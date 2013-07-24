@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="org.xhtmlrenderer:flying-saucer-core:9.0.2" type="repository">
+    <properties maven-id="org.xhtmlrenderer:flying-saucer-core:9.0.2" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/flying-saucer-core-9.0.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/flying-saucer-core-9.0.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="org.asciidoctor:asciidoctor-java-integration:0.1.3" type="repository">
+    <properties maven-id="org.asciidoctor:asciidoctor-java-integration:0.1.3" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/asciidoctor-java-integration-0.1.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jruby-complete-1.7.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jcommander-1.30.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/asciidoctor-java-integration-0.1.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
