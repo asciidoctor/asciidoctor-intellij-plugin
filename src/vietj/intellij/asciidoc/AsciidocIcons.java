@@ -23,7 +23,7 @@ import javax.swing.*;
 public class AsciidocIcons {
 
   /** The path to the Asciidoc icon. */
-  public static final String ASCIIDOC_ICON_PATH = "/vietj/intellij/asciidoc/markdown.png";
+  public static final String ASCIIDOC_ICON_PATH = "/vietj/intellij/asciidoc/asciidoc.png";
 
   /** The Asciidoc {@link Icon}. */
   public static final Icon ASCIIDOC_ICON = IconLoader.getIcon(ASCIIDOC_ICON_PATH);
