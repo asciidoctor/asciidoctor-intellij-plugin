@@ -23,6 +23,11 @@ To build this plugin, you need to:
 
 You can then install the plugin from the generated zip file in any IntelliJ platform product.
 
+== Copyright and Licensing
+
+Copyright (C) 2013-2014 Julien Viet.
+Released under the Apache License, Version 2.0 (see link:LICENSE[LICENSE]).
+
 == Credits
 
 This plugin is based on the https://github.com/nicoulaj/idea-markdown[Intellij Markdown plugin by Julien Nicoulaud].
