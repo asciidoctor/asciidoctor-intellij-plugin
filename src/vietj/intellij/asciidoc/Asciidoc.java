@@ -16,8 +16,13 @@
 package vietj.intellij.asciidoc;
 
 import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.Attributes;
+import org.asciidoctor.AttributesBuilder;
+import org.asciidoctor.OptionsBuilder;
+import org.asciidoctor.SafeMode;
 
 import java.util.Collections;
+import java.util.Map;
 
 /** @author Julien Viet */
 public class Asciidoc {
@@ -40,10 +45,19 @@ public class Asciidoc {
     ClassLoader old = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(AsciidocAction.class.getClassLoader());
-      return doctor.render(text, Collections.<String, Object>emptyMap());
+      String result = "<div id=\"content\">\n" + doctor.render(text, getDefaultOptions()) + "\n</div>";
+      return result;
     }
     finally {
       Thread.currentThread().setContextClassLoader(old);
     }
+  }
+
+  public Map<String, Object> getDefaultOptions() {
+    Attributes attrs = AttributesBuilder.attributes().showTitle(true)
+        .sourceHighlighter("coderay").attribute("coderay-css", "style")
+        .attribute("env", "idea").attribute("env-idea").get();
+    OptionsBuilder opts = OptionsBuilder.options().safe(SafeMode.SAFE).backend("html5").headerFooter(false).attributes(attrs);
+    return opts.asMap();
   }
 }

@@ -20,33 +20,20 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.psi.PsiFile;
 import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.AttributesBuilder;
+import org.asciidoctor.Options;
+import org.asciidoctor.OptionsBuilder;
+import org.asciidoctor.SafeMode;
 import vietj.intellij.asciidoc.file.AsciidocFileType;
 
+import java.io.File;
 import java.util.Collections;
 
 /** @author Julien Viet */
 public class AsciidocAction extends AnAction {
   public void actionPerformed(AnActionEvent event) {
-
     PsiFile file = event.getData(DataKeys.PSI_FILE);
-    String text = file.getText();
-
-    ClassLoader old = Thread.currentThread().getContextClassLoader();
-    try {
-      Thread.currentThread().setContextClassLoader(AsciidocAction.class.getClassLoader());
-      Asciidoctor doctor = Asciidoctor.Factory.create();
-      String result = doctor.render(text, Collections.<String, Object>emptyMap());
-      System.out.println("Rendered as " + result);
-    }
-    catch (Exception e
-        ) {
-      e.printStackTrace();
-    }
-    finally {
-      Thread.currentThread().setContextClassLoader(old);
-    }
-
-
+    new Asciidoc().render(file.getText());
   }
 
   @Override
