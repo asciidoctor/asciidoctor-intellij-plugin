@@ -18,31 +18,31 @@ package vietj.intellij.asciidoc.file;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import vietj.intellij.asciidoc.AsciidocIcons;
-import vietj.intellij.asciidoc.AsciidocLanguage;
+import vietj.intellij.asciidoc.AsciiDocIcons;
+import vietj.intellij.asciidoc.AsciiDocLanguage;
 
 import javax.swing.*;
 
 /** @author Julien Viet */
-public class AsciidocFileType extends LanguageFileType {
+public class AsciiDocFileType extends LanguageFileType {
 
-  /** The {@link AsciidocFileType} instance. */
-  public static final AsciidocFileType INSTANCE = new AsciidocFileType();
+  /** The {@link AsciiDocFileType} instance. */
+  public static final AsciiDocFileType INSTANCE = new AsciiDocFileType();
   /** . */
   public static final String[] DEFAULT_ASSOCIATED_EXTENSIONS = {"adoc", "asciidoc", "ad", "asc"};
 
-  public AsciidocFileType() {
-    super(new AsciidocLanguage());
+  public AsciiDocFileType() {
+    super(new AsciiDocLanguage());
   }
 
   @NotNull
   public String getName() {
-    return "Asciidoc";
+    return "AsciiDoc";
   }
 
   @NotNull
   public String getDescription() {
-    return "The asciidoc language";
+    return "The AsciiDoc markup language";
   }
 
   @NotNull
@@ -52,6 +52,6 @@ public class AsciidocFileType extends LanguageFileType {
 
   @Nullable
   public Icon getIcon() {
-    return AsciidocIcons.ASCIIDOC_ICON;
+    return AsciiDocIcons.ASCIIDOC_ICON;
   }
 }

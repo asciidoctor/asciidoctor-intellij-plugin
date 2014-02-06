@@ -1,17 +1,15 @@
 <idea-plugin version="2">
-  <id>com.yourcompany.unique.plugin.id</id>
-  <name>Plugin display name here</name>
+  <id>org.asciidoctor.intellij.asciidoc</id>
+  <name>IntelliJ AsciiDoc Plugin</name>
   <version>1.0</version>
-  <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+  <vendor email="asciidoctor@example.com" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <small>most HTML tags may be used</small>
+      IntelliJ AsciiDoc Plugin
       ]]></description>
 
   <change-notes><![CDATA[
-      Add change notes here.<br>
-      <small>most HTML tags may be used</small>
+      Alpha
       ]]>
   </change-notes>
 
@@ -35,14 +33,14 @@
 
   <actions>
     <!-- Add your actions here -->
-    <action id="vietj.asciidoc.MyAction" class="vietj.intellij.asciidoc.AsciidocAction" text="AsciidocAction..."
-            description="Asciidoc action">
+    <action id="vietj.asciidoc.MyAction" class="vietj.intellij.asciidoc.AsciiDocAction" text="AsciiDocAction..."
+            description="AsciiDoc action">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <fileTypeFactory implementation="vietj.intellij.asciidoc.file.AsciidocFileTypeFactory"/>
-    <fileEditorProvider implementation="vietj.intellij.asciidoc.editor.AsciidocPreviewEditorProvider"/>
+    <fileTypeFactory implementation="vietj.intellij.asciidoc.file.AsciiDocFileTypeFactory"/>
+    <fileEditorProvider implementation="vietj.intellij.asciidoc.editor.AsciiDocPreviewEditorProvider"/>
   </extensions>
 </idea-plugin>

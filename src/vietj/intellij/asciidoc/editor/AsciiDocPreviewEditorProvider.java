@@ -24,14 +24,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import vietj.intellij.asciidoc.AsciidocLanguage;
-import vietj.intellij.asciidoc.file.AsciidocFileType;
+import vietj.intellij.asciidoc.AsciiDocLanguage;
+import vietj.intellij.asciidoc.file.AsciiDocFileType;
 
 /** @author Julien Viet */
-public class AsciidocPreviewEditorProvider implements FileEditorProvider {
+public class AsciiDocPreviewEditorProvider implements FileEditorProvider {
 
   /** The id of the editors provided by this {@link FileEditorProvider}. */
-  public static final String EDITOR_TYPE_ID = AsciidocLanguage.LANGUAGE_NAME + "PreviewEditor";
+  public static final String EDITOR_TYPE_ID = AsciiDocLanguage.LANGUAGE_NAME + "PreviewEditor";
 
   /**
    * Check wether this {@link FileEditorProvider} can create a valid {@link FileEditor} for the file.
@@ -41,7 +41,7 @@ public class AsciidocPreviewEditorProvider implements FileEditorProvider {
    * @return whether the provider can create a valid editor for the specified <code>file</code>.
    */
   public boolean accept(@NotNull com.intellij.openapi.project.Project project, @NotNull VirtualFile file) {
-    return file.getFileType() instanceof AsciidocFileType;
+    return file.getFileType() instanceof AsciiDocFileType;
   }
 
   /**
@@ -56,7 +56,7 @@ public class AsciidocPreviewEditorProvider implements FileEditorProvider {
    */
   @NotNull
   public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-    return new AsciidocPreviewEditor(project, FileDocumentManager.getInstance().getDocument(file));
+    return new AsciiDocPreviewEditor(project, FileDocumentManager.getInstance().getDocument(file));
   }
 
   /**
@@ -71,7 +71,7 @@ public class AsciidocPreviewEditorProvider implements FileEditorProvider {
   /**
    * Deserialize state from the specified <code>sourceElemet</code>.
    * <p/>
-   * Does not do anything as {@link AsciidocPreviewEditor} is stateless.
+   * Does not do anything as {@link AsciiDocPreviewEditor} is stateless.
    *
    * @param sourceElement the source element.
    * @param project       the project.
@@ -88,7 +88,7 @@ public class AsciidocPreviewEditorProvider implements FileEditorProvider {
   /**
    * Serialize state into the specified <code>targetElement</code>
    * <p/>
-   * Does not do anything as {@link AsciidocPreviewEditor} is stateless.
+   * Does not do anything as {@link AsciiDocPreviewEditor} is stateless.
    *
    * @param state         the state to serialize.
    * @param project       the project.

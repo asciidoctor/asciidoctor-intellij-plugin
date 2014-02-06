@@ -18,12 +18,12 @@ package vietj.intellij.asciidoc;
 import com.intellij.lang.Language;
 
 /** @author Julien Viet */
-public class AsciidocLanguage extends Language {
+public class AsciiDocLanguage extends Language {
 
   /** . */
-  public static final String LANGUAGE_NAME = "Asciidoc";
+  public static final String LANGUAGE_NAME = "AsciiDoc";
 
-  public AsciidocLanguage() {
+  public AsciiDocLanguage() {
     super(LANGUAGE_NAME);
   }
 }

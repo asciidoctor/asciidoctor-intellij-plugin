@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package vietj.intellij.asciidoc.file;
+package vietj.intellij.asciidoc.editor;
 
-import com.intellij.openapi.fileTypes.FileTypeConsumer;
-import com.intellij.openapi.fileTypes.FileTypeFactory;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.editor.Document;
+
+import javax.swing.text.html.HTMLEditorKit;
 
 /** @author Julien Viet */
-public class AsciidocFileTypeFactory extends FileTypeFactory {
+public class AsciiDocEditorKit extends HTMLEditorKit {
 
-  @Override
-  public void createFileTypes(@NotNull FileTypeConsumer fileTypeConsumer) {
-    for (int i = 0;i < AsciidocFileType.DEFAULT_ASSOCIATED_EXTENSIONS.length;i++) {
-      fileTypeConsumer.consume(AsciidocFileType.INSTANCE, AsciidocFileType.DEFAULT_ASSOCIATED_EXTENSIONS[i]);
-    }
+  /** The document. */
+  private final Document document;
+
+  public AsciiDocEditorKit(Document document) {
+    this.document = document;
   }
 }

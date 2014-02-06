@@ -21,20 +21,19 @@ import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
 
-import java.util.Collections;
 import java.util.Map;
 
 /** @author Julien Viet */
-public class Asciidoc {
+public class AsciiDoc {
 
   /** . */
-  private final Asciidoctor doctor;
+  private final Asciidoctor asciidoctor;
 
-  public Asciidoc() {
+  public AsciiDoc() {
     ClassLoader old = Thread.currentThread().getContextClassLoader();
     try {
-      Thread.currentThread().setContextClassLoader(AsciidocAction.class.getClassLoader());
-      doctor = Asciidoctor.Factory.create();
+      Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
+      asciidoctor = Asciidoctor.Factory.create();
     }
     finally {
       Thread.currentThread().setContextClassLoader(old);
@@ -44,8 +43,8 @@ public class Asciidoc {
   public String render(String text) {
     ClassLoader old = Thread.currentThread().getContextClassLoader();
     try {
-      Thread.currentThread().setContextClassLoader(AsciidocAction.class.getClassLoader());
-      String result = "<div id=\"content\">\n" + doctor.render(text, getDefaultOptions()) + "\n</div>";
+      Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
+      String result = "<div id=\"content\">\n" + asciidoctor.render(text, getDefaultOptions()) + "\n</div>";
       return result;
     }
     finally {

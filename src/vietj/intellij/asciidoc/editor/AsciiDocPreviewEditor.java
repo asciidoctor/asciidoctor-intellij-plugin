@@ -31,26 +31,24 @@ import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import vietj.intellij.asciidoc.Asciidoc;
+import vietj.intellij.asciidoc.AsciiDoc;
 
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 /** @author Julien Viet */
-public class AsciidocPreviewEditor extends UserDataHolderBase implements FileEditor {
+public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEditor {
 
   /** The {@link java.awt.Component} used to render the HTML preview. */
   protected final JEditorPane jEditorPane = new JEditorPane();
 
-  /** Indicates whether the HTML preview is obsolete and should regenerated from the Asciidoc {@link #document}. */
+  /** Indicates whether the HTML preview is obsolete and should regenerated from the AsciiDoc {@link #document}. */
   protected boolean previewIsObsolete = true;
 
   /** The {@link Document} previewed in this editor. */
@@ -60,13 +58,13 @@ public class AsciidocPreviewEditor extends UserDataHolderBase implements FileEdi
   protected final JBScrollPane scrollPane = new JBScrollPane(jEditorPane);
 
   /** . */
-  private FutureTask<Asciidoc> asciidoc = new FutureTask<Asciidoc>(new Callable<Asciidoc>() {
-    public Asciidoc call() throws Exception {
-      return new Asciidoc();
+  private FutureTask<AsciiDoc> asciidoc = new FutureTask<AsciiDoc>(new Callable<AsciiDoc>() {
+    public AsciiDoc call() throws Exception {
+      return new AsciiDoc();
     }
   });
 
-  public AsciidocPreviewEditor(Project project, Document document) {
+  public AsciiDocPreviewEditor(Project project, Document document) {
 
     // Get asciidoc asynchronously
     new Thread() {
@@ -88,10 +86,10 @@ public class AsciidocPreviewEditor extends UserDataHolderBase implements FileEdi
     });
 
     // Setup the editor pane for rendering HTML.
-    final HTMLEditorKit kit = new AsciidocEditorKit(document);
+    final HTMLEditorKit kit = new AsciiDocEditorKit(document);
 
     //
-    URL previewURL = AsciidocPreviewEditor.class.getResource("preview.css");
+    URL previewURL = AsciiDocPreviewEditor.class.getResource("preview.css");
     if (previewURL != null) {
       final StyleSheet style = new StyleSheet();
       style.importStyleSheet(previewURL);
@@ -126,18 +124,18 @@ public class AsciidocPreviewEditor extends UserDataHolderBase implements FileEdi
   /**
    * Get the editor displayable name.
    *
-   * @return <code>Asciidoc</code>
+   * @return <code>AsciiDoc</code>
    */
   @NotNull
   @NonNls
   public String getName() {
-    return "Asciidoc";
+    return "AsciiDoc";
   }
 
   /**
    * Get the state of the editor.
    * <p/>
-   * Just returns {@link FileEditorState#INSTANCE} as {@link AsciidocPreviewEditor} is stateless.
+   * Just returns {@link FileEditorState#INSTANCE} as {@link AsciiDocPreviewEditor} is stateless.
    *
    * @param level the level.
    * @return {@link FileEditorState#INSTANCE}
@@ -151,7 +149,7 @@ public class AsciidocPreviewEditor extends UserDataHolderBase implements FileEdi
   /**
    * Set the state of the editor.
    * <p/>
-   * Does not do anything as {@link AsciidocPreviewEditor} is stateless.
+   * Does not do anything as {@link AsciiDocPreviewEditor} is stateless.
    *
    * @param state the new state.
    * @see #getState(com.intellij.openapi.fileEditor.FileEditorStateLevel)
@@ -162,7 +160,7 @@ public class AsciidocPreviewEditor extends UserDataHolderBase implements FileEdi
   /**
    * Indicates whether the document content is modified compared to its file.
    *
-   * @return {@code false} as {@link AsciidocPreviewEditor} is read-only.
+   * @return {@code false} as {@link AsciiDocPreviewEditor} is read-only.
    */
   public boolean isModified() {
     return false;
@@ -185,7 +183,7 @@ public class AsciidocPreviewEditor extends UserDataHolderBase implements FileEdi
   public void selectNotify() {
     if (previewIsObsolete) {
       try {
-        Asciidoc doc = this.asciidoc.get();
+        AsciiDoc doc = this.asciidoc.get();
         String markup = doc.render(document.getText());
         jEditorPane.setText(markup);
         previewIsObsolete = false;
@@ -230,7 +228,7 @@ public class AsciidocPreviewEditor extends UserDataHolderBase implements FileEdi
   /**
    * Get the background editor highlighter.
    *
-   * @return {@code null} as {@link AsciidocPreviewEditor} does not require highlighting.
+   * @return {@code null} as {@link AsciiDocPreviewEditor} does not require highlighting.
    */
   @Nullable
   public BackgroundEditorHighlighter getBackgroundHighlighter() {
@@ -240,7 +238,7 @@ public class AsciidocPreviewEditor extends UserDataHolderBase implements FileEdi
   /**
    * Get the current location.
    *
-   * @return {@code null} as {@link AsciidocPreviewEditor} is not navigable.
+   * @return {@code null} as {@link AsciiDocPreviewEditor} is not navigable.
    */
   @Nullable
   public FileEditorLocation getCurrentLocation() {

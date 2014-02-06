@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AsciidocPlugin.iml" filepath="$PROJECT_DIR$/AsciidocPlugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AsciiDocPlugin.iml" filepath="$PROJECT_DIR$/AsciiDocPlugin.iml" />
     </modules>
   </component>
 </project>

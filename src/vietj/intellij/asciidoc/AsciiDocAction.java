@@ -19,21 +19,13 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.psi.PsiFile;
-import org.asciidoctor.Asciidoctor;
-import org.asciidoctor.AttributesBuilder;
-import org.asciidoctor.Options;
-import org.asciidoctor.OptionsBuilder;
-import org.asciidoctor.SafeMode;
-import vietj.intellij.asciidoc.file.AsciidocFileType;
-
-import java.io.File;
-import java.util.Collections;
+import vietj.intellij.asciidoc.file.AsciiDocFileType;
 
 /** @author Julien Viet */
-public class AsciidocAction extends AnAction {
+public class AsciiDocAction extends AnAction {
   public void actionPerformed(AnActionEvent event) {
     PsiFile file = event.getData(DataKeys.PSI_FILE);
-    new Asciidoc().render(file.getText());
+    new AsciiDoc().render(file.getText());
   }
 
   @Override
@@ -41,7 +33,7 @@ public class AsciidocAction extends AnAction {
     PsiFile file = e.getData(DataKeys.PSI_FILE);
     boolean enabled = false;
     if (file != null) {
-      for (String ext: AsciidocFileType.DEFAULT_ASSOCIATED_EXTENSIONS) {
+      for (String ext: AsciiDocFileType.DEFAULT_ASSOCIATED_EXTENSIONS) {
         if (file.getName().endsWith("." + ext)) {
           enabled = true;
           break;

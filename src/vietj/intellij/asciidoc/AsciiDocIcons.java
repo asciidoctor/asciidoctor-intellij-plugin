@@ -20,12 +20,12 @@ import com.intellij.openapi.util.IconLoader;
 import javax.swing.*;
 
 /** @author Julien Viet */
-public class AsciidocIcons {
+public class AsciiDocIcons {
 
-  /** The path to the Asciidoc icon. */
+  /** The path to the AsciiDoc icon. */
   public static final String ASCIIDOC_ICON_PATH = "/vietj/intellij/asciidoc/asciidoc.png";
 
-  /** The Asciidoc {@link Icon}. */
+  /** The AsciiDoc {@link Icon}. */
   public static final Icon ASCIIDOC_ICON = IconLoader.getIcon(ASCIIDOC_ICON_PATH);
 
 }
