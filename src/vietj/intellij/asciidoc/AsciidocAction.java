@@ -20,6 +20,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.psi.PsiFile;
 import org.asciidoctor.Asciidoctor;
+import vietj.intellij.asciidoc.file.AsciidocFileType;
 
 import java.util.Collections;
 
@@ -51,7 +52,15 @@ public class AsciidocAction extends AnAction {
   @Override
   public void update(AnActionEvent e) {
     PsiFile file = e.getData(DataKeys.PSI_FILE);
-    boolean enabled = file != null && file.getName().endsWith(".asciidoc");
+    boolean enabled = false;
+    if (file != null) {
+      for (String ext: AsciidocFileType.DEFAULT_ASSOCIATED_EXTENSIONS) {
+        if (file.getName().endsWith("." + ext)) {
+          enabled = true;
+          break;
+        }
+      }
+    }
     e.getPresentation().setEnabled(enabled);
   }
 }

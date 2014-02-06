@@ -29,7 +29,7 @@ public class AsciidocFileType extends LanguageFileType {
   /** The {@link AsciidocFileType} instance. */
   public static final AsciidocFileType INSTANCE = new AsciidocFileType();
   /** . */
-  public static final String[] DEFAULT_ASSOCIATED_EXTENSIONS = {"asciidoc", "adoc", "ad"};
+  public static final String[] DEFAULT_ASSOCIATED_EXTENSIONS = {"adoc", "asciidoc", "ad", "asc"};
 
   public AsciidocFileType() {
     super(new AsciidocLanguage());
