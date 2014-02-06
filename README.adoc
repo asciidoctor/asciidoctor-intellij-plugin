@@ -1,5 +1,6 @@
 = IntelliJ AsciiDoc Plugin
 Julien Viet
+:experimental:
 
 A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the AsciiDoc markup language.
 
@@ -18,9 +19,9 @@ To build this plugin, you need to:
 
 . download the IntelliJ IDEA Community Edition (at a minimum)
 . open the project
-. build the project
+. build the project using menu:Build[Prepare Plugin Module {apos}AsciiDoc Plugin{apos} for Deployment]
 
-You can then install the plugin from a local file in any IntelliJ platform product.
+You can then install the plugin from the generated zip file in any IntelliJ platform product.
 
 == Credits
 
