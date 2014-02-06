@@ -2,24 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fce515a7-b880-433e-9ff6-be700fa790e3" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/org_jsoup_jsoup_1_7_2.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/org_xhtmlrenderer_flying_saucer_core_9_0_2.xml" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/AsciidocPlugin.iml" afterPath="$PROJECT_DIR$/AsciiDocPlugin.iml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/Asciidoc.java" afterPath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDoc.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciidocAction.java" afterPath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDocAction.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciidocIcons.java" afterPath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDocIcons.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciidocLanguage.java" afterPath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDocLanguage.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciidocEditorKit.java" afterPath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciiDocEditorKit.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciidocPreviewEditor.java" afterPath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditor.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciidocPreviewEditorProvider.java" afterPath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditorProvider.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/file/AsciidocFileType.java" afterPath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/file/AsciiDocFileType.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/file/AsciidocFileTypeFactory.java" afterPath="$PROJECT_DIR$/src/vietj/intellij/asciidoc/file/AsciiDocFileTypeFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.name" afterPath="$PROJECT_DIR$/.idea/.name" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/gradle.xml" afterPath="$PROJECT_DIR$/.idea/gradle.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/META-INF/plugin.xml" afterPath="$PROJECT_DIR$/META-INF/plugin.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="AsciiDocPlugin.iws" />
@@ -128,9 +113,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
+    <option name="x" value="-1" />
     <option name="y" value="27" />
-    <option name="width" value="1600" />
-    <option name="height" value="873" />
+    <option name="width" value="1602" />
+    <option name="height" value="874" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -202,7 +188,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="project.structure.last.edited" value="Global Libraries" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
@@ -265,19 +251,6 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method />
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -303,6 +276,19 @@
       <envs />
       <properties />
       <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -437,7 +423,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="27" width="1600" height="873" extended-state="0" />
+    <frame x="-1" y="27" width="1602" height="874" extended-state="6" />
     <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -450,20 +436,20 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32988358" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32988358" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24906133" sideWeight="0.67076164" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3665803" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24875" sideWeight="0.67076164" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3661061" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32988358" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -537,33 +523,17 @@
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/asciidoctor-java-integration-0.1.4-sources.jar!/org/asciidoctor/internal/JRubyAsciidoctor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="170" column="44" selection-start="5888" selection-end="5888" vertical-scroll-proportion="0.0" vertical-offset="1914" max-vertical-offset="4410">
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#1894#1910#0" expanded="false" />
-            <element signature="e#4512#4528#0" expanded="false" />
-            <element signature="e#8345#8353#0" expanded="false" />
-          </folding>
-        </state>
+        <state line="170" column="44" selection-start="5888" selection-end="5888" vertical-scroll-proportion="0.0" vertical-offset="1914" max-vertical-offset="4410" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/asciidoctor-java-integration-0.1.4-sources.jar!/org/asciidoctor/AttributesBuilder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="164" column="25" selection-start="4483" selection-end="4483" vertical-scroll-proportion="0.22783083" vertical-offset="2263" max-vertical-offset="7755">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
+        <state line="164" column="25" selection-start="4483" selection-end="4483" vertical-scroll-proportion="0.22783083" vertical-offset="2263" max-vertical-offset="7755" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/asciidoctor-java-integration-0.1.4-sources.jar!/org/asciidoctor/Attributes.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="163" column="14" selection-start="5526" selection-end="5526" vertical-scroll-proportion="-2.866303" vertical-offset="4471" max-vertical-offset="5940">
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#2635#2651#0" expanded="false" />
-          </folding>
-        </state>
+        <state line="163" column="14" selection-start="5526" selection-end="5526" vertical-scroll-proportion="-2.866303" vertical-offset="4471" max-vertical-offset="5940" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/asciidoctor-java-integration-0.1.4-sources.jar!/org/asciidoctor/OptionsBuilder.java">
@@ -582,12 +552,7 @@
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/asciidoctor-java-integration-0.1.4-sources.jar!/org/asciidoctor/Options.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="18" selection-start="1526" selection-end="1526" vertical-scroll-proportion="0.22922252" vertical-offset="474" max-vertical-offset="1905">
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#1122#1138#0" expanded="false" />
-          </folding>
-        </state>
+        <state line="47" column="18" selection-start="1526" selection-end="1526" vertical-scroll-proportion="0.22922252" vertical-offset="474" max-vertical-offset="1905" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/preview.css">
@@ -597,9 +562,7 @@
     </entry>
     <entry file="jar:///usr/lib/jvm/java-1.7.0/jre/lib/rt.jar!/javax/swing/text/html/StyleSheet.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="14" selection-start="1755" selection-end="1755" vertical-scroll-proportion="0.0" vertical-offset="433" max-vertical-offset="5775">
-          <folding />
-        </state>
+        <state line="40" column="14" selection-start="1755" selection-end="1755" vertical-scroll-proportion="0.0" vertical-offset="433" max-vertical-offset="5775" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciiDocEditorKit.java">
@@ -619,13 +582,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditorProvider.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="81" column="5" selection-start="3298" selection-end="3298" vertical-scroll-proportion="0.0" vertical-offset="450" max-vertical-offset="1470">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/file/AsciiDocFileType.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="44" column="31" selection-start="1425" selection-end="1425" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="615">
@@ -635,19 +591,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/file/AsciiDocFileTypeFactory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="26" selection-start="814" selection-end="814" vertical-scroll-proportion="0.422252" vertical-offset="0" max-vertical-offset="746">
-          <folding>
-            <element signature="e#0#1173#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDoc.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="39" selection-start="940" selection-end="940" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="720">
-          <folding />
-        </state>
+        <state line="21" column="26" selection-start="814" selection-end="814" vertical-scroll-proportion="0.422252" vertical-offset="0" max-vertical-offset="746" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDocAction.java">
@@ -670,6 +614,20 @@
     <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDocLanguage.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="20" column="13" selection-start="705" selection-end="705" vertical-scroll-proportion="0.12064343" vertical-offset="0" max-vertical-offset="746">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditorProvider.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="38" selection-start="674" selection-end="674" vertical-scroll-proportion="0.091649696" vertical-offset="0" max-vertical-offset="1620">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDoc.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="39" selection-start="940" selection-end="940" vertical-scroll-proportion="0.27494907" vertical-offset="0" max-vertical-offset="720">
           <folding />
         </state>
       </provider>

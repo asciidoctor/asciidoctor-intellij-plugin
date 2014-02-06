@@ -47,11 +47,9 @@
         </codeStyleSettings>
         <codeStyleSettings language="Groovy">
           <option name="ELSE_ON_NEW_LINE" value="true" />
-          <option name="WHILE_ON_NEW_LINE" value="true" />
           <option name="CATCH_ON_NEW_LINE" value="true" />
           <option name="FINALLY_ON_NEW_LINE" value="true" />
           <option name="SPACE_AFTER_TYPE_CAST" value="false" />
-          <option name="WRAP_COMMENTS" value="true" />
           <option name="PARENT_SETTINGS_INSTALLED" value="true" />
           <indentOptions>
             <option name="INDENT_SIZE" value="2" />
