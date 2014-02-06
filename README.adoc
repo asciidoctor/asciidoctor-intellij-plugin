@@ -1,10 +1,27 @@
-= Asciidoc Intellij Plugin
+= IntelliJ AsciiDoc Plugin
+Julien Viet
 
-Based on the https://github.com/nicoulaj/idea-markdown[Markdown Intellij plugin by Julien Nicoulaud]
+A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the AsciiDoc markup language.
 
 == Status
 
 Alpha but usable in Intellij:
 
-* Asciidoc file type
-* Asciidoc preview editor
+== Features
+
+* recognizes the AsciiDoc file extension (.adoc, .asciidoc, .ad, .asc)
+* provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ]
+
+== Build
+
+To build this plugin, you need to:
+
+. download the IntelliJ IDEA Community Edition (at a minimum)
+. open the project
+. build the project
+
+You can then install the plugin from a local file in any IntelliJ platform product.
+
+== Credits
+
+This plugin is based on the https://github.com/nicoulaj/idea-markdown[Intellij Markdown plugin by Julien Nicoulaud].
