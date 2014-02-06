@@ -19,7 +19,7 @@ To build this plugin, you need to:
 
 . download the IntelliJ IDEA Community Edition (at a minimum)
 . open the project
-. build the project using menu:Build[Prepare Plugin Module {apos}AsciiDoc Plugin{apos} for Deployment]
+. build the project by selecting menu:Build[Prepare Plugin Module {apos}AsciiDoc Plugin{apos} for Deployment]
 
 You can then install the plugin from the generated zip file in any IntelliJ platform product.
 
