@@ -110,11 +110,9 @@ public class AsciiDocPreviewEditorProvider implements FileEditorProvider {
 
   /**
    * Get the {@link FileEditorPolicy} defining how to show editors created via the {@link FileEditorProvider}.
-   *
-   * @return {@link FileEditorPolicy#NONE}
    */
   @NotNull
   public FileEditorPolicy getPolicy() {
-    return FileEditorPolicy.NONE;
+    return FileEditorPolicy.PLACE_AFTER_DEFAULT_EDITOR;
   }
 }
