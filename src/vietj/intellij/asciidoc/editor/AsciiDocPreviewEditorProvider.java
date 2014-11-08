@@ -20,6 +20,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
 import com.intellij.openapi.fileEditor.FileEditorProvider;
 import com.intellij.openapi.fileEditor.FileEditorState;
+import com.intellij.openapi.project.PossiblyDumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
@@ -28,7 +29,7 @@ import vietj.intellij.asciidoc.AsciiDocLanguage;
 import vietj.intellij.asciidoc.file.AsciiDocFileType;
 
 /** @author Julien Viet */
-public class AsciiDocPreviewEditorProvider implements FileEditorProvider {
+public class AsciiDocPreviewEditorProvider implements FileEditorProvider, PossiblyDumbAware {
 
   /** The id of the editors provided by this {@link FileEditorProvider}. */
   public static final String EDITOR_TYPE_ID = AsciiDocLanguage.LANGUAGE_NAME + "PreviewEditor";
@@ -110,11 +111,18 @@ public class AsciiDocPreviewEditorProvider implements FileEditorProvider {
 
   /**
    * Get the {@link FileEditorPolicy} defining how to show editors created via the {@link FileEditorProvider}.
-   *
-   * @return {@link FileEditorPolicy#NONE}
    */
   @NotNull
   public FileEditorPolicy getPolicy() {
-    return FileEditorPolicy.NONE;
+    return FileEditorPolicy.PLACE_AFTER_DEFAULT_EDITOR;
+  }
+
+  /**
+   * Indicates the editor can be created while background indexing is running.
+   *
+   * @return {@code true}
+   */
+  public boolean isDumbAware() {
+    return true;
   }
 }
