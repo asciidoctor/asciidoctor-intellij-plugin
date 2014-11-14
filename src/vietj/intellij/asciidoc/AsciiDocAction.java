@@ -33,7 +33,7 @@ public class AsciiDocAction extends AnAction {
     PsiFile file = e.getData(DataKeys.PSI_FILE);
     boolean enabled = false;
     if (file != null) {
-      for (String ext: AsciiDocFileType.DEFAULT_ASSOCIATED_EXTENSIONS) {
+      for (String ext : AsciiDocFileType.DEFAULT_ASSOCIATED_EXTENSIONS) {
         if (file.getName().endsWith("." + ext)) {
           enabled = true;
           break;

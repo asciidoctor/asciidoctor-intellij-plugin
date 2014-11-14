@@ -1,6 +1,6 @@
 <idea-plugin version="2">
   <id>org.asciidoctor.intellij.asciidoc</id>
-  <name>IntelliJ AsciiDoc Plugin</name>
+  <name>AsciiDoc</name>
   <version>1.0</version>
   <vendor email="asciidoctor@example.com" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 

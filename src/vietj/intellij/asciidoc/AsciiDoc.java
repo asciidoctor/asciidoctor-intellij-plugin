@@ -44,8 +44,7 @@ public class AsciiDoc {
     ClassLoader old = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
-      String result = "<div id=\"content\">\n" + asciidoctor.render(text, getDefaultOptions()) + "\n</div>";
-      return result;
+      return "<div id=\"content\">\n" + asciidoctor.render(text, getDefaultOptions()) + "\n</div>";
     }
     finally {
       Thread.currentThread().setContextClassLoader(old);
