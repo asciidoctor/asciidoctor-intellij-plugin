@@ -129,7 +129,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   @NotNull
   @NonNls
   public String getName() {
-    return "AsciiDoc";
+    return "Preview";
   }
 
   /**
