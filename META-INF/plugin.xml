@@ -1,27 +1,31 @@
 <idea-plugin version="2">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>1.0</version>
-  <vendor email="erik.pragt@gmail.com" url="http://asciidoctor.org">Asciidoctor Project</vendor>
+  <version>1.0.1</version>
+  <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
-      IntelliJ AsciiDoc Plugin
+      AsciiDoc Plugin
       ]]></description>
 
   <change-notes><![CDATA[
-      Alpha
+    <ul>
+      <li>1.0.1 Fixed issues:
+            <a href="https://github.com/asciidoctor/idea-asciidoc/issues/8">GITHUB-8</a>,
+            <a href="https://github.com/asciidoctor/idea-asciidoc/issues/9">GITHUB-9</a>,
+            <a href="https://github.com/asciidoctor/idea-asciidoc/issues/10">GITHUB-10</a>.<br/>
+            Small cleanup (renamed tab, changed tab sequence)
+      </li>
+    </ul>
       ]]>
   </change-notes>
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
   <idea-version since-build="107.105"/>
-  <depends>com.intellij.modules.lang</depends>
-
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->
-  <!-- uncomment to enable plugin in all products
   <depends>com.intellij.modules.lang</depends>
-  -->
+  <depends>com.intellij.modules.platform</depends>
 
   <application-components>
     <!-- Add your application components here -->
