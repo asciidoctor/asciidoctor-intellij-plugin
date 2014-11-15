@@ -2,7 +2,7 @@
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
   <version>1.0</version>
-  <vendor email="asciidoctor@example.com" url="http://asciidoctor.org">Asciidoctor Project</vendor>
+  <vendor email="erik.pragt@gmail.com" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
       IntelliJ AsciiDoc Plugin
