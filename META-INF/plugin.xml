@@ -10,7 +10,7 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>1.0.1 Fixed issues:
+      <li>0.2 Fixed issues:
             <a href="https://github.com/asciidoctor/idea-asciidoc/issues/8">GITHUB-8</a>,
             <a href="https://github.com/asciidoctor/idea-asciidoc/issues/9">GITHUB-9</a>,
             <a href="https://github.com/asciidoctor/idea-asciidoc/issues/10">GITHUB-10</a>.<br/>
@@ -25,7 +25,6 @@
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->
   <depends>com.intellij.modules.lang</depends>
-  <depends>com.intellij.modules.platform</depends>
 
   <application-components>
     <!-- Add your application components here -->

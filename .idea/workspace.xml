@@ -106,8 +106,8 @@
       <file leaf-file-name="plugin.xml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.07992895" vertical-offset="0" max-vertical-offset="840">
-              <caret line="3" column="14" selection-start-line="3" selection-start-column="14" selection-end-line="3" selection-end-column="14" />
+            <state vertical-scroll-proportion="0.3197158" vertical-offset="0" max-vertical-offset="825">
+              <caret line="12" column="13" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -584,7 +584,7 @@
       <created>1374656178522</created>
       <option name="number" value="Default" />
       <updated>1374656178522</updated>
-      <workItem from="1416007362688" duration="2415000" />
+      <workItem from="1416007362688" duration="2911000" />
     </task>
     <task id="LOCAL-00001" summary="Renamed tab to preview.">
       <created>1416008860202</created>
@@ -610,11 +610,17 @@
       <option name="project" value="LOCAL" />
       <updated>1416011164094</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Changed to less-promising version number.">
+      <created>1416011262787</created>
+      <option name="number" value="00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1416011262787</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2415000" />
+    <option name="totallyTimeSpent" value="2911000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="1680" height="1024" extended-state="6" />
@@ -671,7 +677,8 @@
     <MESSAGE value="IDEA settings" />
     <MESSAGE value="Changed contact settings." />
     <MESSAGE value="Updated release notes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated release notes" />
+    <MESSAGE value="Changed to less-promising version number." />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed to less-promising version number." />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -878,8 +885,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.07992895" vertical-offset="0" max-vertical-offset="840">
-          <caret line="3" column="14" selection-start-line="3" selection-start-column="14" selection-end-line="3" selection-end-column="14" />
+        <state vertical-scroll-proportion="0.3197158" vertical-offset="0" max-vertical-offset="825">
+          <caret line="12" column="13" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
           <folding />
         </state>
       </provider>
