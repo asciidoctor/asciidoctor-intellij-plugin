@@ -2,7 +2,7 @@
 Julien Viet
 :experimental:
 
-A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the AsciiDoc markup language.
+A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language.
 
 == Status
 

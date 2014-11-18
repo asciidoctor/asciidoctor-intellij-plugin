@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.2</version>
+  <version>0.3</version>
   <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -15,6 +15,7 @@
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.3 Upgraded to version 1.5.1 of AsciiDoc</li>
       <li>0.2 Fixed issues:
             <a href="https://github.com/asciidoctor/idea-asciidoc/issues/8">GITHUB-8</a>,
             <a href="https://github.com/asciidoctor/idea-asciidoc/issues/9">GITHUB-9</a>,
