@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package vietj.intellij.asciidoc;
+package org.asciidoc.intellij.file;
 
-import com.intellij.openapi.util.IconLoader;
-
-import javax.swing.*;
+import com.intellij.openapi.fileTypes.FileTypeConsumer;
+import com.intellij.openapi.fileTypes.FileTypeFactory;
+import org.jetbrains.annotations.NotNull;
 
 /** @author Julien Viet */
-public class AsciiDocIcons {
+public class AsciiDocFileTypeFactory extends FileTypeFactory {
 
-  /** The path to the AsciiDoc icon. */
-  public static final String ASCIIDOC_ICON_PATH = "/vietj/intellij/asciidoc/asciidoc.png";
-
-  /** The AsciiDoc {@link Icon}. */
-  public static final Icon ASCIIDOC_ICON = IconLoader.getIcon(ASCIIDOC_ICON_PATH);
-
+  @Override
+  public void createFileTypes(@NotNull FileTypeConsumer fileTypeConsumer) {
+    for (int i = 0;i < AsciiDocFileType.DEFAULT_ASSOCIATED_EXTENSIONS.length;i++) {
+      fileTypeConsumer.consume(AsciiDocFileType.INSTANCE, AsciiDocFileType.DEFAULT_ASSOCIATED_EXTENSIONS[i]);
+    }
+  }
 }

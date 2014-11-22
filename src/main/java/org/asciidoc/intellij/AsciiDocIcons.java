@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package vietj.intellij.asciidoc.editor;
+package org.asciidoc.intellij;
 
-import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.util.IconLoader;
 
-import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.*;
 
 /** @author Julien Viet */
-public class AsciiDocEditorKit extends HTMLEditorKit {
+public class AsciiDocIcons {
 
-  /** The document. */
-  private final Document document;
+  /** The path to the AsciiDoc icon. */
+  public static final String ASCIIDOC_ICON_PATH = "/org/asciidoc/intellij/asciidoc.png";
 
-  public AsciiDocEditorKit(Document document) {
-    this.document = document;
-  }
+  /** The AsciiDoc {@link Icon}. */
+  public static final Icon ASCIIDOC_ICON = IconLoader.getIcon(ASCIIDOC_ICON_PATH);
+
 }

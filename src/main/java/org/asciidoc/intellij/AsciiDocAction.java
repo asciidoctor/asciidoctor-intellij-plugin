@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package vietj.intellij.asciidoc;
+package org.asciidoc.intellij;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.psi.PsiFile;
-import vietj.intellij.asciidoc.file.AsciiDocFileType;
+import org.asciidoc.intellij.file.AsciiDocFileType;
 
 /** @author Julien Viet */
 public class AsciiDocAction extends AnAction {

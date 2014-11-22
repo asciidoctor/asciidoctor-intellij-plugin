@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package vietj.intellij.asciidoc.editor;
+package org.asciidoc.intellij.editor;
 
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -23,10 +23,10 @@ import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.project.PossiblyDumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import vietj.intellij.asciidoc.AsciiDocLanguage;
-import vietj.intellij.asciidoc.file.AsciiDocFileType;
+import org.asciidoc.intellij.AsciiDocLanguage;
 
 /** @author Julien Viet */
 public class AsciiDocPreviewEditorProvider implements FileEditorProvider, PossiblyDumbAware {

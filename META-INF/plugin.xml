@@ -42,14 +42,14 @@
 
   <actions>
     <!-- Add your actions here -->
-    <action id="vietj.asciidoc.MyAction" class="vietj.intellij.asciidoc.AsciiDocAction" text="AsciiDocAction..."
+    <action id="org.asciidoc.MyAction" class="org.asciidoc.intellij.AsciiDocAction" text="AsciiDocAction..."
             description="AsciiDoc action">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
     </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <fileTypeFactory implementation="vietj.intellij.asciidoc.file.AsciiDocFileTypeFactory"/>
-    <fileEditorProvider implementation="vietj.intellij.asciidoc.editor.AsciiDocPreviewEditorProvider"/>
+    <fileTypeFactory implementation="org.asciidoc.intellij.file.AsciiDocFileTypeFactory"/>
+    <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocPreviewEditorProvider"/>
   </extensions>
 </idea-plugin>

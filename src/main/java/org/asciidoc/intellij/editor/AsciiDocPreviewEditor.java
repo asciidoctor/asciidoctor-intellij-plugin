@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package vietj.intellij.asciidoc.editor;
+package org.asciidoc.intellij.editor;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
@@ -28,10 +28,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.ui.components.JBScrollPane;
+import org.asciidoc.intellij.AsciiDoc;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import vietj.intellij.asciidoc.AsciiDoc;
 
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;

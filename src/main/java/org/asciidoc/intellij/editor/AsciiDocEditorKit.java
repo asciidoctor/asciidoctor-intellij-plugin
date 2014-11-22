@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package vietj.intellij.asciidoc;
+package org.asciidoc.intellij.editor;
 
-import com.intellij.lang.Language;
+import com.intellij.openapi.editor.Document;
+
+import javax.swing.text.html.HTMLEditorKit;
 
 /** @author Julien Viet */
-public class AsciiDocLanguage extends Language {
+public class AsciiDocEditorKit extends HTMLEditorKit {
 
-  /** . */
-  public static final String LANGUAGE_NAME = "AsciiDoc";
+  /** The document. */
+  private final Document document;
 
-  public AsciiDocLanguage() {
-    super(LANGUAGE_NAME);
+  public AsciiDocEditorKit(Document document) {
+    this.document = document;
   }
 }

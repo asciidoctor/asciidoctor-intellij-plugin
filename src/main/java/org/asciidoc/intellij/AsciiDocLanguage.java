@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package vietj.intellij.asciidoc.file;
+package org.asciidoc.intellij;
 
-import com.intellij.openapi.fileTypes.FileTypeConsumer;
-import com.intellij.openapi.fileTypes.FileTypeFactory;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.Language;
 
 /** @author Julien Viet */
-public class AsciiDocFileTypeFactory extends FileTypeFactory {
+public class AsciiDocLanguage extends Language {
 
-  @Override
-  public void createFileTypes(@NotNull FileTypeConsumer fileTypeConsumer) {
-    for (int i = 0;i < AsciiDocFileType.DEFAULT_ASSOCIATED_EXTENSIONS.length;i++) {
-      fileTypeConsumer.consume(AsciiDocFileType.INSTANCE, AsciiDocFileType.DEFAULT_ASSOCIATED_EXTENSIONS[i]);
-    }
+  /** . */
+  public static final String LANGUAGE_NAME = "AsciiDoc";
+
+  public AsciiDocLanguage() {
+    super(LANGUAGE_NAME);
   }
 }

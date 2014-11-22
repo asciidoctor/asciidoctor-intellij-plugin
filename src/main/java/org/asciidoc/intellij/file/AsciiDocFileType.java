@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package vietj.intellij.asciidoc.file;
+package org.asciidoc.intellij.file;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import vietj.intellij.asciidoc.AsciiDocIcons;
-import vietj.intellij.asciidoc.AsciiDocLanguage;
+import org.asciidoc.intellij.AsciiDocIcons;
+import org.asciidoc.intellij.AsciiDocLanguage;
 
 import javax.swing.*;
 
