@@ -1,27 +1,36 @@
 <idea-plugin version="2">
   <id>org.asciidoctor.intellij.asciidoc</id>
-  <name>IntelliJ AsciiDoc Plugin</name>
-  <version>1.0</version>
-  <vendor email="asciidoctor@example.com" url="http://asciidoctor.org">Asciidoctor Project</vendor>
+  <name>AsciiDoc</name>
+  <version>0.3</version>
+  <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
-      IntelliJ AsciiDoc Plugin
+      <p><a href="http://www.methods.co.nz/asciidoc/">AsciiDoc</a> language support for IntelliJ platform.<p>
+      <p>AsciiDoc is a text document format, similar to formats like Markdown, for writing notes, documentation, articles,
+      books, ebooks, slideshows, web pages, man pages and blogs. AsciiDoc files can be translated to many formats
+      including HTML, PDF, EPUB, man page. AsciiDoc is, in constrast to Markdown, highly configurable: both the AsciiDoc
+      source file syntax and the backend output markups (which can be almost any type of SGML/XML markup)
+    can be customized and extended by the user.
       ]]></description>
 
   <change-notes><![CDATA[
-      Alpha
+    <ul>
+      <li>0.3 Upgraded to version 1.5.1 of AsciiDoc</li>
+      <li>0.2 Fixed issues:
+            <a href="https://github.com/asciidoctor/idea-asciidoc/issues/8">GITHUB-8</a>,
+            <a href="https://github.com/asciidoctor/idea-asciidoc/issues/9">GITHUB-9</a>,
+            <a href="https://github.com/asciidoctor/idea-asciidoc/issues/10">GITHUB-10</a>.<br/>
+            Small cleanup (renamed tab, changed tab sequence)
+      </li>
+    </ul>
       ]]>
   </change-notes>
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
   <idea-version since-build="107.105"/>
-  <depends>com.intellij.modules.lang</depends>
-
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->
-  <!-- uncomment to enable plugin in all products
   <depends>com.intellij.modules.lang</depends>
-  -->
 
   <application-components>
     <!-- Add your application components here -->

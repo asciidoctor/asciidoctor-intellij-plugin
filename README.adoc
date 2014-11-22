@@ -2,11 +2,16 @@
 Julien Viet
 :experimental:
 
-A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the AsciiDoc markup language.
+A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language.
 
 == Status
 
-Alpha but usable in Intellij:
+Alpha but usable in the following JetBrains products:
+
+- IntelliJ IDEA
+- WebStorm and PhpStorm
+- PyCharm
+- RubyMine
 
 == Features
 
@@ -26,7 +31,7 @@ You can then install the plugin from the generated zip file in any IntelliJ plat
 
 == Copyright and Licensing
 
-Copyright (C) 2013-2014 Julien Viet.
+Copyright (C) 2013-2014 Julien Viet and Erik Pragt.
 Released under the Apache License, Version 2.0 (see link:LICENSE[LICENSE]).
 
 == Credits

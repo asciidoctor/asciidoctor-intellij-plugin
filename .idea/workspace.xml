@@ -2,13 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fce515a7-b880-433e-9ff6-be700fa790e3" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" afterPath="$PROJECT_DIR$/.idea/codeStyleSettings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/gradle.xml" afterPath="$PROJECT_DIR$/.idea/gradle.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.adoc" afterPath="$PROJECT_DIR$/README.adoc" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/META-INF/plugin.xml" afterPath="$PROJECT_DIR$/META-INF/plugin.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="AsciiDocPlugin.iws" />
     <ignored path=".idea/workspace.xml" />
+    <ignored path="$PROJECT_DIR$/out/" />
+    <ignored path=".idea/dataSources.local.xml" />
+    <ignored path="$PROJECT_DIR$/.gradle/" />
+    <ignored path="$PROJECT_DIR$/build/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,8 +27,8 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
-    <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
+    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true" converted="true" />
+    <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true" converted="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
         <option name="NOTIFY_UNCAUGHT" value="true" />
@@ -60,16 +64,131 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </breakpoint_any>
-    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true" />
-    <breakpoint_rules />
-    <ui_properties />
+    <ui_properties converted="true" />
+    <breakpoint_rules converted="true" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
     <favorites_list name="AsciiDocPlugin" />
   </component>
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="AsciiDocPreviewEditor.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditor.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="420" max-vertical-offset="3105">
+              <caret line="67" column="0" selection-start-line="67" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
+              <folding>
+                <element signature="e#4129#4130#0" expanded="true" />
+                <element signature="e#4155#4156#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AsciiDocPreviewEditorProvider.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditorProvider.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="1680">
+              <caret line="31" column="13" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AsciiDocEditorKit.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/editor/AsciiDocEditorKit.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="285">
+              <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="plugin.xml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.07992895" vertical-offset="0" max-vertical-offset="915">
+              <caret line="3" column="14" selection-start-line="3" selection-start-column="14" selection-end-line="3" selection-end-column="14" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="555">
+              <caret line="27" column="15" selection-start-line="27" selection-start-column="15" selection-end-line="27" selection-end-column="15" />
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="settings.gradle" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/settings.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="375">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AsciiDocFileTypeFactory.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/file/AsciiDocFileTypeFactory.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="315">
+              <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.adoc" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/README.adoc">
+          <provider editor-type-id="AsciiDocPreviewEditor">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-2.0" vertical-offset="0" max-vertical-offset="660">
+              <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LICENSE" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/LICENSE">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="2955">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+          <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+            <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AsciiDocFileType.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/file/AsciiDocFileType.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="150" max-vertical-offset="495">
+              <caret line="30" column="10" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="10" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -84,39 +203,214 @@
       <MyDateState />
     </option>
   </component>
+  <component name="GradleLocalSettings">
+    <option name="tasksExpandState">
+      <map>
+        <entry key="" value="true" />
+      </map>
+    </option>
+    <option name="availableProjects">
+      <map>
+        <entry>
+          <key>
+            <ExternalProjectPojo>
+              <option name="name" value="idea-asciidoc" />
+              <option name="path" value="$PROJECT_DIR$" />
+            </ExternalProjectPojo>
+          </key>
+          <value>
+            <list>
+              <ExternalProjectPojo>
+                <option name="name" value="idea-asciidoc" />
+                <option name="path" value="$PROJECT_DIR$" />
+              </ExternalProjectPojo>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="availableTasks">
+      <map>
+        <entry key="$PROJECT_DIR$">
+          <value>
+            <list>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project and all projects it depends on." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="buildNeeded" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles classes 'test'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="testClasses" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs the unit tests." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="test" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all checks." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="check" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Compiles Java source 'test:java'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileTestJava" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles the outputs of this project." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="assemble" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Deletes the build directory." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="clean" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Compiles Java source 'main:java'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileJava" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Generates Javadoc API documentation for the main source code." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="javadoc" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="build" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project and all projects that depend on it." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="buildDependents" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles a jar archive containing the main classes." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="jar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles classes 'main'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="classes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Processes resources 'test:resources'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="processTestResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Processes resources 'main:resources'." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="processResources" />
+              </ExternalTaskPojo>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="modificationStamps">
+      <map>
+        <entry key="$PROJECT_DIR$" value="2832536679000" />
+      </map>
+    </option>
+    <option name="projectBuildClasspath">
+      <map>
+        <entry key="$PROJECT_DIR$">
+          <value>
+            <ExternalProjectBuildClasspathPojo>
+              <option name="modulesBuildClasspath">
+                <map>
+                  <entry key="$PROJECT_DIR$">
+                    <value>
+                      <ExternalModuleBuildClasspathPojo>
+                        <option name="path" value="$PROJECT_DIR$" />
+                      </ExternalModuleBuildClasspathPojo>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+              <option name="name" value="idea-asciidoc" />
+              <option name="projectBuildClasspath">
+                <list>
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/ant-1.9.2.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/ant-launcher-1.9.2.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/gradle-base-services-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/gradle-base-services-groovy-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/gradle-cli-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/gradle-core-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/gradle-docs-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/gradle-launcher-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/gradle-messaging-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/gradle-native-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/gradle-open-api-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/gradle-resources-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/gradle-tooling-api-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/gradle-ui-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/gradle-wrapper-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/groovy-all-1.8.6.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/ivy-2.2.0.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/ant-antlr-1.9.2.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-announce-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-antlr-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-build-comparison-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-build-init-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-code-quality-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-core-impl-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-cpp-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-diagnostics-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-ear-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-ide-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-ivy-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-jacoco-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-javascript-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-jetty-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-language-base-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-language-jvm-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-maven-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-osgi-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-plugins-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-publish-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-reporting-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-scala-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-signing-1.9.jar" />
+                  <option value="$USER_HOME$/.gradle/wrapper/dists/gradle-1.9-bin/qtvcssosa3asn4t6njd64fm3i/gradle-1.9/lib/plugins/gradle-sonar-1.9.jar" />
+                  <option value="$PROJECT_DIR$/buildSrc/src/main/java" />
+                  <option value="$PROJECT_DIR$/buildSrc/src/main/groovy" />
+                </list>
+              </option>
+            </ExternalProjectBuildClasspathPojo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="IdeDocumentHistory">
-    <option name="changedFiles">
+    <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/toto.md" />
-        <option value="$PROJECT_DIR$/src/tutu.markdown" />
-        <option value="$PROJECT_DIR$/src/vietj/intellij/asciidoc/file/MarkdownFileType.java" />
-        <option value="$PROJECT_DIR$/META-INF/plugin.xml" />
-        <option value="$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciiDocEditorKit.java" />
-        <option value="$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditorProvider.java" />
-        <option value="$PROJECT_DIR$/src/vietj/intellij/asciidoc/file/AsciiDocFileTypeFactory.java" />
-        <option value="$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDocIcons.java" />
-        <option value="$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDocLanguage.java" />
-        <option value="$PROJECT_DIR$/README.asciidoc" />
-        <option value="$PROJECT_DIR$/README.adoc" />
-        <option value="$PROJECT_DIR$/src/vietj/intellij/asciidoc/file/AsciiDocFileType.java" />
-        <option value="$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDocAction.java" />
-        <option value="$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/preview.css" />
-        <option value="$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDoc.java" />
         <option value="$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditor.java" />
-        <option value="$PROJECT_DIR$/AsciiDocPlugin.iml" />
-        <option value="$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDocAction.java" />
-        <option value="$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDocIcons.java" />
-        <option value="$PROJECT_DIR$/src/vietj/intellij/asciidoc/file/AsciiDocFileTypeFactory.java" />
+        <option value="$PROJECT_DIR$/test.css" />
         <option value="$PROJECT_DIR$/src/vietj/intellij/asciidoc/file/AsciiDocFileType.java" />
-        <option value="$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDoc.java" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/src/main/vietj/intellij/asciidoc/editor/AsciiDocEditorKit.java" />
+        <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="$PROJECT_DIR$/README.adoc" />
+        <option value="$PROJECT_DIR$/META-INF/plugin.xml" />
       </list>
     </option>
   </component>
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+  </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-1" />
-    <option name="y" value="27" />
-    <option name="width" value="1602" />
-    <option name="height" value="874" />
+    <option name="y" value="22" />
+    <option name="width" value="1680" />
+    <option name="height" value="1024" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -125,6 +419,8 @@
     <OptionsSetting value="true" id="Update" />
     <OptionsSetting value="true" id="Status" />
     <OptionsSetting value="true" id="Edit" />
+    <OptionsSetting value="true" id="Undo Check Out" />
+    <OptionsSetting value="true" id="Get Latest Version" />
     <ConfirmationsSetting value="0" id="Add" />
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
@@ -132,7 +428,7 @@
     <option name="STATE" value="0" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
+    <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -144,41 +440,37 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="AsciiDocPlugin" />
+              <option name="myItemId" value="idea-asciidoc" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="AsciiDocPlugin" />
+              <option name="myItemId" value="idea-asciidoc" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="intellij-asciidoc" />
+              <option name="myItemId" value="idea-asciidoc" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="AsciiDocPlugin" />
+              <option name="myItemId" value="idea-asciidoc" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="intellij-asciidoc" />
+              <option name="myItemId" value="idea-asciidoc" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="asciidoc" />
+              <option name="myItemId" value="lib" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -188,14 +480,14 @@
   </component>
   <component name="PropertiesComponent">
     <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Libraries" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="Repository.Attach.JavaDocs" value="false" />
     <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="options.lastSelected" value="project.propCompiler" />
+    <property name="options.lastSelected" value="reference.settingsdialog.project.gradle" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
@@ -209,18 +501,31 @@
     <property name="dynamic.classpath" value="false" />
     <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/lib/asciidoctor-java-integration-0.1.4-sources.jar!/" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/lib/jruby-complete-1.7.10.jar!/" />
+    <property name="list.type.of.created.stylesheet" value="CSS" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/java" />
+      <recent name="$PROJECT_DIR$/src/main" />
       <recent name="$PROJECT_DIR$/src/vietj/intellij/asciidoc" />
     </key>
   </component>
   <component name="RunManager" selected="Plugin.AsciiDocPlugin">
-    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin" singleton="true">
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
       <module name="AsciiDocPlugin" />
       <option name="VM_PARAMETERS" value="-Xms128m&#10;-Xmx750m&#10;-XX:MaxPermSize=350m&#10;-XX:ReservedCodeCacheSize=96m&#10;-XX:+UseCodeCacheFlushing&#10;-XX:+UseCompressedOops" />
       <option name="PROGRAM_PARAMETERS" />
+      <method />
+    </configuration>
+    <configuration default="true" type="GrailsRunConfigurationType" factoryName="Grails">
+      <module name="" />
+      <setting name="vmparams" value="" />
+      <setting name="cmdLine" value="run-app" />
+      <setting name="depsClasspath" value="false" />
+      <setting name="passParentEnv" value="true" />
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <setting name="launchBrowser" value="false" />
       <method />
     </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
@@ -241,6 +546,7 @@
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
       <method />
     </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
@@ -251,31 +557,28 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
-    <configuration default="true" type="TestNG" factoryName="TestNG">
-      <module name="" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="SUITE_NAME" />
-      <option name="PACKAGE_NAME" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="METHOD_NAME" />
-      <option name="GROUP_NAME" />
-      <option name="TEST_OBJECT" value="CLASS" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" />
-      <option name="OUTPUT_DIRECTORY" />
-      <option name="ANNOTATION_TYPE" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <option name="USE_DEFAULT_REPORTERS" value="false" />
-      <option name="PROPERTIES_FILE" />
+    <configuration default="true" type="JarApplication" factoryName="JAR Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <envs />
-      <properties />
-      <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+      <method />
+    </configuration>
+    <configuration default="true" type="GradleRunConfiguration" factoryName="Gradle">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list />
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
       <method />
     </configuration>
     <configuration default="true" type="Applet" factoryName="Applet">
@@ -327,6 +630,14 @@
       <patterns />
       <method />
     </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <pass-parent-envs>true</pass-parent-envs>
+      <envs />
+      <method />
+    </configuration>
     <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
       <module name="" />
       <option name="ACTIVITY_CLASS" value="" />
@@ -344,6 +655,7 @@
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
+      <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
       <method />
     </configuration>
     <configuration default="false" name="AsciiDocPlugin" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
@@ -396,60 +708,106 @@
     </configuration>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
-  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="false" SSL_PROTOCOLS="sslv3">
-    <option name="USER" value="" />
-    <option name="PASSWORD" value="" />
-    <option name="mySSHConnectionTimeout" value="30000" />
-    <option name="mySSHReadTimeout" value="30000" />
-    <option name="LAST_MERGED_REVISION" />
-    <option name="MERGE_DRY_RUN" value="false" />
-    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
-    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
-    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
-    <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
-    <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
-    <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
-    <option name="FORCE_UPDATE" value="false" />
-    <option name="IGNORE_EXTERNALS" value="false" />
-    <configuration useDefault="true">$USER_HOME$/.subversion</configuration>
-    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
+  <component name="SvnConfiguration" myUseAcceleration="nothing">
+    <configuration>$USER_HOME$/.subversion</configuration>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="fce515a7-b880-433e-9ff6-be700fa790e3" name="Default" comment="" />
       <created>1374656178522</created>
+      <option name="number" value="Default" />
       <updated>1374656178522</updated>
+      <workItem from="1416007362688" duration="4434000" />
+      <workItem from="1416052888184" duration="19000" />
+      <workItem from="1416230965563" duration="597000" />
+      <workItem from="1416267614882" duration="2254000" />
+      <workItem from="1416336415644" duration="862000" />
     </task>
+    <task id="LOCAL-00001" summary="Renamed tab to preview.">
+      <created>1416008860202</created>
+      <option name="number" value="00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1416008860202</updated>
+    </task>
+    <task id="LOCAL-00002" summary="IDEA settings">
+      <created>1416008870862</created>
+      <option name="number" value="00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1416008870862</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Changed contact settings.">
+      <created>1416009680495</created>
+      <option name="number" value="00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1416009680495</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Updated release notes">
+      <created>1416011164094</created>
+      <option name="number" value="00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1416011164094</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Changed to less-promising version number.">
+      <created>1416011262787</created>
+      <option name="number" value="00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1416011262787</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Updated version number in plugin descriptor&#10;">
+      <created>1416011757113</created>
+      <option name="number" value="00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1416011757113</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Updated documentation in plugin">
+      <created>1416053594494</created>
+      <option name="number" value="00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1416053594494</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Upgraded to AsciiDoc 1.5.1. Also added initial Gradle support.">
+      <created>1416337005170</created>
+      <option name="number" value="00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1416337005170</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="9068000" />
+  </component>
   <component name="ToolWindowManager">
-    <frame x="-1" y="27" width="1602" height="874" extended-state="6" />
-    <editor active="false" />
+    <frame x="0" y="22" width="1680" height="1024" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32939914" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3992629" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32988358" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32988358" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24875" sideWeight="0.67076164" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3661061" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3852259" sideWeight="0.67076164" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.36587983" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32988358" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32939914" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -457,177 +815,462 @@
     <option name="RECENTLY_FILTERED_USER_GROUPS">
       <collection />
     </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="false" />
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
+    <MESSAGE value="Renamed tab to preview." />
+    <MESSAGE value="IDEA settings" />
+    <MESSAGE value="Changed contact settings." />
+    <MESSAGE value="Updated release notes" />
+    <MESSAGE value="Changed to less-promising version number." />
+    <MESSAGE value="Updated version number in plugin descriptor&#10;" />
+    <MESSAGE value="Updated documentation in plugin" />
+    <MESSAGE value="Upgraded to AsciiDoc 1.5.1. Also added initial Gradle support." />
+    <option name="LAST_COMMIT_MESSAGE" value="Upgraded to AsciiDoc 1.5.1. Also added initial Gradle support." />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
+    <watches-manager />
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditor.java">
+    <entry file="file://$PROJECT_DIR$/README.adoc">
+      <provider editor-type-id="AsciiDocPreviewEditor">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
-        <state line="98" column="6" selection-start="3496" selection-end="3496" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4020">
+        <state vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="660">
+          <caret line="17" column="43" selection-start-line="17" selection-start-column="43" selection-end-line="17" selection-end-column="43" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/preview.css">
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/file/AsciiDocFileType.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="6" selection-start="912" selection-end="912" vertical-scroll-proportion="0.0" vertical-offset="345" max-vertical-offset="4575" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="150" max-vertical-offset="495">
+          <caret line="30" column="10" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/ui.jar!/apple/awt/CAccessible.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1290" max-vertical-offset="2175">
+          <caret line="104" column="9" selection-start-line="104" selection-start-column="9" selection-end-line="104" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/AsciiDocAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="285" max-vertical-offset="495">
+          <caret line="37" column="22" selection-start-line="37" selection-start-column="22" selection-end-line="37" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="900">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/file/AsciiDocFileTypeFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="315">
+          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.adoc">
+      <provider editor-type-id="AsciiDocPreviewEditor">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="660">
+          <caret line="17" column="43" selection-start-line="17" selection-start-column="43" selection-end-line="17" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/file/AsciiDocFileType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="150" max-vertical-offset="495">
+          <caret line="30" column="10" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/ui.jar!/apple/awt/CAccessible.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1290" max-vertical-offset="2175">
+          <caret line="104" column="9" selection-start-line="104" selection-start-column="9" selection-end-line="104" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/AsciiDocAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="285" max-vertical-offset="495">
+          <caret line="37" column="22" selection-start-line="37" selection-start-column="22" selection-end-line="37" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1260" max-vertical-offset="3105">
+          <caret line="131" column="19" selection-start-line="131" selection-start-column="19" selection-end-line="131" selection-end-column="19" />
+          <folding>
+            <element signature="e#4129#4130#0" expanded="true" />
+            <element signature="e#4155#4156#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/asciidoc.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/editor/AsciiDocEditorKit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="390" max-vertical-offset="525">
+          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="900">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/file/AsciiDocFileTypeFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="315">
+          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.adoc">
+      <provider editor-type-id="AsciiDocPreviewEditor">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="660">
+          <caret line="17" column="43" selection-start-line="17" selection-start-column="43" selection-end-line="17" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/file/AsciiDocFileType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="150" max-vertical-offset="495">
+          <caret line="30" column="10" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/ui.jar!/apple/awt/CAccessible.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1290" max-vertical-offset="2175">
+          <caret line="104" column="9" selection-start-line="104" selection-start-column="9" selection-end-line="104" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/AsciiDocAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="345" max-vertical-offset="555">
+          <caret line="37" column="22" selection-start-line="37" selection-start-column="22" selection-end-line="37" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1260" max-vertical-offset="3105">
+          <caret line="131" column="19" selection-start-line="131" selection-start-column="19" selection-end-line="131" selection-end-column="19" />
+          <folding>
+            <element signature="e#4129#4130#0" expanded="true" />
+            <element signature="e#4155#4156#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/asciidoc.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/editor/AsciiDocEditorKit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="390" max-vertical-offset="525">
+          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="675" max-vertical-offset="825">
+          <caret line="45" column="78" selection-start-line="45" selection-start-column="78" selection-end-line="45" selection-end-column="78" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/file/AsciiDocFileTypeFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="90" max-vertical-offset="315">
+          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.adoc">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="0" selection-start="217" selection-end="217" vertical-scroll-proportion="0.0" vertical-offset="150" max-vertical-offset="495" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDoc.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="23" selection-start="747" selection-end="747" vertical-scroll-proportion="0.0" vertical-offset="330" max-vertical-offset="825">
+        <state vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="660">
+          <caret line="17" column="43" selection-start-line="17" selection-start-column="43" selection-end-line="17" selection-end-column="43" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditorProvider.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/file/AsciiDocFileType.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="13" selection-start="1220" selection-end="1220" vertical-scroll-proportion="0.0" vertical-offset="450" max-vertical-offset="1890">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="495">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/ui.jar!/apple/awt/CAccessible.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1290" max-vertical-offset="2175">
+          <caret line="104" column="9" selection-start-line="104" selection-start-column="9" selection-end-line="104" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/AsciiDocAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="345" max-vertical-offset="555">
+          <caret line="37" column="22" selection-start-line="37" selection-start-column="22" selection-end-line="37" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4020">
+          <caret line="98" column="6" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#4129#4130#0" expanded="true" />
+            <element signature="e#4155#4156#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/editor/preview.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="345" max-vertical-offset="4575">
+          <caret line="23" column="6" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.adoc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="150" max-vertical-offset="495">
+          <caret line="10" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/AsciiDoc.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="330" max-vertical-offset="825">
+          <caret line="22" column="23" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditorProvider.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="450" max-vertical-offset="1890">
+          <caret line="30" column="13" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/editor/preview.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.296296" vertical-offset="1897" max-vertical-offset="4515">
+          <caret line="136" column="8" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/AsciiDocIcons.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="315">
+          <caret line="22" column="23" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/AsciiDocLanguage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.12064343" vertical-offset="0" max-vertical-offset="746">
+          <caret line="20" column="13" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/AsciiDoc.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.27494907" vertical-offset="0" max-vertical-offset="720">
+          <caret line="29" column="39" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/asciidoc.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/AsciiDocAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="555">
+          <caret line="37" column="22" selection-start-line="37" selection-start-column="22" selection-end-line="37" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Classes/ui.jar!/apple/awt/CAccessible.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2175">
+          <caret line="104" column="9" selection-start-line="104" selection-start-column="9" selection-end-line="104" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/file/AsciiDocFileTypeFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="315">
+          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="25" selection-start="168" selection-end="168" vertical-scroll-proportion="0.20992367" vertical-offset="0" max-vertical-offset="0" />
+        <state vertical-scroll-proportion="0.23601398" vertical-offset="0" max-vertical-offset="572">
+          <caret line="9" column="2" selection-start-line="9" selection-start-column="2" selection-end-line="9" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/editor/AsciiDocEditorKit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="285">
+          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditorProvider.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1680">
+          <caret line="31" column="13" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/file/AsciiDocFileType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="495">
+          <caret line="30" column="10" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2955">
+          <caret line="67" column="0" selection-start-line="67" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
+          <folding>
+            <element signature="e#4129#4130#0" expanded="true" />
+            <element signature="e#4155#4156#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="555">
+          <caret line="27" column="15" selection-start-line="27" selection-start-column="15" selection-end-line="27" selection-end-column="15" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/settings.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="904">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LICENSE">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2955">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.adoc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="0" selection-start="217" selection-end="217" vertical-scroll-proportion="0.20107238" vertical-offset="0" max-vertical-offset="746" />
+      <provider editor-type-id="AsciiDocPreviewEditor">
+        <state />
       </provider>
-    </entry>
-    <entry file="jar:///usr/lib/jvm/java-1.7.0/jre/lib/rt.jar!/java/util/AbstractMap.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="89" column="0" selection-start="2999" selection-end="2999" vertical-scroll-proportion="0.80851066" vertical-offset="940" max-vertical-offset="1410" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/asciidoctor-java-integration-0.1.4-sources.jar!/org/asciidoctor/internal/JRubyAsciidoctor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="170" column="44" selection-start="5888" selection-end="5888" vertical-scroll-proportion="0.0" vertical-offset="1914" max-vertical-offset="4410" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/asciidoctor-java-integration-0.1.4-sources.jar!/org/asciidoctor/AttributesBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="164" column="25" selection-start="4483" selection-end="4483" vertical-scroll-proportion="0.22783083" vertical-offset="2263" max-vertical-offset="7755" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/asciidoctor-java-integration-0.1.4-sources.jar!/org/asciidoctor/Attributes.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="163" column="14" selection-start="5526" selection-end="5526" vertical-scroll-proportion="-2.866303" vertical-offset="4471" max-vertical-offset="5940" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/asciidoctor-java-integration-0.1.4-sources.jar!/org/asciidoctor/OptionsBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="109" column="25" selection-start="2562" selection-end="2562" vertical-scroll-proportion="0.10857909" vertical-offset="1539" max-vertical-offset="3480">
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar:///usr/lib/jvm/java-1.7.0/jre/lib/rt.jar!/java/util/Map.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="4" selection-start="331" selection-end="331" vertical-scroll-proportion="0.3319149" vertical-offset="84" max-vertical-offset="765" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/asciidoctor-java-integration-0.1.4-sources.jar!/org/asciidoctor/Options.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="18" selection-start="1526" selection-end="1526" vertical-scroll-proportion="0.22922252" vertical-offset="474" max-vertical-offset="1905" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/preview.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="136" column="8" selection-start="10752" selection-end="10760" vertical-scroll-proportion="-5.296296" vertical-offset="1897" max-vertical-offset="4515" />
-      </provider>
-    </entry>
-    <entry file="jar:///usr/lib/jvm/java-1.7.0/jre/lib/rt.jar!/javax/swing/text/html/StyleSheet.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="14" selection-start="1755" selection-end="1755" vertical-scroll-proportion="0.0" vertical-offset="433" max-vertical-offset="5775" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciiDocEditorKit.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="1" selection-start="952" selection-end="952" vertical-scroll-proportion="0.6032172" vertical-offset="0" max-vertical-offset="746">
-          <folding>
-            <element signature="e#0#953#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="94" column="6" selection-start="3415" selection-end="3415" vertical-scroll-proportion="0.0" vertical-offset="2419" max-vertical-offset="3165">
+        <state vertical-scroll-proportion="-2.0" vertical-offset="0" max-vertical-offset="660">
+          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/file/AsciiDocFileType.java">
+    <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="31" selection-start="1425" selection-end="1425" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="615">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/file/AsciiDocFileTypeFactory.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="26" selection-start="814" selection-end="814" vertical-scroll-proportion="0.422252" vertical-offset="0" max-vertical-offset="746" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDocAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="52" selection-start="1001" selection-end="1001" vertical-scroll-proportion="0.0" vertical-offset="41" max-vertical-offset="765">
-          <folding>
-            <element signature="e#0#1498#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDocIcons.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="23" selection-start="748" selection-end="748" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="315">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDocLanguage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="13" selection-start="705" selection-end="705" vertical-scroll-proportion="0.12064343" vertical-offset="0" max-vertical-offset="746">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/editor/AsciiDocPreviewEditorProvider.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="38" selection-start="674" selection-end="674" vertical-scroll-proportion="0.091649696" vertical-offset="0" max-vertical-offset="1620">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/vietj/intellij/asciidoc/AsciiDoc.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="39" selection-start="940" selection-end="940" vertical-scroll-proportion="0.27494907" vertical-offset="0" max-vertical-offset="720">
+        <state vertical-scroll-proportion="0.07992895" vertical-offset="0" max-vertical-offset="915">
+          <caret line="3" column="14" selection-start-line="3" selection-start-column="14" selection-end-line="3" selection-end-column="14" />
           <folding />
         </state>
       </provider>
@@ -661,7 +1304,7 @@
       </state>
       <state key="GlobalLibrariesConfigurable.UI">
         <settings>
-          <last-edited>jquery-1.7</last-edited>
+          <last-edited>angular</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -690,6 +1333,7 @@
             <option name="proportions">
               <list>
                 <option value="0.2" />
+                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>
@@ -722,4 +1366,3 @@
     </states>
   </component>
 </project>
-

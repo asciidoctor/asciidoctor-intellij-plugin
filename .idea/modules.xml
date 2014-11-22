@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AsciiDocPlugin.iml" filepath="$PROJECT_DIR$/AsciiDocPlugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/idea-asciidoc.iml" filepath="$PROJECT_DIR$/idea-asciidoc.iml" />
     </modules>
   </component>
 </project>
-
