@@ -28,6 +28,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.ui.UIUtil;
 import org.asciidoc.intellij.AsciiDoc;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -89,7 +90,13 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     final HTMLEditorKit kit = new AsciiDocEditorKit(document);
 
     //
-    URL previewURL = AsciiDocPreviewEditor.class.getResource("preview.css");
+    String cssFile = "preview.css";
+
+    if(UIUtil.isUnderDarcula()) {
+      cssFile = "darcula.css";
+    }
+
+    URL previewURL = AsciiDocPreviewEditor.class.getResource(cssFile);
     if (previewURL != null) {
       final StyleSheet style = new StyleSheet();
       style.importStyleSheet(previewURL);

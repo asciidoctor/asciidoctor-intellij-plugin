@@ -42,7 +42,7 @@ public class AsciiDocFileType extends LanguageFileType {
 
   @NotNull
   public String getDescription() {
-    return "The AsciiDoc markup language";
+    return "AsciiDoc files";
   }
 
   @NotNull
