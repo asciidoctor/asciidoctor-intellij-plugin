@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin version="2" url="http://www.asciidoctor.org">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
   <version>0.3</version>
