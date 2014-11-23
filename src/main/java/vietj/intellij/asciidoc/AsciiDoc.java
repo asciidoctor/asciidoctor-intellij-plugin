@@ -21,15 +21,19 @@ import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
 
+import java.io.File;
 import java.util.Map;
 
 /** @author Julien Viet */
 public class AsciiDoc {
-
   /** . */
   private final Asciidoctor asciidoctor;
 
-  public AsciiDoc() {
+  /** Base directory to look up includes. */
+  private final File baseDir;
+
+  public AsciiDoc(File path) {
+    this.baseDir = path;
     ClassLoader old = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
@@ -55,7 +59,8 @@ public class AsciiDoc {
     Attributes attrs = AttributesBuilder.attributes().showTitle(true)
         .sourceHighlighter("coderay").attribute("coderay-css", "style")
         .attribute("env", "idea").attribute("env-idea").get();
-    OptionsBuilder opts = OptionsBuilder.options().safe(SafeMode.SAFE).backend("html5").headerFooter(false).attributes(attrs);
+    OptionsBuilder opts = OptionsBuilder.options().safe(SafeMode.SAFE).backend("html5").headerFooter(false).attributes(attrs)
+        .baseDir(baseDir);
     return opts.asMap();
   }
 }

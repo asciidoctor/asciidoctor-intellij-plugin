@@ -20,6 +20,7 @@ import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
@@ -34,13 +35,17 @@ import org.jetbrains.annotations.Nullable;
 import vietj.intellij.asciidoc.AsciiDoc;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
+import java.awt.*;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.net.URL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.Semaphore;
 
 /** @author Julien Viet */
 public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEditor {
@@ -49,7 +54,10 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   protected final JEditorPane jEditorPane = new JEditorPane();
 
   /** Indicates whether the HTML preview is obsolete and should regenerated from the AsciiDoc {@link #document}. */
-  protected boolean previewIsObsolete = true;
+  protected transient String currentContent = "";
+
+  /** Indicate if view is selected = visible */
+  protected transient boolean selected = false;
 
   /** The {@link Document} previewed in this editor. */
   protected final Document document;
@@ -60,11 +68,65 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /** . */
   private FutureTask<AsciiDoc> asciidoc = new FutureTask<AsciiDoc>(new Callable<AsciiDoc>() {
     public AsciiDoc call() throws Exception {
-      return new AsciiDoc();
+      return new AsciiDoc(new File(FileDocumentManager.getInstance().getFile(document).getParent().getCanonicalPath()));
     }
   });
 
-  public AsciiDocPreviewEditor(Project project, Document document) {
+  /** ensure that there is no concurrent asciidoc rendering to prevent excessive
+   * CPU usage. */
+  private Semaphore sem = new Semaphore(1);
+
+  private void render() {
+    /** use a swing worker to render asciidoc in the background, and call
+    jEditorPane.setText in the EDT to avoid flicker
+    @see http://en.wikipedia.org/wiki/Event_dispatching_thread)
+    */
+    SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
+      public String doInBackground() {
+        try {
+          sem.acquire();
+          AsciiDoc doc = asciidoc.get();
+          /* allow a rendering once every 200ms to prevent
+          excessive CPU usage. */
+          Thread.sleep(200);
+          if (!document.getText().equals(currentContent)) {
+            currentContent = document.getText();
+            return doc.render(currentContent);
+          }
+        }
+        catch (InterruptedException ex) {
+          Thread.currentThread().interrupt();
+        }
+        catch (ExecutionException ex) {
+          throw new RuntimeException(ex.getCause());
+        }
+        return null;
+      }
+
+      public void done() {
+        try {
+          String markup = get();
+          if(markup != null) {
+            // markup = "<html><body>" + markup + "</body></html>";
+            jEditorPane.setText(markup);
+            Rectangle d = jEditorPane.getVisibleRect();
+
+            jEditorPane.setSize((int)d.getWidth(), (int)jEditorPane.getSize().getHeight());
+          }
+          sem.release();
+        } catch (Exception ex) {
+          throw new RuntimeException(ex.getCause());
+        }
+      }
+    };
+
+    worker.execute();
+  }
+
+  public AsciiDocPreviewEditor(Project project, final Document document) {
+
+    //
+    this.document = document;
 
     // Get asciidoc asynchronously
     new Thread() {
@@ -74,19 +136,17 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       }
     }.start();
 
-    //
-    this.document = document;
-
     // Listen to the document modifications.
     this.document.addDocumentListener(new DocumentAdapter() {
       @Override
       public void documentChanged(DocumentEvent e) {
-        previewIsObsolete = true;
+        render();
       }
     });
 
     // Setup the editor pane for rendering HTML.
-    final HTMLEditorKit kit = new AsciiDocEditorKit(document);
+    final HTMLEditorKit kit = new AsciiDocEditorKit(document,
+        new File(FileDocumentManager.getInstance().getFile(document).getParent().getCanonicalPath()));
 
     //
     URL previewURL = AsciiDocPreviewEditor.class.getResource("preview.css");
@@ -99,6 +159,10 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     //
     jEditorPane.setEditorKit(kit);
     jEditorPane.setEditable(false);
+    // use this to prevent scrolling to the end of the pane on setText()
+    ((DefaultCaret)jEditorPane.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+    // initial rendering of content
+    render();
   }
 
   /**
@@ -178,23 +242,12 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /**
    * Invoked when the editor is selected.
    * <p/>
-   * Update the HTML content if obsolete.
+   * Refresh view on select (as dependent elements might have changed).
    */
   public void selectNotify() {
-    if (previewIsObsolete) {
-      try {
-        AsciiDoc doc = this.asciidoc.get();
-        String markup = doc.render(document.getText());
-        jEditorPane.setText(markup);
-        previewIsObsolete = false;
-      }
-      catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-      }
-      catch (ExecutionException e) {
-        throw new RuntimeException(e.getCause());
-      }
-    }
+    selected = true;
+    currentContent = "";
+    render();
   }
 
   /**
