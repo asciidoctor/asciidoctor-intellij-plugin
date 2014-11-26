@@ -1,7 +1,7 @@
-<idea-plugin version="2" url="http://www.asciidoctor.org">
+<idea-plugin version="2" url="https://github.com/asciidoctor/idea-asciidoc">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.3</version>
+  <version>0.4</version>
   <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -15,6 +15,14 @@
 
   <change-notes><![CDATA[
     <ul>
+     <li>0.4 Upgraded to JRuby 1.7.16.1 to fix bugs, initial Darcula support.<br />
+      Live preview, relative images and includes fixed, thanks to Alexander Schwartz!<br />
+          Fixed issues:
+            <a href="https://github.com/asciidoctor/idea-asciidoc/issues/21">GITHUB-21</a>,
+            <a href="https://github.com/asciidoctor/idea-asciidoc/issues/20">GITHUB-20</a>,
+            <a href="https://github.com/asciidoctor/idea-asciidoc/issues/16">GITHUB-16</a>,
+            <a href="https://github.com/asciidoctor/idea-asciidoc/issues/18">GITHUB-18</a>.<br/>
+      </li>
       <li>0.3 Upgraded to version 1.5.1 of AsciiDoc</li>
       <li>0.2 Fixed issues:
             <a href="https://github.com/asciidoctor/idea-asciidoc/issues/8">GITHUB-8</a>,
