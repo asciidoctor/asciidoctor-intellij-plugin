@@ -17,7 +17,10 @@ package org.asciidoc.intellij.editor;
 
 import com.intellij.openapi.editor.Document;
 
+import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
+import java.io.File;
+import java.net.MalformedURLException;
 
 /** @author Julien Viet */
 public class AsciiDocEditorKit extends HTMLEditorKit {
@@ -25,7 +28,27 @@ public class AsciiDocEditorKit extends HTMLEditorKit {
   /** The document. */
   private final Document document;
 
-  public AsciiDocEditorKit(Document document) {
+  /** Base directory used to show images. */
+  private File baseDir;
+
+  /**
+   * When the document is created, the base is set to the current file's folder so
+   * that images will displayed in the preview.
+   */
+  @Override
+  public javax.swing.text.Document createDefaultDocument() {
+    HTMLDocument document = (HTMLDocument) super.createDefaultDocument();
+    try {
+      document.setBase(baseDir.toURI().toURL());
+    }
+    catch (MalformedURLException e) {
+      throw new RuntimeException(e);
+    }
+    return document;
+  }
+
+  public AsciiDocEditorKit(Document document, File baseDir) {
     this.document = document;
+    this.baseDir = baseDir;
   }
 }

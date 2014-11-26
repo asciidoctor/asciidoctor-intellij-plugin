@@ -21,11 +21,13 @@ import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.psi.PsiFile;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 
+import java.io.File;
+
 /** @author Julien Viet */
 public class AsciiDocAction extends AnAction {
   public void actionPerformed(AnActionEvent event) {
     PsiFile file = event.getData(DataKeys.PSI_FILE);
-    new AsciiDoc().render(file.getText());
+    new AsciiDoc(new File(file.getOriginalFile().getParent().getVirtualFile().getCanonicalPath())).render(file.getText());
   }
 
   @Override
