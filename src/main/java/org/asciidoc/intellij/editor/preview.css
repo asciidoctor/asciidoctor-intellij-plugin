@@ -94,7 +94,7 @@ code {
   font-size: 11px;
   font-family: Consolas, "Liberation Mono", Courier, monospace;
   color: #6d180b;
-  background-color: #f2f2f2;
+  /*background-color: #f2f2f2;*/
 }
 
 em {
@@ -126,13 +126,17 @@ a img {
   line-height: 1.4;
   border-width: 1px 0;
   border-style: dotted;
-  border-color: #bfbfbf;
+  /*border-color: #bfbfbf;*/
   padding: 9px;
+}
+
+.listingblock {
+  background-color: #f2f2f2;
 }
 
 .listingblock pre code,
 .literalblock pre code {
   color: inherit;
-  background-color: white;
+  /*background-color: white;*/
   font-size: 11px;
 }
