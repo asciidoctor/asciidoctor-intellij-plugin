@@ -15,7 +15,7 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.5.1 Bugfix release, see <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/21">GITHUB-PULL-21</a></li>
+      <li>0.5.1 Bugfix release, see <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/21">PULL-21</a></li>
       <li>0.5 Upgraded to version 1.5.2 of AsciiDoc, and a small bugfix in the styling for bold items.</li>
       <li>0.4 Upgraded to JRuby 1.7.16.1 to fix bugs, initial Darcula support.<br />
       Live preview, relative images and includes fixed, thanks to Alexander Schwartz!<br />
