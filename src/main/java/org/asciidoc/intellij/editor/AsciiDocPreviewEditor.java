@@ -118,11 +118,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           }
         } catch (Exception ex) {
           String message = "Error rendering asciidoctor: " + ex.getMessage();
-          if(message.contains("(Encoding::CompatibilityError) incompatible encoding regexp match")) {
-            message += "\nThis message suggests that you are running into a JRuby encoding problem. " +
-                "Try to add '-Dfile.encoding=UTF8' to you VM options";
-          }
-          Notification notification = new Notification("asciidoctor", "Error; " + ex.getMessage(),
+          Notification notification = new Notification("asciidoctor", "Error rendering asciidoctor",
               message, NotificationType.ERROR);
           // increase event log counter
           notification.setImportant(true);
