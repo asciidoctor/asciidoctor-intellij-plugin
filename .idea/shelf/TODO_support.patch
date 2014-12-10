@@ -1,0 +1,124 @@
+Index: src/main/java/org/asciidoc/intellij/todo/AsciiDocFilterLexer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/org/asciidoc/intellij/todo/AsciiDocFilterLexer.java	(revision )
++++ src/main/java/org/asciidoc/intellij/todo/AsciiDocFilterLexer.java	(revision )
+@@ -0,0 +1,22 @@
++package org.asciidoc.intellij.todo;
++
++import com.intellij.lexer.Lexer;
++import com.intellij.psi.impl.cache.impl.BaseFilterLexer;
++import com.intellij.psi.impl.cache.impl.OccurrenceConsumer;
++import com.intellij.psi.search.UsageSearchContext;
++
++/**
++ * Created by erikp on 22/11/14.
++ */
++public class AsciiDocFilterLexer extends BaseFilterLexer {
++  public AsciiDocFilterLexer(final Lexer originalLexer, final OccurrenceConsumer table) {
++    super(originalLexer, table);
++  }
++
++  @Override
++  public void advance() {
++    scanWordsInToken(UsageSearchContext.IN_PLAIN_TEXT, false, false);
++    advanceTodoItemCountsInToken();
++    myDelegate.advance();
++  }
++}
+Index: src/main/java/org/asciidoc/intellij/todo/AsciiDocIdIndexer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/org/asciidoc/intellij/todo/AsciiDocIdIndexer.java	(revision )
++++ src/main/java/org/asciidoc/intellij/todo/AsciiDocIdIndexer.java	(revision )
+@@ -0,0 +1,21 @@
++package org.asciidoc.intellij.todo;
++
++import com.intellij.lexer.EmptyLexer;
++import com.intellij.lexer.Lexer;
++import com.intellij.psi.impl.cache.impl.OccurrenceConsumer;
++import com.intellij.psi.impl.cache.impl.id.LexerBasedIdIndexer;
++
++/**
++ * {@code Id} indexer for AsciiDoc.
++ */
++public class AsciiDocIdIndexer extends LexerBasedIdIndexer {
++
++  public static Lexer createIndexingLexer(OccurrenceConsumer consumer) {
++    return new AsciiDocFilterLexer(new EmptyLexer(), consumer);
++  }
++
++  @Override
++  public Lexer createLexer(final OccurrenceConsumer consumer) {
++    return createIndexingLexer(consumer);
++  }
++}
+Index: src/main/java/org/asciidoc/intellij/todo/AsciiDocTodoIndexer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/org/asciidoc/intellij/todo/AsciiDocTodoIndexer.java	(revision )
++++ src/main/java/org/asciidoc/intellij/todo/AsciiDocTodoIndexer.java	(revision )
+@@ -0,0 +1,20 @@
++package org.asciidoc.intellij.todo;
++
++import com.intellij.lexer.Lexer;
++import com.intellij.psi.impl.cache.impl.OccurrenceConsumer;
++import com.intellij.psi.impl.cache.impl.todo.LexerBasedTodoIndexer;
++
++/**
++ * Created by erikp on 22/11/14.
++ */
++public class AsciiDocTodoIndexer extends LexerBasedTodoIndexer {
++
++  public AsciiDocTodoIndexer() {
++    System.out.println("hell world");
++  }
++
++  @Override
++  public Lexer createLexer(OccurrenceConsumer consumer) {
++    return AsciiDocIdIndexer.createIndexingLexer(consumer);
++  }
++}
+Index: META-INF/plugin.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- META-INF/plugin.xml	(revision a982f77f7fda8f8fbcbfa65f77e3de52544d7cff)
++++ META-INF/plugin.xml	(revision )
+@@ -1,7 +1,7 @@
+ <idea-plugin version="2" url="http://www.asciidoctor.org">
+   <id>org.asciidoctor.intellij.asciidoc</id>
+   <name>AsciiDoc</name>
+-  <version>0.3</version>
++  <version>0.4</version>
+   <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
+ 
+   <description><![CDATA[
+@@ -15,6 +15,13 @@
+ 
+   <change-notes><![CDATA[
+     <ul>
++      <li>0.4 Upgraded to JRuby 1.7.16.1 to fix bugs, initial Darcula support!<br />
++          Fixed issues:
++            <a href="https://github.com/asciidoctor/idea-asciidoc/issues/21">GITHUB-21</a>,
++            <a href="https://github.com/asciidoctor/idea-asciidoc/issues/20">GITHUB-20</a>,
++            <a href="https://github.com/asciidoctor/idea-asciidoc/issues/16">GITHUB-16</a>,
++            <a href="https://github.com/asciidoctor/idea-asciidoc/issues/18">GITHUB-18</a>.<br/>
++      </li>
+       <li>0.3 Upgraded to version 1.5.1 of AsciiDoc</li>
+       <li>0.2 Fixed issues:
+             <a href="https://github.com/asciidoctor/idea-asciidoc/issues/8">GITHUB-8</a>,
+@@ -51,5 +58,6 @@
+   <extensions defaultExtensionNs="com.intellij">
+     <fileTypeFactory implementation="org.asciidoc.intellij.file.AsciiDocFileTypeFactory"/>
+     <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocPreviewEditorProvider"/>
++    <todoIndexer filetype="AsciiDoc" implementationClass="org.asciidoc.intellij.todo.AsciiDocTodoIndexer"/>
+   </extensions>
+ </idea-plugin>
