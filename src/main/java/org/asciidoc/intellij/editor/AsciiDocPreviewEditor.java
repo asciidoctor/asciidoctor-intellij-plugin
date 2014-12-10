@@ -17,6 +17,9 @@ package org.asciidoc.intellij.editor;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
@@ -111,12 +114,19 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
             // markup = "<html><body>" + markup + "</body></html>";
             jEditorPane.setText(markup);
             Rectangle d = jEditorPane.getVisibleRect();
-
             jEditorPane.setSize((int)d.getWidth(), (int)jEditorPane.getSize().getHeight());
           }
-          sem.release();
         } catch (Exception ex) {
-          throw new RuntimeException(ex.getCause());
+          String message = "Error rendering asciidoctor: " + ex.getMessage();
+          Notification notification = new Notification("asciidoctor", "Error rendering asciidoctor",
+              message, NotificationType.ERROR);
+          // increase event log counter
+          notification.setImportant(true);
+          Notifications.Bus.notify(notification);
+          // don't show balloon
+          notification.hideBalloon();
+        } finally {
+          sem.release();
         }
       }
     };
