@@ -15,6 +15,7 @@
  */
 package org.asciidoc.intellij;
 
+import org.asciidoc.intellij.actions.AsciiDocAction;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Attributes;
 import org.asciidoctor.AttributesBuilder;

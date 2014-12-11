@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.5.1</version>
+  <version>0.6-SNAPSHOT</version>
   <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -52,14 +52,20 @@
 
   <actions>
     <!-- Add your actions here -->
-    <action id="org.asciidoc.MyAction" class="org.asciidoc.intellij.AsciiDocAction" text="AsciiDocAction..."
-            description="AsciiDoc action">
-      <add-to-group group-id="ToolsMenu" anchor="last"/>
-    </action>
+    <group id="AsciiDoc">
+      <action id="asciidoc.convert.document" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
+              text="Convert to AsciiDoc" description="Convert this document to AsciiDoc"/>
+      <separator/>
+      <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+      <add-to-group group-id="EditorTabPopupMenu" anchor="first"/>
+      <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
+    </group>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="org.asciidoc.intellij.file.AsciiDocFileTypeFactory"/>
     <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocPreviewEditorProvider"/>
+    <todoIndexer filetype="AsciiDoc"
+                 implementationClass="com.intellij.psi.impl.cache.impl.id.PlatformIdTableBuilding$PlainTextTodoIndexer"/>
   </extensions>
 </idea-plugin>
