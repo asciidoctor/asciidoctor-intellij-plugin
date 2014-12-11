@@ -1,0 +1,524 @@
+Index: src/main/java/org/asciidoc/intellij/util/FilenameUtils.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/org/asciidoc/intellij/util/FilenameUtils.java	(revision )
++++ src/main/java/org/asciidoc/intellij/util/FilenameUtils.java	(revision )
+@@ -0,0 +1,258 @@
++package org.asciidoc.intellij.util;
++
++import java.io.File;
++import java.util.Collection;
++
++public class FilenameUtils {
++
++  /**
++   * The extension separator character.
++   * @since 1.4
++   */
++  public static final char EXTENSION_SEPARATOR = '.';
++
++  /**
++   * The Unix separator character.
++   */
++  private static final char UNIX_SEPARATOR = '/';
++
++  /**
++   * The Windows separator character.
++   */
++  private static final char WINDOWS_SEPARATOR = '\\';
++
++  /**
++   * Instances should NOT be constructed in standard programming.
++   */
++  public FilenameUtils() {
++    super();
++  }
++
++  /**
++   * Returns the index of the last directory separator character.
++   * <p>
++   * This method will handle a file in either Unix or Windows format.
++   * The position of the last forward or backslash is returned.
++   * <p>
++   * The output will be the same irrespective of the machine that the code is running on.
++   *
++   * @param filename  the filename to find the last path separator in, null returns -1
++   * @return the index of the last separator character, or -1 if there
++   * is no such character
++   */
++  public static int indexOfLastSeparator(String filename) {
++    if (filename == null) {
++      return -1;
++    }
++    int lastUnixPos = filename.lastIndexOf(UNIX_SEPARATOR);
++    int lastWindowsPos = filename.lastIndexOf(WINDOWS_SEPARATOR);
++    return Math.max(lastUnixPos, lastWindowsPos);
++  }
++
++  /**
++   * Returns the index of the last extension separator character, which is a dot.
++   * <p>
++   * This method also checks that there is no directory separator after the last dot.
++   * To do this it uses {@link #indexOfLastSeparator(String)} which will
++   * handle a file in either Unix or Windows format.
++   * <p>
++   * The output will be the same irrespective of the machine that the code is running on.
++   *
++   * @param filename  the filename to find the last path separator in, null returns -1
++   * @return the index of the last separator character, or -1 if there
++   * is no such character
++   */
++  public static int indexOfExtension(String filename) {
++    if (filename == null) {
++      return -1;
++    }
++    int extensionPos = filename.lastIndexOf(EXTENSION_SEPARATOR);
++    int lastSeparator = indexOfLastSeparator(filename);
++    return lastSeparator > extensionPos ? -1 : extensionPos;
++  }
++
++
++  /**
++   * Gets the name minus the path from a full filename.
++   * <p>
++   * This method will handle a file in either Unix or Windows format.
++   * The text after the last forward or backslash is returned.
++   * <pre>
++   * a/b/c.txt --> c.txt
++   * a.txt     --> a.txt
++   * a/b/c     --> c
++   * a/b/c/    --> ""
++   * </pre>
++   * <p>
++   * The output will be the same irrespective of the machine that the code is running on.
++   *
++   * @param filename  the filename to query, null returns null
++   * @return the name of the file without the path, or an empty string if none exists
++   */
++  public static String getName(String filename) {
++    if (filename == null) {
++      return null;
++    }
++    int index = indexOfLastSeparator(filename);
++    return filename.substring(index + 1);
++  }
++
++  /**
++   * Gets the base name, minus the full path and extension, from a full filename.
++   * <p>
++   * This method will handle a file in either Unix or Windows format.
++   * The text after the last forward or backslash and before the last dot is returned.
++   * <pre>
++   * a/b/c.txt --> c
++   * a.txt     --> a
++   * a/b/c     --> c
++   * a/b/c/    --> ""
++   * </pre>
++   * <p>
++   * The output will be the same irrespective of the machine that the code is running on.
++   *
++   * @param filename  the filename to query, null returns null
++   * @return the name of the file without the path, or an empty string if none exists
++   */
++  public static String getBaseName(String filename) {
++    return removeExtension(getName(filename));
++  }
++
++  /**
++   * Gets the extension of a filename.
++   * <p>
++   * This method returns the textual part of the filename after the last dot.
++   * There must be no directory separator after the dot.
++   * <pre>
++   * foo.txt      --> "txt"
++   * a/b/c.jpg    --> "jpg"
++   * a/b.txt/c    --> ""
++   * a/b/c        --> ""
++   * </pre>
++   * <p>
++   * The output will be the same irrespective of the machine that the code is running on.
++   *
++   * @param filename the filename to retrieve the extension of.
++   * @return the extension of the file or an empty string if none exists or {@code null}
++   * if the filename is {@code null}.
++   */
++  public static String getExtension(String filename) {
++    if (filename == null) {
++      return null;
++    }
++    int index = indexOfExtension(filename);
++    if (index == -1) {
++      return "";
++    } else {
++      return filename.substring(index + 1);
++    }
++  }
++
++  //-----------------------------------------------------------------------
++  /**
++   * Removes the extension from a filename.
++   * <p>
++   * This method returns the textual part of the filename before the last dot.
++   * There must be no directory separator after the dot.
++   * <pre>
++   * foo.txt    --> foo
++   * a\b\c.jpg  --> a\b\c
++   * a\b\c      --> a\b\c
++   * a.b\c      --> a.b\c
++   * </pre>
++   * <p>
++   * The output will be the same irrespective of the machine that the code is running on.
++   *
++   * @param filename  the filename to query, null returns null
++   * @return the filename minus the extension
++   */
++  public static String removeExtension(String filename) {
++    if (filename == null) {
++      return null;
++    }
++    int index = indexOfExtension(filename);
++    if (index == -1) {
++      return filename;
++    } else {
++      return filename.substring(0, index);
++    }
++  }
++
++  //-----------------------------------------------------------------------
++  /**
++   * Checks whether the extension of the filename is that specified.
++   * <p>
++   * This method obtains the extension as the textual part of the filename
++   * after the last dot. There must be no directory separator after the dot.
++   * The extension check is case-sensitive on all platforms.
++   *
++   * @param filename  the filename to query, null returns false
++   * @param extension  the extension to check for, null or empty checks for no extension
++   * @return true if the filename has the specified extension
++   */
++  public static boolean isExtension(String filename, String extension) {
++    if (filename == null) {
++      return false;
++    }
++    if (extension == null || extension.length() == 0) {
++      return indexOfExtension(filename) == -1;
++    }
++    String fileExt = getExtension(filename);
++    return fileExt.equals(extension);
++  }
++
++  /**
++   * Checks whether the extension of the filename is one of those specified.
++   * <p>
++   * This method obtains the extension as the textual part of the filename
++   * after the last dot. There must be no directory separator after the dot.
++   * The extension check is case-sensitive on all platforms.
++   *
++   * @param filename  the filename to query, null returns false
++   * @param extensions  the extensions to check for, null checks for no extension
++   * @return true if the filename is one of the extensions
++   */
++  public static boolean isExtension(String filename, String[] extensions) {
++    if (filename == null) {
++      return false;
++    }
++    if (extensions == null || extensions.length == 0) {
++      return indexOfExtension(filename) == -1;
++    }
++    String fileExt = getExtension(filename);
++    for (String extension : extensions) {
++      if (fileExt.equals(extension)) {
++        return true;
++      }
++    }
++    return false;
++  }
++
++  /**
++   * Checks whether the extension of the filename is one of those specified.
++   * <p>
++   * This method obtains the extension as the textual part of the filename
++   * after the last dot. There must be no directory separator after the dot.
++   * The extension check is case-sensitive on all platforms.
++   *
++   * @param filename  the filename to query, null returns false
++   * @param extensions  the extensions to check for, null checks for no extension
++   * @return true if the filename is one of the extensions
++   */
++  public static boolean isExtension(String filename, Collection<String> extensions) {
++    if (filename == null) {
++      return false;
++    }
++    if (extensions == null || extensions.isEmpty()) {
++      return indexOfExtension(filename) == -1;
++    }
++    String fileExt = getExtension(filename);
++    for (String extension : extensions) {
++      if (fileExt.equals(extension)) {
++        return true;
++      }
++    }
++    return false;
++  }
++
++}
+Index: META-INF/plugin.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- META-INF/plugin.xml	(revision a75db81da0a7c2ab1df424e1f120dea4261f3a39)
++++ META-INF/plugin.xml	(revision )
+@@ -50,14 +50,20 @@
+ 
+   <actions>
+     <!-- Add your actions here -->
+-    <action id="org.asciidoc.MyAction" class="org.asciidoc.intellij.AsciiDocAction" text="AsciiDocAction..."
+-            description="AsciiDoc action">
+-      <add-to-group group-id="ToolsMenu" anchor="last"/>
+-    </action>
++    <group id="AsciiDoc">
++      <action id="asciidoc.convert.document" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
++              text="Convert to AsciiDoc" description="Convert this document to AsciiDoc"/>
++      <separator/>
++      <add-to-group group-id="EditorPopupMenu" anchor="first"/>
++      <add-to-group group-id="EditorTabPopupMenu" anchor="first"/>
++      <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
++    </group>
+   </actions>
+ 
+   <extensions defaultExtensionNs="com.intellij">
+     <fileTypeFactory implementation="org.asciidoc.intellij.file.AsciiDocFileTypeFactory"/>
+     <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocPreviewEditorProvider"/>
++    <todoIndexer filetype="AsciiDoc"
++                 implementationClass="com.intellij.psi.impl.cache.impl.id.PlatformIdTableBuilding$PlainTextTodoIndexer"/>
+   </extensions>
+ </idea-plugin>
+Index: src/main/java/org/asciidoc/intellij/AsciiDoc.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/org/asciidoc/intellij/AsciiDoc.java	(revision a75db81da0a7c2ab1df424e1f120dea4261f3a39)
++++ src/main/java/org/asciidoc/intellij/AsciiDoc.java	(revision )
+@@ -15,6 +15,7 @@
+  */
+ package org.asciidoc.intellij;
+ 
++import org.asciidoc.intellij.actions.AsciiDocAction;
+ import org.asciidoctor.Asciidoctor;
+ import org.asciidoctor.Attributes;
+ import org.asciidoctor.AttributesBuilder;
+Index: src/main/java/org/asciidoc/intellij/AsciiDocAction.java
+===================================================================
+--- src/main/java/org/asciidoc/intellij/AsciiDocAction.java	(revision a75db81da0a7c2ab1df424e1f120dea4261f3a39)
++++ src/main/java/org/asciidoc/intellij/actions/AsciiDocAction.java	(revision )
+@@ -13,18 +13,20 @@
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+-package org.asciidoc.intellij;
++package org.asciidoc.intellij.actions;
+ 
+ import com.intellij.openapi.actionSystem.AnAction;
+ import com.intellij.openapi.actionSystem.AnActionEvent;
+ import com.intellij.openapi.actionSystem.DataKeys;
+ import com.intellij.psi.PsiFile;
++import org.asciidoc.intellij.AsciiDoc;
+ import org.asciidoc.intellij.file.AsciiDocFileType;
+ 
+ import java.io.File;
+ 
+ /** @author Julien Viet */
+ public class AsciiDocAction extends AnAction {
++
+   public void actionPerformed(AnActionEvent event) {
+     PsiFile file = event.getData(DataKeys.PSI_FILE);
+     new AsciiDoc(new File(file.getOriginalFile().getParent().getVirtualFile().getCanonicalPath())).render(file.getText());
+Index: src/main/java/org/asciidoc/intellij/util/PluginUtils.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/org/asciidoc/intellij/util/PluginUtils.java	(revision )
++++ src/main/java/org/asciidoc/intellij/util/PluginUtils.java	(revision )
+@@ -0,0 +1,40 @@
++package org.asciidoc.intellij.util;
++
++import com.intellij.openapi.actionSystem.AnActionEvent;
++import com.intellij.openapi.actionSystem.DataKeys;
++import com.intellij.openapi.application.ApplicationManager;
++import com.intellij.openapi.command.CommandProcessor;
++import com.intellij.openapi.project.Project;
++
++/**
++ * Created by erikp on 05/12/14.
++ */
++public class PluginUtils {
++
++  /**
++   * Execute an action inside a <code>CommandProcessor.executeCommand()</code> and
++   * <code>ApplicationManager.runWriteAction()</code> command.
++   *
++   * @param action  Action object triggered by event
++   * @param event   Event object triggered by user
++   * @param command Runnable object to execute action
++   */
++  public static void executeWriteAction(AnActionEvent action, AnActionEvent event, final Runnable command) {
++    final Project project = event.getData(DataKeys.PROJECT);
++    CommandProcessor.getInstance().executeCommand(
++        project,
++        new Runnable() {
++          public void run() {
++            try {
++              ApplicationManager.getApplication().runWriteAction(command);
++            } catch (Exception e) {
++              e.printStackTrace();
++            }
++          }
++        },
++        "name",
++        "description"
++    );
++  }
++
++}
+Index: doc/links.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- doc/links.txt	(revision )
++++ doc/links.txt	(revision )
+@@ -0,0 +1,5 @@
++Resources used:
++
++- http://stackoverflow.com/questions/20947873/intellij-idea-plugin-cannot-undo-on-document-settext
++- https://github.com/JetBrains/intellij-community/blob/master/platform/platform-impl/src/com/intellij/openapi/editor/impl/TrailingSpacesStripper.java
++- https://devnet.jetbrains.com/thread/264626
+\ No newline at end of file
+Index: src/main/java/org/asciidoc/intellij/actions/ConvertToAsciiDocAction.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/org/asciidoc/intellij/actions/ConvertToAsciiDocAction.java	(revision )
++++ src/main/java/org/asciidoc/intellij/actions/ConvertToAsciiDocAction.java	(revision )
+@@ -0,0 +1,115 @@
++package org.asciidoc.intellij.actions;
++
++import com.intellij.openapi.actionSystem.AnAction;
++import com.intellij.openapi.actionSystem.AnActionEvent;
++import com.intellij.openapi.actionSystem.DataKeys;
++import com.intellij.openapi.application.ApplicationManager;
++import com.intellij.openapi.command.CommandProcessor;
++import com.intellij.openapi.command.UndoConfirmationPolicy;
++import com.intellij.openapi.editor.Document;
++import com.intellij.openapi.editor.DocumentRunnable;
++import com.intellij.openapi.project.Project;
++import com.intellij.openapi.vfs.ReadonlyStatusHandler;
++import com.intellij.openapi.vfs.VirtualFile;
++import com.intellij.psi.PsiDocumentManager;
++import com.intellij.psi.PsiFile;
++import com.laamella.markdown_to_asciidoc.AsciiDocProcessor;
++import org.asciidoc.intellij.util.FilenameUtils;
++import org.jetbrains.annotations.NotNull;
++
++import java.io.IOException;
++
++/**
++ * Converts the contents of an editor panel from Markdown to AsciiDoc.
++ * <p/>
++ * Created by erikp on 05/12/14.
++ */
++public class ConvertToAsciiDocAction extends AnAction {
++
++  public static final String[] MARKDOWN_EXTENSIONS = {"markdown", "mkd", "md"};
++
++  @Override
++  public void actionPerformed(@NotNull final AnActionEvent event) {
++
++    final PsiFile file = event.getData(DataKeys.PSI_FILE);
++    final Project project = event.getProject();
++
++    final VirtualFile virtualFile = file.getVirtualFile();
++
++    if(project != null) {
++
++      final Document document = PsiDocumentManager.getInstance(project).getDocument(file);
++
++      ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(virtualFile);
++
++      ApplicationManager.getApplication().runWriteAction(new DocumentRunnable(document, project) {
++        @Override
++        public void run() {
++          CommandProcessor.getInstance().executeCommand(project, new Runnable() {
++            @Override
++            public void run() {
++
++              if (document != null) {
++                try {
++                  String newFileName = FilenameUtils.getBaseName(file.getName()) + ".adoc";
++                  virtualFile.rename(this, newFileName);
++
++                  document.setText(AsciiDocProcessor.convertMarkdownToAsciiDoc(file.getText()));
++                }
++                catch (IOException e) {
++                  e.printStackTrace();
++                }
++              }
++            }
++          }, getName(), getGroupId(), UndoConfirmationPolicy.REQUEST_CONFIRMATION);
++        }
++      });
++    }
++
++//    com.intellij.openapi.application.Application.runWriteAction()
++
++//    CommandProcessor.getInstance().executeCommand();
++
++//    com.intellij.openapi.application.Application.
++//
++//    try {
++//
++//    }
++//    catch (IOException e) {
++//      e.printStackTrace();
++//    }
++
++//    String text = file.getText();
++
++
++//    FileDocumentManager.saveDocument(FileDocumentManager.getDocument(VirtualFile)).
++
++//    new AsciiDoc(new File(file.getOriginalFile().getParent().getVirtualFile().getCanonicalPath())).render(file.getText());
++  }
++
++  public String getName() {
++    return "Convert Markdown to AsciiDoc";
++  }
++
++  public String getGroupId() {
++    return "AsciiDoc";
++  }
++
++
++  @Override
++  public void update(AnActionEvent event) {
++    PsiFile file = event.getData(DataKeys.PSI_FILE);
++    boolean enabled = false;
++
++    if (file != null) {
++      for (String ext : MARKDOWN_EXTENSIONS) {
++        if (file.getName().endsWith("." + ext)) {
++          enabled = true;
++          break;
++        }
++      }
++    }
++    event.getPresentation().setEnabledAndVisible(enabled);
++  }
++
++}
