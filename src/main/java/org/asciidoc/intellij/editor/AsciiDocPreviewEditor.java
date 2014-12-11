@@ -45,7 +45,6 @@ import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.net.URL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -159,19 +158,13 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     final HTMLEditorKit kit = new AsciiDocEditorKit(document,
         new File(FileDocumentManager.getInstance().getFile(document).getParent().getCanonicalPath()));
 
-    //
-    String cssFile = "preview.css";
-
-    if(UIUtil.isUnderDarcula()) {
-      cssFile = "darcula.css";
-    }
-
-    URL previewURL = AsciiDocPreviewEditor.class.getResource(cssFile);
-    if (previewURL != null) {
-      final StyleSheet style = new StyleSheet();
-      style.importStyleSheet(previewURL);
-      kit.setStyleSheet(style);
-    }
+    // Create an AsciiDoc style, based on the default stylesheet supplied by UiUtil.getHTMLEditorKit()
+    // since it contains fix for incorrect styling of tooltips
+    final String cssFile = UIUtil.isUnderDarcula() ? "darcula.css" : "preview.css";
+    final StyleSheet customStyle = UIUtil.loadStyleSheet(AsciiDocPreviewEditor.class.getResource(cssFile));
+    final StyleSheet style = UIUtil.getHTMLEditorKit().getStyleSheet();
+    style.addStyleSheet(customStyle);
+    kit.setStyleSheet(style);
 
     //
     jEditorPane.setEditorKit(kit);

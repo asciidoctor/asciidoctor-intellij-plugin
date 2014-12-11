@@ -1,12 +1,4 @@
 /* Theme inspired by the default Asciidoctor stylesheet */
-body {
-  background: #353637;
-  color: #A9B7C6;
-  padding: 0;
-  margin: 0;
-  font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
-  font-size: 12px;
-}
 
 #content {
   padding: 10px;
