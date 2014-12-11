@@ -6,19 +6,19 @@ import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.DocumentRunnable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
+import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.util.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-import static com.laamella.markdown_to_asciidoc.Converter.*;
+import static com.laamella.markdown_to_asciidoc.Converter.convertMarkdownToAsciiDoc;
 
 /**
  * Converts the contents of an editor panel from Markdown to AsciiDoc.
@@ -35,57 +35,34 @@ public class ConvertToAsciiDocAction extends AnAction {
     final PsiFile file = event.getData(DataKeys.PSI_FILE);
     final Project project = event.getProject();
 
-    final VirtualFile virtualFile = file.getVirtualFile();
-
-    if(project != null) {
-
-      final Document document = PsiDocumentManager.getInstance(project).getDocument(file);
-
-      ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(virtualFile);
-
-      ApplicationManager.getApplication().runWriteAction(new DocumentRunnable(document, project) {
-        @Override
-        public void run() {
-          CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-            @Override
-            public void run() {
-
-              if (document != null) {
-                try {
-                  String newFileName = FilenameUtils.getBaseName(file.getName()) + ".adoc";
-                  virtualFile.rename(this, newFileName);
-
-                  document.setText(convertMarkdownToAsciiDoc(file.getText()));
-                }
-                catch (IOException e) {
-                  e.printStackTrace();
-                }
-              }
-            }
-          }, getName(), getGroupId(), UndoConfirmationPolicy.REQUEST_CONFIRMATION);
-        }
-      });
+    if (file == null || project == null) {
+      return;
     }
 
-//    com.intellij.openapi.application.Application.runWriteAction()
+    final VirtualFile virtualFile = file.getVirtualFile();
+    ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(virtualFile);
 
-//    CommandProcessor.getInstance().executeCommand();
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+          @Override
+          public void run() {
+            String newFileName = FilenameUtils.getBaseName(file.getName()) + "." + AsciiDocFileType.INSTANCE.getDefaultExtension();
+            PsiFile asciiDocFile = PsiFileFactory.getInstance(project).createFileFromText(newFileName, AsciiDocFileType.INSTANCE, convertMarkdownToAsciiDoc(file.getText()));
 
-//    com.intellij.openapi.application.Application.
-//
-//    try {
-//
-//    }
-//    catch (IOException e) {
-//      e.printStackTrace();
-//    }
+            PsiFile newFile = (PsiFile)file.getContainingDirectory().add(asciiDocFile);
+            newFile.navigate(true);
 
-//    String text = file.getText();
-
-
-//    FileDocumentManager.saveDocument(FileDocumentManager.getDocument(VirtualFile)).
-
-//    new AsciiDoc(new File(file.getOriginalFile().getParent().getVirtualFile().getCanonicalPath())).render(file.getText());
+            try {
+              virtualFile.delete(this);
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
+          }
+        }, getName(), getGroupId(), UndoConfirmationPolicy.REQUEST_CONFIRMATION);
+      }
+    });
   }
 
   public String getName() {
@@ -93,9 +70,8 @@ public class ConvertToAsciiDocAction extends AnAction {
   }
 
   public String getGroupId() {
-    return "AsciiDoc";
+    return AsciiDocFileType.INSTANCE.getName();
   }
-
 
   @Override
   public void update(AnActionEvent event) {
