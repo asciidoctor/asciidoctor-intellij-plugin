@@ -17,7 +17,7 @@ Usable in the following JetBrains products:
 
 == Features
 
-* recognizes the AsciiDoc file extension (.adoc, .asciidoc, .ad, .asc)
+* recognizes the AsciiDoc file extension (.adoc, .asciidoc, .ad)
 * provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ]
 
 == Build
