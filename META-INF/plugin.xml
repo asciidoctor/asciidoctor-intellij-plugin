@@ -15,6 +15,7 @@
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.6 Convert from Markdown to AsciiDoc, tooltip background colors fixed.</li>
       <li>0.5.1 Bugfix release, see <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/21">PULL-21</a></li>
       <li>0.5 Upgraded to version 1.5.2 of AsciiDoc, and a small bugfix in the styling for bold items.</li>
       <li>0.4 Upgraded to JRuby 1.7.16.1 to fix bugs, initial Darcula support.<br />
@@ -59,6 +60,7 @@
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
       <add-to-group group-id="EditorTabPopupMenu" anchor="first"/>
       <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
+      <add-to-group group-id="RefactoringMenu" anchor="last"/>
     </group>
   </actions>
 
