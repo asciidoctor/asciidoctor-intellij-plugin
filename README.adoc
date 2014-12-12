@@ -17,8 +17,10 @@ Usable in the following JetBrains products:
 
 == Features
 
+* Since 0.6: refactor Markdown to AsciiDoc. Right click on a file, or use the Refactor menu, and the Markdown document will be replaced by the AsciiDoc equivalent. Also supports undo, in case you're not happy with the result!
+* Since 0.4:
 * recognizes the AsciiDoc file extension (.adoc, .asciidoc, .ad)
-* provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ]
+* provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] with Live preview.
 
 == Build
 
