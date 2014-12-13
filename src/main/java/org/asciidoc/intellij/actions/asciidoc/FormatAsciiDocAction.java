@@ -37,13 +37,17 @@ public abstract class FormatAsciiDocAction extends AnAction {
     }
     final Document document = editor.getDocument();
 
-    final String newDocumentText = applyMarkup(editor, document);
+    SelectionModel selectionModel = editor.getSelectionModel();
+    if(!selectionModel.hasSelection()) {
+      selectionModel.selectWordAtCaret(false);
+    }
 
-    updateDocument(project, document, newDocumentText);
+      final String newDocumentText = applyMarkup(selectionModel, document);
+      updateDocument(project, document, newDocumentText);
   }
 
-  private String applyMarkup(Editor editor, Document document) {
-    SelectionModel selectionModel = editor.getSelectionModel();
+  private String applyMarkup(SelectionModel selectionModel, Document document) {
+
 
     String allText = document.getText();
 

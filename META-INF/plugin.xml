@@ -64,33 +64,34 @@
       <group id="erik" compact="true" description="hello" popup="true" text="AsciiDoc">
               <action id="asciidoc.maketitle" class="org.asciidoc.intellij.actions.asciidoc.MakeTitle"
                       text="Title" description="Make title" >
-                <keyboard-shortcut keymap="$default" first-keystroke="control alt E"/>
-                <keyboard-shortcut keymap="Mac OS X" first-keystroke="control E"/>
-                <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="control E"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl t"/>
+                <keyboard-shortcut keymap="Mac OS X" first-keystroke="ctrl t"/>
+                <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="ctrl t"/>
               </action>
               <action id="asciidoc.makebold" class="org.asciidoc.intellij.actions.asciidoc.MakeBold"
                       text="Bold" description="Make text bold" >
-                <keyboard-shortcut keymap="$default" first-keystroke="control alt K"/>
-                <keyboard-shortcut keymap="Mac OS X" first-keystroke="control K"/>
-                <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="control K"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl b"/>
+                <keyboard-shortcut keymap="Mac OS X" first-keystroke="ctrl b"/>
+                <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="ctrl b"/>
               </action>
               <action id="asciidoc.makeitalic" class="org.asciidoc.intellij.actions.asciidoc.MakeItalic"
                       text="Italic" description="Make text italic">
-                <keyboard-shortcut keymap="$default" first-keystroke="control alt I"/>
-                <keyboard-shortcut keymap="Mac OS X" first-keystroke="control I"/>
-                <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="control I"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl i"/>
+                <keyboard-shortcut keymap="Mac OS X" first-keystroke="ctrl i"/>
+                <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="ctrl i"/>
               </action>
               <action id="asciidoc.makemono" class="org.asciidoc.intellij.actions.asciidoc.MakeMono"
-                      text="Mono" description="Make text mono" keymap="ctrl i">
-                <keyboard-shortcut keymap="$default" first-keystroke="control alt M"/>
-                <keyboard-shortcut keymap="Mac OS X" first-keystroke="control M"/>
-                <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="control M"/>
+                      text="Mono" description="Make text mono">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl m"/>
+                <keyboard-shortcut keymap="Mac OS X" first-keystroke="ctrl m"/>
+                <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="ctrl m"/>
+
               </action>
-              <action id="asciidoc.strikethroguh" class="org.asciidoc.intellij.actions.asciidoc.MakeStrikeThrough"
-                      text="Strike through" description="Make text strike through" keymap="ctrl i">
-                <keyboard-shortcut keymap="$default" first-keystroke="control alt P"/>
-                <keyboard-shortcut keymap="Mac OS X" first-keystroke="control P"/>
-                <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="control P"/>
+              <action id="asciidoc.strikethrough" class="org.asciidoc.intellij.actions.asciidoc.MakeStrikeThrough"
+                      text="Strike through" description="Make text strike through">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl s"/>
+                <keyboard-shortcut keymap="Mac OS X" first-keystroke="ctrl s"/>
+                <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="ctrl s"/>
               </action>
 <!--
               <action id="asciidoc.convert.document4" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
