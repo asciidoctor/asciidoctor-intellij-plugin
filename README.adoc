@@ -1,12 +1,20 @@
 = IntelliJ AsciiDoc Plugin
-Julien Viet
+Erik Pragt
 :experimental:
 
 A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language.
 
-== Current version: 0.5.1
+== Current version: 0.6
 
-image::https://cloud.githubusercontent.com/assets/46468/5202715/c2bfdcec-7580-11e4-91f6-82f9be257b5d.gif[]
+=== 0.6
+
+Convert Markdown to AsciiDoc. Also accessible by using the `Refactor -> Convert to AsciiDoc menu`.
+
+image::https://cloud.githubusercontent.com/assets/46468/5423595/8411b45a-82c5-11e4-9310-ed3d872381ac.gif[]
+
+=== 0.4
+
+link:https://cloud.githubusercontent.com/assets/46468/5202715/c2bfdcec-7580-11e4-91f6-82f9be257b5d.gif[Screencast]
 
 Usable in the following JetBrains products:
 
@@ -17,10 +25,12 @@ Usable in the following JetBrains products:
 
 == Features
 
-* Since 0.6: refactor Markdown to AsciiDoc. Right click on a file, or use the Refactor menu, and the Markdown document will be replaced by the AsciiDoc equivalent. Also supports undo, in case you're not happy with the result!
-* Since 0.4:
-* recognizes the AsciiDoc file extension (.adoc, .asciidoc, .ad)
-* provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] with Live preview.
+* Since 0.6: refactor Markdown to AsciiDoc. Right click on a file, or use the Refactor menu, and the Markdown document
+will be replaced by the AsciiDoc equivalent. Also supports undo, in case you're not happy with the result!
+* Since 0.4: recognizes the AsciiDoc file extension (.adoc, .asciidoc, .ad)
+* Since 0.4: provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] with Live preview.
+
+If you are missing features, please don't hesitate to let me know on Twitter: http://www.twitter.com/epragt[@epragt] or make an issue in the issue tracker!
 
 == Build
 
@@ -41,3 +51,5 @@ Released under the Apache License, Version 2.0 (see link:LICENSE[LICENSE]).
 == Credits
 
 This plugin is based on the https://github.com/nicoulaj/idea-markdown[Intellij Markdown plugin by Julien Nicoulaud].
+
+Also, great help was received from Harro Lissenberg, Alexander Schwartz and Dan Allen. Thank you all for your support!
