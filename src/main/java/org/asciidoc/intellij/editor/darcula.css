@@ -136,6 +136,10 @@ a img {
   font-size: 11px;
 }
 
+.line-through {
+  text-decoration: line-through;
+}
+
 
 /*.subheader, .admonitionblock td.content > .title, .audioblock > .title,*/
 /*.exampleblock > .title, .imageblock > .title, .listingblock > .title,*/

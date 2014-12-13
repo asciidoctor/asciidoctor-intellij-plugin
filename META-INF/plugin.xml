@@ -61,8 +61,54 @@
   <actions>
     <!-- Add your actions here -->
     <group id="AsciiDoc">
+      <group id="erik" compact="true" description="hello" popup="true" text="AsciiDoc">
+              <action id="asciidoc.maketitle" class="org.asciidoc.intellij.actions.asciidoc.MakeTitle"
+                      text="Title" description="Make title" >
+                <keyboard-shortcut keymap="$default" first-keystroke="control alt E"/>
+                <keyboard-shortcut keymap="Mac OS X" first-keystroke="control E"/>
+                <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="control E"/>
+              </action>
+              <action id="asciidoc.makebold" class="org.asciidoc.intellij.actions.asciidoc.MakeBold"
+                      text="Bold" description="Make text bold" >
+                <keyboard-shortcut keymap="$default" first-keystroke="control alt K"/>
+                <keyboard-shortcut keymap="Mac OS X" first-keystroke="control K"/>
+                <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="control K"/>
+              </action>
+              <action id="asciidoc.makeitalic" class="org.asciidoc.intellij.actions.asciidoc.MakeItalic"
+                      text="Italic" description="Make text italic">
+                <keyboard-shortcut keymap="$default" first-keystroke="control alt I"/>
+                <keyboard-shortcut keymap="Mac OS X" first-keystroke="control I"/>
+                <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="control I"/>
+              </action>
+              <action id="asciidoc.makemono" class="org.asciidoc.intellij.actions.asciidoc.MakeMono"
+                      text="Mono" description="Make text mono" keymap="ctrl i">
+                <keyboard-shortcut keymap="$default" first-keystroke="control alt M"/>
+                <keyboard-shortcut keymap="Mac OS X" first-keystroke="control M"/>
+                <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="control M"/>
+              </action>
+              <action id="asciidoc.strikethroguh" class="org.asciidoc.intellij.actions.asciidoc.MakeStrikeThrough"
+                      text="Strike through" description="Make text strike through" keymap="ctrl i">
+                <keyboard-shortcut keymap="$default" first-keystroke="control alt P"/>
+                <keyboard-shortcut keymap="Mac OS X" first-keystroke="control P"/>
+                <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="control P"/>
+              </action>
+<!--
+              <action id="asciidoc.convert.document4" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
+                      text="Insert table..." description="Convert this document to AsciiDoc" />
+              <action id="asciidoc.convert.document5" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
+                      text="Insert link" description="Convert this document to AsciiDoc" />
+              <action id="asciidoc.convert.document6" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
+                      text="Insert image" description="Convert this document to AsciiDoc" />
+              <action id="asciidoc.convert.document7" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
+                      text="Insert code" description="Convert this document to AsciiDoc" />
+              <action id="asciidoc.convert.document8" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
+                      text="Insert quote" description="Convert this document to AsciiDoc" />
+-->
+        </group>
+
       <action id="asciidoc.convert.document" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
               text="Convert to AsciiDoc" description="Convert this document to AsciiDoc" />
+
       <separator/>
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
       <add-to-group group-id="EditorTabPopupMenu" anchor="first"/>
