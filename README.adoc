@@ -2,7 +2,9 @@
 Erik Pragt
 :experimental:
 
-A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language.
+An AsciiDoc editor for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc). It provides support for the
+http://www.asciidoc.org[AsciiDoc] markup language and has features like live preview, conversion from Markdown to
+AsciiDoc, and much more.
 
 == Current version: 0.6
 
@@ -31,6 +33,12 @@ will be replaced by the AsciiDoc equivalent. Also supports undo, in case you're 
 * Since 0.4: provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] with Live preview.
 
 If you are missing features, please don't hesitate to let me know on Twitter: http://www.twitter.com/epragt[@epragt] or make an issue in the issue tracker!
+
+== Dependencies
+
+This project uses AsciiDoctorJ and JRuby for the rendering of the AsciiDoc content.
+
+For the conversion of Markdown to AsciiDoc, we use Pegdown and the https://github.com/bodiam/markdown-to-asciidoc[Markdown to AsciiDoc] converter.
 
 == Build
 
