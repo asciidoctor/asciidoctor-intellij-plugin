@@ -68,6 +68,8 @@
     <fileTypeFactory implementation="org.asciidoc.intellij.file.AsciiDocFileTypeFactory"/>
     <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocPreviewEditorProvider"/>
     <liveTemplateContext implementation="org.asciidoc.intellij.template.AsciiDocTemplateContextType$File"/>
+    <defaultLiveTemplatesProvider implementation="org.asciidoc.intellij.template.AsciiDocTemplatesProvider"/>
+
     <todoIndexer filetype="AsciiDoc"
                  implementationClass="com.intellij.psi.impl.cache.impl.id.PlatformIdTableBuilding$PlainTextTodoIndexer"/>
   </extensions>
