@@ -1,0 +1,13 @@
+<templateSet group="AsciiDoc">
+  <template name="tbl2" value="|===&#10;| $cell1header$ | $cell2header$&#10;&#10;| $cell1row1$&#10;| $cell2row1$&#10;&#10;| $cell1row2$&#10;| $cell2row2$&#10;|===" description="Table with two columns" toReformat="false" toShortenFQNames="true">
+    <variable name="cell1header" expression="" defaultValue="&quot;Header Cell 1&quot;" alwaysStopAt="true" />
+    <variable name="cell2header" expression="" defaultValue="&quot;Header Cell 2&quot;" alwaysStopAt="true" />
+    <variable name="cell1row1" expression="" defaultValue="&quot;Row 1 Cell 1&quot;" alwaysStopAt="true" />
+    <variable name="cell2row1" expression="" defaultValue="&quot;Row 1 Cell 2&quot;" alwaysStopAt="true" />
+    <variable name="cell1row2" expression="" defaultValue="&quot;Row 2 Cell 1&quot;" alwaysStopAt="true" />
+    <variable name="cell2row2" expression="" defaultValue="&quot;Row 2 Cell 2&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+</templateSet>
