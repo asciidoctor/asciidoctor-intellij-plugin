@@ -93,6 +93,9 @@
                 <keyboard-shortcut keymap="Mac OS X" first-keystroke="ctrl s"/>
                 <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="ctrl s"/>
               </action>
+               <action id="asciidoc.createtable" class="org.asciidoc.intellij.actions.asciidoc.table.CreateTableAction"
+                 text="Create table" description="Insert a table at the caret">
+              </action>
 <!--
               <action id="asciidoc.convert.document4" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
                       text="Insert table..." description="Convert this document to AsciiDoc" />
