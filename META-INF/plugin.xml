@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.6</version>
+  <version>0.7</version>
   <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -15,6 +15,7 @@
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.7 Added table creation thanks Harro Lissenberg. Also added basic formatting, and fixed IntelliJ 14.1 incompatibility.</li>
       <li>0.6 Convert from Markdown to AsciiDown. Tooltip background colors fixed thanks to Harro Lissenberg,
       and error handling fixed thanks to Alexander Schwartz. Thanks!!<br />
           Fixed issues:
