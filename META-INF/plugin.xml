@@ -74,7 +74,7 @@
               <action id="asciidoc.makemono" class="org.asciidoc.intellij.actions.asciidoc.MakeMono"
                       text="Mono" description="Make text mono">
               </action>
-              <action id="asciidoc.strikethrough" class="org.asciidoc.intellij.actions.asciidoc.MakeStrikethrough"
+              <action id="asciidoc.strikethrough" class="org.asciidoc.intellij.actions.asciidoc.MakeStrikethroughX"
                       text="Strike through" description="Make text strike through">
               </action>
                <action id="asciidoc.createtable" class="org.asciidoc.intellij.actions.asciidoc.table.CreateTableAction"

@@ -3,10 +3,10 @@ package org.asciidoc.intellij.actions.asciidoc;
 /**
  * @author Erik Pragt
  */
-public class MakeStrikeThrough extends FormatAsciiDocAction {
+public class MakeStrikethroughX extends FormatAsciiDocAction {
   @Override
   public String getName() {
-    return "MakeStrikeThrough";
+    return "MakeStrikethrough";
   }
 
   @Override
