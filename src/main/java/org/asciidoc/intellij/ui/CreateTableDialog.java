@@ -1,4 +1,4 @@
-package org.asciidoc.intellij.actions.asciidoc.table;
+package org.asciidoc.intellij.ui;
 
 import com.intellij.openapi.ui.DialogWrapper;
 import org.jetbrains.annotations.Nullable;
@@ -10,17 +10,14 @@ public class CreateTableDialog extends DialogWrapper {
   private SpinnerNumberModel smCols = new SpinnerNumberModel(3 ,1, 99, 1);
   private SpinnerNumberModel smRows = new SpinnerNumberModel(3 ,1, 99, 1);
 
-  private JSpinner cols, rows;
   private JCheckBox title;
-
 
   public CreateTableDialog() {
     super(false);
-    setTitle("Create table");
+    setTitle("Create Table");
     setResizable(false);
     init();
   }
-
 
   @Nullable
   @Override
@@ -34,13 +31,13 @@ public class CreateTableDialog extends DialogWrapper {
 
     JPanel columns = new JPanel(new BorderLayout());
     columns.add(new JLabel("Nr. of rows"), BorderLayout.CENTER);
-    rows = new JSpinner(smRows);
+    JSpinner rows = new JSpinner(smRows);
     columns.add(rows, BorderLayout.LINE_END);
     panel.add(columns);
 
     JPanel rowPane = new JPanel(new BorderLayout());
     rowPane.add(new JLabel("Nr. of colums"), BorderLayout.CENTER);
-    cols = new JSpinner(smCols);
+    JSpinner cols = new JSpinner(smCols);
     rowPane.add(cols, BorderLayout.LINE_END);
     panel.add(rowPane);
 

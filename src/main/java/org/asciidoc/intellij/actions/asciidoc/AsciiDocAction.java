@@ -12,6 +12,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.asciidoc.intellij.file.AsciiDocFileType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Actions extending this class only apply to AsciiDoc documents
@@ -21,7 +22,7 @@ import org.asciidoc.intellij.file.AsciiDocFileType;
 public abstract class AsciiDocAction extends AnAction {
 
   @Override
-  public void update(AnActionEvent event) {
+  public void update(@NotNull AnActionEvent event) {
     PsiFile file = event.getData(DataKeys.PSI_FILE);
     boolean enabled = false;
 

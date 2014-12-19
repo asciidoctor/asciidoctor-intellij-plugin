@@ -10,7 +10,7 @@ public class MakeStrikethrough extends FormatAsciiDocAction {
   }
 
   @Override
-  public String updateSelection(String asciidoc) {
-    return "[line-through]#" + asciidoc + "#";
+  public String updateSelection(String selection) {
+    return "[line-through]#" + selection + "#";
   }
 }

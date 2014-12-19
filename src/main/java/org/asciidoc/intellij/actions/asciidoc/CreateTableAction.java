@@ -1,4 +1,4 @@
-package org.asciidoc.intellij.actions.asciidoc.table;
+package org.asciidoc.intellij.actions.asciidoc;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -10,11 +10,13 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import org.asciidoc.intellij.actions.asciidoc.AsciiDocAction;
+import org.asciidoc.intellij.ui.CreateTableDialog;
+import org.jetbrains.annotations.NotNull;
 
 public class CreateTableAction extends AsciiDocAction {
 
   @Override
-  public void actionPerformed(AnActionEvent event) {
+  public void actionPerformed(@NotNull AnActionEvent event) {
 
     final Project project = event.getProject();
     if (project == null) {

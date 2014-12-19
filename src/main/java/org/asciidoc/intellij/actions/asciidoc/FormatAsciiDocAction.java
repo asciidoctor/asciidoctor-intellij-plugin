@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Erik Pragt
@@ -17,11 +18,11 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
 
   public abstract String getName();
 
-  public abstract String updateSelection(String asciidoc);
+  public abstract String updateSelection(String selection);
 
 
   @Override
-  public final void actionPerformed(AnActionEvent event) {
+  public final void actionPerformed(@NotNull AnActionEvent event) {
 
     final Project project = event.getProject();
     if (project == null) {

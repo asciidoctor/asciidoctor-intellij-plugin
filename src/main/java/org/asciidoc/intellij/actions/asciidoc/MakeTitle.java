@@ -10,7 +10,7 @@ public class MakeTitle extends FormatAsciiDocAction {
   }
 
   @Override
-  public String updateSelection(String asciidoc) {
-    return "= "+asciidoc;
+  public String updateSelection(String selection) {
+    return "= " + selection;
   }
 }

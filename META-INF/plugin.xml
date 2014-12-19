@@ -77,7 +77,7 @@
               <action id="asciidoc.strikethrough" class="org.asciidoc.intellij.actions.asciidoc.MakeStrikethrough"
                       text="Strike through" description="Make text strike through">
               </action>
-               <action id="asciidoc.createtable" class="org.asciidoc.intellij.actions.asciidoc.table.CreateTableAction"
+               <action id="asciidoc.createtable" class="org.asciidoc.intellij.actions.asciidoc.CreateTableAction"
                  text="Create table" description="Insert a table at the caret">
               </action>
 <!--
