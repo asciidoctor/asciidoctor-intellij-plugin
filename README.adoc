@@ -2,9 +2,7 @@
 Erik Pragt
 :experimental:
 
-An AsciiDoc editor for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc). It provides support for the
-http://www.asciidoc.org[AsciiDoc] markup language and has features like live preview, conversion from Markdown to
-AsciiDoc, and much more.
+A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language. You can install the plugin (named "AsciiDoc") from the plugins section inside your Jetbrains IDE or download it from the https://plugins.jetbrains.com/plugin/7391[Jetbrains Plugin Repository]. 
 
 == Current version: 0.7
 
