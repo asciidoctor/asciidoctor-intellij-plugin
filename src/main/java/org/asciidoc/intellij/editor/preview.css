@@ -132,3 +132,7 @@ a img {
   /*background-color: white;*/
   font-size: 11px;
 }
+
+.line-through {
+  text-decoration: line-through;
+}

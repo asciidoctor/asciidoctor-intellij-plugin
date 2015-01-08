@@ -6,7 +6,7 @@ An AsciiDoc editor for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc). It 
 http://www.asciidoc.org[AsciiDoc] markup language and has features like live preview, conversion from Markdown to
 AsciiDoc, and much more.
 
-== Current version: 0.6
+== Current version: 0.7
 
 === 0.6
 
@@ -27,6 +27,7 @@ Usable in the following JetBrains products:
 
 == Features
 
+* Since 0.7: Right click on a document to apply basic formatting or create tables.
 * Since 0.6: refactor Markdown to AsciiDoc. Right click on a file, or use the Refactor menu, and the Markdown document
 will be replaced by the AsciiDoc equivalent. Also supports undo, in case you're not happy with the result!
 * Since 0.4: recognizes the AsciiDoc file extension (.adoc, .asciidoc, .ad)
