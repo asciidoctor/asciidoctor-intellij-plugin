@@ -20,10 +20,12 @@ import com.intellij.lang.Language;
 /** @author Julien Viet */
 public class AsciiDocLanguage extends Language {
 
+  public static final Language INSTANCE = new AsciiDocLanguage();
+
   /** . */
   public static final String LANGUAGE_NAME = "AsciiDoc";
 
-  public AsciiDocLanguage() {
+  private AsciiDocLanguage() {
     super(LANGUAGE_NAME);
   }
 }

@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.6-SNAPSHOT</version>
+  <version>0.7</version>
   <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -15,7 +15,15 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.6 Convert from Markdown to AsciiDoc, tooltip background colors fixed.</li>
+      <li>0.7 Added table creation thanks Harro Lissenberg. Also added basic formatting, and fixed IntelliJ 14.1 incompatibility.</li>
+      <li>0.6 Convert from Markdown to AsciiDown. Tooltip background colors fixed thanks to Harro Lissenberg,
+      and error handling fixed thanks to Alexander Schwartz. Thanks!!<br />
+          Fixed issues:
+            <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/43">GITHUB-43</a>,
+            <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/41">GITHUB-41</a>,
+            <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/33">GITHUB-33</a>. <br />
+            Also: removed .asc file extension.<br
+      </li>
       <li>0.5.1 Bugfix release, see <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/21">PULL-21</a></li>
       <li>0.5 Upgraded to version 1.5.2 of AsciiDoc, and a small bugfix in the styling for bold items.</li>
       <li>0.4 Upgraded to JRuby 1.7.16.1 to fix bugs, initial Darcula support.<br />
@@ -54,8 +62,42 @@
   <actions>
     <!-- Add your actions here -->
     <group id="AsciiDoc">
+      <group id="TextFormatting" compact="true" description="Text Markup Actions" popup="true" text="AsciiDoc">
+              <action id="asciidoc.maketitle" class="org.asciidoc.intellij.actions.asciidoc.MakeTitle"
+                      text="Title" description="Make title" >
+              </action>
+              <action id="asciidoc.makebold" class="org.asciidoc.intellij.actions.asciidoc.MakeBold"
+                      text="Bold" description="Make text bold" >
+              </action>
+              <action id="asciidoc.makeitalic" class="org.asciidoc.intellij.actions.asciidoc.MakeItalic"
+                      text="Italic" description="Make text italic">
+              </action>
+              <action id="asciidoc.makemono" class="org.asciidoc.intellij.actions.asciidoc.MakeMono"
+                      text="Mono" description="Make text mono">
+              </action>
+              <action id="asciidoc.strikethrough" class="org.asciidoc.intellij.actions.asciidoc.MakeStrikethrough"
+                      text="Strike through" description="Make text strike through">
+              </action>
+               <action id="asciidoc.createtable" class="org.asciidoc.intellij.actions.asciidoc.CreateTableAction"
+                 text="Create table" description="Insert a table at the caret">
+              </action>
+<!--
+              <action id="asciidoc.convert.document4" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
+                      text="Insert table..." description="Convert this document to AsciiDoc" />
+              <action id="asciidoc.convert.document5" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
+                      text="Insert link" description="Convert this document to AsciiDoc" />
+              <action id="asciidoc.convert.document6" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
+                      text="Insert image" description="Convert this document to AsciiDoc" />
+              <action id="asciidoc.convert.document7" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
+                      text="Insert code" description="Convert this document to AsciiDoc" />
+              <action id="asciidoc.convert.document8" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
+                      text="Insert quote" description="Convert this document to AsciiDoc" />
+-->
+        </group>
+
       <action id="asciidoc.convert.document" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
-              text="Convert to AsciiDoc" description="Convert this document to AsciiDoc"/>
+              text="Convert to AsciiDoc" description="Convert this document to AsciiDoc" />
+
       <separator/>
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
       <add-to-group group-id="EditorTabPopupMenu" anchor="first"/>
@@ -67,7 +109,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="org.asciidoc.intellij.file.AsciiDocFileTypeFactory"/>
     <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocPreviewEditorProvider"/>
-    <todoIndexer filetype="AsciiDoc"
-                 implementationClass="com.intellij.psi.impl.cache.impl.id.PlatformIdTableBuilding$PlainTextTodoIndexer"/>
+    <liveTemplateContext implementation="org.asciidoc.intellij.template.AsciiDocTemplateContextType$File"/>
+    <defaultLiveTemplatesProvider implementation="org.asciidoc.intellij.template.AsciiDocTemplatesProvider"/>
   </extensions>
 </idea-plugin>

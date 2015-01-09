@@ -31,8 +31,8 @@ public class AsciiDocFileType extends LanguageFileType {
   /** . */
   public static final String[] DEFAULT_ASSOCIATED_EXTENSIONS = {"adoc", "asciidoc", "ad" };
 
-  public AsciiDocFileType() {
-    super(new AsciiDocLanguage());
+  private AsciiDocFileType() {
+    super(AsciiDocLanguage.INSTANCE);
   }
 
   @NotNull
