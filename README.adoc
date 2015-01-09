@@ -4,7 +4,7 @@ Erik Pragt
 
 A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language. You can install the plugin (named "AsciiDoc") from the plugins section inside your Jetbrains IDE or download it from the https://plugins.jetbrains.com/plugin/7391[Jetbrains Plugin Repository]. 
 
-== Current version: 0.7
+== Current version: 0.7 SNAPSHOT
 
 === 0.6
 
