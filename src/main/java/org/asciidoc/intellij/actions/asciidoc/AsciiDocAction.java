@@ -2,14 +2,7 @@ package org.asciidoc.intellij.actions.asciidoc;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.SelectionModel;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.psi.PsiFile;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +16,7 @@ public abstract class AsciiDocAction extends AnAction {
 
   @Override
   public void update(@NotNull AnActionEvent event) {
-    PsiFile file = event.getData(DataKeys.PSI_FILE);
+    PsiFile file = event.getData(PlatformDataKeys.PSI_FILE);
     boolean enabled = false;
 
     if (file != null) {

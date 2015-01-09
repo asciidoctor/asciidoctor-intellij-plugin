@@ -2,14 +2,13 @@ package org.asciidoc.intellij.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import org.asciidoc.intellij.file.AsciiDocFileType;
@@ -32,7 +31,7 @@ public class ConvertToAsciiDocAction extends AnAction {
   @Override
   public void actionPerformed(@NotNull final AnActionEvent event) {
 
-    final PsiFile file = event.getData(DataKeys.PSI_FILE);
+    final PsiFile file = event.getData(PlatformDataKeys.PSI_FILE);
     final Project project = event.getProject();
 
     if (file == null || project == null) {
@@ -75,7 +74,7 @@ public class ConvertToAsciiDocAction extends AnAction {
 
   @Override
   public void update(AnActionEvent event) {
-    PsiFile file = event.getData(DataKeys.PSI_FILE);
+    PsiFile file = event.getData(PlatformDataKeys.PSI_FILE);
     boolean enabled = false;
 
     if (file != null) {

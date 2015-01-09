@@ -17,7 +17,7 @@ package org.asciidoc.intellij.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.psi.PsiFile;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.file.AsciiDocFileType;
@@ -28,13 +28,13 @@ import java.io.File;
 public class AsciiDocAction extends AnAction {
 
   public void actionPerformed(AnActionEvent event) {
-    PsiFile file = event.getData(DataKeys.PSI_FILE);
+    PsiFile file = event.getData(PlatformDataKeys.PSI_FILE);
     new AsciiDoc(new File(file.getOriginalFile().getParent().getVirtualFile().getCanonicalPath())).render(file.getText());
   }
 
   @Override
   public void update(AnActionEvent e) {
-    PsiFile file = e.getData(DataKeys.PSI_FILE);
+    PsiFile file = e.getData(PlatformDataKeys.PSI_FILE);
     boolean enabled = false;
     if (file != null) {
       for (String ext : AsciiDocFileType.DEFAULT_ASSOCIATED_EXTENSIONS) {
