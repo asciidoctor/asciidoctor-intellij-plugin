@@ -25,6 +25,7 @@ Usable in the following JetBrains products:
 
 == Features
 
+* Since 0.8 Fixed incompatibility with non-IDEA IDE's, thanks to Harro Lissenberg
 * Since 0.7: Right click on a document to apply basic formatting or create tables.
 * Since 0.6: refactor Markdown to AsciiDoc. Right click on a file, or use the Refactor menu, and the Markdown document
 will be replaced by the AsciiDoc equivalent. Also supports undo, in case you're not happy with the result!
