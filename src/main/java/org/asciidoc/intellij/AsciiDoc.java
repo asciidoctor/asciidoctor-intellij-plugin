@@ -60,7 +60,7 @@ public class AsciiDoc {
     Attributes attrs = AttributesBuilder.attributes().showTitle(true)
         .sourceHighlighter("coderay").attribute("coderay-css", "style")
         .attribute("env", "idea").attribute("env-idea").get();
-    OptionsBuilder opts = OptionsBuilder.options().safe(SafeMode.SAFE).backend("html5").headerFooter(false).attributes(attrs)
+    OptionsBuilder opts = OptionsBuilder.options().safe(SafeMode.UNSAFE).backend("html5").headerFooter(false).attributes(attrs)
         .baseDir(baseDir);
     return opts.asMap();
   }
