@@ -44,11 +44,13 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
+import javax.swing.text.EditorKit;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.StringReader;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
@@ -90,7 +92,11 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
             String markup = asciidoc.get().render(currentContent);
             if (markup != null) {
-              updateEditorOnEDT(markup);
+              EditorKit kit = jEditorPane.getEditorKit();
+              javax.swing.text.Document doc = kit.createDefaultDocument();
+              kit.read(new StringReader(markup), doc, 0);
+
+              updateEditorOnEDT(doc);
             }
           }
         }
@@ -109,7 +115,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     });
   }
 
-  private void updateEditorOnEDT(final String markup) {
+  private void updateEditorOnEDT(final javax.swing.text.Document doc) {
     /**
      * call jEditorPane.setText in the EDT to avoid flicker
      *
@@ -119,7 +125,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       @Override
       public void run() {
         // markup = "<html><body>" + markup + "</body></html>";
-        jEditorPane.setText(markup);
+        jEditorPane.setDocument(doc);
         Rectangle d = jEditorPane.getVisibleRect();
         jEditorPane.setSize((int)d.getWidth(), (int)jEditorPane.getSize().getHeight());
       }
