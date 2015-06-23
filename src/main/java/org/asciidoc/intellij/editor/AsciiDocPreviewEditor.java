@@ -18,6 +18,8 @@ package org.asciidoc.intellij.editor;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.editor.Document;
@@ -28,6 +30,8 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
+import com.intellij.openapi.fileEditor.impl.EditorWindow;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
@@ -46,21 +50,22 @@ import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.Semaphore;
 
 /** @author Julien Viet */
 public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEditor {
+
+  private static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup("asciidoctor",
+      NotificationDisplayType.NONE, true);
+
+  /** single threaded with one task queue */
+  private static final LazyApplicationPoolExecutor LAZY_EXECUTOR = new LazyApplicationPoolExecutor();
 
   /** The {@link java.awt.Component} used to render the HTML preview. */
   protected final JEditorPane jEditorPane = new JEditorPane();
 
   /** Indicates whether the HTML preview is obsolete and should regenerated from the AsciiDoc {@link #document}. */
   protected transient String currentContent = "";
-
-  /** Indicate if view is selected = visible */
-  protected transient boolean selected = false;
 
   /** The {@link Document} previewed in this editor. */
   protected final Document document;
@@ -75,62 +80,50 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     }
   });
 
-  /** ensure that there is no concurrent asciidoc rendering to prevent excessive
-   * CPU usage. */
-  private Semaphore sem = new Semaphore(1);
-
   private void render() {
-    /** use a swing worker to render asciidoc in the background, and call
-    jEditorPane.setText in the EDT to avoid flicker
-    @see http://en.wikipedia.org/wiki/Event_dispatching_thread)
-    */
-    SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
-      public String doInBackground() {
+    LAZY_EXECUTOR.execute(new Runnable() {
+      @Override
+      public void run() {
         try {
-          sem.acquire();
-          AsciiDoc doc = asciidoc.get();
-          /* allow a rendering once every 200ms to prevent
-          excessive CPU usage. */
-          Thread.sleep(200);
           if (!document.getText().equals(currentContent)) {
             currentContent = document.getText();
-            return doc.render(currentContent);
+
+            String markup = asciidoc.get().render(currentContent);
+            if (markup != null) {
+              updateEditorOnEDT(markup);
+            }
           }
         }
-        catch (InterruptedException ex) {
+        catch (InterruptedException e) {
           Thread.currentThread().interrupt();
         }
-        catch (ExecutionException ex) {
-          throw new RuntimeException(ex.getCause());
-        }
-        return null;
-      }
-
-      public void done() {
-        try {
-          String markup = get();
-          if(markup != null) {
-            // markup = "<html><body>" + markup + "</body></html>";
-            jEditorPane.setText(markup);
-            Rectangle d = jEditorPane.getVisibleRect();
-            jEditorPane.setSize((int)d.getWidth(), (int)jEditorPane.getSize().getHeight());
-          }
-        } catch (Exception ex) {
+        catch (Exception ex) {
           String message = "Error rendering asciidoctor: " + ex.getMessage();
-          Notification notification = new Notification("asciidoctor", "Error rendering asciidoctor",
-              message, NotificationType.ERROR);
+          Notification notification = NOTIFICATION_GROUP.createNotification("Error rendering asciidoctor", message,
+              NotificationType.ERROR, null);
           // increase event log counter
           notification.setImportant(true);
           Notifications.Bus.notify(notification);
-          // don't show balloon
-          notification.hideBalloon();
-        } finally {
-          sem.release();
         }
       }
-    };
+    });
+  }
 
-    worker.execute();
+  private void updateEditorOnEDT(final String markup) {
+    /**
+     * call jEditorPane.setText in the EDT to avoid flicker
+     *
+     * @see http://en.wikipedia.org/wiki/Event_dispatching_thread)
+     */
+    UIUtil.invokeAndWaitIfNeeded(new Runnable() {
+      @Override
+      public void run() {
+        // markup = "<html><body>" + markup + "</body></html>";
+        jEditorPane.setText(markup);
+        Rectangle d = jEditorPane.getVisibleRect();
+        jEditorPane.setSize((int)d.getWidth(), (int)jEditorPane.getSize().getHeight());
+      }
+    });
   }
 
   public AsciiDocPreviewEditor(Project project, final Document document) {
@@ -147,12 +140,21 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     }.start();
 
     // Listen to the document modifications.
+    final FileEditorManagerEx fileEditorManagerEx = FileEditorManagerEx.getInstanceEx(project);
     this.document.addDocumentListener(new DocumentAdapter() {
       @Override
       public void documentChanged(DocumentEvent e) {
-        render();
+        EditorWindow[] windows = fileEditorManagerEx.getWindows();
+        for (EditorWindow window : windows) {
+          FileEditor selectedEditor = window.getSelectedEditor().getSelectedEditorWithProvider().first;
+          // multiple editors can be opened for one file
+          // render when the editor is visible, only from the right listener
+          if (selectedEditor == AsciiDocPreviewEditor.this) {
+            render();
+          }
+        }
       }
-    });
+    }, this);
 
     // Setup the editor pane for rendering HTML.
     final HTMLEditorKit kit = new AsciiDocEditorKit(document,
@@ -255,13 +257,12 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    * Refresh view on select (as dependent elements might have changed).
    */
   public void selectNotify() {
-    selected = true;
     currentContent = "";
     render();
   }
 
   /**
-   * Invoked when the editor is deselected.
+   * Invoked when the editor is deselected (it does not mean that it is not visible).
    * <p/>
    * Does nothing.
    */
