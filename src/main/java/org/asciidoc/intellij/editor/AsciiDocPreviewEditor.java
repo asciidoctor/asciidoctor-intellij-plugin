@@ -96,7 +96,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
               javax.swing.text.Document doc = kit.createDefaultDocument();
               kit.read(new StringReader(markup), doc, 0);
 
-              updateEditorOnEDT(doc);
+              updatePreviewOnEDT(doc);
             }
           }
         }
@@ -115,7 +115,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     });
   }
 
-  private void updateEditorOnEDT(final javax.swing.text.Document doc) {
+  private void updatePreviewOnEDT(final javax.swing.text.Document doc) {
     /**
      * call jEditorPane.setText in the EDT to avoid flicker
      *
