@@ -92,6 +92,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
             String markup = asciidoc.get().render(currentContent);
             if (markup != null) {
+							// markup = "<html><body>" + markup + "</body></html>";
               EditorKit kit = jEditorPane.getEditorKit();
               javax.swing.text.Document doc = kit.createDefaultDocument();
               kit.read(new StringReader(markup), doc, 0);
@@ -117,14 +118,13 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
   private void updatePreviewOnEDT(final javax.swing.text.Document doc) {
     /**
-     * call jEditorPane.setText in the EDT to avoid flicker
+     * call jEditorPane.setDocument in the EDT to avoid flicker
      *
      * @see http://en.wikipedia.org/wiki/Event_dispatching_thread)
      */
     UIUtil.invokeAndWaitIfNeeded(new Runnable() {
       @Override
       public void run() {
-        // markup = "<html><body>" + markup + "</body></html>";
         jEditorPane.setDocument(doc);
         Rectangle d = jEditorPane.getVisibleRect();
         jEditorPane.setSize((int)d.getWidth(), (int)jEditorPane.getSize().getHeight());
