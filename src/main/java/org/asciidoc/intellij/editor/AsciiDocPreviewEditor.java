@@ -54,6 +54,8 @@ import java.io.StringReader;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
+import static org.asciidoc.intellij.util.UIUtil.loadStyleSheet;
+
 /** @author Julien Viet */
 public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEditor {
 
@@ -169,7 +171,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     // Create an AsciiDoc style, based on the default stylesheet supplied by UiUtil.getHTMLEditorKit()
     // since it contains fix for incorrect styling of tooltips
     final String cssFile = UIUtil.isUnderDarcula() ? "darcula.css" : "preview.css";
-    final StyleSheet customStyle = UIUtil.loadStyleSheet(AsciiDocPreviewEditor.class.getResource(cssFile));
+    final StyleSheet customStyle = loadStyleSheet(AsciiDocPreviewEditor.class.getResource(cssFile));
     final StyleSheet style = UIUtil.getHTMLEditorKit().getStyleSheet();
     style.addStyleSheet(customStyle);
     kit.setStyleSheet(style);
