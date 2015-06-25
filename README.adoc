@@ -4,7 +4,19 @@ Erik Pragt
 
 A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language. You can install the plugin (named "AsciiDoc") from the plugins section inside your Jetbrains IDE or download it from the https://plugins.jetbrains.com/plugin/7391[Jetbrains Plugin Repository]. 
 
-== Current version: 0.7 SNAPSHOT
+== Current version: 0.9
+
+=== 0.9
+
+Performance of editing large documents greatly improved, thanks to Vojtěch Krása
+
+=== 0.8
+
+Fixed incompatibility with non-IDEA IDE's, thanks to Harro Lissenberg
+
+=== 0.7
+
+Added table creation thanks Harro Lissenberg. Also added basic formatting, and fixed IntelliJ 14.1 incompatibility.
 
 === 0.6
 
@@ -25,6 +37,7 @@ Usable in the following JetBrains products:
 
 == Features
 
+* Since 0.8 Fixed incompatibility with non-IDEA IDE's, thanks to Harro Lissenberg
 * Since 0.7: Right click on a document to apply basic formatting or create tables.
 * Since 0.6: refactor Markdown to AsciiDoc. Right click on a file, or use the Refactor menu, and the Markdown document
 will be replaced by the AsciiDoc equivalent. Also supports undo, in case you're not happy with the result!
