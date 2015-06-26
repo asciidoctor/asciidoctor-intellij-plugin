@@ -14,7 +14,7 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 
-/** inspired by com.intellij.ui.EditorNotificationPanel */
+/** inspired by {@link com.intellij.ui.EditorNotificationPanel} */
 public class AsciiDocToolbarPanel extends JPanel {
 
   protected static final String ASCII_DOC_TEXT_FORMATTING = "AsciiDoc.TextFormatting";
