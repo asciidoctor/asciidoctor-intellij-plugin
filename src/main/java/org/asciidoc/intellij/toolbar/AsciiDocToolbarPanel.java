@@ -17,7 +17,8 @@ import java.awt.*;
 /** inspired by {@link com.intellij.ui.EditorNotificationPanel} */
 public class AsciiDocToolbarPanel extends JPanel {
 
-  protected static final String ASCII_DOC_TEXT_FORMATTING = "AsciiDoc.TextFormatting";
+  protected static final String ASCII_DOC_ACTION_GROUP_ID = "AsciiDoc.TextFormatting";
+
   protected final JPanel myLinksPanel;
 
   public AsciiDocToolbarPanel() {
@@ -29,7 +30,7 @@ public class AsciiDocToolbarPanel extends JPanel {
     panel.setMinimumSize(new Dimension(0, 0));
     this.add("Center", panel);
 
-    ActionGroup anAction = (ActionGroup)ActionManager.getInstance().getAction(ASCII_DOC_TEXT_FORMATTING);
+    ActionGroup anAction = (ActionGroup)ActionManager.getInstance().getAction(ASCII_DOC_ACTION_GROUP_ID);
     addChildren(anAction);
   }
 
