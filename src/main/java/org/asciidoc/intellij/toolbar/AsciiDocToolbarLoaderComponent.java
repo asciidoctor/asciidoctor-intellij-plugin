@@ -58,9 +58,9 @@ public class AsciiDocToolbarLoaderComponent implements ProjectComponent {
 
     @Override
     /** called on EDT */
-    public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-      if (isSuitable(source.getProject(), file)) {
-        final FileEditor[] fileEditors = source.getAllEditors(file);
+    public void fileOpened(@NotNull final FileEditorManager manager, @NotNull final VirtualFile file) {
+      if (isSuitable(manager.getProject(), file)) {
+        final FileEditor[] fileEditors = manager.getAllEditors(file);
         for (final FileEditor fileEditor : fileEditors) {
           if (fileEditor instanceof TextEditor) {
             Editor editor = ((TextEditor)fileEditor).getEditor();
@@ -70,12 +70,12 @@ public class AsciiDocToolbarLoaderComponent implements ProjectComponent {
 
             final AsciiDocToolbarPanel asciiDocToolbarPanel = new AsciiDocToolbarPanel(editor);
 
-            source.addTopComponent(fileEditor, asciiDocToolbarPanel);
+            manager.addTopComponent(fileEditor, asciiDocToolbarPanel);
             Disposer.register(fileEditor, asciiDocToolbarPanel);
             Disposer.register(fileEditor, new Disposable() {
               @Override
               public void dispose() {
-                source.removeTopComponent(fileEditor, asciiDocToolbarPanel);
+                manager.removeTopComponent(fileEditor, asciiDocToolbarPanel);
               }
             });
           }
