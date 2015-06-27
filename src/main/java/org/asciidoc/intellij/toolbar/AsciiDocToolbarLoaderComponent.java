@@ -68,14 +68,14 @@ public class AsciiDocToolbarLoaderComponent implements ProjectComponent {
               continue;
             }
 
-            final AsciiDocToolbarPanel asciiDocToolbarPanel = new AsciiDocToolbarPanel(editor);
+            final AsciiDocToolbarPanel toolbarPanel = new AsciiDocToolbarPanel(editor);
 
-            manager.addTopComponent(fileEditor, asciiDocToolbarPanel);
-            Disposer.register(fileEditor, asciiDocToolbarPanel);
+            manager.addTopComponent(fileEditor, toolbarPanel);
+            Disposer.register(fileEditor, toolbarPanel);
             Disposer.register(fileEditor, new Disposable() {
               @Override
               public void dispose() {
-                manager.removeTopComponent(fileEditor, asciiDocToolbarPanel);
+                manager.removeTopComponent(fileEditor, toolbarPanel);
               }
             });
           }
