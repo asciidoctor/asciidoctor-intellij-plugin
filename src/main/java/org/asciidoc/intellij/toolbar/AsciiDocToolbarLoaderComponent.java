@@ -39,7 +39,7 @@ public class AsciiDocToolbarLoaderComponent implements ProjectComponent {
   @Override
   @NotNull
   public String getComponentName() {
-    return "AsciiDocProjectComponent";
+    return "AsciiDocToolbarLoaderComponent";
   }
 
   @Override
