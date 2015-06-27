@@ -1,11 +1,13 @@
 package org.asciidoc.intellij.toolbar;
 
 import com.intellij.ide.DataManager;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Separator;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.HyperlinkLabel;
 import org.jetbrains.annotations.NotNull;
@@ -15,14 +17,18 @@ import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 
 /** inspired by {@link com.intellij.ui.EditorNotificationPanel} */
-public class AsciiDocToolbarPanel extends JPanel {
+public class AsciiDocToolbarPanel extends JPanel implements Disposable {
 
   protected static final String ASCII_DOC_ACTION_GROUP_ID = "AsciiDoc.TextFormatting";
 
-  protected final JPanel myLinksPanel;
+  private Editor myEditor;
+  private final JPanel myLinksPanel;
 
-  public AsciiDocToolbarPanel() {
+  public AsciiDocToolbarPanel(Editor editor) {
     super(new BorderLayout());
+    myEditor = editor;
+    myEditor.putUserData(AsciiDocToolbarLoaderComponent.ASCII_DOC_TOOLBAR, this);
+
     myLinksPanel = new JPanel(new FlowLayout());
     JPanel panel = new JPanel(new BorderLayout());
     panel.setBorder(BorderFactory.createEmptyBorder(1, 5, 1, 5));
@@ -71,5 +77,11 @@ public class AsciiDocToolbarPanel extends JPanel {
     if (event.getPresentation().isEnabled() && event.getPresentation().isVisible()) {
       action.actionPerformed(event);
     }
+  }
+
+  @Override
+  public void dispose() {
+    myEditor.putUserData(AsciiDocToolbarLoaderComponent.ASCII_DOC_TOOLBAR, null);
+    myEditor = null;
   }
 }
