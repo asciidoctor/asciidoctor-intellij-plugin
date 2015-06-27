@@ -58,7 +58,9 @@
   </application-components>
 
   <project-components>
-    <!-- Add your project components here -->
+    <component>
+      <implementation-class>org.asciidoc.intellij.toolbar.AsciiDocToolbarLoaderComponent</implementation-class>
+    </component>
   </project-components>
 
   <actions >
@@ -110,7 +112,6 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <editorNotificationProvider implementation="org.asciidoc.intellij.toolbar.AsciiDocToolbarProvider"/>
     <fileTypeFactory implementation="org.asciidoc.intellij.file.AsciiDocFileTypeFactory"/>
     <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocPreviewEditorProvider"/>
     <liveTemplateContext implementation="org.asciidoc.intellij.template.AsciiDocTemplateContextType$File"/>
