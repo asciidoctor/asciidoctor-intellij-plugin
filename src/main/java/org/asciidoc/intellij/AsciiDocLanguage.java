@@ -16,6 +16,11 @@
 package org.asciidoc.intellij;
 
 import com.intellij.lang.Language;
+import com.intellij.openapi.fileTypes.SingleLazyInstanceSyntaxHighlighterFactory;
+import com.intellij.openapi.fileTypes.SyntaxHighlighter;
+import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
+import org.asciidoc.intellij.lexer.AsciiDocHighlighter;
+import org.jetbrains.annotations.NotNull;
 
 /** @author Julien Viet */
 public class AsciiDocLanguage extends Language {
@@ -27,5 +32,11 @@ public class AsciiDocLanguage extends Language {
 
   private AsciiDocLanguage() {
     super(LANGUAGE_NAME);
+    SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(this, new SingleLazyInstanceSyntaxHighlighterFactory() {
+      @NotNull
+      protected SyntaxHighlighter createHighlighter() {
+        return new AsciiDocHighlighter();
+      }
+    });
   }
 }
