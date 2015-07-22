@@ -116,5 +116,7 @@
     <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocPreviewEditorProvider"/>
     <liveTemplateContext implementation="org.asciidoc.intellij.template.AsciiDocTemplateContextType$File"/>
     <defaultLiveTemplatesProvider implementation="org.asciidoc.intellij.template.AsciiDocTemplatesProvider"/>
+    <lang.parserDefinition language="AsciiDoc" implementationClass="org.asciidoc.intellij.parser.AsciiDocParserDefinition"/>
+    <lang.psiStructureViewFactory language="AsciiDoc" implementationClass="org.asciidoc.intellij.structureView.AsciiDocStructureViewFactory"/>
   </extensions>
 </idea-plugin>
