@@ -12,8 +12,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiManager;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,7 +57,7 @@ public class AsciiDocToolbarLoaderComponent implements ProjectComponent {
     @Override
     /** called on EDT */
     public void fileOpened(@NotNull final FileEditorManager manager, @NotNull final VirtualFile file) {
-      if (isSuitable(manager.getProject(), file)) {
+      if (AsciiDocLanguage.isAsciiDocFile(manager.getProject(), file)) {
         final FileEditor[] fileEditors = manager.getAllEditors(file);
         for (final FileEditor fileEditor : fileEditors) {
           if (fileEditor instanceof TextEditor) {
@@ -83,9 +81,5 @@ public class AsciiDocToolbarLoaderComponent implements ProjectComponent {
       }
     }
 
-    private static boolean isSuitable(final Project project, final VirtualFile file) {
-      final FileViewProvider provider = PsiManager.getInstance(project).findViewProvider(file);
-      return provider != null && provider.getBaseLanguage().isKindOf(AsciiDocLanguage.INSTANCE);
-    }
   }
 }
