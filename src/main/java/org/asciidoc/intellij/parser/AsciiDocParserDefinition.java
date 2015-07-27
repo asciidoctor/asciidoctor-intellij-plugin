@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AsciiDocParserDefinition implements ParserDefinition {
   private final TokenSet WHITESPACE = TokenSet.create(AsciiDocTokenTypes.LINE_BREAK);
-  private final TokenSet COMMENTS = TokenSet.create(AsciiDocTokenTypes.LINE_COMMENT);
+  private final TokenSet COMMENTS = TokenSet.create(AsciiDocTokenTypes.LINE_COMMENT, AsciiDocTokenTypes.BLOCK_COMMENT);
 
   @NotNull
   @Override
