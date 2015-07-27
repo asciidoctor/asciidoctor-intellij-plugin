@@ -118,5 +118,7 @@
     <defaultLiveTemplatesProvider implementation="org.asciidoc.intellij.template.AsciiDocTemplatesProvider"/>
     <lang.parserDefinition language="AsciiDoc" implementationClass="org.asciidoc.intellij.parser.AsciiDocParserDefinition"/>
     <lang.psiStructureViewFactory language="AsciiDoc" implementationClass="org.asciidoc.intellij.structureView.AsciiDocStructureViewFactory"/>
+    <spellchecker.support language="AsciiDoc" implementationClass="org.asciidoc.intellij.AsciiDocSpellcheckingStrategy"/>
+    <lang.commenter language="AsciiDoc" implementationClass="org.asciidoc.intellij.AsciiDocCommenter"/>
   </extensions>
 </idea-plugin>

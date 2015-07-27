@@ -44,6 +44,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('def')");
   }
 
+  public void testCommentBlock() {
+    doTest("////\nfoo bar\n////\nabc",
+        "AsciiDoc:BLOCK_COMMENT ('////\\nfoo bar\\n////')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('abc')");
+  }
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();
