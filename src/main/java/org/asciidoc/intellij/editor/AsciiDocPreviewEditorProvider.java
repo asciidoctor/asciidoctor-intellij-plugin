@@ -23,7 +23,6 @@ import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.project.PossiblyDumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.asciidoc.intellij.AsciiDocLanguage;
@@ -42,7 +41,7 @@ public class AsciiDocPreviewEditorProvider implements FileEditorProvider, Possib
    * @return whether the provider can create a valid editor for the specified <code>file</code>.
    */
   public boolean accept(@NotNull com.intellij.openapi.project.Project project, @NotNull VirtualFile file) {
-    return file.getFileType() instanceof AsciiDocFileType;
+    return AsciiDocLanguage.isAsciiDocFile(project, file);
   }
 
   /**

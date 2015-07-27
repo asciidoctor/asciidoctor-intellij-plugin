@@ -19,6 +19,10 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.SingleLazyInstanceSyntaxHighlighterFactory;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiManager;
 import org.asciidoc.intellij.lexer.AsciiDocHighlighter;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,5 +42,10 @@ public class AsciiDocLanguage extends Language {
         return new AsciiDocHighlighter();
       }
     });
+  }
+
+  public static final boolean isAsciiDocFile(final Project project, final VirtualFile file) {
+    final FileViewProvider provider = PsiManager.getInstance(project).findViewProvider(file);
+    return provider != null && provider.getBaseLanguage().isKindOf(INSTANCE);
   }
 }
