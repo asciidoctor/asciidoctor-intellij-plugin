@@ -107,7 +107,6 @@
 
       <separator/>
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
-      <add-to-group group-id="EditorTabPopupMenu" anchor="first"/>
       <add-to-group group-id="RefactoringMenu" anchor="last"/>
     </group>
   </actions>
