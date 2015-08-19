@@ -6,6 +6,12 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 
 == Release notes
 
+=== 0.11
+
+- Removed AsciiDoc item in right click menu thanks to Dmitry Jemerov.
+- Added 'Open in Browser' menu item.
+- Added 40+ live template (access them by pressing Cmd+J, or type 'ad-')
+
 === 0.10
 
 - Toolbar added thanks to Vojtěch Krása
