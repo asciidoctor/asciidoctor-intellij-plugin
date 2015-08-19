@@ -1,11 +1,247 @@
 <templateSet group="AsciiDoc">
-  <template name="tbl2" value="|===&#10;| $cell1header$ | $cell2header$&#10;&#10;| $cell1row1$&#10;| $cell2row1$&#10;&#10;| $cell1row2$&#10;| $cell2row2$&#10;|===" description="Table with two columns" toReformat="false" toShortenFQNames="true">
+  <template name="ad-table2" value="|===&#10;| $cell1header$ | $cell2header$&#10;&#10;| $cell1row1$&#10;| $cell2row1$&#10;&#10;| $cell1row2$&#10;| $cell2row2$&#10;|===" description="Table with two columns" toReformat="false" toShortenFQNames="true">
     <variable name="cell1header" expression="" defaultValue="&quot;Header Cell 1&quot;" alwaysStopAt="true" />
     <variable name="cell2header" expression="" defaultValue="&quot;Header Cell 2&quot;" alwaysStopAt="true" />
     <variable name="cell1row1" expression="" defaultValue="&quot;Row 1 Cell 1&quot;" alwaysStopAt="true" />
     <variable name="cell2row1" expression="" defaultValue="&quot;Row 1 Cell 2&quot;" alwaysStopAt="true" />
     <variable name="cell1row2" expression="" defaultValue="&quot;Row 2 Cell 1&quot;" alwaysStopAt="true" />
     <variable name="cell2row2" expression="" defaultValue="&quot;Row 2 Cell 2&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-title1" value="= $VAR1$&#10;&#10;$END$" description="Title 1" toReformat="false" toShortenFQNames="true">
+    <variable name="VAR1" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-title2" value="== $VAR1$&#10;&#10;$END$" description="Title 2" toReformat="false" toShortenFQNames="true">
+    <variable name="VAR1" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-title3" value="=== $VAR1$&#10;&#10;$END$" description="Title 3" toReformat="false" toShortenFQNames="true">
+    <variable name="VAR1" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-title4" value="==== $VAR1$&#10;&#10;$END$" description="Title 4" toReformat="false" toShortenFQNames="true">
+    <variable name="VAR1" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-title5" value="===== $VAR1$&#10;&#10;$END$" description="Title 5" toReformat="false" toShortenFQNames="true">
+    <variable name="VAR1" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-title6" value="====== $VAR1$&#10;&#10;$END$" description="Title 6" toReformat="false" toShortenFQNames="true">
+    <variable name="VAR1" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-doc-header-with-attributes" value="= My Document's Title&#10;$NAME$ &lt;$EMAIL_ADDRESS$&gt;&#10;v1.0, $DATE$&#10;:toc:&#10;:imagesdir: assets/images&#10;:homepage: http://asciidoctor.org" description="Header with attributes" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="EMAIL_ADDRESS" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DATE" expression="date(&quot;yyyy-mm-dd&quot;)" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-include" value="include::$FILENAME$.adoc[]&#10;&#10;$END$" description="Include file" toReformat="false" toShortenFQNames="true">
+    <variable name="FILENAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-horizontal-rule" value="'''" description="Horizontal rule" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-page-break" value="&lt;&lt;&lt;" description="Page break" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-list" value="* $NAME$&#10;$END$" description="List item" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-list-checklist" value="- [*] checked&#10;- [x] also checked&#10;- [ ] not checked&#10;-     normal list item&#10;$END$" description="Checklist" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-list-ordered" value=". $NAME$&#10;$END$" description="Ordered list" toReformat="false" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-list-labeled" value="first term:: definition of first term&#10;section term:: definition of second term&#10;$END$" description="Labeled list" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-list-qa" value="[qanda]&#10;What is Asciidoctor?::&#10;  An implementation of the AsciiDoc processor in Ruby.&#10;What is the answer to the Ultimate Question?:: 42&#10;$END$" description="Q&amp;A" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-list-mixed" value="Operating Systems::&#10;  Linux:::&#10;    . Fedora&#10;      * Desktop&#10;    . Ubuntu&#10;      * Desktop&#10;      * Server&#10;  BSD:::&#10;    . FreeBSD&#10;    . NetBSD&#10;&#10;Cloud Providers::&#10;  PaaS:::&#10;    . OpenShift&#10;    . CloudBees&#10;  IaaS:::&#10;    . Amazon EC2&#10;    . Rackspace&#10; $END$" description="Mixed style list" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-link-external" value="http://$LINK$[$TEXT$]&#10;&#10;$END$" description="External link with text" toReformat="false" toShortenFQNames="true">
+    <variable name="LINK" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="TEXT" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-link-relative" value="link:$LINK$[$TEXT$]&#10;&#10;$END$" description="Relative link with text" toReformat="false" toShortenFQNames="true">
+    <variable name="LINK" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="TEXT" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-link-attributes" value="http://discuss.asciidoctor.org[Discuss Asciidoctor, role=&quot;external&quot;, window=&quot;_blank&quot;]&#10;&#10;$END$" description="Link with attributes" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-image" value="image::$FILENAME$[]&#10;&#10;$END$" description="Image" toReformat="false" toShortenFQNames="true">
+    <variable name="FILENAME" expression="" defaultValue="&quot;filename.jpg&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-image-with-caption" value="[[img-sunset]]&#10;image::sunset.jpg[caption=&quot;Figure 1: &quot;, title=&quot;A mountain sunset&quot;, alt=&quot;Sunset&quot;, width=&quot;300&quot;, height=&quot;200&quot;, link=&quot;http://www.flickr.com/photos/javh/5448336655&quot;]&#10;&#10;$END$" description="Image with caption" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-image-inline" value="Click image:icons/play.png[Play, title=&quot;Play&quot;] to get the party started.&#10;&#10;$END$" description="Inline image" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-video" value="video::$FILENAME$[]&#10;&#10;$END$" description="Video" toReformat="false" toShortenFQNames="true">
+    <variable name="FILENAME" expression="" defaultValue="video_file.mp4" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-video-options" value="video::$FILENAME$[width=640, start=60, end=140, options=autoplay]&#10;&#10;$END$" description="Video options" toReformat="false" toShortenFQNames="true">
+    <variable name="FILENAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-video-youtube" value="video::$YOUTUBE$[youtube]&#10;&#10;$END$" description="Youtube video" toReformat="false" toShortenFQNames="true">
+    <variable name="YOUTUBE" expression="" defaultValue="&quot;nPER_vv2SyU&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-video-vimeo" value="video::$VIMEO$[vimeo]&#10;&#10;$END$" description="Vimeo video" toReformat="false" toShortenFQNames="true">
+    <variable name="VIMEO" expression="" defaultValue="&quot;67480300&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-source:ruby" value="[source,ruby]&#10;.$FILENAME$.rb&#10;----&#10;$SOURCE$&#10;----&#10;&#10;$END$" description="Ruby source code" toReformat="false" toShortenFQNames="true">
+    <variable name="FILENAME" expression="" defaultValue="&quot;filename&quot;" alwaysStopAt="true" />
+    <variable name="SOURCE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-source:java" value="[source,java]&#10;.$FILENAME$.java&#10;----&#10;$SOURCE$&#10;----&#10;&#10;$END$" description="Java source code" toReformat="false" toShortenFQNames="true">
+    <variable name="FILENAME" expression="" defaultValue="&quot;filename&quot;" alwaysStopAt="true" />
+    <variable name="SOURCE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-source:scala" value="[source,scala]&#10;.$FILENAME$.scala&#10;----&#10;$SOURCE$&#10;----&#10;&#10;$END$" description="Scala source code" toReformat="false" toShortenFQNames="true">
+    <variable name="FILENAME" expression="" defaultValue="&quot;filename&quot;" alwaysStopAt="true" />
+    <variable name="SOURCE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-source:python" value="[source,python]&#10;.$FILENAME$.python&#10;----&#10;$SOURCE$&#10;----&#10;&#10;$END$" description="Python source code" toReformat="false" toShortenFQNames="true">
+    <variable name="FILENAME" expression="" defaultValue="&quot;filename&quot;" alwaysStopAt="true" />
+    <variable name="SOURCE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-source:bash" value="[source,bash]&#10;.$FILENAME$.sh&#10;----&#10;$SOURCE$&#10;----&#10;&#10;$END$" description="Bash source code" toReformat="false" toShortenFQNames="true">
+    <variable name="FILENAME" expression="" defaultValue="&quot;filename&quot;" alwaysStopAt="true" />
+    <variable name="SOURCE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-source:groovy" value="[source,groovy]&#10;.$FILENAME$.groovy&#10;----&#10;$SOURCE$&#10;----&#10;&#10;$END$" description="Groovy source code" toReformat="false" toShortenFQNames="true">
+    <variable name="FILENAME" expression="" defaultValue="&quot;filename&quot;" alwaysStopAt="true" />
+    <variable name="SOURCE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-source:javascript" value="[source,javascript]&#10;.$FILENAME$.js&#10;----&#10;$SOURCE$&#10;----&#10;&#10;$END$" description="Javascript source code" toReformat="false" toShortenFQNames="true">
+    <variable name="FILENAME" expression="" defaultValue="&quot;filename&quot;" alwaysStopAt="true" />
+    <variable name="SOURCE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-source" value="[source]&#10;.$FILENAME$&#10;----&#10;$SOURCE$&#10;----&#10;&#10;$END$" description="Source code" toReformat="false" toShortenFQNames="true">
+    <variable name="FILENAME" expression="" defaultValue="&quot;filename&quot;" alwaysStopAt="true" />
+    <variable name="SOURCE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-source-callouts" value="[source,ruby]&#10;----&#10;require 'sinatra' // &lt;1&gt;&#10;&#10;get '/hi' do // &lt;2&gt;&#10;  &quot;Hello World!&quot; // &lt;3&gt;&#10;end&#10;----&#10;&lt;1&gt; Library import&#10;&lt;2&gt; URL mapping&#10;&lt;3&gt; Content for response&#10;&#10;$END$" description="Source code with callouts" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-source:xml" value="[source,xml]&#10;.$FILENAME$.xml&#10;----&#10;$SOURCE$&#10;----&#10;&#10;$END$" description="XML source code" toReformat="false" toShortenFQNames="true">
+    <variable name="FILENAME" expression="" defaultValue="&quot;filename&quot;" alwaysStopAt="true" />
+    <variable name="SOURCE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-sidebar" value=".$TITLE$&#10;****&#10;$CONTENT$&#10;****&#10;&#10;$END$" description="Sidebar" toReformat="false" toShortenFQNames="true">
+    <variable name="TITLE" expression="" defaultValue="&quot;Title&quot;" alwaysStopAt="true" />
+    <variable name="CONTENT" expression="" defaultValue="&quot;Some content here&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-bibliography" value="_The Pragmatic Programmer_ &lt;&lt;prag&gt;&gt; should be required reading for&#10;all developers.&#10;&#10;[bibliography]&#10;- [[[prag]]] Andy Hunt &amp; Dave Thomas. The Pragmatic Programmer:&#10;  From Journeyman to Master. Addison-Wesley. 1999.&#10;- [[[regina]]] Erik Pragt. Groovy in Action, Second Edition. Manning Publications.&#10;  2015.&#10;  &#10;$END$" description="Bibliography" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-footnotes" value="A statement.footnote:[Clarification about this statement.]&#10;&#10;A bold statement.footnoteref:[disclaimer,Opinions are my own.]&#10;&#10;Another bold statement.footnoteref:[disclaimer]&#10;  &#10;$END$" description="Footnotes" toReformat="false" toShortenFQNames="true">
     <context>
       <option name="AsciiDoc" value="true" />
     </context>
