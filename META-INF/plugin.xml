@@ -113,6 +113,7 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <webBrowserUrlProvider implementation="org.asciidoc.intellij.web.AsciiDocBrowserUrlProvider" />
     <fileTypeFactory implementation="org.asciidoc.intellij.file.AsciiDocFileTypeFactory"/>
     <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocPreviewEditorProvider"/>
     <liveTemplateContext implementation="org.asciidoc.intellij.template.AsciiDocTemplateContextType$File"/>
