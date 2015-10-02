@@ -35,38 +35,30 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
     final Document document = editor.getDocument();
 
     SelectionModel selectionModel = editor.getSelectionModel();
+    selectText(selectionModel);
+
+    applyMarkup(selectionModel, document, project);
+  }
+
+  protected void selectText(SelectionModel selectionModel) {
     if (!selectionModel.hasSelection()) {
       selectionModel.selectWordAtCaret(false);
     }
-
-    final String newDocumentText = applyMarkup(selectionModel, document);
-    updateDocument(project, document, newDocumentText);
   }
 
-  private String applyMarkup(SelectionModel selectionModel, Document document) {
-    String allText = document.getText();
-
+  private void applyMarkup(SelectionModel selectionModel, Document document, Project project) {
     int start = selectionModel.getSelectionStart();
     int end = selectionModel.getSelectionEnd();
-
-    String startText = allText.substring(0, start);
-    String endText = allText.substring(end, allText.length());
-
     String text = selectionModel.getSelectedText();
-
     final String updatedText = updateSelection(text);
-
-    selectionModel.setSelection(start, end);
-
-    return startText + updatedText + endText;
+    updateDocument(project, document, start, end, updatedText);
   }
 
-
-  private void updateDocument(final Project project, final Document document, final String asciiDoc) {
+  private void updateDocument(final Project project, final Document document, final int start, final int end, final String updatedText) {
     final Runnable readRunner = new Runnable() {
       @Override
       public void run() {
-        document.setText(asciiDoc);
+        document.replaceString(start, end, updatedText);
       }
     };
     ApplicationManager.getApplication().invokeLater(new Runnable() {
