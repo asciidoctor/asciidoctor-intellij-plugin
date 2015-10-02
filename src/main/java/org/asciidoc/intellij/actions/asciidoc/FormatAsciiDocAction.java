@@ -37,7 +37,8 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
     SelectionModel selectionModel = editor.getSelectionModel();
     selectText(selectionModel);
 
-    applyMarkup(selectionModel, document, project);
+    String updatedText = updateSelection(selectionModel.getSelectedText());
+    updateDocument(project, document, selectionModel, updatedText);
   }
 
   protected void selectText(SelectionModel selectionModel) {
@@ -46,21 +47,16 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
     }
   }
 
-  private void applyMarkup(SelectionModel selectionModel, Document document, Project project) {
-    int start = selectionModel.getSelectionStart();
-    int end = selectionModel.getSelectionEnd();
-    String text = selectionModel.getSelectedText();
-    final String updatedText = updateSelection(text);
-    updateDocument(project, document, start, end, updatedText);
-  }
-
-  private void updateDocument(final Project project, final Document document, final int start, final int end, final String updatedText) {
+  private void updateDocument(final Project project, final Document document, final SelectionModel selectionModel,  final String updatedText) {
     final Runnable readRunner = new Runnable() {
       @Override
       public void run() {
+        int start = selectionModel.getSelectionStart();
+        int end = selectionModel.getSelectionEnd();
         document.replaceString(start, end, updatedText);
       }
     };
+
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
