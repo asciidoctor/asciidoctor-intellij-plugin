@@ -16,7 +16,7 @@ public class MakeMono extends FormatAsciiDocAction {
 
   @Override
   public String getName() {
-    return "MakeItalic";
+    return "MakeMono";
   }
 
 
