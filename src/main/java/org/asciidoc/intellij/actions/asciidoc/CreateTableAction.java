@@ -9,7 +9,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import org.asciidoc.intellij.actions.asciidoc.AsciiDocAction;
 import org.asciidoc.intellij.ui.CreateTableDialog;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,9 +40,9 @@ public class CreateTableAction extends AsciiDocAction {
             public void run() {
               document.insertString(offset,
                   generateTable(
-                      createTableDialog.getNrOfColumns(),
-                      createTableDialog.getNrofRows(),
-                      createTableDialog.useTitle()));
+                      createTableDialog.getColumnCount(),
+                      createTableDialog.getRowCount(),
+                      createTableDialog.getTitle()));
             }
           });
         }
@@ -53,12 +52,12 @@ public class CreateTableAction extends AsciiDocAction {
  }
 
 
-  private String generateTable(int cols, int rows, boolean withTitle) {
+  private String generateTable(int cols, int rows, String title) {
     assert cols > 0;
     assert rows > 0;
     StringBuilder table = new StringBuilder("\n");
-    if (withTitle) {
-      table.append(".Table title\n");
+    if (!title.isEmpty()) {
+      table.append(".").append(title).append("\n");
     }
     table.append("|===\n");
     // Create header columns
