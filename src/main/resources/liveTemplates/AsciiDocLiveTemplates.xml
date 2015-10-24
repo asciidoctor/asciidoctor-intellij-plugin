@@ -46,7 +46,8 @@
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
-  <template name="ad-doc-header-with-attributes" value="= My Document's Title&#10;$NAME$ &lt;$EMAIL_ADDRESS$&gt;&#10;v1.0, $DATE$&#10;:toc:&#10;:imagesdir: assets/images&#10;:homepage: http://asciidoctor.org" description="Header with attributes" toReformat="false" toShortenFQNames="true">
+  <template name="ad-doc-header-with-attributes" value="= $TITLE$&#10;$NAME$ &lt;$EMAIL_ADDRESS$&gt;&#10;v1.0, $DATE$&#10;:toc:&#10;:imagesdir: assets/images&#10;:homepage: http://asciidoctor.org" description="Header with attributes" toReformat="false" toShortenFQNames="true">
+    <variable name="TITLE" expression="" defaultValue="My Document's Title" alwaysStopAt="true" />
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="EMAIL_ADDRESS" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="DATE" expression="date(&quot;yyyy-mm-dd&quot;)" defaultValue="" alwaysStopAt="true" />
@@ -76,7 +77,9 @@
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
-  <template name="ad-list-checklist" value="- [*] checked&#10;- [x] also checked&#10;- [ ] not checked&#10;-     normal list item&#10;$END$" description="Checklist" toReformat="false" toShortenFQNames="true">
+ <template name="ad-list-checklist" value="- [$CHECKED$] $TITLE$&#10;$END$" description="Checklist" toReformat="false" toShortenFQNames="true">
+    <variable name="CHECKED" expression="" defaultValue="x" alwaysStopAt="true" />
+    <variable name="TITLE" expression="" defaultValue="An Item" alwaysStopAt="true" />
     <context>
       <option name="AsciiDoc" value="true" />
     </context>
@@ -87,12 +90,16 @@
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
-  <template name="ad-list-labeled" value="first term:: definition of first term&#10;section term:: definition of second term&#10;$END$" description="Labeled list" toReformat="false" toShortenFQNames="true">
+  <template name="ad-list-labeled" value="$TERM$:: $DEFINITION$&#10;$END$" description="Labeled list" toReformat="false" toShortenFQNames="true">
+    <variable name="TERM" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DEFINITION" expression="" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
-  <template name="ad-list-qa" value="[qanda]&#10;What is Asciidoctor?::&#10;  An implementation of the AsciiDoc processor in Ruby.&#10;What is the answer to the Ultimate Question?:: 42&#10;$END$" description="Q&amp;A" toReformat="false" toShortenFQNames="true">
+  <template name="ad-list-qa" value="[qanda]&#10;$QUESTION$::&#10;  $ANSWER$&#10;$END$" description="Q&amp;A" toReformat="false" toShortenFQNames="true">
+    <variable name="QUESTION" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="ANSWER" expression="" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="AsciiDoc" value="true" />
     </context>
@@ -116,7 +123,9 @@
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
-  <template name="ad-link-attributes" value="http://discuss.asciidoctor.org[Discuss Asciidoctor, role=&quot;external&quot;, window=&quot;_blank&quot;]&#10;&#10;$END$" description="Link with attributes" toReformat="false" toShortenFQNames="true">
+  <template name="ad-link-attributes" value="http://$LINK$[$TEXT$, role=&quot;external&quot;, window=&quot;_blank&quot;]&#10;&#10;$END$" description="Link with attributes" toReformat="false" toShortenFQNames="true">
+    <variable name="LINK" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="TEXT" expression="" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="AsciiDoc" value="true" />
     </context>
