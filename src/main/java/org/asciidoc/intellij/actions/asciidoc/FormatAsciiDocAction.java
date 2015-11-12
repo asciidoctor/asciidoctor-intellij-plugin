@@ -20,7 +20,6 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
 
   public abstract String updateSelection(String selection);
 
-
   @Override
   public final void actionPerformed(@NotNull AnActionEvent event) {
 
@@ -41,13 +40,14 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
     updateDocument(project, document, selectionModel, updatedText);
   }
 
+
   protected void selectText(SelectionModel selectionModel) {
     if (!selectionModel.hasSelection()) {
       selectionModel.selectWordAtCaret(false);
     }
   }
 
-  private void updateDocument(final Project project, final Document document, final SelectionModel selectionModel,  final String updatedText) {
+  private void updateDocument(final Project project, final Document document, final SelectionModel selectionModel, final String updatedText) {
     final Runnable readRunner = new Runnable() {
       @Override
       public void run() {
@@ -68,6 +68,19 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
         }, getName(), null);
       }
     });
+  }
+
+  @NotNull
+  protected String updateSelectionIntern(String selection, String symbol) {
+    String doubleSymbol = symbol + symbol;
+    if (selection.startsWith(doubleSymbol) && selection.endsWith(doubleSymbol)) {
+      return selection.substring(2, selection.length() - 2);
+    }
+    if (selection.startsWith(symbol) && selection.endsWith(symbol)) {
+      return selection.substring(1, selection.length() - 1);
+    }
+
+    return doubleSymbol + selection + doubleSymbol;
   }
 
 }
