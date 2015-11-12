@@ -5,14 +5,16 @@ package org.asciidoc.intellij.actions.asciidoc;
  */
 public class MakeBold extends FormatAsciiDocAction {
 
-
   @Override
   public String updateSelection(String selection) {
-    if(selection.startsWith("*") && selection.endsWith("*")) {
+    if (selection.startsWith("**") && selection.endsWith("**")) {
+      return selection.substring(2, selection.length() - 2);
+    }
+    if (selection.startsWith("*") && selection.endsWith("*")) {
       return selection.substring(1, selection.length() - 1);
     }
 
-    return "*" + selection +"*";
+    return "**" + selection + "**";
   }
 
   @Override
