@@ -20,7 +20,6 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
 
   public abstract String updateSelection(String selection);
 
-
   @Override
   public final void actionPerformed(@NotNull AnActionEvent event) {
 
@@ -41,13 +40,14 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
     updateDocument(project, document, selectionModel, updatedText);
   }
 
+
   protected void selectText(SelectionModel selectionModel) {
     if (!selectionModel.hasSelection()) {
       selectionModel.selectWordAtCaret(false);
     }
   }
 
-  private void updateDocument(final Project project, final Document document, final SelectionModel selectionModel,  final String updatedText) {
+  private void updateDocument(final Project project, final Document document, final SelectionModel selectionModel, final String updatedText) {
     final Runnable readRunner = new Runnable() {
       @Override
       public void run() {

@@ -3,16 +3,11 @@ package org.asciidoc.intellij.actions.asciidoc;
 /**
  * @author Erik Pragt
  */
-public class MakeBold extends FormatAsciiDocAction {
-
+public class MakeBold extends SimpleFormatAsciiDocAction {
 
   @Override
   public String updateSelection(String selection) {
-    if(selection.startsWith("*") && selection.endsWith("*")) {
-      return selection.substring(1, selection.length() - 1);
-    }
-
-    return "*" + selection +"*";
+    return updateSelectionIntern(selection, "*");
   }
 
   @Override
