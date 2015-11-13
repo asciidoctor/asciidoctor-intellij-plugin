@@ -19,16 +19,16 @@ public abstract class SimpleFormatAsciiDocAction extends FormatAsciiDocAction {
 
   private String removeSymbol(String selection, String symbol) {
     if (selection.startsWith(symbol + symbol)) {
-      return removeSymbolIntern(selection, symbol+symbol);
+      return removeSymbol(selection, 2);
     }
-    return removeSymbolIntern(selection, symbol);
+    return removeSymbol(selection, 1);
   }
 
-  private String removeSymbolIntern(String selection, String symbol) {
-    if (selection.length() == symbol.length()) {
+  private String removeSymbol(String selection, int symbolLength) {
+    if (selection.length() == symbolLength) {
       return "";
     }
-    return selection.substring(symbol.length(), selection.length() - symbol.length());
+    return selection.substring(symbolLength, selection.length() - symbolLength);
   }
 
   private boolean containsSymbol(String selection, String symbol) {
