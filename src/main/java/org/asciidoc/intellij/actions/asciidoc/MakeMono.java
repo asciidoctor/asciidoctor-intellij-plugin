@@ -3,7 +3,7 @@ package org.asciidoc.intellij.actions.asciidoc;
 /**
  * @author Erik Pragt
  */
-public class MakeMono extends FormatAsciiDocAction {
+public class MakeMono extends SimpleFormatAsciiDocAction {
 
   @Override
   public String updateSelection(String selection) {
@@ -14,6 +14,5 @@ public class MakeMono extends FormatAsciiDocAction {
   public String getName() {
     return "MakeMono";
   }
-
 
 }

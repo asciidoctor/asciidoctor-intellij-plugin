@@ -3,7 +3,7 @@ package org.asciidoc.intellij.actions.asciidoc;
 /**
  * @author Erik Pragt
  */
-public class MakeItalic extends FormatAsciiDocAction {
+public class MakeItalic extends SimpleFormatAsciiDocAction {
 
   @Override
   public String updateSelection(String selection) {
@@ -14,6 +14,5 @@ public class MakeItalic extends FormatAsciiDocAction {
   public String getName() {
     return "MakeItalic";
   }
-
 
 }

@@ -3,7 +3,7 @@ package org.asciidoc.intellij.actions.asciidoc;
 /**
  * @author Erik Pragt
  */
-public class MakeBold extends FormatAsciiDocAction {
+public class MakeBold extends SimpleFormatAsciiDocAction {
 
   @Override
   public String updateSelection(String selection) {
