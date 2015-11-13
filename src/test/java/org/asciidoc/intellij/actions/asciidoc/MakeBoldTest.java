@@ -34,4 +34,16 @@ public class MakeBoldTest {
     String actual = sut.updateSelection("*about");
     assertEquals("***about**", actual);
   }
+
+  @Test
+  public void shouldNotCrashWithTwoAsteriks() throws Exception {
+    String actual = sut.updateSelection("**");
+    assertEquals("", actual);
+  }
+
+  @Test
+  public void shouldNotCrashWithOneAsteriks() throws Exception {
+    String actual = sut.updateSelection("*");
+    assertEquals("", actual);
+  }
 }

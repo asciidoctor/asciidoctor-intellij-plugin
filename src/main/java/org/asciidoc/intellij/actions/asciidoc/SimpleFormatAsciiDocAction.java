@@ -19,7 +19,13 @@ public abstract class SimpleFormatAsciiDocAction extends FormatAsciiDocAction {
 
   private String removeSymbol(String selection, String symbol) {
     if (selection.startsWith(symbol + symbol)) {
+      if (selection.length() == 2) {
+        return "";
+      }
       return selection.substring(2, selection.length() - 2);
+    }
+    if (selection.length() == 1) {
+      return "";
     }
     return selection.substring(1, selection.length() - 1);
   }
