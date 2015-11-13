@@ -1,7 +1,7 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
 /**
- * Created by Michael Krausse on 13/11/15.
+ * @author Michael Krausse (ehmkah)
  */
 public abstract class SimpleFormatAsciiDocAction extends FormatAsciiDocAction {
 
@@ -19,15 +19,16 @@ public abstract class SimpleFormatAsciiDocAction extends FormatAsciiDocAction {
 
   private String removeSymbol(String selection, String symbol) {
     if (selection.startsWith(symbol + symbol)) {
-      if (selection.length() == 2) {
-        return "";
-      }
-      return selection.substring(2, selection.length() - 2);
+      return removeSymbolIntern(selection, symbol+symbol);
     }
-    if (selection.length() == 1) {
+    return removeSymbolIntern(selection, symbol);
+  }
+
+  private String removeSymbolIntern(String selection, String symbol) {
+    if (selection.length() == symbol.length()) {
       return "";
     }
-    return selection.substring(1, selection.length() - 1);
+    return selection.substring(symbol.length(), selection.length() - symbol.length());
   }
 
   private boolean containsSymbol(String selection, String symbol) {
