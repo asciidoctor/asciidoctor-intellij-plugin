@@ -84,14 +84,13 @@
               <action id="asciidoc.strikethrough" class="org.asciidoc.intellij.actions.asciidoc.MakeStrikethrough"
                       text="Strike through" description="Make text strike through">
               </action>
+              <action id="asciidoc.makelink" class="org.asciidoc.intellij.actions.asciidoc.MakeLink"
+                      text="Link" description="Make link" >
+              </action>
                <action id="asciidoc.createtable" class="org.asciidoc.intellij.actions.asciidoc.CreateTableAction"
                  text="Create table" description="Insert a table at the caret" icon="table.gif">
               </action>
 <!--
-              <action id="asciidoc.convert.document4" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
-                      text="Insert table..." description="Convert this document to AsciiDoc" />
-              <action id="asciidoc.convert.document5" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
-                      text="Insert link" description="Convert this document to AsciiDoc" />
               <action id="asciidoc.convert.document6" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
                       text="Insert image" description="Convert this document to AsciiDoc" />
               <action id="asciidoc.convert.document7" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
