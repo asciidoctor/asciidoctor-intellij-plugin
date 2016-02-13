@@ -2,6 +2,7 @@ package org.asciidoc.intellij.psi;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,5 +23,14 @@ public class AsciiDocBlock extends ASTWrapperPsiElement {
     }
     String text = titleNode.getText();
     return text.length() >= 1 ? text.substring(1) : "";
+  }
+
+  @Nullable
+  public String getStyle() {
+    AsciiDocBlockAttributes attrs = PsiTreeUtil.findChildOfType(this, AsciiDocBlockAttributes.class);
+    if (attrs != null) {
+      return attrs.getFirstPositionalAttribute();
+    }
+    return null;
   }
 }

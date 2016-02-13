@@ -33,6 +33,7 @@ public class AsciiDocParserImpl {
   public void parse() {
     while (!myBuilder.eof()) {
       if (at(HEADING)) {
+        dropPreBlock();
         int level = headingLevel(myBuilder.getTokenText());
         closeSections(level);
         SectionMarker newMarker = new SectionMarker(level, myBuilder.mark());
@@ -56,10 +57,18 @@ public class AsciiDocParserImpl {
         myBlockStartMarker = beginBlock();
       }
       else if (at(TITLE)) {
-        if (myPreBlockMarker == null) {
-          myPreBlockMarker = myBuilder.mark();
-        }
+        markPreBlock();
         next();
+        continue;
+      }
+      else if (at(BLOCK_ATTRS_START)) {
+        markPreBlock();
+        PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
+        next();
+        while (at(BLOCK_ATTR_NAME) || at(BLOCK_ATTRS_END)) {
+          next();
+        }
+        blockAttrsMarker.done(AsciiDocElementTypes.BLOCK_ATTRIBUTES);
         continue;
       }
       dropPreBlock();
@@ -69,6 +78,12 @@ public class AsciiDocParserImpl {
     dropPreBlock();
     doneBlock();
     closeSections(0);
+  }
+
+  private void markPreBlock() {
+    if (myPreBlockMarker == null) {
+      myPreBlockMarker = myBuilder.mark();
+    }
   }
 
   private void dropPreBlock() {

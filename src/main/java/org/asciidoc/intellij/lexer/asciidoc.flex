@@ -22,6 +22,7 @@ EXAMPLE_BLOCK_DELIMITER = "====" "="* "\n"
 HEADING_START = "="{1,6} {SPACE}+
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
 TITLE_START = "."
+BLOCK_ATTRS_START = "["
 
 %state INSIDE_LINE
 %state LISTING
@@ -32,6 +33,7 @@ TITLE_START = "."
 %state BLOCK_MACRO
 %state BLOCK_MACRO_ATTRS
 %state TITLE
+%state BLOCK_ATTRS
 
 %%
 
@@ -43,6 +45,7 @@ TITLE_START = "."
   {HEADING_START} / {NON_SPACE} { yybegin(HEADING); return AsciiDocTokenTypes.HEADING; }
   {TITLE_START} { yybegin(TITLE); return AsciiDocTokenTypes.TITLE; }
   {BLOCK_MACRO_START} / {NON_SPACE} { yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  {BLOCK_ATTRS_START} { yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
 
   "\n"                 { return AsciiDocTokenTypes.LINE_BREAK; }
   .                    { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.TEXT; }
@@ -61,6 +64,11 @@ TITLE_START = "."
 <TITLE> {
   "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
   .                    { return AsciiDocTokenTypes.TITLE; }
+}
+
+<BLOCK_ATTRS> {
+  "]"                  { yybegin(YYINITIAL); return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
+  .                    { return AsciiDocTokenTypes.BLOCK_ATTR_NAME; }
 }
 
 <BLOCK_MACRO> {

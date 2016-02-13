@@ -75,6 +75,14 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Foo bar baz')");
   }
 
+  public void testBlockAttrs() {
+    doTest("[NOTE]\n",
+        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:BLOCK_ATTR_NAME ('NOTE')\n" +
+        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
 
   @Override
   protected Lexer createLexer() {
