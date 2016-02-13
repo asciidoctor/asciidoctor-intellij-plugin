@@ -19,6 +19,7 @@ LINE_COMMENT="//"[^\n]*
 LISTING_DELIMITER = "----" "-"*
 COMMENT_BLOCK_DELIMITER = "////" "/"*
 EXAMPLE_BLOCK_DELIMITER = "====" "="* "\n"
+SIDEBAR_BLOCK_DELIMITER = "****" "*"* "\n"
 HEADING_START = "="{1,6} {SPACE}+
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
 TITLE_START = "."
@@ -42,6 +43,7 @@ BLOCK_ATTRS_START = "["
   {LINE_COMMENT}       { return AsciiDocTokenTypes.LINE_COMMENT; }
   {LISTING_DELIMITER}  { yybegin(LISTING); return AsciiDocTokenTypes.LISTING_DELIMITER; }
   {EXAMPLE_BLOCK_DELIMITER} { return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER; }
+  {SIDEBAR_BLOCK_DELIMITER} { return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER; }
   {HEADING_START} / {NON_SPACE} { yybegin(HEADING); return AsciiDocTokenTypes.HEADING; }
   {TITLE_START} { yybegin(TITLE); return AsciiDocTokenTypes.TITLE; }
   {BLOCK_MACRO_START} / {NON_SPACE} { yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }

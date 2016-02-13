@@ -48,13 +48,24 @@ public class AsciiDocParserImpl {
         blockMacroMark.done(AsciiDocElementTypes.BLOCK_MACRO);
         continue;
       }
-      else if (at(EXAMPLE_BLOCK_DELIMITER)) {
+      else if (at(EXAMPLE_BLOCK_DELIMITER) || at(SIDEBAR_BLOCK_DELIMITER)) {
         if (myBlockStartMarker != null) {
           next();
           doneBlock();
           continue;
         }
         myBlockStartMarker = beginBlock();
+      }
+      else if (at(LISTING_DELIMITER)) {
+        PsiBuilder.Marker listingMarker = beginBlock();
+        next();
+        while (at(LISTING_TEXT) || at(LISTING_DELIMITER)) {
+          boolean atDelimiter = at(LISTING_DELIMITER);
+          next();
+          if (atDelimiter) break;
+        }
+        listingMarker.done(AsciiDocElementTypes.LISTING);
+        continue;
       }
       else if (at(TITLE)) {
         markPreBlock();

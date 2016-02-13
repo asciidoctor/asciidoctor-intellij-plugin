@@ -14,4 +14,5 @@ public interface AsciiDocElementTypes {
   IElementType BLOCK_MACRO = new AsciiDocElementType("BLOCK_MACRO_ID");
   IElementType BLOCK = new AsciiDocElementType("BLOCK");
   IElementType BLOCK_ATTRIBUTES = new AsciiDocElementType("BLOCK_ATTRIBUTES");
+  IElementType LISTING = new AsciiDocElementType("LISTING");
 }

@@ -83,6 +83,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testSidebar() {
+    doTest("****\nFoo Bar Baz\n****\n",
+        "AsciiDoc:SIDEBAR_BLOCK_DELIMITER ('****\\n')\n"+
+        "AsciiDoc:TEXT ('Foo Bar Baz')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:SIDEBAR_BLOCK_DELIMITER ('****\\n')");
+  }
 
   @Override
   protected Lexer createLexer() {
