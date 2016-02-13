@@ -38,6 +38,16 @@ public class AsciiDocParser implements PsiParser {
         SectionMarker newMarker = new SectionMarker(level, builder.mark());
         sectionStack.push(newMarker);
       }
+      else if (builder.getTokenType() == AsciiDocTokenTypes.BLOCK_MACRO_ID) {
+        PsiBuilder.Marker blockMacroMark = builder.mark();
+        builder.advanceLexer();
+        while (builder.getTokenType() == AsciiDocTokenTypes.BLOCK_MACRO_BODY ||
+            builder.getTokenType() == AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES) {
+          builder.advanceLexer();
+        }
+        blockMacroMark.done(AsciiDocElementTypes.BLOCK_MACRO);
+        continue;
+      }
       builder.advanceLexer();
     }
 

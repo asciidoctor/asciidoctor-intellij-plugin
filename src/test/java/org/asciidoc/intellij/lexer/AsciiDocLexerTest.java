@@ -51,6 +51,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('abc')");
   }
 
+  public void testBlockMacro() {
+    doTest("image::foo.png[Caption]\nabc",
+            "AsciiDoc:BLOCK_MACRO_ID ('image::')\n" +
+            "AsciiDoc:BLOCK_MACRO_BODY ('foo.png')\n" +
+            "AsciiDoc:BLOCK_MACRO_ATTRIBUTES ('[Caption]')\n" +
+            "AsciiDoc:LINE_BREAK ('\\n')\n" +
+            "AsciiDoc:TEXT ('abc')");
+  }
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();
