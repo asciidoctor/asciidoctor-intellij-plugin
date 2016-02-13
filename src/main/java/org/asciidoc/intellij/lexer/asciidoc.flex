@@ -18,8 +18,10 @@ NON_SPACE = [^\n]
 LINE_COMMENT="//"[^\n]*
 LISTING_DELIMITER = "----" "-"*
 COMMENT_BLOCK_DELIMITER = "////" "/"*
+EXAMPLE_BLOCK_DELIMITER = "====" "="* "\n"
 HEADING_START = "="{1,6} {SPACE}+
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
+TITLE_START = "."
 
 %state INSIDE_LINE
 %state LISTING
@@ -29,6 +31,7 @@ BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
 %state INSIDE_COMMENT_BLOCK_LINE
 %state BLOCK_MACRO
 %state BLOCK_MACRO_ATTRS
+%state TITLE
 
 %%
 
@@ -36,8 +39,11 @@ BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
   {COMMENT_BLOCK_DELIMITER} { yybegin(COMMENT_BLOCK); return AsciiDocTokenTypes.BLOCK_COMMENT; }
   {LINE_COMMENT}       { return AsciiDocTokenTypes.LINE_COMMENT; }
   {LISTING_DELIMITER}  { yybegin(LISTING); return AsciiDocTokenTypes.LISTING_DELIMITER; }
+  {EXAMPLE_BLOCK_DELIMITER} { return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER; }
   {HEADING_START} / {NON_SPACE} { yybegin(HEADING); return AsciiDocTokenTypes.HEADING; }
+  {TITLE_START} { yybegin(TITLE); return AsciiDocTokenTypes.TITLE; }
   {BLOCK_MACRO_START} / {NON_SPACE} { yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+
   "\n"                 { return AsciiDocTokenTypes.LINE_BREAK; }
   .                    { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.TEXT; }
 }
@@ -50,6 +56,11 @@ BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
 <HEADING> {
   "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
   .                    { return AsciiDocTokenTypes.HEADING; }
+}
+
+<TITLE> {
+  "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+  .                    { return AsciiDocTokenTypes.TITLE; }
 }
 
 <BLOCK_MACRO> {

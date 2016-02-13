@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiReference;
@@ -11,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author yole
  */
-public class AsciiDocBlockMacro extends ASTWrapperPsiElement {
+public class AsciiDocBlockMacro extends AsciiDocBlock {
   public AsciiDocBlockMacro(@NotNull ASTNode node) {
     super(node);
   }

@@ -14,10 +14,13 @@ public interface AsciiDocTokenTypes {
   IElementType LISTING_DELIMITER = new AsciiDocElementType("LISTING_DELIMITER");
   IElementType LISTING_TEXT = new AsciiDocElementType("LISTING_TEXT");
   IElementType HEADING = new AsciiDocElementType("HEADING");
+  IElementType TITLE = new AsciiDocElementType("TITLE");
   IElementType BLOCK_MACRO_ID = new AsciiDocElementType("BLOCK_MACRO_ID");
   IElementType BLOCK_MACRO_BODY = new AsciiDocElementType("BLOCK_MACRO_BODY");
   IElementType BLOCK_MACRO_ATTRIBUTES = new AsciiDocElementType("BLOCK_MACRO_ATTRIBUTES");
+  IElementType EXAMPLE_BLOCK_DELIMITER = new AsciiDocElementType("EXAMPLE_BLOCK_DELIMITER");
 
-  TokenSet TOKENS_TO_MERGE = TokenSet.create(TEXT, LISTING_TEXT, HEADING, BLOCK_COMMENT, BLOCK_MACRO_BODY, BLOCK_MACRO_ATTRIBUTES);
+  TokenSet TOKENS_TO_MERGE = TokenSet.create(TEXT, LISTING_TEXT, HEADING, TITLE, BLOCK_COMMENT,
+      BLOCK_MACRO_BODY, BLOCK_MACRO_ATTRIBUTES);
 }
 

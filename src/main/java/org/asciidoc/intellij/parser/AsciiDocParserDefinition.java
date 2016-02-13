@@ -12,6 +12,7 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.asciidoc.intellij.lexer.AsciiDocLexer;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.psi.AsciiDocBlock;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocSection;
@@ -66,6 +67,9 @@ public class AsciiDocParserDefinition implements ParserDefinition {
     }
     if (node.getElementType() == AsciiDocElementTypes.BLOCK_MACRO) {
       return new AsciiDocBlockMacro(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.BLOCK) {
+      return new AsciiDocBlock(node);
     }
     throw new UnsupportedOperationException("Unknown node type " + node.getElementType());
   }

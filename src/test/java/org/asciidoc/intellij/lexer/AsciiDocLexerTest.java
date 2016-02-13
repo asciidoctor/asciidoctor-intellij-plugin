@@ -60,6 +60,22 @@ public class AsciiDocLexerTest extends LexerTestCase {
             "AsciiDoc:TEXT ('abc')");
   }
 
+  public void testExample() {
+    doTest("====\nFoo Bar Baz\n====\n",
+        "AsciiDoc:EXAMPLE_BLOCK_DELIMITER ('====\\n')\n"+
+        "AsciiDoc:TEXT ('Foo Bar Baz')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EXAMPLE_BLOCK_DELIMITER ('====\\n')");
+  }
+
+  public void testTitle() {
+    doTest(".Foo bar baz\nFoo bar baz",
+        "AsciiDoc:TITLE ('.Foo bar baz')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Foo bar baz')");
+  }
+
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();
