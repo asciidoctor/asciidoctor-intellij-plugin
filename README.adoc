@@ -6,6 +6,10 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 
 == Release notes
 
+=== 0.13
+
+* code-cleanup issues/105 files have been removed
+
 === 0.11
 
 - Removed AsciiDoc item in right click menu thanks to Dmitry Jemerov.
