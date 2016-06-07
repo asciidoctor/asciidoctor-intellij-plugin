@@ -5,7 +5,12 @@
       <element id="directory" name="asciidoctor-intellij">
         <element id="directory" name="lib">
           <element id="artifact" artifact-name="asciidoctor-intellij.jar" />
-          <element id="dir-copy" path="$PROJECT_DIR$/lib" />
+          <element id="library" level="project" name="commons-io:commons-io:2.4" />
+          <element id="library" level="project" name="markdown-to-asciidoc-1.0-SNAPSHOT" />
+          <element id="library" level="project" name="org.asciidoctor:asciidoctorj-diagram:1.3.1" />
+          <element id="library" level="project" name="org.pegdown:pegdown:1.4.2" />
+          <element id="library" level="project" name="org.parboiled:parboiled-core:1.1.6" />
+          <element id="library" level="project" name="org.slf4j:slf4j-api:1.7.5" />
         </element>
       </element>
     </root>

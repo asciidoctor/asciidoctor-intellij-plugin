@@ -49,6 +49,7 @@ public class AsciiDoc {
     ClassLoader old = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
+      asciidoctor.requireLibrary("asciidoctor-diagram");
       return "<div id=\"content\">\n" + asciidoctor.render(text, getDefaultOptions()) + "\n</div>";
     }
     finally {
