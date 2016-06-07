@@ -44,7 +44,10 @@ public class AsciiDocLanguage extends Language {
     });
   }
 
-  public static final boolean isAsciiDocFile(final Project project, final VirtualFile file) {
+  public static final boolean isAsciiDocFile(@NotNull Project project, @NotNull VirtualFile file) {
+    if (file.isDirectory() || !file.exists()) {
+      return false;
+    }
     final FileViewProvider provider = PsiManager.getInstance(project).findViewProvider(file);
     return provider != null && provider.getBaseLanguage().isKindOf(INSTANCE);
   }
