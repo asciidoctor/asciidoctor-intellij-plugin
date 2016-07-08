@@ -69,6 +69,7 @@ BLOCK_ATTRS_START = "["
 }
 
 <BLOCK_ATTRS> {
+  "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
   "]"                  { yybegin(YYINITIAL); return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
   .                    { return AsciiDocTokenTypes.BLOCK_ATTR_NAME; }
 }

@@ -83,6 +83,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testUnclosedBlockAttrs() {
+    doTest("[\nfoo",
+        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('foo')");
+  }
+
   public void testSidebar() {
     doTest("****\nFoo Bar Baz\n****\n",
         "AsciiDoc:SIDEBAR_BLOCK_DELIMITER ('****\\n')\n"+
