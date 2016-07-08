@@ -15,6 +15,7 @@
         <arg value="@{skeleton}"/>
         <arg value="-d"/>
         <arg value="@{destdir}"/>
+        <arg value="-legacydot"/>
         <arg value="@{flexfile}"/>
       </java>
     </sequential>
