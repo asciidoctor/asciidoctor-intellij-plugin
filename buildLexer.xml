@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="AsciiDoc Lexer" default="asciidoc">
-  <property name="flex.base" value="${idea.community.source.home}/tools/lexer/jflex-1.4"/>
+  <property name="flex.jar.path" value="${idea.community.source.home}/tools/lexer/jflex-1.7.0-SNAPSHOT.jar"/>
 
   <macrodef name="flex">
     <attribute name="flexfile"/>
     <attribute name="destdir"/>
     <attribute name="skeleton" default="${idea.community.source.home}/tools/lexer/idea-flex.skeleton"/>
     <sequential>
-      <java classname="JFlex.Main"
+      <java jar="${flex.jar.path}"
             fork="true"
             failonerror="true">
         <jvmarg value="-Xmx512M"/>
-        <arg value="-sliceandcharat"/>
         <arg value="-skel"/>
         <arg value="@{skeleton}"/>
         <arg value="-d"/>
         <arg value="@{destdir}"/>
         <arg value="@{flexfile}"/>
-        <classpath>
-          <pathelement location="${flex.base}/lib/JFlex.jar"/>
-        </classpath>
       </java>
     </sequential>
   </macrodef>

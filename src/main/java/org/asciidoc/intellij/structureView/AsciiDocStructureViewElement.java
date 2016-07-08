@@ -4,14 +4,13 @@ import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.structureView.impl.common.PsiTreeElementBase;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
+import org.asciidoc.intellij.psi.AsciiDocBlock;
 import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,13 +24,11 @@ public class AsciiDocStructureViewElement extends PsiTreeElementBase<PsiElement>
   @NotNull
   @Override
   public Collection<StructureViewTreeElement> getChildrenBase() {
-    AsciiDocSection[] sections = PsiTreeUtil.getChildrenOfType(getElement(), AsciiDocSection.class);
-    if (sections == null) {
-      return Collections.emptyList();
-    }
     List<StructureViewTreeElement> result = new ArrayList<StructureViewTreeElement>();
-    for (AsciiDocSection section : sections) {
-      result.add(new AsciiDocStructureViewElement(section));
+    for (PsiElement childElement : getElement().getChildren()) {
+      if (!getPresentableElementText(childElement).isEmpty()) {
+        result.add(new AsciiDocStructureViewElement(childElement));
+      }
     }
     return result;
   }
@@ -39,11 +36,26 @@ public class AsciiDocStructureViewElement extends PsiTreeElementBase<PsiElement>
   @Nullable
   @Override
   public String getPresentableText() {
-    if (getElement() instanceof AsciiDocSection) {
-      return ((AsciiDocSection) getElement()).getTitle();
+    return getPresentableElementText(getElement());
+  }
+
+  private static String getPresentableElementText(PsiElement element) {
+    if (element instanceof AsciiDocSection) {
+      return ((AsciiDocSection)element).getTitle();
     }
-    if (getElement() instanceof PsiFile) {
-      return ((PsiFile) getElement()).getName();
+    if (element instanceof PsiFile) {
+      return ((PsiFile)element).getName();
+    }
+    if (element instanceof AsciiDocBlock) {
+      AsciiDocBlock block = (AsciiDocBlock)element;
+      String title = block.getTitle();
+      if (title != null) {
+        String style = block.getStyle();
+        if (style != null) {
+          return "[" + style + "] " + title;
+        }
+        return title;
+      }
     }
     return "";
   }

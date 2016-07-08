@@ -51,6 +51,53 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('abc')");
   }
 
+  public void testBlockMacro() {
+    doTest("image::foo.png[Caption]\nabc",
+            "AsciiDoc:BLOCK_MACRO_ID ('image::')\n" +
+            "AsciiDoc:BLOCK_MACRO_BODY ('foo.png')\n" +
+            "AsciiDoc:BLOCK_MACRO_ATTRIBUTES ('[Caption]')\n" +
+            "AsciiDoc:LINE_BREAK ('\\n')\n" +
+            "AsciiDoc:TEXT ('abc')");
+  }
+
+  public void testExample() {
+    doTest("====\nFoo Bar Baz\n====\n",
+        "AsciiDoc:EXAMPLE_BLOCK_DELIMITER ('====\\n')\n"+
+        "AsciiDoc:TEXT ('Foo Bar Baz')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EXAMPLE_BLOCK_DELIMITER ('====\\n')");
+  }
+
+  public void testTitle() {
+    doTest(".Foo bar baz\nFoo bar baz",
+        "AsciiDoc:TITLE ('.Foo bar baz')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Foo bar baz')");
+  }
+
+  public void testBlockAttrs() {
+    doTest("[NOTE]\n",
+        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:BLOCK_ATTR_NAME ('NOTE')\n" +
+        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testUnclosedBlockAttrs() {
+    doTest("[\nfoo",
+        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('foo')");
+  }
+
+  public void testSidebar() {
+    doTest("****\nFoo Bar Baz\n****\n",
+        "AsciiDoc:SIDEBAR_BLOCK_DELIMITER ('****\\n')\n"+
+        "AsciiDoc:TEXT ('Foo Bar Baz')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:SIDEBAR_BLOCK_DELIMITER ('****\\n')");
+  }
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();

@@ -30,6 +30,7 @@ public class AsciiDocHighlighter extends SyntaxHighlighterBase {
   private static final ImmutableMap<IElementType, TextAttributesKey> attributes =
       ImmutableMap.<IElementType, TextAttributesKey>builder()
           .put(AsciiDocTokenTypes.LINE_COMMENT, ASCIIDOC_COMMENT)
+          .put(AsciiDocTokenTypes.BLOCK_COMMENT, ASCIIDOC_COMMENT)
           .put(AsciiDocTokenTypes.LISTING_TEXT, ASCIIDOC_LISTING_TEXT)
           .put(AsciiDocTokenTypes.HEADING, ASCIIDOC_HEADING)
           .build();
