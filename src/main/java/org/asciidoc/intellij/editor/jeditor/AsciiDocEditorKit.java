@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.asciidoc.intellij.editor;
-
-import com.intellij.openapi.editor.Document;
+package org.asciidoc.intellij.editor.jeditor;
 
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
@@ -24,9 +22,6 @@ import java.net.MalformedURLException;
 
 /** @author Julien Viet */
 public class AsciiDocEditorKit extends HTMLEditorKit {
-
-  /** The document. */
-  private final Document document;
 
   /** Base directory used to show images. */
   private File baseDir;
@@ -47,8 +42,7 @@ public class AsciiDocEditorKit extends HTMLEditorKit {
     return document;
   }
 
-  public AsciiDocEditorKit(Document document, File baseDir) {
-    this.document = document;
+  public AsciiDocEditorKit(File baseDir) {
     this.baseDir = baseDir;
   }
 }

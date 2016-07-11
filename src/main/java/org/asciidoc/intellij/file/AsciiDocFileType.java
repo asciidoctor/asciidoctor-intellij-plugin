@@ -18,7 +18,7 @@ package org.asciidoc.intellij.file;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.asciidoc.intellij.AsciiDocIcons;
+import icons.AsciiDocIcons;
 import org.asciidoc.intellij.AsciiDocLanguage;
 
 import javax.swing.*;
@@ -52,6 +52,6 @@ public class AsciiDocFileType extends LanguageFileType {
 
   @Nullable
   public Icon getIcon() {
-    return AsciiDocIcons.ASCIIDOC_ICON;
+    return AsciiDocIcons.Asciidoc_Icon;
   }
 }

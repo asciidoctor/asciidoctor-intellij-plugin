@@ -56,7 +56,7 @@ public class AsciiDocPreviewEditorProvider implements FileEditorProvider, Possib
    */
   @NotNull
   public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-    return new AsciiDocPreviewEditor(project, FileDocumentManager.getInstance().getDocument(file));
+    return new AsciiDocPreviewEditor(FileDocumentManager.getInstance().getDocument(file));
   }
 
   /**
