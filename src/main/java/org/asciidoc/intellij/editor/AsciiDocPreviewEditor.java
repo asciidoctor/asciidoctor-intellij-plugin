@@ -15,6 +15,7 @@
  */
 package org.asciidoc.intellij.editor;
 
+import com.intellij.CommonBundle;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.notification.Notification;
@@ -22,6 +23,8 @@ import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
@@ -30,31 +33,26 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
-import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
-import com.intellij.openapi.fileEditor.impl.EditorWindow;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
-import com.intellij.ui.components.JBScrollPane;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.Alarm;
+import com.intellij.util.messages.MessageBusConnection;
 import org.asciidoc.intellij.AsciiDoc;
+import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
+import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.text.DefaultCaret;
-import javax.swing.text.EditorKit;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.StringReader;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
-
-import static org.asciidoc.intellij.util.UIUtil.loadStyleSheet;
 
 /** @author Julien Viet */
 public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEditor {
@@ -65,17 +63,20 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /** single threaded with one task queue */
   private static final LazyApplicationPoolExecutor LAZY_EXECUTOR = new LazyApplicationPoolExecutor();
 
-  /** The {@link java.awt.Component} used to render the HTML preview. */
-  protected final JEditorPane jEditorPane = new JEditorPane();
-
   /** Indicates whether the HTML preview is obsolete and should regenerated from the AsciiDoc {@link #document}. */
-  protected transient String currentContent = "";
+  private transient String currentContent = "";
 
   /** The {@link Document} previewed in this editor. */
   protected final Document document;
 
-  /** The {@link JBScrollPane} allowing to browse {@link #jEditorPane}. */
-  protected final JBScrollPane scrollPane = new JBScrollPane(jEditorPane);
+  @NotNull
+  private final JPanel myHtmlPanelWrapper;
+
+  @NotNull
+  private transient AsciiDocHtmlPanel myPanel;
+
+  @NotNull
+  private final Alarm mySwingAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
 
   /** . */
   private FutureTask<AsciiDoc> asciidoc = new FutureTask<AsciiDoc>(new Callable<AsciiDoc>() {
@@ -94,12 +95,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
             String markup = asciidoc.get().render(currentContent);
             if (markup != null) {
-							// markup = "<html><body>" + markup + "</body></html>";
-              EditorKit kit = jEditorPane.getEditorKit();
-              javax.swing.text.Document doc = kit.createDefaultDocument();
-              kit.read(new StringReader(markup), doc, 0);
-
-              updatePreviewOnEDT(doc);
+              myPanel.setHtml(markup);
             }
           }
         }
@@ -118,26 +114,43 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     });
   }
 
-  private void updatePreviewOnEDT(final javax.swing.text.Document doc) {
-    /**
-     * call jEditorPane.setDocument in the EDT to avoid flicker
-     *
-     * @see http://en.wikipedia.org/wiki/Event_dispatching_thread)
-     */
-    UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        jEditorPane.setDocument(doc);
-        Rectangle d = jEditorPane.getVisibleRect();
-        jEditorPane.setSize((int)d.getWidth(), (int)jEditorPane.getSize().getHeight());
-      }
-    });
+  @Nullable("Null means leave current panel")
+  private AsciiDocHtmlPanelProvider retrievePanelProvider(@NotNull AsciiDocApplicationSettings settings) {
+    final AsciiDocHtmlPanelProvider.ProviderInfo providerInfo = settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo();
+
+    AsciiDocHtmlPanelProvider provider = AsciiDocHtmlPanelProvider.createFromInfo(providerInfo);
+
+    if (provider.isAvailable() != AsciiDocHtmlPanelProvider.AvailabilityInfo.AVAILABLE) {
+      settings.setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(settings.getAsciiDocPreviewSettings().getSplitEditorLayout(),
+          AsciiDocPreviewSettings.DEFAULT.getHtmlPanelProviderInfo()));
+
+      Messages.showMessageDialog(
+          myHtmlPanelWrapper,
+          "Tried to use preview panel provider (" + providerInfo.getName() + "), but it is unavailable. Reverting to default.",
+          CommonBundle.getErrorTitle(),
+          Messages.getErrorIcon()
+      );
+
+      provider = AsciiDocHtmlPanelProvider.getProviders()[0];
+    }
+
+    return provider;
   }
 
-  public AsciiDocPreviewEditor(Project project, final Document document) {
+
+  public AsciiDocPreviewEditor(final Document document) {
 
     //
     this.document = document;
+
+    myHtmlPanelWrapper = new JPanel(new BorderLayout());
+
+    final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+    myPanel = detachOldPanelAndCreateAndAttachNewOne(document, myHtmlPanelWrapper, null, retrievePanelProvider(settings));
+
+    MessageBusConnection settingsConnection = ApplicationManager.getApplication().getMessageBus().connect(this);
+    AsciiDocApplicationSettings.SettingsChangedListener settingsChangedListener = new MyUpdatePanelOnSettingsChangedListener();
+    settingsConnection.subscribe(AsciiDocApplicationSettings.SettingsChangedListener.TOPIC, settingsChangedListener);
 
     // Get asciidoc asynchronously
     new Thread() {
@@ -148,61 +161,55 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     }.start();
 
     // Listen to the document modifications.
-    final FileEditorManagerEx fileEditorManagerEx = FileEditorManagerEx.getInstanceEx(project);
     this.document.addDocumentListener(new DocumentAdapter() {
       @Override
       public void documentChanged(DocumentEvent e) {
-        EditorWindow[] windows = fileEditorManagerEx.getWindows();
-        for (EditorWindow window : windows) {
-          FileEditor selectedEditor = window.getSelectedEditor().getSelectedEditorWithProvider().first;
-          // multiple editors can be opened for one file
-          // render when the editor is visible, only from the right listener
-          if (selectedEditor == AsciiDocPreviewEditor.this) {
-            render();
-          }
-        }
+        render();
       }
     }, this);
 
-    // Setup the editor pane for rendering HTML.
-    final HTMLEditorKit kit = new AsciiDocEditorKit(document,
-        new File(FileDocumentManager.getInstance().getFile(document).getParent().getCanonicalPath()));
-
-    // Create an AsciiDoc style, based on the default stylesheet supplied by UiUtil.getHTMLEditorKit()
-    // since it contains fix for incorrect styling of tooltips
-    final String cssFile = UIUtil.isUnderDarcula() ? "darcula.css" : "preview.css";
-    final StyleSheet customStyle = loadStyleSheet(AsciiDocPreviewEditor.class.getResource(cssFile));
-    final StyleSheet style = UIUtil.getHTMLEditorKit().getStyleSheet();
-    style.addStyleSheet(customStyle);
-    kit.setStyleSheet(style);
-
-    //
-    jEditorPane.setEditorKit(kit);
-    jEditorPane.setEditable(false);
-    // use this to prevent scrolling to the end of the pane on setText()
-    ((DefaultCaret)jEditorPane.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-    // initial rendering of content
     render();
+
+  }
+
+  @Contract("_, null, null -> fail")
+  @NotNull
+  private static AsciiDocHtmlPanel detachOldPanelAndCreateAndAttachNewOne(Document document, @NotNull JPanel panelWrapper,
+                                                                          @Nullable AsciiDocHtmlPanel oldPanel,
+                                                                          @Nullable AsciiDocHtmlPanelProvider newPanelProvider) {
+    ApplicationManager.getApplication().assertIsDispatchThread();
+    if (oldPanel == null && newPanelProvider == null) {
+      throw new IllegalArgumentException("Either create new one or leave the old");
+    }
+    if (newPanelProvider == null) {
+      return oldPanel;
+    }
+    if (oldPanel != null) {
+      panelWrapper.remove(oldPanel.getComponent());
+      Disposer.dispose(oldPanel);
+    }
+
+    final AsciiDocHtmlPanel newPanel = newPanelProvider.createHtmlPanel(document);
+    panelWrapper.add(newPanel.getComponent(), BorderLayout.CENTER);
+    panelWrapper.repaint();
+
+    return newPanel;
   }
 
   /**
    * Get the {@link java.awt.Component} to display as this editor's UI.
-   *
-   * @return a scrollable {@link JEditorPane}.
    */
   @NotNull
   public JComponent getComponent() {
-    return scrollPane;
+    return myHtmlPanelWrapper;
   }
 
   /**
    * Get the component to be focused when the editor is opened.
-   *
-   * @return {@link #scrollPane}
    */
   @Nullable
   public JComponent getPreferredFocusedComponent() {
-    return scrollPane;
+    return myHtmlPanelWrapper;
   }
 
   /**
@@ -331,4 +338,21 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   public void dispose() {
     Disposer.dispose(this);
   }
+
+  private class MyUpdatePanelOnSettingsChangedListener implements AsciiDocApplicationSettings.SettingsChangedListener {
+    @Override
+    public void onSettingsChange(@NotNull AsciiDocApplicationSettings settings) {
+      final AsciiDocHtmlPanelProvider newPanelProvider = retrievePanelProvider(settings);
+
+      mySwingAlarm.addRequest(new Runnable() {
+        @Override
+        public void run() {
+          myPanel = detachOldPanelAndCreateAndAttachNewOne(document, myHtmlPanelWrapper, myPanel, newPanelProvider);
+          currentContent = "";
+          render();
+        }
+      }, 0, ModalityState.stateForComponent(getComponent()));
+    }
+  }
+
 }
