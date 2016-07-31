@@ -9,6 +9,7 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 === 0.13 (not released yet)
 
 - New JavaFX preview and real split view
+- Update to asciidoctorj 1.5.4.1 and asciidoctorj-diagram 1.5.0
 
 === 0.12
 

@@ -15,6 +15,7 @@
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.13 New JavaFX preview and real split view<br />Update to asciidoctorj 1.5.4.1 and asciidoctorj-diagram 1.5.0</li>
       <li>0.12 Updated to asciidoctorj 1.5.3.2, added support for asciidoctor-diagram</li>
       <li>0.11 Added 40+ live templates, added 'open in browser', and removed AsciiDoc menu item. Thanks Dmitry!</li>
       <li>0.10 Toolbar added thanks to <a href="https://github.com/krasa">Vojtěch Krása</a>, Scratch files with preview thanks to Harro Lissenberg, and Basic Syntax Highlighting thanks to Dmitry Jemerov!</li>
