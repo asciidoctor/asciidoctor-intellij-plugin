@@ -6,6 +6,14 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 
 == Release notes
 
+=== 0.13 (not released yet)
+
+- New JavaFX preview and real split view
+
+=== 0.12
+
+- Updated to asciidoctorj 1.5.3.2, added support for asciidoctor-diagram
+
 === 0.11
 
 - Removed AsciiDoc item in right click menu thanks to Dmitry Jemerov.
