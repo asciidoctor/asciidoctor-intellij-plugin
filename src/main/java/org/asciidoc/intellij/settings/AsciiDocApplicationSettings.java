@@ -5,6 +5,7 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.StoragePathMacros;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Property;
@@ -13,7 +14,10 @@ import org.jetbrains.annotations.Nullable;
 
 @State(
   name = "AsciidocApplicationSettings",
-  storages = @Storage("asciidoc.xml")
+  storages = @Storage(file = StoragePathMacros.APP_CONFIG + "/asciidoc.xml")
+    // keep the line above to be compatible with IntellJ 15.x editions
+    // use the line below with IntellJ 2016.2.x
+    // @Storage("asciidoc.xml")
 )
 public class AsciiDocApplicationSettings implements PersistentStateComponent<AsciiDocApplicationSettings.State>,
                                                     AsciiDocPreviewSettings.Holder {

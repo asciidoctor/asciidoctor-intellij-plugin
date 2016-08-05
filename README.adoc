@@ -6,6 +6,11 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 
 == Release notes
 
+=== 0.14.1
+
+- make compatible with IntellJ 15.x again. +
+  This should include: AppCode 3.3, CLion 1.2, DataGrip 1.0, PhpStorm 10, PyCharm 5, RubyMine 8, WebStorm 11
+
 === 0.14
 
 - New JavaFX preview and real split view
