@@ -12,13 +12,13 @@ public class MakeTitleTest {
   @Test
   public void testAddTitle() {
     MakeTitle sut = new MakeTitle();
-    Assert.assertEquals("= hello", sut.updateSelection("hello"));
+    Assert.assertEquals("= hello", sut.updateSelection("hello", false));
   }
 
   @Test
   public void testRemoveTitle() {
     MakeTitle sut = new MakeTitle();
-    Assert.assertEquals("hello", sut.updateSelection("= hello"));
+    Assert.assertEquals("hello", sut.updateSelection("= hello", false));
   }
 
 }

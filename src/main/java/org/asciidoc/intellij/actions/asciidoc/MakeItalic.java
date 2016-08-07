@@ -6,8 +6,8 @@ package org.asciidoc.intellij.actions.asciidoc;
 public class MakeItalic extends SimpleFormatAsciiDocAction {
 
   @Override
-  public String updateSelection(String selection) {
-    return updateSelectionIntern(selection, "_");
+  public String updateSelection(String selection, boolean isWord) {
+    return updateSelectionIntern(selection, "_", isWord);
   }
 
   @Override

@@ -45,11 +45,11 @@ public class MakeLinkTest {
 
   @Test
   public void testUpdateSelection1() throws Exception {
-    assertEquals("http://example.com[]", sut.updateSelection("http://example.com"));
+    assertEquals("http://example.com[]", sut.updateSelection("http://example.com", false));
   }
 
   @Test
   public void testUpdateSelection2() throws Exception {
-    assertEquals("http://www.example.com[www.example.com]", sut.updateSelection("www.example.com"));
+    assertEquals("http://www.example.com[www.example.com]", sut.updateSelection("www.example.com", false));
   }
 }

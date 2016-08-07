@@ -5,20 +5,23 @@ package org.asciidoc.intellij.actions.asciidoc;
  */
 public abstract class SimpleFormatAsciiDocAction extends FormatAsciiDocAction {
 
-  protected String updateSelectionIntern(String selection, String symbol) {
+  protected String updateSelectionIntern(String selection, String symbol, boolean isWord) {
     if (containsSymbol(selection, symbol)) {
       return removeSymbol(selection, symbol);
     }
-    return appendSymbol(selection, symbol);
+    return appendSymbol(selection, symbol, isWord);
   }
 
-  private String appendSymbol(String selection, String symbol) {
-    String doubleSymbol = symbol + symbol;
-    return doubleSymbol + selection + doubleSymbol;
+  private String appendSymbol(String selection, String symbol, boolean isWord) {
+    String matchingSymbol = symbol;
+    if(!isWord) {
+      matchingSymbol += symbol;
+    }
+    return matchingSymbol + selection + matchingSymbol;
   }
 
   private String removeSymbol(String selection, String symbol) {
-    if (selection.startsWith(symbol + symbol)) {
+    if (selection.startsWith(symbol + symbol) && selection.endsWith(symbol + symbol)) {
       return removeSymbol(selection, 2);
     }
     return removeSymbol(selection, 1);

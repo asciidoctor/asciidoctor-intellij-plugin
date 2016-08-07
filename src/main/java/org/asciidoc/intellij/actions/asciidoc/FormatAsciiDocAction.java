@@ -6,6 +6,7 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
+import com.intellij.openapi.editor.impl.TextRangeInterval;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +19,7 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
 
   public abstract String getName();
 
-  public abstract String updateSelection(String selection);
+  public abstract String updateSelection(String selection, boolean word);
 
   @Override
   public final void actionPerformed(@NotNull AnActionEvent event) {
@@ -36,8 +37,44 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
     SelectionModel selectionModel = editor.getSelectionModel();
     selectText(selectionModel);
 
-    String updatedText = updateSelection(selectionModel.getSelectedText());
+    boolean word = isWord(document, selectionModel);
+    String updatedText = updateSelection(selectionModel.getSelectedText(), word);
+
     updateDocument(project, document, selectionModel, updatedText);
+  }
+
+  /**
+   * Implementing the rules of Asciidoc's "When should I use unconstrained quotes?".
+   * See http://asciidoctor.org/docs/user-manual/ for details.
+   */
+  private boolean isWord(Document document, SelectionModel selectionModel) {
+    int start = selectionModel.getSelectionStart();
+    int end = selectionModel.getSelectionEnd();
+    if (start > 0) {
+      String preceededBy = document.getText(new TextRangeInterval(start - 1, start));
+      // not a word if selection is preceeded by a semicolon, an alphabetic characters, a digit or an underscore
+      if (preceededBy.matches("[;\\p{IsAlphabetic}\\p{Digit}_]")) {
+        return false;
+      }
+    }
+    String startingWith = document.getText(new TextRangeInterval(start, start + 1));
+    // not a word if selection is starting with a whitespace
+    if (startingWith.matches("[\\s]")) {
+      return false;
+    }
+    if (end < document.getTextLength()) {
+      // not a word if followed by a alphabetic character, a digit or an underscore
+      String succeededBy = document.getText(new TextRangeInterval(end, end + 1));
+      if (succeededBy.matches("\\p{IsAlphabetic}\\p{Digit}_")) {
+        return false;
+      }
+    }
+    // not a word if selecting is ending with a whitespace
+    String endsWith = document.getText(new TextRangeInterval(end - 1, end));
+    if (endsWith.matches("[\\s]")) {
+      return false;
+    }
+    return true;
   }
 
 

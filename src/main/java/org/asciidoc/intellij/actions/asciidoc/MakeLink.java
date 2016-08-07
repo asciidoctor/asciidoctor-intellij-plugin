@@ -13,7 +13,7 @@ public class MakeLink extends FormatAsciiDocAction {
   }
 
   @Override
-  public String updateSelection(String selection) {
+  public String updateSelection(String selection, boolean isWord) {
     if (isLink(selection)) {
       return selection + "[]";
     }
