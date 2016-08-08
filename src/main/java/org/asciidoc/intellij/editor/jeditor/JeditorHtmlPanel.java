@@ -111,6 +111,11 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
     setHtml(myLastRenderedHtml);
   }
 
+  @Override
+  public void scrollToLine(int line, int lineCount) {
+    // NOOP
+  }
+
   private void adjustBrowserSize() {
   }
 

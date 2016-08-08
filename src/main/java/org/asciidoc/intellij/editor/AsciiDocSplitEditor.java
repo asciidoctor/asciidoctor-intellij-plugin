@@ -59,9 +59,7 @@ public class AsciiDocSplitEditor extends SplitFileEditor<TextEditor, AsciiDocPre
         return;
       }
 
-      final int offset = editor.logicalPositionToOffset(e.getNewPosition());
-      // TODO
-      // myPreviewFileEditor.scrollToSrcOffset(offset);
+      myPreviewFileEditor.scrollToLine(e.getNewPosition().line);
     }
   }
 }

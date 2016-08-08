@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
@@ -133,14 +135,39 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
   }
 
-  private void runInPlatformWhenAvailable(@NotNull Runnable runnable) {
+  private void runInPlatformWhenAvailable(@NotNull final Runnable runnable) {
     if (myPanel == null) {
       myInitActions.add(runnable);
     }
     else {
-      Platform.runLater(runnable);
+      /* normally you should queue all runable for JavaFX. But I don't want to flood
+         JavaFX and instead this is building up some backpressure to the AsciiDoc rendering task.
+         The slower the JavaFX component is, the fewer updates we'll send to it.
+       */
+      final CountDownLatch doneSignal = new CountDownLatch(1);
+      Runnable wrappedRunnable = new Runnable() {
+        @Override
+        public void run() {
+          try {
+            runnable.run();
+          }
+          finally {
+            doneSignal.countDown();
+          }
+        }
+      };
+      Platform.runLater(wrappedRunnable);
+      try {
+        /* this is limited to 10 seconds to avoid a permanent lock condition (in case the Runable is not
+        executed for any reason */
+        doneSignal.await(10, TimeUnit.SECONDS);
+      }
+      catch (InterruptedException e) {
+        // ignore interruption
+      }
     }
   }
+
 
   private static void updateFontSmoothingType(@NotNull WebView view, boolean isGrayscale) {
     final FontSmoothingType typeToSet;
@@ -175,7 +202,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   private String prepareHtml(@NotNull String html) {
     return html
         .replace("<head>", "<head>" + getCssLines(myInlineCss))
-        .replace("<head>", "<head><base href=\"localfile://" + System.currentTimeMillis() + "/" + base + "/\" />\n");
+        .replace("<head>", "<head><base href=\"localfile://" + System.currentTimeMillis() + "/" + base + "/\" />\n")
+        .replace("</body>", getScriptingLines() + "</body>");
   }
 
   @Override
@@ -190,6 +218,24 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
             myPanelWrapper.repaint();
           }
         });
+      }
+    });
+  }
+
+  @Override
+  public void scrollToLine(final int line, final int lineCount) {
+    runInPlatformWhenAvailable(new Runnable() {
+      @Override
+      public void run() {
+        JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
+            "if ('__IntelliJTools' in window) " +
+                "__IntelliJTools.scrollToLine(" + line + ", " + lineCount + ");"
+        );
+        final Object result = JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
+            "document.documentElement.scrollTop || document.body.scrollTop");
+        if (result instanceof Number) {
+          myScrollPreservingListener.myScrollY = ((Number)result).intValue();
+        }
       }
     });
   }
@@ -212,6 +258,11 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       throw new IllegalStateException("WebView should be initialized by now. Check the caller thread");
     }
     return myWebView;
+  }
+
+  @NotNull
+  private static String getScriptingLines() {
+    return MY_SCRIPTING_LINES.getValue();
   }
 
   @SuppressWarnings("unused")

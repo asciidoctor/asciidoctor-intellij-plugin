@@ -65,6 +65,10 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /** Indicates whether the HTML preview is obsolete and should regenerated from the AsciiDoc {@link #document}. */
   private transient String currentContent = "";
 
+  private transient int targetLineNo = 0;
+
+  private transient int currentLineNo = 0;
+
   /** The {@link Document} previewed in this editor. */
   protected final Document document;
 
@@ -96,6 +100,10 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
             if (markup != null) {
               myPanel.setHtml(markup);
             }
+          }
+          if (currentLineNo != targetLineNo) {
+            currentLineNo = targetLineNo;
+            myPanel.scrollToLine(targetLineNo, document.getLineCount());
           }
         }
         catch (InterruptedException e) {
@@ -339,6 +347,11 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /** Dispose the editor. */
   public void dispose() {
     Disposer.dispose(this);
+  }
+
+  public void scrollToLine(int line) {
+    targetLineNo = line;
+    renderIfVisible();
   }
 
   private class MyUpdatePanelOnSettingsChangedListener implements AsciiDocApplicationSettings.SettingsChangedListener {
