@@ -6,6 +6,10 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 
 == Release notes
 
+=== 0.14.2 (unreleased)
+
+- Performance improvement: render preview only when visible
+
 === 0.14.1
 
 - make compatible with IntellJ 15.x again. +
