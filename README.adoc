@@ -9,6 +9,7 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 === 0.14.2 (unreleased)
 
 - Performance improvement: render preview only when visible
+- Don't show AsciiDoc preview actions in other Editors
 
 === 0.14.1
 

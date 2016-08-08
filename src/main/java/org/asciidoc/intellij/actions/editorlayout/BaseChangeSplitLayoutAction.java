@@ -19,7 +19,7 @@ abstract class BaseChangeSplitLayoutAction extends AnAction implements DumbAware
   @Override
   public void update(AnActionEvent e) {
     final SplitFileEditor splitFileEditor = AsciiDocActionUtil.findSplitEditor(e);
-    e.getPresentation().setEnabled(splitFileEditor != null);
+    e.getPresentation().setEnabledAndVisible(splitFileEditor != null);
 
     if (myLayoutToSet != null && splitFileEditor != null) {
       e.getPresentation().putClientProperty(SELECTED_PROPERTY, splitFileEditor.getCurrentEditorLayout() == myLayoutToSet);

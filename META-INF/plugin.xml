@@ -15,7 +15,8 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.14.2 Performance improvement: render preview only when visible.</li>
+      <li>0.14.2 Performance improvement: render preview only when visible.
+        <br />Don't show AsciiDoc preview actions in other Editors</li>
       <li>0.14.1 make compatible with IntellJ 15.x again.
         <br />This should include: AppCode 3.3, CLion 1.2, DataGrip 1.0, PhpStorm 10, PyCharm 5, RubyMine 8, WebStorm 11</li>
       <li>0.14 New JavaFX preview and real split view<br />Update to asciidoctorj 1.5.4.1 and asciidoctorj-diagram 1.5.0</li>
