@@ -5,7 +5,6 @@ import com.intellij.openapi.editor.event.CaretAdapter;
 import com.intellij.openapi.editor.event.CaretEvent;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.pom.Navigatable;
-import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.ui.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +14,12 @@ public class AsciiDocSplitEditor extends SplitFileEditor<TextEditor, AsciiDocPre
     super(mainEditor, secondEditor);
 
     mainEditor.getEditor().getCaretModel().addCaretListener(new MyCaretListener(secondEditor));
+  }
+
+  @Override
+  protected void adjustEditorsVisibility() {
+    super.adjustEditorsVisibility();
+    getSecondEditor().renderIfVisible();
   }
 
   @NotNull

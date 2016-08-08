@@ -112,7 +112,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     IdeFocusManager.findInstanceByComponent(myComponent).requestFocus(myComponent, true);
   }
 
-  private void adjustEditorsVisibility() {
+  protected void adjustEditorsVisibility() {
     myMainEditor.getComponent().setVisible(mySplitEditorLayout.showFirst);
     mySecondEditor.getComponent().setVisible(mySplitEditorLayout.showSecond);
   }
