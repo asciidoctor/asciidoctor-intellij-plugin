@@ -33,7 +33,6 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
@@ -114,6 +113,12 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     });
   }
 
+  public void renderIfVisible() {
+    if (getComponent().isVisible()) {
+      render();
+    }
+  }
+
   @Nullable("Null means leave current panel")
   private AsciiDocHtmlPanelProvider retrievePanelProvider(@NotNull AsciiDocApplicationSettings settings) {
     final AsciiDocHtmlPanelProvider.ProviderInfo providerInfo = settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo();
@@ -164,12 +169,9 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     this.document.addDocumentListener(new DocumentAdapter() {
       @Override
       public void documentChanged(DocumentEvent e) {
-        render();
+        renderIfVisible();
       }
     }, this);
-
-    render();
-
   }
 
   @Contract("_, null, null -> fail")
@@ -273,7 +275,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    */
   public void selectNotify() {
     currentContent = "";
-    render();
+    renderIfVisible();
   }
 
   /**
