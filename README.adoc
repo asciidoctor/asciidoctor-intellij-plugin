@@ -6,7 +6,7 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 
 == Release notes
 
-=== 0.14.2 (unreleased)
+=== 0.14.2
 
 - Performance improvement: render preview only when visible
 - Don't show AsciiDoc preview actions in other Editors
