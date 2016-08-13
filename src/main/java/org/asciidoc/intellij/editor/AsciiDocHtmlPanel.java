@@ -23,4 +23,6 @@ public abstract class AsciiDocHtmlPanel implements Disposable {
     }
     return result.toString();
   }
+
+  public abstract void scrollToLine(int line, int lineCount);
 }

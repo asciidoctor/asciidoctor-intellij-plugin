@@ -23,6 +23,7 @@ import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Map;
 
 /** @author Julien Viet */
@@ -39,6 +40,12 @@ public class AsciiDoc {
     try {
       Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
       asciidoctor = Asciidoctor.Factory.create();
+      asciidoctor.requireLibrary("asciidoctor-diagram");
+      InputStream is = this.getClass().getResourceAsStream("/sourceline-treeprocessor.rb");
+      if(is == null) {
+        throw new RuntimeException("unable to load script sourceline-treeprocessor.rb");
+      }
+      asciidoctor.rubyExtensionRegistry().loadClass(is).treeprocessor("SourceLineTreeProcessor");
     }
     finally {
       Thread.currentThread().setContextClassLoader(old);
@@ -49,7 +56,6 @@ public class AsciiDoc {
     ClassLoader old = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
-      asciidoctor.requireLibrary("asciidoctor-diagram");
       return "<div id=\"content\">\n" + asciidoctor.render(text, getDefaultOptions()) + "\n</div>";
     }
     finally {
@@ -61,7 +67,7 @@ public class AsciiDoc {
     Attributes attrs = AttributesBuilder.attributes().showTitle(true)
         .sourceHighlighter("coderay").attribute("coderay-css", "style")
         .attribute("env", "idea").attribute("env-idea").get();
-    OptionsBuilder opts = OptionsBuilder.options().safe(SafeMode.UNSAFE).backend("html5").headerFooter(false).attributes(attrs)
+    OptionsBuilder opts = OptionsBuilder.options().safe(SafeMode.UNSAFE).backend("html5").headerFooter(false).attributes(attrs).option("sourcemap", "true")
         .baseDir(baseDir);
     return opts.asMap();
   }
