@@ -12,7 +12,7 @@ public class MakeTitle extends FormatAsciiDocAction {
   }
 
   @Override
-  public String updateSelection(String selection) {
+  public String updateSelection(String selection, boolean isWord) {
 
     if (selection.startsWith("= ")) {
       return selection.substring(2);

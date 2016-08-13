@@ -6,8 +6,8 @@ package org.asciidoc.intellij.actions.asciidoc;
 public class MakeBold extends SimpleFormatAsciiDocAction {
 
   @Override
-  public String updateSelection(String selection) {
-    return updateSelectionIntern(selection, "*");
+  public String updateSelection(String selection, boolean isWord) {
+    return updateSelectionIntern(selection, "*", isWord);
   }
 
   @Override
