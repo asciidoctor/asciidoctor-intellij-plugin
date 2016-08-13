@@ -6,6 +6,14 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 
 == Release notes
 
+=== 0.15.0 (work in progress)
+
+- correct usage of constrained/unconstrained AsciiDoc formatting
+- JavaFX Preview will automatically scroll to the cursor position of the editor
+- JavaFX preview will automatically open links in the systems's default browser
+
+IntelliJ 15 (including AppCode 3.3, CLion 1.2, DataGrip 1.0, PhpStorm 10, PyCharm 5, RubyMine 8, WebStorm 11) is the new minimum version required for this release.
+
 === 0.14.2
 
 - Performance improvement: render preview only when visible
