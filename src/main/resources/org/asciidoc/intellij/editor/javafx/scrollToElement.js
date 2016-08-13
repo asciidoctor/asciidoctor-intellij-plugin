@@ -24,8 +24,8 @@ window.__IntelliJTools.scrollToLine = (function () {
 
   var scrollToLine = function (newLineToScroll, lineCount) {
 
-    // the sourcelines will be as CSS class on div elements only
-    var blocks = document.getElementsByTagName('div');
+    // the sourcelines will be as CSS class elements that also have class has-source-line
+    var blocks = document.getElementsByClassName('has-source-line');
     var startY;
     var startLine;
     var endY;

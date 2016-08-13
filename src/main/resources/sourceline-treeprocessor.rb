@@ -10,7 +10,7 @@ class SourceLineTreeProcessor < Extensions::Treeprocessor
 
       # on each node add the source file information as role (will result in CSS class in HTML)
       if (node.source_location) then
-        node.attributes['role'] = 'data-line-' + (node.source_location.file || 'stdin') + "-#{node.source_location.lineno}"
+        node.attributes['role'] = 'has-source-line data-line-' + (node.source_location.file || 'stdin') + "-#{node.source_location.lineno}"
       end
     end
     nil
