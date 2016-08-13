@@ -45,7 +45,14 @@ public class LocalfileURLConnection extends URLConnection {
 
   public String getContentType() {
     String fileName = getURL().getFile();
-    String ext = fileName.substring(fileName.lastIndexOf('.'));
+    String ext = "unknown";
+    if(fileName.lastIndexOf('.') != -1) {
+      ext = fileName.substring(fileName.lastIndexOf('.') + 1);
+      ext.toLowerCase();
+      if (ext.equals("svg")) {
+        ext = "svg+xml";
+      }
+    }
     return "image/" + ext; // TODO: switch based on file-type
   }
 
