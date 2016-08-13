@@ -59,8 +59,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   private static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup("asciidoctor",
       NotificationDisplayType.NONE, true);
 
-  /** single threaded with one task queue */
-  private static final LazyApplicationPoolExecutor LAZY_EXECUTOR = new LazyApplicationPoolExecutor();
+  /** single threaded with one task queue (one for each editor window) */
+  private final LazyApplicationPoolExecutor LAZY_EXECUTOR = new LazyApplicationPoolExecutor();
 
   /** Indicates whether the HTML preview is obsolete and should regenerated from the AsciiDoc {@link #document}. */
   private transient String currentContent = "";

@@ -115,10 +115,10 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
             ApplicationManager.getApplication().invokeLater(new Runnable() {
               @Override
               public void run() {
+                JavaFxHtmlPanel.this.setHtml("Initializing...");
                 myPanel = new JFXPanelWrapper();
                 myPanel.setScene(scene);
 
-                JavaFxHtmlPanel.this.setHtml("");
                 for (Runnable action : myInitActions) {
                   Platform.runLater(action);
                 }

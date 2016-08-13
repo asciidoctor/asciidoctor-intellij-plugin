@@ -28,38 +28,44 @@ import java.util.Map;
 
 /** @author Julien Viet */
 public class AsciiDoc {
-  /** . */
-  private final Asciidoctor asciidoctor;
+
+  private static Asciidoctor asciidoctor;
 
   /** Base directory to look up includes. */
   private final File baseDir;
 
   public AsciiDoc(File path) {
     this.baseDir = path;
-    ClassLoader old = Thread.currentThread().getContextClassLoader();
-    try {
-      Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
-      asciidoctor = Asciidoctor.Factory.create();
-      asciidoctor.requireLibrary("asciidoctor-diagram");
-      InputStream is = this.getClass().getResourceAsStream("/sourceline-treeprocessor.rb");
-      if(is == null) {
-        throw new RuntimeException("unable to load script sourceline-treeprocessor.rb");
+    synchronized (AsciiDoc.class) {
+      if (asciidoctor == null) {
+        ClassLoader old = Thread.currentThread().getContextClassLoader();
+        try {
+          Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
+          asciidoctor = Asciidoctor.Factory.create();
+          asciidoctor.requireLibrary("asciidoctor-diagram");
+          InputStream is = this.getClass().getResourceAsStream("/sourceline-treeprocessor.rb");
+          if (is == null) {
+            throw new RuntimeException("unable to load script sourceline-treeprocessor.rb");
+          }
+          asciidoctor.rubyExtensionRegistry().loadClass(is).treeprocessor("SourceLineTreeProcessor");
+        }
+        finally {
+          Thread.currentThread().setContextClassLoader(old);
+        }
       }
-      asciidoctor.rubyExtensionRegistry().loadClass(is).treeprocessor("SourceLineTreeProcessor");
-    }
-    finally {
-      Thread.currentThread().setContextClassLoader(old);
     }
   }
 
   public String render(String text) {
-    ClassLoader old = Thread.currentThread().getContextClassLoader();
-    try {
-      Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
-      return "<div id=\"content\">\n" + asciidoctor.render(text, getDefaultOptions()) + "\n</div>";
-    }
-    finally {
-      Thread.currentThread().setContextClassLoader(old);
+    synchronized (asciidoctor) {
+      ClassLoader old = Thread.currentThread().getContextClassLoader();
+      try {
+        Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
+        return "<div id=\"content\">\n" + asciidoctor.render(text, getDefaultOptions()) + "\n</div>";
+      }
+      finally {
+        Thread.currentThread().setContextClassLoader(old);
+      }
     }
   }
 
