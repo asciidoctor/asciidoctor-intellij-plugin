@@ -6,7 +6,7 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 
 == Release notes
 
-=== 0.15.0 (work in progress)
+=== 0.15.0 (preview, available from Github releases)
 
 - correct usage of constrained/unconstrained AsciiDoc formatting
 - JavaFX Preview will automatically scroll to the cursor position of the editor
