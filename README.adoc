@@ -6,6 +6,10 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 
 == Release notes
 
+=== 0.15.1 (unreleased)
+
+- revised constrained/unconstrained detection
+
 === 0.15.0 (preview, available from Github releases)
 
 - correct usage of constrained/unconstrained AsciiDoc formatting

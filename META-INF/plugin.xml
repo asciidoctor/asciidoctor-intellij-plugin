@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.15.0</version>
+  <version>0.15.1</version>
   <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -15,6 +15,7 @@
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.15.1 revised constrained/unconstrained detection</li>
       <li>0.15.0 correct usage of constrained/unconstrained AsciiDoc formatting
         <br />JavaFX Preview will automatically scroll to the cursor position of the editor
         <br />JavaFX preview will automatically open links in the systems's default browser

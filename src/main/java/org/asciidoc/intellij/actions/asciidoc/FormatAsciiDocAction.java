@@ -37,7 +37,7 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
     SelectionModel selectionModel = editor.getSelectionModel();
     selectText(selectionModel);
 
-    boolean word = isWord(document, selectionModel);
+    boolean word = isWord(document, selectionModel.getSelectionStart(), selectionModel.getSelectionEnd());
     String updatedText = updateSelection(selectionModel.getSelectedText(), word);
 
     updateDocument(project, document, selectionModel, updatedText);
@@ -47,13 +47,11 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
    * Implementing the rules of Asciidoc's "When should I use unconstrained quotes?".
    * See http://asciidoctor.org/docs/user-manual/ for details.
    */
-  private boolean isWord(Document document, SelectionModel selectionModel) {
-    int start = selectionModel.getSelectionStart();
-    int end = selectionModel.getSelectionEnd();
+  protected static boolean isWord(Document document, int start, int end) {
     if (start > 0) {
       String preceededBy = document.getText(new TextRangeInterval(start - 1, start));
-      // not a word if selection is preceeded by a semicolon, an alphabetic characters, a digit or an underscore
-      if (preceededBy.matches("[;\\p{IsAlphabetic}\\p{Digit}_]")) {
+      // not a word if selection is preceeded by a semicolon, colon, an alphabetic characters, a digit or an underscore
+      if (preceededBy.matches("(?U)[;:\\w_]")) {
         return false;
       }
     }
@@ -65,7 +63,7 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
     if (end < document.getTextLength()) {
       // not a word if followed by a alphabetic character, a digit or an underscore
       String succeededBy = document.getText(new TextRangeInterval(end, end + 1));
-      if (succeededBy.matches("\\p{IsAlphabetic}\\p{Digit}_")) {
+      if (succeededBy.matches("(?U)[\\w_]")) {
         return false;
       }
     }
