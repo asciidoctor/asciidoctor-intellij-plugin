@@ -30,12 +30,18 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
@@ -200,10 +206,44 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   private String prepareHtml(@NotNull String html) {
+    Pattern pattern = Pattern.compile("<img src=\"([^:\"]*)\"");
+    final Matcher matcher = pattern.matcher(html);
+    while (matcher.find()) {
+      final MatchResult matchResult = matcher.toMatchResult();
+      String file = matchResult.group(1);
+      String md5 = calculateMd5(file);
+      String replacement = "<img src=\"localfile://" + md5 + "/" + base + "/" + file + "\"";
+      html = html.substring(0, matchResult.start()) +
+          replacement + html.substring(matchResult.end());
+      matcher.reset(html);
+    }
+
     return html
         .replace("<head>", "<head>" + getCssLines(myInlineCss))
-        .replace("<head>", "<head><base href=\"localfile://" + System.currentTimeMillis() + "/" + base + "/\" />\n")
         .replace("</body>", getScriptingLines() + "</body>");
+  }
+
+  private String calculateMd5(String file) {
+    String md5;
+    try {
+      MessageDigest md = MessageDigest.getInstance("MD5");
+      FileInputStream fis = new FileInputStream(base.replaceAll("%3A", ":") + "/" + file);
+      int nread = 0;
+      byte[] dataBytes = new byte[1024];
+      while ((nread = fis.read(dataBytes)) != -1) {
+        md.update(dataBytes, 0, nread);
+      }
+      byte[] mdbytes = md.digest();
+      StringBuffer sb = new StringBuffer();
+      for (int i = 0;i < mdbytes.length;i++) {
+        sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+      }
+      md5 = sb.toString();
+    }
+    catch (NoSuchAlgorithmException | IOException e) {
+      md5 = "none";
+    }
+    return md5;
   }
 
   @Override

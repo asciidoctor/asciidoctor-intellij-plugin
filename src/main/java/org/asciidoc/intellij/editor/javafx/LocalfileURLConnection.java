@@ -79,7 +79,7 @@ public class LocalfileURLConnection extends URLConnection {
     String imgPath = url.toExternalForm();
     imgPath = imgPath.startsWith("localfile://") ? imgPath.substring("localfile://".length()) : imgPath.substring("localfile:".length()); // attention: triple '/' is reduced to a single '/'
     // decode URL and remove random number at the beginning
-    imgPath = URLDecoder.decode(imgPath, "UTF-8").replaceAll("^[0-9]*/", "");
+    imgPath = URLDecoder.decode(imgPath, "UTF-8").replaceAll("^[0-9a-z]*/", "");
 
     data = IOUtils.toByteArray(new URL("file:/" + imgPath));
   }

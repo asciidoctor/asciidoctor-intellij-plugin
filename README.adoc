@@ -10,6 +10,7 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 
 - revised constrained/unconstrained detection
 - Fix problem in syntax highlighting leading to PSI Parser Exceptions
+- refreshing images on JavaFX only if their content has changed to save memory consumption
 
 === 0.15.0 (preview, available from Github releases)
 
