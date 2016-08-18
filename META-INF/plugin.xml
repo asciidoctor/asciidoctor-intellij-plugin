@@ -15,7 +15,8 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.14.3 Fix situation in syntax highlighting leading to PSI Parser Exceptions</li>
+      <li>0.14.3 Fix situation in syntax highlighting leading to PSI Parser Exceptions
+        <br />disable automatically refreshing local images on JavaFX (to be re-enabled in 0.15.x)</li>
       <li>0.14.2 Performance improvement: render preview only when visible.
         <br />Don't show AsciiDoc preview actions in other Editors
         <br />additional compatibility fixes for IntelliJ 15.x</li>

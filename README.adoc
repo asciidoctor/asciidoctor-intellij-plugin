@@ -9,6 +9,7 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 === 0.14.3
 
 - Fix problem in syntax highlighting leading to PSI Parser Exceptions
+- disable automatically refreshing images on JavaFX (to be re-enabled in 0.15.x)
 
 === 0.14.2
 

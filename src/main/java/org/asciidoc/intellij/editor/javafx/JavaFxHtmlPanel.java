@@ -175,7 +175,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   private String prepareHtml(@NotNull String html) {
     return html
         .replace("<head>", "<head>" + getCssLines(myInlineCss))
-        .replace("<head>", "<head><base href=\"localfile://" + System.currentTimeMillis() + "/" + base + "/\" />\n");
+        .replace("<head>", "<head><base href=\"localfile://" + 1 + "/" + base + "/\" />\n");
   }
 
   @Override
