@@ -32,7 +32,7 @@ public class AsciiDocParserImpl {
 
   public void parse() {
     while (!myBuilder.eof()) {
-      if (at(HEADING)) {
+      if (myBlockStartMarker == null && at(HEADING)) {
         dropPreBlock();
         int level = headingLevel(myBuilder.getTokenText());
         closeSections(level);

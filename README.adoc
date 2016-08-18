@@ -19,6 +19,11 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 
 IntelliJ 15 (including AppCode 3.3, CLion 1.2, DataGrip 1.0, PhpStorm 10, PyCharm 5, RubyMine 8, WebStorm 11) is the new minimum version required for this release.
 
+=== 0.14.3
+
+- Fix problem in syntax highlighting leading to PSI Parser Exceptions
+- disable automatically refreshing images on JavaFX (to be re-enabled in 0.15.x)
+
 === 0.14.2
 
 - Performance improvement: render preview only when visible
