@@ -6,6 +6,10 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 
 == Release notes
 
+=== 0.14.3
+
+- Fix problem in syntax highlighting leading to PSI Parser Exceptions
+
 === 0.14.2
 
 - Performance improvement: render preview only when visible
