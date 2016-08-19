@@ -60,6 +60,8 @@ public class LazyApplicationPoolExecutor implements Executor {
           Thread.sleep(delay);
         }
         catch (InterruptedException e) {
+          System.out.println(System.currentTimeMillis() + ": was interrupted");
+          e.printStackTrace();
           Thread.currentThread().interrupt();
         }
         finally {

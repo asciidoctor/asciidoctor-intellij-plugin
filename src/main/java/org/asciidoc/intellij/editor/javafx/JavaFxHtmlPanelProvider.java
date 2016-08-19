@@ -22,6 +22,14 @@ public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
   @NotNull
   @Override
   public AvailabilityInfo isAvailable() {
+    /* trying to determine 64bit platforms, due to problem with OpenJDK x86 on Windows */
+    String architecture = System.getProperty("os.arch");
+    if (!architecture.equals("amd64") // Windows und Linux AMD64 = 64bit
+        && !architecture.equals("ppc") // Mac PPC = 64bit
+        ) {
+      return AvailabilityInfo.UNAVAILABLE;
+    }
+
     try {
       if (Class.forName("javafx.scene.web.WebView", false, getClass().getClassLoader()) != null) {
         return AvailabilityInfo.AVAILABLE;

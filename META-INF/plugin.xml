@@ -8,15 +8,17 @@
       <p><a href="http://www.methods.co.nz/asciidoc/">AsciiDoc</a> language support for IntelliJ platform.<p>
       <p>AsciiDoc is a text document format, similar to formats like Markdown, for writing notes, documentation, articles,
       books, ebooks, slideshows, web pages, man pages and blogs. AsciiDoc files can be translated to many formats
-      including HTML, PDF, EPUB, man page. AsciiDoc is, in constrast to Markdown, highly configurable: both the AsciiDoc
+      including HTML, PDF, EPUB, man page. AsciiDoc is, in contrast to Markdown, highly configurable: both the AsciiDoc
       source file syntax and the backend output markups (which can be almost any type of SGML/XML markup)
     can be customized and extended by the user.
+      <p>If you want to use JavaFX preview, you'll need to run IntelliJ with 64bit Java. For IntelliJ you'll need to have an environment variable `IDEA_JDK` pointing to the installation folder of a 64bit Java. See <a href="https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under">Jetbrains support database</a> for more information.
       ]]></description>
 
   <change-notes><![CDATA[
     <ul>
       <li>0.14.3 Fix situation in syntax highlighting leading to PSI Parser Exceptions
-        <br />disable automatically refreshing local images on JavaFX (to be re-enabled in 0.15.x)</li>
+        <br />disable automatically refreshing local images on JavaFX (to be re-enabled in 0.15.x)
+        <br />Limiting JavaFX preview to 64bit platforms due to problems especially with Windows OpenJDK 32bit (as default on Windows).</li>
       <li>0.14.2 Performance improvement: render preview only when visible.
         <br />Don't show AsciiDoc preview actions in other Editors
         <br />additional compatibility fixes for IntelliJ 15.x</li>
