@@ -11,13 +11,15 @@
       including HTML, PDF, EPUB, man page. AsciiDoc is, in contrast to Markdown, highly configurable: both the AsciiDoc
       source file syntax and the backend output markups (which can be almost any type of SGML/XML markup)
     can be customized and extended by the user.
+      <p>If you want to use JavaFX preview, you'll need to run IntelliJ with 64bit Java. For IntelliJ you'll need to have an environment variable `IDEA_JDK` pointing to the installation folder of a 64bit Java. See <a href="https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under">Jetbrains support database</a> for more information.
       ]]></description>
 
   <change-notes><![CDATA[
     <ul>
       <li>0.15.1 revised constrained/unconstrained detection
         <br />Fix situation in syntax highlighting leading to PSI Parser Exceptions
-        <br />refreshing images on JavaFX only if their content has changed to save memory consumption</li>
+        <br />refreshing images on JavaFX only if their content has changed to save memory consumption
+        <br />Limiting JavaFX preview to 64bit platforms due to problems especially with Windows OpenJDK 32bit (as default on Windows).</li>
       <li>0.15.0 correct usage of constrained/unconstrained AsciiDoc formatting
         <br />JavaFX Preview will automatically scroll to the cursor position of the editor
         <br />JavaFX preview will automatically open links in the systems's default browser

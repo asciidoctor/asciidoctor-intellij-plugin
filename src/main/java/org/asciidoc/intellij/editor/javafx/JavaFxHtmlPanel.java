@@ -313,6 +313,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
           link = new URI("http", link, null).toURL().toString();
         }
         catch (Exception ignore) {
+          ignore.printStackTrace();
         }
       }
 

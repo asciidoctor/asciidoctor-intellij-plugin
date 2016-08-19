@@ -4,6 +4,8 @@ Erik Pragt
 
 A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language. You can install the plugin (named "AsciiDoc") from the plugins section inside your Jetbrains IDE or download it from the https://plugins.jetbrains.com/plugin/7391[Jetbrains Plugin Repository]. 
 
+If you want to use JavaFX preview, you'll need to run IntelliJ with 64bit Java. For IntelliJ you'll need to have an environment variable `IDEA_JDK` pointing to the installation folder of a 64bit Java. See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Jetbrains support database] for more information.
+
 == Release notes
 
 === 0.15.1 (unreleased)
@@ -11,6 +13,7 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 - revised constrained/unconstrained detection
 - Fix problem in syntax highlighting leading to PSI Parser Exceptions
 - refreshing images on JavaFX only if their content has changed to save memory consumption
+- Limiting JavaFX preview to 64bit platforms due to problems especially with Windows OpenJDK 32bit (as default on Windows).
 
 === 0.15.0 (preview, available from Github releases)
 
