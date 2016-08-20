@@ -8,7 +8,11 @@ If you want to use JavaFX preview, you'll need to run IntelliJ with 64bit Java. 
 
 == Release notes
 
-=== 0.15.1 (unreleased)
+=== 0.15.2 (preview, available from Github releases)
+
+- fixed detection of Mac 64 JVM to be able to activate JavaFX preview
+
+=== 0.15.1 (preview, available from Github releases)
 
 - revised constrained/unconstrained detection
 - Fix problem in syntax highlighting leading to PSI Parser Exceptions

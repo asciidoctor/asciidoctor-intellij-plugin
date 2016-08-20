@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.15.1</version>
+  <version>0.15.2</version>
   <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -16,6 +16,7 @@
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.15.2 fixed detection of Mac 64 JVM to be able to activate JavaFX preview</li>
       <li>0.15.1 revised constrained/unconstrained detection
         <br />Fix situation in syntax highlighting leading to PSI Parser Exceptions
         <br />refreshing images on JavaFX only if their content has changed to save memory consumption
