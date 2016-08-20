@@ -11,6 +11,7 @@ If you want to use JavaFX preview, you'll need to run IntelliJ with 64bit Java. 
 === 0.15.2 (preview, available from Github releases)
 
 - fixed detection of Mac 64 JVM to be able to activate JavaFX preview
+- click-on-url for JavaFX improved, when slow-loading external images are referenced
 
 === 0.15.1 (preview, available from Github releases)
 

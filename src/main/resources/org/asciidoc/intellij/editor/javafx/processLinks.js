@@ -2,12 +2,12 @@ if (window.__IntelliJTools === undefined) {
   window.__IntelliJTools = {}
 }
 
-(function() {
-  var openInExternalBrowser = function(href) {
+window.__IntelliJTools.processLinks = (function () {
+  var openInExternalBrowser = function (href) {
     window.JavaPanelBridge.openInExternalBrowser(href);
   }
 
-  window.__IntelliJTools.processClick = function() {
+  window.__IntelliJTools.processClick = function () {
     if (!this.href) {
       return false;
     }
@@ -26,17 +26,18 @@ if (window.__IntelliJTools === undefined) {
     return false;
   }
 
-  window.onload = function() {
-    setTimeout(function () {
-      var links = document.getElementsByTagName("a");
-      //window.JavaPanelBridge.log(links.length)
-      for (var i = 0; i < links.length; ++i) {
-        var link = links[i];
+  var processLinks = function () {
+    var links = document.getElementsByTagName("a");
+    // window.JavaPanelBridge.log(links.length)
+    for (var i = 0; i < links.length; ++i) {
+      var link = links[i];
 
-        link.onclick = __IntelliJTools.processClick
-        //window.JavaPanelBridge.log(link + ' ' + link.onclick)
-      }
-    }, 100)
+      link.onclick = __IntelliJTools.processClick
+      // window.JavaPanelBridge.log(link + ' ' + link.onclick)
+    }
   }
 
+  return processLinks;
+
 })()
+

@@ -16,7 +16,8 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.15.2 fixed detection of Mac 64 JVM to be able to activate JavaFX preview</li>
+      <li>0.15.2 fixed detection of Mac 64 JVM to be able to activate JavaFX preview
+        <br />click-on-url for JavaFX improved, when slow-loading external images are referenced</li>
       <li>0.15.1 revised constrained/unconstrained detection
         <br />Fix situation in syntax highlighting leading to PSI Parser Exceptions
         <br />refreshing images on JavaFX only if their content has changed to save memory consumption

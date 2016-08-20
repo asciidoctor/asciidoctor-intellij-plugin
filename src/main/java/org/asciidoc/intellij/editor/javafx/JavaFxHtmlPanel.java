@@ -328,9 +328,15 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   private class BridgeSettingListener implements ChangeListener<State> {
     @Override
     public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
-      JSObject win
-          = (JSObject)getWebViewGuaranteed().getEngine().executeScript("window");
-      win.setMember("JavaPanelBridge", new JavaPanelBridge());
+      if (newValue == State.SUCCEEDED) {
+        JSObject win
+            = (JSObject)getWebViewGuaranteed().getEngine().executeScript("window");
+        win.setMember("JavaPanelBridge", new JavaPanelBridge());
+        JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
+            "if ('__IntelliJTools' in window) " +
+                "__IntelliJTools.processLinks();"
+        );
+      }
     }
   }
 
