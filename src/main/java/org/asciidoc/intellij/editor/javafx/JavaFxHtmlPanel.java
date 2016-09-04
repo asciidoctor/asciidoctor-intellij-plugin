@@ -66,7 +66,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   @NotNull
   private final List<Runnable> myInitActions = new ArrayList<Runnable>();
   @Nullable
-  private JFXPanel myPanel;
+  private volatile JFXPanel myPanel;
   @Nullable
   private WebView myWebView;
   @Nullable
@@ -111,6 +111,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
             updateFontSmoothingType(myWebView,
                 true);
             myWebView.setContextMenuEnabled(false);
+            myWebView.getEngine().loadContent("<html><head></head><body>Initializing...</body>");
 
             final WebEngine engine = myWebView.getEngine();
             engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
@@ -121,7 +122,6 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
             ApplicationManager.getApplication().invokeLater(new Runnable() {
               @Override
               public void run() {
-                JavaFxHtmlPanel.this.setHtml("Initializing...");
                 myPanel = new JFXPanelWrapper();
                 myPanel.setScene(scene);
 
