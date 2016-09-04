@@ -15,7 +15,6 @@
  */
 package org.asciidoc.intellij.editor;
 
-import com.intellij.CommonBundle;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.notification.Notification;
@@ -33,7 +32,6 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.util.Alarm;
@@ -137,12 +135,16 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       settings.setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(settings.getAsciiDocPreviewSettings().getSplitEditorLayout(),
           AsciiDocPreviewSettings.DEFAULT.getHtmlPanelProviderInfo()));
 
+      /* the following will not work, IntellIJ will show the error "parent must be showing" when this is
+         tiggered during startup. */
+      /*
       Messages.showMessageDialog(
           myHtmlPanelWrapper,
           "Tried to use preview panel provider (" + providerInfo.getName() + "), but it is unavailable. Reverting to default.",
           CommonBundle.getErrorTitle(),
           Messages.getErrorIcon()
       );
+      */
 
       provider = AsciiDocHtmlPanelProvider.getProviders()[0];
     }
