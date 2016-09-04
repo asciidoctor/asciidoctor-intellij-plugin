@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.15.2</version>
+  <version>0.15.3</version>
   <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -11,11 +11,15 @@
       including HTML, PDF, EPUB, man page. AsciiDoc is, in contrast to Markdown, highly configurable: both the AsciiDoc
       source file syntax and the backend output markups (which can be almost any type of SGML/XML markup)
     can be customized and extended by the user.
-      <p>If you want to use JavaFX preview, you'll need to run IntelliJ with 64bit Java. For IntelliJ you'll need to have an environment variable `IDEA_JDK` pointing to the installation folder of a 64bit Java. See <a href="https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under">Jetbrains support database</a> for more information.
+      <p>If you want to use the JavaFX instead of the Swing preview, you'll need to run IntelliJ with 64bit Java.
+      If your IntelliJ distribution doesn't come with 64bit Java, you'll need to have an environment variable
+      `IDEA_JDK` or `IDEA_JDK64` pointing to the installation folder of a 64bit Java. See <a href="https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under">Jetbrains support database</a> for more information.
       ]]></description>
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.15.3 Initialization message appears only during initialization
+        <br />No error message if user switches to a setup where JavaFX preview is no longer available.</li>
       <li>0.15.2 fixed detection of Mac 64 JVM to be able to activate JavaFX preview
         <br />click-on-url for JavaFX improved, when slow-loading external images are referenced</li>
       <li>0.15.1 revised constrained/unconstrained detection
