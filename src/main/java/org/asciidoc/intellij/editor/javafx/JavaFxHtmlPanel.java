@@ -146,31 +146,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       myInitActions.add(runnable);
     }
     else {
-      /* normally you should queue all runable for JavaFX. But I don't want to flood
-         JavaFX and instead this is building up some backpressure to the AsciiDoc rendering task.
-         The slower the JavaFX component is, the fewer updates we'll send to it.
-       */
-      final CountDownLatch doneSignal = new CountDownLatch(1);
-      Runnable wrappedRunnable = new Runnable() {
-        @Override
-        public void run() {
-          try {
-            runnable.run();
-          }
-          finally {
-            doneSignal.countDown();
-          }
-        }
-      };
-      Platform.runLater(wrappedRunnable);
-      try {
-        /* this is limited to 10 seconds to avoid a permanent lock condition (in case the Runable is not
-        executed for any reason */
-        doneSignal.await(10, TimeUnit.SECONDS);
-      }
-      catch (InterruptedException e) {
-        // ignore interruption
-      }
+      Platform.runLater(runnable);
     }
   }
 
@@ -206,6 +182,9 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   private String prepareHtml(@NotNull String html) {
+    /* for each image we'll calculate a MD5 sum of its content. Once the content changes, MD5 and therefore the URL
+    * will change. The changed URL is necessary for the JavaFX web view to display the new content, as each URL
+    * will be loaded only once by the JavaFX web view. */
     Pattern pattern = Pattern.compile("<img src=\"([^:\"]*)\"");
     final Matcher matcher = pattern.matcher(html);
     while (matcher.find()) {
@@ -218,6 +197,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       matcher.reset(html);
     }
 
+    /* Add CSS line and JavaScript for auto-scolling and clickable links */
     return html
         .replace("<head>", "<head>" + getCssLines(myInlineCss))
         .replace("</body>", getScriptingLines() + "</body>");
