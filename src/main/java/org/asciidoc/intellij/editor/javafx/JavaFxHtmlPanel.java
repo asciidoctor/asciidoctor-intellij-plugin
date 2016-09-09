@@ -2,8 +2,6 @@ package org.asciidoc.intellij.editor.javafx;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
@@ -38,8 +36,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -120,14 +116,14 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
             ApplicationManager.getApplication().invokeLater(new Runnable() {
               @Override
               public void run() {
-                myPanel = new JFXPanelWrapper();
-                myPanel.setScene(scene);
-
-                for (Runnable action : myInitActions) {
-                  Platform.runLater(action);
+                synchronized (myInitActions) {
+                  myPanel = new JFXPanelWrapper();
+                  Platform.runLater(() -> myPanel.setScene(scene));
+                  for (Runnable action : myInitActions) {
+                    Platform.runLater(action);
+                  }
+                  myInitActions.clear();
                 }
-                myInitActions.clear();
-
                 myPanelWrapper.add(myPanel, BorderLayout.CENTER);
                 myPanelWrapper.repaint();
               }
@@ -140,11 +136,13 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   private void runInPlatformWhenAvailable(@NotNull final Runnable runnable) {
-    if (myPanel == null) {
-      myInitActions.add(runnable);
-    }
-    else {
-      Platform.runLater(runnable);
+    synchronized (myInitActions) {
+      if (myPanel == null) {
+        myInitActions.add(runnable);
+      }
+      else {
+        Platform.runLater(runnable);
+      }
     }
   }
 
