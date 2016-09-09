@@ -54,7 +54,7 @@ import java.util.concurrent.FutureTask;
 /** @author Julien Viet */
 public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEditor {
 
-  private static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup("asciidoctor",
+  public static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup("asciidoctor",
       NotificationDisplayType.NONE, true);
 
   /** single threaded with one task queue (one for each editor window) */

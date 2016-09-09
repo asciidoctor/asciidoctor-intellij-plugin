@@ -25,6 +25,7 @@ import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 import org.apache.commons.io.IOUtils;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
+import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,9 +45,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
-
-  private static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup("asciidoctor",
-      NotificationDisplayType.NONE, true);
 
   private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = new NotNullLazyValue<String>() {
     @NotNull
@@ -93,8 +91,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     }
     catch (IOException e) {
       String message = "Error rendering asciidoctor: " + e.getMessage();
-      Notification notification = NOTIFICATION_GROUP.createNotification("Error rendering asciidoctor", message,
-          NotificationType.ERROR, null);
+      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+          .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
       // increase event log counter
       notification.setImportant(true);
       Notifications.Bus.notify(notification);

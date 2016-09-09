@@ -1,8 +1,6 @@
 package org.asciidoc.intellij.editor.jeditor;
 
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.editor.Document;
@@ -10,6 +8,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
+import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -27,9 +26,6 @@ import static org.asciidoc.intellij.util.UIUtil.loadStyleSheet;
 
 final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
   private static final int FOCUS_ELEMENT_DY = 100;
-
-  private static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup("asciidoctor",
-      NotificationDisplayType.NONE, true);
 
   @NotNull
   private final JEditorPane jEditorPane;
@@ -77,8 +73,8 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
     }
     catch (IOException e) {
       String message = "Error rendering asciidoctor: " + e.getMessage();
-      Notification notification = NOTIFICATION_GROUP.createNotification("Error rendering asciidoctor", message,
-          NotificationType.ERROR, null);
+      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+          .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
       // increase event log counter
       notification.setImportant(true);
       Notifications.Bus.notify(notification);
