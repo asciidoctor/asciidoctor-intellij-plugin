@@ -10,7 +10,7 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
-=== 0.15.4 (preview, available from Github releases)
+=== 0.15.4
 
 - setScene now called from FxThread instead of AWT thread to avoid blocking GUI on MacOS
 
