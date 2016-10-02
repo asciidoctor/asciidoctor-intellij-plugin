@@ -38,7 +38,7 @@ public class AsciiDocIcons {
   public static class EditorActions {
     public static final Icon Bold = load("/icons/editor_actions/Bold.png"); // 16x16
     public static final Icon Italic = load("/icons/editor_actions/Italic.png"); // 16x16
-    public static final Icon Table = load("/icons/editor_actions/table.gif"); // 16x16
+    public static final Icon Table = load("/icons/editor_actions/table.png"); // 16x16
     public static final Icon Link = load("/icons/editor_actions/Link.png"); // 16x16
     public static final Icon Strike_through = load("/icons/editor_actions/Strike_through.png"); // 16x16
     public static final Icon Code_span = load("/icons/editor_actions/Code_span.png"); // 16x16
