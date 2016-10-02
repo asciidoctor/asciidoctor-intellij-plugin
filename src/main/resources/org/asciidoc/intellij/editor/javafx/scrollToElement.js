@@ -15,7 +15,7 @@ window.__IntelliJTools.scrollToLine = (function () {
     for (var i = 0; i < classes.length; i++) {
       var className = classes[i]
       if (className.match(/^data-line-stdin-/)) {
-        return className.substr("data-line-stdin-".length);
+        return Number(className.substr("data-line-stdin-".length));
       }
     }
 
@@ -42,7 +42,7 @@ window.__IntelliJTools.scrollToLine = (function () {
       }
       else if (lineOfBlock > newLineToScroll) {
         endY = block.offsetTop
-        endLine = lineOfBlock
+        endLine = lineOfBlock -1;
         break
       }
     }

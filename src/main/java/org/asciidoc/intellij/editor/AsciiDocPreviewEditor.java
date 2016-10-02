@@ -25,6 +25,7 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -74,7 +75,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   private final JPanel myHtmlPanelWrapper;
 
   @NotNull
-  private transient AsciiDocHtmlPanel myPanel;
+  private volatile AsciiDocHtmlPanel myPanel;
 
   @NotNull
   private final Alarm mySwingAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
@@ -152,7 +153,6 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     return provider;
   }
 
-
   public AsciiDocPreviewEditor(final Document document) {
 
     //
@@ -202,6 +202,9 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     }
 
     final AsciiDocHtmlPanel newPanel = newPanelProvider.createHtmlPanel(document);
+    if(oldPanel != null) {
+      newPanel.setEditor(oldPanel.getEditor());
+    }
     panelWrapper.add(newPanel.getComponent(), BorderLayout.CENTER);
     panelWrapper.repaint();
 
@@ -372,4 +375,11 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     }
   }
 
+  public Editor getEditor() {
+    return myPanel.getEditor();
+  }
+
+  public void setEditor(Editor editor) {
+    myPanel.setEditor(editor);
+  }
 }

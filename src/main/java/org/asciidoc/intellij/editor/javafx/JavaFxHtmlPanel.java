@@ -6,7 +6,10 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.CaretState;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.LogicalPosition;
+import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.ui.JBColor;
@@ -35,6 +38,7 @@ import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -51,6 +55,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       return new StringBuilder()
           .append("<script src=\"").append(clazz.getResource("scrollToElement.js")).append("\"></script>\n")
           .append("<script src=\"").append(clazz.getResource("processLinks.js")).append("\"></script>\n")
+          .append("<script src=\"").append(clazz.getResource("pickSourceLine.js")).append("\"></script>\n")
           .toString();
     }
   };
@@ -72,6 +77,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
   @NotNull
   private String base;
+
+  private int lineCount = 0;
 
   public JavaFxHtmlPanel(Document document) {
     //System.setProperty("prism.lcdtext", "false");
@@ -102,8 +109,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
           public void run() {
             myWebView = new WebView();
 
-            updateFontSmoothingType(myWebView,
-                true);
+            updateFontSmoothingType(myWebView, false);
             myWebView.setContextMenuEnabled(false);
             myWebView.getEngine().loadContent("<html><head></head><body>Initializing...</body>");
 
@@ -240,6 +246,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
   @Override
   public void scrollToLine(final int line, final int lineCount) {
+    this.lineCount = lineCount;
     runInPlatformWhenAvailable(new Runnable() {
       @Override
       public void run() {
@@ -282,7 +289,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   @SuppressWarnings("unused")
-  public static class JavaPanelBridge {
+  public class JavaPanelBridge {
     public void openInExternalBrowser(@NotNull String link) {
       if (!BrowserUtil.isAbsoluteURL(link)) {
         try {
@@ -294,6 +301,17 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       }
 
       BrowserUtil.browse(link);
+    }
+
+    public void scollEditorToLine(int sourceLine) {
+      ApplicationManager.getApplication().invokeLater(
+          () -> {
+            getEditor().getCaretModel().setCaretsAndSelections(
+                Arrays.asList(new CaretState(new LogicalPosition(sourceLine - 1, 0), null, null))
+            );
+            getEditor().getScrollingModel().scrollToCaret(ScrollType.CENTER_UP);
+          }
+      );
     }
 
     public void log(@Nullable String text) {
@@ -309,8 +327,10 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
             = (JSObject)getWebViewGuaranteed().getEngine().executeScript("window");
         win.setMember("JavaPanelBridge", new JavaPanelBridge());
         JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
-            "if ('__IntelliJTools' in window) " +
-                "__IntelliJTools.processLinks();"
+            "if ('__IntelliJTools' in window) {" +
+                "__IntelliJTools.processLinks();" +
+                "__IntelliJTools.pickSourceLine(" + lineCount + ");" +
+                "}"
         );
       }
     }
