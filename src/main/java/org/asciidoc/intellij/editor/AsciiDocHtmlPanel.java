@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.editor;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.editor.Editor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,6 +15,8 @@ public abstract class AsciiDocHtmlPanel implements Disposable {
 
   public abstract void render();
 
+  private Editor editor;
+
   @NotNull
   protected static String getCssLines(@Nullable String inlineCss) {
     StringBuilder result = new StringBuilder();
@@ -25,4 +28,12 @@ public abstract class AsciiDocHtmlPanel implements Disposable {
   }
 
   public abstract void scrollToLine(int line, int lineCount);
+
+  public Editor getEditor() {
+    return editor;
+  }
+
+  public void setEditor(Editor editor) {
+    this.editor = editor;
+  }
 }

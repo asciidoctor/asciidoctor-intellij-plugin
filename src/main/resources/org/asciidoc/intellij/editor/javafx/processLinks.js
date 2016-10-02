@@ -7,7 +7,10 @@ window.__IntelliJTools.processLinks = (function () {
     window.JavaPanelBridge.openInExternalBrowser(href);
   }
 
-  window.__IntelliJTools.processClick = function () {
+  window.__IntelliJTools.processClick = function (event) {
+    // stop propagation to prevent triggering scrolling to source line
+    event.stopPropagation()
+
     if (!this.href) {
       return false;
     }
