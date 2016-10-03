@@ -13,6 +13,7 @@ import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.ui.JBColor;
+import com.intellij.util.ui.UIUtil;
 import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -91,6 +92,9 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
     try {
       myInlineCss = IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("default.css"));
+      if(UIUtil.isUnderDarcula()) {
+        myInlineCss += IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("darcula.css"));
+      }
     }
     catch (IOException e) {
       String message = "Error rendering asciidoctor: " + e.getMessage();
@@ -111,7 +115,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
             updateFontSmoothingType(myWebView, false);
             myWebView.setContextMenuEnabled(false);
-            myWebView.getEngine().loadContent("<html><head></head><body>Initializing...</body>");
+            myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>"));
 
             final WebEngine engine = myWebView.getEngine();
             engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);

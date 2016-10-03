@@ -1,0 +1,24 @@
+#content>h1:first-child:not([class]), body {background-color: #45494a;color: #bbbbbb}
+pre, pre>code, *:not(pre)>code, .hljs {background-color: #626262;color: #bbbbbb}
+a, a:hover, a:focus { color: #589df6; }
+
+table.tableblock, th.tableblock, td.tableblock{color: #bbbbbb}
+
+blockquote, cite {color: #bbbbbb !important;}
+
+/* was: f8f8f7 */
+table tbody tr{background:#45494a}
+table tr.even,table tr.alt,table tr:nth-of-type(even){background:#626262}
+
+/* was f7f8f7 */
+table thead,table tfoot{background:#626262}
+tbody tr th{background:#626262}
+
+/* was: 7a2518 */
+.sidebarblock>.content>.title,#toctitle,.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{color: #ba3925}
+
+/* was: f7f7f8 */
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock pre:not(.highlight),.listingblock pre[class="highlight"],.listingblock pre[class^="highlight "],.listingblock pre.CodeRay,.listingblock pre.prettyprint{background:#626262}
+
+#toc {background-color:#626262 !important; border-color:#626262 !important;}
