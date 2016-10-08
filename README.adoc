@@ -10,6 +10,11 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
+=== 0.16.1 (preview, available from Github releases)
+
+- Added darcula theme for JavaFX preview
+- Clicking on JavaFX preview will set cursor position in editor (thanks to @kastork for the idea)
+
 === 0.15.4
 
 - setScene now called from FxThread instead of AWT thread to avoid blocking GUI on MacOS

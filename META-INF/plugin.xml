@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.16.0.2</version>
+  <version>0.16.1</version>
   <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -18,6 +18,8 @@
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.16.1 Added darcula theme for JavaFX preview
+        <br />clicking on JavaFX preview will set cursor position in editor (thanks to @kastork for the idea)
       <li>0.15.4 setScene now called from FxThread instead of AWT thread to avoid blocking GUI on MacOS</li>
       <li>0.15.3 Initialization message appears only during initialization
         <br />No error message if user switches to a setup where JavaFX preview is no longer available.</li>
