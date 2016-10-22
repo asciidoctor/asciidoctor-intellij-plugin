@@ -23,7 +23,6 @@ public class AsciiDocParserImpl {
 
   private final PsiBuilder myBuilder;
   private final Stack<SectionMarker> mySectionStack = new Stack<SectionMarker>();
-  private PsiBuilder.Marker myBlockStartMarker = null;
   private PsiBuilder.Marker myPreBlockMarker = null;
 
   public AsciiDocParserImpl(PsiBuilder builder) {
@@ -31,8 +30,9 @@ public class AsciiDocParserImpl {
   }
 
   public void parse() {
+    myBuilder.setDebugMode(true);
     while (!myBuilder.eof()) {
-      if (myBlockStartMarker == null && at(HEADING)) {
+      if (at(HEADING) || at(HEADING_OLDSTYLE)) {
         dropPreBlock();
         int level = headingLevel(myBuilder.getTokenText());
         closeSections(level);
@@ -40,31 +40,18 @@ public class AsciiDocParserImpl {
         mySectionStack.push(newMarker);
       }
       else if (at(BLOCK_MACRO_ID)) {
-        PsiBuilder.Marker blockMacroMark = beginBlock();
+        markPreBlock();
         next();
         while (at(BLOCK_MACRO_BODY) || at(BLOCK_MACRO_ATTRIBUTES)) {
           next();
         }
-        blockMacroMark.done(AsciiDocElementTypes.BLOCK_MACRO);
+        myPreBlockMarker.done(AsciiDocElementTypes.BLOCK_MACRO);
+        myPreBlockMarker = null;
         continue;
       }
-      else if (at(EXAMPLE_BLOCK_DELIMITER) || at(SIDEBAR_BLOCK_DELIMITER)) {
-        if (myBlockStartMarker != null) {
-          next();
-          doneBlock();
-          continue;
-        }
-        myBlockStartMarker = beginBlock();
-      }
-      else if (at(LISTING_DELIMITER)) {
-        PsiBuilder.Marker listingMarker = beginBlock();
-        next();
-        while (at(LISTING_TEXT) || at(LISTING_DELIMITER)) {
-          boolean atDelimiter = at(LISTING_DELIMITER);
-          next();
-          if (atDelimiter) break;
-        }
-        listingMarker.done(AsciiDocElementTypes.LISTING);
+      else if (at(EXAMPLE_BLOCK_DELIMITER) || at(SIDEBAR_BLOCK_DELIMITER) || at(QUOTE_BLOCK_DELIMITER)
+          || at(LISTING_BLOCK_DELIMITER) || at(COMMENT_BLOCK_DELIMITER) || at(PASSTRHOUGH_BLOCK_DELIMITER)) {
+        parseBlock();
         continue;
       }
       else if (at(TITLE)) {
@@ -87,8 +74,34 @@ public class AsciiDocParserImpl {
     }
 
     dropPreBlock();
-    doneBlock();
     closeSections(0);
+  }
+
+  private void parseBlock() {
+    PsiBuilder.Marker myBlockStartMarker;
+    if (myPreBlockMarker != null) {
+      myBlockStartMarker = myPreBlockMarker;
+      myPreBlockMarker = null;
+    }
+    else {
+      myBlockStartMarker = beginBlock();
+    }
+    String marker = myBuilder.getTokenText();
+    IElementType type = myBuilder.getTokenType();
+    next();
+    while (true) {
+      if (myBuilder.eof()) {
+        myBlockStartMarker.done(AsciiDocElementTypes.BLOCK);
+        break;
+      }
+      // the block needs to be terminated by the same sequence that started it
+      if (at(type) && myBuilder.getTokenText().equals(marker)) {
+        next();
+        myBlockStartMarker.done(AsciiDocElementTypes.BLOCK);
+        break;
+      }
+      next();
+    }
   }
 
   private void markPreBlock() {
@@ -105,24 +118,12 @@ public class AsciiDocParserImpl {
   }
 
   private PsiBuilder.Marker beginBlock() {
-    if (myPreBlockMarker != null) {
-      PsiBuilder.Marker result = myPreBlockMarker;
-      myPreBlockMarker = null;
-      return result;
-    }
     return myBuilder.mark();
   }
 
   private void closeSections(int level) {
     while (!mySectionStack.isEmpty() && mySectionStack.peek().level >= level) {
       mySectionStack.pop().marker.done(AsciiDocElementTypes.SECTION);
-    }
-  }
-
-  private void doneBlock() {
-    if (myBlockStartMarker != null) {
-      myBlockStartMarker.done(AsciiDocElementTypes.BLOCK);
-      myBlockStartMarker = null;
     }
   }
 
@@ -138,6 +139,21 @@ public class AsciiDocParserImpl {
     int result = 0;
     while (result < headingText.length() && headingText.charAt(result) == '=') {
       result++;
+    }
+    if (result == 0) {
+      // this is old header style
+      switch (headingText.charAt(headingText.length() - 2)) {
+        case '+':
+          ++ result;
+        case '^':
+          ++ result;
+        case '~':
+          ++ result;
+        case '-':
+          ++ result;
+        case '=':
+          ++ result;
+      }
     }
     return result;
   }
