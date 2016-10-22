@@ -80,7 +80,10 @@ public class LocalfileURLConnection extends URLConnection {
     imgPath = imgPath.startsWith("localfile://") ? imgPath.substring("localfile://".length()) : imgPath.substring("localfile:".length()); // attention: triple '/' is reduced to a single '/'
     // decode URL and remove random number at the beginning
     imgPath = URLDecoder.decode(imgPath, "UTF-8").replaceAll("^[0-9a-z]*/", "");
-
+    if (imgPath.startsWith("/")) {
+      // this is needed on Linux/Mac OS, but harmful on Windows
+      imgPath = "/" + imgPath;
+    }
     data = IOUtils.toByteArray(new URL("file:/" + imgPath));
   }
 
