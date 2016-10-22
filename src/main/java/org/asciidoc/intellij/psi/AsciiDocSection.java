@@ -17,12 +17,19 @@ public class AsciiDocSection extends ASTWrapperPsiElement {
   public String getTitle() {
     ASTNode heading = getNode().findChildByType(AsciiDocTokenTypes.HEADING);
     if (heading != null) {
-      return trimHeadingPrefix(heading.getText());
+      return trimHeading(heading.getText());
     }
     return "<untitled>";
   }
 
-  private static String trimHeadingPrefix(String text) {
-    return StringUtil.trimLeading(text, '=').trim();
+  private static String trimHeading(String text) {
+    if(text.charAt(0) == '=') {
+      // new style heading
+      text = StringUtil.trimLeading(text, '=').trim();
+    } else {
+      // old style heading
+      text = text.replaceAll("[-=~\\^+\n]*$", "");
+    }
+    return text;
   }
 }

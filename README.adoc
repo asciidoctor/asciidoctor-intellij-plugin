@@ -10,6 +10,11 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
+=== 0.17.0 (preview, available from Github releases)
+
+Updated block parsing to support two styles of headings.
+Block starts and ends are need to be aligned in length and shape when parsed.
+
 === 0.16.4
 
 Improved darcula support for JavaFX. More block types are using proper dark background and light text colors.

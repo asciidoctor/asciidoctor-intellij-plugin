@@ -31,8 +31,13 @@ public class AsciiDocHighlighter extends SyntaxHighlighterBase {
       ImmutableMap.<IElementType, TextAttributesKey>builder()
           .put(AsciiDocTokenTypes.LINE_COMMENT, ASCIIDOC_COMMENT)
           .put(AsciiDocTokenTypes.BLOCK_COMMENT, ASCIIDOC_COMMENT)
+          .put(AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER, ASCIIDOC_COMMENT)
           .put(AsciiDocTokenTypes.LISTING_TEXT, ASCIIDOC_LISTING_TEXT)
+          .put(AsciiDocTokenTypes.QUOTE_BLOCK, ASCIIDOC_LISTING_TEXT)
+          .put(AsciiDocTokenTypes.EXAMPLE_BLOCK, ASCIIDOC_LISTING_TEXT)
+          .put(AsciiDocTokenTypes.SIDEBAR_BLOCK, ASCIIDOC_LISTING_TEXT)
           .put(AsciiDocTokenTypes.HEADING, ASCIIDOC_HEADING)
+          .put(AsciiDocTokenTypes.HEADING_OLDSTYLE, ASCIIDOC_HEADING)
           .build();
 
   @NotNull
