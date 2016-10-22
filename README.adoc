@@ -10,6 +10,10 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
+=== 0.16.2 (preview, available from Github releases)
+
+- Handling of Linux and MacOS file names for image preview in JavaFX
+
 === 0.16.1
 
 - Added darcula theme for JavaFX preview
