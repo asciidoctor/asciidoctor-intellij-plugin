@@ -2,6 +2,7 @@ package org.asciidoc.intellij.editor;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Editor;
+import org.asciidoc.intellij.AsciiDocBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,4 +37,22 @@ public abstract class AsciiDocHtmlPanel implements Disposable {
   public void setEditor(Editor editor) {
     this.editor = editor;
   }
+
+  public enum PreviewTheme {
+    INTELLIJ(AsciiDocBundle.message("asciidoc.preview.intellij")),
+    ASCIIDOC(AsciiDocBundle.message("asciidoc.preview.asciidoc")),
+    DARCULA(AsciiDocBundle.message("asciidoc.preview.darcula"));
+
+    public final String presentationName;
+
+    PreviewTheme(String presentationName) {
+      this.presentationName = presentationName;
+    }
+
+    @Override
+    public String toString() {
+      return presentationName;
+    }
+  }
+
 }

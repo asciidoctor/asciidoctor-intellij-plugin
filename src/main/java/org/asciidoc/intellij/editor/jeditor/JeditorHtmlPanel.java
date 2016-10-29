@@ -9,6 +9,7 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
+import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -44,7 +45,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
 
     // Create an AsciiDoc style, based on the default stylesheet supplied by UiUtil.getHTMLEditorKit()
     // since it contains fix for incorrect styling of tooltips
-    final String cssFile = UIUtil.isUnderDarcula() ? "darcula.css" : "preview.css";
+    final String cssFile = isDarcula() ? "darcula.css" : "preview.css";
     final StyleSheet customStyle = loadStyleSheet(JeditorHtmlPanel.class.getResource(cssFile));
     final StyleSheet style = UIUtil.getHTMLEditorKit().getStyleSheet();
     style.addStyleSheet(customStyle);
@@ -55,6 +56,20 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
     jEditorPane.setEditable(false);
     // use this to prevent scrolling to the end of the pane on setText()
     ((DefaultCaret)jEditorPane.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+  }
+
+  private boolean isDarcula() {
+    final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+    switch (settings.getAsciiDocPreviewSettings().getPreviewTheme()) {
+      case INTELLIJ:
+        return UIUtil.isUnderDarcula();
+      case ASCIIDOC:
+        return false;
+      case DARCULA:
+        return true;
+      default:
+        return false;
+    }
   }
 
   @Override

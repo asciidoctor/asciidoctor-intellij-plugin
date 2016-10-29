@@ -54,7 +54,8 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
         if (isSuccess) {
           asciiDocApplicationSettings.setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
               oldPreviewSettings.getSplitEditorLayout(),
-              new JavaFxHtmlPanelProvider().getProviderInfo()
+              new JavaFxHtmlPanelProvider().getProviderInfo(),
+              oldPreviewSettings.getPreviewTheme()
           ));
           EditorNotifications.updateAll();
         }

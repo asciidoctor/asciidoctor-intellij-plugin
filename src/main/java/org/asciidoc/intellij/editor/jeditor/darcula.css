@@ -1,4 +1,8 @@
 /* Theme inspired by the default Asciidoctor stylesheet */
+body {
+  background-color: #45494a;
+  color: #bbbbbb;
+}
 
 #content {
   padding: 10px;
@@ -140,16 +144,15 @@ a img {
   text-decoration: line-through;
 }
 
-
 /*.subheader, .admonitionblock td.content > .title, .audioblock > .title,*/
 /*.exampleblock > .title, .imageblock > .title, .listingblock > .title,*/
 /*.literalblock > .title, .stemblock > .title, .openblock > .title,*/
 /*.paragraph > .title, .quoteblock > .title, table.tableblock > .title,*/
 /*.verseblock > .title, .videoblock > .title, .dlist > .title, .olist > .title,*/
 /*.ulist > .title, .qlist > .title, .hdlist > .title {*/
-  /*line-height: 1.45;*/
-  /*color: #d6b339;*/
-  /*font-weight: 400;*/
-  /*margin-top: 0;*/
-  /*margin-bottom: .25em*/
+/*line-height: 1.45;*/
+/*color: #d6b339;*/
+/*font-weight: 400;*/
+/*margin-top: 0;*/
+/*margin-bottom: .25em*/
 /*}*/

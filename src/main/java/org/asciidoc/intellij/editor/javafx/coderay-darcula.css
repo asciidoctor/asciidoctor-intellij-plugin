@@ -1,0 +1,19 @@
+/* Stylesheet for CodeRay to match GitHub theme | MIT License | http://foundation.zurb.com */
+/* there is currently darcula set of colors. use only font weights for now */
+.CodeRay .line-numbers{border-right:1px solid #d8d8d8;padding:0 0.5em 0 .25em}
+.CodeRay span.line-numbers{display:inline-block;margin-right:.5em;}
+table.CodeRay{border-collapse:separate;border-spacing:0;margin-bottom:0;border:0}
+table.CodeRay td{vertical-align: top;line-height:1.45}
+table.CodeRay td.line-numbers{text-align:right}
+table.CodeRay td.line-numbers>pre{padding:0;}
+table.CodeRay td.code{padding:0 0 0 .5em}
+table.CodeRay td.code>pre{padding:0}
+.CodeRay .comment{font-style:italic}
+.CodeRay .class{font-weight:bold}
+.CodeRay .exception{color:inherit}
+.CodeRay .function{font-weight:bold}
+.CodeRay .important{font-weight:bold}
+.CodeRay .directive{font-weight:bold}
+.CodeRay .type{font-weight:bold}
+.CodeRay .reserved,.CodeRay .keyword {font-weight:bold}
+.CodeRay .regexp .function{font-weight:bold}

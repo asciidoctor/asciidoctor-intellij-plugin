@@ -3,6 +3,7 @@ package org.asciidoc.intellij.settings;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
+import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider;
 import org.asciidoc.intellij.ui.SplitFileEditor;
@@ -20,18 +21,35 @@ public final class AsciiDocPreviewSettings {
   @NotNull
   private AsciiDocHtmlPanelProvider.ProviderInfo myHtmlPanelProviderInfo = JeditorHtmlPanelProvider.INFO;
 
+  @Attribute("PreviewTheme")
+  @NotNull
+  private AsciiDocHtmlPanel.PreviewTheme myPreviewTheme = AsciiDocHtmlPanel.PreviewTheme.INTELLIJ;
+
   public AsciiDocPreviewSettings() {
   }
 
   public AsciiDocPreviewSettings(@NotNull SplitFileEditor.SplitEditorLayout splitEditorLayout,
-                                 @NotNull AsciiDocHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo) {
+                                 @NotNull AsciiDocHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo,
+                                 @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
+    myPreviewTheme = previewTheme;
   }
 
   @NotNull
   public SplitFileEditor.SplitEditorLayout getSplitEditorLayout() {
+    if (mySplitEditorLayout == null) {
+      return SplitFileEditor.SplitEditorLayout.SPLIT;
+    }
     return mySplitEditorLayout;
+  }
+
+  @NotNull
+  public AsciiDocHtmlPanel.PreviewTheme getPreviewTheme() {
+    if (myPreviewTheme == null) {
+      return AsciiDocHtmlPanel.PreviewTheme.INTELLIJ;
+    }
+    return myPreviewTheme;
   }
 
   @NotNull
@@ -47,6 +65,7 @@ public final class AsciiDocPreviewSettings {
     AsciiDocPreviewSettings settings = (AsciiDocPreviewSettings)o;
 
     if (mySplitEditorLayout != settings.mySplitEditorLayout) return false;
+    if (myPreviewTheme != settings.myPreviewTheme) return false;
     if (!myHtmlPanelProviderInfo.equals(settings.myHtmlPanelProviderInfo)) return false;
 
     return true;
@@ -56,6 +75,7 @@ public final class AsciiDocPreviewSettings {
   public int hashCode() {
     int result = mySplitEditorLayout.hashCode();
     result = 31 * result + myHtmlPanelProviderInfo.hashCode();
+    result = 31 * result + myPreviewTheme.hashCode();
     return result;
   }
 

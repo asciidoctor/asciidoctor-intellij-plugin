@@ -10,7 +10,11 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
-=== 0.16.2 (preview, available from Github releases)
+=== 0.16.3 (preview, available from Github releases)
+
+Theme in preview can be switched from light to darcula independent of IDE theme
+
+=== 0.16.2
 
 - Handling of Linux and MacOS file names for image preview in JavaFX
 

@@ -28,6 +28,7 @@ import netscape.javascript.JSObject;
 import org.apache.commons.io.IOUtils;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
+import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,6 +72,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   private WebView myWebView;
   @Nullable
   private String myInlineCss;
+  @Nullable
+  private String myInlineCssDarcula;
   @NotNull
   private final ScrollPreservingListener myScrollPreservingListener = new ScrollPreservingListener();
   @NotNull
@@ -92,9 +95,9 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
     try {
       myInlineCss = IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("default.css"));
-      if(UIUtil.isUnderDarcula()) {
-        myInlineCss += IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("darcula.css"));
-      }
+      myInlineCssDarcula = myInlineCss + IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("darcula.css"));
+      myInlineCssDarcula += IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("coderay-darcula.css"));
+      myInlineCss += IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("coderay.css"));
     }
     catch (IOException e) {
       String message = "Error rendering asciidoctor: " + e.getMessage();
@@ -157,6 +160,20 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   }
 
 
+  private boolean isDarcula() {
+    final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+    switch (settings.getAsciiDocPreviewSettings().getPreviewTheme()) {
+      case INTELLIJ:
+        return UIUtil.isUnderDarcula();
+      case ASCIIDOC:
+        return false;
+      case DARCULA:
+        return true;
+      default:
+        return false;
+    }
+  }
+
   private static void updateFontSmoothingType(@NotNull WebView view, boolean isGrayscale) {
     final FontSmoothingType typeToSet;
     if (isGrayscale) {
@@ -176,6 +193,11 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
   @Override
   public void setHtml(@NotNull String html) {
+    if (isDarcula()) {
+      // clear out coderay inline CSS colors as they are barely readable in darcula theme
+      html = html.replaceAll("<span style=\"color:#[a-zA-Z0-9]*;?", "<span style=\"");
+      html = html.replaceAll("<span style=\"background-color:#[a-zA-Z0-9]*;?", "<span style=\"");
+    }
     html = "<html><head></head><body>" + html + "</body>";
     final String htmlToRender = prepareHtml(html);
 
@@ -205,7 +227,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
     /* Add CSS line and JavaScript for auto-scolling and clickable links */
     return html
-        .replace("<head>", "<head>" + getCssLines(myInlineCss))
+        .replace("<head>", "<head>" + getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss))
         .replace("</body>", getScriptingLines() + "</body>");
   }
 
