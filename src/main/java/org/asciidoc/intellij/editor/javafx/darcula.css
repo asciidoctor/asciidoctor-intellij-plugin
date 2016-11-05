@@ -4,7 +4,22 @@ a, a:hover, a:focus { color: #589df6; }
 
 table.tableblock, th.tableblock, td.tableblock{color: #bbbbbb}
 
-blockquote, cite {color: #bbbbbb !important;}
+/* was: rgba(0,0,0,.85) */
+.paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{color: #bbbbbb}
+.quoteblock blockquote,.quoteblock blockquote p{color: #bbbbbb}
+.verseblock pre{color: #bbbbbb}
+#content>h1:first-child:not([class]){color: #bbbbbb}
+#header .details br+span.author:before{color: #bbbbbb}
+#header .details span.email a{color: #bbbbbb}
+#header>h1:first-child{color: #bbbbbb}
+blockquote,blockquote p{color: #bbbbbb}
+
+/* was: rgba(0,0,0,.6) */
+blockquote cite a,blockquote cite a:visited {color: #bbbbbb}
+#header .details{color: #bbbbbb}
+.admonitionblock>table td.content{color: #bbbbbb}
+.quoteblock .quoteblock{color: #bbbbbb}
+.quoteblock .attribution cite,.verseblock .attribution cite{color: #bbbbbb}
 
 /* was: f8f8f7 */
 table tbody tr{background:#45494a}
