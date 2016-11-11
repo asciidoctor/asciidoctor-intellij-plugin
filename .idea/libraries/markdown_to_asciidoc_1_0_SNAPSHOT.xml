@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="markdown-to-asciidoc-1.0-SNAPSHOT">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/markdown-to-asciidoc-1.0-SNAPSHOT.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

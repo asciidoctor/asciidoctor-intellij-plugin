@@ -27,7 +27,7 @@ public class AsciiDocIcons {
   }
 
   /** The AsciiDoc {@link Icon}. */
-  public static final Icon Asciidoc_Icon = load("/org/asciidoc/intellij/asciidoc.png");
+  public static final Icon Asciidoc_Icon = load("/icons/asciidoc.png");
 
   public static class Layout {
     public static final Icon Editor_only = load("/icons/layout/Editor_only.png"); // 16x16
