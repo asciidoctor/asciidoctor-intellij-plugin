@@ -10,6 +10,11 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
+=== 0.17.2 (unreleased)
+
+- Plugin is now build using the https://gradle.org/[Gradle] and https://github.com/JetBrains/gradle-intellij-plugin[gradle-intellij-plugin]
+This should make contributing and releasing easier. Thanks Jiawen Geng!
+
 === 0.17.1 (preview, available from Github releases)
 
 - Improved handling of trailing spaces in syntax highlighting.
@@ -156,18 +161,28 @@ For the conversion of Markdown to AsciiDoc, we use Pegdown and the https://githu
 
 == Build
 
-To build this plugin, you need to:
+This plugin is built using Gradle.
+If you build or run it the first time it will download the community edition of IntelliJ automatically.
 
-. download the IntelliJ IDEA Community Edition (at a minimum)
-. open the project
-. set the project SDK to be the IDEA Plugin SDK (and make sure this points to a valid Java SDK)
-. build the project by selecting menu:Build[Prepare Plugin Module {apos}AsciiDoc Plugin{apos} for Deployment]
+If you have developed the plugin before it changed to Gradle you might want to remove the contents of your `.idea` folder to trigger a re-import of the Gradle project.
 
-You can then install the plugin from the generated zip file in any IntelliJ platform product.
+To build this plugin, you need to run:
+
+----
+./gradlew -Dfile.encoding=UTF-8 buildPlugin
+----
+
+The ZIP file with plugin to distribute will be located in `build/distributions`.
+
+To run the plugin for development you'll need to start
+
+----
+./gradlew -Dfile.encoding=UTF-8 runIdea
+----
 
 == Copyright and Licensing
 
-Copyright (C) 2013-2014 Julien Viet and Erik Pragt.
+Copyright (C) 2013-2016 Julien Viet and Erik Pragt.
 Released under the Apache License, Version 2.0 (see link:LICENSE[LICENSE]).
 
 == Credits
