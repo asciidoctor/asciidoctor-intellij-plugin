@@ -237,5 +237,6 @@ MONOSPACE_DELIMITER = "`"
 
 <MONOSPACE> {
   {MONOSPACE_DELIMITER} { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.TEXT; }
+  "\n"                  { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
   .                     { return AsciiDocTokenTypes.MONOSPACE; }
 }
