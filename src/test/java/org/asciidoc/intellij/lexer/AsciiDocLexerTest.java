@@ -103,6 +103,23 @@ public class AsciiDocLexerTest extends LexerTestCase {
             "AsciiDoc:SIDEBAR_BLOCK_DELIMITER ('****\\n')");
   }
 
+  public void testMonospace() {
+    doTest("some text with `monospace` in it.",
+        "AsciiDoc:TEXT ('some text with ')\n" +
+            "AsciiDoc:MONOSPACE ('`')\n" +
+            "AsciiDoc:MONOSPACE ('m')\n" +
+            "AsciiDoc:MONOSPACE ('o')\n" +
+            "AsciiDoc:MONOSPACE ('n')\n" +
+            "AsciiDoc:MONOSPACE ('o')\n" +
+            "AsciiDoc:MONOSPACE ('s')\n" +
+            "AsciiDoc:MONOSPACE ('p')\n" +
+            "AsciiDoc:MONOSPACE ('a')\n" +
+            "AsciiDoc:MONOSPACE ('c')\n" +
+            "AsciiDoc:MONOSPACE ('e')\n" +
+            "AsciiDoc:TEXT ('` in it.')"
+    );
+  }
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();

@@ -39,6 +39,8 @@ class _AsciiDocLexer implements FlexLexer {
   public static final int BLOCK_MACRO_ATTRS = 32;
   public static final int TITLE = 34;
   public static final int BLOCK_ATTRS = 36;
+  public static final int MONOSPACE = 38;
+  public static final int INSIDE_MONOSPACE = 40;
 
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -49,7 +51,7 @@ class _AsciiDocLexer implements FlexLexer {
   private static final int ZZ_LEXSTATE[] = { 
      0,  0,  1,  1,  2,  2,  3,  3,  4,  4,  5,  5,  6,  6,  7,  7, 
      8,  8,  9,  9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 
-    16, 16, 17, 17, 18, 18
+    16, 16, 17, 17, 18, 18, 19, 19, 20, 20
   };
 
   /** 
@@ -72,8 +74,8 @@ class _AsciiDocLexer implements FlexLexer {
   /* The ZZ_CMAP_A table has 320 entries */
   static final char ZZ_CMAP_A[] = zzUnpackCMap(
     "\11\0\1\12\1\2\3\13\22\0\1\1\11\0\1\7\1\4\1\0\1\5\1\17\1\3\12\15\1\16\2\0"+
-    "\1\6\3\0\32\15\1\11\1\0\1\20\1\14\1\10\1\0\32\15\3\0\1\14\6\0\1\13\242\0\2"+
-    "\13\26\0");
+    "\1\6\3\0\32\15\1\11\1\0\1\21\1\14\1\10\1\20\32\15\3\0\1\14\6\0\1\13\242\0"+
+    "\2\13\26\0");
 
   /** 
    * Translates DFA states to action switch labels.
@@ -81,17 +83,18 @@ class _AsciiDocLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\23\0\1\1\1\2\6\1\1\3\1\1\1\0\2\1"+
-    "\1\4\1\5\1\6\1\7\1\10\1\7\1\11\1\12"+
-    "\1\11\1\13\1\14\1\13\1\15\1\16\1\15\1\17"+
-    "\1\20\1\17\1\21\1\22\1\21\1\23\1\24\1\25"+
-    "\1\26\1\27\1\30\1\0\1\31\10\0\1\32\7\0"+
-    "\3\31\2\0\3\33\12\0\1\34\1\31\5\0\2\35"+
-    "\6\0\1\36\1\37\1\40\1\41\1\0\1\42\1\43"+
-    "\1\44\1\45\1\46\1\47\1\50\1\51\2\0";
+    "\25\0\1\1\1\2\6\1\1\3\1\1\1\0\2\1"+
+    "\1\4\1\5\1\6\1\4\1\7\1\10\1\11\1\10"+
+    "\1\12\1\13\1\12\1\14\1\15\1\14\1\16\1\17"+
+    "\1\16\1\20\1\21\1\20\1\22\1\23\1\22\1\24"+
+    "\1\25\1\26\1\27\1\30\1\31\1\32\1\0\1\33"+
+    "\10\0\1\34\7\0\3\33\2\0\3\35\12\0\1\36"+
+    "\1\33\5\0\2\37\6\0\1\40\1\41\1\42\1\43"+
+    "\1\0\1\44\1\45\1\46\1\47\1\50\1\51\1\52"+
+    "\1\53\2\0";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[125];
+    int [] result = new int[130];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -116,25 +119,26 @@ class _AsciiDocLexer implements FlexLexer {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\21\0\42\0\63\0\104\0\125\0\146\0\167"+
-    "\0\210\0\231\0\252\0\273\0\314\0\335\0\356\0\377"+
-    "\0\u0110\0\u0121\0\u0132\0\u0143\0\u0154\0\u0165\0\u0176\0\u0187"+
-    "\0\u0198\0\u01a9\0\u01ba\0\u0154\0\u0154\0\u0143\0\u01cb\0\u01dc"+
-    "\0\u0154\0\u0154\0\u0154\0\u0154\0\u0154\0\u01ed\0\u0154\0\u0154"+
-    "\0\u01fe\0\u0154\0\u0154\0\u020f\0\u0154\0\u0154\0\u0220\0\u0154"+
-    "\0\u0154\0\u0231\0\u0154\0\u0154\0\u0242\0\u0154\0\u0154\0\u0154"+
-    "\0\u0154\0\u0154\0\u0154\0\u0253\0\u0264\0\u0275\0\u0286\0\u0297"+
-    "\0\u02a8\0\u02b9\0\u02ca\0\u01cb\0\u02db\0\u0154\0\u02ec\0\u02fd"+
-    "\0\u030e\0\u031f\0\u0330\0\u0341\0\u0352\0\u0363\0\u0374\0\u0385"+
-    "\0\u0396\0\u03a7\0\u0143\0\u0297\0\u0154\0\u03b8\0\u03c9\0\u03da"+
-    "\0\u03eb\0\u03fc\0\u040d\0\u041e\0\u042f\0\u0440\0\u0451\0\u0154"+
-    "\0\u0462\0\u0473\0\u0484\0\u0495\0\u04a6\0\u04b7\0\u0143\0\u0154"+
-    "\0\u04c8\0\u04d9\0\u04ea\0\u04fb\0\u050c\0\u051d\0\u0253\0\u0253"+
-    "\0\u0253\0\u0253\0\u052e\0\u0253\0\u0253\0\u0154\0\u0154\0\u0154"+
-    "\0\u0154\0\u0154\0\u0154\0\u053f\0\u0550";
+    "\0\0\0\22\0\44\0\66\0\110\0\132\0\154\0\176"+
+    "\0\220\0\242\0\264\0\306\0\330\0\352\0\374\0\u010e"+
+    "\0\u0120\0\u0132\0\u0144\0\u0156\0\u0168\0\u017a\0\u0168\0\u018c"+
+    "\0\u019e\0\u01b0\0\u01c2\0\u01d4\0\u01e6\0\u0168\0\u0168\0\u017a"+
+    "\0\u01f8\0\u020a\0\u017a\0\u0168\0\u0168\0\u0168\0\u0168\0\u0168"+
+    "\0\u0168\0\u021c\0\u0168\0\u0168\0\u022e\0\u0168\0\u0168\0\u0240"+
+    "\0\u0168\0\u0168\0\u0252\0\u0168\0\u0168\0\u0264\0\u0168\0\u0168"+
+    "\0\u0276\0\u0168\0\u0168\0\u0168\0\u0168\0\u0168\0\u0168\0\u0168"+
+    "\0\u0288\0\u029a\0\u02ac\0\u02be\0\u02d0\0\u02e2\0\u02f4\0\u0306"+
+    "\0\u01f8\0\u0318\0\u0168\0\u032a\0\u033c\0\u034e\0\u0360\0\u0372"+
+    "\0\u0384\0\u0396\0\u03a8\0\u03ba\0\u03cc\0\u03de\0\u03f0\0\u017a"+
+    "\0\u02d0\0\u0168\0\u0402\0\u0414\0\u0426\0\u0438\0\u044a\0\u045c"+
+    "\0\u046e\0\u0480\0\u0492\0\u04a4\0\u0168\0\u04b6\0\u04c8\0\u04da"+
+    "\0\u04ec\0\u04fe\0\u0510\0\u017a\0\u0168\0\u0522\0\u0534\0\u0546"+
+    "\0\u0558\0\u056a\0\u057c\0\u0288\0\u0288\0\u0288\0\u0288\0\u058e"+
+    "\0\u0288\0\u0288\0\u0168\0\u0168\0\u0168\0\u0168\0\u0168\0\u0168"+
+    "\0\u05a0\0\u05b2";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[125];
+    int [] result = new int[130];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -157,62 +161,63 @@ class _AsciiDocLexer implements FlexLexer {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\2\24\1\25\1\26\1\27\1\30\1\31\1\32\1\33"+
-    "\1\34\1\35\1\36\1\24\1\37\1\24\1\40\1\24"+
-    "\2\41\1\42\10\41\1\0\5\41\2\43\1\42\10\43"+
-    "\1\0\5\43\2\44\1\45\2\44\1\46\5\44\1\0"+
-    "\7\44\1\45\10\44\1\0\5\44\2\47\1\50\1\51"+
-    "\7\47\1\0\7\47\1\50\10\47\1\0\5\47\2\52"+
-    "\1\53\3\52\1\54\4\52\1\0\7\52\1\53\10\52"+
-    "\1\0\5\52\2\55\1\56\1\55\1\57\6\55\1\0"+
-    "\7\55\1\56\10\55\1\0\5\55\2\60\1\61\4\60"+
-    "\1\62\3\60\1\0\7\60\1\61\10\60\1\0\5\60"+
-    "\2\63\1\64\5\63\1\65\2\63\1\0\7\63\1\64"+
-    "\10\63\1\0\5\63\2\66\1\42\6\66\1\67\1\66"+
-    "\1\0\5\66\2\70\1\42\10\70\1\0\5\70\2\71"+
-    "\1\42\10\71\1\0\5\71\2\72\1\42\10\72\1\0"+
-    "\4\72\1\73\2\36\1\74\10\36\1\0\5\36\21\0"+
-    "\2\36\1\74\1\75\7\36\1\0\7\36\1\74\1\36"+
-    "\1\76\6\36\1\0\7\36\1\74\2\36\1\77\5\36"+
-    "\1\0\6\36\1\100\1\74\3\36\1\101\3\36\1\100"+
-    "\1\0\7\36\1\74\4\36\1\102\3\36\1\0\7\36"+
-    "\1\74\5\36\1\103\2\36\1\0\1\36\1\104\1\105"+
-    "\4\36\1\74\5\36\1\104\2\36\1\0\1\36\1\104"+
-    "\1\105\2\36\1\106\1\0\15\106\1\0\1\106\5\0"+
-    "\1\107\16\0\1\110\23\0\1\111\16\0\1\112\23\0"+
-    "\1\113\21\0\1\114\14\0\3\115\5\0\1\115\4\0"+
-    "\2\116\1\74\1\117\7\116\1\120\5\116\2\36\1\74"+
-    "\1\36\1\121\6\36\1\0\7\36\1\74\2\36\1\122"+
-    "\5\36\1\0\5\36\1\123\1\124\1\74\7\123\1\124"+
-    "\1\125\5\123\1\36\1\100\1\74\3\36\1\126\3\36"+
-    "\1\100\1\0\7\36\1\74\4\36\1\127\3\36\1\0"+
-    "\7\36\1\74\5\36\1\130\2\36\1\0\1\36\1\104"+
-    "\1\105\4\36\1\74\10\36\1\0\2\36\1\131\2\36"+
-    "\5\0\1\132\16\0\1\133\23\0\1\134\16\0\1\135"+
-    "\23\0\1\136\21\0\1\137\12\0\1\140\1\0\3\115"+
-    "\5\0\1\115\4\0\2\116\1\74\10\116\1\120\7\116"+
-    "\1\74\1\141\7\116\1\120\5\116\2\120\1\0\16\120"+
-    "\2\36\1\74\1\36\1\142\6\36\1\0\7\36\1\74"+
-    "\2\36\1\143\5\36\1\0\6\36\1\100\1\74\3\36"+
-    "\1\144\3\36\1\100\1\0\7\36\1\74\4\36\1\145"+
-    "\3\36\1\0\7\36\1\74\5\36\1\146\2\36\1\0"+
-    "\1\36\1\104\1\105\2\36\2\147\1\74\10\147\1\150"+
-    "\5\147\5\0\1\151\16\0\1\152\23\0\1\153\16\0"+
-    "\1\154\23\0\1\155\21\0\1\156\10\0\2\116\1\157"+
-    "\1\141\7\116\1\120\5\116\2\36\1\160\1\36\1\142"+
-    "\6\36\1\0\7\36\1\161\2\36\1\143\5\36\1\0"+
-    "\6\36\1\100\1\162\3\36\1\163\3\36\1\100\1\0"+
-    "\7\36\1\164\4\36\1\145\3\36\1\0\7\36\1\165"+
-    "\5\36\1\146\2\36\1\0\1\36\1\104\1\105\2\36"+
-    "\2\0\1\166\2\0\1\151\15\0\1\167\1\152\17\0"+
-    "\1\170\3\0\1\153\14\0\1\171\1\0\1\154\16\0"+
-    "\1\172\4\0\1\155\13\0\1\173\5\0\1\156\10\0"+
-    "\1\36\1\100\1\162\3\36\1\174\3\36\1\100\1\0"+
-    "\6\36\1\100\1\162\3\36\1\175\3\36\1\100\1\0"+
-    "\7\36\1\162\3\36\1\175\4\36\1\0\5\36";
+    "\2\26\1\27\1\30\1\31\1\32\1\33\1\34\1\35"+
+    "\1\36\1\37\1\40\1\26\1\41\1\26\1\42\1\43"+
+    "\1\26\2\44\1\45\10\44\1\0\4\44\1\46\1\44"+
+    "\2\47\1\45\10\47\1\0\6\47\2\50\1\51\2\50"+
+    "\1\52\5\50\1\0\10\50\1\51\10\50\1\0\6\50"+
+    "\2\53\1\54\1\55\7\53\1\0\10\53\1\54\10\53"+
+    "\1\0\6\53\2\56\1\57\3\56\1\60\4\56\1\0"+
+    "\10\56\1\57\10\56\1\0\6\56\2\61\1\62\1\61"+
+    "\1\63\6\61\1\0\10\61\1\62\10\61\1\0\6\61"+
+    "\2\64\1\65\4\64\1\66\3\64\1\0\10\64\1\65"+
+    "\10\64\1\0\6\64\2\67\1\70\5\67\1\71\2\67"+
+    "\1\0\10\67\1\70\10\67\1\0\6\67\2\72\1\45"+
+    "\6\72\1\73\1\72\1\0\6\72\2\74\1\45\10\74"+
+    "\1\0\6\74\2\75\1\45\10\75\1\0\6\75\2\76"+
+    "\1\45\10\76\1\0\5\76\1\77\2\100\1\0\10\100"+
+    "\1\0\4\100\1\37\1\100\22\0\2\40\1\101\10\40"+
+    "\1\0\10\40\1\101\1\102\7\40\1\0\10\40\1\101"+
+    "\1\40\1\103\6\40\1\0\10\40\1\101\2\40\1\104"+
+    "\5\40\1\0\7\40\1\105\1\101\3\40\1\106\3\40"+
+    "\1\105\1\0\10\40\1\101\4\40\1\107\3\40\1\0"+
+    "\10\40\1\101\5\40\1\110\2\40\1\0\1\40\1\111"+
+    "\1\112\5\40\1\101\5\40\1\111\2\40\1\0\1\40"+
+    "\1\111\1\112\3\40\1\113\1\0\15\113\1\0\2\113"+
+    "\5\0\1\114\17\0\1\115\24\0\1\116\17\0\1\117"+
+    "\24\0\1\120\22\0\1\121\15\0\3\122\5\0\1\122"+
+    "\5\0\2\123\1\101\1\124\7\123\1\125\6\123\2\40"+
+    "\1\101\1\40\1\126\6\40\1\0\10\40\1\101\2\40"+
+    "\1\127\5\40\1\0\6\40\1\130\1\131\1\101\7\130"+
+    "\1\131\1\132\6\130\1\40\1\105\1\101\3\40\1\133"+
+    "\3\40\1\105\1\0\10\40\1\101\4\40\1\134\3\40"+
+    "\1\0\10\40\1\101\5\40\1\135\2\40\1\0\1\40"+
+    "\1\111\1\112\5\40\1\101\10\40\1\0\2\40\1\136"+
+    "\3\40\5\0\1\137\17\0\1\140\24\0\1\141\17\0"+
+    "\1\142\24\0\1\143\22\0\1\144\13\0\1\145\1\0"+
+    "\3\122\5\0\1\122\5\0\2\123\1\101\10\123\1\125"+
+    "\10\123\1\101\1\146\7\123\1\125\6\123\2\125\1\0"+
+    "\17\125\2\40\1\101\1\40\1\147\6\40\1\0\10\40"+
+    "\1\101\2\40\1\150\5\40\1\0\7\40\1\105\1\101"+
+    "\3\40\1\151\3\40\1\105\1\0\10\40\1\101\4\40"+
+    "\1\152\3\40\1\0\10\40\1\101\5\40\1\153\2\40"+
+    "\1\0\1\40\1\111\1\112\3\40\2\154\1\101\10\154"+
+    "\1\155\6\154\5\0\1\156\17\0\1\157\24\0\1\160"+
+    "\17\0\1\161\24\0\1\162\22\0\1\163\11\0\2\123"+
+    "\1\164\1\146\7\123\1\125\6\123\2\40\1\165\1\40"+
+    "\1\147\6\40\1\0\10\40\1\166\2\40\1\150\5\40"+
+    "\1\0\7\40\1\105\1\167\3\40\1\170\3\40\1\105"+
+    "\1\0\10\40\1\171\4\40\1\152\3\40\1\0\10\40"+
+    "\1\172\5\40\1\153\2\40\1\0\1\40\1\111\1\112"+
+    "\3\40\2\0\1\173\2\0\1\156\16\0\1\174\1\157"+
+    "\20\0\1\175\3\0\1\160\15\0\1\176\1\0\1\161"+
+    "\17\0\1\177\4\0\1\162\14\0\1\200\5\0\1\163"+
+    "\11\0\1\40\1\105\1\167\3\40\1\201\3\40\1\105"+
+    "\1\0\7\40\1\105\1\167\3\40\1\202\3\40\1\105"+
+    "\1\0\10\40\1\167\3\40\1\202\4\40\1\0\6\40";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[1377];
+    int [] result = new int[1476];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -250,15 +255,15 @@ class _AsciiDocLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\23\0\1\1\1\11\6\1\2\11\1\0\2\1\5\11"+
-    "\1\1\2\11\1\1\2\11\1\1\2\11\1\1\2\11"+
-    "\1\1\2\11\1\1\6\11\1\0\1\1\10\0\1\11"+
-    "\7\0\3\1\2\0\2\1\1\11\12\0\1\11\1\1"+
-    "\5\0\1\1\1\11\6\0\4\1\1\0\2\1\6\11"+
-    "\2\0";
+    "\24\0\1\10\1\1\1\11\6\1\2\11\1\0\3\1"+
+    "\6\11\1\1\2\11\1\1\2\11\1\1\2\11\1\1"+
+    "\2\11\1\1\2\11\1\1\7\11\1\0\1\1\10\0"+
+    "\1\11\7\0\3\1\2\0\2\1\1\11\12\0\1\11"+
+    "\1\1\5\0\1\1\1\11\6\0\4\1\1\0\2\1"+
+    "\6\11\2\0";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[125];
+    int [] result = new int[130];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -577,118 +582,126 @@ class _AsciiDocLexer implements FlexLexer {
           case 1: 
             { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.TEXT;
             }
-          case 42: break;
+          case 44: break;
           case 2: 
             { return AsciiDocTokenTypes.LINE_BREAK;
             }
-          case 43: break;
+          case 45: break;
           case 3: 
             { yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START;
             }
-          case 44: break;
-          case 4: 
-            { return AsciiDocTokenTypes.TEXT;
-            }
-          case 45: break;
-          case 5: 
-            { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK;
-            }
           case 46: break;
-          case 6: 
-            { return AsciiDocTokenTypes.HEADING;
+          case 4: 
+            { yybegin(MONOSPACE); return AsciiDocTokenTypes.MONOSPACE;
             }
           case 47: break;
-          case 7: 
-            { yybegin(INSIDE_LISTING_BLOCK_LINE); return AsciiDocTokenTypes.LISTING_TEXT;
+          case 5: 
+            { return AsciiDocTokenTypes.TEXT;
             }
           case 48: break;
-          case 8: 
-            { yybegin(LISTING_BLOCK); return AsciiDocTokenTypes.LINE_BREAK;
+          case 6: 
+            { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK;
             }
           case 49: break;
-          case 9: 
-            { yybegin(INSIDE_COMMENT_BLOCK_LINE); return AsciiDocTokenTypes.BLOCK_COMMENT;
+          case 7: 
+            { return AsciiDocTokenTypes.HEADING;
             }
           case 50: break;
-          case 10: 
-            { yybegin(COMMENT_BLOCK); return AsciiDocTokenTypes.LINE_BREAK;
+          case 8: 
+            { yybegin(INSIDE_LISTING_BLOCK_LINE); return AsciiDocTokenTypes.LISTING_TEXT;
             }
           case 51: break;
-          case 11: 
-            { yybegin(INSIDE_EXAMPLE_BLOCK_LINE); return AsciiDocTokenTypes.EXAMPLE_BLOCK;
+          case 9: 
+            { yybegin(LISTING_BLOCK); return AsciiDocTokenTypes.LINE_BREAK;
             }
           case 52: break;
-          case 12: 
-            { yybegin(EXAMPLE_BLOCK); return AsciiDocTokenTypes.LINE_BREAK;
+          case 10: 
+            { yybegin(INSIDE_COMMENT_BLOCK_LINE); return AsciiDocTokenTypes.BLOCK_COMMENT;
             }
           case 53: break;
-          case 13: 
-            { yybegin(INSIDE_PASSTRHOUGH_BLOCK_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK;
+          case 11: 
+            { yybegin(COMMENT_BLOCK); return AsciiDocTokenTypes.LINE_BREAK;
             }
           case 54: break;
-          case 14: 
-            { yybegin(PASSTRHOUGH_BLOCK); return AsciiDocTokenTypes.LINE_BREAK;
+          case 12: 
+            { yybegin(INSIDE_EXAMPLE_BLOCK_LINE); return AsciiDocTokenTypes.EXAMPLE_BLOCK;
             }
           case 55: break;
-          case 15: 
-            { yybegin(INSIDE_SIDEBAR_BLOCK_LINE); return AsciiDocTokenTypes.SIDEBAR_BLOCK;
+          case 13: 
+            { yybegin(EXAMPLE_BLOCK); return AsciiDocTokenTypes.LINE_BREAK;
             }
           case 56: break;
-          case 16: 
-            { yybegin(SIDEBAR_BLOCK); return AsciiDocTokenTypes.LINE_BREAK;
+          case 14: 
+            { yybegin(INSIDE_PASSTRHOUGH_BLOCK_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK;
             }
           case 57: break;
-          case 17: 
-            { yybegin(INSIDE_QUOTE_BLOCK_LINE); return AsciiDocTokenTypes.QUOTE_BLOCK;
+          case 15: 
+            { yybegin(PASSTRHOUGH_BLOCK); return AsciiDocTokenTypes.LINE_BREAK;
             }
           case 58: break;
-          case 18: 
-            { yybegin(QUOTE_BLOCK); return AsciiDocTokenTypes.LINE_BREAK;
+          case 16: 
+            { yybegin(INSIDE_SIDEBAR_BLOCK_LINE); return AsciiDocTokenTypes.SIDEBAR_BLOCK;
             }
           case 59: break;
-          case 19: 
-            { return AsciiDocTokenTypes.BLOCK_MACRO_BODY;
+          case 17: 
+            { yybegin(SIDEBAR_BLOCK); return AsciiDocTokenTypes.LINE_BREAK;
             }
           case 60: break;
-          case 20: 
-            { yybegin(BLOCK_MACRO_ATTRS); return AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES;
+          case 18: 
+            { yybegin(INSIDE_QUOTE_BLOCK_LINE); return AsciiDocTokenTypes.QUOTE_BLOCK;
             }
           case 61: break;
-          case 21: 
-            { return AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES;
+          case 19: 
+            { yybegin(QUOTE_BLOCK); return AsciiDocTokenTypes.LINE_BREAK;
             }
           case 62: break;
-          case 22: 
-            { return AsciiDocTokenTypes.TITLE;
+          case 20: 
+            { return AsciiDocTokenTypes.BLOCK_MACRO_BODY;
             }
           case 63: break;
-          case 23: 
-            { return AsciiDocTokenTypes.BLOCK_ATTR_NAME;
+          case 21: 
+            { yybegin(BLOCK_MACRO_ATTRS); return AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES;
             }
           case 64: break;
-          case 24: 
-            { yybegin(YYINITIAL); return AsciiDocTokenTypes.BLOCK_ATTRS_END;
+          case 22: 
+            { return AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES;
             }
           case 65: break;
-          case 25: 
-            { return AsciiDocTokenTypes.LINE_COMMENT;
+          case 23: 
+            { return AsciiDocTokenTypes.TITLE;
             }
           case 66: break;
+          case 24: 
+            { return AsciiDocTokenTypes.BLOCK_ATTR_NAME;
+            }
+          case 67: break;
+          case 25: 
+            { yybegin(YYINITIAL); return AsciiDocTokenTypes.BLOCK_ATTRS_END;
+            }
+          case 68: break;
           case 26: 
+            { return AsciiDocTokenTypes.MONOSPACE;
+            }
+          case 69: break;
+          case 27: 
+            { return AsciiDocTokenTypes.LINE_COMMENT;
+            }
+          case 70: break;
+          case 28: 
             // lookahead expression with fixed base length
             zzMarkedPos = Character.offsetByCodePoints
                 (zzBufferL/*, zzStartRead, zzEndRead - zzStartRead*/, zzStartRead, 1);
             { yybegin(TITLE); return AsciiDocTokenTypes.TITLE;
             }
-          case 67: break;
-          case 27: 
+          case 71: break;
+          case 29: 
             // lookahead expression with fixed lookahead length
             zzMarkedPos = Character.offsetByCodePoints
                 (zzBufferL/*, zzStartRead, zzEndRead - zzStartRead*/, zzMarkedPos, -1);
             { yybegin(HEADING); return AsciiDocTokenTypes.HEADING;
             }
-          case 68: break;
-          case 28: 
+          case 72: break;
+          case 30: 
             { String[] part = yytext().toString().split("\n");
       boolean sameCharactersInSecondLine = true;
       // must be same character all of second line
@@ -709,39 +722,39 @@ class _AsciiDocLexer implements FlexLexer {
         return AsciiDocTokenTypes.TEXT;
       }
             }
-          case 69: break;
-          case 29: 
+          case 73: break;
+          case 31: 
             // lookahead expression with fixed lookahead length
             zzMarkedPos = Character.offsetByCodePoints
                 (zzBufferL/*, zzStartRead, zzEndRead - zzStartRead*/, zzMarkedPos, -1);
             { yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID;
             }
-          case 70: break;
-          case 30: 
+          case 74: break;
+          case 32: 
             { yybegin(COMMENT_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.BLOCK_COMMENT;
             }
-          case 71: break;
-          case 31: 
+          case 75: break;
+          case 33: 
             { yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
             }
-          case 72: break;
-          case 32: 
+          case 76: break;
+          case 34: 
             { yybegin(LISTING_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
             }
-          case 73: break;
-          case 33: 
+          case 77: break;
+          case 35: 
             { yybegin(EXAMPLE_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER;
             }
-          case 74: break;
-          case 34: 
+          case 78: break;
+          case 36: 
             { yybegin(SIDEBAR_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER;
             }
-          case 75: break;
-          case 35: 
+          case 79: break;
+          case 37: 
             { yybegin(QUOTE_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER;
             }
-          case 76: break;
-          case 36: 
+          case 80: break;
+          case 38: 
             { if (yylength() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
@@ -749,8 +762,8 @@ class _AsciiDocLexer implements FlexLexer {
       return AsciiDocTokenTypes.LISTING_TEXT;
     }
             }
-          case 77: break;
-          case 37: 
+          case 81: break;
+          case 39: 
             { if (yylength() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.BLOCK_COMMENT;
@@ -758,8 +771,8 @@ class _AsciiDocLexer implements FlexLexer {
       return AsciiDocTokenTypes.BLOCK_COMMENT;
     }
             }
-          case 78: break;
-          case 38: 
+          case 82: break;
+          case 40: 
             { if (yylength() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER;
@@ -767,8 +780,8 @@ class _AsciiDocLexer implements FlexLexer {
       return AsciiDocTokenTypes.EXAMPLE_BLOCK;
     }
             }
-          case 79: break;
-          case 39: 
+          case 83: break;
+          case 41: 
             { if (yylength() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
@@ -776,8 +789,8 @@ class _AsciiDocLexer implements FlexLexer {
       return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK;
     }
             }
-          case 80: break;
-          case 40: 
+          case 84: break;
+          case 42: 
             { if (yylength() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER;
@@ -785,8 +798,8 @@ class _AsciiDocLexer implements FlexLexer {
       return AsciiDocTokenTypes.SIDEBAR_BLOCK;
     }
             }
-          case 81: break;
-          case 41: 
+          case 85: break;
+          case 43: 
             { if (yylength() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER;
@@ -794,7 +807,7 @@ class _AsciiDocLexer implements FlexLexer {
       return AsciiDocTokenTypes.QUOTE_BLOCK;
     }
             }
-          case 82: break;
+          case 86: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }

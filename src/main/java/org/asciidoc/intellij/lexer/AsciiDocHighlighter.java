@@ -27,6 +27,11 @@ public class AsciiDocHighlighter extends SyntaxHighlighterBase {
       DefaultLanguageHighlighterColors.KEYWORD
   );
 
+  public static final TextAttributesKey ASCIIDOC_MONOSPACE = TextAttributesKey.createTextAttributesKey(
+      "ASCIIDOC_MONOSPACE",
+      DefaultLanguageHighlighterColors.STRING
+  );
+
   private static final ImmutableMap<IElementType, TextAttributesKey> attributes =
       ImmutableMap.<IElementType, TextAttributesKey>builder()
           .put(AsciiDocTokenTypes.LINE_COMMENT, ASCIIDOC_COMMENT)
@@ -38,6 +43,7 @@ public class AsciiDocHighlighter extends SyntaxHighlighterBase {
           .put(AsciiDocTokenTypes.SIDEBAR_BLOCK, ASCIIDOC_LISTING_TEXT)
           .put(AsciiDocTokenTypes.HEADING, ASCIIDOC_HEADING)
           .put(AsciiDocTokenTypes.HEADING_OLDSTYLE, ASCIIDOC_HEADING)
+          .put(AsciiDocTokenTypes.MONOSPACE, ASCIIDOC_MONOSPACE)
           .build();
 
   @NotNull
