@@ -61,7 +61,9 @@ MONOSPACE_DELIMITER = "`"
 %state TITLE
 %state BLOCK_ATTRS
 
-%state MONOSPACE
+%state MONOSPACE_START
+%state MONOSPACE_INSIDE
+%state MONOSPACE_END
 
 %%
 
@@ -100,14 +102,14 @@ MONOSPACE_DELIMITER = "`"
   {TITLE_START} / [^\. ] { yybegin(TITLE); return AsciiDocTokenTypes.TITLE; }
   {BLOCK_MACRO_START} / {NON_SPACE} { yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   {BLOCK_ATTRS_START} { yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
-  {MONOSPACE_DELIMITER} {yybegin(MONOSPACE); return AsciiDocTokenTypes.MONOSPACE; }
+  {MONOSPACE_DELIMITER} {yybegin(MONOSPACE_START); return AsciiDocTokenTypes.MONOSPACE; }
 
   "\n"                 { return AsciiDocTokenTypes.LINE_BREAK; }
   .                    { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.TEXT; }
 }
 
 <INSIDE_LINE> {
-  {MONOSPACE_DELIMITER} {yybegin(MONOSPACE); return AsciiDocTokenTypes.MONOSPACE; }
+  {MONOSPACE_DELIMITER} {yybegin(MONOSPACE_START); return AsciiDocTokenTypes.MONOSPACE; }
   "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
   .                    { return AsciiDocTokenTypes.TEXT; }
 }
@@ -235,8 +237,20 @@ MONOSPACE_DELIMITER = "`"
   .                    { yybegin(INSIDE_QUOTE_BLOCK_LINE); return AsciiDocTokenTypes.QUOTE_BLOCK; }
 }
 
-<MONOSPACE> {
-  {MONOSPACE_DELIMITER} { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.TEXT; }
+<MONOSPACE_START> {
+  {MONOSPACE_DELIMITER} { yybegin(MONOSPACE_END); return AsciiDocTokenTypes.MONOSPACE; }
+  "\n"                  { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+  .                     { yybegin(MONOSPACE_INSIDE); return AsciiDocTokenTypes.MONOSPACE; }
+}
+
+<MONOSPACE_INSIDE> {
+  {MONOSPACE_DELIMITER} { yybegin(MONOSPACE_END); return AsciiDocTokenTypes.MONOSPACE; }
   "\n"                  { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
   .                     { return AsciiDocTokenTypes.MONOSPACE; }
+}
+
+<MONOSPACE_END> {
+  {MONOSPACE_DELIMITER} { yybegin(MONOSPACE_START); return AsciiDocTokenTypes.MONOSPACE; }
+  "\n"                  { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+  .                     { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.TEXT; }
 }

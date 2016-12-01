@@ -116,7 +116,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
             "AsciiDoc:MONOSPACE ('a')\n" +
             "AsciiDoc:MONOSPACE ('c')\n" +
             "AsciiDoc:MONOSPACE ('e')\n" +
-            "AsciiDoc:TEXT ('` in it.')"
+            "AsciiDoc:MONOSPACE ('`')\n" +
+            "AsciiDoc:TEXT (' in it.')"
     );
   }
 
