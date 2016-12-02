@@ -22,6 +22,15 @@ window.__IntelliJTools.scrollToLine = (function () {
     return null
   }
 
+  function calculateOffset(element) {
+    var offset = 0
+    while(element != null) {
+      offset += element.offsetTop
+      element = element.offsetParent
+    }
+    return offset
+  }
+
   var scrollToLine = function (newLineToScroll, lineCount) {
 
     // the sourcelines will be as CSS class elements that also have class has-source-line
@@ -35,13 +44,13 @@ window.__IntelliJTools.scrollToLine = (function () {
       var block = blocks[i]
       var lineOfBlock = getLine(block);
       if (lineOfBlock <= newLineToScroll) {
-        startY = block.offsetTop
+        startY = calculateOffset(block)
         startLine = lineOfBlock
         // there might be no further block, therefore assume that the end is at the end of this block
-        endY = block.offsetTop + block.offsetHeight
+        endY = startY + block.offsetHeight
       }
       else if (lineOfBlock > newLineToScroll) {
-        endY = block.offsetTop
+        endY = calculateOffset(block)
         endLine = lineOfBlock -1;
         break
       }
@@ -74,9 +83,12 @@ window.__IntelliJTools.scrollToLine = (function () {
       var newValue = resultY - height * relativeWindowPosition;
 
       // ensure consistent scrolling when scrolling up or down
-      if ((oldLineToScroll < newLineToScroll && oldValue < newValue) ||
-          (oldLineToScroll > newLineToScroll && oldValue > newValue) ||
-          (resultY < oldValue || resultY > oldValue + window.height)) {
+      if (
+          (oldLineToScroll < newLineToScroll && oldValue < newValue) || // consistent scrolling up
+          (oldLineToScroll > newLineToScroll && oldValue > newValue) || // consistent scrolling down
+          (resultY < document.documentElement.scrollTop) || // position above window
+          (resultY > document.documentElement.scrollTop + window.height) // position below window
+         ) {
         document.documentElement.scrollTop = document.body.scrollTop = newValue;
       }
 

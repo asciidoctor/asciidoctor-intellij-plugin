@@ -90,12 +90,13 @@ class _AsciiDocLexer implements FlexLexer {
     "\1\16\1\20\1\21\1\20\1\22\1\23\1\22\1\24"+
     "\1\25\1\26\1\27\1\30\1\31\1\32\1\33\1\34"+
     "\1\0\1\35\10\0\1\36\7\0\3\35\2\0\3\37"+
-    "\12\0\1\40\1\35\5\0\2\41\6\0\1\42\1\43"+
-    "\1\44\1\45\1\0\1\46\1\47\1\50\1\51\1\52"+
-    "\1\53\1\54\1\55\2\0";
+    "\13\0\1\40\1\35\5\0\2\41\6\0\1\35\1\42"+
+    "\1\0\1\43\1\0\1\44\1\0\1\45\2\0\1\46"+
+    "\1\0\1\47\1\0\1\50\1\0\1\51\1\0\1\52"+
+    "\1\0\1\53\1\0\1\54\1\0\1\55\1\37\3\0";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[133];
+    int [] result = new int[148];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -132,14 +133,16 @@ class _AsciiDocLexer implements FlexLexer {
     "\0\u0306\0\u0318\0\u032a\0\u021c\0\u033c\0\u019e\0\u034e\0\u0360"+
     "\0\u0372\0\u0384\0\u0396\0\u03a8\0\u03ba\0\u03cc\0\u03de\0\u03f0"+
     "\0\u0402\0\u0414\0\u018c\0\u02f4\0\u019e\0\u0426\0\u0438\0\u044a"+
-    "\0\u045c\0\u046e\0\u0480\0\u0492\0\u04a4\0\u04b6\0\u04c8\0\u019e"+
-    "\0\u04da\0\u04ec\0\u04fe\0\u0510\0\u0522\0\u0534\0\u018c\0\u019e"+
-    "\0\u0546\0\u0558\0\u056a\0\u057c\0\u058e\0\u05a0\0\u02ac\0\u02ac"+
-    "\0\u02ac\0\u02ac\0\u05b2\0\u02ac\0\u02ac\0\u019e\0\u019e\0\u019e"+
-    "\0\u019e\0\u019e\0\u019e\0\u05c4\0\u05d6";
+    "\0\u045c\0\u046e\0\u0480\0\u0492\0\u04a4\0\u04b6\0\u04c8\0\u04da"+
+    "\0\u019e\0\u04ec\0\u04fe\0\u0510\0\u0522\0\u0534\0\u0546\0\u018c"+
+    "\0\u019e\0\u0558\0\u056a\0\u057c\0\u058e\0\u05a0\0\u05b2\0\u05c4"+
+    "\0\u02ac\0\u05d6\0\u02ac\0\u05e8\0\u02ac\0\u05fa\0\u02ac\0\u060c"+
+    "\0\u061e\0\u02ac\0\u0630\0\u02ac\0\u0642\0\u019e\0\u0654\0\u019e"+
+    "\0\u0666\0\u019e\0\u0678\0\u019e\0\u068a\0\u019e\0\u069c\0\u019e"+
+    "\0\u05fa\0\u06ae\0\u06c0\0\u06d2";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[133];
+    int [] result = new int[148];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -197,30 +200,45 @@ class _AsciiDocLexer implements FlexLexer {
     "\10\41\1\104\5\41\1\140\2\41\1\0\1\41\1\114"+
     "\1\115\5\41\1\104\10\41\1\0\2\41\1\141\3\41"+
     "\5\0\1\142\17\0\1\143\24\0\1\144\17\0\1\145"+
-    "\24\0\1\146\22\0\1\147\13\0\1\150\1\0\3\125"+
-    "\5\0\1\125\5\0\2\126\1\104\10\126\1\130\10\126"+
-    "\1\104\1\151\7\126\1\130\6\126\2\130\1\0\17\130"+
-    "\2\41\1\104\1\41\1\152\6\41\1\0\10\41\1\104"+
-    "\2\41\1\153\5\41\1\0\7\41\1\110\1\104\3\41"+
-    "\1\154\3\41\1\110\1\0\10\41\1\104\4\41\1\155"+
-    "\3\41\1\0\10\41\1\104\5\41\1\156\2\41\1\0"+
-    "\1\41\1\114\1\115\3\41\2\157\1\104\10\157\1\160"+
-    "\6\157\5\0\1\161\17\0\1\162\24\0\1\163\17\0"+
-    "\1\164\24\0\1\165\22\0\1\166\11\0\2\126\1\167"+
-    "\1\151\7\126\1\130\6\126\2\41\1\170\1\41\1\152"+
-    "\6\41\1\0\10\41\1\171\2\41\1\153\5\41\1\0"+
-    "\7\41\1\110\1\172\3\41\1\173\3\41\1\110\1\0"+
-    "\10\41\1\174\4\41\1\155\3\41\1\0\10\41\1\175"+
-    "\5\41\1\156\2\41\1\0\1\41\1\114\1\115\3\41"+
-    "\2\0\1\176\2\0\1\161\16\0\1\177\1\162\20\0"+
-    "\1\200\3\0\1\163\15\0\1\201\1\0\1\164\17\0"+
-    "\1\202\4\0\1\165\14\0\1\203\5\0\1\166\11\0"+
-    "\1\41\1\110\1\172\3\41\1\204\3\41\1\110\1\0"+
-    "\7\41\1\110\1\172\3\41\1\205\3\41\1\110\1\0"+
-    "\10\41\1\172\3\41\1\205\4\41\1\0\6\41";
+    "\24\0\1\146\22\0\1\147\12\0\1\150\1\151\1\0"+
+    "\3\125\3\0\1\150\1\0\1\125\5\0\2\126\1\104"+
+    "\10\126\1\130\10\126\1\104\1\152\7\126\1\130\6\126"+
+    "\2\130\1\0\17\130\2\41\1\104\1\41\1\153\6\41"+
+    "\1\0\10\41\1\104\2\41\1\154\5\41\1\0\7\41"+
+    "\1\110\1\104\3\41\1\155\3\41\1\110\1\0\10\41"+
+    "\1\104\4\41\1\156\3\41\1\0\10\41\1\104\5\41"+
+    "\1\157\2\41\1\0\1\41\1\114\1\115\3\41\2\160"+
+    "\1\104\10\160\1\161\6\160\5\0\1\162\17\0\1\163"+
+    "\24\0\1\164\17\0\1\165\24\0\1\166\22\0\1\167"+
+    "\12\0\1\150\1\151\7\0\1\150\7\0\1\126\1\170"+
+    "\1\171\1\152\6\126\1\170\1\130\6\126\1\41\1\172"+
+    "\1\173\1\41\1\153\5\41\1\172\1\0\7\41\1\174"+
+    "\1\175\2\41\1\154\4\41\1\174\1\0\7\41\1\176"+
+    "\1\177\3\41\1\200\3\41\1\176\1\0\7\41\1\201"+
+    "\1\202\4\41\1\156\2\41\1\201\1\0\7\41\1\203"+
+    "\1\204\5\41\1\157\1\41\1\203\1\0\1\41\1\114"+
+    "\1\115\3\41\1\0\1\205\1\206\2\0\1\162\4\0"+
+    "\1\205\10\0\1\207\1\210\1\163\6\0\1\207\10\0"+
+    "\1\211\1\212\3\0\1\164\3\0\1\211\10\0\1\213"+
+    "\1\214\1\0\1\165\5\0\1\213\10\0\1\215\1\216"+
+    "\4\0\1\166\2\0\1\215\10\0\1\217\1\220\5\0"+
+    "\1\167\1\0\1\217\7\0\1\126\1\170\1\171\7\126"+
+    "\1\170\1\130\6\126\1\41\1\172\1\173\7\41\1\172"+
+    "\1\0\7\41\1\174\1\175\7\41\1\174\1\0\6\41"+
+    "\1\133\1\221\1\177\7\133\1\221\1\135\6\133\1\41"+
+    "\1\176\1\177\3\41\1\222\3\41\1\176\1\0\7\41"+
+    "\1\201\1\202\7\41\1\201\1\0\7\41\1\203\1\204"+
+    "\7\41\1\203\1\0\6\41\1\0\1\205\1\206\7\0"+
+    "\1\205\10\0\1\207\1\210\7\0\1\207\10\0\1\211"+
+    "\1\212\7\0\1\211\10\0\1\213\1\214\7\0\1\213"+
+    "\10\0\1\215\1\216\7\0\1\215\10\0\1\217\1\220"+
+    "\7\0\1\217\7\0\1\41\1\176\1\177\3\41\1\223"+
+    "\3\41\1\176\1\0\7\41\1\224\1\177\3\41\1\223"+
+    "\3\41\1\224\1\0\7\41\1\224\1\177\7\41\1\224"+
+    "\1\0\6\41";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[1512];
+    int [] result = new int[1764];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -261,12 +279,14 @@ class _AsciiDocLexer implements FlexLexer {
     "\26\0\1\1\1\11\6\1\2\11\1\0\3\1\6\11"+
     "\1\1\2\11\1\1\2\11\1\1\2\11\1\1\2\11"+
     "\1\1\2\11\1\1\11\11\1\0\1\1\10\0\1\11"+
-    "\7\0\3\1\2\0\2\1\1\11\12\0\1\11\1\1"+
-    "\5\0\1\1\1\11\6\0\4\1\1\0\2\1\6\11"+
-    "\2\0";
+    "\7\0\3\1\2\0\2\1\1\11\13\0\1\11\1\1"+
+    "\5\0\1\1\1\11\6\0\2\1\1\0\1\1\1\0"+
+    "\1\1\1\0\1\1\2\0\1\1\1\0\1\1\1\0"+
+    "\1\11\1\0\1\11\1\0\1\11\1\0\1\11\1\0"+
+    "\1\11\1\0\1\11\1\1\3\0";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[133];
+    int [] result = new int[148];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -714,21 +734,24 @@ class _AsciiDocLexer implements FlexLexer {
           case 76: break;
           case 32: 
             { String[] part = yytext().toString().split("\n");
+      // remove all trailing white space
+      String heading = part[0].replaceAll("[ \t]*$","");
+      String underlining = part[1].replaceAll("[ \t]*$","");
       boolean sameCharactersInSecondLine = true;
       // must be same character all of second line
-      for(int i = 0; i < part[1].length(); ++i) {
-        if(part[1].charAt(0) != part[1].charAt(i)) {
+      for(int i = 0; i < underlining.length(); ++i) {
+        if(underlining.charAt(0) != underlining.charAt(i)) {
           sameCharactersInSecondLine = false;
           break;
         }
       }
       // must be same length plus/minus one character
-      if(part[0].length() >= part[1].length() -1
-         && part[0].length() <= part[1].length() +1
+      if(heading.length() >= underlining.length() -1
+         && heading.length() <= underlining.length() +1
          && sameCharactersInSecondLine) {
         return AsciiDocTokenTypes.HEADING;
       } else {
-        yypushback(yylength()-1); // part[1].length() + 1
+        yypushback(yylength()-1); // heading.length() + 1
         yybegin(INSIDE_LINE);
         return AsciiDocTokenTypes.TEXT;
       }
@@ -742,31 +765,31 @@ class _AsciiDocLexer implements FlexLexer {
             }
           case 78: break;
           case 34: 
-            { yybegin(COMMENT_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.BLOCK_COMMENT;
+            { yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT;
             }
           case 79: break;
           case 35: 
-            { yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
+            { yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
             }
           case 80: break;
           case 36: 
-            { yybegin(LISTING_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
+            { yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
             }
           case 81: break;
           case 37: 
-            { yybegin(EXAMPLE_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER;
+            { yybegin(EXAMPLE_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER;
             }
           case 82: break;
           case 38: 
-            { yybegin(SIDEBAR_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER;
+            { yybegin(SIDEBAR_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER;
             }
           case 83: break;
           case 39: 
-            { yybegin(QUOTE_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER;
+            { yybegin(QUOTE_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER;
             }
           case 84: break;
           case 40: 
-            { if (yylength() == blockDelimiterLength) {
+            { if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
     } else {
@@ -775,7 +798,7 @@ class _AsciiDocLexer implements FlexLexer {
             }
           case 85: break;
           case 41: 
-            { if (yylength() == blockDelimiterLength) {
+            { if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.BLOCK_COMMENT;
     } else {
@@ -784,7 +807,7 @@ class _AsciiDocLexer implements FlexLexer {
             }
           case 86: break;
           case 42: 
-            { if (yylength() == blockDelimiterLength) {
+            { if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER;
     } else {
@@ -793,7 +816,7 @@ class _AsciiDocLexer implements FlexLexer {
             }
           case 87: break;
           case 43: 
-            { if (yylength() == blockDelimiterLength) {
+            { if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
     } else {
@@ -802,7 +825,7 @@ class _AsciiDocLexer implements FlexLexer {
             }
           case 88: break;
           case 44: 
-            { if (yylength() == blockDelimiterLength) {
+            { if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER;
     } else {
@@ -811,7 +834,7 @@ class _AsciiDocLexer implements FlexLexer {
             }
           case 89: break;
           case 45: 
-            { if (yylength() == blockDelimiterLength) {
+            { if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER;
     } else {
