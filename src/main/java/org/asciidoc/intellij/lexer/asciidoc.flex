@@ -63,12 +63,12 @@ BLOCK_ATTRS_START = "["
 %%
 
 <YYINITIAL> {
-  {LISTING_BLOCK_DELIMITER}  { yybegin(LISTING_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
-  {COMMENT_BLOCK_DELIMITER} { yybegin(COMMENT_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
-  {EXAMPLE_BLOCK_DELIMITER} { yybegin(EXAMPLE_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER; }
-  {PASSTRHOUGH_BLOCK_DELIMITER} { yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
-  {SIDEBAR_BLOCK_DELIMITER} { yybegin(SIDEBAR_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER; }
-  {QUOTE_BLOCK_DELIMITER} { yybegin(QUOTE_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER; }
+  {LISTING_BLOCK_DELIMITER}  { yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
+  {COMMENT_BLOCK_DELIMITER} { yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
+  {EXAMPLE_BLOCK_DELIMITER} { yybegin(EXAMPLE_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER; }
+  {PASSTRHOUGH_BLOCK_DELIMITER} { yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
+  {SIDEBAR_BLOCK_DELIMITER} { yybegin(SIDEBAR_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER; }
+  {QUOTE_BLOCK_DELIMITER} { yybegin(QUOTE_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER; }
 
   {HEADING_OLDSTYLE} {
       String[] part = yytext().toString().split("\n");
@@ -139,7 +139,7 @@ BLOCK_ATTRS_START = "["
 
 <LISTING_BLOCK> {
   {LISTING_BLOCK_DELIMITER} {
-    if (yylength() == blockDelimiterLength) {
+    if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
     } else {
@@ -155,7 +155,7 @@ BLOCK_ATTRS_START = "["
 
 <COMMENT_BLOCK> {
   {COMMENT_BLOCK_DELIMITER} {
-    if (yylength() == blockDelimiterLength) {
+    if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.BLOCK_COMMENT;
     } else {
@@ -171,7 +171,7 @@ BLOCK_ATTRS_START = "["
 
 <EXAMPLE_BLOCK> {
   {EXAMPLE_BLOCK_DELIMITER} {
-    if (yylength() == blockDelimiterLength) {
+    if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER;
     } else {
@@ -187,7 +187,7 @@ BLOCK_ATTRS_START = "["
 
 <PASSTRHOUGH_BLOCK> {
   {PASSTRHOUGH_BLOCK_DELIMITER} {
-    if (yylength() == blockDelimiterLength) {
+    if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
     } else {
@@ -203,7 +203,7 @@ BLOCK_ATTRS_START = "["
 
 <SIDEBAR_BLOCK> {
   {SIDEBAR_BLOCK_DELIMITER} {
-    if (yylength() == blockDelimiterLength) {
+    if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER;
     } else {
@@ -219,7 +219,7 @@ BLOCK_ATTRS_START = "["
 
 <QUOTE_BLOCK> {
   {QUOTE_BLOCK_DELIMITER} {
-    if (yylength() == blockDelimiterLength) {
+    if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER;
     } else {

@@ -742,31 +742,31 @@ class _AsciiDocLexer implements FlexLexer {
             }
           case 70: break;
           case 30: 
-            { yybegin(COMMENT_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.BLOCK_COMMENT;
+            { yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT;
             }
           case 71: break;
           case 31: 
-            { yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
+            { yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
             }
           case 72: break;
           case 32: 
-            { yybegin(LISTING_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
+            { yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
             }
           case 73: break;
           case 33: 
-            { yybegin(EXAMPLE_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER;
+            { yybegin(EXAMPLE_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER;
             }
           case 74: break;
           case 34: 
-            { yybegin(SIDEBAR_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER;
+            { yybegin(SIDEBAR_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER;
             }
           case 75: break;
           case 35: 
-            { yybegin(QUOTE_BLOCK); blockDelimiterLength = yylength(); return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER;
+            { yybegin(QUOTE_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER;
             }
           case 76: break;
           case 36: 
-            { if (yylength() == blockDelimiterLength) {
+            { if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
     } else {
@@ -775,7 +775,7 @@ class _AsciiDocLexer implements FlexLexer {
             }
           case 77: break;
           case 37: 
-            { if (yylength() == blockDelimiterLength) {
+            { if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.BLOCK_COMMENT;
     } else {
@@ -784,7 +784,7 @@ class _AsciiDocLexer implements FlexLexer {
             }
           case 78: break;
           case 38: 
-            { if (yylength() == blockDelimiterLength) {
+            { if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER;
     } else {
@@ -793,7 +793,7 @@ class _AsciiDocLexer implements FlexLexer {
             }
           case 79: break;
           case 39: 
-            { if (yylength() == blockDelimiterLength) {
+            { if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
     } else {
@@ -802,7 +802,7 @@ class _AsciiDocLexer implements FlexLexer {
             }
           case 80: break;
           case 40: 
-            { if (yylength() == blockDelimiterLength) {
+            { if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER;
     } else {
@@ -811,7 +811,7 @@ class _AsciiDocLexer implements FlexLexer {
             }
           case 81: break;
           case 41: 
-            { if (yylength() == blockDelimiterLength) {
+            { if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER;
     } else {
