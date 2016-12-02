@@ -242,13 +242,13 @@ MONOSPACE_DELIMITER = "`"
 
 <MONOSPACE_START> {
   {MONOSPACE_DELIMITER} { yybegin(MONOSPACE_END); return AsciiDocTokenTypes.MONOSPACE; }
-  "\n"                  { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+  "\n"                  { yybegin(MONOSPACE_INSIDE); return AsciiDocTokenTypes.LINE_BREAK; }
   .                     { yybegin(MONOSPACE_INSIDE); return AsciiDocTokenTypes.MONOSPACE; }
 }
 
 <MONOSPACE_INSIDE> {
   {MONOSPACE_DELIMITER} { yybegin(MONOSPACE_END); return AsciiDocTokenTypes.MONOSPACE; }
-  "\n"                  { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+  "\n"                  { yybegin(MONOSPACE_INSIDE); return AsciiDocTokenTypes.LINE_BREAK; }
   .                     { return AsciiDocTokenTypes.MONOSPACE; }
 }
 
