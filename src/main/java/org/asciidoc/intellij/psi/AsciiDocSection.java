@@ -28,7 +28,7 @@ public class AsciiDocSection extends ASTWrapperPsiElement {
       text = StringUtil.trimLeading(text, '=').trim();
     } else {
       // old style heading
-      text = text.replaceAll("[-=~\\^+\n]*$", "");
+      text = text.replaceAll("[-=~\\^+\n \t]*$", "");
     }
     return text;
   }

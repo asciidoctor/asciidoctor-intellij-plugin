@@ -20,16 +20,16 @@ import com.intellij.psi.tree.IElementType;
 SPACE = [\ \t]
 NON_SPACE = [^\n]
 LINE_COMMENT="//"[^\n]*
-COMMENT_BLOCK_DELIMITER = "////" "/"* \n
-PASSTRHOUGH_BLOCK_DELIMITER = "++++" "+"* \n
-LISTING_BLOCK_DELIMITER = "----" "-"* \n
-EXAMPLE_BLOCK_DELIMITER = "====" "="* \n
-SIDEBAR_BLOCK_DELIMITER = "****" "*"* \n
-QUOTE_BLOCK_DELIMITER = "____" "_"* \n
+COMMENT_BLOCK_DELIMITER = "////" "/"* {SPACE}* \n
+PASSTRHOUGH_BLOCK_DELIMITER = "++++" "+"* {SPACE}* \n
+LISTING_BLOCK_DELIMITER = "----" "-"* {SPACE}* \n
+EXAMPLE_BLOCK_DELIMITER = "====" "="* {SPACE}* \n
+SIDEBAR_BLOCK_DELIMITER = "****" "*"* {SPACE}* \n
+QUOTE_BLOCK_DELIMITER = "____" "_"* {SPACE}* \n
 HEADING_START = "="{1,6} {SPACE}+
 // starting at the start of the line, but not with a dot
 // next line follwoing with only header marks
-HEADING_OLDSTYLE = [^.\n\t\[].* "\n" [-=~\^+]+ "\n"
+HEADING_OLDSTYLE = [^.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
 TITLE_START = "."
 BLOCK_ATTRS_START = "["
@@ -72,21 +72,24 @@ BLOCK_ATTRS_START = "["
 
   {HEADING_OLDSTYLE} {
       String[] part = yytext().toString().split("\n");
+      // remove all trailing white space
+      String heading = part[0].replaceAll("[ \t]*$","");
+      String underlining = part[1].replaceAll("[ \t]*$","");
       boolean sameCharactersInSecondLine = true;
       // must be same character all of second line
-      for(int i = 0; i < part[1].length(); ++i) {
-        if(part[1].charAt(0) != part[1].charAt(i)) {
+      for(int i = 0; i < underlining.length(); ++i) {
+        if(underlining.charAt(0) != underlining.charAt(i)) {
           sameCharactersInSecondLine = false;
           break;
         }
       }
       // must be same length plus/minus one character
-      if(part[0].length() >= part[1].length() -1
-         && part[0].length() <= part[1].length() +1
+      if(heading.length() >= underlining.length() -1
+         && heading.length() <= underlining.length() +1
          && sameCharactersInSecondLine) {
         return AsciiDocTokenTypes.HEADING;
       } else {
-        yypushback(yylength()-1); // part[1].length() + 1
+        yypushback(yylength()-1); // heading.length() + 1
         yybegin(INSIDE_LINE);
         return AsciiDocTokenTypes.TEXT;
       }
