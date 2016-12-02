@@ -18,7 +18,7 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.17.1 Improved handling of trailing spaces in syntax highlighting. Fixed code/preview sync for nested layouts (i.e. NOTE)</li>
+      <li>0.17.1 Improved handling of trailing spaces in syntax highlighting. Fixed code/preview sync for nested HTML (i.e. NOTE)</li>
       <li>0.17.0 Updated block parsing to support two styles of headings. Block starts and ends are need to be aligned in length and shape when parsed.</li>
       <li>0.16.4 Improved darcula support for JavaFX. More block types are using proper dark background and light text colors.</li>
       <li>0.16.3 Theme in preview can be switched from light to darcula independent of IDE theme</li>

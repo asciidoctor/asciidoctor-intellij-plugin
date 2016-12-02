@@ -13,7 +13,7 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 === 0.17.1 (preview, available from Github releases)
 
 - Improved handling of trailing spaces in syntax highlighting.
-- Fixed code/preview sync for nested layouts (i.e. NOTE)
+- Fixed code/preview sync for nested HTML (i.e. NOTE)
 
 === 0.17.0 (preview, available from Github releases)
 
