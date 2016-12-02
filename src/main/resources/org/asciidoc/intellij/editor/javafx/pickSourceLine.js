@@ -22,6 +22,15 @@ window.__IntelliJTools.pickSourceLine = (function () {
 
   var lineCount;
 
+  function calculateOffset(element) {
+    var offset = 0
+    while(element != null) {
+      offset += element.offsetTop
+      element = element.offsetParent
+    }
+    return offset
+  }
+
   window.__IntelliJTools.srcollEditorToLine = function (event) {
     var sourceLine = getLine(this)
 
@@ -35,13 +44,13 @@ window.__IntelliJTools.pickSourceLine = (function () {
       var block = blocks[i]
       var lineOfBlock = getLine(block);
       if (lineOfBlock <= sourceLine) {
-        startY = block.offsetTop
+        startY = calculateOffset(block)
         startLine = lineOfBlock
         // there might be no further block, therefore assume that the end is at the end of this block
-        endY = block.offsetTop + block.offsetHeight
+        endY = startY + block.offsetHeight
       }
       else if (lineOfBlock > sourceLine) {
-        endY = block.offsetTop
+        endY = calculateOffset(block)
         endLine = lineOfBlock -1;
         break
       }

@@ -10,22 +10,23 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
-=== 0.17.1 (pending)
+=== 0.17.1 (preview, available from Github releases)
 
-Improved handling of trailing spaces in syntax highlighting.
+- Improved handling of trailing spaces in syntax highlighting.
+- Fixed code/preview sync for nested layouts (i.e. NOTE)
 
 === 0.17.0 (preview, available from Github releases)
 
-Updated block parsing to support two styles of headings.
-Block starts and ends are need to be aligned in length and shape when parsed.
+- Updated block parsing to support two styles of headings.
+- Block starts and ends are need to be aligned in length and shape when parsed.
 
 === 0.16.4
 
-Improved darcula support for JavaFX. More block types are using proper dark background and light text colors.
+- Improved darcula support for JavaFX. More block types are using proper dark background and light text colors.
 
 === 0.16.3
 
-Theme in preview can be switched from light to darcula independent of IDE theme
+- Theme in preview can be switched from light to darcula independent of IDE theme
 
 === 0.16.2
 
