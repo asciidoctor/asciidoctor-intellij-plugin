@@ -111,6 +111,27 @@ public class AsciiDocLexerTest extends LexerTestCase {
     );
   }
 
+  public void testMonospaceMultipleLineWithHeading() {
+    doTest("some text with `monospace\n sometext\n= hello in it.",
+        "AsciiDoc:TEXT ('some text with ')\n" +
+            "AsciiDoc:MONOSPACE ('`monospace')\n" +
+            "AsciiDoc:LINE_BREAK ('\\n')\n" +
+            "AsciiDoc:MONOSPACE (' sometext')\n" +
+            "AsciiDoc:LINE_BREAK ('\\n')\n" +
+            "AsciiDoc:HEADING ('= hello in it.')"
+    );
+  }
+
+  public void testMonospaceMultipleLineWithComment() {
+    doTest("some text with `monospace\n sometext\n// hello `in it.",
+        "AsciiDoc:TEXT ('some text with ')\n" +
+            "AsciiDoc:MONOSPACE ('`monospace')\n" +
+            "AsciiDoc:LINE_BREAK ('\\n')\n" +
+            "AsciiDoc:MONOSPACE (' sometext')\n" +
+            "AsciiDoc:LINE_BREAK ('\\n')\n" +
+            "AsciiDoc:LINE_COMMENT ('// hello `in it.')");
+  }
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();

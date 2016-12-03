@@ -247,7 +247,10 @@ MONOSPACE_DELIMITER = "`"
 }
 
 <MONOSPACE_INSIDE> {
-  {MONOSPACE_DELIMITER} { yybegin(MONOSPACE_END); return AsciiDocTokenTypes.MONOSPACE; }
+  {MONOSPACE_DELIMITER}     { yybegin(MONOSPACE_END); return AsciiDocTokenTypes.MONOSPACE; }
+  {HEADING_START}           { yybegin(HEADING); return AsciiDocTokenTypes.HEADING;}
+  {LINE_COMMENT}            { yybegin(YYINITIAL) ; return AsciiDocTokenTypes.LINE_COMMENT; }
+
   "\n"                  { yybegin(MONOSPACE_INSIDE); return AsciiDocTokenTypes.LINE_BREAK; }
   .                     { return AsciiDocTokenTypes.MONOSPACE; }
 }
