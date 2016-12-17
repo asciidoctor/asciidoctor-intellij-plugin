@@ -219,13 +219,11 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   private String findTempImageFile(String _fileName) {
-    if (imagesPath != null) {
-      Path file = imagesPath.resolve(_fileName);
-      if (Files.exists(file)) {
-        return Paths.get(base).relativize(file).toString();
-      }
+    Path file = imagesPath.resolve(_fileName);
+    if (Files.exists(file)) {
+      return file.toFile().toString();
     }
-    return _fileName;
+    return null;
   }
 
   private String prepareHtml(@NotNull String html) {
@@ -237,9 +235,18 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     while (matcher.find()) {
       final MatchResult matchResult = matcher.toMatchResult();
       String file = matchResult.group(1);
-      file = findTempImageFile(file);
-      String md5 = calculateMd5(file);
-      String replacement = "<img src=\"localfile://" + md5 + "/" + base + "/" + file + "\"";
+      String tmpFile = findTempImageFile(file);
+      String md5;
+      String replacement;
+      if(tmpFile != null) {
+        md5 = calculateMd5(tmpFile, null);
+        tmpFile = tmpFile.replaceAll("\\\\", "/");
+        tmpFile = tmpFile.replaceAll(":", "%3A");
+        replacement = "<img src=\"localfile://" + md5 + "/" + tmpFile + "\"";
+      } else {
+        md5 = calculateMd5(file, base);
+        replacement = "<img src=\"localfile://" + md5 + "/" + base + "/" + file + "\"";
+      }
       html = html.substring(0, matchResult.start()) +
           replacement + html.substring(matchResult.end());
       matcher.reset(html);
@@ -251,12 +258,12 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         .replace("</body>", getScriptingLines() + "</body>");
   }
 
-  private String calculateMd5(String file) {
+  private String calculateMd5(String file, String base) {
     String md5;
     try {
       MessageDigest md = MessageDigest.getInstance("MD5");
-      FileInputStream fis = new FileInputStream(base.replaceAll("%3A", ":") + "/" + file);
-      int nread = 0;
+      FileInputStream fis = new FileInputStream((base != null ? base.replaceAll("%3A", ":") + "/" : "") + file);
+      int nread;
       byte[] dataBytes = new byte[1024];
       while ((nread = fis.read(dataBytes)) != -1) {
         md.update(dataBytes, 0, nread);

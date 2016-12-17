@@ -24,6 +24,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.event.DocumentAdapter;
@@ -39,6 +40,7 @@ import com.intellij.util.Alarm;
 import com.intellij.util.messages.MessageBusConnection;
 import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
+import org.asciidoc.intellij.editor.javafx.JavaFxCouldBeEnabledNotificationProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 import org.jetbrains.annotations.Contract;
@@ -162,16 +164,20 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
   public AsciiDocPreviewEditor(final Document document) {
 
-    //
     this.document = document;
 
-    // create temp dir for images, JavaFX only!
+    // create temp dir for images. Will be used by JavaFX only!
     Path tempImagesPath = null;
 
     try {
       tempImagesPath = Files.createTempDirectory("asciidoctor-intellij");
     } catch (IOException _ex) {
-      // ignore
+      String message = "Can't create temp folder to render images: " + _ex.getMessage();
+      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+        .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
+      // increase event log counter
+      notification.setImportant(true);
+      Notifications.Bus.notify(notification);
     }
     this.tempImagesPath = tempImagesPath;
 
@@ -374,7 +380,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       try {
         FileUtils.deleteDirectory(tempImagesPath.toFile());
       } catch (IOException _ex) {
-        // ignore
+        Logger.getInstance(AsciiDocPreviewEditor.class).warn("could not remove temp folder", _ex);
       }
     }
   }
