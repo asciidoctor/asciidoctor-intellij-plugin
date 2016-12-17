@@ -6,6 +6,7 @@ import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
+import java.nio.file.Path;
 
 public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
 
@@ -15,8 +16,8 @@ public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
 
   @NotNull
   @Override
-  public AsciiDocHtmlPanel createHtmlPanel(Document document) {
-    return new JavaFxHtmlPanel(document);
+  public AsciiDocHtmlPanel createHtmlPanel(Document document, Path imagesPath) {
+    return new JavaFxHtmlPanel(document, imagesPath);
   }
 
   @NotNull

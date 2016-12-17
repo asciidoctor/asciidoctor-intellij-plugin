@@ -37,6 +37,9 @@ import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -84,9 +87,15 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
   private int lineCount = 0;
 
-  public JavaFxHtmlPanel(Document document) {
+  private final Path imagesPath;
+
+  public JavaFxHtmlPanel(Document document, Path imagesPath) {
+
     //System.setProperty("prism.lcdtext", "false");
     //System.setProperty("prism.text", "t2k");
+
+    this.imagesPath = imagesPath;
+
     myPanelWrapper = new JPanel(new BorderLayout());
     myPanelWrapper.setBackground(JBColor.background());
 
@@ -209,6 +218,16 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     });
   }
 
+  private String findTempImageFile(String _fileName) {
+    if (imagesPath != null) {
+      Path file = imagesPath.resolve(_fileName);
+      if (Files.exists(file)) {
+        return Paths.get(base).relativize(file).toString();
+      }
+    }
+    return _fileName;
+  }
+
   private String prepareHtml(@NotNull String html) {
     /* for each image we'll calculate a MD5 sum of its content. Once the content changes, MD5 and therefore the URL
     * will change. The changed URL is necessary for the JavaFX web view to display the new content, as each URL
@@ -218,6 +237,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     while (matcher.find()) {
       final MatchResult matchResult = matcher.toMatchResult();
       String file = matchResult.group(1);
+      file = findTempImageFile(file);
       String md5 = calculateMd5(file);
       String replacement = "<img src=\"localfile://" + md5 + "/" + base + "/" + file + "\"";
       html = html.substring(0, matchResult.start()) +
