@@ -9,6 +9,7 @@ import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.nio.file.Path;
 
 public abstract class AsciiDocHtmlPanelProvider {
 
@@ -18,7 +19,7 @@ public abstract class AsciiDocHtmlPanelProvider {
   private static AsciiDocHtmlPanelProvider[] ourProviders = null;
 
   @NotNull
-  public abstract AsciiDocHtmlPanel createHtmlPanel(Document document);
+  public abstract AsciiDocHtmlPanel createHtmlPanel(Document document, Path imagesPath);
 
   @NotNull
   public abstract AvailabilityInfo isAvailable();

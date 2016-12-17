@@ -16,6 +16,8 @@
 package org.asciidoc.intellij;
 
 import org.asciidoc.intellij.actions.AsciiDocAction;
+import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
+import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Attributes;
 import org.asciidoctor.AttributesBuilder;
@@ -24,6 +26,7 @@ import org.asciidoctor.SafeMode;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Map;
 
 /** @author Julien Viet */
@@ -34,8 +37,13 @@ public class AsciiDoc {
   /** Base directory to look up includes. */
   private final File baseDir;
 
-  public AsciiDoc(File path) {
+  /** Images directory. */
+  private final Path imagesPath;
+
+  public AsciiDoc(File path, Path imagesPath) {
     this.baseDir = path;
+    this.imagesPath = imagesPath;
+
     synchronized (AsciiDoc.class) {
       if (asciidoctor == null) {
         ClassLoader old = Thread.currentThread().getContextClassLoader();
@@ -73,6 +81,13 @@ public class AsciiDoc {
     Attributes attrs = AttributesBuilder.attributes().showTitle(true)
         .sourceHighlighter("coderay").attribute("coderay-css", "style")
         .attribute("env", "idea").attribute("env-idea").get();
+
+    if (imagesPath != null) {
+      final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+      if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())) {
+        attrs.setAttribute("outdir", imagesPath.toAbsolutePath().normalize().toString());
+      }
+    }
     OptionsBuilder opts = OptionsBuilder.options().safe(SafeMode.UNSAFE).backend("html5").headerFooter(false).attributes(attrs).option("sourcemap", "true")
         .baseDir(baseDir);
     return opts.asMap();
