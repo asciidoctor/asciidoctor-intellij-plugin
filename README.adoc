@@ -2,7 +2,7 @@
 Erik Pragt
 :experimental:
 
-A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language. You can install the plugin (named "AsciiDoc") from the plugins section inside your Jetbrains IDE or download it from the https://plugins.jetbrains.com/plugin/7391[Jetbrains Plugin Repository]. 
+A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language. You can install the plugin (named "AsciiDoc") from the plugins section inside your Jetbrains IDE or download it from the https://plugins.jetbrains.com/plugin/7391[Jetbrains Plugin Repository].
 
 If you want to use the JavaFX instead of the Swing preview, you'll need to run IntelliJ with 64bit Java.
 If your IntelliJ distribution doesn't come with 64bit Java, you'll need to have an environment variable `IDEA_JDK` or `IDEA_JDK64` pointing to the installation folder of a 64bit Java.
@@ -10,10 +10,11 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
-=== 0.17.2 (unreleased)
+=== 0.17.2 (preview, available from Github releases)
 
 - Plugin is now build using the https://gradle.org/[Gradle] and https://github.com/JetBrains/gradle-intellij-plugin[gradle-intellij-plugin]
 This should make contributing and releasing easier. Thanks Jiawen Geng!
+- Asciidoctor's temporary files are now created in a temporary folder per opened document. Thanks @agorges!
 
 === 0.17.1 (preview, available from Github releases)
 
