@@ -10,7 +10,7 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
-=== 0.17.2 (preview, available from Github releases)
+=== 0.17.2
 
 - Plugin is now build using the https://gradle.org/[Gradle] and https://github.com/JetBrains/gradle-intellij-plugin[gradle-intellij-plugin]
 This should make contributing and releasing easier. Thanks Jiawen Geng!
