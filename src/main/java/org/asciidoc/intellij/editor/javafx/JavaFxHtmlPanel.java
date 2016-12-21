@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -58,10 +57,10 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       final Class<JavaFxHtmlPanel> clazz = JavaFxHtmlPanel.class;
       //noinspection StringBufferReplaceableByString
       return new StringBuilder()
-          .append("<script src=\"").append(clazz.getResource("scrollToElement.js")).append("\"></script>\n")
-          .append("<script src=\"").append(clazz.getResource("processLinks.js")).append("\"></script>\n")
-          .append("<script src=\"").append(clazz.getResource("pickSourceLine.js")).append("\"></script>\n")
-          .toString();
+        .append("<script src=\"").append(clazz.getResource("scrollToElement.js")).append("\"></script>\n")
+        .append("<script src=\"").append(clazz.getResource("processLinks.js")).append("\"></script>\n")
+        .append("<script src=\"").append(clazz.getResource("pickSourceLine.js")).append("\"></script>\n")
+        .toString();
     }
   };
 
@@ -100,18 +99,17 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     myPanelWrapper.setBackground(JBColor.background());
 
     base = FileDocumentManager.getInstance().getFile(document).getParent().getUrl().replaceAll("^file://", "")
-        .replaceAll(":", "%3A");
+      .replaceAll(":", "%3A");
 
     try {
       myInlineCss = IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("default.css"));
       myInlineCssDarcula = myInlineCss + IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("darcula.css"));
       myInlineCssDarcula += IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("coderay-darcula.css"));
       myInlineCss += IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("coderay.css"));
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       String message = "Error rendering asciidoctor: " + e.getMessage();
       Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
-          .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
+        .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
       // increase event log counter
       notification.setImportant(true);
       Notifications.Bus.notify(notification);
@@ -161,8 +159,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     synchronized (myInitActions) {
       if (myPanel == null) {
         myInitActions.add(runnable);
-      }
-      else {
+      } else {
         Platform.runLater(runnable);
       }
     }
@@ -187,8 +184,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     final FontSmoothingType typeToSet;
     if (isGrayscale) {
       typeToSet = FontSmoothingType.GRAY;
-    }
-    else {
+    } else {
       typeToSet = FontSmoothingType.LCD;
     }
     view.fontSmoothingTypeProperty().setValue(typeToSet);
@@ -238,7 +234,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       String tmpFile = findTempImageFile(file);
       String md5;
       String replacement;
-      if(tmpFile != null) {
+      if (tmpFile != null) {
         md5 = calculateMd5(tmpFile, null);
         tmpFile = tmpFile.replaceAll("\\\\", "/");
         tmpFile = tmpFile.replaceAll(":", "%3A");
@@ -248,14 +244,14 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         replacement = "<img src=\"localfile://" + md5 + "/" + base + "/" + file + "\"";
       }
       html = html.substring(0, matchResult.start()) +
-          replacement + html.substring(matchResult.end());
+        replacement + html.substring(matchResult.end());
       matcher.reset(html);
     }
 
     /* Add CSS line and JavaScript for auto-scolling and clickable links */
     return html
-        .replace("<head>", "<head>" + getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss))
-        .replace("</body>", getScriptingLines() + "</body>");
+      .replace("<head>", "<head>" + getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss))
+      .replace("</body>", getScriptingLines() + "</body>");
   }
 
   private String calculateMd5(String file, String base) {
@@ -270,12 +266,11 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       }
       byte[] mdbytes = md.digest();
       StringBuffer sb = new StringBuffer();
-      for (int i = 0;i < mdbytes.length;i++) {
+      for (int i = 0; i < mdbytes.length; i++) {
         sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
       }
       md5 = sb.toString();
-    }
-    catch (NoSuchAlgorithmException | IOException e) {
+    } catch (NoSuchAlgorithmException | IOException e) {
       md5 = "none";
     }
     return md5;
@@ -304,13 +299,13 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       @Override
       public void run() {
         JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
-            "if ('__IntelliJTools' in window) " +
-                "__IntelliJTools.scrollToLine(" + line + ", " + lineCount + ");"
+          "if ('__IntelliJTools' in window) " +
+            "__IntelliJTools.scrollToLine(" + line + ", " + lineCount + ");"
         );
         final Object result = JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
-            "document.documentElement.scrollTop || document.body.scrollTop");
+          "document.documentElement.scrollTop || document.body.scrollTop");
         if (result instanceof Number) {
-          myScrollPreservingListener.myScrollY = ((Number)result).intValue();
+          myScrollPreservingListener.myScrollY = ((Number) result).intValue();
         }
       }
     });
@@ -347,8 +342,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       if (!BrowserUtil.isAbsoluteURL(link)) {
         try {
           link = new URI("http", link, null).toURL().toString();
-        }
-        catch (Exception ignore) {
+        } catch (Exception ignore) {
           ignore.printStackTrace();
         }
       }
@@ -358,12 +352,12 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
     public void scollEditorToLine(int sourceLine) {
       ApplicationManager.getApplication().invokeLater(
-          () -> {
-            getEditor().getCaretModel().setCaretsAndSelections(
-                Arrays.asList(new CaretState(new LogicalPosition(sourceLine - 1, 0), null, null))
-            );
-            getEditor().getScrollingModel().scrollToCaret(ScrollType.CENTER_UP);
-          }
+        () -> {
+          getEditor().getCaretModel().setCaretsAndSelections(
+            Arrays.asList(new CaretState(new LogicalPosition(sourceLine - 1, 0), null, null))
+          );
+          getEditor().getScrollingModel().scrollToCaret(ScrollType.CENTER_UP);
+        }
       );
     }
 
@@ -372,18 +366,24 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     }
   }
 
+  /* keep bridge in class instance to avoid cleanup of bridge due to weak references in
+    JavaScript mappings starting from JDK 8 111
+    see: https://bugs.openjdk.java.net/browse/JDK-8170515
+   */
+  private JavaPanelBridge bridge = new JavaPanelBridge();
+
   private class BridgeSettingListener implements ChangeListener<State> {
     @Override
     public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
       if (newValue == State.SUCCEEDED) {
         JSObject win
-            = (JSObject)getWebViewGuaranteed().getEngine().executeScript("window");
-        win.setMember("JavaPanelBridge", new JavaPanelBridge());
+          = (JSObject) getWebViewGuaranteed().getEngine().executeScript("window");
+        win.setMember("JavaPanelBridge", bridge);
         JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
-            "if ('__IntelliJTools' in window) {" +
-                "__IntelliJTools.processLinks();" +
-                "__IntelliJTools.pickSourceLine(" + lineCount + ");" +
-                "}"
+          "if ('__IntelliJTools' in window) {" +
+            "__IntelliJTools.processLinks();" +
+            "__IntelliJTools.pickSourceLine(" + lineCount + ");" +
+            "}"
         );
       }
     }
@@ -396,14 +396,13 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
       if (newValue == State.RUNNING) {
         final Object result =
-            getWebViewGuaranteed().getEngine().executeScript("document.documentElement.scrollTop || document.body.scrollTop");
+          getWebViewGuaranteed().getEngine().executeScript("document.documentElement.scrollTop || document.body.scrollTop");
         if (result instanceof Number) {
-          myScrollY = ((Number)result).intValue();
+          myScrollY = ((Number) result).intValue();
         }
-      }
-      else if (newValue == State.SUCCEEDED) {
+      } else if (newValue == State.SUCCEEDED) {
         getWebViewGuaranteed().getEngine()
-            .executeScript("document.documentElement.scrollTop = document.body.scrollTop = " + myScrollY);
+          .executeScript("document.documentElement.scrollTop = document.body.scrollTop = " + myScrollY);
       }
     }
   }
