@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 
 /**
@@ -21,7 +22,8 @@ public class MakeTitle extends FormatAsciiDocAction {
   }
 
   @Override
-  protected void selectText(SelectionModel selectionModel) {
+  protected void selectText(Editor editor) {
+    SelectionModel selectionModel = editor.getSelectionModel();
     selectionModel.selectLineAtCaret();
     selectionModel.setSelection(selectionModel.getSelectionStart(), selectionModel.getSelectionEnd());
   }

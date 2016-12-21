@@ -19,22 +19,22 @@ public class FormatAsciiDocActionTest {
   @Parameterized.Parameters(name = "{index}: isWord(\"{0}{1}{2}\") == {3} ({4})")
   public static Collection<Object[]> data() {
     return Arrays.asList(new Object[][]{
-        {" ", "test", " ", true, "word surrounded by blanks"},
-        {"", "test", " ", true, "word prefixed with nothing"},
-        {" ", "test", "", true, "word postfixed with nothing"},
-        {"_", "test", " ", false, "word prefixed with underscore"},
-        {" ", "test", "_", false, "word postfixed with underscore"},
-        {":", "test", " ", false, "word prefixed with colon"},
-        {";", "test", " ", false, "word prefixed with semicolon"},
-        {" ", "123", " ", true, "numbers surrounded by blanks"},
-        {"a", "123", " ", false, "numbers prefixed by letter"},
-        {" ", "123", "b", false, "numbers postfixed by letter"},
-        {" ", "\u00E4rger", " ", true, "word with umlaut surrounded by blanks"},
-        {" ", "regr\u00E4", " ", true, "word with umlaut surrounded by blanks"},
-        {"\u00E4", "123", " ", false, "numbers prefixed by umlaut"},
-        {" ", "123", "\u00E4", false, "numbers postfixed by umlaut"},
-        {" ", " test", " ", false, "word with surrounding space also selected"},
-        {" ", "test ", " ", false, "word with surrounding space also selected"},
+      {" ", "test", " ", true, "word surrounded by blanks"},
+      {"", "test", " ", true, "word prefixed with nothing"},
+      {" ", "test", "", true, "word postfixed with nothing"},
+      {"_", "test", " ", false, "word prefixed with underscore"},
+      {" ", "test", "_", false, "word postfixed with underscore"},
+      {":", "test", " ", false, "word prefixed with colon"},
+      {";", "test", " ", false, "word prefixed with semicolon"},
+      {" ", "123", " ", true, "numbers surrounded by blanks"},
+      {"a", "123", " ", false, "numbers prefixed by letter"},
+      {" ", "123", "b", false, "numbers postfixed by letter"},
+      {" ", "\u00E4rger", " ", true, "word with umlaut surrounded by blanks"},
+      {" ", "regr\u00E4", " ", true, "word with umlaut surrounded by blanks"},
+      {"\u00E4", "123", " ", false, "numbers prefixed by umlaut"},
+      {" ", "123", "\u00E4", false, "numbers postfixed by umlaut"},
+      {" ", " test", " ", false, "word with surrounding space also selected"},
+      {"", "", "", true, "empty string with no prefix and suffix"},
     });
   }
 

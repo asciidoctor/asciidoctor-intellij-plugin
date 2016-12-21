@@ -34,11 +34,15 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
     }
     final Document document = editor.getDocument();
 
-    SelectionModel selectionModel = editor.getSelectionModel();
-    selectText(selectionModel);
+    selectText(editor);
 
+    SelectionModel selectionModel = editor.getSelectionModel();
     boolean word = isWord(document, selectionModel.getSelectionStart(), selectionModel.getSelectionEnd());
-    String updatedText = updateSelection(selectionModel.getSelectedText(), word);
+    String selectedText = selectionModel.getSelectedText();
+    if (selectedText == null) {
+      selectedText = "";
+    }
+    String updatedText = updateSelection(selectedText, word);
 
     updateDocument(project, document, selectionModel, updatedText);
   }
@@ -55,10 +59,12 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
         return false;
       }
     }
-    String startingWith = document.getText(new TextRangeInterval(start, start + 1));
-    // not a word if selection is starting with a whitespace
-    if (startingWith.matches("[\\s]")) {
-      return false;
+    if (start + 1 < document.getTextLength()) {
+      String startingWith = document.getText(new TextRangeInterval(start, start + 1));
+      // not a word if selection is starting with a whitespace
+      if (startingWith.matches("[\\s]")) {
+        return false;
+      }
     }
     if (end < document.getTextLength()) {
       // not a word if followed by a alphabetic character, a digit or an underscore
@@ -67,18 +73,33 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
         return false;
       }
     }
-    // not a word if selecting is ending with a whitespace
-    String endsWith = document.getText(new TextRangeInterval(end - 1, end));
-    if (endsWith.matches("[\\s]")) {
-      return false;
+    if (end > 0) {
+      // not a word if selecting is ending with a whitespace
+      String endsWith = document.getText(new TextRangeInterval(end - 1, end));
+      if (endsWith.matches("[\\s]")) {
+        return false;
+      }
     }
     return true;
   }
 
+  private static boolean isWhitespaceAtCaret(Editor editor) {
+    final Document doc = editor.getDocument();
 
-  protected void selectText(SelectionModel selectionModel) {
+    final int offset = editor.getCaretModel().getOffset();
+    if (offset >= doc.getTextLength()) return false;
+
+    final char c = doc.getCharsSequence().charAt(offset);
+    return c == ' ' || c == '\t' || c == '\n';
+  }
+
+  protected void selectText(Editor editor) {
+    SelectionModel selectionModel = editor.getSelectionModel();
     if (!selectionModel.hasSelection()) {
-      selectionModel.selectWordAtCaret(false);
+      // if whitespace is at caret, the complete document would be selected, therefore check this first
+      if (!isWhitespaceAtCaret(editor)) {
+        selectionModel.selectWordAtCaret(false);
+      }
     }
   }
 
