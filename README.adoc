@@ -13,6 +13,7 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 === 0.17.3 (unreleased)
 
 - Make click-on-link-to-open and click-on-preview-to-set-cursor in JavaFX preview compatible with Java 8 u111+
+- Formatting actions from the toolbar throw exceptions when triggered at the beginning or end of the document
 
 === 0.17.2
 
