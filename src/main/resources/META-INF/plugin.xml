@@ -19,7 +19,7 @@
   <change-notes><![CDATA[
     <ul>
       <li>0.17.3 Make click-on-link-to-open and click-on-preview-to-set-cursor in JavaFX preview compatible with Java 8 u111+<br>
-      Formatting actions from the toolbar throw exceptions when triggered at the beginning or end of the document</li>
+      Formatting actions from the toolbar should not throw exceptions when triggered at the beginning or end of the document</li>
       <li>0.17.2 Plugin is built using Gradle. Thanks @gengjiawen! Asciidoctor's temporary files are placed in a temp folder. Thanks @agorges!</li>
       <li>0.17.1 Improved handling of trailing spaces in syntax highlighting. Fixed code/preview sync for nested HTML (i.e. NOTE)</li>
       <li>0.17.0 Updated block parsing to support two styles of headings. Block starts and ends are need to be aligned in length and shape when parsed.</li>
