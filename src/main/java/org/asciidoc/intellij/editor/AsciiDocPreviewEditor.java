@@ -24,6 +24,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.event.DocumentAdapter;
@@ -37,7 +38,9 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.util.Alarm;
 import com.intellij.util.messages.MessageBusConnection;
+import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
+import org.asciidoc.intellij.editor.javafx.JavaFxCouldBeEnabledNotificationProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 import org.jetbrains.annotations.Contract;
@@ -49,6 +52,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
@@ -71,6 +77,9 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /** The {@link Document} previewed in this editor. */
   protected final Document document;
 
+  /** The directory which holds the temporary images. */
+  protected final Path tempImagesPath;
+
   @NotNull
   private final JPanel myHtmlPanelWrapper;
 
@@ -83,7 +92,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /** . */
   private FutureTask<AsciiDoc> asciidoc = new FutureTask<AsciiDoc>(new Callable<AsciiDoc>() {
     public AsciiDoc call() throws Exception {
-      return new AsciiDoc(new File(FileDocumentManager.getInstance().getFile(document).getParent().getCanonicalPath()));
+      return new AsciiDoc(new File(FileDocumentManager.getInstance().getFile(document).getParent().getCanonicalPath()), tempImagesPath);
     }
   });
 
@@ -155,13 +164,28 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
   public AsciiDocPreviewEditor(final Document document) {
 
-    //
     this.document = document;
+
+    // create temp dir for images. Will be used by JavaFX only!
+    Path tempImagesPath = null;
+
+    try {
+      tempImagesPath = Files.createTempDirectory("asciidoctor-intellij");
+    } catch (IOException _ex) {
+      String message = "Can't create temp folder to render images: " + _ex.getMessage();
+      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+        .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
+      // increase event log counter
+      notification.setImportant(true);
+      Notifications.Bus.notify(notification);
+    }
+    this.tempImagesPath = tempImagesPath;
 
     myHtmlPanelWrapper = new JPanel(new BorderLayout());
 
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
-    myPanel = detachOldPanelAndCreateAndAttachNewOne(document, myHtmlPanelWrapper, null, retrievePanelProvider(settings));
+
+    myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, null, retrievePanelProvider(settings));
 
     MessageBusConnection settingsConnection = ApplicationManager.getApplication().getMessageBus().connect(this);
     AsciiDocApplicationSettings.SettingsChangedListener settingsChangedListener = new MyUpdatePanelOnSettingsChangedListener();
@@ -186,7 +210,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
   @Contract("_, null, null -> fail")
   @NotNull
-  private static AsciiDocHtmlPanel detachOldPanelAndCreateAndAttachNewOne(Document document, @NotNull JPanel panelWrapper,
+  private static AsciiDocHtmlPanel detachOldPanelAndCreateAndAttachNewOne(Document document, Path imagesDir, @NotNull JPanel panelWrapper,
                                                                           @Nullable AsciiDocHtmlPanel oldPanel,
                                                                           @Nullable AsciiDocHtmlPanelProvider newPanelProvider) {
     ApplicationManager.getApplication().assertIsDispatchThread();
@@ -201,7 +225,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       Disposer.dispose(oldPanel);
     }
 
-    final AsciiDocHtmlPanel newPanel = newPanelProvider.createHtmlPanel(document);
+    final AsciiDocHtmlPanel newPanel = newPanelProvider.createHtmlPanel(document, imagesDir);
     if(oldPanel != null) {
       newPanel.setEditor(oldPanel.getEditor());
     }
@@ -352,6 +376,13 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /** Dispose the editor. */
   public void dispose() {
     Disposer.dispose(this);
+    if (tempImagesPath != null) {
+      try {
+        FileUtils.deleteDirectory(tempImagesPath.toFile());
+      } catch (IOException _ex) {
+        Logger.getInstance(AsciiDocPreviewEditor.class).warn("could not remove temp folder", _ex);
+      }
+    }
   }
 
   public void scrollToLine(int line) {
@@ -367,7 +398,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       mySwingAlarm.addRequest(new Runnable() {
         @Override
         public void run() {
-          myPanel = detachOldPanelAndCreateAndAttachNewOne(document, myHtmlPanelWrapper, myPanel, newPanelProvider);
+          myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
           currentContent = "";
           render();
         }

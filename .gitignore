@@ -1,9 +1,13 @@
+.idea/*
+!/.idea/runConfigurations
+.gradle
+*.iml
+build/
 /.classpath
-/.idea/shelf/
-/.idea/workspace.xml
 /.project
 /.settings/
 /out/
+/lib/
 /release.properties
 .DS_Store/
 *.releaseBackup

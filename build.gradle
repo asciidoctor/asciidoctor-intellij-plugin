@@ -1,0 +1,60 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+    }
+    dependencies {
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.13.0'
+    }
+}
+
+
+plugins {
+    id "org.jetbrains.intellij" version "0.1.10"
+}
+
+apply plugin: 'org.jetbrains.intellij'
+apply plugin: 'java'
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+intellij {
+    version 'IC-2016.2.5'
+    pluginName 'asciidoctor'
+    updateSinceUntilBuild false
+
+//    publish {
+//        pluginId '7910'
+//        username publishUsername
+//        password publishPassword
+//    }
+
+//     Uncomment to test against Android Studio
+//    intellij.alternativeIdePath = '/Applications/Android Studio.app'
+    systemProperty 'idea.is.internal', 'false'
+}
+
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'org.asciidoctor:asciidoctorj:1.5.4'
+    compile 'org.asciidoctor:asciidoctorj-diagram:1.5.0'
+    compile 'commons-io:commons-io:2.4'
+    compile 'org.pegdown:pegdown:1.4.2'
+    compile 'org.parboiled:parboiled-core:1.1.6'
+    testCompile 'junit:junit:4.12'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.2'
+    distributionUrl = distributionUrl.replace("bin", "all")
+}
+
+task checkUpdates(type: com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask) {
+    description = "check denpendency updates"
+    group = "check"
+}

@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 
 /**
@@ -26,12 +27,5 @@ public class MakeLink extends FormatAsciiDocAction {
   boolean isLink(String selection) {
     return selection.startsWith("http://") || selection.startsWith("https://");
   }
-
-  protected void selectText(SelectionModel selectionModel) {
-    if (!selectionModel.hasSelection()) {
-      selectionModel.selectWordAtCaret(false);
-    }
-  }
-
 
 }

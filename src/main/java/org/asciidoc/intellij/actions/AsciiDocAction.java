@@ -29,7 +29,7 @@ public class AsciiDocAction extends AnAction {
 
   public void actionPerformed(AnActionEvent event) {
     PsiFile file = event.getData(LangDataKeys.PSI_FILE);
-    new AsciiDoc(new File(file.getOriginalFile().getParent().getVirtualFile().getCanonicalPath())).render(file.getText());
+    new AsciiDoc(new File(file.getOriginalFile().getParent().getVirtualFile().getCanonicalPath()), null).render(file.getText());
   }
 
   @Override
