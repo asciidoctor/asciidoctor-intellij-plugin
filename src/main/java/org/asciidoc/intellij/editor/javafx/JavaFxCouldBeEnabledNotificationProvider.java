@@ -55,7 +55,9 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
           asciiDocApplicationSettings.setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
               oldPreviewSettings.getSplitEditorLayout(),
               new JavaFxHtmlPanelProvider().getProviderInfo(),
-              oldPreviewSettings.getPreviewTheme()
+              oldPreviewSettings.getPreviewTheme(),
+            oldPreviewSettings.getMyMathJaxUrl(),
+            oldPreviewSettings.getMyMathJaxHubConfig()
           ));
           EditorNotifications.updateAll();
         }

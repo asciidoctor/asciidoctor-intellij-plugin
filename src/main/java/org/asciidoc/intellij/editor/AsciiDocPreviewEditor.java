@@ -100,14 +100,21 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     LAZY_EXECUTOR.execute(new Runnable() {
       @Override
       public void run() {
+      String math_script = "<script type=\"text/x-mathjax-config\">\r\nMathJax.Hub.Config({\r\n  messageStyle: \"none\",\r\n  tex2jax: {\r\n    inlineMath: [[\"\\\\(\", \"\\\\)\"]],\r\n    displayMath: [[\"\\\\[\", \"\\\\]\"]],\r\n    ignoreClass: \"nostem|nolatexmath\"\r\n  },\r\n  asciimath2jax: {\r\n    delimiters: [[\"\\\\$\", \"\\\\$\"]],\r\n    ignoreClass: \"nostem|noasciimath\"\r\n  },\r\n  TeX: { equationNumbers: { autoNumber: \"none\" } }\r\n});\r\n</script>\r\n<script src=\"file:///data/zdata/mathjax/MathJax.js?config=TeX-MML-AM_HTMLorMML\"></script>";
+        final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+        final String mathJaxUrl = "<script src=\""+settings.getAsciiDocPreviewSettings().getMyMathJaxUrl()+"\"></script>";
+        final String mathJaxHubConfig = settings.getAsciiDocPreviewSettings().getMyMathJaxHubConfig();
         try {
           if (!document.getText().equals(currentContent)) {
             currentContent = document.getText();
 
             String markup = asciidoc.get().render(currentContent);
             if (markup != null) {
-              myPanel.setHtml(markup);
+              String s = markup+mathJaxHubConfig+mathJaxUrl;
+              myPanel.setHtml(s);
             }
+
+
           }
           if (currentLineNo != targetLineNo) {
             currentLineNo = targetLineNo;
@@ -143,7 +150,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
     if (provider.isAvailable() != AsciiDocHtmlPanelProvider.AvailabilityInfo.AVAILABLE) {
       settings.setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(settings.getAsciiDocPreviewSettings().getSplitEditorLayout(),
-          AsciiDocPreviewSettings.DEFAULT.getHtmlPanelProviderInfo(), settings.getAsciiDocPreviewSettings().getPreviewTheme()));
+          AsciiDocPreviewSettings.DEFAULT.getHtmlPanelProviderInfo(), settings.getAsciiDocPreviewSettings().getPreviewTheme(),settings.getAsciiDocPreviewSettings().getMyMathJaxUrl(),settings.getAsciiDocPreviewSettings().getMyMathJaxHubConfig()));
 
       /* the following will not work, IntellIJ will show the error "parent must be showing" when this is
          tiggered during startup. */

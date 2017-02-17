@@ -80,6 +80,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
 
   @Override
   public void setHtml(@NotNull String html) {
+    System.err.println(html);
     myLastRenderedHtml = html;
     EditorKit kit = jEditorPane.getEditorKit();
     javax.swing.text.Document doc = kit.createDefaultDocument();
