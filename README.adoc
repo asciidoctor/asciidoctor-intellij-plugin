@@ -10,6 +10,10 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
+=== 0.18.0 (unreleased)
+
+- Update to asciidoctor 1.5.5/asciidoctor-diagram 1.5.4
+
 === 0.17.3
 
 - Make click-on-link-to-open and click-on-preview-to-set-cursor in JavaFX preview compatible with Java 8 u111+
