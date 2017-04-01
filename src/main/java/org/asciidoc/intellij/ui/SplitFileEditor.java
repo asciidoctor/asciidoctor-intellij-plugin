@@ -2,11 +2,7 @@ package org.asciidoc.intellij.ui;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorLocation;
-import com.intellij.openapi.fileEditor.FileEditorState;
-import com.intellij.openapi.fileEditor.FileEditorStateLevel;
-import com.intellij.openapi.fileEditor.TextEditor;
+import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
@@ -39,7 +35,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
   private final JComponent myComponent;
   @NotNull
   private SplitEditorLayout mySplitEditorLayout =
-      AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getSplitEditorLayout();
+    AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getSplitEditorLayout();
   @NotNull
   private final MyListenersMultimap myListenersGenerator = new MyListenersMultimap();
 
@@ -68,10 +64,10 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
 
     if (myMainEditor instanceof TextEditor) {
-      myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor)myMainEditor).getEditor());
+      myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor) myMainEditor).getEditor());
     }
     if (mySecondEditor instanceof TextEditor) {
-      myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor)mySecondEditor).getEditor());
+      myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor) mySecondEditor).getEditor());
     }
 
     final JPanel result = new JPanel(new BorderLayout());
@@ -109,7 +105,10 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     myComponent.revalidate();
     myComponent.repaint();
 
-    IdeFocusManager.findInstanceByComponent(myComponent).requestFocus(myComponent, true);
+    final JComponent focusComponent = getPreferredFocusedComponent();
+    if (focusComponent != null) {
+      IdeFocusManager.findInstanceByComponent(focusComponent).requestFocus(focusComponent, true);
+    }
   }
 
   protected void adjustEditorsVisibility() {
@@ -148,7 +147,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
   @Override
   public void setState(@NotNull FileEditorState state) {
     if (state instanceof MyFileEditorState) {
-      final MyFileEditorState compositeState = (MyFileEditorState)state;
+      final MyFileEditorState compositeState = (MyFileEditorState) state;
       if (compositeState.getFirstState() != null) {
         myMainEditor.setState(compositeState.getFirstState());
       }
@@ -174,8 +173,8 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
   @Override
   public void selectNotify() {
-    myMainEditor.selectNotify();
     mySecondEditor.selectNotify();
+    myMainEditor.selectNotify();
   }
 
   @Override
@@ -262,8 +261,8 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     @Override
     public boolean canBeMergedWith(FileEditorState otherState, FileEditorStateLevel level) {
       return otherState instanceof MyFileEditorState
-          && (myFirstState == null || myFirstState.canBeMergedWith(((MyFileEditorState)otherState).myFirstState, level))
-          && (mySecondState == null || mySecondState.canBeMergedWith(((MyFileEditorState)otherState).mySecondState, level));
+        && (myFirstState == null || myFirstState.canBeMergedWith(((MyFileEditorState) otherState).myFirstState, level))
+        && (mySecondState == null || mySecondState.canBeMergedWith(((MyFileEditorState) otherState).mySecondState, level));
     }
   }
 
@@ -283,14 +282,13 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
   private class MyListenersMultimap {
     private final Map<PropertyChangeListener, Pair<Integer, DoublingEventListenerDelegate>> myMap =
-        new HashMap<PropertyChangeListener, Pair<Integer, DoublingEventListenerDelegate>>();
+      new HashMap<PropertyChangeListener, Pair<Integer, DoublingEventListenerDelegate>>();
 
     @NotNull
     public DoublingEventListenerDelegate addListenerAndGetDelegate(@NotNull PropertyChangeListener listener) {
       if (!myMap.containsKey(listener)) {
         myMap.put(listener, Pair.create(1, new DoublingEventListenerDelegate(listener)));
-      }
-      else {
+      } else {
         final Pair<Integer, DoublingEventListenerDelegate> oldPair = myMap.get(listener);
         myMap.put(listener, Pair.create(oldPair.getFirst() + 1, oldPair.getSecond()));
       }
@@ -307,8 +305,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
       if (oldPair.getFirst() == 1) {
         myMap.remove(listener);
-      }
-      else {
+      } else {
         myMap.put(listener, Pair.create(oldPair.getFirst() - 1, oldPair.getSecond()));
       }
       return oldPair.getSecond();
