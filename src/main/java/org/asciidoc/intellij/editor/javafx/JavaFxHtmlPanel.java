@@ -258,11 +258,12 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     String md5;
     try {
       MessageDigest md = MessageDigest.getInstance("MD5");
-      FileInputStream fis = new FileInputStream((base != null ? base.replaceAll("%3A", ":") + "/" : "") + file);
-      int nread;
-      byte[] dataBytes = new byte[1024];
-      while ((nread = fis.read(dataBytes)) != -1) {
-        md.update(dataBytes, 0, nread);
+      try(FileInputStream fis = new FileInputStream((base != null ? base.replaceAll("%3A", ":") + "/" : "") + file)) {
+        int nread;
+        byte[] dataBytes = new byte[1024];
+        while ((nread = fis.read(dataBytes)) != -1) {
+          md.update(dataBytes, 0, nread);
+        }
       }
       byte[] mdbytes = md.digest();
       StringBuffer sb = new StringBuffer();

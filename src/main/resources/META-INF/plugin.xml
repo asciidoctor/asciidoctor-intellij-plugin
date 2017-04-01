@@ -19,7 +19,8 @@
   <change-notes><![CDATA[
     <ul>
       <li>0.18.0 Update to asciidoctor 1.5.5/asciidoctor-diagram 1.5.4<br>
-        Capture Asciidoctor messages on stdout/stderr and write them to IDE notifications</li>
+        Capture Asciidoctor messages on stdout/stderr and write them to IDE notifications<br>
+        Close files when images are shown in preview</li>
       <li>0.17.3 Make click-on-link-to-open and click-on-preview-to-set-cursor in JavaFX preview compatible with Java 8 u111+<br>
       Formatting actions from the toolbar should not throw exceptions when triggered at the beginning or end of the document</li>
       <li>0.17.2 Plugin is built using Gradle. Thanks @gengjiawen! Asciidoctor's temporary files are placed in a temp folder. Thanks @agorges!</li>
