@@ -10,7 +10,7 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
-=== 0.18.0 (unreleased)
+=== 0.18.0 (preview, available from Github releases)
 
 - Update to asciidoctor 1.5.5/asciidoctor-diagram 1.5.4
 - Capture Asciidoctor messages on stdout/stderr and write them to IDE notifications
