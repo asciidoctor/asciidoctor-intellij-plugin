@@ -13,6 +13,7 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 === 0.18.0 (unreleased)
 
 - Update to asciidoctor 1.5.5/asciidoctor-diagram 1.5.4
+- Capture Asciidoctor messages on stdout/stderr and write them to IDE notifications
 
 === 0.17.3
 
@@ -117,41 +118,6 @@ IntelliJ 15 (including AppCode 3.3, CLion 1.2, DataGrip 1.0, PhpStorm 10, PyChar
 - Added 'Open in Browser' menu item.
 - Added 40+ live template (access them by pressing Cmd+J, or type 'ad-')
 
-=== 0.10
-
-- Toolbar added thanks to Vojtěch Krása
-- Scratch files with preview thanks to Harro Lissenberg
-- Basic Syntax Highlighting thanks to Dmitry Jemerov!
-
-=== 0.9
-
-Performance of editing large documents greatly improved, thanks to Vojtěch Krása
-
-=== 0.8
-
-Fixed incompatibility with non-IDEA IDE's, thanks to Harro Lissenberg
-
-=== 0.7
-
-Added table creation thanks Harro Lissenberg. Also added basic formatting, and fixed IntelliJ 14.1 incompatibility.
-
-=== 0.6
-
-Convert Markdown to AsciiDoc. Also accessible by using the `Refactor -> Convert to AsciiDoc menu`.
-
-image::https://cloud.githubusercontent.com/assets/46468/5423595/8411b45a-82c5-11e4-9310-ed3d872381ac.gif[]
-
-=== 0.4
-
-link:https://cloud.githubusercontent.com/assets/46468/5202715/c2bfdcec-7580-11e4-91f6-82f9be257b5d.gif[Screencast]
-
-Usable in the following JetBrains products:
-
-- IntelliJ IDEA
-- WebStorm and PhpStorm
-- PyCharm
-- RubyMine
-
 == Features
 
 * Since 0.8 Fixed incompatibility with non-IDEA IDE's, thanks to Harro Lissenberg
@@ -192,7 +158,7 @@ To run the plugin for development you'll need to start
 
 == Copyright and Licensing
 
-Copyright (C) 2013-2016 Julien Viet and Erik Pragt.
+Copyright (C) 2013-2017 Julien Viet and Erik Pragt.
 Released under the Apache License, Version 2.0 (see link:LICENSE[LICENSE]).
 
 == Credits

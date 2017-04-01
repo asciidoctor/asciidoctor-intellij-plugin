@@ -15,38 +15,53 @@
  */
 package org.asciidoc.intellij;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
+import org.apache.geronimo.gshell.io.SystemOutputHijacker;
 import org.asciidoc.intellij.actions.AsciiDocAction;
+import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
-import org.asciidoctor.Asciidoctor;
-import org.asciidoctor.Attributes;
-import org.asciidoctor.AttributesBuilder;
-import org.asciidoctor.OptionsBuilder;
-import org.asciidoctor.SafeMode;
+import org.asciidoctor.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.nio.file.Path;
 import java.util.Map;
 
-/** @author Julien Viet */
+/**
+ * @author Julien Viet
+ */
 public class AsciiDoc {
 
   private static Asciidoctor asciidoctor;
 
-  /** Base directory to look up includes. */
+  /**
+   * Base directory to look up includes.
+   */
   private final File baseDir;
 
-  /** Images directory. */
+  /**
+   * Images directory.
+   */
   private final Path imagesPath;
+  private final String name;
 
-  public AsciiDoc(File path, Path imagesPath) {
+  public AsciiDoc(File path, Path imagesPath, String name) {
     this.baseDir = path;
     this.imagesPath = imagesPath;
+    this.name = name;
 
     synchronized (AsciiDoc.class) {
       if (asciidoctor == null) {
+        SystemOutputHijacker.install();
         ClassLoader old = Thread.currentThread().getContextClassLoader();
+        ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
+        ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
+        SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
         try {
           Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
           asciidoctor = Asciidoctor.Factory.create();
@@ -56,22 +71,44 @@ public class AsciiDoc {
             throw new RuntimeException("unable to load script sourceline-treeprocessor.rb");
           }
           asciidoctor.rubyExtensionRegistry().loadClass(is).treeprocessor("SourceLineTreeProcessor");
-        }
-        finally {
+        } finally {
+          SystemOutputHijacker.deregister();
+          notify(boasOut, boasErr);
           Thread.currentThread().setContextClassLoader(old);
         }
       }
     }
   }
 
+  private void notify(ByteArrayOutputStream boasOut, ByteArrayOutputStream boasErr) {
+    String out = boasOut.toString();
+    String err = boasErr.toString();
+    if (out.length() > 0) {
+      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Message during rendering " + name, out,
+        NotificationType.INFORMATION, null);
+      notification.setImportant(false);
+      Notifications.Bus.notify(notification);
+    }
+    if (err.length() > 0) {
+      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Error during rendering " + name, err,
+        NotificationType.INFORMATION, null);
+      notification.setImportant(true);
+      Notifications.Bus.notify(notification);
+    }
+  }
+
   public String render(String text) {
     synchronized (asciidoctor) {
       ClassLoader old = Thread.currentThread().getContextClassLoader();
+      ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
+      ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
+      SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
       try {
         Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
         return "<div id=\"content\">\n" + asciidoctor.render(text, getDefaultOptions()) + "\n</div>";
-      }
-      finally {
+      } finally {
+        SystemOutputHijacker.deregister();
+        notify(boasOut, boasErr);
         Thread.currentThread().setContextClassLoader(old);
       }
     }
@@ -79,8 +116,8 @@ public class AsciiDoc {
 
   public Map<String, Object> getDefaultOptions() {
     Attributes attrs = AttributesBuilder.attributes().showTitle(true)
-        .sourceHighlighter("coderay").attribute("coderay-css", "style")
-        .attribute("env", "idea").attribute("env-idea").get();
+      .sourceHighlighter("coderay").attribute("coderay-css", "style")
+      .attribute("env", "idea").attribute("env-idea").get();
 
     if (imagesPath != null) {
       final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
@@ -89,7 +126,7 @@ public class AsciiDoc {
       }
     }
     OptionsBuilder opts = OptionsBuilder.options().safe(SafeMode.UNSAFE).backend("html5").headerFooter(false).attributes(attrs).option("sourcemap", "true")
-        .baseDir(baseDir);
+      .baseDir(baseDir);
     return opts.asMap();
   }
 }

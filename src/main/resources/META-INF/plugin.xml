@@ -18,7 +18,8 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.18.0 Update to asciidoctor 1.5.5/asciidoctor-diagram 1.5.4</li>
+      <li>0.18.0 Update to asciidoctor 1.5.5/asciidoctor-diagram 1.5.4<br>
+        Capture Asciidoctor messages on stdout/stderr and write them to IDE notifications</li>
       <li>0.17.3 Make click-on-link-to-open and click-on-preview-to-set-cursor in JavaFX preview compatible with Java 8 u111+<br>
       Formatting actions from the toolbar should not throw exceptions when triggered at the beginning or end of the document</li>
       <li>0.17.2 Plugin is built using Gradle. Thanks @gengjiawen! Asciidoctor's temporary files are placed in a temp folder. Thanks @agorges!</li>
@@ -54,35 +55,6 @@
       <li>0.13 Updated to asciidoctorj 1.5.3.2, added support for asciidoctor-diagram</li>
       <li>0.12 Bugfixes, new makelink action, table generation improvement, etc.</li>
       <li>0.11 Added 40+ live templates, added 'open in browser', and removed AsciiDoc menu item. Thanks Dmitry!</li>
-      <li>0.10 Toolbar added thanks to <a href="https://github.com/krasa">Vojtěch Krása</a>, Scratch files with preview thanks to Harro Lissenberg, and Basic Syntax Highlighting thanks to Dmitry Jemerov!</li>
-      <li>0.9 Performance of editing large documents greatly improved, thanks to <a href="https://github.com/krasa">Vojtěch Krása</a></li>
-      <li>0.8 Fixed incompatibility with non-IDEA IDE's, thanks to Harro Lissenberg</li>
-      <li>0.7 Added table creation thanks Harro Lissenberg. Also added basic formatting, and fixed IntelliJ 14.1 incompatibility.</li>
-      <li>0.6 Convert from Markdown to AsciiDown. Tooltip background colors fixed thanks to Harro Lissenberg,
-      and error handling fixed thanks to Alexander Schwartz. Thanks!!<br />
-          Fixed issues:
-            <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/43">GITHUB-43</a>,
-            <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/41">GITHUB-41</a>,
-            <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/33">GITHUB-33</a>. <br />
-            Also: removed .asc file extension.<br
-      </li>
-      <li>0.5.1 Bugfix release, see <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/21">PULL-21</a></li>
-      <li>0.5 Upgraded to version 1.5.2 of AsciiDoc, and a small bugfix in the styling for bold items.</li>
-      <li>0.4 Upgraded to JRuby 1.7.16.1 to fix bugs, initial Darcula support.<br />
-      Live preview, relative images and includes fixed, thanks to Alexander Schwartz!<br />
-          Fixed issues:
-            <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/21">GITHUB-21</a>,
-            <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/20">GITHUB-20</a>,
-            <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/16">GITHUB-16</a>,
-            <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/18">GITHUB-18</a>.<br/>
-      </li>
-      <li>0.3 Upgraded to version 1.5.1 of AsciiDoc</li>
-      <li>0.2 Fixed issues:
-            <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/8">GITHUB-8</a>,
-            <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/9">GITHUB-9</a>,
-            <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/10">GITHUB-10</a>.<br/>
-            Small cleanup (renamed tab, changed tab sequence)
-      </li>
     </ul>
       ]]>
   </change-notes>

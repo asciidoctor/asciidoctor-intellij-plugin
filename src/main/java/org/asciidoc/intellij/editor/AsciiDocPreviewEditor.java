@@ -92,7 +92,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /** . */
   private FutureTask<AsciiDoc> asciidoc = new FutureTask<AsciiDoc>(new Callable<AsciiDoc>() {
     public AsciiDoc call() throws Exception {
-      return new AsciiDoc(new File(FileDocumentManager.getInstance().getFile(document).getParent().getCanonicalPath()), tempImagesPath);
+      return new AsciiDoc(new File(FileDocumentManager.getInstance().getFile(document).getParent().getCanonicalPath()),
+        tempImagesPath, FileDocumentManager.getInstance().getFile(document).getName());
     }
   });
 
@@ -400,7 +401,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         public void run() {
           myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
           currentContent = "";
-          render();
+          renderIfVisible();
         }
       }, 0, ModalityState.stateForComponent(getComponent()));
     }

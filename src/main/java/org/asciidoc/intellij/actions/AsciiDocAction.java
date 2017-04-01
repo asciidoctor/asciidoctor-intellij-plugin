@@ -28,8 +28,6 @@ import java.io.File;
 public class AsciiDocAction extends AnAction {
 
   public void actionPerformed(AnActionEvent event) {
-    PsiFile file = event.getData(LangDataKeys.PSI_FILE);
-    new AsciiDoc(new File(file.getOriginalFile().getParent().getVirtualFile().getCanonicalPath()), null).render(file.getText());
   }
 
   @Override
