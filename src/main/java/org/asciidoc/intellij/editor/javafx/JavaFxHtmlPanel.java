@@ -84,7 +84,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   @NotNull
   private String base;
 
-  private int lineCount = 0;
+  private int lineCount;
 
   private final Path imagesPath;
 
@@ -97,6 +97,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
     myPanelWrapper = new JPanel(new BorderLayout());
     myPanelWrapper.setBackground(JBColor.background());
+    lineCount = document.getLineCount();
 
     base = FileDocumentManager.getInstance().getFile(document).getParent().getUrl().replaceAll("^file://", "")
       .replaceAll(":", "%3A");

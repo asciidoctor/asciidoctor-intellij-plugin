@@ -16,6 +16,7 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 - Capture Asciidoctor messages on stdout/stderr and write them to IDE notifications
 - Close files when images are shown in preview
 - Set focus in editor when re-opening file
+- Fix "line must be non negative" error when clicking on preview
 
 === 0.17.3
 
