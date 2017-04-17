@@ -102,39 +102,39 @@ BLOCK_ATTRS_START = "["
   {BLOCK_ATTRS_START} { yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
 
   "\n"                 { return AsciiDocTokenTypes.LINE_BREAK; }
-  .                    { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.TEXT; }
+  [^]                  { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.TEXT; }
 }
 
 <INSIDE_LINE> {
   "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
-  .                    { return AsciiDocTokenTypes.TEXT; }
+  [^]                  { return AsciiDocTokenTypes.TEXT; }
 }
 
 <HEADING> {
   "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
-  .                    { return AsciiDocTokenTypes.HEADING; }
+  [^]                  { return AsciiDocTokenTypes.HEADING; }
 }
 
 <TITLE> {
   "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
-  .                    { return AsciiDocTokenTypes.TITLE; }
+  [^]                  { return AsciiDocTokenTypes.TITLE; }
 }
 
 <BLOCK_ATTRS> {
   "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
   "]"                  { yybegin(YYINITIAL); return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
-  .                    { return AsciiDocTokenTypes.BLOCK_ATTR_NAME; }
+  [^]                  { return AsciiDocTokenTypes.BLOCK_ATTR_NAME; }
 }
 
 <BLOCK_MACRO> {
   "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
   "["                  { yybegin(BLOCK_MACRO_ATTRS); return AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES; }
-  .                    { return AsciiDocTokenTypes.BLOCK_MACRO_BODY; }
+  [^]                  { return AsciiDocTokenTypes.BLOCK_MACRO_BODY; }
 }
 
 <BLOCK_MACRO_ATTRS> {
   "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
-  .                    { return AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES; }
+  [^]                  { return AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES; }
 }
 
 <LISTING_BLOCK> {
@@ -150,7 +150,7 @@ BLOCK_ATTRS_START = "["
 
 <LISTING_BLOCK, INSIDE_LISTING_BLOCK_LINE> {
   "\n"                 { yybegin(LISTING_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
-  .                    { yybegin(INSIDE_LISTING_BLOCK_LINE); return AsciiDocTokenTypes.LISTING_TEXT; }
+  [^]                  { yybegin(INSIDE_LISTING_BLOCK_LINE); return AsciiDocTokenTypes.LISTING_TEXT; }
 }
 
 <COMMENT_BLOCK> {
@@ -166,7 +166,7 @@ BLOCK_ATTRS_START = "["
 
 <COMMENT_BLOCK, INSIDE_COMMENT_BLOCK_LINE> {
   "\n"                 { yybegin(COMMENT_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
-  .                    { yybegin(INSIDE_COMMENT_BLOCK_LINE); return AsciiDocTokenTypes.BLOCK_COMMENT; }
+  [^]                  { yybegin(INSIDE_COMMENT_BLOCK_LINE); return AsciiDocTokenTypes.BLOCK_COMMENT; }
 }
 
 <EXAMPLE_BLOCK> {
@@ -182,7 +182,7 @@ BLOCK_ATTRS_START = "["
 
 <EXAMPLE_BLOCK, INSIDE_EXAMPLE_BLOCK_LINE> {
   "\n"                 { yybegin(EXAMPLE_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
-  .                    { yybegin(INSIDE_EXAMPLE_BLOCK_LINE); return AsciiDocTokenTypes.EXAMPLE_BLOCK; }
+  [^]                  { yybegin(INSIDE_EXAMPLE_BLOCK_LINE); return AsciiDocTokenTypes.EXAMPLE_BLOCK; }
 }
 
 <PASSTRHOUGH_BLOCK> {
@@ -198,7 +198,7 @@ BLOCK_ATTRS_START = "["
 
 <PASSTRHOUGH_BLOCK, INSIDE_PASSTRHOUGH_BLOCK_LINE> {
   "\n"                 { yybegin(PASSTRHOUGH_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
-  .                    { yybegin(INSIDE_PASSTRHOUGH_BLOCK_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK; }
+  [^]                  { yybegin(INSIDE_PASSTRHOUGH_BLOCK_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK; }
 }
 
 <SIDEBAR_BLOCK> {
@@ -214,7 +214,7 @@ BLOCK_ATTRS_START = "["
 
 <SIDEBAR_BLOCK, INSIDE_SIDEBAR_BLOCK_LINE> {
   "\n"                 { yybegin(SIDEBAR_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
-  .                    { yybegin(INSIDE_SIDEBAR_BLOCK_LINE); return AsciiDocTokenTypes.SIDEBAR_BLOCK; }
+  [^]                  { yybegin(INSIDE_SIDEBAR_BLOCK_LINE); return AsciiDocTokenTypes.SIDEBAR_BLOCK; }
 }
 
 <QUOTE_BLOCK> {
@@ -230,5 +230,5 @@ BLOCK_ATTRS_START = "["
 
 <QUOTE_BLOCK, INSIDE_QUOTE_BLOCK_LINE> {
   "\n"                 { yybegin(QUOTE_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
-  .                    { yybegin(INSIDE_QUOTE_BLOCK_LINE); return AsciiDocTokenTypes.QUOTE_BLOCK; }
+  [^]                  { yybegin(INSIDE_QUOTE_BLOCK_LINE); return AsciiDocTokenTypes.QUOTE_BLOCK; }
 }
