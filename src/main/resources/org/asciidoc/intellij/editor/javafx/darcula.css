@@ -51,3 +51,5 @@ tbody tr th{background:#626262}
 .literalblock pre,.listingblock pre:not(.highlight),.listingblock pre[class="highlight"],.listingblock pre[class^="highlight "],.listingblock pre.CodeRay,.listingblock pre.prettyprint{background:#626262}
 
 #toc {background-color:#626262 !important; border-color:#626262 !important;}
+
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{color:#cccccc}
