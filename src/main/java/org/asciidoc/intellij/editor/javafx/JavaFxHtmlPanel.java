@@ -76,6 +76,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   private String myInlineCss;
   @Nullable
   private String myInlineCssDarcula;
+  @Nullable
+  private String myFontAwesomeCssLink;
   @NotNull
   private final ScrollPreservingListener myScrollPreservingListener = new ScrollPreservingListener();
   @NotNull
@@ -107,6 +109,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       myInlineCssDarcula = myInlineCss + IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("darcula.css"));
       myInlineCssDarcula += IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("coderay-darcula.css"));
       myInlineCss += IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("coderay.css"));
+      myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + JavaFxHtmlPanel.class.getResource("font-awesome/css/font-awesome.min.css") + "\">";
     } catch (IOException e) {
       String message = "Error rendering asciidoctor: " + e.getMessage();
       Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
@@ -251,7 +254,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
     /* Add CSS line and JavaScript for auto-scolling and clickable links */
     return html
-      .replace("<head>", "<head>" + getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss))
+      .replace("<head>", "<head>" + getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink)
       .replace("</body>", getScriptingLines() + "</body>");
   }
 
