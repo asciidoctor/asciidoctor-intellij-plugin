@@ -41,8 +41,8 @@ intellij {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'org.asciidoctor:asciidoctorj:1.5.5'
-    compile 'org.asciidoctor:asciidoctorj-diagram:1.5.4'
+    compile 'org.asciidoctor:asciidoctorj:1.5.6'
+    compile 'org.asciidoctor:asciidoctorj-diagram:1.5.4.1'
     compile 'commons-io:commons-io:2.4'
     compile 'org.pegdown:pegdown:1.4.2'
     compile 'org.parboiled:parboiled-core:1.1.6'
