@@ -27,8 +27,10 @@ public class AsciiDocSection extends ASTWrapperPsiElement {
     if (text.charAt(0) == '=') {
       // new style heading
       text = StringUtil.trimLeading(text, '=').trim();
-    }
-    else {
+    } else if (text.charAt(0) == '#') {
+      // markdown style heading
+      text = StringUtil.trimLeading(text, '#').trim();
+    } else {
       // old style heading
       text = text.replaceAll("[-=~\\^+\n \t]*$", "");
     }

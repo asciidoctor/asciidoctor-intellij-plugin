@@ -137,7 +137,7 @@ public class AsciiDocParserImpl {
 
   private static int headingLevel(String headingText) {
     int result = 0;
-    while (result < headingText.length() && headingText.charAt(result) == '=') {
+    while (result < headingText.length() && (headingText.charAt(result) == '=' || headingText.charAt(result) == '#')) {
       result++;
     }
     if (result == 0) {

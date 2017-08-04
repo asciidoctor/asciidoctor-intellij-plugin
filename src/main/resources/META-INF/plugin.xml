@@ -20,7 +20,8 @@
     <ul>
       <li>0.19.0 Support Icon fonts (thanks to Matthias Balke)<br>
         Update to asciidoctorj-1.5.6 (aka asciidoctor-1.5.6.1) and asciidoctorj-diagram-1.5.4.1<br>
-        Support "search everywhere" and "goto by name" for all AsciiDoc sections</li>
+        Support "search everywhere" and "goto by name" for all AsciiDoc sections<br>
+        Support Markdown style sections in syntax highlighting</li>
       <li>0.18.2 Headings in Darcula theme preview are now light grey for better readability</li>
       <li>0.18.1 Improved handling for non-printable characters in syntax highlighting</li>
       <li>0.18.0 Update to asciidoctor 1.5.5/asciidoctor-diagram 1.5.4<br>

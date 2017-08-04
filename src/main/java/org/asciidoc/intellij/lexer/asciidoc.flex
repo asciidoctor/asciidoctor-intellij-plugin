@@ -27,6 +27,7 @@ EXAMPLE_BLOCK_DELIMITER = "====" "="* {SPACE}* \n
 SIDEBAR_BLOCK_DELIMITER = "****" "*"* {SPACE}* \n
 QUOTE_BLOCK_DELIMITER = "____" "_"* {SPACE}* \n
 HEADING_START = "="{1,6} {SPACE}+
+HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 // starting at the start of the line, but not with a dot
 // next line follwoing with only header marks
 HEADING_OLDSTYLE = [^.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
@@ -97,6 +98,7 @@ BLOCK_ATTRS_START = "["
 
   {LINE_COMMENT}       { return AsciiDocTokenTypes.LINE_COMMENT; }
   {HEADING_START} / {NON_SPACE} { yybegin(HEADING); return AsciiDocTokenTypes.HEADING; }
+  {HEADING_START_MARKDOWN} / {NON_SPACE} { yybegin(HEADING); return AsciiDocTokenTypes.HEADING; }
   {TITLE_START} / [^\. ] { yybegin(TITLE); return AsciiDocTokenTypes.TITLE; }
   {BLOCK_MACRO_START} / {NON_SPACE} { yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   {BLOCK_ATTRS_START} { yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
