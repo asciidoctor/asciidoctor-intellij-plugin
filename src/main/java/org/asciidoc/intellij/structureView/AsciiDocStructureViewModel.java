@@ -1,21 +1,27 @@
 package org.asciidoc.intellij.structureView;
 
+import com.intellij.ide.structureView.StructureViewModel;
+import com.intellij.ide.structureView.StructureViewModelBase;
 import com.intellij.ide.structureView.StructureViewTreeElement;
-import com.intellij.ide.structureView.TextEditorBasedStructureViewModel;
 import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
  */
-public class AsciiDocStructureViewModel extends TextEditorBasedStructureViewModel {
+public class AsciiDocStructureViewModel extends StructureViewModelBase implements
+  StructureViewModel.ElementInfoProvider {
   protected AsciiDocStructureViewModel(@NotNull AsciiDocFile file) {
-    super(file);
+    super(file, new AsciiDocStructureViewElement(file));
   }
 
-  @NotNull
   @Override
-  public StructureViewTreeElement getRoot() {
-    return new AsciiDocStructureViewElement(getPsiFile());
+  public boolean isAlwaysShowsPlus(StructureViewTreeElement element) {
+    return false;
+  }
+
+  @Override
+  public boolean isAlwaysLeaf(StructureViewTreeElement element) {
+    return element instanceof AsciiDocFile;
   }
 }
