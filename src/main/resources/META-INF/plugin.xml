@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.18.2</version>
+  <version>0.19.0</version>
   <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -18,6 +18,7 @@
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.19.0 Support Icon fonts (thanks to Matthias Balke)<br>Update to asciidoctorj-1.5.6 (aka asciidoctor-1.5.6.1) and asciidoctorj-diagram-1.5.4.1</li>
       <li>0.18.2 Headings in Darcula theme preview are now light grey for better readability</li>
       <li>0.18.1 Improved handling for non-printable characters in syntax highlighting</li>
       <li>0.18.0 Update to asciidoctor 1.5.5/asciidoctor-diagram 1.5.4<br>
