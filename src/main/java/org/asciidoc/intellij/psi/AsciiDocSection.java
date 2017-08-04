@@ -2,6 +2,7 @@ package org.asciidoc.intellij.psi;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.text.StringUtil;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
@@ -23,13 +24,25 @@ public class AsciiDocSection extends ASTWrapperPsiElement {
   }
 
   private static String trimHeading(String text) {
-    if(text.charAt(0) == '=') {
+    if (text.charAt(0) == '=') {
       // new style heading
       text = StringUtil.trimLeading(text, '=').trim();
-    } else {
+    }
+    else {
       // old style heading
       text = text.replaceAll("[-=~\\^+\n \t]*$", "");
     }
     return text;
   }
+
+  @Override
+  public String getName() {
+    return getTitle();
+  }
+
+  @Override
+  public ItemPresentation getPresentation() {
+    return AsciiDocPsiImplUtil.getPresentation(this);
+  }
+
 }

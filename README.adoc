@@ -14,6 +14,7 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 - Support Icon fonts (thanks to @matthiasbalke)
 - Update to asciidoctorj-1.5.6 (aka asciidoctor-1.5.6.1) and asciidoctorj-diagram-1.5.4.1
+- Support "search everywhere" and "goto by name" for all AsciiDoc sections
 
 === 0.18.2 (preview, available from Github releases)
 

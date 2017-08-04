@@ -2,13 +2,16 @@ package org.asciidoc.intellij.structureView;
 
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.structureView.impl.common.PsiTreeElementBase;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import icons.AsciiDocIcons;
 import org.asciidoc.intellij.psi.AsciiDocBlock;
 import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +34,33 @@ public class AsciiDocStructureViewElement extends PsiTreeElementBase<PsiElement>
       }
     }
     return result;
+  }
+
+  @NotNull
+  @Override
+  public ItemPresentation getPresentation() {
+    return new ItemPresentation() {
+
+      @Nullable
+      @Override
+      public String getPresentableText() {
+        return AsciiDocStructureViewElement.this.getPresentableText();
+      }
+
+      @Nullable
+      @Override
+      public String getLocationString() {
+        getElement().getContainingFile().getName();
+        return null;
+      }
+
+      @Nullable
+      @Override
+      public Icon getIcon(boolean unused) {
+        return AsciiDocStructureViewElement.this.getElement() instanceof AsciiDocSection ?
+          AsciiDocIcons.Asciidoc_Icon : null;
+      }
+    };
   }
 
   @Nullable
