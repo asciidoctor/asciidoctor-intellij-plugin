@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author Alexander Schwartz 2017
@@ -28,6 +29,14 @@ public class AsciiDocSearchEverywhereClassifier extends DefaultPsiElementCellRen
   @Override
   public boolean isSymbol(@Nullable Object o) {
     return false;
+  }
+
+  @Override
+  public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+    if (value instanceof AsciiDocSection) {
+      return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+    }
+    return null;
   }
 
   @Nullable
