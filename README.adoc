@@ -10,12 +10,12 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
-=== 0.19.0 (work in progress)
+=== 0.19.0 (preview, available from Github releases)
 
-- Support Icon fonts (thanks to @matthiasbalke)
+- Support Icon fonts (thanks to @matthiasbalke) / #182
 - Update to asciidoctorj-1.5.6 (aka asciidoctor-1.5.6.1) and asciidoctorj-diagram-1.5.4.1
-- Support "search everywhere" and "goto by name" for all AsciiDoc sections
-- Support Markdown style sections in syntax highlighting
+- Support "search everywhere" (double Shift) and "goto by name - Symbol..." (Ctrl+Shift+Alt+N) for all AsciiDoc section headings - just enter a part of the heading
+- Support Markdown style sections (starting with '#') in syntax highlighting
 
 === 0.18.2 (preview, available from Github releases)
 
