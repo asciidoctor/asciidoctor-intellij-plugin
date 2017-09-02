@@ -88,6 +88,8 @@ BLOCK_ATTRS_START = "["
       if(heading.length() >= underlining.length() -1
          && heading.length() <= underlining.length() +1
          && sameCharactersInSecondLine) {
+        // push back the second newline of the pattern
+        yypushback(1);
         return AsciiDocTokenTypes.HEADING;
       } else {
         yypushback(yylength()-1); // heading.length() + 1

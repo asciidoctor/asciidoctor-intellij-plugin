@@ -728,6 +728,7 @@ class _AsciiDocLexer implements FlexLexer {
       if(heading.length() >= underlining.length() -1
          && heading.length() <= underlining.length() +1
          && sameCharactersInSecondLine) {
+        yypushback(1);
         return AsciiDocTokenTypes.HEADING;
       } else {
         yypushback(yylength()-1); // heading.length() + 1

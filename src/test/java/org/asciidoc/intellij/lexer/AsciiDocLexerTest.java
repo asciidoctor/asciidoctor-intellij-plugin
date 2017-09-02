@@ -44,8 +44,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testHeadingOldStyle() {
     doTest("Abc\n===\ndef",
-        "AsciiDoc:HEADING ('Abc\\n===\\n')\n" +
-            "AsciiDoc:TEXT ('def')");
+        "AsciiDoc:HEADING ('Abc\\n===')\n" +
+           "AsciiDoc:LINE_BREAK ('\\n')\n" +
+           "AsciiDoc:TEXT ('def')");
   }
 
   public void testCommentBlock() {
