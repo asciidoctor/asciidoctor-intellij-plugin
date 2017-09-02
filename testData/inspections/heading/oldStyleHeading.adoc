@@ -1,0 +1,2 @@
+<warning descr="AsciiDoc Old Style Heading">Heading
++++++++</warning>

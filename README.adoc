@@ -10,6 +10,10 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
+=== 0.19.1 (work in progress)
+
+- Support inspections to convert markdown and old style AsciiDoc headings to modern AsciiDoc headings #185
+
 === 0.19.0
 
 - Support Icon fonts (thanks to @matthiasbalke) / #182
