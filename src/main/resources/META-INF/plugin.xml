@@ -18,7 +18,8 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.19.1 Support inspections to convert markdown and old style AsciiDoc headings to modern AsciiDoc headings</li>
+      <li>0.19.1 Support inspections to convert markdown and old style AsciiDoc headings to modern AsciiDoc headings<br>
+          JRuby runtime updated to 9.1.8.0 to work with recent JDK versions</li>
       <li>0.19.0 Support Icon fonts (thanks to Matthias Balke)<br>
         Update to asciidoctorj-1.5.6 (aka asciidoctor-1.5.6.1) and asciidoctorj-diagram-1.5.4.1<br>
         Support "search everywhere" and "goto by name" for all AsciiDoc sections<br>
