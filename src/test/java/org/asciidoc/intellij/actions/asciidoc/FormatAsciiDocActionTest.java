@@ -45,7 +45,8 @@ public class FormatAsciiDocActionTest {
   private boolean isWord;
 
   public FormatAsciiDocActionTest(String prefix, String selection, String postfix, boolean isWord, String explanation) {
-    document = new MockDocument(prefix + selection + postfix);
+    document = new MockDocument();
+    document.replaceString(0, 0, prefix + selection + postfix);
     start = prefix.length();
     end = prefix.length() + selection.length();
     this.explanation = explanation;
