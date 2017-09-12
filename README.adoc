@@ -13,7 +13,7 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
-=== 0.19.1 (preview, available from Github releases)
+=== 0.19.1
 
 - Support inspections to convert markdown and old style AsciiDoc headings to modern AsciiDoc headings #185
 - JRuby runtime updated to 9.1.8.0 to work with recent JDK versions (still, internal Jetbrains JRE is the only supported version) #187
