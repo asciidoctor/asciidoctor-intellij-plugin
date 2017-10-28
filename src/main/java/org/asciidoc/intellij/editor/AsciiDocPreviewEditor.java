@@ -36,11 +36,11 @@ import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
 import com.intellij.util.messages.MessageBusConnection;
 import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
-import org.asciidoc.intellij.editor.javafx.JavaFxCouldBeEnabledNotificationProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 import org.jetbrains.annotations.Contract;
@@ -92,7 +92,13 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /** . */
   private FutureTask<AsciiDoc> asciidoc = new FutureTask<AsciiDoc>(new Callable<AsciiDoc>() {
     public AsciiDoc call() throws Exception {
-      return new AsciiDoc(new File(FileDocumentManager.getInstance().getFile(document).getParent().getCanonicalPath()),
+      File baseDir = new File("");
+      VirtualFile parent = FileDocumentManager.getInstance().getFile(document).getParent();
+      if (parent != null) {
+        // parent will be null if we use Language Injection and Fragment Editor
+        baseDir = new File(parent.getCanonicalPath());
+      }
+      return new AsciiDoc(baseDir,
         tempImagesPath, FileDocumentManager.getInstance().getFile(document).getName());
     }
   });

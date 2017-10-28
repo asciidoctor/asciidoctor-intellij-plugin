@@ -23,7 +23,11 @@ import org.asciidoc.intellij.actions.AsciiDocAction;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
-import org.asciidoctor.*;
+import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.Attributes;
+import org.asciidoctor.AttributesBuilder;
+import org.asciidoctor.OptionsBuilder;
+import org.asciidoctor.SafeMode;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -50,8 +54,8 @@ public class AsciiDoc {
   private final Path imagesPath;
   private final String name;
 
-  public AsciiDoc(File path, Path imagesPath, String name) {
-    this.baseDir = path;
+  public AsciiDoc(File baseDir, Path imagesPath, String name) {
+    this.baseDir = baseDir;
     this.imagesPath = imagesPath;
     this.name = name;
 

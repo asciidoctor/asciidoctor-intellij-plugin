@@ -12,6 +12,7 @@ import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import com.sun.javafx.application.PlatformImpl;
@@ -101,8 +102,14 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     myPanelWrapper.setBackground(JBColor.background());
     lineCount = document.getLineCount();
 
-    base = FileDocumentManager.getInstance().getFile(document).getParent().getUrl().replaceAll("^file://", "")
-      .replaceAll(":", "%3A");
+    VirtualFile parent = FileDocumentManager.getInstance().getFile(document).getParent();
+    if (parent != null) {
+      // parent will be null if we use Language Injection and Fragment Editor
+      base = parent.getUrl().replaceAll("^file://", "")
+        .replaceAll(":", "%3A");
+    } else {
+      base = "";
+    }
 
     try {
       myInlineCss = IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("default.css"));

@@ -13,6 +13,10 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
+=== 0.19.2 (unreleased)
+
+- Fix NullPointerExceptions when used with IntelliJ Language Injection and Fragment Editor #194
+
 === 0.19.1
 
 - Support inspections to convert markdown and old style AsciiDoc headings to modern AsciiDoc headings #185

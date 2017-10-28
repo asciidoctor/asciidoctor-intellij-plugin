@@ -5,6 +5,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
@@ -40,8 +41,13 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
     jEditorPane = new JEditorPane();
     scrollPane = new JBScrollPane(jEditorPane);
     // Setup the editor pane for rendering HTML.
-    final HTMLEditorKit kit = new AsciiDocEditorKit(
-        new File(FileDocumentManager.getInstance().getFile(document).getParent().getCanonicalPath()));
+    File baseDir = new File("");
+    VirtualFile parent = FileDocumentManager.getInstance().getFile(document).getParent();
+    if (parent != null) {
+      // parent will be null if we use Language Injection and Fragment Editor
+      baseDir = new File(parent.getCanonicalPath());
+    }
+    final HTMLEditorKit kit = new AsciiDocEditorKit(baseDir);
 
     // Create an AsciiDoc style, based on the default stylesheet supplied by UiUtil.getHTMLEditorKit()
     // since it contains fix for incorrect styling of tooltips
