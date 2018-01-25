@@ -61,6 +61,11 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         .append("<script src=\"").append(clazz.getResource("scrollToElement.js")).append("\"></script>\n")
         .append("<script src=\"").append(clazz.getResource("processLinks.js")).append("\"></script>\n")
         .append("<script src=\"").append(clazz.getResource("pickSourceLine.js")).append("\"></script>\n")
+        .append("<script src=\"").append(clazz.getResource("mathJaxConfig.js")).append("\"></script>\n")
+        .append("<script src=\"").append(clazz.getResource("MathJax/MathJax.js"))
+          .append("?config=TeX-MML-AM_HTMLorMML,")
+          .append(clazz.getResource("localMathJaxConfig.js"))
+          .append("\"></script>\n")
         .toString();
     }
   };
