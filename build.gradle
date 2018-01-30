@@ -16,17 +16,6 @@ plugins {
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
 
-sourceSets {
-  main {
-    resources {
-      exclude '**/MathJax/test'
-      exclude '**/MathJax/unpacked'
-      exclude '**/MathJax/docs'
-      exclude '**/MathJax/fonts/HTML-CSS/TeX/png'
-    }
-  }
-}
-
 allprojects {
     repositories {
         jcenter()

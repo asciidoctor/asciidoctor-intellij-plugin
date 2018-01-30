@@ -1,3 +1,0 @@
-[submodule "src/main/resources/org/asciidoc/intellij/editor/javafx/MathJax"]
-	path = src/main/resources/org/asciidoc/intellij/editor/javafx/MathJax
-	url = https://github.com/mathjax/MathJax
