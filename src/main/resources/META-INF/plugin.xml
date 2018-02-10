@@ -14,12 +14,112 @@
       <p>If you want to use the JavaFX instead of the Swing preview, you'll need to run IntelliJ with 64bit Java.
       If your IntelliJ distribution doesn't come with 64bit Java, you'll need to have an environment variable
       `IDEA_JDK` or `IDEA_JDK64` pointing to the installation folder of a 64bit Java. See <a href="https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under">Jetbrains support database</a> for more information.
-      ]]></description>
+  <p>
+  <p>
+  <p>
+  For better legibility in the JavaFX preview, this package includes DejaVu fonts:
+  </p>
+  <b>DejaVu Fonts — License</b>
+  <p>
+    Fonts are © Bitstream (see below). DejaVu changes are in public domain. Explanation of copyright is on <a href="http://gnome.org/fonts/">Gnome page on Bitstream Vera fonts</a>. Glyphs imported from <a href="Bitstream_Vera_Derivatives.html">Arev</a> fonts are © Tavmjung Bah (see below)
+  </p>
+  <b>
+    Bitstream Vera Fonts Copyright
+  </b>
+  <p>
+    Copyright (c) 2003 by Bitstream, Inc. All Rights Reserved. Bitstream Vera is a trademark of Bitstream, Inc.
+  </p>
+  <p>
+    Permission is hereby granted, free of charge, to any person obtaining a copy of the fonts accompanying this license ("Fonts") and associated documentation files (the "Font Software"), to reproduce and distribute the Font Software, including without limitation the rights to use, copy, merge, publish, distribute, and/or sell copies of the Font Software, and to permit persons to whom the Font Software is furnished to do so, subject to the following conditions:
+  </p>
+  <p>
+    The above copyright and trademark notices and this permission notice shall be included in all copies of one or more of the Font Software typefaces.
+  </p>
+  <p>
+    The Font Software may be modified, altered, or added to, and in particular the designs of glyphs or characters in the Fonts may be modified and additional glyphs or characters may be added to the Fonts, only if the fonts are renamed to names not containing either the words "Bitstream" or the word "Vera".
+  </p>
+  <p>
+    This License becomes null and void to the extent applicable to Fonts or Font Software that has been modified and is distributed under the "Bitstream Vera" names.
+  </p>
+  <p>
+    The Font Software may be sold as part of a larger software package but no copy of one or more of the Font Software typefaces may be sold by itself.
+  </p>
+  <p>
+    THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL BITSTREAM OR THE GNOME FOUNDATION BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER DEALINGS IN THE FONT SOFTWARE.
+  </p>
+  <p>
+    Except as contained in this notice, the names of Gnome, the Gnome Foundation, and Bitstream Inc., shall not be used in advertising or otherwise to promote the sale, use or other dealings in this Font Software without prior written authorization from the Gnome Foundation or Bitstream Inc., respectively. For further information, contact: fonts at gnome dot org.
+  </p>
+  <a name="Arev_Fonts_Copyright" id="Arev_Fonts_Copyright"></a>
+  <b>
+    Arev Fonts Copyright
+  </b>
+  <p>
+    <a href="http://tavmjong.free.fr/FONTS/ArevCopyright.txt" title="http://tavmjong.free.fr/FONTS/ArevCopyright.txt">Original text</a>
+  </p>
+  <p>
+    Copyright (c) 2006 by Tavmjong Bah. All Rights Reserved.
+  </p>
+  <p>
+    Permission is hereby granted, free of charge, to any person obtaining
+a copy of the fonts accompanying this license ("Fonts") and
+associated documentation files (the "Font Software"), to reproduce
+and distribute the modifications to the Bitstream Vera Font Software,
+including without limitation the rights to use, copy, merge, publish,
+distribute, and/or sell copies of the Font Software, and to permit
+persons to whom the Font Software is furnished to do so, subject to
+the following conditions:
+  </p>
+  <p>
+    The above copyright and trademark notices and this permission notice
+shall be included in all copies of one or more of the Font Software
+typefaces.
+  </p>
+  <p>
+    The Font Software may be modified, altered, or added to, and in
+particular the designs of glyphs or characters in the Fonts may be
+modified and additional glyphs or characters may be added to the
+Fonts, only if the fonts are renamed to names not containing either
+the words "Tavmjong Bah" or the word "Arev".
+  </p>
+  <p>
+    This License becomes null and void to the extent applicable to Fonts
+or Font Software that has been modified and is distributed under the
+"Tavmjong Bah Arev" names.
+  </p>
+  <p>
+    The Font Software may be sold as part of a larger software package but
+no copy of one or more of the Font Software typefaces may be sold by
+itself.
+  </p>
+  <p>
+    THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+OF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL
+TAVMJONG BAH BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
+OTHER DEALINGS IN THE FONT SOFTWARE.
+  </p>
+  <p>
+    Except as contained in this notice, the name of Tavmjong Bah shall not
+be used in advertising or otherwise to promote the sale, use or other
+dealings in this Font Software without prior written authorization
+from Tavmjong Bah. For further information, contact: tavmjong @ free
+. fr.
+</p>
+</body>
+      ]]>
+  </description>
 
   <change-notes><![CDATA[
     <ul>
       <li>0.20.0 Add MathJax support in JavaFX preview #201<br>
-          JavaFX preview is now the default for new installations of the plugin</li>
+          JavaFX preview is now the default for new installations of the plugin<br>
+          Include DejaVu fonts for improved and consistent preview #184
+          </li>
       <li>0.19.2 Fix NullPointerExceptions when used with IntelliJ Language Injection and Fragment Editor #194</li>
       <li>0.19.1 Support inspections to convert markdown and old style AsciiDoc headings to modern AsciiDoc headings<br>
           JRuby runtime updated to 9.1.8.0 to work with recent JDK versions</li>
@@ -36,39 +136,6 @@
         Fix "line must be non negative" error when clicking on preview</li>
       <li>0.17.3 Make click-on-link-to-open and click-on-preview-to-set-cursor in JavaFX preview compatible with Java 8 u111+<br>
       Formatting actions from the toolbar should not throw exceptions when triggered at the beginning or end of the document</li>
-      <li>0.17.2 Plugin is built using Gradle. Thanks @gengjiawen! Asciidoctor's temporary files are placed in a temp folder. Thanks @agorges!</li>
-      <li>0.17.1 Improved handling of trailing spaces in syntax highlighting. Fixed code/preview sync for nested HTML (i.e. NOTE)</li>
-      <li>0.17.0 Updated block parsing to support two styles of headings. Block starts and ends are need to be aligned in length and shape when parsed.</li>
-      <li>0.16.4 Improved darcula support for JavaFX. More block types are using proper dark background and light text colors.</li>
-      <li>0.16.3 Theme in preview can be switched from light to darcula independent of IDE theme</li>
-      <li>0.16.2 Handling of Linux and MacOS file names for image preview in JavaFX</li>
-      <li>0.16.1 Added darcula theme for JavaFX preview
-        <br />clicking on JavaFX preview will set cursor position in editor (thanks to @kastork for the idea)</li>
-      <li>0.15.4 setScene now called from FxThread instead of AWT thread to avoid blocking GUI on MacOS</li>
-      <li>0.15.3 Initialization message appears only during initialization
-        <br />No error message if user switches to a setup where JavaFX preview is no longer available.</li>
-      <li>0.15.2 fixed detection of Mac 64 JVM to be able to activate JavaFX preview
-        <br />click-on-url for JavaFX improved, when slow-loading external images are referenced</li>
-      <li>0.15.1 revised constrained/unconstrained detection
-        <br />Fix situation in syntax highlighting leading to PSI Parser Exceptions
-        <br />refreshing images on JavaFX only if their content has changed to save memory consumption
-        <br />Limiting JavaFX preview to 64bit platforms due to problems especially with Windows OpenJDK 32bit (as default on Windows).</li>
-      <li>0.15.0 correct usage of constrained/unconstrained AsciiDoc formatting
-        <br />JavaFX Preview will automatically scroll to the cursor position of the editor
-        <br />JavaFX preview will automatically open links in the systems's default browser
-        <br />IntelliJ 15 (including AppCode 3.3, CLion 1.2, DataGrip 1.0, PhpStorm 10, PyCharm 5, RubyMine 8, WebStorm 11) is the new minimum version required for this release.
-        <br />Caching rendering instances of Asciidoctor for better performance</li>
-      <li>0.14.3 Fix situation in syntax highlighting leading to PSI Parser Exceptions
-        <br />disable automatically refreshing local images on JavaFX (to be re-enabled in 0.15.x)</li>
-      <li>0.14.2 Performance improvement: render preview only when visible.
-        <br />Don't show AsciiDoc preview actions in other Editors
-        <br />additional compatibility fixes for IntelliJ 15.x</li>
-      <li>0.14.1 make compatible with IntellJ 15.x again.
-        <br />This should include: AppCode 3.3, CLion 1.2, DataGrip 1.0, PhpStorm 10, PyCharm 5, RubyMine 8, WebStorm 11</li>
-      <li>0.14 New JavaFX preview and real split view<br />Update to asciidoctorj 1.5.4.1 and asciidoctorj-diagram 1.5.0</li>
-      <li>0.13 Updated to asciidoctorj 1.5.3.2, added support for asciidoctor-diagram</li>
-      <li>0.12 Bugfixes, new makelink action, table generation improvement, etc.</li>
-      <li>0.11 Added 40+ live templates, added 'open in browser', and removed AsciiDoc menu item. Thanks Dmitry!</li>
     </ul>
       ]]>
   </change-notes>

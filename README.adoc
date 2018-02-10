@@ -17,6 +17,7 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 - Add MathJax support in JavaFX preview #201
 - JavaFX preview is now the default for new installations of the plugin
+- Include DejaVu fonts for improved and consistent preview #184
 
 === 0.19.2
 
