@@ -18,6 +18,7 @@
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.20.0 Add MathJax support in JavaFX preview #201</li>
       <li>0.19.2 Fix NullPointerExceptions when used with IntelliJ Language Injection and Fragment Editor #194</li>
       <li>0.19.1 Support inspections to convert markdown and old style AsciiDoc headings to modern AsciiDoc headings<br>
           JRuby runtime updated to 9.1.8.0 to work with recent JDK versions</li>
