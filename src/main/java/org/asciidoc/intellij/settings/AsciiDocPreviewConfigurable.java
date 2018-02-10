@@ -56,7 +56,9 @@ public class AsciiDocPreviewConfigurable implements SearchableConfigurable {
 
   @Override
   public void apply() throws ConfigurationException {
-    myAsciiDocApplicationSettings.setAsciiDocPreviewSettings(getForm().getAsciiDocPreviewSettings());
+
+       myAsciiDocApplicationSettings.setAsciiDocPreviewSettings(getForm().getAsciiDocPreviewSettings());
+
   }
 
   @Override
@@ -76,4 +78,5 @@ public class AsciiDocPreviewConfigurable implements SearchableConfigurable {
     }
     return myForm;
   }
+
 }

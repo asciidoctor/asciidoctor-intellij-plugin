@@ -25,15 +25,42 @@ public final class AsciiDocPreviewSettings {
   @NotNull
   private AsciiDocHtmlPanel.PreviewTheme myPreviewTheme = AsciiDocHtmlPanel.PreviewTheme.INTELLIJ;
 
+  @Attribute("MathJaxUrl")
+  private String myMathJaxUrl="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.6.0/MathJax.js?config=TeX-MML-AM_HTMLorMML";
+
+  @Attribute("MathJaxHubConfig")
+  private String myMathJaxHubConfig="<script type=\"text/x-mathjax-config\">\n" +
+    "MathJax.Hub.Config({\n" +
+    "  messageStyle: \"none\",\n" +
+    "  menuSettings: {\n" +
+    "  zoom: \"Click\"\n" +
+    "  },\n" +
+    "  tex2jax: {\n" +
+    "    inlineMath: [[\"\\\\(\", \"\\\\)\"]],\n" +
+    "    displayMath: [[\"\\\\[\", \"\\\\]\"]],\n" +
+    "    ignoreClass: \"nostem|nolatexmath\"\n" +
+    "  },\n" +
+    "  asciimath2jax: {\n" +
+    "    delimiters: [[\"\\\\$\", \"\\\\$\"]],\n" +
+    "    ignoreClass: \"nostem|noasciimath\"\n" +
+    "  },\n" +
+    "  TeX: { equationNumbers: { autoNumber: \"none\" } }\n" +
+    "});\n" +
+    "</script> ";
+
   public AsciiDocPreviewSettings() {
   }
 
   public AsciiDocPreviewSettings(@NotNull SplitFileEditor.SplitEditorLayout splitEditorLayout,
                                  @NotNull AsciiDocHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo,
-                                 @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme) {
+                                 @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme,
+                                 String mathJaxUrl,
+                                 String mathJaxHubConfig) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
+    myMathJaxUrl = mathJaxUrl;
+    myMathJaxHubConfig = mathJaxHubConfig;
   }
 
   @NotNull
@@ -52,6 +79,22 @@ public final class AsciiDocPreviewSettings {
     return myPreviewTheme;
   }
 
+  public String getMyMathJaxUrl()
+  {
+    if (myMathJaxUrl != null)
+      return myMathJaxUrl;
+    else
+      return "";
+  }
+
+  public String getMyMathJaxHubConfig()
+  {
+    if (myMathJaxHubConfig != null)
+      return myMathJaxHubConfig;
+    else
+      return "";
+  }
+
   @NotNull
   public AsciiDocHtmlPanelProvider.ProviderInfo getHtmlPanelProviderInfo() {
     return myHtmlPanelProviderInfo;
@@ -67,6 +110,10 @@ public final class AsciiDocPreviewSettings {
     if (mySplitEditorLayout != settings.mySplitEditorLayout) return false;
     if (myPreviewTheme != settings.myPreviewTheme) return false;
     if (!myHtmlPanelProviderInfo.equals(settings.myHtmlPanelProviderInfo)) return false;
+    if (!myMathJaxUrl.equals(settings.myMathJaxUrl)) return false;
+    if (!myMathJaxHubConfig.equals(settings.myMathJaxHubConfig)) return false;
+
+
 
     return true;
   }
@@ -76,6 +123,8 @@ public final class AsciiDocPreviewSettings {
     int result = mySplitEditorLayout.hashCode();
     result = 31 * result + myHtmlPanelProviderInfo.hashCode();
     result = 31 * result + myPreviewTheme.hashCode();
+    result = 31 * result + myMathJaxUrl.hashCode();
+    result = 31 * result + myMathJaxHubConfig.hashCode();
     return result;
   }
 
