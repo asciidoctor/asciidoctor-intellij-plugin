@@ -61,6 +61,22 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         .append("<script src=\"").append(clazz.getResource("scrollToElement.js")).append("\"></script>\n")
         .append("<script src=\"").append(clazz.getResource("processLinks.js")).append("\"></script>\n")
         .append("<script src=\"").append(clazz.getResource("pickSourceLine.js")).append("\"></script>\n")
+        .append("<script type=\"text/x-mathjax-config\">\n" +
+                "MathJax.Hub.Config({\n" +
+                "  messageStyle: \"none\",\n" +
+                "  tex2jax: {\n" +
+                "    inlineMath: [[\"\\\\(\", \"\\\\)\"]],\n" +
+                "    displayMath: [[\"\\\\[\", \"\\\\]\"]],\n" +
+                "    ignoreClass: \"nostem|nolatexmath\"\n" +
+                "  },\n" +
+                "  asciimath2jax: {\n" +
+                "    delimiters: [[\"\\\\$\", \"\\\\$\"]],\n" +
+                "    ignoreClass: \"nostem|noasciimath\"\n" +
+                "  },\n" +
+                "  TeX: { equationNumbers: { autoNumber: \"none\" } }\n" +
+                "});\n" +
+                "</script>\n")
+        .append("<script src=\"").append(clazz.getResource("MathJax/MathJax.js")).append("?config=TeX-MML-AM_HTMLorMML\"></script>\n")
         .toString();
     }
   };
