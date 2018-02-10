@@ -3,12 +3,14 @@ package org.asciidoc.intellij.editor.javafx;
 import com.intellij.openapi.editor.Document;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
+import org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
 import java.nio.file.Path;
 
 public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
+  public static final ProviderInfo INFO = new ProviderInfo("JavaFX WebView", JavaFxHtmlPanelProvider.class.getName());
 
   static {
     URL.setURLStreamHandlerFactory(new LocalfileURLStreamHandlerFactory());
@@ -45,7 +47,7 @@ public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
   @NotNull
   @Override
   public ProviderInfo getProviderInfo() {
-    return new ProviderInfo("JavaFX WebView", JavaFxHtmlPanelProvider.class.getName());
+    return INFO;
   }
 
 }

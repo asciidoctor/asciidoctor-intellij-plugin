@@ -118,7 +118,7 @@ public class AsciiDoc {
     }
   }
 
-  public Map<String, Object> getDefaultOptions() {
+  private Map<String, Object> getDefaultOptions() {
     Attributes attrs = AttributesBuilder.attributes().showTitle(true)
       .sourceHighlighter("coderay").attribute("coderay-css", "style")
       .attribute("env", "idea").attribute("env-idea").get();
