@@ -13,9 +13,10 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
-=== 0.20.1
+=== 0.20.1 (preview)
 
 - Upgrading to asciidoctorj-diagram 1.5.8
+- Dejavu fonts now display chinese characters (#203)
 
 === 0.20.0
 

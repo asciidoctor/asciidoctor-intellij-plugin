@@ -26,7 +26,8 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.20.1 Updated Asciidoctor Diagram to 1.5.8</li>
+      <li>0.20.1 Updated Asciidoctor Diagram to 1.5.8<br>
+          Dejavu fonts now display chinese characters (#203)</li>
       <li>0.20.0 Add MathJax support in JavaFX preview #201<br>
           JavaFX preview is now the default for new installations of the plugin<br>
           Include DejaVu fonts for improved and consistent preview #184
