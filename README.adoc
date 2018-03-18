@@ -13,7 +13,11 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
-=== 0.20.0 (preview)
+=== 0.20.1
+
+- Upgrading to asciidoctorj-diagram 1.5.8
+
+=== 0.20.0
 
 - Add MathJax support in JavaFX preview #201
 - JavaFX preview is now the default for new installations of the plugin
