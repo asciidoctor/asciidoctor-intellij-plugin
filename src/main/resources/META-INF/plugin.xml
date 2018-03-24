@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.20.1</version>
+  <version>0.20.2</version>
   <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -26,6 +26,7 @@
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.20.2 Dejavu fonts now display chinese characters in tables (#203)</li>
       <li>0.20.1 Updated Asciidoctor Diagram to 1.5.8<br>
           Dejavu fonts now display chinese characters (#203)</li>
       <li>0.20.0 Add MathJax support in JavaFX preview #201<br>
