@@ -13,7 +13,7 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
-=== 0.20.3
+=== 0.20.3 (preview)
 
 - Avoiding deadlock on JavaFX initialization (#207)
 - Requiring 2017.2 as minimum for this plugin

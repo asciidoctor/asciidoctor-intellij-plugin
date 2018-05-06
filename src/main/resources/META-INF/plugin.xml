@@ -26,7 +26,7 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.20.3 voiding deadlock on JavaFX initialization (#207)<br />Requiring 2017.2 as minimum for this plugin</li>
+      <li>0.20.3 avoiding deadlock on JavaFX initialization (#207)<br />Requiring 2017.2 as minimum for this plugin</li>
       <li>0.20.2 Dejavu fonts now display chinese characters in tables (#203)</li>
       <li>0.20.1 Updated Asciidoctor Diagram to 1.5.8<br>
           Dejavu fonts now display chinese characters (#203)</li>
