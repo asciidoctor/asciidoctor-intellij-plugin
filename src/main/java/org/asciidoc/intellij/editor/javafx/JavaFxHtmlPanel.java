@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.editor.javafx;
 
 import com.intellij.ide.BrowserUtil;
+import com.intellij.ide.IdeEventQueue;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -148,34 +149,44 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
-        PlatformImpl.startup(new Runnable() {
+        runFX(new Runnable() {
           @Override
           public void run() {
-            myWebView = new WebView();
-
-            updateFontSmoothingType(myWebView, false);
-            myWebView.setContextMenuEnabled(false);
-            myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>"));
-
-            final WebEngine engine = myWebView.getEngine();
-            engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
-            engine.getLoadWorker().stateProperty().addListener(myScrollPreservingListener);
-
-            final Scene scene = new Scene(myWebView);
-
-            ApplicationManager.getApplication().invokeLater(new Runnable() {
+            PlatformImpl.startup(new Runnable() {
               @Override
               public void run() {
-                synchronized (myInitActions) {
-                  myPanel = new JFXPanelWrapper();
-                  Platform.runLater(() -> myPanel.setScene(scene));
-                  for (Runnable action : myInitActions) {
-                    Platform.runLater(action);
+                myWebView = new WebView();
+
+                updateFontSmoothingType(myWebView, false);
+                myWebView.setContextMenuEnabled(false);
+                myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>"));
+
+                final WebEngine engine = myWebView.getEngine();
+                engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
+                engine.getLoadWorker().stateProperty().addListener(myScrollPreservingListener);
+
+                final Scene scene = new Scene(myWebView);
+
+                ApplicationManager.getApplication().invokeLater(new Runnable() {
+                  @Override
+                  public void run() {
+                    runFX(new Runnable() {
+                      @Override
+                      public void run() {
+                        synchronized (myInitActions) {
+                          myPanel = new JFXPanelWrapper();
+                          Platform.runLater(() -> myPanel.setScene(scene));
+                          for (Runnable action : myInitActions) {
+                            Platform.runLater(action);
+                          }
+                          myInitActions.clear();
+                        }
+                        myPanelWrapper.add(myPanel, BorderLayout.CENTER);
+                        myPanelWrapper.repaint();
+                      }
+                    });
                   }
-                  myInitActions.clear();
-                }
-                myPanelWrapper.add(myPanel, BorderLayout.CENTER);
-                myPanelWrapper.repaint();
+                });
               }
             });
           }
@@ -183,6 +194,10 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       }
     });
 
+  }
+
+  private static void runFX(@NotNull Runnable r) {
+    IdeEventQueue.unsafeNonblockingExecute(r);
   }
 
   private void runInPlatformWhenAvailable(@NotNull final Runnable runnable) {
