@@ -13,6 +13,10 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
+=== 0.20.5 (preview)
+
+- Adding first hiDPI support (#125)
+
 === 0.20.4
 
 - Requiring 2017.1 as minimum for this plugin (#207)
