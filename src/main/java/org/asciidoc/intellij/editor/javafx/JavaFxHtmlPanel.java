@@ -15,6 +15,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Platform;
@@ -159,6 +160,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
                 updateFontSmoothingType(myWebView, false);
                 myWebView.setContextMenuEnabled(false);
+                myWebView.setZoom(JBUI.scale(1.f));
                 myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>"));
 
                 final WebEngine engine = myWebView.getEngine();
