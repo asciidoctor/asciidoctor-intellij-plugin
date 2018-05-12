@@ -26,7 +26,7 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.20.5 Adding first hiDPI support (#125)</li>
+      <li>0.20.5 Adding hiDPI support for JavaFX preview (#125)</li>
       <li>0.20.4 Requiring 2017.1 as minimum for this plugin</li>
       <li>0.20.3 avoiding deadlock on JavaFX initialization (#207)<br />Requiring 2017.2 as minimum for this plugin</li>
       <li>0.20.2 Dejavu fonts now display chinese characters in tables (#203)</li>

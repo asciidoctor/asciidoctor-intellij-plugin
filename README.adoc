@@ -13,9 +13,9 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
-=== 0.20.5 (preview)
+=== 0.20.5
 
-- Adding first hiDPI support (#125)
+- Adding hiDPI support for JavaFX preview (#125)
 
 === 0.20.4
 
