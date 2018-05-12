@@ -75,6 +75,11 @@ public class AsciiDoc {
             throw new RuntimeException("unable to load script sourceline-treeprocessor.rb");
           }
           asciidoctor.rubyExtensionRegistry().loadClass(is).treeprocessor("SourceLineTreeProcessor");
+          is = this.getClass().getResourceAsStream("/plantuml-png-patch.rb");
+          if (is == null) {
+            throw new RuntimeException("unable to load script plantuml-png-patch.rb");
+          }
+          asciidoctor.rubyExtensionRegistry().loadClass(is);
         } finally {
           SystemOutputHijacker.deregister();
           notify(boasOut, boasErr);

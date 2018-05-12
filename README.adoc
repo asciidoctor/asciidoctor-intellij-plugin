@@ -13,6 +13,10 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
+=== 0.20.6 (not released yet)
+
+- Display all PlantUML graphics as PNG for preview (#170)
+
 === 0.20.5
 
 - Adding hiDPI support for JavaFX preview (#125)
