@@ -399,7 +399,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     }
 
     public void scollEditorToLine(int sourceLine) {
-      if(sourceLine < 0) {
+      if(sourceLine <= 0) {
         Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Setting cursor position", "line number " + sourceLine + " requested for cursor position, ignoring",
           NotificationType.INFORMATION, null);
         notification.setImportant(false);
