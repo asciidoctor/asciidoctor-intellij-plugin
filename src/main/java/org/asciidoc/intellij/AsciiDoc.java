@@ -28,6 +28,7 @@ import org.asciidoctor.Attributes;
 import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
+import org.asciidoctor.log.LogHandler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -35,6 +36,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * @author Julien Viet
@@ -66,9 +68,14 @@ public class AsciiDoc {
         ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
         ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
         SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
+        LogHandler logHandler = new IntellijLogHandler("initialize");
         try {
           Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
           asciidoctor = Asciidoctor.Factory.create();
+          asciidoctor.registerLogHandler(logHandler);
+          // disable JUL logging of captured messages
+          // https://github.com/asciidoctor/asciidoctorj/issues/669
+          Logger.getLogger("asciidoctor").setUseParentHandlers(false);
           asciidoctor.requireLibrary("asciidoctor-diagram");
           InputStream is = this.getClass().getResourceAsStream("/sourceline-treeprocessor.rb");
           if (is == null) {
@@ -81,6 +88,9 @@ public class AsciiDoc {
           }
           asciidoctor.rubyExtensionRegistry().loadClass(is);
         } finally {
+          if(asciidoctor != null) {
+            asciidoctor.unregisterLogHandler(logHandler);
+          }
           SystemOutputHijacker.deregister();
           notify(boasOut, boasErr);
           Thread.currentThread().setContextClassLoader(old);
@@ -107,15 +117,18 @@ public class AsciiDoc {
   }
 
   public String render(String text) {
+    LogHandler logHandler = new IntellijLogHandler(name);
     synchronized (asciidoctor) {
       ClassLoader old = Thread.currentThread().getContextClassLoader();
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
       ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
       SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
+      asciidoctor.registerLogHandler(logHandler);
       try {
         Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
         return "<div id=\"content\">\n" + asciidoctor.render(text, getDefaultOptions()) + "\n</div>";
       } finally {
+        asciidoctor.unregisterLogHandler(logHandler);
         SystemOutputHijacker.deregister();
         notify(boasOut, boasErr);
         Thread.currentThread().setContextClassLoader(old);
