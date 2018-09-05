@@ -13,7 +13,11 @@ See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting
 
 == Release notes
 
-=== 0.20.6 (not released yet)
+=== 0.21.0 (not released yet)
+
+- Update to AsciidoctorJ 1.5.7 and Asciidoctor Diagram 1.5.9
+
+=== 0.20.6
 
 - Display all PlantUML graphics as PNG for preview (#170)
 
