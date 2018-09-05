@@ -31,6 +31,6 @@ public class AsciiDocTest {
   public void shouldRenderPlainAsciidoc() {
     String html = asciidoc.render("this is *bold*.");
     System.out.println(html);
-    Assert.assertTrue(html.contains("<strong>bold</strong>"));
+    Assert.assertTrue(html.contains("<strong class=\"has-source-line data-line-stdin-1\">bold</strong>"));
   }
 }
