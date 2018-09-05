@@ -14,10 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 @State(
   name = "AsciidocApplicationSettings",
-  storages = @Storage(file = StoragePathMacros.APP_CONFIG + "/asciidoc.xml")
-    // keep the line above to be compatible with IntellJ 15.x editions
-    // use the line below with IntellJ 2016.2.x
-    // @Storage("asciidoc.xml")
+  storages = @Storage("asciidoc.xml")
 )
 public class AsciiDocApplicationSettings implements PersistentStateComponent<AsciiDocApplicationSettings.State>,
                                                     AsciiDocPreviewSettings.Holder {
