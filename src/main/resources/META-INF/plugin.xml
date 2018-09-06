@@ -26,7 +26,7 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.21.0 Update to AsciidoctorJ 1.5.7 and Asciidoctor Diagram 1.5.9</li>
+      <li>0.21.0 Update to AsciidoctorJ 1.5.7 and Asciidoctor Diagram 1.5.9<br />Treat "line must be non negative" only as a warning (#212)</li>
       <li>0.20.6 Display all PlantUML graphics as PNG for preview (#170)</li>
       <li>0.20.5 Adding hiDPI support for JavaFX preview (#125)</li>
       <li>0.20.4 Requiring 2017.1 as minimum for this plugin</li>

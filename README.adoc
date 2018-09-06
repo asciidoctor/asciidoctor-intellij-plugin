@@ -13,6 +13,7 @@ Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to 
 === 0.21.0 (not released yet)
 
 - Update to AsciidoctorJ 1.5.7 and Asciidoctor Diagram 1.5.9
+- Treat "line must be non negative" only as a warning (#212)
 
 === 0.20.6
 
