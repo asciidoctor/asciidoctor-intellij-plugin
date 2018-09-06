@@ -44,7 +44,7 @@ dependencies {
     compile 'org.asciidoctor:asciidoctorj:1.5.7'
     compile 'org.asciidoctor:asciidoctorj-diagram:1.5.9'
     compile 'commons-io:commons-io:2.4'
-    compile 'org.jruby:jruby-complete:9.1.16.0'
+    compile 'org.jruby:jruby-complete:9.1.17.0'
     compile 'org.pegdown:pegdown:1.4.2'
     compile 'org.parboiled:parboiled-core:1.1.6'
     testCompile 'junit:junit:4.12'
