@@ -12,8 +12,8 @@
       source file syntax and the backend output markups (which can be almost any type of SGML/XML markup)
     can be customized and extended by the user.
       <p>If you want to use the JavaFX instead of the Swing preview, you'll need to run IntelliJ with 64bit Java.
-      If your IntelliJ distribution doesn't come with 64bit Java, you'll need to have an environment variable
-      `IDEA_JDK` or `IDEA_JDK64` pointing to the installation folder of a 64bit Java. See <a href="https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under">Jetbrains support database</a> for more information.
+      Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to be most stable in
+      the JetBrains JDK.
   <p>
   <p>
   <p>
