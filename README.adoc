@@ -10,7 +10,7 @@ Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to 
 
 == Release notes
 
-=== 0.21.0 (not released yet)
+=== 0.21.0 (preview, available from Github releases)
 
 - Update to AsciidoctorJ 1.5.7 and Asciidoctor Diagram 1.5.9
 - Treat "line must be non negative" only as a warning (#212)
@@ -27,7 +27,7 @@ Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to 
 
 - Requiring 2017.1 as minimum for this plugin (#207)
 
-=== 0.20.3 (preview)
+=== 0.20.3 (preview, available from Github releases)
 
 - Avoiding deadlock on JavaFX initialization (#207)
 - Requiring 2017.2 as minimum for this plugin
