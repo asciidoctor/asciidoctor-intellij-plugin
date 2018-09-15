@@ -217,7 +217,7 @@ The ZIP file with plugin to distribute will be located in `build/distributions`.
 To run the plugin for development you'll need to start
 
 ----
-./gradlew -Dfile.encoding=UTF-8 runIdea
+./gradlew -Dfile.encoding=UTF-8 runIde
 ----
 
 == Copyright and Licensing

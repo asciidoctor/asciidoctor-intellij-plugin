@@ -10,7 +10,7 @@ buildscript {
 
 
 plugins {
-    id "org.jetbrains.intellij" version "0.1.10"
+    id "org.jetbrains.intellij" version "0.3.10"
 }
 
 apply plugin: 'org.jetbrains.intellij'
@@ -33,9 +33,6 @@ intellij {
 //        password publishPassword
 //    }
 
-//     Uncomment to test against Android Studio
-//    intellij.alternativeIdePath = '/Applications/Android Studio.app'
-    systemProperty 'idea.is.internal', 'false'
 }
 
 
@@ -51,7 +48,7 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '3.2'
+    gradleVersion = '4.10.1'
     distributionUrl = distributionUrl.replace("bin", "all")
 }
 
