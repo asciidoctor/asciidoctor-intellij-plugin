@@ -10,6 +10,10 @@ Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to 
 
 == Release notes
 
+=== 0.21.1 (preview, available from Github releases)
+
+- allow attributes to be pre-defined in plugin settings (#216)
+
 === 0.21.0 (preview, available from Github releases)
 
 - Update to AsciidoctorJ 1.5.7 and Asciidoctor Diagram 1.5.9
