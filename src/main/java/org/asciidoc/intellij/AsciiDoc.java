@@ -15,9 +15,18 @@
  */
 package org.asciidoc.intellij;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Map;
+import java.util.logging.Logger;
+
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.geronimo.gshell.io.SystemOutputHijacker;
 import org.asciidoc.intellij.actions.AsciiDocAction;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
@@ -29,14 +38,6 @@ import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
 import org.asciidoctor.log.LogHandler;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * @author Julien Viet
@@ -88,7 +89,7 @@ public class AsciiDoc {
           }
           asciidoctor.rubyExtensionRegistry().loadClass(is);
         } finally {
-          if(asciidoctor != null) {
+          if (asciidoctor != null) {
             asciidoctor.unregisterLogHandler(logHandler);
           }
           SystemOutputHijacker.deregister();
@@ -141,14 +142,22 @@ public class AsciiDoc {
       .sourceHighlighter("coderay").attribute("coderay-css", "style")
       .attribute("env", "idea").attribute("env-idea").get();
 
+    final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     if (imagesPath != null) {
-      final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
       if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())) {
         attrs.setAttribute("outdir", imagesPath.toAbsolutePath().normalize().toString());
       }
     }
-    OptionsBuilder opts = OptionsBuilder.options().safe(SafeMode.UNSAFE).backend("html5").headerFooter(false).attributes(attrs).option("sourcemap", "true")
+
+    Attributes settingsAttributes = AttributesBuilder.attributes()
+      .attributes(Collections.unmodifiableMap(settings.getAsciiDocPreviewSettings().getAttributes())).get();
+
+    OptionsBuilder opts = OptionsBuilder.options().safe(SafeMode.UNSAFE).backend("html5").headerFooter(false)
+      .attributes(attrs)
+      .attributes(settingsAttributes)
+      .option("sourcemap", "true")
       .baseDir(baseDir);
+
     return opts.asMap();
   }
 }

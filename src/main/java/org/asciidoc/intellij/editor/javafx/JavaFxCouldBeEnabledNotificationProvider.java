@@ -53,13 +53,13 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
         final boolean isSuccess = availabilityInfo.checkAvailability(panel);
         if (isSuccess) {
           asciiDocApplicationSettings.setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
-              oldPreviewSettings.getSplitEditorLayout(),
-              new JavaFxHtmlPanelProvider().getProviderInfo(),
-              oldPreviewSettings.getPreviewTheme()
+            oldPreviewSettings.getSplitEditorLayout(),
+            new JavaFxHtmlPanelProvider().getProviderInfo(),
+            oldPreviewSettings.getPreviewTheme(),
+            oldPreviewSettings.getAttributes()
           ));
           EditorNotifications.updateAll();
-        }
-        else {
+        } else {
           Logger.getInstance(JavaFxCouldBeEnabledNotificationProvider.class).warn("Could not install and apply OpenJFX");
         }
       }

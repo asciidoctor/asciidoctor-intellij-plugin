@@ -1,25 +1,25 @@
 package org.asciidoc.intellij;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.File;
+
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
+import org.junit.Assert;
 
 /**
  * @author Alexander Schwartz 2018
  */
-public class AsciiDocTest {
+public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
 
   private AsciiDoc asciidoc;
 
-  @Before
-  public void setup() {
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
     asciidoc = new AsciiDoc(new File("."), null, "test");
   }
 
-  @Test
-  public void shouldRenderPlantUmlAsPng() {
+  public void testShouldRenderPlantUmlAsPng() {
     String html = asciidoc.render("[plantuml,test,format=svg]\n" +
       "----\n" +
       "List <|.. ArrayList\n" +
@@ -27,10 +27,16 @@ public class AsciiDocTest {
     Assert.assertTrue(html.contains("src=\"test.png\""));
   }
 
-  @Test
-  public void shouldRenderPlainAsciidoc() {
+  public void testShouldRenderPlainAsciidoc() {
     String html = asciidoc.render("this is *bold*.");
     System.out.println(html);
     Assert.assertTrue(html.contains("<strong>bold</strong>"));
+  }
+
+  public void testShouldRenderAttributesAsciidoc() {
+    String expectedContent = "should replace attribute placeholder with value";
+    AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getAttributes().put("attr", expectedContent);
+    String html = asciidoc.render("{attr}");
+    Assert.assertTrue(html.contains(expectedContent));
   }
 }
