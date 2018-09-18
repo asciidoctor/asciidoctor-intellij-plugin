@@ -1,8 +1,14 @@
 package org.asciidoc.intellij.settings;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.intellij.util.xmlb.annotations.Attribute;
+import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
@@ -33,15 +39,22 @@ public final class AsciiDocPreviewSettings {
   @NotNull
   private AsciiDocHtmlPanel.PreviewTheme myPreviewTheme = AsciiDocHtmlPanel.PreviewTheme.INTELLIJ;
 
+  @Property(surroundWithTag = false)
+  @MapAnnotation(surroundWithTag = false, entryTagName = "attribute")
+  @NotNull
+  private Map<String, String> attributes = new HashMap<>();
+
   public AsciiDocPreviewSettings() {
   }
 
   public AsciiDocPreviewSettings(@NotNull SplitFileEditor.SplitEditorLayout splitEditorLayout,
                                  @NotNull AsciiDocHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo,
-                                 @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme) {
+                                 @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme,
+                                 @NotNull Map<String, String> attributes) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
+    this.attributes = attributes;
   }
 
   @NotNull
@@ -65,18 +78,22 @@ public final class AsciiDocPreviewSettings {
     return myHtmlPanelProviderInfo;
   }
 
+  @NotNull
+  public Map<String, String> getAttributes() {
+    return attributes;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    AsciiDocPreviewSettings settings = (AsciiDocPreviewSettings)o;
+    AsciiDocPreviewSettings that = (AsciiDocPreviewSettings) o;
 
-    if (mySplitEditorLayout != settings.mySplitEditorLayout) return false;
-    if (myPreviewTheme != settings.myPreviewTheme) return false;
-    if (!myHtmlPanelProviderInfo.equals(settings.myHtmlPanelProviderInfo)) return false;
-
-    return true;
+    if (mySplitEditorLayout != that.mySplitEditorLayout) return false;
+    if (!myHtmlPanelProviderInfo.equals(that.myHtmlPanelProviderInfo)) return false;
+    if (myPreviewTheme != that.myPreviewTheme) return false;
+    return attributes.equals(that.attributes);
   }
 
   @Override
@@ -84,6 +101,7 @@ public final class AsciiDocPreviewSettings {
     int result = mySplitEditorLayout.hashCode();
     result = 31 * result + myHtmlPanelProviderInfo.hashCode();
     result = 31 * result + myPreviewTheme.hashCode();
+    result = 31 * result + attributes.hashCode();
     return result;
   }
 
