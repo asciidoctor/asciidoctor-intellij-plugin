@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.21.1</version>
+  <version>0.21.2</version>
   <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -26,6 +26,7 @@
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.21.2 show title of document again (#217)</li>
       <li>0.21.1 allow attributes to be pre-defined in plugin settings (#216)</li>
       <li>0.21.0 Update to AsciidoctorJ 1.5.7 and Asciidoctor Diagram 1.5.9<br />Treat "line must be non negative" only as a warning (#212)</li>
       <li>0.20.6 Display all PlantUML graphics as PNG for preview (#170)</li>
