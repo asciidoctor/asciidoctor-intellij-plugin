@@ -138,9 +138,13 @@ public class AsciiDoc {
   }
 
   private Map<String, Object> getDefaultOptions() {
-    Attributes attrs = AttributesBuilder.attributes().showTitle(true)
-      .sourceHighlighter("coderay").attribute("coderay-css", "style")
-      .attribute("env", "idea").attribute("env-idea").get();
+    Attributes attrs = AttributesBuilder.attributes()
+      .showTitle(true)
+      .sourceHighlighter("coderay")
+      .attribute("coderay-css", "style")
+      .attribute("env", "idea")
+      .attribute("env-idea")
+      .get();
 
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     if (imagesPath != null) {
@@ -149,12 +153,10 @@ public class AsciiDoc {
       }
     }
 
-    Attributes settingsAttributes = AttributesBuilder.attributes()
-      .attributes(Collections.unmodifiableMap(settings.getAsciiDocPreviewSettings().getAttributes())).get();
+    settings.getAsciiDocPreviewSettings().getAttributes().forEach(attrs::setAttribute);
 
     OptionsBuilder opts = OptionsBuilder.options().safe(SafeMode.UNSAFE).backend("html5").headerFooter(false)
       .attributes(attrs)
-      .attributes(settingsAttributes)
       .option("sourcemap", "true")
       .baseDir(baseDir);
 
