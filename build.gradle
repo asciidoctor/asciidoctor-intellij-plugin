@@ -10,6 +10,8 @@ buildscript {
 
 
 plugins {
+    // upgrading to 0.3.10 leads to problems with MathJAX as the new version of the plugin
+    // will bundle all resources inside a JAR file and this seems to annoy MathJax. 
     id "org.jetbrains.intellij" version "0.1.10"
 }
 
