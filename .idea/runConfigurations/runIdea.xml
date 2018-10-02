@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="runIde" type="GradleRunConfiguration" factoryName="Gradle" singleton="true">
+  <configuration default="false" name="runIdea" type="GradleRunConfiguration" factoryName="Gradle" singleton="true">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -10,11 +10,11 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="runIde" />
+          <option value="runIdea" />
         </list>
       </option>
       <option name="vmOptions" value="-Dfile.encoding=UTF-8" />
     </ExternalSystemSettings>
-    <method v="2" />
+    <method />
   </configuration>
 </component>
