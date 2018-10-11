@@ -16,6 +16,10 @@ Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to 
 
 == Release notes
 
+=== 0.21.4 (not released yet)
+
+- Add official asciidoctor logo (#219)
+
 === 0.21.3
 
 - upgrade to MathJAX 2.4.7 (as bundled in AsciidoctorJ 1.5.7)
