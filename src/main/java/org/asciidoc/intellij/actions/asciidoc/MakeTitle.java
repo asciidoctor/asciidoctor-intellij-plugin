@@ -13,6 +13,12 @@ public class MakeTitle extends FormatAsciiDocAction {
   }
 
   @Override
+  public boolean displayTextInToolbar() {
+    // this doesn't have an icon, therefore show text
+    return true;
+  }
+
+  @Override
   public String updateSelection(String selection, boolean isWord) {
 
     if (selection.startsWith("= ")) {

@@ -64,10 +64,10 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
 
     if (myMainEditor instanceof TextEditor) {
-      myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor) myMainEditor).getEditor());
+      myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor) myMainEditor).getEditor(), splitter);
     }
     if (mySecondEditor instanceof TextEditor) {
-      myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor) mySecondEditor).getEditor());
+      myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor) mySecondEditor).getEditor(), splitter);
     }
 
     final JPanel result = new JPanel(new BorderLayout());

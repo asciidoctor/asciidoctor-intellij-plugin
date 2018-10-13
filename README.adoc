@@ -20,6 +20,7 @@ Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to 
 
 - Add official asciidoctor logo (#219)
 - Add soft wrap to tool bar (#211)
+- Editor Toolbar show status of toggles
 
 === 0.21.3
 
