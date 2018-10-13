@@ -131,6 +131,12 @@
                       description="Sets AsciiDoc editor layout to show preview only"
                       icon="AsciiDocIcons.Layout.Preview_only">
               </action>
+              <action class="org.asciidoc.intellij.actions.asciidoc.ToggleSoftWrapsAction"
+                      id="org.asciidoc.intellij.actions.asciidoc.ToggleSoftWrapsAction"
+                      text="Use Soft Wraps"
+                      description="Toggle using soft wraps in current editor"
+                      icon="AllIcons.Actions.ToggleSoftWrap">
+              </action>
 
         <!--
               <action id="asciidoc.convert.document6" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
