@@ -7,8 +7,7 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 image::https://hacktoberfest.digitalocean.com/assets/logo-hacktoberfest-658b5aa2bd34e782d29c40bf6afbdff00f20fe1328efa6da17743878ba8db66f.png[float=left,width=200]
 
 *This plugin joined https://hacktoberfest.digitalocean.com/[Hacktoberfest]!
-Issues that can give you a start are https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3AHacktoberfest[marked with the label "Hacktoberfest"], but you can choose any ticket you want to participate (and even create pull requests without a prior ticket).
-If you want to discuss ideas and create pull requests you can meet Alexander, one of the maintainers, at the https://www.eventbrite.com/e/hacktoberfest-frankfurt-2018-tickets-50225231018[Frankfurt/Main Hacktober Fest in Germany on October 12th].*
+Issues that can give you a start are https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3AHacktoberfest[marked with the label "Hacktoberfest"], but you can choose any ticket you want to participate (and even create pull requests without a prior ticket).*
 
 If you want to use the JavaFX instead of the Swing preview, you'll need to run IntelliJ with 64bit Java.
 From 2017.1 onwards 64bit Java is included even in the Windows versions.
