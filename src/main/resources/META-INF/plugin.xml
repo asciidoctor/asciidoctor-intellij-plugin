@@ -13,7 +13,7 @@
     can be customized and extended by the user.
       <p>If you want to use the JavaFX instead of the Swing preview, you'll need to run IntelliJ with 64bit Java.
       Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to be most stable in
-      the JetBrains JDK.
+      the JetBrains JDK. See <a href="https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under">Slecting the JDK version the IDE will run under</a> for more details.
   <p>
   <p>
   <p>
