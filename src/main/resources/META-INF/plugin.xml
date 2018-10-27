@@ -26,7 +26,10 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.21.4 Add official asciidoctor logo (#219)<br>Add soft wrap to tool bar (#211)<br>Editor Toolbar show status of toggles</li>
+      <li>0.21.4 Add official asciidoctor logo (#219)
+      <br>Add soft wrap to tool bar (#211)
+      <br>Editor Toolbar show status of toggles
+      <br>Update to Asciidoctor Diagram 1.5.10 (#215)</li>
       <li>0.21.3 upgrade to MathJAX 2.4.7 (as bundled in AsciidoctorJ 1.5.7)</li>
       <li>0.21.2 show title of document again (#217)</li>
       <li>0.21.1 allow attributes to be pre-defined in plugin settings (#216)</li>
