@@ -12,7 +12,7 @@ If you want to discuss ideas and create pull requests you can meet Alexander, on
 
 If you want to use the JavaFX instead of the Swing preview, you'll need to run IntelliJ with 64bit Java.
 From 2017.1 onwards 64bit Java is included even in the Windows versions.
-Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to be most stable in the JetBrains JDK.
+Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to be most stable in the JetBrains JDK. See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Slecting the JDK version the IDE will run under] for more details.
 
 == Release notes
 
