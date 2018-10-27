@@ -120,6 +120,12 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
             currentLineNo = targetLineNo;
             myPanel.scrollToLine(targetLineNo, document.getLineCount());
           }
+          ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              myHtmlPanelWrapper.repaint();
+            }
+          });
         }
         catch (InterruptedException e) {
           Thread.currentThread().interrupt();
@@ -138,6 +144,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
   public void renderIfVisible() {
     if (getComponent().isVisible()) {
+      myHtmlPanelWrapper.repaint();
       render();
     }
   }
@@ -319,6 +326,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    * Refresh view on select (as dependent elements might have changed).
    */
   public void selectNotify() {
+    myHtmlPanelWrapper.repaint();
     currentContent = "";
     renderIfVisible();
   }
