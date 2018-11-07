@@ -26,7 +26,8 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.22.0 Update to AsciidoctorJ 1.5.8.1</li>
+      <li>0.22.0 Update to AsciidoctorJ 1.5.8.1<br>
+      Workaround for incompatible plugins (#226)</li>
       <li>0.21.4 Add official asciidoctor logo (#219)
       <br>Add soft wrap to tool bar (#221)
       <br>Editor Toolbar show status of toggles

@@ -1,8 +1,13 @@
 package org.asciidoc.intellij.editor.javafx;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.editor.Document;
+import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
+import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,8 +17,28 @@ import java.nio.file.Path;
 public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
   public static final ProviderInfo INFO = new ProviderInfo("JavaFX WebView", JavaFxHtmlPanelProvider.class.getName());
 
+  private static boolean initialized;
+
+  /**
+   * Initialization might fail if a different StreamHandlerFactory has already been registered.
+   * Ask here if this is the case.
+   */
+  public static boolean isInitialized() {
+    return initialized;
+  }
+
   static {
-    URL.setURLStreamHandlerFactory(new LocalfileURLStreamHandlerFactory());
+    try {
+      URL.setURLStreamHandlerFactory(new LocalfileURLStreamHandlerFactory());
+      initialized = true;
+    } catch (Error error) {
+      initialized = false;
+      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+        .createNotification("Message during initialization", "Can't register URLStreamHandlerFactory, " +
+          "reloading of images in JavaFX preview will not work", NotificationType.WARNING, null);
+      notification.setImportant(false);
+      Notifications.Bus.notify(notification);
+    }
   }
 
   @NotNull

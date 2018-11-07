@@ -285,10 +285,18 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         md5 = calculateMd5(tmpFile, null);
         tmpFile = tmpFile.replaceAll("\\\\", "/");
         tmpFile = tmpFile.replaceAll(":", "%3A");
-        replacement = "<img src=\"localfile://" + md5 + "/" + tmpFile + "\"";
+        if (JavaFxHtmlPanelProvider.isInitialized()) {
+          replacement = "<img src=\"localfile://" + md5 + "/" + tmpFile + "\"";
+        } else {
+          replacement = "<img src=\"file://" + tmpFile.replaceAll("%3A", ":") + "\"";
+        }
       } else {
         md5 = calculateMd5(file, base);
-        replacement = "<img src=\"localfile://" + md5 + "/" + base + "/" + file + "\"";
+        if (JavaFxHtmlPanelProvider.isInitialized()) {
+          replacement = "<img src=\"localfile://" + md5 + "/" + base + "/" + file + "\"";
+        } else {
+          replacement = "<img src=\"file://" + base.replaceAll("%3A", ":") + "/" + file + "\"";
+        }
       }
       html = html.substring(0, matchResult.start()) +
         replacement + html.substring(matchResult.end());
