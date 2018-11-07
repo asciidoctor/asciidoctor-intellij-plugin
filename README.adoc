@@ -15,6 +15,10 @@ Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to 
 
 == Release notes
 
+=== 0.22.0 (work in progress)
+
+- Update to AsciidoctorJ 1.5.8.1
+
 === 0.21.4 (preview, available from Github releases)
 
 - Add official asciidoctor logo (#219)
