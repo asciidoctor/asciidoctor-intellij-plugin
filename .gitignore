@@ -3,6 +3,7 @@
 .gradle
 *.iml
 build/
+/gen
 /.classpath
 /.project
 /.settings/

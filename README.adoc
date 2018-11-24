@@ -15,6 +15,7 @@ Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to 
 - Update to AsciidoctorJ 1.5.8.1
 - Workaround for incompatible plugins (#226)
 - Toggle softwraps only available in context menu of AsciiDoc documents (#227)
+- Recognize list continuations plus block instead of marking them as old style headings (#228)
 
 === 0.21.4 (preview, available from Github releases)
 

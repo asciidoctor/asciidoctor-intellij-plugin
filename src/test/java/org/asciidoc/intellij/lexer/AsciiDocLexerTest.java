@@ -96,6 +96,20 @@ public class AsciiDocLexerTest extends LexerTestCase {
             "AsciiDoc:TEXT ('foo')");
   }
 
+  public void testOldStyleHeading() {
+    doTest("Hi\n--\n",
+      "AsciiDoc:HEADING ('Hi\\n--')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testContinuation() {
+    doTest("+\n--\n",
+      "AsciiDoc:TEXT ('+')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('--')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
   public void testSidebar() {
     doTest("****\nFoo Bar Baz\n****\n",
         "AsciiDoc:SIDEBAR_BLOCK_DELIMITER ('****\\n')\n" +

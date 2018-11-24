@@ -13,10 +13,14 @@ plugins {
     // upgrading to 0.3.10 leads to problems with MathJAX as the new version of the plugin
     // will bundle all resources inside a JAR file and this seems to annoy MathJax. 
     id "org.jetbrains.intellij" version "0.1.10"
+    id "org.jetbrains.grammarkit" version "2018.2.2"
 }
 
 apply plugin: 'org.jetbrains.intellij'
+apply plugin: 'org.jetbrains.grammarkit'
 apply plugin: 'java'
+
+import org.jetbrains.grammarkit.tasks.*
 
 allprojects {
     repositories {
@@ -50,6 +54,33 @@ dependencies {
     compile 'org.pegdown:pegdown:1.4.2'
     compile 'org.parboiled:parboiled-core:1.1.6'
     testCompile 'junit:junit:4.12'
+}
+
+def genRoot = file('gen')
+
+sourceSets {
+  main {
+    java.srcDirs project.files(genRoot)
+  }
+}
+
+grammarKit {
+  // version of IntelliJ patched JFlex (see bintray link below), Default is 1.7.0-1
+  jflexRelease = '1.7.0-1'
+
+  // tag or short commit hash of Grammar-Kit to use (see link below). Default is 2017.1.6
+  grammarKitRelease = '6452fde524'
+}
+
+task generateAsciidocLexer(type: GenerateLexer) {
+  source = "src/main/java/org/asciidoc/intellij/lexer/asciidoc.flex"
+  targetDir = "gen/org/asciidoc/intellij/lexer"
+  targetClass = "_AsciiDocLexer"
+  purgeOldFiles = true
+}
+
+compileJava {
+  dependsOn generateAsciidocLexer
 }
 
 task wrapper(type: Wrapper) {
