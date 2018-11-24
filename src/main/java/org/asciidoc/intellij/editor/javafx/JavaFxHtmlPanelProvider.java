@@ -35,7 +35,8 @@ public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
       initialized = false;
       Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
         .createNotification("Message during initialization", "Can't register URLStreamHandlerFactory, " +
-          "reloading of images in JavaFX preview will not work", NotificationType.WARNING, null);
+          "reloading of images in JavaFX preview will not work. Possible root cause: a conflicting plugin " +
+          "is installed (currently 'Fabric for Android Studio' is one known conflict).", NotificationType.WARNING, null);
       notification.setImportant(false);
       Notifications.Bus.notify(notification);
     }
