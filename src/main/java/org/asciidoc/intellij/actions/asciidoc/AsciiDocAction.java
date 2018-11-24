@@ -18,7 +18,6 @@ public abstract class AsciiDocAction extends AnAction {
   public void update(@NotNull AnActionEvent event) {
     PsiFile file = event.getData(LangDataKeys.PSI_FILE);
     boolean enabled = false;
-
     if (file != null) {
       for (String ext : AsciiDocFileType.DEFAULT_ASSOCIATED_EXTENSIONS) {
         if (file.getName().endsWith("." + ext)) {

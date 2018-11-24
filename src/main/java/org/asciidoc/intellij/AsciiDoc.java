@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -28,7 +27,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.geronimo.gshell.io.SystemOutputHijacker;
-import org.asciidoc.intellij.actions.AsciiDocAction;
+import org.asciidoc.intellij.actions.asciidoc.AsciiDocAction;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;

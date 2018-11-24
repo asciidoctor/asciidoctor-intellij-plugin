@@ -1,6 +1,10 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
+import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.psi.PsiFile;
 import org.asciidoc.intellij.actions.AsciiDocActionUtil;
+import org.asciidoc.intellij.file.AsciiDocFileType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -17,10 +21,24 @@ public class ToggleSoftWrapsAction extends AbstractToggleUseSoftWrapsAction {
     copyFrom(ActionManager.getInstance().getAction(IdeActions.ACTION_EDITOR_USE_SOFT_WRAPS));
   }
 
+  @Override
+  public void update(@NotNull AnActionEvent event) {
+    PsiFile file = event.getData(LangDataKeys.PSI_FILE);
+    boolean enabled = false;
+    if (file != null) {
+      for (String ext : AsciiDocFileType.DEFAULT_ASSOCIATED_EXTENSIONS) {
+        if (file.getName().endsWith("." + ext)) {
+          enabled = true;
+          break;
+        }
+      }
+    }
+    event.getPresentation().setEnabledAndVisible(enabled);
+  }
 
   @Nullable
   @Override
-  protected Editor getEditor(AnActionEvent e) {
-    final Editor editor = AsciiDocActionUtil.findAsciiDocTextEditor(e);return editor;
+  protected Editor getEditor(@NotNull AnActionEvent e) {
+    return AsciiDocActionUtil.findAsciiDocTextEditor(e);
   }
 }
