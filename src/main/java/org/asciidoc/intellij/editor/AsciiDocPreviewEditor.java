@@ -34,6 +34,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -62,7 +63,7 @@ import java.util.concurrent.FutureTask;
 public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEditor {
 
   public static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup("asciidoctor",
-      NotificationDisplayType.NONE, true);
+    NotificationDisplayType.NONE, true);
 
   /** single threaded with one task queue (one for each editor window) */
   private final LazyApplicationPoolExecutor LAZY_EXECUTOR = new LazyApplicationPoolExecutor();
@@ -71,11 +72,12 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   private transient String currentContent = "";
 
   private transient int targetLineNo = 0;
-
+  private transient int offsetLineNo = 0;
   private transient int currentLineNo = 0;
 
   /** The {@link Document} previewed in this editor. */
   protected final Document document;
+  private Project project;
 
   /** The directory which holds the temporary images. */
   protected final Path tempImagesPath;
@@ -104,12 +106,35 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   });
 
   private void render() {
+    project.getBasePath();
+    VirtualFile currentFile = FileDocumentManager.getInstance().getFile(document);
+    VirtualFile folder = currentFile.getParent();
+    String tempContent = "";
+    offsetLineNo = 0;
+    while(true) {
+      VirtualFile configFile = folder.findChild(".asciidoctorconfig");
+      if (configFile != null &&
+        !currentFile.equals(configFile)) {
+        Document config = FileDocumentManager.getInstance().getDocument(configFile);
+        tempContent = config.getText() + "\n\n" + tempContent;
+        offsetLineNo += config.getLineCount() + 1;
+      }
+      if(folder.getPath().equals(project.getBasePath())) {
+        break;
+      }
+      folder = folder.getParent();
+      if (folder == null) {
+        break;
+      }
+    }
+    tempContent += document.getText();
+    final String newContent = tempContent;
     LAZY_EXECUTOR.execute(new Runnable() {
       @Override
       public void run() {
         try {
-          if (!document.getText().equals(currentContent)) {
-            currentContent = document.getText();
+          if (!newContent.equals(currentContent)) {
+            currentContent = newContent;
 
             String markup = asciidoc.get().render(currentContent);
             if (markup != null) {
@@ -118,7 +143,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           }
           if (currentLineNo != targetLineNo) {
             currentLineNo = targetLineNo;
-            myPanel.scrollToLine(targetLineNo, document.getLineCount());
+            myPanel.scrollToLine(targetLineNo, document.getLineCount(), offsetLineNo);
           }
           ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
@@ -133,7 +158,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         catch (Exception ex) {
           String message = "Error rendering asciidoctor: " + ex.getMessage();
           Notification notification = NOTIFICATION_GROUP.createNotification("Error rendering asciidoctor", message,
-              NotificationType.ERROR, null);
+            NotificationType.ERROR, null);
           // increase event log counter
           notification.setImportant(true);
           Notifications.Bus.notify(notification);
@@ -177,9 +202,10 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     return provider;
   }
 
-  public AsciiDocPreviewEditor(final Document document) {
+  public AsciiDocPreviewEditor(final Document document, Project project) {
 
     this.document = document;
+    this.project = project;
 
     // create temp dir for images. Will be used by JavaFX only!
     Path tempImagesPath = null;
@@ -402,7 +428,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   }
 
   public void scrollToLine(int line) {
-    targetLineNo = line;
+    targetLineNo = line - offsetLineNo;
     renderIfVisible();
   }
 

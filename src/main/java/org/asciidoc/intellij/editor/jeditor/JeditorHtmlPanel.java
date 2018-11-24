@@ -129,7 +129,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   @Override
-  public void scrollToLine(int line, int lineCount) {
+  public void scrollToLine(int line, int lineCount, int offsetLineNo) {
     // NOOP
   }
 

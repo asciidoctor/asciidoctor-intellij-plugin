@@ -30,6 +30,7 @@
       Workaround for incompatible plugins (#226)<br>
       Toggle softwraps only available in context menu of AsciiDoc documents (#227)<br>
       Recognize list continuations plus block instead of marking them as old style headings (#228)<br>
+      EXPERIMENTAL: supporting _.asciidoctorconfig_ configuration files (#220)<br>
       </li>
       <li>0.21.4 Add official asciidoctor logo (#219)
       <br>Add soft wrap to tool bar (#221)

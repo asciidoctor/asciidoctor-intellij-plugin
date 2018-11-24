@@ -4,6 +4,8 @@ if (window.__IntelliJTools === undefined) {
 
 window.__IntelliJTools.pickSourceLine = (function () {
 
+  var offset = 0;
+
   var getLine = function (node) {
     if (!node || !('className' in node)) {
       return null
@@ -58,11 +60,13 @@ window.__IntelliJTools.pickSourceLine = (function () {
 
     var editorLine = startLine + (event.clientY + window.scrollY - startY) * (endLine - startLine) / (endY - startY)
 
-    window.JavaPanelBridge.scollEditorToLine(editorLine)
+    window.JavaPanelBridge.scollEditorToLine(editorLine - offset)
     event.stopPropagation()
   }
 
-  var initializeContent = function (lc) {
+  var initializeContent = function (lc, off) {
+
+    offset = off
 
     // the sourcelines will be as CSS class elements that also have class has-source-line
     var blocks = document.getElementsByClassName('has-source-line');
@@ -71,7 +75,7 @@ window.__IntelliJTools.pickSourceLine = (function () {
       blocks[i].onclick = window.__IntelliJTools.srcollEditorToLine;
     }
 
-    lineCount = lc;
+    lineCount = lc + off;
 
   }
 

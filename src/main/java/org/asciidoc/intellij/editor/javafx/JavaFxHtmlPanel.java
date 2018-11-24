@@ -108,6 +108,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   private String base;
 
   private int lineCount;
+  private int offset;
 
   private final Path imagesPath;
 
@@ -349,14 +350,15 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   @Override
-  public void scrollToLine(final int line, final int lineCount) {
+  public void scrollToLine(final int line, final int lineCount, int offsetLineNo) {
     this.lineCount = lineCount;
+    this.offset = offsetLineNo;
     runInPlatformWhenAvailable(new Runnable() {
       @Override
       public void run() {
         JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
           "if ('__IntelliJTools' in window) " +
-            "__IntelliJTools.scrollToLine(" + line + ", " + lineCount + ");"
+            "__IntelliJTools.scrollToLine(" + line + ", " + lineCount + ", " + offsetLineNo + ");"
         );
         final Object result = JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
           "document.documentElement.scrollTop || document.body.scrollTop");
@@ -444,7 +446,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
           "if ('__IntelliJTools' in window) {" +
             "__IntelliJTools.processLinks();" +
-            "__IntelliJTools.pickSourceLine(" + lineCount + ");" +
+            "__IntelliJTools.pickSourceLine(" + lineCount + ", " + offset + ");" +
             "}"
         );
       }

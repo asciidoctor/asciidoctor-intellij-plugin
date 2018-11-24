@@ -31,7 +31,10 @@ window.__IntelliJTools.scrollToLine = (function () {
     return offset
   }
 
-  var scrollToLine = function (newLineToScroll, lineCount) {
+  var scrollToLine = function (newLineToScroll, lineCount, offsetLineNo) {
+
+    newLineToScroll += offsetLineNo;
+    lineCount += offsetLineNo;
 
     // the sourcelines will be as CSS class elements that also have class has-source-line
     var blocks = document.getElementsByClassName('has-source-line');
@@ -69,7 +72,7 @@ window.__IntelliJTools.scrollToLine = (function () {
 
     // ensure that the assumed position is between x% of the window height depending on scroll direction
     if (oldLineToScroll < newLineToScroll) {
-      relativeWindowPosition = 0.8
+      relativeWindowPosition = 0.7
     }
     else if (oldLineToScroll > newLineToScroll) {
       relativeWindowPosition = 0.1
