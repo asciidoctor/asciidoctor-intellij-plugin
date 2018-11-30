@@ -13,7 +13,7 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 
 == Release notes
 
-=== 0.22.0 (preview, available from Github releases)
+=== 0.22.0
 
 - Update to AsciidoctorJ 1.5.8.1
 - Workaround for incompatible plugins (#226)
