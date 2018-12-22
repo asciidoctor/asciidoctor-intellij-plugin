@@ -56,6 +56,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
@@ -111,7 +112,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     VirtualFile folder = currentFile.getParent();
     String tempContent = "";
     offsetLineNo = 0;
-    while(true) {
+    while (true) {
       VirtualFile configFile = folder.findChild(".asciidoctorconfig");
       if (configFile != null &&
         !currentFile.equals(configFile)) {
@@ -119,7 +120,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         tempContent = config.getText() + "\n\n" + tempContent;
         offsetLineNo += config.getLineCount() + 1;
       }
-      if(folder.getPath().equals(project.getBasePath())) {
+      if (folder.getPath().equals(project.getBasePath())) {
         break;
       }
       folder = folder.getParent();
@@ -129,6 +130,24 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     }
     tempContent += document.getText();
     final String newContent = tempContent;
+
+    VirtualFile lib = project.getBaseDir().findChild(".asciidoctor");
+    if (lib != null) {
+      lib = lib.findChild("lib");
+    }
+
+    java.util.List<String> extensions = new ArrayList<>();
+    if (lib != null) {
+      for (VirtualFile vf : lib.getChildren()) {
+        if ("rb".equals(vf.getExtension())) {
+          Document extension = FileDocumentManager.getInstance().getDocument(vf);
+          if (extension != null) {
+            extensions.add(vf.getCanonicalPath());
+          }
+        }
+      }
+    }
+
     LAZY_EXECUTOR.execute(new Runnable() {
       @Override
       public void run() {
@@ -136,7 +155,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           if (!newContent.equals(currentContent)) {
             currentContent = newContent;
 
-            String markup = asciidoc.get().render(currentContent);
+            String markup = asciidoc.get().render(currentContent, extensions);
             if (markup != null) {
               myPanel.setHtml(markup);
             }
@@ -267,7 +286,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     }
 
     final AsciiDocHtmlPanel newPanel = newPanelProvider.createHtmlPanel(document, imagesDir);
-    if(oldPanel != null) {
+    if (oldPanel != null) {
       newPanel.setEditor(oldPanel.getEditor());
     }
     panelWrapper.add(newPanel.getComponent(), BorderLayout.CENTER);

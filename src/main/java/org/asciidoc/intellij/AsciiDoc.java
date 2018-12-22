@@ -16,15 +16,22 @@
 package org.asciidoc.intellij;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.geronimo.gshell.io.SystemOutputHijacker;
 import org.asciidoc.intellij.actions.asciidoc.AsciiDocAction;
@@ -45,6 +52,12 @@ public class AsciiDoc {
 
   private static Asciidoctor asciidoctor;
 
+  static {
+    SystemOutputHijacker.install();
+  }
+
+  private static String hash = "";
+
   /**
    * Base directory to look up includes.
    */
@@ -60,10 +73,13 @@ public class AsciiDoc {
     this.baseDir = baseDir;
     this.imagesPath = imagesPath;
     this.name = name;
+    initWithExtensions(Collections.emptyList());
+  }
 
+  private void initWithExtensions(List<String> extensions) {
     synchronized (AsciiDoc.class) {
-      if (asciidoctor == null) {
-        SystemOutputHijacker.install();
+      String md = calcMd(extensions);
+      if (!md.equals(hash)) {
         ClassLoader old = Thread.currentThread().getContextClassLoader();
         ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
         ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
@@ -86,8 +102,13 @@ public class AsciiDoc {
           if (is == null) {
             throw new RuntimeException("unable to load script plantuml-png-patch.rb");
           }
+          for (String extension : extensions) {
+            asciidoctor.rubyExtensionRegistry().requireLibrary(extension);
+          }
           asciidoctor.rubyExtensionRegistry().loadClass(is);
-        } finally {
+          hash = md;
+        }
+        finally {
           if (asciidoctor != null) {
             asciidoctor.unregisterLogHandler(logHandler);
           }
@@ -96,6 +117,34 @@ public class AsciiDoc {
           Thread.currentThread().setContextClassLoader(old);
         }
       }
+    }
+  }
+
+  private String calcMd(List<String> extensions) {
+    try {
+      MessageDigest md = MessageDigest.getInstance("MD5");
+      for (String s : extensions) {
+        try {
+          InputStream is = new FileInputStream(s);
+          try {
+            md.update(IOUtils.toByteArray(is));
+          } finally {
+            IOUtils.closeQuietly(is);
+          }
+        }
+        catch (IOException e) {
+          throw new RuntimeException("unable to read file", e);
+        }
+      }
+      byte[] mdbytes = md.digest();
+      StringBuilder sb = new StringBuilder();
+      for (byte mdbyte : mdbytes) {
+        sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16).substring(1));
+      }
+      return sb.toString();
+    }
+    catch (NoSuchAlgorithmException e) {
+      throw new RuntimeException("unknown hash", e);
     }
   }
 
@@ -116,9 +165,10 @@ public class AsciiDoc {
     }
   }
 
-  public String render(String text) {
+  public String render(String text, List<String> extensions) {
     LogHandler logHandler = new IntellijLogHandler(name);
     synchronized (asciidoctor) {
+      initWithExtensions(extensions);
       ClassLoader old = Thread.currentThread().getContextClassLoader();
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
       ByteArrayOutputStream boasErr = new ByteArrayOutputStream();

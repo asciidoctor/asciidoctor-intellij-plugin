@@ -322,9 +322,9 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         }
       }
       byte[] mdbytes = md.digest();
-      StringBuffer sb = new StringBuffer();
-      for (int i = 0; i < mdbytes.length; i++) {
-        sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+      StringBuilder sb = new StringBuilder();
+      for (byte mdbyte : mdbytes) {
+        sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16).substring(1));
       }
       md5 = sb.toString();
     } catch (NoSuchAlgorithmException | IOException e) {

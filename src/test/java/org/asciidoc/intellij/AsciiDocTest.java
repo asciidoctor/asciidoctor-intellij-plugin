@@ -1,6 +1,7 @@
 package org.asciidoc.intellij;
 
 import java.io.File;
+import java.util.Collections;
 
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -23,12 +24,12 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
     String html = asciidoc.render("[plantuml,test,format=svg]\n" +
       "----\n" +
       "List <|.. ArrayList\n" +
-      "----\n");
+      "----\n", Collections.emptyList());
     Assert.assertTrue(html.contains("src=\"test.png\""));
   }
 
   public void testShouldRenderPlainAsciidoc() {
-    String html = asciidoc.render("this is *bold*.");
+    String html = asciidoc.render("this is *bold*.", Collections.emptyList());
     System.out.println(html);
     Assert.assertTrue(html.contains("<strong>bold</strong>"));
   }
@@ -36,7 +37,7 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testShouldRenderAttributesAsciidoc() {
     String expectedContent = "should replace attribute placeholder with value";
     AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getAttributes().put("attr", expectedContent);
-    String html = asciidoc.render("{attr}");
+    String html = asciidoc.render("{attr}", Collections.emptyList());
     Assert.assertTrue(html.contains(expectedContent));
   }
 }
