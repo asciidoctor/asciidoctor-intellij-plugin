@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -61,24 +62,35 @@ public class AsciiDoc {
   /**
    * Base directory to look up includes.
    */
-  private final File baseDir;
+  private final File fileBaseDir;
 
   /**
    * Images directory.
    */
   private final Path imagesPath;
   private final String name;
+  private final String projectBasePath;
 
-  public AsciiDoc(File baseDir, Path imagesPath, String name) {
-    this.baseDir = baseDir;
+  public AsciiDoc(String projectBasePath, File fileBaseDir, Path imagesPath, String name) {
+    this.projectBasePath = projectBasePath;
+    this.fileBaseDir = fileBaseDir;
     this.imagesPath = imagesPath;
     this.name = name;
-    initWithExtensions(Collections.emptyList());
   }
 
   private void initWithExtensions(List<String> extensions) {
     synchronized (AsciiDoc.class) {
-      String md = calcMd(extensions);
+      boolean extensionsEnabled;
+      AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
+      asciiDocApplicationSettings.setExtensionsPresent(projectBasePath, true);
+      String md;
+      if (Boolean.TRUE.equals(asciiDocApplicationSettings.getExtensionsEnabled(projectBasePath))) {
+        extensionsEnabled = true;
+        md = calcMd(projectBasePath, extensions);
+      } else {
+        extensionsEnabled = false;
+        md = calcMd(projectBasePath, Collections.EMPTY_LIST);
+      }
       if (!md.equals(hash)) {
         ClassLoader old = Thread.currentThread().getContextClassLoader();
         ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
@@ -102,8 +114,10 @@ public class AsciiDoc {
           if (is == null) {
             throw new RuntimeException("unable to load script plantuml-png-patch.rb");
           }
-          for (String extension : extensions) {
-            asciidoctor.rubyExtensionRegistry().requireLibrary(extension);
+          if(extensionsEnabled) {
+            for (String extension : extensions) {
+              asciidoctor.rubyExtensionRegistry().requireLibrary(extension);
+            }
           }
           asciidoctor.rubyExtensionRegistry().loadClass(is);
           hash = md;
@@ -120,9 +134,14 @@ public class AsciiDoc {
     }
   }
 
-  private String calcMd(List<String> extensions) {
+  /** Calculate a hash for the extensions.
+   * Hash will change if the project has been changed, of the contents of files have changed.
+   * TODO: hash will not change if files referenced in extensions changed.
+   */
+  private String calcMd(String projectBasePath, List<String> extensions) {
     try {
       MessageDigest md = MessageDigest.getInstance("MD5");
+      md.update(projectBasePath.getBytes(StandardCharsets.UTF_8));
       for (String s : extensions) {
         try {
           InputStream is = new FileInputStream(s);
@@ -167,7 +186,7 @@ public class AsciiDoc {
 
   public String render(String text, List<String> extensions) {
     LogHandler logHandler = new IntellijLogHandler(name);
-    synchronized (asciidoctor) {
+    synchronized (this) {
       initWithExtensions(extensions);
       ClassLoader old = Thread.currentThread().getContextClassLoader();
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
@@ -207,7 +226,7 @@ public class AsciiDoc {
     OptionsBuilder opts = OptionsBuilder.options().safe(SafeMode.UNSAFE).backend("html5").headerFooter(false)
       .attributes(attrs)
       .option("sourcemap", "true")
-      .baseDir(baseDir);
+      .baseDir(fileBaseDir);
 
     return opts.asMap();
   }

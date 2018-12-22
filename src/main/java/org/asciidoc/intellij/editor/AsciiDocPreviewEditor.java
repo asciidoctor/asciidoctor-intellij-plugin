@@ -95,19 +95,18 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /** . */
   private FutureTask<AsciiDoc> asciidoc = new FutureTask<AsciiDoc>(new Callable<AsciiDoc>() {
     public AsciiDoc call() throws Exception {
-      File baseDir = new File("");
+      File fileBaseDir = new File("");
       VirtualFile parent = FileDocumentManager.getInstance().getFile(document).getParent();
       if (parent != null) {
         // parent will be null if we use Language Injection and Fragment Editor
-        baseDir = new File(parent.getCanonicalPath());
+        fileBaseDir = new File(parent.getCanonicalPath());
       }
-      return new AsciiDoc(baseDir,
+      return new AsciiDoc(project.getBasePath(), fileBaseDir,
         tempImagesPath, FileDocumentManager.getInstance().getFile(document).getName());
     }
   });
 
   private void render() {
-    project.getBasePath();
     VirtualFile currentFile = FileDocumentManager.getInstance().getFile(document);
     VirtualFile folder = currentFile.getParent();
     String tempContent = "";

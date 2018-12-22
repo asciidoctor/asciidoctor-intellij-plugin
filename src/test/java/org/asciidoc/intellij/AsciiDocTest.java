@@ -17,7 +17,7 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    asciidoc = new AsciiDoc(new File("."), null, "test");
+    asciidoc = new AsciiDoc(project.getBasePath(), new File("."), null, "test");
   }
 
   public void testShouldRenderPlantUmlAsPng() {
