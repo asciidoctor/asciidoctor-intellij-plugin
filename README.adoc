@@ -13,7 +13,7 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 
 == Release notes
 
-=== 0.23.0
+=== 0.23.0 (preview, available from Github releases)
 
 - EXPERIMENTAL: Support Asciidoctor Ruby Extensions when placed in _.asciidoctor/lib_ (#220)
 
