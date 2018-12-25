@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.23.0</version>
+  <version>0.23.1</version>
   <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -26,7 +26,8 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>EXPERIMENTAL: Support Asciidoctor Ruby Extensions when placed in _.asciidoctor/lib_ (#220)</li>
+      <li>0.23.1 Updated file icon with less intrusive icon, also introducing SVG for icons (#230)</li>
+      <li>0.23.0 EXPERIMENTAL: Support Asciidoctor Ruby Extensions when placed in _.asciidoctor/lib_ (#220)</li>
       <li>0.22.0 Update to AsciidoctorJ 1.5.8.1<br>
       Workaround for incompatible plugins (#226)<br>
       Toggle softwraps only available in context menu of AsciiDoc documents (#227)<br>
