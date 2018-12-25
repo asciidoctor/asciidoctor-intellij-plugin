@@ -82,7 +82,9 @@ public class AsciiDoc {
     synchronized (AsciiDoc.class) {
       boolean extensionsEnabled;
       AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
-      asciiDocApplicationSettings.setExtensionsPresent(projectBasePath, true);
+      if(extensions.size() > 0) {
+        asciiDocApplicationSettings.setExtensionsPresent(projectBasePath, true);
+      }
       String md;
       if (Boolean.TRUE.equals(asciiDocApplicationSettings.getExtensionsEnabled(projectBasePath))) {
         extensionsEnabled = true;

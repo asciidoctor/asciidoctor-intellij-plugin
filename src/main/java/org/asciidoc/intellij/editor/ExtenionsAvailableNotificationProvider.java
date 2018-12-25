@@ -43,7 +43,7 @@ public class ExtenionsAvailableNotificationProvider extends EditorNotifications.
     final String projectBasePath = bp;
     final AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
     if(asciiDocApplicationSettings.getExtensionsEnabled(projectBasePath) != null
-      || Boolean.FALSE.equals(asciiDocApplicationSettings.getExtensionsPresent(projectBasePath))) {
+      || !Boolean.TRUE.equals(asciiDocApplicationSettings.getExtensionsPresent(projectBasePath))) {
       return null;
     }
     final EditorNotificationPanel panel = new EditorNotificationPanel();
