@@ -23,11 +23,18 @@ import javax.swing.*;
 public class AsciiDocIcons {
 
   private static Icon load(String path) {
-    return IconLoader.getIcon(path, AsciiDocIcons.class);
+    Icon icon = IconLoader.getIcon(path, AsciiDocIcons.class);
+    if (icon.getIconHeight() == 1 && path.endsWith(".svg")) {
+      // when trying to load SVG icons on an older version, they will be returned as 1x1 icon
+      // if this is the case, fallback to PNG icons
+      path = path.substring(0, path.length() - 4) + ".png";
+      icon = IconLoader.getIcon(path, AsciiDocIcons.class);
+    }
+    return icon;
   }
 
   /** The AsciiDoc {@link Icon}. */
-  public static final Icon Asciidoc_Icon = load("/icons/asciidoc.png");
+  public static final Icon Asciidoc_Icon = load("/icons/asciidoc.svg");
 
   public static class Layout {
     public static final Icon Editor_only = load("/icons/layout/Editor_only.png"); // 16x16
@@ -36,12 +43,12 @@ public class AsciiDocIcons {
   }
 
   public static class EditorActions {
-    public static final Icon Bold = load("/icons/editor_actions/Bold.png"); // 16x16
-    public static final Icon Italic = load("/icons/editor_actions/Italic.png"); // 16x16
+    public static final Icon Bold = load("/icons/editor_actions/Bold.svg"); // 16x16
+    public static final Icon Italic = load("/icons/editor_actions/Italic.svg"); // 16x16
     public static final Icon Table = load("/icons/editor_actions/table.png"); // 16x16
-    public static final Icon Link = load("/icons/editor_actions/Link.png"); // 16x16
-    public static final Icon Strike_through = load("/icons/editor_actions/Strike_through.png"); // 16x16
-    public static final Icon Code_span = load("/icons/editor_actions/Code_span.png"); // 16x16
+    public static final Icon Link = load("/icons/editor_actions/Link.svg"); // 16x16
+    public static final Icon Strike_through = load("/icons/editor_actions/Strike_through.svg"); // 16x16
+    public static final Icon Code_span = load("/icons/editor_actions/Code_span.svg"); // 16x16
   }
 
 }
