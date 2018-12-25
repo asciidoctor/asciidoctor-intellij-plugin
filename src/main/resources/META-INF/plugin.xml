@@ -11,9 +11,12 @@
       including HTML, PDF, EPUB, man page. AsciiDoc is, in contrast to Markdown, highly configurable: both the AsciiDoc
       source file syntax and the backend output markups (which can be almost any type of SGML/XML markup)
     can be customized and extended by the user.
-      <p>If you want to use the JavaFX instead of the Swing preview, you'll need to run IntelliJ with 64bit Java.
-      Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to be most stable in
-      the JetBrains JDK. See <a href="https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under">Slecting the JDK version the IDE will run under</a> for more details.
+      <p>The most advanced and recommended preview mode is JavaFX.
+To use the JavaFX preview instead of the Swing preview, you'll need to run IntelliJ with 64bit Java and JavaFX installed.
+Oracle JDK installations include JavaFX, but can make the IDE unstable and crash.
+Pre-bundled OpenJDK installations usually don't include JavaFX.
+Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
+ See <a href="https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under">Selecting the JDK version the IDE will run under</a> for more details.
   <p>
   <p>
   <p>
@@ -26,7 +29,9 @@
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.23.1 Updated file icon with less intrusive icon, also introducing SVG for icons (#230)</li>
+      <li>0.23.1 Updated file icon with less intrusive icon, also introducing SVG for icons (#230)
+      <br>Editor notification to switch to JetBrains 64bit JDK (#189)
+      <br>Tuning support for Asciidoctor Ruby Extensions (#220)</li>
       <li>0.23.0 EXPERIMENTAL: Support Asciidoctor Ruby Extensions when placed in _.asciidoctor/lib_ (#220)</li>
       <li>0.22.0 Update to AsciidoctorJ 1.5.8.1<br>
       Workaround for incompatible plugins (#226)<br>
@@ -163,6 +168,7 @@
     </applicationConfigurable>
     <applicationService serviceImplementation="org.asciidoc.intellij.settings.AsciiDocApplicationSettings"/>
     <editorNotificationProvider implementation="org.asciidoc.intellij.editor.javafx.JavaFxCouldBeEnabledNotificationProvider"/>
+    <editorNotificationProvider implementation="org.asciidoc.intellij.editor.javafx.ChangeJdkForJavaFXNotificationProvider"/>
     <editorNotificationProvider implementation="org.asciidoc.intellij.editor.ExtenionsAvailableNotificationProvider"/>
     <gotoSymbolContributor implementation="org.asciidoc.intellij.psi.AsciiDocChooseByNameContributor"/>
     <searchEverywhereClassifier implementation="org.asciidoc.intellij.psi.AsciiDocSearchEverywhereClassifier"/>
