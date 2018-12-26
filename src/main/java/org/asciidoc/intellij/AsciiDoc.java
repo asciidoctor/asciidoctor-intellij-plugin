@@ -94,6 +94,10 @@ public class AsciiDoc {
         md = calcMd(projectBasePath, Collections.EMPTY_LIST);
       }
       if (!md.equals(hash)) {
+        if (asciidoctor != null) {
+          asciidoctor.shutdown();
+          asciidoctor = null;
+        }
         ClassLoader old = Thread.currentThread().getContextClassLoader();
         ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
         ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
@@ -188,7 +192,7 @@ public class AsciiDoc {
 
   public String render(String text, List<String> extensions) {
     LogHandler logHandler = new IntellijLogHandler(name);
-    synchronized (this) {
+    synchronized (AsciiDoc.class) {
       initWithExtensions(extensions);
       ClassLoader old = Thread.currentThread().getContextClassLoader();
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
