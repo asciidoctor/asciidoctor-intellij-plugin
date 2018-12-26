@@ -187,7 +187,6 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
   public void renderIfVisible() {
     if (getComponent().isVisible()) {
-      myHtmlPanelWrapper.repaint();
       render();
     }
   }
@@ -289,7 +288,6 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       newPanel.setEditor(oldPanel.getEditor());
     }
     panelWrapper.add(newPanel.getComponent(), BorderLayout.CENTER);
-    panelWrapper.repaint();
 
     return newPanel;
   }
