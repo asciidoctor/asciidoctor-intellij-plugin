@@ -23,6 +23,10 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 
 == Release notes
 
+=== 0.23.2
+
+- Resource cleanup for Asciidoctor Ruby Extensions (#220)
+
 === 0.23.1 (preview, available from Github releases)
 
 - Updated file icon with less intrusive icon, also introducing SVG for icons (#230)
