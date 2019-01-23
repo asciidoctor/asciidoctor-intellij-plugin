@@ -29,7 +29,8 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.24.0 Upgrade to AsciidoctorJ 1.6.0 and JRuby 9.2.5.0 (it's still backed by Asciidoctor 1.5.8)</li>
+      <li>0.24.0 Upgrade to AsciidoctorJ 1.6.0 and JRuby 9.2.5.0 (it's still backed by Asciidoctor 1.5.8)
+      <br>Upgrade to asciidoctor diagram 1.5.11</li>
       <li>0.23.2 Resource cleanup for Asciidoctor Ruby Extensions (#220)</li>
       <li>0.23.1 Updated file icon with less intrusive icon, also introducing SVG for icons (#230)
       <br>Editor notification to switch to JetBrains 64bit JDK (#189)
