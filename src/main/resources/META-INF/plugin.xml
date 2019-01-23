@@ -176,7 +176,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
     <gotoSymbolContributor implementation="org.asciidoc.intellij.psi.AsciiDocChooseByNameContributor"/>
     <searchEverywhereClassifier implementation="org.asciidoc.intellij.psi.AsciiDocSearchEverywhereClassifier"/>
     <localInspection language="AsciiDoc" displayName="Heading inspection" groupPath="AsciiDoc"
-                     groupName="General" enabledByDefault="true" level="WARNING"
+                     groupName="General" enabledByDefault="true" level="WARNING" shortName="AsciidocHeadingStyleInspection"
                      implementationClass="org.asciidoc.intellij.inspections.AsciidocHeadingStyleInspection"/>
 
   </extensions>
