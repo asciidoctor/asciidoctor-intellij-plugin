@@ -37,6 +37,7 @@ BLOCK_ATTRS_START = "["
 
 %state INSIDE_LINE
 %state HEADING
+%state SINGLELINE
 
 %state LISTING_BLOCK
 %state INSIDE_LISTING_BLOCK_LINE
@@ -64,41 +65,44 @@ BLOCK_ATTRS_START = "["
 %%
 
 <YYINITIAL> {
+  {HEADING_OLDSTYLE} {
+        String[] part = yytext().toString().split("\n");
+        // remove all trailing white space
+        String heading = part[0].replaceAll("[ \t]*$","");
+        String underlining = part[1].replaceAll("[ \t]*$","");
+        boolean sameCharactersInSecondLine = true;
+        // must be same character all of second line
+        for(int i = 0; i < underlining.length(); ++i) {
+          if(underlining.charAt(0) != underlining.charAt(i)) {
+            sameCharactersInSecondLine = false;
+            break;
+          }
+        }
+        // must be same length plus/minus one character
+        if(heading.length() >= underlining.length() -1
+           && heading.length() <= underlining.length() +1
+           && sameCharactersInSecondLine
+           // only plus signs are never a heading but a continuation (single plus) or something else
+           && !heading.matches("^\\+*$")) {
+          // push back the second newline of the pattern
+          yypushback(1);
+          return AsciiDocTokenTypes.HEADING;
+        } else {
+          // pass this contents to the single line rules (second priority)
+          yypushback(yylength());
+          yybegin(SINGLELINE);
+        }
+      }
+  [^]                  { yypushback(yylength()); yybegin(SINGLELINE); }
+}
+
+<SINGLELINE> {
   {LISTING_BLOCK_DELIMITER}  { yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
   {COMMENT_BLOCK_DELIMITER} { yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
   {EXAMPLE_BLOCK_DELIMITER} { yybegin(EXAMPLE_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER; }
   {PASSTRHOUGH_BLOCK_DELIMITER} { yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
   {SIDEBAR_BLOCK_DELIMITER} { yybegin(SIDEBAR_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER; }
   {QUOTE_BLOCK_DELIMITER} { yybegin(QUOTE_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER; }
-
-  {HEADING_OLDSTYLE} {
-      String[] part = yytext().toString().split("\n");
-      // remove all trailing white space
-      String heading = part[0].replaceAll("[ \t]*$","");
-      String underlining = part[1].replaceAll("[ \t]*$","");
-      boolean sameCharactersInSecondLine = true;
-      // must be same character all of second line
-      for(int i = 0; i < underlining.length(); ++i) {
-        if(underlining.charAt(0) != underlining.charAt(i)) {
-          sameCharactersInSecondLine = false;
-          break;
-        }
-      }
-      // must be same length plus/minus one character
-      if(heading.length() >= underlining.length() -1
-         && heading.length() <= underlining.length() +1
-         && sameCharactersInSecondLine
-         // only plus signs are never a heading but a continuation (single plus) or something else
-         && !heading.matches("^\\+*$")) {
-        // push back the second newline of the pattern
-        yypushback(1);
-        return AsciiDocTokenTypes.HEADING;
-      } else {
-        yypushback(yylength()-1); // heading.length() + 1
-        yybegin(INSIDE_LINE);
-        return AsciiDocTokenTypes.TEXT;
-      }
-    }
 
   {LINE_COMMENT}       { return AsciiDocTokenTypes.LINE_COMMENT; }
   {HEADING_START} / {NON_SPACE} { yybegin(HEADING); return AsciiDocTokenTypes.HEADING; }
@@ -107,7 +111,7 @@ BLOCK_ATTRS_START = "["
   {BLOCK_MACRO_START} / {NON_SPACE} { yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   {BLOCK_ATTRS_START} { yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
 
-  "\n"                 { return AsciiDocTokenTypes.LINE_BREAK; }
+  "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
   [^]                  { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.TEXT; }
 }
 
@@ -149,6 +153,7 @@ BLOCK_ATTRS_START = "["
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
     } else {
+      yypushback(1);
       return AsciiDocTokenTypes.LISTING_TEXT;
     }
   }
@@ -165,6 +170,7 @@ BLOCK_ATTRS_START = "["
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.BLOCK_COMMENT;
     } else {
+      yypushback(1);
       return AsciiDocTokenTypes.BLOCK_COMMENT;
     }
   }
@@ -181,6 +187,7 @@ BLOCK_ATTRS_START = "["
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER;
     } else {
+      yypushback(1);
       return AsciiDocTokenTypes.EXAMPLE_BLOCK;
     }
   }
@@ -197,6 +204,7 @@ BLOCK_ATTRS_START = "["
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
     } else {
+      yypushback(1);
       return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK;
     }
   }
@@ -213,6 +221,7 @@ BLOCK_ATTRS_START = "["
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER;
     } else {
+      yypushback(1);
       return AsciiDocTokenTypes.SIDEBAR_BLOCK;
     }
   }
@@ -229,6 +238,7 @@ BLOCK_ATTRS_START = "["
       yybegin(YYINITIAL);
       return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER;
     } else {
+      yypushback(1);
       return AsciiDocTokenTypes.QUOTE_BLOCK;
     }
   }

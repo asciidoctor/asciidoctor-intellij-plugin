@@ -27,6 +27,8 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 
 - Upgrade to AsciidoctorJ 1.6.0 and JRuby 9.2.5.0 (it's still backed by Asciidoctor 1.5.8)
 - Upgrade to asciidoctor diagram 1.5.11
+- Updated parser for old style multiline headings  to be more specific (#233)
+- Added description for old style heading inspection (#233)
 
 === 0.23.2
 
