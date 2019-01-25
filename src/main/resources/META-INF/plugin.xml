@@ -29,7 +29,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.24.0 Upgrade to AsciidoctorJ 1.6.0 and JRuby 9.2.5.0 (it's still backed by Asciidoctor 1.5.8)
+      <li>0.24.0 Upgrade to AsciidoctorJ 1.6.1 and JRuby 9.2.5.0 (it's still backed by Asciidoctor 1.5.8)
       <br>Upgrade to asciidoctor diagram 1.5.11
       <br>Updated parser for old style multiline headings to be more specific (#233)
       <br>Added description for old style heading inspection (#233)
