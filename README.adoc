@@ -1,5 +1,5 @@
 = IntelliJ AsciiDoc Plugin
-Erik Pragt
+Alexander Schwartz
 :experimental:
 
 A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language. You can install the plugin (named "AsciiDoc") from the plugins section inside your JetBrains IDE or download it from the https://plugins.jetbrains.com/plugin/7391[JetBrains Plugin Repository].
@@ -23,7 +23,7 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 
 == Release notes
 
-=== 0.24.0 (work in progress)
+=== 0.24.0
 
 - Upgrade to AsciidoctorJ 1.6.1 and JRuby 9.2.5.0 (it's still backed by Asciidoctor 1.5.8)
 - Upgrade to asciidoctor diagram 1.5.11
@@ -208,51 +208,14 @@ This should make contributing and releasing easier. Thanks Jiawen Geng!
 
 IntelliJ 15 (including AppCode 3.3, CLion 1.2, DataGrip 1.0, PhpStorm 10, PyCharm 5, RubyMine 8, WebStorm 11) is the new minimum version required for this release.
 
-=== 0.14.3
-
-- Fix problem in syntax highlighting leading to PSI Parser Exceptions
-- disable automatically refreshing images on JavaFX (to be re-enabled in 0.15.x)
-
-=== 0.14.2
-
-- Performance improvement: render preview only when visible
-- Don't show AsciiDoc preview actions in other Editors
-- additional compatibility fixes for IntelliJ 15.x
-
-=== 0.14.1
-
-- make compatible with IntelliJ 15.x again. +
-  This should include: AppCode 3.3, CLion 1.2, DataGrip 1.0, PhpStorm 10, PyCharm 5, RubyMine 8, WebStorm 11
-
-=== 0.14
-
-- New JavaFX preview and real split view
-- Update to asciidoctorj 1.5.4.1 and asciidoctorj-diagram 1.5.0
-
-=== 0.13
-
-- Updated to asciidoctorj 1.5.3.2, added support for asciidoctor-diagram
-
-=== 0.12
-
-- Bugfixes, new makelink action, table generation improvement, etc.
-
-=== 0.11
-
-- Removed AsciiDoc item in right click menu thanks to Dmitry Jemerov.
-- Added 'Open in Browser' menu item.
-- Added 40+ live template (access them by pressing Cmd+J, or type 'ad-')
-
 == Features
 
-* Since 0.8 Fixed incompatibility with non-IDEA IDE's, thanks to Harro Lissenberg
-* Since 0.7: Right click on a document to apply basic formatting or create tables.
-* Since 0.6: refactor Markdown to AsciiDoc. Right click on a file, or use the Refactor menu, and the Markdown document
-will be replaced by the AsciiDoc equivalent. Also supports undo, in case you're not happy with the result!
-* Since 0.4: recognizes the AsciiDoc file extension (.adoc, .asciidoc, .ad)
-* Since 0.4: provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] with Live preview.
+* Right click on a document to apply basic formatting or create tables.
+* Refactor Markdown to AsciiDoc: Right click on a file, or use the Refactor menu, and the Markdown document will be replaced by the AsciiDoc equivalent. Also supports undo, in case you're not happy with the result!
+* Recognizes the AsciiDoc file extension (.adoc, .asciidoc, .ad)
+* Provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] with Live preview.
 
-If you are missing features, please don't hesitate to let me know on Twitter: http://www.twitter.com/epragt[@epragt] or make an issue in the issue tracker!
+If you are missing features, please don't hesitate to let me know on Twitter: http://www.twitter.com/ahus1de[@ahus1de] or make an issue in the issue tracker!
 
 == Dependencies
 
