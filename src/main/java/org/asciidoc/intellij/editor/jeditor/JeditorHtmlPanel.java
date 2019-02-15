@@ -3,6 +3,7 @@ package org.asciidoc.intellij.editor.jeditor;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -10,6 +11,7 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
+import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanel;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +30,8 @@ import static org.asciidoc.intellij.util.UIUtil.loadStyleSheet;
 
 final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
   private static final int FOCUS_ELEMENT_DY = 100;
+
+  private Logger log = Logger.getInstance(JeditorHtmlPanel.class);
 
   @NotNull
   private final JEditorPane jEditorPane;
@@ -92,8 +96,9 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
     try {
       kit.read(new StringReader(html), doc, 0);
     }
-    catch (IOException e) {
-      String message = "Error rendering asciidoctor: " + e.getMessage();
+    catch (IOException ex) {
+      String message = "Error setting HTML: " + ex.getMessage();
+      log.error(message, ex);
       Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
           .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
       // increase event log counter

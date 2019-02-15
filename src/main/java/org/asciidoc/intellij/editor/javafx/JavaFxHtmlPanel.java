@@ -53,6 +53,8 @@ import java.util.regex.Pattern;
 
 public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
+  private Logger log = Logger.getInstance(JavaFxHtmlPanel.class);
+
   private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = new NotNullLazyValue<String>() {
     @NotNull
     @Override
@@ -140,7 +142,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + JavaFxHtmlPanel.class.getResource("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + JavaFxHtmlPanel.class.getResource("dejavu/dejavu.css") + "\">";
     } catch (IOException e) {
-      String message = "Error rendering asciidoctor: " + e.getMessage();
+      String message = "Unable to combine CSS resources: " + e.getMessage();
+      log.error(message, e);
       Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
         .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
       // increase event log counter

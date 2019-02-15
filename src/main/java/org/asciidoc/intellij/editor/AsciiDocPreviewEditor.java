@@ -66,6 +66,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   public static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup("asciidoctor",
     NotificationDisplayType.NONE, true);
 
+  private Logger log = Logger.getInstance(AsciiDocPreviewEditor.class);
+
   /** single threaded with one task queue (one for each editor window) */
   private final LazyApplicationPoolExecutor LAZY_EXECUTOR = new LazyApplicationPoolExecutor();
 
@@ -174,7 +176,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           Thread.currentThread().interrupt();
         }
         catch (Exception ex) {
-          String message = "Error rendering asciidoctor: " + ex.getMessage();
+          String message = "Error rendering preview: " + ex.getMessage();
+          log.error(message, ex);
           Notification notification = NOTIFICATION_GROUP.createNotification("Error rendering asciidoctor", message,
             NotificationType.ERROR, null);
           // increase event log counter
