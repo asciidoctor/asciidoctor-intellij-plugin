@@ -23,7 +23,7 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 
 == Release notes
 
-=== 0.24.1 (preview, available from Github releases)
+=== 0.24.1
 
 - Upgrade to AsciidoctorJ 1.6.2 and JRuby 9.2.6.0 (it's still backed by Asciidoctor 1.5.8)
 - Upgrade to asciidoctor diagram 1.5.12
