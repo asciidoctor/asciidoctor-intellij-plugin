@@ -6,9 +6,9 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 
 *You can meet the maintainers in person:* Please ping them via eMail or chat before or during the event!
 
-* https://www.ahus1.de/[Alex] at https://www.devoxx.co.uk/[Devoxx UK (London)], 2019-05-08..10
-
 * https://www.ahus1.de/[Alex] at https://www.javaland.eu/[JavaLand DE (Brühl)], 2019-03-19..20
+
+* https://www.ahus1.de/[Alex] at https://www.devoxx.co.uk/[Devoxx UK (London)], 2019-05-08..10
 
 The most advanced and recommended preview mode is JavaFX.
 To use the JavaFX preview instead of the Swing preview, you'll need to run IntelliJ with 64bit Java and JavaFX installed.
