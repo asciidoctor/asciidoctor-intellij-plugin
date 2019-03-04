@@ -29,6 +29,10 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 
 == Release notes
 
+=== 0.24.3 (unreleased)
+
+- Filter out problematic pass-through JavaScript with Twitter being the first candidate (#235)
+
 === 0.24.2 (preview, available from Github releases)
 
 - Support JDK11 as of IntelliJ 2019.1 EAP (#238)

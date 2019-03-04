@@ -307,6 +307,10 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       matcher.reset(html);
     }
 
+    // filter out Twitter's JavaScript, as it is problematic for JDK8 JavaFX
+    // see: https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/235
+    html = html.replaceAll("(?i)<script [a-z ]*src=\"https://platform\\.twitter\\.com/widgets\\.js\" [^>]*></script>", "");
+
     /* Add CSS line and JavaScript for auto-scolling and clickable links */
     return html
       .replace("<head>", "<head>" + getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myDejavuCssLink)
