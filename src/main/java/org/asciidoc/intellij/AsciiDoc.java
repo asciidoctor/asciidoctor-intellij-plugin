@@ -201,7 +201,7 @@ public class AsciiDoc {
       asciidoctor.registerLogHandler(logHandler);
       try {
         Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
-        return "<div id=\"content\">\n" + asciidoctor.render(text, getDefaultOptions()) + "\n</div>";
+        return "<div id=\"content\">\n" + asciidoctor.convert(text, getDefaultOptions()) + "\n</div>";
       } finally {
         asciidoctor.unregisterLogHandler(logHandler);
         SystemOutputHijacker.deregister();
