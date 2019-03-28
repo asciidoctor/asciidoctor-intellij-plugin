@@ -447,7 +447,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   }
 
   public void scrollToLine(int line) {
-    targetLineNo = line - offsetLineNo;
+    targetLineNo = line;
     renderIfVisible();
   }
 
