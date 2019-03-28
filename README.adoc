@@ -36,6 +36,10 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 
 - Updating to AsciidoctorJ v1.7.0-RC.1 that includes Asciidoctor 2.0.1 and Asciidoctor Diagram 1.5.16
 
+=== 0.24.4
+
+- Fixing preview line calculation when using .asciidoctorconfig-files
+
 === 0.24.3
 
 - Filter out problematic pass-through JavaScript with Twitter being the first candidate (#235)

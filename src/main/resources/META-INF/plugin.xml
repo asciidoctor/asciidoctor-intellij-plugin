@@ -32,6 +32,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
       <li>0.25.1 Fixing preview line calculation when using .asciidoctorconfig-files
       <br>Updating to AsciidoctorJ v2.0.0-RC.1 that includes Asciidoctor 2.0.2
       <li>0.25.0 Updating to AsciidoctorJ v1.7.0-RC.1 that includes Asciidoctor 2.0.1 and Asciidoctor Diagram 1.5.16
+      <li>0.24.4 Fixing preview line calculation when using .asciidoctorconfig-files
       <li>0.24.3 Filter out problematic pass-through JavaScript with Twitter being the first candidate (#235)
       <li>0.24.2 Support JDK11 as of IntelliJ 2019.1 EAP (#238)
       <li>0.24.1 Upgrade to AsciidoctorJ 1.6.2 and JRuby 9.2.6.0 (it's still backed by Asciidoctor 1.5.8)
