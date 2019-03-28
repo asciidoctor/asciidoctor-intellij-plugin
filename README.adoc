@@ -6,8 +6,6 @@ A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides 
 
 *You can meet the maintainers in person:* Please ping them via eMail or chat before or during the event!
 
-* https://www.ahus1.de/[Alex] at https://www.javaland.eu/[JavaLand DE (Brühl)], 2019-03-19..20
-
 * https://www.ahus1.de/[Alex] at https://www.devoxx.co.uk/[Devoxx UK (London)], 2019-05-08..10
 
 The most advanced and recommended preview mode is JavaFX.
@@ -28,6 +26,11 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
   See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-for-Asciidoctor-Extensions[Wiki page] for details
 
 == Release notes
+
+=== 0.25.1 (preview, available from Github releases)
+
+- Fixing preview line calculation when using .asciidoctorconfig-files
+- Updating to AsciidoctorJ v2.0.0-RC.1 that includes Asciidoctor 2.0.2
 
 === 0.25.0 (preview, available from Github releases)
 
