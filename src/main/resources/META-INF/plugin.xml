@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.25.1</version>
+  <version>0.25.2</version>
   <vendor email="alexander.schwartz@gmx.net" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -29,6 +29,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.25.2 annotate the file in the editor instead of logging to console for asciidoctor messages (#225)
       <li>0.25.1 Fixing preview line calculation when using .asciidoctorconfig-files
       <br>Updating to AsciidoctorJ v2.0.0-RC.1 that includes Asciidoctor 2.0.2
       <li>0.25.0 Updating to AsciidoctorJ v1.7.0-RC.1 that includes Asciidoctor 2.0.1 and Asciidoctor Diagram 1.5.16
@@ -190,6 +191,6 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
     <localInspection language="AsciiDoc" displayName="Heading inspection" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="WARNING" shortName="AsciidocHeadingStyleInspection"
                      implementationClass="org.asciidoc.intellij.inspections.AsciidocHeadingStyleInspection"/>
-
+    <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
   </extensions>
 </idea-plugin>

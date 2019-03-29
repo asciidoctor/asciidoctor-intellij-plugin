@@ -21,17 +21,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.IntConsumer;
 import java.util.logging.Logger;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.geronimo.gshell.io.SystemOutputHijacker;
@@ -45,6 +52,8 @@ import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
 import org.asciidoctor.log.LogHandler;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Julien Viet
@@ -176,6 +185,8 @@ public class AsciiDoc {
   private void notify(ByteArrayOutputStream boasOut, ByteArrayOutputStream boasErr) {
     String out = boasOut.toString();
     String err = boasErr.toString();
+    // asciidoctor error messages will be handled in the org.asciidoc.intellij.annotator.ExternalAnnotator
+    err = err.replaceAll("asciidoctor: [^\n]*\n", "");
     if (out.length() > 0) {
       Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Message during rendering " + name, out,
         NotificationType.INFORMATION, null);
@@ -190,7 +201,80 @@ public class AsciiDoc {
     }
   }
 
+  @Nullable
+  public static Path tempImagesPath() {
+    Path tempImagesPath = null;
+    try {
+      tempImagesPath = Files.createTempDirectory("asciidoctor-intellij");
+    } catch (IOException _ex) {
+      String message = "Can't create temp folder to render images: " + _ex.getMessage();
+      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+        .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
+      // increase event log counter
+      notification.setImportant(true);
+      Notifications.Bus.notify(notification);
+    }
+    return tempImagesPath;
+  }
+
+  @NotNull
+  public static String prependConfig(Document document, Project project, IntConsumer offset) {
+    VirtualFile currentFile = FileDocumentManager.getInstance().getFile(document);
+    VirtualFile folder = currentFile.getParent();
+    String tempContent = "";
+    int offsetLineNo = 0;
+    while (true) {
+      VirtualFile configFile = folder.findChild(".asciidoctorconfig");
+      if (configFile != null &&
+        !currentFile.equals(configFile)) {
+        Document config = FileDocumentManager.getInstance().getDocument(configFile);
+        tempContent = config.getText() + "\n\n" + tempContent;
+        offsetLineNo += config.getLineCount() + 2;
+      }
+      if (folder.getPath().equals(project.getBasePath())) {
+        break;
+      }
+      folder = folder.getParent();
+      if (folder == null) {
+        break;
+      }
+    }
+    tempContent += document.getText();
+    offset.accept(offsetLineNo);
+    return tempContent;
+  }
+
+  @NotNull
+  public static List<String> getExtensions(Project project) {
+    VirtualFile lib = project.getBaseDir().findChild(".asciidoctor");
+    if (lib != null) {
+      lib = lib.findChild("lib");
+    }
+
+    List<String> extensions = new ArrayList<>();
+    if (lib != null) {
+      for (VirtualFile vf : lib.getChildren()) {
+        if ("rb".equals(vf.getExtension())) {
+          Document extension = FileDocumentManager.getInstance().getDocument(vf);
+          if (extension != null) {
+            extensions.add(vf.getCanonicalPath());
+          }
+        }
+      }
+    }
+    return extensions;
+  }
+
+  @FunctionalInterface
+  public interface Notifier {
+    void notify(ByteArrayOutputStream boasOut, ByteArrayOutputStream boasErr);
+  }
+
   public String render(String text, List<String> extensions) {
+    return render(text, extensions, this::notify);
+  }
+
+  public String render(String text, List<String> extensions, Notifier notifier) {
     LogHandler logHandler = new IntellijLogHandler(name);
     synchronized (AsciiDoc.class) {
       initWithExtensions(extensions);
@@ -205,7 +289,7 @@ public class AsciiDoc {
       } finally {
         asciidoctor.unregisterLogHandler(logHandler);
         SystemOutputHijacker.deregister();
-        notify(boasOut, boasErr);
+        notifier.notify(boasOut, boasErr);
         Thread.currentThread().setContextClassLoader(old);
       }
     }

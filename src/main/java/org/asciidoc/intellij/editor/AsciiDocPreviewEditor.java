@@ -54,9 +54,8 @@ import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
@@ -95,8 +94,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   private final Alarm mySwingAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
 
   /** . */
-  private FutureTask<AsciiDoc> asciidoc = new FutureTask<AsciiDoc>(new Callable<AsciiDoc>() {
-    public AsciiDoc call() throws Exception {
+  private FutureTask<AsciiDoc> asciidoc = new FutureTask<>(new Callable<AsciiDoc>() {
+    public AsciiDoc call() {
       File fileBaseDir = new File("");
       VirtualFile parent = FileDocumentManager.getInstance().getFile(document).getParent();
       if (parent != null) {
@@ -109,52 +108,15 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   });
 
   private void render() {
-    VirtualFile currentFile = FileDocumentManager.getInstance().getFile(document);
-    VirtualFile folder = currentFile.getParent();
-    String tempContent = "";
-    offsetLineNo = 0;
-    while (true) {
-      VirtualFile configFile = folder.findChild(".asciidoctorconfig");
-      if (configFile != null &&
-        !currentFile.equals(configFile)) {
-        Document config = FileDocumentManager.getInstance().getDocument(configFile);
-        tempContent = config.getText() + "\n\n" + tempContent;
-        offsetLineNo += config.getLineCount() + 1;
-      }
-      if (folder.getPath().equals(project.getBasePath())) {
-        break;
-      }
-      folder = folder.getParent();
-      if (folder == null) {
-        break;
-      }
-    }
-    tempContent += document.getText();
-    final String newContent = tempContent;
-
-    VirtualFile lib = project.getBaseDir().findChild(".asciidoctor");
-    if (lib != null) {
-      lib = lib.findChild("lib");
-    }
-
-    java.util.List<String> extensions = new ArrayList<>();
-    if (lib != null) {
-      for (VirtualFile vf : lib.getChildren()) {
-        if ("rb".equals(vf.getExtension())) {
-          Document extension = FileDocumentManager.getInstance().getDocument(vf);
-          if (extension != null) {
-            extensions.add(vf.getCanonicalPath());
-          }
-        }
-      }
-    }
+    final String contentWithConfig = AsciiDoc.prependConfig(document, project, o -> offsetLineNo = o);
+    List<String> extensions = AsciiDoc.getExtensions(project);
 
     LAZY_EXECUTOR.execute(new Runnable() {
       @Override
       public void run() {
         try {
-          if (!newContent.equals(currentContent)) {
-            currentContent = newContent;
+          if (!contentWithConfig.equals(currentContent)) {
+            currentContent = contentWithConfig;
 
             String markup = asciidoc.get().render(currentContent, extensions);
             if (markup != null) {
@@ -165,12 +127,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
             currentLineNo = targetLineNo;
             myPanel.scrollToLine(targetLineNo, document.getLineCount(), offsetLineNo);
           }
-          ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              myHtmlPanelWrapper.repaint();
-            }
-          });
+          ApplicationManager.getApplication().invokeLater(myHtmlPanelWrapper::repaint);
         }
         catch (InterruptedException e) {
           Thread.currentThread().interrupt();
@@ -227,20 +184,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     this.document = document;
     this.project = project;
 
-    // create temp dir for images. Will be used by JavaFX only!
-    Path tempImagesPath = null;
-
-    try {
-      tempImagesPath = Files.createTempDirectory("asciidoctor-intellij");
-    } catch (IOException _ex) {
-      String message = "Can't create temp folder to render images: " + _ex.getMessage();
-      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
-        .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
-      // increase event log counter
-      notification.setImportant(true);
-      Notifications.Bus.notify(notification);
-    }
-    this.tempImagesPath = tempImagesPath;
+    this.tempImagesPath = AsciiDoc.tempImagesPath();
 
     myHtmlPanelWrapper = new JPanel(new BorderLayout());
 
@@ -253,12 +197,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     settingsConnection.subscribe(AsciiDocApplicationSettings.SettingsChangedListener.TOPIC, settingsChangedListener);
 
     // Get asciidoc asynchronously
-    new Thread() {
-      @Override
-      public void run() {
-        asciidoc.run();
-      }
-    }.start();
+    new Thread(() -> asciidoc.run()).start();
 
     // Listen to the document modifications.
     this.document.addDocumentListener(new DocumentAdapter() {

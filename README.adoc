@@ -27,6 +27,10 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 
 == Release notes
 
+=== 0.25.2 (preview, available from Github releases)
+
+- annotate the file in the editor instead of logging to console for asciidoctor messages (#225)
+
 === 0.25.1 (preview, available from Github releases)
 
 - Fixing preview line calculation when using .asciidoctorconfig-files
