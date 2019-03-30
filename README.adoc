@@ -27,6 +27,10 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 
 == Release notes
 
+=== 0.25.3 (preview, available from Github releases)
+
+- improve offset calculation for .asciidoctorconfig files (#225)
+
 === 0.25.2 (preview, available from Github releases)
 
 - annotate the file in the editor instead of logging to console for asciidoctor messages (#225)

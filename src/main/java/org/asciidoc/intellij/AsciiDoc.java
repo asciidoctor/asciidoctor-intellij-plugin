@@ -221,15 +221,15 @@ public class AsciiDoc {
   public static String prependConfig(Document document, Project project, IntConsumer offset) {
     VirtualFile currentFile = FileDocumentManager.getInstance().getFile(document);
     VirtualFile folder = currentFile.getParent();
-    String tempContent = "";
-    int offsetLineNo = 0;
+    StringBuilder tempContent = new StringBuilder();
     while (true) {
       VirtualFile configFile = folder.findChild(".asciidoctorconfig");
       if (configFile != null &&
         !currentFile.equals(configFile)) {
         Document config = FileDocumentManager.getInstance().getDocument(configFile);
-        tempContent = config.getText() + "\n\n" + tempContent;
-        offsetLineNo += config.getLineCount() + 2;
+        // prepend the new config, followed by two newlines to avoid sticking-together content
+        tempContent.insert(0, "\n\n");
+        tempContent.insert(0, config.getText());
       }
       if (folder.getPath().equals(project.getBasePath())) {
         break;
@@ -239,9 +239,10 @@ public class AsciiDoc {
         break;
       }
     }
-    tempContent += document.getText();
+    int offsetLineNo = (int) tempContent.chars().filter(i -> i == '\n').count();
+    tempContent.append(document.getText());
     offset.accept(offsetLineNo);
-    return tempContent;
+    return tempContent.toString();
   }
 
   @NotNull
