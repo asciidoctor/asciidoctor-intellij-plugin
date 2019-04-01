@@ -83,7 +83,9 @@ BLOCK_ATTRS_START = "["
            && heading.length() <= underlining.length() +1
            && sameCharactersInSecondLine
            // only plus signs are never a heading but a continuation (single plus) or something else
-           && !heading.matches("^\\+*$")) {
+           && !heading.matches("^\\+*$")
+           // only minus signs are never a heading but block (double minus), a horizontal rule (triple minus) or something else
+           && !heading.matches("^-*$")) {
           // push back the second newline of the pattern
           yypushback(1);
           return AsciiDocTokenTypes.HEADING;
