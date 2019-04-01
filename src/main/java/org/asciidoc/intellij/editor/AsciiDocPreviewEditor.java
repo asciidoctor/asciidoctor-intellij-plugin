@@ -16,6 +16,7 @@
 package org.asciidoc.intellij.editor;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
@@ -38,6 +39,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.Alarm;
 import com.intellij.util.messages.MessageBusConnection;
 import org.apache.commons.io.FileUtils;
@@ -311,8 +314,19 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    */
   public void selectNotify() {
     myHtmlPanelWrapper.repaint();
-    currentContent = "";
+    currentContent = ""; // force a refresh of the preview by resetting the current memorized content
+    reprocessAnnotations();
     renderIfVisible();
+  }
+
+  private void reprocessAnnotations() {
+    PsiDocumentManager pm = PsiDocumentManager.getInstance(project);
+    if (pm != null) {
+      PsiFile psiFile = pm.getPsiFile(document);
+      if(psiFile != null) {
+        DaemonCodeAnalyzer.getInstance(project).restart(psiFile);
+      }
+    }
   }
 
   /**
@@ -399,7 +413,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         @Override
         public void run() {
           myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
-          currentContent = "";
+          currentContent = ""; // force a refresh of the preview by resetting the current memorized content
+          reprocessAnnotations();
           renderIfVisible();
         }
       }, 0, ModalityState.stateForComponent(getComponent()));
