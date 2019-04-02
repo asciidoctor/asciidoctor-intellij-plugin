@@ -27,6 +27,10 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 
 == Release notes
 
+=== 0.25.5 (work in progress)
+
+- Addding error highlight in tree view
+
 === 0.25.4 (preview, available from Github releases)
 
 - restart annotation processing for current file once it gets focused or settings change (#225)
