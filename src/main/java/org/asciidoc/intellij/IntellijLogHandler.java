@@ -8,7 +8,7 @@ import org.asciidoctor.log.LogHandler;
 import org.asciidoctor.log.LogRecord;
 
 /**
- * @author Alexander Schwartz (msg systems ag) 2018
+ * @author Alexander Schwartz 2018
  */
 public class IntellijLogHandler implements LogHandler {
 
