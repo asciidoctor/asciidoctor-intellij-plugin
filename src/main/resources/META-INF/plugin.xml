@@ -194,6 +194,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
                      groupName="General" enabledByDefault="true" level="WARNING" shortName="AsciidocHeadingStyleInspection"
                      implementationClass="org.asciidoc.intellij.inspections.AsciidocHeadingStyleInspection"/>
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
-    <problemFileHighlightFilter implementation="org.asciidoc.intellij.problemHighlighter.AsciidoctorProblemFileHighlightFilter" />
+    <problemFileHighlightFilter implementation="org.asciidoc.intellij.problemHighlighter.AsciidocProblemFileHighlightFilter" />
+    <compiler.buildTargetScopeProvider implementation="org.asciidoc.intellij.builder.AsciidocTargetScopeProvider"/>
   </extensions>
 </idea-plugin>

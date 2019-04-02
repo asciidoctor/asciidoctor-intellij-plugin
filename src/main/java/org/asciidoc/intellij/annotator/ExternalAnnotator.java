@@ -1,11 +1,14 @@
 package org.asciidoc.intellij.annotator;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.problems.Problem;
+import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.psi.PsiFile;
 import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
@@ -16,6 +19,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -76,19 +81,28 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
 
   @Override
   public void apply(@NotNull PsiFile file, AsciidocAnnotationResultType annotationResult, @NotNull AnnotationHolder holder) {
-    for (AsciidocAnnotationResultType.Message m : annotationResult.getMessages()) {
-      if (m.getLine() != null) {
-        holder.createAnnotation(m.getSeverity(),
+    WolfTheProblemSolver theProblemSolver = WolfTheProblemSolver.getInstance(file.getProject());
+        Collection<Problem> problems = new ArrayList<>();
+        for (AsciidocAnnotationResultType.Message m : annotationResult.getMessages()) {
+          if (m.getLine() != null) {
+            holder.createAnnotation(m.getSeverity(),
           TextRange.from(
             annotationResult.getDocument().getLineStartOffset(m.getLine() - 1),
             annotationResult.getDocument().getLineEndOffset(m.getLine() - 1) - annotationResult.getDocument().getLineStartOffset(m.getLine() - 1)),
           m.getMessage());
+        if(m.getSeverity().compareTo(HighlightSeverity.ERROR) >= 0) {
+          problems.add(theProblemSolver.convertToProblem(file.getVirtualFile(), m.getLine(), 0, new String[]{m.getMessage()}));
+        }
       } else {
         holder.createAnnotation(m.getSeverity(),
           TextRange.from(annotationResult.getDocument().getLineStartOffset(0),
             annotationResult.getDocument().getLineEndOffset(0) - annotationResult.getDocument().getLineStartOffset(0)),
           m.getMessage());
+        if(m.getSeverity().compareTo(HighlightSeverity.ERROR) >= 0) {
+          problems.add(theProblemSolver.convertToProblem(file.getVirtualFile(), 0, 0, new String[]{m.getMessage()}));
+        }
       }
     }
+    theProblemSolver.reportProblems(file.getVirtualFile(), problems);
   }
 }

@@ -2,6 +2,7 @@ package org.asciidoc.intellij.annotator;
 
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.Document;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ public class AsciidocAnnotationResultType {
       return severity;
     }
 
+    @Nullable
     public Integer getLine() {
       return line;
     }
