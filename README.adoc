@@ -27,7 +27,7 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 
 == Release notes
 
-=== 0.25.5 (work in progress)
+=== 0.25.5 (preview, available from Github releases)
 
 - Addding error highlight in tree view
 
