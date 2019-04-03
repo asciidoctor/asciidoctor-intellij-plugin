@@ -36,6 +36,7 @@ public class AsciidocTargetScopeProvider extends BuildTargetScopeProvider {
     ModuleRootManager.getInstance(module).getFileIndex().iterateContent(file -> {
       if (!file.isDirectory() && AsciiDocFileType.INSTANCE == file.getFileType()) {
         // this will clear the problems for all Asciidoc files in the modules
+        // consider using clearProblemsFromExternalSource available from 2019.x?
         theProblemSolver.clearProblems(file);
         PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
         if (psiFile != null) {

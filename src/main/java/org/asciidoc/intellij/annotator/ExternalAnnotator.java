@@ -103,6 +103,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
         }
       }
     }
+    // consider using reportProblemsFromExternalSource available from 2019.x?
     theProblemSolver.reportProblems(file.getVirtualFile(), problems);
   }
 }
