@@ -11,6 +11,7 @@
       including HTML, PDF, EPUB, man page. AsciiDoc is, in contrast to Markdown, highly configurable: both the AsciiDoc
       source file syntax and the backend output markups (which can be almost any type of SGML/XML markup)
     can be customized and extended by the user.
+      <p>To support the authors of Asciidoctor, please consider supporting us via <a href="https://opencollective.com/asciidoctor">OpenCollective</a>.
       <p>The most advanced and recommended preview mode is JavaFX.
 To use the JavaFX preview instead of the Swing preview, you'll need to run IntelliJ with 64bit Java and JavaFX installed.
 Oracle JDK installations include JavaFX, but can make the IDE unstable and crash.
