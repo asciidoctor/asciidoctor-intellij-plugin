@@ -307,4 +307,4 @@ Released under the Apache License, Version 2.0 (see link:LICENSE[LICENSE]).
 
 This plugin is based on the https://github.com/nicoulaj/idea-markdown[Intellij Markdown plugin by Julien Nicoulaud].
 
-Also, great help was received from Harro Lissenberg, Alexander Schwartz and Dan Allen. Thank you all for your support!
+Also, great help was received from Erik Pragt, Harro Lissenberg, Alexander Schwartz and Dan Allen. Thank you all for your support!
