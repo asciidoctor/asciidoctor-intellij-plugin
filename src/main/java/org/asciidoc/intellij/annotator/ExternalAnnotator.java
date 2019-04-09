@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.annotator;
 
+import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.diagnostic.Logger;
@@ -13,6 +14,8 @@ import com.intellij.psi.PsiFile;
 import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
+import org.asciidoctor.log.LogRecord;
+import org.asciidoctor.log.Severity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Run Asciidoc and use the warnings and errors as annotations in the file.
+ *
  * @author Alexander Schwartz 2019
  */
 public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnnotator<
@@ -52,18 +56,14 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
       fileBaseDir = new File(parent.getCanonicalPath());
     }
 
-    AsciidocAnnotationResultType asciidocAnnotationResultType = new AsciidocAnnotationResultType(editor.getDocument());
+    AsciidocAnnotationResultType asciidocAnnotationResultType = new AsciidocAnnotationResultType(editor.getDocument(),
+      collectedInfo.getOffsetLineNo());
     Path tempImagesPath = AsciiDoc.tempImagesPath();
     try {
       AsciiDoc asciiDoc = new AsciiDoc(file.getProject().getBasePath(), fileBaseDir,
         tempImagesPath, FileDocumentManager.getInstance().getFile(editor.getDocument()).getName());
-
-      asciiDoc.render(collectedInfo.getContentWithConfig(), collectedInfo.getExtensions(), (boasOut, boasErr) -> {
-        String[] err = boasErr.toString().split("\n");
-        for (String e : err) {
-          if (e.startsWith("asciidoctor:"))
-            asciidocAnnotationResultType.addMessage(e, collectedInfo.getOffsetLineNo());
-        }
+      asciiDoc.render(collectedInfo.getContentWithConfig(), collectedInfo.getExtensions(), (boasOut, boasErr, logRecords) -> {
+        asciidocAnnotationResultType.addLogRecords(logRecords);
       });
 
     } finally {
@@ -82,28 +82,62 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
   @Override
   public void apply(@NotNull PsiFile file, AsciidocAnnotationResultType annotationResult, @NotNull AnnotationHolder holder) {
     WolfTheProblemSolver theProblemSolver = WolfTheProblemSolver.getInstance(file.getProject());
-        Collection<Problem> problems = new ArrayList<>();
-        for (AsciidocAnnotationResultType.Message m : annotationResult.getMessages()) {
-          if (m.getLine() != null) {
-            holder.createAnnotation(m.getSeverity(),
-          TextRange.from(
-            annotationResult.getDocument().getLineStartOffset(m.getLine() - 1),
-            annotationResult.getDocument().getLineEndOffset(m.getLine() - 1) - annotationResult.getDocument().getLineStartOffset(m.getLine() - 1)),
-          m.getMessage());
-        if(m.getSeverity().compareTo(HighlightSeverity.ERROR) >= 0) {
-          problems.add(theProblemSolver.convertToProblem(file.getVirtualFile(), m.getLine(), 0, new String[]{m.getMessage()}));
+    Collection<Problem> problems = new ArrayList<>();
+    for (LogRecord logRecord : annotationResult.getLogRecords()) {
+      HighlightSeverity severity = toSeverity(logRecord.getSeverity());
+      // the line number as shown in the IDE (starting with 1)
+      Integer lineNumber = null;
+      // the line number used for creating the annotation (starting with 0)
+      int lineNumberForAnnotation = 0;
+      if (logRecord.getCursor() != null && logRecord.getCursor().getFile() == null && logRecord.getCursor().getLineNumber() >= 0) {
+        lineNumber = logRecord.getCursor().getLineNumber() - annotationResult.getOffsetLineNo();
+        lineNumberForAnnotation = lineNumber - 1;
+        if (lineNumberForAnnotation < 0) {
+          // logRecords created in the prepended .asciidoctorconfig elements - will be shown on line zero
+          lineNumberForAnnotation = 0;
         }
-      } else {
-        holder.createAnnotation(m.getSeverity(),
-          TextRange.from(annotationResult.getDocument().getLineStartOffset(0),
-            annotationResult.getDocument().getLineEndOffset(0) - annotationResult.getDocument().getLineStartOffset(0)),
-          m.getMessage());
-        if(m.getSeverity().compareTo(HighlightSeverity.ERROR) >= 0) {
-          problems.add(theProblemSolver.convertToProblem(file.getVirtualFile(), 0, 0, new String[]{m.getMessage()}));
+      }
+      Annotation annotation = holder.createAnnotation(severity,
+        TextRange.from(
+          annotationResult.getDocument().getLineStartOffset(lineNumberForAnnotation),
+          annotationResult.getDocument().getLineEndOffset(lineNumberForAnnotation) - annotationResult.getDocument().getLineStartOffset(lineNumberForAnnotation)),
+        logRecord.getMessage());
+      StringBuilder sb = new StringBuilder();
+      sb.append(logRecord.getMessage());
+      if (logRecord.getCursor() != null) {
+        if (logRecord.getCursor().getFile() == null) {
+          sb.append("<br>(").append(file.getVirtualFile().getName());
+          if (lineNumber != null) {
+            sb.append(", line ").append(lineNumber);
+          }
+          sb.append(")");
+        } else {
+          sb.append("<br>(").append(logRecord.getCursor().getFile()).append(", line ").append(logRecord.getCursor().getLineNumber()).append(")");
         }
+      }
+      sb.append("<br>(" + logRecord.getSourceFileName() + ":" + logRecord.getSourceMethodName() + ")");
+      annotation.setTooltip(sb.toString());
+      if (severity.compareTo(HighlightSeverity.ERROR) >= 0) {
+        problems.add(theProblemSolver.convertToProblem(file.getVirtualFile(), lineNumberForAnnotation, 0, new String[]{logRecord.getMessage()}));
       }
     }
     // consider using reportProblemsFromExternalSource available from 2019.x?
     theProblemSolver.reportProblems(file.getVirtualFile(), problems);
   }
+
+  private HighlightSeverity toSeverity(Severity severity) {
+    switch (severity) {
+      case DEBUG:
+      case INFO:
+      case WARN:
+        return HighlightSeverity.WARNING;
+      case ERROR:
+      case FATAL:
+        return HighlightSeverity.ERROR;
+      case UNKNOWN:
+      default:
+        return HighlightSeverity.GENERIC_SERVER_ERROR_OR_WARNING;
+    }
+  }
+
 }

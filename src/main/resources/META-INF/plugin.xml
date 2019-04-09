@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.25.5</version>
+  <version>0.25.6</version>
   <vendor email="alexander.schwartz@gmx.net" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -30,6 +30,8 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.25.6 Updating to AsciidoctorJ v2.0.0-RC.2 that includes Asciidoctor 2.0.6<br>
+      Improved parsing of warnings and errors created by Asciidoctor
       <li>0.25.5 Addding error highlight in tree view
       <li>0.25.4 restart annotation processing for current file once it gets focused or settings change (#225)
       <li>0.25.3 improve offset calculation for .asciidoctorconfig files (#225)

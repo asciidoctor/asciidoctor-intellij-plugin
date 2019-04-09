@@ -29,6 +29,11 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 
 == Release notes
 
+=== 0.25.6 (preview, available from Github releases)
+
+- Updating to AsciidoctorJ v2.0.0-RC.2 that includes Asciidoctor 2.0.6
+- Improved parsing of warnings and errors created by Asciidoctor
+
 === 0.25.5 (preview, available from Github releases)
 
 - Addding error highlight in tree view

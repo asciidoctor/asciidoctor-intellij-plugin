@@ -20,8 +20,8 @@ public class IntellijLogHandler implements LogHandler {
 
   @Override
   public void log(LogRecord logRecord) {
-    String file = logRecord.getSourceFileName();
-    if ("<script>".equals(file)) {
+    String file = logRecord.getCursor().getFile();
+    if (file == null) {
       file = rootFile;
     }
     NotificationType notificationType;
@@ -39,7 +39,8 @@ public class IntellijLogHandler implements LogHandler {
         notificationType = NotificationType.INFORMATION;
     }
     Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
-      .createNotification("Message during rendering " + file, logRecord.getMessage(), notificationType, null);
+      .createNotification("Message during rendering " + file, logRecord.getSourceFileName() + ":"
+        + logRecord.getSourceMethodName() + ": " + logRecord.getMessage(), notificationType, null);
     notification.setImportant(false);
     Notifications.Bus.notify(notification);
   }

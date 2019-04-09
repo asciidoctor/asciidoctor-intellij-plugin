@@ -51,7 +51,9 @@ import org.asciidoctor.Attributes;
 import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
+import org.asciidoctor.jruby.internal.JRubyAsciidoctor;
 import org.asciidoctor.log.LogHandler;
+import org.asciidoctor.log.LogRecord;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,7 +116,7 @@ public class AsciiDoc {
         LogHandler logHandler = new IntellijLogHandler("initialize");
         try {
           Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
-          asciidoctor = Asciidoctor.Factory.create();
+          asciidoctor = JRubyAsciidoctor.create();
           asciidoctor.registerLogHandler(logHandler);
           // disable JUL logging of captured messages
           // https://github.com/asciidoctor/asciidoctorj/issues/669
@@ -142,7 +144,7 @@ public class AsciiDoc {
             asciidoctor.unregisterLogHandler(logHandler);
           }
           SystemOutputHijacker.deregister();
-          notify(boasOut, boasErr);
+          notify(boasOut, boasErr, Collections.EMPTY_LIST);
           Thread.currentThread().setContextClassLoader(old);
         }
       }
@@ -182,11 +184,10 @@ public class AsciiDoc {
     }
   }
 
-  private void notify(ByteArrayOutputStream boasOut, ByteArrayOutputStream boasErr) {
+  private void notify(ByteArrayOutputStream boasOut, ByteArrayOutputStream boasErr, List<LogRecord> logRecords) {
     String out = boasOut.toString();
     String err = boasErr.toString();
-    // asciidoctor error messages will be handled in the org.asciidoc.intellij.annotator.ExternalAnnotator
-    err = err.replaceAll("asciidoctor: [^\n]*\n", "");
+    // logRecords will be handled in the org.asciidoc.intellij.annotator.ExternalAnnotator
     if (out.length() > 0) {
       Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Message during rendering " + name, out,
         NotificationType.INFORMATION, null);
@@ -268,7 +269,7 @@ public class AsciiDoc {
 
   @FunctionalInterface
   public interface Notifier {
-    void notify(ByteArrayOutputStream boasOut, ByteArrayOutputStream boasErr);
+    void notify(ByteArrayOutputStream boasOut, ByteArrayOutputStream boasErr, List<LogRecord> logRecords);
   }
 
   public String render(String text, List<String> extensions) {
@@ -276,13 +277,13 @@ public class AsciiDoc {
   }
 
   public String render(String text, List<String> extensions, Notifier notifier) {
-    LogHandler logHandler = new IntellijLogHandler(name);
     synchronized (AsciiDoc.class) {
       initWithExtensions(extensions);
       ClassLoader old = Thread.currentThread().getContextClassLoader();
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
       ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
       SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
+      CollectingLogHandler logHandler = new CollectingLogHandler();
       asciidoctor.registerLogHandler(logHandler);
       try {
         Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
@@ -290,7 +291,7 @@ public class AsciiDoc {
       } finally {
         asciidoctor.unregisterLogHandler(logHandler);
         SystemOutputHijacker.deregister();
-        notifier.notify(boasOut, boasErr);
+        notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
         Thread.currentThread().setContextClassLoader(old);
       }
     }
