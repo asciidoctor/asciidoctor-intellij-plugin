@@ -12,19 +12,43 @@ import org.jetbrains.annotations.NotNull;
  * @author yole
  */
 public class AsciiDocHighlighter extends SyntaxHighlighterBase {
-  public static final TextAttributesKey ASCIIDOC_COMMENT = TextAttributesKey.createTextAttributesKey(
+  private static final TextAttributesKey ASCIIDOC_COMMENT = TextAttributesKey.createTextAttributesKey(
       "ASCIIDOC.LINE_COMMENT",
       DefaultLanguageHighlighterColors.LINE_COMMENT
   );
 
-  public static final TextAttributesKey ASCIIDOC_LISTING_TEXT = TextAttributesKey.createTextAttributesKey(
+  private static final TextAttributesKey ASCIIDOC_LISTING_TEXT = TextAttributesKey.createTextAttributesKey(
       "ASCIIDOC.LISTING_TEXT",
       DefaultLanguageHighlighterColors.MARKUP_TAG
   );
 
-  public static final TextAttributesKey ASCIIDOC_HEADING = TextAttributesKey.createTextAttributesKey(
+  private static final TextAttributesKey ASCIIDOC_HEADING = TextAttributesKey.createTextAttributesKey(
       "ASCIIDOC.HEADING",
       DefaultLanguageHighlighterColors.KEYWORD
+  );
+
+  private static final TextAttributesKey ASCIIDOC_BULLET = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC.BULLET",
+    DefaultLanguageHighlighterColors.KEYWORD
+  );
+
+  private static final TextAttributesKey ASCIIDOC_BLOCK_MACRO_ID = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC.BLOCK_MACRO_ID",
+    DefaultLanguageHighlighterColors.KEYWORD
+  );
+
+  private static final TextAttributesKey ASCIIDOC_BOLD = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC_BOLD");
+
+  private static final TextAttributesKey ASCIIDOC_ITALIC = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC_ITALIC");
+
+  private static final TextAttributesKey ASCIIDOC_BOLDITALIC = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC_BOLDITALIC");
+
+  private static final TextAttributesKey ASCIIDOC_MARKER = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC_MARKER",
+    DefaultLanguageHighlighterColors.KEYWORD
   );
 
   private static final ImmutableMap<IElementType, TextAttributesKey> attributes =
@@ -38,6 +62,18 @@ public class AsciiDocHighlighter extends SyntaxHighlighterBase {
           .put(AsciiDocTokenTypes.SIDEBAR_BLOCK, ASCIIDOC_LISTING_TEXT)
           .put(AsciiDocTokenTypes.HEADING, ASCIIDOC_HEADING)
           .put(AsciiDocTokenTypes.HEADING_OLDSTYLE, ASCIIDOC_HEADING)
+          .put(AsciiDocTokenTypes.BOLD_END, ASCIIDOC_MARKER)
+          .put(AsciiDocTokenTypes.BOLD_START, ASCIIDOC_MARKER)
+          .put(AsciiDocTokenTypes.BOLD, ASCIIDOC_BOLD)
+          .put(AsciiDocTokenTypes.ITALIC_END, ASCIIDOC_MARKER)
+          .put(AsciiDocTokenTypes.ITALIC_START, ASCIIDOC_MARKER)
+          .put(AsciiDocTokenTypes.ITALIC, ASCIIDOC_ITALIC)
+          .put(AsciiDocTokenTypes.BOLDITALIC, ASCIIDOC_BOLDITALIC)
+          .put(AsciiDocTokenTypes.MONO_END, ASCIIDOC_MARKER)
+          .put(AsciiDocTokenTypes.MONO_START, ASCIIDOC_MARKER)
+          .put(AsciiDocTokenTypes.MONO, ASCIIDOC_LISTING_TEXT)
+          .put(AsciiDocTokenTypes.BLOCK_MACRO_ID, ASCIIDOC_BLOCK_MACRO_ID)
+          .put(AsciiDocTokenTypes.BULLET, ASCIIDOC_BULLET)
           .build();
 
   @NotNull

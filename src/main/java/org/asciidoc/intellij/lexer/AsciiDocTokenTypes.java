@@ -8,6 +8,7 @@ import com.intellij.psi.tree.TokenSet;
  */
 public interface AsciiDocTokenTypes {
   IElementType TEXT = new AsciiDocElementType("TEXT");
+  IElementType BULLET = new AsciiDocElementType("BULLET");
   IElementType LINE_BREAK = new AsciiDocElementType("LINE_BREAK");
   IElementType LINE_COMMENT = new AsciiDocElementType("LINE_COMMENT");
   IElementType BLOCK_COMMENT = new AsciiDocElementType("BLOCK_COMMENT");
@@ -31,9 +32,20 @@ public interface AsciiDocTokenTypes {
   IElementType BLOCK_ATTRS_START = new AsciiDocElementType("BLOCK_ATTRS_START");
   IElementType BLOCK_ATTR_NAME = new AsciiDocElementType("BLOCK_ATTR_NAME");
   IElementType BLOCK_ATTRS_END = new AsciiDocElementType("BLOCK_ATTRS_END");
+  IElementType BOLD_START = new AsciiDocElementType("BOLD_START");
+  IElementType BOLD_END = new AsciiDocElementType("BOLD_END");
+  IElementType BOLD = new AsciiDocElementType("BOLD");
+  IElementType ITALIC_START = new AsciiDocElementType("ITALIC_START");
+  IElementType ITALIC_END = new AsciiDocElementType("ITALIC_END");
+  IElementType MONO_START = new AsciiDocElementType("MONO_START");
+  IElementType MONO_END = new AsciiDocElementType("MONO_END");
+  IElementType ITALIC = new AsciiDocElementType("ITALIC");
+  IElementType BOLDITALIC = new AsciiDocElementType("BOLDITALIC");
+  IElementType MONO = new AsciiDocElementType("MONO");
 
   TokenSet TOKENS_TO_MERGE = TokenSet.create(TEXT, LISTING_TEXT, HEADING, TITLE, BLOCK_COMMENT,
       BLOCK_ATTR_NAME, BLOCK_MACRO_BODY, BLOCK_MACRO_ATTRIBUTES, EXAMPLE_BLOCK, PASSTRHOUGH_BLOCK,
-      QUOTE_BLOCK, SIDEBAR_BLOCK);
+      QUOTE_BLOCK, SIDEBAR_BLOCK, BOLD_START, BOLD_END, BOLD, ITALIC, ITALIC_END, ITALIC_START, BOLDITALIC,
+      MONO_START, MONO_END, MONO);
 }
 

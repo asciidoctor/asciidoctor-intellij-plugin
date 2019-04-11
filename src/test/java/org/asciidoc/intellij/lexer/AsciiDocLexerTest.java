@@ -60,10 +60,12 @@ public class AsciiDocLexerTest extends LexerTestCase {
   public void testBlockMacro() {
     doTest("image::foo.png[Caption]\nabc",
         "AsciiDoc:BLOCK_MACRO_ID ('image::')\n" +
-            "AsciiDoc:BLOCK_MACRO_BODY ('foo.png')\n" +
-            "AsciiDoc:BLOCK_MACRO_ATTRIBUTES ('[Caption]')\n" +
-            "AsciiDoc:LINE_BREAK ('\\n')\n" +
-            "AsciiDoc:TEXT ('abc')");
+          "AsciiDoc:BLOCK_MACRO_BODY ('foo.png')\n" +
+          "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+          "AsciiDoc:BLOCK_MACRO_ATTRIBUTES ('Caption')\n" +
+          "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+          "AsciiDoc:LINE_BREAK ('\\n')\n" +
+          "AsciiDoc:TEXT ('abc')");
   }
 
   public void testExample() {
@@ -116,6 +118,75 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('+')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testBoldSimple() {
+    doTest("Hello *bold* world",
+      "AsciiDoc:TEXT ('Hello')\n" +
+        "AsciiDoc:BOLD_START (' *')\n" +
+        "AsciiDoc:BOLD ('bold')\n" +
+        "AsciiDoc:BOLD_END ('*')\n" +
+        "AsciiDoc:TEXT (' world')");
+  }
+
+  public void testBoldDouble() {
+    doTest("Hello **bold** world",
+      "AsciiDoc:TEXT ('Hello ')\n" +
+        "AsciiDoc:BOLD_START ('**')\n" +
+        "AsciiDoc:BOLD ('bold')\n" +
+        "AsciiDoc:BOLD_END ('**')\n" +
+        "AsciiDoc:TEXT (' world')");
+  }
+
+  public void testNonBoldWithBlockBreak() {
+    doTest("Hello **bold\n\n** world",
+      "AsciiDoc:TEXT ('Hello **bold')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('** world')");
+  }
+
+  public void testBoldAtBeginningAndEndOfLineSingle() {
+    doTest("*bold*",
+      "AsciiDoc:BOLD_START ('*')\n" +
+        "AsciiDoc:BOLD ('bold')\n" +
+        "AsciiDoc:BOLD_END ('*')");
+  }
+
+  public void testBoldAtBeginningAndEndOfLineDouble() {
+    doTest("**bold**",
+      "AsciiDoc:BOLD_START ('**')\n" +
+        "AsciiDoc:BOLD ('bold')\n" +
+        "AsciiDoc:BOLD_END ('**')");
+  }
+
+  public void testNonMatchingBoldHead() {
+    doTest("**bold*",
+      "AsciiDoc:BOLD_START ('**')\n" +
+        "AsciiDoc:BOLD ('bold')\n" +
+        "AsciiDoc:BOLD_END ('*')");
+  }
+
+  public void testNonMatchingBoldTail() {
+    doTest("*bold**",
+      "AsciiDoc:BOLD_START ('*')\n" +
+        "AsciiDoc:BOLD ('bold*')\n" +
+        "AsciiDoc:BOLD_END ('*')");
+  }
+
+  public void testBoldItalic() {
+    doTest("*_bolditalic_*",
+      "AsciiDoc:BOLD_START ('*')\n" +
+        "AsciiDoc:ITALIC_START ('_')\n" +
+        "AsciiDoc:BOLDITALIC ('bolditalic')\n" +
+        "AsciiDoc:ITALIC_END ('_')\n" +
+        "AsciiDoc:BOLD_END ('*')");
+  }
+
+  public void testBullet() {
+    doTest("* bullet",
+      "AsciiDoc:BULLET ('* ')\n" +
+        "AsciiDoc:TEXT ('bullet')");
   }
 
   public void testSidebar() {

@@ -1,0 +1,18 @@
+<?xml version='1.0'?>
+<list>
+  <option baseAttributes="ASCIIDOC_TEXT" name="ASCIIDOC_BOLD">
+    <value>
+      <option name="FONT_TYPE" value="1" />
+    </value>
+  </option>
+  <option baseAttributes="ASCIIDOC_TEXT" name="ASCIIDOC_ITALIC">
+    <value>
+      <option name="FONT_TYPE" value="2" />
+    </value>
+  </option>
+    <option baseAttributes="ASCIIDOC_TEXT" name="ASCIIDOC_BOLDITALIC">
+        <value>
+            <option name="FONT_TYPE" value="3" />
+        </value>
+    </option>
+</list>

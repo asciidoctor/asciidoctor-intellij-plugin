@@ -33,7 +33,9 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
   <change-notes><![CDATA[
     <ul>
       <li>0.25.6 Updating to AsciidoctorJ v2.0.0-RC.2 that includes Asciidoctor 2.0.6<br>
-      Improved parsing of warnings and errors created by Asciidoctor
+      Improved parsing of warnings and errors created by Asciidoctor<br>
+      adding highlighting for italic/bold/mono<br>
+      adding brace matcher for attributes
       <li>0.25.5 Addding error highlight in tree view
       <li>0.25.4 restart annotation processing for current file once it gets focused or settings change (#225)
       <li>0.25.3 improve offset calculation for .asciidoctorconfig files (#225)
@@ -182,6 +184,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
     <lang.psiStructureViewFactory language="AsciiDoc" implementationClass="org.asciidoc.intellij.structureView.AsciiDocStructureViewFactory"/>
     <spellchecker.support language="AsciiDoc" implementationClass="org.asciidoc.intellij.AsciiDocSpellcheckingStrategy"/>
     <lang.commenter language="AsciiDoc" implementationClass="org.asciidoc.intellij.AsciiDocCommenter"/>
+    <braceMatcher filetype="AsciiDoc" implementationClass="org.asciidoc.intellij.braces.AsciiDocBraceMatcher"/>
     <todoIndexer filetype="AsciiDoc" implementationClass="org.asciidoc.intellij.indexer.AsciiDocTodoIndexer"/>
     <applicationConfigurable id="Settings.AsciiDoc.Preview"
                                  bundle="AsciiDocBundle"
@@ -202,5 +205,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
     <problemFileHighlightFilter implementation="org.asciidoc.intellij.problemHighlighter.AsciidocProblemFileHighlightFilter" />
     <compiler.buildTargetScopeProvider implementation="org.asciidoc.intellij.builder.AsciidocTargetScopeProvider"/>
+    <additionalTextAttributes scheme="Default" file="colorSchemes/AsciidocDefault.xml"/>
+    <additionalTextAttributes scheme="Darcula" file="colorSchemes/AsciidocDarcula.xml"/>
   </extensions>
 </idea-plugin>

@@ -14,7 +14,34 @@ import com.intellij.psi.tree.IElementType;
 %eof}
 
 %{
- int blockDelimiterLength;
+  private int blockDelimiterLength;
+  private boolean singlebold = false;
+  private boolean doublebold = false;
+  private boolean singleitalic = false;
+  private boolean doubleitalic = false;
+  private boolean singlemono = false;
+  private boolean doublemono = false;
+  private void resetFormatting() {
+    singlebold = false;
+    doublebold = false;
+    singleitalic = false;
+    doubleitalic = false;
+    singlemono = false;
+    doublemono = false;
+  }
+  private IElementType textFormat() {
+    if(doublemono || singlemono) {
+      return AsciiDocTokenTypes.MONO;
+    } else if((singlebold || doublebold) && (singleitalic || doubleitalic)) {
+      return AsciiDocTokenTypes.BOLDITALIC;
+    } else if(singleitalic || doubleitalic) {
+      return AsciiDocTokenTypes.ITALIC;
+    } else if(singlebold || doublebold) {
+      return AsciiDocTokenTypes.BOLD;
+    } else {
+      return AsciiDocTokenTypes.TEXT;
+    }
+  }
 %}
 
 SPACE = [\ \t]
@@ -34,6 +61,18 @@ HEADING_OLDSTYLE = [^.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
 TITLE_START = "."
 BLOCK_ATTRS_START = "["
+STRING = {NON_SPACE}+ \n?
+BOLD = "*"
+BULLET = {SPACE}* "*" {SPACE}+
+DOUBLEBOLD = {BOLD} {BOLD}
+BOLDINLINESTART = [^\*;:\w_] {BOLD}
+BOLDINLINEEND = {BOLD}[^\w_]
+ITALIC = "_"
+DOUBLEITALIC = {ITALIC} {ITALIC}
+ITALICINLINEEND = {ITALIC}[^\w]
+MONO = "`"
+DOUBLEMONO = {MONO} {MONO}
+MONOINLINEEND = {MONO}[^\w`]
 
 %state INSIDE_LINE
 %state HEADING
@@ -88,6 +127,7 @@ BLOCK_ATTRS_START = "["
            && !heading.matches("^-*$")) {
           // push back the second newline of the pattern
           yypushback(1);
+          resetFormatting();
           return AsciiDocTokenTypes.HEADING;
         } else {
           // pass this contents to the single line rules (second priority)
@@ -99,27 +139,195 @@ BLOCK_ATTRS_START = "["
 }
 
 <SINGLELINE> {
-  {LISTING_BLOCK_DELIMITER}  { yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
-  {COMMENT_BLOCK_DELIMITER} { yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
-  {EXAMPLE_BLOCK_DELIMITER} { yybegin(EXAMPLE_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER; }
-  {PASSTRHOUGH_BLOCK_DELIMITER} { yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
-  {SIDEBAR_BLOCK_DELIMITER} { yybegin(SIDEBAR_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER; }
-  {QUOTE_BLOCK_DELIMITER} { yybegin(QUOTE_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER; }
+  {LISTING_BLOCK_DELIMITER}  { resetFormatting(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
+  {COMMENT_BLOCK_DELIMITER} { resetFormatting(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
+  {EXAMPLE_BLOCK_DELIMITER} { resetFormatting(); yybegin(EXAMPLE_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER; }
+  {PASSTRHOUGH_BLOCK_DELIMITER} { resetFormatting(); yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
+  {SIDEBAR_BLOCK_DELIMITER} { resetFormatting(); yybegin(SIDEBAR_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER; }
+  {QUOTE_BLOCK_DELIMITER} { resetFormatting(); yybegin(QUOTE_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER; }
 
   {LINE_COMMENT}       { return AsciiDocTokenTypes.LINE_COMMENT; }
-  {HEADING_START} / {NON_SPACE} { yybegin(HEADING); return AsciiDocTokenTypes.HEADING; }
-  {HEADING_START_MARKDOWN} / {NON_SPACE} { yybegin(HEADING); return AsciiDocTokenTypes.HEADING; }
-  {TITLE_START} / [^\. ] { yybegin(TITLE); return AsciiDocTokenTypes.TITLE; }
-  {BLOCK_MACRO_START} / {NON_SPACE} { yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  {HEADING_START} / {NON_SPACE} { resetFormatting(); yybegin(HEADING); return AsciiDocTokenTypes.HEADING; }
+  {HEADING_START_MARKDOWN} / {NON_SPACE} { resetFormatting(); yybegin(HEADING); return AsciiDocTokenTypes.HEADING; }
+  {TITLE_START} / [^\. ] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE; }
+  {BLOCK_MACRO_START} / {NON_SPACE} { resetFormatting(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   {BLOCK_ATTRS_START} { yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
 
-  "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                  { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.TEXT; }
+  {BULLET} / {STRING} { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BULLET; }
+
+  // a blank line, it separates blocks
+  "\w"* "\n"           { resetFormatting(); yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+  // BOLD at beginning of line
+  {BOLD} {BOLD} / [^\*] {STRING}* {BOLD} {BOLD} { if(!singlebold) {
+                           doublebold = !doublebold; yybegin(INSIDE_LINE); return doublebold ? AsciiDocTokenTypes.BOLD_START : AsciiDocTokenTypes.BOLD_END;
+                         } else {
+                           return textFormat();
+                         }
+                       }
+  {BOLD} {BOLD} / [^\*] {STRING}* {BOLD} { if(!doublebold) {
+                           singlebold = !singlebold; yybegin(INSIDE_LINE); return singlebold ? AsciiDocTokenTypes.BOLD_START : AsciiDocTokenTypes.BOLD_END;
+                         } else {
+                           return textFormat();
+                         }
+                       }
+  {BOLD} / [^\*] {STRING}* {BOLD} { if(!doublebold) {
+                           singlebold = !singlebold; yybegin(INSIDE_LINE); return singlebold ? AsciiDocTokenTypes.BOLD_START : AsciiDocTokenTypes.BOLD_END;
+                         } else {
+                           return textFormat();
+                         }
+                       }
+  // ITALIC at beginning of line
+  {ITALIC} {ITALIC} / [^\_] {STRING}* {ITALIC} {ITALIC} { if(!singleitalic) {
+                           doubleitalic = !doubleitalic; yybegin(INSIDE_LINE); return doubleitalic ? AsciiDocTokenTypes.ITALIC_START : AsciiDocTokenTypes.ITALIC_END;
+                         } else {
+                           return textFormat();
+                         }
+                       }
+  {ITALIC} {ITALIC} / [^\_] {STRING}* {ITALIC} { if(!doubleitalic) {
+                           singleitalic = !singleitalic; yybegin(INSIDE_LINE); return singleitalic ? AsciiDocTokenTypes.ITALIC_START : AsciiDocTokenTypes.ITALIC_END;
+                         } else {
+                           return textFormat();
+                         }
+                       }
+  {ITALIC} / [^\_] {STRING}* {ITALIC} { if(!doubleitalic) {
+                           singleitalic = !singleitalic; yybegin(INSIDE_LINE); return singleitalic ? AsciiDocTokenTypes.ITALIC_START : AsciiDocTokenTypes.ITALIC_END;
+                         } else {
+                           return textFormat();
+                         }
+                       }
+  // MONO at beginning of line
+  {MONO} {MONO} / [^\_] {STRING}* {MONO} {MONO} { if(!singlemono) {
+                           doublemono = !doublemono; yybegin(INSIDE_LINE); return doublemono ? AsciiDocTokenTypes.MONO_START : AsciiDocTokenTypes.MONO_END;
+                         } else {
+                           return textFormat();
+                         }
+                       }
+  {MONO} {MONO} / [^\_] {STRING}* {MONO} { if(!doublemono) {
+                           singlemono = !singlemono; yybegin(INSIDE_LINE); return singlemono ? AsciiDocTokenTypes.MONO_START : AsciiDocTokenTypes.MONO_END;
+                         } else {
+                           return textFormat();
+                         }
+                       }
+  {MONO} / [^\_] {STRING}* {MONO} { if(!doublemono) {
+                           singlemono = !singlemono; yybegin(INSIDE_LINE); return singlemono ? AsciiDocTokenTypes.MONO_START : AsciiDocTokenTypes.MONO_END;
+                         } else {
+                           return textFormat();
+                         }
+                       }
+  [^]                  { yypushback(yylength()); yybegin(INSIDE_LINE); }
 }
 
 <INSIDE_LINE> {
   "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                  { return AsciiDocTokenTypes.TEXT; }
+  // BOLD START
+  // start something with ** only if it closes within the same block
+  {DOUBLEBOLD} / [^\*] {STRING}* {DOUBLEBOLD} { if(!singlebold) {
+                            doublebold = !doublebold; return doublebold ? AsciiDocTokenTypes.BOLD_START : AsciiDocTokenTypes.BOLD_END;
+                         } else {
+                            return textFormat();
+                         }
+                       }
+  {DOUBLEBOLD}         { if(doublebold && !singlebold) {
+                           doublebold = false; return AsciiDocTokenTypes.BOLD_END;
+                         } else {
+                           yypushback(1);
+                           return textFormat();
+                         }
+                       }
+  {BOLDINLINESTART} / [^\*\n] {STRING}* {BOLD} { if(!singlebold && !doublebold) {
+                            singlebold = true; return AsciiDocTokenTypes.BOLD_START;
+                         } else {
+                            yypushback(1);
+                            return textFormat();
+                         }
+                       }
+  {BOLDINLINEEND}       { if(singlebold && !doublebold) {
+                            singlebold = false; yypushback(1); return AsciiDocTokenTypes.BOLD_END;
+                         } else {
+                            yypushback(1);
+                            return textFormat();
+                         }
+                       }
+  {BOLD}               { if(singlebold && !doublebold) {
+                           singlebold = false; return AsciiDocTokenTypes.BOLD_END;
+                         } else {
+                           return textFormat();
+                         }
+                       }
+  // BOLD END
+  
+  // ITALIC START
+  // start something with ** only if it closes within the same block
+  {DOUBLEITALIC} / [^\_] {STRING}* {DOUBLEITALIC} { if(!singleitalic) {
+                            doubleitalic = !doubleitalic; return doubleitalic ? AsciiDocTokenTypes.ITALIC_START : AsciiDocTokenTypes.ITALIC_END;
+                         } else {
+                            return textFormat();
+                         }
+                       }
+  {DOUBLEITALIC}         { if(doubleitalic && !singleitalic) {
+                           doubleitalic = false; return AsciiDocTokenTypes.ITALIC_END;
+                         } else {
+                           yypushback(1);
+                           return textFormat();
+                         }
+                       }
+  {ITALIC} / [^\_\n] {STRING}* {ITALIC} { if(!singleitalic && !doubleitalic) {
+                            singleitalic = true; return AsciiDocTokenTypes.ITALIC_START;
+                         } else {
+                            return textFormat();
+                         }
+                       }
+  {ITALICINLINEEND}       { if(singleitalic && !doubleitalic) {
+                            singleitalic = false; yypushback(1); return AsciiDocTokenTypes.ITALIC_END;
+                         } else {
+                            yypushback(1);
+                            return textFormat();
+                         }
+                       }
+  {ITALIC}               { if(singleitalic && !doubleitalic) {
+                           singleitalic = false; return AsciiDocTokenTypes.ITALIC_END;
+                         } else {
+                           return textFormat();
+                         }
+                       }
+  // ITALIC END
+
+  // MONO START
+  // start something with ** only if it closes within the same block
+  {DOUBLEMONO} / [^\_] {STRING}* {DOUBLEMONO} { if(!singlemono) {
+                            doublemono = !doublemono; return doublemono ? AsciiDocTokenTypes.MONO_START : AsciiDocTokenTypes.MONO_END;
+                         } else {
+                            return textFormat();
+                         }
+                       }
+  {DOUBLEMONO}         { if(doublemono && !singlemono) {
+                           doublemono = false; return AsciiDocTokenTypes.MONO_END;
+                         } else {
+                           yypushback(1);
+                           return textFormat();
+                         }
+                       }
+  {MONO} / [^\`\n] {STRING}* {MONO} { if(!singlemono && !doublemono) {
+                            singlemono = true; return AsciiDocTokenTypes.MONO_START;
+                         } else {
+                            return textFormat();
+                         }
+                       }
+  {MONOINLINEEND}       { if(singlemono && !doublemono) {
+                            singlemono = false; yypushback(1); return AsciiDocTokenTypes.MONO_END;
+                         } else {
+                            yypushback(1);
+                            return textFormat();
+                         }
+                       }
+  {MONO}               { if(singlemono && !doublemono) {
+                           singlemono = false; return AsciiDocTokenTypes.MONO_END;
+                         } else {
+                           return textFormat();
+                         }
+                       }
+  // ITALIC END
+  [^]                  { return textFormat(); }
 }
 
 <HEADING> {
@@ -140,12 +348,13 @@ BLOCK_ATTRS_START = "["
 
 <BLOCK_MACRO> {
   "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
-  "["                  { yybegin(BLOCK_MACRO_ATTRS); return AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES; }
+  "["                  { yybegin(BLOCK_MACRO_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
   [^]                  { return AsciiDocTokenTypes.BLOCK_MACRO_BODY; }
 }
 
 <BLOCK_MACRO_ATTRS> {
   "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+  "]"                  { yybegin(YYINITIAL); return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
   [^]                  { return AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES; }
 }
 
