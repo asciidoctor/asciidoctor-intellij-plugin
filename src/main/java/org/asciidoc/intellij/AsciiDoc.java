@@ -51,9 +51,10 @@ import org.asciidoctor.Attributes;
 import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
-import org.asciidoctor.jruby.internal.JRubyAsciidoctor;
+import org.asciidoctor.jruby.internal.AsciidoctorCoreException;
 import org.asciidoctor.log.LogHandler;
 import org.asciidoctor.log.LogRecord;
+import org.asciidoctor.log.Severity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,6 +64,9 @@ import org.jetbrains.annotations.Nullable;
 public class AsciiDoc {
 
   private static Asciidoctor asciidoctor;
+
+  private com.intellij.openapi.diagnostic.Logger log =
+    com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDoc.class);
 
   static {
     SystemOutputHijacker.install();
@@ -288,6 +292,10 @@ public class AsciiDoc {
       try {
         Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
         return "<div id=\"content\">\n" + asciidoctor.convert(text, getDefaultOptions()) + "\n</div>";
+      } catch (AsciidoctorCoreException ace) {
+        log.error("unable to render AsciidDoc document", ace);
+        logHandler.log(new LogRecord(Severity.FATAL, ace.getMessage()));
+        return null;
       } finally {
         asciidoctor.unregisterLogHandler(logHandler);
         SystemOutputHijacker.deregister();

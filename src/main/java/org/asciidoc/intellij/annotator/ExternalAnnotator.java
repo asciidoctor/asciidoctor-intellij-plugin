@@ -62,10 +62,8 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
     try {
       AsciiDoc asciiDoc = new AsciiDoc(file.getProject().getBasePath(), fileBaseDir,
         tempImagesPath, FileDocumentManager.getInstance().getFile(editor.getDocument()).getName());
-      asciiDoc.render(collectedInfo.getContentWithConfig(), collectedInfo.getExtensions(), (boasOut, boasErr, logRecords) -> {
-        asciidocAnnotationResultType.addLogRecords(logRecords);
-      });
-
+      asciiDoc.render(collectedInfo.getContentWithConfig(), collectedInfo.getExtensions(), (boasOut, boasErr, logRecords)
+        -> asciidocAnnotationResultType.addLogRecords(logRecords));
     } finally {
       if (tempImagesPath != null) {
         try {
@@ -115,7 +113,9 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
           sb.append("<br>(").append(logRecord.getCursor().getFile()).append(", line ").append(logRecord.getCursor().getLineNumber()).append(")");
         }
       }
-      sb.append("<br>(" + logRecord.getSourceFileName() + ":" + logRecord.getSourceMethodName() + ")");
+      if (logRecord.getSourceFileName() != null) {
+        sb.append("<br>(").append(logRecord.getSourceFileName()).append(":").append(logRecord.getSourceMethodName()).append(")");
+      }
       annotation.setTooltip(sb.toString());
       if (severity.compareTo(HighlightSeverity.ERROR) >= 0) {
         problems.add(theProblemSolver.convertToProblem(file.getVirtualFile(), lineNumberForAnnotation, 0, new String[]{logRecord.getMessage()}));
