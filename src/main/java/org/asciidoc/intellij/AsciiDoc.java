@@ -116,7 +116,7 @@ public class AsciiDoc {
         LogHandler logHandler = new IntellijLogHandler("initialize");
         try {
           Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
-          asciidoctor = JRubyAsciidoctor.create();
+          asciidoctor = Asciidoctor.Factory.create();
           asciidoctor.registerLogHandler(logHandler);
           // disable JUL logging of captured messages
           // https://github.com/asciidoctor/asciidoctorj/issues/669

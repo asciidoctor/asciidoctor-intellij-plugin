@@ -32,7 +32,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.25.6 Updating to AsciidoctorJ v2.0.0-RC.2 that includes Asciidoctor 2.0.6<br>
+      <li>0.25.6 Updating to AsciidoctorJ v2.0.0 that includes Asciidoctor 2.0.8<br>
       Improved parsing of warnings and errors created by Asciidoctor<br>
       adding highlighting for italic/bold/mono<br>
       adding brace matcher for attributes
