@@ -143,7 +143,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:TEXT ('Hello **bold')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TEXT ('** world')");
+        "AsciiDoc:BULLET ('** ')\n" +
+        "AsciiDoc:TEXT ('world')");
   }
 
   public void testBoldAtBeginningAndEndOfLineSingle() {
@@ -151,6 +152,46 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:BOLD_START ('*')\n" +
         "AsciiDoc:BOLD ('bold')\n" +
         "AsciiDoc:BOLD_END ('*')");
+  }
+
+
+  public void testBoldMultipleInSingleLine() {
+    doTest("bold *constrained* & **un**constrained",
+      "AsciiDoc:TEXT ('bold')\n" +
+        "AsciiDoc:BOLD_START (' *')\n" +
+        "AsciiDoc:BOLD ('constrained')\n" +
+        "AsciiDoc:BOLD_END ('*')\n" +
+        "AsciiDoc:TEXT (' & ')\n" +
+        "AsciiDoc:BOLD_START ('**')\n" +
+        "AsciiDoc:BOLD ('un')\n" +
+        "AsciiDoc:BOLD_END ('**')\n" +
+        "AsciiDoc:TEXT ('constrained')");
+  }
+
+  public void testItalicMultipleInSingleLine() {
+    doTest("italic _constrained_ & __un__constrained",
+      "AsciiDoc:TEXT ('italic ')\n" +
+        "AsciiDoc:ITALIC_START ('_')\n" +
+        "AsciiDoc:ITALIC ('constrained')\n" +
+        "AsciiDoc:ITALIC_END ('_')\n" +
+        "AsciiDoc:TEXT (' & ')\n" +
+        "AsciiDoc:ITALIC_START ('__')\n" +
+        "AsciiDoc:ITALIC ('un')\n" +
+        "AsciiDoc:ITALIC_END ('__')\n" +
+        "AsciiDoc:TEXT ('constrained')");
+  }
+
+  public void testMonoMultipleInSingleLine() {
+    doTest("mono `constrained` & ``un``constrained",
+      "AsciiDoc:TEXT ('mono ')\n" +
+        "AsciiDoc:MONO_START ('`')\n" +
+        "AsciiDoc:MONO ('constrained')\n" +
+        "AsciiDoc:MONO_END ('`')\n" +
+        "AsciiDoc:TEXT (' & ')\n" +
+        "AsciiDoc:MONO_START ('``')\n" +
+        "AsciiDoc:MONO ('un')\n" +
+        "AsciiDoc:MONO_END ('``')\n" +
+        "AsciiDoc:TEXT ('constrained')");
   }
 
   public void testBoldAtBeginningAndEndOfLineDouble() {
@@ -187,6 +228,24 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("* bullet",
       "AsciiDoc:BULLET ('* ')\n" +
         "AsciiDoc:TEXT ('bullet')");
+  }
+
+  public void testMultipleBullets() {
+    doTest("* bullet1\n* bullet2",
+      "AsciiDoc:BULLET ('* ')\n" +
+        "AsciiDoc:TEXT ('bullet1')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BULLET ('* ')\n" +
+        "AsciiDoc:TEXT ('bullet2')");
+  }
+
+  public void testMultipleBulletsLevel2() {
+    doTest("** bullet1\n** bullet2",
+      "AsciiDoc:BULLET ('** ')\n" +
+        "AsciiDoc:TEXT ('bullet1')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BULLET ('** ')\n" +
+        "AsciiDoc:TEXT ('bullet2')");
   }
 
   public void testSidebar() {

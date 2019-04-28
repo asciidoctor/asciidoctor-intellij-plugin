@@ -63,7 +63,7 @@ TITLE_START = "."
 BLOCK_ATTRS_START = "["
 STRING = {NON_SPACE}+ \n?
 BOLD = "*"
-BULLET = {SPACE}* "*" {SPACE}+
+BULLET = {SPACE}* "*"+ {SPACE}+
 DOUBLEBOLD = {BOLD} {BOLD}
 BOLDINLINESTART = [^\*;:\w_] {BOLD}
 BOLDINLINEEND = {BOLD}[^\w_]
@@ -158,19 +158,19 @@ MONOINLINEEND = {MONO}[^\w`]
   // a blank line, it separates blocks
   "\w"* "\n"           { resetFormatting(); yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
   // BOLD at beginning of line
-  {BOLD} {BOLD} / [^\*] {STRING}* {BOLD} {BOLD} { if(!singlebold) {
+  {BOLD} {BOLD} / [^\* ] {STRING}* {BOLD} {BOLD} { if(!singlebold) {
                            doublebold = !doublebold; yybegin(INSIDE_LINE); return doublebold ? AsciiDocTokenTypes.BOLD_START : AsciiDocTokenTypes.BOLD_END;
                          } else {
                            return textFormat();
                          }
                        }
-  {BOLD} {BOLD} / [^\*] {STRING}* {BOLD} { if(!doublebold) {
+  {BOLD} {BOLD} / [^\* ] {STRING}* {BOLD} { if(!doublebold) {
                            singlebold = !singlebold; yybegin(INSIDE_LINE); return singlebold ? AsciiDocTokenTypes.BOLD_START : AsciiDocTokenTypes.BOLD_END;
                          } else {
                            return textFormat();
                          }
                        }
-  {BOLD} / [^\*] {STRING}* {BOLD} { if(!doublebold) {
+  {BOLD} / [^\* ] {STRING}* {BOLD} { if(!doublebold) {
                            singlebold = !singlebold; yybegin(INSIDE_LINE); return singlebold ? AsciiDocTokenTypes.BOLD_START : AsciiDocTokenTypes.BOLD_END;
                          } else {
                            return textFormat();
@@ -236,6 +236,8 @@ MONOINLINEEND = {MONO}[^\w`]
                        }
   {BOLDINLINESTART} / [^\*\n] {STRING}* {BOLD} { if(!singlebold && !doublebold) {
                             singlebold = true; return AsciiDocTokenTypes.BOLD_START;
+                         } else if (singlebold) {
+                            singlebold = false; return AsciiDocTokenTypes.BOLD_END;
                          } else {
                             yypushback(1);
                             return textFormat();
@@ -273,6 +275,8 @@ MONOINLINEEND = {MONO}[^\w`]
                        }
   {ITALIC} / [^\_\n] {STRING}* {ITALIC} { if(!singleitalic && !doubleitalic) {
                             singleitalic = true; return AsciiDocTokenTypes.ITALIC_START;
+                         } else if (singleitalic) {
+                            singleitalic = false; return AsciiDocTokenTypes.ITALIC_END;
                          } else {
                             return textFormat();
                          }
@@ -294,7 +298,7 @@ MONOINLINEEND = {MONO}[^\w`]
 
   // MONO START
   // start something with ** only if it closes within the same block
-  {DOUBLEMONO} / [^\_] {STRING}* {DOUBLEMONO} { if(!singlemono) {
+  {DOUBLEMONO} / [^\`] {STRING}* {DOUBLEMONO} { if(!singlemono) {
                             doublemono = !doublemono; return doublemono ? AsciiDocTokenTypes.MONO_START : AsciiDocTokenTypes.MONO_END;
                          } else {
                             return textFormat();
@@ -309,6 +313,8 @@ MONOINLINEEND = {MONO}[^\w`]
                        }
   {MONO} / [^\`\n] {STRING}* {MONO} { if(!singlemono && !doublemono) {
                             singlemono = true; return AsciiDocTokenTypes.MONO_START;
+                         } else if (singlemono) {
+                            singlemono = false; return AsciiDocTokenTypes.MONO_END;
                          } else {
                             return textFormat();
                          }
