@@ -37,6 +37,10 @@ public class AsciiDocBraceMatcher extends PairedBraceMatcherAdapter {
     public BracePair[] getPairs() {
       return new BracePair[]{
         new BracePair(AsciiDocTokenTypes.BLOCK_ATTRS_START, AsciiDocTokenTypes.BLOCK_ATTRS_END, true),
+        // TODO: doesn't work well as there are leading blanks in a line that are highlighted as well
+//        new BracePair(AsciiDocTokenTypes.BOLD_START, AsciiDocTokenTypes.BOLD_END, true),
+//        new BracePair(AsciiDocTokenTypes.ITALIC_START, AsciiDocTokenTypes.ITALIC_END, true),
+//        new BracePair(AsciiDocTokenTypes.MONO_START, AsciiDocTokenTypes.MONO_END, true),
       };
     }
 
