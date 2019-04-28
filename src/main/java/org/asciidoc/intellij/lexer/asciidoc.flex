@@ -73,6 +73,14 @@ ITALICINLINEEND = {ITALIC}[^\w]
 MONO = "`"
 DOUBLEMONO = {MONO} {MONO}
 MONOINLINEEND = {MONO}[^\w`]
+LPAREN = "("
+RPAREN = ")"
+LBRACKET = "["
+RBRACKET = "]"
+LT = "<"
+GT = ">"
+SINGLE_QUOTE = "'"
+DOUBLE_QUOTE = "\""
 
 %state INSIDE_LINE
 %state HEADING
@@ -333,6 +341,14 @@ MONOINLINEEND = {MONO}[^\w`]
                          }
                        }
   // ITALIC END
+  {LPAREN}             { return AsciiDocTokenTypes.LPAREN; }
+  {RPAREN}             { return AsciiDocTokenTypes.RPAREN; }
+  {LBRACKET}           { return AsciiDocTokenTypes.LBRACKET; }
+  {RBRACKET}           { return AsciiDocTokenTypes.RBRACKET; }
+  {LT}                 { return AsciiDocTokenTypes.LT; }
+  {GT}                 { return AsciiDocTokenTypes.GT; }
+  {SINGLE_QUOTE}       { return AsciiDocTokenTypes.SINGLE_QUOTE; }
+  {DOUBLE_QUOTE}       { return AsciiDocTokenTypes.DOUBLE_QUOTE; }
   [^]                  { return textFormat(); }
 }
 
