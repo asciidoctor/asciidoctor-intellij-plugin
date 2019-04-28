@@ -293,7 +293,7 @@ public class AsciiDoc {
         Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
         return "<div id=\"content\">\n" + asciidoctor.convert(text, getDefaultOptions()) + "\n</div>";
       } catch (AsciidoctorCoreException ace) {
-        log.error("unable to render AsciidDoc document", ace);
+        log.warn("unable to render AsciidDoc document", ace);
         logHandler.log(new LogRecord(Severity.FATAL, ace.getMessage()));
         return null;
       } finally {
