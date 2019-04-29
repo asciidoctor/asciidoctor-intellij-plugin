@@ -23,8 +23,14 @@ import javax.swing.*;
 public class AsciiDocIcons {
 
   private static Icon load(String path) {
-    Icon icon = IconLoader.getIcon(path, AsciiDocIcons.class);
-    if (icon.getIconHeight() == 1 && path.endsWith(".svg")) {
+    Icon icon = null;
+    try {
+      icon = IconLoader.getIcon(path, AsciiDocIcons.class);
+      icon.getIconHeight(); // NoClassDefFoundError
+    } catch (NoClassDefFoundError e) {
+      icon = null;
+    }
+    if ((icon == null || icon.getIconHeight() == 1) && path.endsWith(".svg")) {
       // when trying to load SVG icons on an older version, they will be returned as 1x1 icon
       // if this is the case, fallback to PNG icons
       path = path.substring(0, path.length() - 4) + ".png";

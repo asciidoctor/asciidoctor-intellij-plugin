@@ -32,6 +32,7 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 === 0.25.9 (work in progress)
 
 - adding quote handler (#242)
+- Tuning highlighting for mono and bullet lists (#244)
 
 === 0.25.8 (preview, available from Github releases)
 

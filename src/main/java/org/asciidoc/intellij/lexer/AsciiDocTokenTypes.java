@@ -46,6 +46,9 @@ public interface AsciiDocTokenTypes {
   IElementType RPAREN = new AsciiDocElementType("RPAREN");
   IElementType LBRACKET = new AsciiDocElementType("LBRACKET");
   IElementType RBRACKET = new AsciiDocElementType("RBRACKET");
+  IElementType MONOBOLD = new AsciiDocElementType("MONOBOLD");
+  IElementType MONOITALIC = new AsciiDocElementType("MONOITALIC");
+  IElementType MONOBOLDITALIC = new AsciiDocElementType("MONOBOLDITALIC");
   IElementType LT = new AsciiDocElementType("LT");
   IElementType GT = new AsciiDocElementType("GT");
   IElementType DOUBLE_QUOTE = new AsciiDocElementType("DOUBLE_QUOTE");
@@ -54,6 +57,6 @@ public interface AsciiDocTokenTypes {
   TokenSet TOKENS_TO_MERGE = TokenSet.create(TEXT, LISTING_TEXT, HEADING, TITLE, BLOCK_COMMENT,
       BLOCK_ATTR_NAME, BLOCK_MACRO_BODY, BLOCK_MACRO_ATTRIBUTES, EXAMPLE_BLOCK, PASSTRHOUGH_BLOCK,
       QUOTE_BLOCK, SIDEBAR_BLOCK, BOLD_START, BOLD_END, BOLD, ITALIC, ITALIC_END, ITALIC_START, BOLDITALIC,
-      MONO_START, MONO_END, MONO);
+      MONO_START, MONO_END, MONO, MONOBOLD, MONOBOLDITALIC);
 }
 

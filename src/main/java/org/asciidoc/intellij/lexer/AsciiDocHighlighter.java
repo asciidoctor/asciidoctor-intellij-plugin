@@ -46,6 +46,18 @@ public class AsciiDocHighlighter extends SyntaxHighlighterBase {
   private static final TextAttributesKey ASCIIDOC_BOLDITALIC = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_BOLDITALIC");
 
+  private static final TextAttributesKey ASCIIDOC_MONO = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC_MONO");
+
+  private static final TextAttributesKey ASCIIDOC_MONOBOLD = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC_MONOBOLD");
+
+  private static final TextAttributesKey ASCIIDOC_MONOITALIC = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC_MONOITALIC");
+
+  private static final TextAttributesKey ASCIIDOC_MONOBOLDITALIC = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC_MONOBOLDITALIC");
+
   private static final TextAttributesKey ASCIIDOC_MARKER = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_MARKER",
     DefaultLanguageHighlighterColors.KEYWORD
@@ -69,9 +81,12 @@ public class AsciiDocHighlighter extends SyntaxHighlighterBase {
           .put(AsciiDocTokenTypes.ITALIC_START, ASCIIDOC_MARKER)
           .put(AsciiDocTokenTypes.ITALIC, ASCIIDOC_ITALIC)
           .put(AsciiDocTokenTypes.BOLDITALIC, ASCIIDOC_BOLDITALIC)
+          .put(AsciiDocTokenTypes.MONOBOLD, ASCIIDOC_MONOBOLD)
+          .put(AsciiDocTokenTypes.MONOITALIC, ASCIIDOC_MONOITALIC)
+          .put(AsciiDocTokenTypes.MONOBOLDITALIC, ASCIIDOC_MONOBOLDITALIC)
           .put(AsciiDocTokenTypes.MONO_END, ASCIIDOC_MARKER)
           .put(AsciiDocTokenTypes.MONO_START, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.MONO, ASCIIDOC_LISTING_TEXT)
+          .put(AsciiDocTokenTypes.MONO, ASCIIDOC_MONO)
           .put(AsciiDocTokenTypes.BLOCK_MACRO_ID, ASCIIDOC_BLOCK_MACRO_ID)
           .put(AsciiDocTokenTypes.BULLET, ASCIIDOC_BULLET)
           .build();

@@ -32,7 +32,8 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.25.8 tuning highlighting italic/bold/mono, adding brace matcher in text (#244)
+      <li>0.25.8 tuning highlighting italic/bold/mono, adding brace matcher in text (#244)<br>
+      Tuning highlighting for mono and bullet lists (#244)
       <li>0.25.7 Updating to AsciidoctorJ v2.0.0 that includes Asciidoctor 2.0.8<br>
       adding highlighting for italic/bold/mono (#244)<br>
       adding brace matcher for attributes

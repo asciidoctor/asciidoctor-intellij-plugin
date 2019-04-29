@@ -194,6 +194,18 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('constrained')");
   }
 
+  public void testMonoItalicBold() {
+    doTest("``**__un__**``constrained",
+      "AsciiDoc:MONO_START ('``')\n" +
+        "AsciiDoc:BOLD_START ('**')\n" +
+        "AsciiDoc:ITALIC_START ('__')\n" +
+        "AsciiDoc:MONOBOLDITALIC ('un')\n" +
+        "AsciiDoc:ITALIC_END ('__')\n" +
+        "AsciiDoc:BOLD_END ('**')\n" +
+        "AsciiDoc:MONO_END ('``')\n" +
+        "AsciiDoc:TEXT ('constrained')");
+  }
+
   public void testBoldAtBeginningAndEndOfLineDouble() {
     doTest("**bold**",
       "AsciiDoc:BOLD_START ('**')\n" +
@@ -246,6 +258,21 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:BULLET ('** ')\n" +
         "AsciiDoc:TEXT ('bullet2')");
+  }
+
+  public void testThreeBulletItems() {
+    doTest("* abc\n" +
+        "* def\n" +
+        "* ghi\n",
+      "AsciiDoc:BULLET ('* ')\n" +
+        "AsciiDoc:TEXT ('abc')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BULLET ('* ')\n" +
+        "AsciiDoc:TEXT ('def')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BULLET ('* ')\n" +
+        "AsciiDoc:TEXT ('ghi')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
   public void testSidebar() {

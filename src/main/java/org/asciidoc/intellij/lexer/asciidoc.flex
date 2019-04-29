@@ -30,7 +30,13 @@ import com.intellij.psi.tree.IElementType;
     doublemono = false;
   }
   private IElementType textFormat() {
-    if(doublemono || singlemono) {
+    if((doublemono || singlemono) && (singlebold || doublebold) && (doubleitalic || singleitalic)) {
+      return AsciiDocTokenTypes.MONOBOLDITALIC;
+    } else if((doublemono || singlemono) && (singlebold || doublebold)) {
+      return AsciiDocTokenTypes.MONOBOLD;
+    } else if((doublemono || singlemono) && (singleitalic || doubleitalic)) {
+      return AsciiDocTokenTypes.MONOITALIC;
+    } else if(doublemono || singlemono) {
       return AsciiDocTokenTypes.MONO;
     } else if((singlebold || doublebold) && (singleitalic || doubleitalic)) {
       return AsciiDocTokenTypes.BOLDITALIC;
@@ -65,7 +71,7 @@ STRING = {NON_SPACE}+ \n?
 BOLD = "*"
 BULLET = {SPACE}* "*"+ {SPACE}+
 DOUBLEBOLD = {BOLD} {BOLD}
-BOLDINLINESTART = [^\*;:\w_] {BOLD}
+BOLDINLINESTART = [^\*;:\w_\n] {BOLD}
 BOLDINLINEEND = {BOLD}[^\w_]
 ITALIC = "_"
 DOUBLEITALIC = {ITALIC} {ITALIC}
@@ -166,19 +172,19 @@ DOUBLE_QUOTE = "\""
   // a blank line, it separates blocks
   "\w"* "\n"           { resetFormatting(); yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
   // BOLD at beginning of line
-  {BOLD} {BOLD} / [^\* ] {STRING}* {BOLD} {BOLD} { if(!singlebold) {
+  {BOLD} {BOLD} / [^\* \t] {STRING}* {BOLD} {BOLD} { if(!singlebold) {
                            doublebold = !doublebold; yybegin(INSIDE_LINE); return doublebold ? AsciiDocTokenTypes.BOLD_START : AsciiDocTokenTypes.BOLD_END;
                          } else {
                            return textFormat();
                          }
                        }
-  {BOLD} {BOLD} / [^\* ] {STRING}* {BOLD} { if(!doublebold) {
+  {BOLD} {BOLD} / [^\* \t] {STRING}* {BOLD} { if(!doublebold) {
                            singlebold = !singlebold; yybegin(INSIDE_LINE); return singlebold ? AsciiDocTokenTypes.BOLD_START : AsciiDocTokenTypes.BOLD_END;
                          } else {
                            return textFormat();
                          }
                        }
-  {BOLD} / [^\* ] {STRING}* {BOLD} { if(!doublebold) {
+  {BOLD} / [^\* \t] {STRING}* {BOLD} { if(!doublebold) {
                            singlebold = !singlebold; yybegin(INSIDE_LINE); return singlebold ? AsciiDocTokenTypes.BOLD_START : AsciiDocTokenTypes.BOLD_END;
                          } else {
                            return textFormat();
