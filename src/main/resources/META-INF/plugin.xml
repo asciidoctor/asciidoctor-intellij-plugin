@@ -187,6 +187,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
     <spellchecker.support language="AsciiDoc" implementationClass="org.asciidoc.intellij.AsciiDocSpellcheckingStrategy"/>
     <lang.commenter language="AsciiDoc" implementationClass="org.asciidoc.intellij.AsciiDocCommenter"/>
     <braceMatcher filetype="AsciiDoc" implementationClass="org.asciidoc.intellij.braces.AsciiDocBraceMatcher"/>
+    <quoteHandler fileType="AsciiDoc" className="org.asciidoc.intellij.braces.AsciidocQuoteHandler"/>
     <todoIndexer filetype="AsciiDoc" implementationClass="org.asciidoc.intellij.indexer.AsciiDocTodoIndexer"/>
     <applicationConfigurable id="Settings.AsciiDoc.Preview"
                                  bundle="AsciiDocBundle"
