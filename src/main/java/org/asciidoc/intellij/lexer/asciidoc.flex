@@ -67,11 +67,11 @@ HEADING_OLDSTYLE = [^.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
 TITLE_START = "."
 BLOCK_ATTRS_START = "["
-STRING = {NON_SPACE}+ \n?
+STRING = {NON_SPACE}+ \n? // something that doesn't have an empty line
+WORD = [^\n]*[^\ \t\n] \n? // something that doesn't have an empty line and doesn't end with a blank
 BOLD = "*"
 BULLET = {SPACE}* "*"+ {SPACE}+
 DOUBLEBOLD = {BOLD} {BOLD}
-BOLDINLINESTART = [^\*;:\w_\n] {BOLD}
 BOLDINLINEEND = {BOLD}[^\w_]
 ITALIC = "_"
 DOUBLEITALIC = {ITALIC} {ITALIC}
@@ -184,7 +184,7 @@ DOUBLE_QUOTE = "\""
                            return textFormat();
                          }
                        }
-  {BOLD} / [^\* \t] {STRING}* {BOLD} { if(!doublebold) {
+  {BOLD} / [^\* \t] {WORD}* {BOLD} { if(!doublebold) {
                            singlebold = !singlebold; yybegin(INSIDE_LINE); return singlebold ? AsciiDocTokenTypes.BOLD_START : AsciiDocTokenTypes.BOLD_END;
                          } else {
                            return textFormat();
@@ -203,7 +203,7 @@ DOUBLE_QUOTE = "\""
                            return textFormat();
                          }
                        }
-  {ITALIC} / [^\_] {STRING}* {ITALIC} { if(!doubleitalic) {
+  {ITALIC} / [^\_ \t] {WORD}* {ITALIC} { if(!doubleitalic) {
                            singleitalic = !singleitalic; yybegin(INSIDE_LINE); return singleitalic ? AsciiDocTokenTypes.ITALIC_START : AsciiDocTokenTypes.ITALIC_END;
                          } else {
                            return textFormat();
@@ -222,7 +222,7 @@ DOUBLE_QUOTE = "\""
                            return textFormat();
                          }
                        }
-  {MONO} / [^\_] {STRING}* {MONO} { if(!doublemono) {
+  {MONO} / [^\_ \t] {WORD}* {MONO} { if(!doublemono) {
                            singlemono = !singlemono; yybegin(INSIDE_LINE); return singlemono ? AsciiDocTokenTypes.MONO_START : AsciiDocTokenTypes.MONO_END;
                          } else {
                            return textFormat();
@@ -248,7 +248,7 @@ DOUBLE_QUOTE = "\""
                            return textFormat();
                          }
                        }
-  {BOLDINLINESTART} / [^\*\n] {STRING}* {BOLD} { if(!singlebold && !doublebold) {
+  {BOLD} / [^\*\n \t] {WORD}* {BOLD} { if(!singlebold && !doublebold) {
                             singlebold = true; return AsciiDocTokenTypes.BOLD_START;
                          } else if (singlebold) {
                             singlebold = false; return AsciiDocTokenTypes.BOLD_END;
@@ -287,7 +287,7 @@ DOUBLE_QUOTE = "\""
                            return textFormat();
                          }
                        }
-  {ITALIC} / [^\_\n] {STRING}* {ITALIC} { if(!singleitalic && !doubleitalic) {
+  {ITALIC} / [^\_\n \t] {WORD}* {ITALIC} { if(!singleitalic && !doubleitalic) {
                             singleitalic = true; return AsciiDocTokenTypes.ITALIC_START;
                          } else if (singleitalic) {
                             singleitalic = false; return AsciiDocTokenTypes.ITALIC_END;
@@ -325,7 +325,7 @@ DOUBLE_QUOTE = "\""
                            return textFormat();
                          }
                        }
-  {MONO} / [^\`\n] {STRING}* {MONO} { if(!singlemono && !doublemono) {
+  {MONO} / [^\`\n \t] {WORD}* {MONO} { if(!singlemono && !doublemono) {
                             singlemono = true; return AsciiDocTokenTypes.MONO_START;
                          } else if (singlemono) {
                             singlemono = false; return AsciiDocTokenTypes.MONO_END;

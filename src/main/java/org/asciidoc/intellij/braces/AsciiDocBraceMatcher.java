@@ -25,10 +25,9 @@ public class AsciiDocBraceMatcher extends PairedBraceMatcherAdapter {
         new BracePair(AsciiDocTokenTypes.LPAREN, AsciiDocTokenTypes.RPAREN, false),
         new BracePair(AsciiDocTokenTypes.LBRACKET, AsciiDocTokenTypes.RBRACKET, false),
         new BracePair(AsciiDocTokenTypes.LT, AsciiDocTokenTypes.GT, false),
-        // TODO: doesn't work well as there are leading blanks in a line that are highlighted as well
-//        new BracePair(AsciiDocTokenTypes.BOLD_START, AsciiDocTokenTypes.BOLD_END, true),
-//        new BracePair(AsciiDocTokenTypes.ITALIC_START, AsciiDocTokenTypes.ITALIC_END, true),
-//        new BracePair(AsciiDocTokenTypes.MONO_START, AsciiDocTokenTypes.MONO_END, true),
+        new BracePair(AsciiDocTokenTypes.BOLD_START, AsciiDocTokenTypes.BOLD_END, false),
+        new BracePair(AsciiDocTokenTypes.ITALIC_START, AsciiDocTokenTypes.ITALIC_END, false),
+        new BracePair(AsciiDocTokenTypes.MONO_START, AsciiDocTokenTypes.MONO_END, false),
       };
     }
 

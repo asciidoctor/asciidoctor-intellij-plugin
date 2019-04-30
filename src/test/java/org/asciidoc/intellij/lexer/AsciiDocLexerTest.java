@@ -122,8 +122,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testBoldSimple() {
     doTest("Hello *bold* world",
-      "AsciiDoc:TEXT ('Hello')\n" +
-        "AsciiDoc:BOLD_START (' *')\n" +
+      "AsciiDoc:TEXT ('Hello ')\n" +
+        "AsciiDoc:BOLD_START ('*')\n" +
         "AsciiDoc:BOLD ('bold')\n" +
         "AsciiDoc:BOLD_END ('*')\n" +
         "AsciiDoc:TEXT (' world')");
@@ -157,8 +157,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testBoldMultipleInSingleLine() {
     doTest("bold *constrained* & **un**constrained",
-      "AsciiDoc:TEXT ('bold')\n" +
-        "AsciiDoc:BOLD_START (' *')\n" +
+      "AsciiDoc:TEXT ('bold ')\n" +
+        "AsciiDoc:BOLD_START ('*')\n" +
         "AsciiDoc:BOLD ('constrained')\n" +
         "AsciiDoc:BOLD_END ('*')\n" +
         "AsciiDoc:TEXT (' & ')\n" +
