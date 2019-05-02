@@ -12,6 +12,7 @@ import com.intellij.problems.Problem;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.psi.PsiFile;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoctor.log.LogRecord;
@@ -113,7 +114,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
           sb.append("<br>(").append(logRecord.getCursor().getFile()).append(", line ").append(logRecord.getCursor().getLineNumber()).append(")");
         }
       }
-      if (logRecord.getSourceFileName() != null) {
+      if (StringUtils.isNotEmpty(logRecord.getSourceFileName())) {
         sb.append("<br>(").append(logRecord.getSourceFileName()).append(":").append(logRecord.getSourceMethodName()).append(")");
       }
       annotation.setTooltip(sb.toString());
