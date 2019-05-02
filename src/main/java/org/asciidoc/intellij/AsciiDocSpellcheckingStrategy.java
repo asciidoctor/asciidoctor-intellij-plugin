@@ -15,7 +15,15 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
   @Override
   public Tokenizer getTokenizer(PsiElement element) {
     IElementType elementType = element.getNode().getElementType();
-    if (elementType == AsciiDocTokenTypes.HEADING || elementType == AsciiDocTokenTypes.TEXT) {
+    if (elementType == AsciiDocTokenTypes.HEADING
+      || elementType == AsciiDocTokenTypes.TEXT
+      || elementType == AsciiDocTokenTypes.BOLD
+      || elementType == AsciiDocTokenTypes.ITALIC
+      || elementType == AsciiDocTokenTypes.MONO
+      || elementType == AsciiDocTokenTypes.BOLDITALIC
+      || elementType == AsciiDocTokenTypes.MONOBOLD
+      || elementType == AsciiDocTokenTypes.MONOITALIC
+      || elementType == AsciiDocTokenTypes.MONOBOLDITALIC) {
       return TEXT_TOKENIZER;
     }
     return EMPTY_TOKENIZER;
