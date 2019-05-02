@@ -283,6 +283,28 @@ public class AsciiDocLexerTest extends LexerTestCase {
             "AsciiDoc:SIDEBAR_BLOCK_DELIMITER ('****\\n')");
   }
 
+  public void testRef() {
+    doTest("Text <<REF>> More Text",
+      "AsciiDoc:TEXT ('Text ')\n" +
+        "AsciiDoc:REFSTART ('<<')\n" +
+        "AsciiDoc:REF ('REF')\n" +
+        "AsciiDoc:REFEND ('>>')\n" +
+        "AsciiDoc:TEXT (' More Text')");
+  }
+
+  public void testBlockid() {
+    doTest("[[BLOCKID]] Text",
+      "AsciiDoc:BLOCKIDSTART ('[[')\n" +
+        "AsciiDoc:BLOCKID ('BLOCKID')\n" +
+        "AsciiDoc:BLOCKIDEND (']]')\n" +
+        "AsciiDoc:TEXT (' Text')");
+  }
+
+  public void testEscapedBold() {
+    doTest("Text \\*nonbold* Text",
+      "AsciiDoc:TEXT ('Text \\*nonbold* Text')");
+  }
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();

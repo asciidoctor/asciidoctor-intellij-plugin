@@ -89,6 +89,12 @@ public class AsciiDocHighlighter extends SyntaxHighlighterBase {
           .put(AsciiDocTokenTypes.MONO, ASCIIDOC_MONO)
           .put(AsciiDocTokenTypes.BLOCK_MACRO_ID, ASCIIDOC_BLOCK_MACRO_ID)
           .put(AsciiDocTokenTypes.BULLET, ASCIIDOC_BULLET)
+          .put(AsciiDocTokenTypes.REFSTART, ASCIIDOC_MARKER)
+          .put(AsciiDocTokenTypes.REFEND, ASCIIDOC_MARKER)
+          .put(AsciiDocTokenTypes.REF, ASCIIDOC_MARKER)
+          .put(AsciiDocTokenTypes.BLOCKIDSTART, ASCIIDOC_MARKER)
+          .put(AsciiDocTokenTypes.BLOCKIDEND, ASCIIDOC_MARKER)
+          .put(AsciiDocTokenTypes.BLOCKID, ASCIIDOC_MARKER)
           .build();
 
   @NotNull

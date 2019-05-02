@@ -53,10 +53,16 @@ public interface AsciiDocTokenTypes {
   IElementType GT = new AsciiDocElementType("GT");
   IElementType DOUBLE_QUOTE = new AsciiDocElementType("DOUBLE_QUOTE");
   IElementType SINGLE_QUOTE = new AsciiDocElementType("SINGLE_QUOTE");
+  IElementType REFSTART = new AsciiDocElementType("REFSTART");
+  IElementType REF = new AsciiDocElementType("REF");
+  IElementType REFEND = new AsciiDocElementType("REFEND");
+  IElementType BLOCKIDSTART = new AsciiDocElementType("BLOCKIDSTART");
+  IElementType BLOCKID = new AsciiDocElementType("BLOCKID");
+  IElementType BLOCKIDEND = new AsciiDocElementType("BLOCKIDEND");
 
   TokenSet TOKENS_TO_MERGE = TokenSet.create(TEXT, LISTING_TEXT, HEADING, TITLE, BLOCK_COMMENT,
       BLOCK_ATTR_NAME, BLOCK_MACRO_BODY, BLOCK_MACRO_ATTRIBUTES, EXAMPLE_BLOCK, PASSTRHOUGH_BLOCK,
       QUOTE_BLOCK, SIDEBAR_BLOCK, BOLD_START, BOLD_END, BOLD, ITALIC, ITALIC_END, ITALIC_START, BOLDITALIC,
-      MONO_START, MONO_END, MONO, MONOBOLD, MONOBOLDITALIC);
+      MONO_START, MONO_END, MONO, MONOBOLD, MONOBOLDITALIC, REF, BLOCKID);
 }
 

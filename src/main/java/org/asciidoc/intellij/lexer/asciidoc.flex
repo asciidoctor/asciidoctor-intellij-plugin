@@ -85,10 +85,16 @@ LBRACKET = "["
 RBRACKET = "]"
 LT = "<"
 GT = ">"
+REFSTART = "<<"
+REFEND = ">>"
+BLOCKIDSTART = "[["
+BLOCKIDEND = "]]"
 SINGLE_QUOTE = "'"
 DOUBLE_QUOTE = "\""
 
 %state INSIDE_LINE
+%state REF
+%state BLOCKID
 %state HEADING
 %state SINGLELINE
 
@@ -165,7 +171,7 @@ DOUBLE_QUOTE = "\""
   {HEADING_START_MARKDOWN} / {NON_SPACE} { resetFormatting(); yybegin(HEADING); return AsciiDocTokenTypes.HEADING; }
   {TITLE_START} / [^\. ] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE; }
   {BLOCK_MACRO_START} / {NON_SPACE} { resetFormatting(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
-  {BLOCK_ATTRS_START} { yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
+  {BLOCK_ATTRS_START} / [^\[] { yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
 
   {BULLET} / {STRING} { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BULLET; }
 
@@ -349,13 +355,26 @@ DOUBLE_QUOTE = "\""
   // ITALIC END
   {LPAREN}             { return AsciiDocTokenTypes.LPAREN; }
   {RPAREN}             { return AsciiDocTokenTypes.RPAREN; }
-  {LBRACKET}           { return AsciiDocTokenTypes.LBRACKET; }
-  {RBRACKET}           { return AsciiDocTokenTypes.RBRACKET; }
-  {LT}                 { return AsciiDocTokenTypes.LT; }
-  {GT}                 { return AsciiDocTokenTypes.GT; }
+  {LBRACKET} / [^\[]   { return AsciiDocTokenTypes.LBRACKET; }
+  {RBRACKET} / [^\]]   { return AsciiDocTokenTypes.RBRACKET; }
+  {REFSTART} / [^>\n]+ {REFEND} { yybegin(REF); return AsciiDocTokenTypes.REFSTART; }
+  {BLOCKIDSTART} / [^\]\n]+ {BLOCKIDEND} { yybegin(BLOCKID); return AsciiDocTokenTypes.BLOCKIDSTART; }
+  {LT} / [^<]          { return AsciiDocTokenTypes.LT; }
+  {GT} / [^>]          { return AsciiDocTokenTypes.GT; }
   {SINGLE_QUOTE}       { return AsciiDocTokenTypes.SINGLE_QUOTE; }
   {DOUBLE_QUOTE}       { return AsciiDocTokenTypes.DOUBLE_QUOTE; }
+  "\\" .               { return textFormat(); } // an escaped character
   [^]                  { return textFormat(); }
+}
+
+<REF> {
+  {REFEND}             { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.REFEND; }
+  [^]                  { return AsciiDocTokenTypes.REF; }
+}
+
+<BLOCKID> {
+  {BLOCKIDEND}         { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BLOCKIDEND; }
+  [^]                  { return AsciiDocTokenTypes.BLOCKID; }
 }
 
 <HEADING> {
