@@ -29,6 +29,10 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 
 == Release notes
 
+=== 0.25.11
+
+- moving from jruby-complete to jruby dependency like AsciidoctorJ did for 2.0 (#250)
+
 === 0.25.10 (preview, available from Github releases)
 
 - improved syntax highlighting for block IDs and references, suppressing message "possible invalid reference" (#249)

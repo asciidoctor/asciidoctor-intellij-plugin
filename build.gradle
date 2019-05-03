@@ -50,7 +50,7 @@ dependencies {
     compile 'org.asciidoctor:asciidoctorj-diagram:1.5.16'
     compile 'org.asciidoctor:asciidoctorj:2.0.0'
     compile 'commons-io:commons-io:2.4'
-    compile 'org.jruby:jruby-complete:9.2.6.0'
+    // compile 'org.jruby:jruby:9.2.7.0' // use same depdendency as asciidoctorj instead of our own
     compile 'org.pegdown:pegdown:1.4.2'
     compile 'org.parboiled:parboiled-core:1.1.6'
     testCompile 'junit:junit:4.12'
