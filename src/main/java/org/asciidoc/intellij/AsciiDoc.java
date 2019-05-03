@@ -295,7 +295,7 @@ public class AsciiDoc {
       } catch (AsciidoctorCoreException ace) {
         log.warn("unable to render AsciidDoc document", ace);
         logHandler.log(new LogRecord(Severity.FATAL, ace.getMessage()));
-        return null;
+        return "unable to render AsciidDoc document: " + ace.getMessage() + "<p>(the full exception stack trace is available in the IDE's log file)";
       } finally {
         asciidoctor.unregisterLogHandler(logHandler);
         SystemOutputHijacker.deregister();
