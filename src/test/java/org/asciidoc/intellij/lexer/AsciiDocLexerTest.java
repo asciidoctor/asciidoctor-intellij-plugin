@@ -154,7 +154,6 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:BOLD_END ('*')");
   }
 
-
   public void testBoldMultipleInSingleLine() {
     doTest("bold *constrained* & **un**constrained",
       "AsciiDoc:TEXT ('bold ')\n" +
@@ -227,6 +226,30 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:BOLD_END ('*')");
   }
 
+  public void testUnconstrainedNonBold() {
+    doTest("x*nonbold*x",
+      "AsciiDoc:TEXT ('x*nonbold*x')");
+  }
+
+  public void testUnconstrainedNonItalic() {
+    doTest("x_nonitalic_x",
+      "AsciiDoc:TEXT ('x_nonitalic_x')");
+  }
+
+  public void testUnconstrainedNonMono() {
+    doTest("x`nonmono`x",
+      "AsciiDoc:TEXT ('x`nonmono`x')");
+  }
+
+  public void testSpecialUnderscore() {
+    doTest("x__*italiconly*__x",
+      "AsciiDoc:TEXT ('x')\n" +
+        "AsciiDoc:ITALIC_START ('__')\n" +
+        "AsciiDoc:ITALIC ('*italiconly*')\n" +
+        "AsciiDoc:ITALIC_END ('__')\n" +
+        "AsciiDoc:TEXT ('x')");
+  }
+
   public void testBoldItalic() {
     doTest("*_bolditalic_*",
       "AsciiDoc:BOLD_START ('*')\n" +
@@ -234,6 +257,27 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:BOLDITALIC ('bolditalic')\n" +
         "AsciiDoc:ITALIC_END ('_')\n" +
         "AsciiDoc:BOLD_END ('*')");
+  }
+
+  public void testConstrainedMustNotEndWithBlankBold() {
+    doTest("*test * test*",
+      "AsciiDoc:BOLD_START ('*')\n" +
+        "AsciiDoc:BOLD ('test * test')\n" +
+        "AsciiDoc:BOLD_END ('*')");
+  }
+
+  public void testConstrainedMustNotEndWithBlankItalic() {
+    doTest("_test _ test_",
+      "AsciiDoc:ITALIC_START ('_')\n" +
+        "AsciiDoc:ITALIC ('test _ test')\n" +
+        "AsciiDoc:ITALIC_END ('_')");
+  }
+
+  public void testConstrainedMustNotEndWithBlankMono() {
+    doTest("`test ` test`",
+      "AsciiDoc:MONO_START ('`')\n" +
+        "AsciiDoc:MONO ('test ` test')\n" +
+        "AsciiDoc:MONO_END ('`')");
   }
 
   public void testBullet() {
