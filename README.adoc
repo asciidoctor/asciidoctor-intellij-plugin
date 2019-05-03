@@ -29,6 +29,11 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 
 == Release notes
 
+=== 0.25.10 (preview, available from Github releases)
+
+- improved syntax highlighting for block IDs and references, suppressing message "possible invalid reference" (#249)
+- show error message why preview wasn't rendered in preview (#251)
+
 === 0.25.9
 
 - adding quote handler (#242)
