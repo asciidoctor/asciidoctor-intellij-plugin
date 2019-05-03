@@ -83,6 +83,11 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
     WolfTheProblemSolver theProblemSolver = WolfTheProblemSolver.getInstance(file.getProject());
     Collection<Problem> problems = new ArrayList<>();
     for (LogRecord logRecord : annotationResult.getLogRecords()) {
+      if (logRecord.getMessage().startsWith("possible invalid reference:")) {
+        /* TODO: these messages are not helpful in IntelliJ as they have no line number
+           and for splitted documents they provide too many false positives */
+        continue;
+      }
       HighlightSeverity severity = toSeverity(logRecord.getSeverity());
       // the line number as shown in the IDE (starting with 1)
       Integer lineNumber = null;
