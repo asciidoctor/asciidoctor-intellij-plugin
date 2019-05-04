@@ -22,11 +22,11 @@ import com.intellij.psi.tree.IElementType;
   private boolean singlemono = false;
   private boolean doublemono = false;
   private boolean constrained = false;
-  private int previousChar(CharSequence buf, int position) {
-    if(position == 0) {
+  private int previousChar() {
+    if(getTokenStart() == 0) {
       return 0;
     }
-    return buf.charAt(position -1);
+    return zzBuffer.charAt(getTokenStart() -1);
   }
   private void resetFormatting() {
     singlebold = false;
@@ -100,6 +100,7 @@ BLOCKIDEND = "]]"
 SINGLE_QUOTE = "'"
 DOUBLE_QUOTE = "\""
 
+%state MULTILINE
 %state INSIDE_LINE
 %state REF
 %state BLOCKID
@@ -131,7 +132,13 @@ DOUBLE_QUOTE = "\""
 
 %%
 
+// IntelliJ might do partial parsing from any YYINITIAL inside a document
+// therefore only return here is no other state (i.e. bold) needs to be preserved
 <YYINITIAL> {
+  [^]                  { yypushback(yylength()); yybegin(MULTILINE); }
+}
+
+<MULTILINE> {
   {HEADING_OLDSTYLE} {
         String[] part = yytext().toString().split("\n");
         // remove all trailing white space
@@ -246,7 +253,7 @@ DOUBLE_QUOTE = "\""
 }
 
 <INSIDE_LINE> {
-  "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+  "\n"                 { yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; }
   // BOLD START
   // start something with ** only if it closes within the same block
   {DOUBLEBOLD} / [^\*] {STRING}* {DOUBLEBOLD} { if(!singlebold) {
@@ -264,20 +271,20 @@ DOUBLE_QUOTE = "\""
                        }
   {BOLD} / [^\*\n \t] {WORD}* {BOLD} { if(constrained && !singlebold && !doublebold) {
                             singlebold = true; return AsciiDocTokenTypes.BOLD_START;
-                         } else if (singlebold && previousChar(zzBufferL, getTokenStart()) != ' ') {
+                         } else if (singlebold && previousChar() != ' ') {
                             singlebold = false; return AsciiDocTokenTypes.BOLD_END;
                          } else {
                             return textFormat();
                          }
                        }
-  {BOLDINLINEEND}       { if(singlebold && !doublebold && previousChar(zzBufferL, getTokenStart()) != ' ') {
+  {BOLDINLINEEND}       { if(singlebold && !doublebold && previousChar() != ' ') {
                             singlebold = false; yypushback(1); return AsciiDocTokenTypes.BOLD_END;
                          } else {
                             yypushback(1);
                             return textFormat();
                          }
                        }
-  {BOLD}               { if(singlebold && !doublebold && previousChar(zzBufferL, getTokenStart()) != ' ') {
+  {BOLD}               { if(singlebold && !doublebold && previousChar() != ' ') {
                            singlebold = false; return AsciiDocTokenTypes.BOLD_END;
                          } else {
                            return textFormat();
@@ -302,20 +309,20 @@ DOUBLE_QUOTE = "\""
                        }
   {ITALIC} / [^\_\n \t] {WORD}* {ITALIC} { if(constrained && !singleitalic && !doubleitalic) {
                             singleitalic = true; return AsciiDocTokenTypes.ITALIC_START;
-                         } else if (singleitalic && previousChar(zzBufferL, getTokenStart()) != ' ') {
+                         } else if (singleitalic && previousChar() != ' ') {
                             singleitalic = false; return AsciiDocTokenTypes.ITALIC_END;
                          } else {
                             return textFormat();
                          }
                        }
-  {ITALICINLINEEND}       { if(singleitalic && !doubleitalic && previousChar(zzBufferL, getTokenStart()) != ' ') {
+  {ITALICINLINEEND}       { if(singleitalic && !doubleitalic && previousChar() != ' ') {
                             singleitalic = false; yypushback(1); return AsciiDocTokenTypes.ITALIC_END;
                          } else {
                             yypushback(1);
                             return textFormat();
                          }
                        }
-  {ITALIC}               { if(singleitalic && !doubleitalic && previousChar(zzBufferL, getTokenStart()) != ' ') {
+  {ITALIC}               { if(singleitalic && !doubleitalic && previousChar() != ' ') {
                            singleitalic = false; return AsciiDocTokenTypes.ITALIC_END;
                          } else {
                            return textFormat();
@@ -340,20 +347,20 @@ DOUBLE_QUOTE = "\""
                        }
   {MONO} / [^\`\n \t] {WORD}* {MONO} { if(constrained && !singlemono && !doublemono) {
                             singlemono = true; return AsciiDocTokenTypes.MONO_START;
-                         } else if (singlemono && previousChar(zzBufferL, getTokenStart()) != ' ') {
+                         } else if (singlemono && previousChar() != ' ') {
                             singlemono = false; return AsciiDocTokenTypes.MONO_END;
                          } else {
                             return textFormat();
                          }
                        }
-  {MONOINLINEEND}       { if(singlemono && !doublemono && previousChar(zzBufferL, getTokenStart()) != ' ') {
+  {MONOINLINEEND}       { if(singlemono && !doublemono && previousChar() != ' ') {
                             singlemono = false; yypushback(1); return AsciiDocTokenTypes.MONO_END;
                          } else {
                             yypushback(1);
                             return textFormat();
                          }
                        }
-  {MONO}               { if(singlemono && !doublemono && previousChar(zzBufferL, getTokenStart()) != ' ') {
+  {MONO}               { if(singlemono && !doublemono && previousChar() != ' ') {
                            singlemono = false; return AsciiDocTokenTypes.MONO_END;
                          } else {
                            return textFormat();
