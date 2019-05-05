@@ -10,7 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - making linking of documents work for standard includes (#204)
 
-=== 0.25.13 (preview, available from Github releases)
+=== 0.25.13
 
 - support partitial parsing in lexer to avoid flipping formatting in IntelliJ (#248)
 
