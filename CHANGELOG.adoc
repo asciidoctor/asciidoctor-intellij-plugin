@@ -6,6 +6,10 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
+=== 0.25.14 (work in progress)
+
+- making linking of documents work for standard includes (#204)
+
 === 0.25.13 (preview, available from Github releases)
 
 - support partitial parsing in lexer to avoid flipping formatting in IntelliJ (#248)

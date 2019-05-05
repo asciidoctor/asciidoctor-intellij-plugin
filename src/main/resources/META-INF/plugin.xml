@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.25.13</version>
+  <version>0.25.14</version>
   <vendor email="alexander.schwartz@gmx.net" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -32,6 +32,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.25.14 making linking of documents work for standard includes (#204)
       <li>0.25.13 suport partitial parsing in lexer to avoid flipping formatting in IntelliJ (#248)
       <li>0.25.12 adding additional rules for constrained formatting (#248)
       <li>0.25.11 moving from jruby-complete to jruby dependency like AsciidoctorJ did for 2.0 (#250)
@@ -219,5 +220,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
     <compiler.buildTargetScopeProvider implementation="org.asciidoc.intellij.builder.AsciidocTargetScopeProvider"/>
     <additionalTextAttributes scheme="Default" file="colorSchemes/AsciidocDefault.xml"/>
     <additionalTextAttributes scheme="Darcula" file="colorSchemes/AsciidocDarcula.xml"/>
+    <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocBlockMacro"
+                           implementationClass="org.asciidoc.intellij.psi.AsciiDocBlockMacro$Manipulator"/>
   </extensions>
 </idea-plugin>
