@@ -230,8 +230,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testNonMatchingBoldHead() {
     doTest("**bold*",
-      "AsciiDoc:BOLD_START ('**')\n" +
-        "AsciiDoc:BOLD ('bold')\n" +
+      "AsciiDoc:BOLD_START ('*')\n" +
+        "AsciiDoc:BOLD ('*bold')\n" +
         "AsciiDoc:BOLD_END ('*')");
   }
 
