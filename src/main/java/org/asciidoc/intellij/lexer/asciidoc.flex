@@ -190,8 +190,9 @@ DOUBLE_QUOTE = "\""
 
   {BULLET} / {STRING} { yybegin(INSIDE_LINE); constrained = true; return AsciiDocTokenTypes.BULLET; }
 
-  // a blank line, it separates blocks
-  "\w"* "\n"           { resetFormatting(); yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+  /* a blank line, it separates blocks. Don't return YYINITIAL here, as writing on a blank line might change the meaning
+  of the previous blocks combined (for example there is now an italic formatting spanning the two combined blocks) */
+  "\w"* "\n"           { resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; }
   // BOLD at beginning of line
   {BOLD} {BOLD} / [^\* \t] {STRING}* {BOLD} {BOLD} { if(!singlebold) {
                            doublebold = !doublebold; constrained = true; yybegin(INSIDE_LINE); return doublebold ? AsciiDocTokenTypes.BOLD_START : AsciiDocTokenTypes.BOLD_END;
