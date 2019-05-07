@@ -32,7 +32,8 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.25.14 making linking of documents work for standard includes (#204)
+      <li>0.25.14 making linking of documents work for standard includes (#204)<br>
+      improved formatting when blank lines are edited, also handling spaces at the end of a line (#248)
       <li>0.25.13 suport partitial parsing in lexer to avoid flipping formatting in IntelliJ (#248)
       <li>0.25.12 adding additional rules for constrained formatting (#248)
       <li>0.25.11 moving from jruby-complete to jruby dependency like AsciidoctorJ did for 2.0 (#250)

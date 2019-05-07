@@ -9,6 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.25.14 (work in progress)
 
 - making linking of documents work for standard includes (#204)
+- improved formatting when blank lines are edited, also handling spaces at the end of a line (#248)
 
 === 0.25.13
 
