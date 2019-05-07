@@ -154,6 +154,22 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:BOLD_END ('*')");
   }
 
+  public void testItalicBlankAtEndOfFirstLine() {
+    doTest("_test \ntest_",
+      "AsciiDoc:ITALIC_START ('_')\n" +
+        "AsciiDoc:ITALIC ('test ')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:ITALIC ('test')\n" +
+        "AsciiDoc:ITALIC_END ('_')");
+  }
+
+  public void testNonItalicAsPreceededByNewline() {
+    doTest("_test\n_",
+      "AsciiDoc:TEXT ('_test')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('_')");
+  }
+
   public void testBoldMultipleInSingleLine() {
     doTest("bold *constrained* & **un**constrained",
       "AsciiDoc:TEXT ('bold ')\n" +

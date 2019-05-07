@@ -76,7 +76,8 @@ BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
 TITLE_START = "."
 BLOCK_ATTRS_START = "["
 STRING = {NON_SPACE}+ \n? // something that doesn't have an empty line
-WORD = [^\n]*[^\ \t\n] \n? // something that doesn't have an empty line and doesn't end with a blank
+// something with a non-blank at the end, might contain a line break, but only if it doesn't separate the block
+WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n] | {SPACE}* [^\n]*[^\ \t\n]
 BOLD = "*"
 BULLET = {SPACE}* "*"+ {SPACE}+
 DOUBLEBOLD = {BOLD} {BOLD}
