@@ -1,8 +1,6 @@
 = Contributors Documentation
 
 ifdef::env-github[]
-:imagesdir:
- https://gist.githubusercontent.com/path/to/gist/revision/dir/with/all/images
 :tip-caption: :bulb:
 :note-caption: :information_source:
 :important-caption: :heavy_exclamation_mark:
