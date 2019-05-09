@@ -6,7 +6,7 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
-=== 0.25.14 (work in progress)
+=== 0.25.14 (preview, available from Github releases)
 
 - making linking of documents work for standard includes (#204)
 - improved formatting when blank lines are edited, also handling spaces at the end of a line (#248)
