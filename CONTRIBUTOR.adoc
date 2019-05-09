@@ -70,7 +70,7 @@ To run the plugin for development you'll need to start
 You most likely want to do this for fast turnaround times when running single tests, and debugging both tests and the plugin itself.
 Please use IntelliJ IDEA as an IDE for developing on this plugin:
 
-. Ensure the following two plugin:
+. Ensure to install the following two plugin in your IDE (your IDE should recommend to install them once you open the project):
 +
 --
 GrammarKit:: Helps with highlighting and code completion in Grammar files (*.flex).

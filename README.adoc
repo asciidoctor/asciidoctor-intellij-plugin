@@ -27,7 +27,7 @@ See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-proj
 * Support for Ruby Asciidoctor extensions.
   See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-for-Asciidoctor-Extensions[Wiki page] for details
 
-Refer to the https://github.com/asciidoctor/asciidoctor-intellij-plugin/blob/master/CHANGELOG.adoc[CHANGELOG] for a complete list of changes in older releases.
+Refer to the link:CHANGELOG.adoc[CHANGELOG] for a complete list of changes in older releases.
 
 == Features
 
@@ -46,7 +46,7 @@ For the conversion of Markdown to AsciiDoc, we use Pegdown and the https://githu
 
 == Building an Contributing
 
-Please have a look at the link:CONTRIBUTOR[contributor's documentation].
+Please have a look at the link:CONTRIBUTOR.adoc[contributor's documentation].
 
 == Copyright and Licensing
 
