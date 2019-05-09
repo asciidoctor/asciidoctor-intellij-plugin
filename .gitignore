@@ -1,5 +1,6 @@
 .idea/*
 !/.idea/runConfigurations
+!/.idea/externalDependencies.xml
 .gradle
 *.iml
 build/

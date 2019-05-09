@@ -44,30 +44,13 @@ This project uses AsciiDoctorJ and JRuby for the rendering of the AsciiDoc conte
 
 For the conversion of Markdown to AsciiDoc, we use Pegdown and the https://github.com/bodiam/markdown-to-asciidoc[Markdown to AsciiDoc] converter.
 
-== Build
+== Building an Contributing
 
-This plugin is built using Gradle.
-If you build or run it the first time it will download the community edition of IntelliJ automatically.
-
-If you have developed the plugin before it changed to Gradle you might want to remove the contents of your `.idea` folder to trigger a re-import of the Gradle project.
-
-To build this plugin, you need to run:
-
-----
-./gradlew -Dfile.encoding=UTF-8 buildPlugin
-----
-
-The ZIP file with plugin to distribute will be located in `build/distributions`.
-
-To run the plugin for development you'll need to start
-
-----
-./gradlew -Dfile.encoding=UTF-8 runIdea
-----
+Please have a look at the link:CONTRIBUTOR[contributor's documentation].
 
 == Copyright and Licensing
 
-Copyright (C) 2013-2017 Julien Viet and Erik Pragt.
+Copyright (C) 2013-2019 Julien Viet, Erik Pragt and Alexander Schwartz.
 Released under the Apache License, Version 2.0 (see link:LICENSE[LICENSE]).
 
 == Credits
