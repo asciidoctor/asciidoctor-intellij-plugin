@@ -1,4 +1,4 @@
-= Contributors Documentation
+= How to Build and Contribute
 
 ifdef::env-github[]
 :tip-caption: :bulb:

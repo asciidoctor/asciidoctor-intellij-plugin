@@ -46,7 +46,7 @@ For the conversion of Markdown to AsciiDoc, we use Pegdown and the https://githu
 
 == Building an Contributing
 
-Please have a look at the link:CONTRIBUTOR.adoc[contributor's documentation].
+Please have a look at the link:CONTRIBUTING.adoc["How to Build and Contribute"] documentation.
 
 == Copyright and Licensing
 
