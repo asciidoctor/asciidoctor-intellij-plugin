@@ -14,9 +14,11 @@ import org.asciidoc.intellij.lexer.AsciiDocLexer;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocBlock;
 import org.asciidoc.intellij.psi.AsciiDocBlockAttributes;
+import org.asciidoc.intellij.psi.AsciiDocBlockId;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocListing;
+import org.asciidoc.intellij.psi.AsciiDocRef;
 import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,6 +80,12 @@ public class AsciiDocParserDefinition implements ParserDefinition {
     }
     if (node.getElementType() == AsciiDocElementTypes.LISTING) {
       return new AsciiDocListing(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.BLOCKID) {
+      return new AsciiDocBlockId(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.REF) {
+      return new AsciiDocRef(node);
     }
     throw new UnsupportedOperationException("Unknown node type " + node.getElementType());
   }

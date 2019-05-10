@@ -36,6 +36,9 @@ public class AsciiDocSearchEverywhereClassifier extends DefaultPsiElementCellRen
     if (value instanceof AsciiDocSection) {
       return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
     }
+    if (value instanceof AsciiDocBlockId) {
+      return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+    }
     return null;
   }
 

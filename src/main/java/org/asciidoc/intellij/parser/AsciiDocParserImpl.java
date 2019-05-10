@@ -69,6 +69,23 @@ public class AsciiDocParserImpl {
         blockAttrsMarker.done(AsciiDocElementTypes.BLOCK_ATTRIBUTES);
         continue;
       }
+      else if (at(BLOCKID)) {
+        markPreBlock();
+        PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
+        next();
+        blockAttrsMarker.done(AsciiDocElementTypes.BLOCKID);
+        continue;
+      }
+      else if (at(REFSTART)) {
+        markPreBlock();
+        PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
+        next();
+        while (at(REF) || at(REFEND)) {
+          next();
+        }
+        blockAttrsMarker.done(AsciiDocElementTypes.REF);
+        continue;
+      }
       dropPreBlock();
       next();
     }

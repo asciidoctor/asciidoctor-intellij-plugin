@@ -16,7 +16,7 @@ import java.util.List;
 
 public class AsciiDocFileUtil {
 
-  public static List<AsciiDocSection> findProperties(Project project, String key) {
+  public static List<AsciiDocSection> findSections(Project project, String key) {
     List<AsciiDocSection> result = null;
     Collection<VirtualFile> virtualFiles =
       FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, AsciiDocFileType.INSTANCE,
@@ -39,7 +39,7 @@ public class AsciiDocFileUtil {
     return result != null ? result : Collections.emptyList();
   }
 
-  public static List<AsciiDocSection> findProperties(Project project) {
+  public static List<AsciiDocSection> findSections(Project project) {
     List<AsciiDocSection> result = new ArrayList<>();
     Collection<VirtualFile> virtualFiles =
       FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, AsciiDocFileType.INSTANCE,

@@ -225,23 +225,27 @@ public class AsciiDoc {
   @NotNull
   public static String prependConfig(Document document, Project project, IntConsumer offset) {
     VirtualFile currentFile = FileDocumentManager.getInstance().getFile(document);
-    VirtualFile folder = currentFile.getParent();
     StringBuilder tempContent = new StringBuilder();
-    while (true) {
-      VirtualFile configFile = folder.findChild(".asciidoctorconfig");
-      if (configFile != null &&
-        !currentFile.equals(configFile)) {
-        Document config = FileDocumentManager.getInstance().getDocument(configFile);
-        // prepend the new config, followed by two newlines to avoid sticking-together content
-        tempContent.insert(0, "\n\n");
-        tempContent.insert(0, config.getText());
-      }
-      if (folder.getPath().equals(project.getBasePath())) {
-        break;
-      }
-      folder = folder.getParent();
-      if (folder == null) {
-        break;
+    VirtualFile folder = currentFile.getParent();
+    if(folder != null) {
+      while (true) {
+        VirtualFile configFile = folder.findChild(".asciidoctorconfig");
+        if (configFile != null &&
+          !currentFile.equals(configFile)) {
+          Document config = FileDocumentManager.getInstance().getDocument(configFile);
+          if(config != null) {
+            // prepend the new config, followed by two newlines to avoid sticking-together content
+            tempContent.insert(0, "\n\n");
+            tempContent.insert(0, config.getText());
+          }
+        }
+        if (folder.getPath().equals(project.getBasePath())) {
+          break;
+        }
+        folder = folder.getParent();
+        if (folder == null) {
+          break;
+        }
       }
     }
     int offsetLineNo = (int) tempContent.chars().filter(i -> i == '\n').count();
