@@ -325,12 +325,12 @@ DOUBLE_QUOTE = "\""
   // ITALIC END
   {LPAREN}             { return AsciiDocTokenTypes.LPAREN; }
   {RPAREN}             { return AsciiDocTokenTypes.RPAREN; }
-  {LBRACKET} / [^\[]   { return AsciiDocTokenTypes.LBRACKET; }
-  {RBRACKET} / [^\]]   { return AsciiDocTokenTypes.RBRACKET; }
+  {LBRACKET}           { return AsciiDocTokenTypes.LBRACKET; }
+  {RBRACKET}           { return AsciiDocTokenTypes.RBRACKET; }
   {REFSTART} / [^>\n]+ {REFEND} { yybegin(REF); return AsciiDocTokenTypes.REFSTART; }
   {BLOCKIDSTART} / [^\]\n]+ {BLOCKIDEND} { yybegin(BLOCKID); return AsciiDocTokenTypes.BLOCKIDSTART; }
-  {LT} / [^<]          { return AsciiDocTokenTypes.LT; }
-  {GT} / [^>]          { return AsciiDocTokenTypes.GT; }
+  {LT}                 { return AsciiDocTokenTypes.LT; }
+  {GT}                 { return AsciiDocTokenTypes.GT; }
   {SINGLE_QUOTE}       { return AsciiDocTokenTypes.SINGLE_QUOTE; }
   {DOUBLE_QUOTE}       { return AsciiDocTokenTypes.DOUBLE_QUOTE; }
   [^]                  { return textFormat(); }
