@@ -99,6 +99,7 @@ HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 HEADING_OLDSTYLE = [^.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
 TITLE_START = "."
+AUTOCOMPLETE = "IntellijIdeaRulezzz " // CompletionUtilCore.DUMMY_IDENTIFIER
 BLOCK_ATTRS_START = "["
 STRING = {NON_SPACE}+ \n? // something that doesn't have an empty line
 // something with a non-blank at the end, might contain a line break, but only if it doesn't separate the block
@@ -126,6 +127,7 @@ DOUBLE_QUOTE = "\""
 %state MULTILINE
 %state INSIDE_LINE
 %state REF
+%state REFAUTO
 %state BLOCKID
 %state HEADING
 %state SINGLELINE
@@ -328,6 +330,9 @@ DOUBLE_QUOTE = "\""
   {LBRACKET}           { return AsciiDocTokenTypes.LBRACKET; }
   {RBRACKET}           { return AsciiDocTokenTypes.RBRACKET; }
   {REFSTART} / [^>\n]+ {REFEND} { yybegin(REF); return AsciiDocTokenTypes.REFSTART; }
+  // when typing a reference, it will not be complete due to the missing matching closing ref
+  // therefore second variante for incomplete REF that will only be active during autocomplete
+  {REFSTART} / [^>\n ]* {AUTOCOMPLETE} { yybegin(REFAUTO); return AsciiDocTokenTypes.REFSTART; }
   {BLOCKIDSTART} / [^\]\n]+ {BLOCKIDEND} { yybegin(BLOCKID); return AsciiDocTokenTypes.BLOCKIDSTART; }
   {LT}                 { return AsciiDocTokenTypes.LT; }
   {GT}                 { return AsciiDocTokenTypes.GT; }
@@ -338,6 +343,11 @@ DOUBLE_QUOTE = "\""
 
 <REF> {
   {REFEND}             { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.REFEND; }
+  [^]                  { return AsciiDocTokenTypes.REF; }
+}
+
+<REFAUTO> {
+  " "                  { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.REF; }
   [^]                  { return AsciiDocTokenTypes.REF; }
 }
 
