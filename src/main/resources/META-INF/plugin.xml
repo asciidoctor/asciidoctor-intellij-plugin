@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.25.14</version>
+  <version>0.26.0</version>
   <vendor email="alexander.schwartz@gmx.net" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -32,7 +32,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.25.15 support for anchors, block ids and references including linking and refactoring (#252)
+      <li>0.26.0 support for anchors, block ids and references including linking and refactoring (#252)
       <li>0.25.14 making linking of documents work for standard includes (#204)<br>
       improved formatting when blank lines are edited, also handling spaces at the end of a line (#248)
       <li>0.25.13 suport partitial parsing in lexer to avoid flipping formatting in IntelliJ (#248)

@@ -6,7 +6,7 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
-=== 0.25.15 (preview, available from Github releases)
+=== 0.26.0 (preview, available from Github releases)
 
 - support for anchors, block ids and references including linking and refactoring (#252)
 
