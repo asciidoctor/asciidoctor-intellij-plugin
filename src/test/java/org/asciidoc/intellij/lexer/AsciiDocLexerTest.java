@@ -352,10 +352,31 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT (' More Text')");
   }
 
+  public void testRefWithRefText() {
+    doTest("Text <<REF,Text>> More Text",
+      "AsciiDoc:TEXT ('Text ')\n" +
+        "AsciiDoc:REFSTART ('<<')\n" +
+        "AsciiDoc:REF ('REF')\n" +
+        "AsciiDoc:SEPARATOR (',')\n" +
+        "AsciiDoc:REFTEXT ('Text')\n" +
+        "AsciiDoc:REFEND ('>>')\n" +
+        "AsciiDoc:TEXT (' More Text')");
+  }
+
   public void testBlockid() {
     doTest("[[BLOCKID]] Text",
       "AsciiDoc:BLOCKIDSTART ('[[')\n" +
         "AsciiDoc:BLOCKID ('BLOCKID')\n" +
+        "AsciiDoc:BLOCKIDEND (']]')\n" +
+        "AsciiDoc:TEXT (' Text')");
+  }
+
+  public void testBlockidWithRefText() {
+    doTest("[[BLOCKID,name]] Text",
+      "AsciiDoc:BLOCKIDSTART ('[[')\n" +
+        "AsciiDoc:BLOCKID ('BLOCKID')\n" +
+        "AsciiDoc:SEPARATOR (',')\n" +
+        "AsciiDoc:BLOCKREFTEXT ('name')\n" +
         "AsciiDoc:BLOCKIDEND (']]')\n" +
         "AsciiDoc:TEXT (' Text')");
   }

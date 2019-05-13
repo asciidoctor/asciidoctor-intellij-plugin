@@ -127,8 +127,10 @@ DOUBLE_QUOTE = "\""
 %state MULTILINE
 %state INSIDE_LINE
 %state REF
+%state REFTEXT
 %state REFAUTO
 %state BLOCKID
+%state BLOCKREFTEXT
 %state HEADING
 %state SINGLELINE
 
@@ -341,19 +343,35 @@ DOUBLE_QUOTE = "\""
   [^]                  { return textFormat(); }
 }
 
-<REF> {
+<REF, REFTEXT> {
   {REFEND}             { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.REFEND; }
+}
+
+<REF> {
+  ","                  { yybegin(REFTEXT); return AsciiDocTokenTypes.SEPARATOR; }
   [^]                  { return AsciiDocTokenTypes.REF; }
+}
+
+<REFTEXT> {
+  [^]                  { return AsciiDocTokenTypes.REFTEXT; }
 }
 
 <REFAUTO> {
-  " "                  { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.REF; }
+  [ ,]                 { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.REF; }
   [^]                  { return AsciiDocTokenTypes.REF; }
 }
 
-<BLOCKID> {
+<BLOCKID, BLOCKREFTEXT> {
   {BLOCKIDEND}         { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BLOCKIDEND; }
+}
+
+<BLOCKID> {
+  ","                  { yybegin(BLOCKREFTEXT); return AsciiDocTokenTypes.SEPARATOR; }
   [^]                  { return AsciiDocTokenTypes.BLOCKID; }
+}
+
+<BLOCKREFTEXT> {
+  [^]                  { return AsciiDocTokenTypes.BLOCKREFTEXT; }
 }
 
 <HEADING> {

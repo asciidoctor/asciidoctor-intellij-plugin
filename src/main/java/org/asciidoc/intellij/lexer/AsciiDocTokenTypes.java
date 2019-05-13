@@ -55,14 +55,17 @@ public interface AsciiDocTokenTypes {
   IElementType SINGLE_QUOTE = new AsciiDocElementType("SINGLE_QUOTE");
   IElementType REFSTART = new AsciiDocElementType("REFSTART");
   IElementType REF = new AsciiDocElementType("REF");
+  IElementType REFTEXT = new AsciiDocElementType("REFTEXT");
   IElementType REFEND = new AsciiDocElementType("REFEND");
   IElementType BLOCKIDSTART = new AsciiDocElementType("BLOCKIDSTART");
   IElementType BLOCKID = new AsciiDocElementType("BLOCKID");
+  IElementType BLOCKREFTEXT = new AsciiDocElementType("BLOCKREFTEXT");
   IElementType BLOCKIDEND = new AsciiDocElementType("BLOCKIDEND");
+  IElementType SEPARATOR = new AsciiDocElementType("SEPARATOR");
 
   TokenSet TOKENS_TO_MERGE = TokenSet.create(TEXT, LISTING_TEXT, HEADING, TITLE, BLOCK_COMMENT,
       BLOCK_ATTR_NAME, BLOCK_MACRO_BODY, BLOCK_MACRO_ATTRIBUTES, EXAMPLE_BLOCK, PASSTRHOUGH_BLOCK,
       QUOTE_BLOCK, SIDEBAR_BLOCK, BOLD_START, BOLD_END, BOLD, ITALIC, ITALIC_END, ITALIC_START, BOLDITALIC,
-      MONO_START, MONO_END, MONO, MONOBOLD, MONOBOLDITALIC, REF, BLOCKID);
+      MONO_START, MONO_END, MONO, MONOBOLD, MONOBOLDITALIC, REF, BLOCKID, BLOCKREFTEXT, REFTEXT);
 }
 

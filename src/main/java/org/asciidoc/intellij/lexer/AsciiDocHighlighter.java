@@ -95,6 +95,7 @@ public class AsciiDocHighlighter extends SyntaxHighlighterBase {
           .put(AsciiDocTokenTypes.BLOCKIDSTART, ASCIIDOC_MARKER)
           .put(AsciiDocTokenTypes.BLOCKIDEND, ASCIIDOC_MARKER)
           .put(AsciiDocTokenTypes.BLOCKID, ASCIIDOC_MARKER)
+          .put(AsciiDocTokenTypes.SEPARATOR, ASCIIDOC_MARKER)
           .build();
 
   @NotNull
