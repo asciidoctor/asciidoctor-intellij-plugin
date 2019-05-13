@@ -29,7 +29,8 @@ allprojects {
 }
 
 intellij {
-    version 'IC-2017.2'
+    // we support IC-2017.2, but PsiViewer is not available for the older version, therefore se IC-2018.1 to run it
+    version 'IC-2018.1'
     pluginName 'asciidoctor'
     updateSinceUntilBuild false
 
