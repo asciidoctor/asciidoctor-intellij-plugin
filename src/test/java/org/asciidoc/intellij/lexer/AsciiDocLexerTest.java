@@ -381,6 +381,34 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT (' Text')");
   }
 
+  public void testAnchorid() {
+    doTest("[#BLOCKID]Text",
+      "AsciiDoc:BLOCKIDSTART ('[#')\n" +
+        "AsciiDoc:BLOCKID ('BLOCKID')\n" +
+        "AsciiDoc:BLOCKIDEND (']')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testAnchorWithRefText() {
+    doTest("[#BLOCKID,name]Text",
+      "AsciiDoc:BLOCKIDSTART ('[#')\n" +
+        "AsciiDoc:BLOCKID ('BLOCKID')\n" +
+        "AsciiDoc:SEPARATOR (',')\n" +
+        "AsciiDoc:BLOCKREFTEXT ('name')\n" +
+        "AsciiDoc:BLOCKIDEND (']')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testAnchorWithClass() {
+    doTest("[#BLOCKID.class]Text",
+      "AsciiDoc:BLOCKIDSTART ('[#')\n" +
+        "AsciiDoc:BLOCKID ('BLOCKID')\n" +
+        "AsciiDoc:SEPARATOR ('.')\n" +
+        "AsciiDoc:BLOCKREFTEXT ('class')\n" +
+        "AsciiDoc:BLOCKIDEND (']')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
   public void testEscapedBold() {
     doTest("Text \\*nonbold* Text",
       "AsciiDoc:TEXT ('Text \\*nonbold* Text')");

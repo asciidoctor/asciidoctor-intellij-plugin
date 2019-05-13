@@ -123,6 +123,8 @@ BLOCKIDSTART = "[["
 BLOCKIDEND = "]]"
 SINGLE_QUOTE = "'"
 DOUBLE_QUOTE = "\""
+ANCHORSTART = "[#"
+ANCHOREND = "]"
 
 %state MULTILINE
 %state INSIDE_LINE
@@ -133,6 +135,8 @@ DOUBLE_QUOTE = "\""
 %state BLOCKREFTEXT
 %state HEADING
 %state SINGLELINE
+%state ANCHORID
+%state ANCHORREFTEXT
 
 %state LISTING_BLOCK
 %state INSIDE_LISTING_BLOCK_LINE
@@ -208,6 +212,7 @@ DOUBLE_QUOTE = "\""
   {SIDEBAR_BLOCK_DELIMITER} { resetFormatting(); yybegin(SIDEBAR_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER; }
   {QUOTE_BLOCK_DELIMITER} { resetFormatting(); yybegin(QUOTE_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER; }
 
+  {ANCHORSTART} / [^\]\n]+ {ANCHOREND} { resetFormatting(); yybegin(ANCHORID); return AsciiDocTokenTypes.BLOCKIDSTART; }
   {LINE_COMMENT}       { return AsciiDocTokenTypes.LINE_COMMENT; }
   {HEADING_START} / {NON_SPACE} { resetFormatting(); yybegin(HEADING); return AsciiDocTokenTypes.HEADING; }
   {HEADING_START_MARKDOWN} / {NON_SPACE} { resetFormatting(); yybegin(HEADING); return AsciiDocTokenTypes.HEADING; }
@@ -371,6 +376,19 @@ DOUBLE_QUOTE = "\""
 }
 
 <BLOCKREFTEXT> {
+  [^]                  { return AsciiDocTokenTypes.BLOCKREFTEXT; }
+}
+
+<ANCHORID, ANCHORREFTEXT> {
+  {ANCHOREND}         { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BLOCKIDEND; }
+}
+
+<ANCHORID> {
+  [,.]                 { yybegin(ANCHORREFTEXT); return AsciiDocTokenTypes.SEPARATOR; }
+  [^]                  { return AsciiDocTokenTypes.BLOCKID; }
+}
+
+<ANCHORREFTEXT> {
   [^]                  { return AsciiDocTokenTypes.BLOCKREFTEXT; }
 }
 
