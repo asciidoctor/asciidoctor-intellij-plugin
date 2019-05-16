@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.EnumComboBoxModel;
+import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.components.JBRadioButton;
 import com.intellij.util.containers.ContainerUtil;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
@@ -28,6 +30,9 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private CollectionComboBoxModel<AsciiDocHtmlPanelProvider.ProviderInfo> myPreviewPanelModel;
   private AttributeTable attributeTable;
   private JPanel attributesPanel;
+  private JBRadioButton myVerticalLayout;
+  private JBRadioButton myHorizontalLayout;
+  private JBLabel myVerticalSplitLabel;
 
   public JComponent getComponent() {
     return myMainPanel;
@@ -90,6 +95,9 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       .collect(Collectors.toList());
 
     attributeTable.setValues(attributes);
+
+    myVerticalLayout.setSelected(settings.isVerticalSplit());
+    myHorizontalLayout.setSelected(!settings.isVerticalSplit());
   }
 
   @NotNull
@@ -104,6 +112,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       .collect(Collectors.toMap(AttributeTableItem::getKey, AttributeTableItem::getValue, (a, b) -> b));
 
     return new AsciiDocPreviewSettings(mySplitLayoutModel.getSelectedItem(),
-      myPreviewPanelModel.getSelected(), myPreviewThemeModel.getSelectedItem(), attributes);
+      myPreviewPanelModel.getSelected(), myPreviewThemeModel.getSelectedItem(), attributes,
+      myVerticalLayout.isSelected());
   }
 }

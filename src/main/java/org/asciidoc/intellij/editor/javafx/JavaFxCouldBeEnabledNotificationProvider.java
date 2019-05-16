@@ -56,8 +56,8 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
             oldPreviewSettings.getSplitEditorLayout(),
             new JavaFxHtmlPanelProvider().getProviderInfo(),
             oldPreviewSettings.getPreviewTheme(),
-            oldPreviewSettings.getAttributes()
-          ));
+            oldPreviewSettings.getAttributes(),
+            oldPreviewSettings.isVerticalSplit()));
           EditorNotifications.updateAll();
         } else {
           Logger.getInstance(JavaFxCouldBeEnabledNotificationProvider.class).warn("Could not install and apply OpenJFX");

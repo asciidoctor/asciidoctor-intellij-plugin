@@ -42,17 +42,21 @@ public final class AsciiDocPreviewSettings {
   @NotNull
   private Map<String, String> attributes = new HashMap<>();
 
+  @Attribute("VerticalSplit")
+  private boolean myIsVerticalSplit = true;
+
   public AsciiDocPreviewSettings() {
   }
 
   public AsciiDocPreviewSettings(@NotNull SplitFileEditor.SplitEditorLayout splitEditorLayout,
                                  @NotNull AsciiDocHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo,
                                  @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme,
-                                 @NotNull Map<String, String> attributes) {
+                                 @NotNull Map<String, String> attributes, boolean verticalSplit) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
     this.attributes = attributes;
+    myIsVerticalSplit = verticalSplit;
   }
 
   @NotNull
@@ -81,6 +85,10 @@ public final class AsciiDocPreviewSettings {
     return attributes;
   }
 
+  public boolean isVerticalSplit() {
+    return myIsVerticalSplit;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -91,6 +99,7 @@ public final class AsciiDocPreviewSettings {
     if (mySplitEditorLayout != that.mySplitEditorLayout) return false;
     if (!myHtmlPanelProviderInfo.equals(that.myHtmlPanelProviderInfo)) return false;
     if (myPreviewTheme != that.myPreviewTheme) return false;
+    if (myIsVerticalSplit != that.myIsVerticalSplit) return false;
     return attributes.equals(that.attributes);
   }
 
@@ -100,6 +109,7 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + myHtmlPanelProviderInfo.hashCode();
     result = 31 * result + myPreviewTheme.hashCode();
     result = 31 * result + attributes.hashCode();
+    result = 31 * result + (myIsVerticalSplit ? 1 : 0);
     return result;
   }
 

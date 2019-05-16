@@ -2,6 +2,7 @@ package org.asciidoc.intellij.ui;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
@@ -41,6 +42,9 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
   private AsciiDocToolbarPanel myToolbarWrapper;
 
+  private boolean myVerticalSplitOption;
+  private JBSplitter mySplitter;
+
   public SplitFileEditor(@NotNull E1 mainEditor, @NotNull E2 secondEditor) {
     myMainEditor = mainEditor;
     mySecondEditor = secondEditor;
@@ -53,26 +57,36 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     if (mySecondEditor instanceof TextEditor) {
       mySecondEditor.putUserData(PARENT_SPLIT_KEY, this);
     }
+
+    AsciiDocApplicationSettings.SettingsChangedListener settingsChangedListener =
+      settings -> ApplicationManager.getApplication().invokeLater(() -> {
+        triggerSplitOrientationChange(settings.getAsciiDocPreviewSettings().isVerticalSplit());
+      });
+
+    ApplicationManager.getApplication().getMessageBus().connect(this)
+      .subscribe(AsciiDocApplicationSettings.SettingsChangedListener.TOPIC, settingsChangedListener);
+
   }
 
   @NotNull
   private JComponent createComponent() {
-    final JBSplitter splitter = new JBSplitter(false, 0.5f, 0.15f, 0.85f);
-    splitter.setSplitterProportionKey(MY_PROPORTION_KEY);
-    splitter.setFirstComponent(myMainEditor.getComponent());
-    splitter.setSecondComponent(mySecondEditor.getComponent());
+    myVerticalSplitOption = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isVerticalSplit();
+    mySplitter = new JBSplitter(!myVerticalSplitOption,0.5f, 0.15f, 0.85f);
+    mySplitter.setSplitterProportionKey(MY_PROPORTION_KEY);
+    mySplitter.setFirstComponent(myMainEditor.getComponent());
+    mySplitter.setSecondComponent(mySecondEditor.getComponent());
 
 
     if (myMainEditor instanceof TextEditor) {
-      myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor) myMainEditor).getEditor(), splitter);
+      myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor) myMainEditor).getEditor(), mySplitter);
     }
     if (mySecondEditor instanceof TextEditor) {
-      myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor) mySecondEditor).getEditor(), splitter);
+      myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor) mySecondEditor).getEditor(), mySplitter);
     }
 
     final JPanel result = new JPanel(new BorderLayout());
     result.add(myToolbarWrapper, BorderLayout.NORTH);
-    result.add(splitter, BorderLayout.CENTER);
+    result.add(mySplitter, BorderLayout.CENTER);
     adjustEditorsVisibility();
 
     return result;
@@ -93,6 +107,17 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
     mySplitEditorLayout = newLayout;
     invalidateLayout();
+  }
+
+  private void triggerSplitOrientationChange(boolean isVerticalSplit) {
+    if (myVerticalSplitOption == isVerticalSplit) {
+      return;
+    }
+
+    myVerticalSplitOption = isVerticalSplit;
+
+    mySplitter.setOrientation(!myVerticalSplitOption);
+    myComponent.repaint();
   }
 
   @NotNull
