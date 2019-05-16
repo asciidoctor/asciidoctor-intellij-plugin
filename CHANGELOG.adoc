@@ -6,6 +6,10 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
+=== 0.26.2 (preview, available from Github releases)
+
+- allow horizontal split view via settings (#136)
+
 === 0.26.1 (preview, available from Github releases)
 
 - adding color settings for syntax highlighting (#254)
