@@ -1,4 +1,4 @@
-package org.asciidoc.intellij.lexer;
+package org.asciidoc.intellij.highlighting;
 
 import com.google.common.collect.ImmutableMap;
 import com.intellij.lexer.Lexer;
@@ -6,64 +6,70 @@ import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
+import org.asciidoc.intellij.lexer.AsciiDocLexer;
+import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
  */
-public class AsciiDocHighlighter extends SyntaxHighlighterBase {
-  private static final TextAttributesKey ASCIIDOC_COMMENT = TextAttributesKey.createTextAttributesKey(
+public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
+  public static final TextAttributesKey ASCIIDOC_COMMENT = TextAttributesKey.createTextAttributesKey(
       "ASCIIDOC.LINE_COMMENT",
       DefaultLanguageHighlighterColors.LINE_COMMENT
   );
 
-  private static final TextAttributesKey ASCIIDOC_LISTING_TEXT = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributesKey ASCIIDOC_LISTING_TEXT = TextAttributesKey.createTextAttributesKey(
       "ASCIIDOC.LISTING_TEXT",
       DefaultLanguageHighlighterColors.MARKUP_TAG
   );
 
-  private static final TextAttributesKey ASCIIDOC_HEADING = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributesKey ASCIIDOC_HEADING = TextAttributesKey.createTextAttributesKey(
       "ASCIIDOC.HEADING",
       DefaultLanguageHighlighterColors.KEYWORD
   );
 
-  private static final TextAttributesKey ASCIIDOC_BULLET = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributesKey ASCIIDOC_BULLET = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC.BULLET",
     DefaultLanguageHighlighterColors.KEYWORD
   );
 
-  private static final TextAttributesKey ASCIIDOC_BLOCK_MACRO_ID = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributesKey ASCIIDOC_BLOCK_MACRO_ID = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC.BLOCK_MACRO_ID",
     DefaultLanguageHighlighterColors.KEYWORD
   );
 
-  private static final TextAttributesKey ASCIIDOC_BOLD = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributesKey ASCIIDOC_BOLD = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_BOLD");
 
-  private static final TextAttributesKey ASCIIDOC_ITALIC = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributesKey ASCIIDOC_ITALIC = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_ITALIC");
 
-  private static final TextAttributesKey ASCIIDOC_BOLDITALIC = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributesKey ASCIIDOC_BOLDITALIC = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_BOLDITALIC");
 
-  private static final TextAttributesKey ASCIIDOC_MONO = TextAttributesKey.createTextAttributesKey(
-    "ASCIIDOC_MONO");
+  public static final TextAttributesKey ASCIIDOC_MONO = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC_MONO",
+    DefaultLanguageHighlighterColors.MARKUP_TAG);
 
-  private static final TextAttributesKey ASCIIDOC_MONOBOLD = TextAttributesKey.createTextAttributesKey(
-    "ASCIIDOC_MONOBOLD");
+  public static final TextAttributesKey ASCIIDOC_MONOBOLD = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC_MONOBOLD",
+    DefaultLanguageHighlighterColors.MARKUP_TAG);
 
-  private static final TextAttributesKey ASCIIDOC_MONOITALIC = TextAttributesKey.createTextAttributesKey(
-    "ASCIIDOC_MONOITALIC");
+  public static final TextAttributesKey ASCIIDOC_MONOITALIC = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC_MONOITALIC",
+    DefaultLanguageHighlighterColors.MARKUP_TAG);
 
-  private static final TextAttributesKey ASCIIDOC_MONOBOLDITALIC = TextAttributesKey.createTextAttributesKey(
-    "ASCIIDOC_MONOBOLDITALIC");
+  public static final TextAttributesKey ASCIIDOC_MONOBOLDITALIC = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC_MONOBOLDITALIC",
+    DefaultLanguageHighlighterColors.MARKUP_TAG);
 
-  private static final TextAttributesKey ASCIIDOC_MARKER = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributesKey ASCIIDOC_MARKER = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_MARKER",
     DefaultLanguageHighlighterColors.KEYWORD
   );
 
-  private static final ImmutableMap<IElementType, TextAttributesKey> attributes =
+  public static final ImmutableMap<IElementType, TextAttributesKey> attributes =
       ImmutableMap.<IElementType, TextAttributesKey>builder()
           .put(AsciiDocTokenTypes.LINE_COMMENT, ASCIIDOC_COMMENT)
           .put(AsciiDocTokenTypes.BLOCK_COMMENT, ASCIIDOC_COMMENT)

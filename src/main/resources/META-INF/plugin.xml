@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.26.0</version>
+  <version>0.26.1</version>
   <vendor email="alexander.schwartz@gmx.net" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -32,6 +32,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.26.1 adding color settings for syntax highlighting (#254)
       <li>0.26.0 support for anchors, block ids and references including linking and refactoring (#252)
       <li>0.25.14 making linking of documents work for standard includes (#204)<br>
       improved formatting when blank lines are edited, also handling spaces at the end of a line (#248)
@@ -220,6 +221,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
     <problemFileHighlightFilter implementation="org.asciidoc.intellij.problemHighlighter.AsciidocProblemFileHighlightFilter" />
     <compiler.buildTargetScopeProvider implementation="org.asciidoc.intellij.builder.AsciidocTargetScopeProvider"/>
+    <colorSettingsPage implementation="org.asciidoc.intellij.highlighting.AsciiDocColorSettingsPage"/>
     <additionalTextAttributes scheme="Default" file="colorSchemes/AsciidocDefault.xml"/>
     <additionalTextAttributes scheme="Darcula" file="colorSchemes/AsciidocDarcula.xml"/>
     <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocBlockMacro"

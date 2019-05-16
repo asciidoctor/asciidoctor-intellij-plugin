@@ -6,6 +6,10 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
+=== 0.26.1 (preview, available from Github releases)
+
+- adding color settings for syntax highlighting (#254)
+
 === 0.26.0 (preview, available from Github releases)
 
 - support for anchors, block ids and references including linking and refactoring (#252)

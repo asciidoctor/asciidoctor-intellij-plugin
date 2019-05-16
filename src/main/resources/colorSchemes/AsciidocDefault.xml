@@ -15,18 +15,18 @@
             <option name="FONT_TYPE" value="3"/>
         </value>
     </option>
-    <option baseAttributes="ASCIIDOC_TEXT" name="ASCIIDOC_MONO">
+    <option baseAttributes="DEFAULT_KEYWORD" name="ASCIIDOC_MONO">
         <value>
             <option name="BACKGROUND" value="efefef"/>
         </value>
     </option>
-    <option baseAttributes="ASCIIDOC_TEXT" name="ASCIIDOC_MONOBOLD">
+    <option baseAttributes="DEFAULT_KEYWORD" name="ASCIIDOC_MONOBOLD">
         <value>
             <option name="BACKGROUND" value="efefef"/>
             <option name="FONT_TYPE" value="1"/>
         </value>
     </option>
-    <option baseAttributes="ASCIIDOC_TEXT" name="ASCIIDOC_MONOITALIC">
+    <option baseAttributes="DEFAULT_KEYWORD" name="ASCIIDOC_MONOITALIC">
         <value>
             <option name="BACKGROUND" value="efefef"/>
             <option name="FONT_TYPE" value="2"/>

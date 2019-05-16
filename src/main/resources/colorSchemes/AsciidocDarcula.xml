@@ -5,19 +5,19 @@
             <option name="BACKGROUND" value="3c3f41"/>
         </value>
     </option>
-    <option baseAttributes="ASCIIDOC_TEXT" name="ASCIIDOC_MONOBOLD">
+    <option baseAttributes="DEFAULT_KEYWORD" name="ASCIIDOC_MONOBOLD">
         <value>
             <option name="BACKGROUND" value="3c3f41"/>
             <option name="FONT_TYPE" value="1"/>
         </value>
     </option>
-    <option baseAttributes="ASCIIDOC_TEXT" name="ASCIIDOC_MONOITALIC">
+    <option baseAttributes="DEFAULT_KEYWORD" name="ASCIIDOC_MONOITALIC">
         <value>
             <option name="BACKGROUND" value="3c3f41"/>
             <option name="FONT_TYPE" value="2"/>
         </value>
     </option>
-    <option baseAttributes="ASCIIDOC_TEXT" name="ASCIIDOC_MONOBOLDITALIC">
+    <option baseAttributes="DEFAULT_KEYWORD" name="ASCIIDOC_MONOBOLDITALIC">
         <value>
             <option name="BACKGROUND" value="3c3f41"/>
             <option name="FONT_TYPE" value="3"/>

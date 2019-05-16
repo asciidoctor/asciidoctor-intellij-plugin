@@ -23,7 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiManager;
-import org.asciidoc.intellij.lexer.AsciiDocHighlighter;
+import org.asciidoc.intellij.highlighting.AsciiDocSyntaxHighlighter;
 import org.jetbrains.annotations.NotNull;
 
 /** @author Julien Viet */
@@ -39,7 +39,7 @@ public class AsciiDocLanguage extends Language {
     SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(this, new SingleLazyInstanceSyntaxHighlighterFactory() {
       @NotNull
       protected SyntaxHighlighter createHighlighter() {
-        return new AsciiDocHighlighter();
+        return new AsciiDocSyntaxHighlighter();
       }
     });
   }
