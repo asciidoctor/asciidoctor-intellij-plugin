@@ -18,17 +18,37 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
 import com.intellij.util.PsiNavigateUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.sun.javafx.application.PlatformImpl;
-import java.awt.BorderLayout;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker.State;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.Scene;
+import javafx.scene.text.FontSmoothingType;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import netscape.javascript.JSObject;
+import org.apache.commons.io.IOUtils;
+import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
+import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
+import org.asciidoc.intellij.psi.AsciiDocBlockId;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
+import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -39,26 +59,6 @@ import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Worker.State;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.Scene;
-import javafx.scene.text.FontSmoothingType;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import netscape.javascript.JSObject;
-import org.apache.commons.io.IOUtils;
-import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
-import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
-import org.asciidoc.intellij.psi.AsciiDocBlockId;
-import org.asciidoc.intellij.psi.AsciiDocUtil;
-import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
@@ -416,22 +416,19 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   public class JavaPanelBridge {
     public void openLink(@NotNull String link) {
       final URI uri;
-      try
-      {
+      try {
         uri = new URI(link);
-      }
-      catch (Exception ignore) {
-        ignore.printStackTrace();
-        return;
+      } catch (URISyntaxException ex) {
+        throw new RuntimeException("unable to parse URL " + link);
       }
 
       String scheme = uri.getScheme();
-      if("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme))
-      {
+      if("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) {
         BrowserUtil.browse(uri);
-      }
-      else {
+      } else if ("file".equalsIgnoreCase(scheme) || scheme == null) {
         openInEditor(uri);
+      } else {
+        log.warn("won't open URI as it might be unsafe: " + uri);
       }
     }
 
@@ -439,40 +436,42 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       String anchor = uri.getFragment();
       String path = uri.getPath();
       final VirtualFile targetFile;
-      if(BrowserUtil.isAbsoluteURL(path)) {
-        targetFile = LocalFileSystem.getInstance().findFileByPath(path);
-        if (targetFile == null) {
-          return;
-        }
+      VirtualFile tmpTargetFile = parentDirectory.findFileByRelativePath(path);
+      if (tmpTargetFile == null) {
+        // extension might be skipped if it is an .adoc file
+        tmpTargetFile = parentDirectory.findFileByRelativePath(path + ".adoc");
       }
-      else {
-        targetFile = parentDirectory.findFileByRelativePath(path);
-        if (targetFile == null) {
-          return;
-        }
+      if (tmpTargetFile == null && path.endsWith(".html")) {
+        // might link to a .html in the rendered output, but might actually be a .adoc file
+        tmpTargetFile = parentDirectory.findFileByRelativePath(path.replaceAll("\\.html$", ".adoc"));
       }
+      if (tmpTargetFile == null) {
+        log.warn("unable to find file for " + uri);
+        return;
+      }
+      targetFile = tmpTargetFile;
 
       Project project = ProjectUtil.guessProjectForContentFile(targetFile);
       if (project == null) {
+        log.warn("unable to find project for " + uri);
         return;
       }
 
-      if(targetFile.isDirectory()) {
+      if (targetFile.isDirectory()) {
         ProjectView projectView = ProjectView.getInstance(project);
         projectView.changeView(ProjectViewPane.ID);
         projectView.select(null, targetFile, true);
-      }
-      else {
+      } else {
         boolean anchorFound = false;
-        if(anchor!=null) {
-          List<AsciiDocBlockId> ids = AsciiDocUtil.findIds(project, anchor);
-          if(!ids.isEmpty()) {
+        if (anchor != null) {
+          List<AsciiDocBlockId> ids = AsciiDocUtil.findIds(project, targetFile, anchor);
+          if (!ids.isEmpty()) {
             anchorFound = true;
             ApplicationManager.getApplication().invokeLater(() -> PsiNavigateUtil.navigate(ids.get(0)));
           }
         }
 
-        if(!anchorFound) {
+        if (!anchorFound) {
           ApplicationManager.getApplication().invokeLater(() -> OpenFileAction.openFile(targetFile, project));
         }
       }
