@@ -3,8 +3,8 @@ if (window.__IntelliJTools === undefined) {
 }
 
 window.__IntelliJTools.processLinks = (function () {
-  var openInExternalBrowser = function (href) {
-    window.JavaPanelBridge.openInExternalBrowser(href);
+  var openLink = function (href) {
+    window.JavaPanelBridge.openLink(href);
   }
 
   window.__IntelliJTools.processClick = function (event) {
@@ -23,7 +23,7 @@ window.__IntelliJTools.processLinks = (function () {
       }
     }
     else {
-      openInExternalBrowser(this.href);
+      openLink(this.href);
     }
 
     return false;
