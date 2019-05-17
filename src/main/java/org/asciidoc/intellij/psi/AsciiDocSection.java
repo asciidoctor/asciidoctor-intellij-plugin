@@ -4,6 +4,8 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElementVisitor;
+import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +25,16 @@ public class AsciiDocSection extends ASTWrapperPsiElement {
     return "<untitled>";
   }
 
+  @Override
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof AsciiDocVisitor) {
+      ((AsciiDocVisitor)visitor).visitSections(this);
+      return;
+    }
+
+    super.accept(visitor);
+  }
+
   private static String trimHeading(String text) {
     if (text.charAt(0) == '=') {
       // new style heading
@@ -32,7 +44,7 @@ public class AsciiDocSection extends ASTWrapperPsiElement {
       text = StringUtil.trimLeading(text, '#').trim();
     } else {
       // old style heading
-      text = text.replaceAll("[-=~\\^+\n \t]*$", "");
+      text = text.replaceAll("[-=~^+\n \t]*$", "");
     }
     return text;
   }

@@ -6,6 +6,10 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
+=== 0.26.3 (preview, available from Github releases)
+
+- allow folding of sections and blocks (#174)
+
 === 0.26.2 (preview, available from Github releases)
 
 - allow horizontal split view via settings (#136)

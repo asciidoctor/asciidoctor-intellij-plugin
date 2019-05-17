@@ -2,7 +2,9 @@ package org.asciidoc.intellij.psi;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,4 +35,15 @@ public class AsciiDocBlock extends ASTWrapperPsiElement {
     }
     return null;
   }
+
+  @Override
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof AsciiDocVisitor) {
+      ((AsciiDocVisitor)visitor).visitBlocks(this);
+      return;
+    }
+
+    super.accept(visitor);
+  }
+
 }
