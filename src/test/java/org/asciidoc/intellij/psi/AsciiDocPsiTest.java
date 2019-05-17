@@ -1,4 +1,4 @@
-package org.asciidoc.intellij.psi;
+  package org.asciidoc.intellij.psi;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -22,14 +22,14 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testExampleBlock() {
     PsiFile psiFile = configureByAsciiDoc("====\nfoo\n====\n");
     PsiElement[] children = psiFile.getChildren();
-    assertEquals(1, children.length);
+    assertEquals(2, children.length);
     assertInstanceOf(children[0], AsciiDocBlock.class);
   }
 
   public void testExampleBlockWithTitle() {
     PsiFile psiFile = configureByAsciiDoc(".Xyzzy\n====\nfoo\n====\n");
     PsiElement[] children = psiFile.getChildren();
-    assertEquals(1, children.length);
+    assertEquals(2, children.length);
     AsciiDocBlock block = (AsciiDocBlock) children[0];
     assertEquals("Xyzzy", block.getTitle());
   }
@@ -46,7 +46,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testBlockAttributes() {
     PsiFile psiFile = configureByAsciiDoc("[NOTE]\n====\nfoo\n====\n");
     PsiElement[] children = psiFile.getChildren();
-    assertEquals(1, children.length);
+    assertEquals(2, children.length);
     AsciiDocBlock block = (AsciiDocBlock) children[0];
     assertEquals("NOTE", block.getStyle());
   }
@@ -63,7 +63,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testSidebarBlockWithTitle() {
     PsiFile psiFile = configureByAsciiDoc(".Xyzzy\n****\nfoo\n****\n");
     PsiElement[] children = psiFile.getChildren();
-    assertEquals(1, children.length);
+    assertEquals(2, children.length);
     AsciiDocBlock block = (AsciiDocBlock) children[0];
     assertEquals("Xyzzy", block.getTitle());
   }
