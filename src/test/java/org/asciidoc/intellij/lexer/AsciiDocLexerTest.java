@@ -23,12 +23,14 @@ public class AsciiDocLexerTest extends LexerTestCase {
   public void testListing() {
     doTest("some text at start\n----\nbbbb\n----\ncccc",
         "AsciiDoc:TEXT ('some text at start')\n" +
-            "AsciiDoc:LINE_BREAK ('\\n')\n" +
-            "AsciiDoc:LISTING_BLOCK_DELIMITER ('----\\n')\n" +
-            "AsciiDoc:LISTING_TEXT ('bbbb')\n" +
-            "AsciiDoc:LINE_BREAK ('\\n')\n" +
-            "AsciiDoc:LISTING_BLOCK_DELIMITER ('----\\n')\n" +
-            "AsciiDoc:TEXT ('cccc')");
+          "AsciiDoc:LINE_BREAK ('\\n')\n" +
+          "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+          "AsciiDoc:LINE_BREAK ('\\n')\n" +
+          "AsciiDoc:LISTING_TEXT ('bbbb')\n" +
+          "AsciiDoc:LINE_BREAK ('\\n')\n" +
+          "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+          "AsciiDoc:LINE_BREAK ('\\n')\n" +
+          "AsciiDoc:TEXT ('cccc')");
   }
 
   public void testHeading() {
@@ -51,10 +53,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testCommentBlock() {
     doTest("////\nfoo bar\n////\nabc",
-        "AsciiDoc:BLOCK_COMMENT ('////\\nfoo bar')\n" +
-            "AsciiDoc:LINE_BREAK ('\\n')\n" +
-            "AsciiDoc:BLOCK_COMMENT ('////\\n')\n" +
-            "AsciiDoc:TEXT ('abc')");
+        "AsciiDoc:BLOCK_COMMENT ('////')\n" +
+          "AsciiDoc:LINE_BREAK ('\\n')\n" +
+          "AsciiDoc:BLOCK_COMMENT ('foo bar')\n" +
+          "AsciiDoc:LINE_BREAK ('\\n')\n" +
+          "AsciiDoc:BLOCK_COMMENT ('////')\n" +
+          "AsciiDoc:LINE_BREAK ('\\n')\n" +
+          "AsciiDoc:TEXT ('abc')");
   }
 
   public void testBlockMacro() {
@@ -70,10 +75,12 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testExample() {
     doTest("====\nFoo Bar Baz\n====\n",
-        "AsciiDoc:EXAMPLE_BLOCK_DELIMITER ('====\\n')\n" +
-            "AsciiDoc:EXAMPLE_BLOCK ('Foo Bar Baz')\n" +
-            "AsciiDoc:LINE_BREAK ('\\n')\n" +
-            "AsciiDoc:EXAMPLE_BLOCK_DELIMITER ('====\\n')");
+        "AsciiDoc:EXAMPLE_BLOCK_DELIMITER ('====')\n" +
+          "AsciiDoc:LINE_BREAK ('\\n')\n" +
+          "AsciiDoc:EXAMPLE_BLOCK ('Foo Bar Baz')\n" +
+          "AsciiDoc:LINE_BREAK ('\\n')\n" +
+          "AsciiDoc:EXAMPLE_BLOCK_DELIMITER ('====')\n" +
+          "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
   public void testTitle() {
@@ -337,10 +344,12 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testSidebar() {
     doTest("****\nFoo Bar Baz\n****\n",
-        "AsciiDoc:SIDEBAR_BLOCK_DELIMITER ('****\\n')\n" +
-            "AsciiDoc:SIDEBAR_BLOCK ('Foo Bar Baz')\n" +
-            "AsciiDoc:LINE_BREAK ('\\n')\n" +
-            "AsciiDoc:SIDEBAR_BLOCK_DELIMITER ('****\\n')");
+        "AsciiDoc:SIDEBAR_BLOCK_DELIMITER ('****')\n" +
+          "AsciiDoc:LINE_BREAK ('\\n')\n" +
+          "AsciiDoc:SIDEBAR_BLOCK ('Foo Bar Baz')\n" +
+          "AsciiDoc:LINE_BREAK ('\\n')\n" +
+          "AsciiDoc:SIDEBAR_BLOCK_DELIMITER ('****')\n" +
+          "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
   public void testRef() {
