@@ -33,7 +33,7 @@ window.__IntelliJTools.pickSourceLine = (function () {
     return offset
   }
 
-  window.__IntelliJTools.srcollEditorToLine = function (event) {
+  window.__IntelliJTools.scrollEditorToLine = function (event) {
     var sourceLine = getLine(this)
 
     var blocks = document.getElementsByClassName('has-source-line');
@@ -60,7 +60,7 @@ window.__IntelliJTools.pickSourceLine = (function () {
 
     var editorLine = startLine + (event.clientY + window.scrollY - startY) * (endLine - startLine) / (endY - startY)
 
-    window.JavaPanelBridge.scollEditorToLine(editorLine - offset)
+    window.JavaPanelBridge.scrollEditorToLine(editorLine - offset)
     event.stopPropagation()
   }
 
@@ -72,7 +72,7 @@ window.__IntelliJTools.pickSourceLine = (function () {
     var blocks = document.getElementsByClassName('has-source-line');
 
     for (var i = 0; i < blocks.length; i++) {
-      blocks[i].onclick = window.__IntelliJTools.srcollEditorToLine;
+      blocks[i].onclick = window.__IntelliJTools.scrollEditorToLine;
     }
 
     lineCount = lc + off;

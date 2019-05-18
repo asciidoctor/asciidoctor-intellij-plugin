@@ -36,6 +36,23 @@ public class AsciiDocUtil {
     return result != null ? result : Collections.emptyList();
   }
 
+  public static List<AsciiDocBlockId> findIds(Project project, VirtualFile virtualFile, String key) {
+    List<AsciiDocBlockId> result = null;
+    AsciiDocFile AsciiDocFile = (AsciiDocFile) PsiManager.getInstance(project).findFile(virtualFile);
+    if (AsciiDocFile != null) {
+      Collection<AsciiDocBlockId> properties = PsiTreeUtil.findChildrenOfType(AsciiDocFile, AsciiDocBlockId.class);
+      for (AsciiDocBlockId blockId : properties) {
+        if (key.equals(blockId.getId())) {
+          if (result == null) {
+            result = new ArrayList<>();
+          }
+          result.add(blockId);
+        }
+      }
+    }
+    return result != null ? result : Collections.emptyList();
+  }
+
   public static List<AsciiDocBlockId> findIds(Project project) {
     List<AsciiDocBlockId> result = new ArrayList<>();
     Collection<VirtualFile> virtualFiles =

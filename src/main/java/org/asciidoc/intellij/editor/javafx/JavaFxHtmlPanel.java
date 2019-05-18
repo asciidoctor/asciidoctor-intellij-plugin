@@ -2,6 +2,9 @@ package org.asciidoc.intellij.editor.javafx;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.IdeEventQueue;
+import com.intellij.ide.actions.OpenFileAction;
+import com.intellij.ide.projectView.ProjectView;
+import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -12,9 +15,12 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
+import com.intellij.util.PsiNavigateUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.sun.javafx.application.PlatformImpl;
@@ -31,6 +37,8 @@ import netscape.javascript.JSObject;
 import org.apache.commons.io.IOUtils;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
+import org.asciidoc.intellij.psi.AsciiDocBlockId;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +48,7 @@ import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -114,6 +123,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
   private final Path imagesPath;
 
+  private final VirtualFile parentDirectory;
+
   public JavaFxHtmlPanel(Document document, Path imagesPath) {
 
     //System.setProperty("prism.lcdtext", "false");
@@ -125,10 +136,10 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     myPanelWrapper.setBackground(JBColor.background());
     lineCount = document.getLineCount();
 
-    VirtualFile parent = FileDocumentManager.getInstance().getFile(document).getParent();
-    if (parent != null) {
+    parentDirectory = FileDocumentManager.getInstance().getFile(document).getParent();
+    if (parentDirectory != null) {
       // parent will be null if we use Language Injection and Fragment Editor
-      base = parent.getUrl().replaceAll("^file://", "")
+      base = parentDirectory.getUrl().replaceAll("^file://", "")
         .replaceAll(":", "%3A");
     } else {
       base = "";
@@ -403,19 +414,70 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
   @SuppressWarnings("unused")
   public class JavaPanelBridge {
-    public void openInExternalBrowser(@NotNull String link) {
-      if (!BrowserUtil.isAbsoluteURL(link)) {
-        try {
-          link = new URI("http", link, null).toURL().toString();
-        } catch (Exception ignore) {
-          ignore.printStackTrace();
-        }
+    public void openLink(@NotNull String link) {
+      final URI uri;
+      try {
+        uri = new URI(link);
+      } catch (URISyntaxException ex) {
+        throw new RuntimeException("unable to parse URL " + link);
       }
 
-      BrowserUtil.browse(link);
+      String scheme = uri.getScheme();
+      if("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) {
+        BrowserUtil.browse(uri);
+      } else if ("file".equalsIgnoreCase(scheme) || scheme == null) {
+        openInEditor(uri);
+      } else {
+        log.warn("won't open URI as it might be unsafe: " + uri);
+      }
     }
 
-    public void scollEditorToLine(int sourceLine) {
+    private void openInEditor(@NotNull URI uri) {
+      String anchor = uri.getFragment();
+      String path = uri.getPath();
+      final VirtualFile targetFile;
+      VirtualFile tmpTargetFile = parentDirectory.findFileByRelativePath(path);
+      if (tmpTargetFile == null) {
+        // extension might be skipped if it is an .adoc file
+        tmpTargetFile = parentDirectory.findFileByRelativePath(path + ".adoc");
+      }
+      if (tmpTargetFile == null && path.endsWith(".html")) {
+        // might link to a .html in the rendered output, but might actually be a .adoc file
+        tmpTargetFile = parentDirectory.findFileByRelativePath(path.replaceAll("\\.html$", ".adoc"));
+      }
+      if (tmpTargetFile == null) {
+        log.warn("unable to find file for " + uri);
+        return;
+      }
+      targetFile = tmpTargetFile;
+
+      Project project = ProjectUtil.guessProjectForContentFile(targetFile);
+      if (project == null) {
+        log.warn("unable to find project for " + uri);
+        return;
+      }
+
+      if (targetFile.isDirectory()) {
+        ProjectView projectView = ProjectView.getInstance(project);
+        projectView.changeView(ProjectViewPane.ID);
+        projectView.select(null, targetFile, true);
+      } else {
+        boolean anchorFound = false;
+        if (anchor != null) {
+          List<AsciiDocBlockId> ids = AsciiDocUtil.findIds(project, targetFile, anchor);
+          if (!ids.isEmpty()) {
+            anchorFound = true;
+            ApplicationManager.getApplication().invokeLater(() -> PsiNavigateUtil.navigate(ids.get(0)));
+          }
+        }
+
+        if (!anchorFound) {
+          ApplicationManager.getApplication().invokeLater(() -> OpenFileAction.openFile(targetFile, project));
+        }
+      }
+    }
+
+    public void scrollEditorToLine(int sourceLine) {
       if(sourceLine <= 0) {
         Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Setting cursor position", "line number " + sourceLine + " requested for cursor position, ignoring",
           NotificationType.INFORMATION, null);
