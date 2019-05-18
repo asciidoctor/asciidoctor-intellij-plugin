@@ -423,6 +423,20 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:TEXT ('Text \\*nonbold* Text')");
   }
 
+  public void testTypographicQuotes() {
+    doTest("\"`typoquote`\"",
+      "AsciiDoc:TYPOGRAPHIC_QUOTE_START ('\"`')\n" +
+        "AsciiDoc:TEXT ('typoquote')\n" +
+        "AsciiDoc:TYPOGRAPHIC_QUOTE_END ('`\"')");
+  }
+
+  public void testNoTypographicQuotes() {
+    doTest("\"` test `\"",
+      "AsciiDoc:TYPOGRAPHIC_QUOTE_START ('\"`')\n" +
+        "AsciiDoc:TEXT ('typoquote')\n" +
+        "AsciiDoc:TYPOGRAPHIC_QUOTE_END ('`\"')");
+  }
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();

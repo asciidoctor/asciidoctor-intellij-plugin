@@ -123,6 +123,8 @@ BLOCKIDSTART = "[["
 BLOCKIDEND = "]]"
 SINGLE_QUOTE = "'"
 DOUBLE_QUOTE = "\""
+TYPOGRAPHIC_QUOTE_START = "\"`"
+TYPOGRAPHIC_QUOTE_END = "`\""
 ANCHORSTART = "[#"
 ANCHOREND = "]"
 
@@ -244,6 +246,22 @@ ANCHOREND = "]"
                          } else {
                            yypushback(1);
                            return textFormat();
+                         }
+                       }
+  {TYPOGRAPHIC_QUOTE_START} / [^\*\n \t] {WORD}* {TYPOGRAPHIC_QUOTE_END} {
+                         if (isUnconstrainedStart()) {
+                           return AsciiDocTokenTypes.TYPOGRAPHIC_QUOTE_START;
+                         } else {
+                           yypushback(1);
+                           return AsciiDocTokenTypes.DOUBLE_QUOTE;
+                         }
+                       }
+  {TYPOGRAPHIC_QUOTE_END} {
+                         if (isUnconstrainedEnd()) {
+                           return AsciiDocTokenTypes.TYPOGRAPHIC_QUOTE_END;
+                         } else {
+                           yypushback(1);
+                           return AsciiDocTokenTypes.SINGLE_QUOTE;
                          }
                        }
   {BOLD} {BOLD}? / [^\*\n \t] {WORD}* {BOLD} { if(isUnconstrainedStart() && !singlebold && !doublebold) {

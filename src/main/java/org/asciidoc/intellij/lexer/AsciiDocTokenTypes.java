@@ -62,6 +62,8 @@ public interface AsciiDocTokenTypes {
   IElementType BLOCKREFTEXT = new AsciiDocElementType("BLOCKREFTEXT");
   IElementType BLOCKIDEND = new AsciiDocElementType("BLOCKIDEND");
   IElementType SEPARATOR = new AsciiDocElementType("SEPARATOR");
+  IElementType TYPOGRAPHIC_QUOTE_START = new AsciiDocElementType("TYPOGRAPHIC_QUOTE_START");
+  IElementType TYPOGRAPHIC_QUOTE_END = new AsciiDocElementType("TYPOGRAPHIC_QUOTE_END");
 
   TokenSet TOKENS_TO_MERGE = TokenSet.create(TEXT, LISTING_TEXT, HEADING, TITLE, BLOCK_COMMENT,
       BLOCK_ATTR_NAME, BLOCK_MACRO_BODY, BLOCK_MACRO_ATTRIBUTES, EXAMPLE_BLOCK, PASSTRHOUGH_BLOCK,
