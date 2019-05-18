@@ -6,6 +6,10 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
+=== 0.26.4 (preview, available from Github releases)
+
+- Support for relative path links in preview (#256)
+
 === 0.26.3 (preview, available from Github releases)
 
 - allow folding of sections and blocks (#174)

@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.26.3</version>
+  <version>0.26.4</version>
   <vendor email="alexander.schwartz@gmx.net" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -32,6 +32,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.26.4 Support for relative path links in preview (#256)
       <li>0.26.3 allow folding of sections and blocks (#174)
       <li>0.26.2 allow horizontal split view via settings (#136)
       <li>0.26.1 adding color settings for syntax highlighting (#254)
