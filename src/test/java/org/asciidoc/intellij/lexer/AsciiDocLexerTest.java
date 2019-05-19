@@ -361,6 +361,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT (' More Text')");
   }
 
+  public void testRefWithFile() {
+    doTest("Text <<FILE#REF>> More Text",
+      "AsciiDoc:TEXT ('Text ')\n" +
+        "AsciiDoc:REFSTART ('<<')\n" +
+        "AsciiDoc:REFFILE ('FILE')\n" +
+        "AsciiDoc:SEPARATOR ('#')\n" +
+        "AsciiDoc:REF ('REF')\n" +
+        "AsciiDoc:REFEND ('>>')\n" +
+        "AsciiDoc:TEXT (' More Text')");
+  }
+
   public void testRefWithRefText() {
     doTest("Text <<REF,Text>> More Text",
       "AsciiDoc:TEXT ('Text ')\n" +

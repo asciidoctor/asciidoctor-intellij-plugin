@@ -80,7 +80,7 @@ public class AsciiDocParserImpl {
         markPreBlock();
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
-        while (at(REF) || at(REFEND)) {
+        while (at(REF) || at(REFEND) || at(REFFILE) || at(SEPARATOR) || at(REFTEXT)) {
           next();
         }
         blockAttrsMarker.done(AsciiDocElementTypes.REF);

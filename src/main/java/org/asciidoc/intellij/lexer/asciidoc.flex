@@ -376,6 +376,8 @@ ANCHOREND = "]"
 
 <REF> {
   ","                  { yybegin(REFTEXT); return AsciiDocTokenTypes.SEPARATOR; }
+  "#"                  { return AsciiDocTokenTypes.SEPARATOR; }
+  [^#\]\n]+ / "#"      { return AsciiDocTokenTypes.REFFILE; }
   [^]                  { return AsciiDocTokenTypes.REF; }
 }
 

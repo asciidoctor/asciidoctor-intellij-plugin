@@ -98,6 +98,7 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
           .put(AsciiDocTokenTypes.REFSTART, ASCIIDOC_MARKER)
           .put(AsciiDocTokenTypes.REFEND, ASCIIDOC_MARKER)
           .put(AsciiDocTokenTypes.REF, ASCIIDOC_MARKER)
+          .put(AsciiDocTokenTypes.REFFILE, ASCIIDOC_MARKER)
           .put(AsciiDocTokenTypes.BLOCKIDSTART, ASCIIDOC_MARKER)
           .put(AsciiDocTokenTypes.BLOCKIDEND, ASCIIDOC_MARKER)
           .put(AsciiDocTokenTypes.BLOCKID, ASCIIDOC_MARKER)

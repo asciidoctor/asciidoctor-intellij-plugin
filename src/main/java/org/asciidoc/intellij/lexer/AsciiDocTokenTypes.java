@@ -55,6 +55,7 @@ public interface AsciiDocTokenTypes {
   IElementType SINGLE_QUOTE = new AsciiDocElementType("SINGLE_QUOTE");
   IElementType REFSTART = new AsciiDocElementType("REFSTART");
   IElementType REF = new AsciiDocElementType("REF");
+  IElementType REFFILE = new AsciiDocElementType("REFFILE");
   IElementType REFTEXT = new AsciiDocElementType("REFTEXT");
   IElementType REFEND = new AsciiDocElementType("REFEND");
   IElementType BLOCKIDSTART = new AsciiDocElementType("BLOCKIDSTART");
