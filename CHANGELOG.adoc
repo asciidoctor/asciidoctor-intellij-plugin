@@ -6,6 +6,12 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
+=== 0.26.5 (preview, available from Github releases)
+
+- decouple read action from event thread to avoid error from IDE (#204)
+- highlighting for lexical quotes
+- parsing referenced file from reference (#204)
+
 === 0.26.4 (preview, available from Github releases)
 
 - Support for relative path links in preview (#256)
