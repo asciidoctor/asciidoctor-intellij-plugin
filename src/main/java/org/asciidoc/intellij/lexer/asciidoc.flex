@@ -21,6 +21,7 @@ import com.intellij.psi.tree.IElementType;
   private boolean doubleitalic = false;
   private boolean singlemono = false;
   private boolean doublemono = false;
+  private boolean typographicquote = false;
 
   private boolean isUnconstrainedEnd() {
     if(getTokenStart() > 0) {
@@ -61,6 +62,7 @@ import com.intellij.psi.tree.IElementType;
     doubleitalic = false;
     singlemono = false;
     doublemono = false;
+    typographicquote = false;
   }
   private IElementType textFormat() {
     if((doublemono || singlemono) && (singlebold || doublebold) && (doubleitalic || singleitalic)) {
@@ -248,22 +250,6 @@ ANCHOREND = "]"
                            return textFormat();
                          }
                        }
-  {TYPOGRAPHIC_QUOTE_START} / [^\*\n \t] {WORD}* {TYPOGRAPHIC_QUOTE_END} {
-                         if (isUnconstrainedStart()) {
-                           return AsciiDocTokenTypes.TYPOGRAPHIC_QUOTE_START;
-                         } else {
-                           yypushback(1);
-                           return AsciiDocTokenTypes.DOUBLE_QUOTE;
-                         }
-                       }
-  {TYPOGRAPHIC_QUOTE_END} {
-                         if (isUnconstrainedEnd()) {
-                           return AsciiDocTokenTypes.TYPOGRAPHIC_QUOTE_END;
-                         } else {
-                           yypushback(1);
-                           return AsciiDocTokenTypes.SINGLE_QUOTE;
-                         }
-                       }
   {BOLD} {BOLD}? / [^\*\n \t] {WORD}* {BOLD} { if(isUnconstrainedStart() && !singlebold && !doublebold) {
                             if (yylength() == 2) {
                               yypushback(1);
@@ -363,6 +349,24 @@ ANCHOREND = "]"
   {GT}                 { return AsciiDocTokenTypes.GT; }
   {SINGLE_QUOTE}       { return AsciiDocTokenTypes.SINGLE_QUOTE; }
   {DOUBLE_QUOTE}       { return AsciiDocTokenTypes.DOUBLE_QUOTE; }
+  {TYPOGRAPHIC_QUOTE_START} / [^\*\n \t] {WORD}* {TYPOGRAPHIC_QUOTE_END} {
+                         if (isUnconstrainedStart()) {
+                           typographicquote = true;
+                           return AsciiDocTokenTypes.TYPOGRAPHIC_QUOTE_START;
+                         } else {
+                           yypushback(1);
+                           return AsciiDocTokenTypes.DOUBLE_QUOTE;
+                         }
+                       }
+  {TYPOGRAPHIC_QUOTE_END} {
+                         if (typographicquote && isUnconstrainedEnd()) {
+                           typographicquote = false;
+                           return AsciiDocTokenTypes.TYPOGRAPHIC_QUOTE_END;
+                         } else {
+                           yypushback(1);
+                           return textFormat();
+                         }
+                       }
   [^]                  { return textFormat(); }
 }
 

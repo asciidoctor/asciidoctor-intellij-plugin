@@ -432,9 +432,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testNoTypographicQuotes() {
     doTest("\"` test `\"",
-      "AsciiDoc:TYPOGRAPHIC_QUOTE_START ('\"`')\n" +
-        "AsciiDoc:TEXT ('typoquote')\n" +
-        "AsciiDoc:TYPOGRAPHIC_QUOTE_END ('`\"')");
+      "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +
+        "AsciiDoc:TEXT ('` test `')\n" +
+        "AsciiDoc:DOUBLE_QUOTE ('\"')");
+  }
+
+  public void testNoTypographicQuotesNonMatching() {
+    doTest("\"`test",
+      "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +
+        "AsciiDoc:TEXT ('`test')");
   }
 
   @Override
