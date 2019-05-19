@@ -33,10 +33,16 @@ public class AsciiDocParserImpl {
     myBuilder.setDebugMode(true);
     while (!myBuilder.eof()) {
       if (at(HEADING) || at(HEADING_OLDSTYLE)) {
-        dropPreBlock();
         int level = headingLevel(myBuilder.getTokenText());
         closeSections(level);
-        SectionMarker newMarker = new SectionMarker(level, myBuilder.mark());
+        PsiBuilder.Marker marker;
+        if(myPreBlockMarker != null) {
+          marker = myPreBlockMarker;
+          myPreBlockMarker = null;
+        } else {
+          marker = myBuilder.mark();
+        }
+        SectionMarker newMarker = new SectionMarker(level, marker);
         mySectionStack.push(newMarker);
       }
       else if (at(BLOCK_MACRO_ID)) {
@@ -69,15 +75,21 @@ public class AsciiDocParserImpl {
         blockAttrsMarker.done(AsciiDocElementTypes.BLOCK_ATTRIBUTES);
         continue;
       }
-      else if (at(BLOCKID)) {
+      else if (at(BLOCKIDSTART)) {
         markPreBlock();
-        PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
-        blockAttrsMarker.done(AsciiDocElementTypes.BLOCKID);
+        while (at(BLOCKID) || at(BLOCKIDEND)) {
+          if(at(BLOCKID)) {
+            PsiBuilder.Marker blockIdMarker = myBuilder.mark();
+            next();
+            blockIdMarker.done(AsciiDocElementTypes.BLOCKID);
+          } else {
+            next();
+          }
+        }
         continue;
       }
       else if (at(REFSTART)) {
-        markPreBlock();
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
         while (at(REF) || at(REFEND) || at(REFFILE) || at(SEPARATOR) || at(REFTEXT)) {
@@ -140,7 +152,12 @@ public class AsciiDocParserImpl {
 
   private void closeSections(int level) {
     while (!mySectionStack.isEmpty() && mySectionStack.peek().level >= level) {
-      mySectionStack.pop().marker.done(AsciiDocElementTypes.SECTION);
+      PsiBuilder.Marker marker = mySectionStack.pop().marker;
+      if(myPreBlockMarker != null) {
+        marker.doneBefore(AsciiDocElementTypes.SECTION, marker); }
+      else {
+        marker.done(AsciiDocElementTypes.SECTION);
+      }
     }
   }
 
