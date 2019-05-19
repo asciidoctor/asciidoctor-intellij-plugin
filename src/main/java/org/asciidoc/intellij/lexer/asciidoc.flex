@@ -229,12 +229,12 @@ ANCHOREND = "]"
   /* a blank line, it separates blocks. Don't return YYINITIAL here, as writing on a blank line might change the meaning
   of the previous blocks combined (for example there is now an italic formatting spanning the two combined blocks) */
   "\w"* "\n"           { resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; }
-
   [^]                  { yypushback(yylength()); yybegin(INSIDE_LINE); }
 }
 
 <INSIDE_LINE> {
   "\n"                 { yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; }
+  [ \t]                { return AsciiDocTokenTypes.WHITE_SPACE; }
   // BOLD START
   // start something with ** only if it closes within the same block
   {DOUBLEBOLD} / [^\*] {STRING}* {DOUBLEBOLD} { if(!singlebold) {

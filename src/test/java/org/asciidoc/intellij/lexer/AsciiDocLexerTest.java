@@ -22,7 +22,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testListing() {
     doTest("some text at start\n----\nbbbb\n----\ncccc",
-        "AsciiDoc:TEXT ('some text at start')\n" +
+        "AsciiDoc:TEXT ('some')\n" +
+          "AsciiDoc:WHITE_SPACE (' ')\n" +
+          "AsciiDoc:TEXT ('text')\n" +
+          "AsciiDoc:WHITE_SPACE (' ')\n" +
+          "AsciiDoc:TEXT ('at')\n" +
+          "AsciiDoc:WHITE_SPACE (' ')\n" +
+          "AsciiDoc:TEXT ('start')\n" +
           "AsciiDoc:LINE_BREAK ('\\n')\n" +
           "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
           "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -86,8 +92,12 @@ public class AsciiDocLexerTest extends LexerTestCase {
   public void testTitle() {
     doTest(".Foo bar baz\nFoo bar baz",
         "AsciiDoc:TITLE ('.Foo bar baz')\n" +
-            "AsciiDoc:LINE_BREAK ('\\n')\n" +
-            "AsciiDoc:TEXT ('Foo bar baz')");
+          "AsciiDoc:LINE_BREAK ('\\n')\n" +
+          "AsciiDoc:TEXT ('Foo')\n" +
+          "AsciiDoc:WHITE_SPACE (' ')\n" +
+          "AsciiDoc:TEXT ('bar')\n" +
+          "AsciiDoc:WHITE_SPACE (' ')\n" +
+          "AsciiDoc:TEXT ('baz')");
   }
 
   public void testBlockAttrs() {
@@ -129,25 +139,31 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testBoldSimple() {
     doTest("Hello *bold* world",
-      "AsciiDoc:TEXT ('Hello ')\n" +
+      "AsciiDoc:TEXT ('Hello')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:BOLD_START ('*')\n" +
         "AsciiDoc:BOLD ('bold')\n" +
         "AsciiDoc:BOLD_END ('*')\n" +
-        "AsciiDoc:TEXT (' world')");
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('world')");
   }
 
   public void testBoldDouble() {
     doTest("Hello **bold** world",
-      "AsciiDoc:TEXT ('Hello ')\n" +
+      "AsciiDoc:TEXT ('Hello')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:BOLD_START ('**')\n" +
         "AsciiDoc:BOLD ('bold')\n" +
         "AsciiDoc:BOLD_END ('**')\n" +
-        "AsciiDoc:TEXT (' world')");
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('world')");
   }
 
   public void testNonBoldWithBlockBreak() {
     doTest("Hello **bold\n\n** world",
-      "AsciiDoc:TEXT ('Hello **bold')\n" +
+      "AsciiDoc:TEXT ('Hello')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('**bold')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:BULLET ('** ')\n" +
@@ -164,7 +180,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
   public void testItalicBlankAtEndOfFirstLine() {
     doTest("_test \ntest_",
       "AsciiDoc:ITALIC_START ('_')\n" +
-        "AsciiDoc:ITALIC ('test ')\n" +
+        "AsciiDoc:ITALIC ('test')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:ITALIC ('test')\n" +
         "AsciiDoc:ITALIC_END ('_')");
@@ -179,11 +196,14 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testBoldMultipleInSingleLine() {
     doTest("bold *constrained* & **un**constrained",
-      "AsciiDoc:TEXT ('bold ')\n" +
+      "AsciiDoc:TEXT ('bold')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:BOLD_START ('*')\n" +
         "AsciiDoc:BOLD ('constrained')\n" +
         "AsciiDoc:BOLD_END ('*')\n" +
-        "AsciiDoc:TEXT (' & ')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('&')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:BOLD_START ('**')\n" +
         "AsciiDoc:BOLD ('un')\n" +
         "AsciiDoc:BOLD_END ('**')\n" +
@@ -192,11 +212,14 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testItalicMultipleInSingleLine() {
     doTest("italic _constrained_ & __un__constrained",
-      "AsciiDoc:TEXT ('italic ')\n" +
+      "AsciiDoc:TEXT ('italic')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:ITALIC_START ('_')\n" +
         "AsciiDoc:ITALIC ('constrained')\n" +
         "AsciiDoc:ITALIC_END ('_')\n" +
-        "AsciiDoc:TEXT (' & ')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('&')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:ITALIC_START ('__')\n" +
         "AsciiDoc:ITALIC ('un')\n" +
         "AsciiDoc:ITALIC_END ('__')\n" +
@@ -205,11 +228,14 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testMonoMultipleInSingleLine() {
     doTest("mono `constrained` & ``un``constrained",
-      "AsciiDoc:TEXT ('mono ')\n" +
+      "AsciiDoc:TEXT ('mono')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:MONO_START ('`')\n" +
         "AsciiDoc:MONO ('constrained')\n" +
         "AsciiDoc:MONO_END ('`')\n" +
-        "AsciiDoc:TEXT (' & ')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('&')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:MONO_START ('``')\n" +
         "AsciiDoc:MONO ('un')\n" +
         "AsciiDoc:MONO_END ('``')\n" +
@@ -285,21 +311,33 @@ public class AsciiDocLexerTest extends LexerTestCase {
   public void testConstrainedMustNotEndWithBlankBold() {
     doTest("*test * test*",
       "AsciiDoc:BOLD_START ('*')\n" +
-        "AsciiDoc:BOLD ('test * test')\n" +
+        "AsciiDoc:BOLD ('test')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:BOLD ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:BOLD ('test')\n" +
         "AsciiDoc:BOLD_END ('*')");
   }
 
   public void testConstrainedMustNotEndWithBlankItalic() {
     doTest("_test _ test_",
       "AsciiDoc:ITALIC_START ('_')\n" +
-        "AsciiDoc:ITALIC ('test _ test')\n" +
+        "AsciiDoc:ITALIC ('test')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:ITALIC ('_')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:ITALIC ('test')\n" +
         "AsciiDoc:ITALIC_END ('_')");
   }
 
   public void testConstrainedMustNotEndWithBlankMono() {
     doTest("`test ` test`",
       "AsciiDoc:MONO_START ('`')\n" +
-        "AsciiDoc:MONO ('test ` test')\n" +
+        "AsciiDoc:MONO ('test')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:MONO ('`')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:MONO ('test')\n" +
         "AsciiDoc:MONO_END ('`')");
   }
 
@@ -354,33 +392,45 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testRef() {
     doTest("Text <<REF>> More Text",
-      "AsciiDoc:TEXT ('Text ')\n" +
+      "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:REFSTART ('<<')\n" +
         "AsciiDoc:REF ('REF')\n" +
         "AsciiDoc:REFEND ('>>')\n" +
-        "AsciiDoc:TEXT (' More Text')");
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('More')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Text')");
   }
 
   public void testRefWithFile() {
     doTest("Text <<FILE#REF>> More Text",
-      "AsciiDoc:TEXT ('Text ')\n" +
+      "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:REFSTART ('<<')\n" +
         "AsciiDoc:REFFILE ('FILE')\n" +
         "AsciiDoc:SEPARATOR ('#')\n" +
         "AsciiDoc:REF ('REF')\n" +
         "AsciiDoc:REFEND ('>>')\n" +
-        "AsciiDoc:TEXT (' More Text')");
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('More')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Text')");
   }
 
   public void testRefWithRefText() {
     doTest("Text <<REF,Text>> More Text",
-      "AsciiDoc:TEXT ('Text ')\n" +
+      "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:REFSTART ('<<')\n" +
         "AsciiDoc:REF ('REF')\n" +
         "AsciiDoc:SEPARATOR (',')\n" +
         "AsciiDoc:REFTEXT ('Text')\n" +
         "AsciiDoc:REFEND ('>>')\n" +
-        "AsciiDoc:TEXT (' More Text')");
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('More')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Text')");
   }
 
   public void testBlockid() {
@@ -388,7 +438,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:BLOCKIDSTART ('[[')\n" +
         "AsciiDoc:BLOCKID ('BLOCKID')\n" +
         "AsciiDoc:BLOCKIDEND (']]')\n" +
-        "AsciiDoc:TEXT (' Text')");
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Text')");
   }
 
   public void testBlockidWithRefText() {
@@ -398,7 +449,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:SEPARATOR (',')\n" +
         "AsciiDoc:BLOCKREFTEXT ('name')\n" +
         "AsciiDoc:BLOCKIDEND (']]')\n" +
-        "AsciiDoc:TEXT (' Text')");
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Text')");
   }
 
   public void testAnchorid() {
@@ -431,7 +483,11 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testEscapedBold() {
     doTest("Text \\*nonbold* Text",
-      "AsciiDoc:TEXT ('Text \\*nonbold* Text')");
+      "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('\\*nonbold*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Text')");
   }
 
   public void testTypographicQuotes() {
@@ -444,7 +500,11 @@ public class AsciiDocLexerTest extends LexerTestCase {
   public void testNoTypographicQuotes() {
     doTest("\"` test `\"",
       "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +
-        "AsciiDoc:TEXT ('` test `')\n" +
+        "AsciiDoc:TEXT ('`')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('test')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('`')\n" +
         "AsciiDoc:DOUBLE_QUOTE ('\"')");
   }
 
