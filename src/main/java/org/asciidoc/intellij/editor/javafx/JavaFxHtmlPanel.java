@@ -9,6 +9,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.CaretState;
 import com.intellij.openapi.editor.Document;
@@ -432,49 +433,52 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       }
     }
 
-    private void openInEditor(@NotNull URI uri) {
-      String anchor = uri.getFragment();
-      String path = uri.getPath();
-      final VirtualFile targetFile;
-      VirtualFile tmpTargetFile = parentDirectory.findFileByRelativePath(path);
-      if (tmpTargetFile == null) {
-        // extension might be skipped if it is an .adoc file
-        tmpTargetFile = parentDirectory.findFileByRelativePath(path + ".adoc");
-      }
-      if (tmpTargetFile == null && path.endsWith(".html")) {
-        // might link to a .html in the rendered output, but might actually be a .adoc file
-        tmpTargetFile = parentDirectory.findFileByRelativePath(path.replaceAll("\\.html$", ".adoc"));
-      }
-      if (tmpTargetFile == null) {
-        log.warn("unable to find file for " + uri);
-        return;
-      }
-      targetFile = tmpTargetFile;
+    private boolean openInEditor(@NotNull URI uri) {
+      return ReadAction.compute(() -> {
+        String anchor = uri.getFragment();
+        String path = uri.getPath();
+        final VirtualFile targetFile;
+        VirtualFile tmpTargetFile = parentDirectory.findFileByRelativePath(path);
+        if (tmpTargetFile == null) {
+          // extension might be skipped if it is an .adoc file
+          tmpTargetFile = parentDirectory.findFileByRelativePath(path + ".adoc");
+        }
+        if (tmpTargetFile == null && path.endsWith(".html")) {
+          // might link to a .html in the rendered output, but might actually be a .adoc file
+          tmpTargetFile = parentDirectory.findFileByRelativePath(path.replaceAll("\\.html$", ".adoc"));
+        }
+        if (tmpTargetFile == null) {
+          log.warn("unable to find file for " + uri);
+          return false;
+        }
+        targetFile = tmpTargetFile;
 
-      Project project = ProjectUtil.guessProjectForContentFile(targetFile);
-      if (project == null) {
-        log.warn("unable to find project for " + uri);
-        return;
-      }
+        Project project = ProjectUtil.guessProjectForContentFile(targetFile);
+        if (project == null) {
+          log.warn("unable to find project for " + uri);
+          return false;
+        }
 
-      if (targetFile.isDirectory()) {
-        ProjectView projectView = ProjectView.getInstance(project);
-        projectView.changeView(ProjectViewPane.ID);
-        projectView.select(null, targetFile, true);
-      } else {
-        boolean anchorFound = false;
-        if (anchor != null) {
-          List<AsciiDocBlockId> ids = AsciiDocUtil.findIds(project, targetFile, anchor);
-          if (!ids.isEmpty()) {
-            anchorFound = true;
-            ApplicationManager.getApplication().invokeLater(() -> PsiNavigateUtil.navigate(ids.get(0)));
+        if (targetFile.isDirectory()) {
+          ProjectView projectView = ProjectView.getInstance(project);
+          projectView.changeView(ProjectViewPane.ID);
+          projectView.select(null, targetFile, true);
+        } else {
+          boolean anchorFound = false;
+          if (anchor != null) {
+            List<AsciiDocBlockId> ids = AsciiDocUtil.findIds(project, targetFile, anchor);
+            if (!ids.isEmpty()) {
+              anchorFound = true;
+              ApplicationManager.getApplication().invokeLater(() -> PsiNavigateUtil.navigate(ids.get(0)));
+            }
+          }
+
+          if (!anchorFound) {
+            ApplicationManager.getApplication().invokeLater(() -> OpenFileAction.openFile(targetFile, project));
           }
         }
-
-        if (!anchorFound) {
-          ApplicationManager.getApplication().invokeLater(() -> OpenFileAction.openFile(targetFile, project));
-        }
-      }
+        return true;
+      });
     }
 
     public void scrollEditorToLine(int sourceLine) {
