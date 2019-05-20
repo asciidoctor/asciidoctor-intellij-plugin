@@ -109,9 +109,121 @@ runIdea:: runs an IntelliJ community edition with the AsciiDoc plugin enabled.
 You can choose to run it in debug mode.
 --
 
-== Parsing AsciiDoc files
+== Lexing and Parsing AsciiDoc files
 
-TODO: lexing, parsing, syntax highlighting, refactorings
+Lexing and parsing input files is the beginning of both highlighting the code in the editor and building auto-completion and refactoring functionality.
+
+[[lexing]]
+=== Lexing of input files
+
+Lexing chops the input file into a stream of tokens.
+Each token has a type and a snippet of characters.
+
+The standard to do this in IntelliJ is https://jflex.de[JFlex].
+
+The heart of lexing is `asciidoc.flex`.
+It defines multiple states, and uses a lot of functionality and tweaking to parse AsciiDoc.
+You can add new token types as you go in `AsciiDocTokenTypes`. Ensure to update the list `TOKENS_TO_MERGE` if consecutive identical types of the tokens should be merged.
+
+Once you change `asciidoc.flex`, you should run `gradlew compileJava` to generate the parser code.
+
+A test suite for the lexer in `AsciiDocLexerTest`.
+I recommend running it from the IDE.
+Each test case contains a `doTest()` method that parses one snippet of AsciiDoc and compares it to an expected "`golden master`" result.
+
+A typical developer workflow for enhancing the lexer looks like this:
+
+. change `asciidoc.flex` in the IDE, adding new entries to `AsciiDocTokenTypes` as needed
+. run `gradlew compileJava` on the command line
+. add a test case to `AsciiDocLexerTest` and run it from the IDE
+. if lexing doesn't work yet as expected repeat from step 1 when
+. if lexing returns the expected result, update the `expected` parameter in the test
+
+[WARNING]
+--
+Things to consider when parsing AsciiDoc with JFlex:
+
+* JFlex has originally been designed to parse Java code. AsciiDoc is different
+* There are no wrong characters in AsciiDoc. If you get the syntax wrong, the characters are printed normally "as is", while only a matching set of for example asterisks (`*`) produces bold text.
+--
+
+Here some JFlex rules for AsciiDoc together with an explanation of the why:
+
+Look ahead rules::
++
+--
+Look ahead rules are considered slow in JFlex, but they give the power to recognize tokens only when there is a matching closing token.
+
+A slash (`/`) separates the matching pattern from the look ahead.
+
+.Example from parsing typographic quotes
+----
+{TYPOGRAPHIC_QUOTE_START} / [^\*\n \t] {WORD}* {TYPOGRAPHIC_QUOTE_END}
+----
+--
+
+Stateful parser::
++
+--
+To parse bold, italic and monospace text (that can be nested) there is a set of boolean variables to memorize the current text style.
+They are reset at the end of a block (like in regular Asciidoctor).
+The function `textFormat()` uses them to determine the current token type from a combination of these flags.
+
+Other states memorize the length of block separator line to find the matching closing separator.
+--
+
+qualifying matches, push back and state change::
++
+--
+After a match the Java code checks additional conditions like if this is an unconstrained position in the stream.
+If the code decides to discard the match, two possible strategies out of several are:
+
+. push back all but the first character, and return the token type for the single character (for example when an double-asterisk occurs, but no bold text is to end here, see `{DOUBLEMONO}` in the lexer).
+
+. push back the complete text and continue with a different state using `yybegin()` (for example when matching a `{HEADING_OLDSTYLE}` in the `MULTILINE` state).
+
+Unfortunately, the parser can't continue with other matches in the same state.
+To work around this issue blocks are parsed first in state `MULTILINE`, then in state `SINGLELINE`, and finally `INSIDE_LINE` to implement a hierarchy and some ordering of matches.
+--
+
+autocompletion::
++
+--
+Expressions described above match expressions once they have their closing syntax completed and it is essential for the correct highlighting.
+To support autocomplete the matching must handle an expression where only the left part of the expression exists.
+
+A special case is in the parser to support autocompletion, as IntelliJ inserts a special string when parsing the content for autocompletion (named `AUTOCOMPLETE` in our parser).
+
+In the case for references (`\<<ref>>`) there are two rules, one for regular parsing and highlighting, one without:
+
+[source,indent=0]
+----
+  // regular
+  {REFSTART} / [^>\n]+ {REFEND} { yybegin(REF); return AsciiDocTokenTypes.REFSTART; }
+  // autocomplete
+  {REFSTART} / [^>\n ]* {AUTOCOMPLETE} { yybegin(REFAUTO); return AsciiDocTokenTypes.REFSTART; }
+----
+--
+
+[[highlighting]]
+=== Highlighting
+
+Highlighting is coloring the text in the editor.
+
+The file `AsciiDocSyntaxHighlighter` defines one `TextAttributesKey` to each entry in `AsciiDocTokenTypes` parsed during lexing.
+Currently several tokens have the same highlighting `ASCIIDOC_MARKER`, so users have the same color for the pointy brackets around references references (`\<<ref>>`)and markers for bold (`\*bold*`).
+
+Once you add a new `TextAttributesKey`, you should either
+
+. reference an existing color (like `ASCIIDOC_COMMENT` references `DefaultLanguageHighlighterColors.LINE_COMMENT`) OR
+. add a color the AsciiDoc themes `AsciidocDefault.xml` and `AsciidocDarcula.xml`
+
+Once you add a new token you will need to add it to `AsciiDocColorSettingsPage` so users can customize the colors of their theme.
+This class references also `SampleDocument.adoc` and `AsciiDocBundle.properties`, therefore you'll probably need to change these two files as well.
+
+=== Parsing
+
+TODO: parsing, refactoring, folding, linking, autocompletion, finding references
 
 == Preview rendering
 
