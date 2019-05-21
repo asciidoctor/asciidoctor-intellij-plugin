@@ -433,6 +433,37 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Text')");
   }
 
+  public void testLink() {
+    doTest("Text link:FILE[Text] More Text",
+      "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:LINKSTART ('link:')\n" +
+        "AsciiDoc:LINKFILE ('FILE')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKTEXT ('Text')\n" +
+        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('More')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testLinkWithAnchor() {
+    doTest("Text link:FILE#ANCHOR[Text] More Text",
+      "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:LINKSTART ('link:')\n" +
+        "AsciiDoc:LINKFILE ('FILE')\n" +
+        "AsciiDoc:LINKANCHOR ('#ANCHOR')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKTEXT ('Text')\n" +
+        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('More')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
   public void testBlockid() {
     doTest("[[BLOCKID]] Text",
       "AsciiDoc:BLOCKIDSTART ('[[')\n" +

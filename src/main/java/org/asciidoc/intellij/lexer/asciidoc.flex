@@ -129,6 +129,9 @@ TYPOGRAPHIC_QUOTE_START = "\"`"
 TYPOGRAPHIC_QUOTE_END = "`\""
 ANCHORSTART = "[#"
 ANCHOREND = "]"
+LINKSTART = "link:"
+LINKTEXT_START = "["
+LINKEND = "]"
 
 %state MULTILINE
 %state INSIDE_LINE
@@ -164,6 +167,12 @@ ANCHOREND = "]"
 %state BLOCK_MACRO_ATTRS
 %state TITLE
 %state BLOCK_ATTRS
+
+%state LINKSTART
+%state LINKFILE
+%state LINKANCHOR
+%state LINKTEXT
+%state LINKEND
 
 %%
 
@@ -367,6 +376,7 @@ ANCHOREND = "]"
                            return textFormat();
                          }
                        }
+  {LINKSTART} / [^\]]+ {LINKEND} { yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART; }
   [^]                  { return textFormat(); }
 }
 
@@ -388,6 +398,22 @@ ANCHOREND = "]"
 <REFAUTO> {
   [ ,]                 { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.REF; }
   [^]                  { return AsciiDocTokenTypes.REF; }
+}
+
+<LINKFILE> {
+  "#"                  { yybegin(LINKANCHOR); return AsciiDocTokenTypes.LINKANCHOR; }
+  {LINKTEXT_START}     { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
+  [^]                  { return AsciiDocTokenTypes.LINKFILE; }
+}
+
+<LINKANCHOR> {
+  {LINKTEXT_START}     { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
+  [^]                  { return AsciiDocTokenTypes.LINKANCHOR; }
+}
+
+<LINKTEXT> {
+  {LINKEND}            { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINKEND; }
+  [^]                  { return AsciiDocTokenTypes.LINKTEXT; }
 }
 
 <BLOCKID, BLOCKREFTEXT> {
