@@ -6,6 +6,11 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
+=== 0.26.6 (preview, available from Github releases)
+
+- improved brace matcher
+- ensure that block IDs are part of next section when folding (#174)
+
 === 0.26.5 (preview, available from Github releases)
 
 - decouple read action from event thread to avoid error from IDE (#204)
