@@ -203,6 +203,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
     <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocSplitEditorProvider"/>
     <liveTemplateContext implementation="org.asciidoc.intellij.template.AsciiDocTemplateContextType$File"/>
     <defaultLiveTemplatesProvider implementation="org.asciidoc.intellij.template.AsciiDocTemplatesProvider"/>
+    <lang.ast.factory language="AsciiDoc" implementationClass="org.asciidoc.intellij.psi.AsciiDocASTFactory"/>
     <lang.parserDefinition language="AsciiDoc" implementationClass="org.asciidoc.intellij.parser.AsciiDocParserDefinition"/>
     <lang.psiStructureViewFactory language="AsciiDoc" implementationClass="org.asciidoc.intellij.structureView.AsciiDocStructureViewFactory"/>
     <lang.foldingBuilder language="AsciiDoc" implementationClass="org.asciidoc.intellij.folding.AsciiDocFoldingBuilder"/>
