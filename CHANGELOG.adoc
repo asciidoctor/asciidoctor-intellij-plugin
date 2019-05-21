@@ -6,6 +6,10 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
+=== 0.26.7 (preview, available from Github releases)
+
+fixing error in tree structure; improving test capabilities for parsing (#174)
+
 === 0.26.6 (preview, available from Github releases)
 
 - improved brace matcher
