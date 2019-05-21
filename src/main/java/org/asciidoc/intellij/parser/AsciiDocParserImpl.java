@@ -78,7 +78,7 @@ public class AsciiDocParserImpl {
       else if (at(BLOCKIDSTART)) {
         markPreBlock();
         next();
-        while (at(BLOCKID) || at(BLOCKIDEND)) {
+        while (at(BLOCKID) || at(BLOCKIDEND) || at(SEPARATOR) || at(BLOCKREFTEXT)) {
           if(at(BLOCKID)) {
             PsiBuilder.Marker blockIdMarker = myBuilder.mark();
             next();
@@ -124,7 +124,7 @@ public class AsciiDocParserImpl {
         break;
       }
       // the block needs to be terminated by the same sequence that started it
-      if (at(type) && myBuilder.getTokenText().equals(marker)) {
+      if (at(type) && myBuilder.getTokenText() != null && myBuilder.getTokenText().equals(marker)) {
         next();
         myBlockStartMarker.done(AsciiDocElementTypes.BLOCK);
         break;
@@ -154,7 +154,7 @@ public class AsciiDocParserImpl {
     while (!mySectionStack.isEmpty() && mySectionStack.peek().level >= level) {
       PsiBuilder.Marker marker = mySectionStack.pop().marker;
       if(myPreBlockMarker != null) {
-        marker.doneBefore(AsciiDocElementTypes.SECTION, marker); }
+        marker.doneBefore(AsciiDocElementTypes.SECTION, myPreBlockMarker); }
       else {
         marker.done(AsciiDocElementTypes.SECTION);
       }

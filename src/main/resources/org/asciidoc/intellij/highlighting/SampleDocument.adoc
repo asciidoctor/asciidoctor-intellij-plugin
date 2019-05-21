@@ -23,4 +23,4 @@ Listing
 <marker>*_</marker><bolditalic>bolditalic</bolditalic><marker>_*</marker>
 <marker>*`</marker><monobold>monobold</monobold><marker>`*</marker>
 <marker>*`</marker><monoitalic>monoitalic</monoitalic><marker>`*</marker>
-<marker>*`_</marker><monobolditalic>monobolditalic</monobolditalic><marker>`*</marker>
+<marker>*`_</marker><monobolditalic>monobolditalic</monobolditalic><marker>_`*</marker>
