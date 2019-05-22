@@ -36,9 +36,9 @@ public class AsciiDocBlockId extends ASTWrapperPsiElement implements AsciiDocNam
     ASTNode node = getNode().getFirstChildNode();
     if(node instanceof LeafElement) {
       ((LeafElement) node).replaceWithText(s);
-  } else {
-    throw new IncorrectOperationException("Bad child");
-  }
+    } else {
+      throw new IncorrectOperationException("Bad child");
+    }
     return this;
   }
 
