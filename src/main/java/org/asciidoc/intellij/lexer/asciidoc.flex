@@ -100,6 +100,8 @@ HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 // next line follwoing with only header marks
 HEADING_OLDSTYLE = [^.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
+ATTRIBUTE_DECL = ":" [a-zA-Z0-9_]+ [a-zA-Z0-9_-]* ":"
+ATTRIBUTE_REF = "{" [a-zA-Z0-9_]+ [a-zA-Z0-9_-]* "}"
 TITLE_START = "."
 AUTOCOMPLETE = "IntellijIdeaRulezzz " // CompletionUtilCore.DUMMY_IDENTIFIER
 BLOCK_ATTRS_START = "["
@@ -165,6 +167,10 @@ ANCHOREND = "]"
 %state TITLE
 %state BLOCK_ATTRS
 
+%state ATTRIBUTE_DECL
+%state ATTRIBUTE_VAL
+%state ATTRIBUTE_REF
+
 %%
 
 // IntelliJ might do partial parsing from any YYINITIAL inside a document
@@ -205,7 +211,23 @@ ANCHOREND = "]"
           yybegin(SINGLELINE);
         }
       }
+  {ATTRIBUTE_DECL} {
+        yybegin(ATTRIBUTE_DECL);
+        return AsciiDocTokenTypes.ATTRIBUTE_DECL;
+      }
   [^]                  { yypushback(yylength()); yybegin(SINGLELINE); }
+}
+
+<ATTRIBUTE_DECL> {
+  "\n"                 { yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                { yybegin(ATTRIBUTE_VAL); return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
+}
+
+<ATTRIBUTE_VAL> {
+  /*Value continue on the next line if the line is ended by a space followed by a backslash*/
+  " \\\n"                { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
+  "\n"                 { yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
 }
 
 <SINGLELINE> {
@@ -345,6 +367,7 @@ ANCHOREND = "]"
   // therefore second variante for incomplete REF that will only be active during autocomplete
   {REFSTART} / [^>\n ]* {AUTOCOMPLETE} { yybegin(REFAUTO); return AsciiDocTokenTypes.REFSTART; }
   {BLOCKIDSTART} / [^\]\n]+ {BLOCKIDEND} { yybegin(BLOCKID); return AsciiDocTokenTypes.BLOCKIDSTART; }
+  {ATTRIBUTE_REF}      { return AsciiDocTokenTypes.ATTRIBUTE_REF; }
   {LT}                 { return AsciiDocTokenTypes.LT; }
   {GT}                 { return AsciiDocTokenTypes.GT; }
   {SINGLE_QUOTE}       { return AsciiDocTokenTypes.SINGLE_QUOTE; }

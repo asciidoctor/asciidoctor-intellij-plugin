@@ -69,6 +69,16 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
     DefaultLanguageHighlighterColors.KEYWORD
   );
 
+  public static final TextAttributesKey ASCIIDOC_ATTRIBUTE = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC_ATTRIBUTE",
+    DefaultLanguageHighlighterColors.MARKUP_ATTRIBUTE
+  );
+
+  public static final TextAttributesKey ASCIIDOC_ATTRIBUTE_VAL = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC_ATTRIBUTE_VAL",
+    DefaultLanguageHighlighterColors.STRING
+  );
+
   public static final ImmutableMap<IElementType, TextAttributesKey> attributes =
       ImmutableMap.<IElementType, TextAttributesKey>builder()
           .put(AsciiDocTokenTypes.LINE_COMMENT, ASCIIDOC_COMMENT)
@@ -103,6 +113,9 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
           .put(AsciiDocTokenTypes.BLOCKIDEND, ASCIIDOC_MARKER)
           .put(AsciiDocTokenTypes.BLOCKID, ASCIIDOC_MARKER)
           .put(AsciiDocTokenTypes.SEPARATOR, ASCIIDOC_MARKER)
+          .put(AsciiDocTokenTypes.ATTRIBUTE_DECL, ASCIIDOC_ATTRIBUTE)
+          .put(AsciiDocTokenTypes.ATTRIBUTE_VAL, ASCIIDOC_ATTRIBUTE_VAL)
+          .put(AsciiDocTokenTypes.ATTRIBUTE_REF, ASCIIDOC_ATTRIBUTE)
           .build();
 
   @NotNull
