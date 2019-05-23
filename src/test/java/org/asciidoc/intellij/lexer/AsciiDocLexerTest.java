@@ -130,7 +130,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:WHITE_SPACE (' ')\n"+
         "AsciiDoc:TEXT ('an')\n"+
         "AsciiDoc:WHITE_SPACE (' ')\n"+
-        "AsciiDoc:ATTRIBUTE ('{attribute}')\n"+
+        "AsciiDoc:ATTRIBUTE_REF ('{attribute}')\n"+
         "AsciiDoc:WHITE_SPACE (' ')\n"+
         "AsciiDoc:TEXT ('more')\n"+
         "AsciiDoc:WHITE_SPACE (' ')\n"+
