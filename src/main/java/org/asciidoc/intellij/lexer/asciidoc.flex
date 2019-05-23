@@ -376,7 +376,7 @@ LINKEND = "]"
                            return textFormat();
                          }
                        }
-  {LINKSTART} / [^\]]+ {LINKEND} { yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART; }
+  {LINKSTART} / [^\[\n]* {LINKTEXT_START} [^\]\n]* {LINKEND} { yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART; }
   [^]                  { return textFormat(); }
 }
 
@@ -400,19 +400,21 @@ LINKEND = "]"
   [^]                  { return AsciiDocTokenTypes.REF; }
 }
 
-<LINKFILE> {
-  "#"                  { yybegin(LINKANCHOR); return AsciiDocTokenTypes.LINKANCHOR; }
+<LINKFILE, LINKANCHOR> {
   {LINKTEXT_START}     { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
+}
+
+<LINKFILE> {
+  "#"                  { yybegin(LINKANCHOR); return AsciiDocTokenTypes.SEPARATOR; }
   [^]                  { return AsciiDocTokenTypes.LINKFILE; }
 }
 
 <LINKANCHOR> {
-  {LINKTEXT_START}     { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
   [^]                  { return AsciiDocTokenTypes.LINKANCHOR; }
 }
 
 <LINKTEXT> {
-  {LINKEND}            { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINKEND; }
+  {LINKEND}            { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.LINKEND; }
   [^]                  { return AsciiDocTokenTypes.LINKTEXT; }
 }
 

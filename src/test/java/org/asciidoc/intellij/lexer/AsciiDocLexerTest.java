@@ -454,7 +454,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:LINKSTART ('link:')\n" +
         "AsciiDoc:LINKFILE ('FILE')\n" +
-        "AsciiDoc:LINKANCHOR ('#ANCHOR')\n" +
+        "AsciiDoc:SEPARATOR ('#')\n" +
+        "AsciiDoc:LINKANCHOR ('ANCHOR')\n" +
         "AsciiDoc:LINKTEXT_START ('[')\n" +
         "AsciiDoc:LINKTEXT ('Text')\n" +
         "AsciiDoc:LINKEND (']')\n" +
