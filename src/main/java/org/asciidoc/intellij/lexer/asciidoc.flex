@@ -219,14 +219,14 @@ ANCHOREND = "]"
 }
 
 <ATTRIBUTE_DECL> {
-  "\n"                 { yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; }
+  "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
   [^]                { yybegin(ATTRIBUTE_VAL); return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
 }
 
 <ATTRIBUTE_VAL> {
   /*Value continue on the next line if the line is ended by a space followed by a backslash*/
-  " \\\n"                { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
-  "\n"                 { yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; }
+  {SPACE} "\\" {SPACE}* "\n" { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
+  "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
   [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
 }
 
