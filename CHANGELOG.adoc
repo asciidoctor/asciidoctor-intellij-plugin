@@ -6,7 +6,11 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
-=== 0.26.7 (preview, available from Github releases)
+=== 0.26.8 (preview, available from Github releases)
+
+default file encoding for JRuby now UTF-8 if set file encoding is not supported by JRuby (#174)
+
+=== 0.26.7
 
 fixing error in tree structure; improving test capabilities for parsing (#174)
 

@@ -32,6 +32,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.26.8 default file encoding for JRuby now UTF-8 if set file encoding is not supported by JRuby (#174)
       <li>0.26.7 fixing error in tree structure; improving test capabilities for parsing #174
       <li>0.26.6 improved brace matcher<br>
       ensure that block IDs are part of next section when folding (#174)
