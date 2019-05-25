@@ -9,6 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.26.9 (work in progress)
 
 - upgrading gradle and JetBrains plugin; now use `gradlew runIde` to start the plugin in development mode
+- allow user to switch left/right and upper/lower in split view (#136)
 
 === 0.26.8 (preview, available from Github releases)
 
