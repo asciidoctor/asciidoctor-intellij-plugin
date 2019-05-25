@@ -92,9 +92,7 @@ PsiViewer:: Helps analyzing the PSI (abstract syntax tree) created from the plug
 
 .. add "JetBrains JDK 8" (see <<JDK>> above where to download)
 
-.. add "IntelliJ IDEA SDK" and set "JetBrains JDK 8" as the internal Java Platform
-
-.. choose "IntelliJ IDEA SDK" as the JDK for this project
+.. choose "JetBrains JDK 8" as the JDK for this project
 
 ==== Validation Tasks
 
