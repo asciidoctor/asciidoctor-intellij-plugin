@@ -61,7 +61,7 @@ The ZIP file with plugin to distribute will be located in `build/distributions`.
 To run the plugin for development you'll need to start
 
 ----
-./gradlew -Dfile.encoding=UTF-8 runIdea
+./gradlew -Dfile.encoding=UTF-8 runIde
 ----
 
 === Running the plugin from with the IDE
@@ -105,7 +105,7 @@ Perform these tasks to ensure that your setup is ready for development.
 --
 buildPlugin:: building the plugin as a ZIP-file that you can then install locally into your IDE
 
-runIdea:: runs an IntelliJ community edition with the AsciiDoc plugin enabled.
+runIde:: runs an IntelliJ community edition with the AsciiDoc plugin enabled.
 You can choose to run it in debug mode.
 --
 
