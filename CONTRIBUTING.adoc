@@ -27,6 +27,8 @@ This document is work in progress. Please ask questions to the maintainers for a
 Currently JDK 8 and JavaFX is required to build and run the plugin.
 
 The JetBrains JDK 8 distribution is recommended for development.
+As some parts of the code still support Java 8 and JavaFX 8, you can't develop with Java 11 at the moment.
+The plugin will still run in environments with Java 11.
 
 JetBrains JDK 8::
 Comes with a bundled JavaFX, download here: https://bintray.com/jetbrains/intellij-jdk[JetBrains OpenJDK 8]
@@ -36,7 +38,7 @@ Oracle JDK 8::
 Meets both dependencies, JavaFX is bundled with it out-of-the box.
 This is easy to give development a start if it is already installed on your machine, but will be different from most user's installations.
 
-OpenJDK::
+OpenJDK 8::
 Is usually distributed without JavaFX; you probably need to install JavaFX manually.
 This is usually the least preferred approach, although in practice Linux users often run JetBrains IDEA with the JDK provided by their local Linux distribution (that now and then leads to difficulties).
 
