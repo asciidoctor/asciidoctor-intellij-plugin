@@ -27,6 +27,7 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
   static {
     TYPES_PRESENTATION_MAP.put(AsciiDocElementTypes.SECTION, AsciiDocBundle.message("asciidoc.folding.section.name"));
     TYPES_PRESENTATION_MAP.put(AsciiDocElementTypes.BLOCK, AsciiDocBundle.message("asciidoc.folding.block.name"));
+    TYPES_PRESENTATION_MAP.put(AsciiDocElementTypes.LISTING, AsciiDocBundle.message("asciidoc.folding.listing.name"));
   }
 
   @Override

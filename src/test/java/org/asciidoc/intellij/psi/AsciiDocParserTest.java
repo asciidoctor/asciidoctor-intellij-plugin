@@ -43,4 +43,9 @@ public class AsciiDocParserTest extends ParsingTestCase {
   public void testSectionsWithPreBlock() {
     doTest(true);
   }
+
+  public void testListingWithCodeBlock() {
+    doTest(true);
+  }
+
 }

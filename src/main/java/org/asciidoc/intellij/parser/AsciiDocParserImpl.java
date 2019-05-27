@@ -56,8 +56,12 @@ public class AsciiDocParserImpl {
         continue;
       }
       else if (at(EXAMPLE_BLOCK_DELIMITER) || at(SIDEBAR_BLOCK_DELIMITER) || at(QUOTE_BLOCK_DELIMITER)
-          || at(LISTING_BLOCK_DELIMITER) || at(COMMENT_BLOCK_DELIMITER) || at(PASSTRHOUGH_BLOCK_DELIMITER)) {
+          || at(COMMENT_BLOCK_DELIMITER) || at(PASSTRHOUGH_BLOCK_DELIMITER)) {
         parseBlock();
+        continue;
+      }
+      else if (at(LISTING_BLOCK_DELIMITER)) {
+        parseListing();
         continue;
       }
       else if (at(TITLE)) {
@@ -69,7 +73,7 @@ public class AsciiDocParserImpl {
         markPreBlock();
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
-        while (at(BLOCK_ATTR_NAME) || at(BLOCK_ATTRS_END)) {
+        while (at(BLOCK_ATTR_NAME) || at(BLOCK_ATTRS_END) || at(SEPARATOR)) {
           next();
         }
         blockAttrsMarker.done(AsciiDocElementTypes.BLOCK_ATTRIBUTES);
@@ -131,6 +135,44 @@ public class AsciiDocParserImpl {
       }
       next();
     }
+  }
+
+  private void parseListing() {
+    PsiBuilder.Marker myBlockStartMarker;
+    if (myPreBlockMarker != null) {
+      myBlockStartMarker = myPreBlockMarker;
+      myPreBlockMarker = null;
+    }
+    else {
+      myBlockStartMarker = beginBlock();
+    }
+    String marker = myBuilder.getTokenText();
+    IElementType type = myBuilder.getTokenType();
+    next();
+    PsiBuilder.Marker myCodeBlockStart = beginBlock();
+    PsiBuilder.Marker myCodeBlockEnd = null;
+    while (true) {
+      if (myBuilder.eof()) {
+        break;
+      }
+      // the block needs to be terminated by the same sequence that started it
+      if (at(type) && myBuilder.getTokenText() != null && myBuilder.getTokenText().equals(marker)) {
+        next();
+        break;
+      }
+      if (myCodeBlockEnd != null) {
+        myCodeBlockEnd.drop();
+      }
+      next();
+      myCodeBlockEnd = myBuilder.mark();
+    }
+    if (myCodeBlockEnd != null) {
+      myCodeBlockStart.doneBefore(CODE_FENCE_CONTENT, myCodeBlockEnd);
+      myCodeBlockEnd.drop();
+    } else {
+      myCodeBlockStart.drop();
+    }
+    myBlockStartMarker.done(AsciiDocElementTypes.LISTING);
   }
 
   private void markPreBlock() {

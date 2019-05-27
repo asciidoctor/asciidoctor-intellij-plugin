@@ -500,6 +500,7 @@ ATTRIBUTE_REF_END = "}"
 <BLOCK_ATTRS> {
   "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
   "]"                  { yybegin(YYINITIAL); return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
+  ","                  { return AsciiDocTokenTypes.SEPARATOR; }
   [^]                  { return AsciiDocTokenTypes.BLOCK_ATTR_NAME; }
 }
 

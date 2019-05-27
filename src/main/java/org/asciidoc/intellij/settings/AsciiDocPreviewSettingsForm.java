@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.EnumComboBoxModel;
+import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBRadioButton;
 import com.intellij.util.containers.ContainerUtil;
@@ -39,6 +40,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JBRadioButton myEditorBottom;
   private JBRadioButton myEditorRight;
   private JBRadioButton myEditorTop;
+  private JBCheckBox myDisableInjections;
 
   public JComponent getComponent() {
     return myMainPanel;
@@ -125,6 +127,8 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     myHorizontalLayout.addActionListener(e -> adjustSplitOption());
 
     adjustSplitOption();
+
+    myDisableInjections.setSelected(settings.isDisableInjections());
   }
 
   @NotNull
@@ -140,6 +144,6 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     return new AsciiDocPreviewSettings(mySplitLayoutModel.getSelectedItem(),
       myPreviewPanelModel.getSelected(), myPreviewThemeModel.getSelectedItem(), attributes,
-      myVerticalLayout.isSelected(), myEditorTop.isSelected() || myEditorLeft.isSelected());
+      myVerticalLayout.isSelected(), myEditorTop.isSelected() || myEditorLeft.isSelected(), myDisableInjections.isSelected());
   }
 }

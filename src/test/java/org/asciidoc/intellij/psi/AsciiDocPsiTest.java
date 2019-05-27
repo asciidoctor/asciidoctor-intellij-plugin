@@ -24,14 +24,14 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiFile psiFile = configureByAsciiDoc("====\nfoo\n====\n");
     PsiElement[] children = psiFile.getChildren();
     assertEquals(2, children.length);
-    assertInstanceOf(children[0], AsciiDocBlock.class);
+    assertInstanceOf(children[0], AsciiDocStandardBlock.class);
   }
 
   public void testExampleBlockWithTitle() {
     PsiFile psiFile = configureByAsciiDoc(".Xyzzy\n====\nfoo\n====\n");
     PsiElement[] children = psiFile.getChildren();
     assertEquals(2, children.length);
-    AsciiDocBlock block = (AsciiDocBlock) children[0];
+    AsciiDocStandardBlock block = (AsciiDocStandardBlock) children[0];
     assertEquals("Xyzzy", block.getTitle());
   }
 
@@ -48,7 +48,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiFile psiFile = configureByAsciiDoc("[NOTE]\n====\nfoo\n====\n");
     PsiElement[] children = psiFile.getChildren();
     assertEquals(2, children.length);
-    AsciiDocBlock block = (AsciiDocBlock) children[0];
+    AsciiDocStandardBlock block = (AsciiDocStandardBlock) children[0];
     assertEquals("NOTE", block.getStyle());
   }
 
@@ -57,7 +57,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiFile psiFile = configureByAsciiDoc("====\n\n==== Test\n");
     PsiElement[] children = psiFile.getChildren();
     assertEquals(2, children.length);
-    AsciiDocBlock block = (AsciiDocBlock) children[0];
+    AsciiDocStandardBlock block = (AsciiDocStandardBlock) children[0];
     assertEquals("====\n\n==== Test", block.getText());
   }
 
@@ -65,7 +65,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiFile psiFile = configureByAsciiDoc(".Xyzzy\n****\nfoo\n****\n");
     PsiElement[] children = psiFile.getChildren();
     assertEquals(2, children.length);
-    AsciiDocBlock block = (AsciiDocBlock) children[0];
+    AsciiDocStandardBlock block = (AsciiDocStandardBlock) children[0];
     assertEquals("Xyzzy", block.getTitle());
   }
 
@@ -74,6 +74,20 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     AsciiDocBlock[] blocks = PsiTreeUtil.getChildrenOfType(psiFile, AsciiDocBlock.class);
     assertNotNull(blocks);
     assertEquals(2, blocks.length);
+  }
+
+  public void testListingLanguage() {
+    PsiFile psiFile = configureByAsciiDoc("[source,java]\n----\nfoo\n----\n");
+    AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
+    assertNotNull(listing);
+    assertEquals("source-java", listing.getFenceLanguage());
+  }
+
+  public void testDiagramLanguage() {
+    PsiFile psiFile = configureByAsciiDoc("[plantuml]\n----\nfoo\n----\n");
+    AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
+    assertNotNull(listing);
+    assertEquals("diagram-plantuml", listing.getFenceLanguage());
   }
 
   private PsiFile configureByAsciiDoc(String text) {
