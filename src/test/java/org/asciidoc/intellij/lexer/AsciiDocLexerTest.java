@@ -130,7 +130,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:WHITE_SPACE (' ')\n"+
         "AsciiDoc:TEXT ('an')\n"+
         "AsciiDoc:WHITE_SPACE (' ')\n"+
-        "AsciiDoc:ATTRIBUTE_REF ('{attribute}')\n"+
+        "AsciiDoc:ATTRIBUTE_REF_START ('{')\n"+
+        "AsciiDoc:ATTRIBUTE_REF ('attribute')\n"+
+        "AsciiDoc:ATTRIBUTE_REF_END ('}')\n"+
         "AsciiDoc:WHITE_SPACE (' ')\n"+
         "AsciiDoc:TEXT ('more')\n"+
         "AsciiDoc:WHITE_SPACE (' ')\n"+
@@ -139,12 +141,16 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testAttributeWithoutValue() {
     doTest(":attribute:",
-      "AsciiDoc:ATTRIBUTE_DECL (':attribute:')");
+      "AsciiDoc:ATTRIBUTE_NAME_START (':')\n"+
+        "AsciiDoc:ATTRIBUTE_NAME ('attribute')\n"+
+        "AsciiDoc:ATTRIBUTE_NAME_END (':')");
   }
 
   public void testAttributeWithValue() {
     doTest(":attribute: value",
-      "AsciiDoc:ATTRIBUTE_DECL (':attribute:')\n"+
+      "AsciiDoc:ATTRIBUTE_NAME_START (':')\n"+
+        "AsciiDoc:ATTRIBUTE_NAME ('attribute')\n"+
+        "AsciiDoc:ATTRIBUTE_NAME_END (':')\n"+
         "AsciiDoc:ATTRIBUTE_VAL (' value')");
   }
 
@@ -153,21 +159,27 @@ public class AsciiDocLexerTest extends LexerTestCase {
    */
   public void testAttributeMultiline() {
     doTest(":attribute: value \\\n continue on the next line\nMore text",
-      "AsciiDoc:ATTRIBUTE_DECL (':attribute:')\n"+
-        "AsciiDoc:ATTRIBUTE_VAL (' value \\\\n continue on the next line')\n" +
-        "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TEXT ('More')\n" +
-        "AsciiDoc:WHITE_SPACE (' ')\n" +
+      "AsciiDoc:ATTRIBUTE_NAME_START (':')\n"+
+        "AsciiDoc:ATTRIBUTE_NAME ('attribute')\n"+
+        "AsciiDoc:ATTRIBUTE_NAME_END (':')\n"+
+        "AsciiDoc:ATTRIBUTE_VAL (' value \\\\n continue on the next line')\n"+
+        "AsciiDoc:LINE_BREAK ('\\n')\n"+
+        "AsciiDoc:TEXT ('More')\n"+
+        "AsciiDoc:WHITE_SPACE (' ')\n"+
         "AsciiDoc:TEXT ('text')");
   }
 
   public void testTwoConsecutiveAttributes() {
     doTest("Text\n:attribute1:\n:attribute2:",
-      "AsciiDoc:TEXT ('Text')\n" +
-        "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:ATTRIBUTE_DECL (':attribute1:')\n"+
-        "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:ATTRIBUTE_DECL (':attribute2:')");
+      "AsciiDoc:TEXT ('Text')\n"+
+        "AsciiDoc:LINE_BREAK ('\\n')\n"+
+        "AsciiDoc:ATTRIBUTE_NAME_START (':')\n"+
+        "AsciiDoc:ATTRIBUTE_NAME ('attribute1')\n"+
+        "AsciiDoc:ATTRIBUTE_NAME_END (':')\n"+
+        "AsciiDoc:LINE_BREAK ('\\n')\n"+
+        "AsciiDoc:ATTRIBUTE_NAME_START (':')\n"+
+        "AsciiDoc:ATTRIBUTE_NAME ('attribute2')\n"+
+        "AsciiDoc:ATTRIBUTE_NAME_END (':')");
   }
 
   public void testContinuation() {

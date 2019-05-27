@@ -100,8 +100,6 @@ HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 // next line follwoing with only header marks
 HEADING_OLDSTYLE = [^.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
-ATTRIBUTE_DECL = ":" [a-zA-Z0-9_]+ [a-zA-Z0-9_-]* ":"
-ATTRIBUTE_REF = "{" [a-zA-Z0-9_]+ [a-zA-Z0-9_-]* "}"
 TITLE_START = "."
 AUTOCOMPLETE = "IntellijIdeaRulezzz " // CompletionUtilCore.DUMMY_IDENTIFIER
 BLOCK_ATTRS_START = "["
@@ -131,6 +129,11 @@ TYPOGRAPHIC_QUOTE_START = "\"`"
 TYPOGRAPHIC_QUOTE_END = "`\""
 ANCHORSTART = "[#"
 ANCHOREND = "]"
+ATTRIBUTE_NAME_START = ":"
+ATTRIBUTE_NAME = [a-zA-Z0-9_]+ [a-zA-Z0-9_-]*
+ATTRIBUTE_NAME_END = ":"
+ATTRIBUTE_REF_START = "{"
+ATTRIBUTE_REF_END = "}"
 
 %state MULTILINE
 %state INSIDE_LINE
@@ -168,7 +171,9 @@ ANCHOREND = "]"
 %state BLOCK_ATTRS
 
 %state ATTRIBUTE_DECL
+%state ATTRIBUTE_NAME
 %state ATTRIBUTE_VAL
+%state ATTRIBUTE_REF_START
 %state ATTRIBUTE_REF
 
 %%
@@ -211,16 +216,23 @@ ANCHOREND = "]"
           yybegin(SINGLELINE);
         }
       }
-  {ATTRIBUTE_DECL} {
+  {ATTRIBUTE_NAME_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_NAME_END} {
         yybegin(ATTRIBUTE_DECL);
-        return AsciiDocTokenTypes.ATTRIBUTE_DECL;
+        return AsciiDocTokenTypes.ATTRIBUTE_NAME_START;
       }
   [^]                  { yypushback(yylength()); yybegin(SINGLELINE); }
 }
 
 <ATTRIBUTE_DECL> {
-  "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                { yybegin(ATTRIBUTE_VAL); return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
+  "\n"               { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                { yybegin(ATTRIBUTE_NAME); return AsciiDocTokenTypes.ATTRIBUTE_NAME; }
+}
+
+<ATTRIBUTE_NAME> {
+  {ATTRIBUTE_NAME_END} { yybegin(ATTRIBUTE_VAL); return AsciiDocTokenTypes.ATTRIBUTE_NAME_END; }
+  {ATTRIBUTE_NAME}   { return AsciiDocTokenTypes.ATTRIBUTE_NAME; }
+  "\n"               { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                { yybegin(YYINITIAL); }
 }
 
 <ATTRIBUTE_VAL> {
@@ -367,7 +379,7 @@ ANCHOREND = "]"
   // therefore second variante for incomplete REF that will only be active during autocomplete
   {REFSTART} / [^>\n ]* {AUTOCOMPLETE} { yybegin(REFAUTO); return AsciiDocTokenTypes.REFSTART; }
   {BLOCKIDSTART} / [^\]\n]+ {BLOCKIDEND} { yybegin(BLOCKID); return AsciiDocTokenTypes.BLOCKIDSTART; }
-  {ATTRIBUTE_REF}      { return AsciiDocTokenTypes.ATTRIBUTE_REF; }
+  {ATTRIBUTE_REF_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} { yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START; }
   {LT}                 { return AsciiDocTokenTypes.LT; }
   {GT}                 { return AsciiDocTokenTypes.GT; }
   {SINGLE_QUOTE}       { return AsciiDocTokenTypes.SINGLE_QUOTE; }
@@ -411,6 +423,14 @@ ANCHOREND = "]"
 <REFAUTO> {
   [ ,]                 { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.REF; }
   [^]                  { return AsciiDocTokenTypes.REF; }
+}
+
+<ATTRIBUTE_REF_START, ATTRIBUTE_REF> {
+  {ATTRIBUTE_REF_END}  { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ATTRIBUTE_REF_END; }
+}
+
+<ATTRIBUTE_REF> {
+  [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_REF; }
 }
 
 <BLOCKID, BLOCKREFTEXT> {
