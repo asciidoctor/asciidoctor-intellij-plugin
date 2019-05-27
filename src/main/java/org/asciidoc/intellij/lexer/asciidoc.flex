@@ -129,6 +129,9 @@ TYPOGRAPHIC_QUOTE_START = "\"`"
 TYPOGRAPHIC_QUOTE_END = "`\""
 ANCHORSTART = "[#"
 ANCHOREND = "]"
+LINKSTART = "link:"
+LINKTEXT_START = "["
+LINKEND = "]"
 ATTRIBUTE_NAME_START = ":"
 ATTRIBUTE_NAME = [a-zA-Z0-9_]+ [a-zA-Z0-9_-]*
 ATTRIBUTE_NAME_END = ":"
@@ -175,6 +178,12 @@ ATTRIBUTE_REF_END = "}"
 %state ATTRIBUTE_VAL
 %state ATTRIBUTE_REF_START
 %state ATTRIBUTE_REF
+
+%state LINKSTART
+%state LINKFILE
+%state LINKANCHOR
+%state LINKTEXT
+%state LINKEND
 
 %%
 
@@ -402,6 +411,7 @@ ATTRIBUTE_REF_END = "}"
                            return textFormat();
                          }
                        }
+  {LINKSTART} / [^\[\n]* {LINKTEXT_START} [^\]\n]* {LINKEND} { yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART; }
   [^]                  { return textFormat(); }
 }
 
@@ -423,6 +433,24 @@ ATTRIBUTE_REF_END = "}"
 <REFAUTO> {
   [ ,]                 { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.REF; }
   [^]                  { return AsciiDocTokenTypes.REF; }
+}
+
+<LINKFILE, LINKANCHOR> {
+  {LINKTEXT_START}     { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
+}
+
+<LINKFILE> {
+  "#"                  { yybegin(LINKANCHOR); return AsciiDocTokenTypes.SEPARATOR; }
+  [^]                  { return AsciiDocTokenTypes.LINKFILE; }
+}
+
+<LINKANCHOR> {
+  [^]                  { return AsciiDocTokenTypes.LINKANCHOR; }
+}
+
+<LINKTEXT> {
+  {LINKEND}            { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.LINKEND; }
+  [^]                  { return AsciiDocTokenTypes.LINKTEXT; }
 }
 
 <ATTRIBUTE_REF_START, ATTRIBUTE_REF> {
