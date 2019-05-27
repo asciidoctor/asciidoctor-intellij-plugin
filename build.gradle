@@ -31,6 +31,9 @@ intellij {
     version 'IC-2018.1'
     pluginName 'asciidoctor'
     updateSinceUntilBuild false
+    plugins = [
+        'psiviewer:2018.1.2'
+    ]
 
 //    publish {
 //        pluginId '7910'
