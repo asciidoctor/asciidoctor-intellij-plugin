@@ -33,7 +33,9 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
   <change-notes><![CDATA[
     <ul>
       <li>0.26.9 upgrading gradle and JetBrains plugin; now use `gradlew runIde` to start the plugin in development mode<br>
-      allow user to switch left/right and upper/lower in split view (#136)
+      allow user to switch left/right and upper/lower in split view (#136)<br>
+      add syntax highlighter to support link:file[] (#259)<br>
+      add syntax highlighter to support attribute:value and {attribute reference} (#260)
       <li>0.26.8 default file encoding for JRuby now UTF-8 if set file encoding is not supported by JRuby (#174)
       <li>0.26.7 fixing error in tree structure; improving test capabilities for parsing #174
       <li>0.26.6 improved brace matcher<br>
