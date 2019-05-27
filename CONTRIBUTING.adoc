@@ -27,6 +27,8 @@ This document is work in progress. Please ask questions to the maintainers for a
 Currently JDK 8 and JavaFX is required to build and run the plugin.
 
 The JetBrains JDK 8 distribution is recommended for development.
+As some parts of the code still support Java 8 and JavaFX 8, you can't develop with Java 11 at the moment.
+The plugin will still run in environments with Java 11.
 
 JetBrains JDK 8::
 Comes with a bundled JavaFX, download here: https://bintray.com/jetbrains/intellij-jdk[JetBrains OpenJDK 8]
@@ -36,7 +38,7 @@ Oracle JDK 8::
 Meets both dependencies, JavaFX is bundled with it out-of-the box.
 This is easy to give development a start if it is already installed on your machine, but will be different from most user's installations.
 
-OpenJDK::
+OpenJDK 8::
 Is usually distributed without JavaFX; you probably need to install JavaFX manually.
 This is usually the least preferred approach, although in practice Linux users often run JetBrains IDEA with the JDK provided by their local Linux distribution (that now and then leads to difficulties).
 
@@ -61,7 +63,7 @@ The ZIP file with plugin to distribute will be located in `build/distributions`.
 To run the plugin for development you'll need to start
 
 ----
-./gradlew -Dfile.encoding=UTF-8 runIdea
+./gradlew -Dfile.encoding=UTF-8 runIde
 ----
 
 === Running the plugin from with the IDE
@@ -90,9 +92,7 @@ PsiViewer:: Helps analyzing the PSI (abstract syntax tree) created from the plug
 
 .. add "JetBrains JDK 8" (see <<JDK>> above where to download)
 
-.. add "IntelliJ IDEA SDK" and set "JetBrains JDK 8" as the internal Java Platform
-
-.. choose "IntelliJ IDEA SDK" as the JDK for this project
+.. choose "JetBrains JDK 8" as the JDK for this project
 
 ==== Validation Tasks
 
@@ -105,7 +105,7 @@ Perform these tasks to ensure that your setup is ready for development.
 --
 buildPlugin:: building the plugin as a ZIP-file that you can then install locally into your IDE
 
-runIdea:: runs an IntelliJ community edition with the AsciiDoc plugin enabled.
+runIde:: runs an IntelliJ community edition with the AsciiDoc plugin enabled.
 You can choose to run it in debug mode.
 --
 

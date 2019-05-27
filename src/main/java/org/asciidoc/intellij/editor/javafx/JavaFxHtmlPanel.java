@@ -72,9 +72,9 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       final Class<JavaFxHtmlPanel> clazz = JavaFxHtmlPanel.class;
       //noinspection StringBufferReplaceableByString
       return new StringBuilder()
-        .append("<script src=\"").append(clazz.getResource("scrollToElement.js")).append("\"></script>\n")
-        .append("<script src=\"").append(clazz.getResource("processLinks.js")).append("\"></script>\n")
-        .append("<script src=\"").append(clazz.getResource("pickSourceLine.js")).append("\"></script>\n")
+        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("scrollToElement.js")).append("\"></script>\n")
+        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processLinks.js")).append("\"></script>\n")
+        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("pickSourceLine.js")).append("\"></script>\n")
         .append("<script type=\"text/x-mathjax-config\">\n" +
                 "MathJax.Hub.Config({\n" +
                 "  messageStyle: \"none\",\n" +
@@ -90,7 +90,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
                 "  TeX: { equationNumbers: { autoNumber: \"none\" } }\n" +
                 "});\n" +
                 "</script>\n")
-        .append("<script src=\"").append(clazz.getResource("MathJax/MathJax.js")).append("?config=TeX-MML-AM_HTMLorMML\"></script>\n")
+        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("MathJax/MathJax.js")).append("&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n")
         .toString();
     }
   };
@@ -151,8 +151,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       myInlineCssDarcula = myInlineCss + IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("darcula.css"));
       myInlineCssDarcula += IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("coderay-darcula.css"));
       myInlineCss += IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("coderay.css"));
-      myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + JavaFxHtmlPanel.class.getResource("font-awesome/css/font-awesome.min.css") + "\">";
-      myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + JavaFxHtmlPanel.class.getResource("dejavu/dejavu.css") + "\">";
+      myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
+      myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
     } catch (IOException e) {
       String message = "Unable to combine CSS resources: " + e.getMessage();
       log.error(message, e);
