@@ -10,7 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - upgrading gradle and JetBrains plugin; now use `gradlew runIde` to start the plugin in development mode
 - allow user to switch left/right and upper/lower in split view (#136)
-- add syntax highlighter to support link:file[] (#259)
+- add syntax highlighter to support \link:file[] (#259)
 - add syntax highlighter to support attribute:value and {attribute reference} (#260)
 
 === 0.26.8 (preview, available from Github releases)
