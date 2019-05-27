@@ -132,6 +132,11 @@ ANCHOREND = "]"
 LINKSTART = "link:"
 LINKTEXT_START = "["
 LINKEND = "]"
+ATTRIBUTE_NAME_START = ":"
+ATTRIBUTE_NAME = [a-zA-Z0-9_]+ [a-zA-Z0-9_-]*
+ATTRIBUTE_NAME_END = ":"
+ATTRIBUTE_REF_START = "{"
+ATTRIBUTE_REF_END = "}"
 
 %state MULTILINE
 %state INSIDE_LINE
@@ -167,6 +172,12 @@ LINKEND = "]"
 %state BLOCK_MACRO_ATTRS
 %state TITLE
 %state BLOCK_ATTRS
+
+%state ATTRIBUTE_DECL
+%state ATTRIBUTE_NAME
+%state ATTRIBUTE_VAL
+%state ATTRIBUTE_REF_START
+%state ATTRIBUTE_REF
 
 %state LINKSTART
 %state LINKFILE
@@ -214,7 +225,30 @@ LINKEND = "]"
           yybegin(SINGLELINE);
         }
       }
+  {ATTRIBUTE_NAME_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_NAME_END} {
+        yybegin(ATTRIBUTE_DECL);
+        return AsciiDocTokenTypes.ATTRIBUTE_NAME_START;
+      }
   [^]                  { yypushback(yylength()); yybegin(SINGLELINE); }
+}
+
+<ATTRIBUTE_DECL> {
+  "\n"               { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                { yybegin(ATTRIBUTE_NAME); return AsciiDocTokenTypes.ATTRIBUTE_NAME; }
+}
+
+<ATTRIBUTE_NAME> {
+  {ATTRIBUTE_NAME_END} { yybegin(ATTRIBUTE_VAL); return AsciiDocTokenTypes.ATTRIBUTE_NAME_END; }
+  {ATTRIBUTE_NAME}   { return AsciiDocTokenTypes.ATTRIBUTE_NAME; }
+  "\n"               { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                { yybegin(YYINITIAL); }
+}
+
+<ATTRIBUTE_VAL> {
+  /*Value continue on the next line if the line is ended by a space followed by a backslash*/
+  {SPACE} "\\" {SPACE}* "\n" { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
+  "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
 }
 
 <SINGLELINE> {
@@ -354,6 +388,7 @@ LINKEND = "]"
   // therefore second variante for incomplete REF that will only be active during autocomplete
   {REFSTART} / [^>\n ]* {AUTOCOMPLETE} { yybegin(REFAUTO); return AsciiDocTokenTypes.REFSTART; }
   {BLOCKIDSTART} / [^\]\n]+ {BLOCKIDEND} { yybegin(BLOCKID); return AsciiDocTokenTypes.BLOCKIDSTART; }
+  {ATTRIBUTE_REF_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} { yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START; }
   {LT}                 { return AsciiDocTokenTypes.LT; }
   {GT}                 { return AsciiDocTokenTypes.GT; }
   {SINGLE_QUOTE}       { return AsciiDocTokenTypes.SINGLE_QUOTE; }
@@ -416,6 +451,14 @@ LINKEND = "]"
 <LINKTEXT> {
   {LINKEND}            { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.LINKEND; }
   [^]                  { return AsciiDocTokenTypes.LINKTEXT; }
+}
+
+<ATTRIBUTE_REF_START, ATTRIBUTE_REF> {
+  {ATTRIBUTE_REF_END}  { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ATTRIBUTE_REF_END; }
+}
+
+<ATTRIBUTE_REF> {
+  [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_REF; }
 }
 
 <BLOCKID, BLOCKREFTEXT> {
