@@ -164,7 +164,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       settings.setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(settings.getAsciiDocPreviewSettings().getSplitEditorLayout(),
         AsciiDocPreviewSettings.DEFAULT.getHtmlPanelProviderInfo(), settings.getAsciiDocPreviewSettings().getPreviewTheme(),
         settings.getAsciiDocPreviewSettings().getAttributes(), settings.getAsciiDocPreviewSettings().isVerticalSplit(),
-        settings.getAsciiDocPreviewSettings().isEditorFirst()));
+        settings.getAsciiDocPreviewSettings().isEditorFirst(), settings.getAsciiDocPreviewSettings().isDisableInjections()));
 
       /* the following will not work, IntellIJ will show the error "parent must be showing" when this is
          tiggered during startup. */

@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author yole
  */
-public class AsciiDocBlockMacro extends AsciiDocBlock {
+public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
   public AsciiDocBlockMacro(@NotNull ASTNode node) {
     super(node);
   }
@@ -65,8 +65,12 @@ public class AsciiDocBlockMacro extends AsciiDocBlock {
     @NotNull
     @Override
     public TextRange getRangeInElement(@NotNull AsciiDocBlockMacro element) {
-      final String text = element.findChildByType(AsciiDocTokenTypes.BLOCK_MACRO_BODY).getText();
-      return TextRange.allOf(text);
+      PsiElement body = element.findChildByType(AsciiDocTokenTypes.BLOCK_MACRO_BODY);
+      if(body != null) {
+        return TextRange.allOf(body.getText());
+      } else {
+        return TextRange.EMPTY_RANGE;
+      }
     }
   }
 

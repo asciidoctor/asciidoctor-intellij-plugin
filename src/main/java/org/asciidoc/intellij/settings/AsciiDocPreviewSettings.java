@@ -3,6 +3,7 @@ package org.asciidoc.intellij.settings;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Property;
@@ -48,19 +49,25 @@ public final class AsciiDocPreviewSettings {
   @Attribute("EditorFirst")
   private boolean myIsEditorFirst = true;
 
+  // When it is no longer experimental: remove "Experimental" suffix , and set to false
+  @Attribute("DisableInjectionsExperimental")
+  private boolean myDisableInjections = true;
+
   public AsciiDocPreviewSettings() {
   }
 
   public AsciiDocPreviewSettings(@NotNull SplitFileEditor.SplitEditorLayout splitEditorLayout,
                                  @NotNull AsciiDocHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo,
                                  @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme,
-                                 @NotNull Map<String, String> attributes, boolean verticalSplit, boolean editorFirst) {
+                                 @NotNull Map<String, String> attributes, boolean verticalSplit, boolean editorFirst,
+                                 boolean disableInjections) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
     this.attributes = attributes;
     myIsVerticalSplit = verticalSplit;
     myIsEditorFirst = editorFirst;
+    myDisableInjections = disableInjections;
   }
 
   @NotNull
@@ -97,6 +104,14 @@ public final class AsciiDocPreviewSettings {
     return myIsEditorFirst;
   }
 
+  public void setDisableInjections(boolean disableInjections) {
+    myDisableInjections = disableInjections;
+  }
+
+  public boolean isDisableInjections() {
+    return myDisableInjections;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -109,6 +124,7 @@ public final class AsciiDocPreviewSettings {
     if (myPreviewTheme != that.myPreviewTheme) return false;
     if (myIsVerticalSplit != that.myIsVerticalSplit) return false;
     if (myIsEditorFirst != that.myIsEditorFirst) return false;
+    if (myDisableInjections != that.myDisableInjections) return false;
     return attributes.equals(that.attributes);
   }
 
@@ -120,6 +136,7 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + attributes.hashCode();
     result = 31 * result + (myIsVerticalSplit ? 1 : 0);
     result = 31 * result + (myIsEditorFirst ? 1 : 0);
+    result = 31 * result + (myDisableInjections ? 1 : 0);
     return result;
   }
 

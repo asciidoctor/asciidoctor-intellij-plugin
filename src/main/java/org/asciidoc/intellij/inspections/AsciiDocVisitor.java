@@ -14,5 +14,4 @@ public class AsciiDocVisitor extends PsiElementVisitor {
   public void visitBlocks(@NotNull AsciiDocBlock o) {
     visitElement(o);
   }
-
 }

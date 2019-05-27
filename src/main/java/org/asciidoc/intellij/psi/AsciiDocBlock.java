@@ -1,24 +1,15 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author yole
- */
-public class AsciiDocBlock extends ASTWrapperPsiElement {
-  public AsciiDocBlock(@NotNull ASTNode node) {
-    super(node);
-  }
+public interface AsciiDocBlock extends PsiElement {
 
   @Nullable
-  public String getTitle() {
+  default String getTitle() {
     ASTNode titleNode = getNode().findChildByType(AsciiDocTokenTypes.TITLE);
     if (titleNode == null) {
       return null;
@@ -27,23 +18,15 @@ public class AsciiDocBlock extends ASTWrapperPsiElement {
     return text.length() >= 1 ? text.substring(1) : "";
   }
 
+  ASTNode getNode();
+
   @Nullable
-  public String getStyle() {
+  default String getStyle() {
     AsciiDocBlockAttributes attrs = PsiTreeUtil.findChildOfType(this, AsciiDocBlockAttributes.class);
     if (attrs != null) {
       return attrs.getFirstPositionalAttribute();
     }
     return null;
-  }
-
-  @Override
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof AsciiDocVisitor) {
-      ((AsciiDocVisitor)visitor).visitBlocks(this);
-      return;
-    }
-
-    super.accept(visitor);
   }
 
 }

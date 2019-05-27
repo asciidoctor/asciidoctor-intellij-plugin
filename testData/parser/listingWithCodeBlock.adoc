@@ -1,0 +1,11 @@
+Some Text
+
+.The Listing
+[source,java]
+----
+public class Java {
+  int i = 0;
+}
+----
+
+More Text.

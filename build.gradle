@@ -32,7 +32,8 @@ intellij {
     pluginName 'asciidoctor'
     updateSinceUntilBuild false
     plugins = [
-        'PsiViewer:2018.1.2'
+        'PsiViewer:2018.1.2', // used for debugging
+        'PlantUML integration:2.12.1' // used to test highlighting of plantuml diagrams
     ]
 
 //    publish {
