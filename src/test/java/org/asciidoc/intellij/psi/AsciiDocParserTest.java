@@ -37,6 +37,7 @@ public class AsciiDocParserTest extends ParsingTestCase {
       demoText = demoText.replaceAll("<" + tag + ">", "");
       demoText = demoText.replaceAll("</" + tag + ">", "");
     }
+    System.out.println("demoText = " + demoText);
     doCodeTest(demoText);
   }
 
