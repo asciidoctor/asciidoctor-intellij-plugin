@@ -32,7 +32,7 @@ intellij {
     pluginName 'asciidoctor'
     updateSinceUntilBuild false
     plugins = [
-        'psiviewer:2018.1.2'
+        'PsiViewer:2018.1.2'
     ]
 
 //    publish {
