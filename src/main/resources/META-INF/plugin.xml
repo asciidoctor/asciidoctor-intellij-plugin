@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.26.6</version>
+  <version>0.26.9</version>
   <vendor email="alexander.schwartz@gmx.net" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -32,6 +32,10 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.26.9 upgrading gradle and JetBrains plugin; now use `gradlew runIde` to start the plugin in development mode<br>
+      allow user to switch left/right and upper/lower in split view (#136)
+      <li>0.26.8 default file encoding for JRuby now UTF-8 if set file encoding is not supported by JRuby (#174)
+      <li>0.26.7 fixing error in tree structure; improving test capabilities for parsing #174
       <li>0.26.6 improved brace matcher<br>
       ensure that block IDs are part of next section when folding (#174)
       <li>0.26.5 decouple read action from event thread to avoid error from IDE (#204)<br>
@@ -203,6 +207,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
     <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocSplitEditorProvider"/>
     <liveTemplateContext implementation="org.asciidoc.intellij.template.AsciiDocTemplateContextType$File"/>
     <defaultLiveTemplatesProvider implementation="org.asciidoc.intellij.template.AsciiDocTemplatesProvider"/>
+    <lang.ast.factory language="AsciiDoc" implementationClass="org.asciidoc.intellij.psi.AsciiDocASTFactory"/>
     <lang.parserDefinition language="AsciiDoc" implementationClass="org.asciidoc.intellij.parser.AsciiDocParserDefinition"/>
     <lang.psiStructureViewFactory language="AsciiDoc" implementationClass="org.asciidoc.intellij.structureView.AsciiDocStructureViewFactory"/>
     <lang.foldingBuilder language="AsciiDoc" implementationClass="org.asciidoc.intellij.folding.AsciiDocFoldingBuilder"/>
@@ -239,5 +244,6 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
                            implementationClass="org.asciidoc.intellij.psi.AsciiDocRef$Manipulator"/>
     <lang.findUsagesProvider language="AsciiDoc" implementationClass="org.asciidoc.intellij.findUsages.AsciiDocFindUsagesProvider" />
     <psi.referenceContributor implementation="org.asciidoc.intellij.findUsages.AsciiDocReferenceContributor"/>
+    <httpRequestHandler implementation="org.asciidoc.intellij.editor.javafx.PreviewStaticServer"/>
   </extensions>
 </idea-plugin>

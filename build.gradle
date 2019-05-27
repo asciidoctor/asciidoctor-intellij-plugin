@@ -4,15 +4,13 @@ buildscript {
         maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
     }
     dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.13.0'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.21.0'
     }
 }
 
 
 plugins {
-    // upgrading to 0.3.10 leads to problems with MathJAX as the new version of the plugin
-    // will bundle all resources inside a JAR file and this seems to annoy MathJax. 
-    id "org.jetbrains.intellij" version "0.1.10"
+    id "org.jetbrains.intellij" version "0.4.8"
     id "org.jetbrains.grammarkit" version "2018.2.2"
 }
 
@@ -42,7 +40,7 @@ intellij {
 
 //     Uncomment to test against Android Studio
 //    intellij.alternativeIdePath = '/Applications/Android Studio.app'
-    systemProperty 'idea.is.internal', 'false'
+//    systemProperty 'idea.is.internal', 'false'
 }
 
 
@@ -82,11 +80,6 @@ task generateAsciidocLexer(type: GenerateLexer) {
 
 compileJava {
   dependsOn generateAsciidocLexer
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '3.2'
-    distributionUrl = distributionUrl.replace("bin", "all")
 }
 
 task checkUpdates(type: com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask) {

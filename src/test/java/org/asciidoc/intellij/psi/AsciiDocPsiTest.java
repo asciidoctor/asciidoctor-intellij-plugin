@@ -1,4 +1,4 @@
-  package org.asciidoc.intellij.psi;
+package org.asciidoc.intellij.psi;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -8,6 +8,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import org.asciidoc.intellij.file.AsciiDocFileType;
 
 /**
+ * WARNING: instead of this test, consider a golden master test in {@link AsciiDocParserTest}
  * @author yole
  */
 public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
@@ -71,6 +72,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testListingBlockAttributesThenSidebar() {
     PsiFile psiFile = configureByAsciiDoc("[source]\n----\nfoo\n----\n<1> Bar\n\n.Title\n****\nFoo\n****\n");
     AsciiDocBlock[] blocks = PsiTreeUtil.getChildrenOfType(psiFile, AsciiDocBlock.class);
+    assertNotNull(blocks);
     assertEquals(2, blocks.length);
   }
 

@@ -43,6 +43,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
   private AsciiDocToolbarPanel myToolbarWrapper;
 
   private boolean myVerticalSplitOption;
+  private boolean myEditorFirst;
   private JBSplitter mySplitter;
 
   public SplitFileEditor(@NotNull E1 mainEditor, @NotNull E2 secondEditor) {
@@ -61,6 +62,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     AsciiDocApplicationSettings.SettingsChangedListener settingsChangedListener =
       settings -> ApplicationManager.getApplication().invokeLater(() -> {
         triggerSplitOrientationChange(settings.getAsciiDocPreviewSettings().isVerticalSplit());
+        triggerEditorFirstChange(settings.getAsciiDocPreviewSettings().isEditorFirst());
       });
 
     ApplicationManager.getApplication().getMessageBus().connect(this)
@@ -68,14 +70,25 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
   }
 
+  private void triggerEditorFirstChange(boolean isEditorFirst) {
+    if (myEditorFirst == isEditorFirst) {
+      return;
+    }
+
+    myEditorFirst = isEditorFirst;
+
+    mySplitter.swapComponents();
+    myComponent.repaint();
+  }
+
   @NotNull
   private JComponent createComponent() {
     myVerticalSplitOption = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isVerticalSplit();
+    myEditorFirst = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isEditorFirst();
     mySplitter = new JBSplitter(!myVerticalSplitOption,0.5f, 0.15f, 0.85f);
     mySplitter.setSplitterProportionKey(MY_PROPORTION_KEY);
-    mySplitter.setFirstComponent(myMainEditor.getComponent());
-    mySplitter.setSecondComponent(mySecondEditor.getComponent());
-
+    mySplitter.setFirstComponent(myEditorFirst ? myMainEditor.getComponent() : mySecondEditor.getComponent());
+    mySplitter.setSecondComponent(myEditorFirst ? mySecondEditor.getComponent() : myMainEditor.getComponent());
 
     if (myMainEditor instanceof TextEditor) {
       myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor) myMainEditor).getEditor(), mySplitter);

@@ -45,18 +45,22 @@ public final class AsciiDocPreviewSettings {
   @Attribute("VerticalSplit")
   private boolean myIsVerticalSplit = true;
 
+  @Attribute("EditorFirst")
+  private boolean myIsEditorFirst = true;
+
   public AsciiDocPreviewSettings() {
   }
 
   public AsciiDocPreviewSettings(@NotNull SplitFileEditor.SplitEditorLayout splitEditorLayout,
                                  @NotNull AsciiDocHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo,
                                  @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme,
-                                 @NotNull Map<String, String> attributes, boolean verticalSplit) {
+                                 @NotNull Map<String, String> attributes, boolean verticalSplit, boolean editorFirst) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
     this.attributes = attributes;
     myIsVerticalSplit = verticalSplit;
+    myIsEditorFirst = editorFirst;
   }
 
   @NotNull
@@ -89,6 +93,10 @@ public final class AsciiDocPreviewSettings {
     return myIsVerticalSplit;
   }
 
+  public boolean isEditorFirst() {
+    return myIsEditorFirst;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -100,6 +108,7 @@ public final class AsciiDocPreviewSettings {
     if (!myHtmlPanelProviderInfo.equals(that.myHtmlPanelProviderInfo)) return false;
     if (myPreviewTheme != that.myPreviewTheme) return false;
     if (myIsVerticalSplit != that.myIsVerticalSplit) return false;
+    if (myIsEditorFirst != that.myIsEditorFirst) return false;
     return attributes.equals(that.attributes);
   }
 
@@ -110,6 +119,7 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + myPreviewTheme.hashCode();
     result = 31 * result + attributes.hashCode();
     result = 31 * result + (myIsVerticalSplit ? 1 : 0);
+    result = 31 * result + (myIsEditorFirst ? 1 : 0);
     return result;
   }
 

@@ -2,6 +2,8 @@ package org.asciidoc.intellij.settings;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.util.Comparator;
 import java.util.List;
@@ -33,6 +35,10 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JBRadioButton myVerticalLayout;
   private JBRadioButton myHorizontalLayout;
   private JBLabel myVerticalSplitLabel;
+  private JBRadioButton myEditorLeft;
+  private JBRadioButton myEditorBottom;
+  private JBRadioButton myEditorRight;
+  private JBRadioButton myEditorTop;
 
   public JComponent getComponent() {
     return myMainPanel;
@@ -77,7 +83,19 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     attributeTable = new AttributeTable();
     attributesPanel = new JPanel(new BorderLayout());
     attributesPanel.add(attributeTable.getComponent(), BorderLayout.CENTER);
+  }
 
+  private void adjustSplitOption() {
+    boolean isEditorFirst = myEditorTop.isSelected() || myEditorLeft.isSelected();
+    boolean isVerticalSplit = myVerticalLayout.isSelected();
+    myEditorBottom.setVisible(!isVerticalSplit);
+    myEditorTop.setVisible(!isVerticalSplit);
+    myEditorLeft.setVisible(isVerticalSplit);
+    myEditorRight.setVisible(isVerticalSplit);
+    myEditorLeft.setSelected(isVerticalSplit && isEditorFirst);
+    myEditorRight.setSelected(isVerticalSplit && !isEditorFirst);
+    myEditorTop.setSelected(!isVerticalSplit && isEditorFirst);
+    myEditorBottom.setSelected(!isVerticalSplit && !isEditorFirst);
   }
 
   @Override
@@ -98,6 +116,15 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     myVerticalLayout.setSelected(settings.isVerticalSplit());
     myHorizontalLayout.setSelected(!settings.isVerticalSplit());
+    myEditorLeft.setSelected(settings.isVerticalSplit() && settings.isEditorFirst());
+    myEditorRight.setSelected(settings.isVerticalSplit() && !settings.isEditorFirst());
+    myEditorTop.setSelected(!settings.isVerticalSplit() && settings.isEditorFirst());
+    myEditorBottom.setSelected(!settings.isVerticalSplit() && !settings.isEditorFirst());
+
+    myVerticalLayout.addActionListener(e -> adjustSplitOption());
+    myHorizontalLayout.addActionListener(e -> adjustSplitOption());
+
+    adjustSplitOption();
   }
 
   @NotNull
@@ -113,6 +140,6 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     return new AsciiDocPreviewSettings(mySplitLayoutModel.getSelectedItem(),
       myPreviewPanelModel.getSelected(), myPreviewThemeModel.getSelectedItem(), attributes,
-      myVerticalLayout.isSelected());
+      myVerticalLayout.isSelected(), myEditorTop.isSelected() || myEditorLeft.isSelected());
   }
 }
