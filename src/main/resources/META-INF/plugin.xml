@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.26.9</version>
+  <version>0.26.10</version>
   <vendor email="alexander.schwartz@gmx.net" url="http://asciidoctor.org">Asciidoctor Project</vendor>
 
   <description><![CDATA[
@@ -32,6 +32,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.26.10 Experimental highlighting in code blocks (#255, #262)
       <li>0.26.9 upgrading gradle and JetBrains plugin; now use `gradlew runIde` to start the plugin in development mode<br>
       allow user to switch left/right and upper/lower in split view (#136)<br>
       add syntax highlighter to support link:file[] (#259)<br>

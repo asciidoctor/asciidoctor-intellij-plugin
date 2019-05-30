@@ -6,6 +6,10 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
+=== 0.26.10 (preview, available from Github releases)
+
+- Experimental highlighting in code blocks (#255, #262)
+
 === 0.26.9 (preview, available from Github releases)
 
 - upgrading gradle and JetBrains plugin; now use `gradlew runIde` to start the plugin in development mode
