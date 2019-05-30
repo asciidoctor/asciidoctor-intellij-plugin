@@ -15,24 +15,6 @@
  */
 package org.asciidoc.intellij;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceConfigurationError;
-import java.util.function.IntConsumer;
-import java.util.logging.Logger;
-
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -62,6 +44,24 @@ import org.jruby.exceptions.MainExitException;
 import org.jruby.platform.Platform;
 import org.jruby.util.ByteList;
 import org.jruby.util.SafePropertyAccessor;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.ServiceConfigurationError;
+import java.util.function.IntConsumer;
+import java.util.logging.Logger;
 
 /**
  * @author Julien Viet
@@ -131,10 +131,10 @@ public class AsciiDoc {
           String encoding = System.getProperty("file.encoding", "UTF-8");
           ByteList bytes = ByteList.create(encoding);
           EncodingDB.Entry entry = EncodingDB.getEncodings().get(bytes.getUnsafeBytes(), bytes.getBegin(), bytes.getBegin() + bytes.getRealSize());
-          if(entry == null) {
+          if (entry == null) {
             entry = EncodingDB.getAliases().get(bytes.getUnsafeBytes(), bytes.getBegin(), bytes.getBegin() + bytes.getRealSize());
           }
-          if(entry == null) {
+          if (entry == null) {
             // this happes for example with -Dfile.encoding=MS949 (Korean?)
             oldEncoding = encoding;
             log.warn("unsupported encoding " + encoding + " in JRuby, defaulting to UTF-8");
@@ -351,13 +351,19 @@ public class AsciiDoc {
   }
 
   private Map<String, Object> getDefaultOptions() {
-    Attributes attrs = AttributesBuilder.attributes()
+    AttributesBuilder builder = AttributesBuilder.attributes()
       .showTitle(true)
       .sourceHighlighter("coderay")
       .attribute("coderay-css", "style")
       .attribute("env", "idea")
-      .attribute("env-idea")
-      .get();
+      .attribute("env-idea");
+
+    String graphvizDot = System.getenv("GRAPHVIZ_DOT");
+    if (graphvizDot != null) {
+      builder.attribute("graphvizdot", graphvizDot);
+    }
+
+    Attributes attrs = builder.get();
 
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     if (imagesPath != null) {
