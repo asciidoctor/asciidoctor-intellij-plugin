@@ -6,7 +6,7 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
-=== 0.26.11 (preview, available from Github releases)
+=== 0.26.11 (work in progress)
 
 - adding support for GRAPHVIZ_DOT environment variable (#261)
 
