@@ -32,7 +32,8 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.26.11 adding support for GRAPHVIZ_DOT environment variable (#261)
+      <li>0.26.11 adding support for GRAPHVIZ_DOT environment variable (#261)<br>
+      adding support for statement completion (ctrl-shift-enter (#263)
       <li>0.26.10 Experimental highlighting in code blocks (#255, #262)
       <li>0.26.9 upgrading gradle and JetBrains plugin; now use `gradlew runIde` to start the plugin in development mode<br>
       allow user to switch left/right and upper/lower in split view (#136)<br>
