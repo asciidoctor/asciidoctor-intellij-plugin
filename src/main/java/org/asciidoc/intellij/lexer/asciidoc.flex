@@ -517,6 +517,7 @@ ATTRIBUTE_REF_END = "}"
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
   "]"                  { yypopstate(); return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
   ","                  { return AsciiDocTokenTypes.SEPARATOR; }
+  {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
   [^]                  { return AsciiDocTokenTypes.BLOCK_ATTR_NAME; }
 }
 

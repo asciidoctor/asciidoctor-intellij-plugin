@@ -6,6 +6,10 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
+=== 0.26.12 (preview, available from Github releases)
+
+- supporting blanks in block attributes (#255)
+
 === 0.26.11 (preview, available from Github releases)
 
 - adding support for GRAPHVIZ_DOT environment variable (#261)
