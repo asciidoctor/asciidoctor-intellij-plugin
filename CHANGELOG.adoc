@@ -6,6 +6,10 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
+=== 0.26.13 (work in progress)
+
+- update to asciidoctorj-diagram:1.5.18
+
 === 0.26.12 (preview, available from Github releases)
 
 - supporting blanks in block attributes (#255)
