@@ -2,8 +2,6 @@ package org.asciidoc.intellij.settings;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.util.Comparator;
 import java.util.List;
@@ -16,6 +14,7 @@ import com.intellij.ui.EnumComboBoxModel;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBRadioButton;
+import com.intellij.ui.components.JBTextField;
 import com.intellij.util.containers.ContainerUtil;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
@@ -40,7 +39,9 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JBRadioButton myEditorBottom;
   private JBRadioButton myEditorRight;
   private JBRadioButton myEditorTop;
-  private JBCheckBox myDisableInjections;
+  private JBCheckBox myEnableInjections;
+  private JBTextField myDisabledInjectionsByLanguage;
+  private JPanel myDisableLanguageInjection;
 
   public JComponent getComponent() {
     return myMainPanel;
@@ -128,7 +129,14 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     adjustSplitOption();
 
-    myDisableInjections.setSelected(settings.isDisableInjections());
+    myEnableInjections.setSelected(settings.isEnabledInjections());
+
+    myEnableInjections.addItemListener(e -> {
+      myDisableLanguageInjection.setVisible(myEnableInjections.isSelected());
+    });
+    myDisableLanguageInjection.setVisible(myEnableInjections.isSelected());
+
+    myDisabledInjectionsByLanguage.setText(settings.getDisabledInjectionsByLanguage());
   }
 
   @NotNull
@@ -144,6 +152,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     return new AsciiDocPreviewSettings(mySplitLayoutModel.getSelectedItem(),
       myPreviewPanelModel.getSelected(), myPreviewThemeModel.getSelectedItem(), attributes,
-      myVerticalLayout.isSelected(), myEditorTop.isSelected() || myEditorLeft.isSelected(), myDisableInjections.isSelected());
+      myVerticalLayout.isSelected(), myEditorTop.isSelected() || myEditorLeft.isSelected(), myEnableInjections.isSelected(),
+      myDisabledInjectionsByLanguage.getText());
   }
 }

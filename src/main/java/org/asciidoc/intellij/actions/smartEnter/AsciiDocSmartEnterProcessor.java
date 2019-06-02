@@ -59,6 +59,15 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
             atCaret = atCaret.getNextSibling();
           }
         }
+        if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.BLOCK_MACRO_BODY) {
+          if (atCaret.getNextSibling() == null) {
+            String textToInsert = "[]\n";
+            doc.insertString(atCaret.getTextRange().getEndOffset(), textToInsert);
+            caretTo = atCaret.getTextOffset() + atCaret.getTextLength() + 3;
+            commitChanges(project, editor, caretTo);
+            result = true;
+          }
+        }
         if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.BLOCK_ATTRS_END) {
           ASTNode[] attr = atCaret.getParent().getNode().getChildren(TokenSet.create(AsciiDocTokenTypes.BLOCK_ATTR_NAME));
           if (attr.length > 0 && "source".equals(attr[0].getText())) {

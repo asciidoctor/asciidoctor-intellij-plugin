@@ -39,6 +39,19 @@ public class AsciiDocLexerTest extends LexerTestCase {
           "AsciiDoc:TEXT ('cccc')");
   }
 
+  public void testListingWithInclude() {
+    doTest("----\ninclude::file.adoc[]\n----\n",
+      "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_MACRO_ID ('include::')\n" +
+        "AsciiDoc:BLOCK_MACRO_BODY ('file.adoc')\n" +
+        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
   public void testHeading() {
     doTest("= Abc\nabc\n== Def\ndef",
         "AsciiDoc:HEADING ('= Abc')\n" +

@@ -2,6 +2,7 @@ package org.asciidoc.intellij.lexer;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
+import java.util.Stack;
 
 %%
 
@@ -22,6 +23,8 @@ import com.intellij.psi.tree.IElementType;
   private boolean singlemono = false;
   private boolean doublemono = false;
   private boolean typographicquote = false;
+
+  private Stack<Integer> stateStack = new Stack<Integer>();
 
   private boolean isUnconstrainedEnd() {
     if(getTokenStart() > 0) {
@@ -83,6 +86,19 @@ import com.intellij.psi.tree.IElementType;
       return AsciiDocTokenTypes.TEXT;
     }
   }
+
+  private void yypushstate (int state) {
+    stateStack.push(state);
+  }
+
+  private void yypopstate () {
+    if(stateStack.size() > 0) {
+      yybegin(stateStack.pop());
+    } else {
+      yybegin(YYINITIAL);
+    }
+  }
+
 %}
 
 SPACE = [\ \t]
@@ -498,21 +514,21 @@ ATTRIBUTE_REF_END = "}"
 }
 
 <BLOCK_ATTRS> {
-  "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
-  "]"                  { yybegin(YYINITIAL); return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
+  "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
+  "]"                  { yypopstate(); return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
   ","                  { return AsciiDocTokenTypes.SEPARATOR; }
   [^]                  { return AsciiDocTokenTypes.BLOCK_ATTR_NAME; }
 }
 
 <BLOCK_MACRO> {
-  "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+  "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
   "["                  { yybegin(BLOCK_MACRO_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
   [^]                  { return AsciiDocTokenTypes.BLOCK_MACRO_BODY; }
 }
 
 <BLOCK_MACRO_ATTRS> {
-  "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
-  "]"                  { yybegin(YYINITIAL); return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
+  "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
+  "]"                  { yypopstate(); return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
   [^]                  { return AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES; }
 }
 
@@ -527,6 +543,8 @@ ATTRIBUTE_REF_END = "}"
       return AsciiDocTokenTypes.LISTING_TEXT;
     }
   }
+  // include is the only allowed block macro in this type of block
+  "include::" / [^\[\n]* "[" [^\]\n]* "]" { yypushstate(LISTING_BLOCK); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
 }
 
 <LISTING_BLOCK, INSIDE_LISTING_BLOCK_LINE> {

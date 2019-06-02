@@ -98,6 +98,12 @@ public class AsciiDocListing extends CompositePsiElement implements PsiLanguageI
     // must not use PsiTreeUtil.findChildOfType as it leads to exception
     for(PsiElement e : myHost.getChildren()) {
       if (e instanceof AsciiDocCodeContent) {
+        for(PsiElement i : e.getChildren()) {
+          // if there is a block macro (typically an include), disable highlighting for all of it
+          if (i instanceof AsciiDocBlockMacro) {
+            return TextRange.EMPTY_RANGE;
+          }
+        }
         return TextRange.create(e.getStartOffsetInParent(), e.getStartOffsetInParent() + e.getTextLength());
       }
     }

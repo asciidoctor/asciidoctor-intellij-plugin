@@ -5,7 +5,33 @@ import com.intellij.psi.tree.IElementType;
 
 import java.util.Stack;
 
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.*;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKID;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDEND;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDSTART;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKREFTEXT;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTRS_END;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTRS_START;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTR_NAME;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_BODY;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ID;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.CODE_FENCE_CONTENT;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_OLDSTYLE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_BREAK;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REF;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFEND;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFFILE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFSTART;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFTEXT;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SEPARATOR;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TITLE;
 
 /**
  * @author yole
@@ -29,8 +55,15 @@ public class AsciiDocParserImpl {
     myBuilder = builder;
   }
 
+  int newLines;
+
   public void parse() {
     myBuilder.setDebugMode(true);
+    myBuilder.setWhitespaceSkippedCallback((type, start, end) -> {
+      if(type == LINE_BREAK) {
+        ++newLines;
+      }
+    });
     while (!myBuilder.eof()) {
       if (at(HEADING) || at(HEADING_OLDSTYLE)) {
         int level = headingLevel(myBuilder.getTokenText());
@@ -46,9 +79,15 @@ public class AsciiDocParserImpl {
         mySectionStack.push(newMarker);
       }
       else if (at(BLOCK_MACRO_ID)) {
+        newLines = 0;
         markPreBlock();
         next();
-        while (at(BLOCK_MACRO_BODY) || at(BLOCK_MACRO_ATTRIBUTES)) {
+        while ((at(BLOCK_MACRO_BODY) || at(BLOCK_MACRO_ATTRIBUTES) || at(BLOCK_ATTRS_START) || at(BLOCK_ATTRS_END))
+          && newLines == 0) {
+          if (at(BLOCK_ATTRS_END)) {
+            next();
+            break;
+          }
           next();
         }
         myPreBlockMarker.done(AsciiDocElementTypes.BLOCK_MACRO);
@@ -160,6 +199,26 @@ public class AsciiDocParserImpl {
         next();
         break;
       }
+      if (at(BLOCK_MACRO_ID)) {
+        newLines = 0;
+        PsiBuilder.Marker blockMacro = myBuilder.mark();
+        next();
+        while (at(BLOCK_MACRO_BODY) || at(BLOCK_MACRO_ATTRIBUTES) || at(BLOCK_ATTRS_START) || at(BLOCK_ATTRS_END)
+          && newLines == 0) {
+          if (at(BLOCK_ATTRS_END)) {
+            next();
+            break;
+          }
+          next();
+        }
+        blockMacro.done(AsciiDocElementTypes.BLOCK_MACRO);
+        if (myCodeBlockEnd != null) {
+          myCodeBlockEnd.drop();
+        }
+        myCodeBlockEnd = myBuilder.mark();
+        continue;
+      }
+
       if (myCodeBlockEnd != null) {
         myCodeBlockEnd.drop();
       }

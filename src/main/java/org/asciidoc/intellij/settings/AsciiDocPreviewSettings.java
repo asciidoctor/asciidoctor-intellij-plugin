@@ -1,13 +1,17 @@
 package org.asciidoc.intellij.settings;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
+import org.apache.commons.lang.StringUtils;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
@@ -49,9 +53,11 @@ public final class AsciiDocPreviewSettings {
   @Attribute("EditorFirst")
   private boolean myIsEditorFirst = true;
 
-  // When it is no longer experimental: remove "Experimental" suffix , and set to false
-  @Attribute("DisableInjectionsExperimental")
-  private boolean myDisableInjections = true;
+  @Attribute("EnableInjections")
+  private boolean myEnableInjections = true;
+
+  @Attribute("DisabledInjectionsByLanguage")
+  private String myDisabledInjectionsByLanguage;
 
   public AsciiDocPreviewSettings() {
   }
@@ -60,14 +66,15 @@ public final class AsciiDocPreviewSettings {
                                  @NotNull AsciiDocHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo,
                                  @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme,
                                  @NotNull Map<String, String> attributes, boolean verticalSplit, boolean editorFirst,
-                                 boolean disableInjections) {
+                                 boolean enableInjections, String disabledInjectionsByLanguage) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
     this.attributes = attributes;
     myIsVerticalSplit = verticalSplit;
     myIsEditorFirst = editorFirst;
-    myDisableInjections = disableInjections;
+    myEnableInjections = enableInjections;
+    myDisabledInjectionsByLanguage = disabledInjectionsByLanguage;
   }
 
   @NotNull
@@ -104,12 +111,20 @@ public final class AsciiDocPreviewSettings {
     return myIsEditorFirst;
   }
 
-  public void setDisableInjections(boolean disableInjections) {
-    myDisableInjections = disableInjections;
+  public boolean isEnabledInjections() {
+    return myEnableInjections;
   }
 
-  public boolean isDisableInjections() {
-    return myDisableInjections;
+  public String getDisabledInjectionsByLanguage() { return myDisabledInjectionsByLanguage; }
+
+  public List<String> getDisabledInjectionsByLanguageAsList() {
+    List<String> list = new ArrayList<>();
+    if (myDisabledInjectionsByLanguage != null) {
+      Arrays.asList(myDisabledInjectionsByLanguage.split(";")).forEach(
+        entry -> list.add(entry.trim().toLowerCase(Locale.US))
+      );
+    }
+    return list;
   }
 
   @Override
@@ -124,7 +139,8 @@ public final class AsciiDocPreviewSettings {
     if (myPreviewTheme != that.myPreviewTheme) return false;
     if (myIsVerticalSplit != that.myIsVerticalSplit) return false;
     if (myIsEditorFirst != that.myIsEditorFirst) return false;
-    if (myDisableInjections != that.myDisableInjections) return false;
+    if (myEnableInjections != that.myEnableInjections) return false;
+    if (!myDisabledInjectionsByLanguage.equals(that.myDisabledInjectionsByLanguage)) return false;
     return attributes.equals(that.attributes);
   }
 
@@ -136,7 +152,8 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + attributes.hashCode();
     result = 31 * result + (myIsVerticalSplit ? 1 : 0);
     result = 31 * result + (myIsEditorFirst ? 1 : 0);
-    result = 31 * result + (myDisableInjections ? 1 : 0);
+    result = 31 * result + (myEnableInjections ? 1 : 0);
+    result = 31 * result + myDisabledInjectionsByLanguage.hashCode();
     return result;
   }
 

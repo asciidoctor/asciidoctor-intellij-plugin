@@ -52,7 +52,7 @@ public class CodeFenceInjector implements MultiHostInjector {
 
   @Nullable
   private static Language guessLanguageByFenceLang(@NotNull String langName) {
-    if (AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isDisableInjections()) {
+    if (!AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isEnabledInjections()) {
       return null;
     } else {
       return LanguageGuesser.INSTANCE.guessLanguage(langName);

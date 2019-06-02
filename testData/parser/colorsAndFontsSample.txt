@@ -20,7 +20,6 @@ FILE
     PsiWhiteSpace('\n')
     AsciiDocBlockMacro(AsciiDoc:BLOCK_MACRO_ID)
       PsiElement(AsciiDoc:BLOCK_MACRO_ID)('blockmacro::')
-    AsciiDocBlockAttributes(AsciiDoc:BLOCK_ATTRIBUTES)
       PsiElement(AsciiDoc:BLOCK_ATTRS_START)('[')
       PsiElement(AsciiDoc:BLOCK_ATTRS_END)(']')
     PsiWhiteSpace('\n')

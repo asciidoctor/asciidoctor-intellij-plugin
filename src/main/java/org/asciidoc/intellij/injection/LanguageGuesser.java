@@ -2,11 +2,11 @@ package org.asciidoc.intellij.injection;
 
 import com.intellij.lang.Language;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
-import com.intellij.openapi.util.ClearableLazyValue;
 import com.intellij.openapi.util.NotNullLazyValue;
+import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
+import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -67,6 +67,12 @@ public enum LanguageGuesser {
     if(lang == null) {
       return null;
     }
+
+    AsciiDocPreviewSettings settings = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings();
+    if(settings.getDisabledInjectionsByLanguageAsList().contains(lang)) {
+      return null;
+    }
+
     final Language languageFromMap = langIdToLanguage.getValue().get(lang.toLowerCase(Locale.US));
     if (languageFromMap != null) {
       return languageFromMap;
