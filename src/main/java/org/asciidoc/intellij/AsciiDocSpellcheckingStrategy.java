@@ -23,6 +23,7 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
       || elementType == AsciiDocTokenTypes.BOLDITALIC
       || elementType == AsciiDocTokenTypes.MONOBOLD
       || elementType == AsciiDocTokenTypes.MONOITALIC
+      || elementType == AsciiDocTokenTypes.TITLE
       || elementType == AsciiDocTokenTypes.MONOBOLDITALIC) {
       return TEXT_TOKENIZER;
     }
