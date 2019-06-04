@@ -27,7 +27,7 @@ The user can fold sections and blocks using the small +/- symbols on the left of
 
 The structure of the file kbd:[ALT+7] shows the hierarchy of sections and blocks with titles.
 
-The search all view kbd:[Shift+Shift] shows section titles and titles of blocks.
+The search all view kbd:[Shift]kbd:[Shift] shows section titles and titles of blocks.
 
 The breadcrumbs view (bottom of the editor) shows the hierarchy leading to the current sections and blocks.
 
@@ -35,9 +35,9 @@ For
 +++include::[]+++
 and
 +++image::[]+++
-block macros the kbd:[Ctrl+click] and kbd:[Ctrl+b] will navigate to the referenced file.
+block macros the kbd:[Ctrl+Click] and kbd:[Ctrl+B] will navigate to the referenced file.
 
-For references (like `\<<id>>`) kbd:[Ctrl+click] and kbd:[Ctrl+b] will navigate to the reference (like `\[[id]]`).
+For references (like `\<<id>>`) kbd:[Ctrl+Click] and kbd:[Ctrl+B] will navigate to the reference (like `\[[id]]`).
 "Find Usages" (kbd:[ALT+F7]) will find usages of a reference and allows navigation.
 
 The plugin highlights matching braces including symmetric formatting for bold, italic and monospace.
