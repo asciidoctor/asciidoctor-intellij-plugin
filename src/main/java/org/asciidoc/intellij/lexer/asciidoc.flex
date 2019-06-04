@@ -407,7 +407,12 @@ ATTRIBUTE_REF_END = "}"
   {ATTRIBUTE_REF_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} { yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START; }
   {LT}                 { return AsciiDocTokenTypes.LT; }
   {GT}                 { return AsciiDocTokenTypes.GT; }
-  {SINGLE_QUOTE}       { return AsciiDocTokenTypes.SINGLE_QUOTE; }
+  {SINGLE_QUOTE}       { if (isUnconstrainedStart() || isUnconstrainedEnd()) {
+                           return AsciiDocTokenTypes.SINGLE_QUOTE;
+                         } else {
+                           return textFormat();
+                         }
+                       }
   {DOUBLE_QUOTE}       { return AsciiDocTokenTypes.DOUBLE_QUOTE; }
   {TYPOGRAPHIC_QUOTE_START} / [^\*\n \t] {WORD}* {TYPOGRAPHIC_QUOTE_END} {
                          if (isUnconstrainedStart()) {

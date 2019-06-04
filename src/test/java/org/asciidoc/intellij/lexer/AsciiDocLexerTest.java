@@ -251,6 +251,18 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:BOLD_END ('*')");
   }
 
+  public void testSingleQuote() {
+    doTest("'single'",
+      "AsciiDoc:SINGLE_QUOTE (''')\n" +
+        "AsciiDoc:TEXT ('single')\n" +
+        "AsciiDoc:SINGLE_QUOTE (''')");
+  }
+
+  public void testNoSingleQuoteJustText() {
+    doTest("don't",
+      "AsciiDoc:TEXT ('don't')");
+  }
+
   public void testItalicBlankAtEndOfFirstLine() {
     doTest("_test \ntest_",
       "AsciiDoc:ITALIC_START ('_')\n" +
