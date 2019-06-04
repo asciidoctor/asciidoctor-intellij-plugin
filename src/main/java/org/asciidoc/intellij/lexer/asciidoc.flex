@@ -285,7 +285,7 @@ ATTRIBUTE_REF_END = "}"
   {BLOCK_MACRO_START} / {NON_SPACE} { resetFormatting(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   {BLOCK_ATTRS_START} / [^\[] { yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
 
-  {BULLET} / {STRING} { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BULLET; }
+  {BULLET} / {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BULLET; }
 
   /* a blank line, it separates blocks. Don't return YYINITIAL here, as writing on a blank line might change the meaning
   of the previous blocks combined (for example there is now an italic formatting spanning the two combined blocks) */
