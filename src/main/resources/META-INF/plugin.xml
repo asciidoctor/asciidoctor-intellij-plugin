@@ -32,7 +32,8 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.26.13 update to asciidoctorj-diagram:1.5.18
+      <li>0.26.13 update to asciidoctorj-diagram:1.5.18<br>
+      breadcrumb support in editor
       <li>0.26.12 supporting blanks in block attributes (#255)
       <li>0.26.11 adding support for GRAPHVIZ_DOT environment variable (#261)<br>
       adding support for statement completion (ctrl-shift-enter (#263)
@@ -260,5 +261,6 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
     <multiHostInjector implementation="org.asciidoc.intellij.injection.CodeFenceInjector"/>
     <completion.contributor language="AsciiDoc"
                             implementationClass="org.asciidoc.intellij.injection.LanguageListCompletionContributor"/>
+    <breadcrumbsInfoProvider implementation="org.asciidoc.intellij.breadcrumbs.AsciiDocBreadcrumbsInfoProvider" />
   </extensions>
 </idea-plugin>

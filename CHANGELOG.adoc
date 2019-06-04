@@ -9,6 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.26.13 (work in progress)
 
 - update to asciidoctorj-diagram:1.5.18
+- breadcrumb support in editor
 
 === 0.26.12 (preview, available from Github releases)
 
