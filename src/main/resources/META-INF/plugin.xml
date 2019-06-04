@@ -2,7 +2,7 @@
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
   <version>0.26.13</version>
-  <vendor email="alexander.schwartz@gmx.net" url="http://asciidoctor.org">Asciidoctor Project</vendor>
+  <vendor email="alexander.schwartz@gmx.net" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">Asciidoctor IntelliJ Plugin Project</vendor>
 
   <description><![CDATA[
       <p><a href="http://www.methods.co.nz/asciidoc/">AsciiDoc</a> language support for IntelliJ platform.<p>
