@@ -6,6 +6,11 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
+=== 0.26.14
+
+- fixing NullPointerException in settings processing (#266)
+- supporting pass-through inline content
+
 === 0.26.13
 
 - update to asciidoctorj-diagram:1.5.18

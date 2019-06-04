@@ -32,6 +32,8 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.26.14 fixing NullPointerException in settings processing (#266)<br>
+      supporting pass-through inline content
       <li>0.26.13 update to asciidoctorj-diagram:1.5.18<br>
       breadcrumb support in editor
       <li>0.26.12 supporting blanks in block attributes (#255)
