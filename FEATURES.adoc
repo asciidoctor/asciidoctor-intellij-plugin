@@ -58,8 +58,6 @@ The user can disable this feature in the settings completely or for selected lan
 All comments containing a `TODO` and `FIXME` and are indexed in the Todo-View (kbd:[Alt+6]).
 The user can configure the keywords in the IDE settings.
 
-// this is
-
 ==== Writing
 
 When adding block attributes, the plugin supports statement completion (also known as "`Smart Enter`") using the shortcut kbd:[Shift+Ctrl+Enter].
