@@ -31,6 +31,7 @@ public class AsciiDocBraceMatcher extends PairedBraceMatcherAdapter {
         new BracePair(AsciiDocTokenTypes.TYPOGRAPHIC_QUOTE_START, AsciiDocTokenTypes.TYPOGRAPHIC_QUOTE_END, false),
         new BracePair(AsciiDocTokenTypes.REFSTART, AsciiDocTokenTypes.REFEND, true),
         new BracePair(AsciiDocTokenTypes.BLOCKIDSTART, AsciiDocTokenTypes.BLOCKIDEND, true),
+        new BracePair(AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START, AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END, false),
       };
     }
 

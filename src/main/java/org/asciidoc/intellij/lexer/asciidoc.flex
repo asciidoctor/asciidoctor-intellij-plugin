@@ -125,6 +125,7 @@ WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n] | {SPACE}* [^\n]*[^\ \t\n]
 BOLD = "*"
 BULLET = {SPACE}* "*"+ {SPACE}+
 DOUBLEBOLD = {BOLD} {BOLD}
+PASSTRHOUGH_INLINE = "+++"
 ITALIC = "_"
 DOUBLEITALIC = {ITALIC} {ITALIC}
 MONO = "`"
@@ -177,6 +178,7 @@ ATTRIBUTE_REF_END = "}"
 
 %state PASSTRHOUGH_BLOCK
 %state INSIDE_PASSTRHOUGH_BLOCK_LINE
+%state PASSTRHOUGH_INLINE
 
 %state SIDEBAR_BLOCK
 %state INSIDE_SIDEBAR_BLOCK_LINE
@@ -433,6 +435,9 @@ ATTRIBUTE_REF_END = "}"
                          }
                        }
   {LINKSTART} / [^\[\n]* {LINKTEXT_START} [^\]\n]* {LINKEND} { yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART; }
+  {PASSTRHOUGH_INLINE} / {STRING}* {PASSTRHOUGH_INLINE} {
+                           yybegin(PASSTRHOUGH_INLINE); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
+                         }
   [^]                  { return textFormat(); }
 }
 
@@ -594,22 +599,27 @@ ATTRIBUTE_REF_END = "}"
   [^]                  { yybegin(INSIDE_EXAMPLE_BLOCK_LINE); return AsciiDocTokenTypes.EXAMPLE_BLOCK; }
 }
 
+<PASSTRHOUGH_INLINE> {
+  {PASSTRHOUGH_INLINE} { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END; }
+  [^]                  { return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
+}
+
 <PASSTRHOUGH_BLOCK> {
   {PASSTRHOUGH_BLOCK_DELIMITER} {
-    if (yytext().toString().trim().length() == blockDelimiterLength) {
-      yypushback(1);
-      yybegin(YYINITIAL);
-      return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
-    } else {
-      yypushback(1);
-      return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK;
+      if (yytext().toString().trim().length() == blockDelimiterLength) {
+        yypushback(1);
+        yybegin(YYINITIAL);
+        return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
+      } else {
+        yypushback(1);
+        return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT;
+      }
     }
-  }
 }
 
 <PASSTRHOUGH_BLOCK, INSIDE_PASSTRHOUGH_BLOCK_LINE> {
   "\n"                 { yybegin(PASSTRHOUGH_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                  { yybegin(INSIDE_PASSTRHOUGH_BLOCK_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK; }
+  [^]                  { yybegin(INSIDE_PASSTRHOUGH_BLOCK_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
 }
 
 <SIDEBAR_BLOCK> {

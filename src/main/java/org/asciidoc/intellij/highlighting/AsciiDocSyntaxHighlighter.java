@@ -126,6 +126,8 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
           .put(AsciiDocTokenTypes.ATTRIBUTE_REF_START, ASCIIDOC_MARKER)
           .put(AsciiDocTokenTypes.ATTRIBUTE_REF, ASCIIDOC_ATTRIBUTE)
           .put(AsciiDocTokenTypes.ATTRIBUTE_REF_END, ASCIIDOC_MARKER)
+          .put(AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START, ASCIIDOC_MARKER)
+          .put(AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END, ASCIIDOC_MARKER)
           .build();
 
   @NotNull

@@ -632,6 +632,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('`test')");
   }
 
+  public void testPassThroughInline() {
+    doTest("+++pt\npt2+++",
+      "AsciiDoc:PASSTRHOUGH_INLINE_START ('+++')\n" +
+        "AsciiDoc:PASSTRHOUGH_CONTENT ('pt\\npt2')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_END ('+++')");
+  }
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();
