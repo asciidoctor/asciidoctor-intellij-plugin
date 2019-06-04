@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
@@ -18,6 +19,7 @@ import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider;
 import org.asciidoc.intellij.ui.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class AsciiDocPreviewSettings {
   public static final AsciiDocPreviewSettings DEFAULT = new AsciiDocPreviewSettings();
@@ -57,6 +59,7 @@ public final class AsciiDocPreviewSettings {
   private boolean myEnableInjections = true;
 
   @Attribute("DisabledInjectionsByLanguage")
+  @Nullable
   private String myDisabledInjectionsByLanguage;
 
   public AsciiDocPreviewSettings() {
@@ -66,7 +69,7 @@ public final class AsciiDocPreviewSettings {
                                  @NotNull AsciiDocHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo,
                                  @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme,
                                  @NotNull Map<String, String> attributes, boolean verticalSplit, boolean editorFirst,
-                                 boolean enableInjections, String disabledInjectionsByLanguage) {
+                                 boolean enableInjections, @Nullable String disabledInjectionsByLanguage) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
@@ -140,7 +143,7 @@ public final class AsciiDocPreviewSettings {
     if (myIsVerticalSplit != that.myIsVerticalSplit) return false;
     if (myIsEditorFirst != that.myIsEditorFirst) return false;
     if (myEnableInjections != that.myEnableInjections) return false;
-    if (!myDisabledInjectionsByLanguage.equals(that.myDisabledInjectionsByLanguage)) return false;
+    if (Objects.equals(myDisabledInjectionsByLanguage, that.myDisabledInjectionsByLanguage)) return false;
     return attributes.equals(that.attributes);
   }
 
@@ -153,7 +156,7 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + (myIsVerticalSplit ? 1 : 0);
     result = 31 * result + (myIsEditorFirst ? 1 : 0);
     result = 31 * result + (myEnableInjections ? 1 : 0);
-    result = 31 * result + myDisabledInjectionsByLanguage.hashCode();
+    result = 31 * result + Objects.hashCode(myDisabledInjectionsByLanguage);
     return result;
   }
 
