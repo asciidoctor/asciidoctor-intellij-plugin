@@ -1,0 +1,108 @@
+= Features of the AsciiDoc IntelliJ plugin
+:experimental:
+
+== About
+
+This document details the features available in the plugin to users of the plugin.
+Use it as a reference guide to find out what the plugin can do today.
+The plugin should work "`like any other IntelliJ plugin`" when it comes to shortcuts and configurations.
+If not, please describe the expected behaviour in a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issue].
+
+== Features
+
+=== Basic
+
+* Recognizes the AsciiDoc file extension (.adoc, .asciidoc, .ad)
+* Provides a split view with
+** editor with syntax highlighting (per default on the left) and
+** live preview (per default on the right)
+* Toolbar and context menu for basic formatting and to create tables
+* Refactor Markdown to AsciiDoc: Right click on a file, or use the Refactor menu, and plugin will replace the Markdown document by the AsciiDoc equivalent. Also supports undo, in case the user is not happy with the result!
+
+=== Editor
+
+==== Navigation
+
+The user can fold sections and blocks using the small +/- symbols on the left of the editor.
+
+The structure of the file kbd:[ALT+7] shows the hierarchy of sections and blocks with titles.
+
+The search all view kbd:[Shift+Shift] shows section titles and titles of blocks.
+
+The breadcrumbs view (bottom of the editor) shows the hierarchy leading to the current sections and blocks.
+
+For
++++include::[]+++
+and
++++image::[]+++
+block macros the kbd:[Ctrl+click] and kbd:[Ctrl+b] will navigate to the referenced file.
+
+For references (like `\<<id>>`) kbd:[Ctrl+click] and kbd:[Ctrl+b] will navigate to the reference (like `\[[id]]`).
+"Find Usages" (kbd:[ALT+F7]) will find usages of a reference and allows navigation.
+
+The plugin highlights matching braces including symmetric formatting for bold, italic and monospace.
+
+During rendering Asciidoctor might indicate problems in the file including a line number.
+The editor shows them as red and yellow annotations.
+Hover over the annotations to see the full warning or error message.
+
+When the text contains Markdown style headings (starting with `#`) or old style Asciidoc headings (titles underlined with string or characters matching the length or the heading), the editor highlights this in yellow and offers a quick fix to convert these to a new style Asciidoc heading.
+
+The editor supports a default and dark theme.
+The user can change the colors of the theme in the IDE settings.
+
+When using listings with `[source,lang]`, the plugin will trigger language injection following code block when the language is supported by the IDE (either by default, or by a language plugin).
+This allow syntax highlighting and code completion specific to the language of the code block.
+The user can disable this feature in the settings completely or for selected languages.
+
+All comments containing a `TODO` and `FIXME` and are indexed in the Todo-View (kbd:[Alt+6]).
+The user can configure the keywords in the IDE settings.
+
+// this is
+
+==== Writing
+
+When adding block attributes, the plugin supports statement completion (also known as "`Smart Enter`") using the shortcut kbd:[Shift+Ctrl+Enter].
+For example: a `[source,java` will receive a closing bracket and two listing separator lines.
+
+When the user opens a quote or a bracket, the plugin will automatically add a closing quote.
+
+For references and includes it provides auto-completion using kbd:[Ctrl+Space].
+References support renaming within a project.
+
+There are several live templates included.
+Once the user starts typing kbd:[a]kbd:[d], a list of templates appears.
+Continued typing any character of the template name restricts the list. A kbd:[Tab] selects and entry.
+
+=== Preview
+
+Per default the preview is on the right side of a vertical split screen.
+Using the configuration, the user can change the split to horizontal, and change the position of the preview.
+
+The plugin uses https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] 2.x to render the preview.
+
+It renders the content of the editor including all referenced includes, images and diagrams like PlantUML on the fly.
+
+When the user moves the cursor in the editor, the preview scrolls the text into the preview.
+
+When the user clicks on text in the preview, the editor will move the cursor to the clicked text.
+This is accurate at block level, unfortunately not yet on line or character level.
+
+When the user clicks on an external URL, the preview will open it in an external browser.
+
+When the user clicks on a relative link within the project (usually a `\link:[]` reference), the preview will open the referenced file in a new editor.
+
+=== Advanced
+
+==== Configuration File
+
+To provide a common set of variables when rendering the preview, the plugin reads an _.asciidoctorconfig_ configuration file.
+Use this to optimize the preview the project contains a document that is split out to multiple include files.
+See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-project-specific-configurations[Wiki page] for details
+
+==== Extensions
+
+Asciidoctor Extensions can provide additional macros.
+To see the rendered result in the preview, the plugin can use extensions during rendering.
+See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-for-Asciidoctor-Extensions[Wiki page] for details
+

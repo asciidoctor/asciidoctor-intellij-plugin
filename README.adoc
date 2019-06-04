@@ -2,15 +2,19 @@
 Alexander Schwartz
 :experimental:
 
-A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language. You can install the plugin (named "AsciiDoc") from the plugins section inside your JetBrains IDE or download it from the https://plugins.jetbrains.com/plugin/7391[JetBrains Plugin Repository].
-
+A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language.
 To support the authors of Asciidoctor, please consider supporting us via https://opencollective.com/asciidoctor[OpenCollective].
 
 *You can meet the maintainers in person:* Please ping them via eMail or chat before or during the event!
 
 * https://www.ahus1.de/[Alex] at https://www.devoxx.co.uk/[JavaZone (Oslo, NO)], 2019-09-11..12
 
-The most advanced and recommended preview mode is JavaFX.
+== Installation
+
+You can install the plugin (named "AsciiDoc") from the plugins section inside your JetBrains IDE or download it from the https://plugins.jetbrains.com/plugin/7391[JetBrains Plugin Repository].
+
+The most advanced and recommended preview mode (and default for new installations) is JavaFX.
+
 To use the JavaFX preview instead of the Swing preview, you'll need to run IntelliJ with 64bit Java and JavaFX installed.
 Oracle JDK installations include JavaFX, but can make the IDE unstable and crash.
 Pre-bundled OpenJDK installations usually don't include JavaFX.
@@ -19,24 +23,18 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 From 2017.1 onwards a JetBrains OpenJDK 64bit is included even in the Windows versions.
 Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to be most stable in the JetBrains JDK. See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Selecting the JDK version the IDE will run under] for more details.
 
-EXPERIMENTAL:
-
-* Support for _.asciidoctorconfig_ configuration files.
-See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-project-specific-configurations[Wiki page] for details
-
-* Support for Ruby Asciidoctor extensions.
-  See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-for-Asciidoctor-Extensions[Wiki page] for details
-
-Refer to the link:CHANGELOG.adoc[CHANGELOG] for a complete list of changes in older releases.
-
 == Features
 
-* Right click on a document to apply basic formatting or create tables.
-* Refactor Markdown to AsciiDoc: Right click on a file, or use the Refactor menu, and the Markdown document will be replaced by the AsciiDoc equivalent. Also supports undo, in case you're not happy with the result!
 * Recognizes the AsciiDoc file extension (.adoc, .asciidoc, .ad)
-* Provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] with Live preview.
+* Provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] with live preview.
+* Toolbar and context menu for basic formatting and to create tables.
+* Refactor Markdown to AsciiDoc: Right click on a file, or use the Refactor menu, and the Markdown document will be replaced by the AsciiDoc equivalent. Also supports undo, in case you're not happy with the result!
+
+Refer to the link:FEATURES.adoc[Features list] for a detailed overview of the features.
 
 If you are missing features, please don't hesitate to let me know on Twitter: http://www.twitter.com/ahus1de[@ahus1de] or make an issue in the issue tracker!
+
+Refer to the link:CHANGELOG.adoc[CHANGELOG] for a complete list of changes in older releases.
 
 == Dependencies
 
