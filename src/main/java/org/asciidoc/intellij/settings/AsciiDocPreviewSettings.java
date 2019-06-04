@@ -143,7 +143,7 @@ public final class AsciiDocPreviewSettings {
     if (myIsVerticalSplit != that.myIsVerticalSplit) return false;
     if (myIsEditorFirst != that.myIsEditorFirst) return false;
     if (myEnableInjections != that.myEnableInjections) return false;
-    if (Objects.equals(myDisabledInjectionsByLanguage, that.myDisabledInjectionsByLanguage)) return false;
+    if (!Objects.equals(myDisabledInjectionsByLanguage, that.myDisabledInjectionsByLanguage)) return false;
     return attributes.equals(that.attributes);
   }
 

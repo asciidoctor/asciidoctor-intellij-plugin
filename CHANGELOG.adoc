@@ -6,6 +6,10 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
+=== 0.26.15
+
+- fixing equals check for disabled injected languages (#266)
+
 === 0.26.14
 
 - fixing NullPointerException in settings processing (#266)
