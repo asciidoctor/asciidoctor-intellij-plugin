@@ -1,12 +1,41 @@
 = Features of the AsciiDoc IntelliJ plugin
 :experimental:
 
+
+////
+Contribution Guideline for this document:
+
+This guideline should lead to a style that is comprehensible to the user.
+Naming the actor, the active voice and the present tense will make it easier for non-native speakers to understand this document.
+
+Name the actor::
+Examples: user, preview, editor, plugin
+
+Provide Keyboard shortcuts::
+Example: kbd:[Alt+7]
+
+Use active voice::
+Good: "The preview displays the result" +
+Bad: "The result is displayed"
+
+Use present tense::
+Good: "The preview displays the result" +
+Bad: "The preview will display the result"
+
+Use only on capital letter for Keyboard shortcuts::
+Good: kbd:[Alt+7] +
+Bad: kbd:[ALT+7]
+////
+
 == About
 
 This document details the features available in the plugin to users of the plugin.
 Use it as a reference guide to find out what the plugin can do today.
 The plugin should work "`like any other IntelliJ plugin`" when it comes to shortcuts and configurations.
 If not, please describe the expected behaviour in a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issue].
+
+Please consider to contribute to this document: open a bug when something is unclear, missing or wrong.
+You can even create a pull request for this document!
 
 == Features
 
@@ -25,7 +54,7 @@ If not, please describe the expected behaviour in a https://github.com/asciidoct
 
 The user can fold sections and blocks using the small +/- symbols on the left of the editor.
 
-The structure of the file kbd:[ALT+7] shows the hierarchy of sections and blocks with titles.
+The structure of the file kbd:[Alt+7] shows the hierarchy of sections and blocks with titles.
 
 The search all view kbd:[Shift]kbd:[Shift] shows section titles and titles of blocks.
 
@@ -38,7 +67,7 @@ and
 block macros the kbd:[Ctrl+Click] and kbd:[Ctrl+B] will navigate to the referenced file.
 
 For references (like `\<<id>>`) kbd:[Ctrl+Click] and kbd:[Ctrl+B] will navigate to the reference (like `\[[id]]`).
-"Find Usages" (kbd:[ALT+F7]) will find usages of a reference and allows navigation.
+"Find Usages" (kbd:[Alt+F7]) will find usages of a reference and allows navigation.
 
 The plugin highlights matching braces including symmetric formatting for bold, italic and monospace.
 
