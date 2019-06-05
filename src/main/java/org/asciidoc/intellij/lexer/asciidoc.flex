@@ -407,6 +407,7 @@ ATTRIBUTE_REF_END = "}"
   {REFSTART} / [^>\n ]* {AUTOCOMPLETE} { yybegin(REFAUTO); return AsciiDocTokenTypes.REFSTART; }
   {BLOCKIDSTART} / [^\]\n]+ {BLOCKIDEND} { yybegin(BLOCKID); return AsciiDocTokenTypes.BLOCKIDSTART; }
   {ATTRIBUTE_REF_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} { yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START; }
+  (->|=>|<-|<=)        { return textFormat(); } // avoid errors to be recognized as LT/GT
   {LT}                 { return AsciiDocTokenTypes.LT; }
   {GT}                 { return AsciiDocTokenTypes.GT; }
   {SINGLE_QUOTE}       { if (isUnconstrainedStart() || isUnconstrainedEnd()) {
