@@ -51,8 +51,8 @@ When the text contains Markdown style headings (starting with `#`) or old style 
 The editor supports a default and dark theme.
 The user can change the colors of the theme in the IDE settings.
 
-When using listings with `[source,lang]`, the plugin will trigger language injection following code block when the language is supported by the IDE (either by default, or by a language plugin).
-This allow syntax highlighting and code completion specific to the language of the code block.
+When using listings with `[source,lang]`, the plugin triggers language injection to the following code block when the language is supported by the IDE (either by default, or by a language plugin).
+This allows syntax highlighting and code completion specific to the language of the code block.
 The user can disable this feature in the settings completely or for selected languages.
 
 All comments containing a `TODO` and `FIXME` and are indexed in the Todo-View (kbd:[Alt+6]).
