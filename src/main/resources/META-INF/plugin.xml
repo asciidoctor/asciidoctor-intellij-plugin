@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.26.15</version>
+  <version>0.26.16</version>
   <vendor email="alexander.schwartz@gmx.net" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">Asciidoctor IntelliJ Plugin Project</vendor>
 
   <description><![CDATA[
@@ -32,6 +32,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.26.16 show includes and images in structure view (#267)
       <li>0.26.15 fixing equals check for disabled injected languages (#266)
       <li>0.26.14 fixing NullPointerException in settings processing (#266)<br>
       supporting pass-through inline content
