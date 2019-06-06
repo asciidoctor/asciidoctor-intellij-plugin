@@ -615,6 +615,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TYPOGRAPHIC_QUOTE_END ('`\"')");
   }
 
+  public void testTwoTypographicQuotes() {
+    doTest("\"`tq`\" \"`tq`\"",
+      "AsciiDoc:TYPOGRAPHIC_QUOTE_START ('\"`')\n" +
+        "AsciiDoc:TEXT ('tq')\n" +
+        "AsciiDoc:TYPOGRAPHIC_QUOTE_END ('`\"')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TYPOGRAPHIC_QUOTE_START ('\"`')\n" +
+        "AsciiDoc:TEXT ('tq')\n" +
+        "AsciiDoc:TYPOGRAPHIC_QUOTE_END ('`\"')");
+  }
+
   public void testNoTypographicQuotes() {
     doTest("\"` test `\"",
       "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +

@@ -379,7 +379,7 @@ ATTRIBUTE_REF_END = "}"
                            return textFormat();
                          }
                        }
-  {MONO} {MONO}? / [^\`\n \t] {WORD}* {MONO} { if(isUnconstrainedStart() && !singlemono && !doublemono) {
+  {MONO} {MONO}? / [^\`\n \t\"] {WORD}* {MONO} { if(isUnconstrainedStart() && !singlemono && !doublemono) {
                             if (yylength() == 2) {
                               yypushback(1);
                             }
