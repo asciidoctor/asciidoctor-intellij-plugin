@@ -3,10 +3,16 @@
 
 
 ////
-Contribution Guideline for this document:
+= Contribution Guideline for this document:
 
 This guideline should lead to a style that is comprehensible to the user.
+
+Don't assume people are developers and have worked with IntelliJ before -- this should be for writers or business analysts as well, and also for first-time IntelliJ users.
+
 Naming the actor, the active voice and the present tense will make it easier for non-native speakers to understand this document.
+Adding the shortcuts should help users new to IntelliJ.
+
+== Check lists for writing content
 
 Name the actor::
 Examples: user, preview, editor, plugin
