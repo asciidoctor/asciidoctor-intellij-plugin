@@ -77,6 +77,12 @@ For references (like `\<<id>>`) kbd:[Ctrl+Click] and kbd:[Ctrl+B] will navigate 
 
 The plugin highlights matching braces including symmetric formatting for bold, italic and monospace.
 
+IntelliJ's built-in spell checker verifies all text areas of the document.
+It underlines unknown words with a green wavy line.
+With the context menu the user can change the spelling or to add the word to the project's dictionary.
+To enable spell-checking support for other languages, the user can add a dictionary file via "Editor | Spelling".
+Dictionaries are available online for example at http://www.winedt.org/dict.html. Word lists need to be in the UTF-8 format to work.
+
 During rendering Asciidoctor might indicate problems in the file including a line number.
 The editor shows them as red and yellow annotations.
 Hover over the annotations to see the full warning or error message.
