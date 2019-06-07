@@ -21,13 +21,6 @@ import java.util.Map;
 public class LanguageListCompletionContributor extends CompletionContributor {
 
   @Override
-  public void beforeCompletion(@NotNull CompletionInitializationContext context) {
-    if (context.getFile() instanceof AsciiDocFile) {
-      context.setDummyIdentifier(CompletionInitializationContext.DUMMY_IDENTIFIER + "\n");
-    }
-  }
-
-  @Override
   public boolean invokeAutoPopup(@NotNull PsiElement position, char typeChar) {
     return typeChar == ',' && position.getNode().getElementType() == AsciiDocTokenTypes.BLOCK_ATTR_NAME
       && "source".equalsIgnoreCase(position.getNode().getText());

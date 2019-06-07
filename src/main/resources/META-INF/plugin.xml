@@ -34,7 +34,8 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
     <ul>
       <li>0.26.17 support escaping with backslash ("\") in editor, avoiding highlighting<br>
       move to released markdown-to-asciidoc version 1.1 to use proper dependency management (#268)<br>
-      support spell checking on more elements including quotes, examples and comments (#269)
+      support spell checking on more elements including quotes, examples and comments (#269)<br>
+      fixing autocomplete for file names on include::[] within blocks
       <li>0.26.16 show includes and images in structure view, adding icon set for breadcrumbs and structure view, tuning contents (#267)
       <li>0.26.15 fixing equals check for disabled injected languages (#266)
       <li>0.26.14 fixing NullPointerException in settings processing (#266)<br>
