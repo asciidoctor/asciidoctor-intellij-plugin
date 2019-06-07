@@ -40,8 +40,9 @@ public class AsciiDocStructureViewElement extends PsiTreeElementBase<PsiElement>
       if (childElement instanceof AsciiDocBlockMacro) {
         PsiReference[] references = childElement.getReferences();
         if (references.length > 0) {
-          if (!getPresentableElementText(references[0].resolve()).isEmpty()) {
-            result.add(new AsciiDocStructureViewElement(references[0].resolve()));
+          PsiElement resolved = references[references.length - 1].resolve();
+          if (!getPresentableElementText(resolved).isEmpty()) {
+            result.add(new AsciiDocStructureViewElement(resolved));
             continue;
           }
         }
@@ -54,8 +55,9 @@ public class AsciiDocStructureViewElement extends PsiTreeElementBase<PsiElement>
           for (AsciiDocBlockMacro block : blocks) {
             PsiReference[] references = block.getReferences();
             if (references.length > 0) {
-              if (!getPresentableElementText(references[0].resolve()).isEmpty()) {
-                result.add(new AsciiDocStructureViewElement(references[0].resolve()));
+              PsiElement resolved = references[references.length - 1].resolve();
+              if (!getPresentableElementText(resolved).isEmpty()) {
+                result.add(new AsciiDocStructureViewElement(resolved));
                 found = true;
               }
             }

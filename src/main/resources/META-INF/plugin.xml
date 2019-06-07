@@ -32,6 +32,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.26.18 resolve the last reference as this will be the file; the others are the subdirectories (#267)
       <li>0.26.17 support escaping with backslash ("\") in editor, avoiding highlighting<br>
       move to released markdown-to-asciidoc version 1.1 to use proper dependency management (#268)<br>
       support spell checking on more elements including quotes, examples and comments (#269)<br>
