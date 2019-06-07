@@ -9,6 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.26.17 (work in progress)
 
 - support escaping with backslash ("\") in editor, avoiding highlighting
+- move to released markdown-to-asciidoc version 1.1 to use proper dependency management (#268)
 
 === 0.26.16 (preview, available from Github releases)
 

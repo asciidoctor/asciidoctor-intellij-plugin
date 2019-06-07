@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-import static com.laamella.markdown_to_asciidoc.Converter.convertMarkdownToAsciiDoc;
+import static nl.jworks.markdown_to_asciidoc.Converter.convertMarkdownToAsciiDoc;
 
 /**
  * Converts the contents of an editor panel from Markdown to AsciiDoc.
