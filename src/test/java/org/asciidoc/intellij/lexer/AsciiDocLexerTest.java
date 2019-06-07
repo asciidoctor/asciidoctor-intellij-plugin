@@ -159,6 +159,11 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRIBUTE_NAME_END (':')");
   }
 
+  public void testAttributeEscaped() {
+    doTest("\\:attribute:",
+      "AsciiDoc:TEXT ('\\:attribute:')");
+  }
+
   public void testAttributeWithValue() {
     doTest(":attribute: value",
       "AsciiDoc:ATTRIBUTE_NAME_START (':')\n"+
@@ -489,6 +494,16 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Text')");
   }
 
+  public void testEscapedRef() {
+    doTest("\\<<REF>>",
+      "AsciiDoc:TEXT ('\\')\n" +
+        "AsciiDoc:LT ('<')\n" +
+        "AsciiDoc:LT ('<')\n" +
+        "AsciiDoc:TEXT ('REF')\n" +
+        "AsciiDoc:GT ('>')\n" +
+        "AsciiDoc:GT ('>')");
+  }
+
   public void testRefWithFile() {
     doTest("Text <<FILE#REF>> More Text",
       "AsciiDoc:TEXT ('Text')\n" +
@@ -532,6 +547,14 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('More')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testEscapedLink() {
+    doTest("\\link:FILE[Text]",
+      "AsciiDoc:TEXT ('\\link:FILE')\n" +
+        "AsciiDoc:LBRACKET ('[')\n" +
+        "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:RBRACKET (']')");
   }
 
   public void testLinkWithAnchor() {

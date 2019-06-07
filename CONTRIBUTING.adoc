@@ -178,9 +178,12 @@ qualifying matches, push back and state change::
 After a match the Java code checks additional conditions like if this is an unconstrained position in the stream.
 If the code decides to discard the match, two possible strategies out of several are:
 
-. push back all but the first character, and return the token type for the single character (for example when an double-asterisk occurs, but no bold text is to end here, see `{DOUBLEMONO}` in the lexer).
+. push back all but the first character, and return the token type for the single character (for example when an double-asterisk occurs, but no bold text is to end here, see `\{DOUBLEMONO}` in the lexer).
 
-. push back the complete text and continue with a different state using `yybegin()` (for example when matching a `{HEADING_OLDSTYLE}` in the `MULTILINE` state).
+. push back the complete text and continue with a different state using `yybegin()` (for example when matching a `\{HEADING_OLDSTYLE}` in the `MULTILINE` state).
+
+. some of the expressions can be prefixed with a backslash (`\`) to escape the expression.
+Use `isEscaped()` to check if it has been escaped.
 
 Unfortunately, the parser can't continue with other matches in the same state.
 To work around this issue blocks are parsed first in state `MULTILINE`, then in state `SINGLELINE`, and finally `INSIDE_LINE` to implement a hierarchy and some ordering of matches.

@@ -24,7 +24,7 @@ import java.util.Stack;
   private boolean doublemono = false;
   private boolean typographicquote = false;
 
-  private Stack<Integer> stateStack = new Stack<Integer>();
+  private Stack<Integer> stateStack = new Stack<>();
 
   private boolean isUnconstrainedEnd() {
     if(getTokenStart() > 0) {
@@ -56,6 +56,16 @@ import java.util.Stack;
       }
     }
     return true;
+  }
+
+  private boolean isEscaped() {
+    if(getTokenStart() > 0) {
+      char c = zzBuffer.charAt(getTokenStart() -1);
+      if (c == '\\') {
+        return true;
+      }
+    }
+    return false;
   }
 
   private void resetFormatting() {
@@ -244,8 +254,12 @@ ATTRIBUTE_REF_END = "}"
         }
       }
   {ATTRIBUTE_NAME_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_NAME_END} {
-        yybegin(ATTRIBUTE_DECL);
-        return AsciiDocTokenTypes.ATTRIBUTE_NAME_START;
+        if (!isEscaped()) {
+          yybegin(ATTRIBUTE_DECL);
+          return AsciiDocTokenTypes.ATTRIBUTE_NAME_START;
+        } else {
+          yypushback(yylength()); yybegin(SINGLELINE);
+        }
       }
   [^]                  { yypushback(yylength()); yybegin(SINGLELINE); }
 }
@@ -401,12 +415,38 @@ ATTRIBUTE_REF_END = "}"
   {RPAREN}             { return AsciiDocTokenTypes.RPAREN; }
   {LBRACKET}           { return AsciiDocTokenTypes.LBRACKET; }
   {RBRACKET}           { return AsciiDocTokenTypes.RBRACKET; }
-  {REFSTART} / [^>\n]+ {REFEND} { yybegin(REF); return AsciiDocTokenTypes.REFSTART; }
+  {REFSTART} / [^>\n]+ {REFEND} {
+                         if (!isEscaped()) {
+                           yybegin(REF); return AsciiDocTokenTypes.REFSTART;
+                         } else {
+                           yypushback(1);
+                           return AsciiDocTokenTypes.LT;
+                         }
+                       }
   // when typing a reference, it will not be complete due to the missing matching closing ref
   // therefore second variante for incomplete REF that will only be active during autocomplete
-  {REFSTART} / [^>\n ]* {AUTOCOMPLETE} { yybegin(REFAUTO); return AsciiDocTokenTypes.REFSTART; }
-  {BLOCKIDSTART} / [^\]\n]+ {BLOCKIDEND} { yybegin(BLOCKID); return AsciiDocTokenTypes.BLOCKIDSTART; }
-  {ATTRIBUTE_REF_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} { yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START; }
+  {REFSTART} / [^>\n ]* {AUTOCOMPLETE} {
+                         if (!isEscaped()) {
+                           yybegin(REFAUTO); return AsciiDocTokenTypes.REFSTART;
+                         } else {
+                           yypushback(1);
+                           return AsciiDocTokenTypes.LT;
+                         }
+                        }
+  {BLOCKIDSTART} / [^\]\n]+ {BLOCKIDEND} {
+                         if (!isEscaped()) {
+                           yybegin(BLOCKID); return AsciiDocTokenTypes.BLOCKIDSTART;
+                         } else {
+                           return textFormat();
+                         }
+                       }
+  {ATTRIBUTE_REF_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} {
+                         if (!isEscaped()) {
+                           yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
+                         } else {
+                           return textFormat();
+                         }
+                       }
   (->|=>|<-|<=)        { return textFormat(); } // avoid errors to be recognized as LT/GT
   {LT}                 { return AsciiDocTokenTypes.LT; }
   {GT}                 { return AsciiDocTokenTypes.GT; }
@@ -435,7 +475,13 @@ ATTRIBUTE_REF_END = "}"
                            return textFormat();
                          }
                        }
-  {LINKSTART} / [^\[\n]* {LINKTEXT_START} [^\]\n]* {LINKEND} { yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART; }
+  {LINKSTART} / [^\[\n]* {LINKTEXT_START} [^\]\n]* {LINKEND} {
+                         if (!isEscaped()) {
+                           yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART;
+                         } else {
+                           return textFormat();
+                         }
+                       }
   {PASSTRHOUGH_INLINE} / {STRING}* {PASSTRHOUGH_INLINE} {
                            yybegin(PASSTRHOUGH_INLINE); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
                          }

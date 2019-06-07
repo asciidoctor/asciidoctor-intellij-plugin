@@ -6,6 +6,10 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
+=== 0.26.17 (work in progress)
+
+- support escaping with backslash ("\") in editor, avoiding highlighting
+
 === 0.26.16 (preview, available from Github releases)
 
 - show includes and images in structure view, adding icon set for breadcrumbs and structure view, tuning contents (#267)
