@@ -22,6 +22,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_OLDSTYLE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_BREAK;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REF;
@@ -95,7 +96,7 @@ public class AsciiDocParserImpl {
         continue;
       }
       else if (at(EXAMPLE_BLOCK_DELIMITER) || at(SIDEBAR_BLOCK_DELIMITER) || at(QUOTE_BLOCK_DELIMITER)
-          || at(COMMENT_BLOCK_DELIMITER) || at(PASSTRHOUGH_BLOCK_DELIMITER)) {
+          || at(COMMENT_BLOCK_DELIMITER) || at(PASSTRHOUGH_BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER)) {
         parseBlock();
         continue;
       }
@@ -171,6 +172,21 @@ public class AsciiDocParserImpl {
         next();
         myBlockStartMarker.done(AsciiDocElementTypes.BLOCK);
         break;
+      }
+      if (at(BLOCK_MACRO_ID)) {
+        newLines = 0;
+        PsiBuilder.Marker blockMacro = myBuilder.mark();
+        next();
+        while (at(BLOCK_MACRO_BODY) || at(BLOCK_MACRO_ATTRIBUTES) || at(BLOCK_ATTRS_START) || at(BLOCK_ATTRS_END)
+          && newLines == 0) {
+          if (at(BLOCK_ATTRS_END)) {
+            next();
+            break;
+          }
+          next();
+        }
+        blockMacro.done(AsciiDocElementTypes.BLOCK_MACRO);
+        continue;
       }
       next();
     }

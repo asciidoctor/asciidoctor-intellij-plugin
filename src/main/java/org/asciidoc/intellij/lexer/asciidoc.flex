@@ -120,6 +120,7 @@ LISTING_BLOCK_DELIMITER = "----" "-"* {SPACE}* \n
 EXAMPLE_BLOCK_DELIMITER = "====" "="* {SPACE}* \n
 SIDEBAR_BLOCK_DELIMITER = "****" "*"* {SPACE}* \n
 QUOTE_BLOCK_DELIMITER = "____" "_"* {SPACE}* \n
+LITERAL_BLOCK_DELIMITER = "...." "."* {SPACE}* \n
 HEADING_START = "="{1,6} {SPACE}+
 HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 // starting at the start of the line, but not with a dot
@@ -195,6 +196,9 @@ ATTRIBUTE_REF_END = "}"
 
 %state QUOTE_BLOCK
 %state INSIDE_QUOTE_BLOCK_LINE
+
+%state LITERAL_BLOCK
+%state INSIDE_LITERAL_BLOCK_LINE
 
 %state BLOCK_MACRO
 %state BLOCK_MACRO_ATTRS
@@ -290,6 +294,7 @@ ATTRIBUTE_REF_END = "}"
   {PASSTRHOUGH_BLOCK_DELIMITER} { resetFormatting(); yypushback(1); yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
   {SIDEBAR_BLOCK_DELIMITER} { resetFormatting(); yypushback(1); yybegin(SIDEBAR_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER; }
   {QUOTE_BLOCK_DELIMITER} { resetFormatting(); yypushback(1); yybegin(QUOTE_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER; }
+  {LITERAL_BLOCK_DELIMITER} { resetFormatting(); yypushback(1); yybegin(LITERAL_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER; }
 
   {ANCHORSTART} / [^\]\n]+ {ANCHOREND} { resetFormatting(); yybegin(ANCHORID); return AsciiDocTokenTypes.BLOCKIDSTART; }
   {LINE_COMMENT}       { return AsciiDocTokenTypes.LINE_COMMENT; }
@@ -703,4 +708,24 @@ ATTRIBUTE_REF_END = "}"
 <QUOTE_BLOCK, INSIDE_QUOTE_BLOCK_LINE> {
   "\n"                 { yybegin(QUOTE_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
   [^]                  { yybegin(INSIDE_QUOTE_BLOCK_LINE); return AsciiDocTokenTypes.QUOTE_BLOCK; }
+}
+
+<LITERAL_BLOCK> {
+  {LITERAL_BLOCK_DELIMITER} {
+    if (yytext().toString().trim().length() == blockDelimiterLength) {
+      yypushback(1);
+      yybegin(YYINITIAL);
+      return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER;
+    } else {
+      yypushback(1);
+      return AsciiDocTokenTypes.LITERAL_BLOCK;
+    }
+  }
+  // include is the only allowed block macro in this type of block
+  "include::" / [^\[\n]* "[" [^\]\n]* "]" { yypushstate(LITERAL_BLOCK); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+}
+
+<LITERAL_BLOCK, INSIDE_LITERAL_BLOCK_LINE> {
+  "\n"                 { yybegin(LITERAL_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                  { yybegin(INSIDE_LITERAL_BLOCK_LINE); return AsciiDocTokenTypes.LITERAL_BLOCK; }
 }

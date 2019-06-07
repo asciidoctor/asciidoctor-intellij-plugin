@@ -19,7 +19,7 @@ This document enables you to enhance the plugin when you are new to either the p
 
 This document is work in progress. Please ask questions to the maintainers for anything that is missing (either via email or via a GitHub ticket), and we'll update it.
 
-== Getting started
+== Getting started with developing
 
 [[JDK]]
 === Choosing a Java Version and Distribution
@@ -123,7 +123,9 @@ The standard to do this in IntelliJ is https://jflex.de[JFlex].
 
 The heart of lexing is `asciidoc.flex`.
 It defines multiple states, and uses a lot of functionality and tweaking to parse AsciiDoc.
-You can add new token types as you go in `AsciiDocTokenTypes`. Ensure to update the list `TOKENS_TO_MERGE` if consecutive identical types of the tokens should be merged.
+You can add new token types as you go in `AsciiDocTokenTypes`.
+Ensure to update the list `TOKENS_TO_MERGE` if consecutive identical types of the tokens should be merged.
+If the content of the token types should be spell-checked, add the token types to the list of tokens in `AsciiDocSpellcheckingStrategy`.
 
 Once you change `asciidoc.flex`, you should run `gradlew compileJava` to generate the parser code.
 

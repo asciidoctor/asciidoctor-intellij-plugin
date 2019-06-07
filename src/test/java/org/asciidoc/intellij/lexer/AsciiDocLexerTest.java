@@ -673,6 +673,16 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:PASSTRHOUGH_INLINE_END ('+++')");
   }
 
+  public void testLiteralBlock() {
+    doTest("....\nliteral\n....\n",
+      "AsciiDoc:LITERAL_BLOCK_DELIMITER ('....')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LITERAL_BLOCK ('literal')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LITERAL_BLOCK_DELIMITER ('....')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();

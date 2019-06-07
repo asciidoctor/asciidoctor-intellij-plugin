@@ -12,16 +12,27 @@ import org.jetbrains.annotations.NotNull;
  * @author yole
  */
 public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
-  public static TokenSet TEXT_TOKENS = TokenSet.create(AsciiDocTokenTypes.HEADING,
+  public static TokenSet TEXT_TOKENS = TokenSet.create(
+    AsciiDocTokenTypes.HEADING,
+    AsciiDocTokenTypes.HEADING_OLDSTYLE,
     AsciiDocTokenTypes.TEXT,
-    AsciiDocTokenTypes.BOLD,
     AsciiDocTokenTypes.ITALIC,
-    AsciiDocTokenTypes.MONO,
+    AsciiDocTokenTypes.BOLD,
     AsciiDocTokenTypes.BOLDITALIC,
+    AsciiDocTokenTypes.MONO,
     AsciiDocTokenTypes.MONOBOLD,
     AsciiDocTokenTypes.MONOITALIC,
+    AsciiDocTokenTypes.MONOBOLDITALIC,
     AsciiDocTokenTypes.TITLE,
-    AsciiDocTokenTypes.MONOBOLDITALIC);
+    AsciiDocTokenTypes.LINE_COMMENT,
+    AsciiDocTokenTypes.BLOCK_COMMENT,
+    AsciiDocTokenTypes.EXAMPLE_BLOCK,
+    AsciiDocTokenTypes.SIDEBAR_BLOCK,
+    AsciiDocTokenTypes.QUOTE_BLOCK,
+    AsciiDocTokenTypes.LITERAL_BLOCK,
+    AsciiDocTokenTypes.BLOCKREFTEXT,
+    AsciiDocTokenTypes.LINKTEXT
+  );
 
   @NotNull
   @Override
