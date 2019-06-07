@@ -7,10 +7,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
-import icons.AsciiDocIcons;
 import org.asciidoc.intellij.psi.AsciiDocBlock;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocCodeContent;
+import org.asciidoc.intellij.psi.AsciiDocListing;
 import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,13 +92,12 @@ public class AsciiDocStructureViewElement extends PsiTreeElementBase<PsiElement>
       @Nullable
       @Override
       public Icon getIcon(boolean unused) {
-        if (AsciiDocStructureViewElement.this.getElement() instanceof AsciiDocSection) {
-          return AsciiDocIcons.Asciidoc_Icon;
+        PsiElement element = AsciiDocStructureViewElement.this.getElement();
+        if (element != null) {
+          return element.getIcon(0);
+        } else {
+          return null;
         }
-        if (AsciiDocStructureViewElement.this.getElement() instanceof PsiFile) {
-          return AsciiDocStructureViewElement.this.getElement().getIcon(0);
-        }
-        return null;
       }
     };
   }
@@ -119,10 +118,18 @@ public class AsciiDocStructureViewElement extends PsiTreeElementBase<PsiElement>
     if (element instanceof AsciiDocBlock) {
       AsciiDocBlock block = (AsciiDocBlock) element;
       String title = block.getTitle();
-      if (title == null) {
-        title = "(Block)";
-      }
       String style = block.getStyle();
+      if (title == null) {
+        if (element instanceof AsciiDocListing && style == null) {
+          title = "(Listing)";
+        } else if (element instanceof AsciiDocBlockMacro) {
+          title = ((AsciiDocBlockMacro) element).getMacroName();
+        } else if (style == null) {
+          title = "(Block)";
+        } else {
+          title = "";
+        }
+      }
       if (style != null) {
         return "[" + style + "] " + title;
       }

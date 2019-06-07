@@ -6,9 +6,9 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
-=== 0.26.16
+=== 0.26.16 (preview, available from Github releases)
 
-- show includes and images in structure view (#267)
+- show includes and images in structure view, adding icon set for breadcrumbs and structure view, tuning contents (#267)
 
 === 0.26.15
 

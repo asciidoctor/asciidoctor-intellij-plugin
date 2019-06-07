@@ -5,9 +5,12 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
+import icons.AsciiDocIcons;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 /**
  * @author yole
@@ -59,4 +62,8 @@ public class AsciiDocSection extends ASTWrapperPsiElement {
     return AsciiDocPsiImplUtil.getPresentation(this);
   }
 
+  @Override
+  public Icon getIcon(int ignored) {
+    return AsciiDocIcons.Structure.Section;
+  }
 }

@@ -9,8 +9,11 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.IncorrectOperationException;
+import icons.AsciiDocIcons;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 /**
  * @author yole
@@ -40,6 +43,11 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
     }
     return StringUtil.trimEnd(idNode.getText(), "::");
 
+  }
+
+  @Override
+  public Icon getIcon(int ignored) {
+    return AsciiDocIcons.Structure.Macro;
   }
 
   public static class Manipulator extends AbstractElementManipulator<AsciiDocBlockMacro> {
