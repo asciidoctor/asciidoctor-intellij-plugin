@@ -12,6 +12,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKREFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTRS_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTRS_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTR_NAME;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_BODY;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ID;
@@ -24,7 +25,6 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_BREAK;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REF;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFEND;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFFILE;
@@ -46,10 +46,23 @@ public class AsciiDocParserImpl {
       this.level = level;
       this.marker = marker;
     }
+
+  }
+
+  private static class BlockMarker {
+    String delimiter;
+    PsiBuilder.Marker marker;
+
+    public BlockMarker(String delimiter, PsiBuilder.Marker marker) {
+      this.delimiter = delimiter;
+      this.marker = marker;
+    }
+
   }
 
   private final PsiBuilder myBuilder;
-  private final Stack<SectionMarker> mySectionStack = new Stack<SectionMarker>();
+  private final Stack<SectionMarker> mySectionStack = new Stack<>();
+  private final Stack<BlockMarker> myBlockMarker = new Stack<>();
   private PsiBuilder.Marker myPreBlockMarker = null;
 
   public AsciiDocParserImpl(PsiBuilder builder) {
@@ -66,7 +79,7 @@ public class AsciiDocParserImpl {
       }
     });
     while (!myBuilder.eof()) {
-      if (at(HEADING) || at(HEADING_OLDSTYLE)) {
+      if ((at(HEADING) || at(HEADING_OLDSTYLE)) && myBlockMarker.size() == 0) {
         int level = headingLevel(myBuilder.getTokenText());
         closeSections(level);
         PsiBuilder.Marker marker;
@@ -95,7 +108,7 @@ public class AsciiDocParserImpl {
         myPreBlockMarker = null;
         continue;
       }
-      else if (at(EXAMPLE_BLOCK_DELIMITER) || at(SIDEBAR_BLOCK_DELIMITER) || at(QUOTE_BLOCK_DELIMITER)
+      else if (at(BLOCK_DELIMITER)
           || at(COMMENT_BLOCK_DELIMITER) || at(PASSTRHOUGH_BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER)) {
         parseBlock();
         continue;
@@ -147,47 +160,33 @@ public class AsciiDocParserImpl {
     }
 
     dropPreBlock();
+    closeBlocks();
     closeSections(0);
   }
 
+  private void closeBlocks() {
+    while (!myBlockMarker.isEmpty()) {
+      PsiBuilder.Marker marker = myBlockMarker.pop().marker;
+      marker.done(AsciiDocElementTypes.BLOCK);
+    }
+  }
+
   private void parseBlock() {
-    PsiBuilder.Marker myBlockStartMarker;
-    if (myPreBlockMarker != null) {
-      myBlockStartMarker = myPreBlockMarker;
-      myPreBlockMarker = null;
-    }
-    else {
-      myBlockStartMarker = beginBlock();
-    }
-    String marker = myBuilder.getTokenText();
-    IElementType type = myBuilder.getTokenType();
-    next();
-    while (true) {
-      if (myBuilder.eof()) {
-        myBlockStartMarker.done(AsciiDocElementTypes.BLOCK);
-        break;
+    String delimiter = myBuilder.getTokenText().trim();
+    if (myBlockMarker.size() > 0 && myBlockMarker.peek().delimiter.equals(delimiter)) {
+      dropPreBlock();
+      next();
+      BlockMarker currentBlock = myBlockMarker.pop();
+      currentBlock.marker.done(AsciiDocElementTypes.BLOCK);
+    } else {
+      PsiBuilder.Marker myBlockStartMarker;
+      if (myPreBlockMarker != null) {
+        myBlockStartMarker = myPreBlockMarker;
+        myPreBlockMarker = null;
+      } else {
+        myBlockStartMarker = beginBlock();
       }
-      // the block needs to be terminated by the same sequence that started it
-      if (at(type) && myBuilder.getTokenText() != null && myBuilder.getTokenText().equals(marker)) {
-        next();
-        myBlockStartMarker.done(AsciiDocElementTypes.BLOCK);
-        break;
-      }
-      if (at(BLOCK_MACRO_ID)) {
-        newLines = 0;
-        PsiBuilder.Marker blockMacro = myBuilder.mark();
-        next();
-        while (at(BLOCK_MACRO_BODY) || at(BLOCK_MACRO_ATTRIBUTES) || at(BLOCK_ATTRS_START) || at(BLOCK_ATTRS_END)
-          && newLines == 0) {
-          if (at(BLOCK_ATTRS_END)) {
-            next();
-            break;
-          }
-          next();
-        }
-        blockMacro.done(AsciiDocElementTypes.BLOCK_MACRO);
-        continue;
-      }
+      myBlockMarker.push(new BlockMarker(delimiter, myBlockStartMarker));
       next();
     }
   }

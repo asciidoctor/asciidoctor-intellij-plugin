@@ -36,10 +36,8 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
       if (atCaret.getNode() != null) {
 
         if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER
-          || atCaret.getNode().getElementType() == AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER
-          || atCaret.getNode().getElementType() == AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER
+          || atCaret.getNode().getElementType() == AsciiDocTokenTypes.BLOCK_DELIMITER
           || atCaret.getNode().getElementType() == AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER
-          || atCaret.getNode().getElementType() == AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER
           || atCaret.getNode().getElementType() == AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER) {
           String textToInsert = "\n\n" + atCaret.getText() + "\n";
           doc.insertString(atCaret.getTextRange().getEndOffset(), textToInsert);

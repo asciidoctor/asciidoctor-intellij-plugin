@@ -26,9 +26,6 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
     AsciiDocTokenTypes.TITLE,
     AsciiDocTokenTypes.LINE_COMMENT,
     AsciiDocTokenTypes.BLOCK_COMMENT,
-    AsciiDocTokenTypes.EXAMPLE_BLOCK,
-    AsciiDocTokenTypes.SIDEBAR_BLOCK,
-    AsciiDocTokenTypes.QUOTE_BLOCK,
     AsciiDocTokenTypes.LITERAL_BLOCK,
     AsciiDocTokenTypes.BLOCKREFTEXT,
     AsciiDocTokenTypes.LINKTEXT

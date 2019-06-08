@@ -93,12 +93,12 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   public void testExample() {
-    doTest("====\nFoo Bar Baz\n====\n",
-        "AsciiDoc:EXAMPLE_BLOCK_DELIMITER ('====')\n" +
+    doTest("====\nFoo\n====\n",
+        "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
           "AsciiDoc:LINE_BREAK ('\\n')\n" +
-          "AsciiDoc:EXAMPLE_BLOCK ('Foo Bar Baz')\n" +
+          "AsciiDoc:TEXT ('Foo')\n" +
           "AsciiDoc:LINE_BREAK ('\\n')\n" +
-          "AsciiDoc:EXAMPLE_BLOCK_DELIMITER ('====')\n" +
+          "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
           "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
@@ -204,13 +204,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("+\n--\n",
       "AsciiDoc:TEXT ('+')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TEXT ('--')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('--')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
   public void testContinuationAfter() {
     doTest("--\n+\n",
-      "AsciiDoc:TEXT ('--')\n" +
+      "AsciiDoc:BLOCK_DELIMITER ('--')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('+')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
@@ -472,12 +472,12 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   public void testSidebar() {
-    doTest("****\nFoo Bar Baz\n****\n",
-        "AsciiDoc:SIDEBAR_BLOCK_DELIMITER ('****')\n" +
+    doTest("****\nFoo\n****\n",
+        "AsciiDoc:BLOCK_DELIMITER ('****')\n" +
           "AsciiDoc:LINE_BREAK ('\\n')\n" +
-          "AsciiDoc:SIDEBAR_BLOCK ('Foo Bar Baz')\n" +
+          "AsciiDoc:TEXT ('Foo')\n" +
           "AsciiDoc:LINE_BREAK ('\\n')\n" +
-          "AsciiDoc:SIDEBAR_BLOCK_DELIMITER ('****')\n" +
+          "AsciiDoc:BLOCK_DELIMITER ('****')\n" +
           "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
@@ -680,6 +680,38 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LITERAL_BLOCK ('literal')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LITERAL_BLOCK_DELIMITER ('....')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testQuotedBlock() {
+    doTest("____\nQuoted with *bold*\n____\n",
+      "AsciiDoc:BLOCK_DELIMITER ('____')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Quoted')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('with')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:BOLD_START ('*')\n" +
+        "AsciiDoc:BOLD ('bold')\n" +
+        "AsciiDoc:BOLD_END ('*')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('____')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testNestedQuotedBlock() {
+    doTest("____\nQuoted\n_____\nDoubleQuote\n_____\n____\n",
+      "AsciiDoc:BLOCK_DELIMITER ('____')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Quoted')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('_____')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('DoubleQuote')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('_____')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('____')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 

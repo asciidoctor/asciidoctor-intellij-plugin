@@ -26,6 +26,8 @@ import java.util.Stack;
 
   private Stack<Integer> stateStack = new Stack<>();
 
+  private Stack<String> blockStack = new Stack<>();
+
   private boolean isUnconstrainedEnd() {
     if(getTokenStart() > 0) {
       char c = zzBuffer.charAt(getTokenStart() -1);
@@ -97,8 +99,8 @@ import java.util.Stack;
     }
   }
 
-  private void yypushstate (int state) {
-    stateStack.push(state);
+  private void yypushstate () {
+    stateStack.push(yystate());
   }
 
   private void yypopstate () {
@@ -109,18 +111,27 @@ import java.util.Stack;
     }
   }
 
+  private void yyinitialIfNotInBlock() {
+    if (blockStack.size() == 0) {
+      yybegin(YYINITIAL);
+    } else {
+      yybegin(SINGLELINE);
+    }
+  }
 %}
 
 SPACE = [\ \t]
 NON_SPACE = [^\n]
 LINE_COMMENT="//"[^\n]*
-COMMENT_BLOCK_DELIMITER = "////" "/"* {SPACE}* \n
-PASSTRHOUGH_BLOCK_DELIMITER = "++++" "+"* {SPACE}* \n
-LISTING_BLOCK_DELIMITER = "----" "-"* {SPACE}* \n
-EXAMPLE_BLOCK_DELIMITER = "====" "="* {SPACE}* \n
-SIDEBAR_BLOCK_DELIMITER = "****" "*"* {SPACE}* \n
-QUOTE_BLOCK_DELIMITER = "____" "_"* {SPACE}* \n
-LITERAL_BLOCK_DELIMITER = "...." "."* {SPACE}* \n
+COMMENT_BLOCK_DELIMITER = "////" "/"* {SPACE}*
+PASSTRHOUGH_BLOCK_DELIMITER = "++++" "+"* {SPACE}*
+LISTING_BLOCK_DELIMITER = "----" "-"* {SPACE}*
+EXAMPLE_BLOCK_DELIMITER = "====" "="* {SPACE}*
+SIDEBAR_BLOCK_DELIMITER = "****" "*"* {SPACE}*
+QUOTE_BLOCK_DELIMITER = "____" "_"* {SPACE}*
+LITERAL_BLOCK_DELIMITER = "...." "."* {SPACE}*
+TABLE_BLOCK_DELIMITER = "|===" "="* {SPACE}*
+OPEN_BLOCK_DELIMITER = "--" {SPACE}*
 HEADING_START = "="{1,6} {SPACE}+
 HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 // starting at the start of the line, but not with a dot
@@ -167,6 +178,7 @@ ATTRIBUTE_REF_START = "{"
 ATTRIBUTE_REF_END = "}"
 
 %state MULTILINE
+%state SINGLELINE
 %state INSIDE_LINE
 %state REF
 %state REFTEXT
@@ -174,7 +186,6 @@ ATTRIBUTE_REF_END = "}"
 %state BLOCKID
 %state BLOCKREFTEXT
 %state HEADING
-%state SINGLELINE
 %state ANCHORID
 %state ANCHORREFTEXT
 
@@ -257,6 +268,29 @@ ATTRIBUTE_REF_END = "}"
           yybegin(SINGLELINE);
         }
       }
+  [^]                  { yypushback(yylength()); yybegin(SINGLELINE); }
+}
+
+<ATTRIBUTE_DECL> {
+  "\n"               { yyinitialIfNotInBlock(); return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                { yybegin(ATTRIBUTE_NAME); return AsciiDocTokenTypes.ATTRIBUTE_NAME; }
+}
+
+<ATTRIBUTE_NAME> {
+  {ATTRIBUTE_NAME_END} { yybegin(ATTRIBUTE_VAL); return AsciiDocTokenTypes.ATTRIBUTE_NAME_END; }
+  {ATTRIBUTE_NAME}   { return AsciiDocTokenTypes.ATTRIBUTE_NAME; }
+  "\n"               { yyinitialIfNotInBlock(); return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                { yyinitialIfNotInBlock(); }
+}
+
+<ATTRIBUTE_VAL> {
+  /*Value continue on the next line if the line is ended by a space followed by a backslash*/
+  {SPACE} "\\" {SPACE}* "\n" { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
+  "\n"                 { yyinitialIfNotInBlock(); return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
+}
+
+<SINGLELINE> {
   {ATTRIBUTE_NAME_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_NAME_END} {
         if (!isEscaped()) {
           yybegin(ATTRIBUTE_DECL);
@@ -265,41 +299,28 @@ ATTRIBUTE_REF_END = "}"
           yypushback(yylength()); yybegin(SINGLELINE);
         }
       }
-  [^]                  { yypushback(yylength()); yybegin(SINGLELINE); }
-}
-
-<ATTRIBUTE_DECL> {
-  "\n"               { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                { yybegin(ATTRIBUTE_NAME); return AsciiDocTokenTypes.ATTRIBUTE_NAME; }
-}
-
-<ATTRIBUTE_NAME> {
-  {ATTRIBUTE_NAME_END} { yybegin(ATTRIBUTE_VAL); return AsciiDocTokenTypes.ATTRIBUTE_NAME_END; }
-  {ATTRIBUTE_NAME}   { return AsciiDocTokenTypes.ATTRIBUTE_NAME; }
-  "\n"               { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                { yybegin(YYINITIAL); }
-}
-
-<ATTRIBUTE_VAL> {
-  /*Value continue on the next line if the line is ended by a space followed by a backslash*/
-  {SPACE} "\\" {SPACE}* "\n" { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
-  "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
-}
-
-<SINGLELINE> {
-  {LISTING_BLOCK_DELIMITER}  { resetFormatting(); yypushback(1); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
-  {COMMENT_BLOCK_DELIMITER} { resetFormatting(); yypushback(1); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
-  {EXAMPLE_BLOCK_DELIMITER} { resetFormatting(); yypushback(1); yybegin(EXAMPLE_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER; }
-  {PASSTRHOUGH_BLOCK_DELIMITER} { resetFormatting(); yypushback(1); yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
-  {SIDEBAR_BLOCK_DELIMITER} { resetFormatting(); yypushback(1); yybegin(SIDEBAR_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER; }
-  {QUOTE_BLOCK_DELIMITER} { resetFormatting(); yypushback(1); yybegin(QUOTE_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER; }
-  {LITERAL_BLOCK_DELIMITER} { resetFormatting(); yypushback(1); yybegin(LITERAL_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER; }
+  {LISTING_BLOCK_DELIMITER} / "\n" { resetFormatting(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
+  {COMMENT_BLOCK_DELIMITER} / "\n" { resetFormatting(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
+  {PASSTRHOUGH_BLOCK_DELIMITER} / "\n" { resetFormatting(); yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
+  {EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER} / "\n" { resetFormatting();
+                            String delimiter = yytext().toString().trim();
+                            if(blockStack.size() > 0 && blockStack.peek().equals(delimiter)) {
+                              blockStack.pop();
+                            } else {
+                              blockStack.push(delimiter);
+                            }
+                            yybegin(INSIDE_LINE);
+                            return AsciiDocTokenTypes.BLOCK_DELIMITER;
+                          }
+  {LITERAL_BLOCK_DELIMITER} / "\n" { resetFormatting(); yybegin(LITERAL_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER; }
 
   {ANCHORSTART} / [^\]\n]+ {ANCHOREND} { resetFormatting(); yybegin(ANCHORID); return AsciiDocTokenTypes.BLOCKIDSTART; }
   {LINE_COMMENT}       { return AsciiDocTokenTypes.LINE_COMMENT; }
-  {HEADING_START} / {NON_SPACE} { resetFormatting(); yybegin(HEADING); return AsciiDocTokenTypes.HEADING; }
-  {HEADING_START_MARKDOWN} / {NON_SPACE} { resetFormatting(); yybegin(HEADING); return AsciiDocTokenTypes.HEADING; }
+  {HEADING_START} | {HEADING_START_MARKDOWN} / {NON_SPACE} { if (blockStack.size() == 0) {
+                              resetFormatting(); yybegin(HEADING); return AsciiDocTokenTypes.HEADING;
+                            }
+                            return textFormat();
+                          }
   {TITLE_START} / [^\. ] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE; }
   {BLOCK_MACRO_START} / {NON_SPACE} { resetFormatting(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   {BLOCK_ATTRS_START} / [^\[] { yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
@@ -308,12 +329,22 @@ ATTRIBUTE_REF_END = "}"
 
   /* a blank line, it separates blocks. Don't return YYINITIAL here, as writing on a blank line might change the meaning
   of the previous blocks combined (for example there is now an italic formatting spanning the two combined blocks) */
-  "\w"* "\n"           { resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; }
+  "\w"* "\n"           { resetFormatting();
+                         if(blockStack.size() == 0) {
+                           yybegin(MULTILINE);
+                         }
+                         return AsciiDocTokenTypes.LINE_BREAK;
+                       }
   [^]                  { yypushback(yylength()); yybegin(INSIDE_LINE); }
 }
 
 <INSIDE_LINE> {
-  "\n"                 { yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; }
+  "\n"                 { if(blockStack.size() == 0) {
+                           yybegin(MULTILINE);
+                         } else {
+                           yybegin(SINGLELINE);
+                         }
+                         return AsciiDocTokenTypes.LINE_BREAK; }
   [ \t]                { return AsciiDocTokenTypes.WHITE_SPACE; }
   // BOLD START
   // start something with ** only if it closes within the same block
@@ -571,7 +602,7 @@ ATTRIBUTE_REF_END = "}"
 }
 
 <TITLE> {
-  "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+  "\n"                 { yyinitialIfNotInBlock(); return AsciiDocTokenTypes.LINE_BREAK; }
   [^]                  { return AsciiDocTokenTypes.TITLE; }
 }
 
@@ -596,18 +627,14 @@ ATTRIBUTE_REF_END = "}"
 }
 
 <LISTING_BLOCK> {
-  {LISTING_BLOCK_DELIMITER} {
+  {LISTING_BLOCK_DELIMITER} / "\n" {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
-      yypushback(1);
-      yybegin(YYINITIAL);
+      yyinitialIfNotInBlock();
       return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
     } else {
-      yypushback(1);
       return AsciiDocTokenTypes.LISTING_TEXT;
     }
   }
-  // include is the only allowed block macro in this type of block
-  "include::" / [^\[\n]* "[" [^\]\n]* "]" { yypushstate(LISTING_BLOCK); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
 }
 
 <LISTING_BLOCK, INSIDE_LISTING_BLOCK_LINE> {
@@ -616,13 +643,11 @@ ATTRIBUTE_REF_END = "}"
 }
 
 <COMMENT_BLOCK> {
-  {COMMENT_BLOCK_DELIMITER} {
+  {COMMENT_BLOCK_DELIMITER} / "\n" {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
-      yypushback(1);
-      yybegin(YYINITIAL);
+      yyinitialIfNotInBlock();
       return AsciiDocTokenTypes.BLOCK_COMMENT;
     } else {
-      yypushback(1);
       return AsciiDocTokenTypes.BLOCK_COMMENT;
     }
   }
@@ -633,37 +658,17 @@ ATTRIBUTE_REF_END = "}"
   [^]                  { yybegin(INSIDE_COMMENT_BLOCK_LINE); return AsciiDocTokenTypes.BLOCK_COMMENT; }
 }
 
-<EXAMPLE_BLOCK> {
-  {EXAMPLE_BLOCK_DELIMITER} {
-    if (yytext().toString().trim().length() == blockDelimiterLength) {
-      yypushback(1);
-      yybegin(YYINITIAL);
-      return AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER;
-    } else {
-      yypushback(1);
-      return AsciiDocTokenTypes.EXAMPLE_BLOCK;
-    }
-  }
-}
-
-<EXAMPLE_BLOCK, INSIDE_EXAMPLE_BLOCK_LINE> {
-  "\n"                 { yybegin(EXAMPLE_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                  { yybegin(INSIDE_EXAMPLE_BLOCK_LINE); return AsciiDocTokenTypes.EXAMPLE_BLOCK; }
-}
-
 <PASSTRHOUGH_INLINE> {
   {PASSTRHOUGH_INLINE} { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END; }
   [^]                  { return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
 }
 
 <PASSTRHOUGH_BLOCK> {
-  {PASSTRHOUGH_BLOCK_DELIMITER} {
+  {PASSTRHOUGH_BLOCK_DELIMITER} / "\n" {
       if (yytext().toString().trim().length() == blockDelimiterLength) {
-        yypushback(1);
-        yybegin(YYINITIAL);
+        yybegin(MULTILINE);
         return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
       } else {
-        yypushback(1);
         return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT;
       }
     }
@@ -674,55 +679,20 @@ ATTRIBUTE_REF_END = "}"
   [^]                  { yybegin(INSIDE_PASSTRHOUGH_BLOCK_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
 }
 
-<SIDEBAR_BLOCK> {
-  {SIDEBAR_BLOCK_DELIMITER} {
-    if (yytext().toString().trim().length() == blockDelimiterLength) {
-      yypushback(1);
-      yybegin(YYINITIAL);
-      return AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER;
-    } else {
-      yypushback(1);
-      return AsciiDocTokenTypes.SIDEBAR_BLOCK;
-    }
-  }
-}
-
-<SIDEBAR_BLOCK, INSIDE_SIDEBAR_BLOCK_LINE> {
-  "\n"                 { yybegin(SIDEBAR_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                  { yybegin(INSIDE_SIDEBAR_BLOCK_LINE); return AsciiDocTokenTypes.SIDEBAR_BLOCK; }
-}
-
-<QUOTE_BLOCK> {
-  {QUOTE_BLOCK_DELIMITER} {
-    if (yytext().toString().trim().length() == blockDelimiterLength) {
-      yypushback(1);
-      yybegin(YYINITIAL);
-      return AsciiDocTokenTypes.QUOTE_BLOCK_DELIMITER;
-    } else {
-      yypushback(1);
-      return AsciiDocTokenTypes.QUOTE_BLOCK;
-    }
-  }
-}
-
-<QUOTE_BLOCK, INSIDE_QUOTE_BLOCK_LINE> {
-  "\n"                 { yybegin(QUOTE_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                  { yybegin(INSIDE_QUOTE_BLOCK_LINE); return AsciiDocTokenTypes.QUOTE_BLOCK; }
-}
-
 <LITERAL_BLOCK> {
-  {LITERAL_BLOCK_DELIMITER} {
+  {LITERAL_BLOCK_DELIMITER} / "\n" {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
-      yypushback(1);
-      yybegin(YYINITIAL);
+      yybegin(MULTILINE);
       return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER;
     } else {
-      yypushback(1);
       return AsciiDocTokenTypes.LITERAL_BLOCK;
     }
   }
   // include is the only allowed block macro in this type of block
-  "include::" / [^\[\n]* "[" [^\]\n]* "]" { yypushstate(LITERAL_BLOCK); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+}
+
+<LITERAL_BLOCK, LISTING_BLOCK, PASSTRHOUGH_BLOCK> {
+  "include::" / [^\[\n]* "[" [^\]\n]* "]" { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
 }
 
 <LITERAL_BLOCK, INSIDE_LITERAL_BLOCK_LINE> {
