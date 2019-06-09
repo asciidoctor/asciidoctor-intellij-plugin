@@ -12,6 +12,7 @@ import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocCodeContent;
 import org.asciidoc.intellij.psi.AsciiDocListing;
 import org.asciidoc.intellij.psi.AsciiDocSection;
+import org.asciidoc.intellij.psi.AsciiDocSelfDescribe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -117,25 +118,8 @@ public class AsciiDocStructureViewElement extends PsiTreeElementBase<PsiElement>
     if (element instanceof PsiFile) {
       return ((PsiFile) element).getName();
     }
-    if (element instanceof AsciiDocBlock) {
-      AsciiDocBlock block = (AsciiDocBlock) element;
-      String title = block.getTitle();
-      String style = block.getStyle();
-      if (title == null) {
-        if (element instanceof AsciiDocListing && style == null) {
-          title = "(Listing)";
-        } else if (element instanceof AsciiDocBlockMacro) {
-          title = ((AsciiDocBlockMacro) element).getMacroName();
-        } else if (style == null) {
-          title = "(Block)";
-        } else {
-          title = "";
-        }
-      }
-      if (style != null) {
-        return "[" + style + "] " + title;
-      }
-      return title;
+    if (element instanceof AsciiDocSelfDescribe) {
+      return ((AsciiDocSelfDescribe) element).getDescription();
     }
     return "";
   }

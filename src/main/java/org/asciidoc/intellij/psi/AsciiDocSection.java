@@ -15,7 +15,7 @@ import javax.swing.*;
 /**
  * @author yole
  */
-public class AsciiDocSection extends ASTWrapperPsiElement {
+public class AsciiDocSection extends ASTWrapperPsiElement implements AsciiDocSelfDescribe {
   public AsciiDocSection(@NotNull ASTNode node) {
     super(node);
   }
@@ -65,5 +65,11 @@ public class AsciiDocSection extends ASTWrapperPsiElement {
   @Override
   public Icon getIcon(int ignored) {
     return AsciiDocIcons.Structure.Section;
+  }
+
+  @NotNull
+  @Override
+  public String getDescription() {
+    return getTitle();
   }
 }

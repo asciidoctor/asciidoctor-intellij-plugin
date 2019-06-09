@@ -3,8 +3,10 @@ package org.asciidoc.intellij.psi;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.TokenSet;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
+import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -25,6 +27,43 @@ public class AsciiDocStandardBlock extends ASTWrapperPsiElement implements Ascii
     }
 
     super.accept(visitor);
+  }
+
+  @NotNull
+  @Override
+  public String getDescription() {
+    ASTNode delimiter = getNode().findChildByType(TokenSet.create(AsciiDocTokenTypes.BLOCK_DELIMITER,
+      AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER, AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER));
+    String title = getTitle();
+    String style = getStyle();
+    if (title == null) {
+      if (delimiter != null && style == null) {
+        String d = delimiter.getText();
+        if (d.startsWith("|")) {
+          title = "(Table)";
+        } else if (d.startsWith("*")) {
+          title = "(Sidebar)";
+        } else if (d.startsWith("=")) {
+          title = "(Example)";
+        } else if (d.startsWith(".")) {
+          title = "(Literal)";
+        } else if (d.startsWith("+")) {
+          title = "(Passthrough)";
+        } else if (d.startsWith("_")) {
+          title = "(Quote)";
+        } else {
+          title = "(Block)";
+        }
+      } else if (style == null) {
+        title = "(Block)";
+      } else {
+        title = "";
+      }
+    }
+    if (style != null) {
+      return "[" + style + "]" + (title.isEmpty() ? "" : " ") + title;
+    }
+    return title;
   }
 
   @Override

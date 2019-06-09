@@ -18,7 +18,6 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_BODY;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ID;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.CODE_FENCE_CONTENT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.EXAMPLE_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_OLDSTYLE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_BREAK;
@@ -31,7 +30,6 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFFILE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SEPARATOR;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SIDEBAR_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TITLE;
 
 /**

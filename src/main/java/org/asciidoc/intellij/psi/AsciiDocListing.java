@@ -38,6 +38,22 @@ public class AsciiDocListing extends CompositePsiElement implements PsiLanguageI
     super.accept(visitor);
   }
 
+  @Override
+  public String getDescription() {
+    String title = getTitle();
+    String style = getStyle();
+    if (title == null) {
+      if (style == null) {
+        title = "(Listing)";
+      } else {
+        title = "";
+      }
+    }
+    if (style != null) {
+      return "[" + style + "]" + (title.isEmpty() ? "" : " ") + title;
+    }
+    return title;
+  }
 
   @Override
   public ItemPresentation getPresentation() {

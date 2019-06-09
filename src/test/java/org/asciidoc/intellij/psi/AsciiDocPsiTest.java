@@ -100,6 +100,55 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("diagram-plantuml", listing.getFenceLanguage());
   }
 
+  public void testDescriptionImagePlain() {
+    PsiFile psiFile = configureByAsciiDoc("image::test.adoc[]");
+    AsciiDocBlockMacro macro = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlockMacro.class);
+    assertNotNull(macro);
+    assertEquals("image", macro.getDescription());
+  }
+
+  public void testDescriptionImageWithTitle() {
+    PsiFile psiFile = configureByAsciiDoc(".Title\nimage::test.adoc[]");
+    AsciiDocBlockMacro macro = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlockMacro.class);
+    assertNotNull(macro);
+    assertEquals("Title", macro.getDescription());
+  }
+
+  public void testDescriptionListingPlain() {
+    PsiFile psiFile = configureByAsciiDoc("----\nListing\n----\n");
+    AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
+    assertNotNull(listing);
+    assertEquals("(Listing)", listing.getDescription());
+  }
+
+  public void testDescriptionListingWithAttribute() {
+    PsiFile psiFile = configureByAsciiDoc("[source]\n----\nListing\n----\n");
+    AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
+    assertNotNull(listing);
+    assertEquals("[source]", listing.getDescription());
+  }
+
+  public void testDescriptionListingWithAttributeAndTitle() {
+    PsiFile psiFile = configureByAsciiDoc(".Title\n[source]\n----\nListing\n----\n");
+    AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
+    assertNotNull(listing);
+    assertEquals("[source] Title", listing.getDescription());
+  }
+
+  public void testDescriptionListingWithTitle() {
+    PsiFile psiFile = configureByAsciiDoc(".Title\n[source]\n----\nListing\n----\n");
+    AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
+    assertNotNull(listing);
+    assertEquals("[source] Title", listing.getDescription());
+  }
+
+  public void testDescriptionSection() {
+    PsiFile psiFile = configureByAsciiDoc("== Section Title");
+    AsciiDocSection section = PsiTreeUtil.getChildOfType(psiFile, AsciiDocSection.class);
+    assertNotNull(section);
+    assertEquals("Section Title", section.getDescription());
+  }
+
   private PsiFile configureByAsciiDoc(String text) {
     return myFixture.configureByText(AsciiDocFileType.INSTANCE, text);
   }

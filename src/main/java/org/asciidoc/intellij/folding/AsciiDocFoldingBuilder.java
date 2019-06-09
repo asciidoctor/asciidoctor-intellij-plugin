@@ -8,28 +8,15 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiUtilCore;
-import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
-import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.psi.AsciiDocBlock;
 import org.asciidoc.intellij.psi.AsciiDocSection;
+import org.asciidoc.intellij.psi.AsciiDocSelfDescribe;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements DumbAware {
-  private static final Map<IElementType, String> TYPES_PRESENTATION_MAP = new HashMap<>();
-
-  static {
-    TYPES_PRESENTATION_MAP.put(AsciiDocElementTypes.SECTION, AsciiDocBundle.message("asciidoc.folding.section.name"));
-    TYPES_PRESENTATION_MAP.put(AsciiDocElementTypes.BLOCK, AsciiDocBundle.message("asciidoc.folding.block.name"));
-    TYPES_PRESENTATION_MAP.put(AsciiDocElementTypes.LISTING, AsciiDocBundle.message("asciidoc.folding.listing.name"));
-  }
-
   @Override
   protected void buildLanguageFoldRegions(@NotNull List<FoldingDescriptor> descriptors,
                                           @NotNull PsiElement root,
@@ -84,23 +71,11 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
 
   @Override
   protected String getLanguagePlaceholderText(@NotNull ASTNode node, @NotNull TextRange range) {
-    IElementType elementType = PsiUtilCore.getElementType(node);
-    String title = "";
-    String explicitName = TYPES_PRESENTATION_MAP.get(elementType);
-    final String prefix = explicitName != null ? explicitName + ": " : "";
-    if (node.getPsi() instanceof AsciiDocSection) {
-      title = ((AsciiDocSection) node.getPsi()).getTitle();
-      if (title != null && title.length() > 0) {
-        title = prefix + StringUtil.shortenTextWithEllipsis(title, 50, 5);
-      }
-    } else if (node.getPsi() instanceof AsciiDocBlock) {
-      title = ((AsciiDocBlock) node.getPsi()).getTitle();
-      if (title != null && title.length() > 0) {
-        title = prefix + StringUtil.shortenTextWithEllipsis(title, 50, 5);
-      }
-    }
-    if (title == null || title.length() == 0) {
-      title = prefix + StringUtil.shortenTextWithEllipsis(node.getText(), 50, 5);
+    String title;
+    if (node.getPsi() instanceof AsciiDocSelfDescribe) {
+      title = ((AsciiDocSelfDescribe) node.getPsi()).getDescription() + " ...";
+    } else {
+      title = StringUtil.shortenTextWithEllipsis(node.getText(), 50, 5);
     }
     return title;
   }

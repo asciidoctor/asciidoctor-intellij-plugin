@@ -36,6 +36,23 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
     return super.getReferences();
   }
 
+  @Override
+  public String getDescription() {
+    String title = getTitle();
+    String style = getStyle();
+    if (title == null) {
+      if (style == null) {
+        title = getMacroName();
+      } else {
+        title = "";
+      }
+    }
+    if (style != null) {
+      return "[" + style + "]" + (title.isEmpty() ? "" : " ") + title;
+    }
+    return title;
+  }
+
   public String getMacroName() {
     ASTNode idNode = getNode().findChildByType(AsciiDocTokenTypes.BLOCK_MACRO_ID);
     if (idNode == null) {

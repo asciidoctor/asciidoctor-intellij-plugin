@@ -6,7 +6,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.Nullable;
 
-public interface AsciiDocBlock extends PsiElement {
+public interface AsciiDocBlock extends PsiElement, AsciiDocSelfDescribe {
 
   @Nullable
   default String getTitle() {
@@ -16,6 +16,21 @@ public interface AsciiDocBlock extends PsiElement {
     }
     String text = titleNode.getText();
     return text.length() >= 1 ? text.substring(1) : "";
+  }
+
+  @Override
+  default String getDescription() {
+    String title = getTitle();
+    String style = getStyle();
+    if (title == null) {
+      title = "(Block)";
+    } else {
+      title = "";
+    }
+    if (style != null) {
+      return "[" + style + "]" + (title.isEmpty() ? "" : " ") + title;
+    }
+    return title;
   }
 
   ASTNode getNode();
