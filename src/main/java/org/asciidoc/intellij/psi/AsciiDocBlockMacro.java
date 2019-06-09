@@ -36,6 +36,7 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
     return super.getReferences();
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     String title = getTitle();

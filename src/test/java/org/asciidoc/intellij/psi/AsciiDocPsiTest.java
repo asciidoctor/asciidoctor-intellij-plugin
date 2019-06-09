@@ -101,10 +101,11 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testDescriptionImagePlain() {
-    PsiFile psiFile = configureByAsciiDoc("image::test.adoc[]");
+    PsiFile psiFile = configureByAsciiDoc("image::test.png[]");
     AsciiDocBlockMacro macro = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlockMacro.class);
     assertNotNull(macro);
     assertEquals("image", macro.getDescription());
+    assertEquals("image::", macro.getFoldedSummary());
   }
 
   public void testDescriptionImageWithTitle() {
@@ -112,6 +113,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     AsciiDocBlockMacro macro = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlockMacro.class);
     assertNotNull(macro);
     assertEquals("Title", macro.getDescription());
+    assertEquals(".Title", macro.getFoldedSummary());
   }
 
   public void testDescriptionListingPlain() {
@@ -119,6 +121,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
     assertNotNull(listing);
     assertEquals("(Listing)", listing.getDescription());
+    assertEquals("----", listing.getFoldedSummary());
   }
 
   public void testDescriptionListingWithAttribute() {
@@ -126,6 +129,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
     assertNotNull(listing);
     assertEquals("[source]", listing.getDescription());
+    assertEquals("[source]", listing.getFoldedSummary());
   }
 
   public void testDescriptionListingWithAttributeAndTitle() {
@@ -133,13 +137,15 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
     assertNotNull(listing);
     assertEquals("[source] Title", listing.getDescription());
+    assertEquals(".Title", listing.getFoldedSummary());
   }
 
   public void testDescriptionListingWithTitle() {
-    PsiFile psiFile = configureByAsciiDoc(".Title\n[source]\n----\nListing\n----\n");
+    PsiFile psiFile = configureByAsciiDoc(".Title\n----\nListing\n----\n");
     AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
     assertNotNull(listing);
-    assertEquals("[source] Title", listing.getDescription());
+    assertEquals("Title", listing.getDescription());
+    assertEquals(".Title", listing.getFoldedSummary());
   }
 
   public void testDescriptionSection() {
@@ -147,6 +153,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     AsciiDocSection section = PsiTreeUtil.getChildOfType(psiFile, AsciiDocSection.class);
     assertNotNull(section);
     assertEquals("Section Title", section.getDescription());
+    assertEquals("== Section Title", section.getFoldedSummary());
   }
 
   private PsiFile configureByAsciiDoc(String text) {

@@ -73,7 +73,9 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
   protected String getLanguagePlaceholderText(@NotNull ASTNode node, @NotNull TextRange range) {
     String title;
     if (node.getPsi() instanceof AsciiDocSelfDescribe) {
-      title = ((AsciiDocSelfDescribe) node.getPsi()).getDescription() + " ...";
+      title = ((AsciiDocSelfDescribe) node.getPsi()).getFoldedSummary();
+      title = StringUtil.shortenTextWithEllipsis(title, 50, 5);
+      title += " ...";
     } else {
       title = StringUtil.shortenTextWithEllipsis(node.getText(), 50, 5);
     }

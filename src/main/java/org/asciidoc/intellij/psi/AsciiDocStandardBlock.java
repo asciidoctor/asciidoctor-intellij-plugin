@@ -2,6 +2,7 @@ package org.asciidoc.intellij.psi;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.TokenSet;
 import icons.AsciiDocIcons;
@@ -27,6 +28,16 @@ public class AsciiDocStandardBlock extends ASTWrapperPsiElement implements Ascii
     }
 
     super.accept(visitor);
+  }
+
+  @NotNull
+  @Override
+  public String getFoldedSummary() {
+    PsiElement child = getFirstSignificantChildForFolding();
+    if (child instanceof AsciiDocBlockAttributes) {
+      return "[" + getStyle() + "]";
+    }
+    return child.getText();
   }
 
   @NotNull

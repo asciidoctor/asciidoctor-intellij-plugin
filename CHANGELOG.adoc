@@ -9,9 +9,10 @@ This document provides a high-level view of the changes introduced by release.
 === 0.26.18 (work in progress)
 
 - resolve the last reference in structure view as this will be the file; the others are the subdirectories (#267)
-- refactoring or shortened descriptions; not in sync for structure view, folding and breadcrumbs (#267)
+- refactoring or shortened descriptions; now in sync for structure view and breadcrumbs (#267)
 - allow browser to cache static content to avoid flickering (#267)
 - allow more block types, supporting nested blocks, parsing content within blocks (#267)
+- rework folding to show first significant line in block (#267)
 
 === 0.26.17 (preview, available from Github releases)
 

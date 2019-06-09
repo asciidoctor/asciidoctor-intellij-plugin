@@ -33,9 +33,10 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
   <change-notes><![CDATA[
     <ul>
       <li>0.26.18 resolve the last reference in structure view as this will be the file; the others are the subdirectories (#267)<br>
-      refactoring or shortened descriptions; not in sync for structure view, folding and breadcrumbs (#267)<br>
+      refactoring or shortened descriptions; now in sync for structure view, folding and breadcrumbs (#267)<br>
       allow browser to cache static content to avoid flickering (#267)<br>
-      allow more block types, supporting nested blocks, parsing content within blocks (#267)
+      allow more block types, supporting nested blocks, parsing content within blocks (#267)<br>
+      rework folding to show first significant line in block (#267)
       <li>0.26.17 support escaping with backslash ("\") in editor, avoiding highlighting<br>
       move to released markdown-to-asciidoc version 1.1 to use proper dependency management (#268)<br>
       support spell checking on more elements including quotes, examples and comments (#269)<br>

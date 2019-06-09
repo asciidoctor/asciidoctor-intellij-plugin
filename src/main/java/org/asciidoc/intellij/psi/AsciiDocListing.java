@@ -38,6 +38,7 @@ public class AsciiDocListing extends CompositePsiElement implements PsiLanguageI
     super.accept(visitor);
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     String title = getTitle();
@@ -53,6 +54,16 @@ public class AsciiDocListing extends CompositePsiElement implements PsiLanguageI
       return "[" + style + "]" + (title.isEmpty() ? "" : " ") + title;
     }
     return title;
+  }
+
+  @NotNull
+  @Override
+  public String getFoldedSummary() {
+    PsiElement child = getFirstSignificantChildForFolding();
+    if (child instanceof AsciiDocBlockAttributes) {
+      return "[" + getStyle() + "]";
+    }
+    return child.getText();
   }
 
   @Override

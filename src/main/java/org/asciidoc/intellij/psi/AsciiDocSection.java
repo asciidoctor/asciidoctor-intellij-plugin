@@ -72,4 +72,14 @@ public class AsciiDocSection extends ASTWrapperPsiElement implements AsciiDocSel
   public String getDescription() {
     return getTitle();
   }
+
+  @NotNull
+  @Override
+  public String getFoldedSummary() {
+    ASTNode heading = getNode().findChildByType(AsciiDocTokenTypes.HEADING);
+    if(heading == null) {
+      throw new IllegalStateException("heading without heading");
+    }
+    return heading.getText();
+  }
 }
