@@ -233,11 +233,16 @@ ATTRIBUTE_REF_END = "}"
 // IntelliJ might do partial parsing from any YYINITIAL inside a document
 // therefore only return here is no other state (i.e. bold) needs to be preserved
 <YYINITIAL> {
-  [^]                  { yypushback(yylength()); yybegin(MULTILINE); }
+  [^]                  { yypushback(yylength()); blockStack.clear(); stateStack.clear(); yybegin(MULTILINE); }
 }
 
 <MULTILINE> {
   {HEADING_OLDSTYLE} {
+        if (blockStack.size() > 0) {
+          // headings must not be nested in block
+          yypushback(yylength());
+          yybegin(SINGLELINE);
+        }
         String[] part = yytext().toString().split("\n");
         // remove all trailing white space
         String heading = part[0].replaceAll("[ \t]*$","");

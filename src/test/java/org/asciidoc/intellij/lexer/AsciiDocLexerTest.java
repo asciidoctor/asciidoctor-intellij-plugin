@@ -715,6 +715,16 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testBlockEndingOverOldStyleHeader() {
+    doTest("--\nS\n--\n",
+      "AsciiDoc:BLOCK_DELIMITER ('--')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('S')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('--')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();
