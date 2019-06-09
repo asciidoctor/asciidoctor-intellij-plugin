@@ -725,6 +725,18 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testHorizontalRule() {
+    doTest("---\n",
+      "AsciiDoc:HORIZONTALRULE ('---')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testPagebreak() {
+    doTest("<<<\n",
+      "AsciiDoc:PAGEBREAK ('<<<')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();

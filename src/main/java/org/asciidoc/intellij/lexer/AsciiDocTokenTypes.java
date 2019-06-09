@@ -80,6 +80,8 @@ public interface AsciiDocTokenTypes {
   IElementType ATTRIBUTE_REF_START = new AsciiDocElementType("ATTRIBUTE_REF_START");
   IElementType ATTRIBUTE_REF = new AsciiDocElementType("ATTRIBUTE_REF");
   IElementType ATTRIBUTE_REF_END = new AsciiDocElementType("ATTRIBUTE_REF_END");
+  IElementType PAGEBREAK = new AsciiDocElementType("PAGEBREAK");
+  IElementType HORIZONTALRULE = new AsciiDocElementType("HORIZONTALRULE");
 
   TokenSet TOKENS_TO_MERGE = TokenSet.create(TEXT, LISTING_TEXT, HEADING, TITLE, BLOCK_COMMENT,
       BLOCK_ATTR_NAME, BLOCK_MACRO_BODY, BLOCK_MACRO_ATTRIBUTES, PASSTRHOUGH_CONTENT,

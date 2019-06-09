@@ -160,6 +160,8 @@ LT = "<"
 GT = ">"
 REFSTART = "<<"
 REFEND = ">>"
+PAGEBREAK = "<<<" "<"* {SPACE}*
+HORIZONTALRULE = "---" {SPACE}*
 BLOCKIDSTART = "[["
 BLOCKIDEND = "]]"
 SINGLE_QUOTE = "'"
@@ -317,6 +319,8 @@ ATTRIBUTE_REF_END = "}"
                             yybegin(INSIDE_LINE);
                             return AsciiDocTokenTypes.BLOCK_DELIMITER;
                           }
+  {PAGEBREAK} / "\n" { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.PAGEBREAK; }
+  {HORIZONTALRULE} / "\n" { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.HORIZONTALRULE; }
   {LITERAL_BLOCK_DELIMITER} / "\n" { resetFormatting(); yybegin(LITERAL_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER; }
 
   {ANCHORSTART} / [^\]\n]+ {ANCHOREND} { resetFormatting(); yybegin(ANCHORID); return AsciiDocTokenTypes.BLOCKIDSTART; }
