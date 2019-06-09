@@ -113,43 +113,16 @@ public class PreviewStaticServer extends HttpRequestHandler {
                    fileName);
     }
     else if ("styles".equals(contentType)) {
-      if (INLINE_CSS_FILENAME.equals(fileName)) {
-        sendInlineStyle(request, context.channel());
-      }
-      else {
-        sendResource(request,
-                     context.channel(),
-          JavaFxHtmlPanel.class,
-                     fileName);
-      }
+      sendResource(request,
+                   context.channel(),
+        JavaFxHtmlPanel.class,
+                   fileName);
     }
     else {
       return false;
     }
 
     return true;
-  }
-
-
-  private void sendInlineStyle(@NotNull HttpRequest request, @NotNull Channel channel) {
-    /*
-    // API incompatible with older versions of IntelliJ
-    if (FileResponses.INSTANCE.checkCache(request, channel, myInlineStyleTimestamp)) {
-      return;
-    }
-    */
-
-    if (myInlineStyleBytes == null) {
-      Responses.send(HttpResponseStatus.NOT_FOUND, channel, request);
-      return;
-    }
-
-    FullHttpResponse response =
-      new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(myInlineStyleBytes));
-    response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/css");
-    response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, must-revalidate");
-    response.headers().set(HttpHeaderNames.LAST_MODIFIED, new Date(myInlineStyleTimestamp));
-    Responses.send(response, channel, request);
   }
 
   private static void sendResource(@NotNull HttpRequest request,
@@ -180,8 +153,8 @@ public class PreviewStaticServer extends HttpRequestHandler {
 
     FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(data));
     response.headers().set(HttpHeaderNames.CONTENT_TYPE, FileResponses.INSTANCE.getContentType(resourceName));
-    response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, must-revalidate");
-    response.headers().set(HttpHeaderNames.LAST_MODIFIED, new Date(LAST_MODIFIED));
+    response.headers().set(HttpHeaderNames.CACHE_CONTROL, "max-age=3600, private, must-revalidate");
+    response.headers().set(HttpHeaderNames.ETAG, Long.toString(LAST_MODIFIED));
     Responses.send(response, channel, request);
   }
 }
