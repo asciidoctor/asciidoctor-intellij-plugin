@@ -19,7 +19,46 @@ This document enables you to enhance the plugin when you are new to either the p
 
 This document is work in progress. Please ask questions to the maintainers for anything that is missing (either via email or via a GitHub ticket), and we'll update it.
 
-== Getting started with developing
+== Supporting the plugin without developing code
+
+There are several ways how to support the development of the plugin as a user of the plugin. No programming skills required!
+
+Join the discussion on GitHub::
++
+--
+The developers of the plugin need feedback how they should implement a new idea and if a new functionality is useful to users or not.
+
+_You can help with providing feedback!_
+
+To participate in the discussions have a look at the GitHub tickets.
+You can join the discussion or subscribe to tickets you are interested in.
+Once the maintainers publish a preview version of the plugin, you can test the new version.
+--
+
+Subscribe to new preview releases::
++
+--
+A preview release contains new functionality or fixed bugs.
+While automated tests catch some of the bugs, some other bugs might pass unnoticed.
+Or the implementation misses a corner case that no-one has thought of before.
+
+_You can help by testing preview releases!_
+
+On GitHub you can subscribe to a repository to receive email notifications once a preview release is available.
+The maintainers publish new releases of the plugin on GitHub a few days of weeks before they are published on the IntelliJ plugin repository.
+The release notes contain information about the newly included functionality or fixed bugs.
+
+To try out a preview release:
+
+. Download the new release file `asciidoctor-intellij-plugin.zip`
+. Go to "`File | Settings... | Plugins | (Gear Icon) | Install plugin from disk...`"
+. Choose the downloaded file in the file selection dialogue
+. Restart the IDE to activate the new plugin version
+
+Use the GitHub issue numbers given in the release notes to join the discussion on the respective GitHub issues.
+--
+
+== Getting started with coding
 
 [[JDK]]
 === Choosing a Java Version and Distribution
