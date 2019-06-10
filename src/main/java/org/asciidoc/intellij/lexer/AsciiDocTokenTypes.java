@@ -65,8 +65,10 @@ public interface AsciiDocTokenTypes {
   IElementType BLOCKREFTEXT = new AsciiDocElementType("BLOCKREFTEXT");
   IElementType BLOCKIDEND = new AsciiDocElementType("BLOCKIDEND");
   IElementType SEPARATOR = new AsciiDocElementType("SEPARATOR");
-  IElementType TYPOGRAPHIC_QUOTE_START = new AsciiDocElementType("TYPOGRAPHIC_QUOTE_START");
-  IElementType TYPOGRAPHIC_QUOTE_END = new AsciiDocElementType("TYPOGRAPHIC_QUOTE_END");
+  IElementType TYPOGRAPHIC_DOUBLE_QUOTE_START = new AsciiDocElementType("TYPOGRAPHIC_DOUBLE_QUOTE_START");
+  IElementType TYPOGRAPHIC_DOUBLE_QUOTE_END = new AsciiDocElementType("TYPOGRAPHIC_DOUBLE_QUOTE_END");
+  IElementType TYPOGRAPHIC_SINGLE_QUOTE_START = new AsciiDocElementType("TYPOGRAPHIC_SINGLE_QUOTE_START");
+  IElementType TYPOGRAPHIC_SINGLE_QUOTE_END = new AsciiDocElementType("TYPOGRAPHIC_SINGLE_QUOTE_END");
   IElementType LINK = new AsciiDocElementType("LINK");
   IElementType LINKSTART = new AsciiDocElementType("LINKSTART");
   IElementType LINKFILE = new AsciiDocElementType("LINKFILE");

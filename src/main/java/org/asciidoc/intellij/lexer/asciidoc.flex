@@ -166,8 +166,10 @@ BLOCKIDSTART = "[["
 BLOCKIDEND = "]]"
 SINGLE_QUOTE = "'"
 DOUBLE_QUOTE = "\""
-TYPOGRAPHIC_QUOTE_START = "\"`"
-TYPOGRAPHIC_QUOTE_END = "`\""
+TYPOGRAPHIC_DOUBLE_QUOTE_START = "\"`"
+TYPOGRAPHIC_DOUBLE_QUOTE_END = "`\""
+TYPOGRAPHIC_SINGLE_QUOTE_START = "'`"
+TYPOGRAPHIC_SINGLE_QUOTE_END = "`'"
 ANCHORSTART = "[#"
 ANCHOREND = "]"
 LINKSTART = "link:"
@@ -503,24 +505,42 @@ ATTRIBUTE_REF_END = "}"
                          }
                        }
   {DOUBLE_QUOTE}       { return AsciiDocTokenTypes.DOUBLE_QUOTE; }
-  {TYPOGRAPHIC_QUOTE_START} / [^\*\n \t] {WORD}* {TYPOGRAPHIC_QUOTE_END} {
-                         if (isUnconstrainedStart()) {
-                           typographicquote = true;
-                           return AsciiDocTokenTypes.TYPOGRAPHIC_QUOTE_START;
-                         } else {
-                           yypushback(1);
-                           return AsciiDocTokenTypes.DOUBLE_QUOTE;
+  {TYPOGRAPHIC_DOUBLE_QUOTE_START} / [^\*\n \t] {WORD}* {TYPOGRAPHIC_DOUBLE_QUOTE_END} {
+                           if (isUnconstrainedStart()) {
+                             typographicquote = true;
+                             return AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START;
+                           } else {
+                             yypushback(1);
+                             return AsciiDocTokenTypes.DOUBLE_QUOTE;
+                           }
                          }
-                       }
-  {TYPOGRAPHIC_QUOTE_END} {
-                         if (typographicquote && isUnconstrainedEnd()) {
-                           typographicquote = false;
-                           return AsciiDocTokenTypes.TYPOGRAPHIC_QUOTE_END;
-                         } else {
-                           yypushback(1);
-                           return textFormat();
+  {TYPOGRAPHIC_DOUBLE_QUOTE_END} {
+                           if (typographicquote && isUnconstrainedEnd()) {
+                             typographicquote = false;
+                             return AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END;
+                           } else {
+                             yypushback(1);
+                             return textFormat();
+                           }
                          }
-                       }
+  {TYPOGRAPHIC_SINGLE_QUOTE_START} / [^\*\n \t] {WORD}* {TYPOGRAPHIC_SINGLE_QUOTE_END} {
+                           if (isUnconstrainedStart()) {
+                             typographicquote = true;
+                             return AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START;
+                           } else {
+                             yypushback(1);
+                             return AsciiDocTokenTypes.SINGLE_QUOTE;
+                           }
+                         }
+  {TYPOGRAPHIC_SINGLE_QUOTE_END} {
+                           if (typographicquote && isUnconstrainedEnd()) {
+                             typographicquote = false;
+                             return AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END;
+                           } else {
+                             yypushback(1);
+                             return textFormat();
+                           }
+                         }
   {LINKSTART} / [^\[\n]* {LINKTEXT_START} [^\]\n]* {LINKEND} {
                          if (!isEscaped()) {
                            yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART;

@@ -631,22 +631,29 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Text')");
   }
 
-  public void testTypographicQuotes() {
+  public void testTypographicDoubleQuotes() {
     doTest("\"`typoquote`\"",
-      "AsciiDoc:TYPOGRAPHIC_QUOTE_START ('\"`')\n" +
+      "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_START ('\"`')\n" +
         "AsciiDoc:TEXT ('typoquote')\n" +
-        "AsciiDoc:TYPOGRAPHIC_QUOTE_END ('`\"')");
+        "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_END ('`\"')");
+  }
+
+  public void testTypographicSingleQuotes() {
+    doTest("'`typoquote`'",
+      "AsciiDoc:TYPOGRAPHIC_SINGLE_QUOTE_START (''`')\n" +
+        "AsciiDoc:TEXT ('typoquote')\n" +
+        "AsciiDoc:TYPOGRAPHIC_SINGLE_QUOTE_END ('`'')");
   }
 
   public void testTwoTypographicQuotes() {
     doTest("\"`tq`\" \"`tq`\"",
-      "AsciiDoc:TYPOGRAPHIC_QUOTE_START ('\"`')\n" +
+      "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_START ('\"`')\n" +
         "AsciiDoc:TEXT ('tq')\n" +
-        "AsciiDoc:TYPOGRAPHIC_QUOTE_END ('`\"')\n" +
+        "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_END ('`\"')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:TYPOGRAPHIC_QUOTE_START ('\"`')\n" +
+        "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_START ('\"`')\n" +
         "AsciiDoc:TEXT ('tq')\n" +
-        "AsciiDoc:TYPOGRAPHIC_QUOTE_END ('`\"')");
+        "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_END ('`\"')");
   }
 
   public void testNoTypographicQuotes() {
