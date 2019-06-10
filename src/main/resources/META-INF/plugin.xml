@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.26.18</version>
+  <version>0.26.19</version>
   <vendor email="alexander.schwartz@gmx.net" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">Asciidoctor IntelliJ Plugin Project</vendor>
 
   <description><![CDATA[
@@ -32,6 +32,7 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
+      <li>0.26.19 tuning parsing and documentation #267
       <li>0.26.18 resolve the last reference in structure view as this will be the file; the others are the subdirectories (#267)<br>
       refactoring or shortened descriptions; now in sync for structure view, folding and breadcrumbs (#267)<br>
       allow browser to cache static content to avoid flickering (#267)<br>

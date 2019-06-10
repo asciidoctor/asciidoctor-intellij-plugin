@@ -58,21 +58,26 @@ You can even create a pull request for this document!
 
 ==== Navigation
 
+// see: AsciiDocFoldingBuilder
 The user can fold sections and blocks using the small +/- symbols on the left of the editor.
+Folded sections and blocks show their first line except when this is block id (like `\[[id]]`).
 
+// see: AsciiDocStructureViewElement
 The structure of the file kbd:[Alt+7] shows the hierarchy of sections and blocks with titles.
+This contains (if available) the first block attribute element (like \[source], \[quote] or \[verse]) and the title of the block or section.
+If an element like an `image::[]` references another file, it shows the icon of the file and the file's name.
+If an `include::[]` references an AsciiDoc file, it includes the file as a sub-tree in the structure view.
+Clicking on either a referenced file or an element of a sub-tree opens the referenced file.
 
-The search all view kbd:[Shift]kbd:[Shift] shows section titles and titles of blocks.
+// see: AsciiDocChooseByNameContributor and AsciiDocSearchEverywhereClassifier
+The search all view kbd:[Shift]kbd:[Shift] shows section titles and IDs of blocks.
 
 The breadcrumbs view (bottom of the editor) shows the hierarchy leading to the current sections and blocks.
+It contains the same elements like in the structure view for the cursor position.
 
-For
-+++include::[]+++
-and
-+++image::[]+++
-block macros the kbd:[Ctrl+Click] and kbd:[Ctrl+B] will navigate to the referenced file.
+For `include::[]` and `image::[]` block macros the keys kbd:[Ctrl+Click] and kbd:[Ctrl+B] navigate to the referenced file.
 
-For references (like `\<<id>>`) kbd:[Ctrl+Click] and kbd:[Ctrl+B] will navigate to the reference (like `\[[id]]`).
+For references (like `\<<id>>`) the keys kbd:[Ctrl+Click] and kbd:[Ctrl+B] navigate to the reference (like `\[[id]]`).
 "Find Usages" (kbd:[Alt+F7]) will find usages of a reference and allows navigation.
 
 The plugin highlights matching braces including symmetric formatting for bold, italic and monospace.
@@ -101,10 +106,12 @@ The user can configure the keywords in the IDE settings.
 
 ==== Writing
 
+// see: AsciiDocSmartEnterProcessor
 When adding block attributes, the plugin supports statement completion (also known as "`Smart Enter`") using the shortcut kbd:[Shift+Ctrl+Enter].
-For example: a `[source,java` will receive a closing bracket and two listing separator lines.
+For example: a `[source,java` receives a closing bracket and two listing separator lines.
 
-When the user opens a quote or a bracket, the plugin will automatically add a closing quote.
+// see: AsciiDocBraceMatcher
+When the user opens a quote or a bracket, the plugin automatically adds a closing quote if it followed by whitespace or a closing bracket.
 
 For references and includes it provides auto-completion using kbd:[Ctrl+Space].
 References support renaming within a project.

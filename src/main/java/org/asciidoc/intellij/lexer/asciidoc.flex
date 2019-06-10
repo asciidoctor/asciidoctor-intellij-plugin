@@ -482,7 +482,8 @@ ATTRIBUTE_REF_END = "}"
                          if (!isEscaped()) {
                            yybegin(BLOCKID); return AsciiDocTokenTypes.BLOCKIDSTART;
                          } else {
-                           return textFormat();
+                           yypushback(1);
+                           return AsciiDocTokenTypes.LBRACKET;
                          }
                        }
   {ATTRIBUTE_REF_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} {
@@ -620,6 +621,7 @@ ATTRIBUTE_REF_END = "}"
   "]"                  { yypopstate(); return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
   ","                  { return AsciiDocTokenTypes.SEPARATOR; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
+  "=\"" ( [^\"] | "\\\"" )* "\"" { return AsciiDocTokenTypes.BLOCK_ATTR_VALUE; }
   [^]                  { return AsciiDocTokenTypes.BLOCK_ATTR_NAME; }
 }
 

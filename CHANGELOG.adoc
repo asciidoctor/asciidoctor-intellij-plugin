@@ -6,6 +6,10 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
+=== 0.26.19 (work in progress)
+
+- tuning parsing and documentation #267
+
 === 0.26.18 (preview, available from Github releases)
 
 - resolve the last reference in structure view as this will be the file; the others are the subdirectories (#267)

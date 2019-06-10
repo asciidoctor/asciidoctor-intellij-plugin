@@ -12,6 +12,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKREFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTRS_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTRS_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTR_NAME;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTR_VALUE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_BODY;
@@ -124,7 +125,7 @@ public class AsciiDocParserImpl {
         markPreBlock();
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
-        while (at(BLOCK_ATTR_NAME) || at(BLOCK_ATTRS_END) || at(SEPARATOR)) {
+        while (at(BLOCK_ATTR_NAME) || at (BLOCK_ATTR_VALUE) || at(BLOCK_ATTRS_END) || at(SEPARATOR)) {
           next();
         }
         blockAttrsMarker.done(AsciiDocElementTypes.BLOCK_ATTRIBUTES);
@@ -170,7 +171,11 @@ public class AsciiDocParserImpl {
   }
 
   private void parseBlock() {
-    String delimiter = myBuilder.getTokenText().trim();
+    String delimiter = myBuilder.getTokenText();
+    if (delimiter == null) {
+      return;
+    }
+    delimiter = delimiter.trim();
     if (myBlockMarker.size() > 0 && myBlockMarker.peek().delimiter.equals(delimiter)) {
       dropPreBlock();
       next();

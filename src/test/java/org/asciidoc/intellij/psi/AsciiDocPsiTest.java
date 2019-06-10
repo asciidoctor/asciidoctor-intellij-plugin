@@ -156,6 +156,14 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("== Section Title", section.getFoldedSummary());
   }
 
+  public void testDescriptionSectionWithId() {
+    PsiFile psiFile = configureByAsciiDoc("[[id]]\n== Section Title");
+    AsciiDocSection section = PsiTreeUtil.getChildOfType(psiFile, AsciiDocSection.class);
+    assertNotNull(section);
+    assertEquals("Section Title", section.getDescription());
+    assertEquals("== Section Title", section.getFoldedSummary());
+  }
+
   private PsiFile configureByAsciiDoc(String text) {
     return myFixture.configureByText(AsciiDocFileType.INSTANCE, text);
   }
