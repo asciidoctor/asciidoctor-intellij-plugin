@@ -1,4 +1,4 @@
-= How to Build and Contribute
+= How to Contribute (and Build)
 
 ifdef::env-github[]
 :tip-caption: :bulb:
