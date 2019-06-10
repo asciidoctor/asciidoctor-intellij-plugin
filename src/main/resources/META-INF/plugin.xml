@@ -32,7 +32,8 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.26.19 tuning parsing and documentation #267
+      <li>0.26.19 tuning parsing and documentation #267<br>
+      New inspection to shorten page break where possible
       <li>0.26.18 resolve the last reference in structure view as this will be the file; the others are the subdirectories (#267)<br>
       refactoring or shortened descriptions; now in sync for structure view, folding and breadcrumbs (#267)<br>
       allow browser to cache static content to avoid flickering (#267)<br>
@@ -238,6 +239,9 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
     <localInspection language="AsciiDoc" displayName="Heading inspection" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="WARNING" shortName="AsciidocHeadingStyleInspection"
                      implementationClass="org.asciidoc.intellij.inspections.AsciidocHeadingStyleInspection"/>
+    <localInspection language="AsciiDoc" displayName="Pagebreak inspection" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="WARNING" shortName="AsciiDocPageBreakInspection"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocPageBreakInspection"/>
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
     <problemFileHighlightFilter implementation="org.asciidoc.intellij.problemHighlighter.AsciidocProblemFileHighlightFilter" />
     <compiler.buildTargetScopeProvider implementation="org.asciidoc.intellij.builder.AsciidocTargetScopeProvider"/>
