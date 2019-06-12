@@ -49,7 +49,6 @@ intellij {
 
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'org.asciidoctor:asciidoctorj-diagram:1.5.18'
     compile 'org.asciidoctor:asciidoctorj:2.0.0'
     compile 'commons-io:commons-io:2.4'
