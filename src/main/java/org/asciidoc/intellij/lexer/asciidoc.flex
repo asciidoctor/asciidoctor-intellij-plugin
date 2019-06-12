@@ -724,6 +724,7 @@ ATTRIBUTE_REF_END = "}"
 
 <LITERAL_BLOCK, LISTING_BLOCK, PASSTRHOUGH_BLOCK> {
   "include::" / [^\[\n]* "[" [^\]\n]* "]" { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  "include::" / [^\[\n]* {AUTOCOMPLETE} { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
 }
 
 <LITERAL_BLOCK, INSIDE_LITERAL_BLOCK_LINE> {
