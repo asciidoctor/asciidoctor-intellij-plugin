@@ -14,11 +14,11 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class AsciiDocBreadcrumbsInfoProvider implements BreadcrumbsProvider {
-  private static final Language[] ourLanguages = {AsciiDocLanguage.INSTANCE};
+  private static final Language[] OUR_LANGUAGES = {AsciiDocLanguage.INSTANCE};
 
   @Override
   public Language[] getLanguages() {
-    return ourLanguages;
+    return OUR_LANGUAGES;
   }
 
   @Override

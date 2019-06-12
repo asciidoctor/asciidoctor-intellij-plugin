@@ -11,7 +11,6 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
-import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanel;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +40,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
   private String myLastRenderedHtml = "";
 
 
-  public JeditorHtmlPanel(Document document) {
+  JeditorHtmlPanel(Document document) {
     jEditorPane = new JEditorPane();
     scrollPane = new JBScrollPane(jEditorPane);
     // Setup the editor pane for rendering HTML.
@@ -95,8 +94,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
     javax.swing.text.Document doc = kit.createDefaultDocument();
     try {
       kit.read(new StringReader(html), doc, 0);
-    }
-    catch (IOException ex) {
+    } catch (IOException ex) {
       String message = "Error setting HTML: " + ex.getMessage();
       log.error(message, ex);
       Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
@@ -104,8 +102,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
       // increase event log counter
       notification.setImportant(true);
       Notifications.Bus.notify(notification);
-    }
-    catch (BadLocationException e) {
+    } catch (BadLocationException e) {
       e.printStackTrace();
     }
 

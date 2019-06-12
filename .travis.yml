@@ -2,7 +2,7 @@ language: java
 jdk:
 - oraclejdk8
 script:
-- "./gradlew -Dfile.encoding=UTF-8 clean test buildPlugin"
+- "./gradlew -Dfile.encoding=UTF-8 clean check buildPlugin"
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/

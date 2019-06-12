@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.List;
 
-abstract public class AsciiDocCodeInsightFixtureTestCase extends LightPlatformCodeInsightFixtureTestCase {
+public abstract class AsciiDocCodeInsightFixtureTestCase extends LightPlatformCodeInsightFixtureTestCase {
 
   @Override
   protected boolean isWriteActionRequired() {

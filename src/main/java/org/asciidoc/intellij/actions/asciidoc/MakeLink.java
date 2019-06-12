@@ -1,8 +1,5 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.SelectionModel;
-
 /**
  * @author Michael Krausse, Raffael Krebs, Ulrich Etter
  */
@@ -17,8 +14,7 @@ public class MakeLink extends FormatAsciiDocAction {
   public String updateSelection(String selection, boolean isWord) {
     if (isLink(selection)) {
       return selection + "[]";
-    }
-    else {
+    } else {
       return "http://" + selection + "[" + selection + "]";
     }
 

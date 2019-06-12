@@ -35,8 +35,7 @@ public class AsciiDocEditorKit extends HTMLEditorKit {
     HTMLDocument document = (HTMLDocument) super.createDefaultDocument();
     try {
       document.setBase(baseDir.toURI().toURL());
-    }
-    catch (MalformedURLException e) {
+    } catch (MalformedURLException e) {
       throw new RuntimeException(e);
     }
     return document;

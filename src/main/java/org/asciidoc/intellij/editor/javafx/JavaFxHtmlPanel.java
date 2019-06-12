@@ -277,8 +277,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     });
   }
 
-  private String findTempImageFile(String _fileName) {
-    Path file = imagesPath.resolve(_fileName);
+  private String findTempImageFile(String filename) {
+    Path file = imagesPath.resolve(filename);
     if (Files.exists(file)) {
       return file.toFile().toString();
     }

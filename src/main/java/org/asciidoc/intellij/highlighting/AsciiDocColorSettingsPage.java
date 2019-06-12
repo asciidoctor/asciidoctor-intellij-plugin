@@ -65,16 +65,13 @@ public class AsciiDocColorSettingsPage implements ColorSettingsPage {
   @NotNull
   public String getDemoText() {
     final InputStream stream = getClass().getResourceAsStream("SampleDocument.adoc");
-
     try {
       final String result = StreamUtil.readText(stream, CharsetToolkit.UTF8);
       stream.close();
       return StringUtil.convertLineSeparators(result);
+    } catch (IOException ignored) {
+      return "*error loading text*";
     }
-    catch (IOException ignored) {
-    }
-
-    return "*error loading text*";
   }
 
   @Override

@@ -41,7 +41,7 @@ public class AsciiDocParserImpl {
     int level;
     PsiBuilder.Marker marker;
 
-    public SectionMarker(int level, PsiBuilder.Marker marker) {
+    SectionMarker(int level, PsiBuilder.Marker marker) {
       this.level = level;
       this.marker = marker;
     }
@@ -52,7 +52,7 @@ public class AsciiDocParserImpl {
     String delimiter;
     PsiBuilder.Marker marker;
 
-    public BlockMarker(String delimiter, PsiBuilder.Marker marker) {
+    BlockMarker(String delimiter, PsiBuilder.Marker marker) {
       this.delimiter = delimiter;
       this.marker = marker;
     }
@@ -125,7 +125,7 @@ public class AsciiDocParserImpl {
         markPreBlock();
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
-        while (at(BLOCK_ATTR_NAME) || at (BLOCK_ATTR_VALUE) || at(BLOCK_ATTRS_END) || at(SEPARATOR)) {
+        while (at(BLOCK_ATTR_NAME) || at(BLOCK_ATTR_VALUE) || at(BLOCK_ATTRS_END) || at(SEPARATOR)) {
           next();
         }
         blockAttrsMarker.done(AsciiDocElementTypes.BLOCK_ATTRIBUTES);

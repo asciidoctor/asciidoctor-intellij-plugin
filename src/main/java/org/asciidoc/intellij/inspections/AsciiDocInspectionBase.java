@@ -12,7 +12,7 @@ import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-abstract public class AsciiDocInspectionBase extends LocalInspectionTool {
+public abstract class AsciiDocInspectionBase extends LocalInspectionTool {
   protected static final AsciiDocVisitor DUMMY_VISITOR = new AsciiDocVisitor() {
   };
 

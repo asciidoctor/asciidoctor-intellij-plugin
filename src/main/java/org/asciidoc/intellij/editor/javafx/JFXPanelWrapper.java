@@ -12,7 +12,7 @@ import javafx.scene.Scene;
 import java.awt.*;
 
 public class JFXPanelWrapper extends JFXPanel {
-  private static final FieldAccessor<JFXPanel, Integer> myScaleFactorAccessor = new FieldAccessor<>(JFXPanel.class, "scaleFactor");
+  private static final FieldAccessor<JFXPanel, Integer> MY_SCALE_FACTOR_ACCESSOR = new FieldAccessor<>(JFXPanel.class, "scaleFactor");
 
   public JFXPanelWrapper() {
     Platform.setImplicitExit(false);
@@ -37,7 +37,7 @@ public class JFXPanelWrapper extends JFXPanel {
       // JFXPanel is scaled asynchronously after first repaint, what may lead
       // to showing unscaled content. To work it around, set "scaleFactor" ahead.
       int scale = Math.round(JBUI.sysScale(this));
-      myScaleFactorAccessor.set(this, scale);
+      MY_SCALE_FACTOR_ACCESSOR.set(this, scale);
       Scene scene = getScene();
       // If scene is null then it will be set later and super.setEmbeddedScene(..) will init its scale properly,
       // otherwise explicitly set scene scale to match JFXPanel.scaleFactor.

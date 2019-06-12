@@ -79,7 +79,7 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
     DefaultLanguageHighlighterColors.STRING
   );
 
-  public static final ImmutableMap<IElementType, TextAttributesKey> attributes =
+  public static final ImmutableMap<IElementType, TextAttributesKey> ATTRIBUTES =
       ImmutableMap.<IElementType, TextAttributesKey>builder()
           .put(AsciiDocTokenTypes.LINE_COMMENT, ASCIIDOC_COMMENT)
           .put(AsciiDocTokenTypes.BLOCK_COMMENT, ASCIIDOC_COMMENT)
@@ -141,6 +141,6 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
   @NotNull
   @Override
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
-    return pack(attributes.get(tokenType));
+    return pack(ATTRIBUTES.get(tokenType));
   }
 }

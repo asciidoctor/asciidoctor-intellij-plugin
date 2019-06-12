@@ -1,7 +1,5 @@
 package org.asciidoc.intellij.inspections;
 
-import org.asciidoc.intellij.quickfix.AsciiDocConvertMarkdownHeading;
-import org.asciidoc.intellij.quickfix.AsciiDocConvertOldstyleHeading;
 import org.asciidoc.intellij.quickfix.AsciiDocShortenPagebreak;
 
 public class AsciiDocPagebreakTest extends AsciiDocQuickFixTestBase {

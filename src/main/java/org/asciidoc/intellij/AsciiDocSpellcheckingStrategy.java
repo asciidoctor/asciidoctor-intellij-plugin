@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * @author yole
  */
 public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
-  public static TokenSet TEXT_TOKENS = TokenSet.create(
+  private static final TokenSet TEXT_TOKENS = TokenSet.create(
     AsciiDocTokenTypes.HEADING,
     AsciiDocTokenTypes.HEADING_OLDSTYLE,
     AsciiDocTokenTypes.TEXT,

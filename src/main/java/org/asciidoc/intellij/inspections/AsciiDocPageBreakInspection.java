@@ -5,7 +5,6 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
-import org.asciidoc.intellij.quickfix.AsciiDocConvertMarkdownHeading;
 import org.asciidoc.intellij.quickfix.AsciiDocShortenPagebreak;
 import org.jetbrains.annotations.NotNull;
 

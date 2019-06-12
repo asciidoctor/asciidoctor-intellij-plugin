@@ -29,9 +29,9 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
   private static final String MY_PROPORTION_KEY = "SplitFileEditor.Proportion";
 
   @NotNull
-  protected final E1 myMainEditor;
+  private final E1 myMainEditor;
   @NotNull
-  protected final E2 mySecondEditor;
+  private final E2 mySecondEditor;
   @NotNull
   private final JComponent myComponent;
   @NotNull
@@ -107,8 +107,8 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
   public void triggerLayoutChange() {
     final int oldValue = mySplitEditorLayout.ordinal();
-    final int N = SplitEditorLayout.values().length;
-    final int newValue = (oldValue + N - 1) % N;
+    final int n = SplitEditorLayout.values().length;
+    final int newValue = (oldValue + n - 1) % n;
 
     triggerLayoutChange(SplitEditorLayout.values()[newValue]);
   }
@@ -275,7 +275,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     @Nullable
     private final FileEditorState mySecondState;
 
-    public MyFileEditorState(@Nullable String splitLayout, @Nullable FileEditorState firstState, @Nullable FileEditorState secondState) {
+    MyFileEditorState(@Nullable String splitLayout, @Nullable FileEditorState firstState, @Nullable FileEditorState secondState) {
       mySplitLayout = splitLayout;
       myFirstState = firstState;
       mySecondState = secondState;

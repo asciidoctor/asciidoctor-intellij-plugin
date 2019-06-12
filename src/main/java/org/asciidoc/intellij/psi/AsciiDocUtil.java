@@ -20,9 +20,9 @@ public class AsciiDocUtil {
     Collection<VirtualFile> virtualFiles =
             FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
     for (VirtualFile virtualFile : virtualFiles) {
-      AsciiDocFile AsciiDocFile = (AsciiDocFile) PsiManager.getInstance(project).findFile(virtualFile);
-      if (AsciiDocFile != null) {
-        Collection<AsciiDocBlockId> properties = PsiTreeUtil.findChildrenOfType(AsciiDocFile, AsciiDocBlockId.class);
+      AsciiDocFile asciiDocFile = (AsciiDocFile) PsiManager.getInstance(project).findFile(virtualFile);
+      if (asciiDocFile != null) {
+        Collection<AsciiDocBlockId> properties = PsiTreeUtil.findChildrenOfType(asciiDocFile, AsciiDocBlockId.class);
         for (AsciiDocBlockId blockId : properties) {
           if (key.equals(blockId.getId())) {
             if (result == null) {
@@ -38,9 +38,9 @@ public class AsciiDocUtil {
 
   public static List<AsciiDocBlockId> findIds(Project project, VirtualFile virtualFile, String key) {
     List<AsciiDocBlockId> result = null;
-    AsciiDocFile AsciiDocFile = (AsciiDocFile) PsiManager.getInstance(project).findFile(virtualFile);
-    if (AsciiDocFile != null) {
-      Collection<AsciiDocBlockId> properties = PsiTreeUtil.findChildrenOfType(AsciiDocFile, AsciiDocBlockId.class);
+    AsciiDocFile asciiDocFile = (AsciiDocFile) PsiManager.getInstance(project).findFile(virtualFile);
+    if (asciiDocFile != null) {
+      Collection<AsciiDocBlockId> properties = PsiTreeUtil.findChildrenOfType(asciiDocFile, AsciiDocBlockId.class);
       for (AsciiDocBlockId blockId : properties) {
         if (key.equals(blockId.getId())) {
           if (result == null) {
@@ -58,9 +58,9 @@ public class AsciiDocUtil {
     Collection<VirtualFile> virtualFiles =
             FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
     for (VirtualFile virtualFile : virtualFiles) {
-      AsciiDocFile AsciiDocFile = (AsciiDocFile) PsiManager.getInstance(project).findFile(virtualFile);
-      if (AsciiDocFile != null) {
-        Collection<AsciiDocBlockId> properties = PsiTreeUtil.findChildrenOfType(AsciiDocFile, AsciiDocBlockId.class);
+      AsciiDocFile asciiDocFile = (AsciiDocFile) PsiManager.getInstance(project).findFile(virtualFile);
+      if (asciiDocFile != null) {
+        Collection<AsciiDocBlockId> properties = PsiTreeUtil.findChildrenOfType(asciiDocFile, AsciiDocBlockId.class);
         result.addAll(properties);
       }
     }

@@ -40,15 +40,15 @@ public class AsciiDocConvertOldstyleHeading extends LocalQuickFixBase {
     int depth = 0;
     switch (text.charAt(text.length() - 2)) {
       case '+':
-        ++ depth;
+        ++depth;
       case '^':
-        ++ depth;
+        ++depth;
       case '~':
-        ++ depth;
+        ++depth;
       case '-':
-        ++ depth;
+        ++depth;
       case '=':
-        ++ depth;
+        ++depth;
         break;
       default:
         return;
@@ -60,7 +60,7 @@ public class AsciiDocConvertOldstyleHeading extends LocalQuickFixBase {
     // prepend right number of equals and a blank
     text.insert(0, " ");
     while(depth > 0) {
-      -- depth;
+      --depth;
       text.insert(0, "=");
     }
 

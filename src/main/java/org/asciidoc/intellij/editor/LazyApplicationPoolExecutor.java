@@ -58,13 +58,11 @@ public class LazyApplicationPoolExecutor implements Executor {
         try {
           command.run();
           Thread.sleep(delay);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
           System.out.println(System.currentTimeMillis() + ": was interrupted");
           e.printStackTrace();
           Thread.currentThread().interrupt();
-        }
-        finally {
+        } finally {
           if (!Thread.currentThread().isInterrupted())
             scheduleNext(); //needed to execute the very last command
         }

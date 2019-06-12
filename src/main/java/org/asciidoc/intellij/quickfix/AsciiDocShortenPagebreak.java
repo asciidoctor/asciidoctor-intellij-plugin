@@ -5,10 +5,8 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.psi.AsciiDocFile;
-import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.jetbrains.annotations.NotNull;
 
 /**

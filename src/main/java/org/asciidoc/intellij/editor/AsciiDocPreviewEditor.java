@@ -70,8 +70,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
   private Logger log = Logger.getInstance(AsciiDocPreviewEditor.class);
 
-  /** single threaded with one task queue (one for each editor window) */
-  private final LazyApplicationPoolExecutor LAZY_EXECUTOR = new LazyApplicationPoolExecutor();
+  /** single threaded with one task queue (one for each editor window). */
+  private final LazyApplicationPoolExecutor lazyExecutor = new LazyApplicationPoolExecutor();
 
   /** Indicates whether the HTML preview is obsolete and should regenerated from the AsciiDoc {@link #document}. */
   private transient String currentContent = "";
@@ -81,11 +81,11 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   private transient int currentLineNo = 0;
 
   /** The {@link Document} previewed in this editor. */
-  protected final Document document;
+  private final Document document;
   private Project project;
 
   /** The directory which holds the temporary images. */
-  protected final Path tempImagesPath;
+  private final Path tempImagesPath;
 
   @NotNull
   private final JPanel myHtmlPanelWrapper;
@@ -114,7 +114,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     final String contentWithConfig = AsciiDoc.prependConfig(document, project, o -> offsetLineNo = o);
     List<String> extensions = AsciiDoc.getExtensions(project);
 
-    LAZY_EXECUTOR.execute(new Runnable() {
+    lazyExecutor.execute(new Runnable() {
       @Override
       public void run() {
         try {
@@ -131,11 +131,9 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
             myPanel.scrollToLine(targetLineNo, document.getLineCount(), offsetLineNo);
           }
           ApplicationManager.getApplication().invokeLater(myHtmlPanelWrapper::repaint);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
           String message = "Error rendering preview: " + ex.getMessage();
           log.error(message, ex);
           Notification notification = NOTIFICATION_GROUP.createNotification("Error rendering asciidoctor", message,

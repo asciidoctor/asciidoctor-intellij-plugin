@@ -8,7 +8,8 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import org.asciidoc.intellij.file.AsciiDocFileType;
 
 /**
- * WARNING: instead of this test, consider a golden master test in {@link AsciiDocParserTest}
+ * Tests for {@link org.asciidoc.intellij.parser.AsciiDocParserImpl}.
+ * HINT: instead of this test, consider a golden master test in {@link AsciiDocParserTest}
  * @author yole
  */
 public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {

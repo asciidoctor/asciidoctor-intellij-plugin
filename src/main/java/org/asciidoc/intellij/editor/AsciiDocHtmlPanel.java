@@ -43,7 +43,7 @@ public abstract class AsciiDocHtmlPanel implements Disposable {
     ASCIIDOC(AsciiDocBundle.message("asciidoc.preview.asciidoc")),
     DARCULA(AsciiDocBundle.message("asciidoc.preview.darcula"));
 
-    public final String presentationName;
+    private final String presentationName;
 
     PreviewTheme(String presentationName) {
       this.presentationName = presentationName;

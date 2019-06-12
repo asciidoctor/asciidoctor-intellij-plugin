@@ -12,7 +12,6 @@ import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
-import org.apache.commons.lang.StringUtils;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
@@ -65,6 +64,7 @@ public final class AsciiDocPreviewSettings {
   public AsciiDocPreviewSettings() {
   }
 
+  @SuppressWarnings("checkstyle:ParameterNumber")
   public AsciiDocPreviewSettings(@NotNull SplitFileEditor.SplitEditorLayout splitEditorLayout,
                                  @NotNull AsciiDocHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo,
                                  @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme,
@@ -118,7 +118,9 @@ public final class AsciiDocPreviewSettings {
     return myEnableInjections;
   }
 
-  public String getDisabledInjectionsByLanguage() { return myDisabledInjectionsByLanguage; }
+  public String getDisabledInjectionsByLanguage() {
+    return myDisabledInjectionsByLanguage;
+  }
 
   public List<String> getDisabledInjectionsByLanguageAsList() {
     List<String> list = new ArrayList<>();

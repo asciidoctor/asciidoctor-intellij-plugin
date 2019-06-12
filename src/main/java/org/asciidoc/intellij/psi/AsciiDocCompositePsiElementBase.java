@@ -61,8 +61,7 @@ public abstract class AsciiDocCompositePsiElementBase extends ASTWrapperPsiEleme
         }
         if (getCompositeChildren().size() == 0) {
           return shrinkTextTo(PRESENTABLE_TEXT_LENGTH);
-        }
-        else {
+        } else {
           return null;
         }
       }

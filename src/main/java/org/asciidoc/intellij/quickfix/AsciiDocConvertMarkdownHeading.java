@@ -28,8 +28,7 @@ public class AsciiDocConvertMarkdownHeading extends LocalQuickFixBase {
     for (int i = 0;i < text.length();++i) {
       if (text.charAt(i) == '#') {
         text.setCharAt(i, '=');
-      }
-      else {
+      } else {
         break;
       }
     }

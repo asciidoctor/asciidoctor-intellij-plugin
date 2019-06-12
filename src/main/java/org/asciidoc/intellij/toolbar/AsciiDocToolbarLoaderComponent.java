@@ -51,7 +51,7 @@ public class AsciiDocToolbarLoaderComponent implements ProjectComponent {
   }
 
 
-  /** inspired by {@link com.intellij.xml.breadcrumbs.BreadcrumbsLoaderComponent.MyFileEditorManagerListener} */
+  /** inspired by {@link com.intellij.xml.breadcrumbs.BreadcrumbsLoaderComponent.MyFileEditorManagerListener}. */
   private static class AsciiDocFileEditorManagerListener extends FileEditorManagerAdapter {
 
     @Override

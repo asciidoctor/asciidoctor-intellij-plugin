@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-/** inspired by {@link com.intellij.ui.EditorNotificationPanel} */
+/** inspired by {@link com.intellij.ui.EditorNotificationPanel}. */
 public class AsciiDocToolbarPanel extends JPanel implements Disposable {
 
   private static final String ASCII_DOC_ACTION_GROUP_ID = "AsciiDoc.TextFormatting";

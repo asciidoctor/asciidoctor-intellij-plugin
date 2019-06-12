@@ -15,10 +15,8 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDEND;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKREFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_COMMENT;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_BREAK;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_COMMENT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SEPARATOR;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.WHITE_SPACE;
 
 public interface AsciiDocBlock extends PsiElement, AsciiDocSelfDescribe {
 

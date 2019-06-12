@@ -1,6 +1,7 @@
 .idea/*
-!/.idea/runConfigurations
+!/.idea/runConfigurations/*.xml
 !/.idea/externalDependencies.xml
+!/.idea/checkstyle-idea.xml
 .gradle
 *.iml
 build/

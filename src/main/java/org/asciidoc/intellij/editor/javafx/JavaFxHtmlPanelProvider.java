@@ -4,11 +4,9 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.editor.Document;
-import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
-import org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
@@ -63,9 +61,7 @@ public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
       if (Class.forName("javafx.scene.web.WebView", false, getClass().getClassLoader()) != null) {
         return AvailabilityInfo.AVAILABLE;
       }
-    }
-    catch (ClassNotFoundException ignored) {
-    }
+    } catch (ClassNotFoundException ignored) {}
 
     return AvailabilityInfo.UNAVAILABLE;
   }

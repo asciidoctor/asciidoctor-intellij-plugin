@@ -4,7 +4,7 @@ package org.asciidoc.intellij.actions.asciidoc;
  * @author Erik Pragt
  */
 public class MakeStrikethrough extends FormatAsciiDocAction {
-  private final static String LINE_THROUGH = "[.line-through]";
+  private static final String LINE_THROUGH = "[.line-through]";
 
   @Override
   public String getName() {

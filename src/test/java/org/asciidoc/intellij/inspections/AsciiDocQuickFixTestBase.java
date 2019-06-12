@@ -30,8 +30,7 @@ public abstract class AsciiDocQuickFixTestBase extends AsciiDocCodeInsightFixtur
   private void configure(boolean checkHighlighting, String testName) {
     if (checkHighlighting) {
       myFixture.testHighlighting(testName + ".adoc");
-    }
-    else {
+    } else {
       myFixture.configureByFile(testName + ".adoc");
       myFixture.doHighlighting();
     }

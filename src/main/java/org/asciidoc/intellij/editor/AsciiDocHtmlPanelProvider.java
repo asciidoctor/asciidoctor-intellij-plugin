@@ -39,8 +39,7 @@ public abstract class AsciiDocHtmlPanelProvider {
   public static AsciiDocHtmlPanelProvider createFromInfo(@NotNull ProviderInfo providerInfo) {
     try {
       return ((AsciiDocHtmlPanelProvider)Class.forName(providerInfo.getClassName()).newInstance());
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       Messages.showMessageDialog(
         "Cannot set preview panel provider (" + providerInfo.getName() + "):\n" + e.getMessage(),
         CommonBundle.getErrorTitle(),
@@ -106,7 +105,7 @@ public abstract class AsciiDocHtmlPanelProvider {
     }
   }
 
-  public static abstract class AvailabilityInfo {
+  public abstract static class AvailabilityInfo {
     public static final AvailabilityInfo AVAILABLE = new AvailabilityInfo() {
       @Override
       public boolean checkAvailability(@NotNull JComponent parentComponent) {

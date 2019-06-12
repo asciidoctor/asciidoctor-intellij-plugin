@@ -10,7 +10,7 @@ import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class AsciidocQuoteHandler implements QuoteHandler {
-  private final static TokenSet QUOTE_TYPES = TokenSet.create(AsciiDocTokenTypes.DOUBLE_QUOTE,
+  private static final TokenSet QUOTE_TYPES = TokenSet.create(AsciiDocTokenTypes.DOUBLE_QUOTE,
                                                               AsciiDocTokenTypes.SINGLE_QUOTE);
 
   @Override
@@ -78,8 +78,7 @@ public class AsciidocQuoteHandler implements QuoteHandler {
       final char currentChar = haystack.charAt(from);
       if (currentChar == needle) {
         return from;
-      }
-      else if (currentChar == '\n') {
+      } else if (currentChar == '\n') {
         return -1;
       }
 

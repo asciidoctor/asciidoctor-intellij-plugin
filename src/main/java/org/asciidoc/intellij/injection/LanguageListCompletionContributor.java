@@ -1,19 +1,15 @@
 package org.asciidoc.intellij.injection;
 
 import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionInitializationContext;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.codeInsight.lookup.LookupElementDecorator;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.DeferredIconImpl;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
-import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

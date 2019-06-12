@@ -36,8 +36,7 @@ public class LocalfileURLConnection extends URLConnection {
   public String getHeaderField(String name) {
     if ("Content-Type".equalsIgnoreCase(name)) {
       return getContentType();
-    }
-    else if ("Content-Length".equalsIgnoreCase(name)) {
+    } else if ("Content-Length".equalsIgnoreCase(name)) {
       return "" + getContentLength();
     }
     return null;

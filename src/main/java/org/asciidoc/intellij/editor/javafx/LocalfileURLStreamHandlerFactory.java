@@ -5,10 +5,8 @@ import java.net.URLStreamHandlerFactory;
 
 public class LocalfileURLStreamHandlerFactory implements URLStreamHandlerFactory {
 
-  public URLStreamHandler createURLStreamHandler(String protocol)
-  {
-    if (protocol.equals("localfile"))
-    {
+  public URLStreamHandler createURLStreamHandler(String protocol) {
+    if (protocol.equals("localfile")) {
       return new LocalfileURLHandler();
     }
     return null;

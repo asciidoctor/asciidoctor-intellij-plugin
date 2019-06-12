@@ -26,7 +26,6 @@ import org.jetbrains.io.Responses;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -111,14 +110,12 @@ public class PreviewStaticServer extends HttpRequestHandler {
                    context.channel(),
                    JavaFxHtmlPanel.class,
                    fileName);
-    }
-    else if ("styles".equals(contentType)) {
+    } else if ("styles".equals(contentType)) {
       sendResource(request,
                    context.channel(),
         JavaFxHtmlPanel.class,
                    fileName);
-    }
-    else {
+    } else {
       return false;
     }
 
@@ -137,15 +134,14 @@ public class PreviewStaticServer extends HttpRequestHandler {
     */
 
     byte[] data;
-    try (final InputStream inputStream = clazz.getResourceAsStream(resourceName)) {
+    try (InputStream inputStream = clazz.getResourceAsStream(resourceName)) {
       if (inputStream == null) {
         Responses.send(HttpResponseStatus.NOT_FOUND, channel, request);
         return;
       }
 
       data = FileUtilRt.loadBytes(inputStream);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       LOG.warn(e);
       Responses.send(HttpResponseStatus.INTERNAL_SERVER_ERROR, channel, request);
       return;
