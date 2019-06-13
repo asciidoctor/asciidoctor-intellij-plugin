@@ -12,14 +12,15 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.asciidoc.intellij.lexer.AsciiDocLexer;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
-import org.asciidoc.intellij.psi.AsciiDocStandardBlock;
 import org.asciidoc.intellij.psi.AsciiDocBlockAttributes;
 import org.asciidoc.intellij.psi.AsciiDocBlockId;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocCodeContent;
 import org.asciidoc.intellij.psi.AsciiDocFile;
+import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocRef;
 import org.asciidoc.intellij.psi.AsciiDocSection;
+import org.asciidoc.intellij.psi.AsciiDocStandardBlock;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -86,6 +87,9 @@ public class AsciiDocParserDefinition implements ParserDefinition {
     }
     if (node.getElementType() == AsciiDocTokenTypes.CODE_FENCE_CONTENT) {
       return new AsciiDocCodeContent(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.LINK) {
+      return new AsciiDocLink(node);
     }
     throw new UnsupportedOperationException("Unknown node type " + node.getElementType());
   }
