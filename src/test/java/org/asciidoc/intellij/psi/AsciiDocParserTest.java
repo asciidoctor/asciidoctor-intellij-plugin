@@ -48,4 +48,7 @@ public class AsciiDocParserTest extends ParsingTestCase {
     doTest(true);
   }
 
+  public void testInlineLinks() {
+    doTest(true);
+  }
 }

@@ -1,10 +1,5 @@
 package org.asciidoc.intellij.parser;
 
-import com.intellij.lang.PsiBuilder;
-import com.intellij.psi.tree.IElementType;
-
-import java.util.Stack;
-
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKID;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDEND;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDSTART;
@@ -22,6 +17,12 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.COMMENT_BLOCK_DELIM
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_OLDSTYLE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_BREAK;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKANCHOR;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKEND;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKFILE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKSTART;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKTEXT;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKTEXT_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
@@ -32,6 +33,9 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SEPARATOR;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TITLE;
+import com.intellij.lang.PsiBuilder;
+import com.intellij.psi.tree.IElementType;
+import java.util.Stack;
 
 /**
  * @author yole
@@ -154,6 +158,16 @@ public class AsciiDocParserImpl {
         blockAttrsMarker.done(AsciiDocElementTypes.REF);
         continue;
       }
+      else if (at(LINKSTART)) {
+        PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
+        next();
+        while (at(LINKFILE) || at(LINKANCHOR) || at(LINKTEXT_START) || at(SEPARATOR) || at(LINKTEXT) || at(LINKEND)) {
+          next();
+        }
+        blockAttrsMarker.done(AsciiDocElementTypes.LINK);
+        continue;
+      }
+
       dropPreBlock();
       next();
     }

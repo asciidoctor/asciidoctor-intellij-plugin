@@ -1,0 +1,1 @@
+Some text link:file#anchor[complete link] some other text link:file[link without anchor].

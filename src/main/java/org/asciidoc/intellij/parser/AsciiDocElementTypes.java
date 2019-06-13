@@ -17,4 +17,5 @@ public interface AsciiDocElementTypes {
   IElementType BLOCKID = new AsciiDocElementType("BLOCKID");
   IElementType REF = new AsciiDocElementType("REF");
   IElementType LISTING = new AsciiDocElementType("LISTING");
+  IElementType LINK = new AsciiDocElementType("LINK");
 }
