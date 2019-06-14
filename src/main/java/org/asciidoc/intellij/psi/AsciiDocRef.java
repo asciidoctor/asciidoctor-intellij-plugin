@@ -46,8 +46,12 @@ public class AsciiDocRef extends ASTWrapperPsiElement {
     @NotNull
     @Override
     public TextRange getRangeInElement(@NotNull AsciiDocRef element) {
-      final String text = element.findChildByType(AsciiDocTokenTypes.BLOCK_MACRO_BODY).getText();
-      return TextRange.allOf(text);
+      PsiElement child = element.findChildByType(AsciiDocTokenTypes.REF);
+      if (child != null) {
+        return TextRange.create(child.getStartOffsetInParent(), child.getStartOffsetInParent() + child.getTextLength());
+      } else {
+        return TextRange.EMPTY_RANGE;
+      }
     }
   }
 }

@@ -9,7 +9,8 @@ import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 public class AsciiDocWordsScanner extends DefaultWordsScanner {
 
   public AsciiDocWordsScanner() {
-    super(new AsciiDocLexer(), TokenSet.create(AsciiDocTokenTypes.BLOCKID),
+    super(new AsciiDocLexer(),
+      TokenSet.create(AsciiDocTokenTypes.BLOCKID, AsciiDocTokenTypes.REF, AsciiDocTokenTypes.LINKANCHOR),
       TokenSet.create(AsciiDocTokenTypes.BLOCK_COMMENT, AsciiDocTokenTypes.LINE_COMMENT),
       TokenSet.create(AsciiDocTokenTypes.TEXT, AsciiDocTokenTypes.BOLD, AsciiDocTokenTypes.MONO,
         AsciiDocTokenTypes.MONOBOLD, AsciiDocTokenTypes.MONOITALIC, AsciiDocTokenTypes.BOLDITALIC,

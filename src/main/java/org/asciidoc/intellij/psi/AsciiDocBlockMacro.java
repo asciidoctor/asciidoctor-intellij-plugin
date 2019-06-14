@@ -91,9 +91,9 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
     @NotNull
     @Override
     public TextRange getRangeInElement(@NotNull AsciiDocBlockMacro element) {
-      PsiElement body = element.findChildByType(AsciiDocTokenTypes.BLOCK_MACRO_BODY);
-      if(body != null) {
-        return TextRange.allOf(body.getText());
+      PsiElement child = element.findChildByType(AsciiDocTokenTypes.BLOCK_MACRO_BODY);
+      if(child != null) {
+        return TextRange.create(child.getStartOffsetInParent(), child.getStartOffsetInParent() + child.getTextLength());
       } else {
         return TextRange.EMPTY_RANGE;
       }
