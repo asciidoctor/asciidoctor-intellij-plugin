@@ -69,7 +69,6 @@ public interface AsciiDocTokenTypes {
   IElementType TYPOGRAPHIC_DOUBLE_QUOTE_END = new AsciiDocElementType("TYPOGRAPHIC_DOUBLE_QUOTE_END");
   IElementType TYPOGRAPHIC_SINGLE_QUOTE_START = new AsciiDocElementType("TYPOGRAPHIC_SINGLE_QUOTE_START");
   IElementType TYPOGRAPHIC_SINGLE_QUOTE_END = new AsciiDocElementType("TYPOGRAPHIC_SINGLE_QUOTE_END");
-  IElementType LINK = new AsciiDocElementType("LINK");
   IElementType LINKSTART = new AsciiDocElementType("LINKSTART");
   IElementType LINKFILE = new AsciiDocElementType("LINKFILE");
   IElementType LINKANCHOR = new AsciiDocElementType("LINKANCHOR");

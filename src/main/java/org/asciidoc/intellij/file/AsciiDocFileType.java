@@ -22,6 +22,7 @@ import icons.AsciiDocIcons;
 import org.asciidoc.intellij.AsciiDocLanguage;
 
 import javax.swing.*;
+import java.util.Locale;
 
 /** @author Julien Viet */
 public class AsciiDocFileType extends LanguageFileType {
@@ -53,5 +54,28 @@ public class AsciiDocFileType extends LanguageFileType {
   @Nullable
   public Icon getIcon() {
     return AsciiDocIcons.Asciidoc_Icon;
+  }
+
+  public static boolean hasAsciiDocExtension(String filename) {
+    filename = filename.toLowerCase(Locale.US);
+    for (String extension : DEFAULT_ASSOCIATED_EXTENSIONS) {
+      if (filename.endsWith("." + extension)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * If the filename ends with a known AsciiDoc extension, return the file name without the extension (and the dot).
+   */
+  public static String removeAsciiDocExtension(String filename) {
+    String filenameAsLowercase = filename.toLowerCase(Locale.US);
+    for (String extension : DEFAULT_ASSOCIATED_EXTENSIONS) {
+      if (filenameAsLowercase.endsWith("." + extension)) {
+        return filename.substring(0, filename.length() - extension.length() - 1);
+      }
+    }
+    return filename;
   }
 }
