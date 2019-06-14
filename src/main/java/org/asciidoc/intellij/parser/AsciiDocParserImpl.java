@@ -44,8 +44,10 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TITLE;
  */
 public class AsciiDocParserImpl {
   private static class SectionMarker {
-    int level;
-    PsiBuilder.Marker marker;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    final int level;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    final PsiBuilder.Marker marker;
 
     SectionMarker(int level, PsiBuilder.Marker marker) {
       this.level = level;
@@ -55,8 +57,10 @@ public class AsciiDocParserImpl {
   }
 
   private static class BlockMarker {
-    String delimiter;
-    PsiBuilder.Marker marker;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    final String delimiter;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    final PsiBuilder.Marker marker;
 
     BlockMarker(String delimiter, PsiBuilder.Marker marker) {
       this.delimiter = delimiter;
@@ -74,7 +78,7 @@ public class AsciiDocParserImpl {
     myBuilder = builder;
   }
 
-  int newLines;
+  private int newLines;
 
   public void parse() {
     myBuilder.setDebugMode(true);

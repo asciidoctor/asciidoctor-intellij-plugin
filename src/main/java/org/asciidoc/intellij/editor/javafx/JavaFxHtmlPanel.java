@@ -98,7 +98,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   @NotNull
   private final JPanel myPanelWrapper;
   @NotNull
-  private final List<Runnable> myInitActions = new ArrayList<Runnable>();
+  private final List<Runnable> myInitActions = new ArrayList<>();
   @Nullable
   private volatile JFXPanel myPanel;
   @Nullable
@@ -527,7 +527,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   private class ScrollPreservingListener implements ChangeListener<State> {
-    volatile int myScrollY = 0;
+    private volatile int myScrollY = 0;
 
     @Override
     public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {

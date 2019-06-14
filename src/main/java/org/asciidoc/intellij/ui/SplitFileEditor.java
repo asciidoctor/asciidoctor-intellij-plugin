@@ -359,8 +359,11 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     SECOND(false, true, AsciiDocBundle.message("asciidoc.layout.preview.only")),
     SPLIT(true, true, AsciiDocBundle.message("asciidoc.layout.editor.and.preview"));
 
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     public final boolean showFirst;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     public final boolean showSecond;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     public final String presentationName;
 
     SplitEditorLayout(boolean showFirst, boolean showSecond, String presentationName) {
