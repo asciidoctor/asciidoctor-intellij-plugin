@@ -63,8 +63,9 @@ public class LazyApplicationPoolExecutor implements Executor {
           e.printStackTrace();
           Thread.currentThread().interrupt();
         } finally {
-          if (!Thread.currentThread().isInterrupted())
+          if (!Thread.currentThread().isInterrupted()) {
             scheduleNext(); //needed to execute the very last command
+          }
         }
       }
     };

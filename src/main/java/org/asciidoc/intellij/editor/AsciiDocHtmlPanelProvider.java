@@ -81,13 +81,21 @@ public abstract class AsciiDocHtmlPanelProvider {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
 
       ProviderInfo info = (ProviderInfo) o;
 
-      if (!myName.equals(info.myName)) return false;
-      if (!className.equals(info.className)) return false;
+      if (!myName.equals(info.myName)) {
+        return false;
+      }
+      if (!className.equals(info.className)) {
+        return false;
+      }
 
       return true;
     }

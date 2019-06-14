@@ -87,7 +87,9 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
     final Document doc = editor.getDocument();
 
     final int offset = editor.getCaretModel().getOffset();
-    if (offset >= doc.getTextLength()) return false;
+    if (offset >= doc.getTextLength()) {
+      return false;
+    }
 
     final char c = doc.getCharsSequence().charAt(offset);
     return c == ' ' || c == '\t' || c == '\n';

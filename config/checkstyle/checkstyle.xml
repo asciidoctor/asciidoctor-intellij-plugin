@@ -132,10 +132,7 @@
         <module name="AvoidNestedBlocks"/>
         <module name="EmptyBlock"/>
         <module name="LeftCurly"/>
-        <!--
-        TODO: activate
         <module name="NeedBraces"/>
-        -->
         <module name="RightCurly"/>
 
         <!-- Checks for common coding problems               -->

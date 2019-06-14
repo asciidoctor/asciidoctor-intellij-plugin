@@ -134,18 +134,36 @@ public final class AsciiDocPreviewSettings {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
     AsciiDocPreviewSettings that = (AsciiDocPreviewSettings) o;
 
-    if (mySplitEditorLayout != that.mySplitEditorLayout) return false;
-    if (!myHtmlPanelProviderInfo.equals(that.myHtmlPanelProviderInfo)) return false;
-    if (myPreviewTheme != that.myPreviewTheme) return false;
-    if (myIsVerticalSplit != that.myIsVerticalSplit) return false;
-    if (myIsEditorFirst != that.myIsEditorFirst) return false;
-    if (myEnableInjections != that.myEnableInjections) return false;
-    if (!Objects.equals(myDisabledInjectionsByLanguage, that.myDisabledInjectionsByLanguage)) return false;
+    if (mySplitEditorLayout != that.mySplitEditorLayout) {
+      return false;
+    }
+    if (!myHtmlPanelProviderInfo.equals(that.myHtmlPanelProviderInfo)) {
+      return false;
+    }
+    if (myPreviewTheme != that.myPreviewTheme) {
+      return false;
+    }
+    if (myIsVerticalSplit != that.myIsVerticalSplit) {
+      return false;
+    }
+    if (myIsEditorFirst != that.myIsEditorFirst) {
+      return false;
+    }
+    if (myEnableInjections != that.myEnableInjections) {
+      return false;
+    }
+    if (!Objects.equals(myDisabledInjectionsByLanguage, that.myDisabledInjectionsByLanguage)) {
+      return false;
+    }
     return attributes.equals(that.attributes);
   }
 
