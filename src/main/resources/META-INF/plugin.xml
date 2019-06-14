@@ -33,7 +33,8 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
   <change-notes><![CDATA[
     <ul>
       <li>0.26.19 tuning parsing and documentation #267<br>
-      New inspection to shorten page break where possible
+      New inspection to shorten page break where possible<br>
+      link:file#id[] now with navigation and autocomplete #273
       <li>0.26.18 resolve the last reference in structure view as this will be the file; the others are the subdirectories (#267)<br>
       refactoring or shortened descriptions; now in sync for structure view, folding and breadcrumbs (#267)<br>
       allow browser to cache static content to avoid flickering (#267)<br>

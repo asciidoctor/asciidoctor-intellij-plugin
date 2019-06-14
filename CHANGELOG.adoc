@@ -8,8 +8,9 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.26.19 (work in progress)
 
-- tuning parsing and documentation #267
+- tuning parsing and documentation (#267)
 - new inspection to shorten page break (<<<) where possible
+- \link:file#id[] now with navigation and autocomplete (#273)
 
 === 0.26.18 (preview, available from Github releases)
 

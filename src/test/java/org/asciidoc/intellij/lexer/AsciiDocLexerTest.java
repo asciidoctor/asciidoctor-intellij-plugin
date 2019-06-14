@@ -534,21 +534,6 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Text')");
   }
 
-  public void testLink() {
-    doTest("Text link:FILE[Text] More Text",
-      "AsciiDoc:TEXT ('Text')\n" +
-        "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:LINKSTART ('link:')\n" +
-        "AsciiDoc:LINKFILE ('FILE')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKTEXT ('Text')\n" +
-        "AsciiDoc:LINKEND (']')\n" +
-        "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:TEXT ('More')\n" +
-        "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:TEXT ('Text')");
-  }
-
   public void testEscapedLink() {
     doTest("\\link:FILE[Text]",
       "AsciiDoc:TEXT ('\\link:FILE')\n" +
@@ -568,6 +553,18 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINKTEXT_START ('[')\n" +
         "AsciiDoc:LINKTEXT ('Text')\n" +
         "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('More')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testLinkForAutocomplete() {
+    doTest("Text link:FILEIntellijIdeaRulezzz More Text",
+      "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:LINKSTART ('link:')\n" +
+        "AsciiDoc:LINKFILE ('FILEIntellijIdeaRulezzz')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('More')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
