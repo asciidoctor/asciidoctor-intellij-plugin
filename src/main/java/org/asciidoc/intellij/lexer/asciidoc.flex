@@ -541,7 +541,15 @@ ATTRIBUTE_REF_END = "}"
                              return textFormat();
                            }
                          }
-  {LINKSTART} / [^\[\n]* {LINKTEXT_START} [^\]\n]* {LINKEND} {
+  {LINKSTART} / [^\[\n \t]* {LINKTEXT_START} [^\]\n]* {LINKEND} {
+                         if (!isEscaped()) {
+                           yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART;
+                         } else {
+                           return textFormat();
+                         }
+                       }
+  // allow autocomplete even if brackets have not been entered yet
+  {LINKSTART} / [^\[\n \t]* {AUTOCOMPLETE} {
                          if (!isEscaped()) {
                            yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART;
                          } else {
@@ -576,6 +584,7 @@ ATTRIBUTE_REF_END = "}"
 
 <LINKFILE, LINKANCHOR> {
   {LINKTEXT_START}     { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
+  [ \t]                { yypushback(1); yybegin(INSIDE_LINE); }
 }
 
 <LINKFILE> {
