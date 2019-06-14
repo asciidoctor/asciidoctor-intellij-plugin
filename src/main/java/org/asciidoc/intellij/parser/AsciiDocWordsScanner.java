@@ -10,8 +10,11 @@ public class AsciiDocWordsScanner extends DefaultWordsScanner {
 
   public AsciiDocWordsScanner() {
     super(new AsciiDocLexer(),
+      // identifiers
       TokenSet.create(AsciiDocTokenTypes.BLOCKID, AsciiDocTokenTypes.REF, AsciiDocTokenTypes.LINKANCHOR),
+      // comments
       TokenSet.create(AsciiDocTokenTypes.BLOCK_COMMENT, AsciiDocTokenTypes.LINE_COMMENT),
+      // literals
       TokenSet.create(AsciiDocTokenTypes.TEXT, AsciiDocTokenTypes.BOLD, AsciiDocTokenTypes.MONO,
         AsciiDocTokenTypes.MONOBOLD, AsciiDocTokenTypes.MONOITALIC, AsciiDocTokenTypes.BOLDITALIC,
         AsciiDocTokenTypes.MONOBOLDITALIC));

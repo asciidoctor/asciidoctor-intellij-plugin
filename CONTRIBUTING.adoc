@@ -386,7 +386,14 @@ Writing such a test is often slower as it requires more code and skill, but it w
 
 === Interacting with PsiElements
 
-TODO: refactoring, folding, linking, autocompletion, finding references
+==== References and renaming
+
+All PsiElement that reference files (like for example an `include::[]`) or IDs (like for example `\<<id>>`) return references.
+Examples for this are `AsciiDocBlockMacro` and `AsciiDocRef`.
+They all need to provide a `Manipulator` that IntelliJ calls when the user renames such a reference.
+To make the "`Find References`" functionality work, the tokens that contain the IDs need to be part of the Identifier-Token-Set in `AsciiDocWordsScanner`.
+
+TODO: refactoring, folding, autocompletion
 
 == Preview rendering
 
