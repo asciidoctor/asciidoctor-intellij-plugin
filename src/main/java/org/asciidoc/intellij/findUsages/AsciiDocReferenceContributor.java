@@ -13,6 +13,7 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.util.ProcessingContext;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocFile;
@@ -94,6 +95,10 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
       start += child.getTextLength();
       child = child.getNextSibling();
     }
-    return Arrays.asList(new FileReferenceSet(child.getText(), element, start,null, false).getAllReferences());
+    if (child != null) {
+      return Arrays.asList(new FileReferenceSet(child.getText(), element, start, null, false).getAllReferences());
+    } else {
+      return Collections.emptyList();
+    }
   }
 }
