@@ -76,20 +76,20 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processLinks.js")).append("\"></script>\n")
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("pickSourceLine.js")).append("\"></script>\n")
         .append("<script type=\"text/x-mathjax-config\">\n" +
-                "MathJax.Hub.Config({\n" +
-                "  messageStyle: \"none\",\n" +
-                "  tex2jax: {\n" +
-                "    inlineMath: [[\"\\\\(\", \"\\\\)\"]],\n" +
-                "    displayMath: [[\"\\\\[\", \"\\\\]\"]],\n" +
-                "    ignoreClass: \"nostem|nolatexmath\"\n" +
-                "  },\n" +
-                "  asciimath2jax: {\n" +
-                "    delimiters: [[\"\\\\$\", \"\\\\$\"]],\n" +
-                "    ignoreClass: \"nostem|noasciimath\"\n" +
-                "  },\n" +
-                "  TeX: { equationNumbers: { autoNumber: \"none\" } }\n" +
-                "});\n" +
-                "</script>\n")
+          "MathJax.Hub.Config({\n" +
+          "  messageStyle: \"none\",\n" +
+          "  tex2jax: {\n" +
+          "    inlineMath: [[\"\\\\(\", \"\\\\)\"]],\n" +
+          "    displayMath: [[\"\\\\[\", \"\\\\]\"]],\n" +
+          "    ignoreClass: \"nostem|nolatexmath\"\n" +
+          "  },\n" +
+          "  asciimath2jax: {\n" +
+          "    delimiters: [[\"\\\\$\", \"\\\\$\"]],\n" +
+          "    ignoreClass: \"nostem|noasciimath\"\n" +
+          "  },\n" +
+          "  TeX: { equationNumbers: { autoNumber: \"none\" } }\n" +
+          "});\n" +
+          "</script>\n")
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("MathJax/MathJax.js")).append("&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n")
         .toString();
     }
@@ -287,8 +287,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
   private String prepareHtml(@NotNull String html) {
     /* for each image we'll calculate a MD5 sum of its content. Once the content changes, MD5 and therefore the URL
-    * will change. The changed URL is necessary for the JavaFX web view to display the new content, as each URL
-    * will be loaded only once by the JavaFX web view. */
+     * will change. The changed URL is necessary for the JavaFX web view to display the new content, as each URL
+     * will be loaded only once by the JavaFX web view. */
     Pattern pattern = Pattern.compile("<img src=\"([^:\"]*)\"");
     final Matcher matcher = pattern.matcher(html);
     while (matcher.find()) {
@@ -333,7 +333,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     String md5;
     try {
       MessageDigest md = MessageDigest.getInstance("MD5");
-      try(FileInputStream fis = new FileInputStream((base != null ? base.replaceAll("%3A", ":") + "/" : "") + file)) {
+      try (FileInputStream fis = new FileInputStream((base != null ? base.replaceAll("%3A", ":") + "/" : "") + file)) {
         int nread;
         byte[] dataBytes = new byte[1024];
         while ((nread = fis.read(dataBytes)) != -1) {
@@ -424,7 +424,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       }
 
       String scheme = uri.getScheme();
-      if("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) {
+      if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) {
         BrowserUtil.browse(uri);
       } else if ("file".equalsIgnoreCase(scheme) || scheme == null) {
         openInEditor(uri);
@@ -482,7 +482,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     }
 
     public void scrollEditorToLine(int sourceLine) {
-      if(sourceLine <= 0) {
+      if (sourceLine <= 0) {
         Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Setting cursor position", "line number " + sourceLine + " requested for cursor position, ignoring",
           NotificationType.INFORMATION, null);
         notification.setImportant(false);

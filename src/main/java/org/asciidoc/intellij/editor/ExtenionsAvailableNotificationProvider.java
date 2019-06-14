@@ -31,8 +31,8 @@ public class ExtenionsAvailableNotificationProvider extends EditorNotifications.
       return null;
     }
     String bp = null;
-    for(Project p : ProjectManager.getInstance().getOpenProjects()) {
-      if(p.getBasePath() != null && file.getPath().startsWith(p.getBasePath())) {
+    for (Project p : ProjectManager.getInstance().getOpenProjects()) {
+      if (p.getBasePath() != null && file.getPath().startsWith(p.getBasePath())) {
         bp = p.getBasePath();
       }
     }
@@ -41,7 +41,7 @@ public class ExtenionsAvailableNotificationProvider extends EditorNotifications.
     }
     final String projectBasePath = bp;
     final AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
-    if(asciiDocApplicationSettings.getExtensionsEnabled(projectBasePath) != null
+    if (asciiDocApplicationSettings.getExtensionsEnabled(projectBasePath) != null
       || !Boolean.TRUE.equals(asciiDocApplicationSettings.getExtensionsPresent(projectBasePath))) {
       return null;
     }

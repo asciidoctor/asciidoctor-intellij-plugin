@@ -39,17 +39,17 @@ public class CreateTableAction extends AsciiDocAction {
             @Override
             public void run() {
               document.insertString(offset,
-                  generateTable(
-                      createTableDialog.getColumnCount(),
-                      createTableDialog.getRowCount(),
-                      createTableDialog.getTitle()));
+                generateTable(
+                  createTableDialog.getColumnCount(),
+                  createTableDialog.getRowCount(),
+                  createTableDialog.getTitle()));
             }
           });
         }
       }, null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
     }
 
- }
+  }
 
 
   private String generateTable(int cols, int rows, String title) {
@@ -61,7 +61,7 @@ public class CreateTableAction extends AsciiDocAction {
     }
     table.append("|===\n");
     // Create header columns
-    for (int c = 0;c < cols;c++) {
+    for (int c = 0; c < cols; c++) {
       table.append("|Header ");
       table.append(c + 1);
       if (c < cols - 1) {
@@ -70,8 +70,8 @@ public class CreateTableAction extends AsciiDocAction {
     }
     table.append("\n\n");
     // Create table cells
-    for (int r = 0;r < rows;r++) {
-      for (int c = 0;c < cols;c++) {
+    for (int r = 0; r < rows; r++) {
+      for (int c = 0; c < cols; c++) {
         // Build row
         table.append("|Column ");
         table.append(c + 1);

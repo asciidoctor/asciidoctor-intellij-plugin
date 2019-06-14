@@ -25,7 +25,7 @@ public class AsciiDocActionUtil {
   public static SplitFileEditor findSplitEditor(AnActionEvent e) {
     final FileEditor editor = e.getData(PlatformDataKeys.FILE_EDITOR);
     if (editor instanceof SplitFileEditor) {
-      return (SplitFileEditor)editor;
+      return (SplitFileEditor) editor;
     } else {
       return SplitFileEditor.PARENT_SPLIT_KEY.get(editor);
     }
@@ -48,7 +48,7 @@ public class AsciiDocActionUtil {
     if (!(splitEditor.getMainEditor() instanceof TextEditor)) {
       return null;
     }
-    final TextEditor mainEditor = (TextEditor)splitEditor.getMainEditor();
+    final TextEditor mainEditor = (TextEditor) splitEditor.getMainEditor();
     if (!mainEditor.getComponent().isVisible()) {
       return null;
     }

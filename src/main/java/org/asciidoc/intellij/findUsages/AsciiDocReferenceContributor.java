@@ -64,12 +64,12 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
         @NotNull
         @Override
         public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
-          @NotNull ProcessingContext
-            context) {
+                                                     @NotNull ProcessingContext
+                                                       context) {
           List<PsiReference> references = new ArrayList<>();
 
           PsiReference anchorReference = findAnchor(element);
-          if(anchorReference!=null) {
+          if (anchorReference != null) {
             references.add(anchorReference);
           }
 
@@ -89,7 +89,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
       start += child.getTextLength();
       child = child.getNextSibling();
     }
-    return child!=null ? new AsciiDocReference(element, TextRange.create(start, start + child.getTextLength())) : null;
+    return child != null ? new AsciiDocReference(element, TextRange.create(start, start + child.getTextLength())) : null;
   }
 
   class LinkFileReferenceSet extends FileReferenceSet {
@@ -121,7 +121,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
       child = child.getNextSibling();
     }
     if (child != null) {
-      return Arrays.asList(new  LinkFileReferenceSet(child.getText(), element, start, null, false).getAllReferences());
+      return Arrays.asList(new LinkFileReferenceSet(child.getText(), element, start, null, false).getAllReferences());
     } else {
       return Collections.emptyList();
     }

@@ -119,11 +119,8 @@
         -->
         <module name="ParenPad"/>
         <module name="TypecastParenPad"/>
-        <!--
-        TODO: activate
         <module name="WhitespaceAfter"/>
         <module name="WhitespaceAround"/>
-        -->
 
         <!-- Modifier Checks                                    -->
         <!-- See http://checkstyle.sf.net/config_modifiers.html -->

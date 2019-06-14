@@ -64,7 +64,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
     jEditorPane.setEditorKit(kit);
     jEditorPane.setEditable(false);
     // use this to prevent scrolling to the end of the pane on setText()
-    ((DefaultCaret)jEditorPane.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+    ((DefaultCaret) jEditorPane.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
   }
 
   private boolean isDarcula() {
@@ -98,7 +98,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
       String message = "Error setting HTML: " + ex.getMessage();
       log.error(message, ex);
       Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
-          .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
+        .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
       // increase event log counter
       notification.setImportant(true);
       Notifications.Bus.notify(notification);
@@ -120,7 +120,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
       public void run() {
         jEditorPane.setDocument(doc);
         Rectangle d = jEditorPane.getVisibleRect();
-        jEditorPane.setSize((int)d.getWidth(), (int)jEditorPane.getSize().getHeight());
+        jEditorPane.setSize((int) d.getWidth(), (int) jEditorPane.getSize().getHeight());
       }
     });
   }

@@ -22,7 +22,7 @@ public class AsciiDocFileUtil {
       FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, AsciiDocFileType.INSTANCE,
         GlobalSearchScope.allScope(project));
     for (VirtualFile virtualFile : virtualFiles) {
-      AsciiDocFile asciiDocFile = (AsciiDocFile)PsiManager.getInstance(project).findFile(virtualFile);
+      AsciiDocFile asciiDocFile = (AsciiDocFile) PsiManager.getInstance(project).findFile(virtualFile);
       if (asciiDocFile != null) {
         ArrayList<AsciiDocSection> properties = new ArrayList<>();
         new PsiFilter(AsciiDocSection.class).createVisitor(properties).visitFile(asciiDocFile);
@@ -45,7 +45,7 @@ public class AsciiDocFileUtil {
       FileBasedIndex.getInstance().getContainingFiles(FileTypeIndex.NAME, AsciiDocFileType.INSTANCE,
         GlobalSearchScope.allScope(project));
     for (VirtualFile virtualFile : virtualFiles) {
-      AsciiDocFile simpleFile = (AsciiDocFile)PsiManager.getInstance(project).findFile(virtualFile);
+      AsciiDocFile simpleFile = (AsciiDocFile) PsiManager.getInstance(project).findFile(virtualFile);
       if (simpleFile != null) {
         new PsiFilter(AsciiDocSection.class).createVisitor(result).visitFile(simpleFile);
       }

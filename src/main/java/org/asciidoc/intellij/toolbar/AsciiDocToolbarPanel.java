@@ -13,7 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-/** inspired by {@link com.intellij.ui.EditorNotificationPanel}. */
+/**
+ * inspired by {@link com.intellij.ui.EditorNotificationPanel}.
+ */
 public class AsciiDocToolbarPanel extends JPanel implements Disposable {
 
   private static final String ASCII_DOC_ACTION_GROUP_ID = "AsciiDoc.TextFormatting";
@@ -45,9 +47,9 @@ public class AsciiDocToolbarPanel extends JPanel implements Disposable {
     if (!actionManager.isGroup(groupId)) {
       throw new IllegalStateException(groupId + " should have been a group");
     }
-    final ActionGroup group = ((ActionGroup)actionManager.getAction(groupId));
+    final ActionGroup group = ((ActionGroup) actionManager.getAction(groupId));
     final ActionToolbarImpl editorToolbar =
-      ((ActionToolbarImpl)actionManager.createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, group, true));
+      ((ActionToolbarImpl) actionManager.createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, group, true));
     editorToolbar.setOpaque(false);
     editorToolbar.setBorder(new JBEmptyBorder(0, 2, 0, 2));
 

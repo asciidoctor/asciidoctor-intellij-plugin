@@ -50,7 +50,7 @@ public class ConvertToAsciiDocAction extends AnAction {
             String newFileName = FilenameUtils.getBaseName(file.getName()) + "." + AsciiDocFileType.INSTANCE.getDefaultExtension();
             PsiFile asciiDocFile = PsiFileFactory.getInstance(project).createFileFromText(newFileName, AsciiDocFileType.INSTANCE, convertMarkdownToAsciiDoc(file.getText()));
 
-            PsiFile newFile = (PsiFile)file.getContainingDirectory().add(asciiDocFile);
+            PsiFile newFile = (PsiFile) file.getContainingDirectory().add(asciiDocFile);
             newFile.navigate(true);
 
             try {

@@ -30,7 +30,7 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
       ASTNode bodyNode = getNode().findChildByType(AsciiDocTokenTypes.BLOCK_MACRO_BODY);
       if (bodyNode != null) {
         return new FileReferenceSet(bodyNode.getText(), this, bodyNode.getStartOffset() - getTextRange().getStartOffset(),
-            null, false).getAllReferences();
+          null, false).getAllReferences();
       }
     }
     return super.getReferences();
@@ -92,7 +92,7 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
     @Override
     public TextRange getRangeInElement(@NotNull AsciiDocBlockMacro element) {
       PsiElement child = element.findChildByType(AsciiDocTokenTypes.BLOCK_MACRO_BODY);
-      if(child != null) {
+      if (child != null) {
         return TextRange.create(child.getStartOffsetInParent(), child.getStartOffsetInParent() + child.getTextLength());
       } else {
         return TextRange.EMPTY_RANGE;

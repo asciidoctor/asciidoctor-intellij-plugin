@@ -31,7 +31,7 @@ public class AsciiDocSection extends ASTWrapperPsiElement implements AsciiDocSel
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof AsciiDocVisitor) {
-      ((AsciiDocVisitor)visitor).visitSections(this);
+      ((AsciiDocVisitor) visitor).visitSections(this);
       return;
     }
 
@@ -77,7 +77,7 @@ public class AsciiDocSection extends ASTWrapperPsiElement implements AsciiDocSel
   @Override
   public String getFoldedSummary() {
     ASTNode heading = getNode().findChildByType(AsciiDocTokenTypes.HEADING);
-    if(heading == null) {
+    if (heading == null) {
       throw new IllegalStateException("heading without heading");
     }
     return heading.getText();

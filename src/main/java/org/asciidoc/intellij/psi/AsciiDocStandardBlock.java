@@ -23,7 +23,7 @@ public class AsciiDocStandardBlock extends ASTWrapperPsiElement implements Ascii
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof AsciiDocVisitor) {
-      ((AsciiDocVisitor)visitor).visitBlocks(this);
+      ((AsciiDocVisitor) visitor).visitBlocks(this);
       return;
     }
 

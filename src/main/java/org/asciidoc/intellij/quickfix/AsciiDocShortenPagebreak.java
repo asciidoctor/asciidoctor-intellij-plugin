@@ -33,6 +33,6 @@ public class AsciiDocShortenPagebreak extends LocalQuickFixBase {
 
   @NotNull
   private static AsciiDocFile createFileFromText(@NotNull Project project, @NotNull String text) {
-    return (AsciiDocFile)PsiFileFactory.getInstance(project).createFileFromText("a.adoc", AsciiDocLanguage.INSTANCE, text);
+    return (AsciiDocFile) PsiFileFactory.getInstance(project).createFileFromText("a.adoc", AsciiDocLanguage.INSTANCE, text);
   }
 }

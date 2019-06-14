@@ -51,7 +51,9 @@ public class AsciiDocToolbarLoaderComponent implements ProjectComponent {
   }
 
 
-  /** inspired by {@link com.intellij.xml.breadcrumbs.BreadcrumbsLoaderComponent.MyFileEditorManagerListener}. */
+  /**
+   * inspired by com.intellij.xml.breadcrumbs.BreadcrumbsLoaderComponent.MyFileEditorManagerListener.
+   */
   private static class AsciiDocFileEditorManagerListener extends FileEditorManagerAdapter {
 
     @Override
@@ -61,7 +63,7 @@ public class AsciiDocToolbarLoaderComponent implements ProjectComponent {
         final FileEditor[] fileEditors = manager.getAllEditors(file);
         for (final FileEditor fileEditor : fileEditors) {
           if (fileEditor instanceof TextEditor) {
-            Editor editor = ((TextEditor)fileEditor).getEditor();
+            Editor editor = ((TextEditor) fileEditor).getEditor();
             if (editor.getUserData(ASCII_DOC_TOOLBAR) != null) {
               continue;
             }

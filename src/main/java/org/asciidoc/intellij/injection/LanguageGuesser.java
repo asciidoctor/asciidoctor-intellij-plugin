@@ -57,19 +57,19 @@ public enum LanguageGuesser {
   public Language guessLanguage(@NotNull String languageName) {
     String[] parts = languageName.split("-");
     String lang = null;
-    if("source".equals(parts[0])) {
+    if ("source".equals(parts[0])) {
       lang = parts[1];
     } else if ("diagram-plantuml".equals(languageName)) {
       lang = "puml";
     } else if ("diagram-graphviz".equals(languageName)) {
       lang = "dot";
     }
-    if(lang == null) {
+    if (lang == null) {
       return null;
     }
 
     AsciiDocPreviewSettings settings = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings();
-    if(settings.getDisabledInjectionsByLanguageAsList().contains(lang)) {
+    if (settings.getDisabledInjectionsByLanguageAsList().contains(lang)) {
       return null;
     }
 

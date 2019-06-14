@@ -52,8 +52,8 @@ public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
     /* trying to determine 64bit platforms, due to problem with OpenJDK x86 on Windows */
     String architecture = System.getProperty("os.arch");
     if (!architecture.equals("amd64") // Windows und Linux amd64 = 64bit
-        && !architecture.equals("x86_64") // Mac Intel x86_64 = 64bit
-        ) {
+      && !architecture.equals("x86_64") // Mac Intel x86_64 = 64bit
+    ) {
       return AvailabilityInfo.UNAVAILABLE;
     }
 
@@ -61,7 +61,8 @@ public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
       if (Class.forName("javafx.scene.web.WebView", false, getClass().getClassLoader()) != null) {
         return AvailabilityInfo.AVAILABLE;
       }
-    } catch (ClassNotFoundException ignored) {}
+    } catch (ClassNotFoundException ignored) {
+    }
 
     return AvailabilityInfo.UNAVAILABLE;
   }

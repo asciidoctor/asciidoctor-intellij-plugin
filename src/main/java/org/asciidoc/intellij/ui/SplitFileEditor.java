@@ -3,7 +3,11 @@ package org.asciidoc.intellij.ui;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorLocation;
+import com.intellij.openapi.fileEditor.FileEditorState;
+import com.intellij.openapi.fileEditor.FileEditorStateLevel;
+import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
@@ -85,7 +89,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
   private JComponent createComponent() {
     myVerticalSplitOption = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isVerticalSplit();
     myEditorFirst = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isEditorFirst();
-    mySplitter = new JBSplitter(!myVerticalSplitOption,0.5f, 0.15f, 0.85f);
+    mySplitter = new JBSplitter(!myVerticalSplitOption, 0.5f, 0.15f, 0.85f);
     mySplitter.setSplitterProportionKey(MY_PROPORTION_KEY);
     mySplitter.setFirstComponent(myEditorFirst ? myMainEditor.getComponent() : mySecondEditor.getComponent());
     mySplitter.setSecondComponent(myEditorFirst ? mySecondEditor.getComponent() : myMainEditor.getComponent());

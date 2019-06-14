@@ -17,9 +17,9 @@ public class AsciiDocSplitEditorProvider extends SplitTextEditorProvider {
     if (!(firstEditor instanceof TextEditor) || !(secondEditor instanceof AsciiDocPreviewEditor)) {
       throw new IllegalArgumentException("Main editor should be TextEditor");
     }
-    AsciiDocPreviewEditor asciiDocPreviewEditor = (AsciiDocPreviewEditor)secondEditor;
-    asciiDocPreviewEditor.setEditor(((TextEditor)firstEditor).getEditor());
-    return new AsciiDocSplitEditor(((TextEditor)firstEditor), ((AsciiDocPreviewEditor)secondEditor));
+    AsciiDocPreviewEditor asciiDocPreviewEditor = (AsciiDocPreviewEditor) secondEditor;
+    asciiDocPreviewEditor.setEditor(((TextEditor) firstEditor).getEditor());
+    return new AsciiDocSplitEditor(((TextEditor) firstEditor), ((AsciiDocPreviewEditor) secondEditor));
   }
 
   @Override

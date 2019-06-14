@@ -34,7 +34,7 @@ public class AsciiDocBlockId extends ASTWrapperPsiElement implements AsciiDocNam
   @Override
   public PsiElement setName(@NotNull String s) throws IncorrectOperationException {
     ASTNode node = getNode().getFirstChildNode();
-    if(node instanceof LeafElement) {
+    if (node instanceof LeafElement) {
       ((LeafElement) node).replaceWithText(s);
     } else {
       throw new IncorrectOperationException("Bad child");

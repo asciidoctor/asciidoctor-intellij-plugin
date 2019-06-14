@@ -62,7 +62,9 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
-/** @author Julien Viet */
+/**
+ * @author Julien Viet
+ */
 public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEditor {
 
   public static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup("asciidoctor",
@@ -70,21 +72,29 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
   private Logger log = Logger.getInstance(AsciiDocPreviewEditor.class);
 
-  /** single threaded with one task queue (one for each editor window). */
+  /**
+   * single threaded with one task queue (one for each editor window).
+   */
   private final LazyApplicationPoolExecutor lazyExecutor = new LazyApplicationPoolExecutor();
 
-  /** Indicates whether the HTML preview is obsolete and should regenerated from the AsciiDoc {@link #document}. */
+  /**
+   * Indicates whether the HTML preview is obsolete and should regenerated from the AsciiDoc {@link #document}.
+   */
   private transient String currentContent = "";
 
   private transient int targetLineNo = 0;
   private transient int offsetLineNo = 0;
   private transient int currentLineNo = 0;
 
-  /** The {@link Document} previewed in this editor. */
+  /**
+   * The {@link Document} previewed in this editor.
+   */
   private final Document document;
   private Project project;
 
-  /** The directory which holds the temporary images. */
+  /**
+   * The directory which holds the temporary images.
+   */
   private final Path tempImagesPath;
 
   @NotNull
@@ -96,7 +106,9 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   @NotNull
   private final Alarm mySwingAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
 
-  /** . */
+  /**
+   * .
+   */
   private FutureTask<AsciiDoc> asciidoc = new FutureTask<>(new Callable<AsciiDoc>() {
     public AsciiDoc call() {
       File fileBaseDir = new File("");
@@ -323,7 +335,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     PsiDocumentManager pm = PsiDocumentManager.getInstance(project);
     if (pm != null) {
       PsiFile psiFile = pm.getPsiFile(document);
-      if(psiFile != null) {
+      if (psiFile != null) {
         DaemonCodeAnalyzer.getInstance(project).restart(psiFile);
       }
     }
@@ -387,7 +399,9 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     return null;
   }
 
-  /** Dispose the editor. */
+  /**
+   * Dispose the editor.
+   */
   public void dispose() {
     Disposer.dispose(this);
     if (tempImagesPath != null) {

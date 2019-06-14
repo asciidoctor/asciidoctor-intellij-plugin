@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
   storages = @Storage("asciidoc.xml")
 )
 public class AsciiDocApplicationSettings implements PersistentStateComponent<AsciiDocApplicationSettings.State>,
-                                                    AsciiDocPreviewSettings.Holder {
+  AsciiDocPreviewSettings.Holder {
 
   private State myState = new State();
 
@@ -69,7 +69,7 @@ public class AsciiDocApplicationSettings implements PersistentStateComponent<Asc
   }
 
   public void setExtensionsPresent(String projectBasePath, boolean extensionsPresent) {
-    if(!Boolean.valueOf(extensionsPresent).equals(this.extensionsPresent.get(projectBasePath))) {
+    if (!Boolean.valueOf(extensionsPresent).equals(this.extensionsPresent.get(projectBasePath))) {
       this.extensionsPresent.put(projectBasePath, extensionsPresent);
       EditorNotifications.updateAll();
     }

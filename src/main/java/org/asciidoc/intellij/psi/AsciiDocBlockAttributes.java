@@ -16,7 +16,7 @@ public class AsciiDocBlockAttributes extends ASTWrapperPsiElement {
 
   public String getFirstPositionalAttribute() {
     ASTNode[] children = getNode().getChildren(TokenSet.create(AsciiDocTokenTypes.BLOCK_ATTR_NAME));
-    if(children.length > 0) {
+    if (children.length > 0) {
       return children[0].getText();
     }
     return null;

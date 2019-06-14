@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.util.Locale;
 
 /**
  * Inspired by: http://stackoverflow.com/questions/17522343/custom-javafx-webview-protocol-handler. This is a workaround
@@ -45,9 +46,9 @@ public class LocalfileURLConnection extends URLConnection {
   public String getContentType() {
     String fileName = getURL().getFile();
     String ext = "unknown";
-    if(fileName.lastIndexOf('.') != -1) {
+    if (fileName.lastIndexOf('.') != -1) {
       ext = fileName.substring(fileName.lastIndexOf('.') + 1);
-      ext.toLowerCase();
+      ext = ext.toLowerCase(Locale.US);
       if (ext.equals("svg")) {
         ext = "svg+xml";
       }
@@ -86,12 +87,12 @@ public class LocalfileURLConnection extends URLConnection {
     data = IOUtils.toByteArray(new URL("file:/" + imgPath).openStream());
   }
 
-  public OutputStream getOutputStream() throws IOException {
+  public OutputStream getOutputStream() {
     // this might be unnecessary - the whole method can probably be omitted for our purposes
     return new ByteArrayOutputStream();
   }
 
-  public java.security.Permission getPermission() throws IOException {
+  public java.security.Permission getPermission() {
     return null; // we need no permissions to access this URL
   }
 

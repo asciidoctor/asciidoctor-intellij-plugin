@@ -1,5 +1,10 @@
 package org.asciidoc.intellij.parser;
 
+import com.intellij.lang.PsiBuilder;
+import com.intellij.psi.tree.IElementType;
+
+import java.util.Stack;
+
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKID;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDEND;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDSTART;
@@ -33,9 +38,6 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SEPARATOR;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TITLE;
-import com.intellij.lang.PsiBuilder;
-import com.intellij.psi.tree.IElementType;
-import java.util.Stack;
 
 /**
  * @author yole
@@ -77,7 +79,7 @@ public class AsciiDocParserImpl {
   public void parse() {
     myBuilder.setDebugMode(true);
     myBuilder.setWhitespaceSkippedCallback((type, start, end) -> {
-      if(type == LINE_BREAK) {
+      if (type == LINE_BREAK) {
         ++newLines;
       }
     });
@@ -86,7 +88,7 @@ public class AsciiDocParserImpl {
         int level = headingLevel(myBuilder.getTokenText());
         closeSections(level);
         PsiBuilder.Marker marker;
-        if(myPreBlockMarker != null) {
+        if (myPreBlockMarker != null) {
           marker = myPreBlockMarker;
           myPreBlockMarker = null;
         } else {
@@ -110,7 +112,7 @@ public class AsciiDocParserImpl {
         myPreBlockMarker = null;
         continue;
       } else if (at(BLOCK_DELIMITER)
-          || at(COMMENT_BLOCK_DELIMITER) || at(PASSTRHOUGH_BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER)) {
+        || at(COMMENT_BLOCK_DELIMITER) || at(PASSTRHOUGH_BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER)) {
         parseBlock();
         continue;
       } else if (at(LISTING_BLOCK_DELIMITER)) {
@@ -133,7 +135,7 @@ public class AsciiDocParserImpl {
         markPreBlock();
         next();
         while (at(BLOCKID) || at(BLOCKIDEND) || at(SEPARATOR) || at(BLOCKREFTEXT)) {
-          if(at(BLOCKID)) {
+          if (at(BLOCKID)) {
             PsiBuilder.Marker blockIdMarker = myBuilder.mark();
             next();
             blockIdMarker.done(AsciiDocElementTypes.BLOCKID);
@@ -277,7 +279,7 @@ public class AsciiDocParserImpl {
   private void closeSections(int level) {
     while (!mySectionStack.isEmpty() && mySectionStack.peek().level >= level) {
       PsiBuilder.Marker marker = mySectionStack.pop().marker;
-      if(myPreBlockMarker != null) {
+      if (myPreBlockMarker != null) {
         marker.doneBefore(AsciiDocElementTypes.SECTION, myPreBlockMarker);
       } else {
         marker.done(AsciiDocElementTypes.SECTION);

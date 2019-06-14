@@ -23,6 +23,7 @@ public class JFXPanelWrapper extends JFXPanel {
    * with jbtabs/splitters when some of them are not showing.
    * On getMinimumSize there is no layout manager nor peer so
    * the result could be #size() which is incorrect.
+   *
    * @return zero size
    */
   @Override
@@ -46,7 +47,7 @@ public class JFXPanelWrapper extends JFXPanel {
           // this will no longer work with JDK 11
           TKScene tks = scene.impl_getPeer();
           if (tks instanceof EmbeddedSceneInterface) {
-            ((EmbeddedSceneInterface)tks).setPixelScaleFactor(scale);
+            ((EmbeddedSceneInterface) tks).setPixelScaleFactor(scale);
           }
         } catch (NoSuchMethodError e) {
           // ignore

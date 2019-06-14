@@ -10,7 +10,7 @@ import org.asciidoc.intellij.file.AsciiDocFileType;
 public class AsciiDocBrowserUrlProvider extends WebBrowserUrlProvider {
   @Override
   public boolean canHandleElement(OpenInBrowserRequest request) {
-    if(request.getFile().getFileType() instanceof AsciiDocFileType) {
+    if (request.getFile().getFileType() instanceof AsciiDocFileType) {
       return true;
     }
 

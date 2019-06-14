@@ -25,7 +25,7 @@ public class AsciiDocConvertMarkdownHeading extends LocalQuickFixBase {
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
     PsiElement element = descriptor.getPsiElement();
     StringBuilder text = new StringBuilder(element.getText());
-    for (int i = 0;i < text.length();++i) {
+    for (int i = 0; i < text.length(); ++i) {
       if (text.charAt(i) == '#') {
         text.setCharAt(i, '=');
       } else {
@@ -43,6 +43,6 @@ public class AsciiDocConvertMarkdownHeading extends LocalQuickFixBase {
 
   @NotNull
   private static AsciiDocFile createFileFromText(@NotNull Project project, @NotNull String text) {
-    return (AsciiDocFile)PsiFileFactory.getInstance(project).createFileFromText("a.adoc", AsciiDocLanguage.INSTANCE, text);
+    return (AsciiDocFile) PsiFileFactory.getInstance(project).createFileFromText("a.adoc", AsciiDocLanguage.INSTANCE, text);
   }
 }

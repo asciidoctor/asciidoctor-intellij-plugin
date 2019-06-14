@@ -42,7 +42,7 @@ public abstract class AsciiDocInspectionBase extends LocalInspectionTool {
     return new AsciiDocVisitor() {
       @Override
       public void visitFile(PsiFile file) {
-        checkFile((AsciiDocFile)file, holder);
+        checkFile((AsciiDocFile) file, holder);
       }
     };
   }

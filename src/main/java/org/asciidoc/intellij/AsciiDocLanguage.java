@@ -26,12 +26,16 @@ import com.intellij.psi.PsiManager;
 import org.asciidoc.intellij.highlighting.AsciiDocSyntaxHighlighter;
 import org.jetbrains.annotations.NotNull;
 
-/** @author Julien Viet */
+/**
+ * @author Julien Viet
+ */
 public class AsciiDocLanguage extends Language {
 
   public static final Language INSTANCE = new AsciiDocLanguage();
 
-  /** . */
+  /**
+   * .
+   */
   public static final String LANGUAGE_NAME = "AsciiDoc";
 
   private AsciiDocLanguage() {
@@ -49,7 +53,7 @@ public class AsciiDocLanguage extends Language {
       return false;
     }
     // when a project is already disposed due to a slow initialization, reject this file
-    if(project.isDisposed()) {
+    if (project.isDisposed()) {
       return false;
     }
     final FileViewProvider provider = PsiManager.getInstance(project).findViewProvider(file);

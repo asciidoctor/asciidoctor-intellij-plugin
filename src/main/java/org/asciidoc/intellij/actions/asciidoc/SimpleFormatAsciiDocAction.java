@@ -14,7 +14,7 @@ public abstract class SimpleFormatAsciiDocAction extends FormatAsciiDocAction {
 
   private String appendSymbol(String selection, String symbol, boolean isWord) {
     String matchingSymbol = symbol;
-    if(!isWord) {
+    if (!isWord) {
       matchingSymbol += symbol;
     }
     return matchingSymbol + selection + matchingSymbol;
@@ -37,6 +37,6 @@ public abstract class SimpleFormatAsciiDocAction extends FormatAsciiDocAction {
   private boolean containsSymbol(String selection, String symbol) {
     String doubleSymbol = symbol + symbol;
     return (selection.startsWith(symbol) && selection.endsWith(symbol)) ||
-        (selection.startsWith(doubleSymbol) && selection.endsWith(doubleSymbol));
+      (selection.startsWith(doubleSymbol) && selection.endsWith(doubleSymbol));
   }
 }

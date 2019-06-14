@@ -32,7 +32,7 @@ public class AsciiDocConvertOldstyleHeading extends LocalQuickFixBase {
     PsiElement element = descriptor.getPsiElement();
     StringBuilder text = new StringBuilder(element.getText());
 
-    if(text.indexOf("\n") == -1) {
+    if (text.indexOf("\n") == -1) {
       // nothing to fix any more
       return;
     }
@@ -59,7 +59,7 @@ public class AsciiDocConvertOldstyleHeading extends LocalQuickFixBase {
 
     // prepend right number of equals and a blank
     text.insert(0, " ");
-    while(depth > 0) {
+    while (depth > 0) {
       --depth;
       text.insert(0, "=");
     }
@@ -75,6 +75,6 @@ public class AsciiDocConvertOldstyleHeading extends LocalQuickFixBase {
 
   @NotNull
   private static AsciiDocFile createFileFromText(@NotNull Project project, @NotNull String text) {
-    return (AsciiDocFile)PsiFileFactory.getInstance(project).createFileFromText("a.adoc", AsciiDocLanguage.INSTANCE, text);
+    return (AsciiDocFile) PsiFileFactory.getInstance(project).createFileFromText("a.adoc", AsciiDocLanguage.INSTANCE, text);
   }
 }
