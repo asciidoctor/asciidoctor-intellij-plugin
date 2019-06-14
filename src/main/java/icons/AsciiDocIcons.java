@@ -40,28 +40,28 @@ public class AsciiDocIcons {
   }
 
   /** The AsciiDoc {@link Icon}. */
-  public static final Icon Asciidoc_Icon = load("/icons/asciidoc.svg");
+  public static final Icon ASCIIDOC_ICON = load("/icons/asciidoc.svg");
 
   public static class Layout {
-    public static final Icon Editor_only = load("/icons/layout/Editor_only.png"); // 16x16
-    public static final Icon Editor_preview = load("/icons/layout/Editor_preview.png"); // 16x16
-    public static final Icon Preview_only = load("/icons/layout/Preview_only.png"); // 16x16
+    public static final Icon EDITOR_ONLY = load("/icons/layout/Editor_only.png"); // 16x16
+    public static final Icon EDITOR_PREVIEW = load("/icons/layout/Editor_preview.png"); // 16x16
+    public static final Icon PREVIEW_ONLY = load("/icons/layout/Preview_only.png"); // 16x16
   }
 
   public static class EditorActions {
-    public static final Icon Bold = load("/icons/editor_actions/Bold.svg"); // 16x16
-    public static final Icon Italic = load("/icons/editor_actions/Italic.svg"); // 16x16
-    public static final Icon Table = load("/icons/editor_actions/table.png"); // 16x16
-    public static final Icon Link = load("/icons/editor_actions/Link.svg"); // 16x16
-    public static final Icon Strike_through = load("/icons/editor_actions/Strike_through.svg"); // 16x16
-    public static final Icon Code_span = load("/icons/editor_actions/Code_span.svg"); // 16x16
+    public static final Icon BOLD = load("/icons/editor_actions/Bold.svg"); // 16x16
+    public static final Icon ITALIC = load("/icons/editor_actions/Italic.svg"); // 16x16
+    public static final Icon TABLE = load("/icons/editor_actions/table.png"); // 16x16
+    public static final Icon LINK = load("/icons/editor_actions/Link.svg"); // 16x16
+    public static final Icon STRIKE_THROUGH = load("/icons/editor_actions/Strike_through.svg"); // 16x16
+    public static final Icon CODE_SPAN = load("/icons/editor_actions/Code_span.svg"); // 16x16
   }
 
   public static class Structure {
-    public static final Icon Section = load("/icons/structure/section.svg"); // 16x16
-    public static final Icon Block = load("/icons/structure/block.svg"); // 16x16
-    public static final Icon Listing = load("/icons/structure/listing.svg"); // 16x16;
-    public static final Icon Macro = load("/icons/structure/macro.svg"); // 16x16;;
+    public static final Icon SECTION = load("/icons/structure/section.svg"); // 16x16
+    public static final Icon BLOCK = load("/icons/structure/block.svg"); // 16x16
+    public static final Icon LISTING = load("/icons/structure/listing.svg"); // 16x16
+    public static final Icon MACRO = load("/icons/structure/macro.svg"); // 16x16
   }
 
 }

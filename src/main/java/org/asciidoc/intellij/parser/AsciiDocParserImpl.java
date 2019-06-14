@@ -94,8 +94,7 @@ public class AsciiDocParserImpl {
         }
         SectionMarker newMarker = new SectionMarker(level, marker);
         mySectionStack.push(newMarker);
-      }
-      else if (at(BLOCK_MACRO_ID)) {
+      } else if (at(BLOCK_MACRO_ID)) {
         newLines = 0;
         markPreBlock();
         next();
@@ -110,22 +109,18 @@ public class AsciiDocParserImpl {
         myPreBlockMarker.done(AsciiDocElementTypes.BLOCK_MACRO);
         myPreBlockMarker = null;
         continue;
-      }
-      else if (at(BLOCK_DELIMITER)
+      } else if (at(BLOCK_DELIMITER)
           || at(COMMENT_BLOCK_DELIMITER) || at(PASSTRHOUGH_BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER)) {
         parseBlock();
         continue;
-      }
-      else if (at(LISTING_BLOCK_DELIMITER)) {
+      } else if (at(LISTING_BLOCK_DELIMITER)) {
         parseListing();
         continue;
-      }
-      else if (at(TITLE)) {
+      } else if (at(TITLE)) {
         markPreBlock();
         next();
         continue;
-      }
-      else if (at(BLOCK_ATTRS_START)) {
+      } else if (at(BLOCK_ATTRS_START)) {
         markPreBlock();
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
@@ -134,8 +129,7 @@ public class AsciiDocParserImpl {
         }
         blockAttrsMarker.done(AsciiDocElementTypes.BLOCK_ATTRIBUTES);
         continue;
-      }
-      else if (at(BLOCKIDSTART)) {
+      } else if (at(BLOCKIDSTART)) {
         markPreBlock();
         next();
         while (at(BLOCKID) || at(BLOCKIDEND) || at(SEPARATOR) || at(BLOCKREFTEXT)) {
@@ -148,8 +142,7 @@ public class AsciiDocParserImpl {
           }
         }
         continue;
-      }
-      else if (at(REFSTART)) {
+      } else if (at(REFSTART)) {
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
         while (at(REF) || at(REFEND) || at(REFFILE) || at(SEPARATOR) || at(REFTEXT)) {
@@ -157,8 +150,7 @@ public class AsciiDocParserImpl {
         }
         blockAttrsMarker.done(AsciiDocElementTypes.REF);
         continue;
-      }
-      else if (at(LINKSTART)) {
+      } else if (at(LINKSTART)) {
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
         while (at(LINKFILE) || at(LINKANCHOR) || at(LINKTEXT_START) || at(SEPARATOR) || at(LINKTEXT) || at(LINKEND)) {
@@ -213,8 +205,7 @@ public class AsciiDocParserImpl {
     if (myPreBlockMarker != null) {
       myBlockStartMarker = myPreBlockMarker;
       myPreBlockMarker = null;
-    }
-    else {
+    } else {
       myBlockStartMarker = beginBlock();
     }
     String marker = myBuilder.getTokenText();
@@ -287,8 +278,8 @@ public class AsciiDocParserImpl {
     while (!mySectionStack.isEmpty() && mySectionStack.peek().level >= level) {
       PsiBuilder.Marker marker = mySectionStack.pop().marker;
       if(myPreBlockMarker != null) {
-        marker.doneBefore(AsciiDocElementTypes.SECTION, myPreBlockMarker); }
-      else {
+        marker.doneBefore(AsciiDocElementTypes.SECTION, myPreBlockMarker);
+      } else {
         marker.done(AsciiDocElementTypes.SECTION);
       }
     }
@@ -309,17 +300,21 @@ public class AsciiDocParserImpl {
     }
     if (result == 0) {
       // this is old header style
-      switch (headingText.charAt(headingText.length() - 2)) {
+      char character = headingText.charAt(headingText.length() - 2);
+      switch (character) {
         case '+':
-          ++ result;
+          ++result;
         case '^':
-          ++ result;
+          ++result;
         case '~':
-          ++ result;
+          ++result;
         case '-':
-          ++ result;
+          ++result;
         case '=':
-          ++ result;
+          ++result;
+          break;
+        default:
+          throw new IllegalArgumentException("unknown character '" + character + "' in switch");
       }
     }
     return result;

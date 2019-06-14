@@ -31,7 +31,7 @@ public class AsciiDocPsiImplUtil {
       @Nullable
       @Override
       public Icon getIcon(boolean unused) {
-        return AsciiDocIcons.Asciidoc_Icon;
+        return AsciiDocIcons.ASCIIDOC_ICON;
       }
     };
   }

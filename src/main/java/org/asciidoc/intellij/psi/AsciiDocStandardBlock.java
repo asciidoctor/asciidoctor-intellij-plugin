@@ -79,7 +79,7 @@ public class AsciiDocStandardBlock extends ASTWrapperPsiElement implements Ascii
 
   @Override
   public Icon getIcon(int flags) {
-    return AsciiDocIcons.Structure.Block;
+    return AsciiDocIcons.Structure.BLOCK;
   }
 
 }

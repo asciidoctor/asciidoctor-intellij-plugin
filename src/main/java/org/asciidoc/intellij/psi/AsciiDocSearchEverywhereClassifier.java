@@ -23,7 +23,7 @@ public class AsciiDocSearchEverywhereClassifier extends DefaultPsiElementCellRen
 
   @Override
   protected Icon getIcon(PsiElement element) {
-    return AsciiDocIcons.Asciidoc_Icon;
+    return AsciiDocIcons.ASCIIDOC_ICON;
   }
 
   @Override

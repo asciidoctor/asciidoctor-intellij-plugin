@@ -50,7 +50,7 @@ public abstract class AsciiDocCompositePsiElementBase extends ASTWrapperPsiEleme
       @Nullable
       @Override
       public Icon getIcon(boolean unused) {
-        return AsciiDocIcons.Asciidoc_Icon;
+        return AsciiDocIcons.ASCIIDOC_ICON;
       }
 
       @Nullable

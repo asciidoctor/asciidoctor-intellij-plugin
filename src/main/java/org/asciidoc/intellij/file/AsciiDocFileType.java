@@ -53,7 +53,7 @@ public class AsciiDocFileType extends LanguageFileType {
 
   @Nullable
   public Icon getIcon() {
-    return AsciiDocIcons.Asciidoc_Icon;
+    return AsciiDocIcons.ASCIIDOC_ICON;
   }
 
   public static boolean hasAsciiDocExtension(String filename) {

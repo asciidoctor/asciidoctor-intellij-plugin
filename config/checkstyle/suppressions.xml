@@ -15,10 +15,4 @@
     <!-- Suppress all checks in geronimo -->
     <suppress checks=".*" files="org[\\/]apache[\\/]geronimo"/>
 
-    <!-- TODO reactivate after link psi parsing -->
-    <suppress checks="(VisibilityModifierCheck|RightCurlyCheck|MissingSwitchDefault|NoWhitespaceAfterCheck)" files="AsciiDocParserImpl"/>
-
-    <!-- TODO reactivate after link psi parsing -->
-    <suppress checks="(ConstantNameCheck)" files="AsciiDocIcons"/>
-
 </suppressions>

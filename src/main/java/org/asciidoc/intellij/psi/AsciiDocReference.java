@@ -46,7 +46,7 @@ public class AsciiDocReference extends PsiReferenceBase<PsiElement> implements P
     for (final AsciiDocBlockId id : ids) {
       if (id.getId() != null && id.getId().length() > 0) {
         variants.add(LookupElementBuilder.create(id).
-          withIcon(AsciiDocIcons.Asciidoc_Icon).
+          withIcon(AsciiDocIcons.ASCIIDOC_ICON).
           withTypeText(id.getContainingFile().getName())
         );
       }

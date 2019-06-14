@@ -65,7 +65,7 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
 
   @Override
   public Icon getIcon(int ignored) {
-    return AsciiDocIcons.Structure.Macro;
+    return AsciiDocIcons.Structure.MACRO;
   }
 
   public static class Manipulator extends AbstractElementManipulator<AsciiDocBlockMacro> {

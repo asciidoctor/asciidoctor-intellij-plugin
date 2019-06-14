@@ -64,7 +64,7 @@ public class AsciiDocSection extends ASTWrapperPsiElement implements AsciiDocSel
 
   @Override
   public Icon getIcon(int ignored) {
-    return AsciiDocIcons.Structure.Section;
+    return AsciiDocIcons.Structure.SECTION;
   }
 
   @NotNull

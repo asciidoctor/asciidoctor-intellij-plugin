@@ -81,7 +81,7 @@ public class AsciiDocListing extends CompositePsiElement implements PsiLanguageI
       @Nullable
       @Override
       public Icon getIcon(boolean unused) {
-        return AsciiDocIcons.Asciidoc_Icon;
+        return AsciiDocIcons.ASCIIDOC_ICON;
       }
 
       @Nullable
@@ -183,7 +183,7 @@ public class AsciiDocListing extends CompositePsiElement implements PsiLanguageI
 
   @Override
   public Icon getIcon(int ignored) {
-    return AsciiDocIcons.Structure.Listing;
+    return AsciiDocIcons.Structure.LISTING;
   }
 
   public static class Manipulator extends AbstractElementManipulator<AsciiDocListing> {

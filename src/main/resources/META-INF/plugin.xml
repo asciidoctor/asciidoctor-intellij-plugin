@@ -142,43 +142,43 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
     <group id="AsciiDoc" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
       <group id="AsciiDoc.TextFormatting" compact="true" description="Text Markup Actions" popup="true" text="AsciiDoc" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
               <action id="asciidoc.makebold" class="org.asciidoc.intellij.actions.asciidoc.MakeBold"
-                      text="Bold" description="Make text bold" icon="AsciiDocIcons.EditorActions.Bold">
+                      text="Bold" description="Make text bold" icon="AsciiDocIcons.EditorActions.BOLD">
               </action>
               <action id="asciidoc.makeitalic" class="org.asciidoc.intellij.actions.asciidoc.MakeItalic"
-                      text="Italic" description="Make text italic" icon="AsciiDocIcons.EditorActions.Italic">
+                      text="Italic" description="Make text italic" icon="AsciiDocIcons.EditorActions.ITALIC">
               </action>
               <action id="asciidoc.maketitle" class="org.asciidoc.intellij.actions.asciidoc.MakeTitle"
                       text="Title" description="Make title" >
               </action>
               <action id="asciidoc.makemono" class="org.asciidoc.intellij.actions.asciidoc.MakeMono"
-                      text="Mono" description="Make text mono" icon="AsciiDocIcons.EditorActions.Code_span">
+                      text="Mono" description="Make text mono" icon="AsciiDocIcons.EditorActions.CODE_SPAN">
               </action>
               <action id="asciidoc.strikethrough" class="org.asciidoc.intellij.actions.asciidoc.MakeStrikethrough"
-                      text="Strike through" description="Make text strike through"  icon="AsciiDocIcons.EditorActions.Strike_through">
+                      text="Strike through" description="Make text strike through"  icon="AsciiDocIcons.EditorActions.STRIKE_THROUGH">
               </action>
               <action id="asciidoc.makelink" class="org.asciidoc.intellij.actions.asciidoc.MakeLink"
-                      text="Link" description="Make link" icon="AsciiDocIcons.EditorActions.Link">
+                      text="Link" description="Make link" icon="AsciiDocIcons.EditorActions.LINK">
               </action>
                <action id="asciidoc.createtable" class="org.asciidoc.intellij.actions.asciidoc.CreateTableAction"
-                 text="Create table" description="Insert a table at the caret" icon="AsciiDocIcons.EditorActions.Table">
+                 text="Create table" description="Insert a table at the caret" icon="AsciiDocIcons.EditorActions.TABLE">
               </action>
               <action class="org.asciidoc.intellij.actions.editorlayout.EditorOnlyLayoutChangeAction"
                       id="org.asciidoc.intellij.actions.editorlayout.EditorOnlyLayoutChangeAction"
                       text="Show editor only"
                       description="Sets AsciiDoc editor layout to show editor only"
-                      icon="AsciiDocIcons.Layout.Editor_only">
+                      icon="AsciiDocIcons.Layout.EDITOR_ONLY">
               </action>
               <action class="org.asciidoc.intellij.actions.editorlayout.EditorAndPreviewLayoutChangeAction"
                       id="org.asciidoc.intellij.actions.editorlayout.EditorAndPreviewLayoutChangeAction"
                       text="Show editor and preview"
                       description="Sets AsciiDoc editor layout to show editor and preview in split"
-                      icon="AsciiDocIcons.Layout.Editor_preview">
+                      icon="AsciiDocIcons.Layout.EDITOR_PREVIEW">
               </action>
               <action class="org.asciidoc.intellij.actions.editorlayout.PreviewOnlyLayoutChangeAction"
                       id="org.asciidoc.intellij.actions.editorlayout.PreviewOnlyLayoutChangeAction"
                       text="Show preview only"
                       description="Sets AsciiDoc editor layout to show preview only"
-                      icon="AsciiDocIcons.Layout.Preview_only">
+                      icon="AsciiDocIcons.Layout.PREVIEW_ONLY">
               </action>
               <action class="org.asciidoc.intellij.actions.asciidoc.ToggleSoftWrapsAction"
                       id="org.asciidoc.intellij.actions.asciidoc.ToggleSoftWrapsAction"
