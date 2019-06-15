@@ -23,6 +23,8 @@ apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'org.jetbrains.grammarkit'
 apply plugin: 'java'
 
+
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.jetbrains.grammarkit.tasks.*
 
 allprojects {
@@ -88,7 +90,7 @@ compileJava {
   dependsOn generateAsciidocLexer
 }
 
-task checkUpdates(type: com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask) {
+task checkUpdates(type: DependencyUpdatesTask) {
     description = "check denpendency updates"
     group = "check"
 }
