@@ -1,22 +1,23 @@
 buildscript {
-    repositories {
-        jcenter()
-        maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
-    }
-    dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.21.0'
-    }
+  repositories {
+    jcenter()
+    maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+  }
+  dependencies {
+    classpath 'com.github.ben-manes:gradle-versions-plugin:0.21.0'
+  }
 }
 
 
 plugins {
-    id "org.jetbrains.intellij" version "0.4.8"
-    id "org.jetbrains.grammarkit" version "2018.2.2"
-    id "checkstyle"
+  id "org.jetbrains.intellij" version "0.4.8"
+  id "org.jetbrains.grammarkit" version "2018.2.2"
+  id "checkstyle"
+  id 'org.asciidoctor.jvm.convert' version '2.2.0'
 }
 
 checkstyle {
-    toolVersion '8.20';
+  toolVersion '8.20'
 }
 
 apply plugin: 'org.jetbrains.intellij'
@@ -25,42 +26,64 @@ apply plugin: 'java'
 
 
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import org.jetbrains.grammarkit.tasks.*
+import org.jetbrains.grammarkit.tasks.GenerateLexer
+import org.jsoup.Jsoup
 
 allprojects {
-    repositories {
-        jcenter()
-    }
+  repositories {
+    jcenter()
+  }
 }
 
 intellij {
-    // we support IC-2017.2, but PsiViewer is not available for the older version, therefore se IC-2018.1 to run it
-    version 'IC-2018.1'
-    pluginName 'asciidoctor'
-    updateSinceUntilBuild false
-    plugins = [
-        'PsiViewer:2018.1.2', // used for debugging
-        'PlantUML integration:2.12.1' // used to test highlighting of plantuml diagrams
-    ]
+  // we support IC-2017.2, but PsiViewer is not available for the older version, therefore se IC-2018.1 to run it
+  version 'IC-2018.1'
+  pluginName 'asciidoctor'
+  updateSinceUntilBuild false
+  plugins = [
+    'PsiViewer:2018.1.2', // used for debugging
+    'PlantUML integration:2.12.1' // used to test highlighting of plantuml diagrams
+  ]
 
-//    publish {
-//        pluginId '7910'
-//        username publishUsername
-//        password publishPassword
-//    }
-
-//     Uncomment to test against Android Studio
-//    intellij.alternativeIdePath = '/Applications/Android Studio.app'
-//    systemProperty 'idea.is.internal', 'false'
 }
 
+asciidoctor {
+  sourceDir file('.')
+  sources {
+    include 'CHANGELOG.adoc'
+  }
+  outputDir file('build/docs')
+}
+
+patchPluginXml {
+  dependsOn asciidoctor
+  version System.getenv('TRAVIS_TAG')
+  changeNotes = {
+    Jsoup.parse(file('build/docs/CHANGELOG.html').getText('UTF-8'))
+      .select("#releasenotes").get(0).nextElementSibling().children()
+      .subList(0, 20)
+      .stream().map { e ->
+      e.html()
+        .replaceAll('\\(preview, available from Github releases\\)', '')
+        .replaceAll('#([0-9]*)', '<a href=\\https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/$1>#$1</a>')
+    }
+      .collect().join("\n")
+  }
+  pluginDescription "${file('src/main/resources/META-INF/description.html').getText('UTF-8')}"
+}
+
+publishPlugin {
+  username 'ahus1'
+  token System.getenv('PLUGIN_REPO_TOKEN')
+  channels 'eap'
+}
 
 dependencies {
-    compile 'org.asciidoctor:asciidoctorj-diagram:1.5.18'
-    compile 'org.asciidoctor:asciidoctorj:2.0.0'
-    compile 'commons-io:commons-io:2.4'
-    compile 'nl.jworks.markdown_to_asciidoc:markdown_to_asciidoc:1.1'
-    testCompile 'junit:junit:4.12'
+  compile 'org.asciidoctor:asciidoctorj-diagram:1.5.18'
+  compile 'org.asciidoctor:asciidoctorj:2.0.0'
+  compile 'commons-io:commons-io:2.4'
+  compile 'nl.jworks.markdown_to_asciidoc:markdown_to_asciidoc:1.1'
+  testCompile 'junit:junit:4.12'
 }
 
 def genRoot = file('gen')
@@ -68,6 +91,9 @@ def genRoot = file('gen')
 sourceSets {
   main {
     java.srcDirs project.files(genRoot)
+    resources {
+      exclude('META-INF/description.html')
+    }
   }
 }
 
@@ -91,6 +117,6 @@ compileJava {
 }
 
 task checkUpdates(type: DependencyUpdatesTask) {
-    description = "check denpendency updates"
-    group = "check"
+  description = "check denpendency updates"
+  group = "check"
 }

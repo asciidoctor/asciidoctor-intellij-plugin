@@ -4,7 +4,12 @@
 
 This document provides a high-level view of the changes introduced by release.
 
+[[releasenotes]]
 == Release notes
+
+=== 0.28.1 (preview, available from Github releases)
+
+- new automated release mechanism, also EAP plugin repository
 
 === 0.26.20 (preview, available from Github releases)
 

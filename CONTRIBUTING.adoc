@@ -58,6 +58,17 @@ To try out a preview release:
 Use the GitHub issue numbers given in the release notes to join the discussion on the respective GitHub issues.
 --
 
+Add our early-access-repository to your IDE::
++
+--
+To receive notifications of new releases and download the new plugin releases:
+
+. Go to "`File | Settings... | Plugins | (Gear Icon) | Manage plugin repositories...`"
+. add https://plugins.jetbrains.com/plugins/eap/list?pluginId=7391 as an additional repository
+
+Use the GitHub issue numbers given in the release notes to join the discussion on the respective GitHub issues.
+--
+
 == Getting started with coding
 
 [[JDK]]

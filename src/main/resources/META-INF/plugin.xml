@@ -1,119 +1,14 @@
 <idea-plugin url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.26.20</version>
+  <version>0.0.1</version>
   <vendor email="alexander.schwartz@gmx.net" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
     Asciidoctor IntelliJ Plugin Project
   </vendor>
 
-  <description><![CDATA[
-      <p><a href="http://www.methods.co.nz/asciidoc/">AsciiDoc</a> language support for IntelliJ platform.<p>
-      <p>AsciiDoc is a text document format, similar to formats like Markdown, for writing notes, documentation, articles,
-      books, ebooks, slideshows, web pages, man pages and blogs. AsciiDoc files can be translated to many formats
-      including HTML, PDF, EPUB, man page. AsciiDoc is, in contrast to Markdown, highly configurable: both the AsciiDoc
-      source file syntax and the backend output markups (which can be almost any type of SGML/XML markup)
-      can be customized and extended by the user.
-      <p>
-      <p><b>To support the authors of Asciidoctor, please consider supporting us via <a href="https://opencollective.com/asciidoctor">OpenCollective</a>.</b>
-      <p>
-      <p>The most advanced and recommended preview mode is JavaFX.
-To use the JavaFX preview instead of the Swing preview, you'll need to run IntelliJ with 64bit Java and JavaFX installed.
-Oracle JDK installations include JavaFX, but can make the IDE unstable and crash.
-Pre-bundled OpenJDK installations usually don't include JavaFX.
-Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
- See <a href="https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under">Selecting the JDK version the IDE will run under</a> for more details.
-  <p>
-  <p>
-  <p>
-  For better legibility in the JavaFX preview, this package includes DejaVu fonts.
-  <a href="https://dejavu-fonts.github.io/License.html">See here for the free fonts license</a>.
-  </p>
-</body>
-      ]]>
-  </description>
+  <description>(automatically filled during build from description.html)</description>
 
-  <change-notes><![CDATA[
-    <ul>
-      <li>0.26.20 link to Wiki how to fix blurry preview (#213)<br>
-      monospace-bold preview now working (#193)
-      <li>0.26.19 tuning parsing and documentation (#267)<br>
-      New inspection to shorten page break where possible<br>
-      link:file#id[] now with navigation and autocomplete (#273)
-      <li>0.26.18 resolve the last reference in structure view as this will be the file; the others are the subdirectories (#267)<br>
-      refactoring or shortened descriptions; now in sync for structure view, folding and breadcrumbs (#267)<br>
-      allow browser to cache static content to avoid flickering (#267)<br>
-      allow more block types, supporting nested blocks, parsing content within blocks (#267)<br>
-      rework folding to show first significant line in block (#267)
-      <li>0.26.17 support escaping with backslash ("\") in editor, avoiding highlighting<br>
-      move to released markdown-to-asciidoc version 1.1 to use proper dependency management (#268)<br>
-      support spell checking on more elements including quotes, examples and comments (#269)<br>
-      fixing autocomplete for file names on include::[] within blocks
-      <li>0.26.16 show includes and images in structure view, adding icon set for breadcrumbs and structure view, tuning contents (#267)
-      <li>0.26.15 fixing equals check for disabled injected languages (#266)
-      <li>0.26.14 fixing NullPointerException in settings processing (#266)<br>
-      supporting pass-through inline content
-      <li>0.26.13 update to asciidoctorj-diagram:1.5.18<br>
-      breadcrumb support in editor
-      <li>0.26.12 supporting blanks in block attributes (#255)
-      <li>0.26.11 adding support for GRAPHVIZ_DOT environment variable (#261)<br>
-      adding support for statement completion (ctrl-shift-enter (#263)
-      language injection can now is now enabled by default and can be disabled for specific languages, and will be disabled when the block has an `include::[]` (#255)<br>
-      includes are now parsed and highlighted inside code blocks (#255)<br>
-      <li>0.26.10 Experimental highlighting in code blocks (#255, #262)
-      <li>0.26.9 upgrading gradle and JetBrains plugin; now use `gradlew runIde` to start the plugin in development mode<br>
-      allow user to switch left/right and upper/lower in split view (#136)<br>
-      add syntax highlighter to support link:file[] (#259)<br>
-      add syntax highlighter to support attribute:value and {attribute reference} (#260)
-      <li>0.26.8 default file encoding for JRuby now UTF-8 if set file encoding is not supported by JRuby (#174)
-      <li>0.26.7 fixing error in tree structure; improving test capabilities for parsing #174
-      <li>0.26.6 improved brace matcher<br>
-      ensure that block IDs are part of next section when folding (#174)
-      <li>0.26.5 decouple read action from event thread to avoid error from IDE (#204)<br>
-      highlighting for lexical quotes<br>
-      parsing referenced file from reference (#204)
-      <li>0.26.4 Support for relative path links in preview (#256)
-      <li>0.26.3 allow folding of sections and blocks (#174)
-      <li>0.26.2 allow horizontal split view via settings (#136)
-      <li>0.26.1 adding color settings for syntax highlighting (#254)
-      <li>0.26.0 support for anchors, block ids and references including linking and refactoring (#252)
-      <li>0.25.14 making linking of documents work for standard includes (#204)<br>
-      improved formatting when blank lines are edited, also handling spaces at the end of a line (#248)
-      <li>0.25.13 suport partitial parsing in lexer to avoid flipping formatting in IntelliJ (#248)
-      <li>0.25.12 adding additional rules for constrained formatting (#248)
-      <li>0.25.11 moving from jruby-complete to jruby dependency like AsciidoctorJ did for 2.0 (#250)
-      <li>0.25.10 improved syntax highlighting for block IDs and references, suppressing message "possible invalid reference" (#249)<br>
-      show error message why preview wasn't rendered in preview (#251)
-      <li>0.25.9 adding quote handler (#242)<br>
-      Tuning highlighting for mono and bullet lists (#244)<br>
-      Activating brace highlighting for mono/italic/bold (#244)
-      <li>0.25.8 tuning highlighting italic/bold/mono, adding brace matcher in text (#244)<br>
-      Tuning highlighting for mono and bullet lists (#244)
-      <li>0.25.7 Updating to AsciidoctorJ v2.0.0 that includes Asciidoctor 2.0.8<br>
-      adding highlighting for italic/bold/mono (#244)<br>
-      adding brace matcher for attributes
-      <li>0.25.6 Updating to AsciidoctorJ v2.0.0-RC.2 that includes Asciidoctor 2.0.6<br>
-      Improved parsing of warnings and errors created by Asciidoctor
-      <li>0.25.5 Addding error highlight in tree view
-      <li>0.25.4 restart annotation processing for current file once it gets focused or settings change (#225)
-      <li>0.25.3 improve offset calculation for .asciidoctorconfig files (#225)
-      <li>0.25.2 annotate the file in the editor instead of logging to console for asciidoctor messages (#225)
-      <li>0.25.1 Fixing preview line calculation when using .asciidoctorconfig-files
-      <br>Updating to AsciidoctorJ v2.0.0-RC.1 that includes Asciidoctor 2.0.2
-      <li>0.25.0 Updating to AsciidoctorJ v1.7.0-RC.1 that includes Asciidoctor 2.0.1 and Asciidoctor Diagram 1.5.16
-      <li>0.24.4 Fixing preview line calculation when using .asciidoctorconfig-files
-      <li>0.24.3 Filter out problematic pass-through JavaScript with Twitter being the first candidate (#235)
-      <li>0.24.2 Support JDK11 as of IntelliJ 2019.1 EAP (#238)
-      <li>0.24.1 Upgrade to AsciidoctorJ 1.6.2 and JRuby 9.2.6.0 (it's still backed by Asciidoctor 1.5.8)
-      <br>Upgrade to asciidoctor diagram 1.5.12
-      <br>Additional logging to analyze errors (#236)
-      <li>0.24.0 Upgrade to AsciidoctorJ 1.6.1 and JRuby 9.2.5.0 (it's still backed by Asciidoctor 1.5.8)
-      <br>Upgrade to asciidoctor diagram 1.5.11
-      <br>Updated parser for old style multiline headings to be more specific (#233)
-      <br>Added description for old style heading inspection (#233)
-      </li>
-    </ul>
-      ]]>
-  </change-notes>
+  <change-notes>(automatically filled during build from CHANGELOG.adoc)</change-notes>
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->

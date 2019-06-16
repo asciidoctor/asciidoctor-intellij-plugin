@@ -14,15 +14,23 @@ cache:
   directories:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
+env:
+  global:
+    secure: BdgAcZphbuZ61etK+9dsNxtMtcAj7mcZEae13e4k6ScvhpdEDy0vl8fnm9f6gf51Htjn+UC6wwzvTRUCB7xbHMiVxFe5wVCLB7GUpmrjo4Kov2klAp76HGqF7X81iIoj28HNgRqYRuuZB+VFsm7gVlemn+pbQEqRstHO7c9YUrA=
 deploy:
-  # any release is a pre-release that need to be promoted manually
+- provider: releases
   prerelease: true
   skip_cleanup: true
-  provider: releases
   overwrite: true
   api_key:
     secure: L7f73+dt2+XCdhLsMDwkG/Y9Y2DIx1zghK+6eG84kEiPn/Dn9Dw7ZPt3Zwst2hCIjvq9mkUOup4s0bVh5IhsPahGseA5I1LCkxdV8Z/gIRvHFtd5jViBpa9iPiyuc9V70tBp77t/0lRnpRX0xQaqIDlFMK1wvoKzSuWu17y6Qwk=
   file: build/distributions/asciidoctor-intellij-plugin.zip
+  on:
+    repo: asciidoctor/asciidoctor-intellij-plugin
+    all_branches: false
+    tags: true
+- provider: script
+  script: "./gradlew -Dfile.encoding=UTF-8 publishPlugin"
   on:
     repo: asciidoctor/asciidoctor-intellij-plugin
     all_branches: false
