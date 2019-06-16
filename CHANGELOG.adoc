@@ -6,6 +6,10 @@ This document provides a high-level view of the changes introduced by release.
 
 == Release notes
 
+=== 0.26.20 (work in progress)
+
+- link to Wiki how to fix blurry preview (#213)
+
 === 0.26.19 (preview, available from Github releases)
 
 - tuning parsing and documentation (#267)

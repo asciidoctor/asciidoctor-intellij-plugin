@@ -1,7 +1,7 @@
 <idea-plugin url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.26.19</version>
+  <version>0.26.20</version>
   <vendor email="alexander.schwartz@gmx.net" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
     Asciidoctor IntelliJ Plugin Project
   </vendor>
@@ -34,9 +34,10 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.26.19 tuning parsing and documentation #267<br>
+      <li>0.26.20 link to Wiki how to fix blurry preview (#213)
+      <li>0.26.19 tuning parsing and documentation (#267)<br>
       New inspection to shorten page break where possible<br>
-      link:file#id[] now with navigation and autocomplete #273
+      link:file#id[] now with navigation and autocomplete (#273)
       <li>0.26.18 resolve the last reference in structure view as this will be the file; the others are the subdirectories (#267)<br>
       refactoring or shortened descriptions; now in sync for structure view, folding and breadcrumbs (#267)<br>
       allow browser to cache static content to avoid flickering (#267)<br>
@@ -248,6 +249,8 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
       implementation="org.asciidoc.intellij.editor.javafx.ChangeJdkForJavaFXNotificationProvider"/>
     <editorNotificationProvider
       implementation="org.asciidoc.intellij.editor.ExtenionsAvailableNotificationProvider"/>
+    <editorNotificationProvider
+      implementation="org.asciidoc.intellij.editor.javafx.JavaFxMightBeBlurredNotificationProvider" />
     <gotoSymbolContributor implementation="org.asciidoc.intellij.psi.AsciiDocChooseByNameContributor"/>
     <searchEverywhereClassifier implementation="org.asciidoc.intellij.psi.AsciiDocSearchEverywhereClassifier"/>
     <localInspection language="AsciiDoc" displayName="Heading inspection" groupPath="AsciiDoc"
