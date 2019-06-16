@@ -9,6 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.26.20 (work in progress)
 
 - link to Wiki how to fix blurry preview (#213)
+- monospace-bold preview now working (#193)
 
 === 0.26.19 (preview, available from Github releases)
 

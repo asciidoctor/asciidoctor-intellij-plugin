@@ -417,3 +417,18 @@ For the JavaFX preview the HTML is enriched with CSS and JavaScript.
 The JavaFX preview uses JavaScript to scroll the preview to the current position: once the user moves the cursor, the cursor line is transmitted to the preview using `scrollToLine()` and repositions the preview using JavaScript.
 
 When the user interacts with the JavaFX preview (for example clicks on a text or a link), there is a bridge `JavaPanelBridge` back from JavaScript to Java to trigger actions like scrolling the editor or opening a link in the browser.
+
+== Upgrading Asciidoctor
+
+Follow these steps:
+
+. update `build.gradle` with the latest available AsciidoctorJ release
+. update `coderay.css` with the `coderay-asciidoctor.css` provided in the library
+. update JavaFX' `default.css` with `asciidoctor-default.css` and make the following substitutions:
++
+--
+* remove `text-rendering:...` (as it breaks asian fonts in JavaFX preview, issue #203)
+* remove references to fonts Noto Serif, Open Sans and Droid Sans Mono as they are unavailable locally and confuse JavaFX (no bold-mono, issue #193)
+* remove media queries for print (not applicable for JavaFX preview)
+--
++

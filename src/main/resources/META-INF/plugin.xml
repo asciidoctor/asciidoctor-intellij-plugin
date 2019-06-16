@@ -34,7 +34,8 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
   <change-notes><![CDATA[
     <ul>
-      <li>0.26.20 link to Wiki how to fix blurry preview (#213)
+      <li>0.26.20 link to Wiki how to fix blurry preview (#213)<br>
+      monospace-bold preview now working (#193)
       <li>0.26.19 tuning parsing and documentation (#267)<br>
       New inspection to shorten page break where possible<br>
       link:file#id[] now with navigation and autocomplete (#273)
