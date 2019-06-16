@@ -14,11 +14,27 @@ import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author yole
  */
 public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
+  private static final Set<String> HAS_FILE_AS_BODY = new HashSet<>();
+
+  static {
+    HAS_FILE_AS_BODY.addAll(Arrays.asList(
+      // standard asciidoctor
+      "image", "include", "video", "audio",
+      // asciidoctor diagram
+      "a2s", "actdiag", "blockdiag", "ditaa", "erd", "graphviz", "meme", "mermaid", "msc",
+      "nwdiag", "packetdiag", "plantuml", "rackdiag", "seqdiag", "shaape", "svgbob",
+      "syntrax", "umlet", "vega", "vegalite", "wavedrom"
+    ));
+  }
+
   public AsciiDocBlockMacro(@NotNull ASTNode node) {
     super(node);
   }
@@ -26,7 +42,7 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
   @NotNull
   @Override
   public PsiReference[] getReferences() {
-    if (getMacroName().equals("image") || getMacroName().equals("include")) {
+    if (HAS_FILE_AS_BODY.contains(getMacroName())) {
       ASTNode bodyNode = getNode().findChildByType(AsciiDocTokenTypes.BLOCK_MACRO_BODY);
       if (bodyNode != null) {
         return new FileReferenceSet(bodyNode.getText(), this, bodyNode.getStartOffset() - getTextRange().getStartOffset(),
