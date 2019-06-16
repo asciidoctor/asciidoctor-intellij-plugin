@@ -423,12 +423,5 @@ When the user interacts with the JavaFX preview (for example clicks on a text or
 Follow these steps:
 
 . update `build.gradle` with the latest available AsciidoctorJ release
-. update `coderay.css` with the `coderay-asciidoctor.css` provided in the library
-. update JavaFX' `default.css` with `asciidoctor-default.css` and make the following substitutions:
-+
---
-* remove `text-rendering:...` (as it breaks asian fonts in JavaFX preview, issue #203)
-* remove references to fonts Noto Serif, Open Sans and Droid Sans Mono as they are unavailable locally and confuse JavaFX (no bold-mono, issue #193)
-* remove media queries for print (not applicable for JavaFX preview)
---
-+
+
+`JavaFxHtmlPanel` will automatically load the most recent style sheets and patch them accordingly at runtime.

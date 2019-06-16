@@ -55,8 +55,9 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -126,7 +127,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
   private final VirtualFile parentDirectory;
 
-  public JavaFxHtmlPanel(Document document, Path imagesPath) {
+  JavaFxHtmlPanel(Document document, Path imagesPath) {
 
     //System.setProperty("prism.lcdtext", "false");
     //System.setProperty("prism.text", "t2k");
@@ -147,10 +148,26 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     }
 
     try {
-      myInlineCss = IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("default.css"));
+      Properties p = new Properties();
+      p.load(JavaFxHtmlPanel.class.getResourceAsStream("/META-INF/asciidoctorj-version.properties"));
+      String asciidoctorVersion = p.getProperty("version.asciidoctor");
+      myInlineCss = IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
+        + asciidoctorVersion
+        + "/data/stylesheets/asciidoctor-default.css"));
+
+      // asian characters won't display with text-rendering:optimizeLegibility
+      // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/203
+      myInlineCss = myInlineCss.replaceAll("text-rendering:", "disabled-text-rendering");
+
+      // JavaFX doesn't load 'DejaVu Sans Mono' font when 'Droid Sans Mono' is listed first
+      // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/193
+      myInlineCss = myInlineCss.replaceAll("(\"Noto Serif\"|\"Open Sans\"|\"Droid Sans Mono\"),", "");
+
       myInlineCssDarcula = myInlineCss + IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("darcula.css"));
       myInlineCssDarcula += IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("coderay-darcula.css"));
-      myInlineCss += IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("coderay.css"));
+      myInlineCss += IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
+        + asciidoctorVersion
+        + "/data/stylesheets/coderay-asciidoctor.css"));
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
     } catch (IOException e) {
@@ -163,54 +180,38 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       Notifications.Bus.notify(notification);
     }
 
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
+    ApplicationManager.getApplication().invokeLater(() -> runFX(new Runnable() {
       @Override
       public void run() {
-        runFX(new Runnable() {
-          @Override
-          public void run() {
-            PlatformImpl.startup(new Runnable() {
-              @Override
-              public void run() {
-                myWebView = new WebView();
+        PlatformImpl.startup(() -> {
+          myWebView = new WebView();
 
-                updateFontSmoothingType(myWebView, false);
-                myWebView.setContextMenuEnabled(false);
-                myWebView.setZoom(JBUI.scale(1.f));
-                myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>"));
+          updateFontSmoothingType(myWebView, false);
+          myWebView.setContextMenuEnabled(false);
+          myWebView.setZoom(JBUI.scale(1.f));
+          myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>"));
 
-                final WebEngine engine = myWebView.getEngine();
-                engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
-                engine.getLoadWorker().stateProperty().addListener(myScrollPreservingListener);
+          final WebEngine engine = myWebView.getEngine();
+          engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
+          engine.getLoadWorker().stateProperty().addListener(myScrollPreservingListener);
 
-                final Scene scene = new Scene(myWebView);
+          final Scene scene = new Scene(myWebView);
 
-                ApplicationManager.getApplication().invokeLater(new Runnable() {
-                  @Override
-                  public void run() {
-                    runFX(new Runnable() {
-                      @Override
-                      public void run() {
-                        synchronized (myInitActions) {
-                          myPanel = new JFXPanelWrapper();
-                          Platform.runLater(() -> myPanel.setScene(scene));
-                          for (Runnable action : myInitActions) {
-                            Platform.runLater(action);
-                          }
-                          myInitActions.clear();
-                        }
-                        myPanelWrapper.add(myPanel, BorderLayout.CENTER);
-                        myPanelWrapper.repaint();
-                      }
-                    });
-                  }
-                });
+          ApplicationManager.getApplication().invokeLater(() -> runFX(() -> {
+            synchronized (myInitActions) {
+              myPanel = new JFXPanelWrapper();
+              Platform.runLater(() -> myPanel.setScene(scene));
+              for (Runnable action : myInitActions) {
+                Platform.runLater(action);
               }
-            });
-          }
+              myInitActions.clear();
+            }
+            myPanelWrapper.add(myPanel, BorderLayout.CENTER);
+            myPanelWrapper.repaint();
+          }));
         });
       }
-    });
+    }));
 
   }
 
@@ -269,12 +270,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     html = "<html><head></head><body>" + html + "</body>";
     final String htmlToRender = prepareHtml(html);
 
-    runInPlatformWhenAvailable(new Runnable() {
-      @Override
-      public void run() {
-        JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().loadContent(htmlToRender);
-      }
-    });
+    runInPlatformWhenAvailable(() -> JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().loadContent(htmlToRender));
   }
 
   private String findTempImageFile(String filename) {
@@ -354,17 +350,9 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
   @Override
   public void render() {
-    runInPlatformWhenAvailable(new Runnable() {
-      @Override
-      public void run() {
-        JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().reload();
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            myPanelWrapper.repaint();
-          }
-        });
-      }
+    runInPlatformWhenAvailable(() -> {
+      JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().reload();
+      ApplicationManager.getApplication().invokeLater(myPanelWrapper::repaint);
     });
   }
 
@@ -372,31 +360,25 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   public void scrollToLine(final int line, final int lineCount, int offsetLineNo) {
     this.lineCount = lineCount;
     this.offset = offsetLineNo;
-    runInPlatformWhenAvailable(new Runnable() {
-      @Override
-      public void run() {
-        JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
-          "if ('__IntelliJTools' in window) " +
-            "__IntelliJTools.scrollToLine(" + line + ", " + lineCount + ", " + offsetLineNo + ");"
-        );
-        final Object result = JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
-          "document.documentElement.scrollTop || document.body.scrollTop");
-        if (result instanceof Number) {
-          myScrollPreservingListener.myScrollY = ((Number) result).intValue();
-        }
+    runInPlatformWhenAvailable(() -> {
+      JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
+        "if ('__IntelliJTools' in window) " +
+          "__IntelliJTools.scrollToLine(" + line + ", " + lineCount + ", " + offsetLineNo + ");"
+      );
+      final Object result = JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
+        "document.documentElement.scrollTop || document.body.scrollTop");
+      if (result instanceof Number) {
+        myScrollPreservingListener.myScrollY = ((Number) result).intValue();
       }
     });
   }
 
   @Override
   public void dispose() {
-    runInPlatformWhenAvailable(new Runnable() {
-      @Override
-      public void run() {
-        JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().load("about:blank");
-        JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().getLoadWorker().stateProperty().removeListener(myScrollPreservingListener);
-        JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().getLoadWorker().stateProperty().removeListener(myBridgeSettingListener);
-      }
+    runInPlatformWhenAvailable(() -> {
+      JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().load("about:blank");
+      JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().getLoadWorker().stateProperty().removeListener(myScrollPreservingListener);
+      JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().getLoadWorker().stateProperty().removeListener(myBridgeSettingListener);
     });
   }
 
@@ -491,7 +473,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       ApplicationManager.getApplication().invokeLater(
         () -> {
           getEditor().getCaretModel().setCaretsAndSelections(
-            Arrays.asList(new CaretState(new LogicalPosition(sourceLine - 1, 0), null, null))
+            Collections.singletonList(new CaretState(new LogicalPosition(sourceLine - 1, 0), null, null))
           );
           getEditor().getScrollingModel().scrollToCaret(ScrollType.CENTER_UP);
         }
