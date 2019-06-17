@@ -62,7 +62,7 @@ Use the GitHub issue numbers given in the release notes to join the discussion o
 Add our early-access-repository to your IDE::
 +
 --
-To receive notifications of new releases and download the new plugin releases:
+Receive notifications of new preview releases and download them directly to your IDE:
 
 . Go to "`File | Settings... | Plugins | (Gear Icon) | Manage plugin repositories...`"
 . add https://plugins.jetbrains.com/plugins/eap/list?pluginId=7391 as an additional repository
