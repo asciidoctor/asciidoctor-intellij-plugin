@@ -58,6 +58,7 @@ To try out a preview release:
 Use the GitHub issue numbers given in the release notes to join the discussion on the respective GitHub issues.
 --
 
+[[eap, Adding the EAP Repository]]
 Add our early-access-repository to your IDE::
 +
 --
@@ -107,6 +108,12 @@ To build this plugin, you need to run:
 ----
 
 The ZIP file with plugin to distribute will be located in `build/distributions`.
+
+[NOTE]
+====
+The `plugin.xml` inside the archive will state version `0.0.1` unless you specify an environment variable `TRAVIS_TAG` that holds a release number.
+This ensures that a temporarily locally build plugin will be overwritten by the JetBrains plugin update site.
+====
 
 === Running the development version locally
 
@@ -436,3 +443,27 @@ Follow these steps:
 . update `build.gradle` with the latest available AsciidoctorJ release
 
 `JavaFxHtmlPanel` will automatically load the most recent style sheets and patch them accordingly at runtime.
+
+== Releasing a new version of the plugin
+
+=== Publishing a preview version
+
+. Update link:CHANGELOG.adoc[] with th latest changes for the release
+. Push all changes to GitHub
+. Create a Release in the GitHub releases.
+This allows you to also create a tag.
+Name the tag like the release (for example: `0.28.2`)
+. Travis CI will then https://travis-ci.org/asciidoctor/asciidoctor-intellij-plugin/builds[build the release]
+The `plugin.xml` included in the build will contain the release version and the most recent entries from the change log.
+TravisCI will publish a binary to:
++
+--
+* https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases[GitHub releases] (attached as `asciidoctor-intellij-plugin.zip`)
+* https://plugins.jetbrains.com/plugin/7391-asciidoc/versions[EAP (early access program) repository], see <<eap>> for more information.
+--
+
+=== Publishing a stable version
+
+. Edit the link:CHANGELOG.adoc[] and remove the "`(preview ...)`" additions here
+. Copy the link of the `asciidoctor-intellij-plugin.zip` on GitHub releases to the clipboard
+. Go to the https://plugins.jetbrains.com/plugin/edit?pluginId=7391[JetBrains plugin repository] and upload the plugin to the stable repository using '`Get file from URL`'
