@@ -136,7 +136,7 @@ HEADING_START = "="{1,6} {SPACE}+
 HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 // starting at the start of the line, but not with a dot
 // next line follwoing with only header marks
-HEADING_OLDSTYLE = [^.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
+HEADING_OLDSTYLE = {SPACE}* [^ +\-#=~.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
 TITLE_START = "."
 AUTOCOMPLETE = "IntellijIdeaRulezzz " // CompletionUtilCore.DUMMY_IDENTIFIER

@@ -2,6 +2,7 @@ package org.asciidoc.intellij.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Stack;
 
@@ -299,14 +300,21 @@ public class AsciiDocParserImpl {
     myBuilder.advanceLexer();
   }
 
-  private static int headingLevel(String headingText) {
+  private static int headingLevel(@Nullable String headingText) {
+    if (headingText == null) {
+      return 0;
+    }
     int result = 0;
     while (result < headingText.length() && (headingText.charAt(result) == '=' || headingText.charAt(result) == '#')) {
       result++;
     }
     if (result == 0) {
       // this is old header style
-      char character = headingText.charAt(headingText.length() - 2);
+      int pos = headingText.length() - 1;
+      while (pos > 0 && (headingText.charAt(pos) == ' ' || headingText.charAt(pos) == '\t')) {
+        --pos;
+      }
+      char character = headingText.charAt(pos);
       switch (character) {
         case '+':
           ++result;

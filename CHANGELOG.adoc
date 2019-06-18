@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.2 (preview, available from Github releases)
+
+- fixed parsing for old-style headers (#274)
+
 === 0.28.1 (preview, available from Github releases)
 
 - new automated release mechanism, also EAP plugin repository

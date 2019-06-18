@@ -4,7 +4,6 @@ import com.intellij.ide.actions.SearchEverywhereClassifier;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import icons.AsciiDocIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +22,7 @@ public class AsciiDocSearchEverywhereClassifier extends DefaultPsiElementCellRen
 
   @Override
   protected Icon getIcon(PsiElement element) {
-    return AsciiDocIcons.ASCIIDOC_ICON;
+    return element.getIcon(0);
   }
 
   @Override

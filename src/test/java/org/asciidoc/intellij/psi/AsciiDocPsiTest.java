@@ -63,6 +63,13 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("NOTE", block.getStyle());
   }
 
+  public void testOldStyleHeader() {
+    PsiFile psiFile = configureByAsciiDoc("H\n+\n");
+    PsiElement[] children = psiFile.getChildren();
+    assertEquals(2, children.length);
+    AsciiDocSection section = (AsciiDocSection) children[0];
+    assertEquals("H", section.getName());
+  }
 
   public void testBlockFollowedBySomethingLookingLikeAHeaderButActuallyPlainText() {
     PsiFile psiFile = configureByAsciiDoc("====\n\n==== Test\n");

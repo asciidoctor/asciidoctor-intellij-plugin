@@ -81,7 +81,7 @@ public class AsciiDocListing extends CompositePsiElement implements PsiLanguageI
       @Nullable
       @Override
       public Icon getIcon(boolean unused) {
-        return AsciiDocIcons.ASCIIDOC_ICON;
+        return AsciiDocIcons.Structure.LISTING;
       }
 
       @Nullable

@@ -37,8 +37,13 @@ public class AsciiDocConvertOldstyleHeading extends LocalQuickFixBase {
       return;
     }
 
+    int pos = text.length() - 1;
+    while (pos > 0 && (text.charAt(pos) == ' ' || text.charAt(pos) == '\t')) {
+      --pos;
+    }
+    char character = text.charAt(pos);
     int depth = 0;
-    switch (text.charAt(text.length() - 2)) {
+    switch (character) {
       case '+':
         ++depth;
       case '^':
