@@ -500,8 +500,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         win.setMember("JavaPanelBridge", bridge);
         JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
           "if ('__IntelliJTools' in window) {" +
-            "__IntelliJTools.processLinks();" +
-            "__IntelliJTools.pickSourceLine(" + lineCount + ", " + offset + ");" +
+            "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
+            "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ", " + offset + ");" +
             "}"
         );
       }
