@@ -9,6 +9,7 @@ import com.intellij.psi.tree.TokenSet;
 public interface AsciiDocTokenTypes {
   IElementType TEXT = new AsciiDocElementType("TEXT");
   IElementType BULLET = new AsciiDocElementType("BULLET");
+  IElementType ENUMERATION = new AsciiDocElementType("ENUMERATION");
   IElementType LINE_BREAK = new AsciiDocElementType("LINE_BREAK");
   IElementType WHITE_SPACE = new AsciiDocElementType("WHITE_SPACE");
   IElementType LINE_COMMENT = new AsciiDocElementType("LINE_COMMENT");

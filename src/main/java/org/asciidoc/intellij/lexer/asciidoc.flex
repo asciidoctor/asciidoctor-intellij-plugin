@@ -146,6 +146,7 @@ STRING = {NON_SPACE}+ \n? // something that doesn't have an empty line
 WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n] | {SPACE}* [^\n]*[^\ \t\n]
 BOLD = "*"
 BULLET = {SPACE}* "*"+ {SPACE}+
+ENUMERATION = {SPACE}* "."+ {SPACE}+
 DOUBLEBOLD = {BOLD} {BOLD}
 PASSTRHOUGH_INLINE = "+++"
 ITALIC = "_"
@@ -337,6 +338,7 @@ ATTRIBUTE_REF_END = "}"
   {BLOCK_ATTRS_START} / [^\[] { yypushstate(); yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
 
   {BULLET} / {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BULLET; }
+  {ENUMERATION} / {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ENUMERATION; }
 
   /* a blank line, it separates blocks. Don't return YYINITIAL here, as writing on a blank line might change the meaning
   of the previous blocks combined (for example there is now an italic formatting spanning the two combined blocks) */

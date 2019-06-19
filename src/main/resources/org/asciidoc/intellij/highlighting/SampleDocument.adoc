@@ -9,6 +9,8 @@ Block comment
 
 <bullet>*</bullet> bullet
 
+<enumeration>.</enumeration> enumeration
+
 <block_macro>blockmacro::</block_macro><marker>[]</marker>
 
 <marker>:</marker><attribute>attribute</attribute><marker>:</marker> <value>value</value>
