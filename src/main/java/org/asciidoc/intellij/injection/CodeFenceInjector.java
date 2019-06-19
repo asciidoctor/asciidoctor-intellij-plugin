@@ -5,8 +5,6 @@ import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.asciidoc.intellij.psi.AsciiDocCodeContent;
 import org.asciidoc.intellij.psi.AsciiDocListing;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
@@ -19,9 +17,6 @@ public class CodeFenceInjector implements MultiHostInjector {
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
     if (!(context instanceof AsciiDocListing)) {
-      return;
-    }
-    if (PsiTreeUtil.findChildOfType(context, AsciiDocCodeContent.class) == null) {
       return;
     }
 

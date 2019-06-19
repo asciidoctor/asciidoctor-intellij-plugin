@@ -7,10 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.28.3 (work in progress)
+=== 0.28.3 (preview, available from Github releases)
 
 - brace matching for attribute start/end (`:attr:` and `\{attr}`)
 - syntax highlighting for enumerations (`.`)
+- fixing "`Edit Fragment...`" for listings (#276)
 
 === 0.28.2 (preview, available from Github releases)
 

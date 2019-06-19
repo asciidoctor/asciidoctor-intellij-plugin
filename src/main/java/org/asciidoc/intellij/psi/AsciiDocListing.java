@@ -3,6 +3,7 @@ package org.asciidoc.intellij.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.AbstractElementManipulator;
 import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.LiteralTextEscaper;
@@ -21,10 +22,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Objects;
 
 public class AsciiDocListing extends CompositePsiElement implements PsiLanguageInjectionHost, AsciiDocPsiElement, AsciiDocBlock {
-  public AsciiDocListing(IElementType type) {
+  AsciiDocListing(IElementType type) {
     super(type);
   }
 
@@ -116,6 +116,9 @@ public class AsciiDocListing extends CompositePsiElement implements PsiLanguageI
     return true;
   }
 
+  /**
+   * Replace complete text. Will be called when quick fixes in the fenced code occur.
+   */
   @Override
   public PsiLanguageInjectionHost updateText(@NotNull String text) {
     return ElementManipulators.handleContentChange(this, text);
@@ -124,17 +127,42 @@ public class AsciiDocListing extends CompositePsiElement implements PsiLanguageI
   public static TextRange getContentTextRange(PsiElement myHost) {
     // must not use PsiTreeUtil.findChildOfType as it leads to exception
     for (PsiElement e : myHost.getChildren()) {
-      if (e instanceof AsciiDocCodeContent) {
-        for (PsiElement i : e.getChildren()) {
-          // if there is a block macro (typically an include), disable highlighting for all of it
-          if (i instanceof AsciiDocBlockMacro) {
-            return TextRange.EMPTY_RANGE;
-          }
-        }
-        return TextRange.create(e.getStartOffsetInParent(), e.getStartOffsetInParent() + e.getTextLength());
+      // if there is a block macro (typically an include), disable highlighting for all of it
+      if (e instanceof AsciiDocBlockMacro) {
+        return TextRange.EMPTY_RANGE;
       }
     }
-    return TextRange.EMPTY_RANGE;
+
+    /*
+     * The calculated text range needs to end with a newline. Otherwise the IDE will
+     * give a strange behaviour when adding new lines at the end of fragment editing.
+     */
+    ASTNode node = myHost.getNode().getFirstChildNode();
+    int offset = 0;
+    while (node != null && node.getElementType() != AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER) {
+      offset += node.getTextLength();
+      node = node.getTreeNext();
+    }
+    if (node == null) {
+      return TextRange.EMPTY_RANGE;
+    }
+    offset += node.getTextLength();
+    node = node.getTreeNext();
+    if (node == null) {
+      return TextRange.EMPTY_RANGE;
+    }
+    offset += node.getTextLength();
+    node = node.getTreeNext();
+    int start = offset; // start will be after the delimiter and its newline
+    while (node != null && node.getElementType() != AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER) {
+      offset += node.getTextLength();
+      node = node.getTreeNext();
+    }
+    if (node == null) {
+      return TextRange.EMPTY_RANGE;
+    }
+    int end = offset; // end will be just before the delimiter, but including the newline of the last code line
+    return TextRange.create(start, end);
   }
 
   @NotNull
@@ -194,8 +222,15 @@ public class AsciiDocListing extends CompositePsiElement implements PsiLanguageI
       if (newContent == null) {
         return null;
       }
-
-      return (AsciiDocListing) element.replace(AsciiDocPsiElementFactory.createListing(element.getProject(), Objects.requireNonNull(newContent)));
+      /* if the fenced content is edited, ensure that there is a newline at the end
+       otherwise it will break the fencing */
+      if (range.equals(element.createLiteralTextEscaper().getRelevantTextRange()) &&
+        !StringUtil.endsWithLineBreak(newContent)) {
+        newContent = newContent + "\n";
+      }
+      StringBuilder content = new StringBuilder(element.getText());
+      content.replace(range.getStartOffset(), range.getEndOffset(), newContent);
+      return (AsciiDocListing) element.replace(AsciiDocPsiElementFactory.createListing(element.getProject(), content.toString()));
     }
   }
 

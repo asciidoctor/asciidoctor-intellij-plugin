@@ -18,7 +18,6 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_BODY;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ID;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.CODE_FENCE_CONTENT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_OLDSTYLE;
@@ -218,8 +217,6 @@ public class AsciiDocParserImpl {
     String marker = myBuilder.getTokenText();
     IElementType type = myBuilder.getTokenType();
     next();
-    PsiBuilder.Marker myCodeBlockStart = beginBlock();
-    PsiBuilder.Marker myCodeBlockEnd = null;
     while (true) {
       if (myBuilder.eof()) {
         break;
@@ -242,24 +239,9 @@ public class AsciiDocParserImpl {
           next();
         }
         blockMacro.done(AsciiDocElementTypes.BLOCK_MACRO);
-        if (myCodeBlockEnd != null) {
-          myCodeBlockEnd.drop();
-        }
-        myCodeBlockEnd = myBuilder.mark();
         continue;
       }
-
-      if (myCodeBlockEnd != null) {
-        myCodeBlockEnd.drop();
-      }
       next();
-      myCodeBlockEnd = myBuilder.mark();
-    }
-    if (myCodeBlockEnd != null) {
-      myCodeBlockStart.doneBefore(CODE_FENCE_CONTENT, myCodeBlockEnd);
-      myCodeBlockEnd.drop();
-    } else {
-      myCodeBlockStart.drop();
     }
     myBlockStartMarker.done(AsciiDocElementTypes.LISTING);
   }
