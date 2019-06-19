@@ -14,129 +14,129 @@ import org.jetbrains.annotations.NotNull;
  * @author yole
  */
 public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
-  public static final TextAttributesKey ASCIIDOC_COMMENT = TextAttributesKey.createTextAttributesKey(
-      "ASCIIDOC.LINE_COMMENT",
-      DefaultLanguageHighlighterColors.LINE_COMMENT
+  static final TextAttributesKey ASCIIDOC_COMMENT = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC.LINE_COMMENT",
+    DefaultLanguageHighlighterColors.LINE_COMMENT
   );
 
-  public static final TextAttributesKey ASCIIDOC_LISTING_TEXT = TextAttributesKey.createTextAttributesKey(
-      "ASCIIDOC.LISTING_TEXT",
-      DefaultLanguageHighlighterColors.MARKUP_TAG
+  static final TextAttributesKey ASCIIDOC_LISTING_TEXT = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC.LISTING_TEXT",
+    DefaultLanguageHighlighterColors.MARKUP_TAG
   );
 
-  public static final TextAttributesKey ASCIIDOC_HEADING = TextAttributesKey.createTextAttributesKey(
-      "ASCIIDOC.HEADING",
-      DefaultLanguageHighlighterColors.KEYWORD
+  static final TextAttributesKey ASCIIDOC_HEADING = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC.HEADING",
+    DefaultLanguageHighlighterColors.KEYWORD
   );
 
-  public static final TextAttributesKey ASCIIDOC_BULLET = TextAttributesKey.createTextAttributesKey(
+  static final TextAttributesKey ASCIIDOC_BULLET = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC.BULLET",
     DefaultLanguageHighlighterColors.KEYWORD
   );
 
-  public static final TextAttributesKey ASCIIDOC_ENUMERATION = TextAttributesKey.createTextAttributesKey(
+  static final TextAttributesKey ASCIIDOC_ENUMERATION = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC.ENUMERATION",
     DefaultLanguageHighlighterColors.KEYWORD
   );
 
-  public static final TextAttributesKey ASCIIDOC_BLOCK_MACRO_ID = TextAttributesKey.createTextAttributesKey(
+  static final TextAttributesKey ASCIIDOC_BLOCK_MACRO_ID = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC.BLOCK_MACRO_ID",
     DefaultLanguageHighlighterColors.KEYWORD
   );
 
-  public static final TextAttributesKey ASCIIDOC_BOLD = TextAttributesKey.createTextAttributesKey(
+  static final TextAttributesKey ASCIIDOC_BOLD = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_BOLD");
 
-  public static final TextAttributesKey ASCIIDOC_ITALIC = TextAttributesKey.createTextAttributesKey(
+  static final TextAttributesKey ASCIIDOC_ITALIC = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_ITALIC");
 
-  public static final TextAttributesKey ASCIIDOC_BOLDITALIC = TextAttributesKey.createTextAttributesKey(
+  static final TextAttributesKey ASCIIDOC_BOLDITALIC = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_BOLDITALIC");
 
-  public static final TextAttributesKey ASCIIDOC_MONO = TextAttributesKey.createTextAttributesKey(
+  static final TextAttributesKey ASCIIDOC_MONO = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_MONO",
     DefaultLanguageHighlighterColors.MARKUP_TAG);
 
-  public static final TextAttributesKey ASCIIDOC_MONOBOLD = TextAttributesKey.createTextAttributesKey(
+  static final TextAttributesKey ASCIIDOC_MONOBOLD = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_MONOBOLD",
     DefaultLanguageHighlighterColors.MARKUP_TAG);
 
-  public static final TextAttributesKey ASCIIDOC_MONOITALIC = TextAttributesKey.createTextAttributesKey(
+  static final TextAttributesKey ASCIIDOC_MONOITALIC = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_MONOITALIC",
     DefaultLanguageHighlighterColors.MARKUP_TAG);
 
-  public static final TextAttributesKey ASCIIDOC_MONOBOLDITALIC = TextAttributesKey.createTextAttributesKey(
+  static final TextAttributesKey ASCIIDOC_MONOBOLDITALIC = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_MONOBOLDITALIC",
     DefaultLanguageHighlighterColors.MARKUP_TAG);
 
-  public static final TextAttributesKey ASCIIDOC_MARKER = TextAttributesKey.createTextAttributesKey(
+  static final TextAttributesKey ASCIIDOC_MARKER = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_MARKER",
     DefaultLanguageHighlighterColors.KEYWORD
   );
 
-  public static final TextAttributesKey ASCIIDOC_ATTRIBUTE = TextAttributesKey.createTextAttributesKey(
+  static final TextAttributesKey ASCIIDOC_ATTRIBUTE = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_ATTRIBUTE",
     DefaultLanguageHighlighterColors.MARKUP_ATTRIBUTE
   );
 
-  public static final TextAttributesKey ASCIIDOC_ATTRIBUTE_VAL = TextAttributesKey.createTextAttributesKey(
+  static final TextAttributesKey ASCIIDOC_ATTRIBUTE_VAL = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_ATTRIBUTE_VAL",
     DefaultLanguageHighlighterColors.STRING
   );
 
-  public static final ImmutableMap<IElementType, TextAttributesKey> ATTRIBUTES =
-      ImmutableMap.<IElementType, TextAttributesKey>builder()
-          .put(AsciiDocTokenTypes.LINE_COMMENT, ASCIIDOC_COMMENT)
-          .put(AsciiDocTokenTypes.BLOCK_COMMENT, ASCIIDOC_COMMENT)
-          .put(AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER, ASCIIDOC_COMMENT)
-          .put(AsciiDocTokenTypes.LISTING_TEXT, ASCIIDOC_LISTING_TEXT)
-          .put(AsciiDocTokenTypes.HEADING, ASCIIDOC_HEADING)
-          .put(AsciiDocTokenTypes.HEADING_OLDSTYLE, ASCIIDOC_HEADING)
-          .put(AsciiDocTokenTypes.BOLD_END, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.BOLD_START, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.BOLD, ASCIIDOC_BOLD)
-          .put(AsciiDocTokenTypes.ITALIC_END, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.ITALIC_START, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.ITALIC, ASCIIDOC_ITALIC)
-          .put(AsciiDocTokenTypes.BOLDITALIC, ASCIIDOC_BOLDITALIC)
-          .put(AsciiDocTokenTypes.MONOBOLD, ASCIIDOC_MONOBOLD)
-          .put(AsciiDocTokenTypes.MONOITALIC, ASCIIDOC_MONOITALIC)
-          .put(AsciiDocTokenTypes.MONOBOLDITALIC, ASCIIDOC_MONOBOLDITALIC)
-          .put(AsciiDocTokenTypes.MONO_END, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.MONO_START, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.MONO, ASCIIDOC_MONO)
-          .put(AsciiDocTokenTypes.BLOCK_MACRO_ID, ASCIIDOC_BLOCK_MACRO_ID)
-          .put(AsciiDocTokenTypes.BULLET, ASCIIDOC_BULLET)
-          .put(AsciiDocTokenTypes.ENUMERATION, ASCIIDOC_ENUMERATION)
-          .put(AsciiDocTokenTypes.REFSTART, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.REFEND, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.REF, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.REFFILE, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.LINKSTART, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.LINKFILE, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.LINKANCHOR, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.LINKTEXT_START, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.LINKTEXT, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.LINKEND, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.BLOCKIDSTART, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.BLOCKIDEND, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.BLOCKID, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.BLOCK_DELIMITER, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.SEPARATOR, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.ATTRIBUTE_NAME_START, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.ATTRIBUTE_NAME, ASCIIDOC_ATTRIBUTE)
-          .put(AsciiDocTokenTypes.ATTRIBUTE_NAME_END, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.ATTRIBUTE_VAL, ASCIIDOC_ATTRIBUTE_VAL)
-          .put(AsciiDocTokenTypes.ATTRIBUTE_REF_START, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.ATTRIBUTE_REF, ASCIIDOC_ATTRIBUTE)
-          .put(AsciiDocTokenTypes.ATTRIBUTE_REF_END, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.PAGEBREAK, ASCIIDOC_MARKER)
-          .put(AsciiDocTokenTypes.HORIZONTALRULE, ASCIIDOC_MARKER)
-          .build();
+  private static final ImmutableMap<IElementType, TextAttributesKey> ATTRIBUTES =
+    ImmutableMap.<IElementType, TextAttributesKey>builder()
+      .put(AsciiDocTokenTypes.LINE_COMMENT, ASCIIDOC_COMMENT)
+      .put(AsciiDocTokenTypes.BLOCK_COMMENT, ASCIIDOC_COMMENT)
+      .put(AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER, ASCIIDOC_COMMENT)
+      .put(AsciiDocTokenTypes.LISTING_TEXT, ASCIIDOC_LISTING_TEXT)
+      .put(AsciiDocTokenTypes.HEADING, ASCIIDOC_HEADING)
+      .put(AsciiDocTokenTypes.HEADING_OLDSTYLE, ASCIIDOC_HEADING)
+      .put(AsciiDocTokenTypes.BOLD_END, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.BOLD_START, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.BOLD, ASCIIDOC_BOLD)
+      .put(AsciiDocTokenTypes.ITALIC_END, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.ITALIC_START, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.ITALIC, ASCIIDOC_ITALIC)
+      .put(AsciiDocTokenTypes.BOLDITALIC, ASCIIDOC_BOLDITALIC)
+      .put(AsciiDocTokenTypes.MONOBOLD, ASCIIDOC_MONOBOLD)
+      .put(AsciiDocTokenTypes.MONOITALIC, ASCIIDOC_MONOITALIC)
+      .put(AsciiDocTokenTypes.MONOBOLDITALIC, ASCIIDOC_MONOBOLDITALIC)
+      .put(AsciiDocTokenTypes.MONO_END, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.MONO_START, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.MONO, ASCIIDOC_MONO)
+      .put(AsciiDocTokenTypes.BLOCK_MACRO_ID, ASCIIDOC_BLOCK_MACRO_ID)
+      .put(AsciiDocTokenTypes.BULLET, ASCIIDOC_BULLET)
+      .put(AsciiDocTokenTypes.ENUMERATION, ASCIIDOC_ENUMERATION)
+      .put(AsciiDocTokenTypes.REFSTART, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.REFEND, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.REF, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.REFFILE, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.LINKSTART, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.LINKFILE, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.LINKANCHOR, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.LINKTEXT_START, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.LINKTEXT, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.LINKEND, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.BLOCKIDSTART, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.BLOCKIDEND, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.BLOCKID, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.BLOCK_DELIMITER, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.SEPARATOR, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.ATTRIBUTE_NAME_START, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.ATTRIBUTE_NAME, ASCIIDOC_ATTRIBUTE)
+      .put(AsciiDocTokenTypes.ATTRIBUTE_NAME_END, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.ATTRIBUTE_VAL, ASCIIDOC_ATTRIBUTE_VAL)
+      .put(AsciiDocTokenTypes.ATTRIBUTE_REF_START, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.ATTRIBUTE_REF, ASCIIDOC_ATTRIBUTE)
+      .put(AsciiDocTokenTypes.ATTRIBUTE_REF_END, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.PAGEBREAK, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.HORIZONTALRULE, ASCIIDOC_MARKER)
+      .build();
 
   @NotNull
   @Override
