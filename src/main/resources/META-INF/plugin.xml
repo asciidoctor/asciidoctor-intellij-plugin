@@ -175,6 +175,8 @@
     <lang.findUsagesProvider language="AsciiDoc"
                              implementationClass="org.asciidoc.intellij.findUsages.AsciiDocFindUsagesProvider"/>
     <psi.referenceContributor implementation="org.asciidoc.intellij.findUsages.AsciiDocReferenceContributor"/>
+    <completion.contributor language="AsciiDoc" implementationClass="org.asciidoc.intellij.completion.AsciiDocCompletionContributor"/>
+    <lang.documentationProvider language="AsciiDoc" implementationClass="org.asciidoc.intellij.AsciiDocDocumentationProvider"/>
     <httpRequestHandler implementation="org.asciidoc.intellij.editor.javafx.PreviewStaticServer"/>
     <multiHostInjector implementation="org.asciidoc.intellij.injection.CodeFenceInjector"/>
     <completion.contributor language="AsciiDoc"

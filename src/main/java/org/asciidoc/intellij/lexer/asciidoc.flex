@@ -339,7 +339,13 @@ ATTRIBUTE_REF_END = "}"
 
   {BULLET} / {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BULLET; }
   {ENUMERATION} / {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ENUMERATION; }
-
+  {ATTRIBUTE_NAME_START} / [^:\n \t]* {AUTOCOMPLETE} {
+    if (!isEscaped()) {
+      yybegin(ATTRIBUTE_DECL); return AsciiDocTokenTypes.ATTRIBUTE_NAME_START;
+    } else {
+      return textFormat();
+    }
+  }
   /* a blank line, it separates blocks. Don't return YYINITIAL here, as writing on a blank line might change the meaning
   of the previous blocks combined (for example there is now an italic formatting spanning the two combined blocks) */
   "\w"* "\n"           { resetFormatting();
@@ -554,6 +560,13 @@ ATTRIBUTE_REF_END = "}"
   {LINKSTART} / [^\[\n \t]* {AUTOCOMPLETE} {
                          if (!isEscaped()) {
                            yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART;
+                         } else {
+                           return textFormat();
+                         }
+                       }
+  {ATTRIBUTE_REF_START} / [^}\n ]* {AUTOCOMPLETE} {
+                         if (!isEscaped()) {
+                           yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
                          } else {
                            return textFormat();
                          }

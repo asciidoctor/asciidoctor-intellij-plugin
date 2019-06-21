@@ -11,7 +11,8 @@ public class AsciiDocWordsScanner extends DefaultWordsScanner {
   public AsciiDocWordsScanner() {
     super(new AsciiDocLexer(),
       // identifiers
-      TokenSet.create(AsciiDocTokenTypes.BLOCKID, AsciiDocTokenTypes.REF, AsciiDocTokenTypes.LINKANCHOR),
+      TokenSet.create(AsciiDocTokenTypes.BLOCKID, AsciiDocTokenTypes.REF, AsciiDocTokenTypes.LINKANCHOR,
+        AsciiDocTokenTypes.ATTRIBUTE_REF),
       // comments
       TokenSet.create(AsciiDocTokenTypes.BLOCK_COMMENT, AsciiDocTokenTypes.LINE_COMMENT),
       // literals
