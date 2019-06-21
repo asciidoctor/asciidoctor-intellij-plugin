@@ -1,11 +1,12 @@
 package org.asciidoc.intellij.parser;
 
-import com.intellij.lang.PsiBuilder;
-import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Stack;
-
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_NAME;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_NAME_END;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_NAME_START;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_REF;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_REF_END;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_REF_START;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_VAL;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKID;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDEND;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDSTART;
@@ -38,6 +39,10 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SEPARATOR;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TITLE;
+import com.intellij.lang.PsiBuilder;
+import com.intellij.psi.tree.IElementType;
+import java.util.Stack;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
@@ -163,6 +168,22 @@ public class AsciiDocParserImpl {
           next();
         }
         blockAttrsMarker.done(AsciiDocElementTypes.LINK);
+        continue;
+      } else if (at(ATTRIBUTE_NAME_START)) {
+        PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
+        next();
+        while (at(ATTRIBUTE_NAME) || at(ATTRIBUTE_NAME_END) || at(ATTRIBUTE_VAL)) {
+          next();
+        }
+        blockAttrsMarker.done(AsciiDocElementTypes.ATTRIBUTE_DECLARATION);
+        continue;
+      } else if (at(ATTRIBUTE_REF_START)) {
+        PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
+        next();
+        while (at(ATTRIBUTE_REF) || at(ATTRIBUTE_REF_END)) {
+          next();
+        }
+        blockAttrsMarker.done(AsciiDocElementTypes.ATTRIBUTE_REF);
         continue;
       }
 
