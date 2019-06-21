@@ -47,14 +47,20 @@ import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -78,6 +84,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       return new StringBuilder()
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("scrollToElement.js")).append("\"></script>\n")
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processLinks.js")).append("\"></script>\n")
+        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processImages.js")).append("\"></script>\n")
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("pickSourceLine.js")).append("\"></script>\n")
         .append("<script type=\"text/x-mathjax-config\">\n" +
           "MathJax.Hub.Config({\n" +
@@ -498,6 +505,47 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       );
     }
 
+    public void saveImage(@NotNull String path) {
+      String parent = imagesPath.getFileName().toString();
+      String subPath = path.substring(path.indexOf(parent) + parent.length() + 1);
+      Path imagePath = imagesPath.resolve(subPath);
+      if (imagePath.toFile().exists()) {
+        File file = imagePath.toFile();
+        JFileChooser fc = new JFileChooser();
+        String fileName = imagePath.getFileName().toString();
+        String extension = "";
+        int i = fileName.lastIndexOf('.');
+        if (i > 0) {
+          extension = fileName.substring(i);
+        }
+        fc.setSelectedFile(new File("image" + extension));
+        int retrieval = fc.showSaveDialog(null);
+        if (retrieval == JFileChooser.APPROVE_OPTION) {
+          try {
+            saveFile(imagePath, fc.getSelectedFile().toPath());
+          } catch (IOException ex) {
+            String message = "Can't save file: " + ex.getMessage();
+            Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+              .createNotification("Error in plugin", message, NotificationType.ERROR, null);
+            // increase event log counter
+            notification.setImportant(true);
+            Notifications.Bus.notify(notification);
+          }
+        }
+      }
+    }
+
+    private void saveFile(Path sourceFilePath, Path destinationFilePath) throws IOException {
+      try {
+        Files.copy(sourceFilePath, destinationFilePath);
+      } catch (FileAlreadyExistsException ex) {
+        int response = JOptionPane.showConfirmDialog(null, "File already exists. Do you want to replace it?");
+        if (response == JOptionPane.OK_OPTION) {
+          Files.copy(sourceFilePath, destinationFilePath, StandardCopyOption.REPLACE_EXISTING);
+        }
+      }
+    }
+
     public void log(@Nullable String text) {
       Logger.getInstance(JavaPanelBridge.class).warn(text);
     }
@@ -520,6 +568,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
           "if ('__IntelliJTools' in window) {" +
             "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
             "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ", " + offset + ");" +
+            "__IntelliJTools.processImages(); && __IntelliJTools.processImages();" +
             "}"
         );
       }
