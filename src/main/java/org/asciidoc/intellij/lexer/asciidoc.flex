@@ -309,10 +309,10 @@ ATTRIBUTE_REF_END = "}"
           yypushback(yylength()); yybegin(SINGLELINE);
         }
       }
-  {LISTING_BLOCK_DELIMITER} / "\n" { resetFormatting(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
-  {COMMENT_BLOCK_DELIMITER} / "\n" { resetFormatting(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
-  {PASSTRHOUGH_BLOCK_DELIMITER} / "\n" { resetFormatting(); yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
-  {EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER} / "\n" { resetFormatting();
+  {LISTING_BLOCK_DELIMITER} $ { resetFormatting(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
+  {COMMENT_BLOCK_DELIMITER} $ { resetFormatting(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
+  {PASSTRHOUGH_BLOCK_DELIMITER} $ { resetFormatting(); yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
+  ({EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER}) $ { resetFormatting();
                             String delimiter = yytext().toString().trim();
                             if(blockStack.size() > 0 && blockStack.peek().equals(delimiter)) {
                               blockStack.pop();
@@ -322,9 +322,9 @@ ATTRIBUTE_REF_END = "}"
                             yybegin(INSIDE_LINE);
                             return AsciiDocTokenTypes.BLOCK_DELIMITER;
                           }
-  {PAGEBREAK} / "\n" { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.PAGEBREAK; }
-  {HORIZONTALRULE} / "\n" { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.HORIZONTALRULE; }
-  {LITERAL_BLOCK_DELIMITER} / "\n" { resetFormatting(); yybegin(LITERAL_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER; }
+  {PAGEBREAK} $ { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.PAGEBREAK; }
+  {HORIZONTALRULE} $ { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.HORIZONTALRULE; }
+  {LITERAL_BLOCK_DELIMITER} $ { resetFormatting(); yybegin(LITERAL_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER; }
 
   {ANCHORSTART} / [^\]\n]+ {ANCHOREND} { resetFormatting(); yybegin(ANCHORID); return AsciiDocTokenTypes.BLOCKIDSTART; }
   {LINE_COMMENT}       { return AsciiDocTokenTypes.LINE_COMMENT; }
@@ -669,7 +669,7 @@ ATTRIBUTE_REF_END = "}"
 }
 
 <LISTING_BLOCK> {
-  {LISTING_BLOCK_DELIMITER} / "\n" {
+  {LISTING_BLOCK_DELIMITER} $ {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
       yyinitialIfNotInBlock();
       return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
@@ -685,7 +685,7 @@ ATTRIBUTE_REF_END = "}"
 }
 
 <COMMENT_BLOCK> {
-  {COMMENT_BLOCK_DELIMITER} / "\n" {
+  {COMMENT_BLOCK_DELIMITER} $ {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
       yyinitialIfNotInBlock();
       return AsciiDocTokenTypes.BLOCK_COMMENT;
@@ -706,7 +706,7 @@ ATTRIBUTE_REF_END = "}"
 }
 
 <PASSTRHOUGH_BLOCK> {
-  {PASSTRHOUGH_BLOCK_DELIMITER} / "\n" {
+  {PASSTRHOUGH_BLOCK_DELIMITER} $ {
       if (yytext().toString().trim().length() == blockDelimiterLength) {
         yybegin(MULTILINE);
         return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
@@ -722,7 +722,7 @@ ATTRIBUTE_REF_END = "}"
 }
 
 <LITERAL_BLOCK> {
-  {LITERAL_BLOCK_DELIMITER} / "\n" {
+  {LITERAL_BLOCK_DELIMITER} $ {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(MULTILINE);
       return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER;
