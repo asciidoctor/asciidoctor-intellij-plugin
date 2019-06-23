@@ -77,8 +77,12 @@ It contains the same elements like in the structure view for the cursor position
 
 For `include::[]` and `image::[]` block macros the keys kbd:[Ctrl+Click] and kbd:[Ctrl+B] navigate to the referenced file.
 
-For references (like `\<<id>>`) the keys kbd:[Ctrl+Click] and kbd:[Ctrl+B] navigate to the reference (like `\[[id]]`).
-"Find Usages" (kbd:[Alt+F7]) will find usages of a reference and allows navigation.
+For references (like `\<<id>>`) the keys kbd:[Ctrl+Click] and kbd:[Ctrl+B] navigate to the reference (like `\[[id]]`). This works similarly for attributes (`\{attrib}` and `:attrib:`).
+"`Find Usages`" (kbd:[Alt+F7]) will find usages of a reference and allows navigation.
+
+// see: AsciiDocDocumentationProvider
+The user can show quick documentation for the element at the cursor's position using kbd:[Ctrl+Q].
+At the moments this works for attributes (`\{attrib}` and `:attrib:`) both in the editor and when using autocomplete.
 
 The plugin highlights matching braces including symmetric formatting for bold, italic and monospace.
 
@@ -114,7 +118,7 @@ For example: a `[source,java` receives a closing bracket and two listing separat
 // see: AsciiDocBraceMatcher
 When the user opens a quote or a bracket, the plugin automatically adds a closing quote if it followed by whitespace or a closing bracket.
 
-For references and includes it provides auto-completion using kbd:[Ctrl+Space].
+For references, attributes and images, and several block macros like include, image and diagrams it provides auto-completion using kbd:[Ctrl+Space].
 References support renaming within a project.
 
 There are several live templates included.

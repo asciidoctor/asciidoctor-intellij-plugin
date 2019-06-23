@@ -10,10 +10,12 @@ import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
 import icons.AsciiDocIcons;
-import java.util.ArrayList;
-import java.util.List;
+import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
   private String key;
@@ -57,10 +59,21 @@ public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiE
           value = " (" + value + ")";
         }
         String attributeName = declaration.getAttributeName();
-        variants.add(LookupElementBuilder.create(attributeName + "}").
-          withIcon(AsciiDocIcons.ASCIIDOC_ICON).
-          withPresentableText(attributeName + value).
-          withTypeText(declaration.getContainingFile().getName())
+        variants.add(LookupElementBuilder.create(attributeName)
+          .withIcon(AsciiDocIcons.ASCIIDOC_ICON)
+          .withPresentableText(attributeName + value)
+          .withTypeText(declaration.getContainingFile().getName())
+          .withInsertHandler((insertionContext, item) -> {
+            // the finalizing } hasn't been entered yet, autocomplete it here
+            int offset = insertionContext.getStartOffset();
+            PsiElement element = insertionContext.getFile().findElementAt(offset);
+            if (element != null && element.getNode() != null && element.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_REF) {
+              offset += attributeName.length();
+              insertionContext.getDocument().insertString(offset, "}");
+              offset += 1;
+              insertionContext.getEditor().getCaretModel().moveToOffset(offset);
+            }
+          })
         );
       }
     }
