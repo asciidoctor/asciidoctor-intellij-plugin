@@ -31,6 +31,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -190,6 +191,14 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
           myWebView.setContextMenuEnabled(false);
           myWebView.setZoom(JBUI.scale(1.f));
           myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>"));
+
+          myWebView.addEventFilter(ScrollEvent.SCROLL, scrollEvent -> {
+            if (scrollEvent.isControlDown()) {
+              float zoom = (float) (scrollEvent.getDeltaY() > 0 ? 1.1 : 0.9);
+              myWebView.setZoom(JBUI.scale((float) (myWebView.getZoom() * zoom)));
+              scrollEvent.consume();
+            }
+          });
 
           final WebEngine engine = myWebView.getEngine();
           engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);

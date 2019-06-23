@@ -143,6 +143,8 @@ When the user clicks on an external URL, the preview opens it in an external bro
 
 When the user clicks on a relative link within the project (usually a `\link:[]` reference), the preview opens the referenced file in a new editor.
 
+The user can zoom in and out of the preview by holding kbd:[Ctrl] and scrolling the mouse wheel up or down.
+
 === Advanced
 
 ==== Configuration File
