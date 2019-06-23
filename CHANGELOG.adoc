@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.28.4 (work in progress)
+=== 0.28.4 (preview, available from Github releases)
 
 - autocompletion for attributes and attribute references (`:attr:` and `\{attr}`) (thanks to @bbrenne) (#277)
 - renaming and find-usage for attribute names (#243)
