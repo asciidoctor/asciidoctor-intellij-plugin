@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.IncorrectOperationException;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
@@ -34,12 +35,24 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
 
     try {
       if (atCaret.getNode() != null) {
-
+        if (atCaret.getTextRange().getEndOffset() == editor.getDocument().getTextLength()
+          && !(atCaret instanceof PsiWhiteSpace)) {
+          // as new line is necessary at end of file for delimiters to be recognized
+          String textToInsert = "\n";
+          doc.insertString(atCaret.getTextRange().getEndOffset(), textToInsert);
+          commitChanges(project, editor, editor.getCaretModel().getOffset());
+          // get updated PsiElement as it might have changed due to the newline
+          atCaret = getStatementAtCaret(editor, psiFile);
+          if (atCaret == null || atCaret.getNode() == null) {
+            return result;
+          }
+          result = true;
+        }
         if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER
           || atCaret.getNode().getElementType() == AsciiDocTokenTypes.BLOCK_DELIMITER
           || atCaret.getNode().getElementType() == AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER
           || atCaret.getNode().getElementType() == AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER) {
-          String textToInsert = "\n\n" + atCaret.getText() + "\n";
+          String textToInsert = "\n\n" + atCaret.getText();
           doc.insertString(atCaret.getTextRange().getEndOffset(), textToInsert);
           caretTo = atCaret.getTextOffset() + atCaret.getTextLength() + 1;
           commitChanges(project, editor, caretTo);
@@ -70,6 +83,9 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
           ASTNode[] attr = atCaret.getParent().getNode().getChildren(TokenSet.create(AsciiDocTokenTypes.BLOCK_ATTR_NAME));
           if (attr.length > 0 && "source".equals(attr[0].getText())) {
             String textToInsert = "\n----\n\n----";
+            if (atCaret.getTextRange().getEndOffset() == editor.getDocument().getTextLength()) {
+              textToInsert = textToInsert + "\n";
+            }
             doc.insertString(atCaret.getTextRange().getEndOffset(), textToInsert);
             caretTo = atCaret.getTextOffset() + atCaret.getTextLength() + 6;
             commitChanges(project, editor, caretTo);
@@ -77,6 +93,9 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
           }
           if (attr.length > 0 && "plantuml".equals(attr[0].getText())) {
             String textToInsert = "\n----\n@startuml\n\n@enduml\n----";
+            if (atCaret.getTextRange().getEndOffset() == editor.getDocument().getTextLength()) {
+              textToInsert = textToInsert + "\n";
+            }
             doc.insertString(atCaret.getTextRange().getEndOffset(), textToInsert);
             caretTo = atCaret.getTextOffset() + atCaret.getTextLength() + 16;
             commitChanges(project, editor, caretTo);
