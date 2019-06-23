@@ -80,7 +80,7 @@ publishPlugin {
 
 dependencies {
   compile 'org.asciidoctor:asciidoctorj-diagram:1.5.18'
-  compile 'org.asciidoctor:asciidoctorj:2.0.0'
+  compile 'org.asciidoctor:asciidoctorj:2.1.0'
   compile 'commons-io:commons-io:2.4'
   compile 'nl.jworks.markdown_to_asciidoc:markdown_to_asciidoc:1.1'
   testCompile 'junit:junit:4.12'
