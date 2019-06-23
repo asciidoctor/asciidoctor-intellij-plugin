@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - renaming and find-usage for attribute names (#243)
 - upgrade to AsciidoctorJ 2.1.0 and Asciidoctor 2.0.10
 - statement completion adds newline if at end of file (#276)
+- listing and other delimiters recognized at end of file (#276)
 
 === 0.28.3 (preview, available from Github releases)
 

@@ -303,9 +303,20 @@ ATTRIBUTE_REF_END = "}"
           yypushback(yylength()); yybegin(SINGLELINE);
         }
       }
+
+  // triple rules to handle EOF
   {LISTING_BLOCK_DELIMITER} $ { resetFormatting(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
+  {LISTING_BLOCK_DELIMITER} / [^\n \t] { yypushback(yylength()); yybegin(INSIDE_LINE);  }
+  {LISTING_BLOCK_DELIMITER} { resetFormatting(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
+
   {COMMENT_BLOCK_DELIMITER} $ { resetFormatting(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
+  {COMMENT_BLOCK_DELIMITER} / [^\n \t] { yypushback(yylength()); yybegin(INSIDE_LINE);  }
+  {COMMENT_BLOCK_DELIMITER} { resetFormatting(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
+
   {PASSTRHOUGH_BLOCK_DELIMITER} $ { resetFormatting(); yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
+  {PASSTRHOUGH_BLOCK_DELIMITER} / [^\n \t] { yypushback(yylength()); yybegin(INSIDE_LINE);  }
+  {PASSTRHOUGH_BLOCK_DELIMITER} { resetFormatting(); yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
+
   ({EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER}) $ { resetFormatting();
                             String delimiter = yytext().toString().trim();
                             if(blockStack.size() > 0 && blockStack.peek().equals(delimiter)) {
@@ -316,9 +327,25 @@ ATTRIBUTE_REF_END = "}"
                             yybegin(INSIDE_LINE);
                             return AsciiDocTokenTypes.BLOCK_DELIMITER;
                           }
+  // don't put {EXAMPLE_BLOCK_DELIMITER} here, as this would prevent recognising a header
+  ({QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER}) / [^\n \t] { yypushback(yylength()); yybegin(INSIDE_LINE); }
+  ({EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER})  { resetFormatting();
+                            String delimiter = yytext().toString().trim();
+                            if(blockStack.size() > 0 && blockStack.peek().equals(delimiter)) {
+                              blockStack.pop();
+                            } else {
+                              blockStack.push(delimiter);
+                            }
+                            yybegin(INSIDE_LINE);
+                            return AsciiDocTokenTypes.BLOCK_DELIMITER;
+                          }
+
+  {LITERAL_BLOCK_DELIMITER} $ { resetFormatting(); yybegin(LITERAL_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER; }
+  {LITERAL_BLOCK_DELIMITER} / [^\n \t] { yypushback(yylength()); yybegin(INSIDE_LINE); }
+  {LITERAL_BLOCK_DELIMITER} { resetFormatting(); yybegin(LITERAL_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER; }
+
   {PAGEBREAK} $ { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.PAGEBREAK; }
   {HORIZONTALRULE} $ { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.HORIZONTALRULE; }
-  {LITERAL_BLOCK_DELIMITER} $ { resetFormatting(); yybegin(LITERAL_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER; }
 
   {ANCHORSTART} / [^\]\n]+ {ANCHOREND} { resetFormatting(); yybegin(ANCHORID); return AsciiDocTokenTypes.BLOCKIDSTART; }
   {LINE_COMMENT}       { return AsciiDocTokenTypes.LINE_COMMENT; }
@@ -681,7 +708,19 @@ ATTRIBUTE_REF_END = "}"
       yyinitialIfNotInBlock();
       return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
     } else {
-      return AsciiDocTokenTypes.LISTING_TEXT;
+      yybegin(LISTING_BLOCK); return AsciiDocTokenTypes.LISTING_TEXT;
+    }
+  }
+  // duplicating to handle end of file content
+  {LISTING_BLOCK_DELIMITER} / [^\n \t] {
+    yybegin(LISTING_BLOCK); return AsciiDocTokenTypes.LISTING_TEXT;
+  }
+  {LISTING_BLOCK_DELIMITER} {
+    if (yytext().toString().trim().length() == blockDelimiterLength) {
+      yyinitialIfNotInBlock();
+      return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
+    } else {
+      yybegin(LISTING_BLOCK); return AsciiDocTokenTypes.LISTING_TEXT;
     }
   }
 }
@@ -697,7 +736,17 @@ ATTRIBUTE_REF_END = "}"
       yyinitialIfNotInBlock();
       return AsciiDocTokenTypes.BLOCK_COMMENT;
     } else {
+      yybegin(INSIDE_COMMENT_BLOCK_LINE); return AsciiDocTokenTypes.BLOCK_COMMENT;
+    }
+  }
+  // duplicating to handle end of file content
+  {COMMENT_BLOCK_DELIMITER} / [^\n \t] { yybegin(INSIDE_COMMENT_BLOCK_LINE); return AsciiDocTokenTypes.BLOCK_COMMENT; }
+  {COMMENT_BLOCK_DELIMITER} {
+    if (yytext().toString().trim().length() == blockDelimiterLength) {
+      yyinitialIfNotInBlock();
       return AsciiDocTokenTypes.BLOCK_COMMENT;
+    } else {
+      yybegin(INSIDE_COMMENT_BLOCK_LINE); return AsciiDocTokenTypes.BLOCK_COMMENT;
     }
   }
 }
@@ -718,7 +767,17 @@ ATTRIBUTE_REF_END = "}"
         yybegin(MULTILINE);
         return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
       } else {
-        return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT;
+        yybegin(INSIDE_PASSTRHOUGH_BLOCK_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT;
+      }
+    }
+  // duplicating to handle end of file content
+  {PASSTRHOUGH_BLOCK_DELIMITER} / [^\n \t] { yybegin(INSIDE_PASSTRHOUGH_BLOCK_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
+  {PASSTRHOUGH_BLOCK_DELIMITER} {
+      if (yytext().toString().trim().length() == blockDelimiterLength) {
+        yybegin(MULTILINE);
+        return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
+      } else {
+        yybegin(INSIDE_PASSTRHOUGH_BLOCK_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT;
       }
     }
 }
@@ -734,18 +793,29 @@ ATTRIBUTE_REF_END = "}"
       yybegin(MULTILINE);
       return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER;
     } else {
-      return AsciiDocTokenTypes.LITERAL_BLOCK;
+      yybegin(INSIDE_LITERAL_BLOCK_LINE); return AsciiDocTokenTypes.LITERAL_BLOCK;
     }
   }
-  // include is the only allowed block macro in this type of block
-}
-
-<LITERAL_BLOCK, LISTING_BLOCK, PASSTRHOUGH_BLOCK> {
-  "include::" / [^\[\n]* "[" [^\]\n]* "]" { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
-  "include::" / [^\[\n]* {AUTOCOMPLETE} { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  // duplicating to handle end of file content
+  {LITERAL_BLOCK_DELIMITER} / [^\n \t] { yybegin(INSIDE_LITERAL_BLOCK_LINE); return AsciiDocTokenTypes.LITERAL_BLOCK; }
+  {LITERAL_BLOCK_DELIMITER} {
+    if (yytext().toString().trim().length() == blockDelimiterLength) {
+      yybegin(MULTILINE);
+      return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER;
+    } else {
+      yybegin(INSIDE_LITERAL_BLOCK_LINE); return AsciiDocTokenTypes.LITERAL_BLOCK;
+    }
+  }
 }
 
 <LITERAL_BLOCK, INSIDE_LITERAL_BLOCK_LINE> {
   "\n"                 { yybegin(LITERAL_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
   [^]                  { yybegin(INSIDE_LITERAL_BLOCK_LINE); return AsciiDocTokenTypes.LITERAL_BLOCK; }
 }
+
+// include is the only allowed block macro in these types of block
+<LITERAL_BLOCK, LISTING_BLOCK, PASSTRHOUGH_BLOCK> {
+  "include::" / [^\[\n]* "[" [^\]\n]* "]" { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  "include::" / [^\[\n]* {AUTOCOMPLETE} { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+}
+

@@ -229,6 +229,28 @@ A slash (`/`) separates the matching pattern from the look ahead.
 ----
 --
 
+End of line and end of file parsing::
++
+--
+JFlex supports `$` to describe the end of a line as look-ahead.
+But this doesn't work at the end of a file.
+To match the end of a file, the lexer uses the fact that JFlex will match the longest rule first (including any look-ahead rules).
+So first match the end of a line, then when not at the end of a line (of the same length), and then the end of the file (the shortest rule).
+
+.Example: matching a delimiter at the end of the file
+[source]
+----
+// delimiter at end of line
+{LISTING_BLOCK_DELIMITER} $ { /* ... */ }
+
+// delimiter not at end of line
+{LISTING_BLOCK_DELIMITER} / [^\n \t] { /* ... */ }
+
+// delimiter at end of file (shorter match than the two above)
+{LISTING_BLOCK_DELIMITER} { /* ... */ }
+----
+--
+
 Stateful parser::
 +
 --
