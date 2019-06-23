@@ -47,11 +47,8 @@ import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -513,12 +510,16 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         File file = imagePath.toFile();
         JFileChooser fc = new JFileChooser();
         String fileName = imagePath.getFileName().toString();
-        String extension = "";
-        int i = fileName.lastIndexOf('.');
-        if (i > 0) {
-          extension = fileName.substring(i);
+        // set static file name if image name has been generated dynamically
+        if (fileName.matches("diag-[0-9a-f]{32}\\.[a-z]+")) {
+          String extension = "";
+          int i = fileName.lastIndexOf('.');
+          if (i > 0) {
+            extension = fileName.substring(i);
+          }
+          fileName = "image" + extension;
         }
-        fc.setSelectedFile(new File("image" + extension));
+        fc.setSelectedFile(new File(fileName));
         int retrieval = fc.showSaveDialog(null);
         if (retrieval == JFileChooser.APPROVE_OPTION) {
           try {
@@ -568,7 +569,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
           "if ('__IntelliJTools' in window) {" +
             "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
             "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ", " + offset + ");" +
-            "__IntelliJTools.processImages(); && __IntelliJTools.processImages();" +
+            "__IntelliJTools.processImages && __IntelliJTools.processImages();" +
             "}"
         );
       }
