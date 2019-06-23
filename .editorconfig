@@ -21,3 +21,7 @@ indent_size = 2
 
 [build.gradle]
 indent_size = 2
+
+[*.properties]
+# Java properties files should be encoded latin1 (aka iso8859-1)
+charset = latin1

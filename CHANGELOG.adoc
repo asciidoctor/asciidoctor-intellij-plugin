@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.28.4 (work in progress)
 
-- autocompletion for attributes and attribute references (`:attr:` and `\{attr}`)
+- autocompletion for attributes and attribute references (`:attr:` and `\{attr}`) (thanks to @bbrenne) (#277)
 
 === 0.28.3 (preview, available from Github releases)
 
