@@ -6,6 +6,7 @@ import com.intellij.lang.findUsages.FindUsagesProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import org.asciidoc.intellij.parser.AsciiDocWordsScanner;
+import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
 import org.asciidoc.intellij.psi.AsciiDocBlockId;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +27,8 @@ public class AsciiDocFindUsagesProvider implements FindUsagesProvider {
   public String getType(@NotNull PsiElement element) {
     if (element instanceof AsciiDocBlockId) {
       return "AsciiDoc ID";
+    } else if (element instanceof AsciiDocAttributeDeclarationName) {
+      return "AsciiDoc Attribute Name";
     } else {
       return "";
     }

@@ -189,9 +189,9 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("declaration should have name 'myattr'", "myattr", declaration.getAttributeName());
     assertNotNull("reference should exist", reference);
     assertEquals("reference should have one reference", 1, reference.getReferences().length);
-    AsciiDocAttributeDeclaration resolved = (AsciiDocAttributeDeclaration) reference.getReferences()[0].resolve();
+    AsciiDocAttributeDeclarationName resolved = (AsciiDocAttributeDeclarationName) reference.getReferences()[0].resolve();
     assertNotNull("reference should resolve", resolved);
-    assertEquals("reference should resolve to 'myattr'", "myattr", resolved.getAttributeName());
+    assertEquals("reference should resolve to 'myattr'", "myattr", resolved.getName());
   }
 
   private PsiFile configureByAsciiDoc(String text) {

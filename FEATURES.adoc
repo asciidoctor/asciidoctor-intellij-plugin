@@ -9,7 +9,7 @@ This guideline should lead to a style that is comprehensible to the user.
 
 Don't assume people are developers and have worked with IntelliJ before -- this should be for writers or business analysts as well, and also for first-time IntelliJ users.
 
-Naming the actor, the active voice and the present tense will make it easier for non-native speakers to understand this document.
+Naming the actor, the active voice and the present tense makes it easier for non-native speakers to understand this document.
 Adding the shortcuts should help users new to IntelliJ.
 
 == Check lists for writing content
@@ -52,7 +52,7 @@ You can even create a pull request for this document!
 ** editor with syntax highlighting (per default on the left) and
 ** live preview (per default on the right)
 * Toolbar and context menu for basic formatting and to create tables
-* Refactor Markdown to AsciiDoc: Right click on a file, or use the Refactor menu, and plugin will replace the Markdown document by the AsciiDoc equivalent. Also supports undo, in case the user is not happy with the result!
+* Refactor Markdown to AsciiDoc: Right click on a file, or use the Refactor menu, and plugin replaces the Markdown document by the AsciiDoc equivalent. Also supports undo, in case the user is not happy with the result!
 
 === Editor
 
@@ -78,7 +78,7 @@ It contains the same elements like in the structure view for the cursor position
 For `include::[]` and `image::[]` block macros the keys kbd:[Ctrl+Click] and kbd:[Ctrl+B] navigate to the referenced file.
 
 For references (like `\<<id>>`) the keys kbd:[Ctrl+Click] and kbd:[Ctrl+B] navigate to the reference (like `\[[id]]`). This works similarly for attributes (`\{attrib}` and `:attrib:`).
-"`Find Usages`" (kbd:[Alt+F7]) will find usages of a reference and allows navigation.
+"`Find Usages`" (kbd:[Alt+F7]) finds usages of references and attributes and allows navigation.
 
 // see: AsciiDocDocumentationProvider
 The user can show quick documentation for the element at the cursor's position using kbd:[Ctrl+Q].
@@ -119,7 +119,7 @@ For example: a `[source,java` receives a closing bracket and two listing separat
 When the user opens a quote or a bracket, the plugin automatically adds a closing quote if it followed by whitespace or a closing bracket.
 
 For references, attributes and images, and several block macros like include, image and diagrams it provides auto-completion using kbd:[Ctrl+Space].
-References support renaming within a project.
+References and attributes support renaming within a project.
 
 There are several live templates included.
 Once the user starts typing kbd:[a]kbd:[d], a list of templates appears.
@@ -136,12 +136,12 @@ It renders the content of the editor including all referenced includes, images a
 
 When the user moves the cursor in the editor, the preview scrolls the text into the preview.
 
-When the user clicks on text in the preview, the editor will move the cursor to the clicked text.
+When the user clicks on text in the preview, the editor moves the cursor to the clicked text.
 This is accurate at block level, unfortunately not yet on line or character level.
 
-When the user clicks on an external URL, the preview will open it in an external browser.
+When the user clicks on an external URL, the preview opens it in an external browser.
 
-When the user clicks on a relative link within the project (usually a `\link:[]` reference), the preview will open the referenced file in a new editor.
+When the user clicks on a relative link within the project (usually a `\link:[]` reference), the preview opens the referenced file in a new editor.
 
 === Advanced
 

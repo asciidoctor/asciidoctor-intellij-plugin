@@ -13,6 +13,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.asciidoc.intellij.lexer.AsciiDocLexer;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
+import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
 import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.asciidoc.intellij.psi.AsciiDocBlockAttributes;
 import org.asciidoc.intellij.psi.AsciiDocBlockId;
@@ -94,6 +95,9 @@ public class AsciiDocParserDefinition implements ParserDefinition {
     }
     if (node.getElementType() == AsciiDocElementTypes.ATTRIBUTE_REF) {
       return new AsciiDocAttributeReference(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.ATTRIBUTE_DECLARATION_NAME) {
+      return new AsciiDocAttributeDeclarationName(node);
     }
     throw new UnsupportedOperationException("Unknown node type " + node.getElementType());
   }

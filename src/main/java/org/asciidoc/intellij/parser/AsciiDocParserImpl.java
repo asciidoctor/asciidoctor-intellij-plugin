@@ -1,5 +1,11 @@
 package org.asciidoc.intellij.parser;
 
+import com.intellij.lang.PsiBuilder;
+import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Stack;
+
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_NAME;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_NAME_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_NAME_START;
@@ -39,10 +45,6 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SEPARATOR;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TITLE;
-import com.intellij.lang.PsiBuilder;
-import com.intellij.psi.tree.IElementType;
-import java.util.Stack;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
@@ -173,7 +175,13 @@ public class AsciiDocParserImpl {
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
         while (at(ATTRIBUTE_NAME) || at(ATTRIBUTE_NAME_END) || at(ATTRIBUTE_VAL)) {
-          next();
+          if (at(ATTRIBUTE_NAME)) {
+            PsiBuilder.Marker blockIdMarker = myBuilder.mark();
+            next();
+            blockIdMarker.done(AsciiDocElementTypes.ATTRIBUTE_DECLARATION_NAME);
+          } else {
+            next();
+          }
         }
         blockAttrsMarker.done(AsciiDocElementTypes.ATTRIBUTE_DECLARATION);
         continue;

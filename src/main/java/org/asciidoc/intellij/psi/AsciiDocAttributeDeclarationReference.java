@@ -32,7 +32,7 @@ public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiE
     final List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(project, key);
     List<ResolveResult> results = new ArrayList<>();
     for (AsciiDocAttributeDeclaration declaration : declarations) {
-      results.add(new PsiElementResolveResult(declaration));
+      results.add(new PsiElementResolveResult(declaration.getNavigationElement()));
     }
     return results.toArray(new ResolveResult[0]);
   }

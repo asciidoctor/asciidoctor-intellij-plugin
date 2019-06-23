@@ -20,4 +20,5 @@ public interface AsciiDocElementTypes {
   IElementType LINK = new AsciiDocElementType("LINK");
   IElementType ATTRIBUTE_DECLARATION = new AsciiDocElementType("ATTRIBUTE_DECLARATION");
   IElementType ATTRIBUTE_REF = new AsciiDocElementType("ATTRIBUTE_REF");
+  IElementType ATTRIBUTE_DECLARATION_NAME = new AsciiDocElementType("ATTRIBUTE_DECLARATION_NAME");
 }
