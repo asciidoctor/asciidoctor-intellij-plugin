@@ -221,7 +221,6 @@ ATTRIBUTE_REF_END = "}"
 %state TITLE
 %state BLOCK_ATTRS
 
-%state ATTRIBUTE_DECL
 %state ATTRIBUTE_NAME
 %state ATTRIBUTE_VAL
 %state ATTRIBUTE_REF_START
@@ -281,14 +280,9 @@ ATTRIBUTE_REF_END = "}"
   [^]                  { yypushback(yylength()); yybegin(SINGLELINE); }
 }
 
-<ATTRIBUTE_DECL> {
-  "\n"               { yyinitialIfNotInBlock(); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                { yybegin(ATTRIBUTE_NAME); return AsciiDocTokenTypes.ATTRIBUTE_NAME; }
-}
-
 <ATTRIBUTE_NAME> {
   {ATTRIBUTE_NAME_END} { yybegin(ATTRIBUTE_VAL); return AsciiDocTokenTypes.ATTRIBUTE_NAME_END; }
-  {ATTRIBUTE_NAME}   { return AsciiDocTokenTypes.ATTRIBUTE_NAME; }
+  {AUTOCOMPLETE} | {ATTRIBUTE_NAME} { return AsciiDocTokenTypes.ATTRIBUTE_NAME; }
   "\n"               { yyinitialIfNotInBlock(); return AsciiDocTokenTypes.LINE_BREAK; }
   [^]                { yyinitialIfNotInBlock(); }
 }
@@ -301,9 +295,9 @@ ATTRIBUTE_REF_END = "}"
 }
 
 <SINGLELINE> {
-  {ATTRIBUTE_NAME_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_NAME_END} {
+  {ATTRIBUTE_NAME_START} / {AUTOCOMPLETE}? {ATTRIBUTE_NAME} {ATTRIBUTE_NAME_END} {
         if (!isEscaped()) {
-          yybegin(ATTRIBUTE_DECL);
+          yybegin(ATTRIBUTE_NAME);
           return AsciiDocTokenTypes.ATTRIBUTE_NAME_START;
         } else {
           yypushback(yylength()); yybegin(SINGLELINE);
@@ -341,7 +335,7 @@ ATTRIBUTE_REF_END = "}"
   {ENUMERATION} / {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ENUMERATION; }
   {ATTRIBUTE_NAME_START} / [^:\n \t]* {AUTOCOMPLETE} {
     if (!isEscaped()) {
-      yybegin(ATTRIBUTE_DECL); return AsciiDocTokenTypes.ATTRIBUTE_NAME_START;
+      yybegin(ATTRIBUTE_NAME); return AsciiDocTokenTypes.ATTRIBUTE_NAME_START;
     } else {
       return textFormat();
     }

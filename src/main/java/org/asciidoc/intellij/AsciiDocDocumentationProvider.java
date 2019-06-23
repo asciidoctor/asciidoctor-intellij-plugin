@@ -2,14 +2,19 @@ package org.asciidoc.intellij;
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.psi.impl.source.DummyHolder;
 import com.intellij.psi.impl.source.DummyHolderFactory;
-import javax.swing.Icon;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public class AsciiDocDocumentationProvider extends AbstractDocumentationProvider {
   @Nullable
@@ -21,14 +26,30 @@ public class AsciiDocDocumentationProvider extends AbstractDocumentationProvider
     return null;
   }
 
+  @Nullable
+  @Override
+  public PsiElement getCustomDocumentationElement(@NotNull Editor editor, @NotNull PsiFile file, @Nullable PsiElement contextElement) {
+    if (contextElement != null && (contextElement.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_NAME ||
+        contextElement.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_REF)) {
+      String key = contextElement.getNode().getText();
+      if (AsciiDocBundle.getBuiltInAttributesList().contains(key)) {
+        return new DummyElement(key, file.getManager());
+      }
+    }
+    return super.getCustomDocumentationElement(editor, file, contextElement);
+  }
+
   @Override
   public String generateDoc(final PsiElement element, @Nullable final PsiElement originalElement) {
     if (element instanceof DummyElement) {
       DummyElement el = (DummyElement) element;
 
       String defaultValue = AsciiDocBundle.message(AsciiDocBundle.BUILTIN_ATTRIBUTE_PREFIX + el.getKey() + ".default-value");
+      defaultValue = StringEscapeUtils.escapeHtml4(defaultValue);
       String values = AsciiDocBundle.message(AsciiDocBundle.BUILTIN_ATTRIBUTE_PREFIX + el.getKey() + ".values");
+      values = StringEscapeUtils.escapeHtml4(values);
       String html = AsciiDocBundle.message(AsciiDocBundle.BUILTIN_ATTRIBUTE_PREFIX + el.getKey() + ".text");
+      html = StringEscapeUtils.escapeHtml4(html);
       if (values != null) {
         html += "<br/><b>" + AsciiDocBundle.message("asciidoc.attributes.values") + ":</b> " + values;
       }
@@ -41,9 +62,12 @@ public class AsciiDocDocumentationProvider extends AbstractDocumentationProvider
   }
 
   private static class DummyElement extends FakePsiElement {
-    @NotNull private final PsiManager myPsiManager;
-    @NotNull private final DummyHolder myDummyHolder;
-    @NotNull private final String key;
+    @NotNull
+    private final PsiManager myPsiManager;
+    @NotNull
+    private final DummyHolder myDummyHolder;
+    @NotNull
+    private final String key;
 
     DummyElement(@NotNull String key, @NotNull PsiManager psiManager) {
       myPsiManager = psiManager;
