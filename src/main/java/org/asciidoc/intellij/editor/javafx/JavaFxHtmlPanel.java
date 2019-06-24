@@ -15,11 +15,15 @@ import com.intellij.openapi.editor.CaretState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.ScrollType;
+import com.intellij.openapi.fileChooser.FileChooserFactory;
+import com.intellij.openapi.fileChooser.FileSaverDescriptor;
+import com.intellij.openapi.fileChooser.FileSaverDialog;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.ui.JBColor;
 import com.intellij.util.PsiNavigateUtil;
 import com.intellij.util.ui.JBUI;
@@ -54,7 +58,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -508,44 +511,49 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       Path imagePath = imagesPath.resolve(subPath);
       if (imagePath.toFile().exists()) {
         File file = imagePath.toFile();
-        JFileChooser fc = new JFileChooser();
         String fileName = imagePath.getFileName().toString();
+        String extension = "";
+        int lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex > 0 && !fileName.endsWith(".")) {
+          extension = fileName.substring(lastDotIndex + 1);
+        }
         // set static file name if image name has been generated dynamically
+        final String fileNameNoExt;
         if (fileName.matches("diag-[0-9a-f]{32}\\.[a-z]+")) {
-          String extension = "";
-          int i = fileName.lastIndexOf('.');
-          if (i > 0) {
-            extension = fileName.substring(i);
-          }
-          fileName = "image" + extension;
+          fileNameNoExt = "image";
+        } else {
+          fileNameNoExt = lastDotIndex > 0 ? fileName.substring(0, lastDotIndex) : fileName;
         }
-        fc.setSelectedFile(new File(fileName));
-        int retrieval = fc.showSaveDialog(null);
-        if (retrieval == JFileChooser.APPROVE_OPTION) {
-          try {
-            saveFile(imagePath, fc.getSelectedFile().toPath());
-          } catch (IOException ex) {
-            String message = "Can't save file: " + ex.getMessage();
-            Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
-              .createNotification("Error in plugin", message, NotificationType.ERROR, null);
-            // increase event log counter
-            notification.setImportant(true);
-            Notifications.Bus.notify(notification);
+        final FileSaverDescriptor descriptor = new FileSaverDescriptor("Export Image to", "Choose the destination file", extension);
+        FileSaverDialog saveFileDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, (Project) null);
+        SwingUtilities.invokeLater(() -> {
+          VirtualFileWrapper destination = saveFileDialog.save(null, fileNameNoExt);
+          if (destination != null) {
+            try {
+              Files.copy(imagePath, destination.getFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException ex) {
+              String message = "Can't save file: " + ex.getMessage();
+              Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+                .createNotification("Error in plugin", message, NotificationType.ERROR, null);
+              // increase event log counter
+              notification.setImportant(true);
+              Notifications.Bus.notify(notification);
+            }
           }
-        }
+        });
       }
     }
 
-    private void saveFile(Path sourceFilePath, Path destinationFilePath) throws IOException {
-      try {
-        Files.copy(sourceFilePath, destinationFilePath);
-      } catch (FileAlreadyExistsException ex) {
-        int response = JOptionPane.showConfirmDialog(null, "File already exists. Do you want to replace it?");
-        if (response == JOptionPane.OK_OPTION) {
-          Files.copy(sourceFilePath, destinationFilePath, StandardCopyOption.REPLACE_EXISTING);
-        }
-      }
-    }
+//    private void saveFile(Path sourceFilePath, Path destinationFilePath) throws IOException {
+//      try {
+//        Files.copy(sourceFilePath, destinationFilePath);
+//      } catch (FileAlreadyExistsException ex) {
+//        int response = JOptionPane.showConfirmDialog(null, "File already exists. Do you want to replace it?");
+//        if (response == JOptionPane.OK_OPTION) {
+//          Files.copy(sourceFilePath, destinationFilePath, StandardCopyOption.REPLACE_EXISTING);
+//        }
+//      }
+//    }
 
     public void log(@Nullable String text) {
       Logger.getInstance(JavaPanelBridge.class).warn(text);
