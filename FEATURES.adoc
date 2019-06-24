@@ -133,6 +133,8 @@ Using the configuration, the user can change the split to horizontal, and change
 The plugin uses https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] 2.x to render the preview.
 
 It renders the content of the editor including all referenced includes, images and diagrams like PlantUML on the fly.
+// see: plantuml-png-patch.rb
+As JavaFX has a problem displaying SVG files correctly, the plugin displays all PlantUML diagrams as PNG on the fly.
 
 When the user moves the cursor in the editor, the preview scrolls the text into the preview.
 
