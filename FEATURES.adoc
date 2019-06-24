@@ -147,6 +147,9 @@ When the user clicks on an external URL, the preview opens it in an external bro
 
 When the user clicks on a relative link within the project (usually a `\link:[]` reference), the preview opens the referenced file in a new editor.
 
+When the user right-clicks on an image, the editor shows a dialog to save the file to the local file system.
+For diagrams like PlantUML it offers to save the files as PNG or SVG.
+
 The user can zoom in and out of the preview by holding kbd:[Ctrl] and scrolling the mouse wheel up or down.
 Clicking the middle mouse button whilst holding kbd:[Ctrl] will reset the zoom to 100%.
 

@@ -201,7 +201,9 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
           myWebView = new WebView();
 
           updateFontSmoothingType(myWebView, false);
-          myWebView.setContextMenuEnabled(false);
+          // will be disabled via JavaScript inside processImages.js as it is not generally helpful here,
+          // but processImages.js will use right-click to export the images.
+          myWebView.setContextMenuEnabled(true);
           myWebView.setZoom(JBUI.scale(1.f));
           myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>"));
 

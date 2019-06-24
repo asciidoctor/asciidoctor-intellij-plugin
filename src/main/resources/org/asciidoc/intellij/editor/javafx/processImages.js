@@ -7,7 +7,7 @@ window.__IntelliJTools.processImages = (function () {
     window.JavaPanelBridge.saveImage(imagePath);
   }
 
-  window.__IntelliJTools.processDoubleClick = function (event) {
+  window.__IntelliJTools.processRightClick = function (event) {
     saveImage(this.src);
     return false;
   }
@@ -16,7 +16,11 @@ window.__IntelliJTools.processImages = (function () {
     var images = document.getElementsByTagName("img");
     for (var i = 0; i < images.length; ++i) {
       var image = images[i];
-      image.ondblclick = __IntelliJTools.processDoubleClick
+      image.oncontextmenu = __IntelliJTools.processRightClick
+    }
+    // disable context menu in all other places as they don't offer helpful options
+    document.oncontextmenu = function() {
+      return false;
     }
   }
 
