@@ -31,6 +31,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.text.FontSmoothingType;
@@ -202,7 +203,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
           });
 
           myWebView.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-            if (mouseEvent.isControlDown() && mouseEvent.isMiddleButtonDown()) {
+            if (mouseEvent.isControlDown() && mouseEvent.getButton() == MouseButton.MIDDLE) {
               myWebView.setZoom(JBUI.scale(1f));
               mouseEvent.consume();
             }

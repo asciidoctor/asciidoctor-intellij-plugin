@@ -12,6 +12,8 @@ Don't assume people are developers and have worked with IntelliJ before -- this 
 Naming the actor, the active voice and the present tense makes it easier for non-native speakers to understand this document.
 Adding the shortcuts should help users new to IntelliJ.
 
+Each sentence should on its own line.
+
 == Check lists for writing content
 
 Name the actor::
@@ -143,7 +145,8 @@ When the user clicks on an external URL, the preview opens it in an external bro
 
 When the user clicks on a relative link within the project (usually a `\link:[]` reference), the preview opens the referenced file in a new editor.
 
-The user can zoom in and out of the preview by holding kbd:[Ctrl] and scrolling the mouse wheel up or down. Clicking the middle mouse button whilst holding kbd:[Ctrl] will reset the zoom to 100%.
+The user can zoom in and out of the preview by holding kbd:[Ctrl] and scrolling the mouse wheel up or down.
+Clicking the middle mouse button whilst holding kbd:[Ctrl] will reset the zoom to 100%.
 
 === Advanced
 
