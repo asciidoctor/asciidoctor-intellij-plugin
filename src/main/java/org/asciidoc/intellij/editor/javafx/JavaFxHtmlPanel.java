@@ -544,17 +544,6 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       }
     }
 
-//    private void saveFile(Path sourceFilePath, Path destinationFilePath) throws IOException {
-//      try {
-//        Files.copy(sourceFilePath, destinationFilePath);
-//      } catch (FileAlreadyExistsException ex) {
-//        int response = JOptionPane.showConfirmDialog(null, "File already exists. Do you want to replace it?");
-//        if (response == JOptionPane.OK_OPTION) {
-//          Files.copy(sourceFilePath, destinationFilePath, StandardCopyOption.REPLACE_EXISTING);
-//        }
-//      }
-//    }
-
     public void log(@Nullable String text) {
       Logger.getInstance(JavaPanelBridge.class).warn(text);
     }
