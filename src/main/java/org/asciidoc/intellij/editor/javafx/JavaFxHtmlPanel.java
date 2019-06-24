@@ -22,6 +22,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.ui.JBColor;
@@ -135,7 +136,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
   private final Path imagesPath;
 
-  private final VirtualFile parentDirectory;
+  private VirtualFile parentDirectory;
 
   JavaFxHtmlPanel(Document document, Path imagesPath) {
 
@@ -148,7 +149,10 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     myPanelWrapper.setBackground(JBColor.background());
     lineCount = document.getLineCount();
 
-    parentDirectory = FileDocumentManager.getInstance().getFile(document).getParent();
+    VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+    if (file != null) {
+      parentDirectory = file.getParent();
+    }
     if (parentDirectory != null) {
       // parent will be null if we use Language Injection and Fragment Editor
       base = parentDirectory.getUrl().replaceAll("^file://", "")
@@ -422,6 +426,9 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
   @SuppressWarnings("unused")
   public class JavaPanelBridge {
+
+    private VirtualFile lastDir = null;
+
     public void openLink(@NotNull String link) {
       final URI uri;
       try {
@@ -512,10 +519,10 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       if (imagePath.toFile().exists()) {
         File file = imagePath.toFile();
         String fileName = imagePath.getFileName().toString();
-        String extension = "";
+        ArrayList<String> extensions = new ArrayList<>();
         int lastDotIndex = fileName.lastIndexOf('.');
         if (lastDotIndex > 0 && !fileName.endsWith(".")) {
-          extension = fileName.substring(lastDotIndex + 1);
+          extensions.add(fileName.substring(lastDotIndex + 1));
         }
         // set static file name if image name has been generated dynamically
         final String fileNameNoExt;
@@ -524,13 +531,33 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         } else {
           fileNameNoExt = lastDotIndex > 0 ? fileName.substring(0, lastDotIndex) : fileName;
         }
-        final FileSaverDescriptor descriptor = new FileSaverDescriptor("Export Image to", "Choose the destination file", extension);
+        // check if also a SVG exists for the provided PNG
+        if (extensions.contains("png") &&
+          new File(file.getParent(), fileNameNoExt + ".svg").exists()) {
+          extensions.add("svg");
+        }
+        final FileSaverDescriptor descriptor = new FileSaverDescriptor("Export Image to", "Choose the destination file",
+          extensions.toArray(new String[]{}));
         FileSaverDialog saveFileDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, (Project) null);
+
+        VirtualFile baseDir = lastDir;
+
+        if (baseDir == null) {
+          baseDir = parentDirectory;
+        }
+
+        VirtualFile finalBaseDir = baseDir;
+
         SwingUtilities.invokeLater(() -> {
-          VirtualFileWrapper destination = saveFileDialog.save(null, fileNameNoExt);
+          VirtualFileWrapper destination = saveFileDialog.save(finalBaseDir, fileNameNoExt);
           if (destination != null) {
             try {
-              Files.copy(imagePath, destination.getFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+              lastDir = LocalFileSystem.getInstance().findFileByIoFile(destination.getFile().getParentFile());
+              Path src = imagePath;
+              if (destination.getFile().getAbsolutePath().endsWith(".svg") && !src.endsWith(".svg")) {
+                src = new File(src.toFile().getAbsolutePath().replaceAll("\\.png$", ".svg")).toPath();
+              }
+              Files.copy(src, destination.getFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException ex) {
               String message = "Can't save file: " + ex.getMessage();
               Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
