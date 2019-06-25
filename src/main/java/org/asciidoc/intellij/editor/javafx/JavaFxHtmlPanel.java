@@ -15,11 +15,16 @@ import com.intellij.openapi.editor.CaretState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.ScrollType;
+import com.intellij.openapi.fileChooser.FileChooserFactory;
+import com.intellij.openapi.fileChooser.FileSaverDescriptor;
+import com.intellij.openapi.fileChooser.FileSaverDialog;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.ui.JBColor;
 import com.intellij.util.PsiNavigateUtil;
 import com.intellij.util.ui.JBUI;
@@ -49,12 +54,14 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -78,6 +85,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       return new StringBuilder()
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("scrollToElement.js")).append("\"></script>\n")
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processLinks.js")).append("\"></script>\n")
+        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processImages.js")).append("\"></script>\n")
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("pickSourceLine.js")).append("\"></script>\n")
         .append("<script type=\"text/x-mathjax-config\">\n" +
           "MathJax.Hub.Config({\n" +
@@ -128,7 +136,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
   private final Path imagesPath;
 
-  private final VirtualFile parentDirectory;
+  private VirtualFile parentDirectory;
 
   JavaFxHtmlPanel(Document document, Path imagesPath) {
 
@@ -141,7 +149,10 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     myPanelWrapper.setBackground(JBColor.background());
     lineCount = document.getLineCount();
 
-    parentDirectory = FileDocumentManager.getInstance().getFile(document).getParent();
+    VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+    if (file != null) {
+      parentDirectory = file.getParent();
+    }
     if (parentDirectory != null) {
       // parent will be null if we use Language Injection and Fragment Editor
       base = parentDirectory.getUrl().replaceAll("^file://", "")
@@ -190,7 +201,9 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
           myWebView = new WebView();
 
           updateFontSmoothingType(myWebView, false);
-          myWebView.setContextMenuEnabled(false);
+          // will be disabled via JavaScript inside processImages.js as it is not generally helpful here,
+          // but processImages.js will use right-click to export the images.
+          myWebView.setContextMenuEnabled(true);
           myWebView.setZoom(JBUI.scale(1.f));
           myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>"));
 
@@ -415,6 +428,9 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
   @SuppressWarnings("unused")
   public class JavaPanelBridge {
+
+    private VirtualFile lastDir = null;
+
     public void openLink(@NotNull String link) {
       final URI uri;
       try {
@@ -498,6 +514,65 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       );
     }
 
+    public void saveImage(@NotNull String path) {
+      String parent = imagesPath.getFileName().toString();
+      String subPath = path.substring(path.indexOf(parent) + parent.length() + 1);
+      Path imagePath = imagesPath.resolve(subPath);
+      if (imagePath.toFile().exists()) {
+        File file = imagePath.toFile();
+        String fileName = imagePath.getFileName().toString();
+        ArrayList<String> extensions = new ArrayList<>();
+        int lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex > 0 && !fileName.endsWith(".")) {
+          extensions.add(fileName.substring(lastDotIndex + 1));
+        }
+        // set static file name if image name has been generated dynamically
+        final String fileNameNoExt;
+        if (fileName.matches("diag-[0-9a-f]{32}\\.[a-z]+")) {
+          fileNameNoExt = "image";
+        } else {
+          fileNameNoExt = lastDotIndex > 0 ? fileName.substring(0, lastDotIndex) : fileName;
+        }
+        // check if also a SVG exists for the provided PNG
+        if (extensions.contains("png") &&
+          new File(file.getParent(), fileNameNoExt + ".svg").exists()) {
+          extensions.add("svg");
+        }
+        final FileSaverDescriptor descriptor = new FileSaverDescriptor("Export Image to", "Choose the destination file",
+          extensions.toArray(new String[]{}));
+        FileSaverDialog saveFileDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, (Project) null);
+
+        VirtualFile baseDir = lastDir;
+
+        if (baseDir == null) {
+          baseDir = parentDirectory;
+        }
+
+        VirtualFile finalBaseDir = baseDir;
+
+        SwingUtilities.invokeLater(() -> {
+          VirtualFileWrapper destination = saveFileDialog.save(finalBaseDir, fileNameNoExt);
+          if (destination != null) {
+            try {
+              lastDir = LocalFileSystem.getInstance().findFileByIoFile(destination.getFile().getParentFile());
+              Path src = imagePath;
+              if (destination.getFile().getAbsolutePath().endsWith(".svg") && !src.endsWith(".svg")) {
+                src = new File(src.toFile().getAbsolutePath().replaceAll("\\.png$", ".svg")).toPath();
+              }
+              Files.copy(src, destination.getFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException ex) {
+              String message = "Can't save file: " + ex.getMessage();
+              Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+                .createNotification("Error in plugin", message, NotificationType.ERROR, null);
+              // increase event log counter
+              notification.setImportant(true);
+              Notifications.Bus.notify(notification);
+            }
+          }
+        });
+      }
+    }
+
     public void log(@Nullable String text) {
       Logger.getInstance(JavaPanelBridge.class).warn(text);
     }
@@ -520,6 +595,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
           "if ('__IntelliJTools' in window) {" +
             "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
             "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ", " + offset + ");" +
+            "__IntelliJTools.processImages && __IntelliJTools.processImages();" +
             "}"
         );
       }
