@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.5 (work in progress)
+
+- Support zoom in preview window (#199, #279)
+
 === 0.28.4 (preview, available from Github releases)
 
 - autocompletion for attributes and attribute references (`:attr:` and `\{attr}`) (thanks to @bbrenne) (#277)
