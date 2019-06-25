@@ -10,7 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.28.5 (preview, available from Github releases)
 
 - support zoom in preview window (thanks to @ianflett) (#199, #279)
-- save generated images from preview (thanks to @bbrenne) (#245 #278)
+- save generated images from preview (thanks to @bbrenne) (#245, #278)
 
 === 0.28.4 (preview, available from Github releases)
 
