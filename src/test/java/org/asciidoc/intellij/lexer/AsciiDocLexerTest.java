@@ -72,6 +72,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('def')");
   }
 
+  public void testTable() {
+    doTest("|====\n" +
+        "|1|2|3\n" +
+        "|====",
+      "AsciiDoc:BLOCK_DELIMITER ('|====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('|1|2|3')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('|====')");
+  }
+
   public void testHeadingOldStyle() {
     doTest("Abc\n===\ndef",
       "AsciiDoc:HEADING ('Abc\\n===')\n" +

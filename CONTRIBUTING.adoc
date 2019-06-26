@@ -244,7 +244,7 @@ So first match the end of a line, then when not at the end of a line (of the sam
 {LISTING_BLOCK_DELIMITER} $ { /* ... */ }
 
 // delimiter not at end of line
-{LISTING_BLOCK_DELIMITER} / [^\n \t] { /* ... */ }
+{LISTING_BLOCK_DELIMITER} / [^\-\n \t] { /* ... */ }
 
 // delimiter at end of file (shorter match than the two above)
 {LISTING_BLOCK_DELIMITER} { /* ... */ }
