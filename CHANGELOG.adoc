@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.28.6 (preview, available from Github releases)
+=== 0.28.6
 
 - fixing NPE introduced when detecting potentially blurry preview (#284)
 
@@ -24,13 +24,13 @@ This document provides a high-level view of the changes introduced by release.
 - statement completion adds newline if at end of file (#276)
 - listing and other delimiters recognized at end of file (#276)
 
-=== 0.28.3 (preview, available from Github releases)
+=== 0.28.3
 
 - brace matching for attribute start/end (`:attr:` and `\{attr}`)
 - syntax highlighting for enumerations (`.`)
 - fixing "`Edit Fragment...`" for listings (#276)
 
-=== 0.28.2 (preview, available from Github releases)
+=== 0.28.2
 
 - fixed parsing for old-style headers (#274)
 
