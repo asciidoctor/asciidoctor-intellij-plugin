@@ -458,6 +458,17 @@ The JavaFX preview uses JavaScript to scroll the preview to the current position
 
 When the user interacts with the JavaFX preview (for example clicks on a text or a link), there is a bridge `JavaPanelBridge` back from JavaScript to Java to trigger actions like scrolling the editor or opening a link in the browser.
 
+=== Debugging the preview
+
+You can log information from the JavaFX preview the preview using
+
+[source,javascript]
+----
+window.JavaPanelBridge.log("...")
+----
+
+this will call the method `JavaPanelBridge#log`, an inner class of `JavaFxHtmlPanel`.
+
 == Upgrading Asciidoctor
 
 Follow these steps:
