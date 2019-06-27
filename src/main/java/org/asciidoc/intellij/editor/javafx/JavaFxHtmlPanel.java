@@ -86,7 +86,6 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       return new StringBuilder()
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("scrollToElement.js")).append("\"></script>\n")
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processLinks.js")).append("\"></script>\n")
-        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processImages.js")).append("\"></script>\n")
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("pickSourceLine.js")).append("\"></script>\n")
         .append("<script type=\"text/x-mathjax-config\">\n" +
           "MathJax.Hub.Config({\n" +
@@ -138,6 +137,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   private final Path imagesPath;
 
   private VirtualFile parentDirectory;
+  private VirtualFile saveImageLastDir = null;
 
   JavaFxHtmlPanel(Document document, Path imagesPath) {
 
@@ -203,6 +203,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
           updateFontSmoothingType(myWebView, false);
           registerContextMenu(JavaFxHtmlPanel.this.myWebView);
+          myWebView.setContextMenuEnabled(false);
           myWebView.setZoom(JBUI.scale(1.f));
           myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>"));
 
@@ -251,9 +252,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         JSObject object = getJavaScriptObjectAtLocation(webView, e);
         if (object instanceof HTMLImageElement) {
           String src = ((HTMLImageElement) object).getAttribute("src");
-          ApplicationManager.getApplication().invokeLater(() -> runFX(() -> {
-            bridge.saveImage(src);
-          }));
+          ApplicationManager.getApplication().invokeLater(() -> saveImage(src));
         }
       }
     });
@@ -262,6 +261,66 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   private JSObject getJavaScriptObjectAtLocation(WebView webView, MouseEvent e) {
     String script = String.format("document.elementFromPoint(%s,%s);", e.getX(), e.getY());
     return (JSObject) webView.getEngine().executeScript(script);
+  }
+
+  private void saveImage(@NotNull String path) {
+    String parent = imagesPath.getFileName().toString();
+    String subPath = path.substring(path.indexOf(parent) + parent.length() + 1);
+    Path imagePath = imagesPath.resolve(subPath);
+    if (imagePath.toFile().exists()) {
+      File file = imagePath.toFile();
+      String fileName = imagePath.getFileName().toString();
+      ArrayList<String> extensions = new ArrayList<>();
+      int lastDotIndex = fileName.lastIndexOf('.');
+      if (lastDotIndex > 0 && !fileName.endsWith(".")) {
+        extensions.add(fileName.substring(lastDotIndex + 1));
+      }
+      // set static file name if image name has been generated dynamically
+      final String fileNameNoExt;
+      if (fileName.matches("diag-[0-9a-f]{32}\\.[a-z]+")) {
+        fileNameNoExt = "image";
+      } else {
+        fileNameNoExt = lastDotIndex > 0 ? fileName.substring(0, lastDotIndex) : fileName;
+      }
+      // check if also a SVG exists for the provided PNG
+      if (extensions.contains("png") &&
+        new File(file.getParent(), fileNameNoExt + ".svg").exists()) {
+        extensions.add("svg");
+      }
+      final FileSaverDescriptor descriptor = new FileSaverDescriptor("Export Image to", "Choose the destination file",
+        extensions.toArray(new String[]{}));
+      FileSaverDialog saveFileDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, (Project) null);
+
+      VirtualFile baseDir = saveImageLastDir;
+
+      if (baseDir == null) {
+        baseDir = parentDirectory;
+      }
+
+      VirtualFile finalBaseDir = baseDir;
+
+      SwingUtilities.invokeLater(() -> {
+        VirtualFileWrapper destination = saveFileDialog.save(finalBaseDir, fileNameNoExt);
+        if (destination != null) {
+          try {
+            saveImageLastDir = LocalFileSystem.getInstance().findFileByIoFile(destination.getFile().getParentFile());
+            Path src = imagePath;
+            // if the destination ends with .svg, but the source doesn't, patch the source file name as the user chose a different file type
+            if (destination.getFile().getAbsolutePath().endsWith(".svg") && !src.endsWith(".svg")) {
+              src = new File(src.toFile().getAbsolutePath().replaceAll("\\.png$", ".svg")).toPath();
+            }
+            Files.copy(src, destination.getFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+          } catch (IOException ex) {
+            String message = "Can't save file: " + ex.getMessage();
+            Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+              .createNotification("Error in plugin", message, NotificationType.ERROR, null);
+            // increase event log counter
+            notification.setImportant(true);
+            Notifications.Bus.notify(notification);
+          }
+        }
+      });
+    }
   }
 
   private static void runFX(@NotNull Runnable r) {
@@ -447,8 +506,6 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   @SuppressWarnings("unused")
   public class JavaPanelBridge {
 
-    private VirtualFile lastDir = null;
-
     public void openLink(@NotNull String link) {
       final URI uri;
       try {
@@ -530,65 +587,6 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
           getEditor().getScrollingModel().scrollToCaret(ScrollType.CENTER_UP);
         }
       );
-    }
-
-    public void saveImage(@NotNull String path) {
-      String parent = imagesPath.getFileName().toString();
-      String subPath = path.substring(path.indexOf(parent) + parent.length() + 1);
-      Path imagePath = imagesPath.resolve(subPath);
-      if (imagePath.toFile().exists()) {
-        File file = imagePath.toFile();
-        String fileName = imagePath.getFileName().toString();
-        ArrayList<String> extensions = new ArrayList<>();
-        int lastDotIndex = fileName.lastIndexOf('.');
-        if (lastDotIndex > 0 && !fileName.endsWith(".")) {
-          extensions.add(fileName.substring(lastDotIndex + 1));
-        }
-        // set static file name if image name has been generated dynamically
-        final String fileNameNoExt;
-        if (fileName.matches("diag-[0-9a-f]{32}\\.[a-z]+")) {
-          fileNameNoExt = "image";
-        } else {
-          fileNameNoExt = lastDotIndex > 0 ? fileName.substring(0, lastDotIndex) : fileName;
-        }
-        // check if also a SVG exists for the provided PNG
-        if (extensions.contains("png") &&
-          new File(file.getParent(), fileNameNoExt + ".svg").exists()) {
-          extensions.add("svg");
-        }
-        final FileSaverDescriptor descriptor = new FileSaverDescriptor("Export Image to", "Choose the destination file",
-          extensions.toArray(new String[]{}));
-        FileSaverDialog saveFileDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, (Project) null);
-
-        VirtualFile baseDir = lastDir;
-
-        if (baseDir == null) {
-          baseDir = parentDirectory;
-        }
-
-        VirtualFile finalBaseDir = baseDir;
-
-        SwingUtilities.invokeLater(() -> {
-          VirtualFileWrapper destination = saveFileDialog.save(finalBaseDir, fileNameNoExt);
-          if (destination != null) {
-            try {
-              lastDir = LocalFileSystem.getInstance().findFileByIoFile(destination.getFile().getParentFile());
-              Path src = imagePath;
-              if (destination.getFile().getAbsolutePath().endsWith(".svg") && !src.endsWith(".svg")) {
-                src = new File(src.toFile().getAbsolutePath().replaceAll("\\.png$", ".svg")).toPath();
-              }
-              Files.copy(src, destination.getFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException ex) {
-              String message = "Can't save file: " + ex.getMessage();
-              Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
-                .createNotification("Error in plugin", message, NotificationType.ERROR, null);
-              // increase event log counter
-              notification.setImportant(true);
-              Notifications.Bus.notify(notification);
-            }
-          }
-        });
-      }
     }
 
     public void log(@Nullable String text) {
