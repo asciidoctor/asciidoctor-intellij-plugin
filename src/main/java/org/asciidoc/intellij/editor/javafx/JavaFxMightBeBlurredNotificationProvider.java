@@ -51,17 +51,17 @@ public class JavaFxMightBeBlurredNotificationProvider extends EditorNotification
     }
 
     // don't show if workaround for JDK8 active
-    if (System.getProperty("sun.java2d.uiScale.enabled").equalsIgnoreCase("false")) {
+    if ("false".equalsIgnoreCase(System.getProperty("sun.java2d.uiScale.enabled"))) {
       return null;
     }
 
     // seems to be problem only on Windows 10
-    if (!System.getProperty("os.name").equals("Windows 10")) {
+    if (!"Windows 10".equals(System.getProperty("os.name"))) {
       return null;
     }
 
     // seems to be problem with JDK8, and fixed on JRE11+
-    if (!System.getProperty("java.specification.version").equals("1.8")) {
+    if (!"1.8".equals(System.getProperty("java.specification.version"))) {
       return null;
     }
 

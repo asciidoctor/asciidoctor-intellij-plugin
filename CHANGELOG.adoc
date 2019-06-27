@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.6 (preview, available from Github releases)
+
+- fixing NPE introduced when detecting potentially blurry preview (#284)
+
 === 0.28.5 (preview, available from Github releases)
 
 - support zoom in preview window (thanks to @ianflett) (#199, #279)
