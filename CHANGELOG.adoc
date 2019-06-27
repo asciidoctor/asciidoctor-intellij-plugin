@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.28.7
 
-- Save image context menu now showing up on macOS (#283)
+- Save image context menu now showing up on macOS (thanks to @wimdeblauwe) (#283)
 
 === 0.28.6
 
