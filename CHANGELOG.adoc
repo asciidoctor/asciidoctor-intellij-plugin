@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.7
+
+- Save image context menu now showing up on macOS (#283)
+
 === 0.28.6
 
 - fixing NPE introduced when detecting potentially blurry preview (#284)
