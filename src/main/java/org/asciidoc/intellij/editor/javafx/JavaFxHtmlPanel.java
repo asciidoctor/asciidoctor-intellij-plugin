@@ -51,6 +51,7 @@ import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.w3c.dom.html.HTMLImageElement;
 
 import javax.swing.*;
 import java.awt.*;
@@ -201,9 +202,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
           myWebView = new WebView();
 
           updateFontSmoothingType(myWebView, false);
-          // will be disabled via JavaScript inside processImages.js as it is not generally helpful here,
-          // but processImages.js will use right-click to export the images.
-          myWebView.setContextMenuEnabled(true);
+          registerContextMenu(JavaFxHtmlPanel.this.myWebView);
           myWebView.setZoom(JBUI.scale(1.f));
           myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>"));
 
@@ -244,6 +243,25 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       }
     }));
 
+  }
+
+  private void registerContextMenu(WebView webView) {
+    webView.setOnMousePressed(e -> {
+      if (e.getButton() == MouseButton.SECONDARY) {
+        JSObject object = getJavaScriptObjectAtLocation(webView, e);
+        if (object instanceof HTMLImageElement) {
+          String src = ((HTMLImageElement) object).getAttribute("src");
+          ApplicationManager.getApplication().invokeLater(() -> runFX(() -> {
+            bridge.saveImage(src);
+          }));
+        }
+      }
+    });
+  }
+
+  private JSObject getJavaScriptObjectAtLocation(WebView webView, MouseEvent e) {
+    String script = String.format("document.elementFromPoint(%s,%s);", e.getX(), e.getY());
+    return (JSObject) webView.getEngine().executeScript(script);
   }
 
   private static void runFX(@NotNull Runnable r) {
