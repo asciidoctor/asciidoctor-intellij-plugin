@@ -1,13 +1,5 @@
 package org.asciidoc.intellij.settings;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.EnumComboBoxModel;
@@ -20,6 +12,14 @@ import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.ui.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Holder {
   private Object myLastItem;
@@ -42,6 +42,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JBCheckBox myEnableInjections;
   private JBTextField myDisabledInjectionsByLanguage;
   private JPanel myDisableLanguageInjection;
+  private JBCheckBox myEnableFormatSource;
 
   public JComponent getComponent() {
     return myMainPanel;
@@ -137,6 +138,8 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     myDisableLanguageInjection.setVisible(myEnableInjections.isSelected());
 
     myDisabledInjectionsByLanguage.setText(settings.getDisabledInjectionsByLanguage());
+
+    myEnableFormatSource.setSelected(settings.isEnabledFormatSource());
   }
 
   @NotNull
@@ -153,6 +156,6 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     return new AsciiDocPreviewSettings(mySplitLayoutModel.getSelectedItem(),
       myPreviewPanelModel.getSelected(), myPreviewThemeModel.getSelectedItem(), attributes,
       myVerticalLayout.isSelected(), myEditorTop.isSelected() || myEditorLeft.isSelected(), myEnableInjections.isSelected(),
-      myDisabledInjectionsByLanguage.getText());
+      myDisabledInjectionsByLanguage.getText(), myEnableFormatSource.isSelected());
   }
 }

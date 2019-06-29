@@ -145,8 +145,8 @@ STRING = {NON_SPACE}+ \n? // something that doesn't have an empty line
 // something with a non-blank at the end, might contain a line break, but only if it doesn't separate the block
 WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n] | {SPACE}* [^\n]*[^\ \t\n]
 BOLD = "*"
-BULLET = {SPACE}* "*"+ {SPACE}+
-ENUMERATION = {SPACE}* "."+ {SPACE}+
+BULLET = {SPACE}* ("*"+|"-"+) {SPACE}+
+ENUMERATION = {SPACE}* [0-9]*"."+ {SPACE}+
 DOUBLEBOLD = {BOLD} {BOLD}
 PASSTRHOUGH_INLINE = "+++"
 ITALIC = "_"

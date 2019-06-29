@@ -184,5 +184,6 @@
     <completion.contributor language="AsciiDoc"
                             implementationClass="org.asciidoc.intellij.injection.LanguageListCompletionContributor"/>
     <breadcrumbsInfoProvider implementation="org.asciidoc.intellij.breadcrumbs.AsciiDocBreadcrumbsInfoProvider"/>
+    <lang.formatter language="AsciiDoc" implementationClass="org.asciidoc.intellij.formatting.AsciiDocFormattingModelBuilder"/>
   </extensions>
 </idea-plugin>

@@ -1,13 +1,5 @@
 package org.asciidoc.intellij.settings;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Property;
@@ -19,6 +11,14 @@ import org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider;
 import org.asciidoc.intellij.ui.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 
 public final class AsciiDocPreviewSettings {
   public static final AsciiDocPreviewSettings DEFAULT = new AsciiDocPreviewSettings();
@@ -61,6 +61,9 @@ public final class AsciiDocPreviewSettings {
   @Nullable
   private String myDisabledInjectionsByLanguage;
 
+  @Attribute("EnableFormatSource")
+  private boolean myEnableFormatSource = false;
+
   public AsciiDocPreviewSettings() {
   }
 
@@ -69,7 +72,8 @@ public final class AsciiDocPreviewSettings {
                                  @NotNull AsciiDocHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo,
                                  @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme,
                                  @NotNull Map<String, String> attributes, boolean verticalSplit, boolean editorFirst,
-                                 boolean enableInjections, @Nullable String disabledInjectionsByLanguage) {
+                                 boolean enableInjections, @Nullable String disabledInjectionsByLanguage,
+                                 boolean enableFormatSource) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
@@ -78,6 +82,7 @@ public final class AsciiDocPreviewSettings {
     myIsEditorFirst = editorFirst;
     myEnableInjections = enableInjections;
     myDisabledInjectionsByLanguage = disabledInjectionsByLanguage;
+    myEnableFormatSource = enableFormatSource;
   }
 
   @NotNull
@@ -132,6 +137,10 @@ public final class AsciiDocPreviewSettings {
     return list;
   }
 
+  public boolean isEnabledFormatSource() {
+    return myEnableFormatSource;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -164,6 +173,9 @@ public final class AsciiDocPreviewSettings {
     if (!Objects.equals(myDisabledInjectionsByLanguage, that.myDisabledInjectionsByLanguage)) {
       return false;
     }
+    if (myEnableFormatSource != that.myEnableFormatSource) {
+      return false;
+    }
     return attributes.equals(that.attributes);
   }
 
@@ -177,6 +189,7 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + (myIsEditorFirst ? 1 : 0);
     result = 31 * result + (myEnableInjections ? 1 : 0);
     result = 31 * result + Objects.hashCode(myDisabledInjectionsByLanguage);
+    result = 31 * result + (myEnableFormatSource ? 1 : 0);
     return result;
   }
 

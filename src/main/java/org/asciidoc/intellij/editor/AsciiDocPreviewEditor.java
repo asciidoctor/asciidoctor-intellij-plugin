@@ -175,7 +175,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         AsciiDocPreviewSettings.DEFAULT.getHtmlPanelProviderInfo(), settings.getAsciiDocPreviewSettings().getPreviewTheme(),
         settings.getAsciiDocPreviewSettings().getAttributes(), settings.getAsciiDocPreviewSettings().isVerticalSplit(),
         settings.getAsciiDocPreviewSettings().isEditorFirst(), settings.getAsciiDocPreviewSettings().isEnabledInjections(),
-        settings.getAsciiDocPreviewSettings().getDisabledInjectionsByLanguage()));
+        settings.getAsciiDocPreviewSettings().getDisabledInjectionsByLanguage(), settings.getAsciiDocPreviewSettings().isEnabledFormatSource()));
 
       /* the following will not work, IntellIJ will show the error "parent must be showing" when this is
          tiggered during startup. */
@@ -223,7 +223,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     }, this);
   }
 
-  @Contract("_, null, null -> fail")
+  @Contract("_, _, _, null, null -> fail")
   @NotNull
   private static AsciiDocHtmlPanel detachOldPanelAndCreateAndAttachNewOne(Document document, Path imagesDir, @NotNull JPanel panelWrapper,
                                                                           @Nullable AsciiDocHtmlPanel oldPanel,
