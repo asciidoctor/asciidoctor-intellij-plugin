@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.28.8 (preview, available from Github releases)
 
-- investigating problem parts of the UI not refreshing (#283)
+- investigating problem that parts of the UI are not refreshing (#283)
 
 === 0.28.7
 
