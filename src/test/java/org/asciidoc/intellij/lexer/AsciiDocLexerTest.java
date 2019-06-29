@@ -265,7 +265,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('**bold')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:BULLET ('** ')\n" +
+        "AsciiDoc:BULLET ('**')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('world')");
   }
 
@@ -454,25 +455,38 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testBullet() {
     doTest("* bullet",
-      "AsciiDoc:BULLET ('* ')\n" +
+      "AsciiDoc:BULLET ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('bullet')");
+  }
+
+  public void testBulletWithBlanksInFront() {
+    doTest("  * bullet",
+      "AsciiDoc:WHITE_SPACE ('  ')\n" +
+        "AsciiDoc:BULLET ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('bullet')");
   }
 
   public void testMultipleBullets() {
     doTest("* bullet1\n* bullet2",
-      "AsciiDoc:BULLET ('* ')\n" +
+      "AsciiDoc:BULLET ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('bullet1')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:BULLET ('* ')\n" +
+        "AsciiDoc:BULLET ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('bullet2')");
   }
 
   public void testMultipleBulletsLevel2() {
     doTest("** bullet1\n** bullet2",
-      "AsciiDoc:BULLET ('** ')\n" +
+      "AsciiDoc:BULLET ('**')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('bullet1')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:BULLET ('** ')\n" +
+        "AsciiDoc:BULLET ('**')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('bullet2')");
   }
 
@@ -480,13 +494,16 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("* abc\n" +
         "* def\n" +
         "* ghi\n",
-      "AsciiDoc:BULLET ('* ')\n" +
+      "AsciiDoc:BULLET ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:BULLET ('* ')\n" +
+        "AsciiDoc:BULLET ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('def')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:BULLET ('* ')\n" +
+        "AsciiDoc:BULLET ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('ghi')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }

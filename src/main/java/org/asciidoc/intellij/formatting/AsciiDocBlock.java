@@ -76,6 +76,11 @@ class AsciiDocBlock extends AbstractBlock {
       return Spacing.createSpacing(0, 0, 2, false, 0);
     }
 
+    // one space after enumeration or bullet
+    if (isEnumeration(child1) || isBullet(child1)) {
+      return Spacing.createSpacing(1, 1, 0, false, 0);
+    }
+
     // before and after a block have one blank line, but not with if there is an continuation ("+")
     if (isBlock(child2) && !isContinuation(child1) && !isBlock(child1)) {
       return Spacing.createSpacing(0, 0, 2, false, 0);
@@ -163,6 +168,10 @@ class AsciiDocBlock extends AbstractBlock {
 
   @Override
   public Indent getIndent() {
+    if (myNode.getElementType() == AsciiDocTokenTypes.ENUMERATION
+      || myNode.getElementType() == AsciiDocTokenTypes.BULLET) {
+      return Indent.getSpaceIndent(0);
+    }
     ASTNode treePrev = myNode.getTreePrev();
     if (treePrev instanceof PsiWhiteSpace) {
       int spaces = 0;

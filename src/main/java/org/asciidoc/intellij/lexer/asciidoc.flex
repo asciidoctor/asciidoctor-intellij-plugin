@@ -145,8 +145,8 @@ STRING = {NON_SPACE}+ \n? // something that doesn't have an empty line
 // something with a non-blank at the end, might contain a line break, but only if it doesn't separate the block
 WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n] | {SPACE}* [^\n]*[^\ \t\n]
 BOLD = "*"
-BULLET = {SPACE}* ("*"+|"-"+) {SPACE}+
-ENUMERATION = {SPACE}* [0-9]*"."+ {SPACE}+
+BULLET = ("*"+|"-"+)
+ENUMERATION = [0-9]*"."+
 DOUBLEBOLD = {BOLD} {BOLD}
 PASSTRHOUGH_INLINE = "+++"
 ITALIC = "_"
@@ -184,6 +184,7 @@ ATTRIBUTE_REF_END = "}"
 
 %state MULTILINE
 %state SINGLELINE
+%state AFTER_SPACE
 %state INSIDE_LINE
 %state REF
 %state REFTEXT
@@ -361,8 +362,6 @@ ATTRIBUTE_REF_END = "}"
   {BLOCK_MACRO_START} / [^ \t\n] { resetFormatting(); yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   {BLOCK_ATTRS_START} / [^\[] { yypushstate(); yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
 
-  {BULLET} / {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BULLET; }
-  {ENUMERATION} / {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ENUMERATION; }
   {ATTRIBUTE_NAME_START} / [^:\n \t]* {AUTOCOMPLETE} {
     if (!isEscaped()) {
       yybegin(ATTRIBUTE_NAME); return AsciiDocTokenTypes.ATTRIBUTE_NAME_START;
@@ -378,6 +377,13 @@ ATTRIBUTE_REF_END = "}"
                          }
                          return AsciiDocTokenTypes.LINE_BREAK;
                        }
+  [ \t]+               { yybegin(AFTER_SPACE); return AsciiDocTokenTypes.WHITE_SPACE; }
+  [^]                  { yypushback(yylength()); yybegin(AFTER_SPACE); }
+}
+
+<AFTER_SPACE> {
+  {BULLET} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BULLET; }
+  {ENUMERATION} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ENUMERATION; }
   [^]                  { yypushback(yylength()); yybegin(INSIDE_LINE); }
 }
 
