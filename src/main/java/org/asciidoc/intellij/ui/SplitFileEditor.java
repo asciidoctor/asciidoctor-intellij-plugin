@@ -67,6 +67,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
       settings -> ApplicationManager.getApplication().invokeLater(() -> {
         triggerSplitOrientationChange(settings.getAsciiDocPreviewSettings().isVerticalSplit());
         triggerEditorFirstChange(settings.getAsciiDocPreviewSettings().isEditorFirst());
+        triggerLayoutChange(settings.getAsciiDocPreviewSettings().getSplitEditorLayout(), false);
       });
 
     ApplicationManager.getApplication().getMessageBus().connect(this)
@@ -114,16 +115,16 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     final int n = SplitEditorLayout.values().length;
     final int newValue = (oldValue + n - 1) % n;
 
-    triggerLayoutChange(SplitEditorLayout.values()[newValue]);
+    triggerLayoutChange(SplitEditorLayout.values()[newValue], true);
   }
 
-  public void triggerLayoutChange(@NotNull SplitFileEditor.SplitEditorLayout newLayout) {
+  public void triggerLayoutChange(@NotNull SplitFileEditor.SplitEditorLayout newLayout, boolean requestFocus) {
     if (mySplitEditorLayout == newLayout) {
       return;
     }
 
     mySplitEditorLayout = newLayout;
-    invalidateLayout();
+    invalidateLayout(requestFocus);
   }
 
   private void triggerSplitOrientationChange(boolean isVerticalSplit) {
@@ -142,10 +143,13 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     return mySplitEditorLayout;
   }
 
-  private void invalidateLayout() {
+  private void invalidateLayout(boolean requestFocus) {
     adjustEditorsVisibility();
-    myComponent.revalidate();
     myComponent.repaint();
+
+    if (!requestFocus) {
+      return;
+    }
 
     final JComponent focusComponent = getPreferredFocusedComponent();
     if (focusComponent != null) {
@@ -198,7 +202,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
       }
       if (compositeState.getSplitLayout() != null) {
         mySplitEditorLayout = SplitEditorLayout.valueOf(compositeState.getSplitLayout());
-        invalidateLayout();
+        invalidateLayout(true);
       }
     }
   }
@@ -215,8 +219,8 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
   @Override
   public void selectNotify() {
-    mySecondEditor.selectNotify();
     myMainEditor.selectNotify();
+    mySecondEditor.selectNotify();
   }
 
   @Override

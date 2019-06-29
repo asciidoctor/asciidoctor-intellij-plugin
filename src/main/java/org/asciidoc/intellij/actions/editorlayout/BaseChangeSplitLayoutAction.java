@@ -34,7 +34,7 @@ abstract class BaseChangeSplitLayoutAction extends AnAction implements DumbAware
       if (myLayoutToSet == null) {
         splitFileEditor.triggerLayoutChange();
       } else {
-        splitFileEditor.triggerLayoutChange(myLayoutToSet);
+        splitFileEditor.triggerLayoutChange(myLayoutToSet, true);
         e.getPresentation().putClientProperty(SELECTED_PROPERTY, true);
       }
     }

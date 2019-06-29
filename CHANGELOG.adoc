@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.8 (preview, available from Github releases)
+
+- investigating problem parts of the UI not refreshing (#283)
+
 === 0.28.7
 
 - Save image context menu now showing up on macOS (thanks to @wimdeblauwe) (#283)
