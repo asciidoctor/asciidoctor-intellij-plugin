@@ -45,6 +45,8 @@ If not, please describe the expected behaviour in a https://github.com/asciidoct
 Please consider to contribute to this document: open a bug when something is unclear, missing or wrong.
 You can even create a pull request for this document!
 
+NOTE: Parts that are marked to be experimental are likely to have corner cases that are not yet implemented, may have bugs. They can change their behaviour between releases at any time.
+
 == Features
 
 === Basic
@@ -126,6 +128,11 @@ References and attributes support renaming within a project.
 There are several live templates included.
 Once the user starts typing kbd:[a]kbd:[d], a list of templates appears.
 Continued typing any character of the template name restricts the list. A kbd:[Tab] selects and entry.
+
+Experimental: The user can reformat the source in the editor using "Reformat Code" (kbd:[Ctrl+Alt+L]).
+In order to use this feature, the user has to enable it in the settings of the plugin.
+Currently it adjusts empty lines around headings, lists and blocks.
+It also adjusts spaces around lists.
 
 === Preview
 
