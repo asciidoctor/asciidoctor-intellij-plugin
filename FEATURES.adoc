@@ -1,6 +1,6 @@
 = Features of the AsciiDoc IntelliJ plugin
 :experimental:
-
+:icons: font
 
 ////
 = Contribution Guideline for this document:
@@ -112,6 +112,12 @@ For the user to re-format the code block, use "`Edit Fragment`" (kbd:[Alt+Enter]
 
 All comments containing a `TODO` and `FIXME` and are indexed in the Todo-View (kbd:[Alt+6]).
 The user can configure the keywords in the IDE settings.
+
+// see: BrowserPanel for creating the HTML
+// see: PreviewStaticServer for delivering the contents to the Browser
+In the editor the user can select from a list of browsers that are showing in the upper right corner of the editor to preview the document.
+The user can also trigger this action from the context menu.
+To update the preview in the browser the user needs to refresh the contents by pressing kbd:[F5] in the browser.
 
 ==== Writing
 

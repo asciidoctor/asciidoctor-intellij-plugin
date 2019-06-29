@@ -1,8 +1,12 @@
 package org.asciidoc.intellij.editor.javafx;
 
+import com.intellij.ide.browsers.OpenInBrowserRequest;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
 import io.netty.buffer.Unpooled;
@@ -16,8 +20,8 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import org.asciidoc.intellij.editor.browser.BrowserPanel;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.BuiltInServerManager;
 import org.jetbrains.ide.HttpRequestHandler;
 import org.jetbrains.io.FileResponses;
@@ -25,6 +29,8 @@ import org.jetbrains.io.Responses;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
@@ -34,17 +40,14 @@ import java.util.regex.Pattern;
 public class PreviewStaticServer extends HttpRequestHandler {
   private Logger log = Logger.getInstance(PreviewStaticServer.class);
 
-  public static final String INLINE_CSS_FILENAME = "inline.css";
   private static final Logger LOG = Logger.getInstance(PreviewStaticServer.class);
   private static final String PREFIX = "/ead61b63-b0a6-4ff2-a49a-86be75ccfd1a/";
-  private static final Pattern PAYLOAD_PATTERN = Pattern.compile("(?<contentType>[^/]*)/(?<fileName>[a-zA-Z0-9./_-]*)");
+  private static final Pattern PAYLOAD_PATTERN = Pattern.compile("((?<contentType>[^/]*)/(?<fileName>[a-zA-Z0-9./_-]*))|(?<action>(source|image))");
+
+  private BrowserPanel browserPanel;
 
   // every time the plugin starts up, assume resources could have been modified
   private static final long LAST_MODIFIED = System.currentTimeMillis();
-
-  @Nullable
-  private byte[] myInlineStyleBytes = null;
-  private long myInlineStyleTimestamp = 0;
 
   public static PreviewStaticServer getInstance() {
     return HttpRequestHandler.Companion.getEP_NAME().findExtension(PreviewStaticServer.class);
@@ -53,9 +56,9 @@ public class PreviewStaticServer extends HttpRequestHandler {
   @NotNull
   public static String createCSP(@NotNull List<String> scripts, @NotNull List<String> styles) {
     return "default-src 'none'; script-src " + StringUtil.join(scripts, " ") + "; "
-           + "style-src https: " + StringUtil.join(styles, " ") + "; "
-           + "img-src file: *; connect-src 'none'; font-src *; " +
-           "object-src 'none'; media-src 'none'; child-src 'none';";
+      + "style-src https: " + StringUtil.join(styles, " ") + "; "
+      + "img-src file: *; connect-src 'none'; font-src *; " +
+      "object-src 'none'; media-src 'none'; child-src 'none';";
   }
 
   @NotNull
@@ -74,9 +77,18 @@ public class PreviewStaticServer extends HttpRequestHandler {
     return getStaticUrl("styles/" + scriptFileName);
   }
 
-  public void setInlineStyle(@Nullable String inlineStyle) {
-    myInlineStyleBytes = inlineStyle == null ? null : inlineStyle.getBytes(StandardCharsets.UTF_8);
-    myInlineStyleTimestamp = System.currentTimeMillis();
+  public static Url getFileUrl(OpenInBrowserRequest request, VirtualFile file) {
+    Url url;
+    try {
+      url = Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "source?file=" +
+        URLEncoder.encode(file.getPath(), StandardCharsets.UTF_8.toString()));
+    } catch (UnsupportedEncodingException e) {
+      throw new IllegalStateException("can't encode");
+    }
+    if (request.isAppendAccessToken()) {
+      url = BuiltInServerManager.getInstance().addAuthToken(Objects.requireNonNull(url));
+    }
+    return url;
   }
 
   @Override
@@ -104,22 +116,76 @@ public class PreviewStaticServer extends HttpRequestHandler {
 
     final String contentType = matcher.group("contentType");
     final String fileName = matcher.group("fileName");
+    final String action = matcher.group("action");
 
     if ("scripts".equals(contentType)) {
       sendResource(request,
-                   context.channel(),
-                   JavaFxHtmlPanel.class,
-                   fileName);
+        context.channel(),
+        JavaFxHtmlPanel.class,
+        fileName);
     } else if ("styles".equals(contentType)) {
       sendResource(request,
-                   context.channel(),
+        context.channel(),
         JavaFxHtmlPanel.class,
-                   fileName);
+        fileName);
+    } else if ("source".equals(action)) {
+      String file = urlDecoder.parameters().get("file").get(0);
+      VirtualFile vf = LocalFileSystem.getInstance().findFileByPath(file);
+      sendDocument(request, vf, context.channel());
+    } else if ("image".equals(action)) {
+      String file = urlDecoder.parameters().get("file").get(0);
+      String mac = urlDecoder.parameters().get("mac").get(0);
+      return sendImage(request, file, mac, context.channel());
     } else {
       return false;
     }
 
     return true;
+  }
+
+  private boolean sendImage(FullHttpRequest request, String file, String mac, Channel channel) {
+    if (browserPanel == null) {
+      return false;
+    }
+
+    byte[] image = browserPanel.getImage(file, mac);
+    if (image != null) {
+      FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(image));
+      if (file.endsWith(".png")) {
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "image/png");
+      } else if (file.endsWith(".jpg")) {
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "image/jpsg");
+      } else if (file.endsWith(".svg")) {
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "image/svg+xml");
+      } else {
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/octet-stream");
+      }
+      response.headers().set(HttpHeaderNames.CACHE_CONTROL, "max-age=3600, private, must-revalidate");
+      response.headers().set(HttpHeaderNames.ETAG, Long.toString(LAST_MODIFIED));
+      Responses.send(response, channel, request);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private void sendDocument(FullHttpRequest request, VirtualFile file, Channel channel) {
+    synchronized (this) {
+      if (browserPanel == null) {
+        browserPanel = new BrowserPanel();
+      }
+
+      ReadAction.compute(() -> {
+          String html = browserPanel.getHtml(file);
+          FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(html.getBytes(StandardCharsets.UTF_8)));
+          response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
+          response.headers().set(HttpHeaderNames.CACHE_CONTROL, "max-age=5, private, must-revalidate");
+          response.headers().set(HttpHeaderNames.ETAG, Long.toString(LAST_MODIFIED));
+          Responses.send(response, channel, request);
+          return true;
+        }
+      );
+    }
   }
 
   private static void sendResource(@NotNull HttpRequest request,
