@@ -1,17 +1,23 @@
 package org.asciidoc.intellij.toolbar;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.util.ui.JBEmptyBorder;
+import icons.AsciiDocIcons;
+import org.asciidoc.intellij.actions.asciidoc.TableMenuAction;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+
+import static org.asciidoc.intellij.actions.asciidoc.TableMenuAction.SUB_ACTIONS_PREFIX;
 
 /**
  * inspired by {@link com.intellij.ui.EditorNotificationPanel}.
@@ -47,9 +53,31 @@ public class AsciiDocToolbarPanel extends JPanel implements Disposable {
     if (!actionManager.isGroup(groupId)) {
       throw new IllegalStateException(groupId + " should have been a group");
     }
-    final ActionGroup group = ((ActionGroup) actionManager.getAction(groupId));
+
+    DefaultActionGroup toolbarGroup = new DefaultActionGroup();
+
+    final DefaultActionGroup group = (DefaultActionGroup) actionManager.getAction(groupId);
+    AnAction[] children = group.getChildren(null);
+
+    //Create new group of actions without actions starting by SUB_ACTIONS_PREFIX.
+    String[] actionIds = actionManager.getActionIds(SUB_ACTIONS_PREFIX);
+    ArrayList<AnAction> exclusions = new ArrayList<>();
+    for (String actionId : actionIds) {
+      exclusions.add(actionManager.getAction(actionId));
+    }
+    for (AnAction child : children) {
+      if (!exclusions.contains(child)) {
+        toolbarGroup.addAction(child);
+      }
+    }
+
+    TableMenuAction tableMenuAction = new TableMenuAction();
+    tableMenuAction.getTemplatePresentation().setDescription("Create table");
+    tableMenuAction.getTemplatePresentation().setText("Create table");
+    tableMenuAction.getTemplatePresentation().setIcon(AsciiDocIcons.EditorActions.TABLE);
+    toolbarGroup.addAction(tableMenuAction);
     final ActionToolbarImpl editorToolbar =
-      ((ActionToolbarImpl) actionManager.createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, group, true));
+      ((ActionToolbarImpl) actionManager.createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, toolbarGroup, true));
     editorToolbar.setOpaque(false);
     editorToolbar.setBorder(new JBEmptyBorder(0, 2, 0, 2));
 
