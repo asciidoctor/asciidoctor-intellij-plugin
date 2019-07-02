@@ -139,10 +139,11 @@ There are several live templates included.
 Once the user starts typing kbd:[a]kbd:[d], a list of templates appears.
 Continued typing any character of the template name restricts the list. A kbd:[Tab] selects and entry.
 
-Experimental: The user can reformat the source in the editor using "Reformat Code" (kbd:[Ctrl+Alt+L]).
+*Experimental:* The user can reformat the source in the editor using "Reformat Code" (kbd:[Ctrl+Alt+L]).
 In order to use this feature, the user has to enable it in the settings of the plugin.
 Currently it adjusts empty lines around headings, lists and blocks.
-It also adjusts spaces around lists.
+It also adjusts spaces around list items. +
+In the project view the user can reformat a single file or all files in a folder and its sub folders using the same shortcut or the entry from the context menu.
 
 === Preview
 
