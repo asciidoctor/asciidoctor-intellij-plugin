@@ -20,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -88,35 +86,32 @@ public class TableMenuAction extends AsciiDocAction {
       items.add(item);
     }
     TableSizer tableSizer = new TableSizer();
-    tableSizer.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (e instanceof TableSizer.CreateTableActionEvent) {
-          TableSizer.CreateTableActionEvent ctae = (TableSizer.CreateTableActionEvent) e;
-          final Project project = event.getProject();
-          if (project == null) {
-            return;
-          }
-          Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-          if (editor == null) {
-            return;
-          }
-          String table = CreateTableAction.generateTable(ctae.getWidth(), ctae.getHeight(), "");
-          final Document document = editor.getDocument();
-          final int offset = editor.getCaretModel().getOffset();
-          CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-            @Override
-            public void run() {
-              ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                @Override
-                public void run() {
-                  document.insertString(offset, table);
-                }
-              });
-            }
-          }, null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
-          popup.closeOk(null);
+    tableSizer.addActionListener(e -> {
+      if (e instanceof TableSizer.CreateTableActionEvent) {
+        TableSizer.CreateTableActionEvent ctae = (TableSizer.CreateTableActionEvent) e;
+        final Project project = event.getProject();
+        if (project == null) {
+          return;
         }
+        Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+        if (editor == null) {
+          return;
+        }
+        String table = CreateTableAction.generateTable(ctae.getWidth(), ctae.getHeight(), "");
+        final Document document = editor.getDocument();
+        final int offset = editor.getCaretModel().getOffset();
+        CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+          @Override
+          public void run() {
+            ApplicationManager.getApplication().runWriteAction(new Runnable() {
+              @Override
+              public void run() {
+                document.insertString(offset, table);
+              }
+            });
+          }
+        }, null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
+        popup.closeOk(null);
       }
     });
     titleLabel = new JLabel(getTemplatePresentation().getText());
