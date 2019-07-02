@@ -44,6 +44,14 @@ This project uses AsciiDoctorJ and JRuby for the rendering of the AsciiDoc conte
 
 For the conversion of Markdown to AsciiDoc, we use Pegdown and the https://github.com/bodiam/markdown-to-asciidoc[Markdown to AsciiDoc] converter.
 
+== Early Access Repository
+
+There is an EAP plugin repository through which you can automatically get all pre-releases.
+To receive notifications of new releases and download the new plugin releases:
+
+Go to "File | Settings... | Plugins | (Gear Icon) | Manage plugin repositories..."
+add https://plugins.jetbrains.com/plugins/eap/list?pluginId=7391 as an additional repository
+
 == Building an Contributing
 
 Please have a look at the link:CONTRIBUTING.adoc["How to Build and Contribute"] documentation.
