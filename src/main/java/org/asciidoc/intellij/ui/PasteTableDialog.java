@@ -9,15 +9,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.CharArrayReader;
 import java.io.IOException;
 
 public class PasteTableDialog extends DialogWrapper {
 
-  private ComboBox separatorSelector = new ComboBox<String>(new String[]{"tab", ",", ";", "space"});
+  private com.intellij.openapi.diagnostic.Logger log =
+    com.intellij.openapi.diagnostic.Logger.getInstance(PasteTableDialog.class);
+
+  private ComboBox separatorSelector = new ComboBox<>(new String[]{"tab", ",", ";", "space"});
+  @Nullable
   private String data;
   private String separator;
   private JLabel expectedTableSizeLabel = new JLabel();
@@ -28,12 +30,7 @@ public class PasteTableDialog extends DialogWrapper {
     setResizable(false);
     separatorSelector.setEditable(true);
 
-    separatorSelector.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        update();
-      }
-    });
+    separatorSelector.addActionListener(e -> update());
 
     update();
 
@@ -64,7 +61,12 @@ public class PasteTableDialog extends DialogWrapper {
   }
 
   private void update() {
+    // reset data first in case the result can't be parsed or no separator given
+    data = null;
     String sep = (String) separatorSelector.getSelectedItem();
+    if (sep == null) {
+      sep = "";
+    }
     if (sep.equals("tab")) {
       separator = "\t";
     } else if (sep.equals("space")) {
@@ -79,11 +81,9 @@ public class PasteTableDialog extends DialogWrapper {
         br = new BufferedReader(new CharArrayReader(data.toCharArray()));
         int max = br.lines().mapToInt(line -> StringUtils.countMatches(line, separator)).max().orElse(0);
         expectedTableSizeLabel.setText(max + 1 + " x " + lines);
-      } catch (UnsupportedFlavorException e) {
-        e.printStackTrace();
-      } catch (IOException e) {
-        e.printStackTrace();
-        expectedTableSizeLabel.setText("");
+      } catch (UnsupportedFlavorException | IOException e) {
+        log.info("unable to parse clipboard", e);
+        expectedTableSizeLabel.setText("unable to parse clipboard");
       }
     } else {
       expectedTableSizeLabel.setText("");

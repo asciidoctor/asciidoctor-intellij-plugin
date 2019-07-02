@@ -39,21 +39,16 @@ public class PasteTableAction extends AsciiDocAction {
     if (pasteTableDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
       final Document document = editor.getDocument();
       final int offset = editor.getCaretModel().getOffset();
-      CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-        @Override
-        public void run() {
-          ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-              document.insertString(offset, toAsciiDocTable(pasteTableDialog.getData(), pasteTableDialog.getSeparator()));
-            }
-          });
-        }
-      }, null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
+      CommandProcessor.getInstance().executeCommand(project,
+        () -> ApplicationManager.getApplication().runWriteAction(() -> {
+          if (pasteTableDialog.getData() != null) {
+            document.insertString(offset, toAsciiDocTable(pasteTableDialog.getData(), pasteTableDialog.getSeparator()));
+          }
+        }), null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
     }
   }
 
-  private String toAsciiDocTable(String tableData, String separator) {
+  private String toAsciiDocTable(@NotNull String tableData, String separator) {
     StringBuilder asciiDocTable = new StringBuilder("\n");
     BufferedReader br = new BufferedReader(new CharArrayReader(tableData.toCharArray()));
     int cols = br.lines().mapToInt(line -> StringUtils.countMatches(line, separator)).max().orElse(0) + 1;
@@ -73,7 +68,7 @@ public class PasteTableAction extends AsciiDocAction {
       String[] elements = line.split(separator);
       for (int i = 0; i < cols; i++) {
         if (i < elements.length) {
-          asciiDocTable.append("|" + elements[i] + "\n");
+          asciiDocTable.append("|").append(elements[i]).append("\n");
         } else {
           asciiDocTable.append("|\n");
         }
