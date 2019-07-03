@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.28.9 (work in progress)
+=== 0.28.9 (preview, available from Github releases)
 
 - experimental support reformatting of AsciiDoc sources, needs to be enabled in the settings (#289)
 - "`Open in Browser`" now opens the contents of the preview in the selected browser including rendered diagrams (#82)
