@@ -34,7 +34,7 @@ Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to 
 
 Refer to the link:FEATURES.adoc[Features list] for a detailed overview of the features.
 
-If you are missing features, please don't hesitate to let me know on Twitter: http://www.twitter.com/ahus1de[@ahus1de] or make an issue in the issue tracker!
+If you are missing features, please don't hesitate to let me know on Twitter: http://www.twitter.com/ahus1de[@ahus1de] or create an issue in the GitHub issue tracker!
 
 Refer to the link:CHANGELOG.adoc[CHANGELOG] for a complete list of changes in older releases.
 

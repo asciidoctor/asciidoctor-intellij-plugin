@@ -93,7 +93,7 @@ The plugin highlights matching braces including symmetric formatting for bold, i
 IntelliJ's built-in spell checker verifies all text areas of the document.
 It underlines unknown words with a green wavy line.
 With the context menu the user can change the spelling or to add the word to the project's dictionary.
-To enable spell-checking support for other languages, the user can add a dictionary file via "Editor | Spelling".
+To enable spell-checking support for other languages, the user can add a dictionary file via "`Editor | Spelling`".
 Dictionaries are available online for example at http://www.winedt.org/dict.html. Word lists need to be in the UTF-8 format to work.
 
 During rendering Asciidoctor might indicate problems in the file including a line number.
@@ -121,7 +121,7 @@ To update the preview in the browser the user needs to refresh the contents by p
 
 The user can open an AsciiDoc file in an external tool (like for example Google Chrome with the https://github.com/asciidoctor/asciidoctor-browser-extension[Asciidoctor Extension] installed). To do this, add Chrome as an https://www.jetbrains.com/help/idea/settings-tools-external-tools.html[external Tool in the settings].
 Provide `$FilePath$` as the argument so that Chrome knows where to find the file.
-The user can assign a shortcut to the external tool using "Help | Find action... | (type the name of external tool) | kbd:[Alt+Enter] | (type the shortcut of choice) | OK".
+The user can assign a shortcut to the external tool using "`Help | Find action... | (type the name of external tool) | kbd:[Alt+Enter] | (type the shortcut of choice) | OK`".
 
 ==== Writing
 
@@ -139,7 +139,7 @@ There are several live templates included.
 Once the user starts typing kbd:[a]kbd:[d], a list of templates appears.
 Continued typing any character of the template name restricts the list. A kbd:[Tab] selects and entry.
 
-*Experimental:* The user can reformat the source in the editor using "Reformat Code" (kbd:[Ctrl+Alt+L]).
+*Experimental:* The user can reformat the source in the editor using "`Reformat Code`" (kbd:[Ctrl+Alt+L]).
 In order to use this feature, the user has to enable it in the settings of the plugin.
 Currently it adjusts empty lines around headings, lists and blocks.
 It also adjusts spaces around list items. +
