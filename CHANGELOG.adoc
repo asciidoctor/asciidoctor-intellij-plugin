@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.10 (preview, available from Github releases)
+
+- inlining and extracting of includes (#271)
+
 === 0.28.9 (preview, available from Github releases)
 
 - experimental support reformatting of AsciiDoc sources, needs to be enabled in the settings (#289)

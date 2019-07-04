@@ -139,6 +139,14 @@ There are several live templates included.
 Once the user starts typing kbd:[a]kbd:[d], a list of templates appears.
 Continued typing any character of the template name restricts the list. A kbd:[Tab] selects and entry.
 
+The user can extract and inline includes.
+This is available from the "`Refactor`" context menu and via context-sensitive intents via kbd:[Alt+Enter] ("`Inline Include`" and "`Extract Include`").
+// see: ExtractIncludeDialog.java
+Extract will extract either the currently selected text, the current block or the current section including subsections.
+// see: InlineIncludeDialog.java
+Inline will inline the complete referenced file at the current include; optionally it can provide a preview, inline all occurrences of the file and delete the included file afterwards.
+All of these changes can be undone (kbd:[Ctrl+Z]).
+
 *Experimental:* The user can reformat the source in the editor using "`Reformat Code`" (kbd:[Ctrl+Alt+L]).
 In order to use this feature, the user has to enable it in the settings of the plugin.
 Currently it adjusts empty lines around headings, lists and blocks.
