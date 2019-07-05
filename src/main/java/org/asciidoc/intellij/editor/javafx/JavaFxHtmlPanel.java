@@ -209,12 +209,15 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
           myWebView.addEventFilter(ScrollEvent.SCROLL, scrollEvent -> {
             // touch pads send lots of events with deltaY == 0, not handling them here
-            if (scrollEvent.isControlDown() && scrollEvent.getDeltaY() != 0) {
+            if (scrollEvent.isControlDown() && Double.compare(scrollEvent.getDeltaY(), 0.0) != 0) {
               double zoom = myWebView.getZoom();
-              double factor = (scrollEvent.getDeltaY() > 0 ? 1.1 : 0.9)
+              double factor = (scrollEvent.getDeltaY() > 0.0 ? 0.1 : -0.1)
                 // normalize scrolling
-                * (Math.abs(scrollEvent.getDeltaY()) / scrollEvent.getMultiplierY());
+                * (Math.abs(scrollEvent.getDeltaY()) / scrollEvent.getMultiplierY())
+                // adding one to make it a factor that we can multiply the zoom by
+                + 1;
               zoom = zoom * factor;
+              // define minimum/maximum zoom
               if (zoom < JBUI.scale(0.1f)) {
                 zoom = 0.1;
               } else if (zoom > JBUI.scale(10.f)) {

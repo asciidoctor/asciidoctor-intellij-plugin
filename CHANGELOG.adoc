@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.12 (work in progress)
+
+- rework zoom for touchpads (#295)
+
 === 0.28.11 (preview, available from Github releases)
 
 - inject absolute location of .asciidoctorconfig file (thanks to @rdmueller) (#280)
