@@ -42,6 +42,7 @@ public class AsciiDocBraceMatcher extends PairedBraceMatcherAdapter {
     public boolean isPairedBracesAllowedBeforeType(@NotNull IElementType lbraceType, IElementType type) {
       return type == null ||
         type == AsciiDocTokenTypes.WHITE_SPACE ||
+        type == AsciiDocTokenTypes.WHITE_SPACE_MONO ||
         type == AsciiDocTokenTypes.LINE_BREAK ||
         type == AsciiDocTokenTypes.RPAREN ||
         type == AsciiDocTokenTypes.RBRACKET ||

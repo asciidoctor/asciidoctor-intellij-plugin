@@ -147,6 +147,7 @@ WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n] | {SPACE}* [^\n]*[^\ \t\n]
 BOLD = "*"
 BULLET = ("*"+|"-"+)
 ENUMERATION = [0-9]*"."+
+CALLOUT = "<" [0-9] ">"
 DOUBLEBOLD = {BOLD} {BOLD}
 PASSTRHOUGH_INLINE = "+++"
 ITALIC = "_"
@@ -186,6 +187,7 @@ ATTRIBUTE_REF_END = "}"
 %state SINGLELINE
 %state AFTER_SPACE
 %state INSIDE_LINE
+%state MONO_SECOND_TRY
 %state REF
 %state REFTEXT
 %state REFAUTO
@@ -361,6 +363,7 @@ ATTRIBUTE_REF_END = "}"
   {TITLE_START} / [^\. ] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE; }
   {BLOCK_MACRO_START} / [^ \t\n] { resetFormatting(); yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   {BLOCK_ATTRS_START} / [^\[] { yypushstate(); yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
+  {CALLOUT} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.CALLOUT; }
 
   {ATTRIBUTE_NAME_START} / [^:\n \t]* {AUTOCOMPLETE} {
     if (!isEscaped()) {
@@ -377,7 +380,13 @@ ATTRIBUTE_REF_END = "}"
                          }
                          return AsciiDocTokenTypes.LINE_BREAK;
                        }
-  [ \t]+               { yybegin(AFTER_SPACE); return AsciiDocTokenTypes.WHITE_SPACE; }
+  [ \t]+               { yybegin(AFTER_SPACE);
+                         if (singlemono || doublemono) {
+                           return AsciiDocTokenTypes.WHITE_SPACE_MONO;
+                         } else {
+                           return AsciiDocTokenTypes.WHITE_SPACE;
+                         }
+                       }
   [^]                  { yypushback(yylength()); yybegin(AFTER_SPACE); }
 }
 
@@ -394,7 +403,12 @@ ATTRIBUTE_REF_END = "}"
                            yybegin(SINGLELINE);
                          }
                          return AsciiDocTokenTypes.LINE_BREAK; }
-  [ \t]                { return AsciiDocTokenTypes.WHITE_SPACE; }
+  [ \t]                { if (singlemono || doublemono) {
+                           return AsciiDocTokenTypes.WHITE_SPACE_MONO;
+                         } else {
+                           return AsciiDocTokenTypes.WHITE_SPACE;
+                         }
+                       }
   // BOLD START
   // start something with ** only if it closes within the same block
   {DOUBLEBOLD} / [^\*] {STRING}* {DOUBLEBOLD} { if(!singlebold) {
@@ -478,17 +492,6 @@ ATTRIBUTE_REF_END = "}"
                            return textFormat();
                          }
                        }
-  {MONO} {MONO}? / [^\`\n \t\"] {WORD}* {MONO} { if(isUnconstrainedStart() && !singlemono && !doublemono) {
-                            if (yylength() == 2) {
-                              yypushback(1);
-                            }
-                            singlemono = true; return AsciiDocTokenTypes.MONO_START;
-                         } else if (singlemono && isUnconstrainedEnd()) {
-                            singlemono = false; return AsciiDocTokenTypes.MONO_END;
-                         } else {
-                            return textFormat();
-                         }
-                       }
   {MONO}               { if(singlemono && !doublemono && isUnconstrainedEnd()) {
                            singlemono = false; return AsciiDocTokenTypes.MONO_END;
                          } else {
@@ -553,12 +556,14 @@ ATTRIBUTE_REF_END = "}"
                            }
                          }
   {TYPOGRAPHIC_DOUBLE_QUOTE_END} {
+                           // `" might be a typographic quote end of the start of a monospaced quoted part
+                           // if it doesn't match, give MONO start a second try.
                            if (typographicquote && isUnconstrainedEnd()) {
                              typographicquote = false;
                              return AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END;
                            } else {
-                             yypushback(1);
-                             return textFormat();
+                             yypushback(yylength());
+                             yybegin(MONO_SECOND_TRY);
                            }
                          }
   {TYPOGRAPHIC_SINGLE_QUOTE_START} / [^\*\n \t] {WORD}* {TYPOGRAPHIC_SINGLE_QUOTE_END} {
@@ -605,6 +610,27 @@ ATTRIBUTE_REF_END = "}"
                            yybegin(PASSTRHOUGH_INLINE); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
                          }
   [^]                  { return textFormat(); }
+}
+
+<INSIDE_LINE, MONO_SECOND_TRY> {
+  {MONO} {MONO}? / [^\`\n \t] {WORD}* {MONO} {
+                         yybegin(INSIDE_LINE);
+                         if(isUnconstrainedStart() && !singlemono && !doublemono) {
+                            if (yylength() == 2) {
+                              yypushback(1);
+                            }
+                            singlemono = true; return AsciiDocTokenTypes.MONO_START;
+                         } else if (singlemono && isUnconstrainedEnd()) {
+                            singlemono = false; return AsciiDocTokenTypes.MONO_END;
+                         } else {
+                            return textFormat();
+                         }
+                       }
+}
+
+<MONO_SECOND_TRY> {
+                       // needed advance in case of no second try possible
+  [^]                  { yybegin(INSIDE_LINE); return textFormat(); }
 }
 
 <REF, REFTEXT> {

@@ -34,6 +34,11 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
     DefaultLanguageHighlighterColors.KEYWORD
   );
 
+  static final TextAttributesKey ASCIIDOC_CALLOUT = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC.CALLOUT",
+    DefaultLanguageHighlighterColors.KEYWORD
+  );
+
   static final TextAttributesKey ASCIIDOC_ENUMERATION = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC.ENUMERATION",
     DefaultLanguageHighlighterColors.KEYWORD
@@ -105,8 +110,10 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
       .put(AsciiDocTokenTypes.MONO_END, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.MONO_START, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.MONO, ASCIIDOC_MONO)
+      .put(AsciiDocTokenTypes.WHITE_SPACE_MONO, ASCIIDOC_MONO)
       .put(AsciiDocTokenTypes.BLOCK_MACRO_ID, ASCIIDOC_BLOCK_MACRO_ID)
       .put(AsciiDocTokenTypes.BULLET, ASCIIDOC_BULLET)
+      .put(AsciiDocTokenTypes.CALLOUT, ASCIIDOC_CALLOUT)
       .put(AsciiDocTokenTypes.ENUMERATION, ASCIIDOC_ENUMERATION)
       .put(AsciiDocTokenTypes.REFSTART, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.REFEND, ASCIIDOC_MARKER)

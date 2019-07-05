@@ -446,9 +446,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("`test ` test`",
       "AsciiDoc:MONO_START ('`')\n" +
         "AsciiDoc:MONO ('test')\n" +
-        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:WHITE_SPACE_MONO (' ')\n" +
         "AsciiDoc:MONO ('`')\n" +
-        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:WHITE_SPACE_MONO (' ')\n" +
         "AsciiDoc:MONO ('test')\n" +
         "AsciiDoc:MONO_END ('`')");
   }
@@ -679,15 +679,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TYPOGRAPHIC_SINGLE_QUOTE_END ('`'')");
   }
 
-  public void testTwoTypographicQuotes() {
-    doTest("\"`tq`\" \"`tq`\"",
-      "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_START ('\"`')\n" +
-        "AsciiDoc:TEXT ('tq')\n" +
-        "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_END ('`\"')\n" +
-        "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_START ('\"`')\n" +
-        "AsciiDoc:TEXT ('tq')\n" +
-        "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_END ('`\"')");
+  public void testMonospaceWithQuotes() {
+    doTest("`\"initial value\"`",
+      "AsciiDoc:MONO_START ('`')\n" +
+        "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +
+        "AsciiDoc:MONO ('initial')\n" +
+        "AsciiDoc:WHITE_SPACE_MONO (' ')\n" +
+        "AsciiDoc:MONO ('value')\n" +
+        "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +
+        "AsciiDoc:MONO_END ('`')");
   }
 
   public void testNoTypographicQuotes() {

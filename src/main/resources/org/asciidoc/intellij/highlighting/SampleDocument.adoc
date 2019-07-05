@@ -11,6 +11,8 @@ Block comment
 
 <enumeration>.</enumeration> enumeration
 
+<callout><1></callout> callout
+
 <block_macro>blockmacro::</block_macro><marker>[]</marker>
 
 <marker>:</marker><attribute>attribute</attribute><marker>:</marker> <value>value</value>
