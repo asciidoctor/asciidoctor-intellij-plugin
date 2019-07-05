@@ -215,7 +215,26 @@ public class AsciiDoc {
   private void notify(ByteArrayOutputStream boasOut, ByteArrayOutputStream boasErr, List<LogRecord> logRecords) {
     String out = boasOut.toString();
     String err = boasErr.toString();
-    // logRecords will be handled in the org.asciidoc.intellij.annotator.ExternalAnnotator
+    if (!AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isShowAsciiDocWarningsAndErrorsInEditor()) {
+      // logRecords will not be handled in the org.asciidoc.intellij.annotator.ExternalAnnotator
+      for (LogRecord logRecord : logRecords) {
+        if (logRecord.getSeverity() == Severity.DEBUG) {
+          continue;
+        }
+        StringBuilder message = new StringBuilder();
+        message.append("Error during rendering ").append(name).append("; ").append(logRecord.getSeverity().name()).append(" ");
+        // TODO: for the current file there will be line numbers, but no file name.
+        // before we log the line numbers of the current file, they would need to be adjusted be the offset prefix
+        if (logRecord.getCursor() != null && logRecord.getCursor().getFile() != null) {
+          message.append(logRecord.getCursor().getFile()).append(":").append(logRecord.getCursor().getLineNumber());
+        }
+        message.append(" ").append(logRecord.getMessage());
+        Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Message during rendering " + name,
+          message.toString(), NotificationType.INFORMATION, null);
+        notification.setImportant(true);
+        Notifications.Bus.notify(notification);
+      }
+    }
     if (out.length() > 0) {
       Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Message during rendering " + name, out,
         NotificationType.INFORMATION, null);

@@ -64,6 +64,9 @@ public final class AsciiDocPreviewSettings {
   @Attribute("EnableFormatSource")
   private boolean myEnableFormatSource = false;
 
+  @Attribute("ShowAsciiDocWarningsAndErrorsInEditor")
+  private boolean myShowAsciiDocWarningsAndErrorsInEditor = true;
+
   public AsciiDocPreviewSettings() {
   }
 
@@ -73,7 +76,8 @@ public final class AsciiDocPreviewSettings {
                                  @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme,
                                  @NotNull Map<String, String> attributes, boolean verticalSplit, boolean editorFirst,
                                  boolean enableInjections, @Nullable String disabledInjectionsByLanguage,
-                                 boolean enableFormatSource) {
+                                 boolean enableFormatSource,
+                                 boolean showAsciiDocWarningsAndErrorsInEditor) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
@@ -83,6 +87,7 @@ public final class AsciiDocPreviewSettings {
     myEnableInjections = enableInjections;
     myDisabledInjectionsByLanguage = disabledInjectionsByLanguage;
     myEnableFormatSource = enableFormatSource;
+    myShowAsciiDocWarningsAndErrorsInEditor = showAsciiDocWarningsAndErrorsInEditor;
   }
 
   @NotNull
@@ -141,6 +146,10 @@ public final class AsciiDocPreviewSettings {
     return myEnableFormatSource;
   }
 
+  public boolean isShowAsciiDocWarningsAndErrorsInEditor() {
+    return myShowAsciiDocWarningsAndErrorsInEditor;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -176,6 +185,9 @@ public final class AsciiDocPreviewSettings {
     if (myEnableFormatSource != that.myEnableFormatSource) {
       return false;
     }
+    if (myShowAsciiDocWarningsAndErrorsInEditor != that.myShowAsciiDocWarningsAndErrorsInEditor) {
+      return false;
+    }
     return attributes.equals(that.attributes);
   }
 
@@ -190,6 +202,7 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + (myEnableInjections ? 1 : 0);
     result = 31 * result + Objects.hashCode(myDisabledInjectionsByLanguage);
     result = 31 * result + (myEnableFormatSource ? 1 : 0);
+    result = 31 * result + (myShowAsciiDocWarningsAndErrorsInEditor ? 1 : 0);
     return result;
   }
 

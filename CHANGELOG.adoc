@@ -7,9 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.28.12 (work in progress)
+=== 0.28.12 (preview, available from Github releases)
 
 - rework zoom for touchpads (#295)
+- added setting to disable error/warning highlighting in editor (#296)
 
 === 0.28.11 (preview, available from Github releases)
 

@@ -55,7 +55,7 @@ public class AsciidocAnnotationResultType {
     }
   }
 
-  public void addLogRecords(List<LogRecord> logRecords) {
+  public void setLogRecords(List<LogRecord> logRecords) {
     this.logRecords = logRecords;
   }
 

@@ -15,6 +15,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
+import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoctor.log.LogRecord;
 import org.asciidoctor.log.Severity;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -59,12 +61,18 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
 
     AsciidocAnnotationResultType asciidocAnnotationResultType = new AsciidocAnnotationResultType(editor.getDocument(),
       collectedInfo.getOffsetLineNo());
+
+    if (!AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isShowAsciiDocWarningsAndErrorsInEditor()) {
+      asciidocAnnotationResultType.setLogRecords(Collections.emptyList());
+      return asciidocAnnotationResultType;
+    }
+
     Path tempImagesPath = AsciiDoc.tempImagesPath();
     try {
       AsciiDoc asciiDoc = new AsciiDoc(file.getProject().getBasePath(), fileBaseDir,
         tempImagesPath, FileDocumentManager.getInstance().getFile(editor.getDocument()).getName());
       asciiDoc.render(collectedInfo.getContentWithConfig(), collectedInfo.getExtensions(), (boasOut, boasErr, logRecords)
-        -> asciidocAnnotationResultType.addLogRecords(logRecords));
+        -> asciidocAnnotationResultType.setLogRecords(logRecords));
     } finally {
       if (tempImagesPath != null) {
         try {
@@ -83,6 +91,9 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
     WolfTheProblemSolver theProblemSolver = WolfTheProblemSolver.getInstance(file.getProject());
     Collection<Problem> problems = new ArrayList<>();
     for (LogRecord logRecord : annotationResult.getLogRecords()) {
+      if (logRecord.getSeverity() == Severity.DEBUG) {
+        continue;
+      }
       if (logRecord.getMessage().startsWith("possible invalid reference:")) {
         /* TODO: these messages are not helpful in IntelliJ as they have no line number
            and for splitted documents they provide too many false positives */

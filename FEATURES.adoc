@@ -96,9 +96,12 @@ With the context menu the user can change the spelling or to add the word to the
 To enable spell-checking support for other languages, the user can add a dictionary file via "`Editor | Spelling`".
 Dictionaries are available online for example at http://www.winedt.org/dict.html. Word lists need to be in the UTF-8 format to work.
 
+// see: ExternalAnnotator
 During rendering Asciidoctor might indicate problems in the file including a line number.
 The editor shows them as red and yellow annotations.
 Hover over the annotations to see the full warning or error message.
+The user can disable this feature in the settings.
+If it is disabled in the settings, errors show up in the event log.
 
 When the text contains Markdown style headings (starting with `#`) or old style Asciidoc headings (titles underlined with string or characters matching the length or the heading), the editor highlights this in yellow and offers a quick fix to convert these to a new style Asciidoc heading.
 
