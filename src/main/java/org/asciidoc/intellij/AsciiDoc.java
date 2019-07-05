@@ -261,6 +261,8 @@ public class AsciiDoc {
             // prepend the new config, followed by two newlines to avoid sticking-together content
             tempContent.insert(0, "\n\n");
             tempContent.insert(0, config.getText());
+            // prepend the location of the config file
+            tempContent.insert(0, ":asciidoctorconfigdir: " + folder.getCanonicalPath() + "\n\n");
           }
         }
         if (folder.getPath().equals(project.getBasePath())) {
