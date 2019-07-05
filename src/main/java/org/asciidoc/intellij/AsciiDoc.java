@@ -253,16 +253,18 @@ public class AsciiDoc {
     VirtualFile folder = currentFile.getParent();
     if (folder != null) {
       while (true) {
-        VirtualFile configFile = folder.findChild(".asciidoctorconfig");
-        if (configFile != null &&
-          !currentFile.equals(configFile)) {
-          Document config = FileDocumentManager.getInstance().getDocument(configFile);
-          if (config != null) {
-            // prepend the new config, followed by two newlines to avoid sticking-together content
-            tempContent.insert(0, "\n\n");
-            tempContent.insert(0, config.getText());
-            // prepend the location of the config file
-            tempContent.insert(0, ":asciidoctorconfigdir: " + folder.getCanonicalPath() + "\n\n");
+        for (String configName : new String[]{".asciidoctorconfig", ".asciidoctorconfig.adoc"}) {
+          VirtualFile configFile = folder.findChild(configName);
+          if (configFile != null &&
+            !currentFile.equals(configFile)) {
+            Document config = FileDocumentManager.getInstance().getDocument(configFile);
+            if (config != null) {
+              // prepend the new config, followed by two newlines to avoid sticking-together content
+              tempContent.insert(0, "\n\n");
+              tempContent.insert(0, config.getText());
+              // prepend the location of the config file
+              tempContent.insert(0, ":asciidoctorconfigdir: " + folder.getCanonicalPath() + "\n\n");
+            }
           }
         }
         if (folder.getPath().equals(project.getBasePath())) {
