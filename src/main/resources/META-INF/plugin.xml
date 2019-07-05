@@ -117,6 +117,27 @@
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
       <add-to-group group-id="RefactoringMenu" anchor="last"/>
     </group>
+
+    <group id="AsciiDocInline" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
+      <action id="org.asciidoc.intellij.actions.refactor.InlineIncludeAction"
+              class="org.asciidoc.intellij.actions.refactor.InlineIncludeAction"
+              text="Inline Include..."
+              description="Inline selected include file">
+      </action>
+      <separator/>
+      <add-to-group group-id="RefactoringMenu" anchor="last"/>
+    </group>
+
+    <group id="AsciiDocExtract" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
+      <action id="org.asciidoc.intellij.actions.refactor.ExtractIncludeAction"
+              class="org.asciidoc.intellij.actions.refactor.ExtractIncludeAction"
+              text="Include..."
+              description="Extract selected text, block or section to a new include file">
+      </action>
+      <separator/>
+      <add-to-group group-id="IntroduceActionsGroup" anchor="last"/>
+    </group>
+
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -194,5 +215,15 @@
                             implementationClass="org.asciidoc.intellij.injection.LanguageListCompletionContributor"/>
     <breadcrumbsInfoProvider implementation="org.asciidoc.intellij.breadcrumbs.AsciiDocBreadcrumbsInfoProvider"/>
     <lang.formatter language="AsciiDoc" implementationClass="org.asciidoc.intellij.formatting.AsciiDocFormattingModelBuilder"/>
+    <intentionAction>
+      <bundleName>AsciiDocBundle</bundleName>
+      <categoryKey>asciidoc.intention.category</categoryKey>
+      <className>org.asciidoc.intellij.actions.intentions.AsciiDocExtractIntention</className>
+    </intentionAction>
+    <intentionAction>
+      <bundleName>AsciiDocBundle</bundleName>
+      <categoryKey>asciidoc.intention.category</categoryKey>
+      <className>org.asciidoc.intellij.actions.intentions.AsciiDocInlineIntention</className>
+    </intentionAction>
   </extensions>
 </idea-plugin>
