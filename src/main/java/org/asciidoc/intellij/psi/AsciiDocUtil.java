@@ -1,12 +1,18 @@
 package org.asciidoc.intellij.psi;
 
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.text.CharArrayUtil;
 import org.asciidoc.intellij.file.AsciiDocFileType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -100,5 +106,20 @@ public class AsciiDocUtil {
       }
     }
     return result;
+  }
+
+
+  @Nullable
+  public static PsiElement getStatementAtCaret(Editor editor, PsiFile psiFile) {
+    int caret = editor.getCaretModel().getOffset();
+
+    final Document doc = editor.getDocument();
+    CharSequence chars = doc.getCharsSequence();
+    int offset = caret == 0 ? 0 : CharArrayUtil.shiftBackward(chars, caret - 1, " \t");
+    if (doc.getLineNumber(offset) < doc.getLineNumber(caret)) {
+      offset = CharArrayUtil.shiftForward(chars, caret, " \t");
+    }
+
+    return psiFile.findElementAt(offset);
   }
 }

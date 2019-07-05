@@ -136,6 +136,7 @@ class AsciiDocBlock extends AbstractBlock {
   private boolean isBlock(Block block) {
     return block instanceof AsciiDocBlock &&
       (AsciiDocElementTypes.BLOCK.equals(((AsciiDocBlock) block).getNode().getElementType())
+        || AsciiDocTokenTypes.BLOCK_DELIMITER.equals(((AsciiDocBlock) block).getNode().getElementType())
         || AsciiDocElementTypes.LISTING.equals(((AsciiDocBlock) block).getNode().getElementType()));
   }
 

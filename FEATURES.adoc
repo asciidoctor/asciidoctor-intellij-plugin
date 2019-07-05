@@ -93,7 +93,7 @@ The plugin highlights matching braces including symmetric formatting for bold, i
 IntelliJ's built-in spell checker verifies all text areas of the document.
 It underlines unknown words with a green wavy line.
 With the context menu the user can change the spelling or to add the word to the project's dictionary.
-To enable spell-checking support for other languages, the user can add a dictionary file via "Editor | Spelling".
+To enable spell-checking support for other languages, the user can add a dictionary file via "`Editor | Spelling`".
 Dictionaries are available online for example at http://www.winedt.org/dict.html. Word lists need to be in the UTF-8 format to work.
 
 During rendering Asciidoctor might indicate problems in the file including a line number.
@@ -119,6 +119,10 @@ In the editor the user can select from a list of browsers that are showing in th
 The user can also trigger this action from the context menu.
 To update the preview in the browser the user needs to refresh the contents by pressing kbd:[F5] in the browser.
 
+The user can open an AsciiDoc file in an external tool (like for example Google Chrome with the https://github.com/asciidoctor/asciidoctor-browser-extension[Asciidoctor Extension] installed). To do this, add Chrome as an https://www.jetbrains.com/help/idea/settings-tools-external-tools.html[external Tool in the settings].
+Provide `$FilePath$` as the argument so that Chrome knows where to find the file.
+The user can assign a shortcut to the external tool using "`Help | Find action... | (type the name of external tool) | kbd:[Alt+Enter] | (type the shortcut of choice) | OK`".
+
 ==== Writing
 
 // see: AsciiDocSmartEnterProcessor
@@ -135,10 +139,19 @@ There are several live templates included.
 Once the user starts typing kbd:[a]kbd:[d], a list of templates appears.
 Continued typing any character of the template name restricts the list. A kbd:[Tab] selects and entry.
 
-Experimental: The user can reformat the source in the editor using "Reformat Code" (kbd:[Ctrl+Alt+L]).
+The user can extract and inline includes.
+This is available from the "`Refactor`" context menu and via context-sensitive intents via kbd:[Alt+Enter] ("`Inline Include`" and "`Extract Include`").
+// see: ExtractIncludeDialog.java
+Extract will extract either the currently selected text, the current block or the current section including subsections.
+// see: InlineIncludeDialog.java
+Inline will inline the complete referenced file at the current include; optionally it can provide a preview, inline all occurrences of the file and delete the included file afterwards.
+All of these changes can be undone (kbd:[Ctrl+Z]).
+
+*Experimental:* The user can reformat the source in the editor using "`Reformat Code`" (kbd:[Ctrl+Alt+L]).
 In order to use this feature, the user has to enable it in the settings of the plugin.
 Currently it adjusts empty lines around headings, lists and blocks.
-It also adjusts spaces around lists.
+It also adjusts spaces around list items. +
+In the project view the user can reformat a single file or all files in a folder and its sub folders using the same shortcut or the entry from the context menu.
 
 === Preview
 
