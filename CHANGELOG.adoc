@@ -11,6 +11,8 @@ This document provides a high-level view of the changes introduced by release.
 
 - inject absolute location of .asciidoctorconfig file (thanks to @rdmueller) (#280)
 - support for '.adoc' extension of .asciidoctorconfig file (thanks to @rdmueller) (#293, #294)
+- new table size selector using the mouse (thanks to @bbrenne) (#92, #290)
+- create tables from clipboard and converting CSV/TSV format to AsciiDoc (thanks to @bbrenne) (#92, #290)
 
 === 0.28.10 (preview, available from Github releases)
 
