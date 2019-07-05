@@ -77,7 +77,7 @@ public class ExtractIncludeDialog extends RefactoringDialog {
     myFilename = new NameSuggestionsField(new String[]{filename + "." + AsciiDocFileType.INSTANCE.getDefaultExtension()},
       myProject, AsciiDocFileType.INSTANCE, myEditor);
     myFilename.selectNameWithoutExtension();
-    setTitle("Extract Include");
+    setTitle("Extract Include Directive");
     init();
   }
 
