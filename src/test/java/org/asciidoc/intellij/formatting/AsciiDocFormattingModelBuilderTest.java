@@ -32,7 +32,8 @@ public class AsciiDocFormattingModelBuilderTest extends LightPlatformCodeInsight
         oldPreviewSettings.isEditorFirst(),
         oldPreviewSettings.isEnabledInjections(),
         oldPreviewSettings.getDisabledInjectionsByLanguage(),
-        true)
+        true,
+        oldPreviewSettings.isShowAsciiDocWarningsAndErrorsInEditor())
     );
     myFixture.configureByFile(getTestName(true) + "_before.adoc");
     FileInEditorProcessor processor = new FileInEditorProcessor(myFixture.getFile(), myFixture.getEditor(), options);
