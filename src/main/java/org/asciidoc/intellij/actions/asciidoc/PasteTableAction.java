@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.CharArrayReader;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Action to import/convert table data from clipboard.
