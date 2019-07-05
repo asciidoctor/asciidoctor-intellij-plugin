@@ -52,7 +52,7 @@ public class CreateTableAction extends AsciiDocAction {
   }
 
 
-  private String generateTable(int cols, int rows, String title) {
+  public static String generateTable(int cols, int rows, String title) {
     assert cols > 0;
     assert rows > 0;
     StringBuilder table = new StringBuilder("\n");

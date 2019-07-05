@@ -60,10 +60,6 @@
         <action id="asciidoc.makelink" class="org.asciidoc.intellij.actions.asciidoc.MakeLink"
                 text="Link" description="Make link" icon="AsciiDocIcons.EditorActions.LINK">
         </action>
-        <action id="asciidoc.createtable" class="org.asciidoc.intellij.actions.asciidoc.CreateTableAction"
-                text="Create table" description="Insert a table at the caret"
-                icon="AsciiDocIcons.EditorActions.TABLE">
-        </action>
         <action class="org.asciidoc.intellij.actions.editorlayout.EditorOnlyLayoutChangeAction"
                 id="org.asciidoc.intellij.actions.editorlayout.EditorOnlyLayoutChangeAction"
                 text="Show editor only"
@@ -87,6 +83,15 @@
                 text="Use Soft Wraps"
                 description="Toggle using soft wraps in current editor"
                 icon="AllIcons.Actions.ToggleSoftWrap">
+        </action>
+
+        <action id="asciidoc.tables.tabledialog" class="org.asciidoc.intellij.actions.asciidoc.CreateTableAction"
+                text="Create table dialog" description="Insert a table at the caret"
+                icon="AsciiDocIcons.EditorActions.TABLE">
+        </action>
+        <action id="asciidoc.tables.pastetabledialog" class="org.asciidoc.intellij.actions.asciidoc.PasteTableAction"
+                text="Paste Table..." description="Paste table data from clipboard"
+                icon="AsciiDocIcons.EditorActions.TABLE">
         </action>
 
         <!--
@@ -114,11 +119,11 @@
     </group>
 
     <group id="AsciiDocInline" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
-        <action id="org.asciidoc.intellij.actions.refactor.InlineIncludeAction"
-                class="org.asciidoc.intellij.actions.refactor.InlineIncludeAction"
-                text="Inline Include..."
-                description="Inline selected include file">
-        </action>
+      <action id="org.asciidoc.intellij.actions.refactor.InlineIncludeAction"
+              class="org.asciidoc.intellij.actions.refactor.InlineIncludeAction"
+              text="Inline Include..."
+              description="Inline selected include file">
+      </action>
       <separator/>
       <add-to-group group-id="RefactoringMenu" anchor="last"/>
     </group>
