@@ -2,6 +2,7 @@ package org.asciidoc.intellij.ui;
 
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.ValidationInfo;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,15 +31,6 @@ public class PasteTableDialog extends DialogWrapper {
     setTitle("Paste Table");
     setResizable(false);
     separatorSelector.setEditable(true);
-
-    separatorSelector.addActionListener(e -> update());
-
-    firstLineHeaderCheckbox.addActionListener(e -> update());
-
-    Toolkit.getDefaultToolkit().getSystemClipboard().addFlavorListener(e -> update());
-
-    update();
-
     init();
   }
 
@@ -47,7 +39,7 @@ public class PasteTableDialog extends DialogWrapper {
   protected JComponent createCenterPanel() {
     JPanel panel = new JPanel(new GridLayout(4, 0));
 
-    JLabel explanation = new JLabel("Use this dialog to parse data from your clipboard and paste it as a table in the document.");
+    JLabel explanation = new JLabel("<html><body>Use this dialog to parse data from your clipboard<br>and paste it as a table in the document.<body><html>");
     panel.add(explanation);
 
     JPanel firstLineHeaderPanel = new JPanel(new BorderLayout());
@@ -68,12 +60,17 @@ public class PasteTableDialog extends DialogWrapper {
     result.add(expectedTableSizeLabel, BorderLayout.LINE_END);
     panel.add(result);
 
-    update();
-
     return panel;
   }
 
-  private void update() {
+  @Override
+  protected boolean postponeValidation() {
+    return false;
+  }
+
+  @Nullable
+  @Override
+  protected ValidationInfo doValidate() {
     // reset data first in case the result can't be parsed or no separator given
     data = null;
     String sep = (String) separatorSelector.getSelectedItem();
@@ -96,18 +93,19 @@ public class PasteTableDialog extends DialogWrapper {
         br = new BufferedReader(new CharArrayReader(data.toCharArray()));
         int max = br.lines().mapToInt(line -> StringUtils.countMatches(line, separator)).max().orElse(0);
         expectedTableSizeLabel.setText(max + 1 + " x " + lines);
-        myOKAction.setEnabled(true);
       } catch (UnsupportedFlavorException | IOException e) {
-        log.info("unable to parse clipboard", e);
-        expectedTableSizeLabel.setText("unable to parse clipboard");
-        myOKAction.setEnabled(false);
+        log.info("unable to parse clipboard (no text found)", e);
+        expectedTableSizeLabel.setText("");
+        return new ValidationInfo("Unable to parse clipboard (no text found)");
       }
     } else {
       expectedTableSizeLabel.setText("");
-      myOKAction.setEnabled(false);
+      return new ValidationInfo("Please select separator", separatorSelector);
     }
+    return super.doValidate();
   }
 
+  @Nullable
   public String getData() {
     return data;
   }
