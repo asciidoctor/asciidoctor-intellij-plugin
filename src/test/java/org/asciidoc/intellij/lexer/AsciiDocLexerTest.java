@@ -800,6 +800,23 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:RBRACKET (']')");
   }
 
+  public void testEndOfSentence() {
+    doTest("End. Of Sentence",
+      "AsciiDoc:TEXT ('End')\n" +
+        "AsciiDoc:END_OF_SENTENCE ('.')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Of')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Sentence')");
+  }
+
+  public void testNoEndOfSentence() {
+    doTest("End.No Sentence",
+      "AsciiDoc:TEXT ('End.No')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Sentence')");
+  }
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();

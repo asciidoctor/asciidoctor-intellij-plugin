@@ -182,6 +182,7 @@ ATTRIBUTE_NAME = [a-zA-Z0-9_]+ [a-zA-Z0-9_-]*
 ATTRIBUTE_NAME_END = ":"
 ATTRIBUTE_REF_START = "{"
 ATTRIBUTE_REF_END = "}"
+END_OF_SENTENCE = [\.?!]
 
 %state MULTILINE
 %state SINGLELINE
@@ -403,6 +404,20 @@ ATTRIBUTE_REF_END = "}"
                            yybegin(SINGLELINE);
                          }
                          return AsciiDocTokenTypes.LINE_BREAK; }
+  {END_OF_SENTENCE} / {SPACE}
+                       { if (!doublemono && !singlemono) {
+                           return AsciiDocTokenTypes.END_OF_SENTENCE;
+                         } else {
+                           return textFormat();
+                         }
+                       }
+  {END_OF_SENTENCE} $
+                       { if (!doublemono && !singlemono) {
+                           return AsciiDocTokenTypes.END_OF_SENTENCE;
+                         } else {
+                           return textFormat();
+                         }
+                       }
   [ \t]                { if (singlemono || doublemono) {
                            return AsciiDocTokenTypes.WHITE_SPACE_MONO;
                          } else {
