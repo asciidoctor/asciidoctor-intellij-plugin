@@ -126,7 +126,7 @@ To run the plugin for development you'll need to start
 To run all tests and the CheckStyle validations you'll need to start
 
 ----
-./gradlew -Dfile.encoding=UTF-8 runIde
+./gradlew -Dfile.encoding=UTF-8 check
 ----
 
 === Running the plugin from with the IDE
