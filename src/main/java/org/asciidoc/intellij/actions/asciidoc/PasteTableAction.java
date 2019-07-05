@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.CharArrayReader;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Action to import/convert table data from clipboard.
@@ -42,39 +44,52 @@ public class PasteTableAction extends AsciiDocAction {
       CommandProcessor.getInstance().executeCommand(project,
         () -> ApplicationManager.getApplication().runWriteAction(() -> {
           if (pasteTableDialog.getData() != null) {
-            document.insertString(offset, toAsciiDocTable(pasteTableDialog.getData(), pasteTableDialog.getSeparator()));
+            document.insertString(offset, toAsciiDocTable(pasteTableDialog.getData(), pasteTableDialog.getSeparator(), pasteTableDialog.isFirstLineHeader()));
           }
         }), null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
     }
   }
 
-  private String toAsciiDocTable(@NotNull String tableData, String separator) {
+  private String toAsciiDocTable(@NotNull String tableData, String separator, boolean firstLineHeader) {
     StringBuilder asciiDocTable = new StringBuilder("\n");
     BufferedReader br = new BufferedReader(new CharArrayReader(tableData.toCharArray()));
     int cols = br.lines().mapToInt(line -> StringUtils.countMatches(line, separator)).max().orElse(0) + 1;
 
     asciiDocTable.append("|===\n");
-    // Create header columns
-    for (int c = 0; c < cols; c++) {
-      asciiDocTable.append("|Header ");
-      asciiDocTable.append(c + 1);
-      if (c < cols - 1) {
-        asciiDocTable.append(" ");
-      }
-    }
-    asciiDocTable.append("\n\n");
-    br = new BufferedReader(new CharArrayReader(tableData.toCharArray()));
-    br.lines().forEach(line -> {
-      String[] elements = line.split(separator);
-      for (int i = 0; i < cols; i++) {
-        if (i < elements.length) {
-          asciiDocTable.append("|").append(elements[i]).append("\n");
-        } else {
-          asciiDocTable.append("|\n");
+
+    if (!firstLineHeader) {
+      // Create header columns
+      for (int c = 0; c < cols; c++) {
+        asciiDocTable.append("|Header ");
+        asciiDocTable.append(c + 1);
+        if (c < cols - 1) {
+          asciiDocTable.append(' ');
         }
       }
-      asciiDocTable.append("\n");
-    });
+      asciiDocTable.append("\n\n");
+    }
+    br = new BufferedReader(new CharArrayReader(tableData.toCharArray()));
+    boolean firstLine = true;
+    List<String> lines = br.lines().collect(Collectors.toList());
+    for (String line : lines) {
+      String[] elements = line.split(separator);
+      for (int i = 0; i < cols; i++) {
+        asciiDocTable.append('|');
+        if (i < elements.length) {
+          asciiDocTable.append(elements[i]);
+        }
+        //new line except if line is the header (all headers must be on the same line)
+        if (!firstLine || !firstLineHeader) {
+          asciiDocTable.append('\n');
+        }
+      }
+      if (firstLine && firstLineHeader) {
+        //header line must be followed by an empty line
+        asciiDocTable.append('\n');
+      }
+      asciiDocTable.append('\n');
+      firstLine = false;
+    }
     asciiDocTable.append("|===\n");
     return asciiDocTable.toString();
   }

@@ -90,7 +90,7 @@
                 icon="AsciiDocIcons.EditorActions.TABLE">
         </action>
         <action id="asciidoc.tables.pastetabledialog" class="org.asciidoc.intellij.actions.asciidoc.PasteTableAction"
-                text="Paste Special..." description="Paste table data from clipboard"
+                text="Paste Table..." description="Paste table data from clipboard"
                 icon="AsciiDocIcons.EditorActions.TABLE">
         </action>
 

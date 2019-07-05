@@ -23,6 +23,7 @@ public class PasteTableDialog extends DialogWrapper {
   private String data;
   private String separator;
   private JLabel expectedTableSizeLabel = new JLabel();
+  private JCheckBox firstLineHeaderCheckbox = new JCheckBox();
 
   public PasteTableDialog() {
     super(false);
@@ -32,6 +33,10 @@ public class PasteTableDialog extends DialogWrapper {
 
     separatorSelector.addActionListener(e -> update());
 
+    firstLineHeaderCheckbox.addActionListener(e -> update());
+
+    Toolkit.getDefaultToolkit().getSystemClipboard().addFlavorListener(e -> update());
+
     update();
 
     init();
@@ -40,7 +45,16 @@ public class PasteTableDialog extends DialogWrapper {
   @Nullable
   @Override
   protected JComponent createCenterPanel() {
-    JPanel panel = new JPanel(new GridLayout(3, 0));
+    JPanel panel = new JPanel(new GridLayout(4, 0));
+
+    JLabel explanation = new JLabel("Use this dialog to parse data from your clipboard and paste it as a table in the document.");
+    panel.add(explanation);
+
+    JPanel firstLineHeaderPanel = new JPanel(new BorderLayout());
+    firstLineHeaderPanel.add(new JLabel("First line in the clipboard are headers:"), BorderLayout.LINE_START);
+    firstLineHeaderPanel.add(new JPanel(), BorderLayout.CENTER);
+    firstLineHeaderPanel.add(firstLineHeaderCheckbox, BorderLayout.LINE_END);
+    panel.add(firstLineHeaderPanel);
 
     JPanel pasteTableSeparator = new JPanel(new BorderLayout());
     pasteTableSeparator.add(new JLabel("Separator:"), BorderLayout.LINE_START);
@@ -53,7 +67,6 @@ public class PasteTableDialog extends DialogWrapper {
     result.add(new JPanel(), BorderLayout.CENTER);
     result.add(expectedTableSizeLabel, BorderLayout.LINE_END);
     panel.add(result);
-
 
     update();
 
@@ -71,6 +84,8 @@ public class PasteTableDialog extends DialogWrapper {
       separator = "\t";
     } else if (sep.equals("space")) {
       separator = " ";
+    } else {
+      separator = sep;
     }
     if (separator.length() > 0) {
       try {
@@ -81,12 +96,15 @@ public class PasteTableDialog extends DialogWrapper {
         br = new BufferedReader(new CharArrayReader(data.toCharArray()));
         int max = br.lines().mapToInt(line -> StringUtils.countMatches(line, separator)).max().orElse(0);
         expectedTableSizeLabel.setText(max + 1 + " x " + lines);
+        myOKAction.setEnabled(true);
       } catch (UnsupportedFlavorException | IOException e) {
         log.info("unable to parse clipboard", e);
         expectedTableSizeLabel.setText("unable to parse clipboard");
+        myOKAction.setEnabled(false);
       }
     } else {
       expectedTableSizeLabel.setText("");
+      myOKAction.setEnabled(false);
     }
   }
 
@@ -96,5 +114,9 @@ public class PasteTableDialog extends DialogWrapper {
 
   public String getSeparator() {
     return separator;
+  }
+
+  public boolean isFirstLineHeader() {
+    return firstLineHeaderCheckbox.isSelected();
   }
 }
