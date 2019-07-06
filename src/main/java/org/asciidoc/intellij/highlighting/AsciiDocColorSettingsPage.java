@@ -31,6 +31,7 @@ public class AsciiDocColorSettingsPage implements ColorSettingsPage {
     result.put("comment", AsciiDocSyntaxHighlighter.ASCIIDOC_COMMENT);
     result.put("heading", AsciiDocSyntaxHighlighter.ASCIIDOC_HEADING);
     result.put("bullet", AsciiDocSyntaxHighlighter.ASCIIDOC_BULLET);
+    result.put("description", AsciiDocSyntaxHighlighter.ASCIIDOC_DESCRIPTION);
     result.put("enumeration", AsciiDocSyntaxHighlighter.ASCIIDOC_ENUMERATION);
     result.put("callout", AsciiDocSyntaxHighlighter.ASCIIDOC_CALLOUT);
     result.put("block_macro", AsciiDocSyntaxHighlighter.ASCIIDOC_BLOCK_MACRO_ID);
@@ -103,6 +104,7 @@ public class AsciiDocColorSettingsPage implements ColorSettingsPage {
       put("asciidoc.editor.colors.comment", AsciiDocSyntaxHighlighter.ASCIIDOC_COMMENT);
       put("asciidoc.editor.colors.heading", AsciiDocSyntaxHighlighter.ASCIIDOC_HEADING);
       put("asciidoc.editor.colors.bullet", AsciiDocSyntaxHighlighter.ASCIIDOC_BULLET);
+      put("asciidoc.editor.colors.description", AsciiDocSyntaxHighlighter.ASCIIDOC_DESCRIPTION);
       put("asciidoc.editor.colors.enumeration", AsciiDocSyntaxHighlighter.ASCIIDOC_ENUMERATION);
       put("asciidoc.editor.colors.callout", AsciiDocSyntaxHighlighter.ASCIIDOC_CALLOUT);
       put("asciidoc.editor.colors.block_macro", AsciiDocSyntaxHighlighter.ASCIIDOC_BLOCK_MACRO_ID);

@@ -126,6 +126,7 @@ LINE_COMMENT="//"[^\n]*
 COMMENT_BLOCK_DELIMITER = "////" "/"* {SPACE}*
 PASSTRHOUGH_BLOCK_DELIMITER = "++++" "+"* {SPACE}*
 LISTING_BLOCK_DELIMITER = "----" "-"* {SPACE}*
+MARKDOWN_LISTING_BLOCK_DELIMITER = "```" {SPACE}*
 EXAMPLE_BLOCK_DELIMITER = "====" "="* {SPACE}*
 SIDEBAR_BLOCK_DELIMITER = "****" "*"* {SPACE}*
 QUOTE_BLOCK_DELIMITER = "____" "_"* {SPACE}*
@@ -185,6 +186,8 @@ ATTRIBUTE_REF_START = "{"
 ATTRIBUTE_REF_END = "}"
 END_OF_SENTENCE = [\.?!:]
 HARD_BREAK = {SPACE} "+" {SPACE}* "\n"
+DESCRIPTION = [^\n]+ {SPACE}* (":"{2,4} | ";;")
+ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 %state MULTILINE
 %state SINGLELINE
@@ -313,7 +316,7 @@ HARD_BREAK = {SPACE} "+" {SPACE}* "\n"
   // triple rules to handle EOF
   {LISTING_BLOCK_DELIMITER} $ { resetFormatting(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
   {LISTING_BLOCK_DELIMITER} / [^\-\n \t] { yypushback(yylength()); yybegin(INSIDE_LINE);  }
-  {LISTING_BLOCK_DELIMITER} { resetFormatting(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
+  {LISTING_BLOCK_DELIMITER} | {MARKDOWN_LISTING_BLOCK_DELIMITER} { resetFormatting(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
 
   {COMMENT_BLOCK_DELIMITER} $ { resetFormatting(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
   {COMMENT_BLOCK_DELIMITER} / [^\/\n \t] { yypushback(yylength()); yybegin(INSIDE_LINE);  }
@@ -365,8 +368,10 @@ HARD_BREAK = {SPACE} "+" {SPACE}* "\n"
                           }
   {TITLE_START} / [^\. ] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE; }
   {BLOCK_MACRO_START} / [^ \t\n] { resetFormatting(); yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  "[" [^\]\n]+ "]" / "#" { return textFormat(); } // attribute, not handled yet
   {BLOCK_ATTRS_START} / [^\[] { yypushstate(); yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
   {CALLOUT} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.CALLOUT; }
+  {ADMONITION} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.CALLOUT; }
 
   {ATTRIBUTE_NAME_START} / [^:\n \t]* {AUTOCOMPLETE} {
     if (!isEscaped()) {
@@ -399,6 +404,8 @@ HARD_BREAK = {SPACE} "+" {SPACE}* "\n"
 <AFTER_SPACE> {
   {BULLET} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BULLET; }
   {ENUMERATION} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ENUMERATION; }
+  {DESCRIPTION} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.DESCRIPTION; }
+  {DESCRIPTION} / {SPACE}* "\n" { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.DESCRIPTION; }
   [^]                  { yypushback(yylength()); yybegin(INSIDE_LINE); }
 }
 
@@ -411,7 +418,8 @@ HARD_BREAK = {SPACE} "+" {SPACE}* "\n"
                          return AsciiDocTokenTypes.LINE_BREAK; }
   {HARD_BREAK}
                        { return AsciiDocTokenTypes.HARD_BREAK; }
-  {END_OF_SENTENCE} / {SPACE} [a-z]
+  "e.g." | "i.e."      { return textFormat(); }
+  {END_OF_SENTENCE} / {SPACE} [^A-Z]* [a-z]
                        { return textFormat(); }
   {END_OF_SENTENCE} / {SPACE}
                        { if (!doublemono && !singlemono && isUnconstrainedEnd()) {
@@ -664,7 +672,7 @@ HARD_BREAK = {SPACE} "+" {SPACE}* "\n"
 <REF> {
   ","                  { yybegin(REFTEXT); return AsciiDocTokenTypes.SEPARATOR; }
   "#"                  { return AsciiDocTokenTypes.SEPARATOR; }
-  [^#\]\n]+ / "#"      { return AsciiDocTokenTypes.REFFILE; }
+  [^#>\n]+ / "#"       { return AsciiDocTokenTypes.REFFILE; }
   [^]                  { return AsciiDocTokenTypes.REF; }
 }
 
@@ -774,7 +782,7 @@ HARD_BREAK = {SPACE} "+" {SPACE}* "\n"
   {LISTING_BLOCK_DELIMITER} / [^\-\n \t] {
     yybegin(LISTING_BLOCK); return AsciiDocTokenTypes.LISTING_TEXT;
   }
-  {LISTING_BLOCK_DELIMITER} {
+  {LISTING_BLOCK_DELIMITER} | {MARKDOWN_LISTING_BLOCK_DELIMITER} {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
       yyinitialIfNotInBlock();
       return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;

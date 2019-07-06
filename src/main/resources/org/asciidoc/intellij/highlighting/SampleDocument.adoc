@@ -11,6 +11,8 @@ Block comment
 
 <enumeration>.</enumeration> enumeration
 
+<description>property::</description> description
+
 <callout><1></callout> callout
 
 <block_macro>blockmacro::</block_macro><marker>[]</marker>

@@ -84,7 +84,7 @@ class AsciiDocBlock extends AbstractBlock {
     }
 
     // no blank line after title and block attribute
-    if (isTitle(child1) || isBlockAttribute(child1) || isBlockIdEnd(child1)) {
+    if (!verse && !table && (isTitle(child1) || isBlockAttribute(child1) || isBlockIdEnd(child1))) {
       return Spacing.createSpacing(0, 0, 1, true, 0);
     }
 
@@ -101,13 +101,13 @@ class AsciiDocBlock extends AbstractBlock {
     }
 
     // have one blank line before and after a heading
-    if (isSection(child1) || isSection(child2)) {
+    if (!verse && !table && (isSection(child1) || isSection(child2))) {
       return Spacing.createSpacing(0, 0, 2, false, 0);
     }
 
     // have one at least blank line before each bullet or enumeration,
     // but not if previous line starts with one as well (special case compact single line enumerations)
-    if ((isEnumeration(child2) || isBullet(child2)) && !lineStartsWithEnumeration(child1)) {
+    if (!verse && !table && ((isEnumeration(child2) || isBullet(child2)) && !lineStartsWithEnumeration(child1) && !isContinuation(child1))) {
       return Spacing.createSpacing(0, 0, 2, false, 0);
     }
 
@@ -268,7 +268,8 @@ class AsciiDocBlock extends AbstractBlock {
 
   private static boolean isPartOfSentence(Block block) {
     return block instanceof AsciiDocBlock &&
-      TEXT_SET.contains(((AsciiDocBlock) block).getNode().getElementType());
+      TEXT_SET.contains(((AsciiDocBlock) block).getNode().getElementType()) &&
+      !"::".equals(((AsciiDocBlock) block).getNode().getText()); // should stay on a separate line as reformatting might create property list item
   }
 
   @Override

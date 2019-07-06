@@ -817,6 +817,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Sentence')");
   }
 
+  public void testDescription() {
+    doTest("a property:: description",
+      "AsciiDoc:DESCRIPTION ('a property::')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('description')");
+  }
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();
