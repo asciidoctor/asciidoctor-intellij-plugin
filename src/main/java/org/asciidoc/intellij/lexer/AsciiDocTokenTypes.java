@@ -13,6 +13,8 @@ public interface AsciiDocTokenTypes {
   IElementType ENUMERATION = new AsciiDocElementType("ENUMERATION");
   IElementType CALLOUT = new AsciiDocElementType("CALLOUT");
   IElementType LINE_BREAK = new AsciiDocElementType("LINE_BREAK");
+  IElementType HARD_BREAK = new AsciiDocElementType("HARD_BREAK");
+  IElementType CONTINUATION = new AsciiDocElementType("CONTINUATION");
   IElementType WHITE_SPACE = new AsciiDocElementType("WHITE_SPACE");
   IElementType WHITE_SPACE_MONO = new AsciiDocElementType("WHITE_SPACE_MONO");
   IElementType LINE_COMMENT = new AsciiDocElementType("LINE_COMMENT");

@@ -1,9 +1,7 @@
-* item 1
-cont
+* item 1 cont
 
 * item 2
-* item 3
-cont
+* item 3 cont
 +
 some content
 

@@ -78,6 +78,34 @@ public class AsciiDocStandardBlock extends ASTWrapperPsiElement implements Ascii
   }
 
   @Override
+  public Type getType() {
+    Type type = Type.UNKNOWN;
+    ASTNode delimiter = getNode().findChildByType(TokenSet.create(AsciiDocTokenTypes.BLOCK_DELIMITER,
+      AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER, AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER));
+    if (delimiter != null) {
+      String d = delimiter.getText();
+      if (d.startsWith("|")) {
+        type = Type.TABLE;
+      } else if (d.startsWith("*")) {
+        type = Type.SIDEBAR;
+      } else if (d.startsWith("=")) {
+        type = Type.EXAMPLE;
+      } else if (d.startsWith(".")) {
+        type = Type.LITERAL;
+      } else if (d.startsWith("+")) {
+        type = Type.PASSTHROUGH;
+      } else if (d.startsWith("_")) {
+        if ("verse".equals(getStyle())) {
+          type = Type.VERSE;
+        } else {
+          type = Type.QUOTE;
+        }
+      }
+    }
+    return type;
+  }
+
+  @Override
   public Icon getIcon(int flags) {
     return AsciiDocIcons.Structure.BLOCK;
   }

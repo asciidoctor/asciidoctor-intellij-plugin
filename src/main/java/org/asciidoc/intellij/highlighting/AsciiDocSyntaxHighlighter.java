@@ -102,6 +102,8 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
       .put(AsciiDocTokenTypes.BOLD, ASCIIDOC_BOLD)
       .put(AsciiDocTokenTypes.ITALIC_END, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.ITALIC_START, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.CONTINUATION, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.HARD_BREAK, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.ITALIC, ASCIIDOC_ITALIC)
       .put(AsciiDocTokenTypes.BOLDITALIC, ASCIIDOC_BOLDITALIC)
       .put(AsciiDocTokenTypes.MONOBOLD, ASCIIDOC_MONOBOLD)

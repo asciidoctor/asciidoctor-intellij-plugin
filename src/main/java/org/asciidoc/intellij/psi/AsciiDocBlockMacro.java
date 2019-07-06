@@ -116,4 +116,8 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
     }
   }
 
+  @Override
+  public Type getType() {
+    return Type.BLOCKMACRO;
+  }
 }

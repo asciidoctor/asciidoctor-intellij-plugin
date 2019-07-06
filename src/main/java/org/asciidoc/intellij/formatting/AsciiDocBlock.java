@@ -7,8 +7,10 @@ import com.intellij.formatting.Spacing;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.formatter.common.AbstractBlock;
+import com.intellij.psi.tree.TokenSet;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
+import org.asciidoc.intellij.psi.AsciiDocBlock.Type;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,8 +19,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 class AsciiDocBlock extends AbstractBlock {
+
+  private boolean verse = false;
+  private boolean table = false;
+
   AsciiDocBlock(@NotNull ASTNode node) {
     super(node, null, Alignment.createAlignment());
+  }
+
+  private AsciiDocBlock(@NotNull ASTNode node, boolean verse, boolean table) {
+    super(node, null, Alignment.createAlignment());
+    this.verse = verse;
+    this.table = table;
   }
 
   @Override
@@ -28,10 +40,21 @@ class AsciiDocBlock extends AbstractBlock {
       return result;
     }
 
+    if (myNode.getPsi() instanceof org.asciidoc.intellij.psi.AsciiDocBlock) {
+      // if this is inside a verse, pass this information down to all children
+      org.asciidoc.intellij.psi.AsciiDocBlock block = (org.asciidoc.intellij.psi.AsciiDocBlock) myNode.getPsi();
+      if (block.getType() == Type.VERSE) {
+        verse = true;
+      }
+      if (block.getType() == Type.TABLE) {
+        table = true;
+      }
+    }
+
     ASTNode child = myNode.getFirstChildNode();
     while (child != null) {
       if (!(child instanceof PsiWhiteSpace)) {
-        result.add(new AsciiDocBlock(child));
+        result.add(new AsciiDocBlock(child, verse, table));
       }
       child = child.getTreeNext();
     }
@@ -65,6 +88,18 @@ class AsciiDocBlock extends AbstractBlock {
       return Spacing.createSpacing(0, 0, 1, true, 0);
     }
 
+    // ensure a new line at the end of the sentence
+    if (!verse && !table && isEndOfSentence(child1)) {
+      return Spacing.createSpacing(0, 0, 1, true, 999);
+    }
+
+    // ensure exactly one space between parts of one sentence. Remove any newlines
+    if (!verse && !table && isPartOfSentence(child1) && isPartOfSentence(child2) && !hasBlankLineBetween(child1, child2)) {
+      // if there is a newline, create at least one space
+      int minSpaces = hasNewlinesBetween(child1, child2) ? 1 : 0;
+      return Spacing.createSpacing(minSpaces, 1, 0, false, 0);
+    }
+
     // have one blank line before and after a heading
     if (isSection(child1) || isSection(child2)) {
       return Spacing.createSpacing(0, 0, 2, false, 0);
@@ -82,10 +117,10 @@ class AsciiDocBlock extends AbstractBlock {
     }
 
     // before and after a block have one blank line, but not with if there is an continuation ("+")
-    if (isBlock(child2) && !isContinuation(child1) && !isBlock(child1)) {
+    if (isBlockStart(child2) && !isContinuation(child1) && !isBlock(child1)) {
       return Spacing.createSpacing(0, 0, 2, false, 0);
     }
-    if (isBlock(child1) && !isContinuation(child2) && !isBlock(child2)) {
+    if (isBlockEnd(child1) && !isContinuation(child2) && !isBlock(child2)) {
       return Spacing.createSpacing(0, 0, 2, false, 0);
     }
 
@@ -114,7 +149,59 @@ class AsciiDocBlock extends AbstractBlock {
         || AsciiDocTokenTypes.BLOCK_DELIMITER.equals(((AsciiDocBlock) block).getNode().getElementType())
         || AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER.equals(((AsciiDocBlock) block).getNode().getElementType())
         || AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER.equals(((AsciiDocBlock) block).getNode().getElementType())
-      );
+      ) &&
+      ((AsciiDocBlock) block).getNode().getTreeNext() != null;
+  }
+
+  private boolean isBlockEnd(Block block) {
+    return block instanceof AsciiDocBlock &&
+      (AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER.equals(((AsciiDocBlock) block).getNode().getElementType())
+        || AsciiDocTokenTypes.BLOCK_DELIMITER.equals(((AsciiDocBlock) block).getNode().getElementType())
+        || AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER.equals(((AsciiDocBlock) block).getNode().getElementType())
+        || AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER.equals(((AsciiDocBlock) block).getNode().getElementType())
+      ) &&
+      ((AsciiDocBlock) block).getNode().getTreeNext() == null;
+  }
+
+  private boolean hasBlankLineBetween(Block child1, Block child2) {
+    if (!(child1 instanceof AsciiDocBlock)) {
+      return false;
+    }
+    if (!(child2 instanceof AsciiDocBlock)) {
+      return false;
+    }
+    int newlines = 0;
+    ASTNode node = ((AsciiDocBlock) child1).getNode().getTreeNext();
+    while (node != null && node != ((AsciiDocBlock) child2).getNode()) {
+      if (node instanceof PsiWhiteSpace && "\n".equals(node.getText())) {
+        newlines++;
+        if (newlines == 2) {
+          return true;
+        }
+      }
+      if (!(node instanceof PsiWhiteSpace)) {
+        return false;
+      }
+      node = node.getTreeNext();
+    }
+    return false;
+  }
+
+  private boolean hasNewlinesBetween(Block child1, Block child2) {
+    if (!(child1 instanceof AsciiDocBlock)) {
+      return false;
+    }
+    if (!(child2 instanceof AsciiDocBlock)) {
+      return false;
+    }
+    ASTNode node = ((AsciiDocBlock) child1).getNode().getTreeNext();
+    while (node != null && node != ((AsciiDocBlock) child2).getNode()) {
+      if (node instanceof PsiWhiteSpace && "\n".equals(node.getText())) {
+        return true;
+      }
+      node = node.getTreeNext();
+    }
+    return false;
   }
 
   private boolean isComment(Block block) {
@@ -145,6 +232,11 @@ class AsciiDocBlock extends AbstractBlock {
       ((AsciiDocBlock) block).getNode().getText().equals("+");
   }
 
+  private boolean isEndOfSentence(Block block) {
+    return block instanceof AsciiDocBlock &&
+      AsciiDocTokenTypes.END_OF_SENTENCE.equals(((AsciiDocBlock) block).getNode().getElementType());
+  }
+
   private boolean isTitle(Block block) {
     return block instanceof AsciiDocBlock &&
       AsciiDocTokenTypes.TITLE.equals(((AsciiDocBlock) block).getNode().getElementType());
@@ -167,12 +259,29 @@ class AsciiDocBlock extends AbstractBlock {
       AsciiDocTokenTypes.ENUMERATION.equals(((AsciiDocBlock) block).getNode().getElementType());
   }
 
+
+  private static final TokenSet TEXT_SET = TokenSet.create(AsciiDocTokenTypes.TEXT, AsciiDocTokenTypes.BOLD, AsciiDocTokenTypes.BOLDITALIC,
+    AsciiDocTokenTypes.ITALIC, AsciiDocTokenTypes.DOUBLE_QUOTE, AsciiDocTokenTypes.SINGLE_QUOTE, AsciiDocTokenTypes.BOLD_START,
+    AsciiDocTokenTypes.BOLD_END, AsciiDocTokenTypes.ITALIC_START, AsciiDocTokenTypes.ITALIC_END, AsciiDocTokenTypes.LT,
+    AsciiDocTokenTypes.GT, AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END, AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START,
+    AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END, AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START);
+
+  private static boolean isPartOfSentence(Block block) {
+    return block instanceof AsciiDocBlock &&
+      TEXT_SET.contains(((AsciiDocBlock) block).getNode().getElementType());
+  }
+
   @Override
   public Indent getIndent() {
     if (myNode.getElementType() == AsciiDocTokenTypes.ENUMERATION
       || myNode.getElementType() == AsciiDocTokenTypes.BULLET) {
       return Indent.getSpaceIndent(0);
     }
+
+    if (!verse && TEXT_SET.contains(myNode.getElementType())) {
+      return Indent.getSpaceIndent(0);
+    }
+
     ASTNode treePrev = myNode.getTreePrev();
     if (treePrev instanceof PsiWhiteSpace) {
       int spaces = 0;

@@ -132,6 +132,7 @@ QUOTE_BLOCK_DELIMITER = "____" "_"* {SPACE}*
 LITERAL_BLOCK_DELIMITER = "...." "."* {SPACE}*
 TABLE_BLOCK_DELIMITER = "|===" "="* {SPACE}*
 OPEN_BLOCK_DELIMITER = "--" {SPACE}*
+CONTINUATION = "+"
 HEADING_START = "="{1,6} {SPACE}+
 HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 // starting at the start of the line, but not with a dot
@@ -182,7 +183,8 @@ ATTRIBUTE_NAME = [a-zA-Z0-9_]+ [a-zA-Z0-9_-]*
 ATTRIBUTE_NAME_END = ":"
 ATTRIBUTE_REF_START = "{"
 ATTRIBUTE_REF_END = "}"
-END_OF_SENTENCE = [\.?!]
+END_OF_SENTENCE = [\.?!:]
+HARD_BREAK = {SPACE} "+" {SPACE}* "\n"
 
 %state MULTILINE
 %state SINGLELINE
@@ -388,6 +390,9 @@ END_OF_SENTENCE = [\.?!]
                            return AsciiDocTokenTypes.WHITE_SPACE;
                          }
                        }
+  {CONTINUATION} / {SPACE}* "\n" {
+                         return AsciiDocTokenTypes.CONTINUATION;
+                       }
   [^]                  { yypushback(yylength()); yybegin(AFTER_SPACE); }
 }
 
@@ -404,8 +409,12 @@ END_OF_SENTENCE = [\.?!]
                            yybegin(SINGLELINE);
                          }
                          return AsciiDocTokenTypes.LINE_BREAK; }
+  {HARD_BREAK}
+                       { return AsciiDocTokenTypes.HARD_BREAK; }
+  {END_OF_SENTENCE} / {SPACE} [a-z]
+                       { return textFormat(); }
   {END_OF_SENTENCE} / {SPACE}
-                       { if (!doublemono && !singlemono) {
+                       { if (!doublemono && !singlemono && isUnconstrainedEnd()) {
                            return AsciiDocTokenTypes.END_OF_SENTENCE;
                          } else {
                            return textFormat();

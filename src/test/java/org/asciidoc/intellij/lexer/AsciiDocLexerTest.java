@@ -222,7 +222,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testContinuation() {
     doTest("+\n--\n",
-      "AsciiDoc:TEXT ('+')\n" +
+      "AsciiDoc:CONTINUATION ('+')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:BLOCK_DELIMITER ('--')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
@@ -232,7 +232,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("--\n+\n",
       "AsciiDoc:BLOCK_DELIMITER ('--')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TEXT ('+')\n" +
+        "AsciiDoc:CONTINUATION ('+')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 

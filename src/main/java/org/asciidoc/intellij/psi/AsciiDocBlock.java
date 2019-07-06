@@ -20,6 +20,16 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SEPARATOR;
 
 public interface AsciiDocBlock extends PsiElement, AsciiDocSelfDescribe {
 
+  enum Type {
+    UNKNOWN,
+    TABLE,
+    SIDEBAR, EXAMPLE, LITERAL, PASSTHROUGH, QUOTE, BLOCKMACRO, LISTING, VERSE
+  }
+
+  default Type getType() {
+    return Type.UNKNOWN;
+  }
+
   @Nullable
   default String getTitle() {
     ASTNode titleNode = getNode().findChildByType(AsciiDocTokenTypes.TITLE);
