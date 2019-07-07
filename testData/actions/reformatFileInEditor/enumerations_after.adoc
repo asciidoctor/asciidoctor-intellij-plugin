@@ -1,8 +1,6 @@
 * item 1 cont
-
 * item 2
 * item 3 cont
 +
 some content
-
 * item 4

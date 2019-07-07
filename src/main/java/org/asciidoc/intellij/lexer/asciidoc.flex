@@ -184,7 +184,7 @@ ATTRIBUTE_NAME = [a-zA-Z0-9_]+ [a-zA-Z0-9_-]*
 ATTRIBUTE_NAME_END = ":"
 ATTRIBUTE_REF_START = "{"
 ATTRIBUTE_REF_END = "}"
-END_OF_SENTENCE = [\.?!:]
+END_OF_SENTENCE = [\.?!:] | (" " [?!:]) // French: "marks with two elements require a space before them in"
 HARD_BREAK = {SPACE} "+" {SPACE}* "\n"
 DESCRIPTION = [^\n]+ {SPACE}* (":"{2,4} | ";;")
 ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
@@ -418,7 +418,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          return AsciiDocTokenTypes.LINE_BREAK; }
   {HARD_BREAK}
                        { return AsciiDocTokenTypes.HARD_BREAK; }
-  "e.g." | "i.e."      { return textFormat(); }
+  // exceptions to END_OF_SENTENCE
+  [:letter:] "." " "? [:letter:] "." { return textFormat(); } // i.e., e.g., ...
+  "Dr." | "Prof." | "Ing."  { return textFormat(); }
   {END_OF_SENTENCE} / {SPACE} [^A-Z]* [a-z]
                        { return textFormat(); }
   {END_OF_SENTENCE} / {SPACE}

@@ -88,9 +88,14 @@ class AsciiDocBlock extends AbstractBlock {
       return Spacing.createSpacing(0, 0, 1, true, 0);
     }
 
+    // have one blank line before and after a heading
+    if (!verse && !table && (isSection(child1) || isSection(child2))) {
+      return Spacing.createSpacing(0, 0, 2, false, 0);
+    }
+
     // ensure a new line at the end of the sentence
     if (!verse && !table && isEndOfSentence(child1)) {
-      return Spacing.createSpacing(0, 0, 1, true, 999);
+      return Spacing.createSpacing(0, 0, 1, true, 1);
     }
 
     // ensure exactly one space between parts of one sentence. Remove any newlines
@@ -100,16 +105,13 @@ class AsciiDocBlock extends AbstractBlock {
       return Spacing.createSpacing(minSpaces, 1, 0, false, 0);
     }
 
-    // have one blank line before and after a heading
-    if (!verse && !table && (isSection(child1) || isSection(child2))) {
-      return Spacing.createSpacing(0, 0, 2, false, 0);
-    }
-
     // have one at least blank line before each bullet or enumeration,
     // but not if previous line starts with one as well (special case compact single line enumerations)
+    /* disabled, as it only tackles single enumeration items
     if (!verse && !table && ((isEnumeration(child2) || isBullet(child2)) && !lineStartsWithEnumeration(child1) && !isContinuation(child1))) {
       return Spacing.createSpacing(0, 0, 2, false, 0);
     }
+    */
 
     // one space after enumeration or bullet
     if (isEnumeration(child1) || isBullet(child1)) {
@@ -117,10 +119,10 @@ class AsciiDocBlock extends AbstractBlock {
     }
 
     // before and after a block have one blank line, but not with if there is an continuation ("+")
-    if (isBlockStart(child2) && !isContinuation(child1) && !isBlock(child1)) {
+    if (isBlock(child2) && !isContinuation(child1) && !isBlockStart(child1)) {
       return Spacing.createSpacing(0, 0, 2, false, 0);
     }
-    if (isBlockEnd(child1) && !isContinuation(child2) && !isBlock(child2)) {
+    if (isBlock(child1) && !isContinuation(child2) && !isBlockEnd(child2) && !isCallOut(child2)) {
       return Spacing.createSpacing(0, 0, 2, false, 0);
     }
 
@@ -220,10 +222,14 @@ class AsciiDocBlock extends AbstractBlock {
       AsciiDocTokenTypes.BLOCKIDEND.equals(((AsciiDocBlock) block).getNode().getElementType());
   }
 
+  private boolean isBlockIdStart(Block block) {
+    return block instanceof AsciiDocBlock &&
+      AsciiDocTokenTypes.BLOCKIDSTART.equals(((AsciiDocBlock) block).getNode().getElementType());
+  }
+
   private boolean isBlock(Block block) {
     return block instanceof AsciiDocBlock &&
       (AsciiDocElementTypes.BLOCK.equals(((AsciiDocBlock) block).getNode().getElementType())
-        || AsciiDocTokenTypes.BLOCK_DELIMITER.equals(((AsciiDocBlock) block).getNode().getElementType())
         || AsciiDocElementTypes.LISTING.equals(((AsciiDocBlock) block).getNode().getElementType()));
   }
 
@@ -259,6 +265,10 @@ class AsciiDocBlock extends AbstractBlock {
       AsciiDocTokenTypes.ENUMERATION.equals(((AsciiDocBlock) block).getNode().getElementType());
   }
 
+  private boolean isCallOut(Block block) {
+    return block instanceof AsciiDocBlock &&
+      AsciiDocTokenTypes.CALLOUT.equals(((AsciiDocBlock) block).getNode().getElementType());
+  }
 
   private static final TokenSet TEXT_SET = TokenSet.create(AsciiDocTokenTypes.TEXT, AsciiDocTokenTypes.BOLD, AsciiDocTokenTypes.BOLDITALIC,
     AsciiDocTokenTypes.ITALIC, AsciiDocTokenTypes.DOUBLE_QUOTE, AsciiDocTokenTypes.SINGLE_QUOTE, AsciiDocTokenTypes.BOLD_START,
@@ -269,13 +279,15 @@ class AsciiDocBlock extends AbstractBlock {
   private static boolean isPartOfSentence(Block block) {
     return block instanceof AsciiDocBlock &&
       TEXT_SET.contains(((AsciiDocBlock) block).getNode().getElementType()) &&
-      !"::".equals(((AsciiDocBlock) block).getNode().getText()); // should stay on a separate line as reformatting might create property list item
+      !"::".equals(((AsciiDocBlock) block).getNode().getText()) && // should stay on a separate line as reformatting might create property list item
+      !"--".equals(((AsciiDocBlock) block).getNode().getText()); // should stay on a separate line as it might be part of a quote
   }
 
   @Override
   public Indent getIndent() {
     if (myNode.getElementType() == AsciiDocTokenTypes.ENUMERATION
-      || myNode.getElementType() == AsciiDocTokenTypes.BULLET) {
+      || myNode.getElementType() == AsciiDocTokenTypes.BULLET
+      || myNode.getElementType() == AsciiDocTokenTypes.DESCRIPTION) {
       return Indent.getSpaceIndent(0);
     }
 
