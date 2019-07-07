@@ -7,6 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.13 (preview, available from Github releases)
+
+- lexer and highlighting support several new tokens (callouts, admonitions, markdown style listings, definition lists) (#289)
+- reformat supports break-after-end-of-sentence, but still experimental (#289)
+
 === 0.28.12 (preview, available from Github releases)
 
 - rework zoom for touchpads (#295)
