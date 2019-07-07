@@ -119,10 +119,10 @@ class AsciiDocBlock extends AbstractBlock {
     }
 
     // before and after a block have one blank line, but not with if there is an continuation ("+")
-    if (isBlock(child2) && !isContinuation(child1) && !isBlockStart(child1)) {
+    if (!table && isBlock(child2) && !isContinuation(child1) && !isBlockStart(child1)) {
       return Spacing.createSpacing(0, 0, 2, false, 0);
     }
-    if (isBlock(child1) && !isContinuation(child2) && !isBlockEnd(child2) && !isCallOut(child2)) {
+    if (!table && isBlock(child1) && !isContinuation(child2) && !isBlockEnd(child2) && !isCallOut(child2)) {
       return Spacing.createSpacing(0, 0, 2, false, 0);
     }
 
