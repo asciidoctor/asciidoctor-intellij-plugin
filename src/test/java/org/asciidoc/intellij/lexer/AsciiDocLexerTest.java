@@ -701,6 +701,20 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:DOUBLE_QUOTE ('\"')");
   }
 
+  public void testTwoTypographicQuotesThatMightBeConsideredAMonospace() {
+    doTest("\"`Test?`\", and \"`What?`\"",
+      "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_START ('\"`')\n" +
+        "AsciiDoc:TEXT ('Test?')\n" +
+        "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_END ('`\"')\n" +
+        "AsciiDoc:TEXT (',')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('and')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_START ('\"`')\n" +
+        "AsciiDoc:TEXT ('What?')\n" +
+        "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_END ('`\"')");
+  }
+
   public void testNoTypographicQuotesNonMatching() {
     doTest("\"`test",
       "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +

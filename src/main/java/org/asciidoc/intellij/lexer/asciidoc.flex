@@ -589,6 +589,18 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                              return AsciiDocTokenTypes.DOUBLE_QUOTE;
                            }
                          }
+  {TYPOGRAPHIC_DOUBLE_QUOTE_END} / [^\`\n \t] {WORD}* {MONO} {
+                           // have the same long look-ahead like in MONO_SECOND_TRY here to increase the rule's priority
+                           // `" might be a typographic quote end of the start of a monospaced quoted part
+                           // if it doesn't match, give MONO start a second try.
+                           if (typographicquote && isUnconstrainedEnd()) {
+                             typographicquote = false;
+                             return AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END;
+                           } else {
+                             yypushback(yylength());
+                             yybegin(MONO_SECOND_TRY);
+                           }
+                         }
   {TYPOGRAPHIC_DOUBLE_QUOTE_END} {
                            // `" might be a typographic quote end of the start of a monospaced quoted part
                            // if it doesn't match, give MONO start a second try.
