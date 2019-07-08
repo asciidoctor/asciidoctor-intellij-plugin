@@ -116,6 +116,10 @@ public class AsciiDocUtil {
     final Document doc = editor.getDocument();
     CharSequence chars = doc.getCharsSequence();
     int offset = caret == 0 ? 0 : CharArrayUtil.shiftBackward(chars, caret - 1, " \t");
+    if (offset < 0) {
+      // happens if spaces and tabs at beginning of file
+      offset = 0;
+    }
     if (doc.getLineNumber(offset) < doc.getLineNumber(caret)) {
       offset = CharArrayUtil.shiftForward(chars, caret, " \t");
     }
