@@ -106,7 +106,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:BLOCK_MACRO_ID ('image::')\n" +
         "AsciiDoc:BLOCK_MACRO_BODY ('foo.png')\n" +
         "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_MACRO_ATTRIBUTES ('Caption')\n" +
+        "AsciiDoc:BLOCK_ATTR_NAME ('Caption')\n" +
         "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('abc')");
@@ -208,8 +208,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   public void testTwoConsecutiveAttributes() {
-    doTest("Text\n:attribute1:\n:attribute2:",
+    doTest("Text\n\n:attribute1:\n:attribute2:",
       "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
         "AsciiDoc:ATTRIBUTE_NAME ('attribute1')\n" +
@@ -218,6 +219,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
         "AsciiDoc:ATTRIBUTE_NAME ('attribute2')\n" +
         "AsciiDoc:ATTRIBUTE_NAME_END (':')");
+  }
+
+  public void testNoAttributeAfterText() {
+    doTest("Text\n:attribute1:\n",
+      "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT (':attribute1')\n" +
+        "AsciiDoc:END_OF_SENTENCE (':')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
   public void testContinuation() {
@@ -770,6 +780,71 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testListingNestedInExample() {
+    doTest("====\n----\n----\n====\n",
+      "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+
+  public void testTitleAfterId() {
+    doTest("[[id]]\n.Title\n====\nExample\n====",
+      "AsciiDoc:BLOCKIDSTART ('[[')\n" +
+        "AsciiDoc:BLOCKID ('id')\n" +
+        "AsciiDoc:BLOCKIDEND (']]')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TITLE ('.Title')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Example')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('====')");
+  }
+
+  public void testDoubleColonNotEndOfSentence() {
+    doTest("::\n",
+      "AsciiDoc:TEXT ('::')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testExampleWithBlankLine() {
+    doTest("====\nTest\n\n====\n",
+      "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Test')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testExampleWithListing() {
+    doTest("====\n.Title\n[source]\n----\nSource\n----\n====\n",
+      "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TITLE ('.Title')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:BLOCK_ATTR_NAME ('source')\n" +
+        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_TEXT ('Source')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
   public void testBlockEndingOverOldStyleHeader() {
     doTest("--\nS\n--\n",
       "AsciiDoc:BLOCK_DELIMITER ('--')\n" +
@@ -845,6 +920,174 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:DESCRIPTION ('a property::')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('description')");
+  }
+
+  public void testIndentedListing() {
+    doTest("   Listing\nMore\n\nText",
+      "AsciiDoc:LISTING_TEXT ('   Listing')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_TEXT ('More')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testListingWithNoDelimiters() {
+    doTest("[source]\nListing\n\nText",
+      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:BLOCK_ATTR_NAME ('source')\n" +
+        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_TEXT ('Listing')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testPassthroughWithNoDelimiters() {
+    doTest("[pass]\nPas**ss**ss\n\nText",
+      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:BLOCK_ATTR_NAME ('pass')\n" +
+        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:PASSTRHOUGH_CONTENT ('Pas**ss**ss')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testListingWithAttributeAndDelimiter() {
+    doTest("[source]\n----\nListing\n----\nText",
+      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:BLOCK_ATTR_NAME ('source')\n" +
+        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_TEXT ('Listing')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testVerseWithCommentNoDelimiters() {
+    doTest("[verse]\n" +
+        "// test\n" +
+        " Verse\n",
+      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:BLOCK_ATTR_NAME ('verse')\n" +
+        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LINE_COMMENT ('// test')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Verse')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testBlockWithTitleInsideExample() {
+    doTest("====\n" +
+        "Text\n" +
+        "\n" +
+        ".Title\n" +
+        "----\n" +
+        "Hi\n" +
+        "----\n" +
+        "====",
+      "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TITLE ('.Title')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_TEXT ('Hi')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('====')");
+  }
+
+  public void testVerseWithSomethingLookingLikeBlock() {
+    doTest("[verse]\n" +
+        "V1\n" +
+        "----\n" +
+        "V2\n" +
+        "\n" +
+        "[source]\n" +
+        "Hi",
+      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:BLOCK_ATTR_NAME ('verse')\n" +
+        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('V1')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('V2')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:BLOCK_ATTR_NAME ('source')\n" +
+        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_TEXT ('Hi')");
+  }
+
+  public void testEnumeration() {
+    doTest(". Item",
+      "AsciiDoc:ENUMERATION ('.')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Item')");
+  }
+
+  public void testEnumerationNumber() {
+    doTest("1. Item",
+      "AsciiDoc:ENUMERATION ('1.')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Item')");
+  }
+
+  public void testEnumerationCharacter() {
+    doTest("a. Item",
+      "AsciiDoc:ENUMERATION ('a.')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Item')");
+  }
+
+  public void testEndingBlockWithNoDelimiterInsideBlockWithDelimiter() {
+    doTest("====\n" +
+        "[verse]\n" +
+        "test\n" +
+        "----\n" +
+        "====\n",
+      "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:BLOCK_ATTR_NAME ('verse')\n" +
+        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('test')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testExampleWithListingNoDelimiter() {
+    doTest("====\n" +
+        " Test\n" +
+        "====\n",
+      "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_TEXT (' Test')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
   @Override

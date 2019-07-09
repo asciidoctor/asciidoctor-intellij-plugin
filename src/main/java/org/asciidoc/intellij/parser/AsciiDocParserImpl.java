@@ -36,6 +36,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKTEXT_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LISTING_TEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REF;
@@ -111,7 +112,7 @@ public class AsciiDocParserImpl {
         newLines = 0;
         markPreBlock();
         next();
-        while ((at(BLOCK_MACRO_BODY) || at(BLOCK_MACRO_ATTRIBUTES) || at(BLOCK_ATTRS_START) || at(BLOCK_ATTRS_END))
+        while ((at(BLOCK_MACRO_BODY) || at(BLOCK_ATTR_NAME) || at(BLOCK_ATTR_VALUE) || at(SEPARATOR) || at(BLOCK_ATTRS_START) || at(BLOCK_ATTRS_END))
           && newLines == 0) {
           if (at(BLOCK_ATTRS_END)) {
             next();
@@ -128,6 +129,9 @@ public class AsciiDocParserImpl {
         continue;
       } else if (at(LISTING_BLOCK_DELIMITER)) {
         parseListing();
+        continue;
+      } else if (at(LISTING_TEXT)) {
+        parseListingNoDelimiter();
         continue;
       } else if (at(TITLE)) {
         markPreBlock();
@@ -155,7 +159,13 @@ public class AsciiDocParserImpl {
           }
         }
         continue;
-      } else if (at(REFSTART)) {
+      }
+
+      if (myPreBlockMarker != null) {
+        startBlockNoDelimiter();
+      }
+
+      if (at(REFSTART)) {
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
         while (at(REF) || at(REFEND) || at(REFFILE) || at(SEPARATOR) || at(REFTEXT)) {
@@ -196,7 +206,13 @@ public class AsciiDocParserImpl {
       }
 
       dropPreBlock();
+
+      newLines = 0;
       next();
+      // call eof to trigger skipWhitespace
+      if (!myBuilder.eof() && newLines > 1) {
+        endBlockNoDelimiter();
+      }
     }
 
     dropPreBlock();
@@ -217,9 +233,22 @@ public class AsciiDocParserImpl {
       return;
     }
     delimiter = delimiter.trim();
-    if (myBlockMarker.size() > 0 && myBlockMarker.peek().delimiter.equals(delimiter)) {
+    boolean existsInStack = false;
+    for (BlockMarker m : myBlockMarker) {
+      if (m.delimiter.equals(delimiter)) {
+        existsInStack = true;
+        break;
+      }
+    }
+    if (existsInStack) {
       dropPreBlock();
+      // close all non-matching blocks
+      while (!myBlockMarker.peek().delimiter.equals(delimiter)) {
+        BlockMarker currentBlock = myBlockMarker.pop();
+        currentBlock.marker.done(AsciiDocElementTypes.BLOCK);
+      }
       next();
+      // close this block
       BlockMarker currentBlock = myBlockMarker.pop();
       currentBlock.marker.done(AsciiDocElementTypes.BLOCK);
     } else {
@@ -232,6 +261,25 @@ public class AsciiDocParserImpl {
       }
       myBlockMarker.push(new BlockMarker(delimiter, myBlockStartMarker));
       next();
+    }
+  }
+
+  private void startBlockNoDelimiter() {
+    PsiBuilder.Marker myBlockStartMarker;
+    if (myPreBlockMarker != null) {
+      myBlockStartMarker = myPreBlockMarker;
+      myPreBlockMarker = null;
+    } else {
+      myBlockStartMarker = beginBlock();
+    }
+    myBlockMarker.push(new BlockMarker("nodel", myBlockStartMarker));
+  }
+
+  private void endBlockNoDelimiter() {
+    if (myBlockMarker.size() > 0 && myBlockMarker.peek().delimiter.equals("nodel")) {
+      dropPreBlock();
+      BlockMarker currentBlock = myBlockMarker.pop();
+      currentBlock.marker.done(AsciiDocElementTypes.BLOCK);
     }
   }
 
@@ -271,6 +319,46 @@ public class AsciiDocParserImpl {
         continue;
       }
       next();
+    }
+    myBlockStartMarker.done(AsciiDocElementTypes.LISTING);
+  }
+
+  private void parseListingNoDelimiter() {
+    PsiBuilder.Marker myBlockStartMarker;
+    if (myPreBlockMarker != null) {
+      myBlockStartMarker = myPreBlockMarker;
+      myPreBlockMarker = null;
+    } else {
+      myBlockStartMarker = beginBlock();
+    }
+    while (true) {
+      if (myBuilder.eof()) {
+        break;
+      }
+      if (!at(LISTING_TEXT)) {
+        break;
+      }
+      if (at(BLOCK_MACRO_ID)) {
+        newLines = 0;
+        PsiBuilder.Marker blockMacro = myBuilder.mark();
+        next();
+        while (at(BLOCK_MACRO_BODY) || at(BLOCK_MACRO_ATTRIBUTES) || at(BLOCK_ATTRS_START) || at(BLOCK_ATTRS_END)
+          && newLines == 0) {
+          if (at(BLOCK_ATTRS_END)) {
+            next();
+            break;
+          }
+          next();
+        }
+        blockMacro.done(AsciiDocElementTypes.BLOCK_MACRO);
+        continue;
+      }
+      newLines = 0;
+      next();
+      // eof() triggers skipWhitepace that increments newLines
+      if (!myBuilder.eof() && newLines > 1) {
+        break;
+      }
     }
     myBlockStartMarker.done(AsciiDocElementTypes.LISTING);
   }

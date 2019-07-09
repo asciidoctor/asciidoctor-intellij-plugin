@@ -23,6 +23,7 @@ import java.util.Stack;
   private boolean singlemono = false;
   private boolean doublemono = false;
   private boolean typographicquote = false;
+  private String style = null;
 
   private Stack<Integer> stateStack = new Stack<>();
 
@@ -70,6 +71,13 @@ import java.util.Stack;
     return false;
   }
 
+  private boolean isNoDel() {
+    if(blockStack.size() > 0 && blockStack.peek().equals("nodel")) {
+      return true;
+    }
+    return false;
+  }
+
   private void resetFormatting() {
     singlebold = false;
     doublebold = false;
@@ -98,6 +106,14 @@ import java.util.Stack;
       return AsciiDocTokenTypes.TEXT;
     }
   }
+  private void clearStyle() {
+    style = null;
+  }
+  private void setStyle(String style) {
+    if (this.style == null) {
+      this.style = style;
+    }
+  }
 
   private void yypushstate () {
     stateStack.push(yystate());
@@ -112,10 +128,10 @@ import java.util.Stack;
   }
 
   private void yyinitialIfNotInBlock() {
-    if (blockStack.size() == 0) {
+    if (blockStack.size() == 0 && style == null) {
       yybegin(YYINITIAL);
     } else {
-      yybegin(SINGLELINE);
+      yybegin(MULTILINE);
     }
   }
 %}
@@ -138,7 +154,7 @@ HEADING_START = "="{1,6} {SPACE}+
 HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 // starting at the start of the line, but not with a dot
 // next line follwoing with only header marks
-HEADING_OLDSTYLE = {SPACE}* [^ +\-#=~.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
+HEADING_OLDSTYLE = {SPACE}* [^ _+\-#=~.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
 TITLE_START = "."
 AUTOCOMPLETE = "IntellijIdeaRulezzz " // CompletionUtilCore.DUMMY_IDENTIFIER
@@ -148,7 +164,7 @@ STRING = {NON_SPACE}+ \n? // something that doesn't have an empty line
 WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n] | {SPACE}* [^\n]*[^\ \t\n]
 BOLD = "*"
 BULLET = ("*"+|"-"+)
-ENUMERATION = [0-9]*"."+
+ENUMERATION = ([0-9]*|[a-zA-Z]?)"."+
 CALLOUT = "<" [0-9] ">"
 DOUBLEBOLD = {BOLD} {BOLD}
 PASSTRHOUGH_INLINE = "+++"
@@ -190,6 +206,9 @@ DESCRIPTION = [^\n]+ {SPACE}* (":"{2,4} | ";;")
 ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 %state MULTILINE
+%state PREBLOCK
+%state STARTBLOCK
+%state DELIMITER
 %state SINGLELINE
 %state AFTER_SPACE
 %state INSIDE_LINE
@@ -204,26 +223,19 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state ANCHORREFTEXT
 
 %state LISTING_BLOCK
-%state INSIDE_LISTING_BLOCK_LINE
+%state LISTING_NO_DELIMITER
+%state LISTING_NO_DELIMITER
 
 %state COMMENT_BLOCK
-%state INSIDE_COMMENT_BLOCK_LINE
-
 %state EXAMPLE_BLOCK
-%state INSIDE_EXAMPLE_BLOCK_LINE
-
-%state PASSTRHOUGH_BLOCK
-%state INSIDE_PASSTRHOUGH_BLOCK_LINE
-%state PASSTRHOUGH_INLINE
-
 %state SIDEBAR_BLOCK
-%state INSIDE_SIDEBAR_BLOCK_LINE
-
 %state QUOTE_BLOCK
-%state INSIDE_QUOTE_BLOCK_LINE
-
 %state LITERAL_BLOCK
-%state INSIDE_LITERAL_BLOCK_LINE
+%state PASSTRHOUGH_BLOCK
+
+%state PASSTRHOUGH_INLINE
+%state PASSTHROUGH_NO_DELIMITER
+%state PASSTHROUGH_NO_DELIMITER
 
 %state BLOCK_MACRO
 %state BLOCK_MACRO_ATTRS
@@ -254,39 +266,42 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         if (blockStack.size() > 0) {
           // headings must not be nested in block
           yypushback(yylength());
-          yybegin(SINGLELINE);
-        }
-        String[] part = yytext().toString().split("\n");
-        // remove all trailing white space
-        String heading = part[0].replaceAll("[ \t]*$","");
-        String underlining = part[1].replaceAll("[ \t]*$","");
-        boolean sameCharactersInSecondLine = true;
-        // must be same character all of second line
-        for(int i = 0; i < underlining.length(); ++i) {
-          if(underlining.charAt(0) != underlining.charAt(i)) {
-            sameCharactersInSecondLine = false;
-            break;
+          yybegin(PREBLOCK);
+        } else {
+          String[] part = yytext().toString().split("\n");
+          // remove all trailing white space
+          String heading = part[0].replaceAll("[ \t]*$","");
+          String underlining = part[1].replaceAll("[ \t]*$","");
+          boolean sameCharactersInSecondLine = true;
+          // must be same character all of second line
+          for(int i = 0; i < underlining.length(); ++i) {
+            if(underlining.charAt(0) != underlining.charAt(i)) {
+              sameCharactersInSecondLine = false;
+              break;
+            }
+          }
+          // must be same length plus/minus one character
+          if(heading.length() >= underlining.length() -1
+             && heading.length() <= underlining.length() +1
+             && sameCharactersInSecondLine
+             // only plus signs are never a heading but a continuation (single plus) or something else
+             && !heading.matches("^\\+*$")
+             // only minus signs are never a heading but block (double minus), a horizontal rule (triple minus) or something else
+             && !heading.matches("^-*$")) {
+            // push back the second newline of the pattern
+            yypushback(1);
+            resetFormatting();
+            return AsciiDocTokenTypes.HEADING;
+          } else {
+            // pass this contents to the single line rules (second priority)
+            yypushback(yylength());
+            yybegin(PREBLOCK);
           }
         }
-        // must be same length plus/minus one character
-        if(heading.length() >= underlining.length() -1
-           && heading.length() <= underlining.length() +1
-           && sameCharactersInSecondLine
-           // only plus signs are never a heading but a continuation (single plus) or something else
-           && !heading.matches("^\\+*$")
-           // only minus signs are never a heading but block (double minus), a horizontal rule (triple minus) or something else
-           && !heading.matches("^-*$")) {
-          // push back the second newline of the pattern
-          yypushback(1);
-          resetFormatting();
-          return AsciiDocTokenTypes.HEADING;
-        } else {
-          // pass this contents to the single line rules (second priority)
-          yypushback(yylength());
-          yybegin(SINGLELINE);
-        }
       }
-  [^]                  { yypushback(yylength()); yybegin(SINGLELINE); }
+  [^] {
+        yypushback(yylength()); yybegin(PREBLOCK);
+      }
 }
 
 <ATTRIBUTE_NAME> {
@@ -303,91 +318,166 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
 }
 
-<SINGLELINE> {
-  {ATTRIBUTE_NAME_START} / {AUTOCOMPLETE}? {ATTRIBUTE_NAME} {ATTRIBUTE_NAME_END} {
+// everything that will not render after a [source] as literal text
+// especially: titles, block attributes, block ID, etc.
+<PREBLOCK> {
+  ^ [ \t]+ / ({BULLET} {SPACE}+ {STRING} | {ENUMERATION} {SPACE}+ {STRING} | {DESCRIPTION} {SPACE}+ {STRING} | {DESCRIPTION} {SPACE}* "\n" )  {
+        yypushback(yylength()); yybegin(SINGLELINE);
+      }
+  ^ [ \t]+ / [^ \t\n] {
+        if (style == null) {
+          yypushback(yylength()); yybegin(LISTING_NO_DELIMITER);
+        } else {
+          yypushback(yylength()); yybegin(STARTBLOCK);
+        }
+      }
+  {SPACE}* "\n"           { yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; } // blank lines within pre block don't have an effect
+  ^ {TITLE_START} / [^\. ] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE; }
+  ^ {ATTRIBUTE_NAME_START} / {AUTOCOMPLETE}? {ATTRIBUTE_NAME} {ATTRIBUTE_NAME_END} {
         if (!isEscaped()) {
           yybegin(ATTRIBUTE_NAME);
           return AsciiDocTokenTypes.ATTRIBUTE_NAME_START;
         } else {
-          yypushback(yylength()); yybegin(SINGLELINE);
+          yypushback(yylength()); yybegin(STARTBLOCK);
         }
       }
-
-  // triple rules to handle EOF
-  {LISTING_BLOCK_DELIMITER} $ { resetFormatting(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
-  {LISTING_BLOCK_DELIMITER} / [^\-\n \t] { yypushback(yylength()); yybegin(INSIDE_LINE);  }
-  {LISTING_BLOCK_DELIMITER} | {MARKDOWN_LISTING_BLOCK_DELIMITER} { resetFormatting(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
-
-  {COMMENT_BLOCK_DELIMITER} $ { resetFormatting(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
-  {COMMENT_BLOCK_DELIMITER} / [^\/\n \t] { yypushback(yylength()); yybegin(INSIDE_LINE);  }
-  {COMMENT_BLOCK_DELIMITER} { resetFormatting(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
-
-  {PASSTRHOUGH_BLOCK_DELIMITER} $ { resetFormatting(); yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
-  {PASSTRHOUGH_BLOCK_DELIMITER} / [^\+\n \t] { yypushback(yylength()); yybegin(INSIDE_LINE);  }
-  {PASSTRHOUGH_BLOCK_DELIMITER} { resetFormatting(); yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
-
-  ({EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER}) $ { resetFormatting();
-                            String delimiter = yytext().toString().trim();
-                            if(blockStack.size() > 0 && blockStack.peek().equals(delimiter)) {
-                              blockStack.pop();
-                            } else {
-                              blockStack.push(delimiter);
-                            }
-                            yybegin(INSIDE_LINE);
-                            return AsciiDocTokenTypes.BLOCK_DELIMITER;
-                          }
-  // don't put {EXAMPLE_BLOCK_DELIMITER} here, as this would prevent recognising a header
-  {QUOTE_BLOCK_DELIMITER} / [^\_\n \t] { yypushback(yylength()); yybegin(INSIDE_LINE); /* QUOTE_BLOCK_DELIMITER */ }
-  {SIDEBAR_BLOCK_DELIMITER} / [^\*\n \t] { yypushback(yylength()); yybegin(INSIDE_LINE); /* SIDEBAR_BLOCK_DELIMITER */ }
-  {TABLE_BLOCK_DELIMITER} / [^\=\n \t] { yypushback(yylength()); yybegin(INSIDE_LINE); /* TABLE_BLOCK_DELIMITER */ }
-  {OPEN_BLOCK_DELIMITER} / [^\-\n \t] { yypushback(yylength()); yybegin(INSIDE_LINE); /* OPEN_BLOCK_DELIMITER */ }
-  ({EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER})  { resetFormatting();
-                            String delimiter = yytext().toString().trim();
-                            if(blockStack.size() > 0 && blockStack.peek().equals(delimiter)) {
-                              blockStack.pop();
-                            } else {
-                              blockStack.push(delimiter);
-                            }
-                            yybegin(INSIDE_LINE);
-                            return AsciiDocTokenTypes.BLOCK_DELIMITER;
-                          }
-
-  {LITERAL_BLOCK_DELIMITER} $ { resetFormatting(); yybegin(LITERAL_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER; }
-  {LITERAL_BLOCK_DELIMITER} / [^\n \t] { yypushback(yylength()); yybegin(INSIDE_LINE); }
-  {LITERAL_BLOCK_DELIMITER} { resetFormatting(); yybegin(LITERAL_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER; }
-
-  {PAGEBREAK} $ { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.PAGEBREAK; }
-  {HORIZONTALRULE} $ { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.HORIZONTALRULE; }
-
-  {ANCHORSTART} / [^\]\n]+ {ANCHOREND} { resetFormatting(); yybegin(ANCHORID); return AsciiDocTokenTypes.BLOCKIDSTART; }
-  {LINE_COMMENT}       { return AsciiDocTokenTypes.LINE_COMMENT; }
-  {HEADING_START} | {HEADING_START_MARKDOWN} / {NON_SPACE} { if (blockStack.size() == 0) {
-                              resetFormatting(); yybegin(HEADING); return AsciiDocTokenTypes.HEADING;
-                            }
-                            return textFormat();
-                          }
-  {TITLE_START} / [^\. ] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE; }
-  {BLOCK_MACRO_START} / [^ \t\n] { resetFormatting(); yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
-  "[" [^\]\n]+ "]" / "#" { return textFormat(); } // attribute, not handled yet
-  {BLOCK_ATTRS_START} / [^\[] { yypushstate(); yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
-  {CALLOUT} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.CALLOUT; }
-  {ADMONITION} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.CALLOUT; }
-
-  {ATTRIBUTE_NAME_START} / [^:\n \t]* {AUTOCOMPLETE} {
+  ^ {ATTRIBUTE_NAME_START} / [^:\n \t]* {AUTOCOMPLETE} {
     if (!isEscaped()) {
       yybegin(ATTRIBUTE_NAME); return AsciiDocTokenTypes.ATTRIBUTE_NAME_START;
     } else {
       return textFormat();
     }
   }
+}
+
+<DELIMITER, PREBLOCK> {
+  ^ {PAGEBREAK} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.PAGEBREAK; }
+  ^ {HORIZONTALRULE} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.HORIZONTALRULE; }
+  {BLOCK_MACRO_START} / [^ \t\n] { resetFormatting(); yybegin(PREBLOCK); yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  {BLOCK_ATTRS_START} / [^\[] { yybegin(MULTILINE); yypushstate(); clearStyle(); yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
+  {ANCHORSTART} / [^\]\n]+ {ANCHOREND} { resetFormatting(); yybegin(ANCHORID); return AsciiDocTokenTypes.BLOCKIDSTART; }
+  {BLOCKIDSTART} / [^\]\n]+ {BLOCKIDEND} {
+                         if (!isEscaped()) {
+                           yybegin(BLOCKID); return AsciiDocTokenTypes.BLOCKIDSTART;
+                         } else {
+                           yypushback(1);
+                           return AsciiDocTokenTypes.LBRACKET;
+                         }
+                       }
+  // triple rules to handle EOF
+  ^ {LISTING_BLOCK_DELIMITER} $ { clearStyle(); resetFormatting(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
+  ^ {LISTING_BLOCK_DELIMITER} / [^\-\n \t] { yypushback(yylength()); yybegin(STARTBLOCK);  }
+  ^ {LISTING_BLOCK_DELIMITER} | {MARKDOWN_LISTING_BLOCK_DELIMITER} { resetFormatting(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
+
+  ^ {PASSTRHOUGH_BLOCK_DELIMITER} $ { clearStyle(); resetFormatting(); yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
+  ^ {PASSTRHOUGH_BLOCK_DELIMITER} / [^\+\n \t] { yypushback(yylength()); yybegin(STARTBLOCK);  }
+  ^ {PASSTRHOUGH_BLOCK_DELIMITER} { clearStyle(); resetFormatting(); yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
+
+  ^ {HEADING_START} | {HEADING_START_MARKDOWN} / {NON_SPACE} { if (blockStack.size() == 0) {
+                              clearStyle(); resetFormatting(); yybegin(HEADING); return AsciiDocTokenTypes.HEADING;
+                            }
+                            yypushback(yylength()); yybegin(STARTBLOCK);
+                          }
+
+  ^ ({EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER}) $ {
+                            clearStyle();
+                            resetFormatting();
+                            String delimiter = yytext().toString().trim();
+                            if(blockStack.contains(delimiter)) {
+                              while (blockStack.contains(delimiter)) {
+                                blockStack.pop();
+                              }
+                            } else {
+                              blockStack.push(delimiter);
+                            }
+                            yybegin(PREBLOCK);
+                            return AsciiDocTokenTypes.BLOCK_DELIMITER;
+                          }
+  ^ {QUOTE_BLOCK_DELIMITER} / [^\_\n \t] { yypushback(yylength()); yybegin(STARTBLOCK); /* QUOTE_BLOCK_DELIMITER */ }
+  ^ {SIDEBAR_BLOCK_DELIMITER} / [^\*\n \t] { yypushback(yylength()); yybegin(STARTBLOCK); /* SIDEBAR_BLOCK_DELIMITER */ }
+  ^ {TABLE_BLOCK_DELIMITER} / [^\=\n \t] { yypushback(yylength()); yybegin(STARTBLOCK); /* TABLE_BLOCK_DELIMITER */ }
+  ^ {OPEN_BLOCK_DELIMITER} / [^\n \t] { yypushback(yylength()); yybegin(STARTBLOCK); /* OPEN_BLOCK_DELIMITER */ }
+  ^ {EXAMPLE_BLOCK_DELIMITER} / [^\=\n \t] { yypushback(yylength()); yybegin(STARTBLOCK); /* EXAMPLE_BLOCK_DELIMITER */ }
+  ^ ({EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER})  {
+                            clearStyle();
+                            resetFormatting();
+                            String delimiter = yytext().toString().trim();
+                            if(blockStack.contains(delimiter)) {
+                              while (blockStack.contains(delimiter)) {
+                                blockStack.pop();
+                              }
+                            } else {
+                              blockStack.push(delimiter);
+                            }
+                            yybegin(PREBLOCK);
+                            return AsciiDocTokenTypes.BLOCK_DELIMITER;
+                          }
+
+  ^ {LITERAL_BLOCK_DELIMITER} $ { clearStyle(); resetFormatting(); yybegin(LITERAL_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER; }
+  ^ {LITERAL_BLOCK_DELIMITER} / [^\n \t] { yypushback(yylength()); yybegin(STARTBLOCK); }
+  ^ {LITERAL_BLOCK_DELIMITER} { clearStyle(); resetFormatting(); yybegin(LITERAL_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER; }
+}
+
+<DELIMITER> {
+  {SPACE}* "\n"           { yypushback(yylength()); yybegin(PREBLOCK); } // blank lines don't have an effect
+  [^] {
+    yypushback(yylength()); yybegin(SINGLELINE);
+  }
+}
+
+// no pre-block or boundary elements matched, now start block with the style that has been defined
+<PREBLOCK, STARTBLOCK> {
+  [^] {
+        if (style == null) {
+          yypushback(yylength()); yybegin(SINGLELINE);
+        } else if ("source".equals(style)) {
+          yypushback(yylength()); yybegin(LISTING_NO_DELIMITER);
+        } else if ("pass".equals(style)) {
+          yypushback(yylength()); yybegin(PASSTHROUGH_NO_DELIMITER);
+        } else {
+          blockStack.push("nodel");
+          yypushback(yylength()); yybegin(SINGLELINE);
+        }
+        clearStyle();
+      }
+}
+
+<SINGLELINE, LISTING_NO_DELIMITER, LITERAL_BLOCK, QUOTE_BLOCK, EXAMPLE_BLOCK, SIDEBAR_BLOCK> {
+  // this will only terminate any open blocks when they appear even in no-delimiter blocks
+  ^ ({EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER}) $ {
+                            String delimiter = yytext().toString().trim();
+                            if(blockStack.contains(delimiter)) {
+                              while (blockStack.contains(delimiter)) {
+                                blockStack.pop();
+                              }
+                              yybegin(PREBLOCK);
+                              return AsciiDocTokenTypes.BLOCK_DELIMITER;
+                            } else {
+                              yybegin(INSIDE_LINE);
+                              return textFormat();
+                            }
+                          }
+}
+
+<SINGLELINE> {
+  "[" [^\]\n]+ "]" / "#" { return textFormat(); } // attribute, not handled yet
+  ^ {CALLOUT} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.CALLOUT; }
+  ^ {ADMONITION} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ADMONITION; }
   /* a blank line, it separates blocks. Don't return YYINITIAL here, as writing on a blank line might change the meaning
   of the previous blocks combined (for example there is now an italic formatting spanning the two combined blocks) */
-  "\w"* "\n"           { resetFormatting();
-                         if(blockStack.size() == 0) {
+  {SPACE}* "\n"           { clearStyle();
+                         resetFormatting();
+                         if (blockStack.size() == 0) {
                            yybegin(MULTILINE);
+                         } else if (isNoDel()) {
+                           blockStack.pop();
+                           yybegin(MULTILINE);
+                         } else {
+                           yybegin(DELIMITER);
                          }
                          return AsciiDocTokenTypes.LINE_BREAK;
                        }
+  ^ "::"                 { yybegin(INSIDE_LINE); return textFormat(); } // avoid end-of-sentence
   [ \t]+               { yybegin(AFTER_SPACE);
                          if (singlemono || doublemono) {
                            return AsciiDocTokenTypes.WHITE_SPACE_MONO;
@@ -396,9 +486,22 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          }
                        }
   {CONTINUATION} / {SPACE}* "\n" {
+                         yybegin(INSIDE_LINE);
                          return AsciiDocTokenTypes.CONTINUATION;
                        }
   [^]                  { yypushback(yylength()); yybegin(AFTER_SPACE); }
+}
+
+<PREBLOCK, SINGLELINE, PASSTHROUGH_NO_DELIMITER> {
+  {LINE_COMMENT} {
+    return AsciiDocTokenTypes.LINE_COMMENT;
+  }
+}
+
+<PREBLOCK, SINGLELINE, DELIMITER> {
+  {COMMENT_BLOCK_DELIMITER} $ { clearStyle(); resetFormatting(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
+  {COMMENT_BLOCK_DELIMITER} / [^\/\n \t] { yypushback(yylength()); yybegin(STARTBLOCK);  }
+  {COMMENT_BLOCK_DELIMITER} { clearStyle(); resetFormatting(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
 }
 
 <AFTER_SPACE> {
@@ -410,10 +513,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <INSIDE_LINE> {
-  "\n"                 { if(blockStack.size() == 0) {
-                           yybegin(MULTILINE);
-                         } else {
+  "\n"                 { if (isNoDel()) {
                            yybegin(SINGLELINE);
+                         } else {
+                           yybegin(DELIMITER);
                          }
                          return AsciiDocTokenTypes.LINE_BREAK; }
   {HARD_BREAK}
@@ -555,14 +658,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            return AsciiDocTokenTypes.LT;
                          }
                         }
-  {BLOCKIDSTART} / [^\]\n]+ {BLOCKIDEND} {
-                         if (!isEscaped()) {
-                           yybegin(BLOCKID); return AsciiDocTokenTypes.BLOCKIDSTART;
-                         } else {
-                           yypushback(1);
-                           return AsciiDocTokenTypes.LBRACKET;
-                         }
-                       }
   {ATTRIBUTE_REF_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} {
                          if (!isEscaped()) {
                            yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
@@ -727,7 +822,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <BLOCKID, BLOCKREFTEXT> {
-  {BLOCKIDEND}         { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BLOCKIDEND; }
+  {BLOCKIDEND}         { yybegin(PREBLOCK); return AsciiDocTokenTypes.BLOCKIDEND; }
 }
 
 <BLOCKID> {
@@ -764,10 +859,16 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <BLOCK_ATTRS> {
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
-  "]"                  { yypopstate(); return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
+  "]"                  { return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
   ","                  { return AsciiDocTokenTypes.SEPARATOR; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
   "=\"" ( [^\"] | "\\\"" )* "\"" { return AsciiDocTokenTypes.BLOCK_ATTR_VALUE; }
+  [^\],=\n\t ]+ {
+        if (!yytext().toString().startsWith(".") && !yytext().toString().startsWith("%") && !yytext().toString().equals("role")) {
+          setStyle(yytext().toString());
+        }
+        return AsciiDocTokenTypes.BLOCK_ATTR_NAME;
+      }
   [^]                  { return AsciiDocTokenTypes.BLOCK_ATTR_NAME; }
 }
 
@@ -780,123 +881,146 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <BLOCK_MACRO_ATTRS> {
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
   "]"                  { yypopstate(); return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
-  [^]                  { return AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES; }
+  ","                  { return AsciiDocTokenTypes.SEPARATOR; }
+  {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
+  "=\"" ( [^\"] | "\\\"" )* "\"" { return AsciiDocTokenTypes.BLOCK_ATTR_VALUE; }
+  [^]                  { return AsciiDocTokenTypes.BLOCK_ATTR_NAME; }
+}
+
+<LISTING_NO_DELIMITER> {
+  ^ {SPACE}* "\n" {
+        clearStyle();
+        yybegin(MULTILINE);
+        yypushback(yylength());
+      }
+  "\n" {
+        return AsciiDocTokenTypes.LINE_BREAK;
+      }
+  [^] {
+        return AsciiDocTokenTypes.LISTING_TEXT;
+      }
+}
+
+<PASSTHROUGH_NO_DELIMITER> {
+  ^ {SPACE}* "\n" {
+        clearStyle();
+        yybegin(MULTILINE);
+        yypushback(yylength());
+      }
+  "\n" {
+        return AsciiDocTokenTypes.LINE_BREAK;
+      }
+  [^] {
+        return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT;
+      }
 }
 
 <LISTING_BLOCK> {
-  {LISTING_BLOCK_DELIMITER} $ {
+  ^ {LISTING_BLOCK_DELIMITER} $ {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
-      yyinitialIfNotInBlock();
+      yybegin(PREBLOCK);
       return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
     } else {
-      yybegin(LISTING_BLOCK); return AsciiDocTokenTypes.LISTING_TEXT;
+      return AsciiDocTokenTypes.LISTING_TEXT;
     }
   }
   // duplicating to handle end of file content
-  {LISTING_BLOCK_DELIMITER} / [^\-\n \t] {
-    yybegin(LISTING_BLOCK); return AsciiDocTokenTypes.LISTING_TEXT;
+  ^ {LISTING_BLOCK_DELIMITER} / [^\-\n \t] {
+    return AsciiDocTokenTypes.LISTING_TEXT;
   }
-  {LISTING_BLOCK_DELIMITER} | {MARKDOWN_LISTING_BLOCK_DELIMITER} {
+  ^ {LISTING_BLOCK_DELIMITER} | {MARKDOWN_LISTING_BLOCK_DELIMITER} {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
-      yyinitialIfNotInBlock();
+      yybegin(PREBLOCK);
       return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
     } else {
-      yybegin(LISTING_BLOCK); return AsciiDocTokenTypes.LISTING_TEXT;
+      return AsciiDocTokenTypes.LISTING_TEXT;
     }
   }
-}
-
-<LISTING_BLOCK, INSIDE_LISTING_BLOCK_LINE> {
-  "\n"                 { yybegin(LISTING_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                  { yybegin(INSIDE_LISTING_BLOCK_LINE); return AsciiDocTokenTypes.LISTING_TEXT; }
+  "\n"                 { return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                  { return AsciiDocTokenTypes.LISTING_TEXT; }
 }
 
 <COMMENT_BLOCK> {
-  {COMMENT_BLOCK_DELIMITER} $ {
+  ^ {COMMENT_BLOCK_DELIMITER} $ {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
       yyinitialIfNotInBlock();
       return AsciiDocTokenTypes.BLOCK_COMMENT;
     } else {
-      yybegin(INSIDE_COMMENT_BLOCK_LINE); return AsciiDocTokenTypes.BLOCK_COMMENT;
+      return AsciiDocTokenTypes.BLOCK_COMMENT;
     }
   }
   // duplicating to handle end of file content
-  {COMMENT_BLOCK_DELIMITER} / [^\/\n \t] { yybegin(INSIDE_COMMENT_BLOCK_LINE); return AsciiDocTokenTypes.BLOCK_COMMENT; }
-  {COMMENT_BLOCK_DELIMITER} {
+  ^ {COMMENT_BLOCK_DELIMITER} / [^\/\n \t] { return AsciiDocTokenTypes.BLOCK_COMMENT; }
+  ^ {COMMENT_BLOCK_DELIMITER} {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
       yyinitialIfNotInBlock();
       return AsciiDocTokenTypes.BLOCK_COMMENT;
     } else {
-      yybegin(INSIDE_COMMENT_BLOCK_LINE); return AsciiDocTokenTypes.BLOCK_COMMENT;
+      return AsciiDocTokenTypes.BLOCK_COMMENT;
     }
   }
-}
-
-<COMMENT_BLOCK, INSIDE_COMMENT_BLOCK_LINE> {
-  "\n"                 { yybegin(COMMENT_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                  { yybegin(INSIDE_COMMENT_BLOCK_LINE); return AsciiDocTokenTypes.BLOCK_COMMENT; }
+  "\n"                 { return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                  { return AsciiDocTokenTypes.BLOCK_COMMENT; }
 }
 
 <PASSTRHOUGH_INLINE> {
-  {PASSTRHOUGH_INLINE} { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END; }
+  {PASSTRHOUGH_INLINE} { yybegin(PREBLOCK); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END; }
   [^]                  { return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
 }
 
 <PASSTRHOUGH_BLOCK> {
-  {PASSTRHOUGH_BLOCK_DELIMITER} $ {
+  ^ {PASSTRHOUGH_BLOCK_DELIMITER} $ {
       if (yytext().toString().trim().length() == blockDelimiterLength) {
+        clearStyle();
         yybegin(MULTILINE);
         return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
       } else {
-        yybegin(INSIDE_PASSTRHOUGH_BLOCK_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT;
+        return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT;
       }
     }
   // duplicating to handle end of file content
-  {PASSTRHOUGH_BLOCK_DELIMITER} / [^\+\n \t] { yybegin(INSIDE_PASSTRHOUGH_BLOCK_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
-  {PASSTRHOUGH_BLOCK_DELIMITER} {
+  ^ {PASSTRHOUGH_BLOCK_DELIMITER} / [^\+\n \t] { return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
+  ^ {PASSTRHOUGH_BLOCK_DELIMITER} {
       if (yytext().toString().trim().length() == blockDelimiterLength) {
+        clearStyle();
         yybegin(MULTILINE);
         return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
       } else {
-        yybegin(INSIDE_PASSTRHOUGH_BLOCK_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT;
+        return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT;
       }
     }
-}
-
-<PASSTRHOUGH_BLOCK, INSIDE_PASSTRHOUGH_BLOCK_LINE> {
-  "\n"                 { yybegin(PASSTRHOUGH_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                  { yybegin(INSIDE_PASSTRHOUGH_BLOCK_LINE); return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
+  "\n"                 { return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                  { return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
 }
 
 <LITERAL_BLOCK> {
-  {LITERAL_BLOCK_DELIMITER} $ {
+  ^ {LITERAL_BLOCK_DELIMITER} $ {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
+      clearStyle();
       yybegin(MULTILINE);
       return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER;
     } else {
-      yybegin(INSIDE_LITERAL_BLOCK_LINE); return AsciiDocTokenTypes.LITERAL_BLOCK;
+      return AsciiDocTokenTypes.LITERAL_BLOCK;
     }
   }
   // duplicating to handle end of file content
-  {LITERAL_BLOCK_DELIMITER} / [^\.\n \t] { yybegin(INSIDE_LITERAL_BLOCK_LINE); return AsciiDocTokenTypes.LITERAL_BLOCK; }
-  {LITERAL_BLOCK_DELIMITER} {
+  ^ {LITERAL_BLOCK_DELIMITER} / [^\.\n \t] { return AsciiDocTokenTypes.LITERAL_BLOCK; }
+  ^ {LITERAL_BLOCK_DELIMITER} {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
+      clearStyle();
       yybegin(MULTILINE);
       return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER;
     } else {
-      yybegin(INSIDE_LITERAL_BLOCK_LINE); return AsciiDocTokenTypes.LITERAL_BLOCK;
+      return AsciiDocTokenTypes.LITERAL_BLOCK;
     }
   }
-}
-
-<LITERAL_BLOCK, INSIDE_LITERAL_BLOCK_LINE> {
-  "\n"                 { yybegin(LITERAL_BLOCK); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                  { yybegin(INSIDE_LITERAL_BLOCK_LINE); return AsciiDocTokenTypes.LITERAL_BLOCK; }
+  "\n"                 { return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                  { return AsciiDocTokenTypes.LITERAL_BLOCK; }
 }
 
 // include is the only allowed block macro in these types of block
-<LITERAL_BLOCK, LISTING_BLOCK, PASSTRHOUGH_BLOCK> {
-  "include::" / [^\[\n]* "[" [^\]\n]* "]" { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
-  "include::" / [^\[\n]* {AUTOCOMPLETE} { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+<LITERAL_BLOCK, LISTING_BLOCK, PASSTRHOUGH_BLOCK, LISTING_NO_DELIMITER, SINGLELINE> {
+  ^ "include::" / [^\[\n]* "[" [^\]\n]* "]" {SPACE}* \n { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  ^ "include::" / [^\[\n]* {AUTOCOMPLETE} { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
 }
 

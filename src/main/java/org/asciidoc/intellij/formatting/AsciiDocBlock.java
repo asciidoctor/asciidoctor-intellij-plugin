@@ -22,15 +22,17 @@ class AsciiDocBlock extends AbstractBlock {
 
   private boolean verse = false;
   private boolean table = false;
+  private boolean hardbreaks = false;
 
   AsciiDocBlock(@NotNull ASTNode node) {
     super(node, null, Alignment.createAlignment());
   }
 
-  private AsciiDocBlock(@NotNull ASTNode node, boolean verse, boolean table) {
+  private AsciiDocBlock(@NotNull ASTNode node, boolean verse, boolean table, boolean hardbreaks) {
     super(node, null, Alignment.createAlignment());
     this.verse = verse;
     this.table = table;
+    this.hardbreaks = hardbreaks;
   }
 
   @Override
@@ -49,12 +51,15 @@ class AsciiDocBlock extends AbstractBlock {
       if (block.getType() == Type.TABLE) {
         table = true;
       }
+      if ("%hardbreaks".equals(block.getStyle())) {
+        hardbreaks = true;
+      }
     }
 
     ASTNode child = myNode.getFirstChildNode();
     while (child != null) {
       if (!(child instanceof PsiWhiteSpace)) {
-        result.add(new AsciiDocBlock(child, verse, table));
+        result.add(new AsciiDocBlock(child, verse, table, hardbreaks));
       }
       child = child.getTreeNext();
     }
@@ -94,12 +99,12 @@ class AsciiDocBlock extends AbstractBlock {
     }
 
     // ensure a new line at the end of the sentence
-    if (!verse && !table && isEndOfSentence(child1)) {
+    if (!verse && !table && !hardbreaks && isEndOfSentence(child1) && isPartOfSentence(child2)) {
       return Spacing.createSpacing(0, 0, 1, true, 1);
     }
 
     // ensure exactly one space between parts of one sentence. Remove any newlines
-    if (!verse && !table && isPartOfSentence(child1) && isPartOfSentence(child2) && !hasBlankLineBetween(child1, child2)) {
+    if (!verse && !table && !hardbreaks && isPartOfSentence(child1) && isPartOfSentence(child2) && !hasBlankLineBetween(child1, child2)) {
       // if there is a newline, create at least one space
       int minSpaces = hasNewlinesBetween(child1, child2) ? 1 : 0;
       return Spacing.createSpacing(minSpaces, 1, 0, false, 0);
@@ -274,6 +279,7 @@ class AsciiDocBlock extends AbstractBlock {
     AsciiDocTokenTypes.ITALIC, AsciiDocTokenTypes.DOUBLE_QUOTE, AsciiDocTokenTypes.SINGLE_QUOTE, AsciiDocTokenTypes.BOLD_START,
     AsciiDocTokenTypes.BOLD_END, AsciiDocTokenTypes.ITALIC_START, AsciiDocTokenTypes.ITALIC_END, AsciiDocTokenTypes.LT,
     AsciiDocTokenTypes.GT, AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END, AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START,
+    AsciiDocTokenTypes.LPAREN, AsciiDocTokenTypes.RPAREN,
     AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END, AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START);
 
   private static boolean isPartOfSentence(Block block) {
