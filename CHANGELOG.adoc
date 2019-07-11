@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.14 (preview, available from Github releases)
+
+- lexer and highlighting support blocks with unbalanced or no delimiters (#289)
+
 === 0.28.13 (preview, available from Github releases)
 
 - lexer and highlighting support several new tokens (callouts, admonitions, markdown style listings, definition lists) (#289)
