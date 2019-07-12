@@ -1118,6 +1118,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Text')");
   }
 
+  public void testEndifSpecial() {
+    doTest("endif::[]",
+      "AsciiDoc:BLOCK_MACRO_ID ('endif::')\n" +
+        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:BLOCK_ATTRS_END (']')");
+  }
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();
