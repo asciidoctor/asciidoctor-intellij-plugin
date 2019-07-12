@@ -7,6 +7,13 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.16 (work in progress)
+
+- adding code style settings for reformat (#289)
+- rework inline macro for false positives (#275)
+- ifdef/ifndef/endif body references attributes in (#275)
+- reset formatting after a blank line (#289)
+
 === 0.28.15 (preview, available from Github releases)
 
 - respect imagesdir when resolving image paths in source file (#275)
