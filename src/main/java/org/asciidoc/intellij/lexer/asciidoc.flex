@@ -750,16 +750,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            return textFormat();
                          }
                        }
-  {INLINE_MACRO_START} / [^: \[\n] [^\[\n]* "[" [^\]\n]* "]" {
-        if (!isEscaped()) {
-          yypushstate();
-          yybegin(INLINE_MACRO);
-          return AsciiDocTokenTypes.INLINE_MACRO_ID;
-        } else {
-          return textFormat();
-        }
-      }
-  {INLINE_MACRO_START} / [^: \[\n]? [^\[\n]* {AUTOCOMPLETE} {
+  {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\[\n\"`:]* | "") ({AUTOCOMPLETE} | "[" [^\]\n]* "]") {
         if (!isEscaped()) {
           yypushstate();
           yybegin(INLINE_MACRO);
