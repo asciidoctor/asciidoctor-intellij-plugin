@@ -1102,6 +1102,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testEllipseInsideLIne() {
+    doTest("Text... Text",
+      "AsciiDoc:TEXT ('Text...')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();
