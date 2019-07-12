@@ -10,7 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.28.15 (preview, available from Github releases)
 
 - respect imagesdir when resolving image paths in source file (#275)
-- resolve attribute names in macro defintion (#275)
+- resolve attribute names in macro definition (#275)
 - auto-completion of files should include ".." (#253)
 
 === 0.28.14 (preview, available from Github releases)
