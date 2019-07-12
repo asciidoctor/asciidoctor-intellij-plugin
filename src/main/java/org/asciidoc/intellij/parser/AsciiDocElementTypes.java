@@ -11,7 +11,8 @@ import org.asciidoc.intellij.lexer.AsciiDocElementType;
 public interface AsciiDocElementTypes {
   IFileElementType FILE = new IFileElementType(AsciiDocLanguage.INSTANCE);
   IElementType SECTION = new AsciiDocElementType("SECTION");
-  IElementType BLOCK_MACRO = new AsciiDocElementType("BLOCK_MACRO_ID");
+  IElementType BLOCK_MACRO = new AsciiDocElementType("BLOCK_MACRO");
+  IElementType INLINE_MACRO = new AsciiDocElementType("INLINE_MACRO");
   IElementType BLOCK = new AsciiDocElementType("BLOCK");
   IElementType BLOCK_ATTRIBUTES = new AsciiDocElementType("BLOCK_ATTRIBUTES");
   IElementType BLOCKID = new AsciiDocElementType("BLOCKID");

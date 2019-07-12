@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.psi;
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -18,16 +19,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author yole
- */
-public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
+public class AsciiDocInlineMacro extends ASTWrapperPsiElement {
   private static final Set<String> HAS_FILE_AS_BODY = new HashSet<>();
 
   static {
     HAS_FILE_AS_BODY.addAll(Arrays.asList(
       // standard asciidoctor
-      "image", "include", "video", "audio",
+      "image", "video", "audio",
       // asciidoctor diagram
       "a2s", "actdiag", "blockdiag", "ditaa", "erd", "graphviz", "meme", "mermaid", "msc",
       "nwdiag", "packetdiag", "plantuml", "rackdiag", "seqdiag", "shaape", "svgbob",
@@ -35,7 +33,7 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
     ));
   }
 
-  public AsciiDocBlockMacro(@NotNull ASTNode node) {
+  public AsciiDocInlineMacro(@NotNull ASTNode node) {
     super(node);
   }
 
@@ -43,7 +41,7 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
   @Override
   public PsiReference[] getReferences() {
     if (HAS_FILE_AS_BODY.contains(getMacroName())) {
-      ASTNode bodyNode = getNode().findChildByType(AsciiDocTokenTypes.BLOCK_MACRO_BODY);
+      ASTNode bodyNode = getNode().findChildByType(AsciiDocTokenTypes.INLINE_MACRO_BODY);
       if (bodyNode != null) {
         String file = bodyNode.getText();
         ArrayList<PsiReference> references = new ArrayList<>();
@@ -69,30 +67,12 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
     return super.getReferences();
   }
 
-  @NotNull
-  @Override
-  public String getDescription() {
-    String title = getTitle();
-    String style = getStyle();
-    if (title == null) {
-      if (style == null) {
-        title = getMacroName();
-      } else {
-        title = "";
-      }
-    }
-    if (style != null) {
-      return "[" + style + "]" + (title.isEmpty() ? "" : " ") + title;
-    }
-    return title;
-  }
-
   public String getMacroName() {
-    ASTNode idNode = getNode().findChildByType(AsciiDocTokenTypes.BLOCK_MACRO_ID);
+    ASTNode idNode = getNode().findChildByType(AsciiDocTokenTypes.INLINE_MACRO_ID);
     if (idNode == null) {
       throw new IllegalStateException("Parser failure: block macro without ID found: " + getText());
     }
-    return StringUtil.trimEnd(idNode.getText(), "::");
+    return StringUtil.trimEnd(idNode.getText(), ":");
 
   }
 
@@ -101,14 +81,14 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
     return AsciiDocIcons.Structure.MACRO;
   }
 
-  public static class Manipulator extends AbstractElementManipulator<AsciiDocBlockMacro> {
+  public static class Manipulator extends AbstractElementManipulator<AsciiDocInlineMacro> {
 
     @Override
-    public AsciiDocBlockMacro handleContentChange(@NotNull AsciiDocBlockMacro element,
-                                                  @NotNull TextRange range,
-                                                  String newContent) throws IncorrectOperationException {
+    public AsciiDocInlineMacro handleContentChange(@NotNull AsciiDocInlineMacro element,
+                                                   @NotNull TextRange range,
+                                                   String newContent) throws IncorrectOperationException {
       PsiElement child = element.getFirstChild();
-      while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.BLOCK_MACRO_BODY) {
+      while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.INLINE_MACRO_BODY) {
         range = range.shiftRight(-child.getTextLength());
         child = child.getNextSibling();
       }
@@ -123,8 +103,8 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
 
     @NotNull
     @Override
-    public TextRange getRangeInElement(@NotNull AsciiDocBlockMacro element) {
-      PsiElement child = element.findChildByType(AsciiDocTokenTypes.BLOCK_MACRO_BODY);
+    public TextRange getRangeInElement(@NotNull AsciiDocInlineMacro element) {
+      PsiElement child = element.findChildByType(AsciiDocTokenTypes.INLINE_MACRO_BODY);
       if (child != null) {
         return TextRange.create(child.getStartOffsetInParent(), child.getStartOffsetInParent() + child.getTextLength());
       } else {
@@ -133,8 +113,4 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
     }
   }
 
-  @Override
-  public Type getType() {
-    return Type.BLOCKMACRO;
-  }
 }

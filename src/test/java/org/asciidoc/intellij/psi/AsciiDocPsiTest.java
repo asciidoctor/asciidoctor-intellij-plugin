@@ -49,8 +49,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiFile psiFile = configureByAsciiDoc("image::foo.png\n[hi]");
     PsiElement[] children = psiFile.getChildren();
     assertEquals(3, children.length);
-    AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) children[0];
-    assertEquals("image", blockMacro.getMacroName());
+    assertEquals("image::foo.png", children[0].getText());
     assertEquals("\n", children[1].getText());
     assertEquals("[hi]", children[2].getText());
   }

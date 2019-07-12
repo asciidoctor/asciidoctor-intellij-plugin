@@ -15,7 +15,9 @@ Block comment
 
 <callout><1></callout> callout
 
-<block_macro>blockmacro::</block_macro><marker>[]</marker>
+<block_macro>blockmacro::</block_macro>content<marker>[]</marker>
+
+<inline_macro>inlinemacro:</inline_macro>content<marker>[]</marker>
 
 <marker>:</marker><attribute>attribute</attribute><marker>:</marker> <value>value</value>
 

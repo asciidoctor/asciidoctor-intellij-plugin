@@ -54,6 +54,11 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
     DefaultLanguageHighlighterColors.KEYWORD
   );
 
+  static final TextAttributesKey ASCIIDOC_INLINE_MACRO_ID = TextAttributesKey.createTextAttributesKey(
+    "ASCIIDOC.INLINE_MACRO_ID",
+    DefaultLanguageHighlighterColors.KEYWORD
+  );
+
   static final TextAttributesKey ASCIIDOC_BOLD = TextAttributesKey.createTextAttributesKey(
     "ASCIIDOC_BOLD");
 
@@ -119,6 +124,11 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
       .put(AsciiDocTokenTypes.MONO, ASCIIDOC_MONO)
       .put(AsciiDocTokenTypes.WHITE_SPACE_MONO, ASCIIDOC_MONO)
       .put(AsciiDocTokenTypes.BLOCK_MACRO_ID, ASCIIDOC_BLOCK_MACRO_ID)
+      .put(AsciiDocTokenTypes.INLINE_MACRO_ID, ASCIIDOC_INLINE_MACRO_ID)
+      .put(AsciiDocTokenTypes.BLOCK_ATTRS_START, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.BLOCK_ATTRS_END, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.INLINE_ATTRS_START, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.INLINE_ATTRS_END, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.BULLET, ASCIIDOC_BULLET)
       .put(AsciiDocTokenTypes.DESCRIPTION, ASCIIDOC_DESCRIPTION)
       .put(AsciiDocTokenTypes.CALLOUT, ASCIIDOC_CALLOUT)

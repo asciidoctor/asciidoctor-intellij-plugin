@@ -19,6 +19,7 @@ import org.asciidoc.intellij.psi.AsciiDocBlockAttributes;
 import org.asciidoc.intellij.psi.AsciiDocBlockId;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocFile;
+import org.asciidoc.intellij.psi.AsciiDocInlineMacro;
 import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocRef;
 import org.asciidoc.intellij.psi.AsciiDocSection;
@@ -74,6 +75,9 @@ public class AsciiDocParserDefinition implements ParserDefinition {
     }
     if (node.getElementType() == AsciiDocElementTypes.BLOCK_MACRO) {
       return new AsciiDocBlockMacro(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.INLINE_MACRO) {
+      return new AsciiDocInlineMacro(node);
     }
     if (node.getElementType() == AsciiDocElementTypes.BLOCK) {
       return new AsciiDocStandardBlock(node);

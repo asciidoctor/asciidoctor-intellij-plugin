@@ -8,6 +8,7 @@ import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class AsciiDocAttributeDeclaration extends ASTWrapperPsiElement {
   public AsciiDocAttributeDeclaration(@NotNull ASTNode node) {
@@ -28,6 +29,7 @@ public class AsciiDocAttributeDeclaration extends ASTWrapperPsiElement {
     return null;
   }
 
+  @Nullable
   public String getAttributeValue() {
     ASTNode attributeValue = getNode().findChildByType(AsciiDocTokenTypes.ATTRIBUTE_VAL);
     if (attributeValue != null) {

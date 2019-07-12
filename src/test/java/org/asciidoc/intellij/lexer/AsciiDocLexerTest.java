@@ -1078,6 +1078,18 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testInlineMacro() {
+    doTest("Text image:image.png[] text",
+      "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:INLINE_MACRO_ID ('image:')\n" +
+        "AsciiDoc:INLINE_MACRO_BODY ('image.png')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('text')");
+  }
+
   public void testExampleWithListingNoDelimiter() {
     doTest("====\n" +
         " Test\n" +

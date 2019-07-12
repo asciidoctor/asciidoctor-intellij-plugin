@@ -156,6 +156,7 @@ HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 // next line follwoing with only header marks
 HEADING_OLDSTYLE = {SPACE}* [^ _+\-#=~.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
+INLINE_MACRO_START = [a-zA-Z0-9_]+":"
 TITLE_START = "."
 AUTOCOMPLETE = "IntellijIdeaRulezzz " // CompletionUtilCore.DUMMY_IDENTIFIER
 BLOCK_ATTRS_START = "["
@@ -239,8 +240,13 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 %state BLOCK_MACRO
 %state BLOCK_MACRO_ATTRS
-%state TITLE
 %state BLOCK_ATTRS
+
+%state INLINE_MACRO
+%state INLINE_MACRO_ATTRS
+%state INLINE_ATTRS
+
+%state TITLE
 
 %state ATTRIBUTE_NAME
 %state ATTRIBUTE_VAL
@@ -353,7 +359,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <DELIMITER, PREBLOCK> {
   ^ {PAGEBREAK} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.PAGEBREAK; }
   ^ {HORIZONTALRULE} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.HORIZONTALRULE; }
-  {BLOCK_MACRO_START} / [^ \t\n] { resetFormatting(); yybegin(PREBLOCK); yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  ^ {BLOCK_MACRO_START} / [^ \[\n] [^\[\n]* { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  ^ {BLOCK_MACRO_START} / [^ \[\n]? [^\[\n]* {AUTOCOMPLETE} { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   {BLOCK_ATTRS_START} / [^\[] { yybegin(MULTILINE); yypushstate(); clearStyle(); yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
   {ANCHORSTART} / [^\]\n]+ {ANCHOREND} { resetFormatting(); yybegin(ANCHORID); return AsciiDocTokenTypes.BLOCKIDSTART; }
   {BLOCKIDSTART} / [^\]\n]+ {BLOCKIDEND} {
@@ -740,6 +747,24 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            return textFormat();
                          }
                        }
+  {INLINE_MACRO_START} / [^: \[\n] [^\[\n]* "[" [^\]\n]* "]" {
+        if (!isEscaped()) {
+          yypushstate();
+          yybegin(INLINE_MACRO);
+          return AsciiDocTokenTypes.INLINE_MACRO_ID;
+        } else {
+          return textFormat();
+        }
+      }
+  {INLINE_MACRO_START} / [^: \[\n]? [^\[\n]* {AUTOCOMPLETE} {
+        if (!isEscaped()) {
+          yypushstate();
+          yybegin(INLINE_MACRO);
+          return AsciiDocTokenTypes.INLINE_MACRO_ID;
+        } else {
+          return textFormat();
+        }
+      }
   {ATTRIBUTE_REF_START} / [^}\n ]* {AUTOCOMPLETE} {
                          if (!isEscaped()) {
                            yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
@@ -885,6 +910,21 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
   "=\"" ( [^\"] | "\\\"" )* "\"" { return AsciiDocTokenTypes.BLOCK_ATTR_VALUE; }
   [^]                  { return AsciiDocTokenTypes.BLOCK_ATTR_NAME; }
+}
+
+<INLINE_MACRO> {
+  "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
+  "["                  { yybegin(INLINE_MACRO_ATTRS); return AsciiDocTokenTypes.INLINE_ATTRS_START; }
+  [^]                  { return AsciiDocTokenTypes.INLINE_MACRO_BODY; }
+}
+
+<INLINE_MACRO_ATTRS> {
+  "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
+  "]"                  { yypopstate(); return AsciiDocTokenTypes.INLINE_ATTRS_END; }
+  ","                  { return AsciiDocTokenTypes.SEPARATOR; }
+  {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
+  "=\"" ( [^\"] | "\\\"" )* "\"" { return AsciiDocTokenTypes.INLINE_ATTR_VALUE; }
+  [^]                  { return AsciiDocTokenTypes.INLINE_ATTR_NAME; }
 }
 
 <LISTING_NO_DELIMITER> {

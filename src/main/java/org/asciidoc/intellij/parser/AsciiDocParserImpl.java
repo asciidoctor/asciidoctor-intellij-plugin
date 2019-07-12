@@ -28,6 +28,12 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ID;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_OLDSTYLE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_END;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_START;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTR_NAME;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTR_VALUE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_MACRO_BODY;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_MACRO_ID;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_BREAK;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKANCHOR;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKEND;
@@ -122,6 +128,20 @@ public class AsciiDocParserImpl {
         }
         myPreBlockMarker.done(AsciiDocElementTypes.BLOCK_MACRO);
         myPreBlockMarker = null;
+        continue;
+      } else if (at(INLINE_MACRO_ID)) {
+        newLines = 0;
+        PsiBuilder.Marker inlineMacroMarker = myBuilder.mark();
+        next();
+        while ((at(INLINE_MACRO_BODY) || at(INLINE_ATTR_NAME) || at(INLINE_ATTR_VALUE) || at(SEPARATOR) || at(INLINE_ATTRS_START) || at(INLINE_ATTRS_END))
+          && newLines == 0) {
+          if (at(INLINE_ATTRS_END)) {
+            next();
+            break;
+          }
+          next();
+        }
+        inlineMacroMarker.done(AsciiDocElementTypes.INLINE_MACRO);
         continue;
       } else if (at(BLOCK_DELIMITER)
         || at(COMMENT_BLOCK_DELIMITER) || at(PASSTRHOUGH_BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER)) {

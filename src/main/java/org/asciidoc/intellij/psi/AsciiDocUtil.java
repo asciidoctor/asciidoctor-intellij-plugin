@@ -3,6 +3,8 @@ package org.asciidoc.intellij.psi;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -25,7 +27,14 @@ public class AsciiDocUtil {
     List<AsciiDocBlockId> result = null;
     Collection<VirtualFile> virtualFiles =
             FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
+    ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
     for (VirtualFile virtualFile : virtualFiles) {
+      if (index.isInLibrary(virtualFile)
+        || index.isExcluded(virtualFile)
+        || index.isInLibraryClasses(virtualFile)
+        || index.isInLibrarySource(virtualFile)) {
+        continue;
+      }
       AsciiDocFile asciiDocFile = (AsciiDocFile) PsiManager.getInstance(project).findFile(virtualFile);
       if (asciiDocFile != null) {
         Collection<AsciiDocBlockId> properties = PsiTreeUtil.findChildrenOfType(asciiDocFile, AsciiDocBlockId.class);
@@ -63,7 +72,14 @@ public class AsciiDocUtil {
     List<AsciiDocBlockId> result = new ArrayList<>();
     Collection<VirtualFile> virtualFiles =
             FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
+    ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
     for (VirtualFile virtualFile : virtualFiles) {
+      if (index.isInLibrary(virtualFile)
+        || index.isExcluded(virtualFile)
+        || index.isInLibraryClasses(virtualFile)
+        || index.isInLibrarySource(virtualFile)) {
+        continue;
+      }
       AsciiDocFile asciiDocFile = (AsciiDocFile) PsiManager.getInstance(project).findFile(virtualFile);
       if (asciiDocFile != null) {
         Collection<AsciiDocBlockId> properties = PsiTreeUtil.findChildrenOfType(asciiDocFile, AsciiDocBlockId.class);
@@ -77,11 +93,18 @@ public class AsciiDocUtil {
     List<AsciiDocAttributeDeclaration> result = null;
     Collection<VirtualFile> virtualFiles =
       FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
+    ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
     for (VirtualFile virtualFile : virtualFiles) {
+      if (index.isInLibrary(virtualFile)
+        || index.isExcluded(virtualFile)
+        || index.isInLibraryClasses(virtualFile)
+        || index.isInLibrarySource(virtualFile)) {
+        continue;
+      }
       AsciiDocFile asciiDocFile = (AsciiDocFile) PsiManager.getInstance(project).findFile(virtualFile);
       if (asciiDocFile != null) {
-        Collection<AsciiDocAttributeDeclaration> properties = PsiTreeUtil.findChildrenOfType(asciiDocFile, AsciiDocAttributeDeclaration.class);
-        for (AsciiDocAttributeDeclaration attributeDeclaration : properties) {
+        Collection<AsciiDocAttributeDeclaration> attributeDeclarations = PsiTreeUtil.findChildrenOfType(asciiDocFile, AsciiDocAttributeDeclaration.class);
+        for (AsciiDocAttributeDeclaration attributeDeclaration : attributeDeclarations) {
           if (key.equals(attributeDeclaration.getAttributeName())) {
             if (result == null) {
               result = new ArrayList<>();
@@ -98,11 +121,18 @@ public class AsciiDocUtil {
     List<AsciiDocAttributeDeclaration> result = new ArrayList<>();
     Collection<VirtualFile> virtualFiles =
       FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
+    ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
     for (VirtualFile virtualFile : virtualFiles) {
+      if (index.isInLibrary(virtualFile)
+        || index.isExcluded(virtualFile)
+        || index.isInLibraryClasses(virtualFile)
+        || index.isInLibrarySource(virtualFile)) {
+        continue;
+      }
       AsciiDocFile asciiDocFile = (AsciiDocFile) PsiManager.getInstance(project).findFile(virtualFile);
       if (asciiDocFile != null) {
-        Collection<AsciiDocAttributeDeclaration> properties = PsiTreeUtil.findChildrenOfType(asciiDocFile, AsciiDocAttributeDeclaration.class);
-        result.addAll(properties);
+        Collection<AsciiDocAttributeDeclaration> attributeDeclarations = PsiTreeUtil.findChildrenOfType(asciiDocFile, AsciiDocAttributeDeclaration.class);
+        result.addAll(attributeDeclarations);
       }
     }
     return result;

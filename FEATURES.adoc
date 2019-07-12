@@ -1,4 +1,5 @@
 = Features of the AsciiDoc IntelliJ plugin
+
 :experimental:
 :icons: font
 
@@ -45,7 +46,8 @@ If not, please describe the expected behaviour in a https://github.com/asciidoct
 Please consider to contribute to this document: open a bug when something is unclear, missing or wrong.
 You can even create a pull request for this document!
 
-NOTE: Parts that are marked to be experimental are likely to have corner cases that are not yet implemented, may have bugs. They can change their behaviour between releases at any time.
+NOTE: Parts that are marked to be experimental are likely to have corner cases that are not yet implemented, may have bugs.
+They can change their behaviour between releases at any time.
 
 == Features
 
@@ -56,7 +58,9 @@ NOTE: Parts that are marked to be experimental are likely to have corner cases t
 ** editor with syntax highlighting (per default on the left) and
 ** live preview (per default on the right)
 * Toolbar and context menu for basic formatting and to create tables
-* Refactor Markdown to AsciiDoc: Right click on a file, or use the Refactor menu, and plugin replaces the Markdown document by the AsciiDoc equivalent. Also supports undo, in case the user is not happy with the result!
+* Refactor Markdown to AsciiDoc:
+Right click on a file, or use the Refactor menu, and plugin replaces the Markdown document by the AsciiDoc equivalent.
+Also supports undo, in case the user is not happy with the result!
 
 === Editor
 
@@ -81,7 +85,8 @@ It contains the same elements like in the structure view for the cursor position
 
 For `include::[]` and `image::[]` block macros the keys kbd:[Ctrl+Click] and kbd:[Ctrl+B] navigate to the referenced file.
 
-For references (like `\<<id>>`) the keys kbd:[Ctrl+Click] and kbd:[Ctrl+B] navigate to the reference (like `\[[id]]`). This works similarly for attributes (`\{attrib}` and `:attrib:`).
+For references (like `\<<id>>`) the keys kbd:[Ctrl+Click] and kbd:[Ctrl+B] navigate to the reference (like `\[[id]]`).
+This works similarly for attributes (`\{attrib}` and `:attrib:`).
 "`Find Usages`" (kbd:[Alt+F7]) finds usages of references and attributes and allows navigation.
 
 // see: AsciiDocDocumentationProvider
@@ -94,7 +99,8 @@ IntelliJ's built-in spell checker verifies all text areas of the document.
 It underlines unknown words with a green wavy line.
 With the context menu the user can change the spelling or to add the word to the project's dictionary.
 To enable spell-checking support for other languages, the user can add a dictionary file via "`Editor | Spelling`".
-Dictionaries are available online for example at http://www.winedt.org/dict.html. Word lists need to be in the UTF-8 format to work.
+Dictionaries are available online for example at http://www.winedt.org/dict.html.
+Word lists need to be in the UTF-8 format to work.
 
 // see: ExternalAnnotator
 During rendering Asciidoctor might indicate problems in the file including a line number.
@@ -122,7 +128,8 @@ In the editor the user can select from a list of browsers that are showing in th
 The user can also trigger this action from the context menu.
 To update the preview in the browser the user needs to refresh the contents by pressing kbd:[F5] in the browser.
 
-The user can open an AsciiDoc file in an external tool (like for example Google Chrome with the https://github.com/asciidoctor/asciidoctor-browser-extension[Asciidoctor Extension] installed). To do this, add Chrome as an https://www.jetbrains.com/help/idea/settings-tools-external-tools.html[external Tool in the settings].
+The user can open an AsciiDoc file in an external tool (like for example Google Chrome with the https://github.com/asciidoctor/asciidoctor-browser-extension[Asciidoctor Extension] installed).
+To do this, add Chrome as an https://www.jetbrains.com/help/idea/settings-tools-external-tools.html[external Tool in the settings].
 Provide `$FilePath$` as the argument so that Chrome knows where to find the file.
 The user can assign a shortcut to the external tool using "`Help | Find action... | (type the name of external tool) | kbd:[Alt+Enter] | (type the shortcut of choice) | OK`".
 
@@ -135,12 +142,16 @@ For example: a `[source,java` receives a closing bracket and two listing separat
 // see: AsciiDocBraceMatcher
 When the user opens a quote or a bracket, the plugin automatically adds a closing quote if it followed by whitespace or a closing bracket.
 
-For references, attributes and images, and several block macros like include, image and diagrams it provides auto-completion using kbd:[Ctrl+Space].
+For references, attributes and images, and several macros like include, image and diagrams it provides auto-completion using kbd:[Ctrl+Space].
 References and attributes support renaming within a project.
+
+When auto-completing folder and file names in macros, the plugin tries to resolves attributes using their values specified in the current file or other files.
+For image macros it tries to find a declaration of the _imagesDir_ attribute either in any of the Asciidoc files of the project.
 
 There are several live templates included.
 Once the user starts typing kbd:[a]kbd:[d], a list of templates appears.
-Continued typing any character of the template name restricts the list. A kbd:[Tab] selects and entry.
+Continued typing of any character of the template name restricts the list.
+A kbd:[Tab] selects and entry.
 
 The user can extract and inline includes.
 This is available from the "`Refactor`" context menu and via context-sensitive intentions via kbd:[Alt+Enter] ("`Inline Include Directive`" and "`Extract Include Directive`").

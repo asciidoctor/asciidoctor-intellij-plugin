@@ -196,6 +196,8 @@
     <additionalTextAttributes scheme="Darcula" file="colorSchemes/AsciidocDarcula.xml"/>
     <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocBlockMacro"
                              implementationClass="org.asciidoc.intellij.psi.AsciiDocBlockMacro$Manipulator"/>
+    <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocInlineMacro"
+                             implementationClass="org.asciidoc.intellij.psi.AsciiDocInlineMacro$Manipulator"/>
     <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocRef"
                              implementationClass="org.asciidoc.intellij.psi.AsciiDocRef$Manipulator"/>
     <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocListing"
