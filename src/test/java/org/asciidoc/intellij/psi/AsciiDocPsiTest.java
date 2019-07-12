@@ -51,7 +51,18 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals(1, children.length);
     AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) children[0];
     assertEquals(2, blockMacro.getReferences().length);
+    assertEquals(AsciiDocFileReference.class, blockMacro.getReferences()[0].getClass());
     assertEquals(2, blockMacro.getReferences()[0].getVariants().length);
+  }
+
+  public void testIfdefBlockMacroWithReferences() {
+    PsiFile psiFile = configureByAsciiDoc(":hi: ho\nifdef::hi,ho+hu[]");
+    PsiElement[] children = psiFile.getChildren();
+    assertEquals(3, children.length);
+    AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) children[2];
+    assertEquals(3, blockMacro.getReferences().length);
+    assertEquals(AsciiDocAttributeDeclarationReference.class, blockMacro.getReferences()[0].getClass());
+    assertEquals(1, blockMacro.getReferences()[0].getVariants().length);
   }
 
   public void testIncompleteBlockMacroWithAttributesInNewLine() {

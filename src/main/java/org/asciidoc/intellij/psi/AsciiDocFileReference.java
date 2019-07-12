@@ -141,7 +141,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         final Icon icon = result.getElement().getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
         additionalItems.add(
           FileInfoManager.getFileLookupItem(result.getElement(), "{" + decl.getAttributeName() + "}", icon)
-            .withTypeText(decl.getAttributeValue())
+            .withTailText(" (" + decl.getAttributeValue() + ")", true)
+            .withTypeText(decl.getContainingFile().getName())
         );
       }
     }

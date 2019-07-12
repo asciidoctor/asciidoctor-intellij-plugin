@@ -23,6 +23,7 @@ import java.util.Set;
  */
 public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
   private static final Set<String> HAS_FILE_AS_BODY = new HashSet<>();
+  private static final Set<String> HAS_ATTRIBUTE_BODY = new HashSet<>();
 
   static {
     HAS_FILE_AS_BODY.addAll(Arrays.asList(
@@ -32,6 +33,10 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
       "a2s", "actdiag", "blockdiag", "ditaa", "erd", "graphviz", "meme", "mermaid", "msc",
       "nwdiag", "packetdiag", "plantuml", "rackdiag", "seqdiag", "shaape", "svgbob",
       "syntrax", "umlet", "vega", "vegalite", "wavedrom"
+    ));
+    HAS_ATTRIBUTE_BODY.addAll(Arrays.asList(
+      // standard asciidoctor
+      "ifdef", "ifndef"
     ));
   }
 
@@ -60,6 +65,29 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
         }
         references.add(
           new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
+            TextRange.create(bodyNode.getPsi().getStartOffsetInParent() + start, bodyNode.getPsi().getStartOffsetInParent() + file.length())
+          )
+        );
+        return references.toArray(new PsiReference[0]);
+      }
+    } else if (HAS_ATTRIBUTE_BODY.contains(getMacroName())) {
+      ASTNode bodyNode = getNode().findChildByType(AsciiDocTokenTypes.BLOCK_MACRO_BODY);
+      if (bodyNode != null) {
+        String file = bodyNode.getText();
+        ArrayList<PsiReference> references = new ArrayList<>();
+        int start = 0;
+        for (int i = 0; i < file.length(); ++i) {
+          if (file.charAt(i) == ',' || file.charAt(i) == '+') {
+            references.add(
+              new AsciiDocAttributeDeclarationReference(this,
+                TextRange.create(bodyNode.getPsi().getStartOffsetInParent() + start, bodyNode.getPsi().getStartOffsetInParent() + i)
+              )
+            );
+            start = i + 1;
+          }
+        }
+        references.add(
+          new AsciiDocAttributeDeclarationReference(this,
             TextRange.create(bodyNode.getPsi().getStartOffsetInParent() + start, bodyNode.getPsi().getStartOffsetInParent() + file.length())
           )
         );

@@ -61,13 +61,15 @@ public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiE
         String attributeName = declaration.getAttributeName();
         variants.add(LookupElementBuilder.create(attributeName)
           .withIcon(AsciiDocIcons.ASCIIDOC_ICON)
-          .withPresentableText(attributeName + value)
+          .withTailText(value, true)
           .withTypeText(declaration.getContainingFile().getName())
           .withInsertHandler((insertionContext, item) -> {
             // the finalizing } hasn't been entered yet, autocomplete it here
             int offset = insertionContext.getStartOffset();
             PsiElement element = insertionContext.getFile().findElementAt(offset);
-            if (element != null && element.getNode() != null && element.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_REF) {
+            if (element != null && element.getNode() != null
+              && element.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_REF
+              && element.getNode().getElementType() != AsciiDocTokenTypes.BLOCK_MACRO_BODY) {
               offset += attributeName.length();
               insertionContext.getDocument().insertString(offset, "}");
               offset += 1;
