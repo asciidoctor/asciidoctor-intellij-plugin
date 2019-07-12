@@ -1109,6 +1109,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Text')");
   }
 
+  public void testResetFormatting() {
+    doTest("`Mono`Text\n\nText",
+      "AsciiDoc:MONO_START ('`')\n" +
+        "AsciiDoc:MONO ('Mono`Text')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
   @Override
   protected Lexer createLexer() {
     return new AsciiDocLexer();
