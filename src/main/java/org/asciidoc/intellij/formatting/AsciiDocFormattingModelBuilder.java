@@ -20,7 +20,7 @@ public class AsciiDocFormattingModelBuilder implements FormattingModelBuilder {
   public FormattingModel createModel(PsiElement element, CodeStyleSettings settings) {
     final ASTNode root = TreeUtil.getFileElement((TreeElement) element.getNode());
     final FormattingDocumentModelImpl documentModel = FormattingDocumentModelImpl.createOn(element.getContainingFile());
-    return new PsiBasedFormattingModel(element.getContainingFile(), new AsciiDocBlock(root), documentModel);
+    return new PsiBasedFormattingModel(element.getContainingFile(), new AsciiDocBlock(root, settings), documentModel);
   }
 
   @Nullable

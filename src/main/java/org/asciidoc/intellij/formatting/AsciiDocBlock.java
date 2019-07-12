@@ -6,12 +6,13 @@ import com.intellij.formatting.Indent;
 import com.intellij.formatting.Spacing;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.TokenSet;
+import org.asciidoc.intellij.codeStyle.AsciiDocCodeStyleSettings;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.psi.AsciiDocBlock.Type;
-import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,13 +24,16 @@ class AsciiDocBlock extends AbstractBlock {
   private boolean verse = false;
   private boolean table = false;
   private boolean hardbreaks = false;
+  private final CodeStyleSettings settings;
 
-  AsciiDocBlock(@NotNull ASTNode node) {
+  AsciiDocBlock(@NotNull ASTNode node, CodeStyleSettings settings) {
     super(node, null, Alignment.createAlignment());
+    this.settings = settings;
   }
 
-  private AsciiDocBlock(@NotNull ASTNode node, boolean verse, boolean table, boolean hardbreaks) {
+  private AsciiDocBlock(@NotNull ASTNode node, CodeStyleSettings settings, boolean verse, boolean table, boolean hardbreaks) {
     super(node, null, Alignment.createAlignment());
+    this.settings = settings;
     this.verse = verse;
     this.table = table;
     this.hardbreaks = hardbreaks;
@@ -38,7 +42,7 @@ class AsciiDocBlock extends AbstractBlock {
   @Override
   protected List<Block> buildChildren() {
     final List<Block> result = new ArrayList<>();
-    if (!AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isEnabledFormatSource()) {
+    if (!settings.getCustomSettings(AsciiDocCodeStyleSettings.class).FORMATTING_ENABLED) {
       return result;
     }
 
@@ -59,7 +63,7 @@ class AsciiDocBlock extends AbstractBlock {
     ASTNode child = myNode.getFirstChildNode();
     while (child != null) {
       if (!(child instanceof PsiWhiteSpace)) {
-        result.add(new AsciiDocBlock(child, verse, table, hardbreaks));
+        result.add(new AsciiDocBlock(child, settings, verse, table, hardbreaks));
       }
       child = child.getTreeNext();
     }
@@ -98,16 +102,18 @@ class AsciiDocBlock extends AbstractBlock {
       return Spacing.createSpacing(0, 0, 2, false, 0);
     }
 
-    // ensure a new line at the end of the sentence
-    if (!verse && !table && !hardbreaks && isEndOfSentence(child1) && isPartOfSentence(child2)) {
-      return Spacing.createSpacing(0, 0, 1, true, 1);
-    }
+    if (settings.getCustomSettings(AsciiDocCodeStyleSettings.class).ONE_SENTENCE_PER_LINE) {
+      // ensure a new line at the end of the sentence
+      if (!verse && !table && !hardbreaks && isEndOfSentence(child1) && isPartOfSentence(child2)) {
+        return Spacing.createSpacing(0, 0, 1, true, 1);
+      }
 
-    // ensure exactly one space between parts of one sentence. Remove any newlines
-    if (!verse && !table && !hardbreaks && isPartOfSentence(child1) && isPartOfSentence(child2) && !hasBlankLineBetween(child1, child2)) {
-      // if there is a newline, create at least one space
-      int minSpaces = hasNewlinesBetween(child1, child2) ? 1 : 0;
-      return Spacing.createSpacing(minSpaces, 1, 0, false, 0);
+      // ensure exactly one space between parts of one sentence. Remove any newlines
+      if (!verse && !table && !hardbreaks && isPartOfSentence(child1) && isPartOfSentence(child2) && !hasBlankLineBetween(child1, child2)) {
+        // if there is a newline, create at least one space
+        int minSpaces = hasNewlinesBetween(child1, child2) ? 1 : 0;
+        return Spacing.createSpacing(minSpaces, 1, 0, false, 0);
+      }
     }
 
     // have one at least blank line before each bullet or enumeration,

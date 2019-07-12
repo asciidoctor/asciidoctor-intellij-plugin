@@ -61,9 +61,6 @@ public final class AsciiDocPreviewSettings {
   @Nullable
   private String myDisabledInjectionsByLanguage;
 
-  @Attribute("EnableFormatSource")
-  private boolean myEnableFormatSource = false;
-
   @Attribute("ShowAsciiDocWarningsAndErrorsInEditor")
   private boolean myShowAsciiDocWarningsAndErrorsInEditor = true;
 
@@ -76,7 +73,6 @@ public final class AsciiDocPreviewSettings {
                                  @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme,
                                  @NotNull Map<String, String> attributes, boolean verticalSplit, boolean editorFirst,
                                  boolean enableInjections, @Nullable String disabledInjectionsByLanguage,
-                                 boolean enableFormatSource,
                                  boolean showAsciiDocWarningsAndErrorsInEditor) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
@@ -86,7 +82,6 @@ public final class AsciiDocPreviewSettings {
     myIsEditorFirst = editorFirst;
     myEnableInjections = enableInjections;
     myDisabledInjectionsByLanguage = disabledInjectionsByLanguage;
-    myEnableFormatSource = enableFormatSource;
     myShowAsciiDocWarningsAndErrorsInEditor = showAsciiDocWarningsAndErrorsInEditor;
   }
 
@@ -142,10 +137,6 @@ public final class AsciiDocPreviewSettings {
     return list;
   }
 
-  public boolean isEnabledFormatSource() {
-    return myEnableFormatSource;
-  }
-
   public boolean isShowAsciiDocWarningsAndErrorsInEditor() {
     return myShowAsciiDocWarningsAndErrorsInEditor;
   }
@@ -182,9 +173,6 @@ public final class AsciiDocPreviewSettings {
     if (!Objects.equals(myDisabledInjectionsByLanguage, that.myDisabledInjectionsByLanguage)) {
       return false;
     }
-    if (myEnableFormatSource != that.myEnableFormatSource) {
-      return false;
-    }
     if (myShowAsciiDocWarningsAndErrorsInEditor != that.myShowAsciiDocWarningsAndErrorsInEditor) {
       return false;
     }
@@ -201,7 +189,6 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + (myIsEditorFirst ? 1 : 0);
     result = 31 * result + (myEnableInjections ? 1 : 0);
     result = 31 * result + Objects.hashCode(myDisabledInjectionsByLanguage);
-    result = 31 * result + (myEnableFormatSource ? 1 : 0);
     result = 31 * result + (myShowAsciiDocWarningsAndErrorsInEditor ? 1 : 0);
     return result;
   }

@@ -163,11 +163,15 @@ All of these changes can be undone (kbd:[Ctrl+Z]).
 
 The user can disable and enable intentions in "`Settings... | Editor | Intentions | AsciiDoc`".
 
-*Experimental:* The user can reformat the source in the editor using "`Reformat Code`" (kbd:[Ctrl+Alt+L]).
-In order to use this feature, the user has to enable it in the settings of the plugin.
+The user can reformat the source in the editor using "`Reformat Code`" (kbd:[Ctrl+Alt+L]).
+The user can disable formatting completely or configure parameters using "`Settings... | Editor | Code Style | AsciiDoc`".
 Currently it adjusts empty lines around headings, lists and blocks.
-It also adjusts spaces around list items. +
-In the project view the user can reformat a single file or all files in a folder and its sub folders using the same shortcut or the entry from the context menu.
+It also adjusts spaces around list items.
+
+By default it re-format blocks to the one-sentence-per-line convention.
+The user can disable this in the code style settings.
+
+NOTE: The code style functionality may change as this feature is still in its early stages.
 
 === Preview
 

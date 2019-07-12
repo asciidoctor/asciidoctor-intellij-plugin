@@ -59,7 +59,6 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
           oldPreviewSettings.isEditorFirst(),
           oldPreviewSettings.isEnabledInjections(),
           oldPreviewSettings.getDisabledInjectionsByLanguage(),
-          oldPreviewSettings.isEnabledFormatSource(),
           oldPreviewSettings.isShowAsciiDocWarningsAndErrorsInEditor()));
         EditorNotifications.updateAll();
       } else {
