@@ -129,6 +129,11 @@ class AsciiDocBlock extends AbstractBlock {
       return Spacing.createSpacing(1, 1, 0, false, 0);
     }
 
+    // no space before or after separator in block attributes
+    if (isSeparator(child1) || isSeparator(child2)) {
+      return Spacing.createSpacing(0, 0, 0, false, 0);
+    }
+
     // before and after a block have one blank line, but not with if there is an continuation ("+")
     if (!table && isBlock(child2) && !isContinuation(child1) && !isBlockStart(child1)) {
       return Spacing.createSpacing(0, 0, 2, false, 0);
@@ -174,6 +179,11 @@ class AsciiDocBlock extends AbstractBlock {
         || AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER.equals(((AsciiDocBlock) block).getNode().getElementType())
       ) &&
       ((AsciiDocBlock) block).getNode().getTreeNext() == null;
+  }
+
+  private boolean isSeparator(Block block) {
+    return block instanceof AsciiDocBlock &&
+      (AsciiDocTokenTypes.SEPARATOR.equals(((AsciiDocBlock) block).getNode().getElementType()));
   }
 
   private boolean hasBlankLineBetween(Block child1, Block child2) {
