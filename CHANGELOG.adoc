@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - rework inline macro for false positives (#275)
 - ifdef/ifndef/endif body references attributes in (#275)
 - reset formatting after a blank line (#289)
+- navigate to auto-generated IDs of sections
 
 === 0.28.15 (preview, available from Github releases)
 
