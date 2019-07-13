@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.28.16 (work in progress)
+=== 0.28.16 (preview, available from Github releases)
 
 - adding code style settings for reformat (#289)
 - rework inline macro for false positives (#275)
