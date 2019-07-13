@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.28.17 (work in progress)
 
-- runing state resetting for lexer (#289)
+- tuning state resetting for lexer (#289)
 
 === 0.28.16 (preview, available from Github releases)
 
