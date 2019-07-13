@@ -814,6 +814,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testInitialNotEndOfSentence() {
+    doTest("Wolfgang A. Mozart",
+      "AsciiDoc:TEXT ('Wolfgang')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('A.')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Mozart')");
+  }
+
   public void testExampleWithBlankLine() {
     doTest("====\nTest\n\n====\n",
       "AsciiDoc:BLOCK_DELIMITER ('====')\n" +

@@ -533,6 +533,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   // exceptions to END_OF_SENTENCE
   [:letter:] "." " "? [:letter:] "." { return textFormat(); } // i.e., e.g., ...
   "Dr." | "Prof." | "Ing."  { return textFormat(); }
+  [A-Z] "." { return textFormat(); } // initials, no end of sentence
   ".." "."* / {SPACE}* [^\n] { yybegin(INSIDE_LINE); return textFormat(); } // avoid for "..." if inside of a line
   {END_OF_SENTENCE} / {SPACE} [^A-Z]* [a-z]
                        { return textFormat(); }
