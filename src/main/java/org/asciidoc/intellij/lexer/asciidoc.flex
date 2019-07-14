@@ -533,20 +533,20 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                        { return AsciiDocTokenTypes.HARD_BREAK; }
   // exceptions to END_OF_SENTENCE
   [:letter:] "." " "? [:letter:] "." { return textFormat(); } // i.e., e.g., ...
-  "Dr." | "Prof." | "Ing."  { return textFormat(); }
-  [A-Z] "." { return textFormat(); } // initials, no end of sentence
-  ".." "."* / {SPACE}* [^\n] { yybegin(INSIDE_LINE); return textFormat(); } // avoid for "..." if inside of a line
-  {END_OF_SENTENCE} / {SPACE} [^A-Z]* [a-z]
+  "Dr." | "Prof." | "Ing." / {SPACE}* [^ \t\n] { return textFormat(); } // title inside a line as text if inside of a line
+  [A-Z] "." / {SPACE}* [^ \t\n] { return textFormat(); } // initials inside a line as text if inside of a line
+  ".." "."* / {SPACE}* [^ \t\n] { return textFormat(); } // avoid end of sentence for "..." if inside of a line
+  {END_OF_SENTENCE} / {SPACE} [^A-Z]* [a-z] // standard text if followed by lower case character
                        { return textFormat(); }
-  {END_OF_SENTENCE} / {SPACE}
-                       { if (!doublemono && !singlemono && isUnconstrainedEnd()) {
+  {END_OF_SENTENCE} / {SPACE}* \n // end of sentence at end of line
+                       { if (!doublemono && !singlemono) {
                            return AsciiDocTokenTypes.END_OF_SENTENCE;
                          } else {
                            return textFormat();
                          }
                        }
-  {END_OF_SENTENCE} $
-                       { if (!doublemono && !singlemono) {
+  {END_OF_SENTENCE} / {SPACE} // end of sentence within a line, needs to be unconstrained
+                       { if (!doublemono && !singlemono && isUnconstrainedEnd()) {
                            return AsciiDocTokenTypes.END_OF_SENTENCE;
                          } else {
                            return textFormat();

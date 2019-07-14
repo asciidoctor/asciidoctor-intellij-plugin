@@ -814,12 +814,33 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
-  public void testInitialNotEndOfSentence() {
+  public void testInitialNotEndOfSentenceMiddleOfLine() {
     doTest("Wolfgang A. Mozart",
       "AsciiDoc:TEXT ('Wolfgang')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('A.')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Mozart')");
+  }
+
+  public void testInitialEndOfSentenceAtEndOfLineSoThatItKeepsExistingWraps() {
+    doTest("Wolfgang A.\nMozart",
+      "AsciiDoc:TEXT ('Wolfgang')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('A')\n" +
+        "AsciiDoc:END_OF_SENTENCE ('.')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Mozart')");
+  }
+
+  public void testInitialEndOfSentenceAtEndOfLineSoThatItKeepsExistingWrapsEvenIfThereIsABlankAtTheEndOfTheLine() {
+    doTest("Wolfgang A. \nMozart",
+      "AsciiDoc:TEXT ('Wolfgang')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('A')\n" +
+        "AsciiDoc:END_OF_SENTENCE ('.')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('Mozart')");
   }
 
