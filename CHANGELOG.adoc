@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.18 (preview, available from Github releases)
+
+- detecting a stuck JavaFX initialization (#299)
+
 === 0.28.17 (preview, available from Github releases)
 
 - tuning state resetting for lexer (#289)

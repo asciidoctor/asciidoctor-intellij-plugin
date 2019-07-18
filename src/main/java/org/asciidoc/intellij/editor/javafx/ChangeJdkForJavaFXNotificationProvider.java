@@ -43,6 +43,10 @@ public class ChangeJdkForJavaFXNotificationProvider extends EditorNotifications.
     if (availabilityInfo == AsciiDocHtmlPanelProvider.AvailabilityInfo.AVAILABLE) {
       return null;
     }
+    if (new JavaFxHtmlPanelProvider().isJavaFxStuck()) {
+      // there is a different notification about a stuck JavaFX initialization; don't show this notification now
+      return null;
+    }
 
     final EditorNotificationPanel panel = new EditorNotificationPanel();
     panel.setText("You could enable the advanced JavaFX preview if you would change to JetBrains 64bit JDK.");

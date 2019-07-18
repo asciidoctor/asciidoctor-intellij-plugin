@@ -45,6 +45,7 @@ import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 import org.apache.commons.io.IOUtils;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
+import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.psi.AsciiDocBlockId;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
@@ -198,62 +199,77 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     ApplicationManager.getApplication().invokeLater(() -> runFX(new Runnable() {
       @Override
       public void run() {
-        PlatformImpl.startup(() -> {
-          myWebView = new WebView();
+        if (new JavaFxHtmlPanelProvider().isAvailable() == AsciiDocHtmlPanelProvider.AvailabilityInfo.UNAVAILABLE) {
+          String message = "JavaFX unavailable, probably stuck";
+          log.warn(message);
+          return;
+        }
+        try {
+          PlatformImpl.startup(() -> {
+            myWebView = new WebView();
 
-          updateFontSmoothingType(myWebView, false);
-          registerContextMenu(JavaFxHtmlPanel.this.myWebView);
-          myWebView.setContextMenuEnabled(false);
-          myWebView.setZoom(JBUI.scale(1.f));
-          myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>"));
+            updateFontSmoothingType(myWebView, false);
+            registerContextMenu(JavaFxHtmlPanel.this.myWebView);
+            myWebView.setContextMenuEnabled(false);
+            myWebView.setZoom(JBUI.scale(1.f));
+            myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>"));
 
-          myWebView.addEventFilter(ScrollEvent.SCROLL, scrollEvent -> {
-            // touch pads send lots of events with deltaY == 0, not handling them here
-            if (scrollEvent.isControlDown() && Double.compare(scrollEvent.getDeltaY(), 0.0) != 0) {
-              double zoom = myWebView.getZoom();
-              double factor = (scrollEvent.getDeltaY() > 0.0 ? 0.1 : -0.1)
-                // normalize scrolling
-                * (Math.abs(scrollEvent.getDeltaY()) / scrollEvent.getMultiplierY())
-                // adding one to make it a factor that we can multiply the zoom by
-                + 1;
-              zoom = zoom * factor;
-              // define minimum/maximum zoom
-              if (zoom < JBUI.scale(0.1f)) {
-                zoom = 0.1;
-              } else if (zoom > JBUI.scale(10.f)) {
-                zoom = 10;
+            myWebView.addEventFilter(ScrollEvent.SCROLL, scrollEvent -> {
+              // touch pads send lots of events with deltaY == 0, not handling them here
+              if (scrollEvent.isControlDown() && Double.compare(scrollEvent.getDeltaY(), 0.0) != 0) {
+                double zoom = myWebView.getZoom();
+                double factor = (scrollEvent.getDeltaY() > 0.0 ? 0.1 : -0.1)
+                  // normalize scrolling
+                  * (Math.abs(scrollEvent.getDeltaY()) / scrollEvent.getMultiplierY())
+                  // adding one to make it a factor that we can multiply the zoom by
+                  + 1;
+                zoom = zoom * factor;
+                // define minimum/maximum zoom
+                if (zoom < JBUI.scale(0.1f)) {
+                  zoom = 0.1;
+                } else if (zoom > JBUI.scale(10.f)) {
+                  zoom = 10;
+                }
+                myWebView.setZoom(zoom);
+                scrollEvent.consume();
               }
-              myWebView.setZoom(zoom);
-              scrollEvent.consume();
-            }
-          });
+            });
 
-          myWebView.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-            if (mouseEvent.isControlDown() && mouseEvent.getButton() == MouseButton.MIDDLE) {
-              myWebView.setZoom(JBUI.scale(1f));
-              mouseEvent.consume();
-            }
-          });
-
-          final WebEngine engine = myWebView.getEngine();
-          engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
-          engine.getLoadWorker().stateProperty().addListener(myScrollPreservingListener);
-
-          final Scene scene = new Scene(myWebView);
-
-          ApplicationManager.getApplication().invokeLater(() -> runFX(() -> {
-            synchronized (myInitActions) {
-              myPanel = new JFXPanelWrapper();
-              Platform.runLater(() -> myPanel.setScene(scene));
-              for (Runnable action : myInitActions) {
-                Platform.runLater(action);
+            myWebView.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+              if (mouseEvent.isControlDown() && mouseEvent.getButton() == MouseButton.MIDDLE) {
+                myWebView.setZoom(JBUI.scale(1f));
+                mouseEvent.consume();
               }
-              myInitActions.clear();
-            }
-            myPanelWrapper.add(myPanel, BorderLayout.CENTER);
-            myPanelWrapper.repaint();
-          }));
-        });
+            });
+
+            final WebEngine engine = myWebView.getEngine();
+            engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
+            engine.getLoadWorker().stateProperty().addListener(myScrollPreservingListener);
+
+            final Scene scene = new Scene(myWebView);
+
+            ApplicationManager.getApplication().invokeLater(() -> runFX(() -> {
+              synchronized (myInitActions) {
+                myPanel = new JFXPanelWrapper();
+                Platform.runLater(() -> myPanel.setScene(scene));
+                for (Runnable action : myInitActions) {
+                  Platform.runLater(action);
+                }
+                myInitActions.clear();
+              }
+              myPanelWrapper.add(myPanel, BorderLayout.CENTER);
+              myPanelWrapper.repaint();
+            }));
+          });
+        } catch (Throwable ex) {
+          String message = "Error initializing JavaFX: " + ex.getMessage();
+          log.error(message, ex);
+          Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Error rendering asciidoctor", message,
+            NotificationType.ERROR, null);
+          // increase event log counter
+          notification.setImportant(true);
+          Notifications.Bus.notify(notification);
+        }
       }
     }));
 

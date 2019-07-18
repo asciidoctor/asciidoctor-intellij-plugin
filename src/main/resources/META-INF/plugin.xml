@@ -177,6 +177,8 @@
       implementation="org.asciidoc.intellij.editor.ExtenionsAvailableNotificationProvider"/>
     <editorNotificationProvider
       implementation="org.asciidoc.intellij.editor.javafx.JavaFxMightBeBlurredNotificationProvider" />
+    <editorNotificationProvider
+      implementation="org.asciidoc.intellij.editor.javafx.JavaFxInitializationIsStuckNotificationProvider"/>
     <gotoSymbolContributor implementation="org.asciidoc.intellij.psi.AsciiDocChooseByNameContributor"/>
     <searchEverywhereClassifier implementation="org.asciidoc.intellij.psi.AsciiDocSearchEverywhereClassifier"/>
     <localInspection language="AsciiDoc" displayName="Heading inspection" groupPath="AsciiDoc"
