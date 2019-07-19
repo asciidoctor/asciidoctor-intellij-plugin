@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.19 (preview, available from Github releases)
+
+- prevent "`Initializing...`" message on empty file
+
 === 0.28.18 (preview, available from Github releases)
 
 - detecting a stuck JavaFX initialization (#299)
