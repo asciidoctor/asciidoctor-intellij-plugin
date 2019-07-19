@@ -16,6 +16,7 @@
 package org.asciidoc.intellij.editor;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
+import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.notification.Notification;
@@ -80,7 +81,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /**
    * Indicates whether the HTML preview is obsolete and should regenerated from the AsciiDoc {@link #document}.
    */
-  private transient String currentContent = "";
+  private transient String currentContent = null;
 
   private transient int targetLineNo = 0;
   private transient int offsetLineNo = 0;
@@ -112,13 +113,17 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   private FutureTask<AsciiDoc> asciidoc = new FutureTask<>(new Callable<AsciiDoc>() {
     public AsciiDoc call() {
       File fileBaseDir = new File("");
-      VirtualFile parent = FileDocumentManager.getInstance().getFile(document).getParent();
-      if (parent != null) {
-        // parent will be null if we use Language Injection and Fragment Editor
-        fileBaseDir = new File(parent.getCanonicalPath());
+      VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+      String name = "unkown";
+      if (file != null) {
+        name = file.getName();
+        VirtualFile parent = file.getParent();
+        if (parent != null && parent.getCanonicalPath() != null) {
+          // parent will be null if we use Language Injection and Fragment Editor
+          fileBaseDir = new File(parent.getCanonicalPath());
+        }
       }
-      return new AsciiDoc(project.getBasePath(), fileBaseDir,
-        tempImagesPath, FileDocumentManager.getInstance().getFile(document).getName());
+      return new AsciiDoc(project.getBasePath(), fileBaseDir, tempImagesPath, name);
     }
   });
 
@@ -126,39 +131,36 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     final String contentWithConfig = AsciiDoc.prependConfig(document, project, o -> offsetLineNo = o);
     List<String> extensions = AsciiDoc.getExtensions(project);
 
-    lazyExecutor.execute(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          if (!contentWithConfig.equals(currentContent)) {
-            currentContent = contentWithConfig;
+    lazyExecutor.execute(() -> {
+      try {
+        if (!contentWithConfig.equals(currentContent)) {
+          currentContent = contentWithConfig;
 
-            String markup = asciidoc.get().render(currentContent, extensions);
-            if (markup != null) {
-              myPanel.setHtml(markup);
-            }
+          String markup = asciidoc.get().render(currentContent, extensions);
+          if (markup != null) {
+            myPanel.setHtml(markup);
           }
-          if (currentLineNo != targetLineNo) {
-            currentLineNo = targetLineNo;
-            myPanel.scrollToLine(targetLineNo, document.getLineCount(), offsetLineNo);
-          }
-          ApplicationManager.getApplication().invokeLater(myHtmlPanelWrapper::repaint);
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
-        } catch (Exception ex) {
-          String message = "Error rendering preview: " + ex.getMessage();
-          log.error(message, ex);
-          Notification notification = NOTIFICATION_GROUP.createNotification("Error rendering asciidoctor", message,
-            NotificationType.ERROR, null);
-          // increase event log counter
-          notification.setImportant(true);
-          Notifications.Bus.notify(notification);
         }
+        if (currentLineNo != targetLineNo) {
+          currentLineNo = targetLineNo;
+          myPanel.scrollToLine(targetLineNo, document.getLineCount(), offsetLineNo);
+        }
+        ApplicationManager.getApplication().invokeLater(myHtmlPanelWrapper::repaint);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      } catch (Exception ex) {
+        String message = "Error rendering preview: " + ex.getMessage();
+        log.error(message, ex);
+        Notification notification = NOTIFICATION_GROUP.createNotification("Error rendering asciidoctor", message,
+          NotificationType.ERROR, null);
+        // increase event log counter
+        notification.setImportant(true);
+        Notifications.Bus.notify(notification);
       }
     });
   }
 
-  public void renderIfVisible() {
+  void renderIfVisible() {
     if (getComponent().isVisible()) {
       render();
     }
@@ -327,7 +329,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    */
   public void selectNotify() {
     myHtmlPanelWrapper.repaint();
-    currentContent = ""; // force a refresh of the preview by resetting the current memorized content
+    currentContent = null; // force a refresh of the preview by resetting the current memorized content
     reprocessAnnotations();
     renderIfVisible();
   }
@@ -414,7 +416,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     }
   }
 
-  public void scrollToLine(int line) {
+  void scrollToLine(int line) {
     targetLineNo = line;
     renderIfVisible();
   }
@@ -424,14 +426,13 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     public void onSettingsChange(@NotNull AsciiDocApplicationSettings settings) {
       final AsciiDocHtmlPanelProvider newPanelProvider = retrievePanelProvider(settings);
 
-      mySwingAlarm.addRequest(new Runnable() {
-        @Override
-        public void run() {
+      mySwingAlarm.addRequest(() -> {
+        synchronized (this) {
           myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
-          currentContent = ""; // force a refresh of the preview by resetting the current memorized content
-          reprocessAnnotations();
-          renderIfVisible();
         }
+        currentContent = CompletionUtilCore.DUMMY_IDENTIFIER; // force a refresh of the preview by resetting the current memorized content
+        reprocessAnnotations();
+        renderIfVisible();
       }, 0, ModalityState.stateForComponent(getComponent()));
     }
   }
