@@ -53,10 +53,15 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
     PsiFile file = collectedInfo.getFile();
     Editor editor = collectedInfo.getEditor();
     File fileBaseDir = new File("");
-    VirtualFile parent = FileDocumentManager.getInstance().getFile(editor.getDocument()).getParent();
-    if (parent != null) {
-      // parent will be null if we use Language Injection and Fragment Editor
-      fileBaseDir = new File(parent.getCanonicalPath());
+    VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(editor.getDocument());
+    String name = "unkown";
+    if (virtualFile != null) {
+      name = file.getName();
+      VirtualFile parent = virtualFile.getParent();
+      if (parent != null && parent.getCanonicalPath() != null) {
+        // parent will be null if we use Language Injection and Fragment Editor
+        fileBaseDir = new File(parent.getCanonicalPath());
+      }
     }
 
     AsciidocAnnotationResultType asciidocAnnotationResultType = new AsciidocAnnotationResultType(editor.getDocument(),
@@ -70,7 +75,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
     Path tempImagesPath = AsciiDoc.tempImagesPath();
     try {
       AsciiDoc asciiDoc = new AsciiDoc(file.getProject().getBasePath(), fileBaseDir,
-        tempImagesPath, FileDocumentManager.getInstance().getFile(editor.getDocument()).getName());
+        tempImagesPath, name);
       asciiDoc.render(collectedInfo.getContentWithConfig(), collectedInfo.getExtensions(), (boasOut, boasErr, logRecords)
         -> asciidocAnnotationResultType.setLogRecords(logRecords));
     } finally {
