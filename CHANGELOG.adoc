@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.28.19 (preview, available from Github releases)
 
-- prevent "`Initializing...`" message on empty file
+- prevent "`Initializing...`" message in preview of empty file
 
 === 0.28.18 (preview, available from Github releases)
 
