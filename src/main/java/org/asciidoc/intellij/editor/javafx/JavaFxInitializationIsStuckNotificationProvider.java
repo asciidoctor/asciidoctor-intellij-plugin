@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.editor.javafx;
 
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
@@ -36,7 +37,9 @@ public class JavaFxInitializationIsStuckNotificationProvider extends EditorNotif
     }
 
     final EditorNotificationPanel panel = new EditorNotificationPanel();
-    panel.setText("JavaFX initialization is stuck. Please look at your IDE logs for JavaFX error messages.");
+    panel.setText("JavaFX initialization is stuck. Fallback to Swing preview until this is resolved.");
+    panel.createActionLabel("Show me how to fix it!", ()
+      -> BrowserUtil.browse("https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/JavaFX-initialization-stuck"));
     panel.createActionLabel("Do not show again", () -> {
       PropertiesComponent.getInstance().setValue(DONT_NOTIFY_STUCK_JAVAFX, true);
       EditorNotifications.updateAll();

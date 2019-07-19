@@ -249,16 +249,20 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
             final Scene scene = new Scene(myWebView);
 
             ApplicationManager.getApplication().invokeLater(() -> runFX(() -> {
-              synchronized (myInitActions) {
-                myPanel = new JFXPanelWrapper();
-                Platform.runLater(() -> myPanel.setScene(scene));
-                for (Runnable action : myInitActions) {
-                  Platform.runLater(action);
+              try {
+                synchronized (myInitActions) {
+                  myPanel = new JFXPanelWrapper();
+                  Platform.runLater(() -> myPanel.setScene(scene));
+                  for (Runnable action : myInitActions) {
+                    Platform.runLater(action);
+                  }
+                  myInitActions.clear();
                 }
-                myInitActions.clear();
+                myPanelWrapper.add(myPanel, BorderLayout.CENTER);
+                myPanelWrapper.repaint();
+              } catch (Throwable e) {
+                log.warn("can't initialize JFXPanelWrapper", e);
               }
-              myPanelWrapper.add(myPanel, BorderLayout.CENTER);
-              myPanelWrapper.repaint();
             }));
           });
         } catch (Throwable ex) {
