@@ -16,7 +16,6 @@
 package org.asciidoc.intellij.editor;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
-import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.notification.Notification;
@@ -136,7 +135,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         if (!contentWithConfig.equals(currentContent)) {
           currentContent = contentWithConfig;
 
-          String markup = asciidoc.get().render(currentContent, extensions);
+          String markup = asciidoc.get().render(contentWithConfig, extensions);
           if (markup != null) {
             myPanel.setHtml(markup);
           }
@@ -430,7 +429,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         synchronized (this) {
           myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
         }
-        currentContent = CompletionUtilCore.DUMMY_IDENTIFIER; // force a refresh of the preview by resetting the current memorized content
+        currentContent = null; // force a refresh of the preview by resetting the current memorized content
         reprocessAnnotations();
         renderIfVisible();
       }, 0, ModalityState.stateForComponent(getComponent()));
