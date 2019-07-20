@@ -45,7 +45,7 @@ public class AsciiDocLanguageCodeStyleSettingsProvider extends LanguageCodeStyle
     try {
       return readText(
         AsciiDocLanguageCodeStyleSettingsProvider.class.getResourceAsStream(name), UTF_8
-      );
+      ).replaceAll("\r", "");
     } catch (IOException e) {
       LOG.warn("unable to load sample", e);
     }
