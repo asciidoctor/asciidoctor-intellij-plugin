@@ -44,6 +44,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
@@ -70,6 +71,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -139,6 +142,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
   private VirtualFile parentDirectory;
   private VirtualFile saveImageLastDir = null;
+
+  private volatile CountDownLatch rendered;
 
   JavaFxHtmlPanel(Document document, Path imagesPath) {
 
@@ -402,16 +407,53 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   @Override
-  public void setHtml(@NotNull String html) {
-    if (isDarcula()) {
-      // clear out coderay inline CSS colors as they are barely readable in darcula theme
-      html = html.replaceAll("<span style=\"color:#[a-zA-Z0-9]*;?", "<span style=\"");
-      html = html.replaceAll("<span style=\"background-color:#[a-zA-Z0-9]*;?", "<span style=\"");
+  public void setHtml(@NotNull String htmlParam) {
+    rendered = new CountDownLatch(1);
+    runInPlatformWhenAvailable(() -> {
+      String html = htmlParam;
+      if (isDarcula()) {
+        // clear out coderay inline CSS colors as they are barely readable in darcula theme
+        html = html.replaceAll("<span style=\"color:#[a-zA-Z0-9]*;?", "<span style=\"");
+        html = html.replaceAll("<span style=\"background-color:#[a-zA-Z0-9]*;?", "<span style=\"");
+      }
+      boolean result = false;
+      if (html.contains("id=\"content\"")) {
+        final String htmlToReplace = StringEscapeUtils.escapeEcmaScript(html);
+        // try to replace the HTML contents using JavaScript to avoid flickering MathML
+        result = (Boolean) JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
+          "function finish() {" +
+            "if ('__IntelliJTools' in window) {" +
+            "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
+            "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ", " + offset + ");" +
+            "}" +
+            "window.JavaPanelBridge.rendered();" +
+            "}" +
+            "function updateContent() { var elem = document.getElementById('content'); if (elem && elem.parentNode) { " +
+            "var div = document.createElement('div');" +
+            "div.innerHTML = '" + htmlToReplace + "'; " +
+            // use MathJax to set the formulas in advance if formulas are present - this takes ~100ms
+            // re-evaluate the content element as it might have been replaced by a concurrent rendering
+            "if ('MathJax' in window && MathJax.Hub.getAllJax().length > 0) { MathJax.Hub.Typeset(div.firstChild, function() { var elem2 = document.getElementById('content'); elem2.parentNode.replaceChild(div.firstChild, elem2); finish(); }); } " +
+            // if no math was present before, replace contents, and do the MathJax typesetting afterwards in case Math has been added
+            "else { elem.parentNode.replaceChild(div.firstChild, elem); MathJax.Hub.Typeset(div.firstChild); finish(); } " +
+            "return true; } else { return false; }}; updateContent();"
+        );
+      }
+      // if not successful (like on first rendering attempt), set full content
+      if (!result) {
+        html = "<html><head></head><body>" + html + "</body>";
+        final String htmlToRender = prepareHtml(html);
+        JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().loadContent(htmlToRender);
+        rendered.countDown();
+      }
+    });
+    try {
+      // slow down the rendering of the next version of the preview until the rendering if the current version is complete
+      // this prevents us building up a queue that would lead to a lagging preview
+      rendered.await(1, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {
+      log.warn("rendering didn't complete in time, might be slow or broken");
     }
-    html = "<html><head></head><body>" + html + "</body>";
-    final String htmlToRender = prepareHtml(html);
-
-    runInPlatformWhenAvailable(() -> JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().loadContent(htmlToRender));
   }
 
   private String findTempImageFile(String filename) {
@@ -557,6 +599,10 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       }
     }
 
+    public void rendered() {
+      rendered.countDown();
+    }
+
     private boolean openInEditor(@NotNull URI uri) {
       return ReadAction.compute(() -> {
         String anchor = uri.getFragment();
@@ -644,7 +690,6 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
           "if ('__IntelliJTools' in window) {" +
             "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
             "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ", " + offset + ");" +
-            "__IntelliJTools.processImages && __IntelliJTools.processImages();" +
             "}"
         );
       }
