@@ -28,6 +28,9 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.colors.EditorColorsListener;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -212,6 +215,9 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     MessageBusConnection settingsConnection = ApplicationManager.getApplication().getMessageBus().connect(this);
     AsciiDocApplicationSettings.SettingsChangedListener settingsChangedListener = new MyUpdatePanelOnSettingsChangedListener();
     settingsConnection.subscribe(AsciiDocApplicationSettings.SettingsChangedListener.TOPIC, settingsChangedListener);
+
+    MyEditorColorsListener editorColorsListener = new MyEditorColorsListener();
+    settingsConnection.subscribe(EditorColorsManager.TOPIC, editorColorsListener);
 
     // Get asciidoc asynchronously
     new Thread(() -> asciidoc.run()).start();
@@ -442,5 +448,18 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
   public void setEditor(Editor editor) {
     myPanel.setEditor(editor);
+  }
+
+  private class MyEditorColorsListener implements EditorColorsListener {
+    @Override
+    public void globalSchemeChange(@Nullable EditorColorsScheme scheme) {
+      final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+      // reset contents in preview with latest CSS headers
+      if (settings.getAsciiDocPreviewSettings().getPreviewTheme() == AsciiDocHtmlPanel.PreviewTheme.INTELLIJ) {
+        currentContent = null;
+        myPanel.setHtml("");
+        renderIfVisible();
+      }
+    }
   }
 }
