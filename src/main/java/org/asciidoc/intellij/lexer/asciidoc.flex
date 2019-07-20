@@ -737,22 +737,15 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                              return textFormat();
                            }
                          }
-  {LINKSTART} / [^\[\n \t]* {LINKTEXT_START} [^\]\n]* {LINKEND} {
-                         if (!isEscaped()) {
-                           yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART;
-                         } else {
-                           return textFormat();
-                         }
-                       }
   // allow autocomplete even if brackets have not been entered yet
-  {LINKSTART} / [^\[\n \t]* {AUTOCOMPLETE} {
+  {LINKSTART} / [^\[\n \t]* ( {AUTOCOMPLETE} | {AUTOCOMPLETE}? {LINKTEXT_START} [^\]\n]* {LINKEND}) {
                          if (!isEscaped()) {
                            yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART;
                          } else {
                            return textFormat();
                          }
                        }
-  {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\[\n\"`:]* | "") ({AUTOCOMPLETE} | "[" [^\]\n]* "]") {
+  {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\[\n\"`:]* | "") ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" [^\]\n]* "]") {
         if (!isEscaped()) {
           yypushstate();
           yybegin(INLINE_MACRO);
@@ -822,6 +815,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <LINKFILE> {
   "#"                  { yybegin(LINKANCHOR); return AsciiDocTokenTypes.SEPARATOR; }
+  {AUTOCOMPLETE}       { return AsciiDocTokenTypes.LINKFILE; }
   [^]                  { return AsciiDocTokenTypes.LINKFILE; }
 }
 

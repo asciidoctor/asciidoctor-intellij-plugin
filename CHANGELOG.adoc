@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.21 (work in progress)
+
+- fixing autocomplete for link: when brackets already provided
+
 === 0.28.20
 
 - Linking to Wiki page if JavaFX initialization is stuck (#299)

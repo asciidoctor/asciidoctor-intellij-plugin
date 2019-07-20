@@ -611,11 +611,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:TEXT ('Text')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:LINKSTART ('link:')\n" +
-        "AsciiDoc:LINKFILE ('FILEIntellijIdeaRulezzz')\n" +
-        "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:TEXT ('More')\n" +
+        "AsciiDoc:LINKFILE ('FILEIntellijIdeaRulezzz More')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testLinkForAutocompleteWithBrackets() {
+    doTest("link:IntellijIdeaRulezzz []",
+      "AsciiDoc:LINKSTART ('link:')\n" +
+        "AsciiDoc:LINKFILE ('IntellijIdeaRulezzz ')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKEND (']')");
   }
 
   public void testBlockid() {
