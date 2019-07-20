@@ -94,6 +94,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         .append("<script type=\"text/x-mathjax-config\">\n" +
           "MathJax.Hub.Config({\n" +
           "  messageStyle: \"none\",\n" +
+          "  EqnChunkDelay: 1," +
           "  tex2jax: {\n" +
           "    inlineMath: [[\"\\\\(\", \"\\\\)\"]],\n" +
           "    displayMath: [[\"\\\\[\", \"\\\\]\"]],\n" +
