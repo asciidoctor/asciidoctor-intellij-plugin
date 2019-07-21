@@ -201,6 +201,9 @@ MacOS users need to type the extension for the target file name (`.svg` or `.png
 The user can zoom in and out of the preview by holding kbd:[Ctrl] and scrolling the mouse wheel up or down.
 Clicking the middle mouse button whilst holding kbd:[Ctrl] will reset the zoom to 100%.
 
+EXPERIMENTAL: When using mathematical formulas in the preview, the preview can flicker.
+There is an experimental feature that you can enable in the settings of the plugin to activate a new update mechanism that avoids the flickering. Activate the option "`Replace preview contents without flicker (JavaFX preview only)`" for this.
+
 === Advanced
 
 ==== Configuration File
