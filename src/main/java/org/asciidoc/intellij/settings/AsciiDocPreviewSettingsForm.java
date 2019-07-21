@@ -43,6 +43,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JBTextField myDisabledInjectionsByLanguage;
   private JPanel myDisableLanguageInjection;
   private JBCheckBox myShowAsciiDocWarningsAndErrorsInEditor;
+  private JBCheckBox myInplacePreviewRefresh;
 
   public JComponent getComponent() {
     return myMainPanel;
@@ -140,6 +141,8 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     myDisabledInjectionsByLanguage.setText(settings.getDisabledInjectionsByLanguage());
 
     myShowAsciiDocWarningsAndErrorsInEditor.setSelected((settings.isShowAsciiDocWarningsAndErrorsInEditor()));
+
+    myInplacePreviewRefresh.setSelected((settings.isInplacePreviewRefresh()));
   }
 
   @NotNull
@@ -157,6 +160,6 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myPreviewPanelModel.getSelected(), myPreviewThemeModel.getSelectedItem(), attributes,
       myVerticalLayout.isSelected(), myEditorTop.isSelected() || myEditorLeft.isSelected(), myEnableInjections.isSelected(),
       myDisabledInjectionsByLanguage.getText(),
-      myShowAsciiDocWarningsAndErrorsInEditor.isSelected());
+      myShowAsciiDocWarningsAndErrorsInEditor.isSelected(), myInplacePreviewRefresh.isSelected());
   }
 }

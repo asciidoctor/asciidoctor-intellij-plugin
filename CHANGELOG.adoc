@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.28.21 (work in progress)
+=== 0.28.21
 
 - fixing autocomplete for link: when brackets already provided
 - avoid flickering Math preview by replacing contents in Preview via JavaScript (#241)

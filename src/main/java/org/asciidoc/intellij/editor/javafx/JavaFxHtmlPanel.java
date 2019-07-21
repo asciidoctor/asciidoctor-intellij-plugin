@@ -418,7 +418,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         html = html.replaceAll("<span style=\"background-color:#[a-zA-Z0-9]*;?", "<span style=\"");
       }
       boolean result = false;
-      if (html.contains("id=\"content\"")) {
+      final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+      if (settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")) {
         final String htmlToReplace = StringEscapeUtils.escapeEcmaScript(html);
         // try to replace the HTML contents using JavaScript to avoid flickering MathML
         result = (Boolean) JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
@@ -440,7 +441,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
             "return true; } else { return false; }}; updateContent();"
         );
       }
-      // if not successful (like on first rendering attempt), set full content
+      // if not successful using JavaScript (like on first rendering attempt), set full content
       if (!result) {
         html = "<html><head></head><body>" + html + "</body>";
         final String htmlToRender = prepareHtml(html);

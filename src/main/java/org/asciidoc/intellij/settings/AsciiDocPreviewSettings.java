@@ -57,6 +57,11 @@ public final class AsciiDocPreviewSettings {
   @Attribute("EnableInjections")
   private boolean myEnableInjections = true;
 
+  // stored with prefix "Experimental" for now while it is disabled.
+  // will be enabled by default once it is no longer experimental
+  @Attribute("ExperimentalInplacePreviewRefresh")
+  private boolean myInplacePreviewRefresh = false;
+
   @Attribute("DisabledInjectionsByLanguage")
   @Nullable
   private String myDisabledInjectionsByLanguage;
@@ -73,7 +78,8 @@ public final class AsciiDocPreviewSettings {
                                  @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme,
                                  @NotNull Map<String, String> attributes, boolean verticalSplit, boolean editorFirst,
                                  boolean enableInjections, @Nullable String disabledInjectionsByLanguage,
-                                 boolean showAsciiDocWarningsAndErrorsInEditor) {
+                                 boolean showAsciiDocWarningsAndErrorsInEditor,
+                                 boolean inplacePreviewRefresh) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
@@ -83,6 +89,7 @@ public final class AsciiDocPreviewSettings {
     myEnableInjections = enableInjections;
     myDisabledInjectionsByLanguage = disabledInjectionsByLanguage;
     myShowAsciiDocWarningsAndErrorsInEditor = showAsciiDocWarningsAndErrorsInEditor;
+    myInplacePreviewRefresh = inplacePreviewRefresh;
   }
 
   @NotNull
@@ -121,6 +128,10 @@ public final class AsciiDocPreviewSettings {
 
   public boolean isEnabledInjections() {
     return myEnableInjections;
+  }
+
+  public boolean isInplacePreviewRefresh() {
+    return myInplacePreviewRefresh;
   }
 
   public String getDisabledInjectionsByLanguage() {
@@ -176,6 +187,9 @@ public final class AsciiDocPreviewSettings {
     if (myShowAsciiDocWarningsAndErrorsInEditor != that.myShowAsciiDocWarningsAndErrorsInEditor) {
       return false;
     }
+    if (myInplacePreviewRefresh != that.myInplacePreviewRefresh) {
+      return false;
+    }
     return attributes.equals(that.attributes);
   }
 
@@ -190,6 +204,7 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + (myEnableInjections ? 1 : 0);
     result = 31 * result + Objects.hashCode(myDisabledInjectionsByLanguage);
     result = 31 * result + (myShowAsciiDocWarningsAndErrorsInEditor ? 1 : 0);
+    result = 31 * result + (myInplacePreviewRefresh ? 1 : 0);
     return result;
   }
 
