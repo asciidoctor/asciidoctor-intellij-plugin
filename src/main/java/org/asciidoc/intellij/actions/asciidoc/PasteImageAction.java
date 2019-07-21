@@ -15,6 +15,7 @@ import com.intellij.openapi.fileChooser.FileSaverDescriptor;
 import com.intellij.openapi.fileChooser.FileSaverDialog;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -23,6 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.util.ui.UIUtil;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
+import org.asciidoc.intellij.ui.CantPasteImageDialog;
 import org.asciidoc.intellij.ui.RadioButtonDialog;
 import org.jdesktop.swingx.action.BoundAction;
 import org.jetbrains.annotations.NotNull;
@@ -30,9 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -42,10 +42,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PasteImageAction extends AsciiDocAction {
+  public static final String ID = "org.asciidoc.intellij.actions.asciidoc.PasteImageAction";
+
   private static final String ACTION_COPY_FILE = "actionCopyFile";
   private static final String ACTION_INSERT_REFERENCE = "actionInsertReference";
   private static final String ACTION_SAVE_PNG = "actionSavePng";
-  private static final String ACTION_SAVE_JPG = "actionSaveJpg";
+  private static final String ACTION_SAVE_JPEG = "actionSaveJpeg";
 
   private Project project;
 
@@ -70,17 +72,21 @@ public class PasteImageAction extends AsciiDocAction {
     }
     parentDirectory = file.getParent();
 
-    Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-    if (systemClipboard.isDataFlavorAvailable(DataFlavor.javaFileListFlavor)) {
-      try {
-        @SuppressWarnings({"unchecked"})
-        java.util.List<File> fileList = (List<File>) systemClipboard.getData(DataFlavor.javaFileListFlavor);
-        if (fileList.size() == 1) {
-          File imageFile = fileList.get(0);
+    CopyPasteManager manager = CopyPasteManager.getInstance();
+    if (manager.areDataFlavorsAvailable(DataFlavor.javaFileListFlavor)) {
+      java.util.List<File> fileList = manager.getContents(DataFlavor.javaFileListFlavor);
+      if (fileList != null) {
+        for (File imageFile : fileList) {
           List<Action> options = new ArrayList<>();
-          options.add(new BoundAction("Copy file into project, then insert a reference.", ACTION_COPY_FILE));
-          options.add(new BoundAction("Only insert a reference.", ACTION_INSERT_REFERENCE));
-          RadioButtonDialog dialog = new RadioButtonDialog("Import image file", "Would you like to copy the image file or only import a reference?", options);
+          options.add(new BoundAction("Copy file to current directory, then insert a reference.", ACTION_COPY_FILE));
+          BoundAction onlyReference = new BoundAction("Only insert a reference.", ACTION_INSERT_REFERENCE);
+          // if project-local file
+          VirtualFile imageVirtualFile = LocalFileSystem.getInstance().findFileByIoFile(imageFile);
+          if (imageVirtualFile != null && VfsUtilCore.getRelativePath(imageVirtualFile, parentDirectory) != null) {
+            onlyReference.setSelected(true);
+          }
+          options.add(onlyReference);
+          RadioButtonDialog dialog = new RadioButtonDialog("Import Image File from Clipboard", "Would you like to copy the image file or only import a reference?", options);
           dialog.show();
 
           if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
@@ -98,9 +104,10 @@ public class PasteImageAction extends AsciiDocAction {
                     updateProjectView(destination.getVirtualFile());
 
                     CommandProcessor.getInstance().executeCommand(project,
-                      () -> ApplicationManager.getApplication().runWriteAction(() -> {
-                        insertImageReference(destination.getVirtualFile(), offset);
-                      }), null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
+                      () -> ApplicationManager.getApplication().runWriteAction(
+                        () -> insertImageReference(destination.getVirtualFile(), offset)
+                      ), null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
+                    );
                   } catch (IOException ex) {
                     String message = "Can't save file: " + ex.getMessage();
                     Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
@@ -112,31 +119,32 @@ public class PasteImageAction extends AsciiDocAction {
                 }
                 break;
               case ACTION_INSERT_REFERENCE:
-                insertImageReference(LocalFileSystem.getInstance().findFileByIoFile(imageFile), offset);
+                CommandProcessor.getInstance().executeCommand(project,
+                  () -> ApplicationManager.getApplication().runWriteAction(() ->
+                    insertImageReference(LocalFileSystem.getInstance().findFileByIoFile(imageFile), offset)
+                  ), null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
+                );
                 break;
               default:
             }
+          } else {
+            break;
           }
         }
-      } catch (UnsupportedFlavorException | IOException e) {
-        String message = "Can't paste image, " + e.getMessage();
-        Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
-          .createNotification("Error in plugin", message, NotificationType.ERROR, null);
-        // increase event log counter
-        notification.setImportant(true);
-        Notifications.Bus.notify(notification);
       }
-    } else if (systemClipboard.isDataFlavorAvailable(DataFlavor.imageFlavor)) {
+    } else if (manager.areDataFlavorsAvailable(DataFlavor.imageFlavor)) {
       List<Action> options = new ArrayList<>();
-      options.add(new BoundAction("PNG", ACTION_SAVE_PNG));
-      options.add(new BoundAction("JPG", ACTION_SAVE_JPG));
-      RadioButtonDialog dialog = new RadioButtonDialog("Import image data", "Which format do you want the image to be saved to?", options);
+      options.add(new BoundAction("PNG (good for screen shots, diagrams and line art)", ACTION_SAVE_PNG));
+      options.add(new BoundAction("JPEG (good for photo images)", ACTION_SAVE_JPEG));
+      RadioButtonDialog dialog = new RadioButtonDialog("Import Image Data from Clipboard", "Which format do you want the image to be saved to?", options);
       dialog.show();
       if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
         final int offset = editor.getCaretModel().getOffset();
         try {
-          @SuppressWarnings({"unchecked"})
-          Image image = (Image) systemClipboard.getData(DataFlavor.imageFlavor);
+          Image image = manager.getContents(DataFlavor.imageFlavor);
+          if (image == null) {
+            throw new IOException("Unable to read image from clipboard");
+          }
           BufferedImage bufferedImage = toBufferedImage(image);
           final FileSaverDescriptor descriptor = new FileSaverDescriptor("Save Image to", "Choose the destination file");
           FileSaverDialog saveFileDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, (Project) null);
@@ -147,9 +155,10 @@ public class PasteImageAction extends AsciiDocAction {
             if (written) {
               updateProjectView(destination.getVirtualFile());
               CommandProcessor.getInstance().executeCommand(project,
-                () -> ApplicationManager.getApplication().runWriteAction(() -> {
-                  insertImageReference(destination.getVirtualFile(), offset);
-                }), null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
+                () -> ApplicationManager.getApplication().runWriteAction(
+                  () -> insertImageReference(destination.getVirtualFile(), offset)
+                ), null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
+              );
             } else {
               String message = "Can't save image, no appropriate writer found for selected format.";
               Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
@@ -159,7 +168,7 @@ public class PasteImageAction extends AsciiDocAction {
               Notifications.Bus.notify(notification);
             }
           }
-        } catch (UnsupportedFlavorException | IOException e) {
+        } catch (IOException e) {
           String message = "Can't paste image, " + e.getMessage();
           Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
             .createNotification("Error in plugin", message, NotificationType.ERROR, null);
@@ -168,14 +177,27 @@ public class PasteImageAction extends AsciiDocAction {
           Notifications.Bus.notify(notification);
         }
       }
+    } else {
+      DialogWrapper dialog = new CantPasteImageDialog();
+      dialog.show();
     }
   }
 
   private void insertImageReference(VirtualFile imageFile, int offset) {
     String relativePath = VfsUtilCore.getRelativePath(imageFile, parentDirectory);
+    if (relativePath == null) {
+      relativePath = imageFile.getCanonicalPath();
+    }
     String insert = "image::" + relativePath + "[]";
+    if (offset > 0 && editor.getDocument().getCharsSequence().charAt(offset - 1) != '\n') {
+      insert = "\n" + insert;
+    }
+    int cursorOffset = insert.length();
+    if (editor.getDocument().getCharsSequence().charAt(offset) != '\n') {
+      insert = insert + "\n";
+    }
     editor.getDocument().insertString(offset, insert);
-    editor.getCaretModel().moveToOffset(offset + insert.length() - 1);
+    editor.getCaretModel().moveToOffset(offset + cursorOffset);
   }
 
   private void updateProjectView(VirtualFile virtualFile) {

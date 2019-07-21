@@ -1,6 +1,8 @@
 package org.asciidoc.intellij.ui;
 
 import com.intellij.openapi.ui.DialogWrapper;
+import org.jdesktop.swingx.action.AbstractActionExt;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -13,7 +15,7 @@ public class RadioButtonDialog extends DialogWrapper {
   private List<Action> options;
   private final ButtonGroup buttonGroup = new ButtonGroup();
 
-  public RadioButtonDialog(String title, String text, List<Action> options) {
+  public RadioButtonDialog(@Nls(capitalization = Nls.Capitalization.Title) String title, String text, List<Action> options) {
     super(false);
     setTitle(title);
     this.text = text;
@@ -31,12 +33,21 @@ public class RadioButtonDialog extends DialogWrapper {
     panel.add(explanation);
 
     JPanel optionsPanel = new JPanel(new GridLayout(options.size(), 1));
-    boolean first = true;
+    boolean selectFirst = true;
+
+    for (Action option : options) {
+      if (option instanceof AbstractActionExt && ((AbstractActionExt) option).isSelected()) {
+        selectFirst = false;
+      }
+    }
+
     for (Action option : options) {
       JRadioButton radioButton = new JRadioButton(option);
-      if (first) {
+      if (selectFirst) {
         radioButton.setSelected(true);
-        first = false;
+        selectFirst = false;
+      } else if (option instanceof AbstractActionExt && ((AbstractActionExt) option).isSelected()) {
+        radioButton.setSelected(true);
       }
       buttonGroup.add(radioButton);
       optionsPanel.add(radioButton);
