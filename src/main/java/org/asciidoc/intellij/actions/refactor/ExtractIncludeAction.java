@@ -3,7 +3,6 @@ package org.asciidoc.intellij.actions.refactor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.asciidoc.intellij.actions.asciidoc.AsciiDocAction;
@@ -20,7 +19,7 @@ public class ExtractIncludeAction extends AsciiDocAction {
     if (project == null || file == null) {
       return;
     }
-    Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+    Editor editor = event.getData(LangDataKeys.EDITOR);
     if (editor == null) {
       return;
     }

@@ -13,6 +13,9 @@ public class AsciiDocExtractIntention extends Intention {
 
   @Override
   public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    if (editor == null || file == null) {
+      return false;
+    }
     if (AsciiDocFileType.INSTANCE != file.getFileType()) {
       return false;
     }

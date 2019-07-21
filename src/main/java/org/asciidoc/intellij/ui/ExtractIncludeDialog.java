@@ -36,7 +36,7 @@ public class ExtractIncludeDialog extends RefactoringDialog {
 
   private NameSuggestionsField myFilename;
 
-  public static PsiElement getElementToExtract(Editor editor, PsiFile file) {
+  public static PsiElement getElementToExtract(@NotNull Editor editor, @NotNull PsiFile file) {
     PsiElement element = AsciiDocUtil.getStatementAtCaret(editor, file);
 
     if (element == null) {
@@ -181,7 +181,7 @@ public class ExtractIncludeDialog extends RefactoringDialog {
       }, getTitle(), getGroupId(), UndoConfirmationPolicy.REQUEST_CONFIRMATION));
   }
 
-  private static TextRange getTextRange(Editor myEditor, PsiFile myFile) {
+  private static TextRange getTextRange(@NotNull Editor myEditor, @NotNull PsiFile myFile) {
     SelectionModel selectionModel = myEditor.getSelectionModel();
     int start, end;
     if (selectionModel.getSelectionStart() != selectionModel.getSelectionEnd()) {

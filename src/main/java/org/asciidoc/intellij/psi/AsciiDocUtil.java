@@ -14,6 +14,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.text.CharArrayUtil;
 import org.asciidoc.intellij.file.AsciiDocFileType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -140,7 +141,7 @@ public class AsciiDocUtil {
 
 
   @Nullable
-  public static PsiElement getStatementAtCaret(Editor editor, PsiFile psiFile) {
+  public static PsiElement getStatementAtCaret(@NotNull Editor editor, @NotNull PsiFile psiFile) {
     int caret = editor.getCaretModel().getOffset();
 
     final Document doc = editor.getDocument();

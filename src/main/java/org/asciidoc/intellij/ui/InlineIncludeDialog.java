@@ -71,7 +71,7 @@ public class InlineIncludeDialog extends InlineOptionsDialog {
   }
 
   @Nullable
-  public static PsiElement getElement(Editor editor, PsiFile psiFile) {
+  public static PsiElement getElement(@NotNull Editor editor, @NotNull PsiFile psiFile) {
     PsiElement element = AsciiDocUtil.getStatementAtCaret(editor, psiFile);
 
     if (element == null) {
