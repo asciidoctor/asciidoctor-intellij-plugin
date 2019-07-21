@@ -193,7 +193,7 @@ public class PasteImageAction extends AsciiDocAction {
       insert = "\n" + insert;
     }
     int cursorOffset = insert.length();
-    if (editor.getDocument().getCharsSequence().charAt(offset) != '\n') {
+    if (offset < editor.getDocument().getTextLength() && editor.getDocument().getCharsSequence().charAt(offset) != '\n') {
       insert = insert + "\n";
     }
     editor.getDocument().insertString(offset, insert);
