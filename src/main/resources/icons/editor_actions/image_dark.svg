@@ -3,15 +3,15 @@
 <svg width="100%" height="100%" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg"
      xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;">
     <g id="Layer-1" serif:id="Layer 1" transform="matrix(0.0352778,0,0,0.0352778,0,-13.7)">
-        <path id="path5612" d="M382.435,686.74L297.259,600.559L205.279,695.065" style="fill:none;fill-rule:nonzero;stroke:rgb(110,110,110);stroke-width:28.35px;"/>
+        <path id="path5612" d="M382.435,686.74L297.259,600.559L205.279,695.065" style="fill:none;fill-rule:nonzero;stroke:rgb(175,177,179);stroke-width:28.35px;"/>
         <g id="path5614" transform="matrix(1,0,0,1,8.06091,-11.9869)">
-            <path d="M242.928,736.267L147.857,640.461L61.084,729.078" style="fill:none;fill-rule:nonzero;stroke:rgb(110,110,110);stroke-width:28.35px;"/>
+            <path d="M242.928,736.267L147.857,640.461L61.084,729.078" style="fill:none;fill-rule:nonzero;stroke:rgb(175,177,179);stroke-width:28.35px;"/>
         </g>
         <g id="path5616" transform="matrix(0.903889,0,0,0.903889,23.0687,58.5552)">
-            <ellipse cx="177.857" cy="539.747" rx="38.571" ry="40.714" style="fill:none;stroke:rgb(110,110,110);stroke-width:28.35px;"/>
+            <ellipse cx="177.857" cy="539.747" rx="38.571" ry="40.714" style="fill:none;stroke:rgb(175,177,179);stroke-width:28.35px;"/>
         </g>
         <g transform="matrix(28.3464,0,0,28.3464,0,388.346)">
-            <path d="M14,14L2,14L2,2L14,2L14,14ZM13,3L3,3L3,13L13,13L13,3Z" style="fill:rgb(110,110,110);"/>
+            <path d="M14,14L2,14L2,2L14,2L14,14ZM13,3L3,3L3,13L13,13L13,3Z" style="fill:rgb(175,177,179);"/>
         </g>
     </g>
 </svg>
