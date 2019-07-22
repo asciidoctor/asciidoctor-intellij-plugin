@@ -428,7 +428,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
             "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
             "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ", " + offset + ");" +
             "}" +
-            "window.JavaPanelBridge.rendered();" +
+            "window.JavaPanelBridge && window.JavaPanelBridge.rendered();" +
             "}" +
             "function updateContent() { var elem = document.getElementById('content'); if (elem && elem.parentNode) { " +
             "var div = document.createElement('div');" +
