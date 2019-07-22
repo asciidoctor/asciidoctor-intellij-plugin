@@ -17,6 +17,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -24,7 +25,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.util.ui.UIUtil;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
-import org.asciidoc.intellij.ui.CantPasteImageDialog;
 import org.asciidoc.intellij.ui.RadioButtonDialog;
 import org.jdesktop.swingx.action.BoundAction;
 import org.jetbrains.annotations.NotNull;
@@ -178,8 +178,10 @@ public class PasteImageAction extends AsciiDocAction {
         }
       }
     } else {
-      DialogWrapper dialog = new CantPasteImageDialog();
-      dialog.show();
+      JPanel panel = new JPanel(new GridLayout(2, 0));
+      panel.add(new JLabel("Clipboard doesn't contain an image."));
+      panel.add(new JLabel("Please copy an image to the clipboard before using this action"));
+      new DialogBuilder().title("Import Image from Clipboard").centerPanel(panel).resizable(false).show();
     }
   }
 
