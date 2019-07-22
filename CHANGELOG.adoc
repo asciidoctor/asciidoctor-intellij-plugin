@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.23 (work in progress)
+
+- Paste image from clipboard (thanks to @bbrenne) (#298, 300)
+
 === 0.28.22
 
 - Wrong test name in gutter when running tests, BrowserUrlProvider eagerly works on all files (#301)

@@ -153,6 +153,14 @@ Once the user starts typing kbd:[a]kbd:[d], a list of templates appears.
 Continued typing of any character of the template name restricts the list.
 A kbd:[Tab] selects and entry.
 
+The user can copy images from the clipboard into the document.
+To do that user selects "`Paste image from clipboard`" from the editor's icon menu or from the context menu.
+If the clipboard contains a reference to an existing file, the user can choose to copy the file to the project or to just create a reference to the image in the AsciiDoc document.
+If the clipboard contains an image, the user can choose to create a JPEG or PNG file from the clipboard and add the reference to the document.
+
+As a shortcut the user can also use kbd:[Ctrl+C] and kbd:[Ctrl+V] to add references to images from within the project to a document.
+This shortcut doesn't work yet for copying contents from outside the project.
+
 The user can extract and inline includes.
 This is available from the "`Refactor`" context menu and via context-sensitive intentions via kbd:[Alt+Enter] ("`Inline Include Directive`" and "`Extract Include Directive`").
 // see: ExtractIncludeDialog.java
@@ -201,8 +209,10 @@ MacOS users need to type the extension for the target file name (`.svg` or `.png
 The user can zoom in and out of the preview by holding kbd:[Ctrl] and scrolling the mouse wheel up or down.
 Clicking the middle mouse button whilst holding kbd:[Ctrl] will reset the zoom to 100%.
 
-EXPERIMENTAL: When using mathematical formulas in the preview, the preview can flicker.
-There is an experimental feature that you can enable in the settings of the plugin to activate a new update mechanism that avoids the flickering. Activate the option "`Replace preview contents without flicker (JavaFX preview only)`" for this.
+EXPERIMENTAL:
+When using mathematical formulas in the preview, the preview can flicker.
+There is an experimental feature that you can enable in the settings of the plugin to activate a new update mechanism that avoids the flickering.
+Activate the option "`Replace preview contents without flicker (JavaFX preview only)`" for this.
 
 === Advanced
 
