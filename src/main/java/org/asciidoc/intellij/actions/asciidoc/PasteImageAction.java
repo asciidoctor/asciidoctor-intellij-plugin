@@ -17,6 +17,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -80,9 +82,10 @@ public class PasteImageAction extends AsciiDocAction {
           List<Action> options = new ArrayList<>();
           options.add(new BoundAction("Copy file to current directory, then insert a reference.", ACTION_COPY_FILE));
           BoundAction onlyReference = new BoundAction("Only insert a reference.", ACTION_INSERT_REFERENCE);
-          // if project-local file
           VirtualFile imageVirtualFile = LocalFileSystem.getInstance().findFileByIoFile(imageFile);
-          if (imageVirtualFile != null && VfsUtil.getPath(file, imageVirtualFile, '/') != null) {
+          // if project-local file, make reference the default
+          ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+          if (imageVirtualFile != null && projectFileIndex.isInContent(imageVirtualFile)) {
             onlyReference.setSelected(true);
           }
           options.add(onlyReference);
@@ -188,6 +191,9 @@ public class PasteImageAction extends AsciiDocAction {
   private void insertImageReference(VirtualFile imageFile, int offset) {
     String relativePath = VfsUtil.getPath(file, imageFile, '/');
     if (relativePath == null) {
+      // null case happens if parent file and image file are on different file systems
+      // in this case show the full original path of the image as this is what a user would expect
+      // ... although this would never render in AsciiDoc - when the user sees the complete path, she/he can then decide what to do next.
       relativePath = imageFile.getCanonicalPath();
     }
     String insert = "image::" + relativePath + "[]";
