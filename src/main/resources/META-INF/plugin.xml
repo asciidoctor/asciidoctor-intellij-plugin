@@ -126,7 +126,7 @@
     <group id="AsciiDocInline" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
       <action id="org.asciidoc.intellij.actions.refactor.InlineIncludeAction"
               class="org.asciidoc.intellij.actions.refactor.InlineIncludeAction"
-              text="Inline Include..."
+              text="Inline Include Directive..."
               description="Inline selected include file">
       </action>
       <separator/>
@@ -136,7 +136,7 @@
     <group id="AsciiDocExtract" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
       <action id="org.asciidoc.intellij.actions.refactor.ExtractIncludeAction"
               class="org.asciidoc.intellij.actions.refactor.ExtractIncludeAction"
-              text="Include..."
+              text="Include Directive..."
               description="Extract selected text, block or section to a new include file">
       </action>
       <separator/>
