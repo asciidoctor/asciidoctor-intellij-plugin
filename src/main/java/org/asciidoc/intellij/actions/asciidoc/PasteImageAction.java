@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.util.ui.UIUtil;
@@ -53,7 +53,7 @@ public class PasteImageAction extends AsciiDocAction {
 
   private Editor editor;
 
-  private VirtualFile parentDirectory;
+  private VirtualFile file;
 
   @Override
   public void actionPerformed(AnActionEvent event) {
@@ -66,11 +66,11 @@ public class PasteImageAction extends AsciiDocAction {
       return;
     }
 
-    VirtualFile file = FileDocumentManager.getInstance().getFile(editor.getDocument());
+    file = FileDocumentManager.getInstance().getFile(editor.getDocument());
     if (file == null) {
       return;
     }
-    parentDirectory = file.getParent();
+    VirtualFile parentDirectory = file.getParent();
 
     CopyPasteManager manager = CopyPasteManager.getInstance();
     if (manager.areDataFlavorsAvailable(DataFlavor.javaFileListFlavor)) {
@@ -82,7 +82,7 @@ public class PasteImageAction extends AsciiDocAction {
           BoundAction onlyReference = new BoundAction("Only insert a reference.", ACTION_INSERT_REFERENCE);
           // if project-local file
           VirtualFile imageVirtualFile = LocalFileSystem.getInstance().findFileByIoFile(imageFile);
-          if (imageVirtualFile != null && VfsUtilCore.getRelativePath(imageVirtualFile, parentDirectory) != null) {
+          if (imageVirtualFile != null && VfsUtil.getPath(file, imageVirtualFile, '/') != null) {
             onlyReference.setSelected(true);
           }
           options.add(onlyReference);
@@ -186,7 +186,7 @@ public class PasteImageAction extends AsciiDocAction {
   }
 
   private void insertImageReference(VirtualFile imageFile, int offset) {
-    String relativePath = VfsUtilCore.getRelativePath(imageFile, parentDirectory);
+    String relativePath = VfsUtil.getPath(file, imageFile, '/');
     if (relativePath == null) {
       relativePath = imageFile.getCanonicalPath();
     }
