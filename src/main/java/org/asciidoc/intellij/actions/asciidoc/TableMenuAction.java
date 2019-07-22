@@ -81,6 +81,7 @@ public class TableMenuAction extends AsciiDocAction {
             ActionManager.getInstance(),
             e.getModifiers()
           ));
+          popup.closeOk(null);
         }
       });
       items.add(item);

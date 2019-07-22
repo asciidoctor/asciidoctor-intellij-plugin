@@ -26,29 +26,24 @@ public class CreateTableAction extends AsciiDocAction {
       return;
     }
 
-    final CreateTableDialog createTableDialog = new CreateTableDialog();
-    createTableDialog.show();
+    ApplicationManager.getApplication().invokeLater(() -> {
+      final CreateTableDialog createTableDialog = new CreateTableDialog();
+      createTableDialog.show();
 
-    if (createTableDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-      final Document document = editor.getDocument();
-      final int offset = editor.getCaretModel().getOffset();
-      CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-        @Override
-        public void run() {
-          ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-              document.insertString(offset,
-                generateTable(
-                  createTableDialog.getColumnCount(),
-                  createTableDialog.getRowCount(),
-                  createTableDialog.getTitle()));
-            }
-          });
-        }
-      }, null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
-    }
-
+      if (createTableDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+        final Document document = editor.getDocument();
+        final int offset = editor.getCaretModel().getOffset();
+        CommandProcessor.getInstance().executeCommand(project,
+          () -> ApplicationManager.getApplication().runWriteAction(
+            () -> document.insertString(offset,
+              generateTable(
+                createTableDialog.getColumnCount(),
+                createTableDialog.getRowCount(),
+                createTableDialog.getTitle())
+            )
+          ), null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
+      }
+    });
   }
 
 

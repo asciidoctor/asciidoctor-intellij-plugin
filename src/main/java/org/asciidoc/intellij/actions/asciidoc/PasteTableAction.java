@@ -35,19 +35,21 @@ public class PasteTableAction extends AsciiDocAction {
       return;
     }
 
-    final PasteTableDialog pasteTableDialog = new PasteTableDialog();
-    pasteTableDialog.show();
+    ApplicationManager.getApplication().invokeLater(() -> {
+      final PasteTableDialog pasteTableDialog = new PasteTableDialog();
+      pasteTableDialog.show();
 
-    if (pasteTableDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-      final Document document = editor.getDocument();
-      final int offset = editor.getCaretModel().getOffset();
-      CommandProcessor.getInstance().executeCommand(project,
-        () -> ApplicationManager.getApplication().runWriteAction(() -> {
-          if (pasteTableDialog.getData() != null) {
-            document.insertString(offset, toAsciiDocTable(pasteTableDialog.getData(), pasteTableDialog.getSeparator(), pasteTableDialog.isFirstLineHeader()));
-          }
-        }), null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
-    }
+      if (pasteTableDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+        final Document document = editor.getDocument();
+        final int offset = editor.getCaretModel().getOffset();
+        CommandProcessor.getInstance().executeCommand(project,
+          () -> ApplicationManager.getApplication().runWriteAction(() -> {
+            if (pasteTableDialog.getData() != null) {
+              document.insertString(offset, toAsciiDocTable(pasteTableDialog.getData(), pasteTableDialog.getSeparator(), pasteTableDialog.isFirstLineHeader()));
+            }
+          }), null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
+      }
+    });
   }
 
   private String toAsciiDocTable(@NotNull String tableData, String separator, boolean firstLineHeader) {
