@@ -60,6 +60,20 @@
         <action id="asciidoc.makelink" class="org.asciidoc.intellij.actions.asciidoc.MakeLink"
                 text="Link" description="Make link" icon="AsciiDocIcons.EditorActions.LINK">
         </action>
+        <action class="org.asciidoc.intellij.actions.asciidoc.PasteImageAction"
+                id="org.asciidoc.intellij.actions.asciidoc.PasteImageAction"
+                text="Paste image"
+                description="Paste image from clipboard"
+                icon="AsciiDocIcons.EditorActions.IMAGE">
+        </action>
+        <action id="asciidoc.tables.tabledialog" class="org.asciidoc.intellij.actions.asciidoc.CreateTableAction"
+                text="Create table dialog" description="Insert a table at the caret"
+                icon="AsciiDocIcons.EditorActions.TABLE">
+        </action>
+        <action id="asciidoc.tables.pastetabledialog" class="org.asciidoc.intellij.actions.asciidoc.PasteTableAction"
+                text="Paste Table..." description="Paste table data from clipboard"
+                icon="AsciiDocIcons.EditorActions.TABLE">
+        </action>
         <action class="org.asciidoc.intellij.actions.editorlayout.EditorOnlyLayoutChangeAction"
                 id="org.asciidoc.intellij.actions.editorlayout.EditorOnlyLayoutChangeAction"
                 text="Show editor only"
@@ -83,15 +97,6 @@
                 text="Use Soft Wraps"
                 description="Toggle using soft wraps in current editor"
                 icon="AllIcons.Actions.ToggleSoftWrap">
-        </action>
-
-        <action id="asciidoc.tables.tabledialog" class="org.asciidoc.intellij.actions.asciidoc.CreateTableAction"
-                text="Create table dialog" description="Insert a table at the caret"
-                icon="AsciiDocIcons.EditorActions.TABLE">
-        </action>
-        <action id="asciidoc.tables.pastetabledialog" class="org.asciidoc.intellij.actions.asciidoc.PasteTableAction"
-                text="Paste Table..." description="Paste table data from clipboard"
-                icon="AsciiDocIcons.EditorActions.TABLE">
         </action>
 
         <!--
@@ -142,6 +147,8 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <webBrowserUrlProvider implementation="org.asciidoc.intellij.web.AsciiDocBrowserUrlProvider"/>
+    <customPasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteProvider" />
+    <filePasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteProvider" />
     <fileTypeFactory implementation="org.asciidoc.intellij.file.AsciiDocFileTypeFactory"/>
     <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocSplitEditorProvider"/>
     <liveTemplateContext implementation="org.asciidoc.intellij.template.AsciiDocTemplateContextType$File"/>
