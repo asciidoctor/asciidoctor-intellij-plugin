@@ -15,11 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public class AsciiDocBrowserUrlProvider extends WebBrowserUrlProvider {
   @Override
   public boolean canHandleElement(OpenInBrowserRequest request) {
-    if (request.getFile().getFileType() instanceof AsciiDocFileType) {
-      return true;
-    }
-
-    return super.canHandleElement(request);
+    return request.getFile().getFileType() instanceof AsciiDocFileType;
   }
 
   @Nullable
