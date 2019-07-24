@@ -420,7 +420,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       boolean result = false;
       final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
       if (settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")) {
-        final String htmlToReplace = StringEscapeUtils.escapeEcmaScript(html);
+        final String htmlToReplace = StringEscapeUtils.escapeEcmaScript(prepareHtml(html));
         // try to replace the HTML contents using JavaScript to avoid flickering MathML
         result = (Boolean) JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
           "function finish() {" +

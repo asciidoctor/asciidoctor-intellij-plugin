@@ -62,12 +62,12 @@
         </action>
         <action class="org.asciidoc.intellij.actions.asciidoc.PasteImageAction"
                 id="org.asciidoc.intellij.actions.asciidoc.PasteImageAction"
-                text="Paste image"
+                text="Paste image..."
                 description="Paste image from clipboard"
                 icon="AsciiDocIcons.EditorActions.IMAGE">
         </action>
         <action id="asciidoc.tables.tabledialog" class="org.asciidoc.intellij.actions.asciidoc.CreateTableAction"
-                text="Create table dialog" description="Insert a table at the caret"
+                text="Create table dialog..." description="Insert a table at the caret"
                 icon="AsciiDocIcons.EditorActions.TABLE">
         </action>
         <action id="asciidoc.tables.pastetabledialog" class="org.asciidoc.intellij.actions.asciidoc.PasteTableAction"
