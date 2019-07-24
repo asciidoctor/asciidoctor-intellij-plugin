@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.util.ui.UIUtil;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
+import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.ui.RadioButtonDialog;
 import org.jdesktop.swingx.action.BoundAction;
 import org.jetbrains.annotations.NotNull;
@@ -38,8 +39,8 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,24 +102,27 @@ public class PasteImageAction extends AsciiDocAction {
                 FileSaverDialog saveFileDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, (Project) null);
                 VirtualFileWrapper destination = saveFileDialog.save(parentDirectory, imageFile.getName());
                 if (destination != null) {
-                  try {
-                    Files.copy(imageFile.toPath(), destination.getFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-                    updateProjectView(destination.getVirtualFile());
-
-                    CommandProcessor.getInstance().executeCommand(project,
-                      () -> ApplicationManager.getApplication().runWriteAction(
-                        () -> insertImageReference(destination.getVirtualFile(), offset)
-                      ), null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
-                    );
-                  } catch (IOException ex) {
-                    String message = "Can't save file: " + ex.getMessage();
-                    Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
-                      .createNotification("Error in plugin", message, NotificationType.ERROR, null);
-                    // increase event log counter
-                    notification.setImportant(true);
-                    Notifications.Bus.notify(notification);
-                  }
+                  CommandProcessor.getInstance().executeCommand(project,
+                    () -> ApplicationManager.getApplication().runWriteAction(
+                      () -> {
+                        try {
+                          VirtualFile target = createOrReplaceTarget(destination);
+                          try (OutputStream outputStream = target.getOutputStream(this)) {
+                            Files.copy(imageFile.toPath(), outputStream);
+                            insertImageReference(destination.getVirtualFile(), offset);
+                            updateProjectView(target);
+                          }
+                        } catch (IOException ex) {
+                          String message = "Can't save file: " + ex.getMessage();
+                          Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+                            .createNotification("Error in plugin", message, NotificationType.ERROR, null);
+                          // increase event log counter
+                          notification.setImportant(true);
+                          Notifications.Bus.notify(notification);
+                        }
+                      }
+                    ), "Paste Image", AsciiDocFileType.INSTANCE.getName(), UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
+                  );
                 }
                 break;
               case ACTION_INSERT_REFERENCE:
@@ -154,22 +158,35 @@ public class PasteImageAction extends AsciiDocAction {
           String ext = ACTION_SAVE_PNG.equals(dialog.getSelectedActionCommand()) ? "png" : "jpg";
           VirtualFileWrapper destination = saveFileDialog.save(parentDirectory, "file." + ext);
           if (destination != null) {
-            boolean written = ImageIO.write(bufferedImage, ext, destination.getFile());
-            if (written) {
-              updateProjectView(destination.getVirtualFile());
-              CommandProcessor.getInstance().executeCommand(project,
-                () -> ApplicationManager.getApplication().runWriteAction(
-                  () -> insertImageReference(destination.getVirtualFile(), offset)
-                ), null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
-              );
-            } else {
-              String message = "Can't save image, no appropriate writer found for selected format.";
-              Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
-                .createNotification("Error in plugin", message, NotificationType.ERROR, null);
-              // increase event log counter
-              notification.setImportant(true);
-              Notifications.Bus.notify(notification);
-            }
+            CommandProcessor.getInstance().executeCommand(project,
+              () -> ApplicationManager.getApplication().runWriteAction(
+                () -> {
+                  try {
+                    VirtualFile target = createOrReplaceTarget(destination);
+                    try (OutputStream outputStream = target.getOutputStream(this)) {
+                      boolean written = ImageIO.write(bufferedImage, ext, outputStream);
+                      if (written) {
+                        insertImageReference(destination.getVirtualFile(), offset);
+                        updateProjectView(target);
+                      } else {
+                        String message = "Can't save image, no appropriate writer found for selected format.";
+                        Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+                          .createNotification("Error in plugin", message, NotificationType.ERROR, null);
+                        // increase event log counter
+                        notification.setImportant(true);
+                        Notifications.Bus.notify(notification);
+                      }
+                    }
+                  } catch (IOException e) {
+                    String message = "Can't paste image, " + e.getMessage();
+                    Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+                      .createNotification("Error in plugin", message, NotificationType.ERROR, null);
+                    // increase event log counter
+                    notification.setImportant(true);
+                    Notifications.Bus.notify(notification);
+                  }
+                }), "Paste Image", AsciiDocFileType.INSTANCE.getName(), UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
+            );
           }
         } catch (IOException e) {
           String message = "Can't paste image, " + e.getMessage();
@@ -186,6 +203,18 @@ public class PasteImageAction extends AsciiDocAction {
       panel.add(new JLabel("Please copy an image to the clipboard before using this action"));
       new DialogBuilder().title("Import Image from Clipboard").centerPanel(panel).resizable(false).show();
     }
+  }
+
+  private VirtualFile createOrReplaceTarget(VirtualFileWrapper destination) throws IOException {
+    VirtualFile target = LocalFileSystem.getInstance().findFileByIoFile(destination.getFile());
+    if (target == null) {
+      VirtualFile parentOfImage = LocalFileSystem.getInstance().findFileByIoFile(destination.getFile().getParentFile());
+      if (parentOfImage == null) {
+        throw new IOException("Unable to determine parent directory");
+      }
+      target = parentOfImage.createChildData(this, destination.getFile().getName());
+    }
+    return target;
   }
 
   private void insertImageReference(VirtualFile imageFile, int offset) {
@@ -213,7 +242,6 @@ public class PasteImageAction extends AsciiDocAction {
     ProjectView projectView = ProjectView.getInstance(project);
     projectView.changeView(ProjectViewPane.ID);
     projectView.select(null, virtualFile, true);
-    ProjectView.getInstance(project).refresh();
   }
 
   private BufferedImage toBufferedImage(@NotNull Image image) {

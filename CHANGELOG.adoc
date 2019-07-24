@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.24 (work in progress)
+
+- support undo for paste-image and send out notifications to add files to VCS (#298)
+
 === 0.28.23 (preview, available from Github releases)
 
 - Paste image from clipboard (thanks to @bbrenne) (#298, #300)
