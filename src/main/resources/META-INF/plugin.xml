@@ -196,6 +196,10 @@
                      groupName="General" enabledByDefault="true" level="WARNING"
                      shortName="AsciiDocPageBreakInspection"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocPageBreakInspection"/>
+    <localInspection language="AsciiDoc" displayName="Horizontal rule inspection" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="WARNING"
+                     shortName="AsciiDocHorizontalRuleInspection"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciidocHorizontalRuleInspection"/>
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
     <problemFileHighlightFilter
       implementation="org.asciidoc.intellij.problemHighlighter.AsciidocProblemFileHighlightFilter"/>
