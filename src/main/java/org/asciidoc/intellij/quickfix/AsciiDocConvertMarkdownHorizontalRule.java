@@ -8,25 +8,23 @@ import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Alexander Schwartz 2019
- */
-public class AsciiDocShortenPagebreak extends LocalQuickFixBase {
-  public static final String NAME = "Shorten Pagebreak";
+public class AsciiDocConvertMarkdownHorizontalRule extends LocalQuickFixBase {
+  public static final String NAME = "Convert to AsciiDoc Horizontal Rule";
 
-  public AsciiDocShortenPagebreak() {
+  public AsciiDocConvertMarkdownHorizontalRule() {
     super(NAME);
   }
 
   @Override
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
     PsiElement element = descriptor.getPsiElement();
-    element.replace(createPagebreak(project, "<<<\n"));
+    element.replace(createHorizontalRule(project));
   }
 
   @NotNull
-  private static PsiElement createPagebreak(@NotNull Project project, @NotNull String text) {
-    AsciiDocFile file = AsciiDocUtil.createFileFromText(project, text);
+  private static PsiElement createHorizontalRule(@NotNull Project project) {
+    AsciiDocFile file = AsciiDocUtil.createFileFromText(project, "'''\n");
     return file.getFirstChild();
   }
+
 }

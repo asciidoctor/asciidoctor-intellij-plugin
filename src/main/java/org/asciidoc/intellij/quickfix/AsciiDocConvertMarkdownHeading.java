@@ -4,12 +4,13 @@ import com.intellij.codeInspection.LocalQuickFixBase;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocSection;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * @author Alexander Schwartz 2016
@@ -36,13 +37,11 @@ public class AsciiDocConvertMarkdownHeading extends LocalQuickFixBase {
   }
 
   @NotNull
-  public static PsiElement createHeading(@NotNull Project project, @NotNull String text) {
-    AsciiDocFile file = createFileFromText(project, text);
-    return PsiTreeUtil.findChildOfType(file, AsciiDocSection.class).getFirstChild();
+  private static PsiElement createHeading(@NotNull Project project, @NotNull String text) {
+    AsciiDocFile file = AsciiDocUtil.createFileFromText(project, text);
+    AsciiDocSection section = PsiTreeUtil.findChildOfType(file, AsciiDocSection.class);
+    Objects.requireNonNull(section, "text passed as paramter should have lead to a section");
+    return section.getFirstChild();
   }
 
-  @NotNull
-  private static AsciiDocFile createFileFromText(@NotNull Project project, @NotNull String text) {
-    return (AsciiDocFile) PsiFileFactory.getInstance(project).createFileFromText("a.adoc", AsciiDocLanguage.INSTANCE, text);
-  }
 }

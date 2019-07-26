@@ -8,11 +8,13 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.text.CharArrayUtil;
+import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +26,7 @@ import java.util.List;
 
 public class AsciiDocUtil {
 
-  public static List<AsciiDocBlockId> findIds(Project project, String key) {
+  static List<AsciiDocBlockId> findIds(Project project, String key) {
     List<AsciiDocBlockId> result = null;
     Collection<VirtualFile> virtualFiles =
             FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
@@ -69,7 +71,7 @@ public class AsciiDocUtil {
     return result != null ? result : Collections.emptyList();
   }
 
-  public static List<AsciiDocBlockId> findIds(Project project) {
+  static List<AsciiDocBlockId> findIds(Project project) {
     List<AsciiDocBlockId> result = new ArrayList<>();
     Collection<VirtualFile> virtualFiles =
             FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
@@ -90,7 +92,7 @@ public class AsciiDocUtil {
     return result;
   }
 
-  public static List<AsciiDocAttributeDeclaration> findAttributes(Project project, String key) {
+  static List<AsciiDocAttributeDeclaration> findAttributes(Project project, String key) {
     List<AsciiDocAttributeDeclaration> result = null;
     Collection<VirtualFile> virtualFiles =
       FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
@@ -118,7 +120,7 @@ public class AsciiDocUtil {
     return result != null ? result : Collections.emptyList();
   }
 
-  public static List<AsciiDocAttributeDeclaration> findAttributes(Project project) {
+  static List<AsciiDocAttributeDeclaration> findAttributes(Project project) {
     List<AsciiDocAttributeDeclaration> result = new ArrayList<>();
     Collection<VirtualFile> virtualFiles =
       FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
@@ -157,4 +159,10 @@ public class AsciiDocUtil {
 
     return psiFile.findElementAt(offset);
   }
+
+  @NotNull
+  public static AsciiDocFile createFileFromText(@NotNull Project project, @NotNull String text) {
+    return (AsciiDocFile) PsiFileFactory.getInstance(project).createFileFromText("a.adoc", AsciiDocLanguage.INSTANCE, text);
+  }
+
 }

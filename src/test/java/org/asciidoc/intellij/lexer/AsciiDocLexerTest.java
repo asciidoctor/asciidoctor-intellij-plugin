@@ -2,6 +2,9 @@ package org.asciidoc.intellij.lexer;
 
 import com.intellij.lexer.Lexer;
 import com.intellij.testFramework.LexerTestCase;
+import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
@@ -892,8 +895,26 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   public void testHorizontalRule() {
+    doTest("'''\n",
+      "AsciiDoc:HORIZONTALRULE (''''')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testMarkdownHorizontalRuleDash() {
     doTest("---\n",
       "AsciiDoc:HORIZONTALRULE ('---')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testMarkdownHorizontalRuleStar() {
+    doTest("***\n",
+      "AsciiDoc:HORIZONTALRULE ('***')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testMarkdownHorizontalRuleUnderscore() {
+    doTest("___\n",
+      "AsciiDoc:HORIZONTALRULE ('___')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
@@ -1159,6 +1180,11 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:BLOCK_MACRO_ID ('endif::')\n" +
         "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
         "AsciiDoc:BLOCK_ATTRS_END (']')");
+  }
+
+  @Override
+  protected void doTest(@NonNls @Language("asciidoc") String text, @Nullable String expected) {
+    super.doTest(text, expected);
   }
 
   @Override

@@ -182,7 +182,7 @@ GT = ">"
 REFSTART = "<<"
 REFEND = ">>"
 PAGEBREAK = "<<<" "<"* {SPACE}*
-HORIZONTALRULE = ("-" {SPACE}* "-" {SPACE}* "-" {SPACE}*) |  ("*" {SPACE}* "*" {SPACE}* "*" {SPACE}*) | "'''"
+HORIZONTALRULE = ("-" {SPACE}* "-" {SPACE}* "-" {SPACE}*) |  ("*" {SPACE}* "*" {SPACE}* "*" {SPACE}*) |  ("_" {SPACE}* "_" {SPACE}* "_" {SPACE}*) | "'''" "'"*
 BLOCKIDSTART = "[["
 BLOCKIDEND = "]]"
 SINGLE_QUOTE = "'"
@@ -591,7 +591,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          }
                        }
   // BOLD END
-  
+
   // ITALIC START
   // start something with ** only if it closes within the same block
   {DOUBLEITALIC} / [^\_] {STRING}* {DOUBLEITALIC} { if(!singleitalic) {
