@@ -161,6 +161,7 @@ If the clipboard contains an image, the user can choose to create a JPEG or PNG 
 As a shortcut the user can also use kbd:[Ctrl+C] and kbd:[Ctrl+V] to add references to images from within the project to a document.
 This shortcut doesn't work yet for copying contents from outside the project.
 
+// AsciiDocHeadingStyleInspection, ...
 The editor runs inspections on the content.
 Once it finds for example Markdown-styled headings or Markdown-styled horizontal rules it highlights this as a warning.
 The user can use kbd:[Ctrl+Enter] to select a quick-fix to convert these to AsciiDoc syntax.

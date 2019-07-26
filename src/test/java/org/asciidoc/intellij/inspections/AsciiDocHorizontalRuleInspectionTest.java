@@ -2,7 +2,7 @@ package org.asciidoc.intellij.inspections;
 
 import org.asciidoc.intellij.quickfix.AsciiDocConvertMarkdownHorizontalRule;
 
-public class AsciiDocHorizontalRuleTest extends AsciiDocQuickFixTestBase {
+public class AsciiDocHorizontalRuleInspectionTest extends AsciiDocQuickFixTestBase {
 
   @Override
   public void setUp() throws Exception {

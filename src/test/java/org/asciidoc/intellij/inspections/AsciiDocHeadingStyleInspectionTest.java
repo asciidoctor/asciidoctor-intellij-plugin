@@ -3,7 +3,7 @@ package org.asciidoc.intellij.inspections;
 import org.asciidoc.intellij.quickfix.AsciiDocConvertMarkdownHeading;
 import org.asciidoc.intellij.quickfix.AsciiDocConvertOldstyleHeading;
 
-public class AsciiDocHeadingTest extends AsciiDocQuickFixTestBase {
+public class AsciiDocHeadingStyleInspectionTest extends AsciiDocQuickFixTestBase {
 
   @Override
   public void setUp() throws Exception {
