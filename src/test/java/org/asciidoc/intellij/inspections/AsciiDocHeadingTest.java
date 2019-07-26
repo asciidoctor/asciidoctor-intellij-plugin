@@ -8,7 +8,8 @@ public class AsciiDocHeadingTest extends AsciiDocQuickFixTestBase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(AsciidocHeadingStyleInspection.class);
+    //noinspection unchecked
+    myFixture.enableInspections(AsciiDocHeadingStyleInspection.class);
   }
 
   public void testOldStyleHeading() {

@@ -39,7 +39,7 @@
   <actions>
     <!-- Add your actions here -->
     <group id="AsciiDoc" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
-      <group id="AsciiDoc.TextFormatting" compact="true" description="Text Markup Actions" popup="true"
+      <group id="AsciiDoc.TextFormatting" compact="true" description="Text Markup actions" popup="true"
              text="AsciiDoc" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
         <action id="asciidoc.makebold" class="org.asciidoc.intellij.actions.asciidoc.MakeBold"
                 text="Bold" description="Make text bold" icon="AsciiDocIcons.EditorActions.BOLD">
@@ -54,7 +54,7 @@
                 text="Mono" description="Make text mono" icon="AsciiDocIcons.EditorActions.CODE_SPAN">
         </action>
         <action id="asciidoc.strikethrough" class="org.asciidoc.intellij.actions.asciidoc.MakeStrikethrough"
-                text="Strike through" description="Make text strike through"
+                text="Strike Through" description="Make text strike through"
                 icon="AsciiDocIcons.EditorActions.STRIKE_THROUGH">
         </action>
         <action id="asciidoc.makelink" class="org.asciidoc.intellij.actions.asciidoc.MakeLink"
@@ -62,12 +62,12 @@
         </action>
         <action class="org.asciidoc.intellij.actions.asciidoc.PasteImageAction"
                 id="org.asciidoc.intellij.actions.asciidoc.PasteImageAction"
-                text="Paste image..."
+                text="Paste Image..."
                 description="Paste image from clipboard"
                 icon="AsciiDocIcons.EditorActions.IMAGE">
         </action>
         <action id="asciidoc.tables.tabledialog" class="org.asciidoc.intellij.actions.asciidoc.CreateTableAction"
-                text="Create table dialog..." description="Insert a table at the caret"
+                text="Create Table Dialog..." description="Insert a table at the caret"
                 icon="AsciiDocIcons.EditorActions.TABLE">
         </action>
         <action id="asciidoc.tables.pastetabledialog" class="org.asciidoc.intellij.actions.asciidoc.PasteTableAction"
@@ -76,19 +76,19 @@
         </action>
         <action class="org.asciidoc.intellij.actions.editorlayout.EditorOnlyLayoutChangeAction"
                 id="org.asciidoc.intellij.actions.editorlayout.EditorOnlyLayoutChangeAction"
-                text="Show editor only"
+                text="Show Editor Only"
                 description="Sets AsciiDoc editor layout to show editor only"
                 icon="AsciiDocIcons.Layout.EDITOR_ONLY">
         </action>
         <action class="org.asciidoc.intellij.actions.editorlayout.EditorAndPreviewLayoutChangeAction"
                 id="org.asciidoc.intellij.actions.editorlayout.EditorAndPreviewLayoutChangeAction"
-                text="Show editor and preview"
+                text="Show Editor and Preview"
                 description="Sets AsciiDoc editor layout to show editor and preview in split"
                 icon="AsciiDocIcons.Layout.EDITOR_PREVIEW">
         </action>
         <action class="org.asciidoc.intellij.actions.editorlayout.PreviewOnlyLayoutChangeAction"
                 id="org.asciidoc.intellij.actions.editorlayout.PreviewOnlyLayoutChangeAction"
-                text="Show preview only"
+                text="Show Preview Only"
                 description="Sets AsciiDoc editor layout to show preview only"
                 icon="AsciiDocIcons.Layout.PREVIEW_ONLY">
         </action>
@@ -190,8 +190,8 @@
     <searchEverywhereClassifier implementation="org.asciidoc.intellij.psi.AsciiDocSearchEverywhereClassifier"/>
     <localInspection language="AsciiDoc" displayName="Heading inspection" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="WARNING"
-                     shortName="AsciidocHeadingStyleInspection"
-                     implementationClass="org.asciidoc.intellij.inspections.AsciidocHeadingStyleInspection"/>
+                     shortName="AsciiDocHeadingStyleInspection"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocHeadingStyleInspection"/>
     <localInspection language="AsciiDoc" displayName="Pagebreak inspection" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="WARNING"
                      shortName="AsciiDocPageBreakInspection"
@@ -199,7 +199,7 @@
     <localInspection language="AsciiDoc" displayName="Horizontal rule inspection" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="WARNING"
                      shortName="AsciiDocHorizontalRuleInspection"
-                     implementationClass="org.asciidoc.intellij.inspections.AsciidocHorizontalRuleInspection"/>
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocHorizontalRuleInspection"/>
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
     <problemFileHighlightFilter
       implementation="org.asciidoc.intellij.problemHighlighter.AsciidocProblemFileHighlightFilter"/>

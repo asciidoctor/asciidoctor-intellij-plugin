@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HORIZONTALRULE;
 
-public class AsciidocHorizontalRuleInspection extends AsciiDocInspectionBase {
+public class AsciiDocHorizontalRuleInspection extends AsciiDocInspectionBase {
   private static final String TEXT_HINT_MARKDOWN = "Markdown horizontal rule";
   private static final AsciiDocConvertMarkdownHorizontalRule MARKDOWN_HORIZONTAL_RULE_QUICKFIX = new AsciiDocConvertMarkdownHorizontalRule();
 

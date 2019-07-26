@@ -7,7 +7,8 @@ public class AsciiDocHorizontalRuleTest extends AsciiDocQuickFixTestBase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(AsciidocHorizontalRuleInspection.class);
+    //noinspection unchecked
+    myFixture.enableInspections(AsciiDocHorizontalRuleInspection.class);
   }
 
   public void testMarkdownHorizontalRuleDash() {

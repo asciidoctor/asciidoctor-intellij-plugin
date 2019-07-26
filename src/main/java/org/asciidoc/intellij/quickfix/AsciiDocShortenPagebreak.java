@@ -4,9 +4,8 @@ import com.intellij.codeInspection.LocalQuickFixBase;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileFactory;
-import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.psi.AsciiDocFile;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -27,12 +26,7 @@ public class AsciiDocShortenPagebreak extends LocalQuickFixBase {
 
   @NotNull
   private static PsiElement createPagebreak(@NotNull Project project, @NotNull String text) {
-    AsciiDocFile file = createFileFromText(project, text);
+    AsciiDocFile file = AsciiDocUtil.createFileFromText(project, text);
     return file.getFirstChild();
-  }
-
-  @NotNull
-  private static AsciiDocFile createFileFromText(@NotNull Project project, @NotNull String text) {
-    return (AsciiDocFile) PsiFileFactory.getInstance(project).createFileFromText("a.adoc", AsciiDocLanguage.INSTANCE, text);
   }
 }

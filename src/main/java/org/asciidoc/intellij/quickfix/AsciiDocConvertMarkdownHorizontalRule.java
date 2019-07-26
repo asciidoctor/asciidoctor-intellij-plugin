@@ -4,9 +4,8 @@ import com.intellij.codeInspection.LocalQuickFixBase;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileFactory;
-import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.psi.AsciiDocFile;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class AsciiDocConvertMarkdownHorizontalRule extends LocalQuickFixBase {
@@ -19,17 +18,13 @@ public class AsciiDocConvertMarkdownHorizontalRule extends LocalQuickFixBase {
   @Override
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
     PsiElement element = descriptor.getPsiElement();
-    element.replace(createHorizontalRule(project, "'''\n"));
+    element.replace(createHorizontalRule(project));
   }
 
   @NotNull
-  public static PsiElement createHorizontalRule(@NotNull Project project, @NotNull String text) {
-    AsciiDocFile file = createFileFromText(project, text);
+  private static PsiElement createHorizontalRule(@NotNull Project project) {
+    AsciiDocFile file = AsciiDocUtil.createFileFromText(project, "'''\n");
     return file.getFirstChild();
   }
 
-  @NotNull
-  private static AsciiDocFile createFileFromText(@NotNull Project project, @NotNull String text) {
-    return (AsciiDocFile) PsiFileFactory.getInstance(project).createFileFromText("a.adoc", AsciiDocLanguage.INSTANCE, text);
-  }
 }

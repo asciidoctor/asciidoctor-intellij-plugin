@@ -14,7 +14,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING;
 /**
  * @author Alexander Schwartz 2016
  */
-public class AsciidocHeadingStyleInspection extends AsciiDocInspectionBase {
+public class AsciiDocHeadingStyleInspection extends AsciiDocInspectionBase {
   private static final String TEXT_HINT_MARKDOWN = "Markdown style heading";
   private static final AsciiDocConvertMarkdownHeading MARKDOWN_HEADING_QUICKFIX = new AsciiDocConvertMarkdownHeading();
 
