@@ -3,10 +3,13 @@ package org.asciidoc.intellij.editor.javafx;
 import com.intellij.ide.browsers.OpenInBrowserRequest;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
 import io.netty.buffer.Unpooled;
@@ -22,6 +25,7 @@ import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import org.asciidoc.intellij.editor.browser.BrowserPanel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.BuiltInServerManager;
 import org.jetbrains.ide.HttpRequestHandler;
 import org.jetbrains.io.FileResponses;
@@ -80,8 +84,18 @@ public class PreviewStaticServer extends HttpRequestHandler {
   public static Url getFileUrl(OpenInBrowserRequest request, VirtualFile file) {
     Url url;
     try {
-      url = Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "source?file=" +
-        URLEncoder.encode(file.getPath(), StandardCharsets.UTF_8.toString()));
+      StringBuilder sb = new StringBuilder();
+      sb.append("http://localhost:").append(BuiltInServerManager.getInstance().getPort()).append(PREFIX);
+      if (file instanceof LightVirtualFile) {
+        throw new IllegalStateException("unable to create a URL from a in-memory file");
+      }
+      sb.append("source?file=").append(URLEncoder.encode(file.getPath(), StandardCharsets.UTF_8.toString()));
+      if (request.getProject().getPresentableUrl() != null) {
+        sb.append("&projectUrl=").append(URLEncoder.encode(request.getProject().getPresentableUrl(), StandardCharsets.UTF_8.toString()));
+      } else {
+        sb.append("&projectName=").append(URLEncoder.encode(request.getProject().getName(), StandardCharsets.UTF_8.toString()));
+      }
+      url = Urls.parseEncoded(sb.toString());
     } catch (UnsupportedEncodingException e) {
       throw new IllegalStateException("can't encode");
     }
@@ -121,17 +135,44 @@ public class PreviewStaticServer extends HttpRequestHandler {
     if ("scripts".equals(contentType)) {
       sendResource(request,
         context.channel(),
-        JavaFxHtmlPanel.class,
         fileName);
     } else if ("styles".equals(contentType)) {
       sendResource(request,
         context.channel(),
-        JavaFxHtmlPanel.class,
         fileName);
     } else if ("source".equals(action)) {
-      String file = urlDecoder.parameters().get("file").get(0);
-      VirtualFile vf = LocalFileSystem.getInstance().findFileByPath(file);
-      sendDocument(request, vf, context.channel());
+      String fileParameter = getParameter(urlDecoder, "file");
+      String projectNameParameter = getParameter(urlDecoder, "projectName");
+      String projectUrlParameter = getParameter(urlDecoder, "projectUrl");
+      if (fileParameter == null) {
+        return false;
+      }
+      if (projectNameParameter == null && projectUrlParameter == null) {
+        return false;
+      }
+      VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(fileParameter);
+      if (virtualFile == null) {
+        log.warn("unable to to find file '" + fileParameter + "', therefore unable to render it");
+        return false;
+      }
+      StringBuilder nonMatchingProjects = new StringBuilder();
+      Project project = null;
+      for (Project p : ProjectManager.getInstance().getOpenProjects()) {
+        if ((projectNameParameter != null && projectNameParameter.equals(p.getName()))
+          || (projectUrlParameter != null && projectUrlParameter.equals(p.getPresentableUrl()))) {
+          project = p;
+          break;
+        } else {
+          nonMatchingProjects.append("'").append(p.getName()).append("'/'").append(p.getPresentableUrl()).append("'");
+        }
+      }
+      if (project == null) {
+        log.warn("unable to determine project for '" + projectNameParameter + "'/'" + projectUrlParameter
+          + "' out of projects " + nonMatchingProjects.toString()
+          + ", therefore unable to render it");
+        return false;
+      }
+      sendDocument(request, virtualFile, project, context.channel());
     } else if ("image".equals(action)) {
       String file = urlDecoder.parameters().get("file").get(0);
       String mac = urlDecoder.parameters().get("mac").get(0);
@@ -141,6 +182,15 @@ public class PreviewStaticServer extends HttpRequestHandler {
     }
 
     return true;
+  }
+
+  @Nullable
+  private String getParameter(@NotNull QueryStringDecoder urlDecoder, @NotNull String parameter) {
+    List<String> parameters = urlDecoder.parameters().get(parameter);
+    if (parameters == null || parameters.size() != 1) {
+      return null;
+    }
+    return parameters.get(0);
   }
 
   private boolean sendImage(FullHttpRequest request, String file, String mac, Channel channel) {
@@ -169,18 +219,17 @@ public class PreviewStaticServer extends HttpRequestHandler {
     }
   }
 
-  private void sendDocument(FullHttpRequest request, VirtualFile file, Channel channel) {
+  private void sendDocument(FullHttpRequest request, @NotNull VirtualFile file, @NotNull Project project, @NotNull Channel channel) {
     synchronized (this) {
       if (browserPanel == null) {
         browserPanel = new BrowserPanel();
       }
 
       ReadAction.compute(() -> {
-          String html = browserPanel.getHtml(file);
+          String html = browserPanel.getHtml(file, project);
           FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(html.getBytes(StandardCharsets.UTF_8)));
           response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
           response.headers().set(HttpHeaderNames.CACHE_CONTROL, "max-age=5, private, must-revalidate");
-          response.headers().set(HttpHeaderNames.ETAG, Long.toString(LAST_MODIFIED));
           Responses.send(response, channel, request);
           return true;
         }
@@ -190,7 +239,6 @@ public class PreviewStaticServer extends HttpRequestHandler {
 
   private static void sendResource(@NotNull HttpRequest request,
                                    @NotNull Channel channel,
-                                   @NotNull Class<?> clazz,
                                    @NotNull String resourceName) {
     /*
     // API incompatible with older versions of IntelliJ
@@ -200,7 +248,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
     */
 
     byte[] data;
-    try (InputStream inputStream = clazz.getResourceAsStream(resourceName)) {
+    try (InputStream inputStream = JavaFxHtmlPanel.class.getResourceAsStream(resourceName)) {
       if (inputStream == null) {
         Responses.send(HttpResponseStatus.NOT_FOUND, channel, request);
         return;

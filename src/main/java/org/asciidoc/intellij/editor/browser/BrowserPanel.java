@@ -7,7 +7,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
@@ -40,6 +39,7 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -145,20 +145,13 @@ public class BrowserPanel implements Closeable {
     }
   }
 
-  public String getHtml(VirtualFile file) {
-    Project project = null;
-    for (Project p : ProjectManager.getInstance().getOpenProjects()) {
-      if (p.getBasePath() != null && file.getPath().startsWith(p.getBasePath())) {
-        project = p;
-      }
-    }
-    if (project == null) {
-      return null;
-    }
+  @NotNull
+  public String getHtml(@NotNull VirtualFile file, @NotNull Project project) {
     Document document = FileDocumentManager.getInstance().getDocument(file);
     AtomicInteger offsetLineNo = new AtomicInteger();
     final String contentWithConfig = AsciiDoc.prependConfig(document, project, offsetLineNo::set);
     List<String> extensions = AsciiDoc.getExtensions(project);
+    Objects.requireNonNull(file.getParent().getCanonicalPath(), "we will have files, these will always have a parent directory");
     AsciiDoc asciiDoc = new AsciiDoc(project.getBasePath(), new File(file.getParent().getCanonicalPath()),
       imagesPath, file.getName());
     String html = asciiDoc.render(contentWithConfig, extensions);
@@ -190,6 +183,7 @@ public class BrowserPanel implements Closeable {
   /**
    * Sign a file to be encoded in a URL inside a document.
    * The key will change every time the IDE is restarted.
+   *
    * @param file filename
    * @return signed file including mac; ready to be added to a URL
    */
@@ -302,8 +296,9 @@ public class BrowserPanel implements Closeable {
 
   /**
    * Retrieve an image that was previously referenced in a file.
+   *
    * @param file absolute file name
-   * @param mac signature created when rendering the surrounding document
+   * @param mac  signature created when rendering the surrounding document
    * @return byte array for the image, or null if file not exists or signature is wrong
    */
   @Nullable
