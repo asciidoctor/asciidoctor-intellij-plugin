@@ -24,6 +24,6 @@ public class AsciiDocHorizontalRuleTest extends AsciiDocQuickFixTestBase {
 
   @Override
   protected String getBasePath() {
-    return "inspections/horizontalRule";
+    return "inspections/horizontalrule";
   }
 }
