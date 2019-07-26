@@ -1,1 +1,1 @@
-<warning descr="Markdown Style Heading"># Markdown Heading</warning>
+<warning descr="Markdown style heading"># Markdown Heading</warning>

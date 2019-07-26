@@ -892,8 +892,26 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   public void testHorizontalRule() {
+    doTest("'''\n",
+      "AsciiDoc:HORIZONTALRULE (''''')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testMarkdownHorizontalRuleDash() {
     doTest("---\n",
       "AsciiDoc:HORIZONTALRULE ('---')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testMarkdownHorizontalRuleStar() {
+    doTest("***\n",
+      "AsciiDoc:HORIZONTALRULE ('***')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testMarkdownHorizontalRuleUnderscore() {
+    doTest("___\n",
+      "AsciiDoc:HORIZONTALRULE ('___')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 

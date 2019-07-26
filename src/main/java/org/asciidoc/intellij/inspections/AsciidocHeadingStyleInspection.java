@@ -15,10 +15,10 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING;
  * @author Alexander Schwartz 2016
  */
 public class AsciidocHeadingStyleInspection extends AsciiDocInspectionBase {
-  private static final String TEXT_HINT_MARKDOWN = "Markdown Style Heading";
+  private static final String TEXT_HINT_MARKDOWN = "Markdown style heading";
   private static final AsciiDocConvertMarkdownHeading MARKDOWN_HEADING_QUICKFIX = new AsciiDocConvertMarkdownHeading();
 
-  private static final String TEXT_HINT_OLD_STYLE = "AsciiDoc Old Style Heading";
+  private static final String TEXT_HINT_OLD_STYLE = "AsciiDoc old style heading";
   private static final AsciiDocConvertOldstyleHeading OLDSTYLE_HEADING_QUICKFIX = new AsciiDocConvertOldstyleHeading();
 
   @NotNull
@@ -27,7 +27,7 @@ public class AsciidocHeadingStyleInspection extends AsciiDocInspectionBase {
     return new AsciiDocVisitor() {
       @Override
       public void visitElement(PsiElement o) {
-        if (o instanceof PsiElement && o.getNode().getElementType() == HEADING) {
+        if (o != null && o.getNode().getElementType() == HEADING) {
           if (o.getNode().getText().startsWith("#")) {
             LocalQuickFix[] fixes = new LocalQuickFix[]{MARKDOWN_HEADING_QUICKFIX};
             holder.registerProblem(o, TEXT_HINT_MARKDOWN, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixes);
