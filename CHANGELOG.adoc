@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - support undo for paste-image and send out notifications to add files to VCS (#298)
 - fix rendering of images in flicker-free fast preview (#241)
 - prevent NPE when opening AsciiDoc documents or fragments in browser (#303)
+- inspection to convert Markdown-style horizontal rules to AsciiDoc-style horizontal rules (thanks to @bbrenne) (#272, #302)
 
 === 0.28.23 (preview, available from Github releases)
 
