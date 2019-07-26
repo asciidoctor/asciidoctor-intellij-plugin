@@ -5,14 +5,14 @@ import com.intellij.psi.PsiFile;
 
 import java.util.List;
 
-public class AsciidocInfoType {
+public class AsciiDocInfoType {
   private final PsiFile file;
   private final Editor editor;
   private final String contentWithConfig;
   private final List<String> extensions;
   private final int offsetLineNo;
 
-  public AsciidocInfoType(PsiFile file, Editor editor, String contentWithConfig, List<String> extensions, int offsetLineNo) {
+  public AsciiDocInfoType(PsiFile file, Editor editor, String contentWithConfig, List<String> extensions, int offsetLineNo) {
     this.file = file;
     this.editor = editor;
     this.contentWithConfig = contentWithConfig;

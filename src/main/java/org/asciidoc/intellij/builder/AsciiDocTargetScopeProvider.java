@@ -21,7 +21,7 @@ import java.util.List;
  * This is a dummy provider to clear all error in asciidoctor files and re-trigger a code analyze for the
  * currently selected/open files using {@link DaemonCodeAnalyzer}.
  */
-public class AsciidocTargetScopeProvider extends BuildTargetScopeProvider {
+public class AsciiDocTargetScopeProvider extends BuildTargetScopeProvider {
   @NotNull
   @Override
   public List<CmdlineRemoteProto.Message.ControllerMessage.ParametersMessage.TargetTypeBuildScope> getBuildTargetScopes(@NotNull CompileScope baseScope, @NotNull CompilerFilter filter, @NotNull Project project, boolean forceBuild) {

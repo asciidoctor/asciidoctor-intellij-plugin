@@ -166,7 +166,7 @@
                           implementationClass="org.asciidoc.intellij.AsciiDocSpellcheckingStrategy"/>
     <lang.commenter language="AsciiDoc" implementationClass="org.asciidoc.intellij.AsciiDocCommenter"/>
     <braceMatcher filetype="AsciiDoc" implementationClass="org.asciidoc.intellij.braces.AsciiDocBraceMatcher"/>
-    <quoteHandler fileType="AsciiDoc" className="org.asciidoc.intellij.braces.AsciidocQuoteHandler"/>
+    <quoteHandler fileType="AsciiDoc" className="org.asciidoc.intellij.braces.AsciiDocQuoteHandler"/>
     <todoIndexer filetype="AsciiDoc" implementationClass="org.asciidoc.intellij.indexer.AsciiDocTodoIndexer"/>
     <applicationConfigurable id="Settings.AsciiDoc.Preview"
                              bundle="AsciiDocBundle"
@@ -202,8 +202,8 @@
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocHorizontalRuleInspection"/>
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
     <problemFileHighlightFilter
-      implementation="org.asciidoc.intellij.problemHighlighter.AsciidocProblemFileHighlightFilter"/>
-    <compiler.buildTargetScopeProvider implementation="org.asciidoc.intellij.builder.AsciidocTargetScopeProvider"/>
+      implementation="org.asciidoc.intellij.problemHighlighter.AsciiDocProblemFileHighlightFilter"/>
+    <compiler.buildTargetScopeProvider implementation="org.asciidoc.intellij.builder.AsciiDocTargetScopeProvider"/>
     <colorSettingsPage implementation="org.asciidoc.intellij.highlighting.AsciiDocColorSettingsPage"/>
     <additionalTextAttributes scheme="Default" file="colorSchemes/AsciidocDefault.xml"/>
     <additionalTextAttributes scheme="Darcula" file="colorSchemes/AsciidocDarcula.xml"/>

@@ -36,20 +36,20 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Alexander Schwartz 2019
  */
 public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnnotator<
-  AsciidocInfoType, AsciidocAnnotationResultType> {
+  AsciiDocInfoType, AsciiDocAnnotationResultType> {
 
   @Nullable
   @Override
-  public AsciidocInfoType collectInformation(@NotNull PsiFile file, @NotNull Editor editor, boolean hasErrors) {
+  public AsciiDocInfoType collectInformation(@NotNull PsiFile file, @NotNull Editor editor, boolean hasErrors) {
     AtomicInteger offsetLineNo = new AtomicInteger(0);
     final String contentWithConfig = AsciiDoc.prependConfig(editor.getDocument(), file.getProject(), offsetLineNo::set);
     List<String> extensions = AsciiDoc.getExtensions(file.getProject());
-    return new AsciidocInfoType(file, editor, contentWithConfig, extensions, offsetLineNo.get());
+    return new AsciiDocInfoType(file, editor, contentWithConfig, extensions, offsetLineNo.get());
   }
 
   @Nullable
   @Override
-  public AsciidocAnnotationResultType doAnnotate(AsciidocInfoType collectedInfo) {
+  public AsciiDocAnnotationResultType doAnnotate(AsciiDocInfoType collectedInfo) {
     PsiFile file = collectedInfo.getFile();
     Editor editor = collectedInfo.getEditor();
     File fileBaseDir = new File("");
@@ -64,7 +64,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
       }
     }
 
-    AsciidocAnnotationResultType asciidocAnnotationResultType = new AsciidocAnnotationResultType(editor.getDocument(),
+    AsciiDocAnnotationResultType asciidocAnnotationResultType = new AsciiDocAnnotationResultType(editor.getDocument(),
       collectedInfo.getOffsetLineNo());
 
     if (!AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isShowAsciiDocWarningsAndErrorsInEditor()) {
@@ -92,7 +92,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
   }
 
   @Override
-  public void apply(@NotNull PsiFile file, AsciidocAnnotationResultType annotationResult, @NotNull AnnotationHolder holder) {
+  public void apply(@NotNull PsiFile file, AsciiDocAnnotationResultType annotationResult, @NotNull AnnotationHolder holder) {
     WolfTheProblemSolver theProblemSolver = WolfTheProblemSolver.getInstance(file.getProject());
     Collection<Problem> problems = new ArrayList<>();
     for (LogRecord logRecord : annotationResult.getLogRecords()) {

@@ -9,7 +9,7 @@ import org.asciidoc.intellij.file.AsciiDocFileType;
  *
  * @author Alexander Schwartz 2019
  */
-public class AsciidocProblemFileHighlightFilter implements Condition<VirtualFile> {
+public class AsciiDocProblemFileHighlightFilter implements Condition<VirtualFile> {
 
   @Override
   public boolean value(VirtualFile virtualFile) {

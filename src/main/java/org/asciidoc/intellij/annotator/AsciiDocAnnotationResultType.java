@@ -7,13 +7,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class AsciidocAnnotationResultType {
+public class AsciiDocAnnotationResultType {
 
   private final Document document;
   private final int offsetLineNo;
   private List<LogRecord> logRecords;
 
-  public AsciidocAnnotationResultType(Document document, int offsetLineNo) {
+  public AsciiDocAnnotationResultType(Document document, int offsetLineNo) {
     this.document = document;
     this.offsetLineNo = offsetLineNo;
   }

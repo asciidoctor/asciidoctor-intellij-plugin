@@ -9,7 +9,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
-public class AsciidocQuoteHandler implements QuoteHandler {
+public class AsciiDocQuoteHandler implements QuoteHandler {
   private static final TokenSet QUOTE_TYPES = TokenSet.create(AsciiDocTokenTypes.DOUBLE_QUOTE,
                                                               AsciiDocTokenTypes.SINGLE_QUOTE);
 

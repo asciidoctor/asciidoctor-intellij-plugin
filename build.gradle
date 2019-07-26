@@ -86,6 +86,7 @@ dependencies {
   compile 'commons-io:commons-io:2.4'
   compile 'nl.jworks.markdown_to_asciidoc:markdown_to_asciidoc:1.1'
   testCompile 'junit:junit:4.12'
+  testCompile 'com.tngtech.archunit:archunit-junit4:0.10.2'
 }
 
 def genRoot = file('gen')

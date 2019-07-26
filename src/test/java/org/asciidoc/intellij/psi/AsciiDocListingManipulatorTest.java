@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 
-public class AsciidocListingManipulatorTest extends LightPlatformCodeInsightFixtureTestCase {
+public class AsciiDocListingManipulatorTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testSimpleCodeFence() {
     doTest("[source,json]\n" +
         "----\n" +
