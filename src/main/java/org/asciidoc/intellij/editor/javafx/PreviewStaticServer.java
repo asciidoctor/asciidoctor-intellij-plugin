@@ -23,6 +23,7 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import org.apache.http.entity.ContentType;
 import org.asciidoc.intellij.editor.browser.BrowserPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +49,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
   private static final String PREFIX = "/ead61b63-b0a6-4ff2-a49a-86be75ccfd1a/";
   private static final Pattern PAYLOAD_PATTERN = Pattern.compile("((?<contentType>[^/]*)/(?<fileName>[a-zA-Z0-9./_-]*))|(?<action>(source|image))");
 
-  private BrowserPanel browserPanel;
+  private static BrowserPanel browserPanel;
 
   // every time the plugin starts up, assume resources could have been modified
   private static final long LAST_MODIFIED = System.currentTimeMillis();
@@ -89,7 +90,8 @@ public class PreviewStaticServer extends HttpRequestHandler {
       if (file instanceof LightVirtualFile) {
         throw new IllegalStateException("unable to create a URL from a in-memory file");
       }
-      sb.append("source?file=").append(URLEncoder.encode(file.getPath(), StandardCharsets.UTF_8.toString()));
+      String mac = getBrowserPanel().signFile(file.getPath()).replaceAll("&amp;", "&");
+      sb.append("source?file=").append(mac);
       if (request.getProject().getPresentableUrl() != null) {
         sb.append("&projectUrl=").append(URLEncoder.encode(request.getProject().getPresentableUrl(), StandardCharsets.UTF_8.toString()));
       } else {
@@ -144,8 +146,17 @@ public class PreviewStaticServer extends HttpRequestHandler {
       String fileParameter = getParameter(urlDecoder, "file");
       String projectNameParameter = getParameter(urlDecoder, "projectName");
       String projectUrlParameter = getParameter(urlDecoder, "projectUrl");
-      if (fileParameter == null) {
+      String mac = getParameter(urlDecoder, "mac");
+      if (fileParameter == null || mac == null) {
         return false;
+      }
+      if (!getBrowserPanel().checkMac(fileParameter, mac)) {
+        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.UNAUTHORIZED,
+          Unpooled.wrappedBuffer("<html><body>expired, please re-open from IDE (AsciiDoc plugin)</body></html>".getBytes(StandardCharsets.UTF_8)));
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, ContentType.TEXT_HTML);
+        response.headers().set(HttpHeaderNames.CACHE_CONTROL, "max-age=5, private, must-revalidate");
+        Responses.send(response, context.channel(), request);
+        return true;
       }
       if (projectNameParameter == null && projectUrlParameter == null) {
         return false;
@@ -194,11 +205,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
   }
 
   private boolean sendImage(FullHttpRequest request, String file, String mac, Channel channel) {
-    if (browserPanel == null) {
-      return false;
-    }
-
-    byte[] image = browserPanel.getImage(file, mac);
+    byte[] image = getBrowserPanel().getImage(file, mac);
     if (image != null) {
       FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(image));
       if (file.endsWith(".png")) {
@@ -219,22 +226,27 @@ public class PreviewStaticServer extends HttpRequestHandler {
     }
   }
 
-  private void sendDocument(FullHttpRequest request, @NotNull VirtualFile file, @NotNull Project project, @NotNull Channel channel) {
-    synchronized (this) {
+  @NotNull
+  private static BrowserPanel getBrowserPanel() {
+    synchronized (PreviewStaticServer.class) {
       if (browserPanel == null) {
         browserPanel = new BrowserPanel();
       }
-
-      ReadAction.compute(() -> {
-          String html = browserPanel.getHtml(file, project);
-          FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(html.getBytes(StandardCharsets.UTF_8)));
-          response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
-          response.headers().set(HttpHeaderNames.CACHE_CONTROL, "max-age=5, private, must-revalidate");
-          Responses.send(response, channel, request);
-          return true;
-        }
-      );
     }
+    return browserPanel;
+  }
+
+  private void sendDocument(FullHttpRequest request, @NotNull VirtualFile file, @NotNull Project project, @NotNull Channel channel) {
+    ReadAction.compute(() -> {
+        String html = getBrowserPanel().getHtml(file, project);
+        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(html.getBytes(StandardCharsets.UTF_8)));
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
+        response.headers().set(HttpHeaderNames.CACHE_CONTROL, "max-age=5, private, must-revalidate");
+        response.headers().set("Referrer-Policy", "no-referrer");
+        Responses.send(response, channel, request);
+        return true;
+      }
+    );
   }
 
   private static void sendResource(@NotNull HttpRequest request,

@@ -98,7 +98,7 @@ public class BrowserPanel implements Closeable {
 
   public BrowserPanel() {
     macKey = new byte[8];
-    new Random().nextBytes(new byte[8]);
+    new Random().nextBytes(macKey);
 
     myPanelWrapper = new JPanel(new BorderLayout());
     myPanelWrapper.setBackground(JBColor.background());
@@ -187,7 +187,7 @@ public class BrowserPanel implements Closeable {
    * @param file filename
    * @return signed file including mac; ready to be added to a URL
    */
-  private String signFile(String file) {
+  public String signFile(String file) {
     try {
       Mac mac = Mac.getInstance("HmacSHA256");
       SecretKeySpec key = new SecretKeySpec(macKey, "HmacSHA256");
@@ -199,7 +199,7 @@ public class BrowserPanel implements Closeable {
     }
   }
 
-  private boolean checkMac(String file, String mac) {
+  public boolean checkMac(@NotNull String file, @NotNull String mac) {
     try {
       Mac m = Mac.getInstance("HmacSHA256");
       SecretKeySpec key = new SecretKeySpec(macKey, "HmacSHA256");
