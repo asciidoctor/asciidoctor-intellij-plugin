@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
-import com.intellij.util.Base64;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -22,26 +21,19 @@ import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import javax.swing.*;
 import java.awt.*;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -94,12 +86,9 @@ public class BrowserPanel implements Closeable {
   @Nullable
   private String myDejavuCssLink;
 
-  private final byte[] macKey;
+  private SignWithMac signWithMac = new SignWithMac();
 
   public BrowserPanel() {
-    macKey = new byte[8];
-    new Random().nextBytes(macKey);
-
     myPanelWrapper = new JPanel(new BorderLayout());
     myPanelWrapper.setBackground(JBColor.background());
     imagesPath = AsciiDoc.tempImagesPath();
@@ -180,36 +169,12 @@ public class BrowserPanel implements Closeable {
     return null;
   }
 
-  /**
-   * Sign a file to be encoded in a URL inside a document.
-   * The key will change every time the IDE is restarted.
-   *
-   * @param file filename
-   * @return signed file including mac; ready to be added to a URL
-   */
   public String signFile(String file) {
-    try {
-      Mac mac = Mac.getInstance("HmacSHA256");
-      SecretKeySpec key = new SecretKeySpec(macKey, "HmacSHA256");
-      mac.init(key);
-      String hash = Base64.encode(mac.doFinal(file.getBytes(StandardCharsets.UTF_8)));
-      return URLEncoder.encode(file, StandardCharsets.UTF_8.toString()) + "&amp;mac=" + hash;
-    } catch (NoSuchAlgorithmException | InvalidKeyException | UnsupportedEncodingException e) {
-      throw new IllegalStateException("unable to calculate mac", e);
-    }
+    return signWithMac.signFile(file);
   }
 
   public boolean checkMac(@NotNull String file, @NotNull String mac) {
-    try {
-      Mac m = Mac.getInstance("HmacSHA256");
-      SecretKeySpec key = new SecretKeySpec(macKey, "HmacSHA256");
-      m.init(key);
-      String hash = Base64.encode(m.doFinal(file.getBytes(StandardCharsets.UTF_8)));
-      mac = mac.replace(" ", "+");
-      return hash.equals(mac);
-    } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-      throw new IllegalStateException("unable to calculate mac", e);
-    }
+    return signWithMac.checkMac(file, mac);
   }
 
   private String prepareHtml(@NotNull String html) {
