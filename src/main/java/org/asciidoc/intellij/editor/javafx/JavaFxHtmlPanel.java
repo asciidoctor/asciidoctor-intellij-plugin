@@ -422,24 +422,29 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       if (settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")) {
         final String htmlToReplace = StringEscapeUtils.escapeEcmaScript(prepareHtml(html));
         // try to replace the HTML contents using JavaScript to avoid flickering MathML
-        result = (Boolean) JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
-          "function finish() {" +
-            "if ('__IntelliJTools' in window) {" +
-            "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
-            "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ", " + offset + ");" +
-            "}" +
-            "window.JavaPanelBridge && window.JavaPanelBridge.rendered();" +
-            "}" +
-            "function updateContent() { var elem = document.getElementById('content'); if (elem && elem.parentNode) { " +
-            "var div = document.createElement('div');" +
-            "div.innerHTML = '" + htmlToReplace + "'; " +
-            // use MathJax to set the formulas in advance if formulas are present - this takes ~100ms
-            // re-evaluate the content element as it might have been replaced by a concurrent rendering
-            "if ('MathJax' in window && MathJax.Hub.getAllJax().length > 0) { MathJax.Hub.Typeset(div.firstChild, function() { var elem2 = document.getElementById('content'); elem2.parentNode.replaceChild(div.firstChild, elem2); finish(); }); } " +
-            // if no math was present before, replace contents, and do the MathJax typesetting afterwards in case Math has been added
-            "else { elem.parentNode.replaceChild(div.firstChild, elem); MathJax.Hub.Typeset(div.firstChild); finish(); } " +
-            "return true; } else { return false; }}; updateContent();"
-        );
+        try {
+          result = (Boolean) JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
+            "function finish() {" +
+              "if ('__IntelliJTools' in window) {" +
+              "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
+              "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ", " + offset + ");" +
+              "}" +
+              "window.JavaPanelBridge && window.JavaPanelBridge.rendered();" +
+              "}" +
+              "function updateContent() { var elem = document.getElementById('content'); if (elem && elem.parentNode) { " +
+              "var div = document.createElement('div');" +
+              "div.innerHTML = '" + htmlToReplace + "'; " +
+              // use MathJax to set the formulas in advance if formulas are present - this takes ~100ms
+              // re-evaluate the content element as it might have been replaced by a concurrent rendering
+              "if ('MathJax' in window && MathJax.Hub.getAllJax().length > 0) { MathJax.Hub.Typeset(div.firstChild, function() { var elem2 = document.getElementById('content'); elem2.parentNode.replaceChild(div.firstChild, elem2); finish(); }); } " +
+              // if no math was present before, replace contents, and do the MathJax typesetting afterwards in case Math has been added
+              "else { elem.parentNode.replaceChild(div.firstChild, elem); MathJax.Hub.Typeset(div.firstChild); finish(); } " +
+              "return true; } else { return false; }}; updateContent();"
+          );
+        } catch (RuntimeException e) {
+          // might happen when rendered output is not valid HTML due to passtrough content
+          log.warn("unable to use JavaScript for update", e);
+        }
       }
       // if not successful using JavaScript (like on first rendering attempt), set full content
       if (!result) {
