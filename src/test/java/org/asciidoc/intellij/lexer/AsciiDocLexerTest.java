@@ -1182,6 +1182,122 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:BLOCK_ATTRS_END (']')");
   }
 
+  public void testSimpleUrl() {
+    doTest("http://www.gmx.net",
+      "AsciiDoc:URL_LINK ('http://www.gmx.net')");
+  }
+
+  public void testSimpleUrlAtEndOfSentence() {
+    doTest("http://www.gmx.net.",
+      "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
+        "AsciiDoc:TEXT ('.')");
+  }
+
+  public void testSimpleUrlInParentheses() {
+    doTest("(http://www.gmx.net)",
+      "AsciiDoc:LPAREN ('(')\n" +
+        "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
+        "AsciiDoc:RPAREN (')')");
+  }
+
+  public void testSimpleUrlInParenthesesWithColon() {
+    doTest("(http://www.gmx.net):",
+      "AsciiDoc:LPAREN ('(')\n" +
+        "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
+        "AsciiDoc:RPAREN (')')\n" +
+        "AsciiDoc:TEXT (':')");
+  }
+
+  public void testSimpleUrlInParenthesesAndText() {
+    doTest("(http://www.gmx.net) Text",
+      "AsciiDoc:LPAREN ('(')\n" +
+        "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
+        "AsciiDoc:RPAREN (')')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testSimpleUrlInParenthesesWithColonAndText() {
+    doTest("(http://www.gmx.net): Text",
+      "AsciiDoc:LPAREN ('(')\n" +
+        "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
+        "AsciiDoc:RPAREN (')')\n" +
+        "AsciiDoc:END_OF_SENTENCE (':')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testSimpleUrlInParenthesesAtEndOfLine() {
+    doTest("(http://www.gmx.net)\nText",
+      "AsciiDoc:LPAREN ('(')\n" +
+        "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
+        "AsciiDoc:RPAREN (')')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testSimpleUrlInParenthesesWithColonAtEndOfLine() {
+    doTest("(http://www.gmx.net):\nText",
+      "AsciiDoc:LPAREN ('(')\n" +
+        "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
+        "AsciiDoc:RPAREN (')')\n" +
+        "AsciiDoc:END_OF_SENTENCE (':')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testUrlInBrackets() {
+    doTest("<http://www.gmx.net>",
+      "AsciiDoc:URL_START ('<')\n" +
+        "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
+        "AsciiDoc:URL_END ('>')");
+  }
+
+  public void testUrlInBracketsWithSpace() {
+    doTest("<http://www.gmx.net >",
+      "AsciiDoc:LT ('<')\n" +
+        "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:GT ('>')");
+  }
+
+  public void testUrlInBracketsWithSquareBracket() {
+    doTest("<http://www.gmx.net[Hi]>",
+      "AsciiDoc:LT ('<')\n" +
+        "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKTEXT ('Hi')\n" +
+        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:GT ('>')");
+  }
+
+  public void testUrlWithLinkPrefix() {
+    doTest("link:http://www.gmx.net[Hi]",
+      "AsciiDoc:URL_PREFIX ('link:')\n" +
+        "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKTEXT ('Hi')\n" +
+        "AsciiDoc:LINKEND (']')");
+  }
+
+  public void testEmail() {
+    doTest("doc.writer@example.com",
+      "AsciiDoc:URL_EMAIL ('doc.writer@example.com')");
+  }
+
+  public void testEmailWithPrefix() {
+    doTest("mailto:doc.writer@example.com[]",
+      "AsciiDoc:URL_PREFIX ('mailto:')\n" +
+        "AsciiDoc:URL_EMAIL ('doc.writer@example.com')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKEND (']')");
+  }
+
+  public void testEmailWithPrefixButNoSquareBrackets() {
+    doTest("mailto:doc.writer@example.com",
+      "AsciiDoc:TEXT ('mailto:doc.writer@example.com')");
+  }
+
   @Override
   protected void doTest(@NonNls @Language("asciidoc") String text, @Nullable String expected) {
     super.doTest(text, expected);

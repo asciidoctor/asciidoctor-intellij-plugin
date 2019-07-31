@@ -597,7 +597,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       }
 
       String scheme = uri.getScheme();
-      if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) {
+      if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme) || "mailto".equalsIgnoreCase(scheme)) {
         BrowserUtil.browse(uri);
       } else if ("file".equalsIgnoreCase(scheme) || scheme == null) {
         openInEditor(uri);

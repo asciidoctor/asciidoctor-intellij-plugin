@@ -24,6 +24,7 @@ import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocRef;
 import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.asciidoc.intellij.psi.AsciiDocStandardBlock;
+import org.asciidoc.intellij.psi.AsciiDocUrl;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -102,6 +103,9 @@ public class AsciiDocParserDefinition implements ParserDefinition {
     }
     if (node.getElementType() == AsciiDocElementTypes.ATTRIBUTE_DECLARATION_NAME) {
       return new AsciiDocAttributeDeclarationName(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.URL) {
+      return new AsciiDocUrl(node);
     }
     throw new UnsupportedOperationException("Unknown node type " + node.getElementType());
   }

@@ -29,6 +29,18 @@ import java.util.Stack;
 
   private Stack<String> blockStack = new Stack<>();
 
+  private boolean isPrefixedBy(String prefix) {
+    if(getTokenStart() > 0) {
+      char c = zzBuffer.charAt(getTokenStart() -1);
+      for (char p : prefix.toCharArray()) {
+        if (c == p) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   private boolean isUnconstrainedEnd() {
     if(getTokenStart() > 0) {
       char c = zzBuffer.charAt(getTokenStart() -1);
@@ -195,6 +207,9 @@ ANCHORSTART = "[#"
 ANCHOREND = "]"
 LINKSTART = "link:"
 LINKTEXT_START = "["
+INLINE_URL_NO_DELIMITER = (https?|file|ftp|irc): "//" [^\s\[\]<]*([^\s.,;\[\]<\)])
+INLINE_URL_WITH_DELIMITER = (https?|file|ftp|irc): "//" [^\s\[\]<]*([^\s\[\]])
+INLINE_EMAIL_NO_DELIMITER = [[:letter:][:digit:]_](&amp;|[[:letter:][:digit:]_\-.%+])*@[[:letter:][:digit:]][[:letter:][:digit:]_\-.]*\.[a-zA-Z]{2,5}
 LINKEND = "]"
 ATTRIBUTE_NAME_START = ":"
 ATTRIBUTE_NAME = [a-zA-Z0-9_]+ [a-zA-Z0-9_-]*
@@ -222,6 +237,11 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state HEADING
 %state ANCHORID
 %state ANCHORREFTEXT
+
+%state INLINE_URL_NO_DELIMITER
+%state INLINE_URL_IN_BRACKETS
+%state INLINE_URL_WITH_PREFIX
+%state INLINE_EMAIL_WITH_PREFIX
 
 %state LISTING_BLOCK
 %state LISTING_NO_DELIMITER
@@ -737,10 +757,49 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                              return textFormat();
                            }
                          }
+  {INLINE_URL_NO_DELIMITER} {
+        if (isEscaped() || isPrefixedBy(":/")) {
+          return textFormat();
+        } else {
+          yypushstate();
+          yypushback(yylength());
+          yybegin(INLINE_URL_NO_DELIMITER);
+        }
+  }
+  {INLINE_EMAIL_NO_DELIMITER} {
+        if (isEscaped() || isPrefixedBy(":/")) {
+          return textFormat();
+        } else {
+          return AsciiDocTokenTypes.URL_EMAIL;
+        }
+  }
+  "<" / {INLINE_URL_WITH_DELIMITER} ">" [^\[] {
+        yypushstate();
+        yybegin(INLINE_URL_IN_BRACKETS);
+        return AsciiDocTokenTypes.URL_START;
+  }
+  "<" / {INLINE_URL_WITH_DELIMITER} ">" "[" {
+        return AsciiDocTokenTypes.LT;
+  }
+  "<" / {INLINE_URL_WITH_DELIMITER} ">" {
+        yypushstate();
+        yybegin(INLINE_URL_IN_BRACKETS);
+        return AsciiDocTokenTypes.URL_START;
+  }
+  {LINKSTART} / {INLINE_URL_WITH_DELIMITER} "[" [^\n]* "]"  {
+        yypushstate();
+        yybegin(INLINE_URL_WITH_PREFIX);
+        return AsciiDocTokenTypes.URL_PREFIX;
+  }
+  mailto: / [^\[\n \t]* "[" [^\n]* "]"  {
+        yypushstate();
+        yybegin(INLINE_EMAIL_WITH_PREFIX);
+        return AsciiDocTokenTypes.URL_PREFIX;
+  }
   // allow autocomplete even if brackets have not been entered yet
   {LINKSTART} / [^\[\n \t]* ( {AUTOCOMPLETE} | {AUTOCOMPLETE}? {LINKTEXT_START} [^\]\n]* {LINKEND}) {
                          if (!isEscaped()) {
-                           yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART;
+                           yypushstate(); yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART;
                          } else {
                            return textFormat();
                          }
@@ -788,6 +847,38 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { yybegin(INSIDE_LINE); return textFormat(); }
 }
 
+<INLINE_URL_NO_DELIMITER> {
+  ( ")"? [;:.,] | ")" ) $    { yypushback(yylength()); yypopstate(); }
+  ( ")"? [;:.,] ) [^\s\[\]]  { return AsciiDocTokenTypes.URL_LINK; }
+  ( ")" ) [^\s\[\];:.,]      { return AsciiDocTokenTypes.URL_LINK; }
+  ( ")"? [;:.,] | ")" )      { yypushback(yylength()); yypopstate(); }
+
+  [.,] {SPACE}+ $      { yypushback(yylength()); yypopstate(); }
+  "["                  { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
+  [\s\[\]]             { yypushback(yylength()); yypopstate(); }
+  [^]                  { return AsciiDocTokenTypes.URL_LINK; }
+}
+
+<INLINE_URL_IN_BRACKETS> {
+  ">" $                { yypopstate(); return AsciiDocTokenTypes.URL_END; }
+  ">" [^\s\[\]]* / ">" { return AsciiDocTokenTypes.URL_LINK; }
+  ">"                  { return AsciiDocTokenTypes.URL_END; }
+  [\s\[\]]             { yypushback(yylength()); yypopstate(); }
+  [^]                  { return AsciiDocTokenTypes.URL_LINK; }
+}
+
+<INLINE_URL_WITH_PREFIX> {
+  "["                  { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
+  [\s\[\]]             { yypushback(yylength()); yypopstate(); }
+  [^]                  { return AsciiDocTokenTypes.URL_LINK; }
+}
+
+<INLINE_EMAIL_WITH_PREFIX> {
+  "["                  { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
+  [\s\[\]]             { yypushback(yylength()); yypopstate(); }
+  [^]                  { return AsciiDocTokenTypes.URL_EMAIL; }
+}
+
 <REF, REFTEXT> {
   {REFEND}             { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.REFEND; }
 }
@@ -810,7 +901,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <LINKFILE, LINKANCHOR> {
   {LINKTEXT_START}     { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
-  [ \t]                { yypushback(1); yybegin(INSIDE_LINE); }
+  [ \t]                { yypushback(1); yypopstate(); }
 }
 
 <LINKFILE> {
@@ -824,7 +915,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <LINKTEXT> {
-  {LINKEND}            { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.LINKEND; }
+  {LINKEND}            { yypopstate(); return AsciiDocTokenTypes.LINKEND; }
   [^]                  { return AsciiDocTokenTypes.LINKTEXT; }
 }
 

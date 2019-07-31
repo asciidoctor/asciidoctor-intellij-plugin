@@ -52,6 +52,11 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SEPARATOR;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TITLE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_EMAIL;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_END;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_LINK;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_PREFIX;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_START;
 
 /**
  * @author yole
@@ -128,6 +133,9 @@ public class AsciiDocParserImpl {
         }
         myPreBlockMarker.done(AsciiDocElementTypes.BLOCK_MACRO);
         myPreBlockMarker = null;
+        continue;
+      } else if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
+        parseUrl();
         continue;
       } else if (at(INLINE_MACRO_ID)) {
         newLines = 0;
@@ -238,6 +246,31 @@ public class AsciiDocParserImpl {
     dropPreBlock();
     closeBlocks();
     closeSections(0);
+  }
+
+  private void parseUrl() {
+    newLines = 0;
+    PsiBuilder.Marker inlineMacroMarker = myBuilder.mark();
+    // avoid combining two links or two emails
+    boolean seenLinkOrEmail = false;
+    while ((at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX) || at(LINKTEXT_START) || at(LINKTEXT) || at(URL_END) || at(LINKEND))
+      && newLines == 0) {
+      if (at(URL_LINK) || at(URL_EMAIL)) {
+        if (!seenLinkOrEmail) {
+          seenLinkOrEmail = true;
+          next();
+          continue;
+        } else {
+          break;
+        }
+      }
+      if (at(URL_END) || at(LINKEND)) {
+        next();
+        break;
+      }
+      next();
+    }
+    inlineMacroMarker.done(AsciiDocElementTypes.URL);
   }
 
   private void closeBlocks() {

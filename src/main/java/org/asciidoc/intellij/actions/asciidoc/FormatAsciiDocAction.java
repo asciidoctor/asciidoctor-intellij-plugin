@@ -22,7 +22,7 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
   public abstract String updateSelection(String selection, boolean word);
 
   @Override
-  public final void actionPerformed(@NotNull AnActionEvent event) {
+  public void actionPerformed(@NotNull AnActionEvent event) {
 
     final Project project = event.getProject();
     if (project == null) {
@@ -88,7 +88,7 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
 
     final int offset = editor.getCaretModel().getOffset();
     if (offset >= doc.getTextLength()) {
-      return false;
+      return true;
     }
 
     final char c = doc.getCharsSequence().charAt(offset);
@@ -98,9 +98,14 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
   protected void selectText(Editor editor) {
     SelectionModel selectionModel = editor.getSelectionModel();
     if (!selectionModel.hasSelection()) {
-      // if whitespace is at caret, the complete document would be selected, therefore check this first
       if (!isWhitespaceAtCaret(editor)) {
+        int selectionStart = selectionModel.getSelectionStart();
+        int selectionEnd = selectionModel.getSelectionEnd();
         selectionModel.selectWordAtCaret(false);
+        // if cursor was on empty line, whole document will be selected
+        if (selectionModel.getSelectionStart() == 0 && selectionModel.getSelectionEnd() == editor.getDocument().getTextLength()) {
+          selectionModel.setSelection(selectionStart, selectionEnd);
+        }
       }
     }
   }

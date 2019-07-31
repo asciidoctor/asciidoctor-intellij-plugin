@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.26 (work in progress)
+
+- improve handling of emails and links in editor (#307)
+
 === 0.28.25
 
 - security review for in-browser preview, adding mac to prevent browser to retrieve arbitrary file, hiding referrer from externally retrieved resources (#303)
