@@ -24,7 +24,7 @@ public final class AsciiDocPreviewSettings {
   public static final AsciiDocPreviewSettings DEFAULT = new AsciiDocPreviewSettings();
 
   @Attribute("DefaultSplitLayout")
-  @NotNull
+  @Nullable // can be returned as null when upgrading from an old release
   private SplitFileEditor.SplitEditorLayout mySplitEditorLayout = SplitFileEditor.SplitEditorLayout.SPLIT;
 
   @Tag("HtmlPanelProviderInfo")
@@ -40,7 +40,7 @@ public final class AsciiDocPreviewSettings {
   }
 
   @Attribute("PreviewTheme")
-  @NotNull
+  @Nullable // can be returned as null when upgrading from an old release
   private AsciiDocHtmlPanel.PreviewTheme myPreviewTheme = AsciiDocHtmlPanel.PreviewTheme.INTELLIJ;
 
   @Property(surroundWithTag = false)
@@ -57,10 +57,9 @@ public final class AsciiDocPreviewSettings {
   @Attribute("EnableInjections")
   private boolean myEnableInjections = true;
 
-  // stored with prefix "Experimental" for now while it is disabled.
-  // will be enabled by default once it is no longer experimental
-  @Attribute("ExperimentalInplacePreviewRefresh")
-  private boolean myInplacePreviewRefresh = false;
+  // can be disabled if it causes problems for a user. Option to disable it will be removed once the feature is stable
+  @Attribute("InplacePreviewRefresh")
+  private boolean myInplacePreviewRefresh = true;
 
   @Attribute("DisabledInjectionsByLanguage")
   @Nullable

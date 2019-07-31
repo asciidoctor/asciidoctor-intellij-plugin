@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.29.x (work in progress)
 
 - improve handling of emails and links in editor (#307)
+- no-flicker preview for JavaFX will is now enabled by default (#241)
 
 === 0.28.26
 
