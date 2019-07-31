@@ -275,6 +275,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 %state LINKSTART
 %state LINKFILE
+%state LINKURL
 %state LINKANCHOR
 %state LINKTEXT
 %state LINKEND
@@ -786,11 +787,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         yybegin(INLINE_URL_IN_BRACKETS);
         return AsciiDocTokenTypes.URL_START;
   }
-  {LINKSTART} / {INLINE_URL_WITH_DELIMITER} "[" [^\n]* "]"  {
-        yypushstate();
-        yybegin(INLINE_URL_WITH_PREFIX);
-        return AsciiDocTokenTypes.URL_PREFIX;
-  }
   mailto: / [^\[\n \t]* "[" [^\n]* "]"  {
         yypushstate();
         yybegin(INLINE_EMAIL_WITH_PREFIX);
@@ -899,15 +895,20 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { return AsciiDocTokenTypes.REF; }
 }
 
-<LINKFILE, LINKANCHOR> {
+<LINKFILE, LINKANCHOR, LINKURL> {
   {LINKTEXT_START}     { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
   [ \t]                { yypushback(1); yypopstate(); }
 }
 
 <LINKFILE> {
   "#"                  { yybegin(LINKANCHOR); return AsciiDocTokenTypes.SEPARATOR; }
+  [a-zA-Z]+ ":"         { yybegin(LINKURL); return AsciiDocTokenTypes.URL_LINK; }
   {AUTOCOMPLETE}       { return AsciiDocTokenTypes.LINKFILE; }
   [^]                  { return AsciiDocTokenTypes.LINKFILE; }
+}
+
+<LINKURL> {
+  [^]                  { return AsciiDocTokenTypes.URL_LINK; }
 }
 
 <LINKANCHOR> {

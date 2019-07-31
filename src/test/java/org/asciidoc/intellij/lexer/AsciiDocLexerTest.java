@@ -2,7 +2,6 @@ package org.asciidoc.intellij.lexer;
 
 import com.intellij.lexer.Lexer;
 import com.intellij.testFramework.LexerTestCase;
-import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
@@ -1273,7 +1272,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testUrlWithLinkPrefix() {
     doTest("link:http://www.gmx.net[Hi]",
-      "AsciiDoc:URL_PREFIX ('link:')\n" +
+      "AsciiDoc:LINKSTART ('link:')\n" +
         "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
         "AsciiDoc:LINKTEXT_START ('[')\n" +
         "AsciiDoc:LINKTEXT ('Hi')\n" +
@@ -1299,7 +1298,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   @Override
-  protected void doTest(@NonNls @Language("asciidoc") String text, @Nullable String expected) {
+  protected void doTest(@NonNls String text, @Nullable String expected) {
     super.doTest(text, expected);
   }
 

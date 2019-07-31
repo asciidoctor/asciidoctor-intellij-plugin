@@ -120,19 +120,7 @@ public class AsciiDocParserImpl {
         SectionMarker newMarker = new SectionMarker(level, marker);
         mySectionStack.push(newMarker);
       } else if (at(BLOCK_MACRO_ID)) {
-        newLines = 0;
-        markPreBlock();
-        next();
-        while ((at(BLOCK_MACRO_BODY) || at(BLOCK_ATTR_NAME) || at(BLOCK_ATTR_VALUE) || at(SEPARATOR) || at(BLOCK_ATTRS_START) || at(BLOCK_ATTRS_END))
-          && newLines == 0) {
-          if (at(BLOCK_ATTRS_END)) {
-            next();
-            break;
-          }
-          next();
-        }
-        myPreBlockMarker.done(AsciiDocElementTypes.BLOCK_MACRO);
-        myPreBlockMarker = null;
+        parseBlockMacro();
         continue;
       } else if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
         parseUrl();
@@ -170,6 +158,10 @@ public class AsciiDocParserImpl {
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
         while (at(BLOCK_ATTR_NAME) || at(BLOCK_ATTR_VALUE) || at(BLOCK_ATTRS_END) || at(SEPARATOR)) {
+          if (at(BLOCK_ATTRS_END)) {
+            next();
+            break;
+          }
           next();
         }
         blockAttrsMarker.done(AsciiDocElementTypes.BLOCK_ATTRIBUTES);
@@ -204,7 +196,11 @@ public class AsciiDocParserImpl {
       } else if (at(LINKSTART)) {
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
-        while (at(LINKFILE) || at(LINKANCHOR) || at(LINKTEXT_START) || at(SEPARATOR) || at(LINKTEXT) || at(LINKEND)) {
+        while (at(LINKFILE) || at(URL_LINK) || at(LINKANCHOR) || at(LINKTEXT_START) || at(SEPARATOR) || at(LINKTEXT) || at(LINKEND)) {
+          if (at(LINKEND)) {
+            next();
+            break;
+          }
           next();
         }
         blockAttrsMarker.done(AsciiDocElementTypes.LINK);
@@ -227,6 +223,10 @@ public class AsciiDocParserImpl {
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
         while (at(ATTRIBUTE_REF) || at(ATTRIBUTE_REF_END)) {
+          if (at(ATTRIBUTE_REF_END)) {
+            next();
+            break;
+          }
           next();
         }
         blockAttrsMarker.done(AsciiDocElementTypes.ATTRIBUTE_REF);
@@ -246,6 +246,22 @@ public class AsciiDocParserImpl {
     dropPreBlock();
     closeBlocks();
     closeSections(0);
+  }
+
+  private void parseBlockMacro() {
+    newLines = 0;
+    markPreBlock();
+    next();
+    while ((at(BLOCK_MACRO_BODY) || at(BLOCK_ATTR_NAME) || at(BLOCK_ATTR_VALUE) || at(SEPARATOR) || at(BLOCK_ATTRS_START) || at(BLOCK_ATTRS_END))
+      && newLines == 0) {
+      if (at(BLOCK_ATTRS_END)) {
+        next();
+        break;
+      }
+      next();
+    }
+    myPreBlockMarker.done(AsciiDocElementTypes.BLOCK_MACRO);
+    myPreBlockMarker = null;
   }
 
   private void parseUrl() {
