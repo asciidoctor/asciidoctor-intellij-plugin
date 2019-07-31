@@ -15,6 +15,7 @@
   <idea-version since-build="172.2465.6"/> <!-- 2017.2 -->
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html -->
   <depends>com.intellij.modules.lang</depends>
+  <depends optional="true" config-file="java-features.xml">com.intellij.modules.java</depends>
 
   <application-components>
     <!-- Add your application components here -->
@@ -203,7 +204,6 @@
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
     <problemFileHighlightFilter
       implementation="org.asciidoc.intellij.problemHighlighter.AsciiDocProblemFileHighlightFilter"/>
-    <compiler.buildTargetScopeProvider implementation="org.asciidoc.intellij.builder.AsciiDocTargetScopeProvider"/>
     <colorSettingsPage implementation="org.asciidoc.intellij.highlighting.AsciiDocColorSettingsPage"/>
     <additionalTextAttributes scheme="Default" file="colorSchemes/AsciidocDefault.xml"/>
     <additionalTextAttributes scheme="Darcula" file="colorSchemes/AsciidocDarcula.xml"/>
