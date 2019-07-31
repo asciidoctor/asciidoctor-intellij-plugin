@@ -11,6 +11,10 @@ This document provides a high-level view of the changes introduced by release.
 
 - improve handling of emails and links in editor (#307)
 
+=== 0.28.26
+
+- restore compatibility with non-Java IDEs, allow pre-bundling of plugin with IDE (#309)
+
 === 0.28.25
 
 - security review for in-browser preview, adding mac to prevent browser to retrieve arbitrary file, hiding referrer from externally retrieved resources (#303)
