@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.28.26 (work in progress)
+=== 0.29.x (work in progress)
 
 - improve handling of emails and links in editor (#307)
 
