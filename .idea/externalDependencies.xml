@@ -3,7 +3,6 @@
   <component name="ExternalDependencies">
     <plugin id="CheckStyle-IDEA" />
     <plugin id="PsiViewer" />
-    <plugin id="mobi.hsz.idea.gitignore" />
     <plugin id="org.jetbrains.idea.grammar" />
   </component>
 </project>
