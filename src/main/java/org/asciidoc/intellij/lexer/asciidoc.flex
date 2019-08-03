@@ -672,7 +672,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {MONO}               { if(singlemono && !doublemono && isUnconstrainedEnd()) {
                            singlemono = false; return AsciiDocTokenTypes.MONO_END;
                          } else {
-                           return textFormat();
+                           // might be a starting MONO, give it a second try
+                           // didn't use look-ahead here to avoid problems with {TYPOGRAPHIC_DOUBLE_QUOTE_END}
+                           yypushback(yylength());
+                           yybegin(MONO_SECOND_TRY);
                          }
                        }
   // ITALIC END
@@ -724,18 +727,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                              return AsciiDocTokenTypes.DOUBLE_QUOTE;
                            }
                          }
-  {TYPOGRAPHIC_DOUBLE_QUOTE_END} / [^\`\n \t] {WORD}* {MONO} {
-                           // have the same long look-ahead like in MONO_SECOND_TRY here to increase the rule's priority
-                           // `" might be a typographic quote end of the start of a monospaced quoted part
-                           // if it doesn't match, give MONO start a second try.
-                           if (typographicquote && isUnconstrainedEnd()) {
-                             typographicquote = false;
-                             return AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END;
-                           } else {
-                             yypushback(yylength());
-                             yybegin(MONO_SECOND_TRY);
-                           }
-                         }
   {TYPOGRAPHIC_DOUBLE_QUOTE_END} {
                            // `" might be a typographic quote end of the start of a monospaced quoted part
                            // if it doesn't match, give MONO start a second try.
@@ -761,8 +752,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                              typographicquote = false;
                              return AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END;
                            } else {
-                             yypushback(1);
-                             return textFormat();
+                             yypushback(yylength());
+                             yybegin(MONO_SECOND_TRY);
                            }
                          }
   {INLINE_URL_NO_DELIMITER} {
@@ -829,7 +820,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { return textFormat(); }
 }
 
-<INSIDE_LINE, MONO_SECOND_TRY> {
+<MONO_SECOND_TRY> {
   {MONO} {MONO}? / [^\`\n \t] {WORD}* {MONO} {
                          yybegin(INSIDE_LINE);
                          if(isUnconstrainedStart() && !singlemono && !doublemono) {
@@ -843,6 +834,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                             return textFormat();
                          }
                        }
+  [^]                  { yybegin(INSIDE_LINE); return textFormat(); }
 }
 
 <MONO_SECOND_TRY> {

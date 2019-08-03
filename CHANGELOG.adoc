@@ -7,6 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.29.2 (work in progress)
+
+- restore standard copy-and-paste functionality if contents can be represented as text
+- avoid mistaking typographic quote end as start of monospace
+
 === 0.29.1 (preview, available from Github releases)
 
 - improve handling of emails and links in editor for Ctrl+click and make-link action (#307)
