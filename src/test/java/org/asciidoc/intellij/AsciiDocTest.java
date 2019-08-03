@@ -1,11 +1,11 @@
 package org.asciidoc.intellij;
 
-import java.io.File;
-import java.util.Collections;
-
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.junit.Assert;
+
+import java.io.File;
+import java.util.Collections;
 
 /**
  * @author Alexander Schwartz 2018
@@ -30,7 +30,6 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testShouldRenderPlainAsciidoc() {
     String html = asciidoc.render("this is *bold*.", Collections.emptyList());
-    System.out.println(html);
     Assert.assertTrue(html.contains("<strong>bold</strong>"));
   }
 
