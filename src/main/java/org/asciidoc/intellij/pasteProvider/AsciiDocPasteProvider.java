@@ -52,6 +52,11 @@ public class AsciiDocPasteProvider implements PasteProvider {
       return false;
     }
     CopyPasteManager manager = CopyPasteManager.getInstance();
+    if (manager.areDataFlavorsAvailable(DataFlavor.getTextPlainUnicodeFlavor())) {
+      /* if the clipboard contents are text, prefer standard paste operation before trying to paste it as an image
+      the user can still try the "paste-as-image" operation from the editor toolbar */
+      return false;
+    }
     if (manager.areDataFlavorsAvailable(DataFlavor.imageFlavor)) {
       return true;
     }

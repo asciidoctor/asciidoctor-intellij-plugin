@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.28.27
+
+- restore standard copy-and-paste functionality if contents can be represented as text
+
 === 0.28.26
 
 - restore compatibility with non-Java IDEs, allow pre-bundling of plugin with IDE (#309)
