@@ -14,6 +14,10 @@ This document provides a high-level view of the changes introduced by release.
 - allow attribute references nested in attribute declarations (#307)
 - no-flicker preview for JavaFX will is now enabled by default (#241)
 
+=== 0.28.27
+
+- restore standard copy-and-paste functionality if contents can be represented as text
+
 === 0.28.26
 
 - restore compatibility with non-Java IDEs, allow pre-bundling of plugin with IDE (#309)
