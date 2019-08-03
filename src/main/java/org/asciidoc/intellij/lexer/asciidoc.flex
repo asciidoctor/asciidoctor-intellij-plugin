@@ -339,6 +339,13 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <ATTRIBUTE_VAL> {
+  {ATTRIBUTE_REF_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} {
+                         if (!isEscaped()) {
+                           yypushstate(); yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
+                         } else {
+                           return AsciiDocTokenTypes.ATTRIBUTE_VAL;
+                         }
+                       }
   /*Value continue on the next line if the line is ended by a space followed by a backslash*/
   {SPACE} "\\" {SPACE}* "\n" { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
   "\n"                 { yyinitialIfNotInBlock(); return AsciiDocTokenTypes.LINE_BREAK; }
@@ -693,7 +700,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                         }
   {ATTRIBUTE_REF_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} {
                          if (!isEscaped()) {
-                           yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
+                           yypushstate(); yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
                          } else {
                            return textFormat();
                          }
@@ -811,7 +818,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
       }
   {ATTRIBUTE_REF_START} / [^}\n ]* {AUTOCOMPLETE} {
                          if (!isEscaped()) {
-                           yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
+                           yypushstate(); yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
                          } else {
                            return textFormat();
                          }
@@ -921,7 +928,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <ATTRIBUTE_REF_START, ATTRIBUTE_REF> {
-  {ATTRIBUTE_REF_END}  { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ATTRIBUTE_REF_END; }
+  {ATTRIBUTE_REF_END}  { yypopstate(); return AsciiDocTokenTypes.ATTRIBUTE_REF_END; }
 }
 
 <ATTRIBUTE_REF> {

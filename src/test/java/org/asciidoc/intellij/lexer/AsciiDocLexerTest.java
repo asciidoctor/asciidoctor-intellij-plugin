@@ -194,6 +194,18 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRIBUTE_VAL (' value')");
   }
 
+  public void testAttributeWithNestedAttributeAndValue() {
+    doTest(":attribute: {otherattr}value",
+      "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME ('attribute')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME_END (':')\n" +
+        "AsciiDoc:ATTRIBUTE_VAL (' ')\n" +
+        "AsciiDoc:ATTRIBUTE_REF_START ('{')\n" +
+        "AsciiDoc:ATTRIBUTE_REF ('otherattr')\n" +
+        "AsciiDoc:ATTRIBUTE_REF_END ('}')\n" +
+        "AsciiDoc:ATTRIBUTE_VAL ('value')");
+  }
+
   /**
    * Value continue on the next line if the line is ended by a space followed by a backslash.
    */

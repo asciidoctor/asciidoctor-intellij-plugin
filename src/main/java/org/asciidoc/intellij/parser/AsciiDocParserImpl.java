@@ -206,30 +206,10 @@ public class AsciiDocParserImpl {
         blockAttrsMarker.done(AsciiDocElementTypes.LINK);
         continue;
       } else if (at(ATTRIBUTE_NAME_START)) {
-        PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
-        next();
-        while (at(ATTRIBUTE_NAME) || at(ATTRIBUTE_NAME_END) || at(ATTRIBUTE_VAL)) {
-          if (at(ATTRIBUTE_NAME)) {
-            PsiBuilder.Marker blockIdMarker = myBuilder.mark();
-            next();
-            blockIdMarker.done(AsciiDocElementTypes.ATTRIBUTE_DECLARATION_NAME);
-          } else {
-            next();
-          }
-        }
-        blockAttrsMarker.done(AsciiDocElementTypes.ATTRIBUTE_DECLARATION);
+        parseAttributeDeclaration();
         continue;
       } else if (at(ATTRIBUTE_REF_START)) {
-        PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
-        next();
-        while (at(ATTRIBUTE_REF) || at(ATTRIBUTE_REF_END)) {
-          if (at(ATTRIBUTE_REF_END)) {
-            next();
-            break;
-          }
-          next();
-        }
-        blockAttrsMarker.done(AsciiDocElementTypes.ATTRIBUTE_REF);
+        parseAttributeReference();
         continue;
       }
 
@@ -246,6 +226,38 @@ public class AsciiDocParserImpl {
     dropPreBlock();
     closeBlocks();
     closeSections(0);
+  }
+
+  private void parseAttributeReference() {
+    PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
+    next();
+    while (at(ATTRIBUTE_REF) || at(ATTRIBUTE_REF_END)) {
+      if (at(ATTRIBUTE_REF_END)) {
+        next();
+        break;
+      }
+      next();
+    }
+    blockAttrsMarker.done(AsciiDocElementTypes.ATTRIBUTE_REF);
+  }
+
+  private void parseAttributeDeclaration() {
+    newLines = 0;
+    PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
+    next();
+    while ((at(ATTRIBUTE_NAME) || at(ATTRIBUTE_NAME_END) || at(ATTRIBUTE_VAL) || at(ATTRIBUTE_REF_START))
+      && newLines == 0) {
+      if (at(ATTRIBUTE_NAME)) {
+        PsiBuilder.Marker blockIdMarker = myBuilder.mark();
+        next();
+        blockIdMarker.done(AsciiDocElementTypes.ATTRIBUTE_DECLARATION_NAME);
+      } else if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
+      } else {
+        next();
+      }
+    }
+    blockAttrsMarker.done(AsciiDocElementTypes.ATTRIBUTE_DECLARATION);
   }
 
   private void parseBlockMacro() {
