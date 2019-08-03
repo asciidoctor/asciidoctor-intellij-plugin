@@ -11,7 +11,9 @@ import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.util.ProcessingContext;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationReference;
 import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.asciidoc.intellij.psi.AsciiDocFile;
@@ -25,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.PlatformPatterns.psiFile;
@@ -104,9 +108,23 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
           List<PsiReference> fileReferences = findFileReferences(element);
           references.addAll(fileReferences);
 
-          List<PsiReference> urlReferences = findUrlReferences(element);
+          List<PsiReference> urlReferences = findUrlReferencesInLinks(element);
           references.addAll(urlReferences);
 
+          return references.toArray(new PsiReference[0]);
+        }
+      });
+
+    final PsiElementPattern.Capture<AsciiDocAttributeDeclaration> attributeDeclaration =
+      psiElement(AsciiDocAttributeDeclaration.class).inFile(psiFile(AsciiDocFile.class));
+
+    registrar.registerReferenceProvider(attributeDeclaration,
+      new PsiReferenceProvider() {
+        @NotNull
+        @Override
+        public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
+                                                     @NotNull ProcessingContext context) {
+          List<PsiReference> references = findUrlReferencesInAttributeDefinition(element);
           return references.toArray(new PsiReference[0]);
         }
       });
@@ -155,7 +173,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
     }
   }
 
-  private List<PsiReference> findUrlReferences(PsiElement element) {
+  private List<PsiReference> findUrlReferencesInLinks(PsiElement element) {
     PsiElement child = element.getFirstChild();
     while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.URL_LINK) {
       child = child.getNextSibling();
@@ -163,11 +181,34 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
     if (child != null) {
       return Collections.singletonList(new WebReference(
         element,
-        TextRange.create(child.getStartOffsetInParent(), child.getStartOffsetInParent() + child.getTextLength()))
+        TextRange.create(child.getStartOffsetInParent(), child.getStartOffsetInParent() + child.getTextLength()),
+        StringEscapeUtils.unescapeHtml4(child.getText()))
       );
     } else {
       return Collections.emptyList();
     }
+  }
+
+  private Pattern urlInAttributeVal = Pattern.compile("(https?|file|ftp|irc)://[^\\s\\[\\]<]*([^\\s\\[\\]])");
+
+  private List<PsiReference> findUrlReferencesInAttributeDefinition(PsiElement element) {
+    PsiElement child = element.getFirstChild();
+    List<PsiReference> result = new ArrayList<>();
+    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_VAL) {
+      child = child.getNextSibling();
+    }
+    if (child != null) {
+      Matcher urls = urlInAttributeVal.matcher(child.getText());
+      while (urls.find()) {
+        result.add(new WebReference(
+          element,
+          TextRange.create(child.getStartOffsetInParent() + urls.start(),
+            child.getStartOffsetInParent() + urls.end()),
+          StringEscapeUtils.unescapeHtml4(urls.group())
+        ));
+      }
+    }
+    return result;
   }
 
 }
