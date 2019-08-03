@@ -7,9 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.29.x (work in progress)
+=== 0.29.1 (preview, available from Github releases)
 
-- improve handling of emails and links in editor (#307)
+- improve handling of emails and links in editor for Ctrl+click and make-link action (#307)
+- add navigatable web references for attribute values, also decode HTML entities (#307)
+- allow attribute references nested in attribute declarations (#307)
 - no-flicker preview for JavaFX will is now enabled by default (#241)
 
 === 0.28.26
