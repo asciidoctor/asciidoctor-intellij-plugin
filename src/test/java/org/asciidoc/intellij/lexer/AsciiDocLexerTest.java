@@ -716,7 +716,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TYPOGRAPHIC_SINGLE_QUOTE_END ('`'')");
   }
 
-  public void testMonospaceWithQuotesAndQuestionMark() {
+  public void testMultipleDoubleTypographicQuotes() {
     doTest("\"`test?`\" \"`test?`\"",
       "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_START ('\"`')\n" +
         "AsciiDoc:TEXT ('test?')\n" +
@@ -725,6 +725,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_START ('\"`')\n" +
         "AsciiDoc:TEXT ('test?')\n" +
         "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_END ('`\"')");
+  }
+
+  public void testMultiplSingleTypographicQuotes() {
+    doTest("'`test?`' '`test?`'",
+      "AsciiDoc:TYPOGRAPHIC_SINGLE_QUOTE_START (''`')\n" +
+        "AsciiDoc:TEXT ('test?')\n" +
+        "AsciiDoc:TYPOGRAPHIC_SINGLE_QUOTE_END ('`'')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TYPOGRAPHIC_SINGLE_QUOTE_START (''`')\n" +
+        "AsciiDoc:TEXT ('test?')\n" +
+        "AsciiDoc:TYPOGRAPHIC_SINGLE_QUOTE_END ('`'')");
   }
 
   public void testMonospaceWithQuotes() {
