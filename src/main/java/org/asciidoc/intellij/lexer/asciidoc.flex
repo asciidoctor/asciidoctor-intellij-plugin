@@ -524,7 +524,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          }
                        }
   {CONTINUATION} / {SPACE}* "\n" {
-                         yybegin(INSIDE_LINE);
+                         yybegin(DELIMITER);
                          return AsciiDocTokenTypes.CONTINUATION;
                        }
   [^]                  { yypushback(yylength()); yybegin(AFTER_SPACE); }

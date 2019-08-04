@@ -260,6 +260,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testContinuationThenTitle() {
+    doTest("+\n.Title",
+      "AsciiDoc:CONTINUATION ('+')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TITLE ('.Title')");
+  }
+
   public void testBoldSimple() {
     doTest("Hello *bold* world",
       "AsciiDoc:TEXT ('Hello')\n" +
