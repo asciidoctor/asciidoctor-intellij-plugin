@@ -564,7 +564,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   "Dr." | "Prof." | "Ing." / {SPACE}* [^ \t\n] { return textFormat(); } // title inside a line as text if inside of a line
   [A-Z] "." / {SPACE}* [^ \t\n] { return textFormat(); } // initials inside a line as text if inside of a line
   ".." "."* / {SPACE}* [^ \t\n] { return textFormat(); } // avoid end of sentence for "..." if inside of a line
-  {END_OF_SENTENCE} / {SPACE} [^A-Z]* [a-z] // standard text if followed by lower case character
+  {END_OF_SENTENCE} / {SPACE} (!:uppercase:)* :lowercase: // standard text if followed by lower case character
                        { return textFormat(); }
   {END_OF_SENTENCE} / {SPACE}* \n // end of sentence at end of line
                        { if (!doublemono && !singlemono) {
