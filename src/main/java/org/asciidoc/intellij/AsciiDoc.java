@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -111,7 +112,7 @@ public class AsciiDoc {
         md = calcMd(projectBasePath, extensions);
       } else {
         extensionsEnabled = false;
-        md = calcMd(projectBasePath, Collections.EMPTY_LIST);
+        md = calcMd(projectBasePath, Collections.emptyList());
       }
       if (!md.equals(hash)) {
         if (asciidoctor != null) {
@@ -173,7 +174,7 @@ public class AsciiDoc {
             asciidoctor.unregisterLogHandler(logHandler);
           }
           SystemOutputHijacker.deregister();
-          notify(boasOut, boasErr, Collections.EMPTY_LIST);
+          notify(boasOut, boasErr, Collections.emptyList());
           Thread.currentThread().setContextClassLoader(old);
         }
       }
@@ -183,12 +184,13 @@ public class AsciiDoc {
   /**
    * Calculate a hash for the extensions.
    * Hash will change if the project has been changed, of the contents of files have changed.
-   * TODO: hash will not change if files referenced in extensions changed.
+   * This will also include all files in subdirectories of the extension when creating the hash.
    */
   private String calcMd(String projectBasePath, List<String> extensions) {
     try {
       MessageDigest md = MessageDigest.getInstance("MD5");
       md.update(projectBasePath.getBytes(StandardCharsets.UTF_8));
+      List<Path> folders = new ArrayList<>();
       for (String s : extensions) {
         try {
           InputStream is = new FileInputStream(s);
@@ -196,6 +198,13 @@ public class AsciiDoc {
             md.update(IOUtils.toByteArray(is));
           } finally {
             IOUtils.closeQuietly(is);
+          }
+          Path parent = FileSystems.getDefault().getPath(s).getParent();
+          if (!folders.contains(parent)) {
+            folders.add(parent);
+            for (Path p : Files.newDirectoryStream(parent, path -> Files.isDirectory(path))) {
+              scanForRubyFiles(p, md);
+            }
           }
         } catch (IOException e) {
           throw new RuntimeException("unable to read file", e);
@@ -209,6 +218,22 @@ public class AsciiDoc {
       return sb.toString();
     } catch (NoSuchAlgorithmException e) {
       throw new RuntimeException("unknown hash", e);
+    }
+  }
+
+  private void scanForRubyFiles(Path path, MessageDigest md) throws IOException {
+    for (Path p : Files.newDirectoryStream(path)) {
+      if (Files.isDirectory(p)) {
+        scanForRubyFiles(p, md);
+      }
+      if (Files.isRegularFile(p) && Files.isReadable(p)) {
+        InputStream is = Files.newInputStream(p);
+        try {
+          md.update(IOUtils.toByteArray(is));
+        } finally {
+          IOUtils.closeQuietly(is);
+        }
+      }
     }
   }
 
@@ -269,29 +294,31 @@ public class AsciiDoc {
   public static String prependConfig(Document document, Project project, IntConsumer offset) {
     VirtualFile currentFile = FileDocumentManager.getInstance().getFile(document);
     StringBuilder tempContent = new StringBuilder();
-    VirtualFile folder = currentFile.getParent();
-    if (folder != null) {
-      while (true) {
-        for (String configName : new String[]{".asciidoctorconfig", ".asciidoctorconfig.adoc"}) {
-          VirtualFile configFile = folder.findChild(configName);
-          if (configFile != null &&
-            !currentFile.equals(configFile)) {
-            Document config = FileDocumentManager.getInstance().getDocument(configFile);
-            if (config != null) {
-              // prepend the new config, followed by two newlines to avoid sticking-together content
-              tempContent.insert(0, "\n\n");
-              tempContent.insert(0, config.getText());
-              // prepend the location of the config file
-              tempContent.insert(0, ":asciidoctorconfigdir: " + folder.getCanonicalPath() + "\n\n");
+    if (currentFile != null) {
+      VirtualFile folder = currentFile.getParent();
+      if (folder != null) {
+        while (true) {
+          for (String configName : new String[]{".asciidoctorconfig", ".asciidoctorconfig.adoc"}) {
+            VirtualFile configFile = folder.findChild(configName);
+            if (configFile != null &&
+              !currentFile.equals(configFile)) {
+              Document config = FileDocumentManager.getInstance().getDocument(configFile);
+              if (config != null) {
+                // prepend the new config, followed by two newlines to avoid sticking-together content
+                tempContent.insert(0, "\n\n");
+                tempContent.insert(0, config.getText());
+                // prepend the location of the config file
+                tempContent.insert(0, ":asciidoctorconfigdir: " + folder.getCanonicalPath() + "\n\n");
+              }
             }
           }
-        }
-        if (folder.getPath().equals(project.getBasePath())) {
-          break;
-        }
-        folder = folder.getParent();
-        if (folder == null) {
-          break;
+          if (folder.getPath().equals(project.getBasePath())) {
+            break;
+          }
+          folder = folder.getParent();
+          if (folder == null) {
+            break;
+          }
         }
       }
     }

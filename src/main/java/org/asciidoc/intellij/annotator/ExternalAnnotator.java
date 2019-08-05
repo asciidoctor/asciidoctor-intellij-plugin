@@ -116,6 +116,11 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
           // logRecords created in the prepended .asciidoctorconfig elements - will be shown on line zero
           lineNumberForAnnotation = 0;
         }
+        if (lineNumberForAnnotation >= annotationResult.getDocument().getLineCount()) {
+          /* an extension (like spring-boot-rest-docs) might run sub-instances of Asciidoctor to parse document snippets.
+          the error messages might have line numbers greater than the current document */
+          lineNumberForAnnotation = 0;
+        }
       }
       Annotation annotation = holder.createAnnotation(severity,
         TextRange.from(
