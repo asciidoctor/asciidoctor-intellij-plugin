@@ -64,8 +64,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   public void testHeading() {
-    doTest("= Abc\nabc\n== Def\ndef",
+    doTest("= Abc\n\nabc\n== Def\ndef",
       "AsciiDoc:HEADING ('= Abc')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -86,8 +87,68 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   public void testHeadingOldStyle() {
-    doTest("Abc\n===\ndef",
+    doTest("Abc\n===\n\ndef",
       "AsciiDoc:HEADING ('Abc\\n===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('def')");
+  }
+
+  public void testHeadingOldStyleWithHeaderSeparatedByBlankLine() {
+    doTest("Abc\n===\nHeader\n\ndef",
+      "AsciiDoc:HEADING ('Abc\\n===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:HEADER ('Header')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('def')");
+  }
+
+  public void testHeadingOldStyleWithHeaderTwoLines() {
+    doTest("Abc\n===\nHeader1\nHeader2\ndef",
+      "AsciiDoc:HEADING ('Abc\\n===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:HEADER ('Header1')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:HEADER ('Header2')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('def')");
+  }
+
+  public void testHeadingNewStyleWithHeaderTwoLines() {
+    doTest("= Abc\nHeader1\nHeader2\ndef",
+      "AsciiDoc:HEADING ('= Abc')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:HEADER ('Header1')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:HEADER ('Header2')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('def')");
+  }
+
+  public void testHeadingMarkdownStyleWithHeaderTwoLines() {
+    doTest("# Abc\nHeader1\nHeader2\ndef",
+      "AsciiDoc:HEADING ('# Abc')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:HEADER ('Header1')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:HEADER ('Header2')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('def')");
+  }
+
+  public void testHeadingOldStyleWithHeaderTwoLinesAndAttribute() {
+    doTest("Abc\n===\nHeader1\n:attr: val\nHeader2\ndef",
+      "AsciiDoc:HEADING ('Abc\\n===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:HEADER ('Header1')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME ('attr')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME_END (':')\n" +
+        "AsciiDoc:ATTRIBUTE_VAL (' val')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:HEADER ('Header2')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('def')");
   }

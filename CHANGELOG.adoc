@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - avoid mistaking typographic quote end as start of monospace
 - recognize title and other block starting elements after a continuation
 - prevent out of bounds exception when handling warning messages returned from Asciidoctor parsing (#311)
+- support author information and attributes in documentation header for reformatting (#314)
 
 === 0.29.1 (preview, available from Github releases)
 

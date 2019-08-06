@@ -24,6 +24,7 @@ import java.util.Stack;
   private boolean doublemono = false;
   private boolean typographicquote = false;
   private String style = null;
+  private int headerLines = 0;
 
   private Stack<Integer> stateStack = new Stack<>();
 
@@ -222,6 +223,7 @@ DESCRIPTION = [^\n]+ {SPACE}* (":"{2,4} | ";;")
 ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 %state MULTILINE
+%state HEADER
 %state PREBLOCK
 %state STARTBLOCK
 %state DELIMITER
@@ -235,6 +237,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state BLOCKID
 %state BLOCKREFTEXT
 %state HEADING
+%state DOCTITLE
 %state ANCHORID
 %state ANCHORREFTEXT
 
@@ -318,6 +321,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
             // push back the second newline of the pattern
             yypushback(1);
             resetFormatting();
+            if (underlining.startsWith("=")) {
+              headerLines = 0;
+              yybegin(HEADER);
+            }
             return AsciiDocTokenTypes.HEADING;
           } else {
             // pass this contents to the single line rules (second priority)
@@ -334,8 +341,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <ATTRIBUTE_NAME> {
   {ATTRIBUTE_NAME_END} { yybegin(ATTRIBUTE_VAL); return AsciiDocTokenTypes.ATTRIBUTE_NAME_END; }
   {AUTOCOMPLETE} | {ATTRIBUTE_NAME} { return AsciiDocTokenTypes.ATTRIBUTE_NAME; }
-  "\n"               { yyinitialIfNotInBlock(); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                { yyinitialIfNotInBlock(); }
+  "\n"               { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                { yypushback(yylength()); yypopstate(); }
 }
 
 <ATTRIBUTE_VAL> {
@@ -348,7 +355,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                        }
   /*Value continue on the next line if the line is ended by a space followed by a backslash*/
   {SPACE} "\\" {SPACE}* "\n" { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
-  "\n"                 { yyinitialIfNotInBlock(); return AsciiDocTokenTypes.LINE_BREAK; }
+  "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
   [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
 }
 
@@ -367,8 +374,12 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
       }
   {SPACE}* "\n"           { resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; } // blank lines within pre block don't have an effect
   ^ {TITLE_START} / [^\. ] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE; }
+}
+
+<HEADER, PREBLOCK> {
   ^ {ATTRIBUTE_NAME_START} / {AUTOCOMPLETE}? {ATTRIBUTE_NAME} {ATTRIBUTE_NAME_END} {
         if (!isEscaped()) {
+          yypushstate();
           yybegin(ATTRIBUTE_NAME);
           return AsciiDocTokenTypes.ATTRIBUTE_NAME_START;
         } else {
@@ -377,10 +388,28 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
       }
   ^ {ATTRIBUTE_NAME_START} / [^:\n \t]* {AUTOCOMPLETE} {
     if (!isEscaped()) {
+      yypushstate();
       yybegin(ATTRIBUTE_NAME); return AsciiDocTokenTypes.ATTRIBUTE_NAME_START;
     } else {
       return textFormat();
     }
+  }
+}
+
+<HEADER> {
+  ^{SPACE}* "\n" {
+        yypushback(yylength());
+        yybegin(PREBLOCK);
+  }
+  "\n" {
+        ++ headerLines;
+        if (headerLines >= 3) {
+          yybegin(PREBLOCK);
+        }
+        return AsciiDocTokenTypes.LINE_BREAK;
+  }
+  [^] {
+        return AsciiDocTokenTypes.HEADER;
   }
 }
 
@@ -411,7 +440,17 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ^ {PASSTRHOUGH_BLOCK_DELIMITER} { clearStyle(); resetFormatting(); yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
 
   ^ {HEADING_START} | {HEADING_START_MARKDOWN} / {NON_SPACE} { if (blockStack.size() == 0) {
-                              clearStyle(); resetFormatting(); yybegin(HEADING); return AsciiDocTokenTypes.HEADING;
+                              int level = 0;
+                              CharSequence prefix = yytext();
+                              while (prefix.length() > level && (prefix.charAt(level) == '#' || prefix.charAt(level) == '=')) {
+                                ++ level;
+                              }
+                              if (level == 1) {
+                                yybegin(DOCTITLE);
+                              } else {
+                                yybegin(HEADING);
+                              }
+                              clearStyle(); resetFormatting(); return AsciiDocTokenTypes.HEADING;
                             }
                             yypushback(yylength()); yybegin(STARTBLOCK);
                           }
@@ -955,6 +994,13 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <HEADING> {
   "\n"                 { yybegin(YYINITIAL); return AsciiDocTokenTypes.LINE_BREAK; }
+}
+
+<DOCTITLE> {
+  "\n"                 { yypushback(yylength()); headerLines = 0; yybegin(HEADER); }
+}
+
+<DOCTITLE, HEADING> {
   [^]                  { return AsciiDocTokenTypes.HEADING; }
 }
 
