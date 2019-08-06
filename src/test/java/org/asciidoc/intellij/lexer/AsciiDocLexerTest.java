@@ -1090,6 +1090,16 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('description')");
   }
 
+  public void testDescriptionWithAttribute() {
+    doTest("{attr}:: description",
+      "AsciiDoc:ATTRIBUTE_REF_START ('{')\n" +
+        "AsciiDoc:ATTRIBUTE_REF ('attr')\n" +
+        "AsciiDoc:ATTRIBUTE_REF_END ('}')\n" +
+        "AsciiDoc:DESCRIPTION ('::')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('description')");
+  }
+
   public void testIndentedListing() {
     doTest("   Listing\nMore\n\nText",
       "AsciiDoc:LISTING_TEXT ('   Listing')\n" +

@@ -101,6 +101,12 @@ import java.util.Stack;
     typographicquote = false;
   }
   private IElementType textFormat() {
+    if(yystate() == DESCRIPTION) {
+      return AsciiDocTokenTypes.DESCRIPTION;
+    }
+    if(yystate() == ATTRIBUTE_VAL) {
+      return AsciiDocTokenTypes.ATTRIBUTE_VAL;
+    }
     if((doublemono || singlemono) && (singlebold || doublebold) && (doubleitalic || singleitalic)) {
       return AsciiDocTokenTypes.MONOBOLDITALIC;
     } else if((doublemono || singlemono) && (singlebold || doublebold)) {
@@ -219,7 +225,8 @@ ATTRIBUTE_REF_START = "{"
 ATTRIBUTE_REF_END = "}"
 END_OF_SENTENCE = [\.?!:] | (" " [?!:]) // French: "marks with two elements require a space before them in"
 HARD_BREAK = {SPACE} "+" {SPACE}* "\n"
-DESCRIPTION = [^\n]+ {SPACE}* (":"{2,4} | ";;")
+DESCRIPTION_END = (":"{2,4} | ";;")
+DESCRIPTION = [^\n]+ {SPACE}* {DESCRIPTION_END}
 ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 %state MULTILINE
@@ -228,6 +235,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state STARTBLOCK
 %state DELIMITER
 %state SINGLELINE
+%state DESCRIPTION
 %state AFTER_SPACE
 %state INSIDE_LINE
 %state MONO_SECOND_TRY
@@ -345,14 +353,17 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                { yypushback(yylength()); yypopstate(); }
 }
 
-<ATTRIBUTE_VAL> {
+<ATTRIBUTE_VAL, DESCRIPTION> {
   {ATTRIBUTE_REF_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} {
                          if (!isEscaped()) {
                            yypushstate(); yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
                          } else {
-                           return AsciiDocTokenTypes.ATTRIBUTE_VAL;
+                           textFormat();
                          }
                        }
+}
+
+<ATTRIBUTE_VAL> {
   /*Value continue on the next line if the line is ended by a space followed by a backslash*/
   {SPACE} "\\" {SPACE}* "\n" { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
@@ -584,9 +595,14 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <AFTER_SPACE> {
   {BULLET} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BULLET; }
   {ENUMERATION} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ENUMERATION; }
-  {DESCRIPTION} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.DESCRIPTION; }
-  {DESCRIPTION} / {SPACE}* "\n" { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.DESCRIPTION; }
+  {DESCRIPTION} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); yypushstate(); yybegin(DESCRIPTION); yypushback(yylength()); }
+  {DESCRIPTION} / {SPACE}* "\n" { resetFormatting(); yybegin(INSIDE_LINE); yypushstate(); yybegin(DESCRIPTION); yypushback(yylength()); }
   [^]                  { yypushback(yylength()); yybegin(INSIDE_LINE); }
+}
+
+<DESCRIPTION> {
+  {DESCRIPTION_END} { yypopstate(); return AsciiDocTokenTypes.DESCRIPTION; }
+  [^] { return AsciiDocTokenTypes.DESCRIPTION; }
 }
 
 <INSIDE_LINE> {
