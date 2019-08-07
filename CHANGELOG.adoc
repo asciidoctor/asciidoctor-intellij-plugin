@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.29.3 (work in progress)
+
+- support syntax highlighting within definition list (#307)
+
 === 0.29.2 (preview, available from Github releases)
 
 - restore standard copy-and-paste functionality if contents can be represented as text

@@ -1098,7 +1098,21 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testDescription() {
     doTest("a property:: description",
-      "AsciiDoc:DESCRIPTION ('a property::')\n" +
+      "AsciiDoc:DESCRIPTION ('a')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:DESCRIPTION ('property::')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('description')");
+  }
+
+  public void testDescriptionWithLink() {
+    doTest("link:http://www.example.com[Example]:: description",
+      "AsciiDoc:LINKSTART ('link:')\n" +
+        "AsciiDoc:URL_LINK ('http://www.example.com')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKTEXT ('Example')\n" +
+        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:DESCRIPTION ('::')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('description')");
   }

@@ -142,7 +142,6 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
       .put(AsciiDocTokenTypes.URL_END, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.URL_PREFIX, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.LINKSTART, ASCIIDOC_MARKER)
-      .put(AsciiDocTokenTypes.LINKFILE, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.LINKANCHOR, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.LINKTEXT_START, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.LINKTEXT, ASCIIDOC_MARKER)

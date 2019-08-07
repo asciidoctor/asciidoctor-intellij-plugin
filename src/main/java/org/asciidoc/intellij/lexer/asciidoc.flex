@@ -353,7 +353,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                { yypushback(yylength()); yypopstate(); }
 }
 
-<ATTRIBUTE_VAL, DESCRIPTION> {
+<ATTRIBUTE_VAL> {
   {ATTRIBUTE_REF_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} {
                          if (!isEscaped()) {
                            yypushstate(); yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
@@ -361,9 +361,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            textFormat();
                          }
                        }
-}
-
-<ATTRIBUTE_VAL> {
   /*Value continue on the next line if the line is ended by a space followed by a backslash*/
   {SPACE} "\\" {SPACE}* "\n" { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
@@ -602,10 +599,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <DESCRIPTION> {
   {DESCRIPTION_END} { yypopstate(); return AsciiDocTokenTypes.DESCRIPTION; }
-  [^] { return AsciiDocTokenTypes.DESCRIPTION; }
 }
 
-<INSIDE_LINE> {
+<INSIDE_LINE, DESCRIPTION> {
   "\n"                 { if (isNoDel()) {
                            yybegin(SINGLELINE);
                          } else {

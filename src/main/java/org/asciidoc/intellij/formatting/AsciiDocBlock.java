@@ -314,7 +314,9 @@ class AsciiDocBlock extends AbstractBlock {
   public Indent getIndent() {
     if (myNode.getElementType() == AsciiDocTokenTypes.ENUMERATION
       || myNode.getElementType() == AsciiDocTokenTypes.BULLET
-      || myNode.getElementType() == AsciiDocTokenTypes.DESCRIPTION) {
+      || myNode.getElementType() == AsciiDocTokenTypes.DESCRIPTION
+      || myNode.getElementType() == AsciiDocElementTypes.LINK
+      || myNode.getElementType() == AsciiDocElementTypes.ATTRIBUTE_REF) {
       return Indent.getSpaceIndent(0);
     }
 
