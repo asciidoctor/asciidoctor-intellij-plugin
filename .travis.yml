@@ -1,6 +1,8 @@
 language: java
 jdk:
 - oraclejdk8
+# remove line "dist: trusty" and fast forward to xenial once oraclejdk8 is no longer required due to old JavaFX
+dist: trusty
 script:
 - "./gradlew -Dfile.encoding=UTF-8 check buildPlugin"
 before_cache:
