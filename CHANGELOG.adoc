@@ -7,13 +7,14 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.29.2 (work in progress)
+=== 0.29.2 (preview, available from Github releases)
 
 - restore standard copy-and-paste functionality if contents can be represented as text
 - avoid mistaking typographic quote end as start of monospace
 - recognize title and other block starting elements after a continuation
 - prevent out of bounds exception when handling warning messages returned from Asciidoctor parsing (#311)
 - support author information and attributes in documentation header for reformatting (#314)
+- support attribute references in definition list and `++`-escaped links (#307)
 
 === 0.29.1 (preview, available from Github releases)
 

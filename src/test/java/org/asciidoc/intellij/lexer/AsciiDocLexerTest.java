@@ -688,6 +688,19 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Text')");
   }
 
+  public void testLinkWithQuotes() {
+    doTest("Text link:++https://example.org/?q=[a b]++[URL with special characters] Text",
+      "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:LINKSTART ('link:')\n" +
+        "AsciiDoc:URL_LINK ('++https://example.org/?q=[a b]++')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKTEXT ('URL with special characters')\n" +
+        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
   public void testLinkForAutocomplete() {
     doTest("Text link:FILEIntellijIdeaRulezzz More Text",
       "AsciiDoc:TEXT ('Text')\n" +

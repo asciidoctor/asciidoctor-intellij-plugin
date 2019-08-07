@@ -179,10 +179,13 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
       child = child.getNextSibling();
     }
     if (child != null) {
+      String url = child.getText();
+      url = url.replaceAll("\\+\\+\\+(.*)\\+\\+\\+", "$1");
+      url = url.replaceAll("\\+\\+(.*)\\+\\+", "$1");
       return Collections.singletonList(new WebReference(
         element,
         TextRange.create(child.getStartOffsetInParent(), child.getStartOffsetInParent() + child.getTextLength()),
-        StringEscapeUtils.unescapeHtml4(child.getText()))
+        StringEscapeUtils.unescapeHtml4(url))
       );
     } else {
       return Collections.emptyList();

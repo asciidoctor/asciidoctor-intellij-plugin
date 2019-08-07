@@ -846,7 +846,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         return AsciiDocTokenTypes.URL_PREFIX;
   }
   // allow autocomplete even if brackets have not been entered yet
-  {LINKSTART} / [^\[\n \t]* ( {AUTOCOMPLETE} | {AUTOCOMPLETE}? {LINKTEXT_START} [^\]\n]* {LINKEND}) {
+  {LINKSTART} / ([^\[\n \t])* ("+++" [^+] {WORD}* "+++")* ("++" {WORD}* "++")* ( {AUTOCOMPLETE} | {AUTOCOMPLETE}? {LINKTEXT_START} [^\]\n]* {LINKEND}) {
                          if (!isEscaped()) {
                            yypushstate(); yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART;
                          } else {
@@ -956,7 +956,11 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <LINKFILE> {
   "#"                  { yybegin(LINKANCHOR); return AsciiDocTokenTypes.SEPARATOR; }
-  [a-zA-Z]+ ":"         { yybegin(LINKURL); return AsciiDocTokenTypes.URL_LINK; }
+  [a-zA-Z]+ ":"        { yybegin(LINKURL); return AsciiDocTokenTypes.URL_LINK; }
+  "+++" [a-zA-Z]+ ":" {WORD}+ "+++"    { yybegin(LINKURL); return AsciiDocTokenTypes.URL_LINK; }
+  "+++" {WORD}+ "+++"    { return AsciiDocTokenTypes.LINKFILE; }
+  "++" [a-zA-Z]+ ":" {WORD}+ "++"    { yybegin(LINKURL); return AsciiDocTokenTypes.URL_LINK; }
+  "++" {WORD}+ "++"    { return AsciiDocTokenTypes.LINKFILE; }
   {AUTOCOMPLETE}       { return AsciiDocTokenTypes.LINKFILE; }
   [^]                  { return AsciiDocTokenTypes.LINKFILE; }
 }
