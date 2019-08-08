@@ -3,11 +3,14 @@ package org.asciidoc.intellij.psi;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileSystemItem;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
@@ -35,8 +38,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     * use an insert handler to do the magic?
    */
   private static final int MAX_DEPTH = 10;
-  private Pattern url = Pattern.compile("^\\p{Alpha}[\\p{Alnum}.+-]+:/{0,2}");
-  private Pattern attributes = Pattern.compile("\\{([a-zA-Z0-9_]+[a-zA-Z0-9_-]*)}");
+  private static final Pattern URL = Pattern.compile("^\\p{Alpha}[\\p{Alnum}.+-]+:/{0,2}");
+  private static final Pattern ATTRIBUTES = Pattern.compile("\\{([a-zA-Z0-9_]+[a-zA-Z0-9_-]*)}");
 
   private String key;
   private String macroName;
@@ -61,7 +64,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     if (depth > MAX_DEPTH) {
       return;
     }
-    Matcher matcher = attributes.matcher(key);
+    Matcher matcher = ATTRIBUTES.matcher(key);
     if (matcher.find()) {
       String attributeName = matcher.group(1);
       List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName);
@@ -69,20 +72,26 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         if (decl.getAttributeValue() == null) {
           continue;
         }
-        resolve(matcher.replaceFirst(decl.getAttributeValue()), results, depth + 1);
+        String val = decl.getAttributeValue();
+        if (val.contains("{asciidoctorconfigdir}") &&
+          (decl.getContainingFile().getName().equals(".asciidoctorconfig") || decl.getContainingFile().getName().equals(".asciidoctorconfig.adoc"))
+          && decl.getContainingFile().getVirtualFile().getParent().getCanonicalPath() != null) {
+          val = val.replaceAll("\\{asciidoctorconfigdir}", decl.getContainingFile().getVirtualFile().getParent().getCanonicalPath());
+        }
+        resolve(matcher.replaceFirst(val), results, depth + 1);
       }
     } else {
       PsiElement file = resolve(key);
       if (file != null) {
         results.add(new PsiElementResolveResult(file));
       } else if ("image".equals(macroName)) {
-        if (!url.matcher(key).matches()) {
+        if (!URL.matcher(key).matches()) {
           List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), "imagesdir");
           for (AsciiDocAttributeDeclaration decl : declarations) {
             if (decl.getAttributeValue() == null) {
               continue;
             }
-            if (url.matcher(decl.getAttributeValue()).matches()) {
+            if (URL.matcher(decl.getAttributeValue()).matches()) {
               continue;
             }
             file = resolve(decl.getAttributeValue() + "/" + key);
@@ -170,7 +179,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     if (depth > MAX_DEPTH) {
       return;
     }
-    Matcher matcher = attributes.matcher(base);
+    Matcher matcher = ATTRIBUTES.matcher(base);
     if (matcher.find()) {
       String attributeName = matcher.group(1);
       List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName);
@@ -178,7 +187,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         if (decl.getAttributeValue() == null) {
           continue;
         }
-        getVariants(matcher.replaceFirst(decl.getAttributeValue()), collector, depth + 1);
+        String val = decl.getAttributeValue();
+        if (val.contains("{asciidoctorconfigdir}") &&
+          (decl.getContainingFile().getName().equals(".asciidoctorconfig") || decl.getContainingFile().getName().equals(".asciidoctorconfig.adoc"))
+          && decl.getContainingFile().getVirtualFile().getCanonicalPath() != null) {
+          val = val.replaceAll("\\{asciidoctorconfigdir}", decl.getContainingFile().getVirtualFile().getCanonicalPath());
+        }
+        getVariants(matcher.replaceFirst(val), collector, depth + 1);
       }
     } else {
       PsiElement resolve = resolve(base);
@@ -227,6 +242,15 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       }
       dir = dir.findSubdirectory(split[i]);
       if (dir == null) {
+        // check if file name is absolute path
+        VirtualFile fileByPath = LocalFileSystem.getInstance().findFileByPath(fileName);
+        if (fileByPath != null) {
+          PsiFile file = PsiManager.getInstance(element.getProject()).findFile(fileByPath);
+          if (file != null) {
+            return file;
+          }
+          return PsiManager.getInstance(element.getProject()).findDirectory(fileByPath);
+        }
         return null;
       }
     }

@@ -10,6 +10,8 @@ This document provides a high-level view of the changes introduced by release.
 === 0.29.3 (work in progress)
 
 - support syntax highlighting within definition list (#307)
+- support asciidoctorconfigdir attribute replacements in dependent variables for macros (#307)
+- restore navigation on path elements for nested attributes in macros (#307)
 
 === 0.29.2 (preview, available from Github releases)
 

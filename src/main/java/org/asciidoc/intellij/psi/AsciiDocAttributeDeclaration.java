@@ -33,7 +33,12 @@ public class AsciiDocAttributeDeclaration extends ASTWrapperPsiElement {
   public String getAttributeValue() {
     ASTNode attributeValue = getNode().findChildByType(AsciiDocTokenTypes.ATTRIBUTE_VAL);
     if (attributeValue != null) {
-      return attributeValue.getText().trim();
+      StringBuilder sb = new StringBuilder();
+      while (attributeValue != null) {
+        sb.append(attributeValue.getText());
+        attributeValue = attributeValue.getTreeNext();
+      }
+      return sb.toString().trim();
     }
     return null;
   }
