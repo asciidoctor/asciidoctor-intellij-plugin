@@ -952,10 +952,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <LINKFILE> {
   "#"                  { yybegin(LINKANCHOR); return AsciiDocTokenTypes.SEPARATOR; }
-  [a-zA-Z]+ ":"        { yybegin(LINKURL); return AsciiDocTokenTypes.URL_LINK; }
-  "+++" [a-zA-Z]+ ":" {WORD}+ "+++"    { yybegin(LINKURL); return AsciiDocTokenTypes.URL_LINK; }
+  [a-zA-Z]{2,6} "://"        { yybegin(LINKURL); return AsciiDocTokenTypes.URL_LINK; }
+  "+++" [a-zA-Z]{2,6} "://" {WORD}+ "+++"    { yybegin(LINKURL); return AsciiDocTokenTypes.URL_LINK; }
   "+++" {WORD}+ "+++"    { return AsciiDocTokenTypes.LINKFILE; }
-  "++" [a-zA-Z]+ ":" {WORD}+ "++"    { yybegin(LINKURL); return AsciiDocTokenTypes.URL_LINK; }
+  "++" [a-zA-Z]{2,6} "://" {WORD}+ "++"    { yybegin(LINKURL); return AsciiDocTokenTypes.URL_LINK; }
   "++" {WORD}+ "++"    { return AsciiDocTokenTypes.LINKFILE; }
   {AUTOCOMPLETE}       { return AsciiDocTokenTypes.LINKFILE; }
   [^]                  { return AsciiDocTokenTypes.LINKFILE; }
