@@ -98,7 +98,7 @@ class AsciiDocBlock extends AbstractBlock {
     }
 
     // have one blank line before and after a heading
-    if (!verse && !table && ((isSection(child1) && !isHeader(child2)) || isSection(child2))) {
+    if (!verse && !table && ((isSection(child1) && !isHeader(child2) && !isAttributeDeclaration(child2)) || isSection(child2))) {
       return Spacing.createSpacing(0, 0, 2, false, 0);
     }
 
@@ -145,7 +145,12 @@ class AsciiDocBlock extends AbstractBlock {
     return Spacing.createSpacing(0, 999, 0, true, 999);
   }
 
-  private boolean isHeader(Block block) {
+  private static boolean isAttributeDeclaration(Block block) {
+    return block instanceof AsciiDocBlock &&
+      (AsciiDocElementTypes.ATTRIBUTE_DECLARATION.equals(((AsciiDocBlock) block).getNode().getElementType()));
+  }
+
+  private static boolean isHeader(Block block) {
     return block instanceof AsciiDocBlock &&
       (AsciiDocTokenTypes.HEADER.equals(((AsciiDocBlock) block).getNode().getElementType()));
   }
