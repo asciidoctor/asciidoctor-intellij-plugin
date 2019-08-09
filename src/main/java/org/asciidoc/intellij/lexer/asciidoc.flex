@@ -1032,7 +1032,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
   "=\"" ( [^\"] | "\\\"" )* "\"" { return AsciiDocTokenTypes.BLOCK_ATTR_VALUE; }
   [^\],=\n\t ]+ {
-        if (!yytext().toString().startsWith(".") && !yytext().toString().startsWith("%") && !yytext().toString().equals("role")) {
+        if ((yytext().charAt(0) != '.' && yytext().charAt(0) != '%') && !yytext().toString().equals("role")) {
           setStyle(yytext().toString());
         }
         return AsciiDocTokenTypes.BLOCK_ATTR_NAME;

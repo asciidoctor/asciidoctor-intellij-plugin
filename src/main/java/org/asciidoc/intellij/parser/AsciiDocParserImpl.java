@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.parser;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,7 +101,7 @@ public class AsciiDocParserImpl {
   private int newLines;
 
   public void parse() {
-    myBuilder.setDebugMode(true);
+    myBuilder.setDebugMode(ApplicationManager.getApplication().isUnitTestMode());
     myBuilder.setWhitespaceSkippedCallback((type, start, end) -> {
       if (type == LINE_BREAK) {
         ++newLines;
