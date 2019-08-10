@@ -107,6 +107,21 @@ import java.util.Stack;
     if(yystate() == ATTRIBUTE_VAL) {
       return AsciiDocTokenTypes.ATTRIBUTE_VAL;
     }
+    if(yystate() == LINKFILE) {
+      return AsciiDocTokenTypes.LINKFILE;
+    }
+    if(yystate() == BLOCK_MACRO) {
+      return AsciiDocTokenTypes.BLOCK_MACRO_BODY;
+    }
+    if(yystate() == LINKTEXT) {
+      return AsciiDocTokenTypes.LINKTEXT;
+    }
+    if(yystate() == REFTEXT) {
+      return AsciiDocTokenTypes.REFTEXT;
+    }
+    if(yystate() == BLOCKREFTEXT) {
+      return AsciiDocTokenTypes.BLOCKREFTEXT;
+    }
     if((doublemono || singlemono) && (singlebold || doublebold) && (doubleitalic || singleitalic)) {
       return AsciiDocTokenTypes.MONOBOLDITALIC;
     } else if((doublemono || singlemono) && (singlebold || doublebold)) {
@@ -353,14 +368,17 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                { yypushback(yylength()); yypopstate(); }
 }
 
-<ATTRIBUTE_VAL> {
-  {ATTRIBUTE_REF_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} {
+<ATTRIBUTE_VAL, INSIDE_LINE, DESCRIPTION, LINKFILE, BLOCK_MACRO, LINKTEXT, REFTEXT, BLOCKREFTEXT> {
+  {ATTRIBUTE_REF_START} / ( {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} | [^}\n ]* {AUTOCOMPLETE} ) {
                          if (!isEscaped()) {
                            yypushstate(); yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
                          } else {
                            textFormat();
                          }
                        }
+}
+
+<ATTRIBUTE_VAL> {
   /*Value continue on the next line if the line is ended by a space followed by a backslash*/
   {SPACE} "\\" {SPACE}* "\n" { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
@@ -752,13 +770,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            return AsciiDocTokenTypes.LT;
                          }
                         }
-  {ATTRIBUTE_REF_START} / {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} {
-                         if (!isEscaped()) {
-                           yypushstate(); yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
-                         } else {
-                           return textFormat();
-                         }
-                       }
   (->|=>|<-|<=)        { return textFormat(); } // avoid errors to be recognized as LT/GT
   {LT}                 { return AsciiDocTokenTypes.LT; }
   {GT}                 { return AsciiDocTokenTypes.GT; }
@@ -858,13 +869,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           return textFormat();
         }
       }
-  {ATTRIBUTE_REF_START} / [^}\n ]* {AUTOCOMPLETE} {
-                         if (!isEscaped()) {
-                           yypushstate(); yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
-                         } else {
-                           return textFormat();
-                         }
-                       }
   {PASSTRHOUGH_INLINE} / {STRING}* {PASSTRHOUGH_INLINE} {
                            yybegin(PASSTRHOUGH_INLINE); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
                          }

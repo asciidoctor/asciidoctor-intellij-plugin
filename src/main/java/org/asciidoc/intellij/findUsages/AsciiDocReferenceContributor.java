@@ -138,19 +138,19 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
   }
 
   private List<PsiReference> findFileReferences(PsiElement element) {
-    PsiElement child = element.getFirstChild();
-    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.LINKFILE) {
-      child = child.getNextSibling();
+    if (element.getNode().findChildByType(AsciiDocTokenTypes.URL_LINK) != null) {
+      return Collections.emptyList();
     }
-    if (child != null) {
-      String file = child.getText();
+    TextRange range = AsciiDocLink.getBodyRange((AsciiDocLink) element);
+    if (!range.isEmpty()) {
+      String file = element.getText().substring(range.getStartOffset(), range.getEndOffset());
       ArrayList<PsiReference> references = new ArrayList<>();
       int start = 0;
       for (int i = 0; i < file.length(); ++i) {
         if (file.charAt(i) == '/') {
           references.add(
             new AsciiDocFileReference(element, "link", file.substring(0, start),
-              TextRange.create(child.getStartOffsetInParent() + start, child.getStartOffsetInParent() + i)
+              TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i)
             )
           );
           start = i + 1;
@@ -158,7 +158,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
       }
       references.add(
         new AsciiDocFileReference(element, "link", file.substring(0, start),
-          TextRange.create(child.getStartOffsetInParent() + start, child.getStartOffsetInParent() + file.length())
+          TextRange.create(range.getStartOffset() + start, range.getStartOffset() + file.length())
         )
       );
       return references;

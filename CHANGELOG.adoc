@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - restore navigation on path elements for nested attributes in macros (#307)
 - don't add new line after heading for attributes (#314)
 - allow attributes to be resolved in file links, allow absolute paths in links and includes (#307)
+- add highlighting for attribute references in several descriptions (#307)
 
 === 0.29.2 (preview, available from Github releases)
 

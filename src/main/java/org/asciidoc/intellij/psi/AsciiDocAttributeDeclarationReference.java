@@ -68,8 +68,7 @@ public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiE
             int offset = insertionContext.getStartOffset();
             PsiElement element = insertionContext.getFile().findElementAt(offset);
             if (element != null && element.getNode() != null
-              && element.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_REF
-              && element.getNode().getElementType() != AsciiDocTokenTypes.BLOCK_MACRO_BODY) {
+              && element.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_REF) {
               offset += attributeName.length();
               insertionContext.getDocument().insertString(offset, "}");
               offset += 1;

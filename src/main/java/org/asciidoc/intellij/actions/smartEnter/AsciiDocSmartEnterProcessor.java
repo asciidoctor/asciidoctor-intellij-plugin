@@ -12,6 +12,7 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.IncorrectOperationException;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
@@ -70,7 +71,9 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
             atCaret = atCaret.getNextSibling();
           }
         }
-        if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.BLOCK_MACRO_BODY) {
+        if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.BLOCK_MACRO_BODY ||
+          (atCaret.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_REF_END
+            && atCaret.getNode().getTreeParent().getTreeParent().getElementType() == AsciiDocElementTypes.BLOCK_MACRO)) {
           if (atCaret.getNextSibling() == null) {
             String textToInsert = "[]\n";
             doc.insertString(atCaret.getTextRange().getEndOffset(), textToInsert);

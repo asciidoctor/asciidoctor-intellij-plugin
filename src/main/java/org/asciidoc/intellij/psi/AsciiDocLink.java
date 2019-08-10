@@ -64,24 +64,25 @@ public class AsciiDocLink extends ASTWrapperPsiElement {
     @NotNull
     @Override
     public TextRange getRangeInElement(@NotNull AsciiDocLink element) {
-      PsiElement child = element.getFirstChild();
-      int startOffset = -1;
-      int endOffset = -1;
-      while (child != null) {
-        if (child.getNode().getElementType().equals(AsciiDocTokenTypes.LINKFILE)
-          || child.getNode().getElementType().equals(AsciiDocTokenTypes.LINKANCHOR)) {
-          if (startOffset == -1) {
-            startOffset = child.getStartOffsetInParent();
-          }
-          endOffset = child.getStartOffsetInParent() + child.getTextLength();
-        }
-        child = child.getNextSibling();
-      }
-      if (startOffset != -1) {
-        return TextRange.create(startOffset, endOffset);
-      } else {
-        return TextRange.EMPTY_RANGE;
-      }
+      return getBodyRange(element);
     }
   }
+
+  public static TextRange getBodyRange(AsciiDocLink element) {
+    PsiElement child = element.getFirstChild();
+    while (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.LINKSTART) {
+      child = child.getNextSibling();
+    }
+    if (child == null) {
+      return TextRange.EMPTY_RANGE;
+    }
+    int start = child.getStartOffsetInParent();
+    int end = start;
+    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.LINKTEXT_START) {
+      end = child.getStartOffsetInParent() + child.getTextLength();
+      child = child.getNextSibling();
+    }
+    return TextRange.create(start, end);
+  }
+
 }

@@ -48,16 +48,16 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
   @Override
   public PsiReference[] getReferences() {
     if (HAS_FILE_AS_BODY.contains(getMacroName())) {
-      ASTNode bodyNode = getNode().findChildByType(AsciiDocTokenTypes.BLOCK_MACRO_BODY);
-      if (bodyNode != null) {
-        String file = bodyNode.getText();
+      TextRange range = getRangeOfBody(this);
+      if (!range.isEmpty()) {
+        String file = this.getText().substring(range.getStartOffset(), range.getEndOffset());
         ArrayList<PsiReference> references = new ArrayList<>();
         int start = 0;
         for (int i = 0; i < file.length(); ++i) {
           if (file.charAt(i) == '/') {
             references.add(
               new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
-                TextRange.create(bodyNode.getPsi().getStartOffsetInParent() + start, bodyNode.getPsi().getStartOffsetInParent() + i)
+                TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i)
               )
             );
             start = i + 1;
@@ -65,7 +65,7 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
         }
         references.add(
           new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
-            TextRange.create(bodyNode.getPsi().getStartOffsetInParent() + start, bodyNode.getPsi().getStartOffsetInParent() + file.length())
+            TextRange.create(range.getStartOffset() + start, range.getStartOffset() + file.length())
           )
         );
         return references.toArray(new PsiReference[0]);
@@ -136,7 +136,7 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
                                                   @NotNull TextRange range,
                                                   String newContent) throws IncorrectOperationException {
       PsiElement child = element.getFirstChild();
-      while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.BLOCK_MACRO_BODY) {
+      while (child != null && range.getStartOffset() >= child.getTextLength()) {
         range = range.shiftRight(-child.getTextLength());
         child = child.getNextSibling();
       }
@@ -152,13 +152,25 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
     @NotNull
     @Override
     public TextRange getRangeInElement(@NotNull AsciiDocBlockMacro element) {
-      PsiElement child = element.findChildByType(AsciiDocTokenTypes.BLOCK_MACRO_BODY);
-      if (child != null) {
-        return TextRange.create(child.getStartOffsetInParent(), child.getStartOffsetInParent() + child.getTextLength());
-      } else {
-        return TextRange.EMPTY_RANGE;
-      }
+      return getRangeOfBody(element);
     }
+  }
+
+  private static TextRange getRangeOfBody(AsciiDocBlockMacro element) {
+    PsiElement child = element.getFirstChild();
+    while (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.BLOCK_MACRO_ID) {
+      child = child.getNextSibling();
+    }
+    if (child == null) {
+      return TextRange.EMPTY_RANGE;
+    }
+    int start = child.getStartOffsetInParent();
+    int end = start;
+    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.BLOCK_ATTRS_START) {
+      end = child.getStartOffsetInParent() + child.getTextLength();
+      child = child.getNextSibling();
+    }
+    return TextRange.create(start, end);
   }
 
   @Override

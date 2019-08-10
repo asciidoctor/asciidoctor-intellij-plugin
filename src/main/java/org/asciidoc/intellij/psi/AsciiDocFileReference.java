@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.psi;
 
 import com.intellij.openapi.util.Iconable;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -142,7 +143,11 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     List<Object> additionalItems = ContainerUtil.newArrayList();
 
     List<ResolveResult> results = new ArrayList<>();
-    resolve(base + "/..", results, 0);
+    if (base.endsWith("/") || base.length() == 0) {
+      resolve(base + "..", results, 0);
+    } else {
+      resolve(base + "/..", results, 0);
+    }
     for (ResolveResult result : results) {
       if (result.getElement() == null) {
         continue;
@@ -242,49 +247,58 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     if (fileName.length() == 0) {
       return startDir;
     }
-    String[] split = StringUtil.trimEnd(fileName, "/").split("/");
-    PsiDirectory dir = startDir;
-    for (int i = 0; i < split.length - 1; ++i) {
-      if (split[i].length() == 0) {
-        continue;
-      }
-      if (split[i].equals("..")) {
-        dir = dir.getParent();
-        if (dir == null) {
-          return null;
+    if (!fileName.startsWith("/") && !fileName.startsWith("\\")) {
+      String[] split = StringUtil.trimEnd(fileName, "/").split("/");
+      PsiDirectory dir = startDir;
+      for (int i = 0; i < split.length - 1; ++i) {
+        if (split[i].length() == 0) {
+          continue;
         }
-        continue;
-      }
-      dir = dir.findSubdirectory(split[i]);
-      if (dir == null) {
-        // check if file name is absolute path
-        VirtualFile fileByPath = LocalFileSystem.getInstance().findFileByPath(fileName);
-        if (fileByPath != null) {
-          PsiFile file = PsiManager.getInstance(element.getProject()).findFile(fileByPath);
-          if (file != null) {
-            return file;
+        if (split[i].equals("..")) {
+          dir = dir.getParent();
+          if (dir == null) {
+            return null;
           }
-          return PsiManager.getInstance(element.getProject()).findDirectory(fileByPath);
+          continue;
         }
-        return null;
+        dir = dir.findSubdirectory(split[i]);
+        if (dir == null) {
+          return resolveAbsolutePath(element, fileName);
+        }
       }
-    }
-    if (split[split.length - 1].equals("..")) {
-      dir = dir.getParent();
-      return dir;
-    }
-    PsiFile file = dir.findFile(split[split.length - 1]);
-    if (file != null) {
-      return file;
-    }
-    dir = dir.findSubdirectory(split[split.length - 1]);
-    if (dir != null) {
-      return dir;
+      if (split[split.length - 1].equals("..")) {
+        dir = dir.getParent();
+        return dir;
+      }
+      PsiFile file = dir.findFile(split[split.length - 1]);
+      if (file != null) {
+        return file;
+      }
+      dir = dir.findSubdirectory(split[split.length - 1]);
+      if (dir != null) {
+        return dir;
+      }
     }
     // check if file name is absolute path
-    VirtualFile fileByPath = LocalFileSystem.getInstance().findFileByPath(fileName);
+    return resolveAbsolutePath(element, fileName);
+  }
+
+  private PsiElement resolveAbsolutePath(PsiElement element, String fileName) {
+    // check if file name is absolute path
+    VirtualFile fileByPath;
+    try {
+      if (SystemInfo.isWindows) {
+        if (fileName.startsWith("/")) {
+          fileName = fileName.replace('/', '\\');
+        }
+      }
+      fileByPath = LocalFileSystem.getInstance().findFileByPath(fileName);
+    } catch (IllegalArgumentException e) {
+      // can happen with exceptions like "path must be canonical" for "/.."
+      fileByPath = null;
+    }
     if (fileByPath != null) {
-      file = PsiManager.getInstance(element.getProject()).findFile(fileByPath);
+      PsiFile file = PsiManager.getInstance(element.getProject()).findFile(fileByPath);
       if (file != null) {
         return file;
       }

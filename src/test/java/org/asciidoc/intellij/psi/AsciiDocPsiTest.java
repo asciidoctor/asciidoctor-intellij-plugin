@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.psi;
 
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
@@ -10,6 +11,7 @@ import org.asciidoc.intellij.file.AsciiDocFileType;
 /**
  * Tests for {@link org.asciidoc.intellij.parser.AsciiDocParserImpl}.
  * HINT: instead of this test, consider a golden master test in {@link AsciiDocParserTest}
+ *
  * @author yole
  */
 public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
@@ -52,7 +54,9 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) children[0];
     assertEquals(2, blockMacro.getReferences().length);
     assertEquals(AsciiDocFileReference.class, blockMacro.getReferences()[0].getClass());
+    // parent folder should be visible
     assertEquals(2, blockMacro.getReferences()[0].getVariants().length);
+    assertTrue(((LookupElementBuilder) blockMacro.getReferences()[0].getVariants()[1]).getAllLookupStrings().contains(".."));
   }
 
   public void testIfdefBlockMacroWithReferences() {
