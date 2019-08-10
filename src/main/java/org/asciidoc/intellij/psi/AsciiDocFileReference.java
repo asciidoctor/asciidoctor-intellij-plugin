@@ -100,6 +100,16 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             }
           }
         }
+      } else if ("link".endsWith(macroName)) {
+        file = resolve(key + ".adoc");
+        if (file != null) {
+          results.add(new PsiElementResolveResult(file));
+        } else if (base.endsWith(".html")) {
+          file = resolve(key.replaceAll("\\.html$", ".adoc"));
+          if (file != null) {
+            results.add(new PsiElementResolveResult(file));
+          }
+        }
       }
     }
   }
@@ -120,6 +130,11 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     getVariants(base, collector, 0);
     if ("image".equals(macroName)) {
       getVariants("{imagesdir}/" + base, collector, 0);
+    } else if ("link".equals(macroName)) {
+      getVariants(base + ".adoc", collector, 0);
+      if (base.endsWith(".html")) {
+        getVariants(base.replaceAll("\\.html$", ".adoc"), collector, 0);
+      }
     }
 
     final THashSet<PsiElement> set = new THashSet<>(collector.getResults());
@@ -263,7 +278,19 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       return file;
     }
     dir = dir.findSubdirectory(split[split.length - 1]);
-    return dir;
+    if (dir != null) {
+      return dir;
+    }
+    // check if file name is absolute path
+    VirtualFile fileByPath = LocalFileSystem.getInstance().findFileByPath(fileName);
+    if (fileByPath != null) {
+      file = PsiManager.getInstance(element.getProject()).findFile(fileByPath);
+      if (file != null) {
+        return file;
+      }
+      return PsiManager.getInstance(element.getProject()).findDirectory(fileByPath);
+    }
+    return null;
   }
 
 }
