@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.29.3 (work in progress)
+=== 0.29.3 (preview, available from Github releases)
 
 - support syntax highlighting within definition list (#307)
 - support asciidoctorconfigdir attribute replacements in dependent variables for macros (#307)
