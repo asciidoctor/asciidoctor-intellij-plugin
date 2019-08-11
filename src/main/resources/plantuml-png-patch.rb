@@ -11,6 +11,9 @@ module SvgToPngHack
     # render as SVG to be used for save-as functionality
     attributes['format'] = 'svg'
     super(parent, reader_or_target, attributes)
+    # rewind figure-number for second call, otherwise it will be incremented twice
+    fignum = parent.document.attr('figure-number')
+    parent.document.set_attr('figure-number', fignum - 1)
     # render a second time for PNG to be used in preview
     attributes['format'] = 'png'
     super(parent, reader_or_target, attributes)

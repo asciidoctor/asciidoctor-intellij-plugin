@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.29.4 (preview, available from Github releases)
+
+- preview no longer increments figure numbers by two instead of one (#317)
+
 === 0.29.3 (preview, available from Github releases)
 
 - support syntax highlighting within definition list (#307)
