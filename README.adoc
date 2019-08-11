@@ -1,6 +1,9 @@
 = IntelliJ AsciiDoc Plugin
 Alexander Schwartz
 :experimental:
+:url-ci-travis: https://travis-ci.org/asciidoctor/asciidoctor-intellij-plugin
+
+image::https://api.travis-ci.org/asciidoctor/asciidoctor-intellij-plugin.svg?branch=master[link={url-ci-travis}]
 
 A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language.
 To support the authors of Asciidoctor, please consider supporting us via https://opencollective.com/asciidoctor[OpenCollective].

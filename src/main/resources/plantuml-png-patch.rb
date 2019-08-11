@@ -10,10 +10,10 @@ module SvgToPngHack
   def process(parent, reader_or_target, attributes)
     # render as SVG to be used for save-as functionality
     attributes['format'] = 'svg'
-    super(parent, reader_or_target, attributes)
-    # rewind figure-number for second call, otherwise it will be incremented twice
+    # rewind figure-number for second call (note that it will only be incremented if the diagram has a title)
     fignum = parent.document.attr('figure-number')
-    parent.document.set_attr('figure-number', fignum - 1)
+    super(parent, reader_or_target, attributes)
+    parent.document.set_attr('figure-number', fignum)
     # render a second time for PNG to be used in preview
     attributes['format'] = 'png'
     super(parent, reader_or_target, attributes)
