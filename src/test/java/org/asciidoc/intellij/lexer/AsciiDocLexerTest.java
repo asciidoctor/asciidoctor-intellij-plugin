@@ -126,6 +126,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('def')");
   }
 
+  public void testHeadingNewStyleWithInclude() {
+    doTest("= Abc\ninclude::test.adoc[]\n",
+      "AsciiDoc:HEADING ('= Abc')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_MACRO_ID ('include::')\n" +
+        "AsciiDoc:BLOCK_MACRO_BODY ('test.adoc')\n" +
+        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
   public void testHeadingMarkdownStyleWithHeaderTwoLines() {
     doTest("# Abc\nHeader1\nHeader2\ndef",
       "AsciiDoc:HEADING ('# Abc')\n" +
@@ -135,6 +146,18 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:HEADER ('Header2')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('def')");
+  }
+
+  public void testHeadingNewStyleWithAppendixStyle() {
+    doTest("[appendix]\n= Abc\nText\n",
+      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:BLOCK_ATTR_NAME ('appendix')\n" +
+        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:HEADING ('= Abc')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
   public void testHeadingOldStyleWithHeaderTwoLinesAndAttribute() {

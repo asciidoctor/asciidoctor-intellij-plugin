@@ -344,7 +344,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
             // push back the second newline of the pattern
             yypushback(1);
             resetFormatting();
-            if (underlining.startsWith("=")) {
+            if (underlining.startsWith("=") && style == null) {
               headerLines = 0;
               yybegin(HEADER);
             }
@@ -475,7 +475,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                               while (prefix.length() > level && (prefix.charAt(level) == '#' || prefix.charAt(level) == '=')) {
                                 ++ level;
                               }
-                              if (level == 1) {
+                              if (level == 1 && style == null) {
                                 yybegin(DOCTITLE);
                               } else {
                                 yybegin(HEADING);
@@ -1210,7 +1210,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 // include is the only allowed block macro in these types of block
-<LITERAL_BLOCK, LISTING_BLOCK, PASSTRHOUGH_BLOCK, LISTING_NO_DELIMITER, SINGLELINE> {
+<LITERAL_BLOCK, LISTING_BLOCK, PASSTRHOUGH_BLOCK, LISTING_NO_DELIMITER, SINGLELINE, HEADER> {
   ^ "include::" / [^\[\n]* "[" [^\]\n]* "]" {SPACE}* \n { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   ^ "include::" / [^\[\n]* {AUTOCOMPLETE} { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
 }
