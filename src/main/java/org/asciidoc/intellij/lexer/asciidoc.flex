@@ -380,7 +380,11 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <ATTRIBUTE_VAL> {
   /*Value continue on the next line if the line is ended by a space followed by a backslash*/
-  {SPACE} "\\" {SPACE}* "\n" { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
+  {SPACE} "\\" {SPACE}* "\n" {SPACE}* { return AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION; }
+  /*Value continue on the next line if the line is ended by a space followed by a plus, but this is old syntax*/
+  {SPACE} {CONTINUATION} {SPACE}* "\n" {SPACE}* {
+                         return AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION_LEGACY;
+                       }
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
   [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
 }

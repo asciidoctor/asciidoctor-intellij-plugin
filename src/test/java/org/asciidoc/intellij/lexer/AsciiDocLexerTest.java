@@ -275,7 +275,26 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
         "AsciiDoc:ATTRIBUTE_NAME ('attribute')\n" +
         "AsciiDoc:ATTRIBUTE_NAME_END (':')\n" +
-        "AsciiDoc:ATTRIBUTE_VAL (' value \\\\n continue on the next line')\n" +
+        "AsciiDoc:ATTRIBUTE_VAL (' value')\n" +
+        "AsciiDoc:ATTRIBUTE_CONTINUATION (' \\\\n ')\n" +
+        "AsciiDoc:ATTRIBUTE_VAL ('continue on the next line')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('More')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('text')");
+  }
+
+  /**
+   * Value continue on the next line if the line is ended by a space followed by a backslash.
+   */
+  public void testAttributeMultilineWithPlus() {
+    doTest(":attribute: value +\n continue on the next line\nMore text",
+      "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME ('attribute')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME_END (':')\n" +
+        "AsciiDoc:ATTRIBUTE_VAL (' value')\n" +
+        "AsciiDoc:ATTRIBUTE_CONTINUATION_LEGACY (' +\\n ')\n" +
+        "AsciiDoc:ATTRIBUTE_VAL ('continue on the next line')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('More')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +

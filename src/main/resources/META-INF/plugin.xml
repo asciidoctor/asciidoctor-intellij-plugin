@@ -201,6 +201,10 @@
                      groupName="General" enabledByDefault="true" level="WARNING"
                      shortName="AsciiDocHorizontalRuleInspection"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocHorizontalRuleInspection"/>
+    <localInspection language="AsciiDoc" displayName="Attribute continuation inspection" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="WARNING"
+                     shortName="AsciiDocAttributeContinuationInspection"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocAttributeContinuationInspection"/>
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
     <problemFileHighlightFilter
       implementation="org.asciidoc.intellij.problemHighlighter.AsciiDocProblemFileHighlightFilter"/>

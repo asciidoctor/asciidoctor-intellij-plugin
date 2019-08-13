@@ -5,6 +5,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
+import com.intellij.psi.tree.TokenSet;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.jetbrains.annotations.NotNull;
@@ -29,13 +30,20 @@ public class AsciiDocAttributeDeclaration extends ASTWrapperPsiElement {
     return null;
   }
 
+  private static final TokenSet CONTINUATION_TYPES = TokenSet.create(AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION,
+    AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION_LEGACY);
+
   @Nullable
   public String getAttributeValue() {
     ASTNode attributeValue = getNode().findChildByType(AsciiDocTokenTypes.ATTRIBUTE_VAL);
     if (attributeValue != null) {
       StringBuilder sb = new StringBuilder();
       while (attributeValue != null) {
-        sb.append(attributeValue.getText());
+        if (CONTINUATION_TYPES.contains(attributeValue.getElementType())) {
+          sb.append(" ");
+        } else {
+          sb.append(attributeValue.getText());
+        }
         attributeValue = attributeValue.getTreeNext();
       }
       return sb.toString().trim();

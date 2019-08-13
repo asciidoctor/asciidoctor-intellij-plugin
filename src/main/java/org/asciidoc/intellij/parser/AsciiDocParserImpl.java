@@ -7,6 +7,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Stack;
 
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION_LEGACY;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_NAME;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_NAME_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_NAME_START;
@@ -258,7 +260,8 @@ public class AsciiDocParserImpl {
     newLines = 0;
     PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
     next();
-    while ((at(ATTRIBUTE_NAME) || at(ATTRIBUTE_NAME_END) || at(ATTRIBUTE_VAL) || at(ATTRIBUTE_REF_START))
+    while ((at(ATTRIBUTE_NAME) || at(ATTRIBUTE_NAME_END) || at(ATTRIBUTE_VAL) || at(ATTRIBUTE_REF_START)
+      || at(ATTRIBUTE_CONTINUATION) || at(ATTRIBUTE_CONTINUATION_LEGACY))
       && newLines == 0) {
       if (at(ATTRIBUTE_NAME)) {
         PsiBuilder.Marker blockIdMarker = myBuilder.mark();

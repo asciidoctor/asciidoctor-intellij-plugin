@@ -224,6 +224,16 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("reference should resolve to 'myattr'", "myattr", resolved.getName());
   }
 
+  public void testValueForAttributeValue() {
+    // given...
+    PsiFile psiFile = configureByAsciiDoc(":myattr: Hi \\\n ho");
+
+    // then...
+    AsciiDocAttributeDeclaration declaration = PsiTreeUtil.getChildOfType(psiFile, AsciiDocAttributeDeclaration.class);
+    assertNotNull("declaration should exist", declaration);
+    assertEquals("declaration should have value 'Hi ho'", "Hi ho", declaration.getAttributeValue());
+  }
+
   public void testNestedReferenceInInclude() {
     // given...
     PsiFile psiFile = configureByAsciiDoc(":file: aaa.adoc\n:val: {file}\ninclude::{val}[]");
