@@ -68,13 +68,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         if (decl.getAttributeValue() == null) {
           continue;
         }
-        String val = decl.getAttributeValue();
-        if (val.contains("{asciidoctorconfigdir}") &&
-          (decl.getContainingFile().getName().equals(".asciidoctorconfig") || decl.getContainingFile().getName().equals(".asciidoctorconfig.adoc"))
-          && decl.getContainingFile().getVirtualFile().getParent().getCanonicalPath() != null) {
-          val = val.replaceAll("\\{asciidoctorconfigdir}", decl.getContainingFile().getVirtualFile().getParent().getCanonicalPath());
-        }
-        resolve(matcher.replaceFirst(val), results, depth + 1);
+        resolve(matcher.replaceFirst(decl.getAttributeValue()), results, depth + 1);
       }
     } else {
       PsiElement file = resolve(key);
@@ -238,13 +232,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         if (decl.getAttributeValue() == null) {
           continue;
         }
-        String val = decl.getAttributeValue();
-        if (val.contains("{asciidoctorconfigdir}") &&
-          (decl.getContainingFile().getName().equals(".asciidoctorconfig") || decl.getContainingFile().getName().equals(".asciidoctorconfig.adoc"))
-          && decl.getContainingFile().getVirtualFile().getCanonicalPath() != null) {
-          val = val.replaceAll("\\{asciidoctorconfigdir}", decl.getContainingFile().getVirtualFile().getCanonicalPath());
-        }
-        getVariants(matcher.replaceFirst(val), collector, depth + 1);
+        getVariants(matcher.replaceFirst(decl.getAttributeValue()), collector, depth + 1);
       }
     } else {
       PsiElement resolve = resolve(base);

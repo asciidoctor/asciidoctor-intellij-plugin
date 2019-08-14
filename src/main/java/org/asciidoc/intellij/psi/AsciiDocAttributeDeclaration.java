@@ -46,7 +46,13 @@ public class AsciiDocAttributeDeclaration extends ASTWrapperPsiElement {
         }
         attributeValue = attributeValue.getTreeNext();
       }
-      return sb.toString().trim();
+      String val = sb.toString().trim();
+      if (val.contains("{asciidoctorconfigdir}") &&
+        (this.getContainingFile().getName().equals(".asciidoctorconfig") || this.getContainingFile().getName().equals(".asciidoctorconfig.adoc"))
+        && this.getContainingFile().getVirtualFile().getParent().getCanonicalPath() != null) {
+        val = val.replaceAll("\\{asciidoctorconfigdir}", this.getContainingFile().getVirtualFile().getParent().getCanonicalPath());
+      }
+      return val;
     }
     return null;
   }
