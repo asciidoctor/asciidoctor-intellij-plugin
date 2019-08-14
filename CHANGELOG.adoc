@@ -7,6 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.29.6 (preview, available from Github releases)
+
+- support autocomplete for includes with attributes in listings (#320)
+- improved autocomplete for directories by handling '/', tab and other characters intuitively (#320)
+
 === 0.29.5 (preview, available from Github releases)
 
 - support legacy `+` for continuations in attribute value declarations, with quickfix to convert (#318)

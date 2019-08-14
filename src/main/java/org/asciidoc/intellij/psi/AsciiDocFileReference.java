@@ -1,5 +1,7 @@
 package org.asciidoc.intellij.psi;
 
+import com.intellij.codeInsight.AutoPopupController;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
@@ -20,6 +22,7 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
+import org.asciidoc.intellij.completion.AsciiDocCompletionContributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,14 +33,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
-  /*
-  TODO:
-    GOAL: insert trailing "/" if a directory has been selected
-    ISSUE: when extending the range by one character, "tab" doesn't replace the the original value any more
-    IDEAS:
-    * be more specific in getRangeInElement()? Maybe implement MultiRangeReference?
-    * use an insert handler to do the magic?
-   */
   private static final int MAX_DEPTH = 10;
   private static final Pattern URL = Pattern.compile("^\\p{Alpha}[\\p{Alnum}.+-]+:/{0,2}");
   private static final Pattern ATTRIBUTES = Pattern.compile("\\{([a-zA-Z0-9_]+[a-zA-Z0-9_-]*)}");
@@ -140,7 +135,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
     final THashSet<PsiElement> set = new THashSet<>(collector.getResults());
     final PsiElement[] candidates = PsiUtilCore.toPsiElementArray(set);
-    List<Object> additionalItems = ContainerUtil.newArrayList();
+    List<LookupElementBuilder> additionalItems = ContainerUtil.newArrayList();
 
     List<ResolveResult> results = new ArrayList<>();
     if (base.endsWith("/") || base.length() == 0) {
@@ -153,7 +148,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         continue;
       }
       final Icon icon = result.getElement().getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
-      additionalItems.add(FileInfoManager.getFileLookupItem(result.getElement(), ".." /* + '/' */, icon));
+      LookupElementBuilder item = FileInfoManager.getFileLookupItem(result.getElement(), ".." /* + '/' */, icon);
+      item = handleTrailingSlash(item);
+      additionalItems.add(item);
     }
 
     List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject());
@@ -162,30 +159,38 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         continue;
       }
       List<ResolveResult> res = new ArrayList<>();
-      resolve(base + "/" + decl.getAttributeValue(), res, 0);
+      String val = base;
+      if (!val.endsWith("/") && val.length() > 0) {
+        val = val + "/";
+      }
+      resolve(val + decl.getAttributeValue(), res, 0);
       for (ResolveResult result : res) {
         if (result.getElement() == null) {
           continue;
         }
         final Icon icon = result.getElement().getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
-        additionalItems.add(
-          FileInfoManager.getFileLookupItem(result.getElement(), "{" + decl.getAttributeName() + "}", icon)
-            .withTailText(" (" + decl.getAttributeValue() + ")", true)
-            .withTypeText(decl.getContainingFile().getName())
-        );
+        LookupElementBuilder lb = FileInfoManager.getFileLookupItem(result.getElement(), "{" + decl.getAttributeName() + "}", icon)
+          .withTailText(" (" + decl.getAttributeValue() + ")", true)
+          .withTypeText(decl.getContainingFile().getName());
+        if (result.getElement() instanceof PsiDirectory) {
+          lb = handleTrailingSlash(lb);
+        }
+        additionalItems.add(lb);
       }
     }
-
 
     final Object[] variants = new Object[candidates.length + additionalItems.size()];
     for (int i = 0; i < candidates.length; i++) {
       PsiElement candidate = candidates[i];
       if (candidate instanceof PsiDirectory) {
         final Icon icon = candidate.getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
-        String name = ((PsiDirectory) candidate).getName(); // + "/";
-        variants[i] = FileInfoManager.getFileLookupItem(candidate, name, icon);
+        String name = ((PsiDirectory) candidate).getName();
+        LookupElementBuilder lb = FileInfoManager.getFileLookupItem(candidate, name, icon);
+        lb = handleTrailingSlash(lb);
+        variants[i] = lb;
+      } else {
+        variants[i] = FileInfoManager.getFileLookupItem(candidate);
       }
-      variants[i] = FileInfoManager.getFileLookupItem(candidate);
     }
 
     for (int i = 0; i < additionalItems.size(); i++) {
@@ -195,7 +200,33 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return variants;
   }
 
-  private void getVariants(String base, CommonProcessors.CollectUniquesProcessor<PsiFileSystemItem> collector, int depth) {
+  private LookupElementBuilder handleTrailingSlash(LookupElementBuilder lb) {
+    return lb.withInsertHandler((insertionContext, item) -> {
+      int offset = insertionContext.getTailOffset();
+      if (insertionContext.getOffsetMap().containsOffset(AsciiDocCompletionContributor.IDENTIFIER_FILE_REFERENCE)) {
+        // AsciiDocCompletionContributor left a hint for us to do the replacement
+        // (happens if a path elements is a variable)
+        insertionContext.getDocument().deleteString(offset, insertionContext.getOffsetMap().getOffset(AsciiDocCompletionContributor.IDENTIFIER_FILE_REFERENCE));
+      }
+      if (insertionContext.getCompletionChar() == '\t') {
+        if (insertionContext.getDocument().getTextLength() <= offset
+          || insertionContext.getDocument().getText().charAt(offset) != '/') {
+          // the finalizing '/' hasn't been entered yet, autocomplete it here
+          insertionContext.getDocument().insertString(offset, "/");
+          offset += 1;
+          insertionContext.getEditor().getCaretModel().moveToOffset(offset);
+        } else if (insertionContext.getDocument().getTextLength() > offset &&
+          insertionContext.getDocument().getText().charAt(offset) == '/') {
+          insertionContext.getEditor().getCaretModel().moveToOffset(offset + 1);
+        }
+      }
+      AutoPopupController.getInstance(insertionContext.getProject())
+        .scheduleAutoPopup(insertionContext.getEditor());
+    });
+  }
+
+  private void getVariants(String base, CommonProcessors.CollectUniquesProcessor<PsiFileSystemItem> collector,
+                           int depth) {
     if (depth > MAX_DEPTH) {
       return;
     }

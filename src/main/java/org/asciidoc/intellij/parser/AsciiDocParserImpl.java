@@ -25,7 +25,6 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTRS_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTR_NAME;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTR_VALUE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_DELIMITER;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ATTRIBUTES;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_BODY;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ID;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER;
@@ -404,21 +403,10 @@ public class AsciiDocParserImpl {
         break;
       }
       if (at(BLOCK_MACRO_ID)) {
-        newLines = 0;
-        PsiBuilder.Marker blockMacro = myBuilder.mark();
+        parseBlockMacro();
+      } else {
         next();
-        while (at(BLOCK_MACRO_BODY) || at(BLOCK_MACRO_ATTRIBUTES) || at(BLOCK_ATTRS_START) || at(BLOCK_ATTRS_END)
-          && newLines == 0) {
-          if (at(BLOCK_ATTRS_END)) {
-            next();
-            break;
-          }
-          next();
-        }
-        blockMacro.done(AsciiDocElementTypes.BLOCK_MACRO);
-        continue;
       }
-      next();
     }
     myBlockStartMarker.done(AsciiDocElementTypes.LISTING);
   }
@@ -439,25 +427,14 @@ public class AsciiDocParserImpl {
         break;
       }
       if (at(BLOCK_MACRO_ID)) {
+        parseBlockMacro();
+      } else {
         newLines = 0;
-        PsiBuilder.Marker blockMacro = myBuilder.mark();
         next();
-        while (at(BLOCK_MACRO_BODY) || at(BLOCK_MACRO_ATTRIBUTES) || at(BLOCK_ATTRS_START) || at(BLOCK_ATTRS_END)
-          && newLines == 0) {
-          if (at(BLOCK_ATTRS_END)) {
-            next();
-            break;
-          }
-          next();
+        // eof() triggers skipWhitepace that increments newLines
+        if (!myBuilder.eof() && newLines > 1) {
+          break;
         }
-        blockMacro.done(AsciiDocElementTypes.BLOCK_MACRO);
-        continue;
-      }
-      newLines = 0;
-      next();
-      // eof() triggers skipWhitepace that increments newLines
-      if (!myBuilder.eof() && newLines > 1) {
-        break;
       }
     }
     myBlockStartMarker.done(AsciiDocElementTypes.LISTING);
