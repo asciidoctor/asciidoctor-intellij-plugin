@@ -93,6 +93,7 @@ public interface AsciiDocTokenTypes {
   IElementType LINKEND = new AsciiDocElementType("LINKEND");
   IElementType ATTRIBUTE_NAME_START = new AsciiDocElementType("ATTRIBUTE_NAME_START");
   IElementType ATTRIBUTE_NAME = new AsciiDocElementType("ATTRIBUTE_NAME");
+  IElementType ATTRIBUTE_UNSET = new AsciiDocElementType("ATTRIBUTE_UNSET");
   IElementType ATTRIBUTE_NAME_END = new AsciiDocElementType("ATTRIBUTE_NAME_END");
   IElementType ATTRIBUTE_VAL = new AsciiDocElementType("ATTRIBUTE_VAL");
   IElementType ATTRIBUTE_REF_START = new AsciiDocElementType("ATTRIBUTE_REF_START");

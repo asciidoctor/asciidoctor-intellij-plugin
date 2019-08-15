@@ -364,6 +364,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <ATTRIBUTE_NAME> {
   {ATTRIBUTE_NAME_END} { yybegin(ATTRIBUTE_VAL); return AsciiDocTokenTypes.ATTRIBUTE_NAME_END; }
   {AUTOCOMPLETE} | {ATTRIBUTE_NAME} { return AsciiDocTokenTypes.ATTRIBUTE_NAME; }
+  "!" / {ATTRIBUTE_NAME_END} { return AsciiDocTokenTypes.ATTRIBUTE_UNSET; }
   "\n"               { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
   [^]                { yypushback(yylength()); yypopstate(); }
 }
@@ -407,7 +408,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <HEADER, PREBLOCK> {
-  ^ {ATTRIBUTE_NAME_START} / {AUTOCOMPLETE}? {ATTRIBUTE_NAME} {ATTRIBUTE_NAME_END} {
+  ^ {ATTRIBUTE_NAME_START} / {AUTOCOMPLETE}? {ATTRIBUTE_NAME} "!"? {ATTRIBUTE_NAME_END} {
         if (!isEscaped()) {
           yypushstate();
           yybegin(ATTRIBUTE_NAME);

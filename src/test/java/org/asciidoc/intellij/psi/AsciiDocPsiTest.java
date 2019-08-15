@@ -234,6 +234,16 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("declaration should have value 'Hi ho'", "Hi ho", declaration.getAttributeValue());
   }
 
+  public void testUnsetForAttribute() {
+    // given...
+    PsiFile psiFile = configureByAsciiDoc(":myattr!:");
+
+    // then...
+    AsciiDocAttributeDeclaration declaration = PsiTreeUtil.getChildOfType(psiFile, AsciiDocAttributeDeclaration.class);
+    assertNotNull("declaration exists", declaration);
+    assertTrue("declaration is of unset type", declaration.isUnset());
+  }
+
   public void testNestedReferenceInInclude() {
     // given...
     PsiFile psiFile = configureByAsciiDoc(":file: aaa.adoc\n:val: {file}\ninclude::{val}[]");

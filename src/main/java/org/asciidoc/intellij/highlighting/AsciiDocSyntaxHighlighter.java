@@ -157,6 +157,7 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
       .put(AsciiDocTokenTypes.SEPARATOR, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.ATTRIBUTE_NAME_START, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.ATTRIBUTE_NAME, ASCIIDOC_ATTRIBUTE)
+      .put(AsciiDocTokenTypes.ATTRIBUTE_UNSET, ASCIIDOC_ATTRIBUTE)
       .put(AsciiDocTokenTypes.ATTRIBUTE_NAME_END, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.ATTRIBUTE_VAL, ASCIIDOC_ATTRIBUTE_VAL)
       .put(AsciiDocTokenTypes.ATTRIBUTE_REF_START, ASCIIDOC_MARKER)

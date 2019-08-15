@@ -30,6 +30,13 @@ public class AsciiDocAttributeDeclaration extends ASTWrapperPsiElement {
     return null;
   }
 
+  /**
+   * Check if is is an unset attribute declaration (':attr!:').
+   */
+  public boolean isUnset() {
+    return this.getNode().getChildren(TokenSet.create(AsciiDocTokenTypes.ATTRIBUTE_UNSET)).length > 0;
+  }
+
   private static final TokenSet CONTINUATION_TYPES = TokenSet.create(AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION,
     AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION_LEGACY);
 

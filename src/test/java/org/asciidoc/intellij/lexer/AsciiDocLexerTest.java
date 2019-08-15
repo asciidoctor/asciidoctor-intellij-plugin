@@ -265,6 +265,14 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRIBUTE_NAME_END (':')");
   }
 
+  public void testAttributeEmpty() {
+    doTest(":attribute!:",
+      "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME ('attribute')\n" +
+        "AsciiDoc:ATTRIBUTE_UNSET ('!')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME_END (':')");
+  }
+
   public void testAttributeEscaped() {
     doTest("\\:attribute:",
       "AsciiDoc:TEXT ('\\:attribute:')");
