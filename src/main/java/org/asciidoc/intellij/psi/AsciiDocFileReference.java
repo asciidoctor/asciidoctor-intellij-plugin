@@ -202,7 +202,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         // (happens if a path elements is a variable)
         insertionContext.getDocument().deleteString(offset, insertionContext.getOffsetMap().getOffset(AsciiDocCompletionContributor.IDENTIFIER_FILE_REFERENCE));
       }
-      if (insertionContext.getCompletionChar() == '\t') {
+      // when selecting with the mouse IntelliJ will send '\n' as well
+      if (insertionContext.getCompletionChar() == '\t'
+        || insertionContext.getCompletionChar() == '\n') {
         if (insertionContext.getDocument().getTextLength() <= offset
           || insertionContext.getDocument().getText().charAt(offset) != '/') {
           // the finalizing '/' hasn't been entered yet, autocomplete it here

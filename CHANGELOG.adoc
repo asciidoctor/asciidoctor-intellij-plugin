@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.29.8 (work in progress)
+
+- add slash also for mouse and enter when completing (#320)
+
 === 0.29.7 (preview, available from Github releases)
 
 - support `asciidoctorconfigdir` in referenced attributes when autocompleting directories and files (#320)
