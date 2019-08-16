@@ -7,9 +7,9 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.29.8 (work in progress)
+=== 0.29.8 (preview, available from Github releases)
 
-- add slash also for mouse and enter when completing (#320)
+- add slash also for mouse and enter key when selecting path elements during auto-completing (#320)
 - support unset attribute in lexer, parser and highlighting
 
 === 0.29.7 (preview, available from Github releases)
