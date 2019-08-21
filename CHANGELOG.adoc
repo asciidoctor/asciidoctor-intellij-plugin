@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.29.9
+
+- tuning end-of-sentence detection when potential end of sentence followed by a lowercase character
+
 === 0.29.8 (preview, available from Github releases)
 
 - add slash also for mouse and enter key when selecting path elements during auto-completing (#320)

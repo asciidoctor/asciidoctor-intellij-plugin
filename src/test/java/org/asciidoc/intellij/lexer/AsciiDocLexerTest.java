@@ -1137,6 +1137,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Sentence')");
   }
 
+  public void testNoEndOfSentenceAgain() {
+    doTest("End. no Sentence",
+      "AsciiDoc:TEXT ('End.')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('no')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Sentence')");
+  }
+
   public void testNoEndOfSentenceAdExemplar() {
     doTest("e.g. No Sentence",
       "AsciiDoc:TEXT ('e.g.')\n" +
