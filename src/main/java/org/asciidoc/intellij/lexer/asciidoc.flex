@@ -238,7 +238,7 @@ ATTRIBUTE_NAME = [a-zA-Z0-9_]+ [a-zA-Z0-9_-]*
 ATTRIBUTE_NAME_END = ":"
 ATTRIBUTE_REF_START = "{"
 ATTRIBUTE_REF_END = "}"
-END_OF_SENTENCE = [\.?!:] | (" " [?!:]) // French: "marks with two elements require a space before them in"
+END_OF_SENTENCE = [\.?!] | (" " [?!]) // French: "marks with two elements require a space before them in"
 HARD_BREAK = {SPACE} "+" {SPACE}* "\n"
 DESCRIPTION_END = (":"{2,4} | ";;")
 DESCRIPTION = [^\n]+ {SPACE}* {DESCRIPTION_END}
@@ -640,8 +640,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ".." "."* / {SPACE}* [^ \t\n] { return textFormat(); } // avoid end of sentence for "..." if inside of a line
   {END_OF_SENTENCE} / {SPACE}+ [^\p{Uppercase}\n]* [\p{Lowercase}] // standard text if followed by lower case character
                        { return textFormat(); }
-  {END_OF_SENTENCE} / {SPACE}* \n // end of sentence at end of line
-                       { if (!doublemono && !singlemono) {
+  ({END_OF_SENTENCE} | (" "? ":")) / {SPACE}* \n // end of sentence at end of line
+                       { if (!doublemono && !singlemono && !isPrefixedBy("1234567890")) {
                            return AsciiDocTokenTypes.END_OF_SENTENCE;
                          } else {
                            return textFormat();

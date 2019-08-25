@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.29.10 (work in progress)
 
 - No end of sentence after a digit
+- no end of sentence after colon in middle of line, but preserve line break after colon at end of line
 
 === 0.29.10
 

@@ -350,8 +350,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("Text\n:attribute1:\n",
       "AsciiDoc:TEXT ('Text')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TEXT (':attribute1')\n" +
-        "AsciiDoc:END_OF_SENTENCE (':')\n" +
+        "AsciiDoc:TEXT (':attribute1:')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
@@ -1146,6 +1145,21 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Number')");
   }
 
+  public void testNoEndOfSentenceAfterColon() {
+    doTest("Colon: Word",
+      "AsciiDoc:TEXT ('Colon:')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Word')");
+  }
+
+  public void testEndOfSentenceAfterColonAndNewline() {
+    doTest("Colon:\nWord",
+      "AsciiDoc:TEXT ('Colon')\n" +
+        "AsciiDoc:END_OF_SENTENCE (':')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Word')");
+  }
+
   public void testNoEndOfSentenceAgain() {
     doTest("End. no Sentence",
       "AsciiDoc:TEXT ('End.')\n" +
@@ -1438,7 +1452,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:LPAREN ('(')\n" +
         "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
         "AsciiDoc:RPAREN (')')\n" +
-        "AsciiDoc:END_OF_SENTENCE (':')\n" +
+        "AsciiDoc:TEXT (':')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('Text')");
   }
