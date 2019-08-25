@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.29.10 (work in progress)
+
+- No end of sentence after a digit
+
 === 0.29.10
 
 - fixing dependency problem when running on IDEs like RubyMine (#323)

@@ -1137,6 +1137,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Sentence')");
   }
 
+  public void testNoEndOfSentenceAfterNumber() {
+    doTest("After 1. Number",
+      "AsciiDoc:TEXT ('After')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('1.')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Number')");
+  }
+
   public void testNoEndOfSentenceAgain() {
     doTest("End. no Sentence",
       "AsciiDoc:TEXT ('End.')\n" +

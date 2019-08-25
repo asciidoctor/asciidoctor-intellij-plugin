@@ -648,7 +648,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          }
                        }
   {END_OF_SENTENCE} / {SPACE} // end of sentence within a line, needs to be unconstrained
-                       { if (!doublemono && !singlemono && isUnconstrainedEnd()) {
+                       { if (!doublemono && !singlemono && isUnconstrainedEnd() && !isPrefixedBy("1234567890")) {
                            return AsciiDocTokenTypes.END_OF_SENTENCE;
                          } else {
                            return textFormat();
