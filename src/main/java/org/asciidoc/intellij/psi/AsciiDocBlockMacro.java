@@ -158,6 +158,11 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
 
   private static TextRange getRangeOfBody(AsciiDocBlockMacro element) {
     PsiElement child = element.getFirstChild();
+    // skip over pre-block until macro ID starts
+    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.BLOCK_MACRO_ID) {
+      child = child.getNextSibling();
+    }
+    // skip over macro ID
     while (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.BLOCK_MACRO_ID) {
       child = child.getNextSibling();
     }

@@ -257,6 +257,19 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("macro should resolve to file 'aaa.adoc'", "aaa.adoc", resolved.getName());
   }
 
+  public void testIncludeWithPreBlock() {
+    // given...
+    PsiFile psiFile = configureByAsciiDoc("[[id]]\ninclude::aaa.adoc[]");
+
+    // then...
+    AsciiDocBlockMacro macro = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlockMacro.class);
+    assertNotNull("macro should exist", macro);
+    assertEquals("macro should have one reference", 1, macro.getReferences().length);
+    AsciiDocFile resolved = (AsciiDocFile) macro.getReferences()[0].resolve();
+    assertNotNull("macro should resolve", resolved);
+    assertEquals("macro should resolve to file 'aaa.adoc'", "aaa.adoc", resolved.getName());
+  }
+
   public void testAttributeInBlockMacroInListing() {
     // given...
     PsiFile psiFile = configureByAsciiDoc(":file: aaa.adoc\n----\ninclude::{file}[]\n----\n");
