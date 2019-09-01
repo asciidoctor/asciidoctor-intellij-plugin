@@ -47,9 +47,10 @@ This project uses AsciiDoctorJ and JRuby for the rendering of the AsciiDoc conte
 
 For the conversion of Markdown to AsciiDoc, we use Pegdown and the https://github.com/bodiam/markdown-to-asciidoc[Markdown to AsciiDoc] converter.
 
-== Building an Contributing
+== Building, Contributing, Code of Conduct
 
 Please have a look at the link:CONTRIBUTING.adoc["How to Build and Contribute"] documentation.
+This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the link:CODE_OF_CONDUCT.adoc[Contributor Covenant code of conduct].
 
 == Copyright and Licensing
 
