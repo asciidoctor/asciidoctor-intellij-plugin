@@ -119,7 +119,6 @@ public class AsciiDoc {
           asciidoctor.shutdown();
           asciidoctor = null;
         }
-        ClassLoader old = Thread.currentThread().getContextClassLoader();
         ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
         ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
         SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
@@ -143,7 +142,6 @@ public class AsciiDoc {
           }
         }
         try {
-          Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
           asciidoctor = Asciidoctor.Factory.create();
           asciidoctor.registerLogHandler(logHandler);
           // disable JUL logging of captured messages
@@ -175,7 +173,6 @@ public class AsciiDoc {
           }
           SystemOutputHijacker.deregister();
           notify(boasOut, boasErr, Collections.emptyList());
-          Thread.currentThread().setContextClassLoader(old);
         }
       }
     }
@@ -238,9 +235,19 @@ public class AsciiDoc {
   }
 
   private void notify(ByteArrayOutputStream boasOut, ByteArrayOutputStream boasErr, List<LogRecord> logRecords) {
+    notify(boasOut, boasErr, logRecords,
+      !AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isShowAsciiDocWarningsAndErrorsInEditor());
+  }
+
+  private void notifyAlways(ByteArrayOutputStream boasOut, ByteArrayOutputStream boasErr, List<LogRecord> logRecords) {
+    notify(boasOut, boasErr, logRecords, true);
+  }
+
+  private void notify(ByteArrayOutputStream boasOut, ByteArrayOutputStream boasErr, List<LogRecord> logRecords,
+                      boolean logAll) {
     String out = boasOut.toString();
     String err = boasErr.toString();
-    if (!AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isShowAsciiDocWarningsAndErrorsInEditor()) {
+    if (logAll) {
       // logRecords will not be handled in the org.asciidoc.intellij.annotator.ExternalAnnotator
       for (LogRecord logRecord : logRecords) {
         if (logRecord.getSeverity() == Severity.DEBUG) {
@@ -361,21 +368,18 @@ public class AsciiDoc {
   public String render(String text, List<String> extensions, Notifier notifier) {
     synchronized (AsciiDoc.class) {
       CollectingLogHandler logHandler = new CollectingLogHandler();
+      ClassLoader old = Thread.currentThread().getContextClassLoader();
+      Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
+      ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
+      ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
+      SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
       try {
         initWithExtensions(extensions);
-        ClassLoader old = Thread.currentThread().getContextClassLoader();
-        ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
-        ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
-        SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
         asciidoctor.registerLogHandler(logHandler);
         try {
-          Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
-          return "<div id=\"content\">\n" + asciidoctor.convert(text, getDefaultOptions()) + "\n</div>";
+          return "<div id=\"content\">\n" + asciidoctor.convert(text, getDefaultOptions("html5")) + "\n</div>";
         } finally {
           asciidoctor.unregisterLogHandler(logHandler);
-          SystemOutputHijacker.deregister();
-          notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
-          Thread.currentThread().setContextClassLoader(old);
         }
       } catch (Exception | ServiceConfigurationError ex) {
         log.warn("unable to render AsciiDoc document", ex);
@@ -396,13 +400,67 @@ public class AsciiDoc {
         } while (t != null);
         response.append("<p>(the full exception stack trace is available in the IDE's log file. Visit menu item 'Help | Show Log in Explorer' to see the log)");
         return response.toString();
+      } finally {
+        SystemOutputHijacker.deregister();
+        notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
+        Thread.currentThread().setContextClassLoader(old);
       }
     }
   }
 
-  private Map<String, Object> getDefaultOptions() {
+  public void renderPdf(File file, List<String> extensions) {
+    Notifier notifier = this::notifyAlways;
+    synchronized (AsciiDoc.class) {
+      CollectingLogHandler logHandler = new CollectingLogHandler();
+      ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
+      ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
+      SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
+      ClassLoader old = Thread.currentThread().getContextClassLoader();
+      Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
+      try {
+        extensions.add("asciidoctor-pdf");
+        initWithExtensions(extensions);
+        asciidoctor.registerLogHandler(logHandler);
+        try {
+          asciidoctor.convertFile(file, getDefaultOptions("pdf"));
+        } finally {
+          asciidoctor.unregisterLogHandler(logHandler);
+        }
+      } catch (Exception | ServiceConfigurationError ex) {
+        log.warn("unable to render AsciiDoc document", ex);
+        logHandler.log(new LogRecord(Severity.FATAL, ex.getMessage()));
+        StringBuilder response = new StringBuilder();
+        response.append("unable to render AsciiDoc document");
+        Throwable t = ex;
+        do {
+          response.append("<p>").append(t.getClass().getCanonicalName()).append(": ").append(t.getMessage());
+          if (t instanceof MainExitException && t.getMessage().startsWith("unknown encoding name")) {
+            response.append("<p>Either your local encoding is not supported by JRuby, or you passed an unrecognized value to the Java property 'file.encoding' either in the IntelliJ options file or via the JAVA_TOOL_OPTION environment variable.");
+            String property = SafePropertyAccessor.getProperty("file.encoding", null);
+            response.append("<p>encoding passed by system property 'file.encoding': ").append(property);
+            response.append("<p>available encodings (excuding aliases): ");
+            EncodingDB.getEncodings().forEach(entry -> response.append(entry.getEncoding().getCharsetName()).append(" "));
+          }
+          t = t.getCause();
+        } while (t != null);
+        response.append("<p>(the full exception stack trace is available in the IDE's log file. Visit menu item 'Help | Show Log in Explorer' to see the log)");
+        try {
+          boasErr.write(response.toString().getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+          throw new RuntimeException("Unable to write bytes");
+        }
+      } finally {
+        SystemOutputHijacker.deregister();
+        notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
+        Thread.currentThread().setContextClassLoader(old);
+      }
+    }
+  }
+
+  private Map<String, Object> getDefaultOptions(String backend) {
     AttributesBuilder builder = AttributesBuilder.attributes()
       .showTitle(true)
+      .backend(backend)
       .sourceHighlighter("coderay")
       .attribute("coderay-css", "style")
       .attribute("env", "idea")
@@ -424,7 +482,7 @@ public class AsciiDoc {
 
     settings.getAsciiDocPreviewSettings().getAttributes().forEach(attrs::setAttribute);
 
-    OptionsBuilder opts = OptionsBuilder.options().safe(SafeMode.UNSAFE).backend("html5").headerFooter(false)
+    OptionsBuilder opts = OptionsBuilder.options().safe(SafeMode.UNSAFE).backend(backend).headerFooter(false)
       .attributes(attrs)
       .option("sourcemap", "true")
       .baseDir(fileBaseDir);

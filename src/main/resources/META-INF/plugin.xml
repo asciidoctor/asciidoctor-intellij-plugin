@@ -99,6 +99,11 @@
                 description="Toggle using soft wraps in current editor"
                 icon="AllIcons.Actions.ToggleSoftWrap">
         </action>
+        <action class="org.asciidoc.intellij.actions.asciidoc.CreatePdfAction"
+                id="org.asciidoc.intellij.actions.asciidoc.CreatePdfAction"
+                text="PDF"
+                description="Create PDF from current file">
+        </action>
 
         <!--
               <action id="asciidoc.convert.document6" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
