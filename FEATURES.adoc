@@ -215,11 +215,6 @@ The user can zoom in and out of the preview by holding kbd:[Ctrl] and scrolling 
 Clicking the middle mouse button whilst holding kbd:[Ctrl] will reset the zoom to 100%.
 
 EXPERIMENTAL:
-When using mathematical formulas in the preview, the preview can flicker.
-There is an experimental feature that you can enable in the settings of the plugin to activate a new update mechanism that avoids the flickering.
-Activate the option "`Replace preview contents without flicker (JavaFX preview only)`" for this.
-
-EXPERIMENTAL:
 The user can choose _Create PDF from current file_ to convert the file in the current AsciiDoc editor to a PDF using AsciiDoctor PDF version 1.5.0-beta.2.
 For now contents in _.asciidoctorconfig_ are not automatically included when creating a PDF.
 You'll have to include this file manually.
