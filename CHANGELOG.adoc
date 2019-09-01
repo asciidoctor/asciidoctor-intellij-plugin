@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.29.10 (work in progress)
+=== 0.29.11 (preview, available from Github releases)
 
 - No end of sentence after a digit
 - no end of sentence after colon in middle of line, but preserve line break after colon at end of line
