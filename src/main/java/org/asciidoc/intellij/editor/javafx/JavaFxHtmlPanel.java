@@ -106,6 +106,18 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
           "  },\n" +
           "  TeX: { equationNumbers: { autoNumber: \"none\" } }\n" +
           "});\n" +
+          "MathJax.Hub.Register.MessageHook(\"Math Processing Error\",function (message) {\n" +
+          " window.JavaPanelBridge && window.JavaPanelBridge.log(JSON.stringify(message)); \n" +
+          "});" +
+          "MathJax.Hub.Register.MessageHook(\"TeX Jax - parse error\",function (message) {\n" +
+          " var errortext = document.getElementById('mathjaxerrortext'); " +
+          " var errorformula = document.getElementById('mathjaxerrorformula'); " +
+          " if (errorformula && errortext) { " +
+          "   errortext.textContent = 'Math Formula problem: ' + message[1]; " +
+          "   errorformula.textContent = '\\n' + message[2]; " +
+          " } " +
+          " window.JavaPanelBridge && window.JavaPanelBridge.log(JSON.stringify(message)); \n" +
+          "});" +
           "</script>\n")
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("MathJax/MathJax.js")).append("&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n")
         .toString();
@@ -434,6 +446,15 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
               "function updateContent() { var elem = document.getElementById('content'); if (elem && elem.parentNode) { " +
               "var div = document.createElement('div');" +
               "div.innerHTML = '" + htmlToReplace + "'; " +
+              " var errortext = document.getElementById('mathjaxerrortext'); " +
+              " var errorformula = document.getElementById('mathjaxerrorformula'); " +
+              " if (errorformula && errortext) { " +
+              "   errortext.textContent = '' " +
+              "   errorformula.textContent = '' " +
+              " } " +
+              "div.style.cssText = 'display: none'; " +
+              // need to add the element to the DOM as MathJAX will use document.getElementById in some places
+              "elem.appendChild(div); " +
               // use MathJax to set the formulas in advance if formulas are present - this takes ~100ms
               // re-evaluate the content element as it might have been replaced by a concurrent rendering
               "if ('MathJax' in window && MathJax.Hub.getAllJax().length > 0) { MathJax.Hub.Typeset(div.firstChild, function() { var elem2 = document.getElementById('content'); elem2.parentNode.replaceChild(div.firstChild, elem2); finish(); }); } " +
@@ -448,7 +469,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       }
       // if not successful using JavaScript (like on first rendering attempt), set full content
       if (!result) {
-        html = "<html><head></head><body>" + html + "</body>";
+        html = "<html><head></head><body><div style='position:fixed;top:0;left:0;background-color:#eeeeee;color:red;z-index:99;'><div id='mathjaxerrortext'></div><pre style='color:red' id='mathjaxerrorformula'></pre></div>" + html + "</body>";
         final String htmlToRender = prepareHtml(html);
         JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().loadContent(htmlToRender);
         rendered.countDown();

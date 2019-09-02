@@ -10,6 +10,8 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.1 (work in progress)
 
 - support .asciidoctorconfig for PDF creation (#325)
+- fix rendering problem with LaTeX style math (#326)
+- improved logging for math problems, plus popup hint with MathML error message in preview (#326)
 
 === 0.30.1 (preview, available from Github releases)
 
