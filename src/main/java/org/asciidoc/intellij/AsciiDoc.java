@@ -418,7 +418,6 @@ public class AsciiDoc {
       ClassLoader old = Thread.currentThread().getContextClassLoader();
       Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
       try {
-        extensions.add("asciidoctor-pdf");
         initWithExtensions(extensions);
         asciidoctor.registerLogHandler(logHandler);
         try {
