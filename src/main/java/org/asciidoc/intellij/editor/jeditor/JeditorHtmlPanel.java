@@ -45,10 +45,13 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
     scrollPane = new JBScrollPane(jEditorPane);
     // Setup the editor pane for rendering HTML.
     File baseDir = new File("");
-    VirtualFile parent = FileDocumentManager.getInstance().getFile(document).getParent();
-    if (parent != null) {
-      // parent will be null if we use Language Injection and Fragment Editor
-      baseDir = new File(parent.getCanonicalPath());
+    VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+    if (file != null) {
+      VirtualFile parent = file.getParent();
+      if (parent != null && parent.getCanonicalPath() != null) {
+        // parent will be null if we use Language Injection and Fragment Editor
+        baseDir = new File(parent.getCanonicalPath());
+      }
     }
     final HTMLEditorKit kit = new AsciiDocEditorKit(baseDir);
 
@@ -115,13 +118,10 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
      *
      * @see http://en.wikipedia.org/wiki/Event_dispatching_thread)
      */
-    UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        jEditorPane.setDocument(doc);
-        Rectangle d = jEditorPane.getVisibleRect();
-        jEditorPane.setSize((int) d.getWidth(), (int) jEditorPane.getSize().getHeight());
-      }
+    UIUtil.invokeAndWaitIfNeeded((Runnable) () -> {
+      jEditorPane.setDocument(doc);
+      Rectangle d = jEditorPane.getVisibleRect();
+      jEditorPane.setSize((int) d.getWidth(), (int) jEditorPane.getSize().getHeight());
     });
   }
 
@@ -131,11 +131,8 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   @Override
-  public void scrollToLine(int line, int lineCount, int offsetLineNo) {
+  public void scrollToLine(int line, int lineCount) {
     // NOOP
-  }
-
-  private void adjustBrowserSize() {
   }
 
   @Override

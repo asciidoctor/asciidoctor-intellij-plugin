@@ -31,15 +31,12 @@ window.__IntelliJTools.scrollToLine = (function () {
     return offset
   }
 
-  var scrollToLine = function (newLineToScroll, lineCount, offsetLineNo) {
-
-    newLineToScroll += offsetLineNo;
-    lineCount += offsetLineNo;
+  var scrollToLine = function (newLineToScroll, lineCount) {
 
     // the sourcelines will be as CSS class elements that also have class has-source-line
     var blocks = document.getElementsByClassName('has-source-line');
     var startY = 0;
-    var startLine = offsetLineNo;
+    var startLine = 0;
     var endY;
     var endLine = lineCount;
 
@@ -62,7 +59,7 @@ window.__IntelliJTools.scrollToLine = (function () {
     var resultY = startY
 
     // interpolate the relative position inside the current block
-    if (newLineToScroll === offsetLineNo) {
+    if (newLineToScroll === 0) {
       resultY = 0;
     } else if (endY !== undefined && newLineToScroll !== startLine) {
       resultY += (newLineToScroll - startLine) / (endLine - startLine) * (endY - startY)

@@ -547,13 +547,12 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   @Override
-  public void scrollToLine(final int line, final int lineCount, int offsetLineNo) {
+  public void scrollToLine(final int line, final int lineCount) {
     this.lineCount = lineCount;
-    this.offset = offsetLineNo;
     runInPlatformWhenAvailable(() -> {
       JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
         "if ('__IntelliJTools' in window) " +
-          "__IntelliJTools.scrollToLine(" + line + ", " + lineCount + ", " + offsetLineNo + ");"
+          "__IntelliJTools.scrollToLine(" + line + ", " + lineCount + ");"
       );
       final Object result = JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
         "document.documentElement.scrollTop || document.body.scrollTop");

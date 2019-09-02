@@ -8,16 +8,16 @@ import java.util.List;
 public class AsciiDocInfoType {
   private final PsiFile file;
   private final Editor editor;
-  private final String contentWithConfig;
+  private final String content;
+  private final String config;
   private final List<String> extensions;
-  private final int offsetLineNo;
 
-  public AsciiDocInfoType(PsiFile file, Editor editor, String contentWithConfig, List<String> extensions, int offsetLineNo) {
+  public AsciiDocInfoType(PsiFile file, Editor editor, String content, String config, List<String> extensions) {
     this.file = file;
     this.editor = editor;
-    this.contentWithConfig = contentWithConfig;
+    this.content = content;
+    this.config = config;
     this.extensions = extensions;
-    this.offsetLineNo = offsetLineNo;
   }
 
   public PsiFile getFile() {
@@ -28,15 +28,15 @@ public class AsciiDocInfoType {
     return editor;
   }
 
-  public String getContentWithConfig() {
-    return contentWithConfig;
+  public String getContent() {
+    return content;
+  }
+
+  public String getConfig() {
+    return config;
   }
 
   public List<String> getExtensions() {
     return extensions;
-  }
-
-  public int getOffsetLineNo() {
-    return offsetLineNo;
   }
 }

@@ -66,10 +66,9 @@ public class CreatePdfAction extends AsciiDocAction {
         try {
           AsciiDoc asciiDoc = new AsciiDoc(project.getBasePath(), fileBaseDir,
             tempImagesPath, file.getName());
-          /* TODO: content from .asciidoctorconfig not included, needing more experiments and ideas
-             how to include this into a file on disk. Maybe convert it to an extension? */
           List<String> extensions = AsciiDoc.getExtensions(project);
-          asciiDoc.renderPdf(new File(file.getCanonicalPath()), extensions);
+          String config = AsciiDoc.config(editor.getDocument(), project);
+          asciiDoc.renderPdf(new File(file.getCanonicalPath()), config, extensions);
           VirtualFile virtualFile = VirtualFileManager.getInstance()
             .refreshAndFindFileByUrl(file.getUrl().replaceAll("\\.(adoc|asciidoc|ad)$", ".pdf"));
           updateProjectView(virtualFile != null ? virtualFile : parent);

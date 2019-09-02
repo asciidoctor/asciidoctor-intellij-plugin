@@ -10,12 +10,10 @@ import java.util.List;
 public class AsciiDocAnnotationResultType {
 
   private final Document document;
-  private final int offsetLineNo;
   private List<LogRecord> logRecords;
 
-  public AsciiDocAnnotationResultType(Document document, int offsetLineNo) {
+  public AsciiDocAnnotationResultType(Document document) {
     this.document = document;
-    this.offsetLineNo = offsetLineNo;
   }
 
   public Document getDocument() {
@@ -24,10 +22,6 @@ public class AsciiDocAnnotationResultType {
 
   public List<LogRecord> getLogRecords() {
     return logRecords;
-  }
-
-  public int getOffsetLineNo() {
-    return offsetLineNo;
   }
 
   public static class Message {

@@ -86,7 +86,6 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   private transient String currentContent = null;
 
   private transient int targetLineNo = 0;
-  private transient int offsetLineNo = 0;
   private transient int currentLineNo = 0;
 
   /**
@@ -130,22 +129,22 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   });
 
   private void render() {
-    final String contentWithConfig = AsciiDoc.prependConfig(document, project, o -> offsetLineNo = o);
+    final String config = AsciiDoc.config(document, project);
+    final String content = document.getText();
     List<String> extensions = AsciiDoc.getExtensions(project);
 
     lazyExecutor.execute(() -> {
       try {
-        if (!contentWithConfig.equals(currentContent)) {
-          currentContent = contentWithConfig;
-
-          String markup = asciidoc.get().render(contentWithConfig, extensions);
+        if (!(config + content).equals(currentContent)) {
+          currentContent = config + content;
+          String markup = asciidoc.get().render(content, config, extensions);
           if (markup != null) {
             myPanel.setHtml(markup);
           }
         }
         if (currentLineNo != targetLineNo) {
           currentLineNo = targetLineNo;
-          myPanel.scrollToLine(targetLineNo, document.getLineCount(), offsetLineNo);
+          myPanel.scrollToLine(targetLineNo, document.getLineCount());
         }
         ApplicationManager.getApplication().invokeLater(myHtmlPanelWrapper::repaint);
       } catch (InterruptedException e) {

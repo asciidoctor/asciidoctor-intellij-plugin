@@ -34,7 +34,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -137,13 +136,13 @@ public class BrowserPanel implements Closeable {
   @NotNull
   public String getHtml(@NotNull VirtualFile file, @NotNull Project project) {
     Document document = FileDocumentManager.getInstance().getDocument(file);
-    AtomicInteger offsetLineNo = new AtomicInteger();
-    final String contentWithConfig = AsciiDoc.prependConfig(document, project, offsetLineNo::set);
+    Objects.requireNonNull(document);
+    final String config = AsciiDoc.config(document, project);
     List<String> extensions = AsciiDoc.getExtensions(project);
     Objects.requireNonNull(file.getParent().getCanonicalPath(), "we will have files, these will always have a parent directory");
     AsciiDoc asciiDoc = new AsciiDoc(project.getBasePath(), new File(file.getParent().getCanonicalPath()),
       imagesPath, file.getName());
-    String html = asciiDoc.render(contentWithConfig, extensions);
+    String html = asciiDoc.render(document.getText(), config, extensions);
     if (file.getParent() != null) {
       // parent will be null if we use Language Injection and Fragment Editor
       base = file.getParent().getPath();

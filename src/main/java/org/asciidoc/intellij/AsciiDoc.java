@@ -26,6 +26,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.geronimo.gshell.io.SystemOutputHijacker;
 import org.asciidoc.intellij.actions.asciidoc.AsciiDocAction;
+import org.asciidoc.intellij.asciidoc.PrependConfig;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -61,7 +62,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceConfigurationError;
-import java.util.function.IntConsumer;
 import java.util.logging.Logger;
 
 /**
@@ -70,6 +70,8 @@ import java.util.logging.Logger;
 public class AsciiDoc {
 
   private static Asciidoctor asciidoctor;
+
+  private static PrependConfig prependConfig;
 
   private com.intellij.openapi.diagnostic.Logger log =
     com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDoc.class);
@@ -144,6 +146,8 @@ public class AsciiDoc {
         try {
           asciidoctor = Asciidoctor.Factory.create();
           asciidoctor.registerLogHandler(logHandler);
+          prependConfig = new PrependConfig();
+          asciidoctor.javaExtensionRegistry().preprocessor(prependConfig);
           // disable JUL logging of captured messages
           // https://github.com/asciidoctor/asciidoctorj/issues/669
           Logger.getLogger("asciidoctor").setUseParentHandlers(false);
@@ -255,8 +259,6 @@ public class AsciiDoc {
         }
         StringBuilder message = new StringBuilder();
         message.append("Error during rendering ").append(name).append("; ").append(logRecord.getSeverity().name()).append(" ");
-        // TODO: for the current file there will be line numbers, but no file name.
-        // before we log the line numbers of the current file, they would need to be adjusted be the offset prefix
         if (logRecord.getCursor() != null && logRecord.getCursor().getFile() != null) {
           message.append(logRecord.getCursor().getFile()).append(":").append(logRecord.getCursor().getLineNumber());
         }
@@ -298,7 +300,7 @@ public class AsciiDoc {
   }
 
   @NotNull
-  public static String prependConfig(Document document, Project project, IntConsumer offset) {
+  public static String config(Document document, Project project) {
     VirtualFile currentFile = FileDocumentManager.getInstance().getFile(document);
     StringBuilder tempContent = new StringBuilder();
     if (currentFile != null) {
@@ -329,9 +331,6 @@ public class AsciiDoc {
         }
       }
     }
-    int offsetLineNo = (int) tempContent.chars().filter(i -> i == '\n').count();
-    tempContent.append(document.getText());
-    offset.accept(offsetLineNo);
     return tempContent.toString();
   }
 
@@ -362,10 +361,14 @@ public class AsciiDoc {
   }
 
   public String render(String text, List<String> extensions) {
-    return render(text, extensions, this::notify);
+    return render(text, "", extensions, this::notify);
   }
 
-  public String render(String text, List<String> extensions, Notifier notifier) {
+  public String render(String text, String config, List<String> extensions) {
+    return render(text, config, extensions, this::notify);
+  }
+
+  public String render(String text, String config, List<String> extensions, Notifier notifier) {
     synchronized (AsciiDoc.class) {
       CollectingLogHandler logHandler = new CollectingLogHandler();
       ClassLoader old = Thread.currentThread().getContextClassLoader();
@@ -376,9 +379,11 @@ public class AsciiDoc {
       try {
         initWithExtensions(extensions);
         asciidoctor.registerLogHandler(logHandler);
+        prependConfig.setConfig(config);
         try {
           return "<div id=\"content\">\n" + asciidoctor.convert(text, getDefaultOptions("html5")) + "\n</div>";
         } finally {
+          prependConfig.setConfig("");
           asciidoctor.unregisterLogHandler(logHandler);
         }
       } catch (Exception | ServiceConfigurationError ex) {
@@ -408,7 +413,7 @@ public class AsciiDoc {
     }
   }
 
-  public void renderPdf(File file, List<String> extensions) {
+  public void renderPdf(File file, String config, List<String> extensions) {
     Notifier notifier = this::notifyAlways;
     synchronized (AsciiDoc.class) {
       CollectingLogHandler logHandler = new CollectingLogHandler();
@@ -419,10 +424,12 @@ public class AsciiDoc {
       Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
       try {
         initWithExtensions(extensions);
+        prependConfig.setConfig(config);
         asciidoctor.registerLogHandler(logHandler);
         try {
           asciidoctor.convertFile(file, getDefaultOptions("pdf"));
         } finally {
+          prependConfig.setConfig("");
           asciidoctor.unregisterLogHandler(logHandler);
         }
       } catch (Exception | ServiceConfigurationError ex) {

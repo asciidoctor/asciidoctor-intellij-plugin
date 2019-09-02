@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Run Asciidoc and use the warnings and errors as annotations in the file.
@@ -41,10 +40,9 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
   @Nullable
   @Override
   public AsciiDocInfoType collectInformation(@NotNull PsiFile file, @NotNull Editor editor, boolean hasErrors) {
-    AtomicInteger offsetLineNo = new AtomicInteger(0);
-    final String contentWithConfig = AsciiDoc.prependConfig(editor.getDocument(), file.getProject(), offsetLineNo::set);
+    final String config = AsciiDoc.config(editor.getDocument(), file.getProject());
     List<String> extensions = AsciiDoc.getExtensions(file.getProject());
-    return new AsciiDocInfoType(file, editor, contentWithConfig, extensions, offsetLineNo.get());
+    return new AsciiDocInfoType(file, editor, editor.getDocument().getText(), config, extensions);
   }
 
   @Nullable
@@ -64,8 +62,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
       }
     }
 
-    AsciiDocAnnotationResultType asciidocAnnotationResultType = new AsciiDocAnnotationResultType(editor.getDocument(),
-      collectedInfo.getOffsetLineNo());
+    AsciiDocAnnotationResultType asciidocAnnotationResultType = new AsciiDocAnnotationResultType(editor.getDocument());
 
     if (!AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isShowAsciiDocWarningsAndErrorsInEditor()) {
       asciidocAnnotationResultType.setLogRecords(Collections.emptyList());
@@ -76,7 +73,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
     try {
       AsciiDoc asciiDoc = new AsciiDoc(file.getProject().getBasePath(), fileBaseDir,
         tempImagesPath, name);
-      asciiDoc.render(collectedInfo.getContentWithConfig(), collectedInfo.getExtensions(), (boasOut, boasErr, logRecords)
+      asciiDoc.render(collectedInfo.getContent(), collectedInfo.getConfig(), collectedInfo.getExtensions(), (boasOut, boasErr, logRecords)
         -> asciidocAnnotationResultType.setLogRecords(logRecords));
     } finally {
       if (tempImagesPath != null) {
@@ -110,7 +107,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
       // the line number used for creating the annotation (starting with 0)
       int lineNumberForAnnotation = 0;
       if (logRecord.getCursor() != null && logRecord.getCursor().getFile() == null && logRecord.getCursor().getLineNumber() >= 0) {
-        lineNumber = logRecord.getCursor().getLineNumber() - annotationResult.getOffsetLineNo();
+        lineNumber = logRecord.getCursor().getLineNumber();
         lineNumberForAnnotation = lineNumber - 1;
         if (lineNumberForAnnotation < 0) {
           // logRecords created in the prepended .asciidoctorconfig elements - will be shown on line zero
