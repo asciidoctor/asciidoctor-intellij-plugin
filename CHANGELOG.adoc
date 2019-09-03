@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.1 (work in progress)
+=== 0.30.2 (preview, available from Github releases)
 
 - support .asciidoctorconfig for PDF creation (#325)
 - fix rendering problem with LaTeX style math (#326)
