@@ -446,12 +446,12 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
               "function updateContent() { var elem = document.getElementById('content'); if (elem && elem.parentNode) { " +
               "var div = document.createElement('div');" +
               "div.innerHTML = '" + htmlToReplace + "'; " +
-              " var errortext = document.getElementById('mathjaxerrortext'); " +
-              " var errorformula = document.getElementById('mathjaxerrorformula'); " +
-              " if (errorformula && errortext) { " +
-              "   errortext.textContent = '' " +
-              "   errorformula.textContent = '' " +
-              " } " +
+              "var errortext = document.getElementById('mathjaxerrortext'); " +
+              "var errorformula = document.getElementById('mathjaxerrorformula'); " +
+              "if (errorformula && errortext) { " +
+              "  errortext.textContent = ''; " +
+              "  errorformula.textContent = ''; " +
+              "} " +
               "div.style.cssText = 'display: none'; " +
               // need to add the element to the DOM as MathJAX will use document.getElementById in some places
               "elem.appendChild(div); " +
