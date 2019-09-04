@@ -1087,7 +1087,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
-  public void testValueInBlockAttribute() {
+  public void testValueInBlockAttributeDoubleQuotes() {
     doTest("[cols=\"1,4\", options=\"header\"]",
       "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
         "AsciiDoc:BLOCK_ATTR_NAME ('cols')\n" +
@@ -1096,6 +1096,18 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:BLOCK_ATTR_NAME ('options')\n" +
         "AsciiDoc:BLOCK_ATTR_VALUE ('=\"header\"')\n" +
+        "AsciiDoc:BLOCK_ATTRS_END (']')");
+  }
+
+  public void testValueInBlockAttributeSingleQuotes() {
+    doTest("[cols='1,4', options='header']",
+      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+        "AsciiDoc:BLOCK_ATTR_NAME ('cols')\n" +
+        "AsciiDoc:BLOCK_ATTR_VALUE ('='1,4'')\n" +
+        "AsciiDoc:SEPARATOR (',')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:BLOCK_ATTR_NAME ('options')\n" +
+        "AsciiDoc:BLOCK_ATTR_VALUE ('='header'')\n" +
         "AsciiDoc:BLOCK_ATTRS_END (']')");
   }
 

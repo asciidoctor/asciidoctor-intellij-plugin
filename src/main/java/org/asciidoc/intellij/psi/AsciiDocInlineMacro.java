@@ -50,16 +50,16 @@ public class AsciiDocInlineMacro extends ASTWrapperPsiElement {
           if (file.charAt(i) == '/') {
             references.add(
               new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
-                TextRange.create(bodyNode.getPsi().getStartOffsetInParent() + start, bodyNode.getPsi().getStartOffsetInParent() + i)
-              )
+                TextRange.create(bodyNode.getPsi().getStartOffsetInParent() + start, bodyNode.getPsi().getStartOffsetInParent() + i),
+                false)
             );
             start = i + 1;
           }
         }
         references.add(
           new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
-            TextRange.create(bodyNode.getPsi().getStartOffsetInParent() + start, bodyNode.getPsi().getStartOffsetInParent() + file.length())
-          )
+            TextRange.create(bodyNode.getPsi().getStartOffsetInParent() + start, bodyNode.getPsi().getStartOffsetInParent() + file.length()),
+            false)
         );
         return references.toArray(new PsiReference[0]);
       }

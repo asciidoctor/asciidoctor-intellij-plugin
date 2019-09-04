@@ -40,11 +40,17 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   private String key;
   private String macroName;
   private String base;
+  private final boolean isFolder;
 
-  public AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, TextRange textRange) {
+  /**
+   * Create a new file reference.
+   * @param isFolder if the argument is a folder, tab will not add a '/' automatically
+   */
+  public AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, TextRange textRange, boolean isFolder) {
     super(element, textRange);
     this.macroName = macroName;
     this.base = base;
+    this.isFolder = isFolder;
     key = element.getText().substring(textRange.getStartOffset(), textRange.getEndOffset());
   }
 
@@ -205,8 +211,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       // when selecting with the mouse IntelliJ will send '\n' as well
       if (insertionContext.getCompletionChar() == '\t'
         || insertionContext.getCompletionChar() == '\n') {
-        if (insertionContext.getDocument().getTextLength() <= offset
-          || insertionContext.getDocument().getText().charAt(offset) != '/') {
+        if ((insertionContext.getDocument().getTextLength() <= offset
+          || insertionContext.getDocument().getText().charAt(offset) != '/')
+          && !isFolder) {
           // the finalizing '/' hasn't been entered yet, autocomplete it here
           insertionContext.getDocument().insertString(offset, "/");
           offset += 1;

@@ -1039,7 +1039,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   "]"                  { return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
   ","                  { return AsciiDocTokenTypes.SEPARATOR; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
-  "=\"" ( [^\"] | "\\\"" )* "\"" { return AsciiDocTokenTypes.BLOCK_ATTR_VALUE; }
+  "=\"" ( [^\"\\n] | "\\\"" )* "\"" { return AsciiDocTokenTypes.BLOCK_ATTR_VALUE; }
+  "=\'" ( [^\"\\n] | "\\\'" )* "\'" { return AsciiDocTokenTypes.BLOCK_ATTR_VALUE; }
   [^\],=\n\t ]+ {
         if ((yytext().charAt(0) != '.' && yytext().charAt(0) != '%') && !yytext().toString().equals("role")) {
           setStyle(yytext().toString());
@@ -1060,7 +1061,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   "]"                  { yypopstate(); return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
   ","                  { return AsciiDocTokenTypes.SEPARATOR; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
-  "=\"" ( [^\"] | "\\\"" )* "\"" { return AsciiDocTokenTypes.BLOCK_ATTR_VALUE; }
+  "=\"" ( [^\"\]\n] | "\\\"" )* "\"" { return AsciiDocTokenTypes.BLOCK_ATTR_VALUE; }
+  "=\'" ( [^\"\]\n] | "\\\'" )* "\'" { return AsciiDocTokenTypes.BLOCK_ATTR_VALUE; }
   [^]                  { return AsciiDocTokenTypes.BLOCK_ATTR_NAME; }
 }
 

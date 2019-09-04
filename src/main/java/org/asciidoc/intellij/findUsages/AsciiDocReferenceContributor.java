@@ -150,16 +150,16 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
         if (file.charAt(i) == '/') {
           references.add(
             new AsciiDocFileReference(element, "link", file.substring(0, start),
-              TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i)
-            )
+              TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
+              false)
           );
           start = i + 1;
         }
       }
       references.add(
         new AsciiDocFileReference(element, "link", file.substring(0, start),
-          TextRange.create(range.getStartOffset() + start, range.getStartOffset() + file.length())
-        )
+          TextRange.create(range.getStartOffset() + start, range.getStartOffset() + file.length()),
+          false)
       );
       return references;
     } else {
