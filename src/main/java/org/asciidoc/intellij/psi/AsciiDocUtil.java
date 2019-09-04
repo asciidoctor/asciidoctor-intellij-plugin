@@ -19,6 +19,7 @@ import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -164,5 +165,35 @@ public class AsciiDocUtil {
   public static AsciiDocFile createFileFromText(@NotNull Project project, @NotNull String text) {
     return (AsciiDocFile) PsiFileFactory.getInstance(project).createFileFromText("a.adoc", AsciiDocLanguage.INSTANCE, text);
   }
+
+  public static File findSpringRestDocSnippets(String projectBasePath, File fileBaseDir) {
+    File dir = fileBaseDir;
+    while (true) {
+      File pom = new File(dir, "pom.xml");
+      if (pom.exists()) {
+        File snippets = new File(fileBaseDir, "target/generated-snippets");
+        if (snippets.exists()) {
+          return snippets;
+        }
+      }
+      File build = new File(dir, "build.gradle");
+      if (build.exists()) {
+        File snippets = new File(dir, "build/generated-snippets");
+        if (snippets.exists()) {
+          return snippets;
+        }
+      }
+      if (new File(projectBasePath).getAbsolutePath().equals(dir.getAbsolutePath())) {
+        break;
+      }
+      dir = dir.getParentFile();
+      if (dir == null) {
+        break;
+      }
+    }
+
+    return null;
+  }
+
 
 }

@@ -64,6 +64,8 @@ import java.util.Map;
 import java.util.ServiceConfigurationError;
 import java.util.logging.Logger;
 
+import static org.asciidoc.intellij.psi.AsciiDocUtil.findSpringRestDocSnippets;
+
 /**
  * @author Julien Viet
  */
@@ -101,7 +103,7 @@ public class AsciiDoc {
     this.name = name;
   }
 
-  private void initWithExtensions(List<String> extensions) {
+  private void initWithExtensions(List<String> extensions, boolean springRestDocs) {
     synchronized (AsciiDoc.class) {
       boolean extensionsEnabled;
       AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
@@ -115,6 +117,9 @@ public class AsciiDoc {
       } else {
         extensionsEnabled = false;
         md = calcMd(projectBasePath, Collections.emptyList());
+      }
+      if (springRestDocs) {
+        md = md + "restdoc";
       }
       if (!md.equals(hash)) {
         if (asciidoctor != null) {
@@ -152,21 +157,32 @@ public class AsciiDoc {
           // https://github.com/asciidoctor/asciidoctorj/issues/669
           Logger.getLogger("asciidoctor").setUseParentHandlers(false);
           asciidoctor.requireLibrary("asciidoctor-diagram");
+
           InputStream is = this.getClass().getResourceAsStream("/sourceline-treeprocessor.rb");
           if (is == null) {
             throw new RuntimeException("unable to load script sourceline-treeprocessor.rb");
           }
           asciidoctor.rubyExtensionRegistry().loadClass(is).treeprocessor("SourceLineTreeProcessor");
+
           is = this.getClass().getResourceAsStream("/plantuml-png-patch.rb");
           if (is == null) {
             throw new RuntimeException("unable to load script plantuml-png-patch.rb");
           }
+          asciidoctor.rubyExtensionRegistry().loadClass(is);
+
+          if (springRestDocs) {
+            is = this.getClass().getResourceAsStream("/springrestdoc-operation-blockmacro.rb");
+            if (is == null) {
+              throw new RuntimeException("unable to load script springrestdoc-operation-blockmacro.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
+          }
+
           if (extensionsEnabled) {
             for (String extension : extensions) {
               asciidoctor.rubyExtensionRegistry().requireLibrary(extension);
             }
           }
-          asciidoctor.rubyExtensionRegistry().loadClass(is);
           hash = md;
         } finally {
           if (oldEncoding != null) {
@@ -376,12 +392,13 @@ public class AsciiDoc {
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
       ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
       SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
+      File springRestDocsSnippets = findSpringRestDocSnippets(projectBasePath, fileBaseDir);
       try {
-        initWithExtensions(extensions);
+        initWithExtensions(extensions, springRestDocsSnippets != null);
         asciidoctor.registerLogHandler(logHandler);
         prependConfig.setConfig(config);
         try {
-          return "<div id=\"content\">\n" + asciidoctor.convert(text, getDefaultOptions("html5")) + "\n</div>";
+          return "<div id=\"content\">\n" + asciidoctor.convert(text, getDefaultOptions("html5", springRestDocsSnippets)) + "\n</div>";
         } finally {
           prependConfig.setConfig("");
           asciidoctor.unregisterLogHandler(logHandler);
@@ -422,12 +439,13 @@ public class AsciiDoc {
       SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
       ClassLoader old = Thread.currentThread().getContextClassLoader();
       Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
+      File springRestDocsSnippets = findSpringRestDocSnippets(projectBasePath, fileBaseDir);
       try {
-        initWithExtensions(extensions);
+        initWithExtensions(extensions, springRestDocsSnippets != null);
         prependConfig.setConfig(config);
         asciidoctor.registerLogHandler(logHandler);
         try {
-          asciidoctor.convertFile(file, getDefaultOptions("pdf"));
+          asciidoctor.convertFile(file, getDefaultOptions("pdf", springRestDocsSnippets));
         } finally {
           prependConfig.setConfig("");
           asciidoctor.unregisterLogHandler(logHandler);
@@ -463,7 +481,7 @@ public class AsciiDoc {
     }
   }
 
-  private Map<String, Object> getDefaultOptions(String backend) {
+  private Map<String, Object> getDefaultOptions(String backend, File springRestDocsSnippets) {
     AttributesBuilder builder = AttributesBuilder.attributes()
       .showTitle(true)
       .backend(backend)
@@ -471,6 +489,10 @@ public class AsciiDoc {
       .attribute("coderay-css", "style")
       .attribute("env", "idea")
       .attribute("env-idea");
+
+    if (springRestDocsSnippets != null) {
+      builder.attribute("snippets", springRestDocsSnippets.getAbsolutePath());
+    }
 
     String graphvizDot = System.getenv("GRAPHVIZ_DOT");
     if (graphvizDot != null) {

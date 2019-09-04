@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.3 (work in progress)
+
+- support operation block macro in https://docs.spring.io/spring-restdocs/docs/current/reference/html5/[spring-restdoc] and auto-detect the snippets folder (#312)
+
 === 0.30.2 (preview, available from Github releases)
 
 - support .asciidoctorconfig for PDF creation (#325)
