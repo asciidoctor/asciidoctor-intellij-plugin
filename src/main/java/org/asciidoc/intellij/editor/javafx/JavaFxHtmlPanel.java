@@ -44,7 +44,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;

@@ -5,7 +5,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.paths.WebReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.TokenSet;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 

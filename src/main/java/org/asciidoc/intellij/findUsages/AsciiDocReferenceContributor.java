@@ -9,7 +9,7 @@ import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.util.ProcessingContext;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationReference;

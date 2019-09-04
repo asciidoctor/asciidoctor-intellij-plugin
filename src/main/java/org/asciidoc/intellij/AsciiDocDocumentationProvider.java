@@ -9,7 +9,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.psi.impl.source.DummyHolder;
 import com.intellij.psi.impl.source.DummyHolderFactory;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
