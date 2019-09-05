@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.psi;
 
+import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
@@ -14,8 +15,10 @@ import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
   private String key;
@@ -63,21 +66,40 @@ public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiE
           .withIcon(AsciiDocIcons.ASCIIDOC_ICON)
           .withTailText(value, true)
           .withTypeText(declaration.getContainingFile().getName())
-          .withInsertHandler((insertionContext, item) -> {
-            // the finalizing } hasn't been entered yet, autocomplete it here
-            int offset = insertionContext.getStartOffset();
-            PsiElement element = insertionContext.getFile().findElementAt(offset);
-            if (element != null && element.getNode() != null
-              && element.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_REF) {
-              offset += attributeName.length();
-              insertionContext.getDocument().insertString(offset, "}");
-              offset += 1;
-              insertionContext.getEditor().getCaretModel().moveToOffset(offset);
-            }
-          })
+          .withInsertHandler(getLookupElementInsertHandler(attributeName))
         );
       }
     }
+    File springRestDocSnippets = AsciiDocUtil.findSpringRestDocSnippets(this.getElement());
+    if (springRestDocSnippets != null) {
+      String value = springRestDocSnippets.getPath();
+      value = value.replaceAll("\\\\", "/");
+      if (project.getBasePath() != null) {
+        value = value.replaceAll("^" + Pattern.quote(project.getBasePath()), "");
+      }
+      value = " (" + value + ")";
+      variants.add(LookupElementBuilder.create("snippets")
+        .withIcon(AsciiDocIcons.ASCIIDOC_ICON)
+        .withTailText(value, true)
+        .withInsertHandler(getLookupElementInsertHandler("snippets"))
+      );
+    }
     return variants.toArray();
+  }
+
+  @NotNull
+  private InsertHandler<LookupElement> getLookupElementInsertHandler(String attributeName) {
+    return (insertionContext, item) -> {
+      // the finalizing } hasn't been entered yet, autocomplete it here
+      int offset = insertionContext.getStartOffset();
+      PsiElement element = insertionContext.getFile().findElementAt(offset);
+      if (element != null && element.getNode() != null
+        && element.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_REF) {
+        offset += attributeName.length();
+        insertionContext.getDocument().insertString(offset, "}");
+        offset += 1;
+        insertionContext.getEditor().getCaretModel().moveToOffset(offset);
+      }
+    };
   }
 }

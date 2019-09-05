@@ -195,5 +195,19 @@ public class AsciiDocUtil {
     return null;
   }
 
+  public static File findSpringRestDocSnippets(PsiElement element) {
+    File springRestDocSnippets = null;
+    VirtualFile vf;
+    vf = element.getContainingFile().getVirtualFile();
+    if (vf == null) {
+      // when running autocomplete, there is only an original file
+      vf = element.getContainingFile().getOriginalFile().getVirtualFile();
+    }
+    if (vf != null) {
+      springRestDocSnippets = findSpringRestDocSnippets(element.getProject().getBasePath(),
+        new File(vf.getPath()));
+    }
+    return springRestDocSnippets;
+  }
 
 }

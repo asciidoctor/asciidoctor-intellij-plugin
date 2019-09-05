@@ -3,7 +3,6 @@ package org.asciidoc.intellij.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.AbstractElementManipulator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -74,17 +73,7 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
       }
     } else if ("operation".equals(getMacroName())) {
       TextRange range = getRangeOfBody(this);
-      File springRestDocSnippets = null;
-      VirtualFile vf;
-      vf = this.getContainingFile().getVirtualFile();
-      if (vf == null) {
-        // when running autocomplete, there is only an original file
-        vf = this.getContainingFile().getOriginalFile().getVirtualFile();
-      }
-      if (vf != null) {
-        springRestDocSnippets = AsciiDocUtil.findSpringRestDocSnippets(getProject().getBasePath(),
-          new File(vf.getPath()));
-      }
+      File springRestDocSnippets = AsciiDocUtil.findSpringRestDocSnippets(this);
       if (!range.isEmpty() && springRestDocSnippets != null) {
         String file = this.getText().substring(range.getStartOffset(), range.getEndOffset());
         ArrayList<PsiReference> references = new ArrayList<>();

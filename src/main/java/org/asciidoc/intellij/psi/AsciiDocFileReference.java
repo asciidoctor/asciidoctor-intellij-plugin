@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -74,7 +75,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         if (decl.getAttributeValue() == null) {
           continue;
         }
-        resolve(matcher.replaceFirst(decl.getAttributeValue()), results, depth + 1);
+        resolve(matcher.replaceFirst(Matcher.quoteReplacement(decl.getAttributeValue())), results, depth + 1);
+      }
+      if (attributeName.equals("snippets")) {
+        File springRestDocSnippets = AsciiDocUtil.findSpringRestDocSnippets(this.getElement());
+        if (springRestDocSnippets != null) {
+          resolve(matcher.replaceFirst(Matcher.quoteReplacement(springRestDocSnippets.getPath())), results, depth + 1);
+        }
       }
     } else {
       PsiElement file = resolve(key);
@@ -241,7 +248,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         if (decl.getAttributeValue() == null) {
           continue;
         }
-        getVariants(matcher.replaceFirst(decl.getAttributeValue()), collector, depth + 1);
+        getVariants(matcher.replaceFirst(Matcher.quoteReplacement(decl.getAttributeValue())), collector, depth + 1);
+      }
+      if (attributeName.equals("snippets")) {
+        File springRestDocSnippets = AsciiDocUtil.findSpringRestDocSnippets(this.getElement());
+        if (springRestDocSnippets != null) {
+          getVariants(matcher.replaceFirst(Matcher.quoteReplacement(springRestDocSnippets.getPath())), collector, depth + 1);
+        }
       }
     } else {
       PsiElement resolve = resolve(base);
