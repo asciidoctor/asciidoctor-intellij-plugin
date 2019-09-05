@@ -21,6 +21,7 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -392,7 +393,10 @@ public class AsciiDoc {
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
       ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
       SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
-      File springRestDocsSnippets = findSpringRestDocSnippets(projectBasePath, fileBaseDir);
+      VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
+        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
+        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
+      );
       try {
         initWithExtensions(extensions, springRestDocsSnippets != null);
         asciidoctor.registerLogHandler(logHandler);
@@ -439,7 +443,9 @@ public class AsciiDoc {
       SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
       ClassLoader old = Thread.currentThread().getContextClassLoader();
       Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
-      File springRestDocsSnippets = findSpringRestDocSnippets(projectBasePath, fileBaseDir);
+      VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
+        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
+        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir));
       try {
         initWithExtensions(extensions, springRestDocsSnippets != null);
         prependConfig.setConfig(config);
@@ -481,7 +487,7 @@ public class AsciiDoc {
     }
   }
 
-  private Map<String, Object> getDefaultOptions(String backend, File springRestDocsSnippets) {
+  private Map<String, Object> getDefaultOptions(String backend, VirtualFile springRestDocsSnippets) {
     AttributesBuilder builder = AttributesBuilder.attributes()
       .showTitle(true)
       .backend(backend)
@@ -491,7 +497,7 @@ public class AsciiDoc {
       .attribute("env-idea");
 
     if (springRestDocsSnippets != null) {
-      builder.attribute("snippets", springRestDocsSnippets.getAbsolutePath());
+      builder.attribute("snippets", springRestDocsSnippets.getCanonicalPath());
     }
 
     String graphvizDot = System.getenv("GRAPHVIZ_DOT");

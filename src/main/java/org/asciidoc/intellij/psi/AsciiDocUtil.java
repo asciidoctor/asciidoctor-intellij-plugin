@@ -19,7 +19,6 @@ import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -166,37 +165,40 @@ public class AsciiDocUtil {
     return (AsciiDocFile) PsiFileFactory.getInstance(project).createFileFromText("a.adoc", AsciiDocLanguage.INSTANCE, text);
   }
 
-  public static File findSpringRestDocSnippets(String projectBasePath, File fileBaseDir) {
-    File dir = fileBaseDir;
-    while (true) {
-      File pom = new File(dir, "pom.xml");
-      if (pom.exists()) {
-        File snippets = new File(fileBaseDir, "target/generated-snippets");
-        if (snippets.exists()) {
-          return snippets;
+  public static VirtualFile findSpringRestDocSnippets(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+    VirtualFile dir = fileBaseDir;
+    while (dir != null) {
+      VirtualFile pom = dir.findChild("pom.xml");
+      if (pom != null) {
+        VirtualFile targetDir = dir.findChild("target");
+        if (targetDir != null) {
+          VirtualFile snippets = targetDir.findChild("generated-snippets");
+          if (snippets != null) {
+            return snippets;
+          }
         }
       }
-      File build = new File(dir, "build.gradle");
-      if (build.exists()) {
-        File snippets = new File(dir, "build/generated-snippets");
-        if (snippets.exists()) {
-          return snippets;
+      VirtualFile buildGradle = dir.findChild("build.gradle");
+      if (buildGradle != null) {
+        VirtualFile buildDir = dir.findChild("build");
+        if (buildDir != null) {
+          VirtualFile snippets = buildDir.findChild("generated-snippets");
+          if (snippets != null) {
+            return snippets;
+          }
         }
       }
-      if (new File(projectBasePath).getAbsolutePath().equals(dir.getAbsolutePath())) {
+      if (projectBasePath.equals(dir)) {
         break;
       }
-      dir = dir.getParentFile();
-      if (dir == null) {
-        break;
-      }
+      dir = dir.getParent();
     }
 
     return null;
   }
 
-  public static File findSpringRestDocSnippets(PsiElement element) {
-    File springRestDocSnippets = null;
+  public static VirtualFile findSpringRestDocSnippets(PsiElement element) {
+    VirtualFile springRestDocSnippets = null;
     VirtualFile vf;
     vf = element.getContainingFile().getVirtualFile();
     if (vf == null) {
@@ -204,8 +206,7 @@ public class AsciiDocUtil {
       vf = element.getContainingFile().getOriginalFile().getVirtualFile();
     }
     if (vf != null) {
-      springRestDocSnippets = findSpringRestDocSnippets(element.getProject().getBasePath(),
-        new File(vf.getPath()));
+      springRestDocSnippets = findSpringRestDocSnippets(element.getProject().getBaseDir(), vf);
     }
     return springRestDocSnippets;
   }

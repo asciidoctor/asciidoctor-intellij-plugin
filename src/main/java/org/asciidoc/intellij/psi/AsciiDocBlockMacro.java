@@ -3,6 +3,7 @@ package org.asciidoc.intellij.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.AbstractElementManipulator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -13,7 +14,6 @@ import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -73,7 +73,7 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
       }
     } else if ("operation".equals(getMacroName())) {
       TextRange range = getRangeOfBody(this);
-      File springRestDocSnippets = AsciiDocUtil.findSpringRestDocSnippets(this);
+      VirtualFile springRestDocSnippets = AsciiDocUtil.findSpringRestDocSnippets(this);
       if (!range.isEmpty() && springRestDocSnippets != null) {
         String file = this.getText().substring(range.getStartOffset(), range.getEndOffset());
         ArrayList<PsiReference> references = new ArrayList<>();

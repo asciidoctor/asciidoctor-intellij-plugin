@@ -5,6 +5,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReference;
@@ -15,7 +16,6 @@ import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -70,7 +70,7 @@ public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiE
         );
       }
     }
-    File springRestDocSnippets = AsciiDocUtil.findSpringRestDocSnippets(this.getElement());
+    VirtualFile springRestDocSnippets = AsciiDocUtil.findSpringRestDocSnippets(this.getElement());
     if (springRestDocSnippets != null) {
       String value = springRestDocSnippets.getPath();
       value = value.replaceAll("\\\\", "/");
