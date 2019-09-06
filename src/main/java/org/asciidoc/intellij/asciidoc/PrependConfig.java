@@ -17,7 +17,10 @@ public class PrependConfig extends Preprocessor {
 
   @Override
   public void process(Document document, PreprocessorReader reader) {
-    reader.restoreLines(Arrays.asList(config.split("\n")));
+    if (config.length() != 0) {
+      // otherwise an empty line at the beginning breaks level 0 detection
+      reader.restoreLines(Arrays.asList(config.split("\n")));
+    }
   }
 
   public void setConfig(String config) {
