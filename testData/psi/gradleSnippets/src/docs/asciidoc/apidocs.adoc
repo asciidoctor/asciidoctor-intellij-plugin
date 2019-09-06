@@ -1,0 +1,5 @@
+operation::example[snippets='curl-request']
+
+{snippets}
+
+include::{snippets}/example/curl-request.adoc[]

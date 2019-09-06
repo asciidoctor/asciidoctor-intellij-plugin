@@ -8,6 +8,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 
+import java.io.File;
+
 /**
  * Tests for {@link org.asciidoc.intellij.parser.AsciiDocParserImpl}.
  * HINT: instead of this test, consider a golden master test in {@link AsciiDocParserTest}
@@ -292,6 +294,49 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     AsciiDocAttributeReference reference = PsiTreeUtil.getChildOfType(declaration, AsciiDocAttributeReference.class);
     assertNotNull("declaration should exist", declaration);
     assertNotNull("reference should exist", reference);
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return new File("testData/" + getBasePath()).getAbsolutePath() + "/psi/";
+  }
+
+  public void testGradleSnippets() {
+    // given...
+    PsiFile[] psiFile = myFixture.configureByFiles(
+      getTestName(true) + "/src/docs/asciidoc/apidocs.adoc",
+      getTestName(true) + "/build.gradle",
+      getTestName(true) + "/build/generated-snippets/example/curl-request.adoc"
+    );
+    AsciiDocBlockMacro[] macros = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocBlockMacro.class);
+    assertSize(2, macros);
+
+    PsiReference[] referencesOperation = macros[0].getReferences();
+    assertSize(1, referencesOperation);
+    // finish test here. Reference will not resolve in the test, files are "temp://" files
+
+    PsiReference[] referencesInclude = macros[1].getReferences();
+    assertSize(3, referencesInclude);
+    // finish test here. Reference will not resolve in the test, files are "temp://" files
+  }
+
+  public void testMavenSnippets() {
+    // given...
+    PsiFile[] psiFile = myFixture.configureByFiles(
+      getTestName(true) + "/src/docs/asciidoc/apidocs.adoc",
+      getTestName(true) + "/pom.xml",
+      getTestName(true) + "/target/generated-snippets/example/curl-request.adoc"
+    );
+    AsciiDocBlockMacro[] macros = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocBlockMacro.class);
+    assertSize(2, macros);
+
+    PsiReference[] referencesOperation = macros[0].getReferences();
+    assertSize(1, referencesOperation);
+    // finish test here. Reference will not resolve in the test, files are "temp://" files
+
+    PsiReference[] referencesInclude = macros[1].getReferences();
+    assertSize(3, referencesInclude);
+    // finish test here. Reference will not resolve in the test, files are "temp://" files
   }
 
   private PsiFile configureByAsciiDoc(String text) {
