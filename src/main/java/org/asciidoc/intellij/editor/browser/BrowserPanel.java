@@ -27,6 +27,9 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -187,6 +190,11 @@ public class BrowserPanel implements Closeable {
       String file = matchResult.group(1);
       if (file.startsWith("image?")) {
         continue;
+      }
+      try {
+        file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
+      } catch (UnsupportedEncodingException e) {
+        throw new RuntimeException(e);
       }
       String tmpFile = findTempImageFile(file);
       String md5;

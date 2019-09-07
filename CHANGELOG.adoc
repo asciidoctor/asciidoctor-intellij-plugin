@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - support operation block macro in https://docs.spring.io/spring-restdocs/docs/current/reference/html5/[spring-restdoc] and auto-detect the snippets folder (#312)
 - prepended config via plugin shouldn't add blank line that breaks document title (#325)
 - upgrade to asciidoctorj-pdf:1.5.0-beta.4 (#325)
+- Support HTML blanks and HTML entities in image file names for preview (#328)
 
 === 0.30.2 (preview, available from Github releases)
 

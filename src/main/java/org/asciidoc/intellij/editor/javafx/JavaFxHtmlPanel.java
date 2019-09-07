@@ -60,8 +60,12 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -531,17 +535,26 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     while (matcher.find()) {
       final MatchResult matchResult = matcher.toMatchResult();
       String file = matchResult.group(1);
+      try {
+        file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
+      } catch (UnsupportedEncodingException e) {
+        throw new RuntimeException(e);
+      }
       String tmpFile = findTempImageFile(file);
       String md5;
       String replacement;
       if (tmpFile != null) {
         md5 = calculateMd5(tmpFile, null);
         tmpFile = tmpFile.replaceAll("\\\\", "/");
-        tmpFile = tmpFile.replaceAll(":", "%3A");
+        try {
+          tmpFile = URLEncoder.encode(tmpFile, StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+          throw new RuntimeException(e);
+        }
         if (JavaFxHtmlPanelProvider.isInitialized()) {
           replacement = "<img src=\"localfile://" + md5 + "/" + tmpFile + "\"";
         } else {
-          replacement = "<img src=\"file://" + tmpFile.replaceAll("%3A", ":") + "\"";
+          replacement = "<img src=\"file://" + tmpFile + "\"";
         }
       } else {
         md5 = calculateMd5(file, base);
