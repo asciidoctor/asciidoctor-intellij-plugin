@@ -2,45 +2,45 @@ if (window.__IntelliJTools === undefined) {
   window.__IntelliJTools = {}
 }
 
-window.__IntelliJTools.processLinks = (function () {
-  var openLink = function (href) {
-    window.JavaPanelBridge.openLink(href);
-  }
+window.__IntelliJTools.processClick = function (event) {
+  // stop propagation to prevent triggering scrolling to source line
+  event.stopPropagation()
 
-  window.__IntelliJTools.processClick = function (event) {
-    // stop propagation to prevent triggering scrolling to source line
-    event.stopPropagation()
-
-    if (!this.href) {
-      return false;
-    }
-
-    if (this.href[0] == '#') {
-      var elementId = this.href.substring(1)
-      var elementById = document.getElementById(elementId);
-      if (elementById) {
-        elementById.scrollIntoView();
-      }
-    }
-    else {
-      openLink(this.href);
-    }
-
+  if (!this.href) {
     return false;
   }
 
-  var processLinks = function () {
-    var links = document.getElementsByTagName("a");
-    // window.JavaPanelBridge.log(links.length)
-    for (var i = 0; i < links.length; ++i) {
-      var link = links[i];
-
-      link.onclick = __IntelliJTools.processClick
-      // window.JavaPanelBridge.log(link + ' ' + link.onclick)
+  if (this.href[0] == '#') {
+    var elementId = this.href.substring(1)
+    var elementById = document.getElementById(elementId);
+    if (elementById) {
+      elementById.scrollIntoView();
     }
+  } else {
+    window.JavaPanelBridge.openLink(this.href);
   }
 
-  return processLinks;
+  return false;
+}
 
-})()
+window.__IntelliJTools.processLinks = function () {
+  var links = document.getElementsByTagName("a");
+  // window.JavaPanelBridge.log(links.length)
+  for (var i = 0; i < links.length; ++i) {
+    var link = links[i];
 
+    link.addEventListener('click', window.__IntelliJTools.processClick);
+    // window.JavaPanelBridge.log(link + ' ' + link.onclick)
+  }
+}
+
+window.__IntelliJTools.clearLinks = function () {
+  var links = document.getElementsByTagName("a");
+  // window.JavaPanelBridge.log(links.length)
+  for (var i = 0; i < links.length; ++i) {
+    var link = links[i];
+
+    link.removeEventListener('click', __IntelliJTools.processClick);
+    // window.JavaPanelBridge.log(link + ' ' + link.onclick)
+  }
+}

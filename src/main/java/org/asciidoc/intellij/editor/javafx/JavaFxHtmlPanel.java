@@ -149,14 +149,15 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   private String base;
 
   private int lineCount;
-  private int offset;
 
   private final Path imagesPath;
 
   private VirtualFile parentDirectory;
   private VirtualFile saveImageLastDir = null;
 
-  private volatile CountDownLatch rendered;
+  private volatile CountDownLatch rendered = new CountDownLatch(1);
+  private volatile boolean forceRefresh = false;
+  private volatile long stamp = 0;
 
   JavaFxHtmlPanel(Document document, Path imagesPath) {
 
@@ -420,8 +421,15 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   @Override
-  public void setHtml(@NotNull String htmlParam) {
+  public synchronized void setHtml(@NotNull String htmlParam) {
     rendered = new CountDownLatch(1);
+    stamp += 1;
+    if (stamp > 10000) {
+      // force a refresh to avoid memory leaks
+      forceRefresh = true;
+      stamp = 0;
+    }
+    long iterationStamp = stamp;
     runInPlatformWhenAvailable(() -> {
       String html = htmlParam;
       if (isDarcula()) {
@@ -431,17 +439,20 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       }
       boolean result = false;
       final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
-      if (settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")) {
+      if (!forceRefresh && settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")) {
         final String htmlToReplace = StringEscapeUtils.escapeEcmaScript(prepareHtml(html));
         // try to replace the HTML contents using JavaScript to avoid flickering MathML
         try {
+          boolean ml = false; // set to "true" to test for memory leaks in HTML/JavaScript
           result = (Boolean) JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
+            (ml ? "var x = 0; " : "") +
             "function finish() {" +
               "if ('__IntelliJTools' in window) {" +
               "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
-              "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ", " + offset + ");" +
+              "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ");" +
+              (ml ? "window.setTimeout(function(){ updateContent(); }, 10); " : "") +
               "}" +
-              "window.JavaPanelBridge && window.JavaPanelBridge.rendered();" +
+              "window.JavaPanelBridge && window.JavaPanelBridge.rendered(" + iterationStamp + ");" +
               "}" +
               "function updateContent() { var elem = document.getElementById('content'); if (elem && elem.parentNode) { " +
               "var div = document.createElement('div');" +
@@ -452,14 +463,28 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
               "  errortext.textContent = ''; " +
               "  errorformula.textContent = ''; " +
               "} " +
+              (ml ? "x = x + 1; " : "") +
+              (ml ? "errortext.textContent = 'count:' + x; " : "") +
               "div.style.cssText = 'display: none'; " +
               // need to add the element to the DOM as MathJAX will use document.getElementById in some places
               "elem.appendChild(div); " +
               // use MathJax to set the formulas in advance if formulas are present - this takes ~100ms
               // re-evaluate the content element as it might have been replaced by a concurrent rendering
-              "if ('MathJax' in window && MathJax.Hub.getAllJax().length > 0) { MathJax.Hub.Typeset(div.firstChild, function() { var elem2 = document.getElementById('content'); elem2.parentNode.replaceChild(div.firstChild, elem2); finish(); }); } " +
+              "if ('MathJax' in window && MathJax.Hub.getAllJax().length > 0) { " +
+              "MathJax.Hub.Typeset(div.firstChild, function() { " +
+              "var elem2 = document.getElementById('content'); " +
+              "__IntelliJTools.clearLinks && __IntelliJTools.clearLinks();" +
+              "__IntelliJTools.clearSourceLine && __IntelliJTools.clearSourceLine();" +
+              "elem2.parentNode.replaceChild(div.firstChild, elem2); " +
+              "finish(); }); } " +
               // if no math was present before, replace contents, and do the MathJax typesetting afterwards in case Math has been added
-              "else { elem.parentNode.replaceChild(div.firstChild, elem); MathJax.Hub.Typeset(div.firstChild); finish(); } " +
+              "else { " +
+              "__IntelliJTools.clearLinks && __IntelliJTools.clearLinks();" +
+              "__IntelliJTools.clearSourceLine && __IntelliJTools.clearSourceLine();" +
+              "elem.parentNode.replaceChild(div.firstChild, elem); " +
+              "MathJax.Hub.Typeset(div.firstChild); " +
+              "finish(); " +
+              "} " +
               "return true; } else { return false; }}; updateContent();"
           );
         } catch (RuntimeException e) {
@@ -469,18 +494,23 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       }
       // if not successful using JavaScript (like on first rendering attempt), set full content
       if (!result) {
-        html = "<html><head></head><body><div style='position:fixed;top:0;left:0;background-color:#eeeeee;color:red;z-index:99;'><div id='mathjaxerrortext'></div><pre style='color:red' id='mathjaxerrorformula'></pre></div>" + html + "</body>";
+        forceRefresh = false;
+        html = "<html><head></head><body><div style='position:fixed;top:0;left:0;background-color:#eeeeee;color:red;z-index:99;'><div id='mathjaxerrortext'></div><pre style='color:red' id='mathjaxerrorformula'></pre></div>"
+          + html
+          + "<script>window.iterationStamp=" + iterationStamp + " </script></body>";
         final String htmlToRender = prepareHtml(html);
         JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().loadContent(htmlToRender);
-        rendered.countDown();
       }
     });
     try {
       // slow down the rendering of the next version of the preview until the rendering if the current version is complete
       // this prevents us building up a queue that would lead to a lagging preview
-      rendered.await(1, TimeUnit.SECONDS);
+      if (htmlParam.length() > 0 && !rendered.await(3, TimeUnit.SECONDS)) {
+        log.warn("rendering didn't complete in time, might be slow or broken");
+        forceRefresh = true;
+      }
     } catch (InterruptedException e) {
-      log.warn("rendering didn't complete in time, might be slow or broken");
+      log.warn("interrupted while waiting for refresh to complete");
     }
   }
 
@@ -626,8 +656,10 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       }
     }
 
-    public void rendered() {
-      rendered.countDown();
+    public void rendered(long iterationStamp) {
+      if (stamp == iterationStamp) {
+        rendered.countDown();
+      }
     }
 
     private boolean openInEditor(@NotNull URI uri) {
@@ -710,15 +742,23 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     @Override
     public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
       if (newValue == State.SUCCEEDED) {
-        JSObject win
-          = (JSObject) getWebViewGuaranteed().getEngine().executeScript("window");
-        win.setMember("JavaPanelBridge", bridge);
-        JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
-          "if ('__IntelliJTools' in window) {" +
-            "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
-            "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ", " + offset + ");" +
-            "}"
-        );
+        try {
+          JSObject win
+            = (JSObject) getWebViewGuaranteed().getEngine().executeScript("window");
+          win.setMember("JavaPanelBridge", bridge);
+          JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
+            "if ('__IntelliJTools' in window) {" +
+              "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
+              "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ");" +
+              "}" +
+              "JavaPanelBridge.rendered(window.iterationStamp);"
+          );
+        } catch (RuntimeException e) {
+          // might happen when rendered output is not valid HTML due to passtrough content
+          log.warn("unable to initialize page JavaScript", e);
+          forceRefresh = true;
+          rendered.countDown();
+        }
       }
     }
   }
