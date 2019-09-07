@@ -60,6 +60,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceConfigurationError;
@@ -72,7 +73,20 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.findSpringRestDocSnippets;
  */
 public class AsciiDoc {
 
-  private static Asciidoctor asciidoctor;
+  private static class MaxHashMap extends LinkedHashMap<String, Asciidoctor> {
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<String, Asciidoctor> eldest) {
+      // cache up to three instances (for example: javafx, pdf, spring-restdocs)
+      if (this.size() > 3) {
+        eldest.getValue().shutdown();
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  private static MaxHashMap instances = new MaxHashMap();
 
   private static PrependConfig prependConfig;
 
@@ -82,8 +96,6 @@ public class AsciiDoc {
   static {
     SystemOutputHijacker.install();
   }
-
-  private static String hash = "";
 
   /**
    * Base directory to look up includes.
@@ -104,7 +116,7 @@ public class AsciiDoc {
     this.name = name;
   }
 
-  private void initWithExtensions(List<String> extensions, boolean springRestDocs) {
+  private Asciidoctor initWithExtensions(List<String> extensions, boolean springRestDocs, String format) {
     synchronized (AsciiDoc.class) {
       boolean extensionsEnabled;
       AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
@@ -120,13 +132,14 @@ public class AsciiDoc {
         md = calcMd(projectBasePath, Collections.emptyList());
       }
       if (springRestDocs) {
-        md = md + "restdoc";
+        md = md + ".restdoc";
       }
-      if (!md.equals(hash)) {
-        if (asciidoctor != null) {
-          asciidoctor.shutdown();
-          asciidoctor = null;
-        }
+      if (format.equals("javafx")) {
+        // special plantuml-png-patch.rb only loaded here
+        md = md + "." + format;
+      }
+      Asciidoctor asciidoctor = instances.get(md);
+      if (asciidoctor == null) {
         ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
         ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
         SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
@@ -165,11 +178,13 @@ public class AsciiDoc {
           }
           asciidoctor.rubyExtensionRegistry().loadClass(is).treeprocessor("SourceLineTreeProcessor");
 
-          is = this.getClass().getResourceAsStream("/plantuml-png-patch.rb");
-          if (is == null) {
-            throw new RuntimeException("unable to load script plantuml-png-patch.rb");
+          if (format.equals("javafx")) {
+            is = this.getClass().getResourceAsStream("/plantuml-png-patch.rb");
+            if (is == null) {
+              throw new RuntimeException("unable to load script plantuml-png-patch.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
           }
-          asciidoctor.rubyExtensionRegistry().loadClass(is);
 
           if (springRestDocs) {
             is = this.getClass().getResourceAsStream("/springrestdoc-operation-blockmacro.rb");
@@ -184,7 +199,7 @@ public class AsciiDoc {
               asciidoctor.rubyExtensionRegistry().requireLibrary(extension);
             }
           }
-          hash = md;
+          instances.put(md, asciidoctor);
         } finally {
           if (oldEncoding != null) {
             System.setProperty("file.encoding", oldEncoding);
@@ -196,6 +211,7 @@ public class AsciiDoc {
           notify(boasOut, boasErr, Collections.emptyList());
         }
       }
+      return asciidoctor;
     }
   }
 
@@ -260,7 +276,7 @@ public class AsciiDoc {
       !AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isShowAsciiDocWarningsAndErrorsInEditor());
   }
 
-  private void notifyAlways(ByteArrayOutputStream boasOut, ByteArrayOutputStream boasErr, List<LogRecord> logRecords) {
+  public void notifyAlways(ByteArrayOutputStream boasOut, ByteArrayOutputStream boasErr, List<LogRecord> logRecords) {
     notify(boasOut, boasErr, logRecords, true);
   }
 
@@ -386,6 +402,10 @@ public class AsciiDoc {
   }
 
   public String render(String text, String config, List<String> extensions, Notifier notifier) {
+    return render(text, config, extensions, notifier, "javafx");
+  }
+
+  public String render(String text, String config, List<String> extensions, Notifier notifier, String format) {
     synchronized (AsciiDoc.class) {
       CollectingLogHandler logHandler = new CollectingLogHandler();
       ClassLoader old = Thread.currentThread().getContextClassLoader();
@@ -398,7 +418,7 @@ public class AsciiDoc {
         LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
       );
       try {
-        initWithExtensions(extensions, springRestDocsSnippets != null);
+        Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         asciidoctor.registerLogHandler(logHandler);
         prependConfig.setConfig(config);
         try {
@@ -447,7 +467,7 @@ public class AsciiDoc {
         LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
         LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir));
       try {
-        initWithExtensions(extensions, springRestDocsSnippets != null);
+        Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, "pdf");
         prependConfig.setConfig(config);
         asciidoctor.registerLogHandler(logHandler);
         try {

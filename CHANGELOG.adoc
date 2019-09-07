@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.4 (work in progress)
+
+- while JavaFX preview forces PNG diagram for readability, browser and PDF should use diagram in the format specified in the source (#325)
+
 === 0.30.3 (preview, available from Github releases)
 
 - support operation block macro in https://docs.spring.io/spring-restdocs/docs/current/reference/html5/[spring-restdocs] and auto-detect the snippets folder (#312)

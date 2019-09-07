@@ -76,6 +76,10 @@ patchPluginXml {
   pluginDescription "${file('src/main/resources/META-INF/description.html').getText('UTF-8')}"
 }
 
+runIde {
+  jvmArgs = ['-Xmx1024m']
+}
+
 publishPlugin {
   username 'ahus1'
   token System.getenv('PLUGIN_REPO_TOKEN')
