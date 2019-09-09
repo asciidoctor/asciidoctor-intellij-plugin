@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - while JavaFX preview forces PNG diagram for readability, browser and PDF should use diagram in the format specified in the source (#325)
 - add editor notification with link to Wiki page for spring boot restdocs (#312)
+- fix chapter numbers for included snippets (#312)
 
 === 0.30.3 (preview, available from Github releases)
 
