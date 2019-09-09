@@ -55,7 +55,10 @@ class OperationBlockMacro < Asciidoctor::Extensions::BlockMacroProcessor
     template = create_section(parent, '', {})
     fragment.blocks.each do |b|
       b.parent = parent
-      b.sectname = template.sectname
+      # might be a standard block in case 'No snippets were found for operation'
+      if b.respond_to?(:sectname)
+        b.sectname = template.sectname
+      end
       b.level = template.level
       parent << b
     end
