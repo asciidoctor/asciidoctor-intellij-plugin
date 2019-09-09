@@ -183,15 +183,16 @@
     </applicationConfigurable>
     <applicationService serviceImplementation="org.asciidoc.intellij.settings.AsciiDocApplicationSettings"/>
     <editorNotificationProvider
-      implementation="org.asciidoc.intellij.editor.javafx.JavaFxCouldBeEnabledNotificationProvider"/>
+      implementation="org.asciidoc.intellij.editor.javafx.notification.JavaFxCouldBeEnabledNotificationProvider"/>
     <editorNotificationProvider
-      implementation="org.asciidoc.intellij.editor.javafx.ChangeJdkForJavaFXNotificationProvider"/>
+      implementation="org.asciidoc.intellij.editor.javafx.notification.ChangeJdkForJavaFXNotificationProvider"/>
     <editorNotificationProvider
-      implementation="org.asciidoc.intellij.editor.ExtenionsAvailableNotificationProvider"/>
+      implementation="org.asciidoc.intellij.editor.notification.ExtensionsAvailableNotificationProvider"/>
     <editorNotificationProvider
-      implementation="org.asciidoc.intellij.editor.javafx.JavaFxMightBeBlurredNotificationProvider" />
+      implementation="org.asciidoc.intellij.editor.javafx.notification.JavaFxMightBeBlurredNotificationProvider" />
     <editorNotificationProvider
-      implementation="org.asciidoc.intellij.editor.javafx.JavaFxInitializationIsStuckNotificationProvider"/>
+      implementation="org.asciidoc.intellij.editor.javafx.notification.JavaFxInitializationIsStuckNotificationProvider"/>
+    <editorNotificationProvider implementation="org.asciidoc.intellij.editor.notification.SpringBootRestDocsNotificationProvider"/>
     <gotoSymbolContributor implementation="org.asciidoc.intellij.psi.AsciiDocChooseByNameContributor"/>
     <searchEverywhereClassifier implementation="org.asciidoc.intellij.psi.AsciiDocSearchEverywhereClassifier"/>
     <localInspection language="AsciiDoc" displayName="Heading inspection" groupPath="AsciiDoc"

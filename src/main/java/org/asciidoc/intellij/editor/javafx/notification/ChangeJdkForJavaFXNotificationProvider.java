@@ -1,5 +1,6 @@
-package org.asciidoc.intellij.editor.javafx;
+package org.asciidoc.intellij.editor.javafx.notification;
 
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
@@ -8,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
+import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
@@ -50,6 +52,8 @@ public class ChangeJdkForJavaFXNotificationProvider extends EditorNotifications.
 
     final EditorNotificationPanel panel = new EditorNotificationPanel();
     panel.setText("You could enable the advanced JavaFX preview if you would change to JetBrains 64bit JDK.");
+    panel.createActionLabel("Yes, tell me more!", ()
+      -> BrowserUtil.browse("https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/JavaFX-preview"));
     panel.createActionLabel("Do not show again", () -> {
       PropertiesComponent.getInstance().setValue(DONT_ASK_TO_CHANGE_JDK_FOR_JAVAFX, true);
       EditorNotifications.updateAll();

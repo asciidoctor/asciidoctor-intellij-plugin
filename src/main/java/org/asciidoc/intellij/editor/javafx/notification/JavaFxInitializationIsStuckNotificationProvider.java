@@ -1,4 +1,4 @@
-package org.asciidoc.intellij.editor.javafx;
+package org.asciidoc.intellij.editor.javafx.notification;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.util.PropertiesComponent;
@@ -8,6 +8,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
+import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

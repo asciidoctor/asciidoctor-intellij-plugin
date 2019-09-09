@@ -1,4 +1,4 @@
-package org.asciidoc.intellij.editor;
+package org.asciidoc.intellij.editor.notification;
 
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
@@ -13,7 +13,7 @@ import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ExtenionsAvailableNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> implements DumbAware {
+public class ExtensionsAvailableNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> implements DumbAware {
   private static final Key<EditorNotificationPanel> KEY = Key.create("Asciidoctor extensions could be enabled");
 
   private static final String DONT_ASK_TO_CHANGE_PROVIDER_TYPE_KEY = "asciidoc.do.not.ask.to.enable.extensions";

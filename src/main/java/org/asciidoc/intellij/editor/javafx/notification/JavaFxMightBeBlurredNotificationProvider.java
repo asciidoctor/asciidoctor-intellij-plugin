@@ -1,4 +1,4 @@
-package org.asciidoc.intellij.editor.javafx;
+package org.asciidoc.intellij.editor.javafx.notification;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.util.PropertiesComponent;
@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import com.intellij.util.ui.JBUI;
+import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
