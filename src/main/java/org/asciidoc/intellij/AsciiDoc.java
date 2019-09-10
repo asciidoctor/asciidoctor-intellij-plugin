@@ -88,7 +88,7 @@ public class AsciiDoc {
 
   private static MaxHashMap instances = new MaxHashMap();
 
-  private static PrependConfig prependConfig;
+  private static PrependConfig prependConfig = new PrependConfig();
 
   private com.intellij.openapi.diagnostic.Logger log =
     com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDoc.class);
@@ -165,7 +165,6 @@ public class AsciiDoc {
         try {
           asciidoctor = Asciidoctor.Factory.create();
           asciidoctor.registerLogHandler(logHandler);
-          prependConfig = new PrependConfig();
           asciidoctor.javaExtensionRegistry().preprocessor(prependConfig);
           // disable JUL logging of captured messages
           // https://github.com/asciidoctor/asciidoctorj/issues/669

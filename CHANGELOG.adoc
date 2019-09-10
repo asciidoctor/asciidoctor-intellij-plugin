@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.5 (preview, available from Github releases)
+
+- fix singleton for prepending .asciidoctorconfig information (#325)
+
 === 0.30.4 (preview, available from Github releases)
 
 - while JavaFX preview forces PNG diagram for readability, browser and PDF should use diagram in the format specified in the source (#325)
