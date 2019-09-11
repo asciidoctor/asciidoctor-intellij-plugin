@@ -202,7 +202,7 @@ public class AsciiDocListing extends CompositePsiElement implements PsiLanguageI
     if (element == null) {
       return null;
     }
-    ASTNode[] attr = element.getNode().getChildren(TokenSet.create(AsciiDocTokenTypes.BLOCK_ATTR_NAME));
+    ASTNode[] attr = element.getNode().getChildren(TokenSet.create(AsciiDocTokenTypes.ATTR_NAME));
     if (attr.length >= 2 && "source".equalsIgnoreCase(attr[0].getText())) {
       return "source-" + attr[1].getText();
     } else if (attr.length >= 1 && "plantuml".equalsIgnoreCase(attr[0].getText())) {

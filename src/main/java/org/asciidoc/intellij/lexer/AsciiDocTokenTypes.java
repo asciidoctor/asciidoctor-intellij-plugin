@@ -39,10 +39,10 @@ public interface AsciiDocTokenTypes {
   IElementType BLOCK_MACRO_ID = new AsciiDocElementType("BLOCK_MACRO_ID");
   IElementType BLOCK_MACRO_BODY = new AsciiDocElementType("BLOCK_MACRO_BODY");
   IElementType BLOCK_MACRO_ATTRIBUTES = new AsciiDocElementType("BLOCK_MACRO_ATTRIBUTES");
-  IElementType BLOCK_ATTRS_START = new AsciiDocElementType("BLOCK_ATTRS_START");
-  IElementType BLOCK_ATTR_NAME = new AsciiDocElementType("BLOCK_ATTR_NAME");
-  IElementType BLOCK_ATTR_VALUE = new AsciiDocElementType("BLOCK_ATTR_VALUE");
-  IElementType BLOCK_ATTRS_END = new AsciiDocElementType("BLOCK_ATTRS_END");
+  IElementType ATTRS_START = new AsciiDocElementType("ATTRS_START");
+  IElementType ATTR_NAME = new AsciiDocElementType("ATTR_NAME");
+  IElementType ATTR_VALUE = new AsciiDocElementType("ATTR_VALUE");
+  IElementType ATTRS_END = new AsciiDocElementType("ATTRS_END");
   IElementType INLINE_MACRO_ID = new AsciiDocElementType("INLINE_MACRO_ID");
   IElementType INLINE_MACRO_BODY = new AsciiDocElementType("INLINE_MACRO_BODY");
   IElementType INLINE_MACRO_ATTRIBUTES = new AsciiDocElementType("INLINE_MACRO_ATTRIBUTES");
@@ -71,6 +71,7 @@ public interface AsciiDocTokenTypes {
   IElementType GT = new AsciiDocElementType("GT");
   IElementType DOUBLE_QUOTE = new AsciiDocElementType("DOUBLE_QUOTE");
   IElementType SINGLE_QUOTE = new AsciiDocElementType("SINGLE_QUOTE");
+  IElementType ASSIGNMENT = new AsciiDocElementType("ASSIGNMENT");
   IElementType REFSTART = new AsciiDocElementType("REFSTART");
   IElementType REF = new AsciiDocElementType("REF");
   IElementType REFFILE = new AsciiDocElementType("REFFILE");
@@ -109,9 +110,9 @@ public interface AsciiDocTokenTypes {
   IElementType HEADER = new AsciiDocElementType("HEADER");
 
   TokenSet TOKENS_TO_MERGE = TokenSet.create(TEXT, LISTING_TEXT, HEADING, TITLE, BLOCK_COMMENT,
-      BLOCK_ATTR_NAME, BLOCK_MACRO_BODY, BLOCK_MACRO_ATTRIBUTES, INLINE_ATTR_NAME, INLINE_MACRO_BODY, INLINE_MACRO_ATTRIBUTES, PASSTRHOUGH_CONTENT,
+    ATTR_NAME, BLOCK_MACRO_BODY, BLOCK_MACRO_ATTRIBUTES, INLINE_ATTR_NAME, INLINE_MACRO_BODY, INLINE_MACRO_ATTRIBUTES, PASSTRHOUGH_CONTENT,
       BOLD_START, BOLD_END, BOLD, ITALIC, ITALIC_END, ITALIC_START, BOLDITALIC,
       MONO_START, MONO_END, MONO, MONOBOLD, MONOBOLDITALIC, REF, BLOCKID, BLOCKREFTEXT, REFTEXT, WHITE_SPACE, WHITE_SPACE_MONO, LINKTEXT,
-      LINKFILE, LINKANCHOR, ATTRIBUTE_NAME, ATTRIBUTE_VAL, ATTRIBUTE_REF, LITERAL_BLOCK, URL_LINK, URL_EMAIL, HEADER, DESCRIPTION);
+      LINKFILE, LINKANCHOR, ATTRIBUTE_NAME, ATTRIBUTE_VAL, ATTRIBUTE_REF, LITERAL_BLOCK, URL_LINK, URL_EMAIL, HEADER, DESCRIPTION, ATTR_VALUE);
 }
 

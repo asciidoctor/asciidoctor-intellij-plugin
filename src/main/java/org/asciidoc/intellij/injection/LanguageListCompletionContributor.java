@@ -18,14 +18,14 @@ public class LanguageListCompletionContributor extends CompletionContributor {
 
   @Override
   public boolean invokeAutoPopup(@NotNull PsiElement position, char typeChar) {
-    return typeChar == ',' && position.getNode().getElementType() == AsciiDocTokenTypes.BLOCK_ATTR_NAME
+    return typeChar == ',' && position.getNode().getElementType() == AsciiDocTokenTypes.ATTR_NAME
       && "source".equalsIgnoreCase(position.getNode().getText());
   }
 
   @Override
   public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
     final PsiElement completionElement = parameters.getPosition();
-    if (PsiUtilCore.getElementType(completionElement) == AsciiDocTokenTypes.BLOCK_ATTR_NAME &&
+    if (PsiUtilCore.getElementType(completionElement) == AsciiDocTokenTypes.ATTR_NAME &&
       completionElement.getPrevSibling() != null &&
       completionElement.getPrevSibling().getPrevSibling() != null &&
       completionElement.getPrevSibling().getPrevSibling().getText().equals("source")) {

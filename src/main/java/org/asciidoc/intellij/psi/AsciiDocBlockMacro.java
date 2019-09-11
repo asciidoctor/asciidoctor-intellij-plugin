@@ -198,7 +198,7 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
     }
     int start = child.getStartOffsetInParent();
     int end = start;
-    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.BLOCK_ATTRS_START) {
+    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.ATTRS_START) {
       end = child.getStartOffsetInParent() + child.getTextLength();
       child = child.getNextSibling();
     }

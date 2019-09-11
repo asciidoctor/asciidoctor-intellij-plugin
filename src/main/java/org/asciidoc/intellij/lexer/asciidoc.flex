@@ -286,6 +286,11 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 %state BLOCK_MACRO
 %state BLOCK_MACRO_ATTRS
+%state ATTRS_SINGLE_QUOTE
+%state ATTRS_DOUBLE_QUOTE
+%state ATTRS_NO_QUOTE
+%state ATTRS_SINGLE_QUOTE_START
+%state ATTRS_DOUBLE_QUOTE_START
 %state BLOCK_ATTRS
 
 %state INLINE_MACRO
@@ -369,7 +374,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                { yypushback(yylength()); yypopstate(); }
 }
 
-<ATTRIBUTE_VAL, INSIDE_LINE, DESCRIPTION, LINKFILE, BLOCK_MACRO, LINKTEXT, REFTEXT, BLOCKREFTEXT> {
+<ATTRIBUTE_VAL, INSIDE_LINE, DESCRIPTION, LINKFILE, BLOCK_MACRO, LINKTEXT, REFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE> {
   {ATTRIBUTE_REF_START} / ( {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} | [^}\n ]* {AUTOCOMPLETE} ) {
                          if (!isEscaped()) {
                            yypushstate(); yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
@@ -448,10 +453,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ^ {PAGEBREAK} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.PAGEBREAK; }
   ^ {HORIZONTALRULE} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.HORIZONTALRULE; }
   ^ {BLOCK_MACRO_START} / [^ \[\n] [^\[\n]* { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
-  // endif allows the body to be empty, special case...
-  ^ "endif::" / [^ \n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  // endif/ifeval allows the body to be empty, special case...
+  ^ ("endif"|"ifeval") "::" / [^ \n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   ^ {BLOCK_MACRO_START} / [^ \[\n]? [^\[\n]* {AUTOCOMPLETE} { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
-  {BLOCK_ATTRS_START} / [^\[] { yybegin(MULTILINE); yypushstate(); clearStyle(); yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
+  {BLOCK_ATTRS_START} / [^\[] { yybegin(MULTILINE); yypushstate(); clearStyle(); yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.ATTRS_START; }
   {ANCHORSTART} / [^\]\n]+ {ANCHOREND} { resetFormatting(); yybegin(ANCHORID); return AsciiDocTokenTypes.BLOCKIDSTART; }
   {BLOCKIDSTART} / [^\]\n]+ {BLOCKIDEND} {
                          if (!isEscaped()) {
@@ -1034,36 +1039,60 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { return AsciiDocTokenTypes.TITLE; }
 }
 
-<BLOCK_ATTRS> {
-  "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
-  "]"                  { return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
+<BLOCK_MACRO_ATTRS, BLOCK_ATTRS> {
+  "=" / "\"" ( [^\"\]\n] | "\\\"" )* "\"" { yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
+  "=" / "\'" ( [^\"\]\n] | "\\\'" )* "\'" { yypushstate(); yybegin(ATTRS_SINGLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
+  "=" { yypushstate(); yybegin(ATTRS_NO_QUOTE); return AsciiDocTokenTypes.ASSIGNMENT; }
   ","                  { return AsciiDocTokenTypes.SEPARATOR; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
-  "=\"" ( [^\"\\n] | "\\\"" )* "\"" { return AsciiDocTokenTypes.BLOCK_ATTR_VALUE; }
-  "=\'" ( [^\"\\n] | "\\\'" )* "\'" { return AsciiDocTokenTypes.BLOCK_ATTR_VALUE; }
-  [^\],=\n\t ]+ {
-        if ((yytext().charAt(0) != '.' && yytext().charAt(0) != '%') && !yytext().toString().equals("role")) {
-          setStyle(yytext().toString());
+  "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
+  "]"                  { yypopstate(); return AsciiDocTokenTypes.ATTRS_END; }
+}
+
+<BLOCK_ATTRS> {
+  [^\],=\n\t }]+ {
+          if ((yytext().charAt(0) != '.' && yytext().charAt(0) != '%') && !yytext().toString().equals("role")) {
+            setStyle(yytext().toString());
+          }
+          return AsciiDocTokenTypes.ATTR_NAME;
         }
-        return AsciiDocTokenTypes.BLOCK_ATTR_NAME;
-      }
-  [^]                  { return AsciiDocTokenTypes.BLOCK_ATTR_NAME; }
 }
 
 <BLOCK_MACRO> {
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
-  "["                  { yybegin(BLOCK_MACRO_ATTRS); return AsciiDocTokenTypes.BLOCK_ATTRS_START; }
+  "["                  { yybegin(BLOCK_MACRO_ATTRS); return AsciiDocTokenTypes.ATTRS_START; }
   [^]                  { return AsciiDocTokenTypes.BLOCK_MACRO_BODY; }
 }
 
-<BLOCK_MACRO_ATTRS> {
-  "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
-  "]"                  { yypopstate(); return AsciiDocTokenTypes.BLOCK_ATTRS_END; }
-  ","                  { return AsciiDocTokenTypes.SEPARATOR; }
-  {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
-  "=\"" ( [^\"\]\n] | "\\\"" )* "\"" { return AsciiDocTokenTypes.BLOCK_ATTR_VALUE; }
-  "=\'" ( [^\"\]\n] | "\\\'" )* "\'" { return AsciiDocTokenTypes.BLOCK_ATTR_VALUE; }
-  [^]                  { return AsciiDocTokenTypes.BLOCK_ATTR_NAME; }
+<BLOCK_MACRO_ATTRS, BLOCK_ATTRS> {
+  [^]                  { return AsciiDocTokenTypes.ATTR_NAME; }
+}
+
+<ATTRS_DOUBLE_QUOTE_START> {
+  "\"" { yybegin(ATTRS_DOUBLE_QUOTE); return AsciiDocTokenTypes.DOUBLE_QUOTE; }
+}
+
+<ATTRS_SINGLE_QUOTE_START> {
+  "\'" { yybegin(ATTRS_SINGLE_QUOTE); return AsciiDocTokenTypes.SINGLE_QUOTE; }
+}
+
+<ATTRS_DOUBLE_QUOTE> {
+  "\\\"" { return AsciiDocTokenTypes.ATTR_VALUE; }
+  "\"" { yypopstate(); return AsciiDocTokenTypes.DOUBLE_QUOTE; }
+}
+
+<ATTRS_SINGLE_QUOTE> {
+  "\\\'" { return AsciiDocTokenTypes.ATTR_VALUE; }
+  "\'" { yypopstate(); return AsciiDocTokenTypes.SINGLE_QUOTE; }
+}
+
+<ATTRS_NO_QUOTE> {
+  [,\]] { yypushback(yylength()); yypopstate(); }
+}
+
+<ATTRS_DOUBLE_QUOTE, ATTRS_SINGLE_QUOTE, ATTRS_NO_QUOTE> {
+  "\n" { yypushback(yylength()); yypopstate(); }
+  [^] { return AsciiDocTokenTypes.ATTR_VALUE; }
 }
 
 <INLINE_MACRO> {

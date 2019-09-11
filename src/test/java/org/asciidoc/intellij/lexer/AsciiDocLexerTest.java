@@ -56,8 +56,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:BLOCK_MACRO_ID ('include::')\n" +
         "AsciiDoc:BLOCK_MACRO_BODY ('file.adoc')\n" +
-        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
@@ -132,8 +132,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:BLOCK_MACRO_ID ('include::')\n" +
         "AsciiDoc:BLOCK_MACRO_BODY ('test.adoc')\n" +
-        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
@@ -150,9 +150,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testHeadingNewStyleWithAppendixStyle() {
     doTest("[appendix]\n= Abc\nText\n",
-      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_ATTR_NAME ('appendix')\n" +
-        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+      "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('appendix')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:HEADING ('= Abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -191,11 +191,48 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("image::foo.png[Caption]\nabc",
       "AsciiDoc:BLOCK_MACRO_ID ('image::')\n" +
         "AsciiDoc:BLOCK_MACRO_BODY ('foo.png')\n" +
-        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_ATTR_NAME ('Caption')\n" +
-        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('Caption')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('abc')");
+  }
+
+  public void testBlockMacroWithAttribute() {
+    doTest("macro::foo[key=value]",
+      "AsciiDoc:BLOCK_MACRO_ID ('macro::')\n" +
+        "AsciiDoc:BLOCK_MACRO_BODY ('foo')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('key')\n" +
+        "AsciiDoc:ASSIGNMENT ('=')\n" +
+        "AsciiDoc:ATTR_VALUE ('value')\n" +
+        "AsciiDoc:ATTRS_END (']')");
+  }
+
+  public void testBlockMacroWithSingleQuotedAttribute() {
+    doTest("macro::foo[key='value']",
+      "AsciiDoc:BLOCK_MACRO_ID ('macro::')\n" +
+        "AsciiDoc:BLOCK_MACRO_BODY ('foo')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('key')\n" +
+        "AsciiDoc:ASSIGNMENT ('=')\n" +
+        "AsciiDoc:SINGLE_QUOTE (''')\n" +
+        "AsciiDoc:ATTR_VALUE ('value')\n" +
+        "AsciiDoc:SINGLE_QUOTE (''')\n" +
+        "AsciiDoc:ATTRS_END (']')");
+  }
+
+  public void testBlockMacroWithDoubleQuotedAttribute() {
+    doTest("macro::foo[key=\"value\"]",
+      "AsciiDoc:BLOCK_MACRO_ID ('macro::')\n" +
+        "AsciiDoc:BLOCK_MACRO_BODY ('foo')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('key')\n" +
+        "AsciiDoc:ASSIGNMENT ('=')\n" +
+        "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +
+        "AsciiDoc:ATTR_VALUE ('value')\n" +
+        "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +
+        "AsciiDoc:ATTRS_END (']')");
   }
 
   public void testExample() {
@@ -221,15 +258,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testBlockAttrs() {
     doTest("[NOTE]\n",
-      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_ATTR_NAME ('NOTE')\n" +
-        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+      "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('NOTE')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
   public void testUnclosedBlockAttrs() {
     doTest("[\nfoo",
-      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
+      "AsciiDoc:ATTRS_START ('[')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('foo')");
   }
@@ -1033,9 +1070,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TITLE ('.Title')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_ATTR_NAME ('source')\n" +
-        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('source')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -1085,30 +1122,6 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("<<<\n",
       "AsciiDoc:PAGEBREAK ('<<<')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
-  }
-
-  public void testValueInBlockAttributeDoubleQuotes() {
-    doTest("[cols=\"1,4\", options=\"header\"]",
-      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_ATTR_NAME ('cols')\n" +
-        "AsciiDoc:BLOCK_ATTR_VALUE ('=\"1,4\"')\n" +
-        "AsciiDoc:SEPARATOR (',')\n" +
-        "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:BLOCK_ATTR_NAME ('options')\n" +
-        "AsciiDoc:BLOCK_ATTR_VALUE ('=\"header\"')\n" +
-        "AsciiDoc:BLOCK_ATTRS_END (']')");
-  }
-
-  public void testValueInBlockAttributeSingleQuotes() {
-    doTest("[cols='1,4', options='header']",
-      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_ATTR_NAME ('cols')\n" +
-        "AsciiDoc:BLOCK_ATTR_VALUE ('='1,4'')\n" +
-        "AsciiDoc:SEPARATOR (',')\n" +
-        "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:BLOCK_ATTR_NAME ('options')\n" +
-        "AsciiDoc:BLOCK_ATTR_VALUE ('='header'')\n" +
-        "AsciiDoc:BLOCK_ATTRS_END (']')");
   }
 
   public void testEscapedBlockId() {
@@ -1233,9 +1246,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testListingWithNoDelimiters() {
     doTest("[source]\nListing\n\nText",
-      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_ATTR_NAME ('source')\n" +
-        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+      "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('source')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LISTING_TEXT ('Listing')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -1245,9 +1258,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testPassthroughWithNoDelimiters() {
     doTest("[pass]\nPas**ss**ss\n\nText",
-      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_ATTR_NAME ('pass')\n" +
-        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+      "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('pass')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:PASSTRHOUGH_CONTENT ('Pas**ss**ss')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -1257,9 +1270,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testListingWithAttributeAndDelimiter() {
     doTest("[source]\n----\nListing\n----\nText",
-      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_ATTR_NAME ('source')\n" +
-        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+      "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('source')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -1274,9 +1287,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("[verse]\n" +
         "// test\n" +
         " Verse\n",
-      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_ATTR_NAME ('verse')\n" +
-        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+      "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('verse')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LINE_COMMENT ('// test')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -1318,9 +1331,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "\n" +
         "[source]\n" +
         "Hi",
-      "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_ATTR_NAME ('verse')\n" +
-        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+      "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('verse')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('V1')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -1329,9 +1342,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('V2')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_ATTR_NAME ('source')\n" +
-        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('source')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LISTING_TEXT ('Hi')");
   }
@@ -1365,9 +1378,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "====\n",
       "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_ATTR_NAME ('verse')\n" +
-        "AsciiDoc:BLOCK_ATTRS_END (']')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('verse')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('test')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -1420,8 +1433,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
   public void testEndifSpecial() {
     doTest("endif::[]",
       "AsciiDoc:BLOCK_MACRO_ID ('endif::')\n" +
-        "AsciiDoc:BLOCK_ATTRS_START ('[')\n" +
-        "AsciiDoc:BLOCK_ATTRS_END (']')");
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTRS_END (']')");
   }
 
   public void testSimpleUrl() {

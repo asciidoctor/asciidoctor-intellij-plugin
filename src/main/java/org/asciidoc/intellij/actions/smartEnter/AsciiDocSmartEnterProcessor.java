@@ -59,7 +59,7 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
           commitChanges(project, editor, caretTo);
           result = true;
         }
-        if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.BLOCK_ATTR_NAME) {
+        if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.ATTR_NAME) {
           if (atCaret.getNextSibling() == null) {
             String textToInsert = "]";
             doc.insertString(atCaret.getTextRange().getEndOffset(), textToInsert);
@@ -67,7 +67,7 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
             commitChanges(project, editor, caretTo);
             result = true;
           }
-          if (atCaret.getNextSibling().getNode().getElementType() == AsciiDocTokenTypes.BLOCK_ATTRS_END) {
+          if (atCaret.getNextSibling().getNode().getElementType() == AsciiDocTokenTypes.ATTRS_END) {
             atCaret = atCaret.getNextSibling();
           }
         }
@@ -82,8 +82,8 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
             result = true;
           }
         }
-        if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.BLOCK_ATTRS_END) {
-          ASTNode[] attr = atCaret.getParent().getNode().getChildren(TokenSet.create(AsciiDocTokenTypes.BLOCK_ATTR_NAME));
+        if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.ATTRS_END) {
+          ASTNode[] attr = atCaret.getParent().getNode().getChildren(TokenSet.create(AsciiDocTokenTypes.ATTR_NAME));
           if (attr.length > 0 && "source".equals(attr[0].getText())) {
             String textToInsert = "\n----\n\n----";
             if (atCaret.getTextRange().getEndOffset() == editor.getDocument().getTextLength()) {

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Stack;
 
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ASSIGNMENT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION_LEGACY;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_NAME;
@@ -17,18 +18,19 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_REF_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_REF_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_UNSET;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_VAL;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRS_END;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRS_START;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTR_NAME;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTR_VALUE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKID;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDEND;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKREFTEXT;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTRS_END;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTRS_START;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTR_NAME;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_ATTR_VALUE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_BODY;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ID;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DOUBLE_QUOTE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_OLDSTYLE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_END;
@@ -54,6 +56,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFFILE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SEPARATOR;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SINGLE_QUOTE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TITLE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_EMAIL;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_END;
@@ -156,14 +159,17 @@ public class AsciiDocParserImpl {
         markPreBlock();
         next();
         continue;
-      } else if (at(BLOCK_ATTRS_START)) {
+      } else if (at(ATTRS_START)) {
         markPreBlock();
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
-        while (at(BLOCK_ATTR_NAME) || at(BLOCK_ATTR_VALUE) || at(BLOCK_ATTRS_END) || at(SEPARATOR)) {
-          if (at(BLOCK_ATTRS_END)) {
+        while (at(ATTR_NAME) || at(ATTR_VALUE) || at(ATTRS_END) || at(SEPARATOR) || at(ATTRIBUTE_REF_START)
+        || at(SINGLE_QUOTE) || at(DOUBLE_QUOTE) || at(ASSIGNMENT)) {
+          if (at(ATTRS_END)) {
             next();
             break;
+          } else if (at(ATTRIBUTE_REF_START)) {
+            parseAttributeReference();
           }
           next();
         }
@@ -280,9 +286,10 @@ public class AsciiDocParserImpl {
     newLines = 0;
     markPreBlock();
     next();
-    while ((at(BLOCK_MACRO_BODY) || at(ATTRIBUTE_REF_START) || at(BLOCK_ATTR_NAME) || at(BLOCK_ATTR_VALUE) || at(SEPARATOR) || at(BLOCK_ATTRS_START) || at(BLOCK_ATTRS_END))
+    while ((at(BLOCK_MACRO_BODY) || at(ATTRIBUTE_REF_START) || at(ATTR_NAME) || at(ATTR_VALUE) || at(SEPARATOR) || at(ATTRS_START) || at(ATTRS_END)
+      || at(ASSIGNMENT) || at(SINGLE_QUOTE) || at(DOUBLE_QUOTE))
       && newLines == 0) {
-      if (at(BLOCK_ATTRS_END)) {
+      if (at(ATTRS_END)) {
         next();
         break;
       } else if (at(ATTRIBUTE_REF_START)) {

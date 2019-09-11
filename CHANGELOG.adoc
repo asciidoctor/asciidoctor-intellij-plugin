@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.6 (work in progress)
+
+- support attribute references in block and block macro attributes
+
 === 0.30.5 (preview, available from Github releases)
 
 - fix singleton for prepending .asciidoctorconfig information (#325)
