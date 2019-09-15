@@ -13,6 +13,13 @@ import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * This notified the user that JavaFX initialization failed.
+ * Initial handling was done here: https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/299
+ * I've reported this as part of https://github.com/JetBrains/intellij-community/pull/1178.
+ * Apparently this should be fixed in 2019.2 with JBR 11. I still see the chance that people run an old version of the IDE or
+ * a non-JBR JRE, therefore keep it in here for now.
+ */
 public class JavaFxInitializationIsStuckNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> implements DumbAware {
   private static final Key<EditorNotificationPanel> KEY = Key.create("JavaFxInitializationIsStuck");
 
