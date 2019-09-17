@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.6 (work in progress)
+=== 0.30.6 (preview, available from Github releases)
 
 - support attribute references in block and block macro attributes
 
