@@ -35,7 +35,7 @@ public interface AsciiDocTokenTypes {
   IElementType LISTING_TEXT = new AsciiDocElementType("LISTING_TEXT");
   IElementType HEADING = new AsciiDocElementType("HEADING");
   IElementType HEADING_OLDSTYLE = new AsciiDocElementType("HEADING_OLDSTYLE");
-  IElementType TITLE = new AsciiDocElementType("TITLE");
+  IElementType TITLE_TOKEN = new AsciiDocElementType("TITLE_TOKEN");
   IElementType BLOCK_MACRO_ID = new AsciiDocElementType("BLOCK_MACRO_ID");
   IElementType BLOCK_MACRO_BODY = new AsciiDocElementType("BLOCK_MACRO_BODY");
   IElementType BLOCK_MACRO_ATTRIBUTES = new AsciiDocElementType("BLOCK_MACRO_ATTRIBUTES");
@@ -109,7 +109,7 @@ public interface AsciiDocTokenTypes {
   IElementType URL_PREFIX = new AsciiDocElementType("URL_PREFIX");
   IElementType HEADER = new AsciiDocElementType("HEADER");
 
-  TokenSet TOKENS_TO_MERGE = TokenSet.create(TEXT, LISTING_TEXT, HEADING, TITLE, BLOCK_COMMENT,
+  TokenSet TOKENS_TO_MERGE = TokenSet.create(TEXT, LISTING_TEXT, HEADING, TITLE_TOKEN, BLOCK_COMMENT,
     ATTR_NAME, BLOCK_MACRO_BODY, BLOCK_MACRO_ATTRIBUTES, INLINE_ATTR_NAME, INLINE_MACRO_BODY, INLINE_MACRO_ATTRIBUTES, PASSTRHOUGH_CONTENT,
       BOLD_START, BOLD_END, BOLD, ITALIC, ITALIC_END, ITALIC_START, BOLDITALIC,
       MONO_START, MONO_END, MONO, MONOBOLD, MONOBOLDITALIC, REF, BLOCKID, BLOCKREFTEXT, REFTEXT, WHITE_SPACE, WHITE_SPACE_MONO, LINKTEXT,

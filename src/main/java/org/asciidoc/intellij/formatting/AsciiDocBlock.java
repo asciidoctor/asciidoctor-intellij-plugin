@@ -276,7 +276,7 @@ class AsciiDocBlock extends AbstractBlock {
 
   private boolean isTitle(Block block) {
     return block instanceof AsciiDocBlock &&
-      AsciiDocTokenTypes.TITLE.equals(((AsciiDocBlock) block).getNode().getElementType());
+      AsciiDocElementTypes.TITLE.equals(((AsciiDocBlock) block).getNode().getElementType());
   }
 
   private static boolean isSection(Block block) {

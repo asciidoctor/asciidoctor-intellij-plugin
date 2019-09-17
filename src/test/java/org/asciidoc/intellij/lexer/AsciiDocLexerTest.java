@@ -247,7 +247,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testTitle() {
     doTest(".Foo bar baz\nFoo bar baz",
-      "AsciiDoc:TITLE ('.Foo bar baz')\n" +
+      "AsciiDoc:TITLE_TOKEN ('.Foo bar baz')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('Foo')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
@@ -308,6 +308,29 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRIBUTE_NAME ('attribute')\n" +
         "AsciiDoc:ATTRIBUTE_UNSET ('!')\n" +
         "AsciiDoc:ATTRIBUTE_NAME_END (':')");
+  }
+
+  public void testAttributeInTitle() {
+    doTest(".xx{hi}xx",
+      "AsciiDoc:TITLE_TOKEN ('.xx')\n" +
+        "AsciiDoc:ATTRIBUTE_REF_START ('{')\n" +
+        "AsciiDoc:ATTRIBUTE_REF ('hi')\n" +
+        "AsciiDoc:ATTRIBUTE_REF_END ('}')\n" +
+        "AsciiDoc:TITLE_TOKEN ('xx')");
+  }
+
+  public void testBracketInBlockAttributes() {
+    doTest("[val=\"{attr}[xx]\"]",
+      "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('val')\n" +
+        "AsciiDoc:ASSIGNMENT ('=')\n" +
+        "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +
+        "AsciiDoc:ATTRIBUTE_REF_START ('{')\n" +
+        "AsciiDoc:ATTRIBUTE_REF ('attr')\n" +
+        "AsciiDoc:ATTRIBUTE_REF_END ('}')\n" +
+        "AsciiDoc:ATTR_VALUE ('[xx]')\n" +
+        "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +
+        "AsciiDoc:ATTRS_END (']')");
   }
 
   public void testAttributeEscaped() {
@@ -411,7 +434,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("+\n.Title",
       "AsciiDoc:CONTINUATION ('+')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TITLE ('.Title')");
+        "AsciiDoc:TITLE_TOKEN ('.Title')");
   }
 
   public void testBoldSimple() {
@@ -1008,7 +1031,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:BLOCKID ('id')\n" +
         "AsciiDoc:BLOCKIDEND (']]')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TITLE ('.Title')\n" +
+        "AsciiDoc:TITLE_TOKEN ('.Title')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -1068,7 +1091,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("====\n.Title\n[source]\n----\nSource\n----\n====\n",
       "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TITLE ('.Title')\n" +
+        "AsciiDoc:TITLE_TOKEN ('.Title')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:ATTRS_START ('[')\n" +
         "AsciiDoc:ATTR_NAME ('source')\n" +
@@ -1312,7 +1335,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Text')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TITLE ('.Title')\n" +
+        "AsciiDoc:TITLE_TOKEN ('.Title')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +

@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.30.6 (preview, available from Github releases)
 
-- support attribute references in block and block macro attributes
+- support attribute references in block and block macro attributes and titles (#327)
 
 === 0.30.5 (preview, available from Github releases)
 

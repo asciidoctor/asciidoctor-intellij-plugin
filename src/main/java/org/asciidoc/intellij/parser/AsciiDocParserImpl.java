@@ -57,7 +57,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SEPARATOR;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SINGLE_QUOTE;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TITLE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TITLE_TOKEN;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_EMAIL;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_LINK;
@@ -155,23 +155,23 @@ public class AsciiDocParserImpl {
       } else if (at(LISTING_TEXT)) {
         parseListingNoDelimiter();
         continue;
-      } else if (at(TITLE)) {
-        markPreBlock();
-        next();
+      } else if (at(TITLE_TOKEN)) {
+        parseTitle();
         continue;
       } else if (at(ATTRS_START)) {
         markPreBlock();
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
         while (at(ATTR_NAME) || at(ATTR_VALUE) || at(ATTRS_END) || at(SEPARATOR) || at(ATTRIBUTE_REF_START)
-        || at(SINGLE_QUOTE) || at(DOUBLE_QUOTE) || at(ASSIGNMENT)) {
+          || at(SINGLE_QUOTE) || at(DOUBLE_QUOTE) || at(ASSIGNMENT)) {
           if (at(ATTRS_END)) {
             next();
             break;
           } else if (at(ATTRIBUTE_REF_START)) {
             parseAttributeReference();
+          } else {
+            next();
           }
-          next();
         }
         blockAttrsMarker.done(AsciiDocElementTypes.BLOCK_ATTRIBUTES);
         continue;
@@ -247,6 +247,24 @@ public class AsciiDocParserImpl {
     dropPreBlock();
     closeBlocks();
     closeSections(0);
+  }
+
+  private void parseTitle() {
+    newLines = 0;
+    markPreBlock();
+    PsiBuilder.Marker titleMarker = myBuilder.mark();
+    while ((at(TITLE_TOKEN) || at(ATTRIBUTE_REF_START))
+      && newLines == 0) {
+      if (at(ATTRS_END)) {
+        next();
+        break;
+      } else if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
+      } else {
+        next();
+      }
+    }
+    titleMarker.done(AsciiDocElementTypes.TITLE);
   }
 
   private void parseAttributeReference() {

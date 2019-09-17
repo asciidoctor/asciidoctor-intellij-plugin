@@ -374,7 +374,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                { yypushback(yylength()); yypopstate(); }
 }
 
-<ATTRIBUTE_VAL, INSIDE_LINE, DESCRIPTION, LINKFILE, BLOCK_MACRO, LINKTEXT, REFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE> {
+<ATTRIBUTE_VAL, INSIDE_LINE, DESCRIPTION, LINKFILE, BLOCK_MACRO, LINKTEXT, REFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE> {
   {ATTRIBUTE_REF_START} / ( {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} | [^}\n ]* {AUTOCOMPLETE} ) {
                          if (!isEscaped()) {
                            yypushstate(); yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
@@ -409,7 +409,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         }
       }
   {SPACE}* "\n"           { resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; } // blank lines within pre block don't have an effect
-  ^ {TITLE_START} / [^\. ] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE; }
+  ^ {TITLE_START} / [^\. ] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE_TOKEN; }
 }
 
 <HEADER, PREBLOCK> {
@@ -1036,12 +1036,12 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <TITLE> {
   "\n"                 { yyinitialIfNotInBlock(); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                  { return AsciiDocTokenTypes.TITLE; }
+  [^]                  { return AsciiDocTokenTypes.TITLE_TOKEN; }
 }
 
 <BLOCK_MACRO_ATTRS, BLOCK_ATTRS> {
-  "=" / "\"" ( [^\"\]\n] | "\\\"" )* "\"" { yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
-  "=" / "\'" ( [^\"\]\n] | "\\\'" )* "\'" { yypushstate(); yybegin(ATTRS_SINGLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
+  "=" / "\"" ( [^\"\n] | "\\\"" )* "\"" { yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
+  "=" / "\'" ( [^\'\n] | "\\\'" )* "\'" { yypushstate(); yybegin(ATTRS_SINGLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
   "=" { yypushstate(); yybegin(ATTRS_NO_QUOTE); return AsciiDocTokenTypes.ASSIGNMENT; }
   ","                  { return AsciiDocTokenTypes.SEPARATOR; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }

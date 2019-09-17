@@ -5,7 +5,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +31,7 @@ public interface AsciiDocBlock extends PsiElement, AsciiDocSelfDescribe {
 
   @Nullable
   default String getTitle() {
-    ASTNode titleNode = getNode().findChildByType(AsciiDocTokenTypes.TITLE);
+    ASTNode titleNode = getNode().findChildByType(AsciiDocElementTypes.TITLE);
     if (titleNode == null) {
       return null;
     }
