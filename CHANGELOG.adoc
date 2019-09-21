@@ -7,12 +7,14 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.7 (work in progress)
+=== 0.30.7
 
 - upgrade to asciidoctorj-pdf:1.5.0-beta.5 (#325)
 - allow unset of attribute after the first colon
+- regression: when clicking an external link in the preview, don't navigate to external site, but open it in external browser only (#335)
+- regression: when right-clicking on an image, show popup to save image (#335)
 
-=== 0.30.6 (preview, available from Github releases)
+=== 0.30.6
 
 - support attribute references in block and block macro attributes and titles (#327)
 
