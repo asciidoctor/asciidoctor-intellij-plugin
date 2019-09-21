@@ -3,8 +3,8 @@ if (window.__IntelliJTools === undefined) {
 }
 
 window.__IntelliJTools.processClick = function (event) {
-  // stop propagation to prevent triggering scrolling to source line
-  event.stopPropagation()
+  // prevent opening the link in the preview
+  event.preventDefault()
 
   if (!this.href) {
     return false;
