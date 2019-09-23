@@ -13,6 +13,7 @@ import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.psi.PsiFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -125,20 +126,29 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
           annotationResult.getDocument().getLineEndOffset(lineNumberForAnnotation) - annotationResult.getDocument().getLineStartOffset(lineNumberForAnnotation)),
         logRecord.getMessage());
       StringBuilder sb = new StringBuilder();
-      sb.append(logRecord.getMessage());
+      sb.append(StringEscapeUtils.escapeHtml4(logRecord.getMessage()));
       if (logRecord.getCursor() != null) {
         if (logRecord.getCursor().getFile() == null) {
-          sb.append("<br>(").append(file.getVirtualFile().getName());
+          sb.append("<br>(")
+            .append(StringEscapeUtils.escapeHtml4(file.getVirtualFile().getName()));
           if (lineNumber != null) {
             sb.append(", line ").append(lineNumber);
           }
           sb.append(")");
         } else {
-          sb.append("<br>(").append(logRecord.getCursor().getFile()).append(", line ").append(logRecord.getCursor().getLineNumber()).append(")");
+          sb.append("<br>(")
+            .append(StringEscapeUtils.escapeHtml4(logRecord.getCursor().getFile()))
+            .append(", line ")
+            .append(logRecord.getCursor().getLineNumber())
+            .append(")");
         }
       }
       if (StringUtils.isNotEmpty(logRecord.getSourceFileName())) {
-        sb.append("<br>(").append(logRecord.getSourceFileName()).append(":").append(logRecord.getSourceMethodName()).append(")");
+        sb.append("<br>(")
+          .append(StringEscapeUtils.escapeHtml4(logRecord.getSourceFileName().replaceAll("[<>]", "")))
+          .append(":")
+          .append(StringEscapeUtils.escapeHtml4(logRecord.getSourceMethodName()))
+          .append(")");
       }
       annotation.setTooltip(sb.toString());
       if (severity.compareTo(HighlightSeverity.ERROR) >= 0) {

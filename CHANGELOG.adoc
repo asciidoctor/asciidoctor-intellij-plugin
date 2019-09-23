@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.8 (work in progress)
+
+- highlight warnings for Spring REST Docs at line in editor
+
 === 0.30.7
 
 - upgrade to asciidoctorj-pdf:1.5.0-beta.5 (#325)
