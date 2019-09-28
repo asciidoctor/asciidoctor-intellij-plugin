@@ -8,6 +8,12 @@ image::https://api.travis-ci.org/asciidoctor/asciidoctor-intellij-plugin.svg?bra
 A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language.
 To support the authors of Asciidoctor, please consider supporting us via https://opencollective.com/asciidoctor[OpenCollective].
 
+image::https://hacktoberfest.digitalocean.com/assets/logo-hf19-full-10f3c000cea930c76acc1dedc516ea7118b95353220869a3051848e45ff1d656.svg[float=left,width=200]
+
+*This plugin joined https://hacktoberfest.digitalocean.com/[Hacktoberfest]!
+Issues that can give you a good start are https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3AHacktoberfest[have the label "Hacktoberfest"] and maintainers are willing to help.
+Feel free to choose these or any other ticket to participate, or even create pull requests without a prior ticket).*
+
 *You can meet the maintainers in person:* Please ping them via eMail or chat before or during the event!
 
 * https://www.ahus1.de/[Alex] at https://baselone.ch/[BaselOne (Basel, CH)], 2019-10-17
@@ -31,7 +37,8 @@ Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to 
 * Recognizes the AsciiDoc file extension (.adoc, .asciidoc, .ad)
 * Provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] with live preview.
 * Toolbar and context menu for basic formatting and to create tables.
-* Refactor Markdown to AsciiDoc: Right click on a file, or use the Refactor menu, and the Markdown document will be replaced by the AsciiDoc equivalent. Also supports undo, in case you're not happy with the result!
+* Refactor Markdown to AsciiDoc: Right click on a file, or use the Refactor menu, and the Markdown document will be replaced by the AsciiDoc equivalent.
+Also supports undo, in case you're not happy with the result!
 
 Refer to the link:FEATURES.adoc[Features list] for a detailed overview of the features.
 
@@ -59,4 +66,5 @@ Released under the Apache License, Version 2.0 (see link:LICENSE[LICENSE]).
 
 This plugin is based on the https://github.com/nicoulaj/idea-markdown[Intellij Markdown plugin by Julien Nicoulaud].
 
-Also, great help was received from Erik Pragt, Harro Lissenberg, Alexander Schwartz and Dan Allen. Thank you all for your support!
+Also, great help was received from Erik Pragt, Harro Lissenberg, Alexander Schwartz and Dan Allen.
+Thank you all for your support!
