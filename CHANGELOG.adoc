@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.8 (work in progress)
 
 - highlight warnings for Spring REST Docs at line in editor
+- upgrade to JRuby 9.2.8.0 to avoid assertion errors when creating PDFs (#337)
 
 === 0.30.7
 
