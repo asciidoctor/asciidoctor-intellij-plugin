@@ -336,6 +336,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     myHtmlPanelWrapper.repaint();
     currentContent = null; // force a refresh of the preview by resetting the current memorized content
     reprocessAnnotations();
+    // save the content in all other editors as their content might be referenced in preview
+    ApplicationManager.getApplication().saveAll();
     renderIfVisible();
   }
 
