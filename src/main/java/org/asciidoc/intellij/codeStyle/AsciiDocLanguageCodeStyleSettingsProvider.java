@@ -8,6 +8,7 @@ import org.asciidoc.intellij.AsciiDocLanguage;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import static com.intellij.openapi.util.io.StreamUtil.readText;
 import static com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider.SettingsType.SPACING_SETTINGS;
@@ -42,10 +43,12 @@ public class AsciiDocLanguageCodeStyleSettingsProvider extends LanguageCodeStyle
 
   private static String loadSample(@NotNull SettingsType settingsType) {
     String name = "/samples/" + settingsType.name() + ".adoc";
-    try {
-      return readText(
-        AsciiDocLanguageCodeStyleSettingsProvider.class.getResourceAsStream(name), UTF_8
-      ).replaceAll("\r", "");
+    try (InputStream is = AsciiDocLanguageCodeStyleSettingsProvider.class.getResourceAsStream(name)) {
+      if (is == null) {
+        LOG.warn("unable to load sample");
+        return "";
+      }
+      return readText(is, UTF_8).replaceAll("\r", "");
     } catch (IOException e) {
       LOG.warn("unable to load sample", e);
     }

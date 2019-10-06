@@ -84,7 +84,9 @@ public class LocalfileURLConnection extends URLConnection {
       // this is needed on Linux/Mac OS, but harmful on Windows
       imgPath = "/" + imgPath;
     }
-    data = IOUtils.toByteArray(new URL("file:/" + imgPath).openStream());
+    try (InputStream stream = new URL("file:/" + imgPath).openStream()) {
+      data = IOUtils.toByteArray(stream);
+    }
   }
 
   public OutputStream getOutputStream() {

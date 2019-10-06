@@ -68,8 +68,7 @@ public class AsciiDocColorSettingsPage implements ColorSettingsPage {
   @NonNls
   @NotNull
   public String getDemoText() {
-    final InputStream stream = getClass().getResourceAsStream("SampleDocument.adoc");
-    try {
+    try (InputStream stream = getClass().getResourceAsStream("SampleDocument.adoc")) {
       final String result = StreamUtil.readText(stream, CharsetToolkit.UTF8);
       stream.close();
       return StringUtil.convertLineSeparators(result);

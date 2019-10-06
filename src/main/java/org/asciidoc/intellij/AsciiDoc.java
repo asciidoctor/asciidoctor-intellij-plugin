@@ -171,26 +171,29 @@ public class AsciiDoc {
           Logger.getLogger("asciidoctor").setUseParentHandlers(false);
           asciidoctor.requireLibrary("asciidoctor-diagram");
 
-          InputStream is = this.getClass().getResourceAsStream("/sourceline-treeprocessor.rb");
-          if (is == null) {
-            throw new RuntimeException("unable to load script sourceline-treeprocessor.rb");
+          try (InputStream is = this.getClass().getResourceAsStream("/sourceline-treeprocessor.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script sourceline-treeprocessor.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is).treeprocessor("SourceLineTreeProcessor");
           }
-          asciidoctor.rubyExtensionRegistry().loadClass(is).treeprocessor("SourceLineTreeProcessor");
 
           if (format.equals("javafx")) {
-            is = this.getClass().getResourceAsStream("/plantuml-png-patch.rb");
-            if (is == null) {
-              throw new RuntimeException("unable to load script plantuml-png-patch.rb");
+            try (InputStream is = this.getClass().getResourceAsStream("/plantuml-png-patch.rb")) {
+              if (is == null) {
+                throw new RuntimeException("unable to load script plantuml-png-patch.rb");
+              }
+              asciidoctor.rubyExtensionRegistry().loadClass(is);
             }
-            asciidoctor.rubyExtensionRegistry().loadClass(is);
           }
 
           if (springRestDocs) {
-            is = this.getClass().getResourceAsStream("/springrestdoc-operation-blockmacro.rb");
-            if (is == null) {
-              throw new RuntimeException("unable to load script springrestdoc-operation-blockmacro.rb");
+            try (InputStream is = this.getClass().getResourceAsStream("/springrestdoc-operation-blockmacro.rb")) {
+              if (is == null) {
+                throw new RuntimeException("unable to load script springrestdoc-operation-blockmacro.rb");
+              }
+              asciidoctor.rubyExtensionRegistry().loadClass(is);
             }
-            asciidoctor.rubyExtensionRegistry().loadClass(is);
           }
 
           if (extensionsEnabled) {
@@ -199,6 +202,8 @@ public class AsciiDoc {
             }
           }
           instances.put(md, asciidoctor);
+        } catch (IOException e) {
+          throw new RuntimeException(e);
         } finally {
           if (oldEncoding != null) {
             System.setProperty("file.encoding", oldEncoding);

@@ -60,6 +60,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -188,11 +189,15 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
     try {
       Properties p = new Properties();
-      p.load(JavaFxHtmlPanel.class.getResourceAsStream("/META-INF/asciidoctorj-version.properties"));
+      try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("/META-INF/asciidoctorj-version.properties")) {
+        p.load(stream);
+      }
       String asciidoctorVersion = p.getProperty("version.asciidoctor");
-      myInlineCss = IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
+      try (InputStream steam = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
         + asciidoctorVersion
-        + "/data/stylesheets/asciidoctor-default.css"));
+        + "/data/stylesheets/asciidoctor-default.css")) {
+        myInlineCss = IOUtils.toString(steam);
+      }
 
       // asian characters won't display with text-rendering:optimizeLegibility
       // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/203
@@ -202,11 +207,17 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/193
       myInlineCss = myInlineCss.replaceAll("(\"Noto Serif\"|\"Open Sans\"|\"Droid Sans Mono\"),", "");
 
-      myInlineCssDarcula = myInlineCss + IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("darcula.css"));
-      myInlineCssDarcula += IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("coderay-darcula.css"));
-      myInlineCss += IOUtils.toString(JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
+      try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
+        myInlineCssDarcula = myInlineCss + IOUtils.toString(stream);
+      }
+      try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("coderay-darcula.css")) {
+        myInlineCssDarcula += IOUtils.toString(stream);
+      }
+      try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
         + asciidoctorVersion
-        + "/data/stylesheets/coderay-asciidoctor.css"));
+        + "/data/stylesheets/coderay-asciidoctor.css")) {
+      myInlineCss += IOUtils.toString(stream);
+      }
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
     } catch (IOException e) {
