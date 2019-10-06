@@ -12,7 +12,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.UserDataHolderBase;
-import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.JBSplitter;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -67,7 +66,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
       settings -> ApplicationManager.getApplication().invokeLater(() -> {
         triggerSplitOrientationChange(settings.getAsciiDocPreviewSettings().isVerticalSplit());
         triggerEditorFirstChange(settings.getAsciiDocPreviewSettings().isEditorFirst());
-        triggerLayoutChange(settings.getAsciiDocPreviewSettings().getSplitEditorLayout(), false);
+        triggerLayoutChange(settings.getAsciiDocPreviewSettings().getSplitEditorLayout());
       });
 
     ApplicationManager.getApplication().getMessageBus().connect(this)
@@ -115,16 +114,16 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     final int n = SplitEditorLayout.values().length;
     final int newValue = (oldValue + n - 1) % n;
 
-    triggerLayoutChange(SplitEditorLayout.values()[newValue], true);
+    triggerLayoutChange(SplitEditorLayout.values()[newValue]);
   }
 
-  public void triggerLayoutChange(@NotNull SplitFileEditor.SplitEditorLayout newLayout, boolean requestFocus) {
+  public void triggerLayoutChange(@NotNull SplitFileEditor.SplitEditorLayout newLayout) {
     if (mySplitEditorLayout == newLayout) {
       return;
     }
 
     mySplitEditorLayout = newLayout;
-    invalidateLayout(requestFocus);
+    invalidateLayout();
   }
 
   private void triggerSplitOrientationChange(boolean isVerticalSplit) {
@@ -143,18 +142,9 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     return mySplitEditorLayout;
   }
 
-  private void invalidateLayout(boolean requestFocus) {
+  private void invalidateLayout() {
     adjustEditorsVisibility();
     myComponent.repaint();
-
-    if (!requestFocus) {
-      return;
-    }
-
-    final JComponent focusComponent = getPreferredFocusedComponent();
-    if (focusComponent != null) {
-      IdeFocusManager.findInstanceByComponent(focusComponent).requestFocus(focusComponent, true);
-    }
   }
 
   protected void adjustEditorsVisibility() {
@@ -202,7 +192,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
       }
       if (compositeState.getSplitLayout() != null) {
         mySplitEditorLayout = SplitEditorLayout.valueOf(compositeState.getSplitLayout());
-        invalidateLayout(true);
+        invalidateLayout();
       }
     }
   }
