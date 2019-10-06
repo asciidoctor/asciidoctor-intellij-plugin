@@ -43,23 +43,27 @@
       <group id="AsciiDoc.TextFormatting" compact="true" description="Text Markup actions" popup="true"
              text="AsciiDoc" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
         <action id="asciidoc.makebold" class="org.asciidoc.intellij.actions.asciidoc.MakeBold"
-                text="Bold" description="Make text bold" icon="AsciiDocIcons.EditorActions.BOLD">
+                text="Toggle Bold" description="Toggle text bold" icon="AsciiDocIcons.EditorActions.BOLD">
         </action>
         <action id="asciidoc.makeitalic" class="org.asciidoc.intellij.actions.asciidoc.MakeItalic"
-                text="Italic" description="Make text italic" icon="AsciiDocIcons.EditorActions.ITALIC">
+                text="Toggle Italic" description="Toggle text italic" icon="AsciiDocIcons.EditorActions.ITALIC">
         </action>
         <action id="asciidoc.maketitle" class="org.asciidoc.intellij.actions.asciidoc.MakeTitle"
-                text="Title" description="Make title">
+                text="Toggle Title" description="Make title">
         </action>
         <action id="asciidoc.makemono" class="org.asciidoc.intellij.actions.asciidoc.MakeMono"
-                text="Mono" description="Make text mono" icon="AsciiDocIcons.EditorActions.CODE_SPAN">
+                text="Toggle Mono" description="Toggle text mono" icon="AsciiDocIcons.EditorActions.CODE_SPAN">
         </action>
-        <action id="asciidoc.strikethrough" class="org.asciidoc.intellij.actions.asciidoc.MakeStrikethrough"
-                text="Strike Through" description="Make text strike through"
+        <action id="asciidoc.makestrikethrough" class="org.asciidoc.intellij.actions.asciidoc.MakeStrikethrough"
+                text="Toggle Strike Through" description="Toggle text strike through"
                 icon="AsciiDocIcons.EditorActions.STRIKE_THROUGH">
         </action>
+        <action id="asciidoc.makehighlighted" class="org.asciidoc.intellij.actions.asciidoc.MakeHighlighted"
+                text="Toggle Highlight" description="Toggle text highlighted"
+                icon="AsciiDocIcons.EditorActions.HIGHLIGHTED">
+        </action>
         <action id="asciidoc.makelink" class="org.asciidoc.intellij.actions.asciidoc.MakeLink"
-                text="Link" description="Make link" icon="AsciiDocIcons.EditorActions.LINK">
+                text="Create Link" description="Make link" icon="AsciiDocIcons.EditorActions.LINK">
         </action>
         <action class="org.asciidoc.intellij.actions.asciidoc.PasteImageAction"
                 id="org.asciidoc.intellij.actions.asciidoc.PasteImageAction"

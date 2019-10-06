@@ -54,6 +54,7 @@ public class AsciiDocIcons {
     public static final Icon TABLE = load("/icons/editor_actions/table.png"); // 16x16
     public static final Icon LINK = load("/icons/editor_actions/Link.svg"); // 16x16
     public static final Icon STRIKE_THROUGH = load("/icons/editor_actions/Strike_through.svg"); // 16x16
+    public static final Icon HIGHLIGHTED = load("/icons/editor_actions/Highlighted.svg"); // 16x16
     public static final Icon CODE_SPAN = load("/icons/editor_actions/Code_span.svg"); // 16x16
     public static final Icon IMAGE = load("/icons/editor_actions/image.svg"); // 16x16
   }

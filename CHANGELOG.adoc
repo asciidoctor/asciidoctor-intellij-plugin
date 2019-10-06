@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - auto-save files when switching to AsciiDoc editor to ensure preview shows latest content
 - clean up handling of input streams throughout the plugin
 - don't switch focus to editor when browsing for example TODO list (#332)
+- add menu bar item to mark/highlight selected text (#134)
 
 === 0.30.8 (preview, available from Github releases)
 
