@@ -1,5 +1,4 @@
-# copy of https://github.com/spring-projects/spring-restdocs/blob/master/spring-restdocs-asciidoctor-support/src/main/resources/extensions/operation_block_macro.rb
-# PLUS changes from PR https://github.com/spring-projects/spring-restdocs/pull/628 to avoid warnings
+# forked from https://github.com/spring-projects/spring-restdocs/blob/master/spring-restdocs-asciidoctor-support/src/main/resources/extensions/operation_block_macro.rb
 
 require 'asciidoctor/extensions'
 require 'stringio'
