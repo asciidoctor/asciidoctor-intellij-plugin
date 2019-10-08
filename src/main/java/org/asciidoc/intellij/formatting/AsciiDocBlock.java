@@ -147,12 +147,12 @@ class AsciiDocBlock extends AbstractBlock {
 
   private static boolean isAttributeDeclaration(Block block) {
     return block instanceof AsciiDocBlock &&
-      (AsciiDocElementTypes.ATTRIBUTE_DECLARATION.equals(((AsciiDocBlock) block).getNode().getElementType()));
+      AsciiDocElementTypes.ATTRIBUTE_DECLARATION.equals(((AsciiDocBlock) block).getNode().getElementType());
   }
 
   private static boolean isHeader(Block block) {
     return block instanceof AsciiDocBlock &&
-      (AsciiDocTokenTypes.HEADER.equals(((AsciiDocBlock) block).getNode().getElementType()));
+      AsciiDocTokenTypes.HEADER.equals(((AsciiDocBlock) block).getNode().getElementType());
   }
 
   private boolean lineStartsWithEnumeration(Block block) {
@@ -193,7 +193,7 @@ class AsciiDocBlock extends AbstractBlock {
 
   private boolean isSeparator(Block block) {
     return block instanceof AsciiDocBlock &&
-      (AsciiDocTokenTypes.SEPARATOR.equals(((AsciiDocBlock) block).getNode().getElementType()));
+      AsciiDocTokenTypes.SEPARATOR.equals(((AsciiDocBlock) block).getNode().getElementType());
   }
 
   private boolean hasBlankLineBetween(Block child1, Block child2) {
@@ -251,11 +251,6 @@ class AsciiDocBlock extends AbstractBlock {
   private boolean isBlockIdEnd(Block block) {
     return block instanceof AsciiDocBlock &&
       AsciiDocTokenTypes.BLOCKIDEND.equals(((AsciiDocBlock) block).getNode().getElementType());
-  }
-
-  private boolean isBlockIdStart(Block block) {
-    return block instanceof AsciiDocBlock &&
-      AsciiDocTokenTypes.BLOCKIDSTART.equals(((AsciiDocBlock) block).getNode().getElementType());
   }
 
   private boolean isBlock(Block block) {

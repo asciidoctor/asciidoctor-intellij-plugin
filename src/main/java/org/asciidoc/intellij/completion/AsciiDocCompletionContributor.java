@@ -51,6 +51,7 @@ public class AsciiDocCompletionContributor extends CompletionContributor {
   public AsciiDocCompletionContributor() {
     extend(CompletionType.BASIC, PlatformPatterns.psiElement().withElementType(AsciiDocTokenTypes.ATTRIBUTE_NAME).withLanguage(AsciiDocLanguage.INSTANCE),
       new CompletionProvider<CompletionParameters>() {
+        @Override
         public void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext processingContext,
                                    @NotNull CompletionResultSet resultSet) {
           List<String> builtInAttributesList = AsciiDocBundle.getBuiltInAttributesList();

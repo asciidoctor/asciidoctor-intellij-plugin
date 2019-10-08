@@ -140,9 +140,9 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     myDisabledInjectionsByLanguage.setText(settings.getDisabledInjectionsByLanguage());
 
-    myShowAsciiDocWarningsAndErrorsInEditor.setSelected((settings.isShowAsciiDocWarningsAndErrorsInEditor()));
+    myShowAsciiDocWarningsAndErrorsInEditor.setSelected(settings.isShowAsciiDocWarningsAndErrorsInEditor());
 
-    myInplacePreviewRefresh.setSelected((settings.isInplacePreviewRefresh()));
+    myInplacePreviewRefresh.setSelected(settings.isInplacePreviewRefresh());
   }
 
   @NotNull

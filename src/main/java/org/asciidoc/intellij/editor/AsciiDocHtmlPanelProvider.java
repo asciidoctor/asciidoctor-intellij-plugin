@@ -38,7 +38,8 @@ public abstract class AsciiDocHtmlPanelProvider {
   @NotNull
   public static AsciiDocHtmlPanelProvider createFromInfo(@NotNull ProviderInfo providerInfo) {
     try {
-      return ((AsciiDocHtmlPanelProvider) Class.forName(providerInfo.getClassName()).newInstance());
+      return Class.forName(providerInfo.getClassName()).asSubclass(AsciiDocHtmlPanelProvider.class)
+        .getDeclaredConstructor().newInstance();
     } catch (Exception e) {
       Messages.showMessageDialog(
         "Cannot set preview panel provider (" + providerInfo.getName() + "):\n" + e.getMessage(),
@@ -84,7 +85,7 @@ public abstract class AsciiDocHtmlPanelProvider {
       if (this == o) {
         return true;
       }
-      if (o == null || getClass() != o.getClass()) {
+      if (!(o instanceof ProviderInfo)) {
         return false;
       }
 

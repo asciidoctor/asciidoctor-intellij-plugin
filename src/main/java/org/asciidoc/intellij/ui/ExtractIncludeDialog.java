@@ -30,7 +30,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ExtractIncludeDialog extends RefactoringDialog {
-  private final Project myProject;
   private final Editor myEditor;
   private final PsiFile myFile;
 
@@ -51,7 +50,8 @@ public class ExtractIncludeDialog extends RefactoringDialog {
       return null;
     }
 
-    while (element instanceof AsciiDocBlockMacro || !(element instanceof AsciiDocBlock) && !(element instanceof AsciiDocSection) && element.getParent() != null) {
+    while ((element instanceof AsciiDocBlockMacro || (!(element instanceof AsciiDocBlock) && !(element instanceof AsciiDocSection)))
+      && element.getParent() != null) {
       element = element.getParent();
     }
     if (element instanceof AsciiDocBlock || element instanceof AsciiDocSection) {
@@ -63,7 +63,6 @@ public class ExtractIncludeDialog extends RefactoringDialog {
 
   public ExtractIncludeDialog(@NotNull Project project, Editor editor, PsiFile file) {
     super(project, false);
-    this.myProject = project;
     this.myEditor = editor;
     this.myFile = file;
     String filename = "include";

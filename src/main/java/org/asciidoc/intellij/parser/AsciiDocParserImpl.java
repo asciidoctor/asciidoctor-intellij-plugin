@@ -95,7 +95,9 @@ public class AsciiDocParserImpl {
   }
 
   private final PsiBuilder myBuilder;
+  @SuppressWarnings("JdkObsolete")
   private final Stack<SectionMarker> mySectionStack = new Stack<>();
+  @SuppressWarnings("JdkObsolete")
   private final Stack<BlockMarker> myBlockMarker = new Stack<>();
   private PsiBuilder.Marker myPreBlockMarker = null;
 
@@ -502,6 +504,7 @@ public class AsciiDocParserImpl {
     myBuilder.advanceLexer();
   }
 
+  @SuppressWarnings("FallThrough")
   private static int headingLevel(@Nullable String headingText) {
     if (headingText == null) {
       return 0;

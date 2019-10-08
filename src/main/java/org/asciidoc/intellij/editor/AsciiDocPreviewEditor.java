@@ -112,6 +112,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    * .
    */
   private FutureTask<AsciiDoc> asciidoc = new FutureTask<>(new Callable<AsciiDoc>() {
+    @Override
     public AsciiDoc call() {
       File fileBaseDir = new File("");
       VirtualFile file = FileDocumentManager.getInstance().getFile(document);
@@ -260,6 +261,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /**
    * Get the {@link java.awt.Component} to display as this editor's UI.
    */
+  @Override
   @NotNull
   public JComponent getComponent() {
     return myHtmlPanelWrapper;
@@ -268,6 +270,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /**
    * Get the component to be focused when the editor is opened.
    */
+  @Override
   @Nullable
   public JComponent getPreferredFocusedComponent() {
     return myHtmlPanelWrapper;
@@ -278,6 +281,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    *
    * @return <code>AsciiDoc</code>
    */
+  @Override
   @NotNull
   @NonNls
   public String getName() {
@@ -293,6 +297,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    * @return {@link FileEditorState#INSTANCE}
    * @see #setState(com.intellij.openapi.fileEditor.FileEditorState)
    */
+  @Override
   @NotNull
   public FileEditorState getState(@NotNull FileEditorStateLevel level) {
     return FileEditorState.INSTANCE;
@@ -306,6 +311,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    * @param state the new state.
    * @see #getState(com.intellij.openapi.fileEditor.FileEditorStateLevel)
    */
+  @Override
   public void setState(@NotNull FileEditorState state) {
   }
 
@@ -314,6 +320,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    *
    * @return {@code false} as {@link AsciiDocPreviewEditor} is read-only.
    */
+  @Override
   public boolean isModified() {
     return false;
   }
@@ -323,6 +330,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    *
    * @return {@code true} if {@link #document} content is readable.
    */
+  @Override
   public boolean isValid() {
     return document.getText() != null;
   }
@@ -332,6 +340,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    * <p/>
    * Refresh view on select (as dependent elements might have changed).
    */
+  @Override
   public void selectNotify() {
     myHtmlPanelWrapper.repaint();
     ApplicationManager.getApplication().invokeLater(() -> {
@@ -360,6 +369,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    * <p/>
    * Does nothing.
    */
+  @Override
   public void deselectNotify() {
   }
 
@@ -370,6 +380,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    *
    * @param listener the listener.
    */
+  @Override
   public void addPropertyChangeListener(@NotNull PropertyChangeListener listener) {
   }
 
@@ -380,6 +391,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    *
    * @param listener the listener.
    */
+  @Override
   public void removePropertyChangeListener(@NotNull PropertyChangeListener listener) {
   }
 
@@ -388,6 +400,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    *
    * @return {@code null} as {@link AsciiDocPreviewEditor} does not require highlighting.
    */
+  @Override
   @Nullable
   public BackgroundEditorHighlighter getBackgroundHighlighter() {
     return null;
@@ -398,6 +411,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    *
    * @return {@code null} as {@link AsciiDocPreviewEditor} is not navigable.
    */
+  @Override
   @Nullable
   public FileEditorLocation getCurrentLocation() {
     return null;
@@ -408,6 +422,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    *
    * @return TODO {@code null} as parsing/PSI is not implemented.
    */
+  @Override
   @Nullable
   public StructureViewBuilder getStructureViewBuilder() {
     return null;
@@ -416,6 +431,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /**
    * Dispose the editor.
    */
+  @Override
   public void dispose() {
     Disposer.dispose(this);
     if (tempImagesPath != null) {

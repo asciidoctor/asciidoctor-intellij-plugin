@@ -41,6 +41,7 @@ public class AsciiDocLanguage extends Language {
   private AsciiDocLanguage() {
     super(LANGUAGE_NAME);
     SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(this, new SingleLazyInstanceSyntaxHighlighterFactory() {
+      @Override
       @NotNull
       protected SyntaxHighlighter createHighlighter() {
         return new AsciiDocSyntaxHighlighter();

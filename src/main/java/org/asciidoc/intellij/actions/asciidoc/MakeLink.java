@@ -68,7 +68,7 @@ public class MakeLink extends FormatAsciiDocAction {
 
     WriteCommandAction.runWriteCommandAction(project, () -> {
       selectText(editor);
-      updateDocument(project, document, editor);
+      updateDocument(document, editor);
     });
   }
 
@@ -91,7 +91,7 @@ public class MakeLink extends FormatAsciiDocAction {
     super.selectText(editor);
   }
 
-  private void updateDocument(Project project, Document document, Editor editor) {
+  private void updateDocument(Document document, Editor editor) {
     CaretModel caretModel = editor.getCaretModel();
     SelectionModel selectionModel = editor.getSelectionModel();
     if (isLink(editor)) {

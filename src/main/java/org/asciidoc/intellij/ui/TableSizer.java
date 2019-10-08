@@ -110,7 +110,7 @@ public class TableSizer extends AbstractButton {
     super.updateUI();
   }
 
-  public class CreateTableActionEvent extends ActionEvent {
+  public static class CreateTableActionEvent extends ActionEvent {
     private int width;
     private int height;
 

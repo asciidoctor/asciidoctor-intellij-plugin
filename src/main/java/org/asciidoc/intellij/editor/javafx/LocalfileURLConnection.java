@@ -34,6 +34,7 @@ public class LocalfileURLConnection extends URLConnection {
     connected = true;
   }
 
+  @Override
   public String getHeaderField(String name) {
     if ("Content-Type".equalsIgnoreCase(name)) {
       return getContentType();
@@ -43,6 +44,7 @@ public class LocalfileURLConnection extends URLConnection {
     return null;
   }
 
+  @Override
   public String getContentType() {
     String fileName = getURL().getFile();
     String ext = "unknown";
@@ -56,18 +58,22 @@ public class LocalfileURLConnection extends URLConnection {
     return "image/" + ext; // TODO: switch based on file-type
   }
 
+  @Override
   public int getContentLength() {
     return data.length;
   }
 
+  @Override
   public long getContentLengthLong() {
     return data.length;
   }
 
+  @Override
   public boolean getDoInput() {
     return true;
   }
 
+  @Override
   public InputStream getInputStream() throws IOException {
     connect();
     return new ByteArrayInputStream(data);
@@ -89,11 +95,13 @@ public class LocalfileURLConnection extends URLConnection {
     }
   }
 
+  @Override
   public OutputStream getOutputStream() {
     // this might be unnecessary - the whole method can probably be omitted for our purposes
     return new ByteArrayOutputStream();
   }
 
+  @Override
   public java.security.Permission getPermission() {
     return null; // we need no permissions to access this URL
   }

@@ -288,7 +288,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       return startDir;
     }
     if (!fileName.startsWith("/") && !fileName.startsWith("\\")) {
-      String[] split = StringUtil.trimEnd(fileName, "/").split("/");
+      String[] split = StringUtil.trimEnd(fileName, "/").split("/", -1);
       PsiDirectory dir = startDir;
       for (int i = 0; i < split.length - 1; ++i) {
         if (split[i].length() == 0) {

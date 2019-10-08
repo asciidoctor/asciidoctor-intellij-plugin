@@ -40,7 +40,7 @@ public class JavaFxInitializationIsStuckNotificationProvider extends EditorNotif
     if (PropertiesComponent.getInstance().getBoolean(DONT_NOTIFY_STUCK_JAVAFX)) {
       return null;
     }
-    if (!(new JavaFxHtmlPanelProvider().isJavaFxStuck())) {
+    if (!new JavaFxHtmlPanelProvider().isJavaFxStuck()) {
       return null;
     }
 

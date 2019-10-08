@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -25,6 +26,7 @@ import static nl.jworks.markdown_to_asciidoc.Converter.convertMarkdownToAsciiDoc
  * Created by erikp on 05/12/14.
  */
 public class ConvertToAsciiDocAction extends AnAction {
+  private Logger log = Logger.getInstance(ConvertToAsciiDocAction.class);
 
   public static final String[] MARKDOWN_EXTENSIONS = {"markdown", "mkd", "md"};
 
@@ -56,7 +58,7 @@ public class ConvertToAsciiDocAction extends AnAction {
             try {
               virtualFile.delete(this);
             } catch (IOException e) {
-              e.printStackTrace();
+              log.error("unable to delete file", e);
             }
           }
         }, getName(), getGroupId(), UndoConfirmationPolicy.REQUEST_CONFIRMATION);

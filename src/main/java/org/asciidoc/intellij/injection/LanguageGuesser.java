@@ -18,7 +18,7 @@ import java.util.Map;
 public enum LanguageGuesser {
   INSTANCE;
 
-  private final NotNullLazyValue<List<EmbeddedTokenTypesProvider>> embeddedTokenTypeProviders =
+  private static final NotNullLazyValue<List<EmbeddedTokenTypesProvider>> EMBEDDED_TOKEN_TYPE_PROVIDERS =
     new NotNullLazyValue<List<EmbeddedTokenTypesProvider>>() {
       @NotNull
       @Override
@@ -27,7 +27,7 @@ public enum LanguageGuesser {
       }
     };
 
-  private final NotNullLazyValue<Map<String, Language>> langIdToLanguage = new NotNullLazyValue<Map<String, Language>>() {
+  private static final NotNullLazyValue<Map<String, Language>> LANG_ID_TO_LANGUAGE = new NotNullLazyValue<Map<String, Language>>() {
     @NotNull
     @Override
     protected Map<String, Language> compute() {
@@ -50,12 +50,12 @@ public enum LanguageGuesser {
 
   @NotNull
   public Map<String, Language> getLangToLanguageMap() {
-    return Collections.unmodifiableMap(langIdToLanguage.getValue());
+    return Collections.unmodifiableMap(LANG_ID_TO_LANGUAGE.getValue());
   }
 
   @Nullable
   public Language guessLanguage(@NotNull String languageName) {
-    String[] parts = languageName.split("-");
+    String[] parts = languageName.split("-", -1);
     String lang = null;
     if ("source".equals(parts[0])) {
       lang = parts[1];
@@ -73,11 +73,11 @@ public enum LanguageGuesser {
       return null;
     }
 
-    final Language languageFromMap = langIdToLanguage.getValue().get(lang.toLowerCase(Locale.US));
+    final Language languageFromMap = LANG_ID_TO_LANGUAGE.getValue().get(lang.toLowerCase(Locale.US));
     if (languageFromMap != null) {
       return languageFromMap;
     }
-    for (EmbeddedTokenTypesProvider provider : embeddedTokenTypeProviders.getValue()) {
+    for (EmbeddedTokenTypesProvider provider : EMBEDDED_TOKEN_TYPE_PROVIDERS.getValue()) {
       if (provider.getName().equalsIgnoreCase(languageName)) {
         return provider.getElementType().getLanguage();
       }

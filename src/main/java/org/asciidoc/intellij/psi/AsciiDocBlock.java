@@ -70,6 +70,7 @@ public interface AsciiDocBlock extends PsiElement, AsciiDocSelfDescribe {
     return title;
   }
 
+  @Override
   ASTNode getNode();
 
   @Nullable

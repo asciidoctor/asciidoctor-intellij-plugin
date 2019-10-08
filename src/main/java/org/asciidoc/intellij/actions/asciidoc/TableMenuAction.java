@@ -152,7 +152,7 @@ public class TableMenuAction extends AsciiDocAction {
   }
 
 
-  private class CustomLabel extends JLabel {
+  private static class CustomLabel extends JLabel {
     CustomLabel(@NotNull String text, Icon icon, int horizontalAlignment) {
       super(text, icon, horizontalAlignment);
       setOpaque(true);

@@ -23,9 +23,9 @@ import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.project.PossiblyDumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.asciidoc.intellij.AsciiDocLanguage;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.asciidoc.intellij.AsciiDocLanguage;
 
 /** @author Julien Viet */
 public class AsciiDocPreviewEditorProvider implements FileEditorProvider, PossiblyDumbAware {
@@ -40,6 +40,7 @@ public class AsciiDocPreviewEditorProvider implements FileEditorProvider, Possib
    * @param file    the file to be tested for acceptance. This parameter must never be <code>null</code>.
    * @return whether the provider can create a valid editor for the specified <code>file</code>.
    */
+  @Override
   public boolean accept(@NotNull com.intellij.openapi.project.Project project, @NotNull VirtualFile file) {
     return AsciiDocLanguage.isAsciiDocFile(project, file);
   }
@@ -54,6 +55,7 @@ public class AsciiDocPreviewEditorProvider implements FileEditorProvider, Possib
    * @return an editor for the specified file.
    * @see #accept(com.intellij.openapi.project.Project, com.intellij.openapi.vfs.VirtualFile)
    */
+  @Override
   @NotNull
   public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
     return new AsciiDocPreviewEditor(FileDocumentManager.getInstance().getDocument(file), project);
@@ -64,6 +66,7 @@ public class AsciiDocPreviewEditorProvider implements FileEditorProvider, Possib
    *
    * @param editor editor to be disposed. This parameter must not be <code>null</code>.
    */
+  @Override
   public void disposeEditor(@NotNull FileEditor editor) {
     editor.dispose();
   }
@@ -80,6 +83,7 @@ public class AsciiDocPreviewEditorProvider implements FileEditorProvider, Possib
    * @see #writeState(com.intellij.openapi.fileEditor.FileEditorState, com.intellij.openapi.project.Project,
    *      org.jdom.Element)
    */
+  @Override
   @NotNull
   public FileEditorState readState(@NotNull Element sourceElement, @NotNull Project project, @NotNull VirtualFile file) {
     return FileEditorState.INSTANCE;
@@ -95,6 +99,7 @@ public class AsciiDocPreviewEditorProvider implements FileEditorProvider, Possib
    * @param targetElement the target element to serialize to.
    * @see #readState(org.jdom.Element, com.intellij.openapi.project.Project, com.intellij.openapi.vfs.VirtualFile)
    */
+  @Override
   public void writeState(@NotNull FileEditorState state, @NotNull Project project, @NotNull Element targetElement) {
   }
 
@@ -103,6 +108,7 @@ public class AsciiDocPreviewEditorProvider implements FileEditorProvider, Possib
    *
    * @return {@link #EDITOR_TYPE_ID}
    */
+  @Override
   @NotNull
   public String getEditorTypeId() {
     return EDITOR_TYPE_ID;
@@ -111,6 +117,7 @@ public class AsciiDocPreviewEditorProvider implements FileEditorProvider, Possib
   /**
    * Get the {@link FileEditorPolicy} defining how to show editors created via the {@link FileEditorProvider}.
    */
+  @Override
   @NotNull
   public FileEditorPolicy getPolicy() {
     return FileEditorPolicy.PLACE_AFTER_DEFAULT_EDITOR;
@@ -121,6 +128,7 @@ public class AsciiDocPreviewEditorProvider implements FileEditorProvider, Possib
    *
    * @return {@code true}
    */
+  @Override
   public boolean isDumbAware() {
     return true;
   }

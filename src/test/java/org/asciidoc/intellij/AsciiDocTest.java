@@ -6,10 +6,13 @@ import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.junit.Assert;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Alexander Schwartz 2018
@@ -47,7 +50,7 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
       if (pdf.exists()) {
         fail("PDF already exists, but shouldn't before runnning AsciiDoc");
       }
-      FileWriter fw = new FileWriter(asciidoc);
+      Writer fw = Files.newBufferedWriter(asciidoc.toPath(), UTF_8);
       fw.write("Hello world.");
       fw.close();
 

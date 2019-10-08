@@ -230,22 +230,27 @@ public class SystemOutputHijacker
       return current().get(type);
     }
 
+    @Override
     public void write(final int b) {
       get().write(b);
     }
 
+    @Override
     public void write(final byte b[]) throws IOException {
       get().write(b, 0, b.length);
     }
 
+    @Override
     public void write(final byte[] b, final int off, final int len) {
       get().write(b, off, len);
     }
 
+    @Override
     public void flush() {
       get().flush();
     }
 
+    @Override
     public void close() {
       get().close();
     }

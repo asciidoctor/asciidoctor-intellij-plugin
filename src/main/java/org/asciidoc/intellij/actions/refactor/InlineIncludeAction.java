@@ -40,6 +40,7 @@ public class InlineIncludeAction extends AsciiDocAction {
 
   }
 
+  @Override
   public void update(AnActionEvent event) {
     PsiFile file = event.getData(LangDataKeys.PSI_FILE);
     final Editor editor = event.getData(LangDataKeys.EDITOR);

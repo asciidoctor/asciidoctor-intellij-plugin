@@ -4,8 +4,6 @@ import com.intellij.codeInsight.actions.FileInEditorProcessor;
 import com.intellij.codeInsight.actions.LayoutCodeOptions;
 import com.intellij.codeInsight.actions.ReformatCodeRunOptions;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
-import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
-import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 
 import java.io.File;
 
@@ -19,7 +17,6 @@ public class AsciiDocFormattingModelBuilderTest extends LightPlatformCodeInsight
   }
 
   private void doTest(LayoutCodeOptions options) {
-    AsciiDocPreviewSettings oldPreviewSettings = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings();
     myFixture.configureByFile(getTestName(true) + "_before.adoc");
     FileInEditorProcessor processor = new FileInEditorProcessor(myFixture.getFile(), myFixture.getEditor(), options);
     processor.processCode();

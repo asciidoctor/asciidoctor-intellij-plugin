@@ -53,6 +53,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -231,17 +232,16 @@ public class AsciiDoc {
       List<Path> folders = new ArrayList<>();
       for (String s : extensions) {
         try {
-          InputStream is = new FileInputStream(s);
-          try {
+          try (InputStream is = new FileInputStream(s)) {
             md.update(IOUtils.toByteArray(is));
-          } finally {
-            IOUtils.closeQuietly(is);
           }
           Path parent = FileSystems.getDefault().getPath(s).getParent();
           if (!folders.contains(parent)) {
             folders.add(parent);
-            for (Path p : Files.newDirectoryStream(parent, path -> Files.isDirectory(path))) {
-              scanForRubyFiles(p, md);
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(parent, path -> Files.isDirectory(path))) {
+              for (Path p : stream) {
+                scanForRubyFiles(p, md);
+              }
             }
           }
         } catch (IOException e) {
@@ -260,16 +260,15 @@ public class AsciiDoc {
   }
 
   private void scanForRubyFiles(Path path, MessageDigest md) throws IOException {
-    for (Path p : Files.newDirectoryStream(path)) {
-      if (Files.isDirectory(p)) {
-        scanForRubyFiles(p, md);
-      }
-      if (Files.isRegularFile(p) && Files.isReadable(p)) {
-        InputStream is = Files.newInputStream(p);
-        try {
-          md.update(IOUtils.toByteArray(is));
-        } finally {
-          IOUtils.closeQuietly(is);
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
+      for (Path p : stream) {
+        if (Files.isDirectory(p)) {
+          scanForRubyFiles(p, md);
+        }
+        if (Files.isRegularFile(p) && Files.isReadable(p)) {
+          try (InputStream is = Files.newInputStream(p)) {
+            md.update(IOUtils.toByteArray(is));
+          }
         }
       }
     }

@@ -21,7 +21,7 @@ import java.util.Map;
 
 public class AsciiDocColorSettingsPage implements ColorSettingsPage {
 
-  private static final AttributesDescriptor[] ATTRIBUTE_DESCRIPTORS = AttributeDescriptorsHolder.INSTANCE.get();
+  private static final AttributesDescriptor[] ATTRIBUTE_DESCRIPTORS = new AttributeDescriptorsHolder().build();
 
   @Override
   @NotNull
@@ -95,8 +95,7 @@ public class AsciiDocColorSettingsPage implements ColorSettingsPage {
     return null;
   }
 
-  private enum AttributeDescriptorsHolder {
-    INSTANCE;
+  private static class AttributeDescriptorsHolder {
 
     private final Map<String, TextAttributesKey> myMap = new HashMap<>();
 
@@ -124,7 +123,7 @@ public class AsciiDocColorSettingsPage implements ColorSettingsPage {
     }
 
     @NotNull
-    public AttributesDescriptor[] get() {
+    AttributesDescriptor[] build() {
       final AttributesDescriptor[] result = new AttributesDescriptor[myMap.size()];
       int i = 0;
 

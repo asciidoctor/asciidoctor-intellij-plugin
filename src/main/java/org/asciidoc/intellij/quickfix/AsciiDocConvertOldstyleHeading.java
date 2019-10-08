@@ -29,6 +29,7 @@ public class AsciiDocConvertOldstyleHeading extends LocalQuickFixBase {
   }
 
   @Override
+  @SuppressWarnings("FallThrough")
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
     PsiElement element = descriptor.getPsiElement();
     StringBuilder text = new StringBuilder(element.getText());

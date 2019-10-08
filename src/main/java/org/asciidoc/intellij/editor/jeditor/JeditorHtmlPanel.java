@@ -106,7 +106,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
       notification.setImportant(true);
       Notifications.Bus.notify(notification);
     } catch (BadLocationException e) {
-      e.printStackTrace();
+      log.error("bad location", e);
     }
 
     updatePreviewOnEDT(doc);

@@ -74,7 +74,7 @@ public class PasteTableAction extends AsciiDocAction {
     boolean firstLine = true;
     List<String> lines = br.lines().collect(Collectors.toList());
     for (String line : lines) {
-      String[] elements = line.split(separator);
+      String[] elements = line.split(separator, -1);
       for (int i = 0; i < cols; i++) {
         asciiDocTable.append('|');
         if (i < elements.length) {

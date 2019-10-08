@@ -7,12 +7,13 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.9 (work in progress)
+=== 0.30.9 (preview, available from Github releases)
 
 - auto-save files when switching to AsciiDoc editor to ensure preview shows latest content
 - clean up handling of input streams throughout the plugin
 - don't switch focus to editor when browsing for example TODO list (#332)
 - add menu bar item to mark/highlight selected text (#134)
+- clean up stream resource leak (#342)
 
 === 0.30.8 (preview, available from Github releases)
 

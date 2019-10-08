@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 public class AsciiDocSectionTest {
 
-  private class MockTitleAsciiDocSection extends AsciiDocSection {
+  private static class MockTitleAsciiDocSection extends AsciiDocSection {
     private String title;
 
     MockTitleAsciiDocSection(String title) {

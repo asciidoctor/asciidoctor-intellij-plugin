@@ -8,7 +8,6 @@ buildscript {
   }
 }
 
-
 plugins {
   id "org.jetbrains.intellij" version "0.4.8"
   id "org.jetbrains.grammarkit" version "2018.2.2"
@@ -16,6 +15,7 @@ plugins {
   id 'org.asciidoctor.jvm.convert' version '2.2.0'
   // once windows classpaths get too long, use this dependency to make them shorter again
   // id "com.github.ManifestClasspath" version "0.1.0-RELEASE"
+   id 'net.ltgt.errorprone' version '0.8.1' apply false
 }
 
 checkstyle {
@@ -25,7 +25,7 @@ checkstyle {
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'org.jetbrains.grammarkit'
 apply plugin: 'java'
-
+apply plugin: 'net.ltgt.errorprone'
 
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.jetbrains.grammarkit.tasks.GenerateLexer
@@ -94,6 +94,8 @@ test {
 }
 
 dependencies {
+  errorprone 'com.google.errorprone:error_prone_core:2.3.2'
+  errorproneJavac 'com.google.errorprone:javac:9+181-r4173-1'
   compile 'org.asciidoctor:asciidoctorj-diagram:1.5.18'
   compile 'org.asciidoctor:asciidoctorj-pdf:1.5.0-beta.5'
   compile 'org.jruby:jruby:9.2.8.0' // TODO: remove JRuby dependency once asciidoctorj has upgraded
@@ -141,6 +143,8 @@ task generateAsciidocLexer(type: GenerateLexer) {
 }
 
 compileJava {
+  options.errorprone.excludedPaths = '.*_AsciiDocLexer.*'
+  options.errorprone.error('StreamResourceLeak') // enforce errors where there would be warning in the standard only
   dependsOn generateAsciidocLexer
 }
 
