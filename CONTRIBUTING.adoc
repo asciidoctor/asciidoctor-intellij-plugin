@@ -176,6 +176,15 @@ runIde:: runs an IntelliJ community edition with the AsciiDoc plugin enabled.
 You can choose to run it in debug mode.
 --
 
+== Getting into development
+
+To get into development of IntelliJ plugins, there is a http://www.jetbrains.org/intellij/sdk/docs/[IntelliJ SDK guide].
+It walks the developer through several stages of developing a custom language plugin.
+
+This plugin pulled several ideas from the Markdown plugin for IntelliJ that is now part of the IntelliJ community edition.
+Clone the https://github.com/JetBrains/intellij-community[GitHub repository for IntelliJ Community] and check out the https://github.com/JetBrains/intellij-community/tree/master/plugins/markdown[Markdown plugin] in particular.
+There is no need to make the community edition compile, just use it as a reference and look up example implementations for IntelliJ's extension point base classes.
+
 == Lexing and Parsing AsciiDoc files
 
 Lexing and parsing input files is the beginning of both highlighting the code in the editor and building auto-completion and refactoring functionality.
