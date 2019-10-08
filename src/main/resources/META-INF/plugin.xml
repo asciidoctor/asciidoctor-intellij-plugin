@@ -175,6 +175,7 @@
     <spellchecker.support language="AsciiDoc"
                           implementationClass="org.asciidoc.intellij.AsciiDocSpellcheckingStrategy"/>
     <lang.commenter language="AsciiDoc" implementationClass="org.asciidoc.intellij.AsciiDocCommenter"/>
+    <extendWordSelectionHandler implementation="org.asciidoc.intellij.editor.ExtendWordSelectionHandler"/>
     <braceMatcher filetype="AsciiDoc" implementationClass="org.asciidoc.intellij.braces.AsciiDocBraceMatcher"/>
     <quoteHandler fileType="AsciiDoc" className="org.asciidoc.intellij.braces.AsciiDocQuoteHandler"/>
     <todoIndexer filetype="AsciiDoc" implementationClass="org.asciidoc.intellij.indexer.AsciiDocTodoIndexer"/>
