@@ -1,8 +1,6 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
@@ -111,26 +109,10 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
   }
 
   private void updateDocument(final Project project, final Document document, final SelectionModel selectionModel, final String updatedText) {
-    final Runnable readRunner = new Runnable() {
-      @Override
-      public void run() {
-        int start = selectionModel.getSelectionStart();
-        int end = selectionModel.getSelectionEnd();
-        document.replaceString(start, end, updatedText);
-      }
-    };
-
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-          @Override
-          public void run() {
-            ApplicationManager.getApplication().runWriteAction(readRunner);
-          }
-        }, getName(), null);
-      }
-    });
+    DocumentWriteAction.run(project, () -> {
+      int start = selectionModel.getSelectionStart();
+      int end = selectionModel.getSelectionEnd();
+      document.replaceString(start, end, updatedText);
+    }, getName());
   }
-
 }
