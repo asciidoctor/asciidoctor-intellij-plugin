@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.10 (work in progress)
 
 - first version of improved extend selection (#341)
+- preserve cursor position and selection when toggling title (thanks to @Mogztter) (#341, #344)
 
 === 0.30.9 (preview, available from Github releases)
 
