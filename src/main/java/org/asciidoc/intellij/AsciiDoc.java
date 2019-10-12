@@ -197,6 +197,19 @@ public class AsciiDoc {
             }
           }
 
+          String krokiEnabledValue = AsciiDocApplicationSettings.getInstance()
+            .getAsciiDocPreviewSettings().getAttributes()
+            .getOrDefault("kroki-enabled", "false");
+
+          if (Boolean.parseBoolean(krokiEnabledValue)) {
+            try (InputStream is = this.getClass().getResourceAsStream("/kroki-extension.rb")) {
+              if (is == null) {
+                throw new RuntimeException("unable to load script kroki-extension.rb");
+              }
+              asciidoctor.rubyExtensionRegistry().loadClass(is);
+            }
+          }
+
           if (extensionsEnabled) {
             for (String extension : extensions) {
               asciidoctor.rubyExtensionRegistry().requireLibrary(extension);
