@@ -12,7 +12,7 @@ class SourceLineTreeProcessor < Extensions::Treeprocessor
         if node.class.name != 'Asciidoctor::Document'
           # on AsciiDoc 1.5.7 I've seen source lines with in inline formatting (i.e. links and bold)
           # it seems that they have been inherited from the document/parent, therefore the document will not get a role
-          node.attributes['role'] = 'has-source-line data-line-' + (node.source_location.file || 'stdin') + "-#{node.source_location.lineno}"
+          node.attributes['role'] = 'has-source-line data-line-' + (node.source_location.file ? node.source_location.file.to_s : 'stdin') + "-#{node.source_location.lineno}"
         end
       end
     end
