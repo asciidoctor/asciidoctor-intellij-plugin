@@ -43,7 +43,10 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testShouldRenderPlainAsciidoc() {
     String html = asciidoc.render("this is *bold*.", Collections.emptyList());
-    Assert.assertTrue(html.contains("<strong>bold</strong>"));
+    Assert.assertTrue("should contain formatted output",
+      html.contains("<strong>bold</strong>"));
+    Assert.assertTrue("should contain data line to allow navigation to source line in preview",
+      html.contains("data-line-stdin-1"));
   }
 
   public void testShouldRenderPdf() throws IOException {
