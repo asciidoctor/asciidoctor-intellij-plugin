@@ -97,7 +97,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
       if (logRecord.getSeverity() == Severity.DEBUG) {
         continue;
       }
-      if (logRecord.getMessage().startsWith("possible invalid reference:")) {
+      if (logRecord.getMessage() != null && logRecord.getMessage().startsWith("possible invalid reference:")) {
         /* TODO: these messages are not helpful in IntelliJ as they have no line number
            and for splitted documents they provide too many false positives */
         continue;
