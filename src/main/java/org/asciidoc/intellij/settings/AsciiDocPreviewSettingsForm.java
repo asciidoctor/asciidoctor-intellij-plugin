@@ -44,6 +44,9 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JPanel myDisableLanguageInjection;
   private JBCheckBox myShowAsciiDocWarningsAndErrorsInEditor;
   private JBCheckBox myInplacePreviewRefresh;
+  private JBCheckBox myEnableKroki;
+  private JPanel myKrokiUrlPanel;
+  private JBTextField myKrokiUrl;
 
   public JComponent getComponent() {
     return myMainPanel;
@@ -88,6 +91,14 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     attributeTable = new AttributeTable();
     attributesPanel = new JPanel(new BorderLayout());
     attributesPanel.add(attributeTable.getComponent(), BorderLayout.CENTER);
+  }
+
+  private void adjustKrokiOptions() {
+    if (myEnableKroki.isSelected()) {
+      myKrokiUrlPanel.setVisible(true);
+    } else {
+      myKrokiUrlPanel.setVisible(false);
+    }
   }
 
   private void adjustSplitOption() {
@@ -143,6 +154,19 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     myShowAsciiDocWarningsAndErrorsInEditor.setSelected(settings.isShowAsciiDocWarningsAndErrorsInEditor());
 
     myInplacePreviewRefresh.setSelected(settings.isInplacePreviewRefresh());
+
+    myEnableKroki.setSelected(settings.isKrokiEnabled());
+
+    myKrokiUrl.setText(settings.getKrokiUrl());
+
+    myEnableKroki.addItemListener(e -> {
+      adjustKrokiOptions();
+    });
+
+    adjustKrokiOptions();
+
+    myKrokiUrl.setTextToTriggerEmptyTextStatus("https://kroki.io");
+
   }
 
   @NotNull
@@ -156,10 +180,16 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       .filter(a -> a.getKey() != null && a.getValue() != null)
       .collect(Collectors.toMap(AttributeTableItem::getKey, AttributeTableItem::getValue, (a, b) -> b));
 
+    String krokiUrl = myKrokiUrl.getText();
+    if ("https://kroki.io".equals(krokiUrl)) {
+      krokiUrl = "";
+    }
+
     return new AsciiDocPreviewSettings(mySplitLayoutModel.getSelectedItem(),
       myPreviewPanelModel.getSelected(), myPreviewThemeModel.getSelectedItem(), attributes,
       myVerticalLayout.isSelected(), myEditorTop.isSelected() || myEditorLeft.isSelected(), myEnableInjections.isSelected(),
       myDisabledInjectionsByLanguage.getText(),
-      myShowAsciiDocWarningsAndErrorsInEditor.isSelected(), myInplacePreviewRefresh.isSelected());
+      myShowAsciiDocWarningsAndErrorsInEditor.isSelected(), myInplacePreviewRefresh.isSelected(),
+      myEnableKroki.isSelected(), krokiUrl);
   }
 }

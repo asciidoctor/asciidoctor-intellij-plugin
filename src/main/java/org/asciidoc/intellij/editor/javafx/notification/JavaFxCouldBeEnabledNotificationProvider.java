@@ -61,7 +61,9 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
           oldPreviewSettings.isEnabledInjections(),
           oldPreviewSettings.getDisabledInjectionsByLanguage(),
           oldPreviewSettings.isShowAsciiDocWarningsAndErrorsInEditor(),
-          oldPreviewSettings.isInplacePreviewRefresh()));
+          oldPreviewSettings.isInplacePreviewRefresh(),
+          oldPreviewSettings.isKrokiEnabled(),
+          oldPreviewSettings.getKrokiUrl()));
         EditorNotifications.updateAll();
       } else {
         Logger.getInstance(JavaFxCouldBeEnabledNotificationProvider.class).warn("Could not install and apply OpenJFX");

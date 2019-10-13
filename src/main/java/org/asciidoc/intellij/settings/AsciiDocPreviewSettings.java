@@ -68,6 +68,12 @@ public final class AsciiDocPreviewSettings {
   @Attribute("ShowAsciiDocWarningsAndErrorsInEditor")
   private boolean myShowAsciiDocWarningsAndErrorsInEditor = true;
 
+  @Attribute("EnabledKroki")
+  private boolean myEnableKroki = false;
+
+  @Attribute("KrokiUrl")
+  private String myKrokiUrl;
+
   public AsciiDocPreviewSettings() {
   }
 
@@ -78,7 +84,9 @@ public final class AsciiDocPreviewSettings {
                                  @NotNull Map<String, String> attributes, boolean verticalSplit, boolean editorFirst,
                                  boolean enableInjections, @Nullable String disabledInjectionsByLanguage,
                                  boolean showAsciiDocWarningsAndErrorsInEditor,
-                                 boolean inplacePreviewRefresh) {
+                                 boolean inplacePreviewRefresh,
+                                 boolean enableKroki,
+                                 String krokiUrl) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
@@ -89,6 +97,8 @@ public final class AsciiDocPreviewSettings {
     myDisabledInjectionsByLanguage = disabledInjectionsByLanguage;
     myShowAsciiDocWarningsAndErrorsInEditor = showAsciiDocWarningsAndErrorsInEditor;
     myInplacePreviewRefresh = inplacePreviewRefresh;
+    myEnableKroki = enableKroki;
+    myKrokiUrl = krokiUrl;
   }
 
   @NotNull
@@ -135,6 +145,14 @@ public final class AsciiDocPreviewSettings {
 
   public String getDisabledInjectionsByLanguage() {
     return myDisabledInjectionsByLanguage;
+  }
+
+  public boolean isKrokiEnabled() {
+    return myEnableKroki;
+  }
+
+  public String getKrokiUrl() {
+    return myKrokiUrl;
   }
 
   public List<String> getDisabledInjectionsByLanguageAsList() {
@@ -186,7 +204,10 @@ public final class AsciiDocPreviewSettings {
     if (myShowAsciiDocWarningsAndErrorsInEditor != that.myShowAsciiDocWarningsAndErrorsInEditor) {
       return false;
     }
-    if (myInplacePreviewRefresh != that.myInplacePreviewRefresh) {
+    if (myEnableKroki != that.myEnableKroki) {
+      return false;
+    }
+    if (!Objects.equals(myKrokiUrl, that.myKrokiUrl)) {
       return false;
     }
     return attributes.equals(that.attributes);
@@ -204,6 +225,8 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + Objects.hashCode(myDisabledInjectionsByLanguage);
     result = 31 * result + (myShowAsciiDocWarningsAndErrorsInEditor ? 1 : 0);
     result = 31 * result + (myInplacePreviewRefresh ? 1 : 0);
+    result = 31 * result + (myEnableKroki ? 1 : 0);
+    result = 31 * result + Objects.hashCode(myKrokiUrl);
     return result;
   }
 
