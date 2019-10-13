@@ -139,6 +139,10 @@ public class AsciiDoc {
         // special plantuml-png-patch.rb only loaded here
         md = md + "." + format;
       }
+      boolean krokiEnabled = isKrokiEnabled();
+      if (krokiEnabled) {
+       md = md + ".kroki";
+      }
       Asciidoctor asciidoctor = instances.get(md);
       if (asciidoctor == null) {
         ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
@@ -170,7 +174,10 @@ public class AsciiDoc {
           // disable JUL logging of captured messages
           // https://github.com/asciidoctor/asciidoctorj/issues/669
           Logger.getLogger("asciidoctor").setUseParentHandlers(false);
-          asciidoctor.requireLibrary("asciidoctor-diagram");
+
+          if (!krokiEnabled) {
+            asciidoctor.requireLibrary("asciidoctor-diagram");
+          }
 
           try (InputStream is = this.getClass().getResourceAsStream("/sourceline-treeprocessor.rb")) {
             if (is == null) {
@@ -197,11 +204,7 @@ public class AsciiDoc {
             }
           }
 
-          String krokiEnabledValue = AsciiDocApplicationSettings.getInstance()
-            .getAsciiDocPreviewSettings().getAttributes()
-            .getOrDefault("kroki-enabled", "false");
-
-          if (Boolean.parseBoolean(krokiEnabledValue)) {
+          if (krokiEnabled) {
             try (InputStream is = this.getClass().getResourceAsStream("/kroki-extension.rb")) {
               if (is == null) {
                 throw new RuntimeException("unable to load script kroki-extension.rb");
@@ -231,6 +234,13 @@ public class AsciiDoc {
       }
       return asciidoctor;
     }
+  }
+
+  private boolean isKrokiEnabled() {
+    String krokiEnabledValue = AsciiDocApplicationSettings.getInstance()
+      .getAsciiDocPreviewSettings().getAttributes()
+      .getOrDefault("kroki-enabled", "false");
+    return Boolean.parseBoolean(krokiEnabledValue);
   }
 
   /**
