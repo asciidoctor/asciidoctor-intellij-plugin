@@ -25,6 +25,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang.StringUtils;
 import org.apache.geronimo.gshell.io.SystemOutputHijacker;
 import org.asciidoc.intellij.actions.asciidoc.AsciiDocAction;
 import org.asciidoc.intellij.asciidoc.PrependConfig;
@@ -139,9 +140,9 @@ public class AsciiDoc {
         // special plantuml-png-patch.rb only loaded here
         md = md + "." + format;
       }
-      boolean krokiEnabled = isKrokiEnabled();
+      boolean krokiEnabled = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isKrokiEnabled();
       if (krokiEnabled) {
-       md = md + ".kroki";
+        md = md + ".kroki";
       }
       Asciidoctor asciidoctor = instances.get(md);
       if (asciidoctor == null) {
@@ -234,13 +235,6 @@ public class AsciiDoc {
       }
       return asciidoctor;
     }
-  }
-
-  private boolean isKrokiEnabled() {
-    String krokiEnabledValue = AsciiDocApplicationSettings.getInstance()
-      .getAsciiDocPreviewSettings().getAttributes()
-      .getOrDefault("kroki-enabled", "false");
-    return Boolean.parseBoolean(krokiEnabledValue);
   }
 
   /**
@@ -557,6 +551,13 @@ public class AsciiDoc {
     if (imagesPath != null) {
       if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())) {
         attrs.setAttribute("outdir", imagesPath.toAbsolutePath().normalize().toString());
+      }
+    }
+
+    if (AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isKrokiEnabled()) {
+      String krokiUrl = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getKrokiUrl();
+      if (!StringUtils.isEmpty(krokiUrl)) {
+        attrs.setAttribute("kroki-server-url", krokiUrl);
       }
     }
 
