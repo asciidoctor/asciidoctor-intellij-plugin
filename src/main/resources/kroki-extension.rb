@@ -34,7 +34,7 @@ class KrokiBlockMacro < Asciidoctor::Extensions::BlockMacroProcessor
     if target.start_with?('http://') || target.start_with?('https://')
       require 'open-uri'
     end
-    open(path) { |f| f.read }
+    open(target) { |f| f.read }
   end
 end
 
@@ -52,11 +52,13 @@ class KrokiProcessor
       title = attrs['title']
       target = attrs['target']
       format = attrs['format'] || 'svg'
-      # The JavaFX preview doesn't support SVG well. Therefore we'll use PNG format.
+      # The JavaFX preview doesn't support SVG well, therefore we'll use PNG format...
       if format == 'svg'
-        format = 'png'
+        # ... unless the diagram library does not support PNG as output format!
+        # Currently, mermaid, nomnoml and svgbob only support SVG as output format.
+        format = 'png' unless diagram_type == :mermaid || diagram_type == :nomnoml || diagram_type == :svgbob
       end
-      image_url = _create_image_src(doc, diagram_text, diagram_type, format)
+      image_url = _create_image_src(doc, diagram_type, format, diagram_text)
       block_attrs = {
           'role' => role ? "#{role} kroki" : 'kroki',
           'target' => image_url,
@@ -71,7 +73,7 @@ class KrokiProcessor
 
     private
 
-    def _create_image_src(doc, text, type, format)
+    def _create_image_src(doc, type, format, text)
       server_url = _server_url(doc)
       data = Base64.urlsafe_encode64(Zlib::Deflate.deflate(text, 9))
       "#{server_url}/#{type}/#{format}/#{data}"

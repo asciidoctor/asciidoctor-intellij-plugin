@@ -2,7 +2,11 @@ package org.asciidoc.intellij;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
+import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
+import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
+import org.asciidoc.intellij.ui.SplitFileEditor;
 import org.junit.Assert;
 
 import java.io.File;
@@ -11,6 +15,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -80,5 +85,70 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
     AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getAttributes().put("attr", expectedContent);
     String html = asciidoc.render("{attr}", Collections.emptyList());
     Assert.assertTrue(html.contains(expectedContent));
+  }
+
+  public void testShouldRenderErdUsingKroki() {
+    AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
+      SplitFileEditor.SplitEditorLayout.SPLIT,
+      JavaFxHtmlPanelProvider.INFO,
+      AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
+      new HashMap<>(),
+      true,
+      true,
+      true,
+      "",
+      true,
+      true,
+      true,
+      ""));
+    try {
+      String html = asciidoc.render("[erd]\n" +
+        "----\n" +
+        "[Person]\n" +
+        "*name\n" +
+        "height\n" +
+        "weight\n" +
+        "+birth_location_id\n" +
+        "\n" +
+        "[Location]\n" +
+        "*id\n" +
+        "city\n" +
+        "state\n" +
+        "country\n" +
+        "\n" +
+        "Person *--1 Location\n" +
+        "----\n", Collections.emptyList());
+      Assert.assertTrue(html.contains("https://kroki.io/erd/png/eNqLDkgtKs7Pi-XSykvMTeXKSM1MzyjhKodQ2kmZRSUZ8Tn5yYklmfl58ZkpXFzRPlAeUAuQn5xZUslVXJJYksqVnF-aV1JUycUFMVJBS1fXUAGmGgCFAiQX"));
+    } finally {
+      AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
+    }
+  }
+
+  public void testShouldRenderNomnomlUsingALocalKroki() {
+    AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
+      SplitFileEditor.SplitEditorLayout.SPLIT,
+      JavaFxHtmlPanelProvider.INFO,
+      AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
+      new HashMap<>(),
+      true,
+      true,
+      true,
+      "",
+      true,
+      true,
+      true,
+      "http://internal.secure.domain/kroki"));
+    try {
+      String html = asciidoc.render("[nomnoml]\n" +
+        "----\n" +
+        "[Pirate|eyeCount: Int|raid();pillage()|\n" +
+        "  [beard]--[parrot]\n" +
+        "  [beard]-:>[foul mouth]\n" +
+        "]\n" +
+        "----\n", Collections.emptyList());
+      Assert.assertTrue(html.contains("http://internal.secure.domain/kroki/nomnoml/svg/eNqLDsgsSixJrUmtTHXOL80rsVLwzCupKUrMTNHQtC7IzMlJTE_V0KzhUlCITkpNLEqJ1dWNLkgsKsoviUUSs7KLTssvzVHIzS8tyYjligUAMhEd0g=="));
+    } finally {
+      AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
+    }
   }
 }
