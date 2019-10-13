@@ -171,6 +171,9 @@ public class AsciiDoc {
         try {
           asciidoctor = Asciidoctor.Factory.create();
           asciidoctor.registerLogHandler(logHandler);
+          // require openssl library here to enable download content via https
+          // requiring it later after other libraries have been loaded results in "undefined method `set_params' for #<OpenSSL::SSL::SSLContext"
+          asciidoctor.requireLibrary("openssl");
           asciidoctor.javaExtensionRegistry().preprocessor(prependConfig);
           // disable JUL logging of captured messages
           // https://github.com/asciidoctor/asciidoctorj/issues/669
