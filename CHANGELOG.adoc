@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - add support for kroki.io when rendering diagrams in the preview (thanks to @Mogztter) (#287, #346)
 - include content via URLs (https or http) when `allow-uri-read` attribute set (#348, #138)
 - allow configuration of safe mode in plugin's configuration (thanks to @bit-man) (#347, #351)
+- support `:prewrap!:` in preview so that listings and other pre-formatted content don't wrap (#350)
 
 === 0.30.9 (preview, available from Github releases)
 
