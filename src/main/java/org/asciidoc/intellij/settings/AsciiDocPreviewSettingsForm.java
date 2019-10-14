@@ -11,6 +11,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.ui.SplitFileEditor;
+import org.asciidoctor.SafeMode;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -26,9 +27,11 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private ComboBox myPreviewProvider;
   private ComboBox myDefaultSplitLayout;
   private ComboBox myPreviewThemeLayout;
+  private ComboBox mySafeModeSetting;
   private JPanel myMainPanel;
   private EnumComboBoxModel<SplitFileEditor.SplitEditorLayout> mySplitLayoutModel;
   private EnumComboBoxModel<AsciiDocHtmlPanel.PreviewTheme> myPreviewThemeModel;
+  private EnumComboBoxModel<SafeMode> mySafeModeModel;
   private CollectionComboBoxModel<AsciiDocHtmlPanelProvider.ProviderInfo> myPreviewPanelModel;
   private AttributeTable attributeTable;
   private JPanel attributesPanel;
@@ -70,6 +73,9 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     myPreviewThemeModel = new EnumComboBoxModel<>(AsciiDocHtmlPanel.PreviewTheme.class);
     myPreviewThemeLayout = new ComboBox(myPreviewThemeModel);
+
+    mySafeModeModel = new EnumComboBoxModel<>(SafeMode.class);
+    mySafeModeSetting = new ComboBox(mySafeModeModel);
 
     myLastItem = myPreviewProvider.getSelectedItem();
     myPreviewProvider.addItemListener(e -> {
@@ -121,6 +127,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     }
     mySplitLayoutModel.setSelectedItem(settings.getSplitEditorLayout());
     myPreviewThemeModel.setSelectedItem(settings.getPreviewTheme());
+    mySafeModeSetting.setSelectedItem(settings.getSafeMode());
 
     List<AttributeTableItem> attributes = settings.getAttributes().entrySet().stream()
       .filter(a -> a.getKey() != null)
@@ -186,7 +193,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     }
 
     return new AsciiDocPreviewSettings(mySplitLayoutModel.getSelectedItem(),
-      myPreviewPanelModel.getSelected(), myPreviewThemeModel.getSelectedItem(), attributes,
+      myPreviewPanelModel.getSelected(), myPreviewThemeModel.getSelectedItem(),  mySafeModeModel.getSelectedItem(), attributes,
       myVerticalLayout.isSelected(), myEditorTop.isSelected() || myEditorLeft.isSelected(), myEnableInjections.isSelected(),
       myDisabledInjectionsByLanguage.getText(),
       myShowAsciiDocWarningsAndErrorsInEditor.isSelected(), myInplacePreviewRefresh.isSelected(),

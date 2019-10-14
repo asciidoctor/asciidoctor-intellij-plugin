@@ -55,6 +55,7 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
           oldPreviewSettings.getSplitEditorLayout(),
           new JavaFxHtmlPanelProvider().getProviderInfo(),
           oldPreviewSettings.getPreviewTheme(),
+          oldPreviewSettings.getSafeMode(),
           oldPreviewSettings.getAttributes(),
           oldPreviewSettings.isVerticalSplit(),
           oldPreviewSettings.isEditorFirst(),

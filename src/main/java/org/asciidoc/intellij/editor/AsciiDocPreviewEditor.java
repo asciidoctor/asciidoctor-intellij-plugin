@@ -177,7 +177,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     if (provider.isAvailable() != AsciiDocHtmlPanelProvider.AvailabilityInfo.AVAILABLE) {
       settings.setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(settings.getAsciiDocPreviewSettings().getSplitEditorLayout(),
         AsciiDocPreviewSettings.DEFAULT.getHtmlPanelProviderInfo(), settings.getAsciiDocPreviewSettings().getPreviewTheme(),
-        settings.getAsciiDocPreviewSettings().getAttributes(), settings.getAsciiDocPreviewSettings().isVerticalSplit(),
+        settings.getSafe(), settings.getAsciiDocPreviewSettings().getAttributes(), settings.getAsciiDocPreviewSettings().isVerticalSplit(),
         settings.getAsciiDocPreviewSettings().isEditorFirst(), settings.getAsciiDocPreviewSettings().isEnabledInjections(),
         settings.getAsciiDocPreviewSettings().getDisabledInjectionsByLanguage(),
         settings.getAsciiDocPreviewSettings().isShowAsciiDocWarningsAndErrorsInEditor(),
