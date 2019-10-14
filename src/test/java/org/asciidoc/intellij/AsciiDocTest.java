@@ -7,6 +7,7 @@ import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 import org.asciidoc.intellij.ui.SplitFileEditor;
+import org.asciidoctor.SafeMode;
 import org.junit.Assert;
 
 import java.io.File;
@@ -95,6 +96,7 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
       SplitFileEditor.SplitEditorLayout.SPLIT,
       JavaFxHtmlPanelProvider.INFO,
       AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
+      SafeMode.UNSAFE,
       new HashMap<>(),
       true,
       true,
@@ -132,6 +134,7 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
       SplitFileEditor.SplitEditorLayout.SPLIT,
       JavaFxHtmlPanelProvider.INFO,
       AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
+      SafeMode.UNSAFE,
       new HashMap<>(),
       true,
       true,
