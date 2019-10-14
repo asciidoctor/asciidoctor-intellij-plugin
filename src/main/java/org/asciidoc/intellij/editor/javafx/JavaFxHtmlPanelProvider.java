@@ -19,7 +19,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
-  public static final ProviderInfo INFO = new ProviderInfo("JavaFX WebView", JavaFxHtmlPanelProvider.class.getName());
+  public static final String JAVA_FX_WEB_VIEW_NAME = "JavaFX WebView";
+  public static final ProviderInfo INFO = new ProviderInfo(JAVA_FX_WEB_VIEW_NAME, JavaFxHtmlPanelProvider.class.getName());
   private Logger log = Logger.getInstance(JavaFxHtmlPanelProvider.class);
   private static final AtomicBoolean HAS_WAITED = new AtomicBoolean(false);
 

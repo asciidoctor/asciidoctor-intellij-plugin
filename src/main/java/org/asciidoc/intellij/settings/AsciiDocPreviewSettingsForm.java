@@ -47,6 +47,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JPanel myDisableLanguageInjection;
   private JBCheckBox myShowAsciiDocWarningsAndErrorsInEditor;
   private JBCheckBox myInplacePreviewRefresh;
+  private JBCheckBox myShowJavaFxPreviewInstructions;
   private JBCheckBox myEnableKroki;
   private JPanel myKrokiUrlPanel;
   private JBTextField myKrokiUrl;
@@ -174,6 +175,8 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     myKrokiUrl.setTextToTriggerEmptyTextStatus("https://kroki.io");
 
+    myShowJavaFxPreviewInstructions.setSelected(settings.isShowJavaFxPreviewInstructions());
+
   }
 
   @NotNull
@@ -197,6 +200,6 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myVerticalLayout.isSelected(), myEditorTop.isSelected() || myEditorLeft.isSelected(), myEnableInjections.isSelected(),
       myDisabledInjectionsByLanguage.getText(),
       myShowAsciiDocWarningsAndErrorsInEditor.isSelected(), myInplacePreviewRefresh.isSelected(),
-      myEnableKroki.isSelected(), krokiUrl);
+      myEnableKroki.isSelected(), krokiUrl, myShowJavaFxPreviewInstructions.isSelected());
   }
 }

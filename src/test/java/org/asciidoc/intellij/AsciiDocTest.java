@@ -139,7 +139,7 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
       true,
       true,
       true,
-      ""));
+      "", true));
     try {
       String html = asciidoc.render("[erd]\n" +
         "----\n" +
@@ -177,7 +177,7 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
       true,
       true,
       true,
-      "http://internal.secure.domain/kroki"));
+      "http://internal.secure.domain/kroki", true));
     try {
       String html = asciidoc.render("[nomnoml]\n" +
         "----\n" +

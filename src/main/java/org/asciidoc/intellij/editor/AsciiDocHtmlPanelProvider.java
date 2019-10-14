@@ -29,10 +29,18 @@ public abstract class AsciiDocHtmlPanelProvider {
 
   @NotNull
   public static AsciiDocHtmlPanelProvider[] getProviders() {
-    if (ourProviders == null) {
-      ourProviders = EP_NAME.getExtensions();
-    }
+    AsciiDocHtmlPanelProvider[] providers = getAsciiDocHtmlPanelProviders();
+    ourProviders = new AsciiDocHtmlPanelProviderCompanion(providers).invoke();
     return ourProviders;
+  }
+
+  @NotNull
+  private static AsciiDocHtmlPanelProvider[] getAsciiDocHtmlPanelProviders() {
+    AsciiDocHtmlPanelProvider[] providers = ourProviders;
+    if (ourProviders == null) {
+      providers = EP_NAME.getExtensions();
+    }
+    return providers;
   }
 
   @NotNull

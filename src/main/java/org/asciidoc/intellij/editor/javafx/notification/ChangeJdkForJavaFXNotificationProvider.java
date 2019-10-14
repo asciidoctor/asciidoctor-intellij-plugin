@@ -1,7 +1,6 @@
 package org.asciidoc.intellij.editor.javafx.notification;
 
 import com.intellij.ide.BrowserUtil;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.Key;
@@ -19,8 +18,6 @@ import org.jetbrains.annotations.Nullable;
 public class ChangeJdkForJavaFXNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> implements DumbAware {
   private static final Key<EditorNotificationPanel> KEY = Key.create("JDK should be changed to support JavaFX");
 
-  private static final String DONT_ASK_TO_CHANGE_JDK_FOR_JAVAFX = "asciidoc.do.not.ask.to.change.jdk.for.javafx";
-
   @NotNull
   @Override
   public Key<EditorNotificationPanel> getKey() {
@@ -33,18 +30,20 @@ public class ChangeJdkForJavaFXNotificationProvider extends EditorNotifications.
     if (file.getFileType() != AsciiDocFileType.INSTANCE) {
       return null;
     }
-    if (PropertiesComponent.getInstance().getBoolean(DONT_ASK_TO_CHANGE_JDK_FOR_JAVAFX)) {
-      return null;
-    }
+
     final AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
-    final AsciiDocPreviewSettings oldPreviewSettings = asciiDocApplicationSettings.getAsciiDocPreviewSettings();
-    if (oldPreviewSettings.getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())) {
+    if (!asciiDocApplicationSettings.isShowJavaFxPreviewInstructions()) {
       return null;
     }
-    final AsciiDocHtmlPanelProvider.AvailabilityInfo availabilityInfo = new JavaFxHtmlPanelProvider().isAvailable();
-    if (availabilityInfo == AsciiDocHtmlPanelProvider.AvailabilityInfo.AVAILABLE) {
+
+    if (!isJavaFXCurrentHtmlProvider(asciiDocApplicationSettings)) {
       return null;
     }
+
+    if (isJavaFXAvailable()) {
+      return null;
+    }
+
     if (new JavaFxHtmlPanelProvider().isJavaFxStuck()) {
       // there is a different notification about a stuck JavaFX initialization; don't show this notification now
       return null;
@@ -55,9 +54,31 @@ public class ChangeJdkForJavaFXNotificationProvider extends EditorNotifications.
     panel.createActionLabel("Yes, tell me more!", ()
       -> BrowserUtil.browse("https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/JavaFX-preview"));
     panel.createActionLabel("Do not show again", () -> {
-      PropertiesComponent.getInstance().setValue(DONT_ASK_TO_CHANGE_JDK_FOR_JAVAFX, true);
+      AsciiDocPreviewSettings asciiDocPreviewSettings = asciiDocApplicationSettings.getAsciiDocPreviewSettings();
+      asciiDocApplicationSettings.setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
+        asciiDocPreviewSettings.getSplitEditorLayout(),
+        asciiDocPreviewSettings.getHtmlPanelProviderInfo(),
+        asciiDocPreviewSettings.getPreviewTheme(),
+        asciiDocPreviewSettings.getSafeMode(),
+        asciiDocPreviewSettings.getAttributes(),
+        asciiDocPreviewSettings.isVerticalSplit(),
+        asciiDocPreviewSettings.isEditorFirst(),
+        asciiDocPreviewSettings.isEnabledInjections(),
+        asciiDocPreviewSettings.getDisabledInjectionsByLanguage(),
+        asciiDocPreviewSettings.isShowAsciiDocWarningsAndErrorsInEditor(),
+        asciiDocPreviewSettings.isInplacePreviewRefresh(),
+        asciiDocPreviewSettings.isKrokiEnabled(),
+        asciiDocPreviewSettings.getKrokiUrl(), false));
       EditorNotifications.updateAll();
     });
     return panel;
+  }
+
+  private boolean isJavaFXAvailable() {
+      return new JavaFxHtmlPanelProvider().isAvailable() == AsciiDocHtmlPanelProvider.AvailabilityInfo.AVAILABLE;
+  }
+
+  private boolean isJavaFXCurrentHtmlProvider(AsciiDocApplicationSettings settings) {
+    return settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName());
   }
 }

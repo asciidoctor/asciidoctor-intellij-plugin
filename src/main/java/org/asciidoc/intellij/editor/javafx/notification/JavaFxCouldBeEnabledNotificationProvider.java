@@ -33,10 +33,11 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
     if (file.getFileType() != AsciiDocFileType.INSTANCE) {
       return null;
     }
-    if (PropertiesComponent.getInstance().getBoolean(DONT_ASK_TO_CHANGE_PROVIDER_TYPE_KEY)) {
+    final AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
+    if (!asciiDocApplicationSettings.isShowJavaFxPreviewInstructions()) {
       return null;
     }
-    final AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
+
     final AsciiDocPreviewSettings oldPreviewSettings = asciiDocApplicationSettings.getAsciiDocPreviewSettings();
     if (oldPreviewSettings.getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())) {
       return null;
@@ -64,7 +65,7 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
           oldPreviewSettings.isShowAsciiDocWarningsAndErrorsInEditor(),
           oldPreviewSettings.isInplacePreviewRefresh(),
           oldPreviewSettings.isKrokiEnabled(),
-          oldPreviewSettings.getKrokiUrl()));
+          oldPreviewSettings.getKrokiUrl(), oldPreviewSettings.isShowJavaFxPreviewInstructions()));
         EditorNotifications.updateAll();
       } else {
         Logger.getInstance(JavaFxCouldBeEnabledNotificationProvider.class).warn("Could not install and apply OpenJFX");
