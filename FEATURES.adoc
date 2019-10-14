@@ -3,6 +3,10 @@
 :experimental:
 :icons: font
 
+:uri-kroki: https://kroki.io
+:uri-asciidoctor-diagrams-gh: https://github.com/asciidoctor/asciidoctor-diagram
+:uri-asciidoctor-diagrams-execs: {uri-asciidoctor-diagrams-gh}#specifying-diagram-generator-paths
+
 ////
 = Contribution Guideline for this document:
 
@@ -198,7 +202,17 @@ If the formula can't be parsed by MathML, the preview shows an error popup.
 
 It renders the content of the editor including all referenced includes, images and diagrams like PlantUML on the fly.
 // see: plantuml-png-patch.rb
-As JavaFX has a problem displaying SVG files correctly, the plugin displays all PlantUML diagrams as PNG on the fly.
+As JavaFX has a problem displaying SVG files correctly, the plugin displays all diagrams as PNG. +
+By default, the plugin uses {uri-asciidoctor-diagrams-gh}[Asciidoctor Diagram]
+that depends on locally installed tools to generates images
+(ie. {uri-asciidoctor-diagrams-execs}[executables] available in your `PATH` environment variable).
+Alternatively, you can use {uri-kroki}[Kroki] instead of Asciidoctor Diagram to render diagrams:
+
+image::doc/assets/kroki-settings.png[]
+
+When Kroki is enabled, the plugin sends the text diagrams to an instance of Kroki to display them as images in the preview.
+By default, it sends your diagrams to the free public cloud instance {uri-kroki}[kroki.io], but you can install Kroki on your own infrastructure.
+Once you've installed Kroki, make sure to update the server URL to point to your instance.
 
 When the user moves the cursor in the editor, the preview scrolls the text into the preview.
 
