@@ -201,7 +201,11 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
       // asian characters won't display with text-rendering:optimizeLegibility
       // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/203
-      myInlineCss = myInlineCss.replaceAll("text-rendering:", "disabled-text-rendering");
+      myInlineCss = myInlineCss.replaceAll("text-rendering:", "disabled-text-rendering:");
+
+      // word-wrap:break-word make the preview wrap listings when it shouldn't
+      // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/350
+      myInlineCss = myInlineCss.replaceAll("word-wrap:break-word", "disabled-word-wrap:break-word");
 
       // JavaFX doesn't load 'DejaVu Sans Mono' font when 'Droid Sans Mono' is listed first
       // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/193
