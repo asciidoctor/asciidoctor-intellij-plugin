@@ -9,9 +9,12 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.30.10 (work in progress)
 
-- first version of improved extend selection (#341)
+- first version of improved "`Extend Selection"` (#341)
 - preserve cursor position and selection when toggling title (thanks to @Mogztter) (#341, #344)
 - improved cursor placement and selection for formatting actions like bold/italic (#341)
+- add support for kroki.io when rendering diagrams in the preview (thanks to @Mogztter) (#287, #346)
+- include content via URLs (https or http) when `allow-uri-read` attribute set (#348, #138)
+- allow configuration of safe mode in plugin's configuration (thanks to @bit-man) (#347, #351)
 
 === 0.30.9 (preview, available from Github releases)
 
