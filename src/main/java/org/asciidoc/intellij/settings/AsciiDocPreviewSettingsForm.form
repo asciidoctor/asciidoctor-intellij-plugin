@@ -25,6 +25,7 @@
         </constraints>
         <properties>
           <text value="Preview browser:"/>
+          <toolTipText resource-bundle="AsciiDocBundle" key="asciidoc.settings.safemode.tooltip"/>
         </properties>
       </component>
       <component id="a7f38" class="com.intellij.ui.components.JBLabel">
