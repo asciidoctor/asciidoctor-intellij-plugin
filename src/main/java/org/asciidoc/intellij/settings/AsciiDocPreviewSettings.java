@@ -9,6 +9,7 @@ import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider;
 import org.asciidoc.intellij.ui.SplitFileEditor;
+import org.asciidoctor.SafeMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,6 +43,10 @@ public final class AsciiDocPreviewSettings {
   @Attribute("PreviewTheme")
   @Nullable // can be returned as null when upgrading from an old release
   private AsciiDocHtmlPanel.PreviewTheme myPreviewTheme = AsciiDocHtmlPanel.PreviewTheme.INTELLIJ;
+
+  @Attribute("SafeMode")
+  @Nullable // can be returned as null when upgrading from an old release
+  private SafeMode mySafeMode = SafeMode.UNSAFE;
 
   @Property(surroundWithTag = false)
   @MapAnnotation(surroundWithTag = false, entryTagName = "attribute")
@@ -81,7 +86,8 @@ public final class AsciiDocPreviewSettings {
   public AsciiDocPreviewSettings(@NotNull SplitFileEditor.SplitEditorLayout splitEditorLayout,
                                  @NotNull AsciiDocHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo,
                                  @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme,
-                                 @NotNull Map<String, String> attributes, boolean verticalSplit, boolean editorFirst,
+                                 @NotNull SafeMode safeMode, @NotNull Map<String, String> attributes,
+                                 boolean verticalSplit, boolean editorFirst,
                                  boolean enableInjections, @Nullable String disabledInjectionsByLanguage,
                                  boolean showAsciiDocWarningsAndErrorsInEditor,
                                  boolean inplacePreviewRefresh,
@@ -90,6 +96,7 @@ public final class AsciiDocPreviewSettings {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
+    mySafeMode = safeMode;
     this.attributes = attributes;
     myIsVerticalSplit = verticalSplit;
     myIsEditorFirst = editorFirst;
@@ -115,6 +122,13 @@ public final class AsciiDocPreviewSettings {
       return AsciiDocHtmlPanel.PreviewTheme.INTELLIJ;
     }
     return myPreviewTheme;
+  }
+
+  public SafeMode getSafeMode() {
+    if (mySafeMode == null) {
+      return SafeMode.UNSAFE;
+    }
+    return mySafeMode;
   }
 
   @NotNull
@@ -189,6 +203,9 @@ public final class AsciiDocPreviewSettings {
     if (myPreviewTheme != that.myPreviewTheme) {
       return false;
     }
+    if (mySafeMode != that.mySafeMode) {
+      return false;
+    }
     if (myIsVerticalSplit != that.myIsVerticalSplit) {
       return false;
     }
@@ -218,6 +235,7 @@ public final class AsciiDocPreviewSettings {
     int result = mySplitEditorLayout.hashCode();
     result = 31 * result + myHtmlPanelProviderInfo.hashCode();
     result = 31 * result + myPreviewTheme.hashCode();
+    result = 31 * result + mySafeMode.hashCode();
     result = 31 * result + attributes.hashCode();
     result = 31 * result + (myIsVerticalSplit ? 1 : 0);
     result = 31 * result + (myIsEditorFirst ? 1 : 0);

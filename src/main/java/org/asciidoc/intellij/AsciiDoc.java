@@ -36,7 +36,6 @@ import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Attributes;
 import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.OptionsBuilder;
-import org.asciidoctor.SafeMode;
 import org.asciidoctor.log.LogHandler;
 import org.asciidoctor.log.LogRecord;
 import org.asciidoctor.log.Severity;
@@ -566,7 +565,7 @@ public class AsciiDoc {
 
     settings.getAsciiDocPreviewSettings().getAttributes().forEach(attrs::setAttribute);
 
-    OptionsBuilder opts = OptionsBuilder.options().safe(SafeMode.UNSAFE).backend(backend).headerFooter(false)
+    OptionsBuilder opts = OptionsBuilder.options().safe(settings.getSafe()).backend(backend).headerFooter(false)
       .attributes(attrs)
       .option("sourcemap", "true")
       .baseDir(fileBaseDir);

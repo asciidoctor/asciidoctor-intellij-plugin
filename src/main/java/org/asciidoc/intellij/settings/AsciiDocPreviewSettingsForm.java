@@ -127,6 +127,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     }
     mySplitLayoutModel.setSelectedItem(settings.getSplitEditorLayout());
     myPreviewThemeModel.setSelectedItem(settings.getPreviewTheme());
+    mySafeModeSetting.setSelectedItem(settings.getSafeMode());
 
     List<AttributeTableItem> attributes = settings.getAttributes().entrySet().stream()
       .filter(a -> a.getKey() != null)
@@ -192,7 +193,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     }
 
     return new AsciiDocPreviewSettings(mySplitLayoutModel.getSelectedItem(),
-      myPreviewPanelModel.getSelected(), myPreviewThemeModel.getSelectedItem(), attributes,
+      myPreviewPanelModel.getSelected(), myPreviewThemeModel.getSelectedItem(),  mySafeModeModel.getSelectedItem(), attributes,
       myVerticalLayout.isSelected(), myEditorTop.isSelected() || myEditorLeft.isSelected(), myEnableInjections.isSelected(),
       myDisabledInjectionsByLanguage.getText(),
       myShowAsciiDocWarningsAndErrorsInEditor.isSelected(), myInplacePreviewRefresh.isSelected(),

@@ -9,6 +9,7 @@ import com.intellij.ui.EditorNotifications;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Property;
+import org.asciidoctor.SafeMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,6 +78,10 @@ public class AsciiDocApplicationSettings implements PersistentStateComponent<Asc
 
   public Boolean getExtensionsPresent(String projectBasePath) {
     return this.extensionsPresent.get(projectBasePath);
+  }
+
+  public SafeMode getSafe() {
+    return myState.myPreviewSettings.getSafeMode();
   }
 
   public static class State {
