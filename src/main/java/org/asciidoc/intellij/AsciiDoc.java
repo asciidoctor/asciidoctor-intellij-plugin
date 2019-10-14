@@ -476,7 +476,7 @@ public class AsciiDoc {
     }
   }
 
-  public void renderPdf(File file, String config, List<String> extensions) {
+  public void convertToPdf(File file, String config, List<String> extensions) {
     Notifier notifier = this::notifyAlways;
     synchronized (AsciiDoc.class) {
       CollectingLogHandler logHandler = new CollectingLogHandler();

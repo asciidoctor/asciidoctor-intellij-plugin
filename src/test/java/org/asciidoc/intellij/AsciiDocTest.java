@@ -64,7 +64,7 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
       fw.close();
 
       // when...
-      this.asciidoc.renderPdf(asciidoc, "", new ArrayList<>());
+      this.asciidoc.convertToPdf(asciidoc, "", new ArrayList<>());
 
       // then...
       Assert.assertTrue(pdf.exists());
