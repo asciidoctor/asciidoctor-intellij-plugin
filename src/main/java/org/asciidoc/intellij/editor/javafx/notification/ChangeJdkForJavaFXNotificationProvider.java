@@ -7,8 +7,6 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
-import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
-import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
@@ -17,6 +15,16 @@ import org.jetbrains.annotations.Nullable;
 
 public class ChangeJdkForJavaFXNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> implements DumbAware {
   private static final Key<EditorNotificationPanel> KEY = Key.create("JDK should be changed to support JavaFX");
+  private JavaFx javaFx;
+
+  //Used for reflection based construction
+  public ChangeJdkForJavaFXNotificationProvider() {
+    javaFx = new JavaFx();
+  }
+
+  protected   ChangeJdkForJavaFXNotificationProvider(JavaFx javaFx) {
+    this.javaFx = javaFx;
+  }
 
   @NotNull
   @Override
@@ -31,24 +39,29 @@ public class ChangeJdkForJavaFXNotificationProvider extends EditorNotifications.
       return null;
     }
 
-    final AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
+    final AsciiDocApplicationSettings asciiDocApplicationSettings = getAsciiDocApplicationSettings();
     if (!asciiDocApplicationSettings.isShowJavaFxPreviewInstructions()) {
       return null;
     }
 
-    if (!isJavaFXCurrentHtmlProvider(asciiDocApplicationSettings)) {
+    if (!javaFx.isCurrentHtmlProvider(asciiDocApplicationSettings)) {
       return null;
     }
 
-    if (isJavaFXAvailable()) {
+    if (javaFx.isAvailable()) {
       return null;
     }
 
-    if (new JavaFxHtmlPanelProvider().isJavaFxStuck()) {
+    if (javaFx.isStuck()) {
       // there is a different notification about a stuck JavaFX initialization; don't show this notification now
       return null;
     }
 
+    return notificationPanelFactory(asciiDocApplicationSettings);
+  }
+
+  @NotNull
+  protected EditorNotificationPanel notificationPanelFactory(AsciiDocApplicationSettings asciiDocApplicationSettings) {
     final EditorNotificationPanel panel = new EditorNotificationPanel();
     panel.setText("You could enable the advanced JavaFX preview if you would change to JetBrains 64bit JDK.");
     panel.createActionLabel("Yes, tell me more!", ()
@@ -74,11 +87,8 @@ public class ChangeJdkForJavaFXNotificationProvider extends EditorNotifications.
     return panel;
   }
 
-  private boolean isJavaFXAvailable() {
-      return new JavaFxHtmlPanelProvider().isAvailable() == AsciiDocHtmlPanelProvider.AvailabilityInfo.AVAILABLE;
-  }
-
-  private boolean isJavaFXCurrentHtmlProvider(AsciiDocApplicationSettings settings) {
-    return settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName());
+  @NotNull
+  protected AsciiDocApplicationSettings getAsciiDocApplicationSettings() {
+    return AsciiDocApplicationSettings.getInstance();
   }
 }
