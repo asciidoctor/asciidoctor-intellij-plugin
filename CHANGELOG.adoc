@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.10 (work in progress)
+=== 0.30.11 (work in progress)
 
 - upgrade to asciidoctorj-pdf:1.5.0-beta.6
 
