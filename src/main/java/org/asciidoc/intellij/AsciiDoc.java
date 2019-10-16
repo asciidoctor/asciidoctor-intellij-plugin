@@ -57,6 +57,8 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -527,6 +529,54 @@ public class AsciiDoc {
         Thread.currentThread().setContextClassLoader(old);
       }
     }
+  }
+
+  public void convertToHtml(File file, String config, List<String> extensions) {
+    Notifier notifier = this::notifyAlways;
+    synchronized (AsciiDoc.class) {
+      CollectingLogHandler logHandler = new CollectingLogHandler();
+      ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
+      ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
+      SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
+      ClassLoader old = Thread.currentThread().getContextClassLoader();
+      Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
+      try {
+
+        String encoding = System.getProperty("file.encoding", "UTF-8");
+        String html = render(new String(Files.readAllBytes(file.toPath()), encoding), extensions);
+        Files.write(Paths.get(changeFileExtensionToHtml(file.getCanonicalPath())),
+          wrapHtmlContent(html).getBytes(encoding), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+
+      } catch (IOException ex) {
+        log.warn("unable to render AsciiDoc document", ex);
+        logHandler.log(new LogRecord(Severity.FATAL, ex.getMessage()));
+        StringBuilder response = new StringBuilder();
+        response.append("unable to render AsciiDoc document");
+        Throwable t = ex;
+        do {
+          response.append("<p>").append(t.getClass().getCanonicalName()).append(": ").append(t.getMessage());
+          t = t.getCause();
+        } while (t != null);
+        response.append("<p>(the full exception stack trace is available in the IDE's log file. Visit menu item 'Help | Show Log in Explorer' to see the log)");
+        try {
+          boasErr.write(response.toString().getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+          throw new RuntimeException("Unable to write bytes");
+        }
+      } finally {
+        SystemOutputHijacker.deregister();
+        notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
+        Thread.currentThread().setContextClassLoader(old);
+      }
+    }
+  }
+
+  private String changeFileExtensionToHtml(String filePath) {
+    return filePath.replaceAll("\\.(adoc|asciidoc|ad)$", ".html");
+  }
+
+  private String wrapHtmlContent(String htmlBody) {
+    return "<html><head></head><body>" + htmlBody + "</body>";
   }
 
   private Map<String, Object> getDefaultOptions(String backend, VirtualFile springRestDocsSnippets) {
