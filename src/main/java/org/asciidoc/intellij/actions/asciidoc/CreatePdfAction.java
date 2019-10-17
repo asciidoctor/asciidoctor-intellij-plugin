@@ -68,7 +68,7 @@ public class CreatePdfAction extends AsciiDocAction {
             tempImagesPath, file.getName());
           List<String> extensions = AsciiDoc.getExtensions(project);
           String config = AsciiDoc.config(editor.getDocument(), project);
-          asciiDoc.convertToPdf(new File(file.getCanonicalPath()), config, extensions);
+          asciiDoc.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDoc.FileType.PDF);
           VirtualFile virtualFile = VirtualFileManager.getInstance()
             .refreshAndFindFileByUrl(file.getUrl().replaceAll("\\.(adoc|asciidoc|ad)$", ".pdf"));
           updateProjectView(virtualFile != null ? virtualFile : parent);

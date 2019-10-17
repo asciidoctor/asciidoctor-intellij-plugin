@@ -64,7 +64,7 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
       fw.close();
 
       // when...
-      this.asciidoc.convertToPdf(asciidoc, "", new ArrayList<>());
+      this.asciidoc.convertTo(asciidoc, "", new ArrayList<>(), AsciiDoc.FileType.PDF);
 
       // then...
       Assert.assertTrue(pdf.exists());
@@ -98,7 +98,7 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
       fw.close();
 
       // when...
-      this.asciidoc.convertToHtml(asciidoc, "", new ArrayList<>());
+      this.asciidoc.convertTo(asciidoc, "", new ArrayList<>(), AsciiDoc.FileType.HTML);
 
       // then...
       Assert.assertTrue(html.exists());

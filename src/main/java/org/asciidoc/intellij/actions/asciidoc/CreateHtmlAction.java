@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -8,7 +9,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.Project;
@@ -74,12 +74,12 @@ public class CreateHtmlAction extends AsciiDocAction {
           List<String> extensions = AsciiDoc.getExtensions(project);
           String config = AsciiDoc.config(editor.getDocument(), project);
 
-          asciiDoc.convertToHtml(new File(file.getCanonicalPath()), config, extensions);
+          asciiDoc.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDoc.FileType.HTML);
           VirtualFile virtualFile = VirtualFileManager.getInstance()
             .refreshAndFindFileByUrl(changeFileExtensionToHtml(file.getUrl()));
           updateProjectView(virtualFile != null ? virtualFile : parent);
           if (virtualFile != null) {
-            new OpenFileDescriptor(project, virtualFile).navigate(true);
+            BrowserUtil.browse(virtualFile);
           }
         } finally {
           if (tempImagesPath != null) {
