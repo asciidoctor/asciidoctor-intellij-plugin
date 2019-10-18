@@ -183,8 +183,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         settings.getAsciiDocPreviewSettings().isShowAsciiDocWarningsAndErrorsInEditor(),
         settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh(),
         settings.getAsciiDocPreviewSettings().isKrokiEnabled(),
-        settings.getAsciiDocPreviewSettings().getKrokiUrl(),
-        settings.getAsciiDocPreviewSettings().isShowJavaFxPreviewInstructions()));
+        settings.getAsciiDocPreviewSettings().getKrokiUrl()
+      ));
 
       /* the following will not work, IntellIJ will show the error "parent must be showing" when this is
          tiggered during startup. */

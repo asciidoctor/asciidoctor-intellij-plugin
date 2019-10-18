@@ -20,6 +20,11 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
   private static final Key<EditorNotificationPanel> KEY = Key.create("AsciiDoc JavaFX Preview Could Be Enabled");
 
   private static final String DONT_ASK_TO_CHANGE_PROVIDER_TYPE_KEY = "asciidoc.do.not.ask.to.change.preview.provider";
+  private final PreviewNotificationRepository previewNotification;
+
+  public JavaFxCouldBeEnabledNotificationProvider() {
+    previewNotification = new PreviewNotificationRepository();
+  }
 
   @NotNull
   @Override
@@ -34,7 +39,7 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
       return null;
     }
     final AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
-    if (!asciiDocApplicationSettings.isShowJavaFxPreviewInstructions()) {
+    if (!previewNotification.isShown()) {
       return null;
     }
 
@@ -65,7 +70,7 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
           oldPreviewSettings.isShowAsciiDocWarningsAndErrorsInEditor(),
           oldPreviewSettings.isInplacePreviewRefresh(),
           oldPreviewSettings.isKrokiEnabled(),
-          oldPreviewSettings.getKrokiUrl(), oldPreviewSettings.isShowJavaFxPreviewInstructions()));
+          oldPreviewSettings.getKrokiUrl()));
         EditorNotifications.updateAll();
       } else {
         Logger.getInstance(JavaFxCouldBeEnabledNotificationProvider.class).warn("Could not install and apply OpenJFX");

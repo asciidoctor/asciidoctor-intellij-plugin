@@ -84,10 +84,6 @@ public class AsciiDocApplicationSettings implements PersistentStateComponent<Asc
     return myState.myPreviewSettings.getSafeMode();
   }
 
-  public boolean isShowJavaFxPreviewInstructions() {
-    return myState.myPreviewSettings.isShowJavaFxPreviewInstructions();
-  }
-
   public static class State {
     @Property(surroundWithTag = false)
     @NotNull

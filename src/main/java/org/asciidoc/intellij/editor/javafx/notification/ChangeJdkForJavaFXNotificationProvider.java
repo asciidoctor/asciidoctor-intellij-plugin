@@ -9,21 +9,23 @@ import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
-import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ChangeJdkForJavaFXNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> implements DumbAware {
   private static final Key<EditorNotificationPanel> KEY = Key.create("JDK should be changed to support JavaFX");
   private JavaFx javaFx;
+  private PreviewNotificationRepository previewNotification;
 
   //Used for reflection based construction
   public ChangeJdkForJavaFXNotificationProvider() {
     javaFx = new JavaFx();
+    previewNotification = new PreviewNotificationRepository();
   }
 
-  protected   ChangeJdkForJavaFXNotificationProvider(JavaFx javaFx) {
+  protected   ChangeJdkForJavaFXNotificationProvider(JavaFx javaFx, PreviewNotificationRepository previewNotification) {
     this.javaFx = javaFx;
+    this.previewNotification = previewNotification;
   }
 
   @NotNull
@@ -39,12 +41,11 @@ public class ChangeJdkForJavaFXNotificationProvider extends EditorNotifications.
       return null;
     }
 
-    final AsciiDocApplicationSettings asciiDocApplicationSettings = getAsciiDocApplicationSettings();
-    if (!asciiDocApplicationSettings.isShowJavaFxPreviewInstructions()) {
+    if (!previewNotification.isShown()) {
       return null;
     }
 
-    if (!javaFx.isCurrentHtmlProvider(asciiDocApplicationSettings)) {
+    if (!javaFx.isCurrentHtmlProvider(getAsciiDocApplicationSettings())) {
       return null;
     }
 
@@ -57,7 +58,7 @@ public class ChangeJdkForJavaFXNotificationProvider extends EditorNotifications.
       return null;
     }
 
-    return notificationPanelFactory(asciiDocApplicationSettings);
+    return notificationPanelFactory(getAsciiDocApplicationSettings());
   }
 
   @NotNull
@@ -67,21 +68,7 @@ public class ChangeJdkForJavaFXNotificationProvider extends EditorNotifications.
     panel.createActionLabel("Yes, tell me more!", ()
       -> BrowserUtil.browse("https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/JavaFX-preview"));
     panel.createActionLabel("Do not show again", () -> {
-      AsciiDocPreviewSettings asciiDocPreviewSettings = asciiDocApplicationSettings.getAsciiDocPreviewSettings();
-      asciiDocApplicationSettings.setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
-        asciiDocPreviewSettings.getSplitEditorLayout(),
-        asciiDocPreviewSettings.getHtmlPanelProviderInfo(),
-        asciiDocPreviewSettings.getPreviewTheme(),
-        asciiDocPreviewSettings.getSafeMode(),
-        asciiDocPreviewSettings.getAttributes(),
-        asciiDocPreviewSettings.isVerticalSplit(),
-        asciiDocPreviewSettings.isEditorFirst(),
-        asciiDocPreviewSettings.isEnabledInjections(),
-        asciiDocPreviewSettings.getDisabledInjectionsByLanguage(),
-        asciiDocPreviewSettings.isShowAsciiDocWarningsAndErrorsInEditor(),
-        asciiDocPreviewSettings.isInplacePreviewRefresh(),
-        asciiDocPreviewSettings.isKrokiEnabled(),
-        asciiDocPreviewSettings.getKrokiUrl(), false));
+      previewNotification.reset();
       EditorNotifications.updateAll();
     });
     return panel;

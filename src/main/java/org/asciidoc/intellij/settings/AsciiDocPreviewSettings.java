@@ -21,8 +21,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.apache.commons.lang.BooleanUtils.toInteger;
-
 public final class AsciiDocPreviewSettings {
   public static final AsciiDocPreviewSettings DEFAULT = new AsciiDocPreviewSettings();
 
@@ -81,9 +79,6 @@ public final class AsciiDocPreviewSettings {
   @Attribute("KrokiUrl")
   private String myKrokiUrl;
 
-  @Attribute("ShowJavaFxPreviewInstructions")
-  private boolean myShowJavaFxPreviewInstructions;
-
   public AsciiDocPreviewSettings() {
   }
 
@@ -97,7 +92,7 @@ public final class AsciiDocPreviewSettings {
                                  boolean showAsciiDocWarningsAndErrorsInEditor,
                                  boolean inplacePreviewRefresh,
                                  boolean enableKroki,
-                                 String krokiUrl, boolean showJavaFxPreviewInstructions) {
+                                 String krokiUrl) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
@@ -111,7 +106,6 @@ public final class AsciiDocPreviewSettings {
     myInplacePreviewRefresh = inplacePreviewRefresh;
     myEnableKroki = enableKroki;
     myKrokiUrl = krokiUrl;
-    myShowJavaFxPreviewInstructions = showJavaFxPreviewInstructions;
   }
 
   @NotNull
@@ -189,9 +183,6 @@ public final class AsciiDocPreviewSettings {
     return myShowAsciiDocWarningsAndErrorsInEditor;
   }
 
-  public boolean isShowJavaFxPreviewInstructions() {
-    return myShowJavaFxPreviewInstructions;
-  }
 
   @Override
   public boolean equals(Object o) {
@@ -234,9 +225,6 @@ public final class AsciiDocPreviewSettings {
     if (myEnableKroki != that.myEnableKroki) {
       return false;
     }
-    if (myShowJavaFxPreviewInstructions != that.myShowJavaFxPreviewInstructions) {
-      return false;
-    }
     if (!Objects.equals(myKrokiUrl, that.myKrokiUrl)) {
       return false;
     }
@@ -257,7 +245,6 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + (myShowAsciiDocWarningsAndErrorsInEditor ? 1 : 0);
     result = 31 * result + (myInplacePreviewRefresh ? 1 : 0);
     result = 31 * result + (myEnableKroki ? 1 : 0);
-    result = 31 * result + toInteger(myShowJavaFxPreviewInstructions);
     result = 31 * result + Objects.hashCode(myKrokiUrl);
     return result;
   }

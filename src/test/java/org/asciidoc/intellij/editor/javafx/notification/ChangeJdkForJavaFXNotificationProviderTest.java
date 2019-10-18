@@ -22,14 +22,14 @@ public class ChangeJdkForJavaFXNotificationProviderTest {
   private JavaFx javaFxHelper;
   private ChangeJdkForJavaFXNotificationProvider notificationProvider;
   private EditorNotificationPanel notificationPanel;
-  private boolean showJavaFxPreviewInstructions;
+  private PreviewNotificationRepository previewNotificationRepository;
 
   @Before
   public void setup() {
     file = mock(VirtualFile.class);
     fileEditor = mock(FileEditor.class);
     javaFxHelper = mock(JavaFx.class);
-    showJavaFxPreviewInstructions = false;
+    previewNotificationRepository = mock(PreviewNotificationRepository.class);
   }
 
   @Test
@@ -115,11 +115,11 @@ public class ChangeJdkForJavaFXNotificationProviderTest {
   }
 
   private void givenShowPreviewInstructions() {
-    showJavaFxPreviewInstructions = true;
+    when(previewNotificationRepository.isShown()).thenReturn(true);
   }
 
   private void givenNoPreviewInstructions() {
-    showJavaFxPreviewInstructions = false;
+    when(previewNotificationRepository.isShown()).thenReturn(false);
   }
 
   private void givenJavaFxIsStuck() {
@@ -152,7 +152,7 @@ public class ChangeJdkForJavaFXNotificationProviderTest {
   }
 
   private void givenNotificationProvider() {
-    notificationProvider = new FakeChangeJdkForJavaFXNotificationProvider(javaFxHelper, showJavaFxPreviewInstructions);
+    notificationProvider = new FakeChangeJdkForJavaFXNotificationProvider(javaFxHelper, previewNotificationRepository);
   }
 
   private void whenNotificationPanelCreationIsAttempted() {
@@ -165,26 +165,18 @@ public class ChangeJdkForJavaFXNotificationProviderTest {
 
   private static class FakeChangeJdkForJavaFXNotificationProvider extends ChangeJdkForJavaFXNotificationProvider {
 
-
-    private final boolean showJavaFxPreviewInstructions;
-
-    private FakeChangeJdkForJavaFXNotificationProvider(JavaFx javaFxHelper, boolean showJavaFxPreviewInstructions) {
-      super(javaFxHelper);
-      this.showJavaFxPreviewInstructions = showJavaFxPreviewInstructions;
-    }
-
-    @NotNull
-    @Override
-    protected AsciiDocApplicationSettings getAsciiDocApplicationSettings() {
-      final AsciiDocApplicationSettings settings = mock(AsciiDocApplicationSettings.class);
-      when(settings.isShowJavaFxPreviewInstructions()).thenReturn(showJavaFxPreviewInstructions);
-      return settings;
+    private FakeChangeJdkForJavaFXNotificationProvider(JavaFx javaFxHelper, PreviewNotificationRepository previewNotificationRepository) {
+      super(javaFxHelper, previewNotificationRepository);
     }
 
     @NotNull
     @Override
     protected EditorNotificationPanel notificationPanelFactory(AsciiDocApplicationSettings asciiDocApplicationSettings) {
       return mock(EditorNotificationPanel.class);
+    }
+
+    protected AsciiDocApplicationSettings getAsciiDocApplicationSettings() {
+      return mock(AsciiDocApplicationSettings.class);
     }
   }
 }

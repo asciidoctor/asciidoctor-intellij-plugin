@@ -10,6 +10,7 @@ import com.intellij.ui.components.JBTextField;
 import com.intellij.util.containers.ContainerUtil;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
+import org.asciidoc.intellij.editor.javafx.notification.PreviewNotificationRepository;
 import org.asciidoc.intellij.ui.SplitFileEditor;
 import org.asciidoctor.SafeMode;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Holder {
   private Object myLastItem;
   private ComboBox myPreviewProvider;
+  private JLabel myPreviewProviderMessage;
   private ComboBox myDefaultSplitLayout;
   private ComboBox myPreviewThemeLayout;
   private ComboBox mySafeModeSetting;
@@ -47,7 +49,6 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JPanel myDisableLanguageInjection;
   private JBCheckBox myShowAsciiDocWarningsAndErrorsInEditor;
   private JBCheckBox myInplacePreviewRefresh;
-  private JBCheckBox myShowJavaFxPreviewInstructions;
   private JBCheckBox myEnableKroki;
   private JPanel myKrokiUrlPanel;
   private JBTextField myKrokiUrl;
@@ -98,6 +99,13 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     attributeTable = new AttributeTable();
     attributesPanel = new JPanel(new BorderLayout());
     attributesPanel.add(attributeTable.getComponent(), BorderLayout.CENTER);
+
+    myPreviewProviderMessage = new JLabel();
+    myPreviewProviderMessage.setVisible(showReminder());
+  }
+
+  private boolean showReminder() {
+    return !new PreviewNotificationRepository().isShown();
   }
 
   private void adjustKrokiOptions() {
@@ -175,8 +183,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     myKrokiUrl.setTextToTriggerEmptyTextStatus("https://kroki.io");
 
-    myShowJavaFxPreviewInstructions.setSelected(settings.isShowJavaFxPreviewInstructions());
-
+    myPreviewProviderMessage.setVisible(showReminder());
   }
 
   @NotNull
@@ -200,6 +207,6 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myVerticalLayout.isSelected(), myEditorTop.isSelected() || myEditorLeft.isSelected(), myEnableInjections.isSelected(),
       myDisabledInjectionsByLanguage.getText(),
       myShowAsciiDocWarningsAndErrorsInEditor.isSelected(), myInplacePreviewRefresh.isSelected(),
-      myEnableKroki.isSelected(), krokiUrl, myShowJavaFxPreviewInstructions.isSelected());
+      myEnableKroki.isSelected(), krokiUrl);
   }
 }
