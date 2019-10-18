@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -8,7 +9,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.Project;
@@ -23,8 +23,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
-public class CreatePdfAction extends AsciiDocAction {
-  public static final String ID = "org.asciidoc.intellij.actions.asciidoc.CreatePdfAction";
+/**
+ * @author Balasubramanian Naagarajan(balabarath)
+ */
+public class CreateHtmlAction extends AsciiDocAction {
+
+  public static final String ID = "org.asciidoc.intellij.actions.asciidoc.CreateHtmlAction";
 
   private Project project;
 
@@ -64,16 +68,18 @@ public class CreatePdfAction extends AsciiDocAction {
         }
         Path tempImagesPath = AsciiDoc.tempImagesPath();
         try {
+
           AsciiDoc asciiDoc = new AsciiDoc(project.getBasePath(), fileBaseDir,
             tempImagesPath, file.getName());
           List<String> extensions = AsciiDoc.getExtensions(project);
           String config = AsciiDoc.config(editor.getDocument(), project);
-          asciiDoc.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDoc.FileType.PDF);
+
+          asciiDoc.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDoc.FileType.HTML);
           VirtualFile virtualFile = VirtualFileManager.getInstance()
-            .refreshAndFindFileByUrl(file.getUrl().replaceAll("\\.(adoc|asciidoc|ad)$", ".pdf"));
+            .refreshAndFindFileByUrl(changeFileExtensionToHtml(file.getUrl()));
           updateProjectView(virtualFile != null ? virtualFile : parent);
           if (virtualFile != null) {
-            new OpenFileDescriptor(project, virtualFile).navigate(true);
+            BrowserUtil.browse(virtualFile);
           }
         } finally {
           if (tempImagesPath != null) {
@@ -88,11 +94,14 @@ public class CreatePdfAction extends AsciiDocAction {
 
   }
 
+  private String changeFileExtensionToHtml(String filePath) {
+    return filePath.replaceAll("\\.(adoc|asciidoc|ad)$", ".html");
+  }
+
   private void updateProjectView(VirtualFile virtualFile) {
     //update project view
     ProjectView projectView = ProjectView.getInstance(project);
     projectView.changeView(ProjectViewPane.ID);
     projectView.select(null, virtualFile, true);
   }
-
 }

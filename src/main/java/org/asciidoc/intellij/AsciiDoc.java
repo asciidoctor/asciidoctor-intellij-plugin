@@ -35,6 +35,7 @@ import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Attributes;
 import org.asciidoctor.AttributesBuilder;
+import org.asciidoctor.Options;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.log.LogHandler;
 import org.asciidoctor.log.LogRecord;
@@ -476,7 +477,8 @@ public class AsciiDoc {
     }
   }
 
-  public void convertToPdf(File file, String config, List<String> extensions) {
+  public void convertTo(File file, String config, List<String> extensions, FileType format) {
+
     Notifier notifier = this::notifyAlways;
     synchronized (AsciiDoc.class) {
       CollectingLogHandler logHandler = new CollectingLogHandler();
@@ -489,11 +491,11 @@ public class AsciiDoc {
         LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
         LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir));
       try {
-        Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, "pdf");
+        Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format.toString());
         prependConfig.setConfig(config);
         asciidoctor.registerLogHandler(logHandler);
         try {
-          asciidoctor.convertFile(file, getDefaultOptions("pdf", springRestDocsSnippets));
+          asciidoctor.convertFile(file, getExportOptions(getDefaultOptions(format.toString(), springRestDocsSnippets), format));
         } finally {
           prependConfig.setConfig("");
           asciidoctor.unregisterLogHandler(logHandler);
@@ -527,6 +529,13 @@ public class AsciiDoc {
         Thread.currentThread().setContextClassLoader(old);
       }
     }
+  }
+
+  public Map<String, Object> getExportOptions(Map<String, Object> options, FileType fileType) {
+    if (fileType == FileType.HTML) {
+      options.put(Options.HEADER_FOOTER, true);
+    }
+    return options;
   }
 
   private Map<String, Object> getDefaultOptions(String backend, VirtualFile springRestDocsSnippets) {
@@ -571,5 +580,21 @@ public class AsciiDoc {
       .baseDir(fileBaseDir);
 
     return opts.asMap();
+  }
+
+  public enum FileType {
+    PDF("pdf"),
+    HTML("html5");
+
+    private final String formatType;
+
+    FileType(String formatType) {
+      this.formatType = formatType;
+    }
+
+    @Override
+    public String toString() {
+      return formatType;
+    }
   }
 }

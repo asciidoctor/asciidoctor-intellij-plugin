@@ -64,7 +64,7 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
       fw.close();
 
       // when...
-      this.asciidoc.convertToPdf(asciidoc, "", new ArrayList<>());
+      this.asciidoc.convertTo(asciidoc, "", new ArrayList<>(), AsciiDoc.FileType.PDF);
 
       // then...
       Assert.assertTrue(pdf.exists());
@@ -78,6 +78,40 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
       }
       if (pdf.exists()) {
         if (!pdf.delete()) {
+          log.warn("unable to delete destination file");
+        }
+      }
+    }
+  }
+
+  public void testShouldRenderHtml() throws IOException {
+    // given...
+    File asciidoc = File.createTempFile("asciidocforhtml", ".adoc");
+    File html = new File(asciidoc.getAbsoluteFile().getAbsolutePath().replaceAll("\\.adoc$", ".html"));
+    try {
+      Assert.assertTrue("replacement should have worked", html.getName().endsWith(".html"));
+      if (html.exists()) {
+        fail("HTML already exists, but shouldn't before running AsciiDoc");
+      }
+      Writer fw = Files.newBufferedWriter(asciidoc.toPath(), UTF_8);
+      fw.write("Hello world.");
+      fw.close();
+
+      // when...
+      this.asciidoc.convertTo(asciidoc, "", new ArrayList<>(), AsciiDoc.FileType.HTML);
+
+      // then...
+      Assert.assertTrue(html.exists());
+
+    } finally {
+      // cleanup...
+      if (asciidoc.exists()) {
+        if (!asciidoc.delete()) {
+          log.warn("unable to delete source file");
+        }
+      }
+      if (html.exists()) {
+        if (!html.delete()) {
           log.warn("unable to delete destination file");
         }
       }

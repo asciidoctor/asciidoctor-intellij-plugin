@@ -109,6 +109,12 @@
                 description="Create PDF from current file">
         </action>
 
+        <action class="org.asciidoc.intellij.actions.asciidoc.CreateHtmlAction"
+                id="org.asciidoc.intellij.actions.asciidoc.CreateHtmlAction"
+                text="HTML"
+                description="Create HTML from current file">
+        </action>
+
         <!--
               <action id="asciidoc.convert.document6" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
                       text="Insert image" description="Convert this document to AsciiDoc" />
