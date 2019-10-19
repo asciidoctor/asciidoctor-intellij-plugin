@@ -16,7 +16,7 @@ Feel free to choose these or any other ticket to participate, or even create pul
 
 *You can meet the maintainers in person:* Please ping them via eMail or chat before or during the event!
 
-* https://www.ahus1.de/[Alex] at https://baselone.ch/[BaselOne (Basel, CH)], 2019-10-17
+* https://www.ahus1.de/[Alex] at https://www.javaland.eu/[JavaLand (Brühl, DE)], 2020-03-16..18
 
 == Installation
 
