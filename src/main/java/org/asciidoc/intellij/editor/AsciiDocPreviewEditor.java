@@ -347,11 +347,14 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     myHtmlPanelWrapper.repaint();
     ApplicationManager.getApplication().invokeLater(() -> {
       ApplicationManager.getApplication().runWriteAction(() -> {
-        // save the content in all other editors as their content might be referenced in preview
-        currentContent = null; // force a refresh of the preview by resetting the current memorized content
-        reprocessAnnotations();
-        ApplicationManager.getApplication().saveAll();
-        renderIfVisible();
+        // project might be already closed (yes, this really happens when you work in multiple projects opened in separate windows)
+        if (!project.isDisposed()) {
+          currentContent = null; // force a refresh of the preview by resetting the current memorized content
+          reprocessAnnotations();
+          // save the content in all other editors as their content might be referenced in preview
+          ApplicationManager.getApplication().saveAll();
+          renderIfVisible();
+        }
       });
     }, ModalityState.NON_MODAL);
   }

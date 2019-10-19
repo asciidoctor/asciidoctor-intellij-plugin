@@ -7,10 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.11 (work in progress)
+=== 0.30.11 (preview, available from Github releases)
 
 - upgrade to asciidoctorj-pdf:1.5.0-beta.6
 - add HTML export to editor actions (thanks to @balabarath) (#349, #354)
+- avoid exception "Already disposed: Project" when closing one out of many currently open projects
 
 === 0.30.10 (preview, available from Github releases)
 
