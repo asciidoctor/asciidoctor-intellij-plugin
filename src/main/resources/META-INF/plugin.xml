@@ -222,6 +222,10 @@
                      groupName="General" enabledByDefault="true" level="WARNING"
                      shortName="AsciiDocAttributeContinuationInspection"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocAttributeContinuationInspection"/>
+    <localInspection language="AsciiDoc" displayName="Listing inspection" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="WARNING"
+                     shortName="AsciiDocListingStyleInspection"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocListingStyleInspection"/>
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
     <problemFileHighlightFilter
       implementation="org.asciidoc.intellij.problemHighlighter.AsciiDocProblemFileHighlightFilter"/>
