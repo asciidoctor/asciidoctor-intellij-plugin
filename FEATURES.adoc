@@ -97,8 +97,13 @@ This works similarly for attributes (`\{attrib}` and `:attrib:`).
 The user can show quick documentation for the element at the cursor's position using kbd:[Ctrl+Q].
 At the moments this works for attributes (`\{attrib}` and `:attrib:`) both in the editor and when using autocomplete.
 
+// see: AsciiDocBraceMatcher
 The plugin highlights matching braces including symmetric formatting for bold, italic and monospace.
 
+// see: ExtendWordSelectionHandler
+The the plugin will expand the current selection when the user presses kbd:[Ctrl+W] and will contract the current selection when the user presses kbd:[Ctrl+Shift+W].
+
+// see: AsciiDocSpellcheckingStrategy
 IntelliJ's built-in spell checker verifies all text areas of the document.
 It underlines unknown words with a green wavy line.
 With the context menu the user can change the spelling or to add the word to the project's dictionary.
