@@ -11,11 +11,11 @@ This document provides a high-level view of the changes introduced by release.
 
 - upgrade to asciidoctorj-pdf:1.5.0-beta.6
 - add HTML export to editor actions (thanks to @balabarath) (#349, #354)
-- avoid exception "Already disposed: Project" when closing one out of many currently open projects
+- avoid exception "`Already disposed: Project`" when closing one out of many currently open projects
 
 === 0.30.10 (preview, available from Github releases)
 
-- first version of improved "`Extend Selection"` (#341)
+- first version of improved "`Extend Selection`" (#341)
 - preserve cursor position and selection when toggling title (thanks to @Mogztter) (#341, #344)
 - improved cursor placement and selection for formatting actions like bold/italic (#341)
 - add support for kroki.io when rendering diagrams in the preview (thanks to @Mogztter) (#287, #346)
