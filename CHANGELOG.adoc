@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - quick-fix for markdown style listings (thanks to @FatihBozik) (#297, #355)
 - improve formatting bold/italic/... using editor actions (#242)
+- toggle formatting on selected text using formatting characters (#242)
 
 === 0.30.11 (preview, available from Github releases)
 

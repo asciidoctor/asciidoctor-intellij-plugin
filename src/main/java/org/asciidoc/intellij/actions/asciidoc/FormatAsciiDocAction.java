@@ -51,7 +51,7 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
    * Implementing the rules of Asciidoc's "When should I use unconstrained quotes?".
    * See http://asciidoctor.org/docs/user-manual/ for details.
    */
-  protected static boolean isWord(Document document, int start, int end) {
+  public static boolean isWord(Document document, int start, int end) {
     if (start > 0) {
       String preceededBy = document.getText(new TextRangeInterval(start - 1, start));
       // not a word if selection is preceeded by a semicolon, colon, an alphabetic characters, a digit or an underscore

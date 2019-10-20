@@ -99,6 +99,10 @@ At the moments this works for attributes (`\{attrib}` and `:attrib:`) both in th
 
 // see: AsciiDocBraceMatcher
 The plugin highlights matching braces including symmetric formatting for bold, italic and monospace.
+// see: FormattingQuotedTypedHandler
+When the user selected some text and types a formatting character like `_` or `*`, the selected text is formatted by adding the formatting at the beginning and end of the selected text.
+The plugin uses constrained/unconstrained formatting as necessary.
+If the selected text is already formatting with the chosen formatting, the plugin removes the formatting from the selected text.
 
 // see: ExtendWordSelectionHandler
 The the plugin will expand the current selection when the user presses kbd:[Ctrl+W] and will contract the current selection when the user presses kbd:[Ctrl+Shift+W].
