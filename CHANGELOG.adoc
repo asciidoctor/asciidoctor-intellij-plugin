@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.12 (work in progress)
+
+- quick-fix for markdown style listings (thanks to @FatihBozik) (#297, #355)
+
 === 0.30.11 (preview, available from Github releases)
 
 - upgrade to asciidoctorj-pdf:1.5.0-beta.6
