@@ -8,6 +8,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.tree.IElementType;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.jetbrains.annotations.NotNull;
@@ -85,20 +86,30 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
       // expand start/endFormatting within paragraph
       while (startFormatting != null && endFormatting != null) {
         while (startFormatting != null &&
-          !SYMMETRIC_FORMATTING.containsKey(startFormatting.getNode().getElementType())) {
+          !SYMMETRIC_FORMATTING.containsKey(startFormatting.getNode().getElementType()) &&
+          !startFormatting.getText().contains("\n")) {
           startFormatting = startFormatting.getPrevSibling();
         }
         if (startFormatting == null) {
           break;
         }
         while (endFormatting != null &&
-          SYMMETRIC_FORMATTING.get(startFormatting.getNode().getElementType()) != endFormatting.getNode().getElementType()) {
+          SYMMETRIC_FORMATTING.get(startFormatting.getNode().getElementType()) != endFormatting.getNode().getElementType() &&
+          !endFormatting.getText().contains("\n")) {
           endFormatting = endFormatting.getNextSibling();
         }
         if (endFormatting == null) {
           break;
         }
-        ranges.add(TextRange.create(startFormatting.getTextOffset(), endFormatting.getTextRange().getEndOffset()));
+        int startOffset = 0;
+        if (startFormatting instanceof PsiWhiteSpace && startFormatting.getText().contains("\n")) {
+          startOffset = startFormatting.getTextLength();
+        }
+        int endOffset = 0;
+        if (endFormatting instanceof PsiWhiteSpace && endFormatting.getText().contains("\n")) {
+          endOffset = -endFormatting.getTextLength() + endFormatting.getText().indexOf("\n");
+        }
+        ranges.add(TextRange.create(startFormatting.getTextOffset() + startOffset, endFormatting.getTextRange().getEndOffset() + endOffset));
         // expand one step further and try again
         startFormatting = startFormatting.getPrevSibling();
         endFormatting = endFormatting.getNextSibling();
