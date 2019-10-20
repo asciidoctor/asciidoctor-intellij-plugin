@@ -119,7 +119,7 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
       if (updatedText.contains(oldText) && oldText.length() > 0) {
         int index = updatedText.indexOf(oldText);
         document.insertString(start, updatedText.substring(0, index));
-        document.insertString(start + oldText.length() + 1, updatedText.substring(index + oldText.length()));
+        document.insertString(start + index + oldText.length(), updatedText.substring(index + oldText.length()));
         selectionModel.setSelection(start, start + updatedText.length());
       } else if (oldText.contains(updatedText)) {
         int index = oldText.indexOf(updatedText);

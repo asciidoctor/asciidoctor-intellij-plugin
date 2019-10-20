@@ -6,8 +6,8 @@ package org.asciidoc.intellij.actions.asciidoc;
 public class MakeMono extends SimpleFormatAsciiDocAction {
 
   @Override
-  public String updateSelection(String selection, boolean isWord) {
-    return updateSelectionIntern(selection, "`", isWord);
+  public String getFormatCharacter() {
+    return "`";
   }
 
   @Override

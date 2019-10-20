@@ -6,12 +6,12 @@ package org.asciidoc.intellij.actions.asciidoc;
 public class MakeBold extends SimpleFormatAsciiDocAction {
 
   @Override
-  public String updateSelection(String selection, boolean isWord) {
-    return updateSelectionIntern(selection, "*", isWord);
+  public String getName() {
+    return "MakeBold";
   }
 
   @Override
-  public String getName() {
-    return "MakeBold";
+  public String getFormatCharacter() {
+    return "*";
   }
 }

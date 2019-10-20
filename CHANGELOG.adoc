@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.12 (work in progress)
 
 - quick-fix for markdown style listings (thanks to @FatihBozik) (#297, #355)
+- improve formatting bold/italic/... using editor actions (#242)
 
 === 0.30.11 (preview, available from Github releases)
 
