@@ -107,7 +107,9 @@ public class FormattingQuotedTypedHandler extends TypedHandlerDelegate {
 
   private static boolean shouldSkipReplacementOfQuotesOrBraces(PsiFile psiFile, Editor editor, String selectedText, char c) {
     for (SelectionQuotingTypedHandler.DequotingFilter filter : Extensions.getExtensions(EP_NAME)) {
-      if (filter.skipReplacementQuotesOrBraces(psiFile, editor, selectedText, c)) return true;
+      if (filter.skipReplacementQuotesOrBraces(psiFile, editor, selectedText, c)) {
+        return true;
+      }
     }
     return false;
   }
