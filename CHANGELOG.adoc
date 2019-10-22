@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.12 (work in progress)
+=== 0.30.12 (preview, available from Github releases)
 
 - quick-fix for markdown style listings (thanks to @FatihBozik) (#297, #355)
 - improve formatting bold/italic/... using editor actions (#242)
