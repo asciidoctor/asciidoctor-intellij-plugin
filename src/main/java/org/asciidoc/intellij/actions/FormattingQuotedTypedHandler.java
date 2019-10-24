@@ -12,7 +12,6 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import org.asciidoc.intellij.AsciiDocLanguage;
@@ -77,9 +76,7 @@ public class FormattingQuotedTypedHandler extends TypedHandlerDelegate {
         boolean restoreStickySelection = editor instanceof EditorEx && ((EditorEx) editor).isStickySelection();
         selectionModel.removeSelection();
         editor.getDocument().replaceString(selectionStart, selectionEnd, newText);
-        TextRange replacedTextRange = Registry.is("editor.smarterSelectionQuoting")
-          ? new TextRange(caretOffset + border, caretOffset + newText.length() - border)
-          : new TextRange(caretOffset, caretOffset + newText.length());
+        TextRange replacedTextRange = new TextRange(caretOffset + border, caretOffset + newText.length() - border);
         // selection is removed here
         if (replacedTextRange.getEndOffset() <= editor.getDocument().getTextLength()) {
           if (restoreStickySelection) {
@@ -94,9 +91,7 @@ public class FormattingQuotedTypedHandler extends TypedHandlerDelegate {
             } else {
               editor.getSelectionModel().setSelection(replacedTextRange.getEndOffset(), replacedTextRange.getStartOffset());
             }
-            if (Registry.is("editor.smarterSelectionQuoting")) {
-              editor.getCaretModel().moveToOffset(ltrSelection ? replacedTextRange.getEndOffset() : replacedTextRange.getStartOffset());
-            }
+            editor.getCaretModel().moveToOffset(ltrSelection ? replacedTextRange.getEndOffset() : replacedTextRange.getStartOffset());
           }
         }
         return Result.STOP;

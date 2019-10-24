@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.13 (preview, available from Github releases)
+
+- fixing exception when using keys to toggle formatting (#242)
+
 === 0.30.12 (preview, available from Github releases)
 
 - quick-fix for markdown style listings (thanks to @FatihBozik) (#297, #355)
