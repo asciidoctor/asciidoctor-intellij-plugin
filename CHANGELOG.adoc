@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.14 (work in progress)
+
+- adding the Asciidoctor logo as the plugin's logo (thanks to @ardlank) (#356, #357)
+
 === 0.30.13 (preview, available from Github releases)
 
 - fixing exception when using keys to toggle formatting (#242)
