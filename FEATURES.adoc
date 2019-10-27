@@ -119,7 +119,8 @@ Word lists need to be in the UTF-8 format to work.
 Once the user installed the https://plugins.jetbrains.com/plugin/12175-grazie/[Grazi plugin] (to be named Grazi**e** in 2019.3) the editor highlights possible grammar mistakes.
 For now text must be included in a section or a block to be checked.
 A minimal file would therefore contain at least a heading and some text for the text to be checked.
-Grazi only supports grammar checks; to get spelling support the user needs to install a dictionary as described in the previous paragraph.
+The user can enable spell checking in Grazi.
+Once it is enabled, the user should disable the standard spell checking inspection in IntelliJ if Grazi doesn't disable it automatically to avoid the need to install dictionaries as described in the paragraph above.
 Grazi supports multiple languages: Once the user configured the languages in Grazi's plugin settings, the plugin detects the language of a section automatically.
 It performs all checks locally with the help of libraries from https://languagetool.org/, it doesn't submit text written in the IDE to a third party cloud service.
 
