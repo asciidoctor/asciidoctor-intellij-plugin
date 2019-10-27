@@ -23,6 +23,7 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
     AsciiDocTokenTypes.MONOBOLD,
     AsciiDocTokenTypes.MONOITALIC,
     AsciiDocTokenTypes.MONOBOLDITALIC,
+    AsciiDocTokenTypes.DESCRIPTION,
     AsciiDocTokenTypes.TITLE_TOKEN,
     AsciiDocTokenTypes.LINE_COMMENT,
     AsciiDocTokenTypes.BLOCK_COMMENT,

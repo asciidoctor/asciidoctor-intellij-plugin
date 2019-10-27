@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="tanvd.grazi">
+    <languageSupport language="AsciiDoc" implementationClass="org.asciidoc.intellij.grazie.AsciiDocLanguageSupport"/>
+  </extensions>
+</idea-plugin>

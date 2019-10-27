@@ -14,8 +14,8 @@ plugins {
   id "checkstyle"
   id 'org.asciidoctor.jvm.convert' version '2.2.0'
   // once windows classpaths get too long, use this dependency to make them shorter again
-  // id "com.github.ManifestClasspath" version "0.1.0-RELEASE"
-   id 'net.ltgt.errorprone' version '0.8.1' apply false
+  id "com.github.ManifestClasspath" version "0.1.0-RELEASE"
+  id 'net.ltgt.errorprone' version '0.8.1' apply false
 }
 
 checkstyle {
@@ -38,15 +38,17 @@ allprojects {
 }
 
 intellij {
-  // we support IC-2017.2, but PsiViewer is not available for the older version, therefore se IC-2018.1 to run it
-  version 'IC-2018.1'
+  // we support IC-2017.2, but PsiViewer is not available for the older version, therefore use IC-2018.1 to run it
+  // Grazi is only available from 2019.2, therefore use IC-2019.2 to run it
+  version 'IC-2019.2'
   pluginName 'asciidoctor'
   updateSinceUntilBuild false
   plugins = [
-    'PsiViewer:2018.1.2', // used for debugging
-    'PlantUML integration:2.12.1' // used to test highlighting of plantuml diagrams
+    'PsiViewer:192-SNAPSHOT', // used for debugging
+    'PlantUML integration:2.12.1', // used to test highlighting of plantuml diagrams
+    'tanvd.grazi:2019.2-4.stable', // used for spell and grammer checking checking
+    'java' // used to integrate into the build via AsciiDocTargetScopeProvider
   ]
-
 }
 
 asciidoctor {

@@ -7,9 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.14 (work in progress)
+=== 0.30.14 (preview, available from Github releases)
 
 - adding the Asciidoctor logo as the plugin's logo (thanks to @ardlank) (#356, #357)
+- experimental support for grammar checking in different languages using the https://plugins.jetbrains.com/plugin/12175-grazie/[Grazi plugin] (to be named Grazi**e** in 2019.3) (#97)
 
 === 0.30.13 (preview, available from Github releases)
 

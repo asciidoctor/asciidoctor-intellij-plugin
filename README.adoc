@@ -38,7 +38,7 @@ Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to 
 * Provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] with live preview.
 * Toolbar and context menu for basic formatting and to create tables.
 * Refactor Markdown to AsciiDoc: Right click on a file, or use the Refactor menu, and the Markdown document will be replaced by the AsciiDoc equivalent.
-Also supports undo, in case you're not happy with the result!
+Also, supports undo if the user is not happy with the result!
 
 Refer to the link:FEATURES.adoc[Features list] for a detailed overview of the features.
 
