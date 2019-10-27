@@ -123,7 +123,7 @@ Grazi only supports grammar checks; to get spelling support the user needs to in
 Grazi supports multiple languages: Once the user configured the languages in Grazi's plugin settings, the plugin detects the language of a section automatically.
 It performs all checks locally with the help of libraries from https://languagetool.org/, it doesn't submit text written in the IDE to a third party cloud service.
 
-NOTE: This feature is experimental: As Grazi a new plugin and the API of Grazi will change in 2019.3 (now EAP), only 2019.2 is supported.
+NOTE: This feature is experimental: As Grazi is a new plugin and the API of Grazi will change in 2019.3 (now EAP), only 2019.2 is supported.
 
 // see: ExternalAnnotator
 During rendering Asciidoctor might indicate problems in the file including a line number.
