@@ -255,4 +255,30 @@
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
+  <template name="ad-config-i18n" value="//https://asciidoctor.org/docs/user-manual/#customizing-labels&#10;//table of contents title&#10;:toc-title: Table of Contents&#10;//admonition captions&#10;:caution-caption: Caution&#10;:important-caption: Important&#10;:note-caption: Note&#10;:tip-caption: Tip&#10;:warning-caption: Warning&#10;//captions for specific blocks&#10;:example-caption: Example&#10;:figure-caption: Figure&#10;:table-caption: Table&#10;//caption for the appendix&#10;:appendix-caption: Appendix&#10;" description="config-attributes for internationalization" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-config-toc" value="//https://asciidoctor.org/docs/user-manual/#table-of-contents-summary&#10;:toc-title: Table of Contents&#10;//display how many headline levels?&#10;:toclevels: 4&#10;//https://asciidoctor.org/docs/user-manual/#sections-summary&#10;//turn numbering on or off (:sectnums!:)&#10;:sectnums:&#10;//enumerate how many section levels?&#10;:sectnumlevels: 2&#10;:sectanchors:&#10;:sectlinks:&#10;//number parts of a book&#10;:partnums:&#10;" description="config-attributes for table of contents and sections" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-config-general" value="//see https://asciidoctor.org/docs/user-manual/#builtin-attributes for builtin attributes&#10;" description="link to a list of all available attributes" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-config-render" value=":icons: font&#10;:imagesdir: images&#10;:doctype: book&#10;" description="icons, imagesdir, doctype" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-config-pdf" value=":pdf-page-size: A4&#10;:pdf-themesdir: ../pdfTheme&#10;" description="page-size and themesdir" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
 </templateSet>
+
