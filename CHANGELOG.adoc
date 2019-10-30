@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.15 (work in progress)
+
+- support `+++[link=...]+++` in browser preview for navigation to images and other AsciiDoc sources of the project (#360)
+
 === 0.30.14 (preview, available from Github releases)
 
 - adding the Asciidoctor logo as the plugin's logo (thanks to @ardlank) (#356, #357)
