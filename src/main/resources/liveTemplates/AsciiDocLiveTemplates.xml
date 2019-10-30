@@ -255,7 +255,17 @@
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
-  <template name="ad-config-i18n" value="//https://asciidoctor.org/docs/user-manual/#customizing-labels&#10;//table of contents title&#10;:toc-title: Table of Contents&#10;//admonition captions&#10;:caution-caption: Caution&#10;:important-caption: Important&#10;:note-caption: Note&#10;:tip-caption: Tip&#10;:warning-caption: Warning&#10;//captions for specific blocks&#10;:example-caption: Example&#10;:figure-caption: Figure&#10;:table-caption: Table&#10;//caption for the appendix&#10;:appendix-caption: Appendix&#10;" description="config-attributes for internationalization" toReformat="true" toShortenFQNames="true">
+  <template name="ad-config-i18n" value="// use these attributes to translate captions and labels to the document's language&#10;// more information: https://asciidoctor.org/docs/user-manual/#customizing-labels&#10;// table of contents title&#10;:toc-title: $toctitle$&#10;// admonition captions&#10;:caution-caption: $cautioncaption$&#10;:important-caption: $importantcaption$&#10;:note-caption: $notecaption$&#10;:tip-caption: $tipcaption$&#10;:warning-caption: $warningcaption$&#10;// captions for specific blocks&#10;:example-caption: $examplecaption$&#10;:figure-caption: $figurecaption$&#10;:table-caption: $tablecaption$&#10;// caption for the appendix&#10;:appendix-caption: $appendixcaption$&#10;" description="config-attributes for internationalization" toReformat="true" toShortenFQNames="true">
+    <variable name="toctitle" expression="" defaultValue="&quot;Table of Contents&quot;" alwaysStopAt="true" />
+    <variable name="cautioncaption" expression="" defaultValue="&quot;Caution&quot;" alwaysStopAt="true" />
+    <variable name="importantcaption" expression="" defaultValue="&quot;Important&quot;" alwaysStopAt="true" />
+    <variable name="notecaption" expression="" defaultValue="&quot;Note&quot;" alwaysStopAt="true" />
+    <variable name="tipcaption" expression="" defaultValue="&quot;Tip&quot;" alwaysStopAt="true" />
+    <variable name="warningcaption" expression="" defaultValue="&quot;Warning&quot;" alwaysStopAt="true" />
+    <variable name="examplecaption" expression="" defaultValue="&quot;Example&quot;" alwaysStopAt="true" />
+    <variable name="figurecaption" expression="" defaultValue="&quot;Figure&quot;" alwaysStopAt="true" />
+    <variable name="tablecaption" expression="" defaultValue="&quot;Table&quot;" alwaysStopAt="true" />
+    <variable name="appendixcaption" expression="" defaultValue="&quot;Appendix&quot;" alwaysStopAt="true" />
     <context>
       <option name="AsciiDoc" value="true" />
     </context>
