@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.15 (work in progress)
+=== 0.30.15 (preview, available from Github releases)
 
 - support `+++[link=...]+++` in browser preview for navigation to images and other AsciiDoc sources of the project (#360)
 - support interactive mode SVG in browser and JavaFX preview (#360)
