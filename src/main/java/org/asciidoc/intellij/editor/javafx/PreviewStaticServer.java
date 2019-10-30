@@ -211,7 +211,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
       if (file.endsWith(".png")) {
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, "image/png");
       } else if (file.endsWith(".jpg")) {
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "image/jpsg");
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "image/jpeg");
       } else if (file.endsWith(".svg")) {
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, "image/svg+xml");
       } else {

@@ -204,7 +204,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
         + asciidoctorVersion
         + "/data/stylesheets/coderay-asciidoctor.css")) {
-      myInlineCss += IOUtils.toString(stream);
+        myInlineCss += IOUtils.toString(stream);
       }
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
@@ -487,7 +487,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
           boolean ml = false; // set to "true" to test for memory leaks in HTML/JavaScript
           result = (Boolean) JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
             (ml ? "var x = 0; " : "") +
-            "function finish() {" +
+              "function finish() {" +
               "if ('__IntelliJTools' in window) {" +
               "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
               "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ");" +
@@ -568,7 +568,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
      * will change. The changed URL is necessary for the JavaFX web view to display the new content, as each URL
      * will be loaded only once by the JavaFX web view. */
     Pattern pattern = Pattern.compile("<img src=\"([^:\"]*)\"");
-    final Matcher matcher = pattern.matcher(html);
+    Matcher matcher = pattern.matcher(html);
     while (matcher.find()) {
       final MatchResult matchResult = matcher.toMatchResult();
       String file = matchResult.group(1);
@@ -599,6 +599,47 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
           replacement = "<img src=\"localfile://" + md5 + "/" + base + "/" + file + "\"";
         } else {
           replacement = "<img src=\"file://" + base.replaceAll("%3A", ":") + "/" + file + "\"";
+        }
+      }
+      html = html.substring(0, matchResult.start()) +
+        replacement + html.substring(matchResult.end());
+      matcher.reset(html);
+    }
+
+    /* the same as above for interactive SVGs */
+    pattern = Pattern.compile("<object ([^>])*data=\"([^:\"]*)\"");
+    matcher = pattern.matcher(html);
+    while (matcher.find()) {
+      final MatchResult matchResult = matcher.toMatchResult();
+      String other = matchResult.group(1);
+      String file = matchResult.group(2);
+      try {
+        file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
+      } catch (UnsupportedEncodingException e) {
+        throw new RuntimeException(e);
+      }
+      String tmpFile = findTempImageFile(file);
+      String md5;
+      String replacement;
+      if (tmpFile != null) {
+        md5 = calculateMd5(tmpFile, null);
+        tmpFile = tmpFile.replaceAll("\\\\", "/");
+        try {
+          tmpFile = URLEncoder.encode(tmpFile, StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+          throw new RuntimeException(e);
+        }
+        if (JavaFxHtmlPanelProvider.isInitialized()) {
+          replacement = "<object " + other + "data=\"localfile://" + md5 + "/" + tmpFile + "\"";
+        } else {
+          replacement = "<object " + other + "data=\"file://" + tmpFile + "\"";
+        }
+      } else {
+        md5 = calculateMd5(file, base);
+        if (JavaFxHtmlPanelProvider.isInitialized()) {
+          replacement = "<object " + other + "data=\"localfile://" + md5 + "/" + base + "/" + file + "\"";
+        } else {
+          replacement = "<object " + other + "data=\"file://" + base.replaceAll("%3A", ":") + "/" + file + "\"";
         }
       }
       html = html.substring(0, matchResult.start()) +

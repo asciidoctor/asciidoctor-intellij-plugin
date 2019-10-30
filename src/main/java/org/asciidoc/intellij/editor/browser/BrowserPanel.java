@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -169,7 +170,7 @@ public class BrowserPanel implements Closeable {
       html = html.replaceAll("<span style=\"background-color:#[a-zA-Z0-9]*;?", "<span style=\"");
     }
     html = "<html><head></head><body>" + html + "</body>";
-    html = prepareHtml(html);
+    html = prepareHtml(html, project);
     return html;
   }
 
@@ -190,12 +191,12 @@ public class BrowserPanel implements Closeable {
     return signWithMac.checkMac(file, mac);
   }
 
-  private String prepareHtml(@NotNull String html) {
+  private String prepareHtml(@NotNull String html, Project project) {
     /* for each image we'll calculate a MD5 sum of its content. Once the content changes, MD5 and therefore the URL
      * will change. The changed URL is necessary for the Browser to display the new content, as each URL
      * will be loaded only once due to caching. Also each URL to a local image will be signed so that it can be retrieved securely afterwards */
     Pattern pattern = Pattern.compile("<img src=\"([^:\"]*)\"");
-    final Matcher matcher = pattern.matcher(html);
+    Matcher matcher = pattern.matcher(html);
     while (matcher.find()) {
       final MatchResult matchResult = matcher.toMatchResult();
       String file = matchResult.group(1);
@@ -222,7 +223,84 @@ public class BrowserPanel implements Closeable {
       matcher.reset(html);
     }
 
-    /* Add CSS line and JavaScript for auto-scolling and clickable links */
+    /* the same as above for links to local resources */
+    pattern = Pattern.compile("<a ([^>])*href=\"([^:\"]*)\"");
+    matcher = pattern.matcher(html);
+    while (matcher.find()) {
+      final MatchResult matchResult = matcher.toMatchResult();
+      String other = matchResult.group(1);
+      String file = matchResult.group(2);
+      if (file.startsWith("image?") || file.startsWith("source?")) {
+        continue;
+      }
+      try {
+        file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
+      } catch (UnsupportedEncodingException e) {
+        throw new RuntimeException(e);
+      }
+      // type 'image' will deliver a binary file
+      String type = "image";
+      String suffix = "";
+      if (file.endsWith(".adoc")) {
+        // type 'source' will be an AsciiDoc converted to HTML on the fly
+        type = "source";
+      } else if (file.endsWith(".html")) {
+        if (!new File(base + "/" + file).exists()) {
+          String adocFile = file.replaceAll("\\.html$", ".adoc");
+          if (new File(base + "/" + adocFile).exists()) {
+            // if the file points to an HTML that doesn't exist, but an AsciiDoc file with the same name exists, use the AsciiDoc file and convert it on the fly
+            file = adocFile;
+            type = "source";
+          }
+        }
+      } else if (new File(base + "/" + file + ".adoc").exists()) {
+        // if the file points to a file without extension, but an AsciiDoc file with the same name exists, use the AsciiDoc file and convert it on the fly
+        file = file + ".adoc";
+        type = "source";
+      }
+      if (type.equals("source")) {
+        try {
+          if (project.getPresentableUrl() != null) {
+              suffix = "&amp;projectUrl=" + URLEncoder.encode(project.getPresentableUrl(), StandardCharsets.UTF_8.toString());
+          } else {
+            suffix = "&amp;projectName=" + URLEncoder.encode(project.getName(), StandardCharsets.UTF_8.toString());
+          }
+        } catch (UnsupportedEncodingException e) {
+          throw new RuntimeException("unable to encode URL", e);
+        }
+      }
+      String replacement;
+      replacement = "<a " + other + "href=\"" + type + "?file=" + signFile(base + "/" + file) + suffix + "\"";
+      html = html.substring(0, matchResult.start()) +
+        replacement + html.substring(matchResult.end());
+      matcher.reset(html);
+    }
+
+    /* the same as above for interactive SVGs */
+    pattern = Pattern.compile("<object ([^>])*data=\"([^:\"]*)\"");
+    matcher = pattern.matcher(html);
+    while (matcher.find()) {
+      final MatchResult matchResult = matcher.toMatchResult();
+      String other = matchResult.group(1);
+      String file = matchResult.group(2);
+      if (file.startsWith("image?")) {
+        continue;
+      }
+      try {
+        file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
+      } catch (UnsupportedEncodingException e) {
+        throw new RuntimeException(e);
+      }
+      // type 'image' will deliver a binary file
+      String type = "image";
+      String replacement;
+      replacement = "<object " + other + "data=\"" + type + "?file=" + signFile(base + "/" + file) + "\"";
+      html = html.substring(0, matchResult.start()) +
+        replacement + html.substring(matchResult.end());
+      matcher.reset(html);
+    }
+
+    /* Add CSS line and JavaScript */
     return html
       .replace("<head>", "<head>" + getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myDejavuCssLink)
       .replace("</body>", getScriptingLines() + "</body>");
