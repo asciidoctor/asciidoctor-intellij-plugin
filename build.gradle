@@ -39,14 +39,14 @@ allprojects {
 
 intellij {
   // we support IC-2017.2, but PsiViewer is not available for the older version, therefore use IC-2018.1 to run it
-  // Grazi is only available from 2019.2, therefore use IC-2019.2 to run it
-  version 'IC-2019.2'
+  // Grazie is only available from 2019.2, therefore use IC-2019.2 to run it
+  version 'IC-2019.2.4'
   pluginName 'asciidoctor'
   updateSinceUntilBuild false
   plugins = [
     'PsiViewer:192-SNAPSHOT', // used for debugging
-    'PlantUML integration:2.12.1', // used to test highlighting of plantuml diagrams
-    'tanvd.grazi:2019.2-4.stable', // used for spell and grammer checking checking
+    'PlantUML integration:2.22.0', // used to test highlighting of plantuml diagrams
+    'tanvd.grazi:2019.2-5.3.stable', // used for spell and grammer checking checking
     'java' // used to integrate into the build via AsciiDocTargetScopeProvider
   ]
 }

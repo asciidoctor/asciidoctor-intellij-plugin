@@ -1,18 +1,23 @@
 package org.asciidoc.intellij.grazie;
 
+import com.intellij.grazie.grammar.Typo;
+import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy;
+import com.intellij.grazie.grammar.strategy.impl.ReplaceCharRule;
+import com.intellij.grazie.grammar.strategy.impl.RuleGroup;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.TokenSet;
+import kotlin.ranges.IntRange;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.jetbrains.annotations.NotNull;
-import tanvd.grazi.grammar.GrammarChecker;
-import tanvd.grazi.grammar.Typo;
-import tanvd.grazi.ide.language.LanguageSupport;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
-public class AsciiDocLanguageSupport extends LanguageSupport {
+public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
 
   // all tokens that contain full sentences that can be checked for grammar and spelling.
   private static final TokenSet NODES_TO_CHECK = TokenSet.create(
@@ -46,34 +51,43 @@ public class AsciiDocLanguageSupport extends LanguageSupport {
     TokenType.WHITE_SPACE
   ), NODES_TO_CHECK);
 
-
+  @NotNull
   @Override
-  public boolean isRelevant(@NotNull PsiElement element) {
-    return NODES_TO_CHECK.contains(element.getNode().getElementType());
+  public ElementBehavior getElementBehavior(@NotNull PsiElement root, @NotNull PsiElement child) {
+    if (root != child && NODES_TO_CHECK.contains(child.getNode().getElementType())) {
+      return ElementBehavior.ABSORB;
+    } else if (TEXT_TOKENS.contains(child.getNode().getElementType())) {
+      return ElementBehavior.TEXT;
+    } else {
+      return ElementBehavior.STEALTH;
+    }
+  }
+
+  @Nullable
+  @Override
+  public RuleGroup getIgnoredRuleGroup(@NotNull PsiElement root, @NotNull PsiElement child) {
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public Set<Typo.Category> getIgnoredTypoCategories(@NotNull PsiElement psiElement, @NotNull PsiElement psiElement1) {
+    return Collections.emptySet();
   }
 
   @NotNull
   @Override
-  protected Set<Typo> check(@NotNull PsiElement psiElement) {
-    return GrammarChecker.Companion.getDefault().check(new PsiElement[]{psiElement}, PsiElement::getText,
-      (element, index) -> {
-        PsiElement elementAtIndex = element.findElementAt(index);
-        if (elementAtIndex == null) {
-          return false;
-        }
-        if (AsciiDocTokenTypes.TITLE_TOKEN.equals(elementAtIndex.getNode().getElementType()) && index == 0) {
-          // ignore the leading "." at the beginning of the title
-          return true;
-        }
-        PsiElement searchSubSection = elementAtIndex;
-        while (element != searchSubSection) {
-          if (NODES_TO_CHECK.contains(searchSubSection.getNode().getElementType())) {
-            // don't include it here as it will be checked independently so that it is a separate sentence
-            return true;
-          }
-          searchSubSection = searchSubSection.getParent();
-        }
-        return !TEXT_TOKENS.contains(elementAtIndex.getNode().getElementType());
-      });
+  public List<ReplaceCharRule> getReplaceCharRules(@NotNull PsiElement psiElement) {
+    return Collections.emptyList();
+  }
+
+  @Override
+  public boolean isMyContextRoot(@NotNull PsiElement psiElement) {
+    return NODES_TO_CHECK.contains(psiElement.getNode().getElementType());
+  }
+
+  @Override
+  public boolean isTypoAccepted(@NotNull PsiElement psiElement, @NotNull IntRange intRange, @NotNull IntRange intRange1) {
+    return true;
   }
 }
