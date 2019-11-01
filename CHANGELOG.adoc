@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.16 (preview, available from Github releases)
+=== 0.30.16
 
 - upgrading to version 2019.2-5.3.stable of the https://plugins.jetbrains.com/plugin/12175-grazie/[Grazie plugin], improving performance and spell checking in different languages (#97)
 
