@@ -27,6 +27,7 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
     AsciiDocTokenTypes.LINE_COMMENT,
     AsciiDocTokenTypes.BLOCK_COMMENT,
     AsciiDocTokenTypes.LITERAL_BLOCK,
+    AsciiDocTokenTypes.BLOCKREFTEXT,
     AsciiDocElementTypes.SECTION,
     AsciiDocElementTypes.BLOCK
   );
@@ -48,7 +49,10 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
     // keep the white space in here as blanks are important to separate words
     AsciiDocTokenTypes.WHITE_SPACE,
     AsciiDocTokenTypes.WHITE_SPACE_MONO,
-    TokenType.WHITE_SPACE
+    TokenType.WHITE_SPACE,
+    AsciiDocElementTypes.URL, // can nest LINKTEXT
+    AsciiDocElementTypes.REF, // can nest REFTEXT
+    AsciiDocElementTypes.LINK // can nest LINKTEXT
   ), NODES_TO_CHECK);
 
   @NotNull
