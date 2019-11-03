@@ -8,12 +8,6 @@ image::https://api.travis-ci.org/asciidoctor/asciidoctor-intellij-plugin.svg?bra
 A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language.
 To support the authors of Asciidoctor, please consider supporting us via https://opencollective.com/asciidoctor[OpenCollective].
 
-image::https://hacktoberfest.digitalocean.com/assets/logo-hf19-full-10f3c000cea930c76acc1dedc516ea7118b95353220869a3051848e45ff1d656.svg[float=left,width=200]
-
-*This plugin joined https://hacktoberfest.digitalocean.com/[Hacktoberfest]!
-Issues that can give you a good start are https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3AHacktoberfest[have the label "Hacktoberfest"] and maintainers are willing to help.
-Feel free to choose these or any other ticket to participate, or even create pull requests without a prior ticket).*
-
 *You can meet the maintainers in person:* Please ping them via eMail or chat before or during the event!
 
 * https://www.ahus1.de/[Alex] at https://www.javaland.eu/[JavaLand (Brühl, DE)], 2020-03-16..18
@@ -53,6 +47,9 @@ This project uses AsciiDoctorJ and JRuby for the rendering of the AsciiDoc conte
 For the conversion of Markdown to AsciiDoc, we use Pegdown and the https://github.com/bodiam/markdown-to-asciidoc[Markdown to AsciiDoc] converter.
 
 == Building, Contributing, Code of Conduct
+
+Issues that can give you a good start are https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22[have the label "good first issue"] and maintainers are willing to help.
+Feel free to choose these or any other ticket to contribute, or even create pull requests without a prior ticket.
 
 Please have a look at the link:CONTRIBUTING.adoc["How to Build and Contribute"] documentation.
 This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the link:CODE_OF_CONDUCT.adoc[Contributor Covenant code of conduct].
