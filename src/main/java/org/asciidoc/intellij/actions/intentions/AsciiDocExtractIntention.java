@@ -2,8 +2,10 @@ package org.asciidoc.intellij.actions.intentions;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.util.IncorrectOperationException;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.ui.ExtractIncludeDialog;
@@ -21,6 +23,14 @@ public class AsciiDocExtractIntention extends Intention {
     }
     if (editor.getSelectionModel().getSelectedText() != null) {
       return true;
+    }
+    PsiDirectory dir = file.getContainingDirectory();
+    if (dir == null) {
+      dir = PsiManager.getInstance(project).findDirectory(file.getVirtualFile().getParent());
+    }
+    if (dir == null) {
+      // unable to determine current file's folder to create new include file later on
+      return false;
     }
     PsiElement element = ExtractIncludeDialog.getElementToExtract(editor, file);
     if (element != null) {

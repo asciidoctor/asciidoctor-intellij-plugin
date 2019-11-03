@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - update to AsciidoctorJ PDF v1.5.0-beta.7
 - tuning spell checking for Grazie for reference and link texts (#97)
+- allow extract include of snippet with language injection
 
 === 0.30.16
 
