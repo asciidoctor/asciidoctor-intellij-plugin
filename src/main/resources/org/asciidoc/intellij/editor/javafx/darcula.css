@@ -1,6 +1,6 @@
 #content>h1:first-child:not([class]), body {background-color: #45494a;color: #bbbbbb}
-pre {color: #bbbbbb}
-pre>code, *:not(pre)>code, .hljs {background-color: #626262;color: #bbbbbb}
+pre {background-color: #626262 !important;color: #bbbbbb}
+pre>code, *:not(pre)>code, .hljs {background-color: #626262 !important;color: #bbbbbb}
 a, a:hover, a:focus { color: #589df6; }
 
 table.tableblock, th.tableblock, td.tableblock{color: #bbbbbb}
