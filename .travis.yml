@@ -9,6 +9,7 @@ before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
+- rm -f  $HOME/.gradle/caches/*/fileContent/fileContent.lock
 - rm -f  $HOME/.gradle/caches/*/javaCompile/javaCompile.lock
 - rm -f  $HOME/.gradle/caches/journal-1/file-access.bin
 - rm -f  $HOME/.gradle/caches/journal-1/journal-1.lock
