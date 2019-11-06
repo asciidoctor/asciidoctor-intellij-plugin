@@ -270,7 +270,7 @@
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
-  <template name="ad-config-toc" value="//https://asciidoctor.org/docs/user-manual/#table-of-contents-summary&#10;:toc-title: $tocTitle$&#10;//display how many headline levels?&#10;:toclevels: $toclevels$&#10;//https://asciidoctor.org/docs/user-manual/#sections-summary&#10;//turn numbering on or off (:sectnums!:)&#10;:sectnums:&#10;//enumerate how many section levels?&#10;:sectnumlevels: $sectnumlevels$&#10;:sectanchors:&#10;:sectlinks:&#10;//number parts of a book&#10;:partnums:&#10;" description="config-attributes for table of contents and sections" toReformat="true" toShortenFQNames="true">
+  <template name="ad-config-toc" value="// see: https://asciidoctor.org/docs/user-manual/#table-of-contents-summary&#10;:toc-title: $tocTitle$&#10;// how many headline levels to display in table of contents?&#10;:toclevels: $toclevels$&#10;// https://asciidoctor.org/docs/user-manual/#sections-summary&#10;// turn numbering on or off (:sectnums!:)&#10;:sectnums:&#10;// enumerate how many section levels?&#10;:sectnumlevels: $sectnumlevels$&#10;// show anchors when hovering over section headers&#10;:sectanchors:&#10;// render section headings as self referencing links&#10;:sectlinks:&#10;// number parts of a book&#10;:partnums:&#10;" description="config-attributes for table of contents and sections" toReformat="true" toShortenFQNames="true">
     <variable name="tocTitle" expression="" defaultValue="&quot;Table of Contents&quot;" alwaysStopAt="true" />
     <variable name="toclevels" expression="" defaultValue="&quot;4&quot;" alwaysStopAt="true" />
     <variable name="sectnumlevels" expression="" defaultValue="&quot;2&quot;" alwaysStopAt="true" />
@@ -278,19 +278,19 @@
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
-  <template name="ad-config-general" value="//see https://asciidoctor.org/docs/user-manual/#builtin-attributes for builtin attributes&#10;" description="link to a list of all available attributes" toReformat="true" toShortenFQNames="true">
+  <template name="ad-config-general" value="// see https://asciidoctor.org/docs/user-manual/#builtin-attributes for builtin attributes&#10;" description="link to a list of all available attributes" toReformat="true" toShortenFQNames="true">
     <context>
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
-  <template name="ad-config-render" value="// use Font Awesome for admonition icons&#10;:icons: font&#10;// the base folder for images&#10;:imagesdir: $imagesdir$&#10;// the type of document. article, book, manpage or inline&#10;// see https://asciidoctor.org/docs/user-manual/#document-types&#10;:doctype: $doctype$&#10;" description="icons, imagesdir, doctype" toReformat="true" toShortenFQNames="true">
+  <template name="ad-config-render" value="// use Font Awesome for admonition icons&#10;:icons: font&#10;// the base folder for images&#10;:imagesdir: $imagesdir$&#10;// the type of document: article, book, manpage or inline&#10;// see https://asciidoctor.org/docs/user-manual/#document-types&#10;:doctype: $doctype$&#10;" description="Render configurations: icons, imagesdir, doctype" toReformat="true" toShortenFQNames="true">
     <variable name="imagesdir" expression="" defaultValue="&quot;images&quot;" alwaysStopAt="true" />
     <variable name="doctype" expression="" defaultValue="&quot;article&quot;" alwaysStopAt="true" />
     <context>
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
-  <template name="ad-config-pdf" value="// use these attribues to configure some attributes for asciidoctor-pdf&#10;:pdf-page-size: $pdfSize$&#10;// see https://github.com/asciidoctor/asciidoctor-pdf/blob/v1.5.0.beta.3/docs/theming-guide.adoc&#10;:pdf-themesdir: $pdfTheme$&#10;" description="page-size and themesdir" toReformat="true" toShortenFQNames="true">
+  <template name="ad-config-pdf" value="// use these attributes to configure some attributes for asciidoctor-pdf&#10;:pdf-page-size: $pdfSize$&#10;// see https://github.com/asciidoctor/asciidoctor-pdf/blob/master/docs/theming-guide.adoc&#10;:pdf-themesdir: $pdfTheme$&#10;" description="PDF-configuration for page-size and themesdir" toReformat="true" toShortenFQNames="true">
     <variable name="pdfSize" expression="" defaultValue="&quot;A4&quot;" alwaysStopAt="true" />
     <variable name="pdfTheme" expression="" defaultValue="&quot;../pdfTheme&quot;" alwaysStopAt="true" />
     <context>
