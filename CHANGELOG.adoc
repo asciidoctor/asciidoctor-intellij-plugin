@@ -12,6 +12,8 @@ This document provides a high-level view of the changes introduced by release.
 - update to AsciidoctorJ PDF v1.5.0-beta.7
 - tuning spell checking for Grazie for reference and link texts (#97)
 - allow extract include of snippet with language injection
+- added some live templates `ad-config...` for configuration attributes (thanks to @rdmueller) (#358, #361)
+- show documentation for attributes also when cursor is set in attribute value, not only when cursor is placed in attribute name
 
 === 0.30.16
 

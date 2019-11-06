@@ -6,11 +6,13 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.psi.impl.source.DummyHolder;
 import com.intellij.psi.impl.source.DummyHolderFactory;
 import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,6 +37,24 @@ public class AsciiDocDocumentationProvider extends AbstractDocumentationProvider
       if (AsciiDocBundle.getBuiltInAttributesList().contains(key)) {
         return new DummyElement(key, file.getManager());
       }
+    }
+    PsiElement lookingForAttribute = contextElement;
+    while (lookingForAttribute != null) {
+      if (lookingForAttribute instanceof PsiWhiteSpace && lookingForAttribute.getPrevSibling() instanceof AsciiDocAttributeDeclaration) {
+        lookingForAttribute = lookingForAttribute.getPrevSibling();
+      }
+      if (lookingForAttribute instanceof AsciiDocAttributeDeclaration) {
+        String key = ((AsciiDocAttributeDeclaration) lookingForAttribute).getAttributeName();
+        if (AsciiDocBundle.getBuiltInAttributesList().contains(key)) {
+          return new DummyElement(key, file.getManager());
+        } else {
+          break;
+        }
+      }
+      if (lookingForAttribute instanceof PsiFile) {
+        break;
+      }
+      lookingForAttribute = lookingForAttribute.getParent();
     }
     return super.getCustomDocumentationElement(editor, file, contextElement);
   }
