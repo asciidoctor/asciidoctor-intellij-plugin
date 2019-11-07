@@ -13,7 +13,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.ui.NameSuggestionsField;
 import com.intellij.refactoring.ui.RefactoringDialog;
@@ -30,9 +29,9 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Objects;
 
 public class ExtractIncludeDialog extends RefactoringDialog {
+  private PsiDirectory myDirectory;
   private final Editor myEditor;
   private final PsiFile myFile;
 
@@ -64,10 +63,11 @@ public class ExtractIncludeDialog extends RefactoringDialog {
     return null;
   }
 
-  public ExtractIncludeDialog(@NotNull Project project, Editor editor, PsiFile file) {
+  public ExtractIncludeDialog(@NotNull Project project, Editor editor, PsiFile file, @NotNull PsiDirectory directory) {
     super(project, false);
     this.myEditor = editor;
     this.myFile = file;
+    this.myDirectory = directory;
     String filename = "include";
     PsiElement element = getElementToExtract(editor, file);
     if (element != null) {
@@ -93,12 +93,7 @@ public class ExtractIncludeDialog extends RefactoringDialog {
       return new ValidationInfo("Specifying a different directory is currently not supported.");
     }
     try {
-      PsiDirectory dir = myFile.getContainingDirectory();
-      if (dir == null) {
-        dir = PsiManager.getInstance(myProject).findDirectory(myFile.getVirtualFile().getParent());
-      }
-      Objects.requireNonNull(dir);
-      dir.checkCreateFile(getFilename());
+      myDirectory.checkCreateFile(getFilename());
     } catch (IncorrectOperationException e) {
       return new ValidationInfo("Unable to create file: " + e.getMessage(), myFilename);
     }
@@ -151,12 +146,7 @@ public class ExtractIncludeDialog extends RefactoringDialog {
           String newFileName = getFilename();
           PsiFile asciiDocFile = PsiFileFactory.getInstance(myProject).createFileFromText(newFileName,
             AsciiDocFileType.INSTANCE, myEditor.getDocument().getText(range));
-          PsiDirectory dir = myFile.getContainingDirectory();
-          if (dir == null) {
-            dir = PsiManager.getInstance(myProject).findDirectory(myFile.getVirtualFile().getParent());
-          }
-          Objects.requireNonNull(dir);
-          PsiFile newFile = (PsiFile) dir.add(asciiDocFile);
+          PsiFile newFile = (PsiFile) myDirectory.add(asciiDocFile);
           StringBuilder sb = new StringBuilder();
           sb.append("include::");
           int offset = sb.length();

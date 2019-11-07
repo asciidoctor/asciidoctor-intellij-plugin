@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.18 (work in progress)
+
+- fix extract include of snippet with language injection
+
 === 0.30.17 (preview, available from Github releases)
 
 - update to AsciidoctorJ PDF v1.5.0-beta.7
@@ -14,7 +18,7 @@ This document provides a high-level view of the changes introduced by release.
 - allow extract include of snippet with language injection
 - added some live templates `ad-config...` for configuration attributes (thanks to @rdmueller) (#358, #361)
 - show documentation for attributes also when cursor is set in attribute value, not only when cursor is placed in attribute name
-- Fix background color for code/monospace in darcula theme (thanks to @bric3) (#364)
+- fix background color for code/monospace in darcula theme (thanks to @bric3) (#364)
 
 === 0.30.16
 

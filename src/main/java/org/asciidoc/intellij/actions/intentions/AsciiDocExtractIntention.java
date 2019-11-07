@@ -1,7 +1,9 @@
 package org.asciidoc.intellij.actions.intentions;
 
+import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -10,6 +12,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.ui.ExtractIncludeDialog;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class AsciiDocExtractIntention extends Intention {
 
@@ -24,10 +27,7 @@ public class AsciiDocExtractIntention extends Intention {
     if (editor.getSelectionModel().getSelectedText() != null) {
       return true;
     }
-    PsiDirectory dir = file.getContainingDirectory();
-    if (dir == null) {
-      dir = PsiManager.getInstance(project).findDirectory(file.getVirtualFile().getParent());
-    }
+    PsiDirectory dir = getPsiDirectory(project, file);
     if (dir == null) {
       // unable to determine current file's folder to create new include file later on
       return false;
@@ -39,9 +39,30 @@ public class AsciiDocExtractIntention extends Intention {
     return false;
   }
 
+  @Nullable
+  public static PsiDirectory getPsiDirectory(Project project, PsiFile file) {
+    PsiDirectory dir = file.getContainingDirectory();
+    if (dir == null && project != null) {
+      // special handling for language injection
+      VirtualFile vf = file.getVirtualFile();
+      if (vf.getParent() == null && vf instanceof VirtualFileWindow) {
+        vf = ((VirtualFileWindow) vf).getDelegate();
+      }
+      vf = vf.getParent();
+      if (vf != null) {
+        dir = PsiManager.getInstance(project).findDirectory(vf);
+      }
+    }
+    return dir;
+  }
+
   @Override
   public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-    final ExtractIncludeDialog extractIncludeDialog = new ExtractIncludeDialog(project, editor, file);
+    PsiDirectory dir = getPsiDirectory(project, file);
+    if (dir == null) {
+      return;
+    }
+    final ExtractIncludeDialog extractIncludeDialog = new ExtractIncludeDialog(project, editor, file, dir);
     extractIncludeDialog.show();
   }
 
