@@ -45,7 +45,7 @@ class KrokiProcessor
       # If "subs" attribute is specified, substitute accordingly.
       # Be careful not to specify "specialcharacters" or your diagram code won't be valid anymore!
       if (subs = attrs['subs'])
-        diagram_text = parent.apply_subs(diagram_text, parent.resolve_subs(subs), true)
+        diagram_text = parent.apply_subs(diagram_text, parent.resolve_subs(subs))
       end
       role = attrs['role']
       block_id = attrs['id']
