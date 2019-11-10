@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.18 (work in progress)
+=== 0.30.18
 
 - fix extract include of snippet with language injection
 - fix `subs` option for diagrams when using Kroki (thanks to @Mogztter) (#365, #366)
