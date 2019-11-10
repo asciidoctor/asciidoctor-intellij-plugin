@@ -1,8 +1,14 @@
 = Features of the AsciiDoc IntelliJ plugin
 
 :experimental:
-:icons: font
-
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
 :uri-kroki: https://kroki.io
 :uri-asciidoctor-diagrams-gh: https://github.com/asciidoctor/asciidoctor-diagram
 :uri-asciidoctor-diagrams-execs: {uri-asciidoctor-diagrams-gh}#specifying-diagram-generator-paths
