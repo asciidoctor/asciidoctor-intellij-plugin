@@ -182,6 +182,7 @@
                               implementationClass="org.asciidoc.intellij.actions.smartEnter.AsciiDocSmartEnterProcessor"/>
     <spellchecker.support language="AsciiDoc"
                           implementationClass="org.asciidoc.intellij.AsciiDocSpellcheckingStrategy"/>
+    <spellchecker.bundledDictionaryProvider implementation="org.asciidoc.intellij.AsciiDocBundledDictionaryProvider" />
     <lang.commenter language="AsciiDoc" implementationClass="org.asciidoc.intellij.AsciiDocCommenter"/>
     <extendWordSelectionHandler implementation="org.asciidoc.intellij.editor.ExtendWordSelectionHandler"/>
     <braceMatcher filetype="AsciiDoc" implementationClass="org.asciidoc.intellij.braces.AsciiDocBraceMatcher"/>

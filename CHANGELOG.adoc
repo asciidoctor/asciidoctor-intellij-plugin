@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.19
+
+- added a bundled dictionary for common Asciidoctor terms
+
 === 0.30.18
 
 - fix extract include of snippet with language injection
