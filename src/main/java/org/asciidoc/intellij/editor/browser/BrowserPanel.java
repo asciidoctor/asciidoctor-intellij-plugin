@@ -224,11 +224,14 @@ public class BrowserPanel implements Closeable {
     }
 
     /* the same as above for links to local resources */
-    pattern = Pattern.compile("<a ([^>])*href=\"([^:\"]*)\"");
+    pattern = Pattern.compile("<a ([^>])*href=\"([^#:\"]*)\"");
     matcher = pattern.matcher(html);
     while (matcher.find()) {
       final MatchResult matchResult = matcher.toMatchResult();
       String other = matchResult.group(1);
+      if (other == null) {
+        other = "";
+      }
       String file = matchResult.group(2);
       if (file.startsWith("image?") || file.startsWith("source?")) {
         continue;
@@ -282,6 +285,9 @@ public class BrowserPanel implements Closeable {
     while (matcher.find()) {
       final MatchResult matchResult = matcher.toMatchResult();
       String other = matchResult.group(1);
+      if (other == null) {
+        other = "";
+      }
       String file = matchResult.group(2);
       if (file.startsWith("image?")) {
         continue;

@@ -612,6 +612,9 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     while (matcher.find()) {
       final MatchResult matchResult = matcher.toMatchResult();
       String other = matchResult.group(1);
+      if (other == null) {
+        other = "";
+      }
       String file = matchResult.group(2);
       try {
         file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
