@@ -125,6 +125,37 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
     Assert.assertTrue(html.contains(expectedContent));
   }
 
+  public void testShouldRenderBlockdiagWithSubstUsingKroki() {
+    AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
+      SplitFileEditor.SplitEditorLayout.SPLIT,
+      JavaFxHtmlPanelProvider.INFO,
+      AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
+      SafeMode.UNSAFE,
+      new HashMap<>(),
+      true,
+      true,
+      true,
+      "",
+      true,
+      true,
+      true,
+      ""));
+    try {
+      String html = asciidoc.render(":action: generates\n" +
+        "\n" +
+        "[blockdiag,block-diag,svg,subs=+attributes]\n" +
+        "----\n" +
+        "blockdiag {\n" +
+        "  Kroki -> {action} -> \"Block diagrams\";\n" +
+        "  Kroki -> is -> \"very easy!\";\n" +
+        "}\n" +
+        "----\n", Collections.emptyList());
+      Assert.assertTrue(html.contains("https://kroki.io/blockdiag/png/eNpLyslPzk7JTExXqOZSUPAuys_OVNC1U0hPzUstSixJLQZxlJxAihRAqooSc4uVrJFVZkKUlKUWVSqkJhZXKgKlawGuixqn"));
+    } finally {
+      AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
+    }
+  }
+
   public void testShouldRenderErdUsingKroki() {
     AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
       SplitFileEditor.SplitEditorLayout.SPLIT,
