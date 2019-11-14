@@ -4,18 +4,23 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.problems.Problem;
 import com.intellij.problems.WolfTheProblemSolver;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
+import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
+import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFile;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoctor.log.LogRecord;
 import org.asciidoctor.log.Severity;
@@ -151,6 +156,15 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
           .append(")");
       }
       annotation.setTooltip(sb.toString());
+      if (logRecord.getMessage().startsWith("include file not found")) {
+        Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+        if (document != null) {
+          PsiElement element = file.findElementAt(document.getLineStartOffset(lineNumberForAnnotation));
+          if (element != null && element.getParent() instanceof AsciiDocBlockMacro) {
+            annotation.registerFix(new AsciiDocCreateMissingFile((AsciiDocBlockMacro) element.getParent()));
+          }
+        }
+      }
       if (severity.compareTo(HighlightSeverity.ERROR) >= 0) {
         problems.add(theProblemSolver.convertToProblem(file.getVirtualFile(), lineNumberForAnnotation, 0, new String[]{logRecord.getMessage()}));
       }

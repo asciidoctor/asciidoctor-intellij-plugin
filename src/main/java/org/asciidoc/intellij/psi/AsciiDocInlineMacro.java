@@ -51,7 +51,7 @@ public class AsciiDocInlineMacro extends ASTWrapperPsiElement {
             references.add(
               new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
                 TextRange.create(bodyNode.getPsi().getStartOffsetInParent() + start, bodyNode.getPsi().getStartOffsetInParent() + i),
-                false)
+                true)
             );
             start = i + 1;
           }
@@ -67,7 +67,7 @@ public class AsciiDocInlineMacro extends ASTWrapperPsiElement {
     return super.getReferences();
   }
 
-  public String getMacroName() {
+  private String getMacroName() {
     ASTNode idNode = getNode().findChildByType(AsciiDocTokenTypes.INLINE_MACRO_ID);
     if (idNode == null) {
       throw new IllegalStateException("Parser failure: block macro without ID found: " + getText());

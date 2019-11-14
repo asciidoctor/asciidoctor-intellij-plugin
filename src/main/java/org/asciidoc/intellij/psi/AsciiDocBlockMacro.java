@@ -59,7 +59,7 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
             references.add(
               new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
                 TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
-                false)
+                true)
             );
             start = i + 1;
           }

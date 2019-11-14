@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.19 (work in progress)
 
 - added a bundled dictionary for common Asciidoctor terms
+- added quick fix for missing include file (#363)
 
 === 0.30.18
 

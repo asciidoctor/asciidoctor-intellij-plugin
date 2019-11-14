@@ -20,7 +20,7 @@ import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileInfoManager;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.CommonProcessors;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.IncorrectOperationException;
 import gnu.trove.THashSet;
 import org.asciidoc.intellij.completion.AsciiDocCompletionContributor;
 import org.jetbrains.annotations.NotNull;
@@ -40,13 +40,83 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   private String key;
   private String macroName;
   private String base;
+
+  public boolean isFolder() {
+    return isFolder;
+  }
+
+  public boolean canBeCreated(PsiDirectory parent) {
+    if (resolve() != null) {
+      return false;
+    }
+    String name = getRangeInElement().substring(myElement.getText());
+    name = resolveAttributes(name);
+    if (name != null) {
+      try {
+        if (isFolder) {
+          parent.checkCreateFile(name);
+        } else {
+          parent.checkCreateSubdirectory(name);
+        }
+      } catch (IncorrectOperationException e) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @Nullable
+  private String resolveAttributes(String val) {
+    Matcher matcher = ATTRIBUTES.matcher(val);
+    while (matcher.find()) {
+      String attributeName = matcher.group(1);
+      List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName);
+      if (declarations.size() == 1) {
+        String attrVal = declarations.get(0).getAttributeValue();
+        if (attrVal != null) {
+          val = matcher.replaceFirst(Matcher.quoteReplacement(attrVal));
+          matcher = ATTRIBUTES.matcher(val);
+          continue;
+        }
+      } else if (declarations.size() > 1) {
+        return null;
+      }
+      if (attributeName.equals("snippets")) {
+        VirtualFile springRestDocSnippets = AsciiDocUtil.findSpringRestDocSnippets(myElement);
+        if (springRestDocSnippets != null) {
+          val = matcher.replaceFirst(Matcher.quoteReplacement(springRestDocSnippets.getPath()));
+          matcher = ATTRIBUTES.matcher(val);
+        }
+      }
+    }
+    return val;
+  }
+
+
+  public PsiElement createFileOrFolder(PsiDirectory parent) {
+    if (canBeCreated(parent)) {
+      String name = getRangeInElement().substring(myElement.getText());
+      name = resolveAttributes(name);
+      if (name != null) {
+        if (isFolder) {
+          return parent.createSubdirectory(name);
+        } else {
+          return parent.createFile(name);
+        }
+      }
+    }
+    return null;
+  }
+
   private final boolean isFolder;
 
   /**
    * Create a new file reference.
+   *
    * @param isFolder if the argument is a folder, tab will not add a '/' automatically
    */
-  public AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, TextRange textRange, boolean isFolder) {
+  public AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, TextRange textRange,
+                               boolean isFolder) {
     super(element, textRange);
     this.macroName = macroName;
     this.base = base;
@@ -141,7 +211,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
     final THashSet<PsiElement> set = new THashSet<>(collector.getResults());
     final PsiElement[] candidates = PsiUtilCore.toPsiElementArray(set);
-    List<LookupElementBuilder> additionalItems = ContainerUtil.newArrayList();
+    List<LookupElementBuilder> additionalItems = new ArrayList<>();
 
     List<ResolveResult> results = new ArrayList<>();
     if (base.endsWith("/") || base.length() == 0) {
@@ -268,15 +338,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   @Override
+  @NotNull
   public TextRange getRangeInElement() {
     return super.getRangeInElement();
   }
 
   private PsiElement resolve(String fileName) {
     PsiElement element = getElement();
-    if (element == null) {
-      return null;
-    }
     PsiDirectory startDir = element.getContainingFile().getContainingDirectory();
     if (startDir == null) {
       startDir = element.getContainingFile().getOriginalFile().getContainingDirectory();

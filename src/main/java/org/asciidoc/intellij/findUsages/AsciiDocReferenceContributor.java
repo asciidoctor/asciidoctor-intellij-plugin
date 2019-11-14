@@ -151,7 +151,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
           references.add(
             new AsciiDocFileReference(element, "link", file.substring(0, start),
               TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
-              false)
+              true)
           );
           start = i + 1;
         }
