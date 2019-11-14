@@ -9,7 +9,7 @@ table.tableblock, th.tableblock, td.tableblock{color: #bbbbbb}
 table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{color: #bbbbbb}
 abbr,acronym{color: #bbbbbb}
 table tr th,table tr td{color: #bbbbbb}
-kbd{color: #bbbbbb}
+kbd{background-color: #626262 !important;color: #bbbbbb;-webkit-box-shadow: 0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #777 inset;box-shadow: 0 1px 0 rgba(0,0,0,0.2),0 0 0 .1em #777 inset}
 .menuseq,.menu{color: #bbbbbb}
 #footer{color: #bbbbbb}
 tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color: #bbbbbb}
