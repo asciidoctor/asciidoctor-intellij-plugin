@@ -24,6 +24,11 @@ public class AsciiDocCreateMissingFileInspectionTest extends AsciiDocQuickFixTes
 
   @Override
   protected String getBasePath() {
-    return "inspections/missingfile";
+    // highlighting contains a "C:" in the path name on windows, therefore different fixtures
+    if (System.getProperty("os.name").toLowerCase().contains("win")) {
+      return "inspections/missingfile-win";
+    } else {
+      return "inspections/missingfile";
+    }
   }
 }

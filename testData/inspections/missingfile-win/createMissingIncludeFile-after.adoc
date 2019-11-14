@@ -1,0 +1,3 @@
+:var: ab
+
+include::{var}/missing.adoc[]
