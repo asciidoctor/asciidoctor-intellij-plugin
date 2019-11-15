@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - added a bundled dictionary for common Asciidoctor terms
 - added quick fix for missing include file (#363)
 - fix darcula kbd and coderay line numbers background color (thanks to @bric3) (#368)
+- preserve custom CSS classes (aka roles) for preview window
 
 === 0.30.18
 
