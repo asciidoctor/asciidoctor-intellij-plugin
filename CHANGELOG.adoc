@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.19 (work in progress)
+=== 0.30.19 (preview, available from Github releases)
 
 - added a bundled dictionary for common Asciidoctor terms
 - added quick fix for missing include file (#363)
