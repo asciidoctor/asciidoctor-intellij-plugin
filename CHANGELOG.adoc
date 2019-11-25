@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.30.20 (work in progress)
 
-- update to AsciidoctorJ PDF v1.5.0-beta.7
+- update to AsciidoctorJ PDF v1.5.0-beta.8
 - adding PDF theme attributes to quick documentation
 
 === 0.30.19 (preview, available from Github releases)
