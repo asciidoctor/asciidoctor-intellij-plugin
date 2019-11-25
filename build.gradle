@@ -99,7 +99,7 @@ dependencies {
   errorprone 'com.google.errorprone:error_prone_core:2.3.2'
   errorproneJavac 'com.google.errorprone:javac:9+181-r4173-1'
   compile 'org.asciidoctor:asciidoctorj-diagram:1.5.18'
-  compile 'org.asciidoctor:asciidoctorj-pdf:1.5.0-beta.7'
+  compile 'org.asciidoctor:asciidoctorj-pdf:1.5.0-beta.8'
   compile 'org.jruby:jruby:9.2.8.0' // TODO: remove JRuby dependency once asciidoctorj has upgraded
   /* snakeyaml is s used by asciidoctorj-pdf, but is actually provided within jruby-stdlib
    * a snakeyaml version in the classpath takes precedence, but IntelliJ includes a version that is too old
