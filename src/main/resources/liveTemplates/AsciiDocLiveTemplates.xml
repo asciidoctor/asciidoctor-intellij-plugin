@@ -47,10 +47,10 @@
     </context>
   </template>
   <template name="ad-doc-header-with-attributes" value="= $TITLE$&#10;$NAME$ &lt;$EMAIL_ADDRESS$&gt;&#10;v1.0, $DATE$&#10;:toc:&#10;:imagesdir: assets/images&#10;:homepage: http://asciidoctor.org" description="Header with attributes" toReformat="false" toShortenFQNames="true">
-    <variable name="TITLE" expression="" defaultValue="My Document's Title" alwaysStopAt="true" />
+    <variable name="TITLE" expression="" defaultValue="&quot;My Document's Title&quot;" alwaysStopAt="true" />
     <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="EMAIL_ADDRESS" expression="" defaultValue="" alwaysStopAt="true" />
-    <variable name="DATE" expression="date(&quot;yyyy-mm-dd&quot;)" defaultValue="" alwaysStopAt="true" />
+    <variable name="DATE" expression="date(&quot;yyyy-MM-dd&quot;)" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="AsciiDoc" value="true" />
     </context>
@@ -78,8 +78,8 @@
     </context>
   </template>
  <template name="ad-list-checklist" value="- [$CHECKED$] $TITLE$&#10;$END$" description="Checklist" toReformat="false" toShortenFQNames="true">
-    <variable name="CHECKED" expression="" defaultValue="x" alwaysStopAt="true" />
-    <variable name="TITLE" expression="" defaultValue="An Item" alwaysStopAt="true" />
+    <variable name="CHECKED" expression="" defaultValue="&quot;x&quot;" alwaysStopAt="true" />
+    <variable name="TITLE" expression="" defaultValue="&quot;An Item&quot;" alwaysStopAt="true" />
     <context>
       <option name="AsciiDoc" value="true" />
     </context>
@@ -147,13 +147,13 @@
     </context>
   </template>
   <template name="ad-video" value="video::$FILENAME$[]&#10;&#10;$END$" description="Video" toReformat="false" toShortenFQNames="true">
-    <variable name="FILENAME" expression="" defaultValue="video_file.mp4" alwaysStopAt="true" />
+    <variable name="FILENAME" expression="" defaultValue="&quot;video_file.mp4&quot;" alwaysStopAt="true" />
     <context>
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
   <template name="ad-video-options" value="video::$FILENAME$[width=640, start=60, end=140, options=autoplay]&#10;&#10;$END$" description="Video options" toReformat="false" toShortenFQNames="true">
-    <variable name="FILENAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="FILENAME" expression="" defaultValue="&quot;video_file.mp4&quot;" alwaysStopAt="true" />
     <context>
       <option name="AsciiDoc" value="true" />
     </context>
