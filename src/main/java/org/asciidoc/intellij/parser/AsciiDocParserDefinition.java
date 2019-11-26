@@ -12,20 +12,28 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.asciidoc.intellij.lexer.AsciiDocLexer;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
-import org.asciidoc.intellij.psi.AsciiDocBlock;
+import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
+import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
+import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.asciidoc.intellij.psi.AsciiDocBlockAttributes;
+import org.asciidoc.intellij.psi.AsciiDocBlockId;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocFile;
-import org.asciidoc.intellij.psi.AsciiDocListing;
+import org.asciidoc.intellij.psi.AsciiDocInlineMacro;
+import org.asciidoc.intellij.psi.AsciiDocLink;
+import org.asciidoc.intellij.psi.AsciiDocRef;
 import org.asciidoc.intellij.psi.AsciiDocSection;
+import org.asciidoc.intellij.psi.AsciiDocStandardBlock;
+import org.asciidoc.intellij.psi.AsciiDocTitle;
+import org.asciidoc.intellij.psi.AsciiDocUrl;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
  */
 public class AsciiDocParserDefinition implements ParserDefinition {
-  private final TokenSet WHITESPACE = TokenSet.create(AsciiDocTokenTypes.LINE_BREAK);
-  private final TokenSet COMMENTS = TokenSet.create(AsciiDocTokenTypes.LINE_COMMENT, AsciiDocTokenTypes.BLOCK_COMMENT);
+  private static final TokenSet WHITESPACE = TokenSet.create(AsciiDocTokenTypes.LINE_BREAK, AsciiDocTokenTypes.WHITE_SPACE, AsciiDocTokenTypes.WHITE_SPACE_MONO);
+  private static final TokenSet COMMENTS = TokenSet.create(AsciiDocTokenTypes.LINE_COMMENT, AsciiDocTokenTypes.BLOCK_COMMENT);
 
   @NotNull
   @Override
@@ -70,14 +78,38 @@ public class AsciiDocParserDefinition implements ParserDefinition {
     if (node.getElementType() == AsciiDocElementTypes.BLOCK_MACRO) {
       return new AsciiDocBlockMacro(node);
     }
+    if (node.getElementType() == AsciiDocElementTypes.INLINE_MACRO) {
+      return new AsciiDocInlineMacro(node);
+    }
     if (node.getElementType() == AsciiDocElementTypes.BLOCK) {
-      return new AsciiDocBlock(node);
+      return new AsciiDocStandardBlock(node);
     }
     if (node.getElementType() == AsciiDocElementTypes.BLOCK_ATTRIBUTES) {
       return new AsciiDocBlockAttributes(node);
     }
-    if (node.getElementType() == AsciiDocElementTypes.LISTING) {
-      return new AsciiDocListing(node);
+    if (node.getElementType() == AsciiDocElementTypes.BLOCKID) {
+      return new AsciiDocBlockId(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.REF) {
+      return new AsciiDocRef(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.LINK) {
+      return new AsciiDocLink(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.ATTRIBUTE_DECLARATION) {
+      return new AsciiDocAttributeDeclaration(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.ATTRIBUTE_REF) {
+      return new AsciiDocAttributeReference(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.ATTRIBUTE_DECLARATION_NAME) {
+      return new AsciiDocAttributeDeclarationName(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.URL) {
+      return new AsciiDocUrl(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.TITLE) {
+      return new AsciiDocTitle(node);
     }
     throw new UnsupportedOperationException("Unknown node type " + node.getElementType());
   }

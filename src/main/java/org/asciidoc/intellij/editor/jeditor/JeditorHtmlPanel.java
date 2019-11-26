@@ -3,6 +3,7 @@ package org.asciidoc.intellij.editor.jeditor;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,6 +30,8 @@ import static org.asciidoc.intellij.util.UIUtil.loadStyleSheet;
 final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
   private static final int FOCUS_ELEMENT_DY = 100;
 
+  private Logger log = Logger.getInstance(JeditorHtmlPanel.class);
+
   @NotNull
   private final JEditorPane jEditorPane;
   @NotNull
@@ -37,15 +40,18 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
   private String myLastRenderedHtml = "";
 
 
-  public JeditorHtmlPanel(Document document) {
+  JeditorHtmlPanel(Document document) {
     jEditorPane = new JEditorPane();
     scrollPane = new JBScrollPane(jEditorPane);
     // Setup the editor pane for rendering HTML.
     File baseDir = new File("");
-    VirtualFile parent = FileDocumentManager.getInstance().getFile(document).getParent();
-    if (parent != null) {
-      // parent will be null if we use Language Injection and Fragment Editor
-      baseDir = new File(parent.getCanonicalPath());
+    VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+    if (file != null) {
+      VirtualFile parent = file.getParent();
+      if (parent != null && parent.getCanonicalPath() != null) {
+        // parent will be null if we use Language Injection and Fragment Editor
+        baseDir = new File(parent.getCanonicalPath());
+      }
     }
     final HTMLEditorKit kit = new AsciiDocEditorKit(baseDir);
 
@@ -61,7 +67,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
     jEditorPane.setEditorKit(kit);
     jEditorPane.setEditable(false);
     // use this to prevent scrolling to the end of the pane on setText()
-    ((DefaultCaret)jEditorPane.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+    ((DefaultCaret) jEditorPane.getCaret()).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
   }
 
   private boolean isDarcula() {
@@ -91,17 +97,16 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
     javax.swing.text.Document doc = kit.createDefaultDocument();
     try {
       kit.read(new StringReader(html), doc, 0);
-    }
-    catch (IOException e) {
-      String message = "Error rendering asciidoctor: " + e.getMessage();
+    } catch (IOException ex) {
+      String message = "Error setting HTML: " + ex.getMessage();
+      log.error(message, ex);
       Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
-          .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
+        .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
       // increase event log counter
       notification.setImportant(true);
       Notifications.Bus.notify(notification);
-    }
-    catch (BadLocationException e) {
-      e.printStackTrace();
+    } catch (BadLocationException e) {
+      log.error("bad location", e);
     }
 
     updatePreviewOnEDT(doc);
@@ -113,13 +118,10 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
      *
      * @see http://en.wikipedia.org/wiki/Event_dispatching_thread)
      */
-    UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        jEditorPane.setDocument(doc);
-        Rectangle d = jEditorPane.getVisibleRect();
-        jEditorPane.setSize((int)d.getWidth(), (int)jEditorPane.getSize().getHeight());
-      }
+    UIUtil.invokeAndWaitIfNeeded((Runnable) () -> {
+      jEditorPane.setDocument(doc);
+      Rectangle d = jEditorPane.getVisibleRect();
+      jEditorPane.setSize((int) d.getWidth(), (int) jEditorPane.getSize().getHeight());
     });
   }
 
@@ -131,9 +133,6 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
   @Override
   public void scrollToLine(int line, int lineCount) {
     // NOOP
-  }
-
-  private void adjustBrowserSize() {
   }
 
   @Override

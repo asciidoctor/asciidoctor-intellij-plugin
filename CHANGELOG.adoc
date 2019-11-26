@@ -1,0 +1,700 @@
+= Asciidoctor IntelliJ Plugin Changelog
+
+== About
+
+This document provides a high-level view of the changes introduced by release.
+
+[[releasenotes]]
+== Release notes
+
+=== 0.30.20 (work in progress)
+
+- update to AsciidoctorJ PDF v1.5.0-beta.8
+- adding PDF theme attributes to quick documentation
+
+=== 0.30.19 (preview, available from Github releases)
+
+- added a bundled dictionary for common Asciidoctor terms
+- added quick fix for missing include file (#363)
+- fix darcula kbd and coderay line numbers background color (thanks to @bric3) (#368)
+- preserve custom CSS classes (aka roles) for preview window
+
+=== 0.30.18
+
+- fix extract include of snippet with language injection
+- fix `subs` option for diagrams when using Kroki (thanks to @Mogztter) (#365, #366)
+
+=== 0.30.17 (preview, available from Github releases)
+
+- update to AsciidoctorJ PDF v1.5.0-beta.7
+- tuning spell checking for Grazie for reference and link texts (#97)
+- allow extract include of snippet with language injection
+- added some live templates `ad-config...` for configuration attributes (thanks to @rdmueller) (#358, #361)
+- show documentation for attributes also when cursor is set in attribute value, not only when cursor is placed in attribute name
+- fix background color for code/monospace in darcula theme (thanks to @bric3) (#364)
+
+=== 0.30.16
+
+- upgrading to version 2019.2-5.3.stable of the https://plugins.jetbrains.com/plugin/12175-grazie/[Grazie plugin], improving performance and spell checking in different languages (#97)
+
+=== 0.30.15 (preview, available from Github releases)
+
+- support `+++[link=...]+++` in browser preview for navigation to images and other AsciiDoc sources of the project (#360)
+- support interactive mode SVG in browser and JavaFX preview (#360)
+
+=== 0.30.14 (preview, available from Github releases)
+
+- adding the Asciidoctor logo as the plugin's logo (thanks to @ardlank) (#356, #357)
+- experimental support for grammar checking in different languages using the https://plugins.jetbrains.com/plugin/12175-grazie/[Grazie plugin] (#97)
+
+=== 0.30.13 (preview, available from Github releases)
+
+- fixing exception when using keys to toggle formatting (#242)
+
+=== 0.30.12 (preview, available from Github releases)
+
+- quick-fix for markdown style listings (thanks to @FatihBozik) (#297, #355)
+- improve formatting bold/italic/... using editor actions (#242)
+- toggle formatting on selected text using formatting characters (#242)
+
+=== 0.30.11 (preview, available from Github releases)
+
+- upgrade to asciidoctorj-pdf:1.5.0-beta.6
+- add HTML export to editor actions (thanks to @balabarath) (#349, #354)
+- avoid exception "`Already disposed: Project`" when closing one out of many currently open projects
+
+=== 0.30.10 (preview, available from Github releases)
+
+- first version of improved "`Extend Selection`" (#341)
+- preserve cursor position and selection when toggling title (thanks to @Mogztter) (#341, #344)
+- improved cursor placement and selection for formatting actions like bold/italic (#341)
+- add support for kroki.io when rendering diagrams in the preview (thanks to @Mogztter) (#287, #346)
+- include content via URLs (https or http) when `allow-uri-read` attribute set (#348, #138)
+- allow configuration of safe mode in plugin's configuration (thanks to @bit-man) (#347, #351)
+- support `:prewrap!:` in preview so that listings and other pre-formatted content don't wrap (#350)
+
+=== 0.30.9 (preview, available from Github releases)
+
+- auto-save files when switching to AsciiDoc editor to ensure preview shows latest content
+- clean up handling of input streams throughout the plugin
+- don't switch focus to editor when browsing for example TODO list (#332)
+- add menu bar item to mark/highlight selected text (#134)
+- clean up stream resource leak (#342)
+
+=== 0.30.8 (preview, available from Github releases)
+
+- highlight warnings for Spring REST Docs at line in editor
+- upgrade to JRuby 9.2.8.0 to avoid assertion errors when creating PDFs (#337)
+
+=== 0.30.7
+
+- upgrade to asciidoctorj-pdf:1.5.0-beta.5 (#325)
+- allow unset of attribute after the first colon
+- regression: when clicking an external link in the preview, don't navigate to external site, but open it in external browser only (#335)
+- regression: when right-clicking on an image, show popup to save image (#335)
+
+=== 0.30.6
+
+- support attribute references in block and block macro attributes and titles (#327)
+
+=== 0.30.5 (preview, available from Github releases)
+
+- fix singleton for prepending .asciidoctorconfig information (#325)
+
+=== 0.30.4 (preview, available from Github releases)
+
+- while JavaFX preview forces PNG diagram for readability, browser and PDF should use diagram in the format specified in the source (#325)
+- add editor notification with link to Wiki page for spring boot restdocs (#312)
+- fix chapter numbers for included snippets (#312)
+
+=== 0.30.3 (preview, available from Github releases)
+
+- support operation block macro in https://docs.spring.io/spring-restdocs/docs/current/reference/html5/[spring-restdocs] and auto-detect the snippets folder (#312)
+- prepended config via plugin shouldn't add blank line that breaks document title (#325)
+- upgrade to asciidoctorj-pdf:1.5.0-beta.4 (#325)
+- support HTML blanks and HTML entities in image file names for preview (#328)
+
+=== 0.30.2 (preview, available from Github releases)
+
+- support .asciidoctorconfig for PDF creation (#325)
+- fix rendering problem with LaTeX style math (#326)
+- improved logging for math problems, plus popup hint with MathML error message in preview (#326)
+
+=== 0.30.1 (preview, available from Github releases)
+
+- fix 'unable to read file' when creating a PDF and working with extensions (#325)
+
+=== 0.30.0 (preview, available from Github releases)
+
+- support creating a PDF from the IDE based on asciidoctorj-pdf:1.5.0-beta.2 (#325)
+
+=== 0.29.11 (preview, available from Github releases)
+
+- No end of sentence after a digit
+- no end of sentence after colon in middle of line, but preserve line break after colon at end of line
+- handle pre-block for block-macros when creating references
+
+=== 0.29.10
+
+- fixing dependency problem when running on IDEs like RubyMine (#323)
+
+=== 0.29.9
+
+- tuning end-of-sentence detection when potential end of sentence followed by a lowercase character
+
+=== 0.29.8 (preview, available from Github releases)
+
+- add slash also for mouse and enter key when selecting path elements during auto-completing (#320)
+- support unset attribute in lexer, parser and highlighting
+
+=== 0.29.7 (preview, available from Github releases)
+
+- support `asciidoctorconfigdir` in referenced attributes when autocompleting directories and files (#320)
+
+=== 0.29.6 (preview, available from Github releases)
+
+- support autocomplete for includes with attributes in listings (#320)
+- improved autocomplete for directories by handling '/', tab and other characters intuitively (#320)
+
+=== 0.29.5 (preview, available from Github releases)
+
+- support legacy `+` for continuations in attribute value declarations, with quickfix to convert (#318)
+- support include block macro after level-0 headers, support appendix in book style (#319)
+
+=== 0.29.4 (preview, available from Github releases)
+
+- preview no longer increments figure numbers by two instead of one (#317)
+
+=== 0.29.3 (preview, available from Github releases)
+
+- support syntax highlighting within definition list (#307)
+- support asciidoctorconfigdir attribute replacements in dependent variables for macros (#307)
+- restore navigation on path elements for nested attributes in macros (#307)
+- don't add new line after heading for attributes (#314)
+- allow attributes to be resolved in file links, allow absolute paths in links and includes (#307)
+- add highlighting for attribute references in several descriptions (#307)
+
+=== 0.29.2 (preview, available from Github releases)
+
+- restore standard copy-and-paste functionality if contents can be represented as text
+- avoid mistaking typographic quote end as start of monospace
+- recognize title and other block starting elements after a continuation
+- prevent out of bounds exception when handling warning messages returned from Asciidoctor parsing (#311)
+- support author information and attributes in documentation header for reformatting (#314)
+- support attribute references in definition list and `++`-escaped links (#307)
+
+=== 0.29.1 (preview, available from Github releases)
+
+- improve handling of emails and links in editor for Ctrl+click and make-link action (#307)
+- add navigatable web references for attribute values, also decode HTML entities (#307)
+- allow attribute references nested in attribute declarations (#307)
+- no-flicker preview for JavaFX will is now enabled by default (#241)
+
+=== 0.28.27
+
+- restore standard copy-and-paste functionality if contents can be represented as text
+
+=== 0.28.26
+
+- restore compatibility with non-Java IDEs, allow pre-bundling of plugin with IDE (#309)
+
+=== 0.28.25
+
+- security review for in-browser preview, adding mac to prevent browser to retrieve arbitrary file, hiding referrer from externally retrieved resources (#303)
+
+=== 0.28.24 (preview, available from Github releases)
+
+- support undo for paste-image and send out notifications to add files to VCS (#298)
+- fix rendering of images in flicker-free fast preview (#241)
+- prevent NPE when opening AsciiDoc documents or fragments in browser (#303)
+- inspection to convert Markdown-style horizontal rules to AsciiDoc-style horizontal rules (thanks to @bbrenne) (#272, #302)
+
+=== 0.28.23 (preview, available from Github releases)
+
+- Paste image from clipboard (thanks to @bbrenne) (#298, #300)
+
+=== 0.28.22
+
+- Wrong test name in gutter when running tests, BrowserUrlProvider eagerly works on all files (#301)
+
+=== 0.28.21
+
+- fixing autocomplete for link: when brackets already provided
+- avoid flickering Math preview by replacing contents in Preview via JavaScript (#241)
+
+=== 0.28.20
+
+- Linking to Wiki page if JavaFX initialization is stuck (#299)
+
+=== 0.28.19
+
+- prevent "`Initializing...`" message in preview of empty file
+
+=== 0.28.18 (preview, available from Github releases)
+
+- detecting a stuck JavaFX initialization (#299)
+
+=== 0.28.17 (preview, available from Github releases)
+
+- tuning state resetting for lexer (#289)
+
+=== 0.28.16 (preview, available from Github releases)
+
+- adding code style settings for reformat (#289)
+- rework inline macro for false positives (#275)
+- ifdef/ifndef/endif body references attributes in (#275)
+- reset formatting after a blank line (#289)
+- navigate to auto-generated IDs of sections
+
+=== 0.28.15 (preview, available from Github releases)
+
+- respect imagesdir when resolving image paths in source file (#275)
+- resolve attribute names in macro definition (#275)
+- auto-completion of files should include ".." (#253)
+
+=== 0.28.14 (preview, available from Github releases)
+
+- lexer and highlighting support blocks with unbalanced or no delimiters (#289)
+
+=== 0.28.13 (preview, available from Github releases)
+
+- lexer and highlighting support several new tokens (callouts, admonitions, markdown style listings, definition lists) (#289)
+- reformat supports break-after-end-of-sentence, but still experimental (#289)
+
+=== 0.28.12 (preview, available from Github releases)
+
+- rework zoom for touchpads (#295)
+- added setting to disable error/warning highlighting in editor (#296)
+
+=== 0.28.11 (preview, available from Github releases)
+
+- inject absolute location of .asciidoctorconfig file (thanks to @rdmueller) (#280)
+- support for '.adoc' extension of .asciidoctorconfig file (thanks to @rdmueller) (#293, #294)
+- new table size selector using the mouse (thanks to @bbrenne) (#92, #290)
+- create tables from clipboard and converting CSV/TSV format to AsciiDoc (thanks to @bbrenne) (#92, #290)
+- better zoom support for touchpads, adding min/max zoom level (#295)
+
+=== 0.28.10 (preview, available from Github releases)
+
+- inlining and extracting of includes (#271)
+
+=== 0.28.9 (preview, available from Github releases)
+
+- experimental support reformatting of AsciiDoc sources, needs to be enabled in the settings (#289)
+- "`Open in Browser`" now opens the contents of the preview in the selected browser including rendered diagrams (#82)
+
+=== 0.28.8 (preview, available from Github releases)
+
+- investigating problem that parts of the UI are not refreshing (#288)
+
+=== 0.28.7
+
+- Save image context menu now showing up on macOS (thanks to @wimdeblauwe) (#283)
+
+=== 0.28.6
+
+- fixing NPE introduced when detecting potentially blurry preview (#284)
+
+=== 0.28.5 (preview, available from Github releases)
+
+- support zoom in preview window (thanks to @ianflett) (#199, #279)
+- save generated images from preview (thanks to @bbrenne) (#245, #278)
+
+=== 0.28.4 (preview, available from Github releases)
+
+- autocompletion for attributes and attribute references (`:attr:` and `\{attr}`) (thanks to @bbrenne) (#277)
+- renaming and find-usage for attribute names (#243)
+- upgrade to AsciidoctorJ 2.1.0 and Asciidoctor 2.0.10
+- statement completion adds newline if at end of file (#276)
+- listing and other delimiters recognized at end of file (#276)
+
+=== 0.28.3
+
+- brace matching for attribute start/end (`:attr:` and `\{attr}`)
+- syntax highlighting for enumerations (`.`)
+- fixing "`Edit Fragment...`" for listings (#276)
+
+=== 0.28.2
+
+- fixed parsing for old-style headers (#274)
+
+=== 0.28.1 (preview, available from Github releases)
+
+- new automated release mechanism, also EAP plugin repository
+
+=== 0.26.20 (preview, available from Github releases)
+
+- link to Wiki how to fix blurry preview (#213)
+- monospace-bold preview now working (#193)
+
+=== 0.26.19 (preview, available from Github releases)
+
+- tuning parsing and documentation (#267)
+- new inspection to shorten page break (`<<<`) where possible
+- `\link:file#id[]` now with navigation and autocomplete (thanks to @bbrenne) (#273)
+
+=== 0.26.18 (preview, available from Github releases)
+
+- resolve the last reference in structure view as this will be the file; the others are the subdirectories (#267)
+- refactoring or shortened descriptions; now in sync for structure view and breadcrumbs (#267)
+- allow browser to cache static content to avoid flickering (#267)
+- allow more block types, supporting nested blocks, parsing content within blocks (#267)
+- rework folding to show first significant line in block (#267)
+
+=== 0.26.17 (preview, available from Github releases)
+
+- support escaping with backslash (`\`) in editor, avoiding highlighting
+- move to released markdown-to-asciidoc version 1.1 to use proper dependency management (#268)
+- support spell checking on more elements including quotes, examples and comments (#269)
+- fixing autocomplete for file names on `include::[]` within blocks
+
+=== 0.26.16 (preview, available from Github releases)
+
+- show includes and images in structure view, adding icon set for breadcrumbs and structure view, tuning contents (#267)
+
+=== 0.26.15
+
+- fixing equals check for disabled injected languages (#266)
+
+=== 0.26.14
+
+- fixing NullPointerException in settings processing (#266)
+- supporting pass-through inline content
+
+=== 0.26.13
+
+- update to asciidoctorj-diagram:1.5.18
+- breadcrumb support in editor
+
+=== 0.26.12 (preview, available from Github releases)
+
+- supporting blanks in block attributes (#255)
+
+=== 0.26.11 (preview, available from Github releases)
+
+- adding support for GRAPHVIZ_DOT environment variable (#261)
+- adding support for statement completion (ctrl-shift-enter) (#263)
+- language injection can now is now enabled by default and can be disabled for specific languages, and will be disabled when the block has an `include::[]` (#255)
+- includes are now parsed and highlighted inside code blocks (#255)
+
+=== 0.26.10 (preview, available from Github releases)
+
+- Experimental highlighting in code blocks (#255, #262)
+
+=== 0.26.9 (preview, available from Github releases)
+
+- upgrading gradle and JetBrains plugin; now use `gradlew runIde` to start the plugin in development mode
+- allow user to switch left/right and upper/lower in split view (#136)
+- add syntax highlighter to support `\link:file[]` (thanks to @bbrenne) (#259)
+- add syntax highlighter to support attribute:value and {attribute reference} (thanks to @bbrenne) (#260)
+
+=== 0.26.8 (preview, available from Github releases)
+
+- default file encoding for JRuby now UTF-8 if set file encoding is not supported by JRuby (#174)
+
+=== 0.26.7
+
+- fixing error in tree structure; improving test capabilities for parsing (#174)
+
+=== 0.26.6 (preview, available from Github releases)
+
+- improved brace matcher
+- ensure that block IDs are part of next section when folding (#174)
+
+=== 0.26.5 (preview, available from Github releases)
+
+- decouple read action from event thread to avoid error from IDE (#204)
+- highlighting for lexical quotes
+- parsing referenced file from reference (#204)
+
+=== 0.26.4 (preview, available from Github releases)
+
+- Support for relative path links in preview (#256)
+
+=== 0.26.3 (preview, available from Github releases)
+
+- allow folding of sections and blocks (#174)
+
+=== 0.26.2 (preview, available from Github releases)
+
+- allow horizontal split view via settings (#136)
+
+=== 0.26.1 (preview, available from Github releases)
+
+- adding color settings for syntax highlighting (#254)
+
+=== 0.26.0 (preview, available from Github releases)
+
+- support for anchors, block ids and references including linking and refactoring (#252)
+
+=== 0.25.14
+
+- making linking of documents work for standard includes (#204)
+- improved formatting when blank lines are edited, also handling spaces at the end of a line (#248)
+
+=== 0.25.13
+
+- support partitial parsing in lexer to avoid flipping formatting in IntelliJ (#248)
+
+=== 0.25.12 (preview, available from Github releases)
+
+- adding additional rules for constrained formatting (#248)
+
+=== 0.25.11
+
+- moving from jruby-complete to jruby dependency like AsciidoctorJ did for 2.0 (#250)
+
+=== 0.25.10 (preview, available from Github releases)
+
+- improved syntax highlighting for block IDs and references, suppressing message "possible invalid reference" (#249)
+- show error message why preview wasn't rendered in preview (#251)
+
+=== 0.25.9
+
+- adding quote handler (#242)
+- Tuning highlighting for mono and bullet lists (#244)
+- Activating brace highlighting for mono/italic/bold (#244)
+
+=== 0.25.8 (preview, available from Github releases)
+
+- Tuning highlighting italic/bold/mono, adding brace matcher in text (#244)
+
+=== 0.25.7 (preview, available from Github releases)
+
+- Updating to AsciidoctorJ v2.0.0 that includes Asciidoctor 2.0.8
+- adding highlighting for italic/bold/mono (#244)
+- adding brace matcher for attributes
+
+=== 0.25.6 (preview, available from Github releases)
+
+- Updating to AsciidoctorJ v2.0.0-RC.2 that includes Asciidoctor 2.0.6
+- Improved parsing of warnings and errors created by Asciidoctor
+
+=== 0.25.5 (preview, available from Github releases)
+
+- Addding error highlight in tree view
+
+=== 0.25.4 (preview, available from Github releases)
+
+- restart annotation processing for current file once it gets focused or settings change (#225)
+
+=== 0.25.3 (preview, available from Github releases)
+
+- improve offset calculation for .asciidoctorconfig files (#225)
+
+=== 0.25.2 (preview, available from Github releases)
+
+- annotate the file in the editor instead of logging to console for asciidoctor messages (#225)
+
+=== 0.25.1 (preview, available from Github releases)
+
+- Fixing preview line calculation when using .asciidoctorconfig-files
+- Updating to AsciidoctorJ v2.0.0-RC.1 that includes Asciidoctor 2.0.2
+
+=== 0.25.0 (preview, available from Github releases)
+
+- Updating to AsciidoctorJ v1.7.0-RC.1 that includes Asciidoctor 2.0.1 and Asciidoctor Diagram 1.5.16
+
+=== 0.24.4
+
+- Fixing preview line calculation when using .asciidoctorconfig-files
+
+=== 0.24.3
+
+- Filter out problematic pass-through JavaScript with Twitter being the first candidate (#235)
+
+=== 0.24.2 (preview, available from Github releases)
+
+- Support JDK11 as of IntelliJ 2019.1 EAP (#238)
+
+=== 0.24.1
+
+- Upgrade to AsciidoctorJ 1.6.2 and JRuby 9.2.6.0 (it's still backed by Asciidoctor 1.5.8)
+- Upgrade to asciidoctor diagram 1.5.12
+- Additional logging to analyze errors (#236)
+
+=== 0.24.0
+
+- Upgrade to AsciidoctorJ 1.6.1 and JRuby 9.2.5.0 (it's still backed by Asciidoctor 1.5.8)
+- Upgrade to asciidoctor diagram 1.5.11
+- Updated parser for old style multiline headings  to be more specific (#233)
+- Added description for old style heading inspection (#233)
+
+=== 0.23.2
+
+- Resource cleanup for Asciidoctor Ruby Extensions (#220)
+
+=== 0.23.1 (preview, available from Github releases)
+
+- Updated file icon with less intrusive icon, also introducing SVG for icons (#230)
+- Editor notification to switch to JetBrains 64bit JDK (#189)
+- Tuning support for Asciidoctor Ruby Extensions (#220)
+
+=== 0.23.0 (preview, available from Github releases)
+
+- EXPERIMENTAL: Support Asciidoctor Ruby Extensions when placed in _.asciidoctor/lib_ (#220)
+
+=== 0.22.0
+
+- Update to AsciidoctorJ 1.5.8.1
+- Workaround for incompatible plugins (#226)
+- Toggle softwraps only available in context menu of AsciiDoc documents (#227)
+- Recognize list continuations plus block instead of marking them as old style headings (#228)
+- EXPERIMENTAL: supporting _.asciidoctorconfig_ configuration files
+
+=== 0.21.4
+
+- Add official asciidoctor logo (#219)
+- Add soft wrap to tool bar (#221)
+- Editor Toolbar show status of toggles
+- Update to Asciidoctor Diagram 1.5.10 (#215)
+
+=== 0.21.3
+
+- upgrade to MathJAX 2.4.7 (as bundled in AsciidoctorJ 1.5.7)
+
+=== 0.21.2
+
+- Regression: show title of document again (#217)
+
+=== 0.21.1
+
+- allow attributes to be pre-defined in plugin settings (#216)
+
+=== 0.21.0 (preview, available from Github releases)
+
+- Update to AsciidoctorJ 1.5.7 and Asciidoctor Diagram 1.5.9
+- Treat "line must be non negative" only as a warning (#212)
+
+=== 0.20.6
+
+- Display all PlantUML graphics as PNG for preview (#170)
+
+=== 0.20.5
+
+- Adding hiDPI support for JavaFX preview (#125)
+
+=== 0.20.4
+
+- Requiring 2017.1 as minimum for this plugin (#207)
+
+=== 0.20.3 (preview, available from Github releases)
+
+- Avoiding deadlock on JavaFX initialization (#207)
+- Requiring 2017.2 as minimum for this plugin
+
+=== 0.20.2
+
+- Dejavu fonts now display chinese characters within tables (#203)
+
+=== 0.20.1
+
+- Upgrading to asciidoctorj-diagram 1.5.8
+- Dejavu fonts now display chinese characters (#203)
+
+=== 0.20.0
+
+- Add MathJax support in JavaFX preview #201
+- JavaFX preview is now the default for new installations of the plugin
+- Include DejaVu fonts for improved and consistent preview #184
+
+=== 0.19.2
+
+- Fix NullPointerExceptions when used with IntelliJ Language Injection and Fragment Editor #194
+
+=== 0.19.1
+
+- Support inspections to convert markdown and old style AsciiDoc headings to modern AsciiDoc headings #185
+- JRuby runtime updated to 9.1.8.0 to work with recent JDK versions (still, internal JetBrains JRE is the only supported version) #187
+
+=== 0.19.0
+
+- Support Icon fonts (thanks to @matthiasbalke) / #182
+- Update to asciidoctorj-1.5.6 (aka asciidoctor-1.5.6.1) and asciidoctorj-diagram-1.5.4.1
+- Support "search everywhere" (double Shift) and "goto by name - Symbol..." (Ctrl+Shift+Alt+N) for all AsciiDoc section headings - just enter a part of the heading
+- Support Markdown style sections (starting with '#') in syntax highlighting
+
+=== 0.18.2 (preview, available from Github releases)
+
+- Headings in Darcula theme preview are now light grey for better readability
+
+=== 0.18.1
+
+- Improved handling for non-printable characters in syntax highlighting
+
+=== 0.18.0 (preview, available from Github releases)
+
+- Update to asciidoctor 1.5.5/asciidoctor-diagram 1.5.4
+- Capture Asciidoctor messages on stdout/stderr and write them to IDE notifications
+- Close files when images are shown in preview
+- Set focus in editor when re-opening file
+- Fix "line must be non negative" error when clicking on preview
+
+=== 0.17.3
+
+- Make click-on-link-to-open and click-on-preview-to-set-cursor in JavaFX preview compatible with Java 8 u111+
+- Formatting actions from the toolbar should not throw exceptions when triggered at the beginning or end of the document
+
+=== 0.17.2
+
+- Plugin is now build using the https://gradle.org/[Gradle] and https://github.com/JetBrains/gradle-intellij-plugin[gradle-intellij-plugin]
+This should make contributing and releasing easier. Thanks Jiawen Geng!
+- Asciidoctor's temporary files are now created in a temporary folder per opened document. Thanks @agorges!
+
+=== 0.17.1 (preview, available from Github releases)
+
+- Improved handling of trailing spaces in syntax highlighting.
+- Fixed code/preview sync for nested HTML (i.e. NOTE)
+
+=== 0.17.0 (preview, available from Github releases)
+
+- Updated block parsing to support two styles of headings.
+- Block starts and ends are need to be aligned in length and shape when parsed.
+
+=== 0.16.4
+
+- Improved darcula support for JavaFX. More block types are using proper dark background and light text colors.
+
+=== 0.16.3
+
+- Theme in preview can be switched from light to darcula independent of IDE theme
+
+=== 0.16.2
+
+- Handling of Linux and MacOS file names for image preview in JavaFX
+
+=== 0.16.1
+
+- Added darcula theme for JavaFX preview
+- Clicking on JavaFX preview will set cursor position in editor (thanks to @kastork for the idea)
+
+=== 0.15.4
+
+- setScene now called from FxThread instead of AWT thread to avoid blocking GUI on MacOS
+
+=== 0.15.3
+
+- Initialization message appears only during initialization
+- No error message if user switches to a setup where JavaFX preview is no longer available.
+
+=== 0.15.2 (preview, available from Github releases)
+
+- fixed detection of Mac 64 JVM to be able to activate JavaFX preview
+- click-on-url for JavaFX improved, when slow-loading external images are referenced
+
+=== 0.15.1 (preview, available from Github releases)
+
+- revised constrained/unconstrained detection
+- Fix problem in syntax highlighting leading to PSI Parser Exceptions
+- refreshing images on JavaFX only if their content has changed to save memory consumption
+- Limiting JavaFX preview to 64bit platforms due to problems especially with Windows OpenJDK 32bit (as default on Windows).
+
+=== 0.15.0 (preview, available from Github releases)
+
+- correct usage of constrained/unconstrained AsciiDoc formatting
+- JavaFX Preview will automatically scroll to the cursor position of the editor
+- JavaFX preview will automatically open links in the systems's default browser
+- Caching rendering instances of Asciidoctor for better performance
+
+IntelliJ 15 (including AppCode 3.3, CLion 1.2, DataGrip 1.0, PhpStorm 10, PyCharm 5, RubyMine 8, WebStorm 11) is the new minimum version required for this release.
+

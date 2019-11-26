@@ -23,29 +23,38 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiManager;
-import org.asciidoc.intellij.lexer.AsciiDocHighlighter;
+import org.asciidoc.intellij.highlighting.AsciiDocSyntaxHighlighter;
 import org.jetbrains.annotations.NotNull;
 
-/** @author Julien Viet */
+/**
+ * @author Julien Viet
+ */
 public class AsciiDocLanguage extends Language {
 
   public static final Language INSTANCE = new AsciiDocLanguage();
 
-  /** . */
+  /**
+   * .
+   */
   public static final String LANGUAGE_NAME = "AsciiDoc";
 
   private AsciiDocLanguage() {
     super(LANGUAGE_NAME);
     SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(this, new SingleLazyInstanceSyntaxHighlighterFactory() {
+      @Override
       @NotNull
       protected SyntaxHighlighter createHighlighter() {
-        return new AsciiDocHighlighter();
+        return new AsciiDocSyntaxHighlighter();
       }
     });
   }
 
-  public static final boolean isAsciiDocFile(@NotNull Project project, @NotNull VirtualFile file) {
+  public static boolean isAsciiDocFile(@NotNull Project project, @NotNull VirtualFile file) {
     if (file.isDirectory() || !file.exists()) {
+      return false;
+    }
+    // when a project is already disposed due to a slow initialization, reject this file
+    if (project.isDisposed()) {
       return false;
     }
     final FileViewProvider provider = PsiManager.getInstance(project).findViewProvider(file);

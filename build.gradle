@@ -1,63 +1,156 @@
 buildscript {
-    repositories {
-        jcenter()
-        maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
-    }
-    dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.13.0'
-    }
+  repositories {
+    jcenter()
+    maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+  }
+  dependencies {
+    classpath 'com.github.ben-manes:gradle-versions-plugin:0.21.0'
+  }
 }
 
-
 plugins {
-    // upgrading to 0.3.10 leads to problems with MathJAX as the new version of the plugin
-    // will bundle all resources inside a JAR file and this seems to annoy MathJax. 
-    id "org.jetbrains.intellij" version "0.1.10"
+  id "org.jetbrains.intellij" version "0.4.8"
+  id "org.jetbrains.grammarkit" version "2018.2.2"
+  id "checkstyle"
+  id 'org.asciidoctor.jvm.convert' version '2.2.0'
+  // once windows classpaths get too long, use this dependency to make them shorter again
+  id "com.github.ManifestClasspath" version "0.1.0-RELEASE"
+  id 'net.ltgt.errorprone' version '0.8.1' apply false
+}
+
+checkstyle {
+  toolVersion '8.20'
 }
 
 apply plugin: 'org.jetbrains.intellij'
+apply plugin: 'org.jetbrains.grammarkit'
 apply plugin: 'java'
+apply plugin: 'net.ltgt.errorprone'
+
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import org.jetbrains.grammarkit.tasks.GenerateLexer
+import org.jsoup.Jsoup
 
 allprojects {
-    repositories {
-        jcenter()
-    }
+  repositories {
+    jcenter()
+  }
 }
 
 intellij {
-    version 'IC-2017.2'
-    pluginName 'asciidoctor'
-    updateSinceUntilBuild false
-
-//    publish {
-//        pluginId '7910'
-//        username publishUsername
-//        password publishPassword
-//    }
-
-//     Uncomment to test against Android Studio
-//    intellij.alternativeIdePath = '/Applications/Android Studio.app'
-    systemProperty 'idea.is.internal', 'false'
+  // we support IC-2017.2, but PsiViewer is not available for the older version, therefore use IC-2018.1 to run it
+  // Grazie is only available from 2019.2, therefore use IC-2019.2 to run it
+  version 'IC-2019.2.4'
+  pluginName 'asciidoctor'
+  updateSinceUntilBuild false
+  plugins = [
+    'PsiViewer:192-SNAPSHOT', // used for debugging
+    'PlantUML integration:2.22.0', // used to test highlighting of plantuml diagrams
+    'tanvd.grazi:2019.2-5.3.stable', // used for spell and grammer checking checking
+    'java' // used to integrate into the build via AsciiDocTargetScopeProvider
+  ]
 }
 
+asciidoctor {
+  sourceDir file('.')
+  sources {
+    include 'CHANGELOG.adoc'
+  }
+  outputDir file('build/docs')
+}
+
+patchPluginXml {
+  dependsOn asciidoctor
+  version System.getenv('TRAVIS_TAG')
+  changeNotes = {
+    Jsoup.parse(file('build/docs/CHANGELOG.html').getText('UTF-8'))
+      .select("#releasenotes").get(0).nextElementSibling().children()
+      .subList(0, 20)
+      .stream().map { e ->
+      e.html()
+        .replaceAll('\\(preview, available from Github releases\\)', '')
+        .replaceAll('#([0-9]+)', '<a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/$1">#$1</a>')
+        // regex for GitHub user names from https://github.com/shinnn/github-username-regex
+        .replaceAll('@([a-z\\d](?:[a-z\\d]|-(?=[a-z\\d])){0,38})', '<a href="https://github.com/$1">@$1</a>')
+    }
+      .collect().join("\n")
+  }
+  pluginDescription "${file('src/main/resources/META-INF/description.html').getText('UTF-8')}"
+}
+
+runIde {
+  jvmArgs = ['-Xmx1024m']
+}
+
+publishPlugin {
+  username 'ahus1'
+  token System.getenv('PLUGIN_REPO_TOKEN')
+  channels 'eap'
+}
+
+test {
+  testLogging {
+    // this show the full exception on failed tests on travis
+    exceptionFormat = 'full'
+  }
+}
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'org.asciidoctor:asciidoctorj:1.5.7'
-    compile 'org.asciidoctor:asciidoctorj-diagram:1.5.9'
-    compile 'commons-io:commons-io:2.4'
-    compile 'org.jruby:jruby-complete:9.1.17.0'
-    compile 'org.pegdown:pegdown:1.4.2'
-    compile 'org.parboiled:parboiled-core:1.1.6'
-    testCompile 'junit:junit:4.12'
+  errorprone 'com.google.errorprone:error_prone_core:2.3.2'
+  errorproneJavac 'com.google.errorprone:javac:9+181-r4173-1'
+  compile 'org.asciidoctor:asciidoctorj-diagram:1.5.18'
+  compile 'org.asciidoctor:asciidoctorj-pdf:1.5.0-beta.8'
+  compile 'org.jruby:jruby:9.2.8.0' // TODO: remove JRuby dependency once asciidoctorj has upgraded
+  /* snakeyaml is s used by asciidoctorj-pdf, but is actually provided within jruby-stdlib
+   * a snakeyaml version in the classpath takes precedence, but IntelliJ includes a version that is too old
+   * therefore this plugin includes the same version of snakeyaml that is already included in jruby-stdlib
+   * to prevent loading the older version from IntelliJ.
+   * When a different version than jruby-stdlib 9.2.7.0 is used after upgrading asciidoctorj,
+   * double check the snakeyaml version.
+   * https://github.com/asciidoctor/asciidoctorj-pdf/issues/25
+   */
+  compile 'org.yaml:snakeyaml:1.23'
+  compile 'org.asciidoctor:asciidoctorj:2.1.0'
+  compile 'commons-io:commons-io:2.4'
+  compile 'nl.jworks.markdown_to_asciidoc:markdown_to_asciidoc:1.1'
+  compile 'org.apache.commons:commons-text:1.8'
+  testCompile 'junit:junit:4.12'
+  testCompile 'com.tngtech.archunit:archunit-junit4:0.10.2'
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '3.2'
-    distributionUrl = distributionUrl.replace("bin", "all")
+def genRoot = file('gen')
+
+sourceSets {
+  main {
+    java.srcDirs project.files(genRoot)
+    resources {
+      exclude('META-INF/description.html')
+    }
+  }
 }
 
-task checkUpdates(type: com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask) {
-    description = "check denpendency updates"
-    group = "check"
+grammarKit {
+  // version of IntelliJ patched JFlex (see bintray link below), Default is 1.7.0-1
+  jflexRelease = '1.7.0-1'
+
+  // tag or short commit hash of Grammar-Kit to use (see link below). Default is 2017.1.6
+  grammarKitRelease = '6452fde524'
+}
+
+task generateAsciidocLexer(type: GenerateLexer) {
+  source = "src/main/java/org/asciidoc/intellij/lexer/asciidoc.flex"
+  targetDir = "gen/org/asciidoc/intellij/lexer"
+  targetClass = "_AsciiDocLexer"
+  purgeOldFiles = true
+}
+
+compileJava {
+  options.errorprone.excludedPaths = '.*_AsciiDocLexer.*'
+  options.errorprone.error('StreamResourceLeak') // enforce errors where there would be warning in the standard only
+  dependsOn generateAsciidocLexer
+}
+
+task checkUpdates(type: DependencyUpdatesTask) {
+  description = "check denpendency updates"
+  group = "check"
 }

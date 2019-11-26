@@ -1,0 +1,35 @@
+.Title
+[source]
+----
+
+----
+
+====
+----
+----
+====
+
+[source,groovy]
+This
+Is
+Groovy
+
+  Indented
+  Source
+  Code
+
+Text Should be on one line.
+
+[source]
+----
+Test1
+----
+
+[source]
+----
+Test2
+----
+
+[%hardbreaks]
+Hard
+Break

@@ -19,9 +19,9 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
   private static final String SPLIT_LAYOUT = "split_layout";
 
   @NotNull
-  protected final FileEditorProvider myFirstProvider;
+  private final FileEditorProvider myFirstProvider;
   @NotNull
-  protected final FileEditorProvider mySecondProvider;
+  private final FileEditorProvider mySecondProvider;
 
   @NotNull
   private final String myEditorTypeId;
@@ -83,8 +83,7 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
     final String layoutName;
     if (attribute != null) {
       layoutName = attribute.getValue();
-    }
-    else {
+    } else {
       layoutName = null;
     }
 
@@ -96,7 +95,7 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
     if (!(state instanceof SplitFileEditor.MyFileEditorState)) {
       return;
     }
-    final SplitFileEditor.MyFileEditorState compositeState = (SplitFileEditor.MyFileEditorState)state;
+    final SplitFileEditor.MyFileEditorState compositeState = (SplitFileEditor.MyFileEditorState) state;
 
     Element child = new Element(FIRST_EDITOR);
     if (compositeState.getFirstState() != null) {
@@ -128,9 +127,8 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
                                                       @NotNull final Project project,
                                                       @NotNull final VirtualFile file) {
     if (provider instanceof AsyncFileEditorProvider) {
-      return ((AsyncFileEditorProvider)provider).createEditorAsync(project, file);
-    }
-    else {
+      return ((AsyncFileEditorProvider) provider).createEditorAsync(project, file);
+    } else {
       return new Builder() {
         @Override
         public FileEditor build() {

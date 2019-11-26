@@ -23,25 +23,48 @@ import javax.swing.*;
 public class AsciiDocIcons {
 
   private static Icon load(String path) {
-    return IconLoader.getIcon(path, AsciiDocIcons.class);
+    Icon icon;
+    try {
+      icon = IconLoader.getIcon(path, AsciiDocIcons.class);
+      icon.getIconHeight(); // NoClassDefFoundError
+    } catch (NoClassDefFoundError e) {
+      icon = null;
+    }
+    if ((icon == null || icon.getIconHeight() == 1) && path.endsWith(".svg")) {
+      // when trying to load SVG icons on an older version, they will be returned as 1x1 icon
+      // if this is the case, fallback to PNG icons
+      path = path.substring(0, path.length() - 4) + ".png";
+      icon = IconLoader.getIcon(path, AsciiDocIcons.class);
+    }
+    return icon;
   }
 
   /** The AsciiDoc {@link Icon}. */
-  public static final Icon Asciidoc_Icon = load("/icons/asciidoc.png");
+  public static final Icon ASCIIDOC_ICON = load("/icons/asciidoc.svg");
 
   public static class Layout {
-    public static final Icon Editor_only = load("/icons/layout/Editor_only.png"); // 16x16
-    public static final Icon Editor_preview = load("/icons/layout/Editor_preview.png"); // 16x16
-    public static final Icon Preview_only = load("/icons/layout/Preview_only.png"); // 16x16
+    public static final Icon EDITOR_ONLY = load("/icons/layout/Editor_only.png"); // 16x16
+    public static final Icon EDITOR_PREVIEW = load("/icons/layout/Editor_preview.png"); // 16x16
+    public static final Icon PREVIEW_ONLY = load("/icons/layout/Preview_only.png"); // 16x16
   }
 
   public static class EditorActions {
-    public static final Icon Bold = load("/icons/editor_actions/Bold.png"); // 16x16
-    public static final Icon Italic = load("/icons/editor_actions/Italic.png"); // 16x16
-    public static final Icon Table = load("/icons/editor_actions/table.png"); // 16x16
-    public static final Icon Link = load("/icons/editor_actions/Link.png"); // 16x16
-    public static final Icon Strike_through = load("/icons/editor_actions/Strike_through.png"); // 16x16
-    public static final Icon Code_span = load("/icons/editor_actions/Code_span.png"); // 16x16
+    public static final Icon BOLD = load("/icons/editor_actions/Bold.svg"); // 16x16
+    public static final Icon ITALIC = load("/icons/editor_actions/Italic.svg"); // 16x16
+    public static final Icon TABLE = load("/icons/editor_actions/table.png"); // 16x16
+    public static final Icon LINK = load("/icons/editor_actions/Link.svg"); // 16x16
+    public static final Icon STRIKE_THROUGH = load("/icons/editor_actions/Strike_through.svg"); // 16x16
+    public static final Icon HIGHLIGHTED = load("/icons/editor_actions/Highlighted.svg"); // 16x16
+    public static final Icon CODE_SPAN = load("/icons/editor_actions/Code_span.svg"); // 16x16
+    public static final Icon IMAGE = load("/icons/editor_actions/image.svg"); // 16x16
+  }
+
+  public static class Structure {
+    public static final Icon SECTION = load("/icons/structure/section.svg"); // 16x16
+    public static final Icon BLOCK = load("/icons/structure/block.svg"); // 16x16
+    public static final Icon LISTING = load("/icons/structure/listing.svg"); // 16x16
+    public static final Icon MACRO = load("/icons/structure/macro.svg"); // 16x16
+    public static final Icon ATTRIBUTE = load("/icons/structure/attribute.svg"); // 16x16
   }
 
 }

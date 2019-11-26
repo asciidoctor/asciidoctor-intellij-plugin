@@ -1,219 +1,44 @@
 = IntelliJ AsciiDoc Plugin
-Erik Pragt
+Alexander Schwartz
 :experimental:
+:url-ci-travis: https://travis-ci.org/asciidoctor/asciidoctor-intellij-plugin
 
-A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language. You can install the plugin (named "AsciiDoc") from the plugins section inside your Jetbrains IDE or download it from the https://plugins.jetbrains.com/plugin/7391[Jetbrains Plugin Repository].
+image::https://api.travis-ci.org/asciidoctor/asciidoctor-intellij-plugin.svg?branch=master[link={url-ci-travis}]
 
-image::https://hacktoberfest.digitalocean.com/assets/logo-hacktoberfest-658b5aa2bd34e782d29c40bf6afbdff00f20fe1328efa6da17743878ba8db66f.png[float=left,width=200]
+A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language.
+To support the authors of Asciidoctor, please consider supporting us via https://opencollective.com/asciidoctor[OpenCollective].
 
-*This plugin joined https://hacktoberfest.digitalocean.com/[Hacktoberfest]!
-Issues that can give you a start are https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3AHacktoberfest[marked with the label "Hacktoberfest"], but you can choose any ticket you want to participate (and even create pull requests without a prior ticket).
-If you want to discuss ideas and create pull requests you can meet Alexander, one of the maintainers, at the https://www.eventbrite.com/e/hacktoberfest-frankfurt-2018-tickets-50225231018[Frankfurt/Main Hacktober Fest in Germany on October 12th].*
+*You can meet the maintainers in person:* Please ping them via eMail or chat before or during the event!
 
-If you want to use the JavaFX instead of the Swing preview, you'll need to run IntelliJ with 64bit Java.
-From 2017.1 onwards 64bit Java is included even in the Windows versions.
-Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to be most stable in the JetBrains JDK.
+* https://www.ahus1.de/[Alex] at https://www.javaland.eu/[JavaLand (Brühl, DE)], 2020-03-16..18
 
-== Release notes
+== Installation
 
-=== 0.21.4 (not released yet)
+You can install the plugin (named "AsciiDoc") from the plugins section inside your JetBrains IDE or download it from the https://plugins.jetbrains.com/plugin/7391[JetBrains Plugin Repository].
 
-- Add official asciidoctor logo (#219)
+The most advanced and recommended preview mode (and default for new installations) is JavaFX.
 
-=== 0.21.3
+To use the JavaFX preview instead of the Swing preview, you'll need to run IntelliJ with 64bit Java and JavaFX installed.
+Oracle JDK installations include JavaFX, but can make the IDE unstable and crash.
+Pre-bundled OpenJDK installations usually don't include JavaFX.
+Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
-- upgrade to MathJAX 2.4.7 (as bundled in AsciidoctorJ 1.5.7)
-
-=== 0.21.2
-
-- Regression: show title of document again (#217)
-
-=== 0.21.1
-
-- allow attributes to be pre-defined in plugin settings (#216)
-
-=== 0.21.0 (preview, available from Github releases)
-
-- Update to AsciidoctorJ 1.5.7 and Asciidoctor Diagram 1.5.9
-- Treat "line must be non negative" only as a warning (#212)
-
-=== 0.20.6
-
-- Display all PlantUML graphics as PNG for preview (#170)
-
-=== 0.20.5
-
-- Adding hiDPI support for JavaFX preview (#125)
-
-=== 0.20.4
-
-- Requiring 2017.1 as minimum for this plugin (#207)
-
-=== 0.20.3 (preview, available from Github releases)
-
-- Avoiding deadlock on JavaFX initialization (#207)
-- Requiring 2017.2 as minimum for this plugin
-
-=== 0.20.2
-
-- Dejavu fonts now display chinese characters within tables (#203)
-
-=== 0.20.1
-
-- Upgrading to asciidoctorj-diagram 1.5.8
-- Dejavu fonts now display chinese characters (#203)
-
-=== 0.20.0
-
-- Add MathJax support in JavaFX preview #201
-- JavaFX preview is now the default for new installations of the plugin
-- Include DejaVu fonts for improved and consistent preview #184
-
-=== 0.19.2
-
-- Fix NullPointerExceptions when used with IntelliJ Language Injection and Fragment Editor #194
-
-=== 0.19.1
-
-- Support inspections to convert markdown and old style AsciiDoc headings to modern AsciiDoc headings #185
-- JRuby runtime updated to 9.1.8.0 to work with recent JDK versions (still, internal Jetbrains JRE is the only supported version) #187
-
-=== 0.19.0
-
-- Support Icon fonts (thanks to @matthiasbalke) / #182
-- Update to asciidoctorj-1.5.6 (aka asciidoctor-1.5.6.1) and asciidoctorj-diagram-1.5.4.1
-- Support "search everywhere" (double Shift) and "goto by name - Symbol..." (Ctrl+Shift+Alt+N) for all AsciiDoc section headings - just enter a part of the heading
-- Support Markdown style sections (starting with '#') in syntax highlighting
-
-=== 0.18.2 (preview, available from Github releases)
-
-- Headings in Darcula theme preview are now light grey for better readability
-
-=== 0.18.1
-
-- Improved handling for non-printable characters in syntax highlighting
-
-=== 0.18.0 (preview, available from Github releases)
-
-- Update to asciidoctor 1.5.5/asciidoctor-diagram 1.5.4
-- Capture Asciidoctor messages on stdout/stderr and write them to IDE notifications
-- Close files when images are shown in preview
-- Set focus in editor when re-opening file
-- Fix "line must be non negative" error when clicking on preview
-
-=== 0.17.3
-
-- Make click-on-link-to-open and click-on-preview-to-set-cursor in JavaFX preview compatible with Java 8 u111+
-- Formatting actions from the toolbar should not throw exceptions when triggered at the beginning or end of the document
-
-=== 0.17.2
-
-- Plugin is now build using the https://gradle.org/[Gradle] and https://github.com/JetBrains/gradle-intellij-plugin[gradle-intellij-plugin]
-This should make contributing and releasing easier. Thanks Jiawen Geng!
-- Asciidoctor's temporary files are now created in a temporary folder per opened document. Thanks @agorges!
-
-=== 0.17.1 (preview, available from Github releases)
-
-- Improved handling of trailing spaces in syntax highlighting.
-- Fixed code/preview sync for nested HTML (i.e. NOTE)
-
-=== 0.17.0 (preview, available from Github releases)
-
-- Updated block parsing to support two styles of headings.
-- Block starts and ends are need to be aligned in length and shape when parsed.
-
-=== 0.16.4
-
-- Improved darcula support for JavaFX. More block types are using proper dark background and light text colors.
-
-=== 0.16.3
-
-- Theme in preview can be switched from light to darcula independent of IDE theme
-
-=== 0.16.2
-
-- Handling of Linux and MacOS file names for image preview in JavaFX
-
-=== 0.16.1
-
-- Added darcula theme for JavaFX preview
-- Clicking on JavaFX preview will set cursor position in editor (thanks to @kastork for the idea)
-
-=== 0.15.4
-
-- setScene now called from FxThread instead of AWT thread to avoid blocking GUI on MacOS
-
-=== 0.15.3
-
-- Initialization message appears only during initialization
-- No error message if user switches to a setup where JavaFX preview is no longer available.
-
-=== 0.15.2 (preview, available from Github releases)
-
-- fixed detection of Mac 64 JVM to be able to activate JavaFX preview
-- click-on-url for JavaFX improved, when slow-loading external images are referenced
-
-=== 0.15.1 (preview, available from Github releases)
-
-- revised constrained/unconstrained detection
-- Fix problem in syntax highlighting leading to PSI Parser Exceptions
-- refreshing images on JavaFX only if their content has changed to save memory consumption
-- Limiting JavaFX preview to 64bit platforms due to problems especially with Windows OpenJDK 32bit (as default on Windows).
-
-=== 0.15.0 (preview, available from Github releases)
-
-- correct usage of constrained/unconstrained AsciiDoc formatting
-- JavaFX Preview will automatically scroll to the cursor position of the editor
-- JavaFX preview will automatically open links in the systems's default browser
-- Caching rendering instances of Asciidoctor for better performance
-
-IntelliJ 15 (including AppCode 3.3, CLion 1.2, DataGrip 1.0, PhpStorm 10, PyCharm 5, RubyMine 8, WebStorm 11) is the new minimum version required for this release.
-
-=== 0.14.3
-
-- Fix problem in syntax highlighting leading to PSI Parser Exceptions
-- disable automatically refreshing images on JavaFX (to be re-enabled in 0.15.x)
-
-=== 0.14.2
-
-- Performance improvement: render preview only when visible
-- Don't show AsciiDoc preview actions in other Editors
-- additional compatibility fixes for IntelliJ 15.x
-
-=== 0.14.1
-
-- make compatible with IntelliJ 15.x again. +
-  This should include: AppCode 3.3, CLion 1.2, DataGrip 1.0, PhpStorm 10, PyCharm 5, RubyMine 8, WebStorm 11
-
-=== 0.14
-
-- New JavaFX preview and real split view
-- Update to asciidoctorj 1.5.4.1 and asciidoctorj-diagram 1.5.0
-
-=== 0.13
-
-- Updated to asciidoctorj 1.5.3.2, added support for asciidoctor-diagram
-
-=== 0.12
-
-- Bugfixes, new makelink action, table generation improvement, etc.
-
-=== 0.11
-
-- Removed AsciiDoc item in right click menu thanks to Dmitry Jemerov.
-- Added 'Open in Browser' menu item.
-- Added 40+ live template (access them by pressing Cmd+J, or type 'ad-')
+From 2017.1 onwards a JetBrains OpenJDK 64bit is included even in the Windows versions.
+Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to be most stable in the JetBrains JDK. See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Selecting the JDK version the IDE will run under] for more details.
 
 == Features
 
-* Since 0.8 Fixed incompatibility with non-IDEA IDE's, thanks to Harro Lissenberg
-* Since 0.7: Right click on a document to apply basic formatting or create tables.
-* Since 0.6: refactor Markdown to AsciiDoc. Right click on a file, or use the Refactor menu, and the Markdown document
-will be replaced by the AsciiDoc equivalent. Also supports undo, in case you're not happy with the result!
-* Since 0.4: recognizes the AsciiDoc file extension (.adoc, .asciidoc, .ad)
-* Since 0.4: provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] with Live preview.
+* Recognizes the AsciiDoc file extension (.adoc, .asciidoc, .ad)
+* Provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] with live preview.
+* Toolbar and context menu for basic formatting and to create tables.
+* Refactor Markdown to AsciiDoc: Right click on a file, or use the Refactor menu, and the Markdown document will be replaced by the AsciiDoc equivalent.
+Also, supports undo if the user is not happy with the result!
 
-If you are missing features, please don't hesitate to let me know on Twitter: http://www.twitter.com/epragt[@epragt] or make an issue in the issue tracker!
+Refer to the link:FEATURES.adoc[Features list] for a detailed overview of the features.
+
+If you are missing features, please don't hesitate to let me know on Twitter: http://www.twitter.com/ahus1de[@ahus1de] or create an issue in the GitHub issue tracker!
+
+Refer to the link:CHANGELOG.adoc[CHANGELOG] for a complete list of changes in older releases.
 
 == Dependencies
 
@@ -221,34 +46,22 @@ This project uses AsciiDoctorJ and JRuby for the rendering of the AsciiDoc conte
 
 For the conversion of Markdown to AsciiDoc, we use Pegdown and the https://github.com/bodiam/markdown-to-asciidoc[Markdown to AsciiDoc] converter.
 
-== Build
+== Building, Contributing, Code of Conduct
 
-This plugin is built using Gradle.
-If you build or run it the first time it will download the community edition of IntelliJ automatically.
+Issues that can give you a good start are https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22[have the label "good first issue"] and maintainers are willing to help.
+Feel free to choose these or any other ticket to contribute, or even create pull requests without a prior ticket.
 
-If you have developed the plugin before it changed to Gradle you might want to remove the contents of your `.idea` folder to trigger a re-import of the Gradle project.
-
-To build this plugin, you need to run:
-
-----
-./gradlew -Dfile.encoding=UTF-8 buildPlugin
-----
-
-The ZIP file with plugin to distribute will be located in `build/distributions`.
-
-To run the plugin for development you'll need to start
-
-----
-./gradlew -Dfile.encoding=UTF-8 runIdea
-----
+Please have a look at the link:CONTRIBUTING.adoc["How to Build and Contribute"] documentation.
+This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the link:CODE_OF_CONDUCT.adoc[Contributor Covenant code of conduct].
 
 == Copyright and Licensing
 
-Copyright (C) 2013-2017 Julien Viet and Erik Pragt.
+Copyright (C) 2013-2019 Julien Viet, Erik Pragt and Alexander Schwartz.
 Released under the Apache License, Version 2.0 (see link:LICENSE[LICENSE]).
 
 == Credits
 
 This plugin is based on the https://github.com/nicoulaj/idea-markdown[Intellij Markdown plugin by Julien Nicoulaud].
 
-Also, great help was received from Harro Lissenberg, Alexander Schwartz and Dan Allen. Thank you all for your support!
+Also, great help was received from Erik Pragt, Harro Lissenberg, Alexander Schwartz and Dan Allen.
+Thank you all for your support!

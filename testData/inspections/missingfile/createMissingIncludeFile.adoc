@@ -1,0 +1,3 @@
+:var: ab
+
+<error descr="include file not found: /src/ab/missing.adoc">include::{var}/missing.adoc[]</error>

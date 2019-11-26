@@ -1,55 +1,37 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
-import org.junit.Test;
+import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
+import org.asciidoc.intellij.AsciiDocTestingUtil;
+import org.jetbrains.annotations.NotNull;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+public class MakeLinkTest extends LightPlatformCodeInsightTestCase {
 
-/**
- * @author Michael Krausse, Raffael Krebs, Ulrich Etter
- */
-public class MakeLinkTest {
-
-  private MakeLink sut = new MakeLink();
-
-  @Test
-  public void testIsLink1() throws Exception {
-    assertFalse(sut.isLink("Example"));
+  @NotNull
+  @Override
+  protected String getTestDataPath() {
+    return AsciiDocTestingUtil.TEST_DATA_PATH;
   }
 
-  @Test
-  public void testIsLink2() throws Exception {
-    assertFalse(sut.isLink("www.example.com"));
+  public void doTest() {
+    configureByFile("/actions/makeLink/" + getTestName(true) + ".adoc");
+    executeAction("asciidoc.makelink");
+    checkResultByFile("/actions/makeLink/" + getTestName(true) + "_after.adoc");
   }
 
-  @Test
-  public void testIsLink3() throws Exception {
-    assertTrue(sut.isLink("http://www.example.com"));
+  public void testMakeLinkFromText() {
+    doTest();
   }
 
-  @Test
-  public void testIsLink4() throws Exception {
-    assertTrue(sut.isLink("http://example.com"));
+  public void testMakeLinkFromLink() {
+    doTest();
   }
 
-  @Test
-  public void testIsLink5() throws Exception {
-    assertTrue(sut.isLink("https://www.example.com"));
+  public void testMakeLinkFromLinkInBrackets() {
+    doTest();
   }
 
-  @Test
-  public void testIsLink6() throws Exception {
-    assertTrue(sut.isLink("https://example.com"));
+  public void testMakeLinkFromEmail() {
+    doTest();
   }
 
-  @Test
-  public void testUpdateSelection1() throws Exception {
-    assertEquals("http://example.com[]", sut.updateSelection("http://example.com", false));
-  }
-
-  @Test
-  public void testUpdateSelection2() throws Exception {
-    assertEquals("http://www.example.com[www.example.com]", sut.updateSelection("www.example.com", false));
-  }
 }

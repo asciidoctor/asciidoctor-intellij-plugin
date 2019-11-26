@@ -1,0 +1,1 @@
+mailto:doc.writer@example.com[<selection><caret>text</selection>]

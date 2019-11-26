@@ -1,0 +1,529 @@
+= How to Contribute (and Build)
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+:experimental:
+:icons: font
+:toc:
+:toc-placement!:
+
+== About
+
+This document enables you to enhance the plugin when you are new to either the project, or developing in an area you haven't previously worked in before.
+
+== Status
+
+This document is work in progress. Please ask questions to the maintainers for anything that is missing (either via email or via a GitHub ticket), and we'll update it.
+
+== Supporting the plugin without developing code
+
+There are several ways how to support the development of the plugin as a user of the plugin. No programming skills required!
+
+Join the discussion on GitHub::
++
+--
+The developers of the plugin need feedback how they should implement a new idea and if a new functionality is useful to users or not.
+
+_You can help with providing feedback!_
+
+To participate in the discussions have a look at the GitHub tickets.
+You can join the discussion or subscribe to tickets you are interested in.
+Once the maintainers publish a preview version of the plugin, you can test the new version.
+--
+
+Subscribe to new preview releases::
++
+--
+A preview release contains new functionality or fixed bugs.
+While automated tests catch some of the bugs, some other bugs might pass unnoticed.
+Or the implementation misses a corner case that no-one has thought of before.
+
+_You can help by testing preview releases!_
+
+On GitHub you can subscribe to a repository to receive email notifications once a preview release is available.
+The maintainers publish new releases of the plugin on GitHub a few days of weeks before they are published on the IntelliJ plugin repository.
+The release notes contain information about the newly included functionality or fixed bugs.
+
+To try out a preview release:
+
+. Download the new release file `asciidoctor-intellij-plugin.zip`
+. Go to "`File | Settings... | Plugins | (Gear Icon) | Install plugin from disk...`"
+. Choose the downloaded file in the file selection dialogue
+. Restart the IDE to activate the new plugin version
+
+Use the GitHub issue numbers given in the release notes to join the discussion on the respective GitHub issues.
+--
+
+[[eap, Adding the EAP Repository]]
+Add our early-access-repository to your IDE::
++
+--
+Receive notifications of new preview releases and download them directly to your IDE:
+
+. Go to "`File | Settings... | Plugins | (Gear Icon) | Manage plugin repositories...`"
+. add https://plugins.jetbrains.com/plugins/eap/list?pluginId=7391 as an additional repository
+
+Use the GitHub issue numbers given in the release notes to join the discussion on the respective GitHub issues.
+--
+
+== Getting started with coding
+
+[[JDK]]
+=== Choosing a Java Version and Distribution
+
+Currently JDK 8 and JavaFX is required to build and run the plugin.
+
+The JetBrains JDK 8 distribution is recommended for development.
+As some parts of the code still support Java 8 and JavaFX 8, you can't develop with Java 11 at the moment.
+The plugin will still run in environments with Java 11.
+
+JetBrains JDK 8::
+Comes with a bundled JavaFX, download here: https://bintray.com/jetbrains/intellij-jdk[JetBrains OpenJDK 8]
+This way you can develop with the JDK that is also running the JetBrains IDE.
+
+Oracle JDK 8::
+Meets both dependencies, JavaFX is bundled with it out-of-the box.
+This is easy to give development a start if it is already installed on your machine, but will be different from most user's installations.
+
+OpenJDK 8::
+Is usually distributed without JavaFX; you probably need to install JavaFX manually.
+This is usually the least preferred approach, although in practice Linux users often run JetBrains IDEA with the JDK provided by their local Linux distribution (that now and then leads to difficulties).
+
+=== Local Build
+
+This plugin is built using Gradle.
+If you build or run it the first time it will download the community edition of IntelliJ automatically.
+You don't need to install Gradle, you just need to install Java and make it available in the path.
+
+If you have developed the plugin before it changed to Gradle you might want to remove the contents of your `.idea` folder to trigger a re-import of the Gradle project.
+
+To build this plugin, you need to run:
+
+----
+./gradlew -Dfile.encoding=UTF-8 buildPlugin
+----
+
+The ZIP file with plugin to distribute will be located in `build/distributions`.
+
+[NOTE]
+====
+The `plugin.xml` inside the archive will state version `0.0.1` unless you specify an environment variable `TRAVIS_TAG` that holds a release number.
+This ensures that a temporarily locally build plugin will be overwritten by the JetBrains plugin update site.
+====
+
+=== Running the development version locally
+
+To run the plugin for development you'll need to start
+
+----
+./gradlew -Dfile.encoding=UTF-8 runIde
+----
+
+To run all tests and the CheckStyle validations you'll need to start
+
+----
+./gradlew -Dfile.encoding=UTF-8 check
+----
+
+=== Running the plugin from with the IDE
+
+==== About
+
+You most likely want to do this for fast turnaround times when running single tests, and debugging both tests and the plugin itself.
+Please use IntelliJ IDEA as an IDE for developing on this plugin.
+
+You can use the most recent version of the IDE.
+The `build.gradle` file specifies the minimum version for all users of the plugin, but when developing you are free to use a more recent version.
+
+==== Setup Tasks
+
+. Checkout the GitHub project and import it as a gradle project.
+
+. Ensure to install the following two plugin in your IDE (your IDE should recommend to install them once you open the project):
++
+--
+GrammarKit:: Helps with highlighting and code completion in Grammar files (*.flex).
+
+PsiViewer:: Helps analyzing the PSI (abstract syntax tree) created from the plugin in the IDE.
+
+CheckStyle:: This project contains a ready-to-go CheckStyle configuration that will work both in the IDE and in gradle.
+--
+
+. Go to "Project Structure... | Platform Settings | SDK":
+
+.. add "JetBrains JDK 8" (see <<JDK>> above where to download)
+
+.. choose "JetBrains JDK 8" as the JDK for this project
+
+==== Validation Tasks
+
+Perform these tasks to ensure that your setup is ready for development.
+
+. Run the test cases from `AsciiDocLexerTest.java` to see that running tests works in your setup
+
+. There are two ready-to-go run configurations checked in to git that that you can run:
++
+--
+buildPlugin:: building the plugin as a ZIP-file that you can then install locally into your IDE
+
+runIde:: runs an IntelliJ community edition with the AsciiDoc plugin enabled.
+You can choose to run it in debug mode.
+--
+
+== Getting into development
+
+To get into development of IntelliJ plugins, there is a http://www.jetbrains.org/intellij/sdk/docs/[IntelliJ SDK guide].
+It walks the developer through several stages of developing a custom language plugin.
+There is a chat on Gitter that might give short answers to short questions to plugin developers: https://gitter.im/IntelliJ-Plugin-Developers/Lobby
+
+This plugin pulled several ideas from the Markdown plugin for IntelliJ that is now part of the IntelliJ community edition.
+Clone the https://github.com/JetBrains/intellij-community[GitHub repository for IntelliJ Community] and check out the https://github.com/JetBrains/intellij-community/tree/master/plugins/markdown[Markdown plugin] in particular.
+There is no need to make the community edition compile, just use it as a reference and look up example implementations for IntelliJ's extension point base classes.
+
+== Lexing and Parsing AsciiDoc files
+
+Lexing and parsing input files is the beginning of both highlighting the code in the editor and building auto-completion and refactoring functionality.
+
+[[lexing]]
+=== Lexing of input files
+
+Lexing chops the input file into a stream of tokens.
+Each token has a type and a snippet of characters.
+
+The standard to do this in IntelliJ is https://jflex.de[JFlex].
+
+The heart of lexing is `asciidoc.flex`.
+It defines multiple states, and uses a lot of functionality and tweaking to parse AsciiDoc.
+You can add new token types as you go in `AsciiDocTokenTypes`.
+Ensure to update the list `TOKENS_TO_MERGE` if consecutive identical types of the tokens should be merged.
+If the content of the token types should be spell-checked, add the token types to the list of tokens in `AsciiDocSpellcheckingStrategy`.
+
+Once you change `asciidoc.flex`, you should run `gradlew compileJava` to generate the parser code.
+
+A test suite for the lexer in `AsciiDocLexerTest`.
+I recommend running it from the IDE.
+Each test case contains a `doTest()` method that parses one snippet of AsciiDoc and compares it to an expected "`golden master`" result.
+
+A typical developer workflow for enhancing the lexer looks like this:
+
+. change `asciidoc.flex` in the IDE, adding new entries to `AsciiDocTokenTypes` as needed
+. run `gradlew compileJava` on the command line
+. add a test case to `AsciiDocLexerTest` and run it from the IDE
+. if lexing doesn't work yet as expected repeat from step 1 when
+. if lexing returns the expected result, update the `expected` parameter in the test
+
+[WARNING]
+--
+Things to consider when parsing AsciiDoc with JFlex:
+
+* JFlex has originally been designed to parse Java code. AsciiDoc is different
+* There are no wrong characters in AsciiDoc. If you get the syntax wrong, the characters are printed normally "as is", while only a matching set of for example asterisks (`*`) produces bold text.
+--
+
+Here some JFlex rules for AsciiDoc together with an explanation of the why:
+
+Look ahead rules::
++
+--
+Look ahead rules are considered slow in JFlex, but they give the power to recognize tokens only when there is a matching closing token.
+
+A slash (`/`) separates the matching pattern from the look ahead.
+
+.Example from parsing typographic quotes
+----
+{TYPOGRAPHIC_QUOTE_START} / [^\*\n \t] {WORD}* {TYPOGRAPHIC_QUOTE_END}
+----
+--
+
+End of line and end of file parsing::
++
+--
+JFlex supports `$` to describe the end of a line as look-ahead.
+But this doesn't work at the end of a file.
+To match the end of a file, the lexer uses the fact that JFlex will match the longest rule first (including any look-ahead rules).
+So first match the end of a line, then when not at the end of a line (of the same length), and then the end of the file (the shortest rule).
+
+.Example: matching a delimiter at the end of the file
+[source]
+----
+// delimiter at end of line
+{LISTING_BLOCK_DELIMITER} $ { /* ... */ }
+
+// delimiter not at end of line
+{LISTING_BLOCK_DELIMITER} / [^\-\n \t] { /* ... */ }
+
+// delimiter at end of file (shorter match than the two above)
+{LISTING_BLOCK_DELIMITER} { /* ... */ }
+----
+--
+
+Stateful parser::
++
+--
+To parse bold, italic and monospace text (that can be nested) there is a set of boolean variables to memorize the current text style.
+They are reset at the end of a block (like in regular Asciidoctor).
+The function `textFormat()` uses them to determine the current token type from a combination of these flags.
+
+Other states memorize the length of block separator line to find the matching closing separator.
+--
+
+qualifying matches, push back and state change::
++
+--
+After a match the Java code checks additional conditions like if this is an unconstrained position in the stream.
+If the code decides to discard the match, two possible strategies out of several are:
+
+. push back all but the first character, and return the token type for the single character (for example when an double-asterisk occurs, but no bold text is to end here, see `\{DOUBLEMONO}` in the lexer).
+
+. push back the complete text and continue with a different state using `yybegin()` (for example when matching a `\{HEADING_OLDSTYLE}` in the `MULTILINE` state).
+
+. some of the expressions can be prefixed with a backslash (`\`) to escape the expression.
+Use `isEscaped()` to check if it has been escaped.
+
+Unfortunately, the parser can't continue with other matches in the same state.
+To work around this issue blocks are parsed first in state `MULTILINE`, then in state `SINGLELINE`, and finally `INSIDE_LINE` to implement a hierarchy and some ordering of matches.
+--
+
+auto-completion::
++
+--
+Expressions described above match expressions once they have their closing syntax completed and it is essential for the correct highlighting.
+To support autocomplete the matching must handle an expression where only the left part of the expression exists.
+
+A special case is in the parser to support autocompletion, as IntelliJ inserts a special string when parsing the content for autocompletion (named `auto-complete` in our parser).
+
+In the case for references (`\<<ref>>`) there are two rules, one for regular parsing and highlighting, one without:
+
+[source,indent=0]
+----
+  // regular
+  {REFSTART} / [^>\n]+ {REFEND} { yybegin(REF); return AsciiDocTokenTypes.REFSTART; }
+  // auto-complete
+  {REFSTART} / [^>\n ]* {AUTOCOMPLETE} { yybegin(REFAUTO); return AsciiDocTokenTypes.REFSTART; }
+----
+--
+
+[[highlighting]]
+=== Highlighting
+
+Highlighting is coloring the text in the editor.
+
+The file `AsciiDocSyntaxHighlighter` defines one `TextAttributesKey` to each entry in `AsciiDocTokenTypes` parsed during lexing.
+Currently several tokens have the same highlighting `ASCIIDOC_MARKER`, so users have the same color for the pointy brackets around references references (`\<<ref>>`)and markers for bold (`\*bold*`).
+
+Once you add a new `TextAttributesKey`, you should either
+
+. reference an existing color (like `ASCIIDOC_COMMENT` references `DefaultLanguageHighlighterColors.LINE_COMMENT`) OR
+. add a color the AsciiDoc themes `AsciidocDefault.xml` and `AsciidocDarcula.xml`
+
+Once you add a new token you will need to add it to `AsciiDocColorSettingsPage` so users can customize the colors of their theme.
+This class references also `SampleDocument.adoc` and `AsciiDocBundle.properties`, therefore you'll probably need to change these two files as well.
+
+[[parsing]]
+=== Parsing
+
+==== Why
+
+Parsing gives a hierarchical structure and meaning to the tokens created in the parsing phase.
+
+It can define `PsiElements` inside the tree to allow interactions with the user like renaming of elements and autocompletion.
+The structure is the foundation of the structure outline view and the folding capabilities.
+
+==== How
+
+The `AsciiDocParserDefinition` separates white space and comments from functional tokens.
+It also serves as a factory for all `PsiElement`s like `AsciiDocSection` for sections and `AsciiDocBlock` for blocks.
+
+`AsciiDocParserImpl` encodes the logic how to group the tokens to a tree.
+To do this, it has several strategies. This outline summaries the most distinct strategies:
+
+References::
++
+--
+Once it sees the start token `REFSTART` (usually two opening pointy brackets, like `<<`), it sets a marker.
+Then it reads all tokens that are valid inside a reference.
+Once the are no more valid tokens for a reference, it marks this block as a `AsciiDocElementTypes.REF`.
+--
+
+Blocks::
++
+--
+A block starts for example with a LISTING_BLOCK_DELIMITER (usually four dashes in a line, like `----`).
+Then the block continues up to the point where the same marker occurs again.
+
+But the block can be preceded for example by a title (it starts with a dot, following by the title itself, like `.Title`).
+This title is part of the block.
+To support this `TITLE` and several other elements call `markPreBlock()` to memorize the first token that is part of a following block. It is stored in a variable `myPreBlockMarker`.
+
+When parsing of the block starts and the `myPreBlockMarker` is set, it uses this marker.
+If the marker is not set, is creates a new marker at the start of the block delimiter.
+When the block doesn't start on one of the following lines, `dropPreBlock()` drops the marker.
+--
+
+Sections::
++
+--
+Sections build on top of blocks.
+They can have pre-block elements as well.
+
+In addition to standard blocks they build a hierarchy:
+Each section has a level determined by the number of equal signs at the start (or, if it is an old style heading by the character underlining the heading).
+
+Whenever a section with the same level like the one before starts, the previous section needs to be closed.
+Whenever a section of a higher order (let's say two equal signs at the start, like `==`) starts, all open sections with a lower order must be closed (in this case with three or more equal signs at the start).
+This logic is encapsulated in `closeSections()`.
+It is also called at the end of the document to close all sections at the end of the document.
+--
+
+==== Debugging
+
+To analyze the structure interactively install the PsiViewer plugin.
+The plugin is pre-installed in the sandbox IDE you start using the `runIde` Gradle ask.
+
+You can also install it in the IDE you develop in, but this is optional.
+
+Right-click on the AsciiDoc editor and choose "PsiViewer | View PSI for enire file" to browse the tree.
+There is also a keyboard shortcut for this.
+
+==== Testing
+
+The are unit tests for the parser.
+You can run them from your IDE.
+The tests come in two variants:
+
+AsciiDocPsiTest::
++
+--
+This test parses a minimal snippet of AsciiDoc, creates the PSI tree, and the lets you apply assertions like in normal unit tests.
+
+Use this to write specific tests.
+Consider a given/when/then structure to write tests that are comprehensible for other developers.
+As you test only specific elements in the created tree, your tests will not break when parts of the tree change that are irrelevant to the tested functionality.
+--
+
+AsciiDocParserTest::
++
+--
+This test acts on example files in `/testData/parser` together with a golden master file.
+
+To write a new test, create a new method in the class (like `testSectionsWithPreBlock()`).
+Then put a matching AsciiDoc file to the example file directory (like `sectionsWithPreBlock.adoc`).
+When you run the test for the first time, it will create a golden master file (like `sectionsWithPreBlock.txt`).
+Check the contents of the golden master file if the result matches your expectations.
+
+On consecutive runs the test will compare the parser result with the contents of the golden master file.
+If the content matches, the test will pass.
+If there are differences, the test will fail.
+If you expected these differences for example because you changed the parser or lexer, copy the result shown in your IDE to the golden master file.
+
+NOTE: Please check in the golden master file to the Git repository!
+--
+
+So why are there two types of tests? Each has its own strengths!
+
+The golden master approach will trigger even on minor changes to the output and gives you the chance to approve or reject the changes.
+The downside is that these tests will fail when there are unrelated changes because they check too many things.
+For a golden master test it is also hard to see the parts of the golden master that are relevant for the expected behavior and must not change.
+
+The test with single assertions will be most specific to the described functionality, and will leave out parts that are unrelated to the test.
+Therefore, it will not break for unrelated changes.
+Meaningful assertions allow fellow developers to understand the expected functionality.
+Writing such a test is often slower as it requires more code and skill, but it will pay off as it will break less often due to unrelated changes.
+
+=== Interacting with PsiElements
+
+==== References and renaming
+
+All PsiElement that reference files (like for example an `include::[]`) or IDs (like for example `\<<id>>`) return references.
+Examples for this are `AsciiDocBlockMacro` and `AsciiDocRef`.
+They all need to provide a `Manipulator` that IntelliJ calls when the user renames such a reference.
+To make the "`Find References`" functionality work, the tokens that contain the IDs need to be part of the Identifier-Token-Set in `AsciiDocWordsScanner`.
+
+TODO: refactoring, folding, autocompletion
+
+== Inspections
+
+Inspections allow highlighting of issues in the editor.
+They also allow for quick fixes that the user can select using kbd:[Ctrl+Enter].
+One example is the inspection that turns Markdown-styled headings into AsciiDoc styled headings.
+
+An inspection contains the following elements:
+
+* inspection (`AsciiDocHeadingStyleInspection.java`)
+* registration of inspection in `plugin.xml`
+* description (`AsciiDocHeadingsStyleInspection.java`)
+* one or more quick-fixes (`AsciiDocConvertMarkdownHeading.java`)
+* test case (`AsciiDocHeadingStyleInspectionTest.java`)
+* test data fore before/after quickfix (`markdownHeading.adoc` and `markdownHeading-after.adoc`)
+
+== Preview rendering
+
+=== Rendering AsciiDoc to HTML
+
+The central class and method to create AsciiDoc from HTML is `AsciiDoc.render()`.
+It is implemented as a singleton.
+
+It registers custom Asciidoctor extensions that are needed for improve the preview.
+It also enables custom extensions in the `.asciidoctorconfig` folder.
+
+=== Displaying the HTML as a preview
+
+There is a `JeditorHtmlPanel` (for Swing) and a `JavaFxHtmlPanel` (for JavaFX) preview.
+
+The JavaFX preview is the current default preview.
+It is available when the user is running 64bit JDK with JavaFX (the default JDK for JetBrains IDE).
+
+For the JavaFX preview the HTML is enriched with CSS and JavaScript.
+
+The JavaFX preview uses JavaScript to scroll the preview to the current position: once the user moves the cursor, the cursor line is transmitted to the preview using `scrollToLine()` and repositions the preview using JavaScript.
+
+When the user interacts with the JavaFX preview (for example clicks on a text or a link), there is a bridge `JavaPanelBridge` back from JavaScript to Java to trigger actions like scrolling the editor or opening a link in the browser.
+
+=== Debugging the preview
+
+You can log information from the JavaFX preview the preview using
+
+[source,javascript]
+----
+window.JavaPanelBridge.log("...")
+----
+
+this will call the method `JavaPanelBridge#log`, an inner class of `JavaFxHtmlPanel`.
+
+== Upgrading Asciidoctor
+
+Follow these steps:
+
+. update `build.gradle` with the latest available AsciidoctorJ release
+
+`JavaFxHtmlPanel` will automatically load the most recent style sheets and patch them accordingly at runtime.
+
+== Releasing a new version of the plugin
+
+=== Publishing a preview version
+
+. Update link:CHANGELOG.adoc[] with th latest changes for the release
+. Push all changes to GitHub
+. Create a Release in the GitHub releases.
+This allows you to also create a tag.
+Name the tag like the release (for example: `0.28.2`)
+. Travis CI will then https://travis-ci.org/asciidoctor/asciidoctor-intellij-plugin/builds[build the release]
+The `plugin.xml` included in the build will contain the release version and the most recent entries from the change log.
+TravisCI will publish a binary to:
++
+--
+* https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases[GitHub releases] (attached as `asciidoctor-intellij-plugin.zip`)
+* https://plugins.jetbrains.com/plugin/7391-asciidoc/versions[EAP (early access program) repository], see <<eap>> for more information.
+--
+
+=== Publishing a stable version
+
+. Edit the link:CHANGELOG.adoc[] and remove the "`(preview ...)`" additions here
+. Copy the link of the `asciidoctor-intellij-plugin.zip` on GitHub releases to the clipboard
+. Go to the https://plugins.jetbrains.com/plugin/edit?pluginId=7391[JetBrains plugin repository] and upload the plugin to the stable repository using '`Get file from URL`'

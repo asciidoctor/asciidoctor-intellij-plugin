@@ -4,12 +4,13 @@ import com.intellij.codeInspection.LocalQuickFixBase;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocSection;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * @author Alexander Schwartz 2016
@@ -28,27 +29,33 @@ public class AsciiDocConvertOldstyleHeading extends LocalQuickFixBase {
   }
 
   @Override
+  @SuppressWarnings("FallThrough")
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
     PsiElement element = descriptor.getPsiElement();
     StringBuilder text = new StringBuilder(element.getText());
 
-    if(text.indexOf("\n") == -1) {
+    if (text.indexOf("\n") == -1) {
       // nothing to fix any more
       return;
     }
 
+    int pos = text.length() - 1;
+    while (pos > 0 && (text.charAt(pos) == ' ' || text.charAt(pos) == '\t')) {
+      --pos;
+    }
+    char character = text.charAt(pos);
     int depth = 0;
-    switch (text.charAt(text.length() - 2)) {
+    switch (character) {
       case '+':
-        ++ depth;
+        ++depth;
       case '^':
-        ++ depth;
+        ++depth;
       case '~':
-        ++ depth;
+        ++depth;
       case '-':
-        ++ depth;
+        ++depth;
       case '=':
-        ++ depth;
+        ++depth;
         break;
       default:
         return;
@@ -59,8 +66,8 @@ public class AsciiDocConvertOldstyleHeading extends LocalQuickFixBase {
 
     // prepend right number of equals and a blank
     text.insert(0, " ");
-    while(depth > 0) {
-      -- depth;
+    while (depth > 0) {
+      --depth;
       text.insert(0, "=");
     }
 
@@ -68,13 +75,11 @@ public class AsciiDocConvertOldstyleHeading extends LocalQuickFixBase {
   }
 
   @NotNull
-  public static PsiElement createHeading(@NotNull Project project, @NotNull String text) {
-    AsciiDocFile file = createFileFromText(project, text);
-    return PsiTreeUtil.findChildOfType(file, AsciiDocSection.class).getFirstChild();
+  private static PsiElement createHeading(@NotNull Project project, @NotNull String text) {
+    AsciiDocFile file = AsciiDocUtil.createFileFromText(project, text);
+    AsciiDocSection section = PsiTreeUtil.findChildOfType(file, AsciiDocSection.class);
+    Objects.requireNonNull(section, "there should be a section from the text passed as argument");
+    return section.getFirstChild();
   }
 
-  @NotNull
-  private static AsciiDocFile createFileFromText(@NotNull Project project, @NotNull String text) {
-    return (AsciiDocFile)PsiFileFactory.getInstance(project).createFileFromText("a.adoc", AsciiDocLanguage.INSTANCE, text);
-  }
 }

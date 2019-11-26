@@ -5,9 +5,10 @@ import com.intellij.ide.structureView.impl.common.PsiTreeElementBase;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import icons.AsciiDocIcons;
-import org.asciidoc.intellij.psi.AsciiDocBlock;
+import com.intellij.psi.PsiReference;
+import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocSection;
+import org.asciidoc.intellij.psi.AsciiDocSelfDescribe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,15 +21,39 @@ import java.util.List;
  * @author yole
  */
 public class AsciiDocStructureViewElement extends PsiTreeElementBase<PsiElement> {
-  public AsciiDocStructureViewElement(PsiElement psiElement) {
+  AsciiDocStructureViewElement(PsiElement psiElement) {
     super(psiElement);
   }
 
   @NotNull
   @Override
   public Collection<StructureViewTreeElement> getChildrenBase() {
-    List<StructureViewTreeElement> result = new ArrayList<StructureViewTreeElement>();
+    List<StructureViewTreeElement> result = new ArrayList<>();
+    if (getElement() == null) {
+      return result;
+    }
     for (PsiElement childElement : getElement().getChildren()) {
+      // a block macro might contain references to other files (for example an include or an image)
+      if (childElement instanceof AsciiDocBlockMacro) {
+        PsiReference[] references = childElement.getReferences();
+        if (references.length > 0) {
+          PsiElement resolved = references[references.length - 1].resolve();
+          if (!getPresentableElementText(resolved).isEmpty()) {
+            result.add(new AsciiDocStructureViewElement(resolved));
+            continue;
+          }
+        }
+      }
+      if (childElement instanceof AsciiDocBlockMacro) {
+        PsiReference[] references = childElement.getReferences();
+        if (references.length > 0) {
+          PsiElement resolved = references[references.length - 1].resolve();
+          if (!getPresentableElementText(resolved).isEmpty()) {
+            result.add(new AsciiDocStructureViewElement(resolved));
+          }
+        }
+        continue;
+      }
       if (!getPresentableElementText(childElement).isEmpty()) {
         result.add(new AsciiDocStructureViewElement(childElement));
       }
@@ -50,15 +75,18 @@ public class AsciiDocStructureViewElement extends PsiTreeElementBase<PsiElement>
       @Nullable
       @Override
       public String getLocationString() {
-        getElement().getContainingFile().getName();
         return null;
       }
 
       @Nullable
       @Override
       public Icon getIcon(boolean unused) {
-        return AsciiDocStructureViewElement.this.getElement() instanceof AsciiDocSection ?
-          AsciiDocIcons.Asciidoc_Icon : null;
+        PsiElement element = AsciiDocStructureViewElement.this.getElement();
+        if (element != null) {
+          return element.getIcon(0);
+        } else {
+          return null;
+        }
       }
     };
   }
@@ -71,21 +99,13 @@ public class AsciiDocStructureViewElement extends PsiTreeElementBase<PsiElement>
 
   private static String getPresentableElementText(PsiElement element) {
     if (element instanceof AsciiDocSection) {
-      return ((AsciiDocSection)element).getTitle();
+      return ((AsciiDocSection) element).getTitle();
     }
     if (element instanceof PsiFile) {
-      return ((PsiFile)element).getName();
+      return ((PsiFile) element).getName();
     }
-    if (element instanceof AsciiDocBlock) {
-      AsciiDocBlock block = (AsciiDocBlock)element;
-      String title = block.getTitle();
-      if (title != null) {
-        String style = block.getStyle();
-        if (style != null) {
-          return "[" + style + "] " + title;
-        }
-        return title;
-      }
+    if (element instanceof AsciiDocSelfDescribe) {
+      return ((AsciiDocSelfDescribe) element).getDescription();
     }
     return "";
   }

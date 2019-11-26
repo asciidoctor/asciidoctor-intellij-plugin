@@ -52,21 +52,20 @@ public class LazyApplicationPoolExecutor implements Executor {
    *
    * @param command command to be executed.
    */
+  @Override
+  @SuppressWarnings("FutureReturnValueIgnored")
   public synchronized void execute(@NotNull final Runnable command) {
-    next = new Runnable() {
-      public void run() {
-        try {
-          command.run();
-          Thread.sleep(delay);
-        }
-        catch (InterruptedException e) {
-          System.out.println(System.currentTimeMillis() + ": was interrupted");
-          e.printStackTrace();
-          Thread.currentThread().interrupt();
-        }
-        finally {
-          if (!Thread.currentThread().isInterrupted())
-            scheduleNext(); //needed to execute the very last command
+    next = () -> {
+      try {
+        command.run();
+        Thread.sleep(delay);
+      } catch (InterruptedException e) {
+        System.out.println(System.currentTimeMillis() + ": was interrupted");
+        e.printStackTrace();
+        Thread.currentThread().interrupt();
+      } finally {
+        if (!Thread.currentThread().isInterrupted()) {
+          scheduleNext(); //needed to execute the very last command
         }
       }
     };

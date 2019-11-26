@@ -1,0 +1,38 @@
+<heading>= Test AsciiDoc document</heading>
+
+<comment>// line comment</comment>
+
+<comment>////
+Block comment
+////
+</comment>
+
+<bullet>*</bullet> bullet
+
+<enumeration>.</enumeration> enumeration
+
+<description>property::</description> description
+
+<callout><1></callout> callout
+
+<block_macro>blockmacro::</block_macro>content<marker>[]</marker>
+
+<inline_macro>inlinemacro:</inline_macro>content<marker>[]</marker>
+
+<marker>:</marker><attribute>attribute</attribute><marker>:</marker> <value>value</value>
+
+<marker>{</marker><attribute>attribute</attribute><marker>}</marker>
+
+<listing>----
+Listing
+----
+</listing>
+
+<marker>*</marker><bold>bold</bold><marker>*</marker>
+<marker>_</marker><italic>italic</italic><marker>_</marker>
+<marker>`</marker><mono>mono</mono><marker>`</marker>
+
+<marker>*_</marker><bolditalic>bolditalic</bolditalic><marker>_*</marker>
+<marker>*`</marker><monobold>monobold</monobold><marker>`*</marker>
+<marker>*`</marker><monoitalic>monoitalic</monoitalic><marker>`*</marker>
+<marker>*`_</marker><monobolditalic>monobolditalic</monobolditalic><marker>_`*</marker>

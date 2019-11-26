@@ -25,9 +25,8 @@ public class AsciiDocActionUtil {
   public static SplitFileEditor findSplitEditor(AnActionEvent e) {
     final FileEditor editor = e.getData(PlatformDataKeys.FILE_EDITOR);
     if (editor instanceof SplitFileEditor) {
-      return (SplitFileEditor)editor;
-    }
-    else {
+      return (SplitFileEditor) editor;
+    } else {
       return SplitFileEditor.PARENT_SPLIT_KEY.get(editor);
     }
   }
@@ -41,8 +40,7 @@ public class AsciiDocActionUtil {
       final PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
       if (psiFile != null && psiFile.getLanguage() == AsciiDocLanguage.INSTANCE && ApplicationManager.getApplication().isUnitTestMode()) {
         return e.getData(CommonDataKeys.EDITOR);
-      }
-      else {
+      } else {
         return null;
       }
     }
@@ -50,7 +48,7 @@ public class AsciiDocActionUtil {
     if (!(splitEditor.getMainEditor() instanceof TextEditor)) {
       return null;
     }
-    final TextEditor mainEditor = (TextEditor)splitEditor.getMainEditor();
+    final TextEditor mainEditor = (TextEditor) splitEditor.getMainEditor();
     if (!mainEditor.getComponent().isVisible()) {
       return null;
     }
@@ -66,8 +64,7 @@ public class AsciiDocActionUtil {
         return null;
       }
       return Couple.of(element, element);
-    }
-    else {
+    } else {
       final PsiElement startElement = file.findElementAt(caret.getSelectionStart());
       final PsiElement endElement = file.findElementAt(caret.getSelectionEnd());
       if (startElement == null || endElement == null) {

@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.util.Locale;
 
 /**
  * Inspired by: http://stackoverflow.com/questions/17522343/custom-javafx-webview-protocol-handler. This is a workaround
@@ -33,22 +34,23 @@ public class LocalfileURLConnection extends URLConnection {
     connected = true;
   }
 
+  @Override
   public String getHeaderField(String name) {
     if ("Content-Type".equalsIgnoreCase(name)) {
       return getContentType();
-    }
-    else if ("Content-Length".equalsIgnoreCase(name)) {
+    } else if ("Content-Length".equalsIgnoreCase(name)) {
       return "" + getContentLength();
     }
     return null;
   }
 
+  @Override
   public String getContentType() {
     String fileName = getURL().getFile();
     String ext = "unknown";
-    if(fileName.lastIndexOf('.') != -1) {
+    if (fileName.lastIndexOf('.') != -1) {
       ext = fileName.substring(fileName.lastIndexOf('.') + 1);
-      ext.toLowerCase();
+      ext = ext.toLowerCase(Locale.US);
       if (ext.equals("svg")) {
         ext = "svg+xml";
       }
@@ -56,18 +58,22 @@ public class LocalfileURLConnection extends URLConnection {
     return "image/" + ext; // TODO: switch based on file-type
   }
 
+  @Override
   public int getContentLength() {
     return data.length;
   }
 
+  @Override
   public long getContentLengthLong() {
     return data.length;
   }
 
+  @Override
   public boolean getDoInput() {
     return true;
   }
 
+  @Override
   public InputStream getInputStream() throws IOException {
     connect();
     return new ByteArrayInputStream(data);
@@ -84,15 +90,19 @@ public class LocalfileURLConnection extends URLConnection {
       // this is needed on Linux/Mac OS, but harmful on Windows
       imgPath = "/" + imgPath;
     }
-    data = IOUtils.toByteArray(new URL("file:/" + imgPath).openStream());
+    try (InputStream stream = new URL("file:/" + imgPath).openStream()) {
+      data = IOUtils.toByteArray(stream);
+    }
   }
 
-  public OutputStream getOutputStream() throws IOException {
+  @Override
+  public OutputStream getOutputStream() {
     // this might be unnecessary - the whole method can probably be omitted for our purposes
     return new ByteArrayOutputStream();
   }
 
-  public java.security.Permission getPermission() throws IOException {
+  @Override
+  public java.security.Permission getPermission() {
     return null; // we need no permissions to access this URL
   }
 

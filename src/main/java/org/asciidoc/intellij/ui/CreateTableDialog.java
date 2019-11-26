@@ -53,6 +53,7 @@ public class CreateTableDialog extends DialogWrapper {
     return columnCount.getNumber().intValue();
   }
 
+  @Override
   public String getTitle() {
     return title.getText();
   }

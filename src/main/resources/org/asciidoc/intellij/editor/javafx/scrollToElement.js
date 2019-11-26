@@ -35,8 +35,8 @@ window.__IntelliJTools.scrollToLine = (function () {
 
     // the sourcelines will be as CSS class elements that also have class has-source-line
     var blocks = document.getElementsByClassName('has-source-line');
-    var startY;
-    var startLine;
+    var startY = 0;
+    var startLine = 0;
     var endY;
     var endLine = lineCount;
 
@@ -59,7 +59,9 @@ window.__IntelliJTools.scrollToLine = (function () {
     var resultY = startY
 
     // interpolate the relative position inside the current block
-    if (endY !== undefined && newLineToScroll != startLine) {
+    if (newLineToScroll === 0) {
+      resultY = 0;
+    } else if (endY !== undefined && newLineToScroll !== startLine) {
       resultY += (newLineToScroll - startLine) / (endLine - startLine) * (endY - startY)
     }
 
@@ -69,7 +71,7 @@ window.__IntelliJTools.scrollToLine = (function () {
 
     // ensure that the assumed position is between x% of the window height depending on scroll direction
     if (oldLineToScroll < newLineToScroll) {
-      relativeWindowPosition = 0.8
+      relativeWindowPosition = 0.7
     }
     else if (oldLineToScroll > newLineToScroll) {
       relativeWindowPosition = 0.1
@@ -79,7 +81,7 @@ window.__IntelliJTools.scrollToLine = (function () {
       relativeWindowPosition = 0.3
     }
 
-    if (oldLineToScroll != newLineToScroll) {
+    if (oldLineToScroll !== newLineToScroll) {
       var newValue = resultY - height * relativeWindowPosition;
 
       // ensure consistent scrolling when scrolling up or down

@@ -4,7 +4,6 @@ import com.intellij.ide.actions.SearchEverywhereClassifier;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import icons.AsciiDocIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +22,7 @@ public class AsciiDocSearchEverywhereClassifier extends DefaultPsiElementCellRen
 
   @Override
   protected Icon getIcon(PsiElement element) {
-    return AsciiDocIcons.Asciidoc_Icon;
+    return element.getIcon(0);
   }
 
   @Override
@@ -34,6 +33,9 @@ public class AsciiDocSearchEverywhereClassifier extends DefaultPsiElementCellRen
   @Override
   public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
     if (value instanceof AsciiDocSection) {
+      return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+    }
+    if (value instanceof AsciiDocBlockId) {
       return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
     }
     return null;

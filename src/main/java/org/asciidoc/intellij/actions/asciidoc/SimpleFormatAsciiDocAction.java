@@ -1,9 +1,32 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
+import com.intellij.openapi.editor.Caret;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.util.TextRange;
+
 /**
  * @author Michael Krausse (ehmkah)
  */
 public abstract class SimpleFormatAsciiDocAction extends FormatAsciiDocAction {
+
+  public abstract String getFormatCharacter();
+
+  @Override
+  protected void selectText(Editor editor) {
+    super.selectText(editor);
+    Caret currentCaret = editor.getCaretModel().getCurrentCaret();
+    while (currentCaret.getSelectionStart() > 0
+      && editor.getDocument().getText(TextRange.create(currentCaret.getSelectionStart() - 1, currentCaret.getSelectionStart())).equals(getFormatCharacter())
+      && currentCaret.getSelectionEnd() < editor.getDocument().getTextLength()
+      && editor.getDocument().getText(TextRange.create(currentCaret.getSelectionEnd(), currentCaret.getSelectionEnd() + 1)).equals(getFormatCharacter())) {
+      currentCaret.setSelection(currentCaret.getSelectionStart() - 1, currentCaret.getSelectionEnd() + 1);
+    }
+  }
+
+  @Override
+  public String updateSelection(String selection, boolean isWord) {
+    return updateSelectionIntern(selection, getFormatCharacter(), isWord);
+  }
 
   protected String updateSelectionIntern(String selection, String symbol, boolean isWord) {
     if (containsSymbol(selection, symbol)) {
@@ -14,7 +37,7 @@ public abstract class SimpleFormatAsciiDocAction extends FormatAsciiDocAction {
 
   private String appendSymbol(String selection, String symbol, boolean isWord) {
     String matchingSymbol = symbol;
-    if(!isWord) {
+    if (!isWord) {
       matchingSymbol += symbol;
     }
     return matchingSymbol + selection + matchingSymbol;
@@ -37,6 +60,6 @@ public abstract class SimpleFormatAsciiDocAction extends FormatAsciiDocAction {
   private boolean containsSymbol(String selection, String symbol) {
     String doubleSymbol = symbol + symbol;
     return (selection.startsWith(symbol) && selection.endsWith(symbol)) ||
-        (selection.startsWith(doubleSymbol) && selection.endsWith(doubleSymbol));
+      (selection.startsWith(doubleSymbol) && selection.endsWith(doubleSymbol));
   }
 }

@@ -48,7 +48,7 @@ public class AsciiDocSplitEditor extends SplitFileEditor<TextEditor, AsciiDocPre
     @NotNull
     private final AsciiDocPreviewEditor myPreviewFileEditor;
 
-    public MyCaretListener(@NotNull AsciiDocPreviewEditor previewFileEditor) {
+    MyCaretListener(@NotNull AsciiDocPreviewEditor previewFileEditor) {
       myPreviewFileEditor = previewFileEditor;
     }
 

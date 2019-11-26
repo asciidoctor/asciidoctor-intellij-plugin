@@ -59,6 +59,7 @@ public class StreamPair {
     return type.get(this);
   }
 
+  @Override
   public String toString() {
     return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }

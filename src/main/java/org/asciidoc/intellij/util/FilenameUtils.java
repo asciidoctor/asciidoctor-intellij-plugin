@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.util;
 
-import java.io.File;
 import java.util.Collection;
 
 public class FilenameUtils {

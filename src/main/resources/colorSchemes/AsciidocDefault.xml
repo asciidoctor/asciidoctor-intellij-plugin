@@ -1,0 +1,41 @@
+<?xml version='1.0'?>
+<list>
+    <option baseAttributes="ASCIIDOC_TEXT" name="ASCIIDOC_BOLD">
+        <value>
+            <option name="FONT_TYPE" value="1"/>
+        </value>
+    </option>
+    <option baseAttributes="ASCIIDOC_TEXT" name="ASCIIDOC_ITALIC">
+        <value>
+            <option name="FONT_TYPE" value="2"/>
+        </value>
+    </option>
+    <option baseAttributes="ASCIIDOC_TEXT" name="ASCIIDOC_BOLDITALIC">
+        <value>
+            <option name="FONT_TYPE" value="3"/>
+        </value>
+    </option>
+    <option baseAttributes="DEFAULT_KEYWORD" name="ASCIIDOC_MONO">
+        <value>
+            <option name="BACKGROUND" value="efefef"/>
+        </value>
+    </option>
+    <option baseAttributes="DEFAULT_KEYWORD" name="ASCIIDOC_MONOBOLD">
+        <value>
+            <option name="BACKGROUND" value="efefef"/>
+            <option name="FONT_TYPE" value="1"/>
+        </value>
+    </option>
+    <option baseAttributes="DEFAULT_KEYWORD" name="ASCIIDOC_MONOITALIC">
+        <value>
+            <option name="BACKGROUND" value="efefef"/>
+            <option name="FONT_TYPE" value="2"/>
+        </value>
+    </option>
+    <option baseAttributes="ASCIIDOC_TEXT" name="ASCIIDOC_MONOBOLDITALIC">
+        <value>
+            <option name="BACKGROUND" value="efefef"/>
+            <option name="FONT_TYPE" value="3"/>
+        </value>
+    </option>
+</list>

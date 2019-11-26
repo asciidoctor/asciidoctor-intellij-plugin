@@ -1,0 +1,6 @@
+
+== Headline 1
+
+<spot>include::sub2.adoc[]</spot>
+
+== Headline 2

@@ -38,9 +38,9 @@ public abstract class AsciiDocHtmlPanelProvider {
   @NotNull
   public static AsciiDocHtmlPanelProvider createFromInfo(@NotNull ProviderInfo providerInfo) {
     try {
-      return ((AsciiDocHtmlPanelProvider)Class.forName(providerInfo.getClassName()).newInstance());
-    }
-    catch (Exception e) {
+      return Class.forName(providerInfo.getClassName()).asSubclass(AsciiDocHtmlPanelProvider.class)
+        .getDeclaredConstructor().newInstance();
+    } catch (Exception e) {
       Messages.showMessageDialog(
         "Cannot set preview panel provider (" + providerInfo.getName() + "):\n" + e.getMessage(),
         CommonBundle.getErrorTitle(),
@@ -82,13 +82,21 @@ public abstract class AsciiDocHtmlPanelProvider {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof ProviderInfo)) {
+        return false;
+      }
 
-      ProviderInfo info = (ProviderInfo)o;
+      ProviderInfo info = (ProviderInfo) o;
 
-      if (!myName.equals(info.myName)) return false;
-      if (!className.equals(info.className)) return false;
+      if (!myName.equals(info.myName)) {
+        return false;
+      }
+      if (!className.equals(info.className)) {
+        return false;
+      }
 
       return true;
     }
@@ -106,7 +114,7 @@ public abstract class AsciiDocHtmlPanelProvider {
     }
   }
 
-  public static abstract class AvailabilityInfo {
+  public abstract static class AvailabilityInfo {
     public static final AvailabilityInfo AVAILABLE = new AvailabilityInfo() {
       @Override
       public boolean checkAvailability(@NotNull JComponent parentComponent) {

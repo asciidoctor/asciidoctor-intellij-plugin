@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.asciidoc.intellij.settings.AsciiDocPreviewSettingsForm">
-  <grid id="27dc6" binding="myMainPanel" layout-manager="GridLayoutManager" row-count="5" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="myMainPanel" layout-manager="GridLayoutManager" row-count="13" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="243" height="400"/>
+      <xy x="20" y="20" width="851" height="975"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -16,7 +16,7 @@
       </component>
       <vspacer id="685ea">
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="12" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <component id="d284a" class="com.intellij.ui.components.JBLabel">
@@ -27,11 +27,6 @@
           <text value="Preview browser:"/>
         </properties>
       </component>
-      <hspacer id="5530d">
-        <constraints>
-          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-      </hspacer>
       <component id="a7f38" class="com.intellij.ui.components.JBLabel">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -63,7 +58,7 @@
       </component>
       <component id="8ac70" class="com.intellij.ui.components.JBLabel">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <horizontalAlignment value="10"/>
@@ -72,7 +67,7 @@
       </component>
       <grid id="1d4b0" binding="attributesPanel" custom-create="true" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints>
-          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="9" fill="0" indent="0" use-parent-layout="false">
+          <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="9" fill="0" indent="0" use-parent-layout="false">
             <maximum-size width="-1" height="200"/>
           </grid>
         </constraints>
@@ -82,6 +77,221 @@
         </border>
         <children/>
       </grid>
+      <grid id="8fd76" layout-manager="GridLayoutManager" row-count="7" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="909dc" class="com.intellij.ui.components.JBRadioButton" binding="myVerticalLayout">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.preview.layout.vertical"/>
+            </properties>
+          </component>
+          <component id="40404" class="com.intellij.ui.components.JBRadioButton" binding="myHorizontalLayout">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.preview.layout.horizontal"/>
+            </properties>
+          </component>
+          <component id="d8eac" class="com.intellij.ui.components.JBRadioButton" binding="myEditorLeft">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.preview.editor.left"/>
+            </properties>
+          </component>
+          <component id="f87fd" class="com.intellij.ui.components.JBRadioButton" binding="myEditorRight">
+            <constraints>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.preview.editor.right"/>
+            </properties>
+          </component>
+          <component id="83a6d" class="com.intellij.ui.components.JBRadioButton" binding="myEditorTop">
+            <constraints>
+              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.preview.editor.top"/>
+            </properties>
+          </component>
+          <component id="c80de" class="com.intellij.ui.components.JBRadioButton" binding="myEditorBottom">
+            <constraints>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.preview.editor.bottom"/>
+            </properties>
+          </component>
+          <component id="8ac2" class="com.intellij.ui.components.JBLabel" binding="myVerticalSplitLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.preview.layout.label"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <component id="9be29" class="com.intellij.ui.components.JBCheckBox" binding="myEnableInjections">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <selected value="true"/>
+          <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.enable.injections"/>
+        </properties>
+      </component>
+      <component id="e1752" class="com.intellij.ui.components.JBCheckBox" binding="myShowAsciiDocWarningsAndErrorsInEditor">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <selected value="true"/>
+          <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.enable.asciiDocErrorsInEditor"/>
+        </properties>
+      </component>
+      <component id="2da3c" class="com.intellij.ui.components.JBCheckBox" binding="myInplacePreviewRefresh">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <selected value="true"/>
+          <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.enable.inplacePreviewRefresh"/>
+        </properties>
+      </component>
+      <grid id="d95d4" binding="myDisableLanguageInjection" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="5f437" class="com.intellij.ui.components.JBTextField" binding="myDisabledInjectionsByLanguage">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="e9a11" class="com.intellij.ui.components.JBLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.disable.injections.languages"/>
+            </properties>
+          </component>
+          <component id="2a017" class="com.intellij.ui.components.JBLabel">
+            <constraints>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.disable.injections.hint2"/>
+            </properties>
+          </component>
+          <component id="37a4" class="com.intellij.ui.components.JBLabel">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.disable.injections.hint1"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="12181" binding="myKrokiUrlPanel" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="10" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="7b7b3" class="com.intellij.ui.components.JBTextField" binding="myKrokiUrl">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value=""/>
+              <toolTipText value="https://kroki.io"/>
+            </properties>
+          </component>
+          <component id="5b251" class="com.intellij.ui.components.JBLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.kroki.url"/>
+            </properties>
+          </component>
+          <component id="f3589" class="com.intellij.ui.components.JBLabel">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.kroki.hint"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <component id="149a2" class="com.intellij.openapi.ui.ComboBox" binding="mySafeModeSetting" custom-create="true">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="a243e" class="com.intellij.ui.components.JBLabel">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <horizontalAlignment value="10"/>
+          <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.safemode.label"/>
+          <toolTipText resource-bundle="AsciiDocBundle" key="asciidoc.settings.safemode.tooltip"/>
+        </properties>
+      </component>
+      <component id="1c3b7" class="com.intellij.ui.components.JBCheckBox" binding="myEnableKroki">
+        <constraints>
+          <grid row="9" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <selected value="true"/>
+          <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.enable.kroki"/>
+        </properties>
+      </component>
+      <component id="a27a8" class="com.intellij.ui.components.JBLabel">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="AsciiDocBundle" key="asciidoc.settings.safemode.hint"/>
+        </properties>
+      </component>
     </children>
   </grid>
+  <buttonGroups>
+    <group name="mySplit">
+      <member id="909dc"/>
+      <member id="40404"/>
+    </group>
+    <group name="myEditorLocation">
+      <member id="d8eac"/>
+      <member id="f87fd"/>
+      <member id="83a6d"/>
+      <member id="c80de"/>
+    </group>
+  </buttonGroups>
 </form>

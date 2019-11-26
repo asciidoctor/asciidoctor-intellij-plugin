@@ -2,12 +2,16 @@ package org.asciidoc.intellij.ui;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
-import com.intellij.openapi.fileEditor.*;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorLocation;
+import com.intellij.openapi.fileEditor.FileEditorState;
+import com.intellij.openapi.fileEditor.FileEditorStateLevel;
+import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.UserDataHolderBase;
-import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.JBSplitter;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -28,9 +32,9 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
   private static final String MY_PROPORTION_KEY = "SplitFileEditor.Proportion";
 
   @NotNull
-  protected final E1 myMainEditor;
+  private final E1 myMainEditor;
   @NotNull
-  protected final E2 mySecondEditor;
+  private final E2 mySecondEditor;
   @NotNull
   private final JComponent myComponent;
   @NotNull
@@ -40,6 +44,10 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
   private final MyListenersMultimap myListenersGenerator = new MyListenersMultimap();
 
   private AsciiDocToolbarPanel myToolbarWrapper;
+
+  private boolean myVerticalSplitOption;
+  private boolean myEditorFirst;
+  private JBSplitter mySplitter;
 
   public SplitFileEditor(@NotNull E1 mainEditor, @NotNull E2 secondEditor) {
     myMainEditor = mainEditor;
@@ -53,26 +61,49 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     if (mySecondEditor instanceof TextEditor) {
       mySecondEditor.putUserData(PARENT_SPLIT_KEY, this);
     }
+
+    AsciiDocApplicationSettings.SettingsChangedListener settingsChangedListener =
+      settings -> ApplicationManager.getApplication().invokeLater(() -> {
+        triggerSplitOrientationChange(settings.getAsciiDocPreviewSettings().isVerticalSplit());
+        triggerEditorFirstChange(settings.getAsciiDocPreviewSettings().isEditorFirst());
+        triggerLayoutChange(settings.getAsciiDocPreviewSettings().getSplitEditorLayout());
+      });
+
+    ApplicationManager.getApplication().getMessageBus().connect(this)
+      .subscribe(AsciiDocApplicationSettings.SettingsChangedListener.TOPIC, settingsChangedListener);
+
+  }
+
+  private void triggerEditorFirstChange(boolean isEditorFirst) {
+    if (myEditorFirst == isEditorFirst) {
+      return;
+    }
+
+    myEditorFirst = isEditorFirst;
+
+    mySplitter.swapComponents();
+    myComponent.repaint();
   }
 
   @NotNull
   private JComponent createComponent() {
-    final JBSplitter splitter = new JBSplitter(false, 0.5f, 0.15f, 0.85f);
-    splitter.setSplitterProportionKey(MY_PROPORTION_KEY);
-    splitter.setFirstComponent(myMainEditor.getComponent());
-    splitter.setSecondComponent(mySecondEditor.getComponent());
-
+    myVerticalSplitOption = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isVerticalSplit();
+    myEditorFirst = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isEditorFirst();
+    mySplitter = new JBSplitter(!myVerticalSplitOption, 0.5f, 0.15f, 0.85f);
+    mySplitter.setSplitterProportionKey(MY_PROPORTION_KEY);
+    mySplitter.setFirstComponent(myEditorFirst ? myMainEditor.getComponent() : mySecondEditor.getComponent());
+    mySplitter.setSecondComponent(myEditorFirst ? mySecondEditor.getComponent() : myMainEditor.getComponent());
 
     if (myMainEditor instanceof TextEditor) {
-      myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor) myMainEditor).getEditor());
+      myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor) myMainEditor).getEditor(), mySplitter);
     }
     if (mySecondEditor instanceof TextEditor) {
-      myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor) mySecondEditor).getEditor());
+      myToolbarWrapper = new AsciiDocToolbarPanel(((TextEditor) mySecondEditor).getEditor(), mySplitter);
     }
 
     final JPanel result = new JPanel(new BorderLayout());
     result.add(myToolbarWrapper, BorderLayout.NORTH);
-    result.add(splitter, BorderLayout.CENTER);
+    result.add(mySplitter, BorderLayout.CENTER);
     adjustEditorsVisibility();
 
     return result;
@@ -80,8 +111,8 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
   public void triggerLayoutChange() {
     final int oldValue = mySplitEditorLayout.ordinal();
-    final int N = SplitEditorLayout.values().length;
-    final int newValue = (oldValue + N - 1) % N;
+    final int n = SplitEditorLayout.values().length;
+    final int newValue = (oldValue + n - 1) % n;
 
     triggerLayoutChange(SplitEditorLayout.values()[newValue]);
   }
@@ -95,6 +126,17 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     invalidateLayout();
   }
 
+  private void triggerSplitOrientationChange(boolean isVerticalSplit) {
+    if (myVerticalSplitOption == isVerticalSplit) {
+      return;
+    }
+
+    myVerticalSplitOption = isVerticalSplit;
+
+    mySplitter.setOrientation(!myVerticalSplitOption);
+    myComponent.repaint();
+  }
+
   @NotNull
   public SplitEditorLayout getCurrentEditorLayout() {
     return mySplitEditorLayout;
@@ -102,13 +144,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
   private void invalidateLayout() {
     adjustEditorsVisibility();
-    myComponent.revalidate();
     myComponent.repaint();
-
-    final JComponent focusComponent = getPreferredFocusedComponent();
-    if (focusComponent != null) {
-      IdeFocusManager.findInstanceByComponent(focusComponent).requestFocus(focusComponent, true);
-    }
   }
 
   protected void adjustEditorsVisibility() {
@@ -173,8 +209,8 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
   @Override
   public void selectNotify() {
-    mySecondEditor.selectNotify();
     myMainEditor.selectNotify();
+    mySecondEditor.selectNotify();
   }
 
   @Override
@@ -237,7 +273,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     @Nullable
     private final FileEditorState mySecondState;
 
-    public MyFileEditorState(@Nullable String splitLayout, @Nullable FileEditorState firstState, @Nullable FileEditorState secondState) {
+    MyFileEditorState(@Nullable String splitLayout, @Nullable FileEditorState firstState, @Nullable FileEditorState secondState) {
       mySplitLayout = splitLayout;
       myFirstState = firstState;
       mySecondState = secondState;
@@ -317,8 +353,11 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     SECOND(false, true, AsciiDocBundle.message("asciidoc.layout.preview.only")),
     SPLIT(true, true, AsciiDocBundle.message("asciidoc.layout.editor.and.preview"));
 
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     public final boolean showFirst;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     public final boolean showSecond;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     public final String presentationName;
 
     SplitEditorLayout(boolean showFirst, boolean showSecond, String presentationName) {

@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <compiler.buildTargetScopeProvider implementation="org.asciidoc.intellij.builder.AsciiDocTargetScopeProvider"/>
+  </extensions>
+</idea-plugin>

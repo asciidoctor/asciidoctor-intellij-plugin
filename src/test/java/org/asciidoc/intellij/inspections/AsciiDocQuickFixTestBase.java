@@ -17,6 +17,13 @@ public abstract class AsciiDocQuickFixTestBase extends AsciiDocCodeInsightFixtur
     myFixture.checkResultByFile(testName + "-after.adoc", true);
   }
 
+  protected void doTest(@NotNull Class<? extends IntentionAction> intentionAction, boolean checkHighlighting) {
+    String testName = getTestName(true);
+    configure(checkHighlighting, testName);
+    applySingleQuickFix(intentionAction);
+    myFixture.checkResultByFile(testName + "-after.adoc", true);
+  }
+
   protected void doTestNoFix(@NotNull String name) {
     doTestNoFix(name, false);
   }
@@ -30,8 +37,7 @@ public abstract class AsciiDocQuickFixTestBase extends AsciiDocCodeInsightFixtur
   private void configure(boolean checkHighlighting, String testName) {
     if (checkHighlighting) {
       myFixture.testHighlighting(testName + ".adoc");
-    }
-    else {
+    } else {
       myFixture.configureByFile(testName + ".adoc");
       myFixture.doHighlighting();
     }

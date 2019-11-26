@@ -2,6 +2,7 @@
 /* there is currently darcula set of colors. use only font weights for now */
 .CodeRay .line-numbers{border-right:1px solid #d8d8d8;padding:0 0.5em 0 .25em}
 .CodeRay span.line-numbers{display:inline-block;margin-right:.5em;}
+table.CodeRay tbody tr {background-color: #626262 !important;}
 table.CodeRay{border-collapse:separate;border-spacing:0;margin-bottom:0;border:0}
 table.CodeRay td{vertical-align: top;line-height:1.45}
 table.CodeRay td.line-numbers{text-align:right}

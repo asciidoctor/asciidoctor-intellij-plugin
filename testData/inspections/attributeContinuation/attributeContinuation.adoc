@@ -1,0 +1,2 @@
+:attr: val<warning descr="Attribute legacy continuation"> <caret>+
+ </warning>val

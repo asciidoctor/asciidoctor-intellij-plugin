@@ -1,72 +1,22 @@
-<idea-plugin version="2" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
+<idea-plugin url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
-  <version>0.21.4</version>
-  <vendor email="erik.pragt@jworks.nl" url="http://asciidoctor.org">Asciidoctor Project</vendor>
+  <version>0.0.1</version>
+  <vendor email="alexander.schwartz@gmx.net" url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
+    Asciidoctor IntelliJ Plugin Project
+  </vendor>
 
-  <description><![CDATA[
-      <p><a href="http://www.methods.co.nz/asciidoc/">AsciiDoc</a> language support for IntelliJ platform.<p>
-      <p>AsciiDoc is a text document format, similar to formats like Markdown, for writing notes, documentation, articles,
-      books, ebooks, slideshows, web pages, man pages and blogs. AsciiDoc files can be translated to many formats
-      including HTML, PDF, EPUB, man page. AsciiDoc is, in contrast to Markdown, highly configurable: both the AsciiDoc
-      source file syntax and the backend output markups (which can be almost any type of SGML/XML markup)
-    can be customized and extended by the user.
-      <p>If you want to use the JavaFX instead of the Swing preview, you'll need to run IntelliJ with 64bit Java.
-      Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to be most stable in
-      the JetBrains JDK.
-  <p>
-  <p>
-  <p>
-  For better legibility in the JavaFX preview, this package includes DejaVu fonts.
-  <a href="https://dejavu-fonts.github.io/License.html">See here for the free fonts license</a>.
-  </p>
-</body>
-      ]]>
-  </description>
+  <description>(automatically filled during build from description.html)</description>
 
-  <change-notes><![CDATA[
-    <ul>
-      <li>0.21.4 Add official asciidoctor logo (#219)</li>
-      <li>0.21.3 upgrade to MathJAX 2.4.7 (as bundled in AsciidoctorJ 1.5.7)</li>
-      <li>0.21.2 show title of document again (#217)</li>
-      <li>0.21.1 allow attributes to be pre-defined in plugin settings (#216)</li>
-      <li>0.21.0 Update to AsciidoctorJ 1.5.7 and Asciidoctor Diagram 1.5.9<br />Treat "line must be non negative" only as a warning (#212)</li>
-      <li>0.20.6 Display all PlantUML graphics as PNG for preview (#170)</li>
-      <li>0.20.5 Adding hiDPI support for JavaFX preview (#125)</li>
-      <li>0.20.4 Requiring 2017.1 as minimum for this plugin</li>
-      <li>0.20.3 avoiding deadlock on JavaFX initialization (#207)<br />Requiring 2017.2 as minimum for this plugin</li>
-      <li>0.20.2 Dejavu fonts now display chinese characters in tables (#203)</li>
-      <li>0.20.1 Updated Asciidoctor Diagram to 1.5.8<br>
-          Dejavu fonts now display chinese characters (#203)</li>
-      <li>0.20.0 Add MathJax support in JavaFX preview #201<br>
-          JavaFX preview is now the default for new installations of the plugin<br>
-          Include DejaVu fonts for improved and consistent preview #184
-          </li>
-      <li>0.19.2 Fix NullPointerExceptions when used with IntelliJ Language Injection and Fragment Editor #194</li>
-      <li>0.19.1 Support inspections to convert markdown and old style AsciiDoc headings to modern AsciiDoc headings<br>
-          JRuby runtime updated to 9.1.8.0 to work with recent JDK versions</li>
-      <li>0.19.0 Support Icon fonts (thanks to Matthias Balke)<br>
-        Update to asciidoctorj-1.5.6 (aka asciidoctor-1.5.6.1) and asciidoctorj-diagram-1.5.4.1<br>
-        Support "search everywhere" and "goto by name" for all AsciiDoc sections<br>
-        Support Markdown style sections in syntax highlighting</li>
-      <li>0.18.2 Headings in Darcula theme preview are now light grey for better readability</li>
-      <li>0.18.1 Improved handling for non-printable characters in syntax highlighting</li>
-      <li>0.18.0 Update to asciidoctor 1.5.5/asciidoctor-diagram 1.5.4<br>
-        Capture Asciidoctor messages on stdout/stderr and write them to IDE notifications<br>
-        Close files when images are shown in preview<br>
-        Set focus in editor when re-opening file<br>
-        Fix "line must be non negative" error when clicking on preview</li>
-      <li>0.17.3 Make click-on-link-to-open and click-on-preview-to-set-cursor in JavaFX preview compatible with Java 8 u111+<br>
-      Formatting actions from the toolbar should not throw exceptions when triggered at the beginning or end of the document</li>
-    </ul>
-      ]]>
-  </change-notes>
+  <change-notes>(automatically filled during build from CHANGELOG.adoc)</change-notes>
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->
-  <idea-version since-build="171.000"/> <!-- 2017.1 -->
+  <idea-version since-build="172.2465.6"/> <!-- 2017.2 -->
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html -->
   <depends>com.intellij.modules.lang</depends>
+  <depends optional="true" config-file="java-features.xml">com.intellij.modules.java</depends>
+  <depends optional="true" config-file="grazie-features.xml">tanvd.grazi</depends>
 
   <application-components>
     <!-- Add your application components here -->
@@ -80,57 +30,91 @@
 
   <extensionPoints>
     <extensionPoint qualifiedName="org.asciidoc.intellij.html.panel.provider"
-                    interface="org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider" />
+                    interface="org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.asciidoc.intellij">
-    <html.panel.provider implementation="org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider" />
-    <html.panel.provider implementation="org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider" />
+    <html.panel.provider implementation="org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider"/>
+    <html.panel.provider implementation="org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider"/>
   </extensions>
 
-  <actions >
+  <actions>
     <!-- Add your actions here -->
     <group id="AsciiDoc" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
-      <group id="AsciiDoc.TextFormatting" compact="true" description="Text Markup Actions" popup="true" text="AsciiDoc" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
-              <action id="asciidoc.makebold" class="org.asciidoc.intellij.actions.asciidoc.MakeBold"
-                      text="Bold" description="Make text bold" icon="AsciiDocIcons.EditorActions.Bold">
-              </action>
-              <action id="asciidoc.makeitalic" class="org.asciidoc.intellij.actions.asciidoc.MakeItalic"
-                      text="Italic" description="Make text italic" icon="AsciiDocIcons.EditorActions.Italic">
-              </action>
-              <action id="asciidoc.maketitle" class="org.asciidoc.intellij.actions.asciidoc.MakeTitle"
-                      text="Title" description="Make title" >
-              </action>
-              <action id="asciidoc.makemono" class="org.asciidoc.intellij.actions.asciidoc.MakeMono"
-                      text="Mono" description="Make text mono" icon="AsciiDocIcons.EditorActions.Code_span">
-              </action>
-              <action id="asciidoc.strikethrough" class="org.asciidoc.intellij.actions.asciidoc.MakeStrikethrough"
-                      text="Strike through" description="Make text strike through"  icon="AsciiDocIcons.EditorActions.Strike_through">
-              </action>
-              <action id="asciidoc.makelink" class="org.asciidoc.intellij.actions.asciidoc.MakeLink"
-                      text="Link" description="Make link" icon="AsciiDocIcons.EditorActions.Link">
-              </action>
-               <action id="asciidoc.createtable" class="org.asciidoc.intellij.actions.asciidoc.CreateTableAction"
-                 text="Create table" description="Insert a table at the caret" icon="AsciiDocIcons.EditorActions.Table">
-              </action>
-              <action class="org.asciidoc.intellij.actions.editorlayout.EditorOnlyLayoutChangeAction"
-                      id="org.asciidoc.intellij.actions.editorlayout.EditorOnlyLayoutChangeAction"
-                      text="Show editor only"
-                      description="Sets AsciiDoc editor layout to show editor only"
-                      icon="AsciiDocIcons.Layout.Editor_only">
-              </action>
-              <action class="org.asciidoc.intellij.actions.editorlayout.EditorAndPreviewLayoutChangeAction"
-                      id="org.asciidoc.intellij.actions.editorlayout.EditorAndPreviewLayoutChangeAction"
-                      text="Show editor and preview"
-                      description="Sets AsciiDoc editor layout to show editor and preview in split"
-                      icon="AsciiDocIcons.Layout.Editor_preview">
-              </action>
-              <action class="org.asciidoc.intellij.actions.editorlayout.PreviewOnlyLayoutChangeAction"
-                      id="org.asciidoc.intellij.actions.editorlayout.PreviewOnlyLayoutChangeAction"
-                      text="Show preview only"
-                      description="Sets AsciiDoc editor layout to show preview only"
-                      icon="AsciiDocIcons.Layout.Preview_only">
-              </action>
+      <group id="AsciiDoc.TextFormatting" compact="true" description="Text Markup actions" popup="true"
+             text="AsciiDoc" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
+        <action id="asciidoc.makebold" class="org.asciidoc.intellij.actions.asciidoc.MakeBold"
+                text="Toggle Bold" description="Toggle text bold" icon="AsciiDocIcons.EditorActions.BOLD">
+        </action>
+        <action id="asciidoc.makeitalic" class="org.asciidoc.intellij.actions.asciidoc.MakeItalic"
+                text="Toggle Italic" description="Toggle text italic" icon="AsciiDocIcons.EditorActions.ITALIC">
+        </action>
+        <action id="asciidoc.maketitle" class="org.asciidoc.intellij.actions.asciidoc.MakeTitle"
+                text="Toggle Title" description="Make title">
+        </action>
+        <action id="asciidoc.makemono" class="org.asciidoc.intellij.actions.asciidoc.MakeMono"
+                text="Toggle Mono" description="Toggle text mono" icon="AsciiDocIcons.EditorActions.CODE_SPAN">
+        </action>
+        <action id="asciidoc.makestrikethrough" class="org.asciidoc.intellij.actions.asciidoc.MakeStrikethrough"
+                text="Toggle Strike Through" description="Toggle text strike through"
+                icon="AsciiDocIcons.EditorActions.STRIKE_THROUGH">
+        </action>
+        <action id="asciidoc.makehighlighted" class="org.asciidoc.intellij.actions.asciidoc.MakeHighlighted"
+                text="Toggle Highlight" description="Toggle text highlighted"
+                icon="AsciiDocIcons.EditorActions.HIGHLIGHTED">
+        </action>
+        <action id="asciidoc.makelink" class="org.asciidoc.intellij.actions.asciidoc.MakeLink"
+                text="Create Link" description="Make link" icon="AsciiDocIcons.EditorActions.LINK">
+        </action>
+        <action class="org.asciidoc.intellij.actions.asciidoc.PasteImageAction"
+                id="org.asciidoc.intellij.actions.asciidoc.PasteImageAction"
+                text="Paste Image..."
+                description="Paste image from clipboard"
+                icon="AsciiDocIcons.EditorActions.IMAGE">
+        </action>
+        <action id="asciidoc.tables.tabledialog" class="org.asciidoc.intellij.actions.asciidoc.CreateTableAction"
+                text="Create Table Dialog..." description="Insert a table at the caret"
+                icon="AsciiDocIcons.EditorActions.TABLE">
+        </action>
+        <action id="asciidoc.tables.pastetabledialog" class="org.asciidoc.intellij.actions.asciidoc.PasteTableAction"
+                text="Paste Table..." description="Paste table data from clipboard"
+                icon="AsciiDocIcons.EditorActions.TABLE">
+        </action>
+        <action class="org.asciidoc.intellij.actions.editorlayout.EditorOnlyLayoutChangeAction"
+                id="org.asciidoc.intellij.actions.editorlayout.EditorOnlyLayoutChangeAction"
+                text="Show Editor Only"
+                description="Sets AsciiDoc editor layout to show editor only"
+                icon="AsciiDocIcons.Layout.EDITOR_ONLY">
+        </action>
+        <action class="org.asciidoc.intellij.actions.editorlayout.EditorAndPreviewLayoutChangeAction"
+                id="org.asciidoc.intellij.actions.editorlayout.EditorAndPreviewLayoutChangeAction"
+                text="Show Editor and Preview"
+                description="Sets AsciiDoc editor layout to show editor and preview in split"
+                icon="AsciiDocIcons.Layout.EDITOR_PREVIEW">
+        </action>
+        <action class="org.asciidoc.intellij.actions.editorlayout.PreviewOnlyLayoutChangeAction"
+                id="org.asciidoc.intellij.actions.editorlayout.PreviewOnlyLayoutChangeAction"
+                text="Show Preview Only"
+                description="Sets AsciiDoc editor layout to show preview only"
+                icon="AsciiDocIcons.Layout.PREVIEW_ONLY">
+        </action>
+        <action class="org.asciidoc.intellij.actions.asciidoc.ToggleSoftWrapsAction"
+                id="org.asciidoc.intellij.actions.asciidoc.ToggleSoftWrapsAction"
+                text="Use Soft Wraps"
+                description="Toggle using soft wraps in current editor"
+                icon="AllIcons.Actions.ToggleSoftWrap">
+        </action>
+        <action class="org.asciidoc.intellij.actions.asciidoc.CreatePdfAction"
+                id="org.asciidoc.intellij.actions.asciidoc.CreatePdfAction"
+                text="PDF"
+                description="Create PDF from current file">
+        </action>
+
+        <action class="org.asciidoc.intellij.actions.asciidoc.CreateHtmlAction"
+                id="org.asciidoc.intellij.actions.asciidoc.CreateHtmlAction"
+                text="HTML"
+                description="Create HTML from current file">
+        </action>
 
         <!--
               <action id="asciidoc.convert.document6" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
@@ -140,44 +124,152 @@
               <action id="asciidoc.convert.document8" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
                       text="Insert quote" description="Convert this document to AsciiDoc" />
 -->
-        </group>
+      </group>
 
+      <separator/>
+      <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+    </group>
+
+    <group id="AsciiDocConvert" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
       <action id="asciidoc.convert.document" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
-              text="Convert to AsciiDoc" description="Convert this document to AsciiDoc" >
+              text="Convert to AsciiDoc" description="Convert this document to AsciiDoc">
         <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
       </action>
-
       <separator/>
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
       <add-to-group group-id="RefactoringMenu" anchor="last"/>
     </group>
+
+    <group id="AsciiDocInline" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
+      <action id="org.asciidoc.intellij.actions.refactor.InlineIncludeAction"
+              class="org.asciidoc.intellij.actions.refactor.InlineIncludeAction"
+              text="Inline Include Directive..."
+              description="Inline selected include file">
+      </action>
+      <separator/>
+      <add-to-group group-id="RefactoringMenu" anchor="last"/>
+    </group>
+
+    <group id="AsciiDocExtract" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
+      <action id="org.asciidoc.intellij.actions.refactor.ExtractIncludeAction"
+              class="org.asciidoc.intellij.actions.refactor.ExtractIncludeAction"
+              text="Include Directive..."
+              description="Extract selected text, block or section to a new include file">
+      </action>
+      <separator/>
+      <add-to-group group-id="IntroduceActionsGroup" anchor="last"/>
+    </group>
+
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <webBrowserUrlProvider implementation="org.asciidoc.intellij.web.AsciiDocBrowserUrlProvider" />
+    <typedHandler implementation="org.asciidoc.intellij.actions.FormattingQuotedTypedHandler" order="first" />
+    <webBrowserUrlProvider implementation="org.asciidoc.intellij.web.AsciiDocBrowserUrlProvider"/>
+    <customPasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteProvider" />
+    <filePasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteProvider" />
     <fileTypeFactory implementation="org.asciidoc.intellij.file.AsciiDocFileTypeFactory"/>
     <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocSplitEditorProvider"/>
     <liveTemplateContext implementation="org.asciidoc.intellij.template.AsciiDocTemplateContextType$File"/>
     <defaultLiveTemplatesProvider implementation="org.asciidoc.intellij.template.AsciiDocTemplatesProvider"/>
-    <lang.parserDefinition language="AsciiDoc" implementationClass="org.asciidoc.intellij.parser.AsciiDocParserDefinition"/>
-    <lang.psiStructureViewFactory language="AsciiDoc" implementationClass="org.asciidoc.intellij.structureView.AsciiDocStructureViewFactory"/>
-    <spellchecker.support language="AsciiDoc" implementationClass="org.asciidoc.intellij.AsciiDocSpellcheckingStrategy"/>
+    <lang.ast.factory language="AsciiDoc" implementationClass="org.asciidoc.intellij.psi.AsciiDocASTFactory"/>
+    <lang.parserDefinition language="AsciiDoc"
+                           implementationClass="org.asciidoc.intellij.parser.AsciiDocParserDefinition"/>
+    <lang.psiStructureViewFactory language="AsciiDoc"
+                                  implementationClass="org.asciidoc.intellij.structureView.AsciiDocStructureViewFactory"/>
+    <lang.foldingBuilder language="AsciiDoc"
+                         implementationClass="org.asciidoc.intellij.folding.AsciiDocFoldingBuilder"/>
+    <lang.smartEnterProcessor language="AsciiDoc"
+                              implementationClass="org.asciidoc.intellij.actions.smartEnter.AsciiDocSmartEnterProcessor"/>
+    <spellchecker.support language="AsciiDoc"
+                          implementationClass="org.asciidoc.intellij.AsciiDocSpellcheckingStrategy"/>
+    <spellchecker.bundledDictionaryProvider implementation="org.asciidoc.intellij.AsciiDocBundledDictionaryProvider" />
     <lang.commenter language="AsciiDoc" implementationClass="org.asciidoc.intellij.AsciiDocCommenter"/>
+    <extendWordSelectionHandler implementation="org.asciidoc.intellij.editor.ExtendWordSelectionHandler"/>
+    <braceMatcher filetype="AsciiDoc" implementationClass="org.asciidoc.intellij.braces.AsciiDocBraceMatcher"/>
+    <quoteHandler fileType="AsciiDoc" className="org.asciidoc.intellij.braces.AsciiDocQuoteHandler"/>
     <todoIndexer filetype="AsciiDoc" implementationClass="org.asciidoc.intellij.indexer.AsciiDocTodoIndexer"/>
     <applicationConfigurable id="Settings.AsciiDoc.Preview"
-                                 bundle="AsciiDocBundle"
-                                 groupId="language"
-                                 nonDefaultProject="true"
-                                 key="settings.asciidoc.preview.name"
-                                 instance="org.asciidoc.intellij.settings.AsciiDocPreviewConfigurable">
+                             bundle="AsciiDocBundle"
+                             groupId="language"
+                             nonDefaultProject="true"
+                             key="settings.asciidoc.preview.name"
+                             instance="org.asciidoc.intellij.settings.AsciiDocPreviewConfigurable">
     </applicationConfigurable>
     <applicationService serviceImplementation="org.asciidoc.intellij.settings.AsciiDocApplicationSettings"/>
-    <editorNotificationProvider implementation="org.asciidoc.intellij.editor.javafx.JavaFxCouldBeEnabledNotificationProvider"/>
+    <editorNotificationProvider
+      implementation="org.asciidoc.intellij.editor.javafx.notification.JavaFxCouldBeEnabledNotificationProvider"/>
+    <editorNotificationProvider
+      implementation="org.asciidoc.intellij.editor.javafx.notification.ChangeJdkForJavaFXNotificationProvider"/>
+    <editorNotificationProvider
+      implementation="org.asciidoc.intellij.editor.notification.ExtensionsAvailableNotificationProvider"/>
+    <editorNotificationProvider
+      implementation="org.asciidoc.intellij.editor.javafx.notification.JavaFxMightBeBlurredNotificationProvider" />
+    <editorNotificationProvider
+      implementation="org.asciidoc.intellij.editor.javafx.notification.JavaFxInitializationIsStuckNotificationProvider"/>
+    <editorNotificationProvider implementation="org.asciidoc.intellij.editor.notification.SpringBootRestDocsNotificationProvider"/>
     <gotoSymbolContributor implementation="org.asciidoc.intellij.psi.AsciiDocChooseByNameContributor"/>
     <searchEverywhereClassifier implementation="org.asciidoc.intellij.psi.AsciiDocSearchEverywhereClassifier"/>
     <localInspection language="AsciiDoc" displayName="Heading inspection" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="WARNING"
-                     implementationClass="org.asciidoc.intellij.inspections.AsciidocHeadingStyleInspection"/>
-
+                     shortName="AsciiDocHeadingStyleInspection"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocHeadingStyleInspection"/>
+    <localInspection language="AsciiDoc" displayName="Pagebreak inspection" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="WARNING"
+                     shortName="AsciiDocPageBreakInspection"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocPageBreakInspection"/>
+    <localInspection language="AsciiDoc" displayName="Horizontal rule inspection" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="WARNING"
+                     shortName="AsciiDocHorizontalRuleInspection"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocHorizontalRuleInspection"/>
+    <localInspection language="AsciiDoc" displayName="Attribute continuation inspection" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="WARNING"
+                     shortName="AsciiDocAttributeContinuationInspection"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocAttributeContinuationInspection"/>
+    <localInspection language="AsciiDoc" displayName="Listing inspection" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="WARNING"
+                     shortName="AsciiDocListingStyleInspection"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocListingStyleInspection"/>
+    <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
+    <problemFileHighlightFilter
+      implementation="org.asciidoc.intellij.problemHighlighter.AsciiDocProblemFileHighlightFilter"/>
+    <colorSettingsPage implementation="org.asciidoc.intellij.highlighting.AsciiDocColorSettingsPage"/>
+    <additionalTextAttributes scheme="Default" file="colorSchemes/AsciidocDefault.xml"/>
+    <additionalTextAttributes scheme="Darcula" file="colorSchemes/AsciidocDarcula.xml"/>
+    <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocBlockMacro"
+                             implementationClass="org.asciidoc.intellij.psi.AsciiDocBlockMacro$Manipulator"/>
+    <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocInlineMacro"
+                             implementationClass="org.asciidoc.intellij.psi.AsciiDocInlineMacro$Manipulator"/>
+    <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocRef"
+                             implementationClass="org.asciidoc.intellij.psi.AsciiDocRef$Manipulator"/>
+    <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocListing"
+                             implementationClass="org.asciidoc.intellij.psi.AsciiDocListing$Manipulator"/>
+    <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocLink"
+                             implementationClass="org.asciidoc.intellij.psi.AsciiDocLink$Manipulator"/>
+    <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocAttributeReference"
+                             implementationClass="org.asciidoc.intellij.psi.AsciiDocAttributeReference$Manipulator"/>
+    <lang.findUsagesProvider language="AsciiDoc"
+                             implementationClass="org.asciidoc.intellij.findUsages.AsciiDocFindUsagesProvider"/>
+    <psi.referenceContributor implementation="org.asciidoc.intellij.findUsages.AsciiDocReferenceContributor"/>
+    <completion.contributor language="AsciiDoc" implementationClass="org.asciidoc.intellij.completion.AsciiDocCompletionContributor"/>
+    <lookup.charFilter implementation="org.asciidoc.intellij.completion.AsciiDocCharFilter" order="before java" id="default"/>
+    <lang.documentationProvider language="AsciiDoc" implementationClass="org.asciidoc.intellij.AsciiDocDocumentationProvider"/>
+    <httpRequestHandler implementation="org.asciidoc.intellij.editor.javafx.PreviewStaticServer"/>
+    <multiHostInjector implementation="org.asciidoc.intellij.injection.CodeFenceInjector"/>
+    <completion.contributor language="AsciiDoc"
+                            implementationClass="org.asciidoc.intellij.injection.LanguageListCompletionContributor"/>
+    <breadcrumbsInfoProvider implementation="org.asciidoc.intellij.breadcrumbs.AsciiDocBreadcrumbsInfoProvider"/>
+    <lang.formatter language="AsciiDoc" implementationClass="org.asciidoc.intellij.formatting.AsciiDocFormattingModelBuilder"/>
+    <langCodeStyleSettingsProvider implementation="org.asciidoc.intellij.codeStyle.AsciiDocLanguageCodeStyleSettingsProvider"/>
+    <codeStyleSettingsProvider implementation="org.asciidoc.intellij.codeStyle.AsciiDocCodeStyleSettingsProvider"/>
+    <intentionAction>
+      <bundleName>AsciiDocBundle</bundleName>
+      <categoryKey>asciidoc.intention.category</categoryKey>
+      <className>org.asciidoc.intellij.actions.intentions.AsciiDocExtractIntention</className>
+    </intentionAction>
+    <intentionAction>
+      <bundleName>AsciiDocBundle</bundleName>
+      <categoryKey>asciidoc.intention.category</categoryKey>
+      <className>org.asciidoc.intellij.actions.intentions.AsciiDocInlineIntention</className>
+    </intentionAction>
   </extensions>
 </idea-plugin>

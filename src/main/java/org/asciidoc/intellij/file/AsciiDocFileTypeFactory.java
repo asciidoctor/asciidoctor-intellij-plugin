@@ -15,17 +15,21 @@
  */
 package org.asciidoc.intellij.file;
 
+import com.intellij.openapi.fileTypes.ExactFileNameMatcher;
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
 import org.jetbrains.annotations.NotNull;
 
-/** @author Julien Viet */
+/**
+ * @author Julien Viet
+ */
 public class AsciiDocFileTypeFactory extends FileTypeFactory {
 
   @Override
   public void createFileTypes(@NotNull FileTypeConsumer fileTypeConsumer) {
-    for (int i = 0;i < AsciiDocFileType.DEFAULT_ASSOCIATED_EXTENSIONS.length;i++) {
+    for (int i = 0; i < AsciiDocFileType.DEFAULT_ASSOCIATED_EXTENSIONS.length; i++) {
       fileTypeConsumer.consume(AsciiDocFileType.INSTANCE, AsciiDocFileType.DEFAULT_ASSOCIATED_EXTENSIONS[i]);
     }
+    fileTypeConsumer.consume(AsciiDocFileType.INSTANCE, new ExactFileNameMatcher(".asciidoctorconfig"));
   }
 }
