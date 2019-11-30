@@ -130,7 +130,7 @@ The user needs to enable spell checking in the Grazie settings.
 Grazie supports multiple languages: Once the user configured the languages in Grazie's plugin settings, the plugin detects the language of a section automatically.
 As it performs all checks locally with the help of libraries from https://languagetool.org/, it doesn't submit text written in the IDE to a third party cloud service.
 
-NOTE: The API of Grazie changed recently, therefore use the following minimum versions: IntelliJ (2019.2.4), Grazie plugin (2019.2-5.3.stable) and AsciiDoc plugin (0.30.18).
+NOTE: The API of Grazie changed recently, therefore use the following minimum versions: IntelliJ (2019.3), Grazie plugin (2019.3-6.2.stable) and AsciiDoc plugin (0.30.20).
 
 // see: ExternalAnnotator
 During rendering Asciidoctor might indicate problems in the file including a line number.

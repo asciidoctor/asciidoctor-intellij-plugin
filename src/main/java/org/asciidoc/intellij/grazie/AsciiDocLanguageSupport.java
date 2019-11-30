@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -93,5 +94,11 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
   @Override
   public boolean isTypoAccepted(@NotNull PsiElement psiElement, @NotNull IntRange intRange, @NotNull IntRange intRange1) {
     return true;
+  }
+
+  @NotNull
+  @Override
+  public LinkedHashSet<IntRange> getStealthyRanges(@NotNull PsiElement psiElement, @NotNull CharSequence charSequence) {
+    return new LinkedHashSet<>();
   }
 }
