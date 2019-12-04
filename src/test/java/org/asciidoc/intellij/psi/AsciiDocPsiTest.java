@@ -326,6 +326,25 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     // finish test here. Reference will not resolve in the test, files are "temp://" files
   }
 
+  public void testGradleKtsSnippets() {
+    // given...
+    PsiFile[] psiFile = myFixture.configureByFiles(
+      getTestName(true) + "/src/docs/asciidoc/apidocs.adoc",
+      getTestName(true) + "/build.gradle.kts",
+      getTestName(true) + "/build/generated-snippets/example/curl-request.adoc"
+    );
+    AsciiDocBlockMacro[] macros = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocBlockMacro.class);
+    assertSize(2, macros);
+
+    PsiReference[] referencesOperation = macros[0].getReferences();
+    assertSize(1, referencesOperation);
+    // finish test here. Reference will not resolve in the test, files are "temp://" files
+
+    PsiReference[] referencesInclude = macros[1].getReferences();
+    assertSize(3, referencesInclude);
+    // finish test here. Reference will not resolve in the test, files are "temp://" files
+  }
+
   public void testMavenSnippets() {
     // given...
     PsiFile[] psiFile = myFixture.configureByFiles(

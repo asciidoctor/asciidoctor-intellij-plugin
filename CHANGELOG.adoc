@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.21
+
+- support spring-rest-docs in Kotlin style gradle projects (#371)
+
 === 0.30.20
 
 - update to AsciidoctorJ PDF v1.5.0-beta.8

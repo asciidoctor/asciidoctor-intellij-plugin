@@ -188,6 +188,16 @@ public class AsciiDocUtil {
           }
         }
       }
+      VirtualFile buildGradleKts = dir.findChild("build.gradle.kts");
+      if (buildGradleKts != null) {
+        VirtualFile buildDir = dir.findChild("build");
+        if (buildDir != null) {
+          VirtualFile snippets = buildDir.findChild("generated-snippets");
+          if (snippets != null) {
+            return snippets;
+          }
+        }
+      }
       if (projectBasePath.equals(dir)) {
         break;
       }

@@ -261,7 +261,7 @@ The user can zoom in and out of the preview by holding kbd:[Ctrl] and scrolling 
 Clicking the middle mouse button whilst holding kbd:[Ctrl] will reset the zoom to 100%.
 
 When writing documentation with https://docs.spring.io/spring-restdocs/docs/current/reference/html5/[Spring REST Docs], the preview plugin will auto-detect the folder `generated-snippets`.
-It looks relative to the `pom.xml` for `target/generated-snippets` or relative to `build.gradle` for `build/generated-snippets`.
+It looks relative to the `pom.xml` for `target/generated-snippets` or relative to `build.gradle` or `build.gradle.kts` for `build/generated-snippets`.
 Once it finds this folder, it sets the snippets attributes and enables the `+++operation::[]+++` block macro.
 
 EXPERIMENTAL:
