@@ -71,7 +71,7 @@ patchPluginXml {
         .replaceAll('\\(preview, available from Github releases\\)', '')
         .replaceAll('#([0-9]+)', '<a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/$1">#$1</a>')
         // regex for GitHub user names from https://github.com/shinnn/github-username-regex
-        .replaceAll('@([a-z\\d](?:[a-z\\d]|-(?=[a-z\\d])){0,38})', '<a href="https://github.com/$1">@$1</a>')
+        .replaceAll('(?i)@([a-z\\d](?:[a-z\\d]|-(?=[a-z\\d])){0,38})', '<a href="https://github.com/$1">@$1</a>')
     }
       .collect().join("\n")
   }
