@@ -1010,7 +1010,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <ANCHORID, ANCHORREFTEXT> {
-  {ANCHOREND}         { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BLOCKIDEND; }
+  {ANCHOREND}         { yybegin(PREBLOCK); return AsciiDocTokenTypes.BLOCKIDEND; }
 }
 
 <ANCHORID> {

@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.22 (work in progress)
+
+- Lexer/Highlighting: allow pre-block elements after anchor
+
 === 0.30.21
 
 - support spring-rest-docs in Kotlin style gradle projects (#371)

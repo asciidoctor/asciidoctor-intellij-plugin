@@ -445,6 +445,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TITLE_TOKEN ('.Title')");
   }
 
+  public void testAnchorThenTitle() {
+    doTest("[#anchor]\n.Title",
+      "AsciiDoc:BLOCKIDSTART ('[#')\n" +
+        "AsciiDoc:BLOCKID ('anchor')\n" +
+        "AsciiDoc:BLOCKIDEND (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TITLE_TOKEN ('.Title')");
+  }
+
   public void testBoldSimple() {
     doTest("Hello *bold* world",
       "AsciiDoc:TEXT ('Hello')\n" +
