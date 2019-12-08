@@ -70,6 +70,10 @@ public final class AsciiDocPreviewSettings {
   @Nullable
   private String myDisabledInjectionsByLanguage;
 
+  @Attribute("DefaultLanguageForPassthrough")
+  @Nullable
+  private String myLanguageForPassthrough = "html";
+
   @Attribute("ShowAsciiDocWarningsAndErrorsInEditor")
   private boolean myShowAsciiDocWarningsAndErrorsInEditor = true;
 
@@ -88,7 +92,8 @@ public final class AsciiDocPreviewSettings {
                                  @NotNull AsciiDocHtmlPanel.PreviewTheme previewTheme,
                                  @NotNull SafeMode safeMode, @NotNull Map<String, String> attributes,
                                  boolean verticalSplit, boolean editorFirst,
-                                 boolean enableInjections, @Nullable String disabledInjectionsByLanguage,
+                                 boolean enableInjections,  @Nullable String languageForPassthrough,
+                                 @Nullable String disabledInjectionsByLanguage,
                                  boolean showAsciiDocWarningsAndErrorsInEditor,
                                  boolean inplacePreviewRefresh,
                                  boolean enableKroki,
@@ -101,6 +106,7 @@ public final class AsciiDocPreviewSettings {
     myIsVerticalSplit = verticalSplit;
     myIsEditorFirst = editorFirst;
     myEnableInjections = enableInjections;
+    myLanguageForPassthrough = languageForPassthrough;
     myDisabledInjectionsByLanguage = disabledInjectionsByLanguage;
     myShowAsciiDocWarningsAndErrorsInEditor = showAsciiDocWarningsAndErrorsInEditor;
     myInplacePreviewRefresh = inplacePreviewRefresh;
@@ -215,6 +221,9 @@ public final class AsciiDocPreviewSettings {
     if (myEnableInjections != that.myEnableInjections) {
       return false;
     }
+    if (!Objects.equals(myLanguageForPassthrough, that.myLanguageForPassthrough)) {
+      return false;
+    }
     if (!Objects.equals(myDisabledInjectionsByLanguage, that.myDisabledInjectionsByLanguage)) {
       return false;
     }
@@ -232,20 +241,26 @@ public final class AsciiDocPreviewSettings {
 
   @Override
   public int hashCode() {
-    int result = mySplitEditorLayout.hashCode();
-    result = 31 * result + myHtmlPanelProviderInfo.hashCode();
-    result = 31 * result + myPreviewTheme.hashCode();
-    result = 31 * result + mySafeMode.hashCode();
+    int result = Objects.hashCode(mySplitEditorLayout);
+    result = 31 * result + Objects.hashCode(myHtmlPanelProviderInfo);
+    result = 31 * result + Objects.hashCode(myPreviewTheme);
+    result = 31 * result + Objects.hashCode(mySafeMode);
     result = 31 * result + attributes.hashCode();
     result = 31 * result + (myIsVerticalSplit ? 1 : 0);
     result = 31 * result + (myIsEditorFirst ? 1 : 0);
     result = 31 * result + (myEnableInjections ? 1 : 0);
+    result = 31 * result + Objects.hashCode(myLanguageForPassthrough);
     result = 31 * result + Objects.hashCode(myDisabledInjectionsByLanguage);
     result = 31 * result + (myShowAsciiDocWarningsAndErrorsInEditor ? 1 : 0);
     result = 31 * result + (myInplacePreviewRefresh ? 1 : 0);
     result = 31 * result + (myEnableKroki ? 1 : 0);
     result = 31 * result + Objects.hashCode(myKrokiUrl);
     return result;
+  }
+
+  public String getLanguageForPassthrough() {
+    // any old setting of null (not set) will default to 'html'
+    return myLanguageForPassthrough == null ? "html" : myLanguageForPassthrough;
   }
 
   public interface Holder {

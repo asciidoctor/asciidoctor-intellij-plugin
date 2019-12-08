@@ -45,6 +45,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Alarm;
+import com.intellij.util.FileContentUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
@@ -179,6 +180,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         AsciiDocPreviewSettings.DEFAULT.getHtmlPanelProviderInfo(), settings.getAsciiDocPreviewSettings().getPreviewTheme(),
         settings.getSafe(), settings.getAsciiDocPreviewSettings().getAttributes(), settings.getAsciiDocPreviewSettings().isVerticalSplit(),
         settings.getAsciiDocPreviewSettings().isEditorFirst(), settings.getAsciiDocPreviewSettings().isEnabledInjections(),
+        settings.getAsciiDocPreviewSettings().getLanguageForPassthrough(),
         settings.getAsciiDocPreviewSettings().getDisabledInjectionsByLanguage(),
         settings.getAsciiDocPreviewSettings().isShowAsciiDocWarningsAndErrorsInEditor(),
         settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh(),
@@ -456,14 +458,21 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   private class MyUpdatePanelOnSettingsChangedListener implements AsciiDocApplicationSettings.SettingsChangedListener {
     @Override
     public void onSettingsChange(@NotNull AsciiDocApplicationSettings settings) {
-      final AsciiDocHtmlPanelProvider newPanelProvider = retrievePanelProvider(settings);
+      reprocessAnnotations();
 
+      // trigger re-parsing of content as language injection might have changed
+      // TODO - doesn't work reliably yet when switching back-and-forth
+      VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+      if (file != null) {
+        FileContentUtil.reparseFiles(file);
+      }
+
+      final AsciiDocHtmlPanelProvider newPanelProvider = retrievePanelProvider(settings);
       mySwingAlarm.addRequest(() -> {
         synchronized (this) {
           myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
         }
         currentContent = null; // force a refresh of the preview by resetting the current memorized content
-        reprocessAnnotations();
         renderIfVisible();
       }, 0, ModalityState.stateForComponent(getComponent()));
     }

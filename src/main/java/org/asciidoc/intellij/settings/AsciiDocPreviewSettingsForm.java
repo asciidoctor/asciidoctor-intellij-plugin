@@ -50,8 +50,9 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JBCheckBox myEnableKroki;
   private JPanel myKrokiUrlPanel;
   private JBTextField myKrokiUrl;
+    private JBTextField myLanguageForPassthrough;
 
-  public JComponent getComponent() {
+    public JComponent getComponent() {
     return myMainPanel;
   }
 
@@ -156,6 +157,8 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     });
     myDisableLanguageInjection.setVisible(myEnableInjections.isSelected());
 
+    myLanguageForPassthrough.setText(settings.getLanguageForPassthrough());
+
     myDisabledInjectionsByLanguage.setText(settings.getDisabledInjectionsByLanguage());
 
     myShowAsciiDocWarningsAndErrorsInEditor.setSelected(settings.isShowAsciiDocWarningsAndErrorsInEditor());
@@ -195,7 +198,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     return new AsciiDocPreviewSettings(mySplitLayoutModel.getSelectedItem(),
       myPreviewPanelModel.getSelected(), myPreviewThemeModel.getSelectedItem(),  mySafeModeModel.getSelectedItem(), attributes,
       myVerticalLayout.isSelected(), myEditorTop.isSelected() || myEditorLeft.isSelected(), myEnableInjections.isSelected(),
-      myDisabledInjectionsByLanguage.getText(),
+      myLanguageForPassthrough.getText(), myDisabledInjectionsByLanguage.getText(),
       myShowAsciiDocWarningsAndErrorsInEditor.isSelected(), myInplacePreviewRefresh.isSelected(),
       myEnableKroki.isSelected(), krokiUrl);
   }

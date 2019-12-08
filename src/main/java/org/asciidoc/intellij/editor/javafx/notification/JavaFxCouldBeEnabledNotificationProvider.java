@@ -60,6 +60,7 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
           oldPreviewSettings.isVerticalSplit(),
           oldPreviewSettings.isEditorFirst(),
           oldPreviewSettings.isEnabledInjections(),
+          oldPreviewSettings.getLanguageForPassthrough(),
           oldPreviewSettings.getDisabledInjectionsByLanguage(),
           oldPreviewSettings.isShowAsciiDocWarningsAndErrorsInEditor(),
           oldPreviewSettings.isInplacePreviewRefresh(),

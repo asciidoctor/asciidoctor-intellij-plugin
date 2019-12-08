@@ -1,11 +1,14 @@
 package org.asciidoc.intellij.psi;
 
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
+import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -48,7 +51,12 @@ public class AsciiDocPassthrough extends AbstractAsciiDocCodeBlock {
 
   @Override
   public String getFenceLanguage() {
-    return "source-html";
+    AsciiDocPreviewSettings settings = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings();
+    if (!settings.isEnabledInjections() || StringUtil.isEmpty(settings.getLanguageForPassthrough())) {
+      return null;
+    } else {
+      return "source-" + settings.getLanguageForPassthrough();
+    }
   }
 
   public static class Manipulator extends AbstractManipulator<AsciiDocPassthrough> {
