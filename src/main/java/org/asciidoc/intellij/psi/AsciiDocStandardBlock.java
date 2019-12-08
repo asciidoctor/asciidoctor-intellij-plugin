@@ -40,39 +40,27 @@ public class AsciiDocStandardBlock extends ASTWrapperPsiElement implements Ascii
     return child.getText();
   }
 
-  @NotNull
   @Override
-  public String getDescription() {
-    ASTNode delimiter = getNode().findChildByType(TokenSet.create(AsciiDocTokenTypes.BLOCK_DELIMITER,
-      AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER, AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER));
-    String title = getTitle();
-    String style = getStyle();
-    if (title == null) {
-      if (delimiter != null && style == null) {
-        String d = delimiter.getText();
-        if (d.startsWith("|")) {
-          title = "(Table)";
-        } else if (d.startsWith("*")) {
-          title = "(Sidebar)";
-        } else if (d.startsWith("=")) {
-          title = "(Example)";
-        } else if (d.startsWith(".")) {
-          title = "(Literal)";
-        } else if (d.startsWith("+")) {
-          title = "(Passthrough)";
-        } else if (d.startsWith("_")) {
-          title = "(Quote)";
-        } else {
-          title = "(Block)";
-        }
-      } else if (style == null) {
-        title = "(Block)";
+  public String getDefaultTitle() {
+    ASTNode delimiter = getNode().findChildByType(TokenSet.create(AsciiDocTokenTypes.BLOCK_DELIMITER, AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER));
+    String title;
+    if (delimiter != null) {
+      String d = delimiter.getText();
+      if (d.startsWith("|")) {
+        title = "Table";
+      } else if (d.startsWith("*")) {
+        title = "Sidebar";
+      } else if (d.startsWith("=")) {
+        title = "Example";
+      } else if (d.startsWith(".")) {
+        title = "Literal";
+      } else if (d.startsWith("_")) {
+        title = "Quote";
       } else {
-        title = "";
+        title = AsciiDocBlock.super.getDefaultTitle();
       }
-    }
-    if (style != null) {
-      return "[" + style + "]" + (title.isEmpty() ? "" : " ") + title;
+    } else {
+      title = AsciiDocBlock.super.getDefaultTitle();
     }
     return title;
   }
@@ -80,8 +68,7 @@ public class AsciiDocStandardBlock extends ASTWrapperPsiElement implements Ascii
   @Override
   public Type getType() {
     Type type = Type.UNKNOWN;
-    ASTNode delimiter = getNode().findChildByType(TokenSet.create(AsciiDocTokenTypes.BLOCK_DELIMITER,
-      AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER, AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER));
+    ASTNode delimiter = getNode().findChildByType(TokenSet.create(AsciiDocTokenTypes.BLOCK_DELIMITER, AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER));
     if (delimiter != null) {
       String d = delimiter.getText();
       if (d.startsWith("|")) {
@@ -92,8 +79,6 @@ public class AsciiDocStandardBlock extends ASTWrapperPsiElement implements Ascii
         type = Type.EXAMPLE;
       } else if (d.startsWith(".")) {
         type = Type.LITERAL;
-      } else if (d.startsWith("+")) {
-        type = Type.PASSTHROUGH;
       } else if (d.startsWith("_")) {
         if ("verse".equals(getStyle())) {
           type = Type.VERSE;

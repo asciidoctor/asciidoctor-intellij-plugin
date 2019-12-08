@@ -38,4 +38,14 @@ public class AsciiDocPsiElementFactory {
     return listing;
   }
 
+  @NotNull
+  public static AsciiDocPassthrough createPassthrough(@NotNull Project project,
+                                              @NotNull String text) {
+    // append a "\n" so that the terminating element is recognized correctly (currently required in the lexer)
+    final AsciiDocFile file = createFile(project, text + "\n");
+    AsciiDocPassthrough listing = (AsciiDocPassthrough) file.getFirstChild();
+    Objects.requireNonNull(listing);
+    return listing;
+  }
+
 }

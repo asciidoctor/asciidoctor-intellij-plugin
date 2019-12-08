@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.22 (work in progress)
 
 - Lexer/Highlighting: allow pre-block elements after anchor
+- Editor: allow language injection for passthrough content (#353)
 
 === 0.30.21
 

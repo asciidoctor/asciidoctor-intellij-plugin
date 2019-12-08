@@ -124,22 +124,9 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
     return super.getReferences();
   }
 
-  @NotNull
   @Override
-  public String getDescription() {
-    String title = getTitle();
-    String style = getStyle();
-    if (title == null) {
-      if (style == null) {
-        title = getMacroName();
-      } else {
-        title = "";
-      }
-    }
-    if (style != null) {
-      return "[" + style + "]" + (title.isEmpty() ? "" : " ") + title;
-    }
-    return title;
+  public String getDefaultTitle() {
+    return getMacroName();
   }
 
   public String getMacroName() {

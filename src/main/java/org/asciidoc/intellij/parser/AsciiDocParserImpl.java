@@ -148,11 +148,14 @@ public class AsciiDocParserImpl {
         inlineMacroMarker.done(AsciiDocElementTypes.INLINE_MACRO);
         continue;
       } else if (at(BLOCK_DELIMITER)
-        || at(COMMENT_BLOCK_DELIMITER) || at(PASSTRHOUGH_BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER)) {
+        || at(COMMENT_BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER)) {
         parseBlock();
         continue;
       } else if (at(LISTING_BLOCK_DELIMITER)) {
-        parseListing();
+        parseBlockElement(AsciiDocElementTypes.LISTING);
+        continue;
+      } else if (at(PASSTRHOUGH_BLOCK_DELIMITER)) {
+        parseBlockElement(AsciiDocElementTypes.PASSTHROUGH);
         continue;
       } else if (at(LISTING_TEXT)) {
         parseListingNoDelimiter();
@@ -410,7 +413,7 @@ public class AsciiDocParserImpl {
     }
   }
 
-  private void parseListing() {
+  private void parseBlockElement(IElementType elementType) {
     PsiBuilder.Marker myBlockStartMarker;
     if (myPreBlockMarker != null) {
       myBlockStartMarker = myPreBlockMarker;
@@ -436,7 +439,7 @@ public class AsciiDocParserImpl {
         next();
       }
     }
-    myBlockStartMarker.done(AsciiDocElementTypes.LISTING);
+    myBlockStartMarker.done(elementType);
   }
 
   private void parseListingNoDelimiter() {

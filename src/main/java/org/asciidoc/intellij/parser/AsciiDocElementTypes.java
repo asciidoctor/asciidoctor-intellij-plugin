@@ -18,6 +18,7 @@ public interface AsciiDocElementTypes {
   IElementType BLOCKID = new AsciiDocElementType("BLOCKID");
   IElementType REF = new AsciiDocElementType("REF");
   IElementType LISTING = new AsciiDocElementType("LISTING");
+  IElementType PASSTHROUGH = new AsciiDocElementType("PASSTHROUGH");
   IElementType LINK = new AsciiDocElementType("LINK");
   IElementType ATTRIBUTE_DECLARATION = new AsciiDocElementType("ATTRIBUTE_DECLARATION");
   IElementType ATTRIBUTE_REF = new AsciiDocElementType("ATTRIBUTE_REF");

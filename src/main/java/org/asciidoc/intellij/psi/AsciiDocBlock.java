@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.TokenSet;
@@ -59,15 +60,23 @@ public interface AsciiDocBlock extends PsiElement, AsciiDocSelfDescribe {
   default String getDescription() {
     String title = getTitle();
     String style = getStyle();
+    if (title == null && style == null) {
+      title = getDefaultTitle();
+      if (StringUtil.isNotEmpty(title)) {
+        title = "(" + title + ")";
+      }
+    }
     if (title == null) {
-      title = "(Block)";
-    } else {
       title = "";
     }
     if (style != null) {
       return "[" + style + "]" + (title.isEmpty() ? "" : " ") + title;
     }
     return title;
+  }
+
+  default String getDefaultTitle() {
+    return "Block";
   }
 
   @Override
