@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Lexer/Highlighting: allow pre-block elements after anchor
 - Editor: allow language injection for passthrough content (#353)
+- upgrade to AsciidoctorJ 2.2.0
 
 === 0.30.21
 

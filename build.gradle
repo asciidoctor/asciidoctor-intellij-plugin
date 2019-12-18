@@ -98,19 +98,18 @@ test {
 dependencies {
   errorprone 'com.google.errorprone:error_prone_core:2.3.2'
   errorproneJavac 'com.google.errorprone:javac:9+181-r4173-1'
-  compile 'org.asciidoctor:asciidoctorj-diagram:1.5.18'
+  compile 'org.asciidoctor:asciidoctorj-diagram:2.0.0'
   compile 'org.asciidoctor:asciidoctorj-pdf:1.5.0-beta.8'
-  compile 'org.jruby:jruby:9.2.8.0' // TODO: remove JRuby dependency once asciidoctorj has upgraded
   /* snakeyaml is s used by asciidoctorj-pdf, but is actually provided within jruby-stdlib
    * a snakeyaml version in the classpath takes precedence, but IntelliJ includes a version that is too old
    * therefore this plugin includes the same version of snakeyaml that is already included in jruby-stdlib
    * to prevent loading the older version from IntelliJ.
-   * When a different version than jruby-stdlib 9.2.7.0 is used after upgrading asciidoctorj,
+   * When a different version than jruby-stdlib 9.2.9.0 is used after upgrading asciidoctorj,
    * double check the snakeyaml version.
    * https://github.com/asciidoctor/asciidoctorj-pdf/issues/25
    */
   compile 'org.yaml:snakeyaml:1.23'
-  compile 'org.asciidoctor:asciidoctorj:2.1.0'
+  compile 'org.asciidoctor:asciidoctorj:2.2.0'
   compile 'commons-io:commons-io:2.4'
   compile 'nl.jworks.markdown_to_asciidoc:markdown_to_asciidoc:1.1'
   compile 'org.apache.commons:commons-text:1.8'
