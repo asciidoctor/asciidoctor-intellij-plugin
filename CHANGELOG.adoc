@@ -7,11 +7,12 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.22 (work in progress)
+=== 0.30.22 (preview, available from Github releases)
 
 - Lexer/Highlighting: allow pre-block elements after anchor
 - Editor: allow language injection for passthrough content (#353)
 - upgrade to AsciidoctorJ 2.2.0
+- process pre-processor macros in .asciidoctorconfig (#374)
 
 === 0.30.21
 
