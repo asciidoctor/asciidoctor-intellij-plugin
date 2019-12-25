@@ -808,6 +808,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:RBRACKET (']')");
   }
 
+  public void testLinkWithAttributeAutocomplete() {
+    doTest("link:IntellijIdeaRulezzz test.adoc[]\n",
+      "AsciiDoc:LINKSTART ('link:')\n" +
+        "AsciiDoc:LINKFILE ('IntellijIdeaRulezzz test.adoc')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
   public void testLinkWithAnchor() {
     doTest("Text link:FILE#ANCHOR[Text] More Text",
       "AsciiDoc:TEXT ('Text')\n" +

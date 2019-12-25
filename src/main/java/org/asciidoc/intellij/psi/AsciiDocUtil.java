@@ -181,7 +181,112 @@ public class AsciiDocUtil {
             return antoraPagePartials;
           }
         }
-        return dir;
+      }
+      if (projectBasePath.equals(dir)) {
+        break;
+      }
+      dir = dir.getParent();
+    }
+    return null;
+  }
+
+  public static VirtualFile findAntoraAttachmentsDir(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+    VirtualFile dir = fileBaseDir;
+    while (dir != null) {
+      if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
+        dir.getParent().getParent().findChild("antora.yml") != null) {
+        VirtualFile assets = dir.findChild("assets");
+        if (assets != null) {
+          VirtualFile attachments = assets.findChild("attachments");
+          if (attachments != null) {
+            return attachments;
+          }
+        }
+      }
+      if (projectBasePath.equals(dir)) {
+        break;
+      }
+      dir = dir.getParent();
+    }
+    return null;
+  }
+
+  public static String findAntoraImagesDirRelative(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+    VirtualFile dir = fileBaseDir;
+    String imagesDir = "";
+    while (dir != null) {
+      if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
+        dir.getParent().getParent().findChild("antora.yml") != null) {
+        VirtualFile assets = dir.findChild("assets");
+        if (assets != null) {
+          VirtualFile images = assets.findChild("images");
+          if (images != null) {
+            return imagesDir + "assets/images";
+          }
+        }
+      }
+      if (projectBasePath.equals(dir)) {
+        break;
+      }
+      dir = dir.getParent();
+      imagesDir = "../" + imagesDir;
+    }
+    return null;
+  }
+
+  public static String findAntoraAttachmentsDirRelative(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+    VirtualFile dir = fileBaseDir;
+    String attachmentsDir = "";
+    while (dir != null) {
+      if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
+        dir.getParent().getParent().findChild("antora.yml") != null) {
+        VirtualFile assets = dir.findChild("assets");
+        if (assets != null) {
+          VirtualFile attachments = assets.findChild("attachments");
+          if (attachments != null) {
+            return attachmentsDir + "assets/attachments";
+          }
+        }
+      }
+      if (projectBasePath.equals(dir)) {
+        break;
+      }
+      dir = dir.getParent();
+      attachmentsDir = "../" + attachmentsDir;
+    }
+    return null;
+  }
+
+  public static VirtualFile findAntoraImagesDir(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+    VirtualFile dir = fileBaseDir;
+    while (dir != null) {
+      if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
+        dir.getParent().getParent().findChild("antora.yml") != null) {
+        VirtualFile assets = dir.findChild("assets");
+        if (assets != null) {
+          VirtualFile images = assets.findChild("images");
+          if (images != null) {
+            return images;
+          }
+        }
+      }
+      if (projectBasePath.equals(dir)) {
+        break;
+      }
+      dir = dir.getParent();
+    }
+    return null;
+  }
+
+  public static VirtualFile findAntoraExamplesDir(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+    VirtualFile dir = fileBaseDir;
+    while (dir != null) {
+      if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
+        dir.getParent().getParent().findChild("antora.yml") != null) {
+        VirtualFile examples = dir.findChild("examples");
+        if (examples != null) {
+          return examples;
+        }
       }
       if (projectBasePath.equals(dir)) {
         break;
@@ -248,7 +353,7 @@ public class AsciiDocUtil {
   }
 
   public static VirtualFile findAntoraPartials(PsiElement element) {
-    VirtualFile antoraModule = null;
+    VirtualFile antoraPartials = null;
     VirtualFile vf;
     vf = element.getContainingFile().getVirtualFile();
     if (vf == null) {
@@ -256,9 +361,51 @@ public class AsciiDocUtil {
       vf = element.getContainingFile().getOriginalFile().getVirtualFile();
     }
     if (vf != null) {
-      antoraModule = findAntoraPartials(element.getProject().getBaseDir(), vf);
+      antoraPartials = findAntoraPartials(element.getProject().getBaseDir(), vf);
     }
-    return antoraModule;
+    return antoraPartials;
+  }
+
+  public static VirtualFile findAntoraImagesDir(PsiElement element) {
+    VirtualFile antoraImagesDir = null;
+    VirtualFile vf;
+    vf = element.getContainingFile().getVirtualFile();
+    if (vf == null) {
+      // when running autocomplete, there is only an original file
+      vf = element.getContainingFile().getOriginalFile().getVirtualFile();
+    }
+    if (vf != null) {
+      antoraImagesDir = findAntoraImagesDir(element.getProject().getBaseDir(), vf);
+    }
+    return antoraImagesDir;
+  }
+
+  public static VirtualFile findAntoraExamplesDir(PsiElement element) {
+    VirtualFile antoraExamplesDir = null;
+    VirtualFile vf;
+    vf = element.getContainingFile().getVirtualFile();
+    if (vf == null) {
+      // when running autocomplete, there is only an original file
+      vf = element.getContainingFile().getOriginalFile().getVirtualFile();
+    }
+    if (vf != null) {
+      antoraExamplesDir = findAntoraExamplesDir(element.getProject().getBaseDir(), vf);
+    }
+    return antoraExamplesDir;
+  }
+
+  public static VirtualFile findAntoraAttachmentsDir(PsiElement element) {
+    VirtualFile antoraAttachmentsDir = null;
+    VirtualFile vf;
+    vf = element.getContainingFile().getVirtualFile();
+    if (vf == null) {
+      // when running autocomplete, there is only an original file
+      vf = element.getContainingFile().getOriginalFile().getVirtualFile();
+    }
+    if (vf != null) {
+      antoraAttachmentsDir = findAntoraAttachmentsDir(element.getProject().getBaseDir(), vf);
+    }
+    return antoraAttachmentsDir;
   }
 
 }

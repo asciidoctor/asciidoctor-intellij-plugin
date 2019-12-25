@@ -228,6 +228,7 @@ TYPOGRAPHIC_SINGLE_QUOTE_END = "`'"
 ANCHORSTART = "[#"
 ANCHOREND = "]"
 LINKSTART = "link:"
+XREFSTART = "xref:"
 LINKTEXT_START = "["
 INLINE_URL_NO_DELIMITER = (https?|file|ftp|irc): "//" [^\s\[\]<]*([^\s.,;\[\]<\)])
 INLINE_URL_WITH_DELIMITER = (https?|file|ftp|irc): "//" [^\s\[\]<]*([^\s\[\]])
@@ -864,7 +865,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         return AsciiDocTokenTypes.URL_PREFIX;
   }
   // allow autocomplete even if brackets have not been entered yet
-  {LINKSTART} / ([^\[\n \t])* ("+++" [^+] {WORD}* "+++")* ("++" {WORD}* "++")* ( {AUTOCOMPLETE} | {AUTOCOMPLETE}? {LINKTEXT_START} [^\]\n]* {LINKEND}) {
+  ({LINKSTART} | {XREFSTART}) / ([^\[\n \t] | {AUTOCOMPLETE})* ("+++" [^+] {WORD}* "+++")* ("++" {WORD}* "++")* ( {AUTOCOMPLETE} | {AUTOCOMPLETE}? {LINKTEXT_START} [^\]\n]* {LINKEND}) {
                          if (!isEscaped()) {
                            yypushstate(); yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART;
                          } else {

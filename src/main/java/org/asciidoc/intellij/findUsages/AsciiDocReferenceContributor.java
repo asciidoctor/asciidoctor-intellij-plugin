@@ -144,12 +144,17 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
     TextRange range = AsciiDocLink.getBodyRange((AsciiDocLink) element);
     if (!range.isEmpty()) {
       String file = element.getText().substring(range.getStartOffset(), range.getEndOffset());
+      String macroName = ((AsciiDocLink) element).getMacroName();
+      if ("xref".equals(macroName) &&
+        (file.contains(":") || file.contains("@"))) {
+          return Collections.emptyList(); // Antora cross-references not supported at the moment
+      }
       ArrayList<PsiReference> references = new ArrayList<>();
       int start = 0;
       for (int i = 0; i < file.length(); ++i) {
         if (file.charAt(i) == '/') {
           references.add(
-            new AsciiDocFileReference(element, "link", file.substring(0, start),
+            new AsciiDocFileReference(element, macroName, file.substring(0, start),
               TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
               true)
           );
@@ -157,7 +162,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
         }
       }
       references.add(
-        new AsciiDocFileReference(element, "link", file.substring(0, start),
+        new AsciiDocFileReference(element, macroName, file.substring(0, start),
           TextRange.create(range.getStartOffset() + start, range.getStartOffset() + file.length()),
           false)
       );

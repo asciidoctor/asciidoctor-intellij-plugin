@@ -98,6 +98,34 @@ public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiE
         .withInsertHandler(getLookupElementInsertHandler("partialsdir"))
       );
     }
+    VirtualFile antoraExamples = AsciiDocUtil.findAntoraExamplesDir(this.getElement());
+    if (antoraExamples != null) {
+      String value = antoraExamples.getPath();
+      value = value.replaceAll("\\\\", "/");
+      if (project.getBasePath() != null) {
+        value = value.replaceAll("^" + Pattern.quote(project.getBasePath()), "");
+      }
+      value = " (" + value + ")";
+      variants.add(LookupElementBuilder.create("examplesdir")
+        .withIcon(AsciiDocIcons.ASCIIDOC_ICON)
+        .withTailText(value, true)
+        .withInsertHandler(getLookupElementInsertHandler("examplesdir"))
+      );
+    }
+    VirtualFile antoraAttachments = AsciiDocUtil.findAntoraAttachmentsDir(this.getElement());
+    if (antoraExamples != null) {
+      String value = antoraAttachments.getPath();
+      value = value.replaceAll("\\\\", "/");
+      if (project.getBasePath() != null) {
+        value = value.replaceAll("^" + Pattern.quote(project.getBasePath()), "");
+      }
+      value = " (" + value + ")";
+      variants.add(LookupElementBuilder.create("attachmentsdir")
+        .withIcon(AsciiDocIcons.ASCIIDOC_ICON)
+        .withTailText(value, true)
+        .withInsertHandler(getLookupElementInsertHandler("attachmentsdir"))
+      );
+    }
     return variants.toArray();
   }
 

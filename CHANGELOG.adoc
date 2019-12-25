@@ -10,6 +10,8 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.24 (work in progress)
 
 - scroll bar of JavaFX preview now dark in Darcula theme (#372)
+- experimental support for Antora: pre-populating the _imagesdir_, _examplesdir_ and _attachmentsdir_ attribute (#373)
+- experimental support for Antora: supporting _xref_ inline macro for references inside same module (#373)
 
 === 0.30.23 (preview, available from Github releases)
 

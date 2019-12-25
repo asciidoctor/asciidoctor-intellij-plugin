@@ -3,6 +3,7 @@ package org.asciidoc.intellij.psi;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.AbstractElementManipulator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -83,6 +84,14 @@ public class AsciiDocLink extends ASTWrapperPsiElement {
       child = child.getNextSibling();
     }
     return TextRange.create(start, end);
+  }
+
+  public String getMacroName() {
+    ASTNode idNode = getNode().findChildByType(AsciiDocTokenTypes.LINKSTART);
+    if (idNode == null) {
+      throw new IllegalStateException("Parser failure: block macro without ID found: " + getText());
+    }
+    return StringUtil.trimEnd(idNode.getText(), ":");
   }
 
 }

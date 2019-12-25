@@ -95,6 +95,27 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           matcher = ATTRIBUTES.matcher(val);
         }
       }
+      if (attributeName.equals("imagesdir")) {
+        VirtualFile dir = AsciiDocUtil.findAntoraImagesDir(this.getElement());
+        if (dir != null) {
+          val = matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath()));
+          matcher = ATTRIBUTES.matcher(val);
+        }
+      }
+      if (attributeName.equals("examplesdir")) {
+        VirtualFile dir = AsciiDocUtil.findAntoraExamplesDir(this.getElement());
+        if (dir != null) {
+          val = matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath()));
+          matcher = ATTRIBUTES.matcher(val);
+        }
+      }
+      if (attributeName.equals("attachmentsdir")) {
+        VirtualFile dir = AsciiDocUtil.findAntoraAttachmentsDir(this.getElement());
+        if (dir != null) {
+          val = matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath()));
+          matcher = ATTRIBUTES.matcher(val);
+        }
+      }
     }
     return val;
   }
@@ -165,6 +186,24 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           resolve(matcher.replaceFirst(Matcher.quoteReplacement(antoraPartials.getPath())), results, depth + 1);
         }
       }
+      if (attributeName.equals("imagesdir")) {
+        VirtualFile dir = AsciiDocUtil.findAntoraImagesDir(this.getElement());
+        if (dir != null) {
+          resolve(matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath())), results, depth + 1);
+        }
+      }
+      if (attributeName.equals("examplesdir")) {
+        VirtualFile dir = AsciiDocUtil.findAntoraExamplesDir(this.getElement());
+        if (dir != null) {
+          resolve(matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath())), results, depth + 1);
+        }
+      }
+      if (attributeName.equals("attachmentsdir")) {
+        VirtualFile dir = AsciiDocUtil.findAntoraAttachmentsDir(this.getElement());
+        if (dir != null) {
+          resolve(matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath())), results, depth + 1);
+        }
+      }
     } else {
       PsiElement file = resolve(key);
       if (file != null) {
@@ -185,7 +224,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             }
           }
         }
-      } else if ("link".endsWith(macroName)) {
+      } else if ("link".endsWith(macroName) || "xref".endsWith(macroName)) {
         file = resolve(key + ".adoc");
         if (file != null) {
           results.add(new PsiElementResolveResult(file));
@@ -215,7 +254,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     getVariants(base, collector, 0);
     if ("image".equals(macroName)) {
       getVariants("{imagesdir}/" + base, collector, 0);
-    } else if ("link".equals(macroName)) {
+    } else if ("link".equals(macroName) || "xref".equals(macroName)) {
       getVariants(base + ".adoc", collector, 0);
       if (base.endsWith(".html")) {
         getVariants(base.replaceAll("\\.html$", ".adoc"), collector, 0);
@@ -342,6 +381,24 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         VirtualFile antoraPartials = AsciiDocUtil.findAntoraPartials(this.getElement());
         if (antoraPartials != null) {
           getVariants(matcher.replaceFirst(Matcher.quoteReplacement(antoraPartials.getPath())), collector, depth + 1);
+        }
+      }
+      if (attributeName.equals("imagesdir")) {
+        VirtualFile dir = AsciiDocUtil.findAntoraImagesDir(this.getElement());
+        if (dir != null) {
+          getVariants(matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath())), collector, depth + 1);
+        }
+      }
+      if (attributeName.equals("examplesdir")) {
+        VirtualFile dir = AsciiDocUtil.findAntoraExamplesDir(this.getElement());
+        if (dir != null) {
+          getVariants(matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath())), collector, depth + 1);
+        }
+      }
+      if (attributeName.equals("attachmentsdir")) {
+        VirtualFile dir = AsciiDocUtil.findAntoraAttachmentsDir(this.getElement());
+        if (dir != null) {
+          getVariants(matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath())), collector, depth + 1);
         }
       }
     } else {
