@@ -88,6 +88,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           matcher = ATTRIBUTES.matcher(val);
         }
       }
+      if (attributeName.equals("partialsdir")) {
+        VirtualFile antoraPartials = AsciiDocUtil.findAntoraPartials(this.getElement());
+        if (antoraPartials != null) {
+          val = matcher.replaceFirst(Matcher.quoteReplacement(antoraPartials.getPath()));
+          matcher = ATTRIBUTES.matcher(val);
+        }
+      }
     }
     return val;
   }
@@ -150,6 +157,12 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         VirtualFile springRestDocSnippets = AsciiDocUtil.findSpringRestDocSnippets(this.getElement());
         if (springRestDocSnippets != null) {
           resolve(matcher.replaceFirst(Matcher.quoteReplacement(springRestDocSnippets.getPath())), results, depth + 1);
+        }
+      }
+      if (attributeName.equals("partialsdir")) {
+        VirtualFile antoraPartials = AsciiDocUtil.findAntoraPartials(this.getElement());
+        if (antoraPartials != null) {
+          resolve(matcher.replaceFirst(Matcher.quoteReplacement(antoraPartials.getPath())), results, depth + 1);
         }
       }
     } else {
@@ -323,6 +336,12 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         VirtualFile springRestDocSnippets = AsciiDocUtil.findSpringRestDocSnippets(this.getElement());
         if (springRestDocSnippets != null) {
           getVariants(matcher.replaceFirst(Matcher.quoteReplacement(springRestDocSnippets.getPath())), collector, depth + 1);
+        }
+      }
+      if (attributeName.equals("partialsdir")) {
+        VirtualFile antoraPartials = AsciiDocUtil.findAntoraPartials(this.getElement());
+        if (antoraPartials != null) {
+          getVariants(matcher.replaceFirst(Matcher.quoteReplacement(antoraPartials.getPath())), collector, depth + 1);
         }
       }
     } else {

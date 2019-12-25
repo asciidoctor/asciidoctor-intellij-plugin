@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - re-added option in settings to disable showing errors in the editor (#375)
 - support URLs in inline macros
+- experimental support for Antora: pre-populating the _partialsdir_ attribute (#373)
 
 === 0.30.22 (preview, available from Github releases)
 

@@ -29,7 +29,7 @@ public class AsciiDocUtil {
   static List<AsciiDocBlockId> findIds(Project project, String key) {
     List<AsciiDocBlockId> result = null;
     Collection<VirtualFile> virtualFiles =
-            FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
+      FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
     ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
     for (VirtualFile virtualFile : virtualFiles) {
       if (index.isInLibrary(virtualFile)
@@ -74,7 +74,7 @@ public class AsciiDocUtil {
   static List<AsciiDocBlockId> findIds(Project project) {
     List<AsciiDocBlockId> result = new ArrayList<>();
     Collection<VirtualFile> virtualFiles =
-            FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
+      FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
     ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
     for (VirtualFile virtualFile : virtualFiles) {
       if (index.isInLibrary(virtualFile)
@@ -165,6 +165,32 @@ public class AsciiDocUtil {
     return (AsciiDocFile) PsiFileFactory.getInstance(project).createFileFromText("a.adoc", AsciiDocLanguage.INSTANCE, text);
   }
 
+  public static VirtualFile findAntoraPartials(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+    VirtualFile dir = fileBaseDir;
+    while (dir != null) {
+      if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
+        dir.getParent().getParent().findChild("antora.yml") != null) {
+        VirtualFile antoraPartials = dir.findChild("partials");
+        if (antoraPartials != null) {
+          return antoraPartials;
+        }
+        VirtualFile antoraPages = dir.findChild("pages");
+        if (antoraPages != null) {
+          VirtualFile antoraPagePartials = antoraPages.findChild("_partials");
+          if (antoraPagePartials != null) {
+            return antoraPagePartials;
+          }
+        }
+        return dir;
+      }
+      if (projectBasePath.equals(dir)) {
+        break;
+      }
+      dir = dir.getParent();
+    }
+    return null;
+  }
+
   public static VirtualFile findSpringRestDocSnippets(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
@@ -219,6 +245,20 @@ public class AsciiDocUtil {
       springRestDocSnippets = findSpringRestDocSnippets(element.getProject().getBaseDir(), vf);
     }
     return springRestDocSnippets;
+  }
+
+  public static VirtualFile findAntoraPartials(PsiElement element) {
+    VirtualFile antoraModule = null;
+    VirtualFile vf;
+    vf = element.getContainingFile().getVirtualFile();
+    if (vf == null) {
+      // when running autocomplete, there is only an original file
+      vf = element.getContainingFile().getOriginalFile().getVirtualFile();
+    }
+    if (vf != null) {
+      antoraModule = findAntoraPartials(element.getProject().getBaseDir(), vf);
+    }
+    return antoraModule;
   }
 
 }

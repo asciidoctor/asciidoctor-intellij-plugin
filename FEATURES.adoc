@@ -264,12 +264,21 @@ When writing documentation with https://docs.spring.io/spring-restdocs/docs/curr
 It looks relative to the `pom.xml` for `target/generated-snippets` or relative to `build.gradle` or `build.gradle.kts` for `build/generated-snippets`.
 Once it finds this folder, it sets the snippets attributes and enables the `+++operation::[]+++` block macro.
 
+The user can choose _Create PDF from current file_ to convert the file in the current AsciiDoc editor to a PDF using AsciiDoctor PDF version 1.5.x. If creating the PDF succeeds, the PDF is opened in the system's PDF viewer.
+To find out more how to configure the output and formatting, please visit https://asciidoctor.org/docs/asciidoctor-pdf/.
+
+The user can also choose _Create HTML from current file_ to convert the file to HTML format.
+If creating HTML succeeds, the exported file is opened in the system's default browser.
+
 EXPERIMENTAL:
 
-* The user can choose _Create PDF from current file_ to convert the file in the current AsciiDoc editor to a PDF using AsciiDoctor PDF version 1.5.0-beta.2. If creating the PDF succeeds, the PDF is opened in the system's PDF viewer.
-To find out more how to configure the output and formatting, please visit https://asciidoctor.org/docs/asciidoctor-pdf/.
-* The user can also choose _Create HTML from current file_ to convert the file to HTML format.
-If creating HTML succeeds, the exported file is opened in the system's default browser.
+When working in an https://antora.org/[Antora project], the plugin has a first preliminary support:
+
+* Attribute _partialsdir_ resolves to the absolute path of the partials folder of the current module (either at the top-level of the module, or below the pages folder). This way the following resolves in the editor and the preview:
++
+----
+\include::{partialsdir}/test.adoc[]
+----
 
 === Advanced
 

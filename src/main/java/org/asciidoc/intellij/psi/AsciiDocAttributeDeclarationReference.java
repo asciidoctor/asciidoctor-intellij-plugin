@@ -84,6 +84,20 @@ public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiE
         .withInsertHandler(getLookupElementInsertHandler("snippets"))
       );
     }
+    VirtualFile antoraPartials = AsciiDocUtil.findAntoraPartials(this.getElement());
+    if (antoraPartials != null) {
+      String value = antoraPartials.getPath();
+      value = value.replaceAll("\\\\", "/");
+      if (project.getBasePath() != null) {
+        value = value.replaceAll("^" + Pattern.quote(project.getBasePath()), "");
+      }
+      value = " (" + value + ")";
+      variants.add(LookupElementBuilder.create("partialsdir")
+        .withIcon(AsciiDocIcons.ASCIIDOC_ICON)
+        .withTailText(value, true)
+        .withInsertHandler(getLookupElementInsertHandler("partialsdir"))
+      );
+    }
     return variants.toArray();
   }
 

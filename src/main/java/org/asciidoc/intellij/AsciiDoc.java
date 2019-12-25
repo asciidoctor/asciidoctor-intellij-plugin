@@ -68,6 +68,7 @@ import java.util.Map;
 import java.util.ServiceConfigurationError;
 import java.util.logging.Logger;
 
+import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraPartials;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findSpringRestDocSnippets;
 
 /**
@@ -440,12 +441,16 @@ public class AsciiDoc {
         LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
         LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
       );
+      VirtualFile antoraPartials = findAntoraPartials(
+        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
+        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
+      );
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         asciidoctor.registerLogHandler(logHandler);
         prependConfig.setConfig(config);
         try {
-          return "<div id=\"content\">\n" + asciidoctor.convert(text, getDefaultOptions("html5", springRestDocsSnippets)) + "\n</div>";
+          return "<div id=\"content\">\n" + asciidoctor.convert(text, getDefaultOptions("html5", springRestDocsSnippets, antoraPartials)) + "\n</div>";
         } finally {
           prependConfig.setConfig("");
           asciidoctor.unregisterLogHandler(logHandler);
@@ -490,12 +495,16 @@ public class AsciiDoc {
       VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
         LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
         LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir));
+      VirtualFile antoraModule = findAntoraPartials(
+        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
+        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
+      );
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format.toString());
         prependConfig.setConfig(config);
         asciidoctor.registerLogHandler(logHandler);
         try {
-          asciidoctor.convertFile(file, getExportOptions(getDefaultOptions(format.toString(), springRestDocsSnippets), format));
+          asciidoctor.convertFile(file, getExportOptions(getDefaultOptions(format.toString(), springRestDocsSnippets, antoraModule), format));
         } finally {
           prependConfig.setConfig("");
           asciidoctor.unregisterLogHandler(logHandler);
@@ -538,7 +547,7 @@ public class AsciiDoc {
     return options;
   }
 
-  private Map<String, Object> getDefaultOptions(String backend, VirtualFile springRestDocsSnippets) {
+  private Map<String, Object> getDefaultOptions(String backend, VirtualFile springRestDocsSnippets, VirtualFile antoraPartials) {
     AttributesBuilder builder = AttributesBuilder.attributes()
       .showTitle(true)
       .backend(backend)
@@ -549,6 +558,10 @@ public class AsciiDoc {
 
     if (springRestDocsSnippets != null) {
       builder.attribute("snippets", springRestDocsSnippets.getCanonicalPath());
+    }
+
+    if (antoraPartials != null) {
+      builder.attribute("partialsdir", antoraPartials.getCanonicalPath());
     }
 
     String graphvizDot = System.getenv("GRAPHVIZ_DOT");
