@@ -53,3 +53,20 @@ tbody tr th{background:#626262}
 #toc {background-color:#626262 !important; border-color:#626262 !important;}
 
 h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{color:#cccccc}
+
+/* scroll bar color change to match the dark scheme */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+    background-color: inherit;
+}
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border: 2px solid #2c2c2c;
+    background-color: #404040;
+}
+::-webkit-scrollbar-track {
+    width: 12px;
+    height: 12px;
+    background-color: #2c2c2c;
+}

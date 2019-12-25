@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.24 (work in progress)
+
+- scroll bar of JavaFX preview now dark in Darcula theme (#372)
+
 === 0.30.23 (preview, available from Github releases)
 
 - re-added option in settings to disable showing errors in the editor (#375)
