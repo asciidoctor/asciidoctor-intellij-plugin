@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.23 (preview, available from Github releases)
+
+- re-added option in settings to disable showing errors in editor (#375)
+
 === 0.30.22 (preview, available from Github releases)
 
 - Lexer/Highlighting: allow pre-block elements after anchor
