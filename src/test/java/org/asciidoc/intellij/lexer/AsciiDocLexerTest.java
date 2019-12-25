@@ -198,6 +198,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('abc')");
   }
 
+  public void testInlineMacroUrl() {
+    doTest("image:http://image.com[Caption]\nabc",
+      "AsciiDoc:INLINE_MACRO_ID ('image:')\n" +
+        "AsciiDoc:URL_LINK ('http://image.com')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_ATTR_NAME ('Caption')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('abc')");
+  }
+
   public void testBlockMacroWithAttribute() {
     doTest("macro::foo[key=value]",
       "AsciiDoc:BLOCK_MACRO_ID ('macro::')\n" +

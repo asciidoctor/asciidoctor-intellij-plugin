@@ -9,7 +9,8 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.30.23 (preview, available from Github releases)
 
-- re-added option in settings to disable showing errors in editor (#375)
+- re-added option in settings to disable showing errors in the editor (#375)
+- support URLs in inline macros
 
 === 0.30.22 (preview, available from Github releases)
 

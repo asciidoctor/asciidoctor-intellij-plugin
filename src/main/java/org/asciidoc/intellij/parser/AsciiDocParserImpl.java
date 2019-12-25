@@ -137,11 +137,15 @@ public class AsciiDocParserImpl {
         newLines = 0;
         PsiBuilder.Marker inlineMacroMarker = myBuilder.mark();
         next();
-        while ((at(INLINE_MACRO_BODY) || at(INLINE_ATTR_NAME) || at(INLINE_ATTR_VALUE) || at(SEPARATOR) || at(INLINE_ATTRS_START) || at(INLINE_ATTRS_END))
+        while ((at(INLINE_MACRO_BODY) || at(INLINE_ATTR_NAME) || at(URL_LINK) || at(INLINE_ATTR_VALUE) || at(SEPARATOR) || at(INLINE_ATTRS_START) || at(INLINE_ATTRS_END))
           && newLines == 0) {
           if (at(INLINE_ATTRS_END)) {
             next();
             break;
+          }
+          if (at(URL_LINK)) {
+            parseUrl();
+            continue;
           }
           next();
         }

@@ -294,6 +294,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state BLOCK_ATTRS
 
 %state INLINE_MACRO
+%state INLINE_MACRO_URL
 %state INLINE_MACRO_ATTRS
 %state INLINE_ATTRS
 
@@ -879,6 +880,15 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           return textFormat();
         }
       }
+  {INLINE_MACRO_START} / ({INLINE_URL_NO_DELIMITER} | {INLINE_URL_WITH_DELIMITER}) ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" [^\]\n]* "]") {
+        if (!isEscaped()) {
+          yypushstate();
+          yybegin(INLINE_MACRO_URL);
+          return AsciiDocTokenTypes.INLINE_MACRO_ID;
+        } else {
+          return textFormat();
+        }
+      }
   {PASSTRHOUGH_INLINE} / {STRING}* {PASSTRHOUGH_INLINE} {
                            yybegin(PASSTRHOUGH_INLINE); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
                          }
@@ -1093,6 +1103,12 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <ATTRS_DOUBLE_QUOTE, ATTRS_SINGLE_QUOTE, ATTRS_NO_QUOTE> {
   "\n" { yypushback(yylength()); yypopstate(); }
   [^] { return AsciiDocTokenTypes.ATTR_VALUE; }
+}
+
+<INLINE_MACRO_URL> {
+  "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
+  "["                  { yybegin(INLINE_MACRO_ATTRS); return AsciiDocTokenTypes.INLINE_ATTRS_START; }
+  [^]                  { return AsciiDocTokenTypes.URL_LINK; }
 }
 
 <INLINE_MACRO> {
