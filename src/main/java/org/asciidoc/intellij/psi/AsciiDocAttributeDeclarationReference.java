@@ -5,7 +5,6 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReference;
@@ -18,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
   private String key;
@@ -51,10 +49,10 @@ public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiE
   @Override
   public Object[] getVariants() {
     Project project = myElement.getProject();
-    List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(project);
+    List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(project, myElement);
     List<LookupElement> variants = new ArrayList<>();
-    for (final AsciiDocAttributeDeclaration declaration : declarations) {
-      if (declaration.getText() != null) {
+    for (final AttributeDeclaration declaration : declarations) {
+      if (declaration.getAttributeValue() != null) {
         String value = declaration.getAttributeValue();
         if (value == null) {
           value = "";
@@ -62,69 +60,15 @@ public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiE
           value = " (" + value + ")";
         }
         String attributeName = declaration.getAttributeName();
-        variants.add(LookupElementBuilder.create(attributeName)
+        LookupElementBuilder lb = LookupElementBuilder.create(attributeName)
           .withIcon(AsciiDocIcons.ASCIIDOC_ICON)
           .withTailText(value, true)
-          .withTypeText(declaration.getContainingFile().getName())
-          .withInsertHandler(getLookupElementInsertHandler(attributeName))
-        );
+          .withInsertHandler(getLookupElementInsertHandler(attributeName));
+        if (declaration instanceof AsciiDocAttributeDeclaration) {
+          lb = lb.withTypeText(((AsciiDocAttributeDeclaration) declaration).getContainingFile().getName());
+        }
+        variants.add(lb);
       }
-    }
-    VirtualFile springRestDocSnippets = AsciiDocUtil.findSpringRestDocSnippets(this.getElement());
-    if (springRestDocSnippets != null) {
-      String value = springRestDocSnippets.getPath();
-      value = value.replaceAll("\\\\", "/");
-      if (project.getBasePath() != null) {
-        value = value.replaceAll("^" + Pattern.quote(project.getBasePath()), "");
-      }
-      value = " (" + value + ")";
-      variants.add(LookupElementBuilder.create("snippets")
-        .withIcon(AsciiDocIcons.ASCIIDOC_ICON)
-        .withTailText(value, true)
-        .withInsertHandler(getLookupElementInsertHandler("snippets"))
-      );
-    }
-    VirtualFile antoraPartials = AsciiDocUtil.findAntoraPartials(this.getElement());
-    if (antoraPartials != null) {
-      String value = antoraPartials.getPath();
-      value = value.replaceAll("\\\\", "/");
-      if (project.getBasePath() != null) {
-        value = value.replaceAll("^" + Pattern.quote(project.getBasePath()), "");
-      }
-      value = " (" + value + ")";
-      variants.add(LookupElementBuilder.create("partialsdir")
-        .withIcon(AsciiDocIcons.ASCIIDOC_ICON)
-        .withTailText(value, true)
-        .withInsertHandler(getLookupElementInsertHandler("partialsdir"))
-      );
-    }
-    VirtualFile antoraExamples = AsciiDocUtil.findAntoraExamplesDir(this.getElement());
-    if (antoraExamples != null) {
-      String value = antoraExamples.getPath();
-      value = value.replaceAll("\\\\", "/");
-      if (project.getBasePath() != null) {
-        value = value.replaceAll("^" + Pattern.quote(project.getBasePath()), "");
-      }
-      value = " (" + value + ")";
-      variants.add(LookupElementBuilder.create("examplesdir")
-        .withIcon(AsciiDocIcons.ASCIIDOC_ICON)
-        .withTailText(value, true)
-        .withInsertHandler(getLookupElementInsertHandler("examplesdir"))
-      );
-    }
-    VirtualFile antoraAttachments = AsciiDocUtil.findAntoraAttachmentsDir(this.getElement());
-    if (antoraExamples != null) {
-      String value = antoraAttachments.getPath();
-      value = value.replaceAll("\\\\", "/");
-      if (project.getBasePath() != null) {
-        value = value.replaceAll("^" + Pattern.quote(project.getBasePath()), "");
-      }
-      value = " (" + value + ")";
-      variants.add(LookupElementBuilder.create("attachmentsdir")
-        .withIcon(AsciiDocIcons.ASCIIDOC_ICON)
-        .withTailText(value, true)
-        .withInsertHandler(getLookupElementInsertHandler("attachmentsdir"))
-      );
     }
     return variants.toArray();
   }

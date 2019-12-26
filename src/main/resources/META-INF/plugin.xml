@@ -230,6 +230,8 @@
                      shortName="AsciiDocListingStyleInspection"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocListingStyleInspection"/>
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
+    <stubElementTypeHolder class="org.asciidoc.intellij.parser.AsciiDocElementTypes"/>
+    <stubIndex implementation="org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationKeyIndex"/>
     <problemFileHighlightFilter
       implementation="org.asciidoc.intellij.problemHighlighter.AsciiDocProblemFileHighlightFilter"/>
     <colorSettingsPage implementation="org.asciidoc.intellij.highlighting.AsciiDocColorSettingsPage"/>

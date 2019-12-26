@@ -12,7 +12,7 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.asciidoc.intellij.lexer.AsciiDocLexer;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
-import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
+import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationImpl;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
 import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.asciidoc.intellij.psi.AsciiDocBlockAttributes;
@@ -97,7 +97,7 @@ public class AsciiDocParserDefinition implements ParserDefinition {
       return new AsciiDocLink(node);
     }
     if (node.getElementType() == AsciiDocElementTypes.ATTRIBUTE_DECLARATION) {
-      return new AsciiDocAttributeDeclaration(node);
+      return new AsciiDocAttributeDeclarationImpl(node);
     }
     if (node.getElementType() == AsciiDocElementTypes.ATTRIBUTE_REF) {
       return new AsciiDocAttributeReference(node);

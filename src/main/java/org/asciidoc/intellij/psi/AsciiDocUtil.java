@@ -94,53 +94,89 @@ public class AsciiDocUtil {
 
   static List<AsciiDocAttributeDeclaration> findAttributes(Project project, String key) {
     List<AsciiDocAttributeDeclaration> result = null;
-    Collection<VirtualFile> virtualFiles =
-      FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
+    final GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+    Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(key, project, scope);
     ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
-    for (VirtualFile virtualFile : virtualFiles) {
+    for (AsciiDocAttributeDeclaration asciiDocAttributeDeclaration : asciiDocAttributeDeclarations) {
+      VirtualFile virtualFile = asciiDocAttributeDeclaration.getContainingFile().getVirtualFile();
       if (index.isInLibrary(virtualFile)
         || index.isExcluded(virtualFile)
         || index.isInLibraryClasses(virtualFile)
         || index.isInLibrarySource(virtualFile)) {
         continue;
       }
-      AsciiDocFile asciiDocFile = (AsciiDocFile) PsiManager.getInstance(project).findFile(virtualFile);
-      if (asciiDocFile != null) {
-        Collection<AsciiDocAttributeDeclaration> attributeDeclarations = PsiTreeUtil.findChildrenOfType(asciiDocFile, AsciiDocAttributeDeclaration.class);
-        for (AsciiDocAttributeDeclaration attributeDeclaration : attributeDeclarations) {
-          if (key.equals(attributeDeclaration.getAttributeName())) {
-            if (result == null) {
-              result = new ArrayList<>();
-            }
-            result.add(attributeDeclaration);
-          }
-        }
+      if (result == null) {
+        result = new ArrayList<>();
       }
+      result.add(asciiDocAttributeDeclaration);
     }
     return result != null ? result : Collections.emptyList();
   }
 
   static List<AsciiDocAttributeDeclaration> findAttributes(Project project) {
     List<AsciiDocAttributeDeclaration> result = new ArrayList<>();
-    Collection<VirtualFile> virtualFiles =
-      FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
     ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
-    for (VirtualFile virtualFile : virtualFiles) {
-      if (index.isInLibrary(virtualFile)
-        || index.isExcluded(virtualFile)
-        || index.isInLibraryClasses(virtualFile)
-        || index.isInLibrarySource(virtualFile)) {
-        continue;
-      }
-      AsciiDocFile asciiDocFile = (AsciiDocFile) PsiManager.getInstance(project).findFile(virtualFile);
-      if (asciiDocFile != null) {
-        Collection<AsciiDocAttributeDeclaration> attributeDeclarations = PsiTreeUtil.findChildrenOfType(asciiDocFile, AsciiDocAttributeDeclaration.class);
-        result.addAll(attributeDeclarations);
+    Collection<String> keys = AsciiDocAttributeDeclarationKeyIndex.getInstance().getAllKeys(project);
+    final GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+    for (String key : keys) {
+      Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(key, project, scope);
+      for (AsciiDocAttributeDeclaration asciiDocAttributeDeclaration : asciiDocAttributeDeclarations) {
+        VirtualFile virtualFile = asciiDocAttributeDeclaration.getContainingFile().getVirtualFile();
+        if (index.isInLibrary(virtualFile)
+          || index.isExcluded(virtualFile)
+          || index.isInLibraryClasses(virtualFile)
+          || index.isInLibrarySource(virtualFile)) {
+          continue;
+        }
+        result.add(asciiDocAttributeDeclaration);
       }
     }
     return result;
   }
 
+  static List<AttributeDeclaration> findAttributes(Project project, String key, PsiElement current) {
+    List<AttributeDeclaration> result = new ArrayList<>(findAttributes(project, key));
+
+    if (key.equals("snippets")) {
+      augmentList(result, AsciiDocUtil.findSpringRestDocSnippets(current), "snippets");
+    }
+
+    if (key.equals("partialsdir")) {
+      augmentList(result, AsciiDocUtil.findAntoraPartials(current), "partialsdir");
+    }
+    if (key.equals("imagesdir")) {
+      augmentList(result, AsciiDocUtil.findAntoraImagesDir(current), "imagesdir");
+    }
+    if (key.equals("attachmentsdir")) {
+      augmentList(result, AsciiDocUtil.findAntoraAttachmentsDir(current), "attachmentsdir");
+    }
+    if (key.equals("examplesdir")) {
+      augmentList(result, AsciiDocUtil.findAntoraExamplesDir(current), "examplesdir");
+    }
+    return result;
+  }
+
+
+  static List<AttributeDeclaration> findAttributes(Project project, PsiElement current) {
+    List<AttributeDeclaration> result = new ArrayList<>(findAttributes(project));
+
+    augmentList(result, AsciiDocUtil.findSpringRestDocSnippets(current), "snippets");
+
+    augmentList(result, AsciiDocUtil.findAntoraPartials(current), "partialsdir");
+    augmentList(result, AsciiDocUtil.findAntoraImagesDir(current), "imagesdir");
+    augmentList(result, AsciiDocUtil.findAntoraAttachmentsDir(current), "attachmentsdir");
+    augmentList(result, AsciiDocUtil.findAntoraExamplesDir(current), "examplesdir");
+
+    return result;
+  }
+
+  static void augmentList(List<AttributeDeclaration> list, VirtualFile file, String attributeName) {
+    if (file != null) {
+      String value = file.getPath();
+      value = value.replaceAll("\\\\", "/");
+      list.add(new AsciiDocAttributeDeclarationDummy(attributeName, value));
+    }
+  }
 
   @Nullable
   public static PsiElement getStatementAtCaret(@NotNull Editor editor, @NotNull PsiFile psiFile) {

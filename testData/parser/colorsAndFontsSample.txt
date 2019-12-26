@@ -48,7 +48,7 @@ FILE
       PsiElement(AsciiDoc:INLINE_ATTRS_END)(']')
     PsiWhiteSpace('\n')
     PsiWhiteSpace('\n')
-    AsciiDocAttributeDeclaration(AsciiDoc:ATTRIBUTE_DECLARATION)
+    AsciiDocAttributeDeclarationImpl(ASCIIDOC_ATTRIBUTE_DECLARATION)
       PsiElement(AsciiDoc:ATTRIBUTE_NAME_START)(':')
       AsciiDocAttributeDeclarationName(AsciiDoc:ATTRIBUTE_DECLARATION_NAME)
         PsiElement(AsciiDoc:ATTRIBUTE_NAME)('attribute')

@@ -247,7 +247,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     PsiFile psiFile = configureByAsciiDoc(":myattr!:");
 
     // then...
-    AsciiDocAttributeDeclaration declaration = PsiTreeUtil.getChildOfType(psiFile, AsciiDocAttributeDeclaration.class);
+    AsciiDocAttributeDeclarationImpl declaration = PsiTreeUtil.getChildOfType(psiFile, AsciiDocAttributeDeclarationImpl.class);
     assertNotNull("declaration exists", declaration);
     assertTrue("declaration is of unset type", declaration.isUnset());
   }

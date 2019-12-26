@@ -28,7 +28,9 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,51 +72,15 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     Matcher matcher = ATTRIBUTES.matcher(val);
     while (matcher.find()) {
       String attributeName = matcher.group(1);
-      List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName);
+      List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName, myElement);
       if (declarations.size() == 1) {
         String attrVal = declarations.get(0).getAttributeValue();
         if (attrVal != null) {
           val = matcher.replaceFirst(Matcher.quoteReplacement(attrVal));
           matcher = ATTRIBUTES.matcher(val);
-          continue;
         }
       } else if (declarations.size() > 1) {
         return null;
-      }
-      if (attributeName.equals("snippets")) {
-        VirtualFile springRestDocSnippets = AsciiDocUtil.findSpringRestDocSnippets(myElement);
-        if (springRestDocSnippets != null) {
-          val = matcher.replaceFirst(Matcher.quoteReplacement(springRestDocSnippets.getPath()));
-          matcher = ATTRIBUTES.matcher(val);
-        }
-      }
-      if (attributeName.equals("partialsdir")) {
-        VirtualFile antoraPartials = AsciiDocUtil.findAntoraPartials(this.getElement());
-        if (antoraPartials != null) {
-          val = matcher.replaceFirst(Matcher.quoteReplacement(antoraPartials.getPath()));
-          matcher = ATTRIBUTES.matcher(val);
-        }
-      }
-      if (attributeName.equals("imagesdir")) {
-        VirtualFile dir = AsciiDocUtil.findAntoraImagesDir(this.getElement());
-        if (dir != null) {
-          val = matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath()));
-          matcher = ATTRIBUTES.matcher(val);
-        }
-      }
-      if (attributeName.equals("examplesdir")) {
-        VirtualFile dir = AsciiDocUtil.findAntoraExamplesDir(this.getElement());
-        if (dir != null) {
-          val = matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath()));
-          matcher = ATTRIBUTES.matcher(val);
-        }
-      }
-      if (attributeName.equals("attachmentsdir")) {
-        VirtualFile dir = AsciiDocUtil.findAntoraAttachmentsDir(this.getElement());
-        if (dir != null) {
-          val = matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath()));
-          matcher = ATTRIBUTES.matcher(val);
-        }
       }
     }
     return val;
@@ -167,42 +133,12 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     Matcher matcher = ATTRIBUTES.matcher(key);
     if (matcher.find()) {
       String attributeName = matcher.group(1);
-      List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName);
-      for (AsciiDocAttributeDeclaration decl : declarations) {
+      List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName, myElement);
+      for (AttributeDeclaration decl : declarations) {
         if (decl.getAttributeValue() == null) {
           continue;
         }
         resolve(matcher.replaceFirst(Matcher.quoteReplacement(decl.getAttributeValue())), results, depth + 1);
-      }
-      if (attributeName.equals("snippets")) {
-        VirtualFile springRestDocSnippets = AsciiDocUtil.findSpringRestDocSnippets(this.getElement());
-        if (springRestDocSnippets != null) {
-          resolve(matcher.replaceFirst(Matcher.quoteReplacement(springRestDocSnippets.getPath())), results, depth + 1);
-        }
-      }
-      if (attributeName.equals("partialsdir")) {
-        VirtualFile antoraPartials = AsciiDocUtil.findAntoraPartials(this.getElement());
-        if (antoraPartials != null) {
-          resolve(matcher.replaceFirst(Matcher.quoteReplacement(antoraPartials.getPath())), results, depth + 1);
-        }
-      }
-      if (attributeName.equals("imagesdir")) {
-        VirtualFile dir = AsciiDocUtil.findAntoraImagesDir(this.getElement());
-        if (dir != null) {
-          resolve(matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath())), results, depth + 1);
-        }
-      }
-      if (attributeName.equals("examplesdir")) {
-        VirtualFile dir = AsciiDocUtil.findAntoraExamplesDir(this.getElement());
-        if (dir != null) {
-          resolve(matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath())), results, depth + 1);
-        }
-      }
-      if (attributeName.equals("attachmentsdir")) {
-        VirtualFile dir = AsciiDocUtil.findAntoraAttachmentsDir(this.getElement());
-        if (dir != null) {
-          resolve(matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath())), results, depth + 1);
-        }
       }
     } else {
       PsiElement file = resolve(key);
@@ -210,8 +146,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         results.add(new PsiElementResolveResult(file));
       } else if ("image".equals(macroName)) {
         if (!URL.matcher(key).matches()) {
-          List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), "imagesdir");
-          for (AsciiDocAttributeDeclaration decl : declarations) {
+          List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), "imagesdir", myElement);
+          for (AttributeDeclaration decl : declarations) {
             if (decl.getAttributeValue() == null) {
               continue;
             }
@@ -281,8 +217,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       additionalItems.add(item);
     }
 
-    List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject());
-    for (AsciiDocAttributeDeclaration decl : declarations) {
+    List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), myElement);
+    Set<String> searched = new HashSet<>(declarations.size());
+    for (AttributeDeclaration decl : declarations) {
       if (decl.getAttributeValue() == null || decl.getAttributeValue().trim().length() == 0) {
         continue;
       }
@@ -291,15 +228,24 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       if (!val.endsWith("/") && val.length() > 0) {
         val = val + "/";
       }
+      // an attribute might be declared with the same value in multiple files, try only once for each combination
+      String key = decl.getAttributeName() + ":" + decl.getAttributeValue();
+      if (searched.contains(key)) {
+        continue;
+      }
+      searched.add(key);
       resolve(val + decl.getAttributeValue(), res, 0);
       for (ResolveResult result : res) {
         if (result.getElement() == null) {
           continue;
         }
         final Icon icon = result.getElement().getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
-        LookupElementBuilder lb = FileInfoManager.getFileLookupItem(result.getElement(), "{" + decl.getAttributeName() + "}", icon)
-          .withTailText(" (" + decl.getAttributeValue() + ")", true)
-          .withTypeText(decl.getContainingFile().getName());
+        LookupElementBuilder lb;
+        lb = FileInfoManager.getFileLookupItem(result.getElement(), "{" + decl.getAttributeName() + "}", icon)
+          .withTailText(" (" + decl.getAttributeValue() + ")", true);
+        if (decl instanceof AsciiDocAttributeDeclaration) {
+            lb = lb.withTypeText(((AsciiDocAttributeDeclaration) decl).getContainingFile().getName());
+        }
         if (result.getElement() instanceof PsiDirectory) {
           lb = handleTrailingSlash(lb);
         }
@@ -364,42 +310,12 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     Matcher matcher = ATTRIBUTES.matcher(base);
     if (matcher.find()) {
       String attributeName = matcher.group(1);
-      List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName);
-      for (AsciiDocAttributeDeclaration decl : declarations) {
+      List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName, myElement);
+      for (AttributeDeclaration decl : declarations) {
         if (decl.getAttributeValue() == null) {
           continue;
         }
         getVariants(matcher.replaceFirst(Matcher.quoteReplacement(decl.getAttributeValue())), collector, depth + 1);
-      }
-      if (attributeName.equals("snippets")) {
-        VirtualFile springRestDocSnippets = AsciiDocUtil.findSpringRestDocSnippets(this.getElement());
-        if (springRestDocSnippets != null) {
-          getVariants(matcher.replaceFirst(Matcher.quoteReplacement(springRestDocSnippets.getPath())), collector, depth + 1);
-        }
-      }
-      if (attributeName.equals("partialsdir")) {
-        VirtualFile antoraPartials = AsciiDocUtil.findAntoraPartials(this.getElement());
-        if (antoraPartials != null) {
-          getVariants(matcher.replaceFirst(Matcher.quoteReplacement(antoraPartials.getPath())), collector, depth + 1);
-        }
-      }
-      if (attributeName.equals("imagesdir")) {
-        VirtualFile dir = AsciiDocUtil.findAntoraImagesDir(this.getElement());
-        if (dir != null) {
-          getVariants(matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath())), collector, depth + 1);
-        }
-      }
-      if (attributeName.equals("examplesdir")) {
-        VirtualFile dir = AsciiDocUtil.findAntoraExamplesDir(this.getElement());
-        if (dir != null) {
-          getVariants(matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath())), collector, depth + 1);
-        }
-      }
-      if (attributeName.equals("attachmentsdir")) {
-        VirtualFile dir = AsciiDocUtil.findAntoraAttachmentsDir(this.getElement());
-        if (dir != null) {
-          getVariants(matcher.replaceFirst(Matcher.quoteReplacement(dir.getPath())), collector, depth + 1);
-        }
       }
     } else {
       PsiElement resolve = resolve(base);
