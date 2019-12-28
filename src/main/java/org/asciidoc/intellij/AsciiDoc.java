@@ -187,7 +187,9 @@ public class AsciiDoc {
           // requiring it later after other libraries have been loaded results in "undefined method `set_params' for #<OpenSSL::SSL::SSLContext"
           asciidoctor.requireLibrary("openssl");
           asciidoctor.javaExtensionRegistry().preprocessor(prependConfig);
-          asciidoctor.javaExtensionRegistry().postprocessor(attributeRetriever);
+          if (format.equals("javafx") || format.equals("html")) {
+            asciidoctor.javaExtensionRegistry().postprocessor(attributeRetriever);
+          }
           // disable JUL logging of captured messages
           // https://github.com/asciidoctor/asciidoctorj/issues/669
           Logger.getLogger("asciidoctor").setUseParentHandlers(false);

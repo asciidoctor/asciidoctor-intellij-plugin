@@ -11,7 +11,7 @@ public class AttributesRetriever extends Postprocessor {
 
   @Override
   public String process(Document document, String output) {
-    imagesdir = document.getAttribute("imagesdir").toString();
+    imagesdir = (String) document.getAttribute("imagesdir");
     return output;
   }
 
