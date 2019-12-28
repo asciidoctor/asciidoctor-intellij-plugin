@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.24 (work in progress)
+
+- added notification in the editor with a link to GitHub Wiki when the plugin recognizes Antora  (#373)
+
 === 0.30.24 (preview, available from Github releases)
 
 - scroll bar of JavaFX preview now dark in Darcula theme (#372)

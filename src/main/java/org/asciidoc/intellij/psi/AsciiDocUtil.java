@@ -247,6 +247,21 @@ public class AsciiDocUtil {
     return null;
   }
 
+  public static VirtualFile findAntoraModuleDir(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+    VirtualFile dir = fileBaseDir;
+    while (dir != null) {
+      if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
+        dir.getParent().getParent().findChild("antora.yml") != null) {
+        return dir;
+      }
+      if (projectBasePath.equals(dir)) {
+        break;
+      }
+      dir = dir.getParent();
+    }
+    return null;
+  }
+
   public static String findAntoraImagesDirRelative(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
     String imagesDir = "";
@@ -442,6 +457,20 @@ public class AsciiDocUtil {
       antoraAttachmentsDir = findAntoraAttachmentsDir(element.getProject().getBaseDir(), vf);
     }
     return antoraAttachmentsDir;
+  }
+
+  public static VirtualFile findAntoraModuleDir(PsiElement element) {
+    VirtualFile antoraModuleDir = null;
+    VirtualFile vf;
+    vf = element.getContainingFile().getVirtualFile();
+    if (vf == null) {
+      // when running autocomplete, there is only an original file
+      vf = element.getContainingFile().getOriginalFile().getVirtualFile();
+    }
+    if (vf != null) {
+      antoraModuleDir = findAntoraModuleDir(element.getProject().getBaseDir(), vf);
+    }
+    return antoraModuleDir;
   }
 
 }
