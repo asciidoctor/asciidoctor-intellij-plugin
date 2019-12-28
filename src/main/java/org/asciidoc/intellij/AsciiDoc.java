@@ -28,6 +28,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.geronimo.gshell.io.SystemOutputHijacker;
 import org.asciidoc.intellij.actions.asciidoc.AsciiDocAction;
+import org.asciidoc.intellij.asciidoc.AttributesRetriever;
 import org.asciidoc.intellij.asciidoc.PrependConfig;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
@@ -79,6 +80,11 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.findSpringRestDocSnippets;
  */
 public class AsciiDoc {
 
+  /**
+   * Stores the contents of attribute imagesdir of laster rendering.
+   */
+  private String imagesdir;
+
   private static class MaxHashMap extends LinkedHashMap<String, Asciidoctor> {
     @Override
     protected boolean removeEldestEntry(Map.Entry<String, Asciidoctor> eldest) {
@@ -95,6 +101,8 @@ public class AsciiDoc {
   private static MaxHashMap instances = new MaxHashMap();
 
   private static PrependConfig prependConfig = new PrependConfig();
+
+  private static AttributesRetriever attributeRetriever = new AttributesRetriever();
 
   private com.intellij.openapi.diagnostic.Logger log =
     com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDoc.class);
@@ -179,6 +187,7 @@ public class AsciiDoc {
           // requiring it later after other libraries have been loaded results in "undefined method `set_params' for #<OpenSSL::SSL::SSLContext"
           asciidoctor.requireLibrary("openssl");
           asciidoctor.javaExtensionRegistry().preprocessor(prependConfig);
+          asciidoctor.javaExtensionRegistry().postprocessor(attributeRetriever);
           // disable JUL logging of captured messages
           // https://github.com/asciidoctor/asciidoctorj/issues/669
           Logger.getLogger("asciidoctor").setUseParentHandlers(false);
@@ -467,6 +476,7 @@ public class AsciiDoc {
         try {
           return "<div id=\"content\">\n" + asciidoctor.convert(text, getDefaultOptions("html5", springRestDocsSnippets, antoraPartials, antoraImagesDir, antoraAttachmentsDir, antoraExamplesDir)) + "\n</div>";
         } finally {
+          imagesdir = attributeRetriever.getImagesdir();
           prependConfig.setConfig("");
           asciidoctor.unregisterLogHandler(logHandler);
         }
@@ -534,6 +544,7 @@ public class AsciiDoc {
           asciidoctor.convertFile(file, getExportOptions(getDefaultOptions(format.toString(), springRestDocsSnippets, antoraPagePartials, antoraImagesDir, antoraAttachmentsDir, antoraExamplesDir), format));
         } finally {
           prependConfig.setConfig("");
+          imagesdir = attributeRetriever.getImagesdir();
           asciidoctor.unregisterLogHandler(logHandler);
         }
       } catch (Exception | ServiceConfigurationError ex) {
@@ -611,6 +622,11 @@ public class AsciiDoc {
     if (imagesPath != null) {
       if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())) {
         attrs.setAttribute("outdir", imagesPath.toAbsolutePath().normalize().toString());
+        // this prevents asciidoctor diagram to render images to a folder {outdir}/{imagesdir} ...
+        // ... that might then be outside of the temporary folder as {imagesdir} might traverse to a parent folder
+        // beware that the HTML output will still prepends {imagesdir} that later needs to be removed from HTML output
+        // https://github.com/asciidoctor/asciidoctor-diagram/issues/110
+        attrs.setAttribute("imagesoutdir", imagesPath.toAbsolutePath().normalize().toString());
       }
     }
 
@@ -629,6 +645,10 @@ public class AsciiDoc {
       .baseDir(fileBaseDir);
 
     return opts.asMap();
+  }
+
+  public String getImagesDir() {
+    return imagesdir;
   }
 
   public enum FileType {

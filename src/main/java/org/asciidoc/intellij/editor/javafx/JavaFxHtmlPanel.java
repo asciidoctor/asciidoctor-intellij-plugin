@@ -234,7 +234,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
             registerContextMenu(JavaFxHtmlPanel.this.myWebView);
             myWebView.setContextMenuEnabled(false);
             myWebView.setZoom(JBUI.scale(1.f));
-            myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>"));
+            myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>", null));
 
             myWebView.addEventFilter(ScrollEvent.SCROLL, scrollEvent -> {
               // touch pads send lots of events with deltaY == 0, not handling them here
@@ -462,7 +462,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   @Override
-  public synchronized void setHtml(@NotNull String htmlParam) {
+  public synchronized void setHtml(@NotNull String htmlParam, String imagesdir) {
     rendered = new CountDownLatch(1);
     stamp += 1;
     if (stamp > 10000) {
@@ -481,7 +481,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       boolean result = false;
       final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
       if (!forceRefresh && settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")) {
-        final String htmlToReplace = StringEscapeUtils.escapeEcmaScript(prepareHtml(html));
+        final String htmlToReplace = StringEscapeUtils.escapeEcmaScript(prepareHtml(html, imagesdir));
         // try to replace the HTML contents using JavaScript to avoid flickering MathML
         try {
           boolean ml = false; // set to "true" to test for memory leaks in HTML/JavaScript
@@ -539,7 +539,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         html = "<html><head></head><body><div style='position:fixed;top:0;left:0;background-color:#eeeeee;color:red;z-index:99;'><div id='mathjaxerrortext'></div><pre style='color:red' id='mathjaxerrorformula'></pre></div>"
           + html
           + "<script>window.iterationStamp=" + iterationStamp + " </script></body>";
-        final String htmlToRender = prepareHtml(html);
+        final String htmlToRender = prepareHtml(html, imagesdir);
         JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().loadContent(htmlToRender);
       }
     });
@@ -555,15 +555,28 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     }
   }
 
-  private String findTempImageFile(String filename) {
+  private String findTempImageFile(String filename, String imagesdir) {
     Path file = imagesPath.resolve(filename);
     if (Files.exists(file)) {
       return file.toFile().toString();
     }
+    // when {imagesoutdir} is set, files created by asciidoctor-diagram end up in the root path of that dir, but HTML will still prepend {imagesdir}
+    // try again with removed {imagesdir}
+    // https://github.com/asciidoctor/asciidoctor-diagram/issues/110
+    if (imagesdir != null) {
+      String prefix = imagesdir + "/";
+      if (filename.startsWith(prefix)) {
+        filename = filename.substring(prefix.length());
+        file = imagesPath.resolve(filename);
+        if (Files.exists(file)) {
+          return file.toFile().toString();
+        }
+      }
+    }
     return null;
   }
 
-  private String prepareHtml(@NotNull String html) {
+  private String prepareHtml(@NotNull String html, String imagesdir) {
     /* for each image we'll calculate a MD5 sum of its content. Once the content changes, MD5 and therefore the URL
      * will change. The changed URL is necessary for the JavaFX web view to display the new content, as each URL
      * will be loaded only once by the JavaFX web view. */
@@ -577,7 +590,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       } catch (UnsupportedEncodingException e) {
         throw new RuntimeException(e);
       }
-      String tmpFile = findTempImageFile(file);
+      String tmpFile = findTempImageFile(file, imagesdir);
       String md5;
       String replacement;
       if (tmpFile != null) {
@@ -621,7 +634,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       } catch (UnsupportedEncodingException e) {
         throw new RuntimeException(e);
       }
-      String tmpFile = findTempImageFile(file);
+      String tmpFile = findTempImageFile(file, imagesdir);
       String md5;
       String replacement;
       if (tmpFile != null) {

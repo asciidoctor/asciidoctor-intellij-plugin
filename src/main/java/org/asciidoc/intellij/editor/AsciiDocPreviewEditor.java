@@ -141,7 +141,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           currentContent = config + content;
           String markup = asciidoc.get().render(content, config, extensions);
           if (markup != null) {
-            myPanel.setHtml(markup);
+            myPanel.setHtml(markup, asciidoc.get().getImagesDir());
           }
         }
         if (currentLineNo != targetLineNo) {
@@ -493,7 +493,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       // reset contents in preview with latest CSS headers
       if (settings.getAsciiDocPreviewSettings().getPreviewTheme() == AsciiDocHtmlPanel.PreviewTheme.INTELLIJ) {
         currentContent = null;
-        myPanel.setHtml("");
+        myPanel.setHtml("", null);
         renderIfVisible();
       }
     }

@@ -279,4 +279,12 @@ public class PreviewStaticServer extends HttpRequestHandler {
     response.headers().set(HttpHeaderNames.ETAG, Long.toString(LAST_MODIFIED));
     Responses.send(response, channel, request);
   }
+
+  @Override
+  protected void finalize() {
+    if (browserPanel != null) {
+      browserPanel.close();
+      browserPanel = null;
+    }
+  }
 }

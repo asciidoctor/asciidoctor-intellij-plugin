@@ -170,15 +170,28 @@ public class BrowserPanel implements Closeable {
       html = html.replaceAll("<span style=\"background-color:#[a-zA-Z0-9]*;?", "<span style=\"");
     }
     html = "<html><head></head><body>" + html + "</body>";
-    html = prepareHtml(html, project);
+    html = prepareHtml(html, project, asciiDoc.getImagesDir());
     return html;
   }
 
 
-  private String findTempImageFile(String filename) {
+  private String findTempImageFile(String filename, String imagesdir) {
     Path file = imagesPath.resolve(filename);
     if (Files.exists(file)) {
       return file.toFile().toString();
+    }
+    // when {imagesoutdir} is set, files created by asciidoctor-diagram end up in the root path of that dir, but HTML will still prepend {imagesdir}
+    // try again with removed {imagesdir}
+    // https://github.com/asciidoctor/asciidoctor-diagram/issues/110
+    if (imagesdir != null) {
+      String prefix = imagesdir + "/";
+      if (filename.startsWith(prefix)) {
+        filename = filename.substring(prefix.length());
+        file = imagesPath.resolve(filename);
+        if (Files.exists(file)) {
+          return file.toFile().toString();
+        }
+      }
     }
     return null;
   }
@@ -191,7 +204,7 @@ public class BrowserPanel implements Closeable {
     return signWithMac.checkMac(file, mac);
   }
 
-  private String prepareHtml(@NotNull String html, Project project) {
+  private String prepareHtml(@NotNull String html, Project project, String imagesdir) {
     /* for each image we'll calculate a MD5 sum of its content. Once the content changes, MD5 and therefore the URL
      * will change. The changed URL is necessary for the Browser to display the new content, as each URL
      * will be loaded only once due to caching. Also each URL to a local image will be signed so that it can be retrieved securely afterwards */
@@ -208,7 +221,7 @@ public class BrowserPanel implements Closeable {
       } catch (UnsupportedEncodingException e) {
         throw new RuntimeException(e);
       }
-      String tmpFile = findTempImageFile(file);
+      String tmpFile = findTempImageFile(file, imagesdir);
       String md5;
       String replacement;
       if (tmpFile != null) {

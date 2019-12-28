@@ -12,7 +12,7 @@ public abstract class AsciiDocHtmlPanel implements Disposable {
   @NotNull
   public abstract JComponent getComponent();
 
-  public abstract void setHtml(@NotNull String html);
+  public abstract void setHtml(@NotNull String html, String imagesdir);
 
   public abstract void render();
 

@@ -91,7 +91,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   @Override
-  public void setHtml(@NotNull String html) {
+  public void setHtml(@NotNull String html, String imagesdir) {
     myLastRenderedHtml = html;
     EditorKit kit = jEditorPane.getEditorKit();
     javax.swing.text.Document doc = kit.createDefaultDocument();
@@ -127,7 +127,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
 
   @Override
   public void render() {
-    setHtml(myLastRenderedHtml);
+    setHtml(myLastRenderedHtml, null);
   }
 
   @Override

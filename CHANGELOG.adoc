@@ -7,10 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.25 (work in progress)
+=== 0.30.25 (preview, available from Github releases)
 
 - added notification in the editor with a link to GitHub Wiki when the plugin recognizes Antora (#373)
 - on pasting images in AsciiDoc files that are part of Antora modules, default to the images folder (#330)
+- fix image preview when using asciidoctor-diagram and imagesdir attribute that traverses to a parent folder (#345)
 
 === 0.30.24 (preview, available from Github releases)
 
