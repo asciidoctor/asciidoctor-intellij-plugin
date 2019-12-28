@@ -238,6 +238,10 @@ public class AsciiDocUtil {
             return attachments;
           }
         }
+        VirtualFile attachments = dir.findChild("attachments");
+        if (attachments != null) {
+          return attachments;
+        }
       }
       if (projectBasePath.equals(dir)) {
         break;
@@ -264,7 +268,7 @@ public class AsciiDocUtil {
 
   public static String findAntoraImagesDirRelative(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
-    String imagesDir = "";
+    StringBuilder imagesDir = new StringBuilder();
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
         dir.getParent().getParent().findChild("antora.yml") != null) {
@@ -275,19 +279,23 @@ public class AsciiDocUtil {
             return imagesDir + "assets/images";
           }
         }
+        VirtualFile images = dir.findChild("images");
+        if (images != null) {
+          return imagesDir + "images";
+        }
       }
       if (projectBasePath.equals(dir)) {
         break;
       }
       dir = dir.getParent();
-      imagesDir = "../" + imagesDir;
+      imagesDir.insert(0, "../");
     }
     return null;
   }
 
   public static String findAntoraAttachmentsDirRelative(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
-    String attachmentsDir = "";
+    StringBuilder attachmentsDir = new StringBuilder();
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
         dir.getParent().getParent().findChild("antora.yml") != null) {
@@ -298,12 +306,16 @@ public class AsciiDocUtil {
             return attachmentsDir + "assets/attachments";
           }
         }
+        VirtualFile attachments = dir.findChild("attachments");
+        if (attachments != null) {
+          return attachmentsDir + "attachments";
+        }
       }
       if (projectBasePath.equals(dir)) {
         break;
       }
       dir = dir.getParent();
-      attachmentsDir = "../" + attachmentsDir;
+      attachmentsDir.insert(0, "../");
     }
     return null;
   }
@@ -319,6 +331,10 @@ public class AsciiDocUtil {
           if (images != null) {
             return images;
           }
+        }
+        VirtualFile images = dir.findChild("images");
+        if (images != null) {
+          return images;
         }
       }
       if (projectBasePath.equals(dir)) {
