@@ -1,5 +1,7 @@
 package org.asciidoc.intellij.psi;
 
+import java.util.Objects;
+
 public class AsciiDocAttributeDeclarationDummy implements AttributeDeclaration {
   private final String attributeValue, attributeName;
 
@@ -17,4 +19,23 @@ public class AsciiDocAttributeDeclarationDummy implements AttributeDeclaration {
   public String getAttributeName() {
     return attributeName;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    AsciiDocAttributeDeclarationDummy that = (AsciiDocAttributeDeclarationDummy) o;
+    return Objects.equals(attributeValue, that.attributeValue) &&
+      Objects.equals(attributeName, that.attributeName);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(attributeValue, attributeName);
+  }
+
 }

@@ -9,6 +9,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import org.asciidoc.intellij.file.AsciiDocFileType;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Tests for {@link org.asciidoc.intellij.parser.AsciiDocParserImpl}.
@@ -361,6 +362,49 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
 
     PsiReference[] referencesInclude = macros[1].getReferences();
     assertSize(3, referencesInclude);
+    // finish test here. Reference will not resolve in the test, files are "temp://" files
+  }
+
+  public void testAntoraModule() {
+    // given...
+    PsiFile[] psiFile = myFixture.configureByFiles(
+      getTestName(true) + "/modules/ROOT/pages/test.adoc",
+      getTestName(true) + "/modules/ROOT/attachments/attachment.txt",
+      getTestName(true) + "/modules/ROOT/examples/example.txt",
+      getTestName(true) + "/modules/ROOT/images/image.txt",
+      getTestName(true) + "/modules/ROOT/partials/part.adoc",
+      getTestName(true) + "/antora.yml"
+    );
+
+    List<AttributeDeclaration> attributes = AsciiDocUtil.findAttributes(psiFile[0].getProject(), psiFile[0].getFirstChild());
+
+    assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("partialsdir", "/src/antoraModule/modules/ROOT/partials")));
+    assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("imagesdir", "/src/antoraModule/modules/ROOT/images")));
+    assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("attachmentsdir", "/src/antoraModule/modules/ROOT/attachments")));
+    assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("examplesdir", "/src/antoraModule/modules/ROOT/examples")));
+
+    AsciiDocBlockMacro[] macros = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocBlockMacro.class);
+    assertNotNull(macros);
+    assertSize(3, macros);
+
+    // image
+    assertSize(1, macros[0].getReferences());
+    // finish test here. Reference will not resolve in the test, files are "temp://" files
+
+    // examples include
+    assertSize(2, macros[1].getReferences());
+    // finish test here. Reference will not resolve in the test, files are "temp://" files
+
+    // partials include
+    assertSize(2, macros[2].getReferences());
+    // finish test here. Reference will not resolve in the test, files are "temp://" files
+
+    AsciiDocLink[] urls = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocLink.class);
+    assertNotNull(urls);
+    assertSize(1, urls);
+
+    // link
+    assertSize(2, urls[0].getReferences());
     // finish test here. Reference will not resolve in the test, files are "temp://" files
   }
 
