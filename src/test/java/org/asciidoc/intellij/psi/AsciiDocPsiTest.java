@@ -57,8 +57,8 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals(2, blockMacro.getReferences().length);
     assertEquals(AsciiDocFileReference.class, blockMacro.getReferences()[0].getClass());
     // parent folder should be visible
-    assertEquals(2, blockMacro.getReferences()[0].getVariants().length);
-    assertTrue(((LookupElementBuilder) blockMacro.getReferences()[0].getVariants()[1]).getAllLookupStrings().contains(".."));
+    assertEquals(1, blockMacro.getReferences()[0].getVariants().length);
+    assertTrue(((LookupElementBuilder) blockMacro.getReferences()[0].getVariants()[0]).getAllLookupStrings().contains(".."));
   }
 
   public void testIfdefBlockMacroWithReferences() {

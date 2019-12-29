@@ -21,7 +21,7 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileInfoMan
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.IncorrectOperationException;
-import gnu.trove.THashSet;
+import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.completion.AsciiDocCompletionContributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
   private static final int MAX_DEPTH = 10;
@@ -141,10 +142,19 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         resolve(matcher.replaceFirst(Matcher.quoteReplacement(decl.getAttributeValue())), results, depth + 1);
       }
     } else {
+      // if this is an image, and we are inside an Antora module, just look in the Antora path
+      VirtualFile antoraImagesDir = null;
+      if ("image".equals(macroName)) {
+        antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(myElement);
+        if (antoraImagesDir != null) {
+          key = antoraImagesDir.getCanonicalPath() + "/" + key;
+        }
+      }
       PsiElement file = resolve(key);
       if (file != null) {
         results.add(new PsiElementResolveResult(file));
-      } else if ("image".equals(macroName)) {
+      } else if ("image".equals(macroName) && antoraImagesDir == null) {
+        // if it is an image, iterate over all available imagesdir declarations
         if (!URL.matcher(key).matches()) {
           List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), "imagesdir", myElement);
           for (AttributeDeclaration decl : declarations) {
@@ -187,17 +197,30 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     final CommonProcessors.CollectUniquesProcessor<PsiFileSystemItem> collector =
       new CommonProcessors.CollectUniquesProcessor<>();
 
-    getVariants(base, collector, 0);
     if ("image".equals(macroName)) {
-      getVariants("{imagesdir}/" + base, collector, 0);
+      VirtualFile antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(myElement);
+      if (antoraImagesDir != null) {
+        getVariants(antoraImagesDir.getCanonicalPath() + "/" + base, collector, 0);
+      } else {
+        // this is not antora, therefore try with and without imagesdir
+        getVariants(base, collector, 0);
+        getVariants("{imagesdir}/" + base, collector, 0);
+      }
     } else if ("link".equals(macroName) || "xref".equals(macroName)) {
+      getVariants(base, collector, 0);
       getVariants(base + ".adoc", collector, 0);
       if (base.endsWith(".html")) {
         getVariants(base.replaceAll("\\.html$", ".adoc"), collector, 0);
       }
+    } else {
+      getVariants(base, collector, 0);
     }
 
-    final THashSet<PsiElement> set = new THashSet<>(collector.getResults());
+    Set<PsiElement> set = new HashSet<>(collector.getResults());
+    if ("image".equals(macroName)) {
+      // image macro should not suggest or resolve asciidoc files
+      set = set.stream().filter(psiElement -> psiElement.getLanguage() != AsciiDocLanguage.INSTANCE).collect(Collectors.toSet());
+    }
     final PsiElement[] candidates = PsiUtilCore.toPsiElementArray(set);
     List<LookupElementBuilder> additionalItems = new ArrayList<>();
 
@@ -223,10 +246,20 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       if (decl.getAttributeValue() == null || decl.getAttributeValue().trim().length() == 0) {
         continue;
       }
+      if ("imagesdir".equals(decl.getAttributeName())) {
+        // unlikely, won't have that as an attribute in an image path
+        continue;
+      }
       List<ResolveResult> res = new ArrayList<>();
       String val = base;
       if (!val.endsWith("/") && val.length() > 0) {
         val = val + "/";
+      }
+      if ("image".equals(macroName)) {
+        VirtualFile antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(myElement);
+        if (antoraImagesDir != null) {
+          val = antoraImagesDir.getCanonicalPath() + "/" + val;
+        }
       }
       // an attribute might be declared with the same value in multiple files, try only once for each combination
       String key = decl.getAttributeName() + ":" + decl.getAttributeValue();
@@ -244,7 +277,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         lb = FileInfoManager.getFileLookupItem(result.getElement(), "{" + decl.getAttributeName() + "}", icon)
           .withTailText(" (" + decl.getAttributeValue() + ")", true);
         if (decl instanceof AsciiDocAttributeDeclaration) {
-            lb = lb.withTypeText(((AsciiDocAttributeDeclaration) decl).getContainingFile().getName());
+          lb = lb.withTypeText(((AsciiDocAttributeDeclaration) decl).getContainingFile().getName());
         }
         if (result.getElement() instanceof PsiDirectory) {
           lb = handleTrailingSlash(lb);
