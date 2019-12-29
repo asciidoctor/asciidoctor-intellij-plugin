@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.26 (work in progress)
 
 - restrict list of suggestions for images if the file is part of an Antora module (#373)
+- unit tests to recognize Antora directory structure (#373)
 
 === 0.30.25 (preview, available from Github releases)
 
