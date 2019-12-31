@@ -72,6 +72,7 @@ import java.util.logging.Logger;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraAttachmentsDirRelative;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraExamplesDir;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraImagesDirRelative;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraModuleDir;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraPartials;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findSpringRestDocSnippets;
 
@@ -471,12 +472,18 @@ public class AsciiDoc {
         LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
         LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
       );
+      VirtualFile antoraModuleDir = findAntoraModuleDir(
+        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
+        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
+      );
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         asciidoctor.registerLogHandler(logHandler);
         prependConfig.setConfig(config);
         try {
-          return "<div id=\"content\">\n" + asciidoctor.convert(text, getDefaultOptions("html5", springRestDocsSnippets, antoraPartials, antoraImagesDir, antoraAttachmentsDir, antoraExamplesDir)) + "\n</div>";
+          return "<div id=\"content\">\n" + asciidoctor.convert(text,
+            getDefaultOptions("html5", springRestDocsSnippets, antoraPartials, antoraImagesDir,
+              antoraAttachmentsDir, antoraExamplesDir, antoraModuleDir)) + "\n</div>";
         } finally {
           imagesdir = attributeRetriever.getImagesdir();
           prependConfig.setConfig("");
@@ -538,12 +545,18 @@ public class AsciiDoc {
         LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
         LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
       );
+      VirtualFile antoraModuleDir = findAntoraModuleDir(
+        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
+        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
+      );
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format.toString());
         prependConfig.setConfig(config);
         asciidoctor.registerLogHandler(logHandler);
         try {
-          asciidoctor.convertFile(file, getExportOptions(getDefaultOptions(format.toString(), springRestDocsSnippets, antoraPagePartials, antoraImagesDir, antoraAttachmentsDir, antoraExamplesDir), format));
+          asciidoctor.convertFile(file, getExportOptions(
+            getDefaultOptions(format.toString(), springRestDocsSnippets, antoraPagePartials, antoraImagesDir,
+              antoraAttachmentsDir, antoraExamplesDir, antoraModuleDir), format));
         } finally {
           prependConfig.setConfig("");
           imagesdir = attributeRetriever.getImagesdir();
@@ -587,7 +600,10 @@ public class AsciiDoc {
     return options;
   }
 
-  private Map<String, Object> getDefaultOptions(String backend, VirtualFile springRestDocsSnippets, VirtualFile antoraPartials, String antoraImagesDir, String antoraAttachmentsDir, VirtualFile antoraExamplesDir) {
+  private Map<String, Object> getDefaultOptions(String backend, VirtualFile springRestDocsSnippets,
+                                                VirtualFile antoraPartials, String antoraImagesDir,
+                                                String antoraAttachmentsDir, VirtualFile antoraExamplesDir,
+                                                VirtualFile antoraModuleDir) {
     AttributesBuilder builder = AttributesBuilder.attributes()
       .showTitle(true)
       .backend(backend)
@@ -611,6 +627,9 @@ public class AsciiDoc {
     }
     if (antoraExamplesDir != null) {
       builder.attribute("examplesdir", antoraExamplesDir.getCanonicalPath());
+    }
+    if (antoraModuleDir != null) {
+      builder.attribute("icons", "font");
     }
 
     String graphvizDot = System.getenv("GRAPHVIZ_DOT");

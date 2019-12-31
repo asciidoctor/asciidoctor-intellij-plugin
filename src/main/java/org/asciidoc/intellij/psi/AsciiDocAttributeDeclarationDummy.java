@@ -25,7 +25,7 @@ public class AsciiDocAttributeDeclarationDummy implements AttributeDeclaration {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof AsciiDocAttributeDeclarationDummy)) {
       return false;
     }
     AsciiDocAttributeDeclarationDummy that = (AsciiDocAttributeDeclarationDummy) o;
