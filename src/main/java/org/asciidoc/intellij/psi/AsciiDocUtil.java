@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
+import java.util.regex.Matcher;
 
 public class AsciiDocUtil {
 
@@ -241,6 +243,24 @@ public class AsciiDocUtil {
         VirtualFile attachments = dir.findChild("attachments");
         if (attachments != null) {
           return attachments;
+        }
+      }
+      if (projectBasePath.equals(dir)) {
+        break;
+      }
+      dir = dir.getParent();
+    }
+    return null;
+  }
+
+  public static VirtualFile findAntoraPagesDir(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+    VirtualFile dir = fileBaseDir;
+    while (dir != null) {
+      if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
+        dir.getParent().getParent().findChild("antora.yml") != null) {
+        VirtualFile pages = dir.findChild("pages");
+        if (pages != null) {
+          return pages;
         }
       }
       if (projectBasePath.equals(dir)) {
@@ -475,6 +495,20 @@ public class AsciiDocUtil {
     return antoraAttachmentsDir;
   }
 
+  private static VirtualFile findAntoraPagesDir(PsiElement element) {
+    VirtualFile antoraPagesDir = null;
+    VirtualFile vf;
+    vf = element.getContainingFile().getVirtualFile();
+    if (vf == null) {
+      // when running autocomplete, there is only an original file
+      vf = element.getContainingFile().getOriginalFile().getVirtualFile();
+    }
+    if (vf != null) {
+      antoraPagesDir = findAntoraPagesDir(element.getProject().getBaseDir(), vf);
+    }
+    return antoraPagesDir;
+  }
+
   public static VirtualFile findAntoraModuleDir(PsiElement element) {
     VirtualFile antoraModuleDir = null;
     VirtualFile vf;
@@ -489,4 +523,31 @@ public class AsciiDocUtil {
     return antoraModuleDir;
   }
 
+  public static String replaceAntoraPrefix(PsiElement myElement, String key) {
+    key = replaceAntoraFamily("example", key, () -> AsciiDocUtil.findAntoraExamplesDir(myElement));
+    key = replaceAntoraFamily("attachment", key, () -> AsciiDocUtil.findAntoraAttachmentsDir(myElement));
+    key = replaceAntoraFamily("partial", key, () -> AsciiDocUtil.findAntoraPartials(myElement));
+    key = replaceAntoraFamily("image", key, () -> AsciiDocUtil.findAntoraImagesDir(myElement));
+    key = replaceAntoraFamily("page", key, () -> AsciiDocUtil.findAntoraPagesDir(myElement));
+    return key;
+  }
+
+  private static String replaceAntoraFamily(String family, String key, Supplier<VirtualFile> dirSupplier) {
+    if (key.startsWith(family + "$")) {
+      VirtualFile dir = dirSupplier.get();
+      if (dir != null) {
+        String value = dir.getPath();
+        value = value.replaceAll("\\\\", "/");
+        key = key.replaceAll("^" + family + "\\$", Matcher.quoteReplacement(value + "/"));
+      }
+    } else if (key.startsWith(family)) {
+      VirtualFile dir = dirSupplier.get();
+      if (dir != null) {
+        String value = dir.getPath();
+        value = value.replaceAll("\\\\", "/");
+        key = key.replaceAll("^" + family, Matcher.quoteReplacement(value));
+      }
+    }
+    return key;
+  }
 }

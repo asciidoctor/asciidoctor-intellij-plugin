@@ -28,6 +28,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.geronimo.gshell.io.SystemOutputHijacker;
 import org.asciidoc.intellij.actions.asciidoc.AsciiDocAction;
+import org.asciidoc.intellij.asciidoc.AntoraIncludeAdapter;
 import org.asciidoc.intellij.asciidoc.AttributesRetriever;
 import org.asciidoc.intellij.asciidoc.PrependConfig;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
@@ -73,6 +74,7 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraAttachmentsDirRel
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraExamplesDir;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraImagesDirRelative;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraModuleDir;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraPagesDir;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraPartials;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findSpringRestDocSnippets;
 
@@ -102,6 +104,8 @@ public class AsciiDoc {
   private static MaxHashMap instances = new MaxHashMap();
 
   private static PrependConfig prependConfig = new PrependConfig();
+
+  private static AntoraIncludeAdapter antoraIncludeAdapter = new AntoraIncludeAdapter();
 
   private static AttributesRetriever attributeRetriever = new AttributesRetriever();
 
@@ -188,6 +192,7 @@ public class AsciiDoc {
           // requiring it later after other libraries have been loaded results in "undefined method `set_params' for #<OpenSSL::SSL::SSLContext"
           asciidoctor.requireLibrary("openssl");
           asciidoctor.javaExtensionRegistry().preprocessor(prependConfig);
+          asciidoctor.javaExtensionRegistry().includeProcessor(antoraIncludeAdapter);
           if (format.equals("javafx") || format.equals("html")) {
             asciidoctor.javaExtensionRegistry().postprocessor(attributeRetriever);
           }
@@ -460,6 +465,10 @@ public class AsciiDoc {
         LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
         LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
       );
+      VirtualFile antoraPagesDir = findAntoraPagesDir(
+        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
+        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
+      );
       String antoraImagesDir = findAntoraImagesDirRelative(
         LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
         LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
@@ -482,7 +491,7 @@ public class AsciiDoc {
         prependConfig.setConfig(config);
         try {
           return "<div id=\"content\">\n" + asciidoctor.convert(text,
-            getDefaultOptions("html5", springRestDocsSnippets, antoraPartials, antoraImagesDir,
+            getDefaultOptions("html5", springRestDocsSnippets, antoraPagesDir, antoraPartials, antoraImagesDir,
               antoraAttachmentsDir, antoraExamplesDir, antoraModuleDir)) + "\n</div>";
         } finally {
           imagesdir = attributeRetriever.getImagesdir();
@@ -529,6 +538,10 @@ public class AsciiDoc {
       VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
         LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
         LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir));
+      VirtualFile antoraPagesDir = findAntoraPagesDir(
+        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
+        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
+      );
       VirtualFile antoraPagePartials = findAntoraPartials(
         LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
         LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
@@ -555,7 +568,7 @@ public class AsciiDoc {
         asciidoctor.registerLogHandler(logHandler);
         try {
           asciidoctor.convertFile(file, getExportOptions(
-            getDefaultOptions(format.toString(), springRestDocsSnippets, antoraPagePartials, antoraImagesDir,
+            getDefaultOptions(format.toString(), springRestDocsSnippets, antoraPagesDir, antoraPagePartials, antoraImagesDir,
               antoraAttachmentsDir, antoraExamplesDir, antoraModuleDir), format));
         } finally {
           prependConfig.setConfig("");
@@ -600,7 +613,9 @@ public class AsciiDoc {
     return options;
   }
 
+  @SuppressWarnings("checkstyle:ParameterNumber")
   private Map<String, Object> getDefaultOptions(String backend, VirtualFile springRestDocsSnippets,
+                                                VirtualFile antoraPages,
                                                 VirtualFile antoraPartials, String antoraImagesDir,
                                                 String antoraAttachmentsDir, VirtualFile antoraExamplesDir,
                                                 VirtualFile antoraModuleDir) {
@@ -616,6 +631,9 @@ public class AsciiDoc {
       builder.attribute("snippets", springRestDocsSnippets.getCanonicalPath());
     }
 
+    if (antoraPages != null) {
+      builder.attribute("pagesdir", antoraPages.getCanonicalPath());
+    }
     if (antoraPartials != null) {
       builder.attribute("partialsdir", antoraPartials.getCanonicalPath());
     }

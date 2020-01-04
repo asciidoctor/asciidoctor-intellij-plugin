@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.psi;
 
+import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -54,12 +55,28 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
         String file = this.getText().substring(range.getStartOffset(), range.getEndOffset());
         ArrayList<PsiReference> references = new ArrayList<>();
         int start = 0;
-        for (int i = 0; i < file.length(); ++i) {
+        int i = 0;
+        boolean isAntora = false;
+        if (file.matches("^[a-z]+\\$.*") ||
+          file.matches("^[a-z]*" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-z]*\\$.*")) {
+          VirtualFile examplesDir = AsciiDocUtil.findAntoraModuleDir(this);
+          if (examplesDir != null) {
+            i += file.indexOf('$');
+            isAntora = true;
+            references.add(
+              new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
+                TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
+                true, isAntora)
+            );
+            start = i + 1;
+          }
+        }
+        for (; i < file.length(); ++i) {
           if (file.charAt(i) == '/') {
             references.add(
               new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
                 TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
-                true)
+                true, isAntora)
             );
             start = i + 1;
           }
@@ -67,7 +84,7 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
         references.add(
           new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
             TextRange.create(range.getStartOffset() + start, range.getStartOffset() + file.length()),
-            false)
+            false, isAntora)
         );
         return references.toArray(new PsiReference[0]);
       }

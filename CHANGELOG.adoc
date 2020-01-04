@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.27 (preview, available from Github releases)
+
+- support Antora families like `example$` and `partials$` for macros in the editor (#373)
+
 === 0.30.26 (preview, available from Github releases)
 
 - restrict list of suggestions for images if the file is part of an Antora module (#373)

@@ -104,6 +104,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   private final boolean isFolder;
+  private final boolean isAntora;
 
   /**
    * Create a new file reference.
@@ -111,11 +112,22 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
    * @param isFolder if the argument is a folder, tab will not add a '/' automatically
    */
   public AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, TextRange textRange,
+                               boolean isFolder, boolean isAntora) {
+    super(element, textRange);
+    this.macroName = macroName;
+    this.base = base;
+    this.isFolder = isFolder;
+    this.isAntora = isAntora;
+    key = element.getText().substring(textRange.getStartOffset(), textRange.getEndOffset());
+  }
+
+  public AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, TextRange textRange,
                                boolean isFolder) {
     super(element, textRange);
     this.macroName = macroName;
     this.base = base;
     this.isFolder = isFolder;
+    this.isAntora = false;
     key = element.getText().substring(textRange.getStartOffset(), textRange.getEndOffset());
   }
 
@@ -127,7 +139,17 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return results.toArray(new ResolveResult[0]);
   }
 
+  private String handleAntora(String key) {
+    if (isAntora) {
+      key = AsciiDocUtil.replaceAntoraPrefix(myElement, key);
+    }
+    return key;
+  }
+
   private void resolve(String key, List<ResolveResult> results, int depth) {
+    if (depth == 0) {
+      key = handleAntora(key);
+    }
     if (depth > MAX_DEPTH) {
       return;
     }
@@ -194,6 +216,15 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   @NotNull
   @Override
   public Object[] getVariants() {
+    if (isAntora && base.length() == 0) {
+      List<LookupElementBuilder> items = new ArrayList<>();
+      toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(myElement));
+      toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement));
+      toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(myElement));
+      toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement));
+      return items.toArray();
+    }
+
     final CommonProcessors.CollectUniquesProcessor<PsiFileSystemItem> collector =
       new CommonProcessors.CollectUniquesProcessor<>();
 
@@ -307,6 +338,20 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return variants;
   }
 
+  private void toAntoraLookupItem(List<LookupElementBuilder> items, String placeholder, VirtualFile antoraDir) {
+    if (antoraDir != null) {
+      PsiDirectory dir = PsiManager.getInstance(myElement.getProject()).findDirectory(antoraDir);
+      if (dir != null) {
+        final Icon icon = dir.getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
+        LookupElementBuilder lb;
+        lb = FileInfoManager.getFileLookupItem(dir, placeholder, icon);
+        lb = lb.withTypeText(dir.getParent().getName() + "/" + dir.getName());
+        lb = handleTrailingDollar(lb);
+        items.add(lb);
+      }
+    }
+  }
+
   private LookupElementBuilder handleTrailingSlash(LookupElementBuilder lb) {
     return lb.withInsertHandler((insertionContext, item) -> {
       int offset = insertionContext.getTailOffset();
@@ -335,8 +380,39 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     });
   }
 
+  private LookupElementBuilder handleTrailingDollar(LookupElementBuilder lb) {
+    return lb.withInsertHandler((insertionContext, item) -> {
+      int offset = insertionContext.getTailOffset();
+      if (insertionContext.getOffsetMap().containsOffset(AsciiDocCompletionContributor.IDENTIFIER_FILE_REFERENCE)) {
+        // AsciiDocCompletionContributor left a hint for us to do the replacement
+        // (happens if a path elements is a variable)
+        insertionContext.getDocument().deleteString(offset, insertionContext.getOffsetMap().getOffset(AsciiDocCompletionContributor.IDENTIFIER_FILE_REFERENCE));
+      }
+      // when selecting with the mouse IntelliJ will send '\n' as well
+      if (insertionContext.getCompletionChar() == '\t'
+        || insertionContext.getCompletionChar() == '\n') {
+        if ((insertionContext.getDocument().getTextLength() <= offset
+          || insertionContext.getDocument().getText().charAt(offset) != '$')
+          && !isFolder) {
+          // the finalizing '$' hasn't been entered yet, autocomplete it here
+          insertionContext.getDocument().insertString(offset, "$");
+          offset += 1;
+          insertionContext.getEditor().getCaretModel().moveToOffset(offset);
+        } else if (insertionContext.getDocument().getTextLength() > offset &&
+          insertionContext.getDocument().getText().charAt(offset) == '$') {
+          insertionContext.getEditor().getCaretModel().moveToOffset(offset + 1);
+        }
+      }
+      AutoPopupController.getInstance(insertionContext.getProject())
+        .scheduleAutoPopup(insertionContext.getEditor());
+    });
+  }
+
   private void getVariants(String base, CommonProcessors.CollectUniquesProcessor<PsiFileSystemItem> collector,
                            int depth) {
+    if (depth == 0) {
+      base = handleAntora(base);
+    }
     if (depth > MAX_DEPTH) {
       return;
     }
