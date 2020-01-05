@@ -18,6 +18,11 @@ public class AsciiDocSectionTest {
     }
 
     @Override
+    protected String getAttribute(String idprefix) {
+      return "_";
+    }
+
+    @Override
     public String getTitle() {
       return title;
     }

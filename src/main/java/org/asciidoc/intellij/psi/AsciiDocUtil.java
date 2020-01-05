@@ -495,7 +495,7 @@ public class AsciiDocUtil {
     return antoraAttachmentsDir;
   }
 
-  private static VirtualFile findAntoraPagesDir(PsiElement element) {
+  public static VirtualFile findAntoraPagesDir(PsiElement element) {
     VirtualFile antoraPagesDir = null;
     VirtualFile vf;
     vf = element.getContainingFile().getVirtualFile();

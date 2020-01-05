@@ -95,15 +95,9 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
         public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
                                                      @NotNull ProcessingContext
                                                        context) {
-          List<PsiReference> references = new ArrayList<>();
-
-          PsiReference anchorReference = findAnchor(element);
-          if (anchorReference != null) {
-            references.add(anchorReference);
-          }
 
           List<PsiReference> fileReferences = findFileReferences(element);
-          references.addAll(fileReferences);
+          List<PsiReference> references = new ArrayList<>(fileReferences);
 
           List<PsiReference> urlReferences = findUrlReferencesInLinks(element);
           references.addAll(urlReferences);
@@ -127,16 +121,6 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
       });
   }
 
-  private PsiReference findAnchor(PsiElement element) {
-    int start = 0;
-    PsiElement child = element.getFirstChild();
-    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.LINKANCHOR) {
-      start += child.getTextLength();
-      child = child.getNextSibling();
-    }
-    return child != null ? new AsciiDocReference(element, TextRange.create(start, start + child.getTextLength())) : null;
-  }
-
   private List<PsiReference> findFileReferences(PsiElement element) {
     if (element.getNode().findChildByType(AsciiDocTokenTypes.URL_LINK) != null) {
       return Collections.emptyList();
@@ -152,7 +136,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
       ArrayList<PsiReference> references = new ArrayList<>();
       int start = 0;
       for (int i = 0; i < file.length(); ++i) {
-        if (file.charAt(i) == '/') {
+        if (file.charAt(i) == '/' || file.charAt(i) == '#') {
           references.add(
             new AsciiDocFileReference(element, macroName, file.substring(0, start),
               TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
