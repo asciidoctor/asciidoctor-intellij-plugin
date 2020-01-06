@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -19,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
 
 /**
  * @author yole
@@ -57,18 +57,18 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
         int start = 0;
         int i = 0;
         boolean isAntora = false;
-        if (file.matches("^[a-z]+\\$.*") ||
-          file.matches("^[a-z]*" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-z]*\\$.*")) {
+        Matcher matcher = AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(file);
+        if (matcher.find()) {
           VirtualFile examplesDir = AsciiDocUtil.findAntoraModuleDir(this);
           if (examplesDir != null) {
-            i += file.indexOf('$');
+            i += matcher.end();
             isAntora = true;
             references.add(
               new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
                 TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
                 true, isAntora)
             );
-            start = i + 1;
+            start = i;
           }
         }
         for (; i < file.length(); ++i) {

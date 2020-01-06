@@ -183,14 +183,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   private String handleAntora(String key) {
     if (isAntora) {
-      key = AsciiDocUtil.replaceAntoraPrefix(myElement, key);
+      key = AsciiDocUtil.replaceAntoraPrefix(myElement, key, null);
     } else if (myElement instanceof AsciiDocLink &&
-      // as long as nothing else has been specified
-      !key.contains(":") && !key.contains("$") && !key.contains("@")) {
+      // as long as no version has been specified
+      !key.contains("@")) {
       if (AsciiDocUtil.findAntoraPagesDir(myElement) != null) {
         // if this is a link/xref, default to page family
-        key = "page$" + key;
-        key = AsciiDocUtil.replaceAntoraPrefix(myElement, key);
+        key = AsciiDocUtil.replaceAntoraPrefix(myElement, key, "page");
       }
     }
     return key;

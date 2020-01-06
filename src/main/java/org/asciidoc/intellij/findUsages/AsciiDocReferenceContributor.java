@@ -19,6 +19,7 @@ import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocRef;
 import org.asciidoc.intellij.psi.AsciiDocReference;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -129,13 +130,26 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
     if (!range.isEmpty()) {
       String file = element.getText().substring(range.getStartOffset(), range.getEndOffset());
       String macroName = ((AsciiDocLink) element).getMacroName();
+      int start = 0;
+      int i = 0;
       if ("xref".equals(macroName) &&
-        (file.contains(":") || file.contains("@"))) {
-          return Collections.emptyList(); // Antora cross-references not supported at the moment
+        file.contains("@")) {
+        return Collections.emptyList(); // Antora cross-references not supported at the moment
       }
       ArrayList<PsiReference> references = new ArrayList<>();
-      int start = 0;
-      for (int i = 0; i < file.length(); ++i) {
+      if ("xref".equals(macroName)) {
+        Matcher matcher = AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(file);
+        if (matcher.find()) {
+          i += matcher.end();
+          references.add(
+            new AsciiDocFileReference(element, macroName, file.substring(0, start),
+              TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
+              true)
+          );
+          start = i;
+        }
+      }
+      for (; i < file.length(); ++i) {
         if (file.charAt(i) == '/' || file.charAt(i) == '#') {
           references.add(
             new AsciiDocFileReference(element, macroName, file.substring(0, start),
