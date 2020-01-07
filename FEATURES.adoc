@@ -274,10 +274,16 @@ EXPERIMENTAL:
 
 When working in an https://antora.org/[Antora project], the plugin has a first preliminary support:
 
-* Attribute _partialsdir_ resolves to the absolute path of the partials folder of the current module (either at the top-level of the module, or below the pages folder). This way the following resolves in the editor and the preview:
+* Attributes _partialsdir_, _examplesdir_, _attachmentsdir_, _imagesdir_ and _pagesdir_ resolve to their absolute path of the partials, examples, attachments, images and pages folder of the current module. This way the following resolves in the editor and the preview:
 +
 ----
 \include::{partialsdir}/test.adoc[]
+----
+* Reference other components and modules resolve for xrefs and include macros. The following works in the editor (xref and include) and in the preview (for include):
++
+----
+\include::component:module:partial$snippet.adoc[]
+xref::component:module:document.adoc[]
 ----
 
 === Advanced
