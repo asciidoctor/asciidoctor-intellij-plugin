@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.29 (work in progress)
+
+- support brackets inside macro
+
 === 0.30.28 (preview, available from Github releases)
 
 - support xref with anchors, including auto-generated IDs for sections (#373)

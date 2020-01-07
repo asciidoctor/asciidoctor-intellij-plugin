@@ -1462,6 +1462,29 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('text')");
   }
 
+  public void testInlineMacroWithBracketsInside() {
+    doTest("Text footnote:[some macro:text[About]] text",
+      "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:INLINE_MACRO_ID ('footnote:')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_ATTR_NAME ('some')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:INLINE_ATTR_NAME ('macro:text[About]')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('text')");
+  }
+
+  public void testBlockMacroWithBracketsInside() {
+    doTest("macro::text[other:[hi]]",
+      "AsciiDoc:BLOCK_MACRO_ID ('macro::')\n" +
+        "AsciiDoc:BLOCK_MACRO_BODY ('text')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('other:[hi]')\n" +
+        "AsciiDoc:ATTRS_END (']')");
+  }
+
   public void testExampleWithListingNoDelimiter() {
     doTest("====\n" +
         " Test\n" +

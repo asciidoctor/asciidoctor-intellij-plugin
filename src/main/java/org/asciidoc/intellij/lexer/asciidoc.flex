@@ -872,7 +872,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            return textFormat();
                          }
                        }
-  {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\[\n\"`:]* | "") ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" [^\]\n]* "]") {
+  {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\[\n\"`:]* | "") ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" ([^\]\n]*|"[" [^\]\n]* "]")*  "]") {
         if (!isEscaped()) {
           yypushstate();
           yybegin(INLINE_MACRO);
@@ -1076,6 +1076,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <BLOCK_MACRO_ATTRS, BLOCK_ATTRS> {
+  "[" [^\]\n]* "]"     { return AsciiDocTokenTypes.ATTR_NAME; }
   [^]                  { return AsciiDocTokenTypes.ATTR_NAME; }
 }
 
@@ -1124,6 +1125,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ","                  { return AsciiDocTokenTypes.SEPARATOR; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
   "=\"" ( [^\"] | "\\\"" )* "\"" { return AsciiDocTokenTypes.INLINE_ATTR_VALUE; }
+  "[" [^\]\n]* "]"     { return AsciiDocTokenTypes.INLINE_ATTR_NAME; }
   [^]                  { return AsciiDocTokenTypes.INLINE_ATTR_NAME; }
 }
 
