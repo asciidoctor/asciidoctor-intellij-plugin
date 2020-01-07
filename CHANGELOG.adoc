@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.28 (work in progress)
+=== 0.30.28 (preview, available from Github releases)
 
 - support xref with anchors, including auto-generated IDs for sections (#373)
 - support Antora module and component prefixes for blocks and inline macros (#373)
