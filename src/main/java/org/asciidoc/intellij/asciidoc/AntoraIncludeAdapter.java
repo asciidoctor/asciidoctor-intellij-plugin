@@ -1,7 +1,9 @@
 package org.asciidoc.intellij.asciidoc;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.apache.commons.lang.StringUtils;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.extension.IncludeProcessor;
@@ -41,7 +43,20 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
     Matcher matcher = ANTORA_PREFIX_PATTERN.matcher(target);
     if (matcher.find()) {
       String oldTarget = target;
-      target = AsciiDocUtil.replaceAntoraPrefix(project, antoraModuleDir, target, null);
+      // if we read from an include-file, use that to determine originating module
+      VirtualFile localModule = antoraModuleDir;
+      String readFile = reader.getFile();
+      if (StringUtils.isNotBlank(readFile)) {
+        VirtualFile resolved = LocalFileSystem.getInstance().findFileByPath(reader.getFile());
+        if (resolved != null) {
+          localModule = AsciiDocUtil.findAntoraModuleDir(project.getBaseDir(), resolved);
+        } else {
+          localModule = null;
+        }
+      }
+      if (localModule != null) {
+        target = AsciiDocUtil.replaceAntoraPrefix(project, localModule, target, null);
+      }
       if (oldTarget.equals(target)) {
         String file = reader.getFile();
         if (file != null && file.length() == 0) {
