@@ -64,7 +64,7 @@ public class CreatePdfAction extends AsciiDocAction {
         }
         Path tempImagesPath = AsciiDoc.tempImagesPath();
         try {
-          AsciiDoc asciiDoc = new AsciiDoc(project.getBasePath(), fileBaseDir,
+          AsciiDoc asciiDoc = new AsciiDoc(project, fileBaseDir,
             tempImagesPath, file.getName());
           List<String> extensions = AsciiDoc.getExtensions(project);
           String config = AsciiDoc.config(editor.getDocument(), project);

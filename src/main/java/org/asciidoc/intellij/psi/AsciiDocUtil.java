@@ -1,12 +1,14 @@
 package org.asciidoc.intellij.psi;
 
 import com.intellij.codeInsight.completion.CompletionUtilCore;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -26,8 +28,10 @@ import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -536,144 +540,174 @@ public class AsciiDocUtil {
     return antoraModuleDir;
   }
 
-  public static final Pattern ANTORA_PREFIX_PATTERN = Pattern.compile("^[a-zA-Z:_-]*(" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-zA-Z:_-]*)?[$:]");
+  public static final Pattern ANTORA_PREFIX_PATTERN = Pattern.compile("^[a-zA-Z0-9:._-]*(" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-zA-Z0-9:._-]*)?[$:]");
 
   @Language("RegExp")
   private static final String FAMILIES = "(" + FAMILY_EXAMPLE + "|" + FAMILY_ATTACHMENT + "|" + FAMILY_PARTIAL + "|" + FAMILY_IMAGE + "|" + FAMILY_PAGE + ")";
 
   // component:module:
-  private static final Pattern COMPONENT_MODULE = Pattern.compile("^(?<component>[a-zA-Z_-]*):(?<module>[a-zA-Z_-]*):");
+  private static final Pattern COMPONENT_MODULE = Pattern.compile("^(?<component>[a-zA-Z0-9._-]*):(?<module>[a-zA-Z0-9._-]*):");
   // module:
-  private static final Pattern MODULE = Pattern.compile("^(?<module>[a-zA-Z_-]*):");
+  private static final Pattern MODULE = Pattern.compile("^(?<module>[a-zA-Z0-9._-]*):");
   // family$
   private static final Pattern FAMILY = Pattern.compile("^(?<family>" + FAMILIES + ")\\$");
 
   public static String replaceAntoraPrefix(PsiElement myElement, String key, String defaultFamily) {
-    String originalKey = key;
     VirtualFile antoraModuleDir = findAntoraModuleDir(myElement);
     if (antoraModuleDir != null) {
-      String myModuleName = antoraModuleDir.getName();
-      VirtualFile antoraFile = antoraModuleDir.getParent().getParent().findChild("antora.yml");
-      if (antoraFile == null) {
-        return originalKey;
-      }
-      Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
-      if (document == null) {
-        return originalKey;
-      }
-      Yaml yaml = new Yaml();
-      Map<String, Object> antora = yaml.load(document.getText());
-      String myComponentName = (String) antora.get("name");
-
-      String otherComponentName = null;
-      String otherModuleName = null;
-      String otherFamily = null;
-
-      Matcher componentModule = COMPONENT_MODULE.matcher(key);
-      if (componentModule.find()) {
-        otherComponentName = componentModule.group("component");
-        otherModuleName = componentModule.group("module");
-        key = componentModule.replaceFirst("");
-      } else {
-        Matcher module = MODULE.matcher(key);
-        if (module.find()) {
-          otherModuleName = module.group("module");
-          key = module.replaceFirst("");
-        }
-      }
-      Matcher family = FAMILY.matcher(key);
-      if (family.find()) {
-        otherFamily = family.group("family");
-        key = family.replaceFirst("");
-      } else {
-        if (defaultFamily == null) {
-          return originalKey;
-        }
-      }
-
-      if (otherFamily == null || otherFamily.length() == 0) {
-        otherFamily = defaultFamily;
-      }
-
-      if (myComponentName.equals(otherComponentName)) {
-        otherComponentName = null;
-      }
-      if (otherComponentName == null && myModuleName.equals(otherModuleName)) {
-        otherModuleName = null;
-      }
-
-      if (otherComponentName != null) {
-        Project project = myElement.getProject();
-        PsiFile[] files  =
-          FilenameIndex.getFilesByName(project, "antora.yml", GlobalSearchScope.projectScope(project));
-        ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
-        for (PsiFile file : files) {
-          if (index.isInLibrary(file.getVirtualFile())
-            || index.isExcluded(file.getVirtualFile())
-            || index.isInLibraryClasses(file.getVirtualFile())
-            || index.isInLibrarySource(file.getVirtualFile())) {
-            continue;
-          }
-          antora = yaml.load(file.getText());
-          if (!otherComponentName.equals(antora.get("name"))) {
-            continue;
-          }
-          PsiDirectory parent = file.getParent();
-          if (parent == null) {
-            continue;
-          }
-          PsiDirectory antoraModulesDir = parent.findSubdirectory("modules");
-          if (antoraModulesDir == null) {
-            continue;
-          }
-          PsiDirectory antoraModule = antoraModulesDir.findSubdirectory(otherModuleName);
-          if (antoraModule == null) {
-            continue;
-          }
-          antoraModuleDir = antoraModule.getVirtualFile();
-          break;
-        }
-      } else if (otherModuleName != null) {
-        antoraModuleDir = antoraModuleDir.getParent().findChild(otherModuleName);
-        if (antoraModuleDir == null) {
-          return originalKey;
-        }
-      }
-
-      VirtualFile baseDir = myElement.getProject().getBaseDir();
-
-      VirtualFile target;
-      switch (otherFamily) {
-        case FAMILY_EXAMPLE:
-          target = AsciiDocUtil.findAntoraExamplesDir(baseDir, antoraModuleDir);
-          break;
-        case FAMILY_ATTACHMENT:
-          target = AsciiDocUtil.findAntoraAttachmentsDir(baseDir, antoraModuleDir);
-          break;
-        case FAMILY_PAGE:
-          target = AsciiDocUtil.findAntoraPagesDir(baseDir, antoraModuleDir);
-          break;
-        case FAMILY_PARTIAL:
-          target = AsciiDocUtil.findAntoraPartials(baseDir, antoraModuleDir);
-          break;
-        case FAMILY_IMAGE:
-          target = AsciiDocUtil.findAntoraImagesDir(baseDir, antoraModuleDir);
-          break;
-        default:
-          return originalKey;
-      }
-      if (target == null) {
-        return originalKey;
-      }
-      if (key.length() != 0) {
-        key = "/" + key;
-      }
-      String value = target.getPath();
-      value = value.replaceAll("\\\\", "/");
-      key = value + key;
+      return replaceAntoraPrefix(myElement.getProject(), antoraModuleDir, key, defaultFamily);
+    } else {
       return key;
     }
-    return key;
+  }
+
+  public static String replaceAntoraPrefix(Project project, VirtualFile moduleDir, String originalKey, String defaultFamily) {
+    if (moduleDir != null) {
+      return ApplicationManager.getApplication().runReadAction((Computable<String>) () -> {
+        VirtualFile antoraModuleDir = moduleDir;
+        String key = originalKey;
+        String myModuleName = antoraModuleDir.getName();
+        VirtualFile antoraFile = antoraModuleDir.getParent().getParent().findChild("antora.yml");
+        if (antoraFile == null) {
+          return originalKey;
+        }
+        Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
+        if (document == null) {
+          return originalKey;
+        }
+        Yaml yaml = new Yaml();
+        Map<String, Object> antora = yaml.load(document.getText());
+        String myComponentName = (String) antora.get("name");
+
+        String otherComponentName = null;
+        String otherModuleName = null;
+        String otherFamily = null;
+
+        Matcher componentModule = COMPONENT_MODULE.matcher(key);
+        if (componentModule.find()) {
+          otherComponentName = componentModule.group("component");
+          otherModuleName = componentModule.group("module");
+          key = componentModule.replaceFirst("");
+        } else {
+          Matcher module = MODULE.matcher(key);
+          if (module.find()) {
+            otherModuleName = module.group("module");
+            key = module.replaceFirst("");
+          }
+        }
+        Matcher family = FAMILY.matcher(key);
+        if (family.find()) {
+          otherFamily = family.group("family");
+          key = family.replaceFirst("");
+        } else {
+          if (defaultFamily == null) {
+            return originalKey;
+          }
+        }
+
+        if (otherFamily == null || otherFamily.length() == 0) {
+          otherFamily = defaultFamily;
+        }
+
+        if (myComponentName.equals(otherComponentName)) {
+          otherComponentName = null;
+        }
+        if (otherComponentName == null && myModuleName.equals(otherModuleName)) {
+          otherModuleName = null;
+        }
+
+        if (otherModuleName != null && otherComponentName == null) {
+          antoraModuleDir = antoraModuleDir.getParent().findChild(otherModuleName);
+          if (antoraModuleDir == null) {
+            // might be a module in another component with the same name
+            otherComponentName = myComponentName;
+          }
+        }
+
+        if (otherComponentName != null) {
+          if (otherModuleName == null || otherModuleName.length() == 0) {
+            otherModuleName = myModuleName;
+          }
+          PsiFile[] files =
+            FilenameIndex.getFilesByName(project, "antora.yml", GlobalSearchScope.projectScope(project));
+          // sort by path proximity
+          Arrays.sort(files,
+            Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
+          ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
+          for (PsiFile file : files) {
+            if (index.isInLibrary(file.getVirtualFile())
+              || index.isExcluded(file.getVirtualFile())
+              || index.isInLibraryClasses(file.getVirtualFile())
+              || index.isInLibrarySource(file.getVirtualFile())) {
+              continue;
+            }
+            antora = yaml.load(file.getText());
+            if (!otherComponentName.equals(antora.get("name"))) {
+              continue;
+            }
+            PsiDirectory parent = file.getParent();
+            if (parent == null) {
+              continue;
+            }
+            PsiDirectory antoraModulesDir = parent.findSubdirectory("modules");
+            if (antoraModulesDir == null) {
+              continue;
+            }
+            PsiDirectory antoraModule = antoraModulesDir.findSubdirectory(otherModuleName);
+            if (antoraModule == null) {
+              continue;
+            }
+            antoraModuleDir = antoraModule.getVirtualFile();
+            break;
+          }
+        }
+
+        VirtualFile baseDir = project.getBaseDir();
+
+        VirtualFile target;
+        switch (otherFamily) {
+          case FAMILY_EXAMPLE:
+            target = AsciiDocUtil.findAntoraExamplesDir(baseDir, antoraModuleDir);
+            break;
+          case FAMILY_ATTACHMENT:
+            target = AsciiDocUtil.findAntoraAttachmentsDir(baseDir, antoraModuleDir);
+            break;
+          case FAMILY_PAGE:
+            target = AsciiDocUtil.findAntoraPagesDir(baseDir, antoraModuleDir);
+            break;
+          case FAMILY_PARTIAL:
+            target = AsciiDocUtil.findAntoraPartials(baseDir, antoraModuleDir);
+            break;
+          case FAMILY_IMAGE:
+            target = AsciiDocUtil.findAntoraImagesDir(baseDir, antoraModuleDir);
+            break;
+          default:
+            return originalKey;
+        }
+        if (target == null) {
+          return originalKey;
+        }
+        if (key.length() != 0) {
+          key = "/" + key;
+        }
+        String value = target.getPath();
+        value = value.replaceAll("\\\\", "/");
+        key = value + key;
+        return key;
+      });
+    }
+    return originalKey;
+  }
+
+  private static int countNumberOfSameStartingCharacters(PsiFile value, String origin) {
+    String path = value.getVirtualFile().getPath();
+    int i = 0;
+    for (; i < origin.length() && i < path.length(); ++i) {
+      if (path.charAt(i) != origin.charAt(i)) {
+        break;
+      }
+    }
+    return i;
   }
 
 }

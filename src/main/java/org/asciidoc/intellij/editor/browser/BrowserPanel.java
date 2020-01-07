@@ -155,7 +155,7 @@ public class BrowserPanel implements Closeable {
     final String config = AsciiDoc.config(document, project);
     List<String> extensions = AsciiDoc.getExtensions(project);
     Objects.requireNonNull(file.getParent().getCanonicalPath(), "we will have files, these will always have a parent directory");
-    AsciiDoc asciiDoc = new AsciiDoc(project.getBasePath(), new File(file.getParent().getCanonicalPath()),
+    AsciiDoc asciiDoc = new AsciiDoc(project, new File(file.getParent().getCanonicalPath()),
       imagesPath, file.getName());
     String html = asciiDoc.render(document.getText(), config, extensions, asciiDoc::notifyAlways, "html");
     if (file.getParent() != null) {

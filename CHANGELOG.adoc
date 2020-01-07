@@ -9,8 +9,9 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.30.28 (work in progress)
 
-- support xref with anchors, including auto-gerated IDs for sections (#373)
-- support Antora module and component prefixes for block and inline macros (#373)
+- support xref with anchors, including auto-generated IDs for sections (#373)
+- support Antora module and component prefixes for blocks and inline macros (#373)
+- support Antora module and component prefixes for includes (#373)
 
 === 0.30.27 (preview, available from Github releases)
 

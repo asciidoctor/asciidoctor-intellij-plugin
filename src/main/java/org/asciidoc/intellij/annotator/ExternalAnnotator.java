@@ -77,7 +77,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
 
     Path tempImagesPath = AsciiDoc.tempImagesPath();
     try {
-      AsciiDoc asciiDoc = new AsciiDoc(file.getProject().getBasePath(), fileBaseDir,
+      AsciiDoc asciiDoc = new AsciiDoc(file.getProject(), fileBaseDir,
         tempImagesPath, name);
       asciiDoc.render(collectedInfo.getContent(), collectedInfo.getConfig(), collectedInfo.getExtensions(), (boasOut, boasErr, logRecords)
         -> asciidocAnnotationResultType.setLogRecords(logRecords));

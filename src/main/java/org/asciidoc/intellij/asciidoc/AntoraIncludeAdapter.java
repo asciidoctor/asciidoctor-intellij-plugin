@@ -1,5 +1,8 @@
 package org.asciidoc.intellij.asciidoc;
 
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.extension.IncludeProcessor;
 import org.asciidoctor.extension.PreprocessorReader;
@@ -9,47 +12,49 @@ import org.asciidoctor.log.Severity;
 import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_PREFIX_PATTERN;
 
 /**
  * This {@link IncludeProcessor} translates Antora style includes to standard AsciiDoc includes.
  */
 public class AntoraIncludeAdapter extends IncludeProcessor {
 
-  private static final Pattern ANTORA = Pattern.compile("^([a-z]*)\\$");
+  private Project project;
+  private VirtualFile antoraModuleDir;
 
   @Override
   public boolean handles(String target) {
-    Matcher matcher = ANTORA.matcher(target);
-    return matcher.find();
+    Matcher matcher = ANTORA_PREFIX_PATTERN.matcher(target);
+    if (matcher.find()) {
+      // if the second character is a colon, this is probably an already expanded windows path name
+      if (matcher.group().length() == 2 && matcher.group().charAt(1) == ':' && target.length() > 2 && target.charAt(2) == '/') {
+        return false;
+      }
+      return true;
+    }
+    return false;
   }
 
   @Override
   public void process(Document document, PreprocessorReader reader, String target, Map<String, Object> attributes) {
-    Matcher matcher = ANTORA.matcher(target);
+    Matcher matcher = ANTORA_PREFIX_PATTERN.matcher(target);
     if (matcher.find()) {
-      String match = matcher.group(1);
-      String antoraprefix = null;
-      // example -> examplesdir, partial -> partialsdir, etc.
-      String val = (String) document.getAttribute(match + "sdir");
-      if (val != null) {
-        antoraprefix = val + "/";
-      }
-      if (antoraprefix == null) {
-        // nothing found, show an error
+      String oldTarget = target;
+      target = AsciiDocUtil.replaceAntoraPrefix(project, antoraModuleDir, target, null);
+      if (oldTarget.equals(target)) {
         String file = reader.getFile();
         if (file != null && file.length() == 0) {
           file = null;
         }
         log(new LogRecord(Severity.ERROR,
           new AsciiDocCursor(file, reader.getDir(), reader.getDir(), reader.getLineNumber() - 1),
-          "Can't resolve Antora prefix " + match));
-        reader.restoreLine("Unresolved Antora prefix '" + match + "'- include::" + target + "[]");
+          "Can't resolve Antora prefix " + matcher.group()));
+        reader.restoreLine("Unresolved Antora prefix '" + matcher.group() + "'- include::" + target + "[]");
         return;
       }
-      target = matcher.replaceFirst(Matcher.quoteReplacement(antoraprefix));
     } else {
-      throw new RuntimeException("matcher didn't match despite handles() method: " + target);
+      throw new RuntimeException("matcher didn't find a match");
     }
     StringBuilder data = new StringBuilder("include::");
     data.append(target).append("[");
@@ -58,5 +63,10 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
     }
     data.append("]");
     reader.push_include(data.toString(), null, null, reader.getLineNumber() - 1, Collections.emptyMap());
+  }
+
+  public void setAntoraDetails(Project project, VirtualFile antoraModuleDir) {
+    this.project = project;
+    this.antoraModuleDir = antoraModuleDir;
   }
 }

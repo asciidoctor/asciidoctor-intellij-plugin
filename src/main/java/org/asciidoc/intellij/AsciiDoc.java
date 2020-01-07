@@ -127,12 +127,14 @@ public class AsciiDoc {
   private final Path imagesPath;
   private final String name;
   private final String projectBasePath;
+  private final Project project;
 
-  public AsciiDoc(String projectBasePath, File fileBaseDir, Path imagesPath, String name) {
-    this.projectBasePath = projectBasePath;
+  public AsciiDoc(Project project, File fileBaseDir, Path imagesPath, String name) {
+    this.projectBasePath = project.getBasePath();
     this.fileBaseDir = fileBaseDir;
     this.imagesPath = imagesPath;
     this.name = name;
+    this.project = project;
   }
 
   private Asciidoctor initWithExtensions(List<String> extensions, boolean springRestDocs, String format) {
@@ -489,6 +491,7 @@ public class AsciiDoc {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         asciidoctor.registerLogHandler(logHandler);
         prependConfig.setConfig(config);
+        antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir);
         try {
           return "<div id=\"content\">\n" + asciidoctor.convert(text,
             getDefaultOptions("html5", springRestDocsSnippets, antoraPagesDir, antoraPartials, antoraImagesDir,
@@ -496,6 +499,7 @@ public class AsciiDoc {
         } finally {
           imagesdir = attributeRetriever.getImagesdir();
           prependConfig.setConfig("");
+          antoraIncludeAdapter.setAntoraDetails(null, null);
           asciidoctor.unregisterLogHandler(logHandler);
         }
       } catch (Exception | ServiceConfigurationError ex) {
@@ -565,6 +569,7 @@ public class AsciiDoc {
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format.toString());
         prependConfig.setConfig(config);
+        antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir);
         asciidoctor.registerLogHandler(logHandler);
         try {
           asciidoctor.convertFile(file, getExportOptions(
@@ -572,6 +577,7 @@ public class AsciiDoc {
               antoraAttachmentsDir, antoraExamplesDir, antoraModuleDir), format));
         } finally {
           prependConfig.setConfig("");
+          antoraIncludeAdapter.setAntoraDetails(null, null);
           imagesdir = attributeRetriever.getImagesdir();
           asciidoctor.unregisterLogHandler(logHandler);
         }

@@ -126,7 +126,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           fileBaseDir = new File(parent.getCanonicalPath());
         }
       }
-      return new AsciiDoc(project.getBasePath(), fileBaseDir, tempImagesPath, name);
+      return new AsciiDoc(project, fileBaseDir, tempImagesPath, name);
     }
   });
 
