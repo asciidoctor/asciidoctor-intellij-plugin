@@ -143,10 +143,20 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
           i += matcher.end();
           references.add(
             new AsciiDocFileReference(element, macroName, file.substring(0, start),
-              TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
-              true)
+              TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i - 1),
+              true, true, 1)
           );
           start = i;
+        }
+        matcher = AsciiDocUtil.ANTORA_FAMILY_PATTERN.matcher(file.substring(start));
+        if (matcher.find()) {
+            i += matcher.end();
+            references.add(
+              new AsciiDocFileReference(element, macroName, file.substring(0, start),
+                TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i - 1),
+                true, true, 1)
+            );
+            start = i;
         }
       }
       for (; i < file.length(); ++i) {

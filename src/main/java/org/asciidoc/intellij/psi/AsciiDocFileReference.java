@@ -124,6 +124,16 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   public AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, TextRange textRange,
+                               boolean isFolder, boolean isAntora, int suffix) {
+    super(element, textRange);
+    this.macroName = macroName;
+    this.base = base;
+    this.isFolder = isFolder;
+    this.isAntora = isAntora;
+    key = element.getText().substring(textRange.getStartOffset(), textRange.getEndOffset() + suffix);
+  }
+
+  public AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, TextRange textRange,
                                boolean isFolder) {
     super(element, textRange);
     this.macroName = macroName;
@@ -197,7 +207,21 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   private void resolve(String key, List<ResolveResult> results, int depth) {
     if (depth == 0) {
-      key = handleAntora(key);
+      if (AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(key).matches()) {
+        VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
+        if (antoraModuleDir != null) {
+          VirtualFile virtualFile = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, key);
+          if (virtualFile != null) {
+            PsiElement psiFile = PsiManager.getInstance(myElement.getProject()).findDirectory(virtualFile);
+            if (psiFile != null) {
+              results.add(new PsiElementResolveResult(psiFile));
+              return;
+            }
+          }
+        }
+      } else {
+        key = handleAntora(key);
+      }
     }
     if (depth > MAX_DEPTH) {
       return;
@@ -265,13 +289,31 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   @NotNull
   @Override
   public Object[] getVariants() {
-    if (isAntora && base.length() == 0) {
+    if (isAntora || base.length() == 0) {
       List<LookupElementBuilder> items = new ArrayList<>();
-      toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(myElement));
-      toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement));
-      toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(myElement));
-      toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement));
-      return items.toArray();
+      VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
+      if (antoraModuleDir != null) {
+        if (base.length() == 0) {
+          toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(myElement), '$');
+          toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement), '$');
+          toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(myElement), '$');
+          toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement), '$');
+          List<AntoraModule> antoraModules = AsciiDocUtil.collectPrefixes(myElement.getProject(), antoraModuleDir);
+          for (AntoraModule antoraModule : antoraModules) {
+            toAntoraLookupItem(items, antoraModule);
+          }
+          return items.toArray();
+        } else if (AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(base).matches()) {
+          VirtualFile vf = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, base);
+          if (vf != null) {
+            toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(myElement.getProject().getBaseDir(), vf), '$');
+            toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement.getProject().getBaseDir(), vf), '$');
+            toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(myElement.getProject().getBaseDir(), vf), '$');
+            toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement.getProject().getBaseDir(), vf), '$');
+          }
+          return items.toArray();
+        }
+      }
     }
 
     if (base.endsWith("#")) {
@@ -320,7 +362,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       }
       final Icon icon = result.getElement().getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
       LookupElementBuilder item = FileInfoManager.getFileLookupItem(result.getElement(), ".." /* + '/' */, icon);
-      item = handleTrailingSlash(item);
+      item = handleTrailing(item, '/');
       additionalItems.add(item);
     }
 
@@ -364,9 +406,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           lb = lb.withTypeText(((AsciiDocAttributeDeclaration) decl).getContainingFile().getName());
         }
         if (result.getElement() instanceof PsiDirectory) {
-          lb = handleTrailingSlash(lb);
+          lb = handleTrailing(lb, '/');
         } else if (result.getElement() instanceof PsiFile) {
-          lb = handleTrailingHash(lb);
+          lb = handleTrailing(lb, '/');
         }
         additionalItems.add(lb);
       }
@@ -379,13 +421,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         final Icon icon = candidate.getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
         String name = ((PsiDirectory) candidate).getName();
         LookupElementBuilder lb = FileInfoManager.getFileLookupItem(candidate, name, icon);
-        lb = handleTrailingSlash(lb);
+        lb = handleTrailing(lb, '/');
         variants[i] = lb;
       } else {
         Object item = FileInfoManager.getFileLookupItem(candidate);
-        if (candidate instanceof PsiFile && item instanceof LookupElementBuilder) {
-          item = handleTrailingHash((LookupElementBuilder) item);
-        }
         variants[i] = item;
       }
     }
@@ -438,53 +477,45 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return items.toArray();
   }
 
-  private void toAntoraLookupItem(List<LookupElementBuilder> items, String placeholder, VirtualFile antoraDir) {
+  private void toAntoraLookupItem(List<LookupElementBuilder> items, String placeholder, VirtualFile antoraDir, char trail) {
     if (antoraDir != null) {
       PsiDirectory dir = PsiManager.getInstance(myElement.getProject()).findDirectory(antoraDir);
       if (dir != null) {
         final Icon icon = dir.getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
         LookupElementBuilder lb;
         lb = FileInfoManager.getFileLookupItem(dir, placeholder, icon);
+        lb = lb.withPresentableText(placeholder + trail);
         if (dir.getParent() != null) {
           lb = lb.withTypeText(dir.getParent().getName() + "/" + dir.getName());
         } else {
           lb = lb.withTypeText(dir.getName());
         }
-        lb = handleTrailingDollar(lb);
+        lb = handleTrailing(lb, trail);
         items.add(lb);
       }
     }
   }
 
-  private LookupElementBuilder handleTrailingSlash(LookupElementBuilder lb) {
-    return lb.withInsertHandler((insertionContext, item) -> {
-      int offset = insertionContext.getTailOffset();
-      if (insertionContext.getOffsetMap().containsOffset(AsciiDocCompletionContributor.IDENTIFIER_FILE_REFERENCE)) {
-        // AsciiDocCompletionContributor left a hint for us to do the replacement
-        // (happens if a path elements is a variable)
-        insertionContext.getDocument().deleteString(offset, insertionContext.getOffsetMap().getOffset(AsciiDocCompletionContributor.IDENTIFIER_FILE_REFERENCE));
+  private void toAntoraLookupItem(List<LookupElementBuilder> items, AntoraModule module) {
+    String placeholder = module.getPrefix().substring(0, module.getPrefix().length() - 1);
+    PsiDirectory dir = PsiManager.getInstance(myElement.getProject()).findDirectory(module.getFile());
+    if (dir != null) {
+      final Icon icon = dir.getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
+      LookupElementBuilder lb;
+      lb = FileInfoManager.getFileLookupItem(dir, placeholder, icon);
+      lb = lb.withPresentableText(module.getPrefix());
+      StringBuilder typeText = new StringBuilder();
+      if (module.getTitle() != null) {
+        lb = lb.withTailText(" " + module.getTitle(), true);
       }
-      // when selecting with the mouse IntelliJ will send '\n' as well
-      if (insertionContext.getCompletionChar() == '\t'
-        || insertionContext.getCompletionChar() == '\n') {
-        if ((insertionContext.getDocument().getTextLength() <= offset
-          || insertionContext.getDocument().getText().charAt(offset) != '/')
-          && !isFolder) {
-          // the finalizing '/' hasn't been entered yet, autocomplete it here
-          insertionContext.getDocument().insertString(offset, "/");
-          offset += 1;
-          insertionContext.getEditor().getCaretModel().moveToOffset(offset);
-        } else if (insertionContext.getDocument().getTextLength() > offset &&
-          insertionContext.getDocument().getText().charAt(offset) == '/') {
-          insertionContext.getEditor().getCaretModel().moveToOffset(offset + 1);
-        }
-      }
-      AutoPopupController.getInstance(insertionContext.getProject())
-        .scheduleAutoPopup(insertionContext.getEditor());
-    });
+      typeText.append(module.getComponent()).append(":").append(module.getModule());
+      lb = lb.withTypeText(typeText.toString());
+      lb = handleTrailing(lb, ':');
+      items.add(lb);
+    }
   }
 
-  private LookupElementBuilder handleTrailingHash(LookupElementBuilder lb) {
+  private LookupElementBuilder handleTrailing(LookupElementBuilder lb, char trail) {
     return lb.withInsertHandler((insertionContext, item) -> {
       int offset = insertionContext.getTailOffset();
       if (insertionContext.getOffsetMap().containsOffset(AsciiDocCompletionContributor.IDENTIFIER_FILE_REFERENCE)) {
@@ -496,42 +527,14 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       if (insertionContext.getCompletionChar() == '\t'
         || insertionContext.getCompletionChar() == '\n') {
         if ((insertionContext.getDocument().getTextLength() <= offset
-          || insertionContext.getDocument().getText().charAt(offset) != '#')
+          || insertionContext.getDocument().getText().charAt(offset) != trail)
           && !isFolder) {
           // the finalizing '/' hasn't been entered yet, autocomplete it here
-          insertionContext.getDocument().insertString(offset, "#");
+          insertionContext.getDocument().insertString(offset, String.valueOf(trail));
           offset += 1;
           insertionContext.getEditor().getCaretModel().moveToOffset(offset);
         } else if (insertionContext.getDocument().getTextLength() > offset &&
-          insertionContext.getDocument().getText().charAt(offset) == '#') {
-          insertionContext.getEditor().getCaretModel().moveToOffset(offset + 1);
-        }
-      }
-      AutoPopupController.getInstance(insertionContext.getProject())
-        .scheduleAutoPopup(insertionContext.getEditor());
-    });
-  }
-
-  private LookupElementBuilder handleTrailingDollar(LookupElementBuilder lb) {
-    return lb.withInsertHandler((insertionContext, item) -> {
-      int offset = insertionContext.getTailOffset();
-      if (insertionContext.getOffsetMap().containsOffset(AsciiDocCompletionContributor.IDENTIFIER_FILE_REFERENCE)) {
-        // AsciiDocCompletionContributor left a hint for us to do the replacement
-        // (happens if a path elements is a variable)
-        insertionContext.getDocument().deleteString(offset, insertionContext.getOffsetMap().getOffset(AsciiDocCompletionContributor.IDENTIFIER_FILE_REFERENCE));
-      }
-      // when selecting with the mouse IntelliJ will send '\n' as well
-      if (insertionContext.getCompletionChar() == '\t'
-        || insertionContext.getCompletionChar() == '\n') {
-        if ((insertionContext.getDocument().getTextLength() <= offset
-          || insertionContext.getDocument().getText().charAt(offset) != '$')
-          && !isFolder) {
-          // the finalizing '$' hasn't been entered yet, autocomplete it here
-          insertionContext.getDocument().insertString(offset, "$");
-          offset += 1;
-          insertionContext.getEditor().getCaretModel().moveToOffset(offset);
-        } else if (insertionContext.getDocument().getTextLength() > offset &&
-          insertionContext.getDocument().getText().charAt(offset) == '$') {
+          insertionContext.getDocument().getText().charAt(offset) == trail) {
           insertionContext.getEditor().getCaretModel().moveToOffset(offset + 1);
         }
       }

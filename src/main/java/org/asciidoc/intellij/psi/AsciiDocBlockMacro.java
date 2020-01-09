@@ -65,8 +65,22 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
             isAntora = true;
             references.add(
               new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
-                TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
-                true, isAntora)
+                TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i - 1),
+                true, isAntora, 1)
+            );
+            start = i;
+          }
+        }
+        matcher = AsciiDocUtil.ANTORA_FAMILY_PATTERN.matcher(file.substring(start));
+        if (matcher.find()) {
+          VirtualFile examplesDir = AsciiDocUtil.findAntoraModuleDir(this);
+          if (examplesDir != null) {
+            i += matcher.end();
+            isAntora = true;
+            references.add(
+              new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
+                TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i - 1),
+                true, isAntora, 1)
             );
             start = i;
           }

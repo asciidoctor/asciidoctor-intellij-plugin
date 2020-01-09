@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -44,6 +45,7 @@ public class AsciiDocUtil {
   public static final String FAMILY_PARTIAL = "partial";
   public static final String FAMILY_IMAGE = "image";
   public static final String FAMILY_PAGE = "page";
+  public static final String ANTORA_YML = "antora.yml";
 
   static List<AsciiDocBlockId> findIds(Project project, String key) {
     List<AsciiDocBlockId> result = null;
@@ -224,7 +226,7 @@ public class AsciiDocUtil {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
-        dir.getParent().getParent().findChild("antora.yml") != null) {
+        dir.getParent().getParent().findChild(ANTORA_YML) != null) {
         VirtualFile antoraPartials = dir.findChild(FAMILY_PARTIAL + "s");
         if (antoraPartials != null) {
           return antoraPartials;
@@ -249,7 +251,7 @@ public class AsciiDocUtil {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
-        dir.getParent().getParent().findChild("antora.yml") != null) {
+        dir.getParent().getParent().findChild(ANTORA_YML) != null) {
         VirtualFile assets = dir.findChild("assets");
         if (assets != null) {
           VirtualFile attachments = assets.findChild(FAMILY_ATTACHMENT + "s");
@@ -274,7 +276,7 @@ public class AsciiDocUtil {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
-        dir.getParent().getParent().findChild("antora.yml") != null) {
+        dir.getParent().getParent().findChild(ANTORA_YML) != null) {
         VirtualFile pages = dir.findChild(FAMILY_PAGE + "s");
         if (pages != null) {
           return pages;
@@ -292,7 +294,7 @@ public class AsciiDocUtil {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
-        dir.getParent().getParent().findChild("antora.yml") != null) {
+        dir.getParent().getParent().findChild(ANTORA_YML) != null) {
         return dir;
       }
       if (projectBasePath.equals(dir)) {
@@ -308,7 +310,7 @@ public class AsciiDocUtil {
     StringBuilder imagesDir = new StringBuilder();
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
-        dir.getParent().getParent().findChild("antora.yml") != null) {
+        dir.getParent().getParent().findChild(ANTORA_YML) != null) {
         VirtualFile assets = dir.findChild("assets");
         if (assets != null) {
           VirtualFile images = assets.findChild(FAMILY_IMAGE + "s");
@@ -335,7 +337,7 @@ public class AsciiDocUtil {
     StringBuilder attachmentsDir = new StringBuilder();
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
-        dir.getParent().getParent().findChild("antora.yml") != null) {
+        dir.getParent().getParent().findChild(ANTORA_YML) != null) {
         VirtualFile assets = dir.findChild("assets");
         if (assets != null) {
           VirtualFile attachments = assets.findChild(FAMILY_ATTACHMENT + "s");
@@ -361,7 +363,7 @@ public class AsciiDocUtil {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
-        dir.getParent().getParent().findChild("antora.yml") != null) {
+        dir.getParent().getParent().findChild(ANTORA_YML) != null) {
         VirtualFile assets = dir.findChild("assets");
         if (assets != null) {
           VirtualFile images = assets.findChild(FAMILY_IMAGE + "s");
@@ -386,7 +388,7 @@ public class AsciiDocUtil {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
-        dir.getParent().getParent().findChild("antora.yml") != null) {
+        dir.getParent().getParent().findChild(ANTORA_YML) != null) {
         VirtualFile examples = dir.findChild(FAMILY_EXAMPLE + "s");
         if (examples != null) {
           return examples;
@@ -540,7 +542,11 @@ public class AsciiDocUtil {
     return antoraModuleDir;
   }
 
-  public static final Pattern ANTORA_PREFIX_PATTERN = Pattern.compile("^[a-zA-Z0-9:._-]*(" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-zA-Z0-9:._-]*)?[$:]");
+  public static final Pattern ANTORA_PREFIX_AND_FAMILY_PATTERN = Pattern.compile("^[a-zA-Z0-9:._-]*(" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-zA-Z0-9:._-]*)?[$:]");
+
+  public static final Pattern ANTORA_PREFIX_PATTERN = Pattern.compile("^[a-zA-Z0-9:._-]*(" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-zA-Z0-9:._-]*)?[:]");
+
+  public static final Pattern ANTORA_FAMILY_PATTERN = Pattern.compile("^[a-z]*(" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-z]*)?[$]");
 
   @Language("RegExp")
   private static final String FAMILIES = "(" + FAMILY_EXAMPLE + "|" + FAMILY_ATTACHMENT + "|" + FAMILY_PARTIAL + "|" + FAMILY_IMAGE + "|" + FAMILY_PAGE + ")";
@@ -567,7 +573,7 @@ public class AsciiDocUtil {
         VirtualFile antoraModuleDir = moduleDir;
         String key = originalKey;
         String myModuleName = antoraModuleDir.getName();
-        VirtualFile antoraFile = antoraModuleDir.getParent().getParent().findChild("antora.yml");
+        VirtualFile antoraFile = antoraModuleDir.getParent().getParent().findChild(ANTORA_YML);
         if (antoraFile == null) {
           return originalKey;
         }
@@ -578,6 +584,7 @@ public class AsciiDocUtil {
         Yaml yaml = new Yaml();
         Map<String, Object> antora = yaml.load(document.getText());
         String myComponentName = (String) antora.get("name");
+        String myComponentVersion = (String) antora.get("version");
 
         String otherComponentName = null;
         String otherModuleName = null;
@@ -629,7 +636,7 @@ public class AsciiDocUtil {
             otherModuleName = myModuleName;
           }
           PsiFile[] files =
-            FilenameIndex.getFilesByName(project, "antora.yml", GlobalSearchScope.projectScope(project));
+            FilenameIndex.getFilesByName(project, ANTORA_YML, GlobalSearchScope.projectScope(project));
           // sort by path proximity
           Arrays.sort(files,
             Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
@@ -643,6 +650,9 @@ public class AsciiDocUtil {
             }
             antora = yaml.load(file.getText());
             if (!otherComponentName.equals(antora.get("name"))) {
+              continue;
+            }
+            if (!myComponentVersion.equals(antora.get("version"))) {
               continue;
             }
             PsiDirectory parent = file.getParent();
@@ -697,6 +707,163 @@ public class AsciiDocUtil {
       });
     }
     return originalKey;
+  }
+
+  public static List<AntoraModule> collectPrefixes(Project project, VirtualFile moduleDir) {
+    return ApplicationManager.getApplication().runReadAction((Computable<List<AntoraModule>>) () -> {
+      PsiFile[] files =
+        FilenameIndex.getFilesByName(project, ANTORA_YML, GlobalSearchScope.projectScope(project));
+      List<AntoraModule> result = new ArrayList<>();
+      // sort by path proximity
+      Arrays.sort(files,
+        Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
+      ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
+      VirtualFile antoraModuleDir = moduleDir;
+      String myModuleName = antoraModuleDir.getName();
+      VirtualFile antoraFile = antoraModuleDir.getParent().getParent().findChild(ANTORA_YML);
+      if (antoraFile == null) {
+        return result;
+      }
+      Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
+      if (document == null) {
+        return result;
+      }
+      Yaml yaml = new Yaml();
+      Map<String, Object> antora = yaml.load(document.getText());
+      String myComponentName = (String) antora.get("name");
+      String myComponentVersion = (String) antora.get("version");
+      Map<String, String> componentTitles = new HashMap<>();
+      for (PsiFile file : files) {
+        if (index.isInLibrary(file.getVirtualFile())
+          || index.isExcluded(file.getVirtualFile())
+          || index.isInLibraryClasses(file.getVirtualFile())
+          || index.isInLibrarySource(file.getVirtualFile())) {
+          continue;
+        }
+        antora = yaml.load(file.getText());
+        if (!myComponentVersion.equals(antora.get("version"))) {
+          continue;
+        }
+        String otherComponentName = (String) antora.get("name");
+        String title = (String) antora.get("title");
+        if (title != null && componentTitles.get(otherComponentName) == null) {
+          componentTitles.put(otherComponentName, title);
+        }
+        VirtualFile md = file.getVirtualFile().getParent().findChild("modules");
+        if (md != null) {
+          VirtualFile[] modules = md.getChildren();
+          for (VirtualFile module : modules) {
+            if (MODULE.matcher(module.getName() + ":").matches()) {
+              if (myComponentName.equals(otherComponentName)) {
+                result.add(new AntoraModule(module.getName() + ":", otherComponentName, module.getName(), title, module));
+              }
+              if (!myComponentName.equals(otherComponentName) && myModuleName.equals(module.getName())) {
+                result.add(new AntoraModule(otherComponentName + "::", otherComponentName, module.getName(), title, module));
+              }
+              result.add(new AntoraModule(otherComponentName + ":" + module.getName() + ":", otherComponentName, module.getName(), title, module));
+            }
+          }
+        }
+      }
+      for (AntoraModule antoraModule : result) {
+        // title might not have been included on all modules, populate other if it has been set on some
+        if (antoraModule.getTitle() == null) {
+          antoraModule.setTitle(componentTitles.get(antoraModule.getComponent()));
+        }
+      }
+      return result;
+    });
+  }
+
+  public static VirtualFile resolvePrefix(Project project, VirtualFile moduleDir, String originalKey) {
+    return ApplicationManager.getApplication().runReadAction((Computable<VirtualFile>) () -> {
+      VirtualFile antoraModuleDir = moduleDir;
+      String myModuleName = antoraModuleDir.getName();
+      VirtualFile antoraFile = antoraModuleDir.getParent().getParent().findChild(ANTORA_YML);
+      if (antoraFile == null) {
+        return null;
+      }
+      Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
+      if (document == null) {
+        return null;
+      }
+      Yaml yaml = new Yaml();
+      Map<String, Object> antora = yaml.load(document.getText());
+      String myComponentName = (String) antora.get("name");
+      String myComponentVersion = (String) antora.get("version");
+
+      String otherComponentName = null;
+      String otherModuleName = null;
+
+      Matcher componentModule = COMPONENT_MODULE.matcher(originalKey);
+      if (componentModule.find()) {
+        otherComponentName = componentModule.group("component");
+        otherModuleName = componentModule.group("module");
+      } else {
+        Matcher module = MODULE.matcher(originalKey);
+        if (module.find()) {
+          otherModuleName = module.group("module");
+        }
+      }
+
+      if (myComponentName.equals(otherComponentName)) {
+        otherComponentName = null;
+      }
+      if (otherComponentName == null && myModuleName.equals(otherModuleName)) {
+        otherModuleName = null;
+      }
+
+      if (otherModuleName != null && otherComponentName == null) {
+        antoraModuleDir = antoraModuleDir.getParent().findChild(otherModuleName);
+        if (antoraModuleDir == null) {
+          // might be a module in another component with the same name
+          otherComponentName = myComponentName;
+        }
+      }
+
+      if (otherComponentName != null) {
+        if (otherModuleName == null || otherModuleName.length() == 0) {
+          otherModuleName = myModuleName;
+        }
+        PsiFile[] files =
+          FilenameIndex.getFilesByName(project, ANTORA_YML, GlobalSearchScope.projectScope(project));
+        // sort by path proximity
+        Arrays.sort(files,
+          Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
+        ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
+        for (PsiFile file : files) {
+          if (index.isInLibrary(file.getVirtualFile())
+            || index.isExcluded(file.getVirtualFile())
+            || index.isInLibraryClasses(file.getVirtualFile())
+            || index.isInLibrarySource(file.getVirtualFile())) {
+            continue;
+          }
+          antora = yaml.load(file.getText());
+          if (!otherComponentName.equals(antora.get("name"))) {
+            continue;
+          }
+          if (!myComponentVersion.equals(antora.get("version"))) {
+            continue;
+          }
+          PsiDirectory parent = file.getParent();
+          if (parent == null) {
+            continue;
+          }
+          PsiDirectory antoraModulesDir = parent.findSubdirectory("modules");
+          if (antoraModulesDir == null) {
+            continue;
+          }
+          PsiDirectory antoraModule = antoraModulesDir.findSubdirectory(otherModuleName);
+          if (antoraModule == null) {
+            continue;
+          }
+          antoraModuleDir = antoraModule.getVirtualFile();
+          break;
+        }
+      }
+
+      return antoraModuleDir;
+    });
   }
 
   private static int countNumberOfSameStartingCharacters(PsiFile value, String origin) {

@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_PREFIX_PATTERN;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_PREFIX_AND_FAMILY_PATTERN;
 
 /**
  * This {@link IncludeProcessor} translates Antora style includes to standard AsciiDoc includes.
@@ -27,7 +27,7 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
 
   @Override
   public boolean handles(String target) {
-    Matcher matcher = ANTORA_PREFIX_PATTERN.matcher(target);
+    Matcher matcher = ANTORA_PREFIX_AND_FAMILY_PATTERN.matcher(target);
     if (matcher.find()) {
       // if the second character is a colon, this is probably an already expanded windows path name
       if (matcher.group().length() == 2 && matcher.group().charAt(1) == ':' && target.length() > 2 && target.charAt(2) == '/') {
@@ -40,7 +40,7 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
 
   @Override
   public void process(Document document, PreprocessorReader reader, String target, Map<String, Object> attributes) {
-    Matcher matcher = ANTORA_PREFIX_PATTERN.matcher(target);
+    Matcher matcher = ANTORA_PREFIX_AND_FAMILY_PATTERN.matcher(target);
     if (matcher.find()) {
       String oldTarget = target;
       // if we read from an include-file, use that to determine originating module
