@@ -18,10 +18,6 @@
   <depends optional="true" config-file="java-features.xml">com.intellij.modules.java</depends>
   <depends optional="true" config-file="grazie-features.xml">tanvd.grazi</depends>
 
-  <application-components>
-    <!-- Add your application components here -->
-  </application-components>
-
   <project-components>
     <component>
       <implementation-class>org.asciidoc.intellij.toolbar.AsciiDocToolbarLoaderComponent</implementation-class>
