@@ -63,7 +63,7 @@ This document provides a high-level view of the changes introduced by release.
 - update to AsciidoctorJ PDF v1.5.0-beta.8
 - adding PDF theme attributes to quick documentation
 - upgrading to Grazie 2019.3-6.2.stable
-- fixing live templates `ad-doc-header-with-attributes`, `ad-list-checklist` and others (thanks to @Javaru) (#369)
+- fixing live templates `ad-doc-header-with-attributes`, `ad-list-checklist` and others (thanks to @javaru) (#369)
 
 === 0.30.19 (preview, available from Github releases)
 
