@@ -9,7 +9,8 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.30.29 (work in progress)
 
-- support brackets inside macro
+- support brackets inside macro for highlighting and formatting
+- highlight attribute references for ifdef/ifndef (#380)
 
 === 0.30.28 (preview, available from Github releases)
 

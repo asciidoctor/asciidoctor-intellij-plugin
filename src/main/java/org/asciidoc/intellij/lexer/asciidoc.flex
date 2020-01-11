@@ -189,6 +189,7 @@ HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 // starting at the start of the line, but not with a dot
 // next line follwoing with only header marks
 HEADING_OLDSTYLE = {SPACE}* [^ _+\-#=~.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
+IFDEF_IFNDEF = ("ifdef"|"ifndef") "::"
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
 INLINE_MACRO_START = [a-zA-Z0-9_]+":"
 TITLE_START = "."
@@ -285,6 +286,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state PASSTHROUGH_NO_DELIMITER
 %state PASSTHROUGH_NO_DELIMITER
 
+%state IFDEF_IFNDEF
 %state BLOCK_MACRO
 %state BLOCK_MACRO_ATTRS
 %state ATTRS_SINGLE_QUOTE
@@ -454,6 +456,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <DELIMITER, PREBLOCK> {
   ^ {PAGEBREAK} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.PAGEBREAK; }
   ^ {HORIZONTALRULE} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.HORIZONTALRULE; }
+  ^ {IFDEF_IFNDEF} / [^ \[\n] [^\[\n]* { yypushstate(); yybegin(IFDEF_IFNDEF); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   ^ {BLOCK_MACRO_START} / [^ \[\n] [^\[\n]* { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   // endif/ifeval allows the body to be empty, special case...
   ^ ("endif"|"ifeval") "::" / [^ \n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
@@ -1069,9 +1072,17 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         }
 }
 
-<BLOCK_MACRO> {
+
+<BLOCK_MACRO,IFDEF_IFNDEF> {
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
   "["                  { yybegin(BLOCK_MACRO_ATTRS); return AsciiDocTokenTypes.ATTRS_START; }
+}
+
+<IFDEF_IFNDEF> {
+  [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_REF; }
+}
+
+<BLOCK_MACRO> {
   [^]                  { return AsciiDocTokenTypes.BLOCK_MACRO_BODY; }
 }
 

@@ -1513,6 +1513,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Text')");
   }
 
+  public void testIfDef() {
+    doTest("AsciiDoc:BLOCK_MACRO_ID ('ifdef::')\n" +
+      "AsciiDoc:ATTRIBUTE_REF ('attr')\n" +
+      "AsciiDoc:ATTRS_START ('[')\n" +
+      "AsciiDoc:ATTRS_END (']')");
+  }
+
   public void testEndifSpecial() {
     doTest("endif::[]",
       "AsciiDoc:BLOCK_MACRO_ID ('endif::')\n" +
