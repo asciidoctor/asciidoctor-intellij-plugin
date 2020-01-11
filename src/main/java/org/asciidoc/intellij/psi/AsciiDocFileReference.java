@@ -289,7 +289,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   @NotNull
   @Override
   public Object[] getVariants() {
-    if (isAntora || base.length() == 0) {
+    if ((isAntora || base.length() == 0) && !"image".equals(macroName)) {
       List<LookupElementBuilder> items = new ArrayList<>();
       VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
       if (antoraModuleDir != null) {

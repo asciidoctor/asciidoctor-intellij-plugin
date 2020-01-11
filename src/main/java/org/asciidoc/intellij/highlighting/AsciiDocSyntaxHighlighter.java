@@ -105,6 +105,7 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
       .put(AsciiDocTokenTypes.BLOCK_COMMENT, ASCIIDOC_COMMENT)
       .put(AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER, ASCIIDOC_COMMENT)
       .put(AsciiDocTokenTypes.LISTING_TEXT, ASCIIDOC_LISTING_TEXT)
+      .put(AsciiDocTokenTypes.LITERAL_BLOCK, ASCIIDOC_LISTING_TEXT)
       .put(AsciiDocTokenTypes.HEADING, ASCIIDOC_HEADING)
       .put(AsciiDocTokenTypes.HEADING_OLDSTYLE, ASCIIDOC_HEADING)
       .put(AsciiDocTokenTypes.BOLD_END, ASCIIDOC_MARKER)

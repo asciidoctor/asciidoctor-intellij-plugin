@@ -11,6 +11,9 @@ This document provides a high-level view of the changes introduced by release.
 
 - support brackets inside macro for highlighting and formatting
 - highlight attribute references for ifdef/ifndef (#380)
+- parse contents of inline ifdef/ifndef (#380)
+- support autocompletion for antora prefixes (#373)
+- do not nest literal blocks
 
 === 0.30.28 (preview, available from Github releases)
 

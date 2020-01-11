@@ -134,26 +134,14 @@ public class AsciiDocParserImpl {
         parseUrl();
         continue;
       } else if (at(INLINE_MACRO_ID)) {
-        newLines = 0;
-        PsiBuilder.Marker inlineMacroMarker = myBuilder.mark();
-        next();
-        while ((at(INLINE_MACRO_BODY) || at(INLINE_ATTR_NAME) || at(URL_LINK) || at(INLINE_ATTR_VALUE) || at(SEPARATOR) || at(INLINE_ATTRS_START) || at(INLINE_ATTRS_END))
-          && newLines == 0) {
-          if (at(INLINE_ATTRS_END)) {
-            next();
-            break;
-          }
-          if (at(URL_LINK)) {
-            parseUrl();
-            continue;
-          }
-          next();
-        }
-        inlineMacroMarker.done(AsciiDocElementTypes.INLINE_MACRO);
+        parseInlineMacro();
         continue;
       } else if (at(BLOCK_DELIMITER)
         || at(COMMENT_BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER)) {
         parseBlock();
+        continue;
+      } else if (at(LITERAL_BLOCK_DELIMITER)) {
+        parseBlockElement(AsciiDocElementTypes.LISTING);
         continue;
       } else if (at(LISTING_BLOCK_DELIMITER)) {
         parseBlockElement(AsciiDocElementTypes.LISTING);
@@ -258,6 +246,25 @@ public class AsciiDocParserImpl {
     closeSections(0);
   }
 
+  private void parseInlineMacro() {
+    newLines = 0;
+    PsiBuilder.Marker inlineMacroMarker = myBuilder.mark();
+    next();
+    while ((at(INLINE_MACRO_BODY) || at(INLINE_ATTR_NAME) || at(URL_LINK) || at(INLINE_ATTR_VALUE) || at(SEPARATOR) || at(INLINE_ATTRS_START) || at(INLINE_ATTRS_END))
+      && newLines == 0) {
+      if (at(INLINE_ATTRS_END)) {
+        next();
+        break;
+      }
+      if (at(URL_LINK)) {
+        parseUrl();
+        continue;
+      }
+      next();
+    }
+    inlineMacroMarker.done(AsciiDocElementTypes.INLINE_MACRO);
+  }
+
   private void parseTitle() {
     newLines = 0;
     markPreBlock();
@@ -312,21 +319,38 @@ public class AsciiDocParserImpl {
   private void parseBlockMacro() {
     newLines = 0;
     markPreBlock();
+    PsiBuilder.Marker myBlock = myPreBlockMarker;
+    myPreBlockMarker = null;
     next();
+    if (at(ATTRIBUTE_REF)) {
+      parseAttributeReference();
+    }
     while ((at(BLOCK_MACRO_BODY) || at(ATTRIBUTE_REF_START) || at(ATTR_NAME) || at(ATTR_VALUE) || at(SEPARATOR) || at(ATTRS_START) || at(ATTRS_END)
-      || at(ASSIGNMENT) || at(SINGLE_QUOTE) || at(DOUBLE_QUOTE) || at(ATTRIBUTE_REF))
+      || at(ASSIGNMENT) || at(SINGLE_QUOTE) || at(DOUBLE_QUOTE) || at(ATTRIBUTE_REF) || at(BLOCK_MACRO_ID)
+      || at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX) || at(INLINE_MACRO_ID) || at(ATTRIBUTE_NAME_START))
       && newLines == 0) {
       if (at(ATTRS_END)) {
         next();
         break;
-      } else if (at(ATTRIBUTE_REF_START) || at(ATTRIBUTE_REF)) {
+      } else if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
+        parseUrl();
+        continue;
+      } else if (at(INLINE_MACRO_ID)) {
+        parseInlineMacro();
+        continue;
+      } else if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();
+      } else if (at(BLOCK_MACRO_ID)) {
+        parseBlockMacro();
+      } else if (at(INLINE_MACRO_ID)) {
+        parseInlineMacro();
+      } else if (at(ATTRIBUTE_NAME_START)) {
+        parseAttributeDeclaration();
       } else {
         next();
       }
     }
-    myPreBlockMarker.done(AsciiDocElementTypes.BLOCK_MACRO);
-    myPreBlockMarker = null;
+    myBlock.done(AsciiDocElementTypes.BLOCK_MACRO);
   }
 
   private void parseUrl() {

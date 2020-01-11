@@ -1520,6 +1520,18 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:ATTRS_END (']')");
   }
 
+  public void testIfDefWithAttributeInBody() {
+    doTest("ifdef::attr[:other: val]",
+      "AsciiDoc:BLOCK_MACRO_ID ('ifdef::')\n" +
+        "AsciiDoc:ATTRIBUTE_REF ('attr')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME ('other')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME_END (':')\n" +
+        "AsciiDoc:ATTRIBUTE_VAL (' val')\n" +
+        "AsciiDoc:ATTRS_END (']')");
+  }
+
   public void testEndifSpecial() {
     doTest("endif::[]",
       "AsciiDoc:BLOCK_MACRO_ID ('endif::')\n" +
