@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.29 (work in progress)
+=== 0.30.29 (preview, available from Github releases)
 
 - support brackets inside macro for highlighting and formatting
 - highlight attribute references for ifdef/ifndef (#380)

@@ -322,8 +322,12 @@ public class AsciiDocParserImpl {
     PsiBuilder.Marker myBlock = myPreBlockMarker;
     myPreBlockMarker = null;
     next();
-    if (at(ATTRIBUTE_REF)) {
-      parseAttributeReference();
+    while (at(ATTRIBUTE_REF) || at(SEPARATOR)) {
+      if (at(ATTRIBUTE_REF)) {
+        parseAttributeReference();
+        continue;
+      }
+      next();
     }
     while ((at(BLOCK_MACRO_BODY) || at(ATTRIBUTE_REF_START) || at(ATTR_NAME) || at(ATTR_VALUE) || at(SEPARATOR) || at(ATTRS_START) || at(ATTRS_END)
       || at(ASSIGNMENT) || at(SINGLE_QUOTE) || at(DOUBLE_QUOTE) || at(ATTRIBUTE_REF) || at(BLOCK_MACRO_ID)

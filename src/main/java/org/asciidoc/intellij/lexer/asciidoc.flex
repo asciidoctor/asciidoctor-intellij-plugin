@@ -1091,6 +1091,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <IFDEF_IFNDEF> {
   "["                  { yypushstate(); yybegin(ATTR_PARSEABLE); return AsciiDocTokenTypes.ATTRS_START; }
+  [,+]                 { return AsciiDocTokenTypes.SEPARATOR; }
   [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_REF; }
 }
 
