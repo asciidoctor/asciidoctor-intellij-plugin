@@ -275,6 +275,16 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testNoBlockAttrs() {
+    doTest("[nolink]:: Term",
+      "AsciiDoc:LBRACKET ('[')\n" +
+        "AsciiDoc:DESCRIPTION ('nolink')\n" +
+        "AsciiDoc:RBRACKET (']')\n" +
+        "AsciiDoc:DESCRIPTION ('::')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Term')");
+  }
+
   public void testUnclosedBlockAttrs() {
     doTest("[\nfoo",
       "AsciiDoc:ATTRS_START ('[')\n" +
