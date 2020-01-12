@@ -741,7 +741,7 @@ public class AsciiDocUtil {
           continue;
         }
         antora = yaml.load(file.getText());
-        if (!myComponentVersion.equals(antora.get("version"))) {
+        if (myComponentVersion != null && !myComponentVersion.equals(antora.get("version"))) {
           continue;
         }
         String otherComponentName = (String) antora.get("name");

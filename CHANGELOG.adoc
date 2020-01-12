@@ -7,6 +7,12 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.30 (preview, available from Github releases)
+
+- support file paths for include-macro starting with `./` (#373)
+- add Antora pages family for autocomplete (#373)
+- Antora image-macro auto-completes resource IDs, but not longer family names (#373)
+
 === 0.30.29 (preview, available from Github releases)
 
 - support brackets inside macro for highlighting and formatting

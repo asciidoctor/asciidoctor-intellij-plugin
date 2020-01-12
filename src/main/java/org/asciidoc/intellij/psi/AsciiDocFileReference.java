@@ -286,34 +286,39 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return resolveResults.length == 1 ? resolveResults[0].getElement() : null;
   }
 
+  @SuppressWarnings("checkstyle:MethodLength")
   @NotNull
   @Override
   public Object[] getVariants() {
-    if ((isAntora || base.length() == 0) && !"image".equals(macroName)) {
+    if ((isAntora || base.length() == 0)) {
       List<LookupElementBuilder> items = new ArrayList<>();
       VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
       if (antoraModuleDir != null) {
         if (base.length() == 0) {
-          toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(myElement), '$');
-          toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement), '$');
-          toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(myElement), '$');
-          toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement), '$');
-          toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(myElement), '$');
+          if (!"image".equals(macroName)) {
+            toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(myElement), '$');
+            toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement), '$');
+            toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(myElement), '$');
+            toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement), '$');
+            toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(myElement), '$');
+          }
           List<AntoraModule> antoraModules = AsciiDocUtil.collectPrefixes(myElement.getProject(), antoraModuleDir);
           for (AntoraModule antoraModule : antoraModules) {
             toAntoraLookupItem(items, antoraModule);
           }
           return items.toArray();
         } else if (AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(base).matches()) {
-          VirtualFile vf = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, base);
-          if (vf != null) {
-            toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(myElement.getProject().getBaseDir(), vf), '$');
-            toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement.getProject().getBaseDir(), vf), '$');
-            toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(myElement.getProject().getBaseDir(), vf), '$');
-            toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement.getProject().getBaseDir(), vf), '$');
-            toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(myElement.getProject().getBaseDir(), vf), '$');
+          if (!"image".equals(macroName)) {
+            VirtualFile vf = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, base);
+            if (vf != null) {
+              toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(myElement.getProject().getBaseDir(), vf), '$');
+              toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement.getProject().getBaseDir(), vf), '$');
+              toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(myElement.getProject().getBaseDir(), vf), '$');
+              toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement.getProject().getBaseDir(), vf), '$');
+              toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(myElement.getProject().getBaseDir(), vf), '$');
+            }
+            return items.toArray();
           }
-          return items.toArray();
         }
       }
     }
@@ -326,9 +331,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       new CommonProcessors.CollectUniquesProcessor<>();
 
     if ("image".equals(macroName)) {
-      VirtualFile antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(myElement);
-      if (antoraImagesDir != null) {
-        getVariants(antoraImagesDir.getCanonicalPath() + "/" + base, collector, 0);
+      VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
+      if (antoraModuleDir != null) {
+        getVariants(AsciiDocUtil.replaceAntoraPrefix(myElement, base, "image"), collector, 0);
       } else {
         // this is not antora, therefore try with and without imagesdir
         getVariants(base, collector, 0);
@@ -607,6 +612,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           }
           continue;
         }
+        if (split[i].equals(".")) {
+          continue;
+        }
         dir = dir.findSubdirectory(split[i]);
         if (dir == null) {
           return resolveAbsolutePath(element, fileName);
@@ -614,6 +622,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       }
       if (split[split.length - 1].equals("..")) {
         dir = dir.getParent();
+        return dir;
+      }
+      if (split[split.length - 1].equals(".")) {
         return dir;
       }
       PsiFile file = dir.findFile(split[split.length - 1]);
