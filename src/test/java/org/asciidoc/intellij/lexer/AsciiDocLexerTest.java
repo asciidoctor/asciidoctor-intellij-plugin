@@ -1524,7 +1524,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   public void testIfDef() {
-    doTest("AsciiDoc:BLOCK_MACRO_ID ('ifdef::')\n" +
+    doTest("ifdef::attr[]",
+      "AsciiDoc:BLOCK_MACRO_ID ('ifdef::')\n" +
       "AsciiDoc:ATTRIBUTE_REF ('attr')\n" +
       "AsciiDoc:ATTRS_START ('[')\n" +
       "AsciiDoc:ATTRS_END (']')");
