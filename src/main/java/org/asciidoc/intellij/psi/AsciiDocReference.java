@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
@@ -36,6 +37,18 @@ public class AsciiDocReference extends PsiReferenceBase<PsiElement> implements P
     }
     for (AsciiDocSection section : sections) {
       results.add(new PsiElementResolveResult(section));
+    }
+    if (results.size() > 0) {
+      List<ResolveResult> sameFile = new ArrayList<>();
+      PsiFile myFile = myElement.getContainingFile();
+      for (ResolveResult result : results) {
+        if (result.getElement() != null && result.getElement().getContainingFile() == myFile) {
+          sameFile.add(result);
+        }
+      }
+      if (sameFile.size() > 0) {
+        results = sameFile;
+      }
     }
     return results.toArray(new ResolveResult[0]);
   }
