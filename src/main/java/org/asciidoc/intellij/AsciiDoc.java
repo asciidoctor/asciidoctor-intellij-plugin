@@ -29,6 +29,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.geronimo.gshell.io.SystemOutputHijacker;
 import org.asciidoc.intellij.actions.asciidoc.AsciiDocAction;
+import org.asciidoc.intellij.asciidoc.AntoraImageAdapter;
 import org.asciidoc.intellij.asciidoc.AntoraIncludeAdapter;
 import org.asciidoc.intellij.asciidoc.AttributesRetriever;
 import org.asciidoc.intellij.asciidoc.PrependConfig;
@@ -110,6 +111,8 @@ public class AsciiDoc {
   private static PrependConfig prependConfig = new PrependConfig();
 
   private static AntoraIncludeAdapter antoraIncludeAdapter = new AntoraIncludeAdapter();
+
+  private static AntoraImageAdapter antoraImageAdapter = new AntoraImageAdapter();
 
   private static AttributesRetriever attributeRetriever = new AttributesRetriever();
 
@@ -200,6 +203,7 @@ public class AsciiDoc {
           asciidoctor.javaExtensionRegistry().preprocessor(prependConfig);
           asciidoctor.javaExtensionRegistry().includeProcessor(antoraIncludeAdapter);
           if (format.equals("javafx") || format.equals("html")) {
+            asciidoctor.javaExtensionRegistry().postprocessor(antoraImageAdapter);
             asciidoctor.javaExtensionRegistry().postprocessor(attributeRetriever);
           }
           // disable JUL logging of captured messages
@@ -477,6 +481,7 @@ public class AsciiDoc {
         asciidoctor.registerLogHandler(logHandler);
         prependConfig.setConfig(config);
         antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir);
+        antoraImageAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir);
         try {
           return "<div id=\"content\">\n" + asciidoctor.convert(text,
             getDefaultOptions("html5", springRestDocsSnippets, attributes)) + "\n</div>";
