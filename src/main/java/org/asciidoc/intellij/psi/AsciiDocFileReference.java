@@ -298,6 +298,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement), '$');
           toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(myElement), '$');
           toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement), '$');
+          toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(myElement), '$');
           List<AntoraModule> antoraModules = AsciiDocUtil.collectPrefixes(myElement.getProject(), antoraModuleDir);
           for (AntoraModule antoraModule : antoraModules) {
             toAntoraLookupItem(items, antoraModule);
@@ -310,6 +311,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement.getProject().getBaseDir(), vf), '$');
             toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(myElement.getProject().getBaseDir(), vf), '$');
             toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement.getProject().getBaseDir(), vf), '$');
+            toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(myElement.getProject().getBaseDir(), vf), '$');
           }
           return items.toArray();
         }
