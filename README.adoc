@@ -16,7 +16,7 @@ To support the authors of Asciidoctor, please consider supporting us via https:/
 
 == Installation
 
-You can install the plugin (named "AsciiDoc") from the plugins section inside your JetBrains IDE or download it from the https://plugins.jetbrains.com/plugin/7391[JetBrains Plugin Repository].
+You can install the plugin (named "`AsciiDoc`") from the plugins section inside your JetBrains IDE or download it from the https://plugins.jetbrains.com/plugin/7391[JetBrains Plugin Repository].
 
 The most advanced and recommended preview mode (and default for new installations) is JavaFX.
 
@@ -50,10 +50,10 @@ For the conversion of Markdown to AsciiDoc, we use Pegdown and the https://githu
 
 == Building, Contributing, Code of Conduct
 
-Issues that can give you a good start are https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22[have the label "good first issue"] and maintainers are willing to help.
+Issues that can give you a good start are https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22[have the label "`good first issue`"] and maintainers are willing to help.
 Feel free to choose these or any other ticket to contribute, or even create pull requests without a prior ticket.
 
-Please have a look at the link:CONTRIBUTING.adoc["How to Build and Contribute"] documentation.
+Please have a look at the link:CONTRIBUTING.adoc["`How to Build and Contribute`"] documentation.
 This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the link:CODE_OF_CONDUCT.adoc[Contributor Covenant code of conduct].
 
 == Copyright and Licensing
