@@ -18,6 +18,7 @@ package org.asciidoc.intellij;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -49,6 +50,7 @@ import org.jruby.exceptions.MainExitException;
 import org.jruby.platform.Platform;
 import org.jruby.util.ByteList;
 import org.jruby.util.SafePropertyAccessor;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -64,12 +66,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceConfigurationError;
 import java.util.logging.Logger;
 
+import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_YML;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraAttachmentsDirRelative;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraExamplesDir;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraImagesDirRelative;
@@ -463,30 +467,11 @@ public class AsciiDoc {
         LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
         LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
       );
-      VirtualFile antoraPartials = findAntoraPartials(
-        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
-        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
-      );
-      VirtualFile antoraPagesDir = findAntoraPagesDir(
-        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
-        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
-      );
-      String antoraImagesDir = findAntoraImagesDirRelative(
-        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
-        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
-      );
-      String antoraAttachmentsDir = findAntoraAttachmentsDirRelative(
-        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
-        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
-      );
-      VirtualFile antoraExamplesDir = findAntoraExamplesDir(
-        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
-        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
-      );
       VirtualFile antoraModuleDir = findAntoraModuleDir(
         LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
         LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
       );
+      Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         asciidoctor.registerLogHandler(logHandler);
@@ -494,8 +479,7 @@ public class AsciiDoc {
         antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir);
         try {
           return "<div id=\"content\">\n" + asciidoctor.convert(text,
-            getDefaultOptions("html5", springRestDocsSnippets, antoraPagesDir, antoraPartials, antoraImagesDir,
-              antoraAttachmentsDir, antoraExamplesDir, antoraModuleDir)) + "\n</div>";
+            getDefaultOptions("html5", springRestDocsSnippets, attributes)) + "\n</div>";
         } finally {
           imagesdir = attributeRetriever.getImagesdir();
           prependConfig.setConfig("");
@@ -542,30 +526,11 @@ public class AsciiDoc {
       VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
         LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
         LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir));
-      VirtualFile antoraPagesDir = findAntoraPagesDir(
-        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
-        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
-      );
-      VirtualFile antoraPagePartials = findAntoraPartials(
-        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
-        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
-      );
-      String antoraImagesDir = findAntoraImagesDirRelative(
-        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
-        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
-      );
-      String antoraAttachmentsDir = findAntoraAttachmentsDirRelative(
-        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
-        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
-      );
-      VirtualFile antoraExamplesDir = findAntoraExamplesDir(
-        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
-        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
-      );
       VirtualFile antoraModuleDir = findAntoraModuleDir(
         LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
         LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
       );
+      Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format.toString());
         prependConfig.setConfig(config);
@@ -573,8 +538,7 @@ public class AsciiDoc {
         asciidoctor.registerLogHandler(logHandler);
         try {
           asciidoctor.convertFile(file, getExportOptions(
-            getDefaultOptions(format.toString(), springRestDocsSnippets, antoraPagesDir, antoraPagePartials, antoraImagesDir,
-              antoraAttachmentsDir, antoraExamplesDir, antoraModuleDir), format));
+            getDefaultOptions(format.toString(), springRestDocsSnippets, attributes), format));
         } finally {
           prependConfig.setConfig("");
           antoraIncludeAdapter.setAntoraDetails(null, null);
@@ -612,6 +576,58 @@ public class AsciiDoc {
     }
   }
 
+  private Map<String, String> populateAntoraAttributes(String projectBasePath, File fileBaseDir, VirtualFile antoraModuleDir) {
+    Map<String, String> result = new HashMap<>();
+    if (antoraModuleDir != null) {
+      result.put("icons", "font");
+      result.put("env-site", "");
+      result.put("site-gen", "antora");
+      result.put("site-gen-antora", "");
+      result.put("page-module", antoraModuleDir.getName());
+
+      if (antoraModuleDir.getParent() != null && antoraModuleDir.getParent().getParent() != null) {
+        VirtualFile antoraFile = antoraModuleDir.getParent().getParent().findChild(ANTORA_YML);
+        if (antoraFile != null) {
+          ApplicationManager.getApplication().runReadAction(() -> {
+            Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
+            Yaml yaml = new Yaml();
+            Map<String, Object> antora = yaml.load(document.getText());
+            mapAttribute(result, antora, "name", "page-component-name");
+            mapAttribute(result, antora, "version", "page-component-version");
+            mapAttribute(result, antora, "title", "page-component-title");
+            mapAttribute(result, antora, "version", "page-version");
+            mapAttribute(result, antora, "display-version", "page-display-version");
+          });
+        }
+      }
+
+      VirtualFile projectBase = LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath));
+      VirtualFile baseDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
+      VirtualFile antoraPages = findAntoraPagesDir(projectBase, baseDir);
+      VirtualFile antoraPartials = findAntoraPartials(projectBase, baseDir);
+      String antoraImagesDir = findAntoraImagesDirRelative(projectBase, baseDir);
+      String antoraAttachmentsDir = findAntoraAttachmentsDirRelative(projectBase, baseDir);
+      VirtualFile antoraExamplesDir = findAntoraExamplesDir(projectBase, baseDir);
+
+      if (antoraPages != null) {
+        result.put("pagesdir", antoraPages.getCanonicalPath());
+      }
+      if (antoraPartials != null) {
+        result.put("partialsdir", antoraPartials.getCanonicalPath());
+      }
+      if (antoraImagesDir != null) {
+        result.put("imagesdir", antoraImagesDir);
+      }
+      if (antoraAttachmentsDir != null) {
+        result.put("attachmentsdir", antoraAttachmentsDir);
+      }
+      if (antoraExamplesDir != null) {
+        result.put("examplesdir", antoraExamplesDir.getCanonicalPath());
+      }
+    }
+    return result;
+  }
+
   public Map<String, Object> getExportOptions(Map<String, Object> options, FileType fileType) {
     if (fileType == FileType.HTML) {
       options.put(Options.HEADER_FOOTER, true);
@@ -620,11 +636,7 @@ public class AsciiDoc {
   }
 
   @SuppressWarnings("checkstyle:ParameterNumber")
-  private Map<String, Object> getDefaultOptions(String backend, VirtualFile springRestDocsSnippets,
-                                                VirtualFile antoraPages,
-                                                VirtualFile antoraPartials, String antoraImagesDir,
-                                                String antoraAttachmentsDir, VirtualFile antoraExamplesDir,
-                                                VirtualFile antoraModuleDir) {
+  private Map<String, Object> getDefaultOptions(String backend, VirtualFile springRestDocsSnippets, Map<String, String> attributes) {
     AttributesBuilder builder = AttributesBuilder.attributes()
       .showTitle(true)
       .backend(backend)
@@ -637,23 +649,8 @@ public class AsciiDoc {
       builder.attribute("snippets", springRestDocsSnippets.getCanonicalPath());
     }
 
-    if (antoraPages != null) {
-      builder.attribute("pagesdir", antoraPages.getCanonicalPath());
-    }
-    if (antoraPartials != null) {
-      builder.attribute("partialsdir", antoraPartials.getCanonicalPath());
-    }
-    if (antoraImagesDir != null) {
-      builder.attribute("imagesdir", antoraImagesDir);
-    }
-    if (antoraAttachmentsDir != null) {
-      builder.attribute("attachmentsdir", antoraAttachmentsDir);
-    }
-    if (antoraExamplesDir != null) {
-      builder.attribute("examplesdir", antoraExamplesDir.getCanonicalPath());
-    }
-    if (antoraModuleDir != null) {
-      builder.attribute("icons", "font");
+    for (Map.Entry<String, String> entry : attributes.entrySet()) {
+      builder.attribute(entry.getKey(), entry.getValue());
     }
 
     String graphvizDot = System.getenv("GRAPHVIZ_DOT");
@@ -711,4 +708,12 @@ public class AsciiDoc {
       return formatType;
     }
   }
+
+  private void mapAttribute(Map<String, String> result, Map<String, Object> antora, String nameSource, String nameTarget) {
+    String value = (String) antora.get(nameSource);
+    if (value != null) {
+      result.put(nameTarget, value);
+    }
+  }
+
 }

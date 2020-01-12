@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - support autocompletion for antora prefixes (#373)
 - do not nest blocks inside literal blocks
 - block attributes must not be followed by characters on same line
+- populating a first set of Antora's `page-*` attributes for preview (#373)
 
 === 0.30.28 (preview, available from Github releases)
 
