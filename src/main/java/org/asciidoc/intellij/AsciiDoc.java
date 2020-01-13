@@ -460,6 +460,15 @@ public class AsciiDoc {
   }
 
   public String render(String text, String config, List<String> extensions, Notifier notifier, String format) {
+    VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
+      LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
+      LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
+    );
+    VirtualFile antoraModuleDir = findAntoraModuleDir(
+      LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
+      LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
+    );
+    Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
     synchronized (AsciiDoc.class) {
       CollectingLogHandler logHandler = new CollectingLogHandler();
       ClassLoader old = Thread.currentThread().getContextClassLoader();
@@ -467,15 +476,6 @@ public class AsciiDoc {
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
       ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
       SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
-      VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
-        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
-        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
-      );
-      VirtualFile antoraModuleDir = findAntoraModuleDir(
-        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
-        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
-      );
-      Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         asciidoctor.registerLogHandler(logHandler);
@@ -519,8 +519,14 @@ public class AsciiDoc {
   }
 
   public void convertTo(File file, String config, List<String> extensions, FileType format) {
-
-    Notifier notifier = this::notifyAlways;
+    VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
+      LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
+      LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir));
+    VirtualFile antoraModuleDir = findAntoraModuleDir(
+      LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
+      LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
+    );
+    Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
     synchronized (AsciiDoc.class) {
       CollectingLogHandler logHandler = new CollectingLogHandler();
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
@@ -528,14 +534,6 @@ public class AsciiDoc {
       SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
       ClassLoader old = Thread.currentThread().getContextClassLoader();
       Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
-      VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
-        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
-        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir));
-      VirtualFile antoraModuleDir = findAntoraModuleDir(
-        LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
-        LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
-      );
-      Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format.toString());
         prependConfig.setConfig(config);
@@ -575,6 +573,7 @@ public class AsciiDoc {
         }
       } finally {
         SystemOutputHijacker.deregister();
+        Notifier notifier = this::notifyAlways;
         notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
         Thread.currentThread().setContextClassLoader(old);
       }
