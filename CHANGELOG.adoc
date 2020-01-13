@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - add Antora pages family for autocomplete (#373)
 - Antora image-macro auto-completes resource IDs, but not longer family names (#373)
 - preview Antora images from outside of current module (#373)
+- upgrade to asciidoctorj-pdf:1.5.0-rc.2
 
 === 0.30.29 (preview, available from Github releases)
 
