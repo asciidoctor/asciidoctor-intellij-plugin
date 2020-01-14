@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.30 (work in progress)
+=== 0.30.30 (preview, available from Github releases)
 
 - support file paths for include-macro starting with `./` (#373)
 - add Antora pages family for autocomplete (#373)
