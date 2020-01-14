@@ -594,13 +594,15 @@ public class AsciiDoc {
         if (antoraFile != null) {
           ApplicationManager.getApplication().runReadAction(() -> {
             Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
-            Yaml yaml = new Yaml();
-            Map<String, Object> antora = yaml.load(document.getText());
-            mapAttribute(result, antora, "name", "page-component-name");
-            mapAttribute(result, antora, "version", "page-component-version");
-            mapAttribute(result, antora, "title", "page-component-title");
-            mapAttribute(result, antora, "version", "page-version");
-            mapAttribute(result, antora, "display-version", "page-display-version");
+            if (document != null) {
+              Yaml yaml = new Yaml();
+              Map<String, Object> antora = yaml.load(document.getText());
+              mapAttribute(result, antora, "name", "page-component-name");
+              mapAttribute(result, antora, "version", "page-component-version");
+              mapAttribute(result, antora, "title", "page-component-title");
+              mapAttribute(result, antora, "version", "page-version");
+              mapAttribute(result, antora, "display-version", "page-display-version");
+            }
           });
         }
       }
@@ -714,9 +716,9 @@ public class AsciiDoc {
   }
 
   private void mapAttribute(Map<String, String> result, Map<String, Object> antora, String nameSource, String nameTarget) {
-    String value = (String) antora.get(nameSource);
+    Object value = antora.get(nameSource);
     if (value != null) {
-      result.put(nameTarget, value);
+      result.put(nameTarget, value.toString());
     }
   }
 

@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - Antora image-macro auto-completes resource IDs, but not longer family names (#373)
 - preview Antora images from outside of current module (#373)
 - upgrade to asciidoctorj-pdf:1.5.0-rc.2
+- handle Antora version numbers in antora.yml even if they are unquoted numbers (#381)
 
 === 0.30.29 (preview, available from Github releases)
 

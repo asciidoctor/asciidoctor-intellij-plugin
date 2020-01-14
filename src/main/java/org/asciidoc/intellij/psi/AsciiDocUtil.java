@@ -583,8 +583,8 @@ public class AsciiDocUtil {
         }
         Yaml yaml = new Yaml();
         Map<String, Object> antora = yaml.load(document.getText());
-        String myComponentName = (String) antora.get("name");
-        String myComponentVersion = (String) antora.get("version");
+        String myComponentName = antora.get("name").toString();
+        String myComponentVersion = antora.get("version").toString();
 
         String otherComponentName = null;
         String otherModuleName = null;
@@ -649,10 +649,10 @@ public class AsciiDocUtil {
               continue;
             }
             antora = yaml.load(file.getText());
-            if (!otherComponentName.equals(antora.get("name"))) {
+            if (!otherComponentName.equals(antora.get("name").toString())) {
               continue;
             }
-            if (!myComponentVersion.equals(antora.get("version"))) {
+            if (!myComponentVersion.equals(antora.get("version").toString())) {
               continue;
             }
             PsiDirectory parent = file.getParent();
@@ -730,8 +730,8 @@ public class AsciiDocUtil {
       }
       Yaml yaml = new Yaml();
       Map<String, Object> antora = yaml.load(document.getText());
-      String myComponentName = (String) antora.get("name");
-      String myComponentVersion = (String) antora.get("version");
+      String myComponentName = antora.get("name").toString();
+      String myComponentVersion = antora.get("version").toString();
       Map<String, String> componentTitles = new HashMap<>();
       for (PsiFile file : files) {
         if (index.isInLibrary(file.getVirtualFile())
@@ -741,11 +741,11 @@ public class AsciiDocUtil {
           continue;
         }
         antora = yaml.load(file.getText());
-        if (myComponentVersion != null && !myComponentVersion.equals(antora.get("version"))) {
+        if (myComponentVersion != null && !myComponentVersion.equals(antora.get("version").toString())) {
           continue;
         }
-        String otherComponentName = (String) antora.get("name");
-        String title = (String) antora.get("title");
+        String otherComponentName = antora.get("name").toString();
+        String title = antora.get("title").toString();
         if (title != null && componentTitles.get(otherComponentName) == null) {
           componentTitles.put(otherComponentName, title);
         }
@@ -789,8 +789,8 @@ public class AsciiDocUtil {
       }
       Yaml yaml = new Yaml();
       Map<String, Object> antora = yaml.load(document.getText());
-      String myComponentName = (String) antora.get("name");
-      String myComponentVersion = (String) antora.get("version");
+      String myComponentName = antora.get("name").toString();
+      String myComponentVersion = antora.get("version").toString();
 
       String otherComponentName = null;
       String otherModuleName = null;
@@ -839,10 +839,10 @@ public class AsciiDocUtil {
             continue;
           }
           antora = yaml.load(file.getText());
-          if (!otherComponentName.equals(antora.get("name"))) {
+          if (!otherComponentName.equals(antora.get("name").toString())) {
             continue;
           }
-          if (!myComponentVersion.equals(antora.get("version"))) {
+          if (!myComponentVersion.equals(antora.get("version").toString())) {
             continue;
           }
           PsiDirectory parent = file.getParent();
