@@ -386,7 +386,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
 
     AsciiDocBlockMacro[] macros = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocBlockMacro.class);
     assertNotNull(macros);
-    assertSize(3, macros);
+    assertSize(4, macros);
 
     // image
     assertSize(1, macros[0].getReferences());
@@ -400,13 +400,25 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertSize(2, macros[2].getReferences());
     // finish test here. Reference will not resolve in the test, files are "temp://" files
 
+    // part include via module
+    assertSize(3, macros[3].getReferences());
+    assertEquals("my-component:ROOT", macros[3].getReferences()[0].getCanonicalText());
+    assertEquals("part", macros[3].getReferences()[1].getCanonicalText());
+    assertEquals("part.adoc", macros[3].getReferences()[2].getCanonicalText());
+    // finish test here. Reference will not resolve in the test, files are "temp://" files
+
     AsciiDocLink[] urls = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocLink.class);
     assertNotNull(urls);
-    assertSize(1, urls);
+    assertSize(2, urls);
 
     // link
     assertSize(2, urls[0].getReferences());
     // finish test here. Reference will not resolve in the test, files are "temp://" files
+
+    // xref
+    assertSize(2, urls[1].getReferences());
+    // finish test here. Reference will not resolve in the test, files are "temp://" files
+
   }
 
   private PsiFile configureByAsciiDoc(String text) {
