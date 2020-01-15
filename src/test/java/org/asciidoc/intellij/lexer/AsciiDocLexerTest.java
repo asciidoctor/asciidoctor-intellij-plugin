@@ -203,7 +203,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:INLINE_MACRO_ID ('image:')\n" +
         "AsciiDoc:URL_LINK ('http://image.com')\n" +
         "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
-        "AsciiDoc:INLINE_ATTR_NAME ('Caption')\n" +
+        "AsciiDoc:ATTR_NAME ('Caption')\n" +
         "AsciiDoc:INLINE_ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('abc')");
@@ -1472,15 +1472,47 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('text')");
   }
 
+  public void testInlineMacroWithAttribute() {
+    doTest("Text image:image.png[link=http://www.gmx.net] text",
+      "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:INLINE_MACRO_ID ('image:')\n" +
+        "AsciiDoc:INLINE_MACRO_BODY ('image.png')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('link')\n" +
+        "AsciiDoc:ASSIGNMENT ('=')\n" +
+        "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('text')");
+  }
+
+  public void testInlineMacroWithAttributeRef() {
+    doTest("Text image:image.png[link={url}] text",
+      "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:INLINE_MACRO_ID ('image:')\n" +
+        "AsciiDoc:INLINE_MACRO_BODY ('image.png')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('link')\n" +
+        "AsciiDoc:ASSIGNMENT ('=')\n" +
+        "AsciiDoc:ATTRIBUTE_REF_START ('{')\n" +
+        "AsciiDoc:ATTRIBUTE_REF ('url')\n" +
+        "AsciiDoc:ATTRIBUTE_REF_END ('}')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('text')");
+  }
+
   public void testInlineMacroWithBracketsInside() {
     doTest("Text footnote:[some macro:text[About]] text",
       "AsciiDoc:TEXT ('Text')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:INLINE_MACRO_ID ('footnote:')\n" +
         "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
-        "AsciiDoc:INLINE_ATTR_NAME ('some')\n" +
+        "AsciiDoc:ATTR_NAME ('some')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:INLINE_ATTR_NAME ('macro:text[About]')\n" +
+        "AsciiDoc:ATTR_NAME ('macro:text[About]')\n" +
         "AsciiDoc:INLINE_ATTRS_END (']')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('text')");
@@ -1540,6 +1572,19 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRIBUTE_NAME ('other')\n" +
         "AsciiDoc:ATTRIBUTE_NAME_END (':')\n" +
         "AsciiDoc:ATTRIBUTE_VAL (' val')\n" +
+        "AsciiDoc:ATTRS_END (']')");
+  }
+
+  public void testLinkAttribute() {
+    doTest("image::file.png[link='http://www.gmx.net']",
+      "AsciiDoc:BLOCK_MACRO_ID ('image::')\n" +
+        "AsciiDoc:BLOCK_MACRO_BODY ('file.png')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('link')\n" +
+        "AsciiDoc:ASSIGNMENT ('=')\n" +
+        "AsciiDoc:SINGLE_QUOTE (''')\n" +
+        "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
+        "AsciiDoc:SINGLE_QUOTE (''')\n" +
         "AsciiDoc:ATTRS_END (']')");
   }
 

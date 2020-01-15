@@ -239,8 +239,8 @@ ANCHOREND = "]"
 LINKSTART = "link:"
 XREFSTART = "xref:"
 LINKTEXT_START = "["
-INLINE_URL_NO_DELIMITER = (https?|file|ftp|irc): "//" [^\s\[\]<]*([^\s.,;\[\]<\)])
-INLINE_URL_WITH_DELIMITER = (https?|file|ftp|irc): "//" [^\s\[\]<]*([^\s\[\]])
+INLINE_URL_NO_DELIMITER = (https?|file|ftp|irc): "//" [^\s\[\]<]*([^\s.,;\[\]<\)\'\"])
+INLINE_URL_WITH_DELIMITER = (https?|file|ftp|irc): "//" [^\s\[\]<]*([^\s\[\]\'\"])
 INLINE_EMAIL_NO_DELIMITER = [[:letter:][:digit:]_](&amp;|[[:letter:][:digit:]_\-.%+])*@[[:letter:][:digit:]][[:letter:][:digit:]_\-.]*\.[a-zA-Z]{2,5}
 LINKEND = "]"
 ATTRIBUTE_NAME_START = ":"
@@ -1133,31 +1133,52 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [,\]] { yypushback(yylength()); yypopstate(); }
 }
 
+<ATTRS_DOUBLE_QUOTE, ATTRS_SINGLE_QUOTE> {
+  {INLINE_URL_WITH_DELIMITER} {
+        if (isEscaped() || isPrefixedBy(":/")) {
+          return textFormat();
+        } else {
+          return AsciiDocTokenTypes.URL_LINK;
+        }
+  }
+}
+
 <ATTRS_DOUBLE_QUOTE, ATTRS_SINGLE_QUOTE, ATTRS_NO_QUOTE> {
+  {INLINE_URL_WITH_DELIMITER} {
+        if (isEscaped() || isPrefixedBy(":/")) {
+          return textFormat();
+        } else {
+          return AsciiDocTokenTypes.URL_LINK;
+        }
+  }
   "\n" { yypushback(yylength()); yypopstate(); }
   [^] { return AsciiDocTokenTypes.ATTR_VALUE; }
 }
 
 <INLINE_MACRO_URL> {
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
-  "["                  { yybegin(INLINE_MACRO_ATTRS); return AsciiDocTokenTypes.INLINE_ATTRS_START; }
+  "["                  { yypushstate(); yybegin(INLINE_MACRO_ATTRS); return AsciiDocTokenTypes.INLINE_ATTRS_START; }
+  "]"                  { yypopstate(); return AsciiDocTokenTypes.INLINE_ATTRS_END; }
   [^]                  { return AsciiDocTokenTypes.URL_LINK; }
 }
 
 <INLINE_MACRO> {
-  "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
-  "["                  { yybegin(INLINE_MACRO_ATTRS); return AsciiDocTokenTypes.INLINE_ATTRS_START; }
+  "\n"                 { yypopstate(); yypushback(yylength()); }
+  "["                  { yypushstate(); yybegin(INLINE_MACRO_ATTRS); return AsciiDocTokenTypes.INLINE_ATTRS_START; }
+  "]"                  { yypopstate(); return AsciiDocTokenTypes.INLINE_ATTRS_END; }
   [^]                  { return AsciiDocTokenTypes.INLINE_MACRO_BODY; }
 }
 
 <INLINE_MACRO_ATTRS> {
-  "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
-  "]"                  { yypopstate(); return AsciiDocTokenTypes.INLINE_ATTRS_END; }
+  "=" / "\"" ( [^\"\n] | "\\\"" )* "\"" { yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
+  "=" / "\'" ( [^\'\n] | "\\\'" )* "\'" { yypushstate(); yybegin(ATTRS_SINGLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
+  "=" { yypushstate(); yybegin(ATTRS_NO_QUOTE); return AsciiDocTokenTypes.ASSIGNMENT; }
+  "\n"                 { yypopstate(); yypushback(yylength()); }
+  "]"                  { yypopstate(); yypushback(yylength()); }
   ","                  { return AsciiDocTokenTypes.SEPARATOR; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
-  "=\"" ( [^\"] | "\\\"" )* "\"" { return AsciiDocTokenTypes.INLINE_ATTR_VALUE; }
-  "[" [^\]\n]* "]"     { return AsciiDocTokenTypes.INLINE_ATTR_NAME; }
-  [^]                  { return AsciiDocTokenTypes.INLINE_ATTR_NAME; }
+  "[" [^\]\n]* "]"     { return AsciiDocTokenTypes.ATTR_NAME; }
+  [^]                  { return AsciiDocTokenTypes.ATTR_NAME; }
 }
 
 <LISTING_NO_DELIMITER> {

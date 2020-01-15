@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.31 (work in progress)
+
+- highlighting for URLs and attributes in inline marco attributes (#383)
+
 === 0.30.30 (preview, available from Github releases)
 
 - support file paths for include-macro starting with `./` (#373)
