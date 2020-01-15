@@ -37,7 +37,8 @@ public class AsciiDocCompletionContributor extends CompletionContributor {
       if (element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_REF) {
         PsiElement parent = element.getParent().getParent();
         // help the autocomplete in AsciiDocFileReference to replace the full reference if it contains a nested attribute
-        if (parent.getNode().getElementType() == AsciiDocElementTypes.BLOCK_MACRO) {
+        if (parent.getNode().getElementType() == AsciiDocElementTypes.BLOCK_MACRO || parent.getNode().getElementType() == AsciiDocElementTypes.INLINE_MACRO
+          || parent.getNode().getElementType() == AsciiDocElementTypes.ATTRIBUTE_IN_BRACKETS) {
           for (PsiReference reference : parent.getReferences()) {
             if (reference.getRangeInElement().shiftRight(parent.getTextOffset()).contains(element.getTextRange())) {
               context.getOffsetMap().addOffset(IDENTIFIER_FILE_REFERENCE, parent.getTextOffset() + reference.getRangeInElement().getEndOffset());

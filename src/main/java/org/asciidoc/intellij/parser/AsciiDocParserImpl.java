@@ -239,6 +239,8 @@ public class AsciiDocParserImpl {
       if (at(ATTRS_END)) {
         next();
         break;
+      } else if (at(ATTR_NAME)) {
+        parseAttributeInBrackets();
       } else if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();
       } else if (at(URL_LINK)) {
@@ -260,9 +262,10 @@ public class AsciiDocParserImpl {
       if (at(INLINE_ATTRS_END)) {
         next();
         break;
-      }
-      if (at(URL_LINK)) {
+      } else if (at(URL_LINK)) {
         parseUrl();
+      } else if (at(ATTR_NAME)) {
+        parseAttributeInBrackets();
       } else if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();
       } else {
@@ -270,6 +273,26 @@ public class AsciiDocParserImpl {
       }
     }
     inlineMacroMarker.done(AsciiDocElementTypes.INLINE_MACRO);
+  }
+
+  private void parseAttributeInBrackets() {
+    newLines = 0;
+    PsiBuilder.Marker attributeInBracketMarker = myBuilder.mark();
+    next();
+    while ((at(ATTR_NAME) || at(ASSIGNMENT) || at(URL_LINK) || at(ATTR_VALUE)
+      || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE) || at(ATTRIBUTE_REF_START))
+      && newLines == 0) {
+      if (at(URL_LINK)) {
+        parseUrl();
+      } else if (at(ATTR_NAME)) {
+        parseAttributeInBrackets();
+      } else if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
+      } else {
+        next();
+      }
+    }
+    attributeInBracketMarker.done(AsciiDocElementTypes.ATTRIBUTE_IN_BRACKETS);
   }
 
   private void parseTitle() {
@@ -343,6 +366,8 @@ public class AsciiDocParserImpl {
       if (at(ATTRS_END)) {
         next();
         break;
+      } else if (at(ATTR_NAME)) {
+        parseAttributeInBrackets();
       } else if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
         parseUrl();
       } else if (at(ATTRIBUTE_REF_START)) {

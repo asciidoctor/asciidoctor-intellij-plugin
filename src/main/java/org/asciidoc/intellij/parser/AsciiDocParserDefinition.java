@@ -14,6 +14,7 @@ import org.asciidoc.intellij.lexer.AsciiDocLexer;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationImpl;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
+import org.asciidoc.intellij.psi.AsciiDocAttributeInBrackets;
 import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.asciidoc.intellij.psi.AsciiDocBlockAttributes;
 import org.asciidoc.intellij.psi.AsciiDocBlockId;
@@ -86,6 +87,9 @@ public class AsciiDocParserDefinition implements ParserDefinition {
     }
     if (node.getElementType() == AsciiDocElementTypes.BLOCK_ATTRIBUTES) {
       return new AsciiDocBlockAttributes(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.ATTRIBUTE_IN_BRACKETS) {
+      return new AsciiDocAttributeInBrackets(node);
     }
     if (node.getElementType() == AsciiDocElementTypes.BLOCKID) {
       return new AsciiDocBlockId(node);
