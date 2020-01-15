@@ -887,19 +887,19 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            return textFormat();
                          }
                        }
-  {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\[\n\"`:]* | "") ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" ([^\]\n]*|"[" [^\]\n]* "]")*  "]") {
+  {INLINE_MACRO_START} / ({INLINE_URL_NO_DELIMITER} | {INLINE_URL_WITH_DELIMITER}) ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" [^\]\n]* "]") {
         if (!isEscaped()) {
           yypushstate();
-          yybegin(INLINE_MACRO);
+          yybegin(INLINE_MACRO_URL);
           return AsciiDocTokenTypes.INLINE_MACRO_ID;
         } else {
           return textFormat();
         }
       }
-  {INLINE_MACRO_START} / ({INLINE_URL_NO_DELIMITER} | {INLINE_URL_WITH_DELIMITER}) ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" [^\]\n]* "]") {
+  {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\[\n\"`]* | "") ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" ([^\]\n]*|"[" [^\]\n]* "]")*  "]") {
         if (!isEscaped()) {
           yypushstate();
-          yybegin(INLINE_MACRO_URL);
+          yybegin(INLINE_MACRO);
           return AsciiDocTokenTypes.INLINE_MACRO_ID;
         } else {
           return textFormat();

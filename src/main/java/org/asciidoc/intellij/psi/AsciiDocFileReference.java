@@ -37,6 +37,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_SUPPORTED;
+
 public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
   private static final int MAX_DEPTH = 10;
   private static final Pattern URL = Pattern.compile("^\\p{Alpha}[\\p{Alnum}.+-]+:/{0,2}");
@@ -194,7 +196,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   private String handleAntora(String key) {
     if (isAntora) {
       key = AsciiDocUtil.replaceAntoraPrefix(myElement, key, null);
-    } else if (myElement instanceof AsciiDocLink &&
+    } else if (myElement instanceof AsciiDocLink && macroName.equals("xref") &&
       // as long as no version has been specified
       !key.contains("@")) {
       if (AsciiDocUtil.findAntoraPagesDir(myElement) != null) {
@@ -206,16 +208,18 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   private void resolve(String key, List<ResolveResult> results, int depth) {
-    if (depth == 0) {
-      if (AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(key).matches()) {
-        VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
-        if (antoraModuleDir != null) {
-          VirtualFile virtualFile = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, key);
-          if (virtualFile != null) {
-            PsiElement psiFile = PsiManager.getInstance(myElement.getProject()).findDirectory(virtualFile);
-            if (psiFile != null) {
-              results.add(new PsiElementResolveResult(psiFile));
-              return;
+    if (ANTORA_SUPPORTED.contains(macroName)) {
+      if (depth == 0) {
+        if (AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(key).matches()) {
+          VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
+          if (antoraModuleDir != null) {
+            VirtualFile virtualFile = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, key);
+            if (virtualFile != null) {
+              PsiElement psiFile = PsiManager.getInstance(myElement.getProject()).findDirectory(virtualFile);
+              if (psiFile != null) {
+                results.add(new PsiElementResolveResult(psiFile));
+                return;
+              }
             }
           }
         }
@@ -226,6 +230,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     if (depth > MAX_DEPTH) {
       return;
     }
+
     Matcher matcher = ATTRIBUTES.matcher(key);
     if (matcher.find()) {
       String attributeName = matcher.group(1);
@@ -277,6 +282,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         }
       }
     }
+
   }
 
   @Nullable
@@ -290,8 +296,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   @NotNull
   @Override
   public Object[] getVariants() {
+    List<LookupElementBuilder> items = new ArrayList<>();
     if ((isAntora || base.length() == 0)) {
-      List<LookupElementBuilder> items = new ArrayList<>();
       VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
       if (antoraModuleDir != null) {
         if (base.length() == 0) {
@@ -306,7 +312,6 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           for (AntoraModule antoraModule : antoraModules) {
             toAntoraLookupItem(items, antoraModule);
           }
-          return items.toArray();
         } else if (AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(base).matches()) {
           if (!"image".equals(macroName)) {
             VirtualFile vf = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, base);
@@ -355,7 +360,6 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       set = set.stream().filter(psiElement -> psiElement.getLanguage() != AsciiDocLanguage.INSTANCE).collect(Collectors.toSet());
     }
     final PsiElement[] candidates = PsiUtilCore.toPsiElementArray(set);
-    List<LookupElementBuilder> additionalItems = new ArrayList<>();
 
     List<ResolveResult> results = new ArrayList<>();
     if (base.endsWith("/") || base.length() == 0) {
@@ -370,7 +374,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       final Icon icon = result.getElement().getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
       LookupElementBuilder item = FileInfoManager.getFileLookupItem(result.getElement(), ".." /* + '/' */, icon);
       item = handleTrailing(item, '/');
-      additionalItems.add(item);
+      items.add(item);
     }
 
     List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), myElement);
@@ -417,11 +421,11 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         } else if (result.getElement() instanceof PsiFile) {
           lb = handleTrailing(lb, '/');
         }
-        additionalItems.add(lb);
+        items.add(lb);
       }
     }
 
-    final Object[] variants = new Object[candidates.length + additionalItems.size()];
+    final Object[] variants = new Object[candidates.length + items.size()];
     for (int i = 0; i < candidates.length; i++) {
       PsiElement candidate = candidates[i];
       if (candidate instanceof PsiDirectory) {
@@ -436,8 +440,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       }
     }
 
-    for (int i = 0; i < additionalItems.size(); i++) {
-      variants[i + candidates.length] = additionalItems.get(i);
+    for (int i = 0; i < items.size(); i++) {
+      variants[i + candidates.length] = items.get(i);
     }
 
     return variants;
@@ -552,7 +556,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   private void getVariants(String base, CommonProcessors.CollectUniquesProcessor<PsiFileSystemItem> collector,
                            int depth) {
-    if (depth == 0) {
+    if (depth == 0 && ANTORA_SUPPORTED.contains(macroName)) {
       base = handleAntora(base);
     }
     if (depth > MAX_DEPTH) {

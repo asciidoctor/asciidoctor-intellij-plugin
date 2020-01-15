@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 
+import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_SUPPORTED;
+
 /**
  * @author yole
  */
@@ -52,32 +54,34 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
         int start = 0;
         int i = 0;
         boolean isAntora = false;
-        Matcher matcher = AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(file);
-        if (matcher.find()) {
-          VirtualFile examplesDir = AsciiDocUtil.findAntoraModuleDir(this);
-          if (examplesDir != null) {
-            i += matcher.end();
-            isAntora = true;
-            references.add(
-              new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
-                TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i - 1),
-                true, isAntora, 1)
-            );
-            start = i;
+        if (ANTORA_SUPPORTED.contains(getMacroName())) {
+          Matcher matcher = AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(file);
+          if (matcher.find()) {
+            VirtualFile examplesDir = AsciiDocUtil.findAntoraModuleDir(this);
+            if (examplesDir != null) {
+              i += matcher.end();
+              isAntora = true;
+              references.add(
+                new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
+                  TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i - 1),
+                  true, isAntora, 1)
+              );
+              start = i;
+            }
           }
-        }
-        matcher = AsciiDocUtil.ANTORA_FAMILY_PATTERN.matcher(file.substring(start));
-        if (matcher.find()) {
-          VirtualFile examplesDir = AsciiDocUtil.findAntoraModuleDir(this);
-          if (examplesDir != null) {
-            i += matcher.end();
-            isAntora = true;
-            references.add(
-              new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
-                TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i - 1),
-                true, isAntora, 1)
-            );
-            start = i;
+          matcher = AsciiDocUtil.ANTORA_FAMILY_PATTERN.matcher(file.substring(start));
+          if (matcher.find()) {
+            VirtualFile examplesDir = AsciiDocUtil.findAntoraModuleDir(this);
+            if (examplesDir != null) {
+              i += matcher.end();
+              isAntora = true;
+              references.add(
+                new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
+                  TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i - 1),
+                  true, isAntora, 1)
+              );
+              start = i;
+            }
           }
         }
         for (; i < file.length(); ++i) {

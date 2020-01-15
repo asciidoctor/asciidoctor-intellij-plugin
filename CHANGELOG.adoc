@@ -11,6 +11,8 @@ This document provides a high-level view of the changes introduced by release.
 
 - highlighting for URLs and attributes in inline marco attributes (#383)
 - autocompletion for link attribute contents (#383)
+- restrict antora autocompletion to Antora supported macros (include, xref, image) (#373)
+- support inline image macro with Antora autocompletion (#373)
 
 === 0.30.30 (preview, available from Github releases)
 

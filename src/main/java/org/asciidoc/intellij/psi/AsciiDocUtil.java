@@ -33,9 +33,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,6 +49,14 @@ public class AsciiDocUtil {
   public static final String FAMILY_IMAGE = "image";
   public static final String FAMILY_PAGE = "page";
   public static final String ANTORA_YML = "antora.yml";
+
+  public static final Set<String> ANTORA_SUPPORTED = new HashSet<>();
+  static {
+    ANTORA_SUPPORTED.addAll(Arrays.asList(
+      // standard asciidoctor
+      "image", "include", "video", "audio", "xref"
+    ));
+  }
 
   static List<AsciiDocBlockId> findIds(Project project, String key) {
     List<AsciiDocBlockId> result = null;
@@ -728,9 +738,8 @@ public class AsciiDocUtil {
       Arrays.sort(files,
         Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
       ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
-      VirtualFile antoraModuleDir = moduleDir;
-      String myModuleName = antoraModuleDir.getName();
-      VirtualFile antoraFile = antoraModuleDir.getParent().getParent().findChild(ANTORA_YML);
+      String myModuleName = moduleDir.getName();
+      VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
       if (antoraFile == null) {
         return result;
       }

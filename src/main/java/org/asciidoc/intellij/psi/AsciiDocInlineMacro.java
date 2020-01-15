@@ -4,6 +4,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.AbstractElementManipulator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -18,10 +19,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+
+import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_SUPPORTED;
 
 public class AsciiDocInlineMacro extends ASTWrapperPsiElement {
   private static final Set<String> HAS_FILE_AS_BODY = new HashSet<>();
-
   static {
     HAS_FILE_AS_BODY.addAll(Arrays.asList(
       // standard asciidoctor
@@ -41,25 +44,57 @@ public class AsciiDocInlineMacro extends ASTWrapperPsiElement {
   @Override
   public PsiReference[] getReferences() {
     if (HAS_FILE_AS_BODY.contains(getMacroName())) {
-      ASTNode bodyNode = getNode().findChildByType(AsciiDocTokenTypes.INLINE_MACRO_BODY);
-      if (bodyNode != null) {
-        String file = bodyNode.getText();
+      TextRange range = getRangeOfBody(this);
+      if (!range.equals(TextRange.EMPTY_RANGE)) {
+        String file = range.substring(this.getText());
         ArrayList<PsiReference> references = new ArrayList<>();
         int start = 0;
-        for (int i = 0; i < file.length(); ++i) {
+        int i = 0;
+        boolean isAntora = false;
+        if (ANTORA_SUPPORTED.contains(getMacroName())) {
+          Matcher matcher = AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(file);
+          if (matcher.find()) {
+            VirtualFile examplesDir = AsciiDocUtil.findAntoraModuleDir(this);
+            if (examplesDir != null) {
+              i += matcher.end();
+              isAntora = true;
+              references.add(
+                new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
+                  TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i - 1),
+                  true, isAntora, 1)
+              );
+              start = i;
+            }
+          }
+          matcher = AsciiDocUtil.ANTORA_FAMILY_PATTERN.matcher(file.substring(start));
+          if (matcher.find()) {
+            VirtualFile examplesDir = AsciiDocUtil.findAntoraModuleDir(this);
+            if (examplesDir != null) {
+              i += matcher.end();
+              isAntora = true;
+              references.add(
+                new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
+                  TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i - 1),
+                  true, isAntora, 1)
+              );
+              start = i;
+            }
+          }
+        }
+        for (; i < file.length(); ++i) {
           if (file.charAt(i) == '/') {
             references.add(
               new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
-                TextRange.create(bodyNode.getPsi().getStartOffsetInParent() + start, bodyNode.getPsi().getStartOffsetInParent() + i),
-                true)
+                TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
+                true, isAntora)
             );
             start = i + 1;
           }
         }
         references.add(
           new AsciiDocFileReference(this, getMacroName(), file.substring(0, start),
-            TextRange.create(bodyNode.getPsi().getStartOffsetInParent() + start, bodyNode.getPsi().getStartOffsetInParent() + file.length()),
-            false)
+            TextRange.create(range.getStartOffset() + start, range.getStartOffset() + file.length()),
+            false, isAntora)
         );
         return references.toArray(new PsiReference[0]);
       }
@@ -104,13 +139,31 @@ public class AsciiDocInlineMacro extends ASTWrapperPsiElement {
     @NotNull
     @Override
     public TextRange getRangeInElement(@NotNull AsciiDocInlineMacro element) {
-      PsiElement child = element.findChildByType(AsciiDocTokenTypes.INLINE_MACRO_BODY);
-      if (child != null) {
-        return TextRange.create(child.getStartOffsetInParent(), child.getStartOffsetInParent() + child.getTextLength());
-      } else {
-        return TextRange.EMPTY_RANGE;
-      }
+      return getRangeOfBody(element);
     }
+
+  }
+
+  private static TextRange getRangeOfBody(AsciiDocInlineMacro element) {
+    PsiElement child = element.getFirstChild();
+    // skip over pre-block until macro ID starts
+    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.INLINE_MACRO_ID) {
+      child = child.getNextSibling();
+    }
+    // skip over macro ID
+    while (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.INLINE_MACRO_ID) {
+      child = child.getNextSibling();
+    }
+    if (child == null) {
+      return TextRange.EMPTY_RANGE;
+    }
+    int start = child.getStartOffsetInParent();
+    int end = start;
+    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.INLINE_ATTRS_START) {
+      end = child.getStartOffsetInParent() + child.getTextLength();
+      child = child.getNextSibling();
+    }
+    return TextRange.create(start, end);
   }
 
 }
