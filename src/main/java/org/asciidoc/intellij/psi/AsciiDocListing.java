@@ -1,16 +1,18 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.LiteralTextEscaper;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AsciiDocListing extends AbstractAsciiDocCodeBlock {
   AsciiDocListing(IElementType type) {
@@ -76,12 +78,12 @@ public class AsciiDocListing extends AbstractAsciiDocCodeBlock {
     if (element == null) {
       return null;
     }
-    ASTNode[] attr = element.getNode().getChildren(TokenSet.create(AsciiDocTokenTypes.ATTR_NAME));
-    if (attr.length >= 2 && "source".equalsIgnoreCase(attr[0].getText())) {
-      return "source-" + attr[1].getText();
-    } else if (attr.length >= 1 && "plantuml".equalsIgnoreCase(attr[0].getText())) {
+    List<AsciiDocAttributeInBrackets> attr = new ArrayList<>(PsiTreeUtil.findChildrenOfType(this, AsciiDocAttributeInBrackets.class));
+    if (attr.size() >= 2 && "source".equalsIgnoreCase(attr.get(0).getText())) {
+      return "source-" + attr.get(1).getText();
+    } else if (attr.size() >= 1 && "plantuml".equalsIgnoreCase(attr.get(0).getText())) {
       return "diagram-plantuml";
-    } else if (attr.length >= 1 && "graphviz".equalsIgnoreCase(attr[0].getText())) {
+    } else if (attr.size() >= 1 && "graphviz".equalsIgnoreCase(attr.get(0).getText())) {
       return "diagram-graphviz";
     }
     return null;

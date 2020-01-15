@@ -1,7 +1,6 @@
 package org.asciidoc.intellij.actions.smartEnter;
 
 import com.intellij.codeInsight.editorActions.smartEnter.SmartEnterProcessor;
-import com.intellij.lang.ASTNode;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -9,10 +8,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
+import org.asciidoc.intellij.psi.AsciiDocAttributeInBrackets;
 import org.jetbrains.annotations.NotNull;
 
 public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
@@ -67,8 +67,8 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
             commitChanges(project, editor, caretTo);
             result = true;
           }
-          if (atCaret.getNextSibling().getNode().getElementType() == AsciiDocTokenTypes.ATTRS_END) {
-            atCaret = atCaret.getNextSibling();
+          if (atCaret.getNextSibling() == null && atCaret.getParent().getNextSibling() == AsciiDocTokenTypes.ATTRS_END) {
+            atCaret = atCaret.getParent().getNextSibling();
           }
         }
         if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.BLOCK_MACRO_BODY ||
@@ -83,8 +83,8 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
           }
         }
         if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.ATTRS_END) {
-          ASTNode[] attr = atCaret.getParent().getNode().getChildren(TokenSet.create(AsciiDocTokenTypes.ATTR_NAME));
-          if (attr.length > 0 && "source".equals(attr[0].getText())) {
+          AsciiDocAttributeInBrackets attr = PsiTreeUtil.findChildOfType(atCaret.getParent(), AsciiDocAttributeInBrackets.class);
+          if (attr != null && "source".equals(attr.getAttrName())) {
             String textToInsert = "\n----\n\n----";
             if (atCaret.getTextRange().getEndOffset() == editor.getDocument().getTextLength()) {
               textToInsert = textToInsert + "\n";
@@ -94,7 +94,7 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
             commitChanges(project, editor, caretTo);
             result = true;
           }
-          if (attr.length > 0 && "plantuml".equals(attr[0].getText())) {
+          if (attr != null && "plantuml".equals(attr.getAttrName())) {
             String textToInsert = "\n----\n@startuml\n\n@enduml\n----";
             if (atCaret.getTextRange().getEndOffset() == editor.getDocument().getTextLength()) {
               textToInsert = textToInsert + "\n";

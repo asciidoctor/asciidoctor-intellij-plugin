@@ -222,9 +222,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
               }
             }
           }
+        } else {
+          key = handleAntora(key);
         }
-      } else {
-        key = handleAntora(key);
       }
     }
     if (depth > MAX_DEPTH) {
