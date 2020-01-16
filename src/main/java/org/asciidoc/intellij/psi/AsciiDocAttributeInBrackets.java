@@ -12,6 +12,7 @@ import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class AsciiDocAttributeInBrackets extends ASTWrapperPsiElement {
 
@@ -19,31 +20,35 @@ public class AsciiDocAttributeInBrackets extends ASTWrapperPsiElement {
     super(node);
   }
 
+  private static final Pattern LINK = Pattern.compile("^(https?|file|ftp|irc)://");
+
   @NotNull
   @Override
   public PsiReference[] getReferences() {
     if ("link".equals(getAttrName())) {
       TextRange rangeOfBody = getRangeOfBody(this);
       if (!TextRange.EMPTY_RANGE.equals(rangeOfBody)) {
-        ArrayList<PsiReference> references = new ArrayList<>();
         String file = rangeOfBody.substring(this.getText());
-        int start = 0;
-        for (int i = 0; i < file.length(); ++i) {
-          if (file.charAt(i) == '/') {
-            references.add(
-              new AsciiDocFileReference(this, "link-attr", file.substring(0, start),
-                TextRange.create(rangeOfBody.getStartOffset() + start, rangeOfBody.getStartOffset() + i),
-                true)
-            );
-            start = i + 1;
+        if (!LINK.matcher(file).find()) {
+          ArrayList<PsiReference> references = new ArrayList<>();
+          int start = 0;
+          for (int i = 0; i < file.length(); ++i) {
+            if (file.charAt(i) == '/') {
+              references.add(
+                new AsciiDocFileReference(this, "link-attr", file.substring(0, start),
+                  TextRange.create(rangeOfBody.getStartOffset() + start, rangeOfBody.getStartOffset() + i),
+                  true)
+              );
+              start = i + 1;
+            }
           }
+          references.add(
+            new AsciiDocFileReference(this, "link-attr", file.substring(0, start),
+              TextRange.create(rangeOfBody.getStartOffset() + start, rangeOfBody.getStartOffset() + file.length()),
+              false)
+          );
+          return references.toArray(new PsiReference[0]);
         }
-        references.add(
-          new AsciiDocFileReference(this, "link-attr", file.substring(0, start),
-            TextRange.create(rangeOfBody.getStartOffset() + start, rangeOfBody.getStartOffset() + file.length()),
-            false)
-        );
-        return references.toArray(new PsiReference[0]);
       }
     }
     return super.getReferences();

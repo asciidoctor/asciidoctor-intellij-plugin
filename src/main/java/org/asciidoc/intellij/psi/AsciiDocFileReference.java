@@ -235,11 +235,17 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     if (matcher.find()) {
       String attributeName = matcher.group(1);
       List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName, myElement);
+      Set<String> searched = new HashSet<>(declarations.size());
       for (AttributeDeclaration decl : declarations) {
-        if (decl.getAttributeValue() == null) {
+        String value = decl.getAttributeValue();
+        if (value == null) {
           continue;
         }
-        resolve(matcher.replaceFirst(Matcher.quoteReplacement(decl.getAttributeValue())), results, depth + 1);
+        if (searched.contains(value)) {
+          continue;
+        }
+        searched.add(value);
+        resolve(matcher.replaceFirst(Matcher.quoteReplacement(value)), results, depth + 1);
       }
     } else {
       // if this is an image, and we are inside an Antora module, just look in the Antora path

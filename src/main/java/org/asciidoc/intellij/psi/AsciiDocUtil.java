@@ -167,24 +167,25 @@ public class AsciiDocUtil {
   }
 
   static List<AttributeDeclaration> findAttributes(Project project, String key, PsiElement current) {
-    List<AttributeDeclaration> result = new ArrayList<>(findAttributes(project, key));
+    List<AttributeDeclaration> result = new ArrayList<>();
 
     if (key.equals("snippets")) {
       augmentList(result, AsciiDocUtil.findSpringRestDocSnippets(current), "snippets");
-    }
-
-    if (key.equals(FAMILY_PARTIAL + "sdir")) {
+    } else if (key.equals(FAMILY_PARTIAL + "sdir")) {
       augmentList(result, AsciiDocUtil.findAntoraPartials(current), FAMILY_PARTIAL + "sdir");
-    }
-    if (key.equals(FAMILY_IMAGE + "sdir")) {
+    } else if (key.equals(FAMILY_IMAGE + "sdir")) {
       augmentList(result, AsciiDocUtil.findAntoraImagesDir(current), FAMILY_IMAGE + "sdir");
-    }
-    if (key.equals(FAMILY_ATTACHMENT + "sdir")) {
+    } else if (key.equals(FAMILY_ATTACHMENT + "sdir")) {
       augmentList(result, AsciiDocUtil.findAntoraAttachmentsDir(current), FAMILY_ATTACHMENT + "sdir");
-    }
-    if (key.equals(FAMILY_EXAMPLE + "sdir")) {
+    } else if (key.equals(FAMILY_EXAMPLE + "sdir")) {
       augmentList(result, AsciiDocUtil.findAntoraExamplesDir(current), FAMILY_EXAMPLE + "sdir");
     }
+
+    // ignore other declarations when we found a specific value
+    if (result.size() == 0) {
+      result.addAll(findAttributes(project, key));
+    }
+
     return result;
   }
 
