@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.31 (preview, available from Github releases)
+=== 0.30.31
 
 - highlighting for URLs and attributes in inline marco attributes (#383)
 - autocompletion for link attribute contents (#383)
