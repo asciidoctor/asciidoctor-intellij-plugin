@@ -30,17 +30,19 @@ public class AsciiDocPsiElementFactory {
 
   @NotNull
   public static AsciiDocListing createListing(@NotNull Project project,
-                                                  @NotNull String text) {
-    // append a "\n" so that the terminating element is recognized correctly (currently required in the lexer)
-    final AsciiDocFile file = createFile(project, text + "\n");
+                                              @NotNull String text) {
+    final AsciiDocFile file = createFile(project, text);
     AsciiDocListing listing = (AsciiDocListing) file.getFirstChild();
-    Objects.requireNonNull(listing);
+    Objects.requireNonNull(listing, "listing should have been found");
+    if (listing.getNextSibling() != null) {
+      throw new RuntimeException("unable to covert to one listing: " + text);
+    }
     return listing;
   }
 
   @NotNull
   public static AsciiDocPassthrough createPassthrough(@NotNull Project project,
-                                              @NotNull String text) {
+                                                      @NotNull String text) {
     // append a "\n" so that the terminating element is recognized correctly (currently required in the lexer)
     final AsciiDocFile file = createFile(project, text + "\n");
     AsciiDocPassthrough listing = (AsciiDocPassthrough) file.getFirstChild();

@@ -18,6 +18,10 @@ public class AsciiDocListingStyleInspectionTest extends AsciiDocQuickFixTestBase
     doTest(AsciiDocConvertMarkdownListing.NAME, true);
   }
 
+  public void testMarkdownListingWithTitle() {
+    doTest(AsciiDocConvertMarkdownListing.NAME, true);
+  }
+
   @Override
   protected String getBasePath() {
     return "inspections/listing";

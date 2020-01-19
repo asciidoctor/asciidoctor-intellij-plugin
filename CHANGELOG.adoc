@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.32 (work in progress)
+
+- updated Markdown listing inspection to handle titles (#387)
+
 === 0.30.31
 
 - highlighting for URLs and attributes in inline marco attributes (#383)

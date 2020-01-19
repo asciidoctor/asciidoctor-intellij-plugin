@@ -4,6 +4,8 @@ import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.lang.ASTNode;
+import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocBlock;
 import org.asciidoc.intellij.quickfix.AsciiDocConvertMarkdownListing;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +39,13 @@ public class AsciiDocListingStyleInspection extends AsciiDocInspectionBase {
     if (block.getType() != AsciiDocBlock.Type.LISTING) {
       return false;
     }
-    return block.getFirstChild().getText().startsWith(MARKDOWN_LISTING_BLOCK_DELIMITER) &&
-      block.getLastChild().getText().startsWith(MARKDOWN_LISTING_BLOCK_DELIMITER);
+    ASTNode node  = block.getNode().getFirstChildNode();
+    while (node != null && node.getElementType() != AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER) {
+      node = node.getTreeNext();
+    }
+    if (node == null) {
+      return false;
+    }
+    return node.getText().startsWith(MARKDOWN_LISTING_BLOCK_DELIMITER);
   }
 }
