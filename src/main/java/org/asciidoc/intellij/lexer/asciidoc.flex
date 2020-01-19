@@ -85,7 +85,14 @@ import java.util.Stack;
   }
 
   private boolean isNoDel() {
-    if(blockStack.size() > 0 && blockStack.peek().equals("nodel")) {
+    if(blockStack.size() > 0 && blockStack.peek().startsWith("nodel")) {
+      return true;
+    }
+    return false;
+  }
+
+  private boolean isNoDelVerse() {
+    if(blockStack.size() > 0 && blockStack.peek().startsWith("nodel-verse")) {
       return true;
     }
     return false;
@@ -422,7 +429,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           yypushback(yylength()); yybegin(STARTBLOCK);
         }
       }
-  {SPACE}* "\n"           { resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; } // blank lines within pre block don't have an effect
+  ^ {SPACE}* "\n"           { if (isNoDel()) { blockStack.pop(); } resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.EMPTY_LINE; } // blank lines within pre block don't have an effect
+  {SPACE}* "\n"           { if (isNoDel()) { blockStack.pop(); } resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; } // blank lines within pre block don't have an effect
   ^ {TITLE_START} / [^\. ] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE_TOKEN; }
 }
 
@@ -565,7 +573,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         } else if ("pass".equals(style)) {
           yypushback(yylength()); yybegin(PASSTHROUGH_NO_DELIMITER);
         } else {
-          blockStack.push("nodel");
+          blockStack.push("nodel-" + style);
           yypushback(yylength()); yybegin(SINGLELINE);
         }
         clearStyle();
@@ -595,6 +603,18 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ^ {ADMONITION} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ADMONITION; }
   /* a blank line, it separates blocks. Don't return YYINITIAL here, as writing on a blank line might change the meaning
   of the previous blocks combined (for example there is now an italic formatting spanning the two combined blocks) */
+  ^ {SPACE}* "\n"           { clearStyle();
+                         resetFormatting();
+                         if (blockStack.size() == 0) {
+                           yybegin(MULTILINE);
+                         } else if (isNoDel()) {
+                           blockStack.pop();
+                           yybegin(MULTILINE);
+                         } else {
+                           yybegin(DELIMITER);
+                         }
+                         return AsciiDocTokenTypes.EMPTY_LINE;
+                       }
   {SPACE}* "\n"           { clearStyle();
                          resetFormatting();
                          if (blockStack.size() == 0) {
@@ -647,7 +667,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <INSIDE_LINE, DESCRIPTION> {
-  "\n"                 { if (isNoDel()) {
+  "\n"                 { if (isNoDelVerse()) {
                            yybegin(SINGLELINE);
                          } else {
                            yybegin(DELIMITER);

@@ -44,6 +44,7 @@ public class AsciiDocBraceMatcher extends PairedBraceMatcherAdapter {
         type == AsciiDocTokenTypes.WHITE_SPACE ||
         type == AsciiDocTokenTypes.WHITE_SPACE_MONO ||
         type == AsciiDocTokenTypes.LINE_BREAK ||
+        type == AsciiDocTokenTypes.EMPTY_LINE ||
         type == AsciiDocTokenTypes.RPAREN ||
         type == AsciiDocTokenTypes.RBRACKET ||
         type == AsciiDocTokenTypes.GT;

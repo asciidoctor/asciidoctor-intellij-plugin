@@ -67,7 +67,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("= Abc\n\nabc\n== Def\ndef",
       "AsciiDoc:HEADING ('= Abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
         "AsciiDoc:TEXT ('abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:HEADING ('== Def')\n" +
@@ -90,7 +90,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("Abc\n===\n\ndef",
       "AsciiDoc:HEADING ('Abc\\n===')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
         "AsciiDoc:TEXT ('def')");
   }
 
@@ -100,7 +100,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:HEADER ('Header')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
         "AsciiDoc:TEXT ('def')");
   }
 
@@ -425,7 +425,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("Text\n\n:attribute1:\n:attribute2:",
       "AsciiDoc:TEXT ('Text')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
         "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
         "AsciiDoc:ATTRIBUTE_NAME ('attribute1')\n" +
         "AsciiDoc:ATTRIBUTE_NAME_END (':')\n" +
@@ -503,7 +503,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('**bold')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
         "AsciiDoc:BULLET ('**')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('world')");
@@ -1129,7 +1129,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('Test')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
         "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
@@ -1310,7 +1310,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LISTING_TEXT ('More')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
         "AsciiDoc:TEXT ('Text')");
   }
 
@@ -1322,7 +1322,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LISTING_TEXT ('Listing')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
         "AsciiDoc:TEXT ('Text')");
   }
 
@@ -1334,7 +1334,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:PASSTRHOUGH_CONTENT ('Pas**ss**ss')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
         "AsciiDoc:TEXT ('Text')");
   }
 
@@ -1381,7 +1381,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('Text')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
         "AsciiDoc:TITLE_TOKEN ('.Title')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
@@ -1411,7 +1411,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('V2')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
         "AsciiDoc:ATTRS_START ('[')\n" +
         "AsciiDoc:ATTR_NAME ('source')\n" +
         "AsciiDoc:ATTRS_END (']')\n" +
@@ -1551,7 +1551,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:MONO_START ('`')\n" +
         "AsciiDoc:MONO ('Mono`Text')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
         "AsciiDoc:TEXT ('Text')");
   }
 

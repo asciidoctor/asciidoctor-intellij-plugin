@@ -29,8 +29,13 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKREFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_BODY;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ID;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BULLET;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.CONTINUATION;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DESCRIPTION;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DOUBLE_QUOTE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.EMPTY_LINE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ENUMERATION;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_OLDSTYLE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_END;
@@ -104,15 +109,40 @@ public class AsciiDocParserImpl {
   }
 
   private int newLines;
+  private int emptyLines;
 
+  @SuppressWarnings("checkstyle:MethodLength")
   public void parse() {
     myBuilder.setDebugMode(ApplicationManager.getApplication().isUnitTestMode());
     myBuilder.setWhitespaceSkippedCallback((type, start, end) -> {
-      if (type == LINE_BREAK) {
+      if (type == EMPTY_LINE) {
+        endBlockNoDelimiter();
+        emptyLines++;
+      }
+      if (type == LINE_BREAK || type == EMPTY_LINE) {
         ++newLines;
       }
     });
+    boolean continuation = false;
     while (!myBuilder.eof()) {
+      if ((at(HEADING) || at(HEADING_OLDSTYLE))) {
+        endBlockNoDelimiter();
+        endEnumerationDelimiter();
+      }
+      if (emptyLines > 0 && !at(ENUMERATION) && !at(BULLET) && !at(DESCRIPTION) && !at(CONTINUATION)) {
+        endEnumerationDelimiter();
+      }
+      emptyLines = 0;
+
+      if (at(BLOCK_MACRO_ID) || at(BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER) || at(LISTING_BLOCK_DELIMITER) || at(PASSTRHOUGH_BLOCK_DELIMITER)) {
+        if (!continuation) {
+          endEnumerationDelimiter();
+          endBlockNoDelimiter();
+        } else {
+          continuation = false;
+        }
+      }
+
       if ((at(HEADING) || at(HEADING_OLDSTYLE)) && myBlockMarker.size() == 0) {
         int level = headingLevel(myBuilder.getTokenText());
         closeSections(level);
@@ -128,14 +158,7 @@ public class AsciiDocParserImpl {
       } else if (at(BLOCK_MACRO_ID)) {
         parseBlockMacro();
         continue;
-      } else if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
-        parseUrl();
-        continue;
-      } else if (at(INLINE_MACRO_ID)) {
-        parseInlineMacro();
-        continue;
-      } else if (at(BLOCK_DELIMITER)
-        || at(COMMENT_BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER)) {
+      } else if (at(BLOCK_DELIMITER) || at(COMMENT_BLOCK_DELIMITER)) {
         parseBlock();
         continue;
       } else if (at(LITERAL_BLOCK_DELIMITER)) {
@@ -152,6 +175,9 @@ public class AsciiDocParserImpl {
         continue;
       } else if (at(TITLE_TOKEN)) {
         parseTitle();
+        continue;
+      } else if (at(ATTRIBUTE_NAME_START)) {
+        parseAttributeDeclaration();
         continue;
       } else if (at(ATTRS_START)) {
         parseBlockAttributes();
@@ -171,13 +197,35 @@ public class AsciiDocParserImpl {
           }
         }
         continue;
+      } else if (at(CONTINUATION)) {
+        newLines = 0;
+        next();
+        if (!myBuilder.eof() && newLines > 2) {
+          // a continuation might have one blank line, but not two blank lines
+          endEnumerationDelimiter();
+          continuation = false;
+        } else {
+          continuation = true;
+        }
+        continue;
       }
+      continuation = false;
 
       if (myPreBlockMarker != null) {
-        startBlockNoDelimiter();
+        if (at(ENUMERATION) || at(BULLET) || at(DESCRIPTION)) {
+          startEnumerationDelimiter();
+        } else {
+          startBlockNoDelimiter();
+        }
       }
 
-      if (at(REFSTART)) {
+      dropPreBlock();
+
+      if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
+        parseUrl();
+      } else if (at(INLINE_MACRO_ID)) {
+        parseInlineMacro();
+      } else if (at(REFSTART)) {
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
         while (at(REF) || at(REFEND) || at(REFFILE) || at(SEPARATOR) || at(REFTEXT) || at(ATTRIBUTE_REF_START)) {
@@ -191,7 +239,6 @@ public class AsciiDocParserImpl {
           }
         }
         blockAttrsMarker.done(AsciiDocElementTypes.REF);
-        continue;
       } else if (at(LINKSTART)) {
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
@@ -206,22 +253,10 @@ public class AsciiDocParserImpl {
           }
         }
         blockAttrsMarker.done(AsciiDocElementTypes.LINK);
-        continue;
-      } else if (at(ATTRIBUTE_NAME_START)) {
-        parseAttributeDeclaration();
-        continue;
       } else if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();
-        continue;
-      }
-
-      dropPreBlock();
-
-      newLines = 0;
-      next();
-      // call eof to trigger skipWhitespace
-      if (!myBuilder.eof() && newLines > 1) {
-        endBlockNoDelimiter();
+      } else {
+        next();
       }
     }
 
@@ -284,8 +319,6 @@ public class AsciiDocParserImpl {
       && newLines == 0) {
       if (at(URL_LINK)) {
         parseUrl();
-      } else if (at(ATTR_NAME)) {
-        parseAttributeInBrackets();
       } else if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();
       } else {
@@ -467,6 +500,25 @@ public class AsciiDocParserImpl {
 
   private void endBlockNoDelimiter() {
     if (myBlockMarker.size() > 0 && myBlockMarker.peek().delimiter.equals("nodel")) {
+      dropPreBlock();
+      BlockMarker currentBlock = myBlockMarker.pop();
+      currentBlock.marker.done(AsciiDocElementTypes.BLOCK);
+    }
+  }
+
+  private void startEnumerationDelimiter() {
+    PsiBuilder.Marker myBlockStartMarker;
+    if (myPreBlockMarker != null) {
+      myBlockStartMarker = myPreBlockMarker;
+      myPreBlockMarker = null;
+    } else {
+      myBlockStartMarker = beginBlock();
+    }
+    myBlockMarker.push(new BlockMarker("enum", myBlockStartMarker));
+  }
+
+  private void endEnumerationDelimiter() {
+    if (myBlockMarker.size() > 0 && myBlockMarker.peek().delimiter.equals("enum")) {
       dropPreBlock();
       BlockMarker currentBlock = myBlockMarker.pop();
       currentBlock.marker.done(AsciiDocElementTypes.BLOCK);

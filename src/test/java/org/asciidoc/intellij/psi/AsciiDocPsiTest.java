@@ -7,9 +7,12 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.asciidoc.intellij.file.AsciiDocFileType;
+import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Tests for {@link org.asciidoc.intellij.parser.AsciiDocParserImpl}.
@@ -80,6 +83,21 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("image::foo.png", children[0].getText());
     assertEquals("\n", children[1].getText());
     assertEquals("[hi]", children[2].getText());
+  }
+
+  public void testEnumerationFollowedByText() {
+    PsiFile psiFile = configureByAsciiDoc("[square]\n* Hi\n\n* Ho\n* http://www.gmx.net\n\nText");
+    PsiElement[] children = psiFile.getChildren();
+    assertEquals(4, children.length);
+
+    assertEquals(AsciiDocElementTypes.BLOCK, children[0].getNode().getElementType());
+
+    assertEquals("\n", children[1].getText());
+
+    assertEquals("\n", children[2].getText());
+
+    assertEquals("Text", children[3].getText());
+    assertEquals(AsciiDocTokenTypes.TEXT, children[3].getNode().getElementType());
   }
 
   public void testBlockAttributes() {
@@ -317,6 +335,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
       getTestName(true) + "/build/generated-snippets/example/curl-request.adoc"
     );
     AsciiDocBlockMacro[] macros = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocBlockMacro.class);
+    Objects.requireNonNull(macros);
     assertSize(2, macros);
 
     PsiReference[] referencesOperation = macros[0].getReferences();
@@ -336,6 +355,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
       getTestName(true) + "/build/generated-snippets/example/curl-request.adoc"
     );
     AsciiDocBlockMacro[] macros = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocBlockMacro.class);
+    Objects.requireNonNull(macros);
     assertSize(2, macros);
 
     PsiReference[] referencesOperation = macros[0].getReferences();
@@ -355,6 +375,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
       getTestName(true) + "/target/generated-snippets/example/curl-request.adoc"
     );
     AsciiDocBlockMacro[] macros = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocBlockMacro.class);
+    Objects.requireNonNull(macros);
     assertSize(2, macros);
 
     PsiReference[] referencesOperation = macros[0].getReferences();

@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.32 (work in progress)
 
 - updated Markdown listing inspection to handle titles (#387)
+- tuning folding of custom markers and blocks without delimiters (#384)
 
 === 0.30.31
 

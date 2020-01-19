@@ -15,6 +15,7 @@ public interface AsciiDocTokenTypes {
   IElementType ADMONITION = new AsciiDocElementType("ADMONITION");
   IElementType CALLOUT = new AsciiDocElementType("CALLOUT");
   IElementType LINE_BREAK = new AsciiDocElementType("LINE_BREAK");
+  IElementType EMPTY_LINE = new AsciiDocElementType("EMPTY_LINE");
   IElementType HARD_BREAK = new AsciiDocElementType("HARD_BREAK");
   IElementType CONTINUATION = new AsciiDocElementType("CONTINUATION");
   IElementType ATTRIBUTE_CONTINUATION = new AsciiDocElementType("ATTRIBUTE_CONTINUATION");
