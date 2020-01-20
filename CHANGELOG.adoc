@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - updated Markdown listing inspection to handle titles (#387)
 - tuning folding of custom markers and blocks without delimiters (#384)
+- show warning in editor if a target file name used more than once by Asciidoctor Diagram (#388)
 
 === 0.30.31
 
