@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.33 (work in progress)
+
+- optimizing lexer for performance (#389)
+
 === 0.30.32 (preview, available from Github releases)
 
 - updated Markdown listing inspection to handle titles (#387)

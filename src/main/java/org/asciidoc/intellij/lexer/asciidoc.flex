@@ -246,8 +246,8 @@ ANCHOREND = "]"
 LINKSTART = "link:"
 XREFSTART = "xref:"
 LINKTEXT_START = "["
-INLINE_URL_NO_DELIMITER = (https?|file|ftp|irc): "//" [^\s\[\]<]*([^\s.,;\[\]<\)\'\"])
-INLINE_URL_WITH_DELIMITER = (https?|file|ftp|irc): "//" [^\s\[\]<]*([^\s\[\]\'\"])
+INLINE_URL_NO_DELIMITER = (https?|file|ftp|irc): "//" [^\n\s\[\]<]*([^\n\s.,;\[\]<\)\'\"])
+INLINE_URL_WITH_DELIMITER = (https?|file|ftp|irc): "//" [^\n\s\[\]<]*([^\n\s\[\]\'\"])
 INLINE_EMAIL_NO_DELIMITER = [[:letter:][:digit:]_](&amp;|[[:letter:][:digit:]_\-.%+])*@[[:letter:][:digit:]][[:letter:][:digit:]_\-.]*\.[a-zA-Z]{2,5}
 LINKEND = "]"
 ATTRIBUTE_NAME_START = ":"
@@ -395,7 +395,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <ATTRIBUTE_VAL, INSIDE_LINE, DESCRIPTION, LINKFILE, BLOCK_MACRO, LINKTEXT, REFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE> {
-  {ATTRIBUTE_REF_START} / ( {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} | [^}\n ]* {AUTOCOMPLETE} ) {
+  {ATTRIBUTE_REF_START} ( {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} | [^}\n ]* {AUTOCOMPLETE} ) {
+                         yypushback(yylength() - 1);
                          if (!isEscaped()) {
                            yypushstate(); yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
                          } else {
@@ -419,19 +420,19 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 // everything that will not render after a [source] as literal text
 // especially: titles, block attributes, block ID, etc.
 <PREBLOCK> {
-  ^ [ \t]+ / ({BULLET} {SPACE}+ {STRING} | {ENUMERATION} {SPACE}+ {STRING} | {DESCRIPTION} {SPACE}+ {STRING} | {DESCRIPTION} {SPACE}* "\n" )  {
+  ^ [ \t]+ ({BULLET} {SPACE}+ {STRING} | {ENUMERATION} {SPACE}+ {STRING} | {DESCRIPTION} {SPACE}+ {STRING} | {DESCRIPTION} {SPACE}* "\n" )  {
         yypushback(yylength()); yybegin(SINGLELINE);
       }
-  ^ [ \t]+ / [^ \t\n] {
+  ^ [ \t]+ [^ \t\n] {
         if (style == null) {
-          yypushback(yylength()); yybegin(LISTING_NO_DELIMITER);
+          yybegin(LISTING_NO_DELIMITER); return AsciiDocTokenTypes.LISTING_TEXT;
         } else {
           yypushback(yylength()); yybegin(STARTBLOCK);
         }
       }
   ^ {SPACE}* "\n"           { if (isNoDel()) { blockStack.pop(); } resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.EMPTY_LINE; } // blank lines within pre block don't have an effect
   {SPACE}* "\n"           { if (isNoDel()) { blockStack.pop(); } resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; } // blank lines within pre block don't have an effect
-  ^ {TITLE_START} / [^\. ] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE_TOKEN; }
+  ^ {TITLE_START} [^\. ] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE_TOKEN; }
 }
 
 <HEADER, PREBLOCK> {
@@ -474,11 +475,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <DELIMITER, PREBLOCK> {
   ^ {PAGEBREAK} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.PAGEBREAK; }
   ^ {HORIZONTALRULE} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.HORIZONTALRULE; }
-  {IFDEF_IFNDEF} / [^ \[\n] [^\[\n]* { yypushstate(); yybegin(IFDEF_IFNDEF); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
-  {BLOCK_MACRO_START} / [^ \[\n] [^\[\n]* { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  {IFDEF_IFNDEF} / [^ \[\n] { yypushstate(); yybegin(IFDEF_IFNDEF); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  {BLOCK_MACRO_START} / [^ \[\n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   // endif/ifeval allows the body to be empty, special case...
   ^ ("endif"|"ifeval") "::" / [^ \n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
-  {BLOCK_MACRO_START} / [^ \[\n]? [^\[\n]* {AUTOCOMPLETE} { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   // if it starts like a block attribute, but has characters afer the closing bracket, it's not
   {BLOCK_ATTRS_START} / [^\[\#] ([^\]\"\']* | (\" [^\"\n]* \") | (\' [^\"\n]* \') )* "]" [ \t]* [^\n] { yypushback(yylength()); yybegin(STARTBLOCK); }
   {BLOCK_ATTRS_START} / [^\[] { yybegin(MULTILINE); yypushstate(); clearStyle(); yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.ATTRS_START; }
