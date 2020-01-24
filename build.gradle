@@ -10,7 +10,7 @@ buildscript {
 
 plugins {
   id "org.jetbrains.intellij" version "0.4.8"
-  id "org.jetbrains.grammarkit" version "2018.2.2"
+  id "org.jetbrains.grammarkit" version "2018.3.1"
   id "checkstyle"
   id 'org.asciidoctor.jvm.convert' version '2.2.0'
   // once windows classpaths get too long, use this dependency to make them shorter again
@@ -129,11 +129,6 @@ sourceSets {
 }
 
 grammarKit {
-  // version of IntelliJ patched JFlex (see bintray link below), Default is 1.7.0-1
-  jflexRelease = '1.7.0-1'
-
-  // tag or short commit hash of Grammar-Kit to use (see link below). Default is 2017.1.6
-  grammarKitRelease = '6452fde524'
 }
 
 task generateAsciidocLexer(type: GenerateLexer) {

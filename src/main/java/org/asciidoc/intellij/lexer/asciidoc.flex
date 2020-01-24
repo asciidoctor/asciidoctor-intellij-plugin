@@ -15,6 +15,8 @@ import java.util.Stack;
 %eof}
 
 %{
+  private static final char[] NUMBERS = "1234567890".toCharArray();
+  private static final char[] COLONSLASH = ":/".toCharArray();
   private int blockDelimiterLength;
   private boolean singlebold = false;
   private boolean doublebold = false;
@@ -30,10 +32,10 @@ import java.util.Stack;
 
   private Stack<String> blockStack = new Stack<>();
 
-  private boolean isPrefixedBy(String prefix) {
+  private boolean isPrefixedBy(char[] prefix) {
     if(getTokenStart() > 0) {
       char c = zzBuffer.charAt(getTokenStart() -1);
-      for (char p : prefix.toCharArray()) {
+      for (char p : prefix) {
         if (c == p) {
           return true;
         }
@@ -283,7 +285,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 %state INLINE_URL_NO_DELIMITER
 %state INLINE_URL_IN_BRACKETS
-%state INLINE_URL_WITH_PREFIX
 %state INLINE_EMAIL_WITH_PREFIX
 
 %state LISTING_BLOCK
@@ -291,9 +292,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state LISTING_NO_DELIMITER
 
 %state COMMENT_BLOCK
-%state EXAMPLE_BLOCK
-%state SIDEBAR_BLOCK
-%state QUOTE_BLOCK
 %state LITERAL_BLOCK
 %state PASSTRHOUGH_BLOCK
 
@@ -315,21 +313,17 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state INLINE_MACRO
 %state INLINE_MACRO_URL
 %state INLINE_MACRO_ATTRS
-%state INLINE_ATTRS
 
 %state TITLE
 
 %state ATTRIBUTE_NAME
 %state ATTRIBUTE_VAL
-%state ATTRIBUTE_REF_START
 %state ATTRIBUTE_REF
 
-%state LINKSTART
 %state LINKFILE
 %state LINKURL
 %state LINKANCHOR
 %state LINKTEXT
-%state LINKEND
 
 %%
 
@@ -580,7 +574,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
       }
 }
 
-<SINGLELINE, LISTING_NO_DELIMITER, QUOTE_BLOCK, EXAMPLE_BLOCK, SIDEBAR_BLOCK> {
+<SINGLELINE, LISTING_NO_DELIMITER> {
   // this will only terminate any open blocks when they appear even in no-delimiter blocks
   ^ ({EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER}) $ {
                             String delimiter = yytext().toString().trim();
@@ -683,14 +677,14 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {END_OF_SENTENCE} / {SPACE}+ [^\p{Uppercase}\n]* [\p{Lowercase}] // standard text if followed by lower case character
                        { return textFormat(); }
   ({END_OF_SENTENCE} | (" "? ":")) / {SPACE}* \n // end of sentence at end of line
-                       { if (!doublemono && !singlemono && !isPrefixedBy("1234567890")) {
+                       { if (!doublemono && !singlemono && !isPrefixedBy(NUMBERS)) {
                            return AsciiDocTokenTypes.END_OF_SENTENCE;
                          } else {
                            return textFormat();
                          }
                        }
   {END_OF_SENTENCE} / {SPACE} // end of sentence within a line, needs to be unconstrained
-                       { if (!doublemono && !singlemono && isUnconstrainedEnd() && !isPrefixedBy("1234567890")) {
+                       { if (!doublemono && !singlemono && isUnconstrainedEnd() && !isPrefixedBy(NUMBERS)) {
                            return AsciiDocTokenTypes.END_OF_SENTENCE;
                          } else {
                            return textFormat();
@@ -866,7 +860,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            }
                          }
   {INLINE_URL_NO_DELIMITER} {
-        if (isEscaped() || isPrefixedBy(":/")) {
+        if (isEscaped() || isPrefixedBy(COLONSLASH)) {
           return textFormat();
         } else {
           yypushstate();
@@ -875,7 +869,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         }
   }
   {INLINE_EMAIL_NO_DELIMITER} {
-        if (isEscaped() || isPrefixedBy(":/")) {
+        if (isEscaped() || isPrefixedBy(COLONSLASH)) {
           return textFormat();
         } else {
           return AsciiDocTokenTypes.URL_EMAIL;
@@ -926,7 +920,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         }
       }
   {PASSTRHOUGH_INLINE} / {STRING}* {PASSTRHOUGH_INLINE} {
-                           yybegin(PASSTRHOUGH_INLINE); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
+                           yypushstate(); yybegin(PASSTRHOUGH_INLINE); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
                          }
   [^]                  { return textFormat(); }
 }
@@ -969,12 +963,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ">" $                { yypopstate(); return AsciiDocTokenTypes.URL_END; }
   ">" [^\s\[\]]* / ">" { return AsciiDocTokenTypes.URL_LINK; }
   ">"                  { return AsciiDocTokenTypes.URL_END; }
-  [\s\[\]]             { yypushback(yylength()); yypopstate(); }
-  [^]                  { return AsciiDocTokenTypes.URL_LINK; }
-}
-
-<INLINE_URL_WITH_PREFIX> {
-  "["                  { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
   [\s\[\]]             { yypushback(yylength()); yypopstate(); }
   [^]                  { return AsciiDocTokenTypes.URL_LINK; }
 }
@@ -1034,11 +1022,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { return AsciiDocTokenTypes.LINKTEXT; }
 }
 
-<ATTRIBUTE_REF_START, ATTRIBUTE_REF> {
-  {ATTRIBUTE_REF_END}  { yypopstate(); return AsciiDocTokenTypes.ATTRIBUTE_REF_END; }
-}
-
 <ATTRIBUTE_REF> {
+  {ATTRIBUTE_REF_END}  { yypopstate(); return AsciiDocTokenTypes.ATTRIBUTE_REF_END; }
   [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_REF; }
 }
 
@@ -1155,7 +1140,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <ATTRS_DOUBLE_QUOTE, ATTRS_SINGLE_QUOTE> {
   {INLINE_URL_WITH_DELIMITER} {
-        if (isEscaped() || isPrefixedBy(":/")) {
+        if (isEscaped() || isPrefixedBy(COLONSLASH)) {
           return textFormat();
         } else {
           return AsciiDocTokenTypes.URL_LINK;
@@ -1165,7 +1150,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <ATTRS_DOUBLE_QUOTE, ATTRS_SINGLE_QUOTE, ATTRS_NO_QUOTE> {
   {INLINE_URL_WITH_DELIMITER} {
-        if (isEscaped() || isPrefixedBy(":/")) {
+        if (isEscaped() || isPrefixedBy(COLONSLASH)) {
           return textFormat();
         } else {
           return AsciiDocTokenTypes.URL_LINK;
@@ -1278,7 +1263,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <PASSTRHOUGH_INLINE> {
-  {PASSTRHOUGH_INLINE} { yybegin(PREBLOCK); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END; }
+  {PASSTRHOUGH_INLINE} { yypopstate(); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END; }
   [^]                  { return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
 }
 
