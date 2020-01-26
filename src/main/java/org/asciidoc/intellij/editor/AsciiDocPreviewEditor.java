@@ -45,7 +45,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Alarm;
-import com.intellij.util.FileContentUtil;
+import com.intellij.util.FileContentUtilCore;
 import com.intellij.util.messages.MessageBusConnection;
 import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
@@ -347,18 +347,16 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   @Override
   public void selectNotify() {
     myHtmlPanelWrapper.repaint();
-    ApplicationManager.getApplication().invokeLater(() -> {
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        // project might be already closed (yes, this really happens when you work in multiple projects opened in separate windows)
-        if (!project.isDisposed()) {
-          currentContent = null; // force a refresh of the preview by resetting the current memorized content
-          reprocessAnnotations();
-          // save the content in all other editors as their content might be referenced in preview
-          ApplicationManager.getApplication().saveAll();
-          renderIfVisible();
-        }
-      });
-    }, ModalityState.NON_MODAL);
+    ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+      // project might be already closed (yes, this really happens when you work in multiple projects opened in separate windows)
+      if (!project.isDisposed()) {
+        currentContent = null; // force a refresh of the preview by resetting the current memorized content
+        reprocessAnnotations();
+        // save the content in all other editors as their content might be referenced in preview
+        ApplicationManager.getApplication().saveAll();
+        renderIfVisible();
+      }
+    }), ModalityState.NON_MODAL);
   }
 
   private void reprocessAnnotations() {
@@ -464,7 +462,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       // TODO - doesn't work reliably yet when switching back-and-forth
       VirtualFile file = FileDocumentManager.getInstance().getFile(document);
       if (file != null) {
-        FileContentUtil.reparseFiles(file);
+        FileContentUtilCore.reparseFiles(file);
       }
 
       final AsciiDocHtmlPanelProvider newPanelProvider = retrievePanelProvider(settings);

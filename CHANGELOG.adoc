@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.33 (work in progress)
 
 - optimizing lexer for performance (#389)
+- ensure binary compatibility with IntelliJ 2020.EAP
 
 === 0.30.32 (preview, available from Github releases)
 
