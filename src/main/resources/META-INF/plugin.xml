@@ -163,7 +163,7 @@
               implementationClass="org.asciidoc.intellij.file.AsciiDocFileType" fieldName="INSTANCE"/>
     <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocSplitEditorProvider"/>
     <liveTemplateContext implementation="org.asciidoc.intellij.template.AsciiDocTemplateContextType$File"/>
-    <defaultLiveTemplatesProvider implementation="org.asciidoc.intellij.template.AsciiDocTemplatesProvider"/>
+    <defaultLiveTemplates file="liveTemplates/AsciiDocLiveTemplates.xml" />
     <lang.ast.factory language="AsciiDoc" implementationClass="org.asciidoc.intellij.psi.AsciiDocASTFactory"/>
     <lang.parserDefinition language="AsciiDoc"
                            implementationClass="org.asciidoc.intellij.parser.AsciiDocParserDefinition"/>

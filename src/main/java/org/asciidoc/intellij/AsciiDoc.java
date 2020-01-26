@@ -15,6 +15,8 @@
  */
 package org.asciidoc.intellij;
 
+import com.intellij.ide.plugins.DynamicPluginListener;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -25,8 +27,10 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.messages.MessageBusConnection;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
@@ -126,6 +130,20 @@ public class AsciiDoc {
 
   static {
     SystemOutputHijacker.install();
+    MessageBusConnection busConnection = ProjectManager.getInstance().getDefaultProject().getMessageBus().connect();
+    busConnection.subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
+      @Override
+      public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
+        if (pluginDescriptor.getPluginId().getIdString().equals("org.asciidoctor.intellij.asciidoc")) {
+          LOG.info("shutting down Asciidoctor instances");
+          synchronized (AsciiDoc.class) {
+            INSTANCES.forEach((key, value) -> value.close());
+            INSTANCES.clear();
+            SystemOutputHijacker.uninstall();
+          }
+        }
+      }
+    });
   }
 
   /**
