@@ -71,6 +71,9 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_START;
  * @author yole
  */
 public class AsciiDocParserImpl {
+  private static final com.intellij.openapi.diagnostic.Logger LOG =
+    com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDocParserImpl.class);
+
   private static class SectionMarker {
     @SuppressWarnings("checkstyle:visibilitymodifier")
     final int level;
@@ -114,6 +117,12 @@ public class AsciiDocParserImpl {
   @SuppressWarnings("checkstyle:MethodLength")
   public void parse() {
     myBuilder.setDebugMode(ApplicationManager.getApplication().isUnitTestMode());
+    if (LOG.isDebugEnabled()) {
+      myBuilder.setDebugMode(true);
+      if (LOG.isTraceEnabled()) {
+        LOG.trace("text to be parsed:\n" + myBuilder.getOriginalText());
+      }
+    }
     myBuilder.setWhitespaceSkippedCallback((type, start, end) -> {
       if (type == EMPTY_LINE) {
         endBlockNoDelimiter();
