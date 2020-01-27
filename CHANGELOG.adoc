@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.33 (work in progress)
+=== 0.30.33 (preview, available from Github releases)
 
 - optimizing lexer for performance (#389)
 - ensure binary compatibility with IntelliJ 2020.EAP
