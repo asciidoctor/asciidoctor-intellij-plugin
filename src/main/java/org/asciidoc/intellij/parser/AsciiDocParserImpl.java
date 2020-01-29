@@ -125,7 +125,6 @@ public class AsciiDocParserImpl {
     }
     myBuilder.setWhitespaceSkippedCallback((type, start, end) -> {
       if (type == EMPTY_LINE) {
-        endBlockNoDelimiter();
         emptyLines++;
       }
       if (type == LINE_BREAK || type == EMPTY_LINE) {
@@ -134,8 +133,10 @@ public class AsciiDocParserImpl {
     });
     boolean continuation = false;
     while (!myBuilder.eof()) {
-      if ((at(HEADING) || at(HEADING_OLDSTYLE))) {
+      if (emptyLines > 0) {
         endBlockNoDelimiter();
+      }
+      if ((at(HEADING) || at(HEADING_OLDSTYLE))) {
         endEnumerationDelimiter();
       }
       if (emptyLines > 0 && !at(ENUMERATION) && !at(BULLET) && !at(DESCRIPTION) && !at(CONTINUATION)) {

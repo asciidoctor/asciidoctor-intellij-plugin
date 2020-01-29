@@ -236,6 +236,12 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertNotNull(link.getReference());
   }
 
+  public void testUndelimitedBlockEndsAtBlankLink() {
+    PsiFile psiFile = configureByAsciiDoc("[example]\nhttp://www.gmx.net\n\nTest");
+    AsciiDocBlock block = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlock.class);
+    assertNotNull(block);
+  }
+
   public void testReferenceForAttribute() {
     // given...
     PsiFile psiFile = configureByAsciiDoc(":myattr:\n{myattr}");

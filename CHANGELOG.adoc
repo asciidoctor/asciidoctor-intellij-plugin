@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.34 (preview, available from GitHub releases)
+
+- preventing unbalanced tree error when parsing a block without a delimiter (#394)
+
 === 0.30.33 (preview, available from GitHub releases)
 
 - optimizing lexer for performance (#389)
