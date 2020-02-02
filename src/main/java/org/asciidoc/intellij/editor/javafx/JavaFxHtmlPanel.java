@@ -573,6 +573,15 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         }
       }
     }
+    // a user might have specified multiple different imagesdir within the document, strip prefixes one-by-one and see if we find the image
+    String shortenedFilename = filename;
+    while (shortenedFilename.indexOf('/') != -1) {
+      shortenedFilename = shortenedFilename.substring(shortenedFilename.indexOf('/') + 1);
+      file = imagesPath.resolve(shortenedFilename);
+      if (Files.exists(file)) {
+        return file.toFile().toString();
+      }
+    }
     return null;
   }
 
