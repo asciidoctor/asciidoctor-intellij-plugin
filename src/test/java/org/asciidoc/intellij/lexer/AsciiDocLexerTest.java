@@ -63,6 +63,19 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testIncludeWithTags() {
+    doTest("include::file.adoc[tags=tag1;tag2]",
+      "AsciiDoc:BLOCK_MACRO_ID ('include::')\n" +
+        "AsciiDoc:BLOCK_MACRO_BODY ('file.adoc')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('tags')\n" +
+        "AsciiDoc:ASSIGNMENT ('=')\n" +
+        "AsciiDoc:ATTR_VALUE ('tag1')\n" +
+        "AsciiDoc:ATTR_LIST_SEP (';')\n" +
+        "AsciiDoc:ATTR_VALUE ('tag2')\n" +
+        "AsciiDoc:ATTRS_END (']')");
+  }
+
   public void testHeading() {
     doTest("= Abc\n\nabc\n== Def\ndef",
       "AsciiDoc:HEADING ('= Abc')\n" +

@@ -8,6 +8,7 @@ import com.intellij.psi.PsiNamedElement;
 import org.asciidoc.intellij.parser.AsciiDocWordsScanner;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
 import org.asciidoc.intellij.psi.AsciiDocBlockId;
+import org.asciidoc.intellij.psi.AsciiDocIncludeTagInDocument;
 import org.jetbrains.annotations.NotNull;
 
 public class AsciiDocFindUsagesProvider implements FindUsagesProvider {
@@ -29,6 +30,8 @@ public class AsciiDocFindUsagesProvider implements FindUsagesProvider {
       return "AsciiDoc ID";
     } else if (element instanceof AsciiDocAttributeDeclarationName) {
       return "AsciiDoc Attribute Name";
+    } else if (element instanceof AsciiDocIncludeTagInDocument) {
+      return "AsciiDoc Include Tag";
     } else {
       return "";
     }

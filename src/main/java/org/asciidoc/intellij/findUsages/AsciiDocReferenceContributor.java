@@ -3,6 +3,7 @@ package org.asciidoc.intellij.findUsages;
 import com.intellij.openapi.paths.WebReference;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.PsiElementPattern;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceContributor;
@@ -16,6 +17,9 @@ import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationReference;
 import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
+import org.asciidoc.intellij.psi.AsciiDocIncludeTagInDocument;
+import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInComment;
+import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInDocument;
 import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocRef;
 import org.asciidoc.intellij.psi.AsciiDocReference;
@@ -120,6 +124,34 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
           return references.toArray(new PsiReference[0]);
         }
       });
+
+    final PsiElementPattern.Capture<PsiComment> tagInComment =
+      psiElement(PsiComment.class);
+
+    registrar.registerReferenceProvider(tagInComment,
+      new PsiReferenceProvider() {
+        @NotNull
+        @Override
+        public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
+                                                     @NotNull ProcessingContext context) {
+          List<PsiReference> references = findTagInComment((PsiComment) element);
+          return references.toArray(new PsiReference[0]);
+        }
+      });
+
+    final PsiElementPattern.Capture<AsciiDocIncludeTagInDocument> tagInInclude =
+      psiElement(AsciiDocIncludeTagInDocument.class).inFile(psiFile(AsciiDocFile.class));
+
+    registrar.registerReferenceProvider(tagInInclude,
+      new PsiReferenceProvider() {
+        @NotNull
+        @Override
+        public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
+                                                     @NotNull ProcessingContext context) {
+          List<PsiReference> references = findTagInDocument((AsciiDocIncludeTagInDocument) element);
+          return references.toArray(new PsiReference[0]);
+        }
+      });
   }
 
   private List<PsiReference> findFileReferences(PsiElement element) {
@@ -197,6 +229,33 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
     } else {
       return Collections.emptyList();
     }
+  }
+
+  private static final Pattern TAG_PATTERN = Pattern.compile("(tag|end)::([a-zA-Z0-9_-]*)\\[]");
+
+  private List<PsiReference> findTagInComment(PsiComment element) {
+    String text = element.getText();
+    Matcher matcher = TAG_PATTERN.matcher(text);
+    if (matcher.find()) {
+      return Collections.singletonList(new AsciiDocIncludeTagReferenceInComment(
+        element,
+        TextRange.create(matcher.start() + 5, matcher.start() + 5 + matcher.group(2).length()),
+        matcher.group(1))
+      );
+    } else {
+      return Collections.emptyList();
+    }
+  }
+
+  private List<PsiReference> findTagInDocument(AsciiDocIncludeTagInDocument element) {
+    PsiElement child = element.getFirstChild();
+    if (child == null) {
+      return Collections.emptyList();
+    }
+    return Collections.singletonList(new AsciiDocIncludeTagReferenceInDocument(
+      element,
+      TextRange.from(0, element.getTextLength()))
+    );
   }
 
   private Pattern urlInAttributeVal = Pattern.compile("(https?|file|ftp|irc)://[^\\s\\[\\]<]*([^\\s\\[\\]])");

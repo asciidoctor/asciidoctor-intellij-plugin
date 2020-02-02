@@ -25,6 +25,7 @@ import java.util.Stack;
   private boolean singlemono = false;
   private boolean doublemono = false;
   private boolean typographicquote = false;
+  private boolean isTags = false;
   private String style = null;
   private int headerLines = 0;
 
@@ -1089,7 +1090,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         }
 }
 
-
 <BLOCK_MACRO,IFDEF_IFNDEF> {
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
 }
@@ -1112,8 +1112,12 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <BLOCK_MACRO_ATTRS, BLOCK_ATTRS> {
-  "[" [^\]\n]* "]"     { return AsciiDocTokenTypes.ATTR_NAME; }
-  [^]                  { return AsciiDocTokenTypes.ATTR_NAME; }
+  "tags" / [ ]* "=" {
+          isTags = true;
+          return AsciiDocTokenTypes.ATTR_NAME;
+        }
+  "[" [^\]\n]* "]"     { isTags = false; return AsciiDocTokenTypes.ATTR_NAME; }
+  [^]                  { isTags = false; return AsciiDocTokenTypes.ATTR_NAME; }
 }
 
 <ATTRS_DOUBLE_QUOTE_START> {
@@ -1136,6 +1140,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <ATTRS_NO_QUOTE> {
   [,\]] { yypushback(yylength()); yypopstate(); }
+  ";" { if (isTags) { return AsciiDocTokenTypes.ATTR_LIST_SEP; } else { return AsciiDocTokenTypes.ATTR_VALUE; } }
 }
 
 <ATTRS_DOUBLE_QUOTE, ATTRS_SINGLE_QUOTE> {

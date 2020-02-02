@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.36 (work in progress)
 
 - show editor notification to user to enable soft wrap in IDE settings when toggling soft wrap in the editor toolbar multiple times (#395)
+- support tags for include for rename and go-to-declaration (#322)
 
 === 0.30.35 (preview, available from GitHub releases)
 

@@ -20,6 +20,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_UNSET;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_VAL;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRS_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRS_START;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTR_LIST_SEP;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTR_NAME;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTR_VALUE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKID;
@@ -279,13 +280,13 @@ public class AsciiDocParserImpl {
     markPreBlock();
     PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
     next();
-    while (at(ATTR_NAME) || at(ATTR_VALUE) || at(ATTRS_END) || at(SEPARATOR) || at(ATTRIBUTE_REF_START)
+    while (at(ATTR_NAME) || at(ATTR_VALUE) || at(ATTRS_END) || at(SEPARATOR) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP)
       || at(SINGLE_QUOTE) || at(DOUBLE_QUOTE) || at(ASSIGNMENT) || at(URL_LINK)) {
       if (at(ATTRS_END)) {
         next();
         break;
       } else if (at(ATTR_NAME)) {
-        parseAttributeInBrackets();
+        parseAttributeInBrackets(null);
       } else if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();
       } else if (at(URL_LINK)) {
@@ -300,9 +301,10 @@ public class AsciiDocParserImpl {
   private void parseInlineMacro() {
     newLines = 0;
     PsiBuilder.Marker inlineMacroMarker = myBuilder.mark();
+    String macroId = myBuilder.getTokenText();
     next();
     while ((at(INLINE_MACRO_BODY) || at(ATTR_NAME) || at(ASSIGNMENT) || at(URL_LINK) || at(ATTR_VALUE) || at(SEPARATOR) || at(INLINE_ATTRS_START) || at(INLINE_ATTRS_END)
-      || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE) || at(ATTRIBUTE_REF_START))
+      || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP))
       && newLines == 0) {
       if (at(INLINE_ATTRS_END)) {
         next();
@@ -310,7 +312,7 @@ public class AsciiDocParserImpl {
       } else if (at(URL_LINK)) {
         parseUrl();
       } else if (at(ATTR_NAME)) {
-        parseAttributeInBrackets();
+        parseAttributeInBrackets(macroId);
       } else if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();
       } else {
@@ -320,17 +322,24 @@ public class AsciiDocParserImpl {
     inlineMacroMarker.done(AsciiDocElementTypes.INLINE_MACRO);
   }
 
-  private void parseAttributeInBrackets() {
+  private void parseAttributeInBrackets(String macroId) {
     newLines = 0;
     PsiBuilder.Marker attributeInBracketMarker = myBuilder.mark();
-    next();
+    String name = null;
     while ((at(ATTR_NAME) || at(ASSIGNMENT) || at(URL_LINK) || at(ATTR_VALUE)
-      || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE) || at(ATTRIBUTE_REF_START))
+      || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP))
       && newLines == 0) {
       if (at(URL_LINK)) {
         parseUrl();
       } else if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();
+      } else if (at(ATTR_NAME)) {
+        name = myBuilder.getTokenText();
+        next();
+      } else if (at(ATTR_VALUE) && ("tags".equals(name) || "tag".equals(name)) && "include::".equals(macroId)) {
+        PsiBuilder.Marker tag = myBuilder.mark();
+        next();
+        tag.done(AsciiDocElementTypes.INCLUDE_TAG);
       } else {
         next();
       }
@@ -394,6 +403,7 @@ public class AsciiDocParserImpl {
     markPreBlock();
     PsiBuilder.Marker myBlock = myPreBlockMarker;
     myPreBlockMarker = null;
+    String macroId = myBuilder.getTokenText();
     next();
     while (at(ATTRIBUTE_REF) || at(SEPARATOR)) {
       if (at(ATTRIBUTE_REF)) {
@@ -403,14 +413,14 @@ public class AsciiDocParserImpl {
       next();
     }
     while ((at(BLOCK_MACRO_BODY) || at(ATTRIBUTE_REF_START) || at(ATTR_NAME) || at(ATTR_VALUE) || at(SEPARATOR) || at(ATTRS_START) || at(ATTRS_END)
-      || at(ASSIGNMENT) || at(SINGLE_QUOTE) || at(DOUBLE_QUOTE) || at(ATTRIBUTE_REF) || at(BLOCK_MACRO_ID)
+      || at(ASSIGNMENT) || at(SINGLE_QUOTE) || at(DOUBLE_QUOTE) || at(ATTRIBUTE_REF) || at(BLOCK_MACRO_ID) || at(ATTR_LIST_SEP)
       || at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX) || at(INLINE_MACRO_ID) || at(ATTRIBUTE_NAME_START))
       && newLines == 0) {
       if (at(ATTRS_END)) {
         next();
         break;
       } else if (at(ATTR_NAME)) {
-        parseAttributeInBrackets();
+        parseAttributeInBrackets(macroId);
       } else if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
         parseUrl();
       } else if (at(ATTRIBUTE_REF_START)) {

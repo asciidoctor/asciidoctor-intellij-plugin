@@ -11,6 +11,7 @@ import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -302,6 +303,15 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     AsciiDocFile resolved = (AsciiDocFile) macro.getReferences()[0].resolve();
     assertNotNull("macro should resolve", resolved);
     assertEquals("macro should resolve to file 'aaa.adoc'", "aaa.adoc", resolved.getName());
+  }
+
+  public void testIncludeWithTag() {
+    // given...
+    PsiFile psiFile = configureByAsciiDoc("include::aaa.adoc[tags=hi]");
+
+    // then...
+    Collection<AsciiDocIncludeTagInDocument> includeTags = PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocIncludeTagInDocument.class);
+    assertEquals("macro should have one include tag", 1, includeTags.size());
   }
 
   public void testAttributeInBlockMacroInListing() {

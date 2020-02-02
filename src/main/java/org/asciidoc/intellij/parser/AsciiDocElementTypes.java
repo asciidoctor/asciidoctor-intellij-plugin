@@ -23,6 +23,7 @@ public interface AsciiDocElementTypes {
   IElementType LISTING = new AsciiDocElementType("LISTING");
   IElementType PASSTHROUGH = new AsciiDocElementType("PASSTHROUGH");
   IElementType LINK = new AsciiDocElementType("LINK");
+  IElementType INCLUDE_TAG = new AsciiDocElementType("INCLUDE_TAG");
   IElementType ATTRIBUTE_REF = new AsciiDocElementType("ATTRIBUTE_REF");
   IElementType ATTRIBUTE_DECLARATION_NAME = new AsciiDocElementType("ATTRIBUTE_DECLARATION_NAME");
   IElementType URL = new AsciiDocElementType("URL");
