@@ -13,7 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.30.35 (preview, available from GitHub releases)
 
-- support multiple definitions of imagesdir in document for the preview (#395)
+- support multiple definitions of imagesdir in document for the preview (#316)
 
 === 0.30.34 (preview, available from GitHub releases)
 
