@@ -1,30 +1,24 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.actions.AbstractToggleUseSoftWrapsAction;
-import com.intellij.openapi.editor.impl.softwrap.SoftWrapAppliancePlaces;
 import com.intellij.psi.PsiFile;
 import org.asciidoc.intellij.actions.AsciiDocActionUtil;
-import org.asciidoc.intellij.editor.notification.EnableSoftWrapNotificationProvider;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.actions.AbstractToggleUseSoftWrapsAction;
+import com.intellij.openapi.editor.impl.softwrap.SoftWrapAppliancePlaces;
+
+
 
 public class ToggleSoftWrapsAction extends AbstractToggleUseSoftWrapsAction {
-
   public ToggleSoftWrapsAction() {
     super(SoftWrapAppliancePlaces.MAIN_EDITOR, false);
     copyFrom(ActionManager.getInstance().getAction(IdeActions.ACTION_EDITOR_USE_SOFT_WRAPS));
-  }
-
-  @Override
-  public void setSelected(@NotNull AnActionEvent e, boolean state) {
-    EnableSoftWrapNotificationProvider.toggle(state);
-    super.setSelected(e, state);
   }
 
   @Override
@@ -38,11 +32,6 @@ public class ToggleSoftWrapsAction extends AbstractToggleUseSoftWrapsAction {
           break;
         }
       }
-    }
-    Editor editor = getEditor(event);
-    if (editor != null) {
-      // use Toggleable.setSelected(presentation, state); from 2019.3 onwards
-      event.getPresentation().putClientProperty("selected", editor.getSettings().isUseSoftWraps());
     }
     event.getPresentation().setEnabledAndVisible(enabled);
   }

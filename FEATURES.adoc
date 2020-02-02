@@ -97,13 +97,6 @@ The search all view kbd:[Shift]kbd:[Shift] shows section titles and IDs of block
 The breadcrumbs view (bottom of the editor) shows the hierarchy leading to the current sections and blocks.
 It contains the same elements like in the structure view for the cursor position.
 
-AsciiDoc recommends the https://asciidoctor.org/docs/asciidoc-recommended-practices/#one-sentence-per-line[one-sentence-per-line] style.
-To avoid scrolling horizontally, the user should enable soft-wrap in the IDE. Go to menu:Settings[Editor > General], scroll to menu:Soft Wrap[], add the AsciiDoc file extension (if not already pre-populated) and activate the check box "`Soft-wrap files`".
-
-// EnableSoftWrapNotificationProvider
-There is also the option to enable soft-wrap for a single file in the editor toolbar.
-If the user enables soft wrap per file multiple times, an editor notification appears and suggests enabling soft wrap in the IDE settings.
-
 For `include::[]` and `image::[]` block macros the keys kbd:[Ctrl+Click] and kbd:[Ctrl+B] navigate to the referenced file.
 
 For references (like `\<<id>>`) the keys kbd:[Ctrl+Click] and kbd:[Ctrl+B] navigate to the reference (like `\[[id]]`).
