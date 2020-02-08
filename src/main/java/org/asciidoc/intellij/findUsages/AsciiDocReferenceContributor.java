@@ -2,8 +2,9 @@ package org.asciidoc.intellij.findUsages;
 
 import com.intellij.openapi.paths.WebReference;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
-import com.intellij.psi.PsiComment;
+import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceContributor;
@@ -125,16 +126,16 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
         }
       });
 
-    final PsiElementPattern.Capture<PsiComment> tagInComment =
-      psiElement(PsiComment.class);
+    final PsiElementPattern.Capture<PsiElement> tagInPlaintext =
+      PlatformPatterns.psiElement().withText(StandardPatterns.string().matches("(?s).*" + TAG_PATTERN_STR + ".*"));
 
-    registrar.registerReferenceProvider(tagInComment,
+    registrar.registerReferenceProvider(tagInPlaintext,
       new PsiReferenceProvider() {
         @NotNull
         @Override
         public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
                                                      @NotNull ProcessingContext context) {
-          List<PsiReference> references = findTagInComment((PsiComment) element);
+          List<PsiReference> references = findTagInElement(element);
           return references.toArray(new PsiReference[0]);
         }
       });
@@ -182,13 +183,13 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
         }
         matcher = AsciiDocUtil.ANTORA_FAMILY_PATTERN.matcher(file.substring(start));
         if (matcher.find()) {
-            i += matcher.end();
-            references.add(
-              new AsciiDocFileReference(element, macroName, file.substring(0, start),
-                TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i - 1),
-                true, true, 1)
-            );
-            start = i;
+          i += matcher.end();
+          references.add(
+            new AsciiDocFileReference(element, macroName, file.substring(0, start),
+              TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i - 1),
+              true, true, 1)
+          );
+          start = i;
         }
       }
       for (; i < file.length(); ++i) {
@@ -231,19 +232,27 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
     }
   }
 
-  private static final Pattern TAG_PATTERN = Pattern.compile("(tag|end)::([a-zA-Z0-9_-]*)\\[]");
+  public static final String TAG_PATTERN_STR = "\\b(tag|end)::([a-zA-Z0-9_-]*)\\[](?=$|[ \\r])";
+  private static final Pattern TAG_PATTERN = Pattern.compile(TAG_PATTERN_STR);
 
-  private List<PsiReference> findTagInComment(PsiComment element) {
+  private List<PsiReference> findTagInElement(PsiElement element) {
     String text = element.getText();
     Matcher matcher = TAG_PATTERN.matcher(text);
-    if (matcher.find()) {
-      return Collections.singletonList(new AsciiDocIncludeTagReferenceInComment(
+    List<PsiReference> result = null;
+    while (matcher.find()) {
+      if (result == null) {
+        result = new ArrayList<>();
+      }
+      result.add(new AsciiDocIncludeTagReferenceInComment(
         element,
-        TextRange.create(matcher.start() + 5, matcher.start() + 5 + matcher.group(2).length()),
+        TextRange.create(matcher.start(2), matcher.end(2)),
         matcher.group(1))
       );
-    } else {
+    }
+    if (result == null) {
       return Collections.emptyList();
+    } else {
+      return result;
     }
   }
 

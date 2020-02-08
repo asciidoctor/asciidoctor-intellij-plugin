@@ -1,7 +1,6 @@
 package org.asciidoc.intellij.psi;
 
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReference;
@@ -13,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class AsciiDocIncludeTagReferenceInDocument extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
@@ -37,18 +35,19 @@ public class AsciiDocIncludeTagReferenceInDocument extends PsiReferenceBase<PsiE
           if (references[i] instanceof AsciiDocFileReference) {
             PsiElement resolve = references[i].resolve();
             if (resolve != null) {
-              Collection<PsiComment> psiComments = PsiTreeUtil.findChildrenOfType(resolve, PsiComment.class);
-              for (PsiComment psiComment : psiComments) {
-                PsiReference[] commentReferences = psiComment.getReferences();
-                for (PsiReference commentReference : commentReferences) {
-                  if (commentReference instanceof AsciiDocIncludeTagReferenceInComment) {
-                    AsciiDocIncludeTagReferenceInComment reference = (AsciiDocIncludeTagReferenceInComment) commentReference;
-                    if (reference.getType().equals("tag") && reference.getKey().equals(key)) {
-                      results.add(new PsiElementResolveResult(new AsciiDocTagDeclaration(reference)));
+              PsiTreeUtil.processElements(resolve.getContainingFile(), element -> {
+                for (PsiReference reference : element.getReferences()) {
+                  if (reference instanceof AsciiDocIncludeTagReferenceInComment) {
+                    AsciiDocIncludeTagReferenceInComment tagReference = (AsciiDocIncludeTagReferenceInComment) reference;
+                    if (tagReference.getType().equals("tag") && tagReference.getKey().equals(key)) {
+                      results.add(new PsiElementResolveResult(new AsciiDocTagDeclaration(tagReference)));
+                      return false;
                     }
                   }
                 }
-              }
+                return true;
+              });
+              return results.toArray(new ResolveResult[0]);
             }
             // only the last file reference is the one with the file
             // any preceding will be a directory that could contain many children with comments

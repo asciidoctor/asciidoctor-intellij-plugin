@@ -9,7 +9,6 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.OffsetKey;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
-import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -23,7 +22,6 @@ import org.asciidoc.intellij.psi.AsciiDocIncludeTagInDocument;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInComment;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -106,21 +104,20 @@ public class AsciiDocCompletionContributor extends CompletionContributor {
                 if (references[i] instanceof AsciiDocFileReference) {
                   PsiElement resolve = references[i].resolve();
                   if (resolve != null) {
-                    Collection<PsiComment> psiComments = PsiTreeUtil.findChildrenOfType(resolve, PsiComment.class);
-                    for (PsiComment psiComment : psiComments) {
-                      PsiReference[] commentReferences = psiComment.getReferences();
-                      for (PsiReference commentReference : commentReferences) {
-                        if (commentReference instanceof AsciiDocIncludeTagReferenceInComment) {
-                          AsciiDocIncludeTagReferenceInComment reference = (AsciiDocIncludeTagReferenceInComment) commentReference;
-                          if (!ids.contains(reference.getValue())) {
-                            resultSet.addElement(LookupElementBuilder.create(reference.getValue())
-                              .withPresentableText(reference.getValue())
+                    PsiTreeUtil.processElements(resolve.getContainingFile(), element -> {
+                      for (PsiReference reference : element.getReferences()) {
+                        if (reference instanceof AsciiDocIncludeTagReferenceInComment) {
+                          AsciiDocIncludeTagReferenceInComment tagReference = (AsciiDocIncludeTagReferenceInComment) reference;
+                          if (!ids.contains(tagReference.getValue())) {
+                            resultSet.addElement(LookupElementBuilder.create(tagReference.getValue())
+                              .withPresentableText(tagReference.getValue())
                             );
-                            ids.add(reference.getValue());
+                            ids.add(tagReference.getValue());
                           }
                         }
                       }
-                    }
+                      return true;
+                    });
                   }
                   // only the last file reference is the one with the file
                   // any preceding will be a directory that could contain many children with comments

@@ -3,7 +3,6 @@ package org.asciidoc.intellij.psi;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReference;
@@ -15,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class AsciiDocIncludeTagReferenceInComment extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
@@ -32,18 +30,19 @@ public class AsciiDocIncludeTagReferenceInComment extends PsiReferenceBase<PsiEl
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
     List<ResolveResult> results = new ArrayList<>();
-    Collection<PsiComment> psiComments = PsiTreeUtil.findChildrenOfType(myElement.getContainingFile(), PsiComment.class);
-    for (PsiComment psiComment : psiComments) {
-      PsiReference[] commentReferences = psiComment.getReferences();
-      for (PsiReference commentReference : commentReferences) {
-        if (commentReference instanceof AsciiDocIncludeTagReferenceInComment) {
-          AsciiDocIncludeTagReferenceInComment reference = (AsciiDocIncludeTagReferenceInComment) commentReference;
-          if (reference.getType().equals("tag") && reference.key.equals(key)) {
-            results.add(new PsiElementResolveResult(new AsciiDocTagDeclaration(reference)));
+    PsiTreeUtil.processElements(myElement.getContainingFile(), element -> {
+      for (PsiReference reference : element.getReferences()) {
+        if (reference instanceof AsciiDocIncludeTagReferenceInComment) {
+          AsciiDocIncludeTagReferenceInComment tagReference = (AsciiDocIncludeTagReferenceInComment) reference;
+          if (tagReference.getType().equals("tag") && tagReference.key.equals(key)) {
+            // will result to the first tag with the given name in the file
+            results.add(new PsiElementResolveResult(new AsciiDocTagDeclaration(tagReference)));
+            break;
           }
         }
       }
-    }
+      return true;
+    });
     return results.toArray(new ResolveResult[0]);
   }
 
@@ -58,18 +57,17 @@ public class AsciiDocIncludeTagReferenceInComment extends PsiReferenceBase<PsiEl
   @Override
   public Object[] getVariants() {
     List<LookupElement> variants = new ArrayList<>();
-    Collection<PsiComment> psiComments = PsiTreeUtil.findChildrenOfType(myElement.getContainingFile(), PsiComment.class);
-    for (PsiComment psiComment : psiComments) {
-      PsiReference[] commentReferences = psiComment.getReferences();
-      for (PsiReference commentReference : commentReferences) {
-        if (commentReference instanceof AsciiDocIncludeTagReferenceInComment) {
-          AsciiDocIncludeTagReferenceInComment reference = (AsciiDocIncludeTagReferenceInComment) commentReference;
-          if (reference.getType().equals("tag")) {
-            variants.add(LookupElementBuilder.create(reference.key));
+    PsiTreeUtil.processElements(myElement.getContainingFile(), element -> {
+      for (PsiReference reference : element.getReferences()) {
+        if (reference instanceof AsciiDocIncludeTagReferenceInComment) {
+          AsciiDocIncludeTagReferenceInComment tagReference = (AsciiDocIncludeTagReferenceInComment) reference;
+          if (tagReference.getType().equals("tag")) {
+            variants.add(LookupElementBuilder.create(tagReference.key));
           }
         }
       }
-    }
+      return true;
+    });
     return variants.toArray();
   }
 

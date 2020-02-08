@@ -48,7 +48,7 @@ public class AsciiDocIncludeTagInDocument extends ASTWrapperPsiElement {
       ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
         // save the content in all other editors as their content might be referenced in preview
         VirtualFile[] files = FileEditorManager.getInstance(element.getProject()).getSelectedFiles();
-        FileEditor editor = files.length == 0 ? null : FileEditorManager.getInstance((element.getProject())).getSelectedEditor(files[0]);
+        FileEditor editor = files.length == 0 ? null : FileEditorManager.getInstance(element.getProject()).getSelectedEditor(files[0]);
         if (editor instanceof AsciiDocSplitEditor) {
           // trigger a save-all-and-refresh, as tags of references will have changed
           editor.selectNotify();
