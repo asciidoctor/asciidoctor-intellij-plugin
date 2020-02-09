@@ -30,6 +30,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKREFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_BODY;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ID;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BOLDITALIC;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BULLET;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.CONTINUATION;
@@ -43,6 +44,9 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_MACRO_BODY;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_MACRO_ID;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC_END;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_BREAK;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKANCHOR;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKEND;
@@ -53,6 +57,11 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKTEXT_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LISTING_TEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONOBOLD;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONOITALIC;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO_END;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REF;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFEND;
@@ -264,6 +273,10 @@ public class AsciiDocParserImpl {
           }
         }
         blockAttrsMarker.done(AsciiDocElementTypes.LINK);
+      } else if (at(MONO_START)) {
+        parseMono();
+      } else if (at(ITALIC_START)) {
+        parseItalic();
       } else if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();
       } else {
@@ -274,6 +287,44 @@ public class AsciiDocParserImpl {
     dropPreBlock();
     closeBlocks();
     closeSections(0);
+  }
+
+  private void parseMono() {
+    next();
+    PsiBuilder.Marker monoMarker = myBuilder.mark();
+    while ((at(MONO) || at(MONOBOLD) || at(MONOITALIC) || at(MONO_END))
+      && emptyLines == 0) {
+      if (at(MONO_END)) {
+        monoMarker.done(AsciiDocElementTypes.MONO);
+        monoMarker = null;
+        next();
+        break;
+      } else {
+        next();
+      }
+    }
+    if (monoMarker != null) {
+      monoMarker.drop();
+    }
+  }
+
+  private void parseItalic() {
+    next();
+    PsiBuilder.Marker italicMarker = myBuilder.mark();
+    while ((at(ITALIC) || at(BOLDITALIC) || at(ITALIC_END))
+      && emptyLines == 0) {
+      if (at(ITALIC_END)) {
+        italicMarker.done(AsciiDocElementTypes.ITALIC);
+        italicMarker = null;
+        next();
+        break;
+      } else {
+        next();
+      }
+    }
+    if (italicMarker != null) {
+      italicMarker.drop();
+    }
   }
 
   private void parseBlockAttributes() {

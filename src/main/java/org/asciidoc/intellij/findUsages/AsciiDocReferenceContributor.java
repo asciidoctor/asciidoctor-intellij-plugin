@@ -24,6 +24,9 @@ import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInDocument;
 import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocRef;
 import org.asciidoc.intellij.psi.AsciiDocReference;
+import org.asciidoc.intellij.psi.AsciiDocSimpleFileReference;
+import org.asciidoc.intellij.psi.AsciiDocTextItalic;
+import org.asciidoc.intellij.psi.AsciiDocTextMono;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -153,6 +156,40 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
           return references.toArray(new PsiReference[0]);
         }
       });
+
+    final PsiElementPattern.Capture<AsciiDocTextMono> monoCapture =
+      psiElement(AsciiDocTextMono.class).inFile(psiFile(AsciiDocFile.class));
+
+    registrar.registerReferenceProvider(monoCapture,
+      new PsiReferenceProvider() {
+        @NotNull
+        @Override
+        public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
+                                                     @NotNull ProcessingContext context) {
+          List<PsiReference> references = findFilesInProject(element);
+          return references.toArray(new PsiReference[0]);
+        }
+      });
+
+    final PsiElementPattern.Capture<AsciiDocTextItalic> italicCapture =
+      psiElement(AsciiDocTextItalic.class).inFile(psiFile(AsciiDocFile.class));
+
+    registrar.registerReferenceProvider(italicCapture,
+      new PsiReferenceProvider() {
+        @NotNull
+        @Override
+        public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
+                                                     @NotNull ProcessingContext context) {
+          List<PsiReference> references = findFilesInProject(element);
+          return references.toArray(new PsiReference[0]);
+        }
+      });
+  }
+
+  private List<PsiReference> findFilesInProject(PsiElement element) {
+    ArrayList<PsiReference> references = new ArrayList<>();
+    references.add(new AsciiDocSimpleFileReference(element, TextRange.create(0, element.getTextLength())));
+    return references;
   }
 
   private List<PsiReference> findFileReferences(PsiElement element) {

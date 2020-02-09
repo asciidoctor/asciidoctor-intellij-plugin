@@ -28,5 +28,7 @@ public interface AsciiDocElementTypes {
   IElementType ATTRIBUTE_DECLARATION_NAME = new AsciiDocElementType("ATTRIBUTE_DECLARATION_NAME");
   IElementType URL = new AsciiDocElementType("URL");
   IElementType TITLE = new AsciiDocElementType("TITLE");
+  IElementType MONO = new AsciiDocElementType("MONO");
+  IElementType ITALIC = new AsciiDocElementType("ITALIC");
   IStubElementType<AsciiDocAttributeDeclarationStub, AsciiDocAttributeDeclaration> ATTRIBUTE_DECLARATION = new AsciiDocAttributeDeclarationStubElementType();
 }
