@@ -12,6 +12,7 @@ import com.intellij.psi.impl.cache.CacheManager;
 import com.intellij.psi.impl.search.LowLevelSearchUtil;
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.search.searches.ReferencesSearch;
@@ -33,34 +34,45 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
       return;
     }
 
-    final SearchScope scope = p.getEffectiveSearchScope();
-    // this will limit the search to Java files that are recognized as part of a project
-    // otherwise it will return "LocalScope" here
-    if (!(scope instanceof GlobalSearchScope)) {
-      return;
-    }
+    // use scope determined by user here, as effective search scope would return the module and its dependants
+    SearchScope scope = p.getScopeDeterminedByUser();
 
     if (element instanceof PsiClass) {
       String name = ((PsiClass) element).getName();
       if (name != null) {
-        search(consumer, element, name);
+        search(consumer, element, name, scope);
       }
     } else if (element instanceof PsiPackage) {
       String name = ((PsiPackage) element).getName();
       if (name != null) {
-        search(consumer, element, name);
+        search(consumer, element, name, scope);
       }
     }
   }
 
-  private void search(@NotNull Processor<? super PsiReference> consumer, PsiElement element, String name) {
+  private void search(@NotNull Processor<? super PsiReference> consumer, PsiElement element, String name, SearchScope scope) {
     DumbService myDumbService = DumbService.getInstance(element.getProject());
+    PsiFile[] files;
+    if (scope instanceof GlobalSearchScope) {
+      // when the user searches all references
+      files = myDumbService.runReadActionInSmartMode(() -> CacheManager.SERVICE.getInstance(element.getProject()).getFilesWithWord(name, UsageSearchContext.IN_CODE,
+        (GlobalSearchScope) scope,
+        false));
+      if (files.length == 0) {
+        return;
+      }
+    } else if (scope instanceof LocalSearchScope) {
+      // when the IDE highlights references of the current file in the editor
+      LocalSearchScope localSearchScope = (LocalSearchScope) scope;
+      if (localSearchScope.getScope().length == 1 && localSearchScope.getScope()[0] instanceof PsiFile) {
+        files = new PsiFile[] {(PsiFile) localSearchScope.getScope()[0]};
+      } else {
+        return;
+      }
+    } else {
+      return;
+    }
     final StringSearcher searcher = new StringSearcher(name, true, true, false);
-    PsiFile[] files = myDumbService.runReadActionInSmartMode(() -> CacheManager.SERVICE.getInstance(element.getProject()).getFilesWithWord(name, UsageSearchContext.IN_CODE,
-      // don't look in module scope and modules that depend on this module, but in all project scope
-      // as documentation might reference classes in other modules
-      GlobalSearchScope.projectScope(element.getProject()),
-      false));
     for (PsiFile psiFile : files) {
       if (psiFile.getLanguage() == AsciiDocLanguage.INSTANCE) {
         final CharSequence text = ReadAction.compute(() -> psiFile.getViewProvider().getContents());

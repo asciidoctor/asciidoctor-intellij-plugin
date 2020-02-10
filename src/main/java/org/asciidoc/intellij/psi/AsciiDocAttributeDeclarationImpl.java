@@ -43,7 +43,7 @@ public class AsciiDocAttributeDeclarationImpl
   }
 
   /**
-   * Check if is is an unset attribute declaration (':attr!:').
+   * Check if it is an unset attribute declaration (':attr!:').
    */
   public boolean isUnset() {
     return this.getNode().getChildren(TokenSet.create(AsciiDocTokenTypes.ATTRIBUTE_UNSET)).length > 0;

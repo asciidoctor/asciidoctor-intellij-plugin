@@ -7,6 +7,7 @@ import com.intellij.refactoring.rename.RenameInputValidator;
 import com.intellij.util.ProcessingContext;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagInDocument;
+import org.asciidoc.intellij.psi.AsciiDocTagDeclaration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
 public class AsciiDocRenameInputValidator implements RenameInputValidator {
   private final ElementPattern<? extends PsiElement> myPattern = PlatformPatterns.or(
     PlatformPatterns.psiElement(AsciiDocIncludeTagInDocument.class),
+    PlatformPatterns.psiElement(AsciiDocTagDeclaration.class),
     PlatformPatterns.psiElement(AsciiDocAttributeDeclarationName.class)
   );
   private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("[a-zA-Z0-9_-]*");

@@ -17,6 +17,9 @@ public class AsciiDocFilterLexer extends BaseFilterLexer {
   private static final TokenSet OUR_SKIP_WORDS_SCAN_SET = TokenSet.create(
     TokenType.WHITE_SPACE,
     AsciiDocTokenTypes.LPAREN,
+    AsciiDocTokenTypes.LINE_BREAK,
+    AsciiDocTokenTypes.BLOCKIDSTART,
+    AsciiDocTokenTypes.BLOCKIDEND,
     AsciiDocTokenTypes.RPAREN,
     AsciiDocTokenTypes.LBRACKET,
     AsciiDocTokenTypes.RBRACKET,
@@ -25,6 +28,8 @@ public class AsciiDocFilterLexer extends BaseFilterLexer {
     AsciiDocTokenTypes.EMPTY_LINE,
     AsciiDocTokenTypes.ATTRIBUTE_REF_START,
     AsciiDocTokenTypes.ATTRIBUTE_REF_END,
+    AsciiDocTokenTypes.ATTRIBUTE_NAME_START,
+    AsciiDocTokenTypes.ATTRIBUTE_NAME_END,
     AsciiDocTokenTypes.SEPARATOR,
     AsciiDocTokenTypes.DOUBLE_QUOTE,
     AsciiDocTokenTypes.SINGLE_QUOTE,
@@ -43,9 +48,18 @@ public class AsciiDocFilterLexer extends BaseFilterLexer {
     AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START,
     AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END,
     AsciiDocTokenTypes.URL_START,
+    AsciiDocTokenTypes.LINKSTART,
     AsciiDocTokenTypes.BLOCK_MACRO_ID,
     AsciiDocTokenTypes.INLINE_MACRO_ID,
     AsciiDocTokenTypes.URL_END
+  );
+
+  private static final TokenSet JAVA_TOKENS = TokenSet.create(
+    AsciiDocTokenTypes.MONO,
+    AsciiDocTokenTypes.ITALIC,
+    AsciiDocTokenTypes.MONOBOLD,
+    AsciiDocTokenTypes.MONOBOLDITALIC,
+    AsciiDocTokenTypes.BOLDITALIC
   );
 
   public AsciiDocFilterLexer(Lexer lexer, OccurrenceConsumer consumer) {
@@ -57,7 +71,11 @@ public class AsciiDocFilterLexer extends BaseFilterLexer {
     final IElementType tokenType = myDelegate.getTokenType();
 
     if (tokenType == AsciiDocTokenTypes.TEXT) {
-      addOccurrenceInToken(UsageSearchContext.IN_PLAIN_TEXT);
+      scanWordsInToken(UsageSearchContext.IN_PLAIN_TEXT, false, false);
+    } else if (tokenType == AsciiDocTokenTypes.BLOCKID) {
+      addOccurrenceInToken(UsageSearchContext.IN_CODE);
+    } else if (JAVA_TOKENS.contains(tokenType)) {
+      scanWordsInToken(UsageSearchContext.IN_PLAIN_TEXT | UsageSearchContext.IN_CODE, false, false);
     } else if (tokenType == AsciiDocTokenTypes.LISTING_TEXT || tokenType == AsciiDocTokenTypes.PASSTRHOUGH_CONTENT) {
       // listings can contain other languages
       scanWordsInToken(UsageSearchContext.IN_STRINGS | UsageSearchContext.IN_FOREIGN_LANGUAGES, false, true);

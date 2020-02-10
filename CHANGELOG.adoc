@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.37 (work in progress)
+
+- tuning highlighting of references to Java classes and packages
+
 === 0.30.36 (preview, available from GitHub releases)
 
 - show editor notification to user to enable soft wrap in IDE settings when toggling soft wrap in the editor toolbar multiple times (#395)
@@ -17,7 +21,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - support multiple definitions of imagesdir in document for the preview (#316)
 
-=== 0.30.34 (preview, available from GitHub releases)
+=== 0.30.34
 
 - preventing unbalanced tree error when parsing a block without a delimiter (#394)
 
