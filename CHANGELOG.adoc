@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.37 (work in progress)
 
 - tuning highlighting of references to Java classes and packages
+- avoid NPE when resolving file references (#397)
 
 === 0.30.36 (preview, available from GitHub releases)
 

@@ -598,9 +598,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   private PsiElement resolve(String fileName) {
     PsiElement element = getElement();
-    PsiDirectory startDir = element.getContainingFile().getContainingDirectory();
+    PsiFile myFile = element.getContainingFile();
+    if (myFile == null) {
+      return null;
+    }
+    PsiDirectory startDir = myFile.getContainingDirectory();
     if (startDir == null) {
-      startDir = element.getContainingFile().getOriginalFile().getContainingDirectory();
+      startDir = myFile.getOriginalFile().getContainingDirectory();
     }
     if (startDir == null) {
       return null;
