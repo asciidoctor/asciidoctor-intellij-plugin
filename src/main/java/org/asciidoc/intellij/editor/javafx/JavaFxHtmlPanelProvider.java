@@ -103,6 +103,8 @@ public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
           return true;
         }
       }
+    } catch (NoClassDefFoundError ex) {
+      log.debug("can't find class PlatformImpl", ex);
     } catch (NoSuchFieldException | IllegalAccessException ex) {
       log.error("can't read state of PlatformImpl", ex);
     }
