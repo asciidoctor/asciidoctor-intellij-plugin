@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.37 (work in progress)
+=== 0.30.37 (preview, available from GitHub releases)
 
 - tuning highlighting of references to Java classes and packages
 - avoid NPE when resolving file references (#397)
