@@ -59,6 +59,16 @@ public class PasteImageAction extends AsciiDocAction {
 
   private VirtualFile file;
 
+  public static boolean imageAvailable() {
+    CopyPasteManager manager = CopyPasteManager.getInstance();
+    if (manager.areDataFlavorsAvailable(DataFlavor.javaFileListFlavor)) {
+      return true;
+    } else if (manager.areDataFlavorsAvailable(DataFlavor.imageFlavor)) {
+      return true;
+    }
+    return false;
+  }
+
   @Override
   public void actionPerformed(AnActionEvent event) {
     project = event.getProject();

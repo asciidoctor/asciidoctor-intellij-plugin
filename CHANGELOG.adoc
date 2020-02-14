@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.38 (work in progress)
 
 - title can now start with a dot; improved parsing of titles (#400)
+- allow pasting image from the clipboard with standard page shortcut (#402)
 
 === 0.30.37 (preview, available from GitHub releases)
 
