@@ -271,7 +271,12 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testTitle() {
     doTest(".Foo bar baz\nFoo bar baz",
-      "AsciiDoc:TITLE_TOKEN ('.Foo bar baz')\n" +
+      "AsciiDoc:TITLE_TOKEN ('.')\n" +
+        "AsciiDoc:TEXT ('Foo')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('bar')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('baz')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('Foo')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
@@ -354,11 +359,12 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testAttributeInTitle() {
     doTest(".xx{hi}xx",
-      "AsciiDoc:TITLE_TOKEN ('.xx')\n" +
+      "AsciiDoc:TITLE_TOKEN ('.')\n" +
+        "AsciiDoc:TEXT ('xx')\n" +
         "AsciiDoc:ATTRIBUTE_REF_START ('{')\n" +
         "AsciiDoc:ATTRIBUTE_REF ('hi')\n" +
         "AsciiDoc:ATTRIBUTE_REF_END ('}')\n" +
-        "AsciiDoc:TITLE_TOKEN ('xx')");
+        "AsciiDoc:TEXT ('xx')");
   }
 
   public void testBracketInBlockAttributes() {
@@ -476,7 +482,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("+\n.Title",
       "AsciiDoc:CONTINUATION ('+')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TITLE_TOKEN ('.Title')");
+        "AsciiDoc:TITLE_TOKEN ('.')\n" +
+        "AsciiDoc:TEXT ('Title')");
   }
 
   public void testAnchorThenTitle() {
@@ -485,7 +492,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:BLOCKID ('anchor')\n" +
         "AsciiDoc:BLOCKIDEND (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TITLE_TOKEN ('.Title')");
+        "AsciiDoc:TITLE_TOKEN ('.')\n" +
+        "AsciiDoc:TEXT ('Title')");
   }
 
   public void testBoldSimple() {
@@ -1091,13 +1099,26 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:BLOCKID ('id')\n" +
         "AsciiDoc:BLOCKIDEND (']]')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TITLE_TOKEN ('.Title')\n" +
+        "AsciiDoc:TITLE_TOKEN ('.')\n" +
+        "AsciiDoc:TEXT ('Title')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('Example')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:BLOCK_DELIMITER ('====')");
+  }
+
+  public void testTitleSTartingWithADot() {
+    doTest("..gitignore\n----\nExample\n----",
+      "AsciiDoc:TITLE_TOKEN ('.')\n" +
+        "AsciiDoc:TEXT ('.gitignore')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_TEXT ('Example')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')");
   }
 
   public void testDoubleColonNotEndOfSentence() {
@@ -1151,7 +1172,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("====\n.Title\n[source]\n----\nSource\n----\n====\n",
       "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TITLE_TOKEN ('.Title')\n" +
+        "AsciiDoc:TITLE_TOKEN ('.')\n" +
+        "AsciiDoc:TEXT ('Title')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:ATTRS_START ('[')\n" +
         "AsciiDoc:ATTR_NAME ('source')\n" +
@@ -1395,7 +1417,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Text')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:EMPTY_LINE ('\\n')\n" +
-        "AsciiDoc:TITLE_TOKEN ('.Title')\n" +
+        "AsciiDoc:TITLE_TOKEN ('.')\n" +
+        "AsciiDoc:TEXT ('Title')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +

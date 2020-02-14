@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.38 (work in progress)
+
+- title can now start with a dot; improved parsing of titles (#400)
+
 === 0.30.37 (preview, available from GitHub releases)
 
 - tuning highlighting of references to Java classes and packages

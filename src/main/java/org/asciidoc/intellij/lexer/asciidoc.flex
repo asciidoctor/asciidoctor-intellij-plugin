@@ -427,7 +427,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
       }
   ^ {SPACE}* "\n"           { if (isNoDel()) { blockStack.pop(); } resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.EMPTY_LINE; } // blank lines within pre block don't have an effect
   {SPACE}* "\n"           { if (isNoDel()) { blockStack.pop(); } resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; } // blank lines within pre block don't have an effect
-  ^ {TITLE_START} [^\. ] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE_TOKEN; }
+  ^ {TITLE_START} / [^ \t] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE_TOKEN; }
 }
 
 <HEADER, PREBLOCK> {
@@ -661,7 +661,12 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {DESCRIPTION_END} { yypopstate(); return AsciiDocTokenTypes.DESCRIPTION; }
 }
 
-<INSIDE_LINE, DESCRIPTION> {
+<TITLE> {
+  // needs to be before the newline defined for INSIDE_LINE, DESCRIPTION, TITLE
+  "\n"                 { yyinitialIfNotInBlock(); return AsciiDocTokenTypes.LINE_BREAK; }
+}
+
+<INSIDE_LINE, DESCRIPTION, TITLE> {
   "\n"                 { if (isNoDelVerse()) {
                            yybegin(SINGLELINE);
                          } else {
@@ -1064,11 +1069,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <DOCTITLE, HEADING> {
   [^]                  { return AsciiDocTokenTypes.HEADING; }
-}
-
-<TITLE> {
-  "\n"                 { yyinitialIfNotInBlock(); return AsciiDocTokenTypes.LINE_BREAK; }
-  [^]                  { return AsciiDocTokenTypes.TITLE_TOKEN; }
 }
 
 <BLOCK_MACRO_ATTRS, BLOCK_ATTRS> {

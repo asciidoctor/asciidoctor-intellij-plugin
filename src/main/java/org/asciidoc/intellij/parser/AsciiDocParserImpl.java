@@ -402,13 +402,13 @@ public class AsciiDocParserImpl {
     newLines = 0;
     markPreBlock();
     PsiBuilder.Marker titleMarker = myBuilder.mark();
-    while ((at(TITLE_TOKEN) || at(ATTRIBUTE_REF_START))
-      && newLines == 0) {
-      if (at(ATTRS_END)) {
-        next();
-        break;
-      } else if (at(ATTRIBUTE_REF_START)) {
+    while (!myBuilder.eof() && newLines == 0) {
+      if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();
+      } else if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
+        parseUrl();
+      } else if (at(INLINE_MACRO_ID)) {
+        parseInlineMacro();
       } else {
         next();
       }

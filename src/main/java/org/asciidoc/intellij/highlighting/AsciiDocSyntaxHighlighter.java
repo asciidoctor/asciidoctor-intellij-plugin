@@ -132,6 +132,7 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
       .put(AsciiDocTokenTypes.ATTRS_END, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.INLINE_ATTRS_START, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.INLINE_ATTRS_END, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.TITLE_TOKEN, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.BULLET, ASCIIDOC_BULLET)
       .put(AsciiDocTokenTypes.DESCRIPTION, ASCIIDOC_DESCRIPTION)
       .put(AsciiDocTokenTypes.CALLOUT, ASCIIDOC_CALLOUT)

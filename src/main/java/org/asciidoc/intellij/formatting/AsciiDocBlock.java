@@ -93,7 +93,12 @@ class AsciiDocBlock extends AbstractBlock {
     }
 
     // no blank line after title and block attribute
-    if (!verse && !table && (isTitle(child1) || isBlockAttribute(child1) || isBlockIdEnd(child1))) {
+    if (isTitleInsideTitle(child1) && !isTitleInsideTitle(child2)) {
+      return Spacing.createSpacing(0, 0, 1, true, 0);
+    }
+
+    // no blank line after title and block attribute
+    if (!verse && !table && (isBlockAttribute(child1) || isBlockIdEnd(child1))) {
       return Spacing.createSpacing(0, 0, 1, true, 0);
     }
 
@@ -104,7 +109,8 @@ class AsciiDocBlock extends AbstractBlock {
 
     if (settings.getCustomSettings(AsciiDocCodeStyleSettings.class).ONE_SENTENCE_PER_LINE) {
       // ensure a new line at the end of the sentence
-      if (!verse && !table && !hardbreaks && isEndOfSentence(child1) && isPartOfSentence(child2)) {
+      if (!verse && !table && !hardbreaks && isEndOfSentence(child1) && isPartOfSentence(child2)
+        && !isTitleInsideTitle(child1)) {
         return Spacing.createSpacing(0, 0, 1, true, 1);
       }
 
@@ -269,9 +275,18 @@ class AsciiDocBlock extends AbstractBlock {
       AsciiDocTokenTypes.END_OF_SENTENCE.equals(((AsciiDocBlock) block).getNode().getElementType());
   }
 
-  private boolean isTitle(Block block) {
-    return block instanceof AsciiDocBlock &&
-      AsciiDocElementTypes.TITLE.equals(((AsciiDocBlock) block).getNode().getElementType());
+  private boolean isTitleInsideTitle(Block block) {
+    if (block instanceof AsciiDocBlock) {
+      AsciiDocBlock adBlock = (AsciiDocBlock) block;
+      ASTNode node = adBlock.getNode();
+      do {
+        if (AsciiDocElementTypes.TITLE.equals(node.getElementType())) {
+          return true;
+        }
+        node = node.getTreeParent();
+      } while (node != null);
+    }
+    return false;
   }
 
   private static boolean isSection(Block block) {
