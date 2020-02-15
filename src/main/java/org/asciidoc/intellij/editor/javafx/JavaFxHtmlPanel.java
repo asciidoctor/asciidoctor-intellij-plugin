@@ -25,6 +25,7 @@ import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
+import com.intellij.psi.PsiElement;
 import com.intellij.ui.JBColor;
 import com.intellij.util.PsiNavigateUtil;
 import com.intellij.util.ui.JBUI;
@@ -48,7 +49,6 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
-import org.asciidoc.intellij.psi.AsciiDocBlockId;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
@@ -811,7 +811,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         } else {
           boolean anchorFound = false;
           if (anchor != null) {
-            List<AsciiDocBlockId> ids = AsciiDocUtil.findIds(project, targetFile, anchor);
+            List<PsiElement> ids = AsciiDocUtil.findIds(project, targetFile, anchor);
             if (!ids.isEmpty()) {
               anchorFound = true;
               ApplicationManager.getApplication().invokeLater(() -> PsiNavigateUtil.navigate(ids.get(0)));

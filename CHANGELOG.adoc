@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - title can now start with a dot; improved parsing of titles (#400)
 - allow pasting image from the clipboard with standard page shortcut (#402)
+- auto-suggest block and section IDs from included file when autocomleting anchors in links (#403)
 
 === 0.30.37 (preview, available from GitHub releases)
 
