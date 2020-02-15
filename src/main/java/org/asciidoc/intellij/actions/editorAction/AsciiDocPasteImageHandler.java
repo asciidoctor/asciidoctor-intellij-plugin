@@ -47,17 +47,19 @@ public class AsciiDocPasteImageHandler extends EditorActionHandler implements Ed
   public void execute(Editor editor, DataContext dataContext, Producer<Transferable> producer) {
     if (editor instanceof EditorEx && editor.getProject() != null) {
       VirtualFile virtualFile = ((EditorEx) editor).getVirtualFile();
-      PsiFile file = PsiManager.getInstance(editor.getProject()).findFile(virtualFile);
-      if (file != null) {
-        PsiElement element = AsciiDocUtil.getStatementAtCaret(editor, file);
-        // handle both language injection and start of empty file
-        if ((element != null && AsciiDocLanguage.INSTANCE.equals(element.getLanguage())) ||
-          AsciiDocFileType.INSTANCE.equals(virtualFile.getFileType())) {
-          if (PasteImageAction.imageAvailable()) {
-            PasteImageAction action = new PasteImageAction();
-            AnActionEvent event = createAnEvent(action, dataContext);
-            action.actionPerformed(event);
-            return;
+      if (virtualFile != null) {
+        PsiFile file = PsiManager.getInstance(editor.getProject()).findFile(virtualFile);
+        if (file != null) {
+          PsiElement element = AsciiDocUtil.getStatementAtCaret(editor, file);
+          // handle both language injection and start of empty file
+          if ((element != null && AsciiDocLanguage.INSTANCE.equals(element.getLanguage())) ||
+            AsciiDocFileType.INSTANCE.equals(virtualFile.getFileType())) {
+            if (PasteImageAction.imageAvailable()) {
+              PasteImageAction action = new PasteImageAction();
+              AnActionEvent event = createAnEvent(action, dataContext);
+              action.actionPerformed(event);
+              return;
+            }
           }
         }
       }
