@@ -62,7 +62,15 @@ public class PasteImageAction extends AsciiDocAction {
   public static boolean imageAvailable() {
     CopyPasteManager manager = CopyPasteManager.getInstance();
     if (manager.areDataFlavorsAvailable(DataFlavor.javaFileListFlavor)) {
-      return true;
+      java.util.List<File> fileList = manager.getContents(DataFlavor.javaFileListFlavor);
+      if (fileList != null) {
+        for (File f : fileList) {
+          String name = f.getName().toLowerCase();
+          if (name.endsWith(".png") || name.endsWith(".svg") || name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".gif")) {
+            return true;
+          }
+        }
+      }
     } else if (manager.areDataFlavorsAvailable(DataFlavor.imageFlavor)) {
       return true;
     }
