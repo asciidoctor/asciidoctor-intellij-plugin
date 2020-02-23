@@ -110,6 +110,12 @@ For references (like `\<<id>>`) the keys kbd:[Ctrl+Click] and kbd:[Ctrl+B] navig
 This works similarly for attributes (`\{attrib}` and `:attrib:`).
 "`Find Usages`" (kbd:[Alt+F7]) finds usages of references and attributes and allows navigation.
 
+// see: AsciiDocTextMono and AsciiDocTextItalic in the PSI Tree
+// see: AsciiDocReferenceContributor and AsciiDocJavaReferenceContributor for the creation of references
+// see: AsciiDocJavaReference for the resolution of Java classes
+The user can navigate using kbd:[Ctrl+Click] and kbd:[Ctrl+B] from a file name or Java class name in backticks (as mono spaced text like +++`filename.txt`+++ or +++`JavaClassName`+++) or in underscopes (as italic text like +++_filename.txt_+++ or +++_JavaClassName_+++).
+The plugin tries to rename occurrences of files and Java classes in the AsciiDoc file when the user renames the file or the class.
+
 // see: AsciiDocDocumentationProvider
 The user can show a quick documentation for the element at the cursor's position using kbd:[Ctrl+Q].
 At the moments this works for attributes (`\{attrib}` and `:attrib:`) both in the editor and when using autocomplete.

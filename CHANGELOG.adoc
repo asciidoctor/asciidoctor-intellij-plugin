@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.38 (preview, available from GitHub releases)
+=== 0.30.38
 
 - titles for listings and blocks are highlighted and re-formatted correctly if they start with a dot; improved parsing of titles (#400)
 - allow pasting an image from the clipboard with standard keyboard shortcut Ctrl+V (#402)
