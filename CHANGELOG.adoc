@@ -11,7 +11,8 @@ This document provides a high-level view of the changes introduced by release.
 
 - implement interface of latest Grazie preview (#408)
 - fix parsing closing brackets in attributes (#411)
-- don't recognize end-of-sentence inside a line if followed by a digit
+- don't assume end-of-sentence inside a line if followed by a digit
+- fix rendering diagrams in browser preview when multiple imagesdirs set in document (#409)
 
 === 0.30.38
 
