@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.39
+
+- implement interface of latest Grazie preview #408
+
 === 0.30.38
 
 - titles for listings and blocks are highlighted and re-formatted correctly if they start with a dot; improved parsing of titles (#400)

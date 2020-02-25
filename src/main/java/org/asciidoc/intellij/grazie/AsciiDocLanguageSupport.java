@@ -68,6 +68,12 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
     }
   }
 
+  // new interface method as part of 2020.1 release
+  // @Override
+  public boolean isEnabledByDefault() {
+    return true;
+  }
+
   @Nullable
   @Override
   public RuleGroup getIgnoredRuleGroup(@NotNull PsiElement root, @NotNull PsiElement child) {
