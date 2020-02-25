@@ -357,6 +357,14 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRIBUTE_NAME_END (':')");
   }
 
+  public void testAttributeWithBracket() {
+    doTest(":attr: icon:check[]",
+      "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME ('attr')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME_END (':')\n" +
+        "AsciiDoc:ATTRIBUTE_VAL (' icon:check[]')");
+  }
+
   public void testAttributeInTitle() {
     doTest(".xx{hi}xx",
       "AsciiDoc:TITLE_TOKEN ('.')\n" +

@@ -407,7 +407,12 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {SPACE} {CONTINUATION} {SPACE}* "\n" {SPACE}* {
                          return AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION_LEGACY;
                        }
-  {RBRACKET}           { if (isInAttribute()) { yypushback(1); yypopstate(); return AsciiDocTokenTypes.ATTRIBUTE_VAL; } }
+  {RBRACKET}           { if (isInAttribute()) {
+                           yypushback(1); yypopstate(); return AsciiDocTokenTypes.ATTRIBUTE_VAL;
+                         } else {
+                           return AsciiDocTokenTypes.ATTRIBUTE_VAL;
+                         }
+                       }
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
   [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
 }

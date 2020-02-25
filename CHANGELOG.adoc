@@ -9,7 +9,8 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.30.39
 
-- implement interface of latest Grazie preview #408
+- implement interface of latest Grazie preview (#408)
+- fix parsing closing brackets in attributes (#411)
 
 === 0.30.38
 
