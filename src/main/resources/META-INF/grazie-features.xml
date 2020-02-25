@@ -1,5 +1,0 @@
-<idea-plugin>
-  <extensions defaultExtensionNs="com.intellij.grazie">
-    <grammar.strategy language="AsciiDoc" implementationClass="org.asciidoc.intellij.grazie.AsciiDocLanguageSupport"/>
-  </extensions>
-</idea-plugin>
