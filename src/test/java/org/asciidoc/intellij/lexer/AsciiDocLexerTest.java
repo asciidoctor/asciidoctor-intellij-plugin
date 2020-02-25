@@ -1154,6 +1154,25 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Mozart')");
   }
 
+  public void testDonWrapIfFollowedByNumberInsideLine() {
+    doTest("Ch. 9 important",
+      "AsciiDoc:TEXT ('Ch.')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('9')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('important')");
+  }
+
+  public void testDonWrapIfFollowedByNumberNextLineLine() {
+    doTest("Ch.\n9 important",
+      "AsciiDoc:TEXT ('Ch')\n" +
+        "AsciiDoc:END_OF_SENTENCE ('.')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('9')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('important')");
+  }
+
   public void testInitialEndOfSentenceAtEndOfLineSoThatItKeepsExistingWrapsEvenIfThereIsABlankAtTheEndOfTheLine() {
     doTest("Wolfgang A. \nMozart",
       "AsciiDoc:TEXT ('Wolfgang')\n" +

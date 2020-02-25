@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - implement interface of latest Grazie preview (#408)
 - fix parsing closing brackets in attributes (#411)
+- don't recognize end-of-sentence inside a line if followed by a digit
 
 === 0.30.38
 
