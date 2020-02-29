@@ -78,6 +78,12 @@ public class PasteImageAction extends AsciiDocAction {
         }
       }
     } else if (manager.areDataFlavorsAvailable(DataFlavor.imageFlavor)) {
+      String string = manager.getContents(DataFlavor.stringFlavor);
+      if (string != null && string.length() > 0) {
+        // if the user copies contents from a word processor, prefer the text instead of a rendered image
+        // user can still select "paste image" from editor action panel to page the contents as an image
+        return false;
+      }
       return true;
     }
     return false;
