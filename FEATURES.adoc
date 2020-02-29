@@ -83,6 +83,10 @@ Also, supports undo if the user is not happy with the result!
 // see: AsciiDocFoldingBuilder
 The user can fold sections and blocks using the small +/- symbols on the left of the editor.
 Folded sections and blocks show their first line except when this is block id (like `\[[id]]`).
+Predefined attributes for character replacements like `+++{plus}+++` or `+++{quot}+++` are foldable as well.
+
+The hotkey to unfold one element is kbd:[Shift+NumPad+], the hotkey to fold one element is kbd:[Shift+NumPad-]
+The hotkey to unfold all elements is kbd:[Ctrl+Shift+NumPad+], the hotkey to fold all elements is kbd:[Ctrl+Shift+NumPad-].
 
 // see: AsciiDocStructureViewElement
 The structure of the file kbd:[Alt+7] shows the hierarchy of sections and blocks with titles.

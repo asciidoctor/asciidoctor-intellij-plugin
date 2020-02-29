@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - prevent triggering paste-image when pasting text from a word processor
 - instruct Grazie to check also comments in preparation for 2020.1 (#408)
 - ignore start of line comment for Grazie grammar check
+- adding folding for predefined attributes for character replacements
 
 === 0.30.39
 
