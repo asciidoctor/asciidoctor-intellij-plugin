@@ -48,7 +48,7 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
     AsciiDocTokenTypes.MONOITALIC,
     AsciiDocTokenTypes.MONOBOLDITALIC,
     AsciiDocTokenTypes.END_OF_SENTENCE,
-    // keep the white space in here as blanks are important to separate words
+    // keep the white space in here as blanks are necessary to separate words
     AsciiDocTokenTypes.WHITE_SPACE,
     AsciiDocTokenTypes.WHITE_SPACE_MONO,
     TokenType.WHITE_SPACE,
@@ -106,6 +106,11 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
   @NotNull
   @Override
   public LinkedHashSet<IntRange> getStealthyRanges(@NotNull PsiElement psiElement, @NotNull CharSequence charSequence) {
-    return new LinkedHashSet<>();
+    LinkedHashSet<IntRange> ranges = new LinkedHashSet<>();
+    if (psiElement.getNode().getElementType() == AsciiDocTokenTypes.LINE_COMMENT && psiElement.getTextLength() >= 2) {
+      // ignore "//" at start of line comment
+      ranges.add(new IntRange(0, 1));
+    }
+    return ranges;
   }
 }
