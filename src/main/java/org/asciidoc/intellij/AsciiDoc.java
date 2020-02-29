@@ -162,9 +162,9 @@ public class AsciiDoc {
       if (springRestDocs) {
         md = md + ".restdoc";
       }
-      if (format == FileType.JAVAFX) {
-        // special plantuml-png-patch.rb only loaded here
-        md = md + "." + format;
+      if (format == FileType.JAVAFX || format == FileType.HTML) {
+        // special ruby extensions loaded for JAVAFX and HTML
+        md = md + "." + format.name();
       }
       boolean krokiEnabled = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isKrokiEnabled();
       if (krokiEnabled) {

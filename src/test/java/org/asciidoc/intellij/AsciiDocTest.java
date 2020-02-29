@@ -88,13 +88,23 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
     // given...
     File asciidoc = File.createTempFile("asciidocforhtml", ".adoc");
     File html = new File(asciidoc.getAbsoluteFile().getAbsolutePath().replaceAll("\\.adoc$", ".html"));
+    File diagram = new File(asciidoc.getAbsoluteFile().getAbsolutePath().replaceAll("asciidocforhtml.*adoc$", "uml-example.png"));
     try {
       Assert.assertTrue("replacement should have worked", html.getName().endsWith(".html"));
+      Assert.assertTrue("replacement should have worked", diagram.getName().endsWith(".png"));
       if (html.exists()) {
         fail("HTML already exists, but shouldn't before running AsciiDoc");
       }
+      if (diagram.exists()) {
+        fail("Diagram already exists, but shouldn't before running AsciiDoc");
+      }
       Writer fw = Files.newBufferedWriter(asciidoc.toPath(), UTF_8);
-      fw.write("Hello world.");
+      fw.write("Hello world.\n\n[plantuml, uml-example, png]\n" +
+        "----\n" +
+        "@startuml\n" +
+        "Alice -> Bob: Authentication Request\n" +
+        "@enduml\n" +
+        "----");
       fw.close();
 
       // when...
@@ -102,6 +112,7 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
 
       // then...
       Assert.assertTrue(html.exists());
+      Assert.assertTrue(diagram.exists());
 
     } finally {
       // cleanup...
@@ -112,6 +123,11 @@ public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
       }
       if (html.exists()) {
         if (!html.delete()) {
+          log.warn("unable to delete destination file");
+        }
+      }
+      if (diagram.exists()) {
+        if (!diagram.delete()) {
           log.warn("unable to delete destination file");
         }
       }
