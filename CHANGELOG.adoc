@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - fix drag-and-drop of code snippets (#413)
 - export-to-html creates PlantUML diagrams so that they show up when opening the HTML in the browser, the default is the directory of the source file (#409)
 - prevent triggering paste-image when pasting text from a word processor
+- instruct Grazie to check also comments in preparation for 2020.1 (#408)
 
 === 0.30.39
 

@@ -4,6 +4,7 @@ import com.intellij.grazie.grammar.Typo;
 import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy;
 import com.intellij.grazie.grammar.strategy.impl.ReplaceCharRule;
 import com.intellij.grazie.grammar.strategy.impl.RuleGroup;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.TokenSet;
@@ -94,7 +95,7 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
 
   @Override
   public boolean isMyContextRoot(@NotNull PsiElement psiElement) {
-    return NODES_TO_CHECK.contains(psiElement.getNode().getElementType());
+    return NODES_TO_CHECK.contains(psiElement.getNode().getElementType()) || psiElement instanceof PsiComment;
   }
 
   @Override
