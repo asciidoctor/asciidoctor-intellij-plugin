@@ -25,6 +25,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
+import com.intellij.util.Producer;
 import com.intellij.util.ui.UIUtil;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.file.AsciiDocFileType;
@@ -37,6 +38,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +61,11 @@ public class PasteImageAction extends AsciiDocAction {
 
   private VirtualFile file;
 
-  public static boolean imageAvailable() {
+  public static boolean imageAvailable(Producer<Transferable> producer) {
+    if (producer != null) {
+      // if drag-and-drop, stop here and do standard processing
+      return false;
+    }
     CopyPasteManager manager = CopyPasteManager.getInstance();
     if (manager.areDataFlavorsAvailable(DataFlavor.javaFileListFlavor)) {
       java.util.List<File> fileList = manager.getContents(DataFlavor.javaFileListFlavor);

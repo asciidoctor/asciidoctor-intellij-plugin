@@ -27,13 +27,13 @@ import java.awt.datatransfer.Transferable;
 /**
  * Page an image from the clipboard when in editor.
  * Inspired by {@link com.intellij.codeInsight.editorActions.PasteHandler} and
- * https://plugins.jetbrains.com/plugin/8446-paste-images-into-markdown who showed me how to used this API.
+ * https://plugins.jetbrains.com/plugin/8446-paste-images-into-markdown who showed me how to use this API.
  */
 public class AsciiDocPasteImageHandler extends EditorActionHandler implements EditorTextInsertHandler {
 
-  private final EditorActionHandler myOriginalHandler;
+  private final EditorTextInsertHandler myOriginalHandler;
 
-  public AsciiDocPasteImageHandler(EditorActionHandler originalAction) {
+  public AsciiDocPasteImageHandler(EditorTextInsertHandler originalAction) {
     myOriginalHandler = originalAction;
   }
 
@@ -54,7 +54,7 @@ public class AsciiDocPasteImageHandler extends EditorActionHandler implements Ed
           // handle both language injection and start of empty file
           if ((element != null && AsciiDocLanguage.INSTANCE.equals(element.getLanguage())) ||
             AsciiDocFileType.INSTANCE.equals(virtualFile.getFileType())) {
-            if (PasteImageAction.imageAvailable()) {
+            if (PasteImageAction.imageAvailable(producer)) {
               PasteImageAction action = new PasteImageAction();
               AnActionEvent event = createAnEvent(action, dataContext);
               action.actionPerformed(event);
@@ -66,7 +66,7 @@ public class AsciiDocPasteImageHandler extends EditorActionHandler implements Ed
     }
 
     if (myOriginalHandler != null) {
-      myOriginalHandler.execute(editor, null, dataContext);
+      myOriginalHandler.execute(editor, dataContext, producer);
     }
   }
 

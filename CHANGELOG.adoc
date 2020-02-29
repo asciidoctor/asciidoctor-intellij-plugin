@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.40
+
+- fix drag-and-drop of code snippets (#413)
+
 === 0.30.39
 
 - implement interface of latest Grazie preview (#408)

@@ -8,14 +8,19 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.ide.CopyPasteManager;
+import com.intellij.openapi.editor.actions.PasteAction;
 import com.intellij.psi.PsiFile;
 import org.asciidoc.intellij.actions.asciidoc.PasteImageAction;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
 
 public class AsciiDocPasteProvider implements PasteProvider {
   @Override
@@ -51,23 +56,26 @@ public class AsciiDocPasteProvider implements PasteProvider {
     if (file.getFileType() != AsciiDocFileType.INSTANCE) {
       return false;
     }
-    CopyPasteManager manager = CopyPasteManager.getInstance();
-    if (manager.areDataFlavorsAvailable(DataFlavor.getTextPlainUnicodeFlavor())) {
-      /* if the clipboard contents are text, prefer standard paste operation before trying to paste it as an image
+    Transferable produce = Objects.requireNonNull(dataContext.getData(PasteAction.TRANSFERABLE_PROVIDER)).produce();
+    if (produce.isDataFlavorSupported(DataFlavor.getTextPlainUnicodeFlavor())) {
+      /* if the contents are text, prefer standard paste operation before trying to paste it as an image
       the user can still try the "paste-as-image" operation from the editor toolbar */
       return false;
     }
-    if (manager.areDataFlavorsAvailable(DataFlavor.imageFlavor)) {
+    if (produce.isDataFlavorSupported(DataFlavor.imageFlavor)) {
       return true;
     }
-    if (manager.areDataFlavorsAvailable(DataFlavor.javaFileListFlavor)) {
-      java.util.List<File> fileList = manager.getContents(DataFlavor.javaFileListFlavor);
-      if (fileList != null) {
-        for (File f : fileList) {
-          String name = f.getName().toLowerCase();
-          if (name.endsWith(".png") || name.endsWith(".svg") || name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".gif")) {
-            return true;
-          }
+    if (produce.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+      java.util.List<File> fileList = null;
+      try {
+        fileList = (List<File>) produce.getTransferData(DataFlavor.javaFileListFlavor);
+      } catch (UnsupportedFlavorException | IOException e) {
+        return false;
+      }
+      for (File f : fileList) {
+        String name = f.getName().toLowerCase();
+        if (name.endsWith(".png") || name.endsWith(".svg") || name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".gif")) {
+          return true;
         }
       }
     }
