@@ -30,10 +30,10 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
     COLLAPSABLE_ATTRIBUTES.put("nbsp", " ");
     COLLAPSABLE_ATTRIBUTES.put("apos", "'");
     COLLAPSABLE_ATTRIBUTES.put("quot", "\"");
-    COLLAPSABLE_ATTRIBUTES.put("lsquo", "‘");
-    COLLAPSABLE_ATTRIBUTES.put("rsquo", "’");
-    COLLAPSABLE_ATTRIBUTES.put("ldquo", "“");
-    COLLAPSABLE_ATTRIBUTES.put("rdquo", "”");
+    COLLAPSABLE_ATTRIBUTES.put("lsquo", "\u2018");
+    COLLAPSABLE_ATTRIBUTES.put("rsquo", "\u2019");
+    COLLAPSABLE_ATTRIBUTES.put("ldquo", "\u201c");
+    COLLAPSABLE_ATTRIBUTES.put("rdquo", "\u2018");
     COLLAPSABLE_ATTRIBUTES.put("deg", "°");
     COLLAPSABLE_ATTRIBUTES.put("plus", "+");
     COLLAPSABLE_ATTRIBUTES.put("brvbar", "¦");
