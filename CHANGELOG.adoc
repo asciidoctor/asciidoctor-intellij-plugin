@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.40
 
 - fix drag-and-drop of code snippets (#413)
+- export-to-html creates PlantUML diagrams so that they show up when opening the HTML in the browser, the default is the directory of the source file (#409)
 
 === 0.30.39
 

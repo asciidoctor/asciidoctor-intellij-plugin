@@ -157,7 +157,7 @@ public class BrowserPanel implements Closeable {
     Objects.requireNonNull(file.getParent().getCanonicalPath(), "we will have files, these will always have a parent directory");
     AsciiDoc asciiDoc = new AsciiDoc(project, new File(file.getParent().getCanonicalPath()),
       imagesPath, file.getName());
-    String html = asciiDoc.render(document.getText(), config, extensions, asciiDoc::notifyAlways, "html");
+    String html = asciiDoc.render(document.getText(), config, extensions, asciiDoc::notifyAlways, AsciiDoc.FileType.HTML);
     if (file.getParent() != null) {
       // parent will be null if we use Language Injection and Fragment Editor
       base = file.getParent().getPath();
@@ -286,7 +286,7 @@ public class BrowserPanel implements Closeable {
       if (type.equals("source")) {
         try {
           if (project.getPresentableUrl() != null) {
-              suffix = "&amp;projectUrl=" + URLEncoder.encode(project.getPresentableUrl(), StandardCharsets.UTF_8.toString());
+            suffix = "&amp;projectUrl=" + URLEncoder.encode(project.getPresentableUrl(), StandardCharsets.UTF_8.toString());
           } else {
             suffix = "&amp;projectName=" + URLEncoder.encode(project.getName(), StandardCharsets.UTF_8.toString());
           }

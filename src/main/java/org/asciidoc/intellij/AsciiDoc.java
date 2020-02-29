@@ -144,7 +144,7 @@ public class AsciiDoc {
     this.project = project;
   }
 
-  private Asciidoctor initWithExtensions(List<String> extensions, boolean springRestDocs, String format) {
+  private Asciidoctor initWithExtensions(List<String> extensions, boolean springRestDocs, FileType format) {
     synchronized (AsciiDoc.class) {
       boolean extensionsEnabled;
       AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
@@ -162,7 +162,7 @@ public class AsciiDoc {
       if (springRestDocs) {
         md = md + ".restdoc";
       }
-      if (format.equals("javafx")) {
+      if (format == FileType.JAVAFX) {
         // special plantuml-png-patch.rb only loaded here
         md = md + "." + format;
       }
@@ -202,7 +202,7 @@ public class AsciiDoc {
           asciidoctor.requireLibrary("openssl");
           asciidoctor.javaExtensionRegistry().preprocessor(prependConfig);
           asciidoctor.javaExtensionRegistry().includeProcessor(antoraIncludeAdapter);
-          if (format.equals("javafx") || format.equals("html")) {
+          if (format == FileType.JAVAFX || format == FileType.HTML) {
             asciidoctor.javaExtensionRegistry().postprocessor(antoraImageAdapter);
             asciidoctor.javaExtensionRegistry().postprocessor(attributeRetriever);
           }
@@ -214,14 +214,16 @@ public class AsciiDoc {
             asciidoctor.requireLibrary("asciidoctor-diagram");
           }
 
-          try (InputStream is = this.getClass().getResourceAsStream("/sourceline-treeprocessor.rb")) {
-            if (is == null) {
-              throw new RuntimeException("unable to load script sourceline-treeprocessor.rb");
+          if (format == FileType.JAVAFX) {
+            try (InputStream is = this.getClass().getResourceAsStream("/sourceline-treeprocessor.rb")) {
+              if (is == null) {
+                throw new RuntimeException("unable to load script sourceline-treeprocessor.rb");
+              }
+              asciidoctor.rubyExtensionRegistry().loadClass(is).treeprocessor("SourceLineTreeProcessor");
             }
-            asciidoctor.rubyExtensionRegistry().loadClass(is).treeprocessor("SourceLineTreeProcessor");
           }
 
-          if (format.equals("javafx")) {
+          if (format == FileType.JAVAFX) {
             try (InputStream is = this.getClass().getResourceAsStream("/plantuml-png-patch.rb")) {
               if (is == null) {
                 throw new RuntimeException("unable to load script plantuml-png-patch.rb");
@@ -456,10 +458,10 @@ public class AsciiDoc {
   }
 
   public String render(String text, String config, List<String> extensions, Notifier notifier) {
-    return render(text, config, extensions, notifier, "javafx");
+    return render(text, config, extensions, notifier, FileType.JAVAFX);
   }
 
-  public String render(String text, String config, List<String> extensions, Notifier notifier, String format) {
+  public String render(String text, String config, List<String> extensions, Notifier notifier, FileType format) {
     VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
       LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
@@ -484,7 +486,7 @@ public class AsciiDoc {
         antoraImageAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir);
         try {
           return "<div id=\"content\">\n" + asciidoctor.convert(text,
-            getDefaultOptions("html5", springRestDocsSnippets, attributes)) + "\n</div>";
+            getDefaultOptions(FileType.JAVAFX, springRestDocsSnippets, attributes)) + "\n</div>";
         } finally {
           imagesdir = attributeRetriever.getImagesdir();
           prependConfig.setConfig("");
@@ -535,13 +537,13 @@ public class AsciiDoc {
       ClassLoader old = Thread.currentThread().getContextClassLoader();
       Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
       try {
-        Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format.toString());
+        Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         prependConfig.setConfig(config);
         antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir);
         asciidoctor.registerLogHandler(logHandler);
         try {
           asciidoctor.convertFile(file, getExportOptions(
-            getDefaultOptions(format.toString(), springRestDocsSnippets, attributes), format));
+            getDefaultOptions(format, springRestDocsSnippets, attributes), format));
         } finally {
           prependConfig.setConfig("");
           antoraIncludeAdapter.setAntoraDetails(null, null);
@@ -642,10 +644,10 @@ public class AsciiDoc {
   }
 
   @SuppressWarnings("checkstyle:ParameterNumber")
-  private Map<String, Object> getDefaultOptions(String backend, VirtualFile springRestDocsSnippets, Map<String, String> attributes) {
+  private Map<String, Object> getDefaultOptions(FileType fileType, VirtualFile springRestDocsSnippets, Map<String, String> attributes) {
     AttributesBuilder builder = AttributesBuilder.attributes()
       .showTitle(true)
-      .backend(backend)
+      .backend(fileType.backend)
       .sourceHighlighter("coderay")
       .attribute("coderay-css", "style")
       .attribute("env", "idea")
@@ -668,13 +670,15 @@ public class AsciiDoc {
 
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     if (imagesPath != null) {
-      if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())) {
-        attrs.setAttribute("outdir", imagesPath.toAbsolutePath().normalize().toString());
-        // this prevents asciidoctor diagram to render images to a folder {outdir}/{imagesdir} ...
-        // ... that might then be outside of the temporary folder as {imagesdir} might traverse to a parent folder
-        // beware that the HTML output will still prepends {imagesdir} that later needs to be removed from HTML output
-        // https://github.com/asciidoctor/asciidoctor-diagram/issues/110
-        attrs.setAttribute("imagesoutdir", imagesPath.toAbsolutePath().normalize().toString());
+      if (fileType == FileType.JAVAFX) {
+        if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())) {
+          attrs.setAttribute("outdir", imagesPath.toAbsolutePath().normalize().toString());
+          // this prevents asciidoctor diagram to render images to a folder {outdir}/{imagesdir} ...
+          // ... that might then be outside of the temporary folder as {imagesdir} might traverse to a parent folder
+          // beware that the HTML output will still prepends {imagesdir} that later needs to be removed from HTML output
+          // https://github.com/asciidoctor/asciidoctor-diagram/issues/110
+          attrs.setAttribute("imagesoutdir", imagesPath.toAbsolutePath().normalize().toString());
+        }
       }
     }
 
@@ -687,7 +691,7 @@ public class AsciiDoc {
 
     settings.getAsciiDocPreviewSettings().getAttributes().forEach(attrs::setAttribute);
 
-    OptionsBuilder opts = OptionsBuilder.options().safe(settings.getSafe()).backend(backend).headerFooter(false)
+    OptionsBuilder opts = OptionsBuilder.options().safe(settings.getSafe()).backend(fileType.backend).headerFooter(false)
       .attributes(attrs)
       .option("sourcemap", "true")
       .baseDir(fileBaseDir);
@@ -701,17 +705,19 @@ public class AsciiDoc {
 
   public enum FileType {
     PDF("pdf"),
-    HTML("html5");
+    HTML("html5"),
+    JAVAFX("html5"),
+    JEDITOR("html5");
 
-    private final String formatType;
+    private final String backend;
 
-    FileType(String formatType) {
-      this.formatType = formatType;
+    FileType(String backend) {
+      this.backend = backend;
     }
 
     @Override
     public String toString() {
-      return formatType;
+      return backend;
     }
   }
 
