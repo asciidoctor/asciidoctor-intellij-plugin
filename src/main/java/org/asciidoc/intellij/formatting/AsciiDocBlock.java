@@ -265,6 +265,7 @@ class AsciiDocBlock extends AbstractBlock {
         || AsciiDocElementTypes.LISTING.equals(((AsciiDocBlock) block).getNode().getElementType()));
   }
 
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   private boolean isContinuation(Block block) {
     return block instanceof AsciiDocBlock &&
       ((AsciiDocBlock) block).getNode().getText().equals("+");
@@ -316,6 +317,7 @@ class AsciiDocBlock extends AbstractBlock {
     AsciiDocTokenTypes.BOLD_END, AsciiDocTokenTypes.ITALIC_START, AsciiDocTokenTypes.ITALIC_END, AsciiDocTokenTypes.LT,
     AsciiDocTokenTypes.GT, AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END, AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START,
     AsciiDocTokenTypes.LPAREN, AsciiDocTokenTypes.RPAREN,
+    AsciiDocTokenTypes.LINKTEXT, AsciiDocTokenTypes.ATTR_NAME,
     AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END, AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START);
 
   private static boolean isPartOfSentence(Block block) {
@@ -332,11 +334,11 @@ class AsciiDocBlock extends AbstractBlock {
       || myNode.getElementType() == AsciiDocTokenTypes.DESCRIPTION
       || myNode.getElementType() == AsciiDocElementTypes.LINK
       || myNode.getElementType() == AsciiDocElementTypes.ATTRIBUTE_REF) {
-      return Indent.getSpaceIndent(0);
+      return Indent.getAbsoluteNoneIndent();
     }
 
     if (!verse && TEXT_SET.contains(myNode.getElementType())) {
-      return Indent.getSpaceIndent(0);
+      return Indent.getAbsoluteNoneIndent();
     }
 
     ASTNode treePrev = myNode.getTreePrev();
@@ -352,10 +354,10 @@ class AsciiDocBlock extends AbstractBlock {
         }
       }
       if (i < 0 || chars[i] == '\n') {
-        return Indent.getSpaceIndent(spaces);
+        return Indent.getIndent(Indent.Type.NONE, spaces, false, false);
       }
     }
-    return Indent.getNoneIndent();
+    return Indent.getAbsoluteNoneIndent();
   }
 
   @Override

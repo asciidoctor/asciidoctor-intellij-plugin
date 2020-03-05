@@ -16,6 +16,7 @@ import java.util.Stack;
 
 %{
   private static final char[] NUMBERS = "1234567890".toCharArray();
+  private static final char[] SPACES = " \t".toCharArray();
   private static final char[] COLONSLASH = ":/".toCharArray();
   private int blockDelimiterLength;
   private boolean singlebold = false;
@@ -216,6 +217,7 @@ BLOCK_ATTRS_START = "["
 STRING = {NON_SPACE}+ \n? // something that doesn't have an empty line
 // something with a non-blank at the end, might contain a line break, but only if it doesn't separate the block
 WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n] | {SPACE}* [^\n]*[^\ \t\n]
+WORDNOBRACKET = {SPACE}* [^\n\]]* {SPACE}* \n {SPACE}* [^\ \t\n\]] | {SPACE}* [^\n\]]*[^\ \t\n\]]
 BOLD = "*"
 BULLET = ("*"+|"-"+)
 ENUMERATION = ([0-9]*|[a-zA-Z]?)"."+
@@ -477,6 +479,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   "\n" {
     yypopstate();
     return AsciiDocTokenTypes.LINE_BREAK;
+  }
+  {SPACE} {
+    return AsciiDocTokenTypes.WHITE_SPACE;
   }
   [^] {
     yypopstate();
@@ -919,14 +924,14 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         return AsciiDocTokenTypes.URL_PREFIX;
   }
   // allow autocomplete even if brackets have not been entered yet
-  ({LINKSTART} | {XREFSTART}) / ([^\[\n \t] | {AUTOCOMPLETE})* ("+++" [^+] {WORD}* "+++")* ("++" {WORD}* "++")* ( {AUTOCOMPLETE} | {AUTOCOMPLETE}? {LINKTEXT_START} [^\]\n]* {LINKEND}) {
+  ({LINKSTART} | {XREFSTART}) / ([^\[\n \t] | {AUTOCOMPLETE})* ("+++" [^+] {WORD}* "+++")* ("++" {WORD}* "++")* ( {AUTOCOMPLETE} | {AUTOCOMPLETE}? {LINKTEXT_START} {WORDNOBRACKET}* {LINKEND}) {
                          if (!isEscaped()) {
                            yypushstate(); yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART;
                          } else {
                            return textFormat();
                          }
                        }
-  {INLINE_MACRO_START} / ({INLINE_URL_NO_DELIMITER} | {INLINE_URL_WITH_DELIMITER}) ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" [^\]\n]* "]") {
+  {INLINE_MACRO_START} / ({INLINE_URL_NO_DELIMITER} | {INLINE_URL_WITH_DELIMITER}) ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" {WORDNOBRACKET}* "]") {
         if (!isEscaped()) {
           yypushstate();
           yybegin(INLINE_MACRO_URL);
@@ -935,7 +940,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           return textFormat();
         }
       }
-  {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\[\n\"`]* | "") ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" ([^\]\n]*|"[" [^\]\n]* "]")*  "]") {
+  {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\[\n\"`]* | "") ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" ({WORDNOBRACKET}*|"[" [^\]\n]* "]")*  "]") {
         if (!isEscaped()) {
           yypushstate();
           yybegin(INLINE_MACRO);
@@ -1044,6 +1049,16 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <LINKTEXT> {
   {LINKEND}            { yypopstate(); return AsciiDocTokenTypes.LINKEND; }
+  {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
+  {CONTINUATION} / {SPACE}* "\n" {
+                         if (isPrefixedBy(SPACES)) {
+                           yypushstate();
+                           yybegin(EOL_POP);
+                           return AsciiDocTokenTypes.CONTINUATION;
+                         } else {
+                           return AsciiDocTokenTypes.LINKTEXT;
+                         }
+                       }
   [^]                  { return AsciiDocTokenTypes.LINKTEXT; }
 }
 
@@ -1202,7 +1217,17 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   "=" / "\"" ( [^\"\n] | "\\\"" )* "\"" { yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
   "=" / "\'" ( [^\'\n] | "\\\'" )* "\'" { yypushstate(); yybegin(ATTRS_SINGLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
   "=" { yypushstate(); yybegin(ATTRS_NO_QUOTE); return AsciiDocTokenTypes.ASSIGNMENT; }
-  "\n"                 { yypopstate(); yypushback(yylength()); }
+  "\n" {SPACE}* "\n"   { yypopstate(); yypushback(yylength()); }
+  {CONTINUATION} / {SPACE}* "\n" {
+                         if (isPrefixedBy(SPACES)) {
+                           yypushstate();
+                           yybegin(EOL_POP);
+                           return AsciiDocTokenTypes.CONTINUATION;
+                         } else {
+                           return AsciiDocTokenTypes.ATTR_NAME;
+                         }
+                       }
+  "\n"                 { return AsciiDocTokenTypes.LINE_BREAK; }
   "]"                  { yypopstate(); yypushback(yylength()); }
   ","                  { return AsciiDocTokenTypes.SEPARATOR; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }

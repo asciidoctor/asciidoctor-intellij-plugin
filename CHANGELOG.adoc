@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - fix handling comments in header lines after a title (#414, #415)
 - adding folding support for attributes showing their value (#416)
+- inline attributes can have multi-line content in brackets and continuations (#406)
 
 === 0.30.40
 
@@ -23,7 +24,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.30.39
 
-- implement interface of latest Grazie preview (#408)
+- implement interface of the latest Grazie preview (#408)
 - fix parsing closing brackets in attributes (#411)
 - don't assume end-of-sentence inside a line if followed by a digit
 - fix rendering diagrams in browser preview when multiple imagesdirs set in document (#409)

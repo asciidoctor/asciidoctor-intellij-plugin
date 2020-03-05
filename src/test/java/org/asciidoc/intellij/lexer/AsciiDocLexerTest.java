@@ -181,6 +181,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   public void testHeadingMarkdownStyleWithHeaderTwoLines() {
+    //noinspection AsciiDocHeadingStyleInspection
     doTest("# Abc\nHeader1\nHeader2\ndef",
       "AsciiDoc:HEADING ('# Abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -465,6 +466,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
    * Value continue on the next line if the line is ended by a space followed by a backslash.
    */
   public void testAttributeMultilineWithPlus() {
+    //noinspection AsciiDocAttributeContinuationInspection
     doTest(":attribute: value +\n continue on the next line\nMore text",
       "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
         "AsciiDoc:ATTRIBUTE_NAME ('attribute')\n" +
@@ -886,6 +888,20 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testLinkWithTitleAndContinuation() {
+    doTest("link:test.adoc[Title +\nContinuing]\n",
+      "AsciiDoc:LINKSTART ('link:')\n" +
+        "AsciiDoc:LINKFILE ('test.adoc')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKTEXT ('Title')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:CONTINUATION ('+')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LINKTEXT ('Continuing')\n" +
+        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
   public void testLinkWithAnchor() {
     doTest("Text link:FILE#ANCHOR[Text] More Text",
       "AsciiDoc:TEXT ('Text')\n" +
@@ -910,7 +926,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINKSTART ('link:')\n" +
         "AsciiDoc:URL_LINK ('++https://example.org/?q=[a b]++')\n" +
         "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKTEXT ('URL with special characters')\n" +
+        "AsciiDoc:LINKTEXT ('URL')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:LINKTEXT ('with')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:LINKTEXT ('special')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:LINKTEXT ('characters')\n" +
         "AsciiDoc:LINKEND (']')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('Text')");
@@ -1263,18 +1285,21 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   public void testMarkdownHorizontalRuleDash() {
+    //noinspection AsciiDocHorizontalRuleInspection
     doTest("---\n",
       "AsciiDoc:HORIZONTALRULE ('---')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
   public void testMarkdownHorizontalRuleStar() {
+    //noinspection AsciiDocHorizontalRuleInspection
     doTest("***\n",
       "AsciiDoc:HORIZONTALRULE ('***')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
   public void testMarkdownHorizontalRuleUnderscore() {
+    //noinspection AsciiDocHorizontalRuleInspection
     doTest("___\n",
       "AsciiDoc:HORIZONTALRULE ('___')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
@@ -1563,6 +1588,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:INLINE_ATTRS_END (']')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('text')");
+  }
+
+  public void testInlineMacroMultiLine() {
+    doTest("image:image.png[Text\nText]",
+      "AsciiDoc:INLINE_MACRO_ID ('image:')\n" +
+        "AsciiDoc:INLINE_MACRO_BODY ('image.png')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('Text')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:ATTR_NAME ('Text')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
   }
 
   public void testInlineMacroWithAttribute() {

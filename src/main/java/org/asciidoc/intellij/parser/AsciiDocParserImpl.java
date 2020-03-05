@@ -262,7 +262,8 @@ public class AsciiDocParserImpl {
       } else if (at(LINKSTART)) {
         PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
         next();
-        while (at(LINKFILE) || at(URL_LINK) || at(LINKANCHOR) || at(LINKTEXT_START) || at(SEPARATOR) || at(LINKTEXT) || at(LINKEND) || at(ATTRIBUTE_REF_START)) {
+        while (at(LINKFILE) || at(URL_LINK) || at(LINKANCHOR) || at(LINKTEXT_START) || at(SEPARATOR) || at(LINKTEXT)
+          || at(ATTRIBUTE_REF_START) || at(CONTINUATION) || at(LINKEND)) {
           if (at(LINKEND)) {
             next();
             break;
@@ -374,12 +375,11 @@ public class AsciiDocParserImpl {
   }
 
   private void parseAttributeInBrackets(String macroId) {
-    newLines = 0;
     PsiBuilder.Marker attributeInBracketMarker = myBuilder.mark();
     String name = null;
     while ((at(ATTR_NAME) || at(ASSIGNMENT) || at(URL_LINK) || at(ATTR_VALUE)
-      || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP))
-      && newLines == 0) {
+      || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP) || at(CONTINUATION))
+      && emptyLines == 0) {
       if (at(URL_LINK)) {
         parseUrl();
       } else if (at(ATTRIBUTE_REF_START)) {
