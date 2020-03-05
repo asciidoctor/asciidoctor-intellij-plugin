@@ -83,6 +83,9 @@ public final class AsciiDocPreviewSettings {
   @Attribute("KrokiUrl")
   private String myKrokiUrl;
 
+  @Attribute("EnabledFoldedAttributeReferencedExperimental")
+  private boolean myEnableAttributeFolding = false;
+
   public AsciiDocPreviewSettings() {
   }
 
@@ -97,7 +100,8 @@ public final class AsciiDocPreviewSettings {
                                  boolean showAsciiDocWarningsAndErrorsInEditor,
                                  boolean inplacePreviewRefresh,
                                  boolean enableKroki,
-                                 String krokiUrl) {
+                                 String krokiUrl,
+                                 boolean enableAttributeFolding) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
@@ -112,6 +116,7 @@ public final class AsciiDocPreviewSettings {
     myInplacePreviewRefresh = inplacePreviewRefresh;
     myEnableKroki = enableKroki;
     myKrokiUrl = krokiUrl;
+    myEnableAttributeFolding = enableAttributeFolding;
   }
 
   @NotNull
@@ -175,6 +180,10 @@ public final class AsciiDocPreviewSettings {
     return myKrokiUrl;
   }
 
+  public boolean isAttributeFoldingEnabled() {
+    return myEnableAttributeFolding;
+  }
+
   public List<String> getDisabledInjectionsByLanguageAsList() {
     List<String> list = new ArrayList<>();
     if (myDisabledInjectionsByLanguage != null) {
@@ -236,6 +245,9 @@ public final class AsciiDocPreviewSettings {
     if (!Objects.equals(myKrokiUrl, that.myKrokiUrl)) {
       return false;
     }
+    if (myEnableAttributeFolding != that.myEnableAttributeFolding) {
+      return false;
+    }
     return attributes.equals(that.attributes);
   }
 
@@ -255,6 +267,7 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + (myInplacePreviewRefresh ? 1 : 0);
     result = 31 * result + (myEnableKroki ? 1 : 0);
     result = 31 * result + Objects.hashCode(myKrokiUrl);
+    result = 31 * result + (myEnableAttributeFolding ? 1 : 0);
     return result;
   }
 

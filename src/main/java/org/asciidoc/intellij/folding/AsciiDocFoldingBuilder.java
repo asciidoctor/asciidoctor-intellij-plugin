@@ -8,16 +8,24 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveResult;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
+import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
+import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
+import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationReference;
 import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.asciidoc.intellij.psi.AsciiDocBlock;
 import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.asciidoc.intellij.psi.AsciiDocSelfDescribe;
+import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements DumbAware {
   private static final Map<String, String> COLLAPSABLE_ATTRIBUTES = new HashMap<>();
@@ -58,16 +66,15 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
                                           @NotNull PsiElement root,
                                           @NotNull Document document,
                                           boolean quick) {
+    boolean attributeFoldingEnabled = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isAttributeFoldingEnabled();
     root.accept(new AsciiDocVisitor() {
 
       @Override
       public void visitElement(PsiElement element) {
-        if (element instanceof AsciiDocAttributeReference) {
-          String text = element.getText();
-          if (text.startsWith("{") && text.endsWith("}")) {
-            if (COLLAPSABLE_ATTRIBUTES.containsKey(text.substring(1, text.length() - 1))) {
-              addDescriptors(element);
-            }
+        if (attributeFoldingEnabled && element instanceof AsciiDocAttributeReference) {
+          if (!element.getText().toLowerCase().endsWith("dir}")) {
+            // avoid replacing imagesdir, partialsdir, attachmentdir, etc. as this would be too verbose
+            addDescriptors(element);
           }
         }
         super.visitElement(element);
@@ -127,7 +134,25 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
       if (text.startsWith("{") && text.endsWith("}")) {
         title = COLLAPSABLE_ATTRIBUTES.get(text.substring(1, text.length() - 1));
         if (title == null) {
-          title = text;
+          Set<String> values = new HashSet<>();
+          for (PsiReference reference : node.getPsi().getReferences()) {
+            if (reference instanceof AsciiDocAttributeDeclarationReference) {
+              for (ResolveResult resolveResult : ((AsciiDocAttributeDeclarationReference) reference).multiResolve(false)) {
+                PsiElement element = resolveResult.getElement();
+                if (element instanceof AsciiDocAttributeDeclarationName) {
+                  PsiElement parent = element.getParent();
+                  if (parent instanceof AsciiDocAttributeDeclaration) {
+                    values.add(((AsciiDocAttributeDeclaration) parent).getAttributeValue());
+                  }
+                }
+              }
+            }
+            if (values.size() == 1) {
+              title = values.iterator().next();
+            } else {
+              title = text;
+            }
+          }
         }
       } else {
         title = text;
@@ -140,6 +165,6 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
 
   @Override
   protected boolean isRegionCollapsedByDefault(@NotNull ASTNode node) {
-    return false;
+    return node.getPsi() instanceof AsciiDocAttributeReference;
   }
 }

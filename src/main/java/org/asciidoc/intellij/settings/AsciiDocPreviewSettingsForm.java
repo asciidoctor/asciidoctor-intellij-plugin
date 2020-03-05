@@ -50,9 +50,10 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JBCheckBox myEnableKroki;
   private JPanel myKrokiUrlPanel;
   private JBTextField myKrokiUrl;
-    private JBTextField myLanguageForPassthrough;
+  private JBTextField myLanguageForPassthrough;
+  private JBCheckBox myEnabledAttributeFolding;
 
-    public JComponent getComponent() {
+  public JComponent getComponent() {
     return myMainPanel;
   }
 
@@ -175,6 +176,8 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     adjustKrokiOptions();
 
+    myEnabledAttributeFolding.setSelected(settings.isAttributeFoldingEnabled());
+
     myKrokiUrl.setTextToTriggerEmptyTextStatus("https://kroki.io");
 
   }
@@ -200,6 +203,6 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myVerticalLayout.isSelected(), myEditorTop.isSelected() || myEditorLeft.isSelected(), myEnableInjections.isSelected(),
       myLanguageForPassthrough.getText(), myDisabledInjectionsByLanguage.getText(),
       myShowAsciiDocWarningsAndErrorsInEditor.isSelected(), myInplacePreviewRefresh.isSelected(),
-      myEnableKroki.isSelected(), krokiUrl);
+      myEnableKroki.isSelected(), krokiUrl, myEnabledAttributeFolding.isSelected());
   }
 }
