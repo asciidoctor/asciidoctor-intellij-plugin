@@ -139,6 +139,36 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('def')");
   }
 
+  public void testHeadingNewStyleWithHeaderTwoLinesAndLineComment() {
+    doTest("= Abc\nHeader1\n// Comment\nHeader2\ndef",
+      "AsciiDoc:HEADING ('= Abc')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:HEADER ('Header1')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LINE_COMMENT ('// Comment')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:HEADER ('Header2')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('def')");
+  }
+
+  public void testHeadingNewStyleWithHeaderTwoLinesAndBlockComment() {
+    doTest("= Abc\nHeader1\n////\nHiHo\n////\nHeader2\ndef",
+      "AsciiDoc:HEADING ('= Abc')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:HEADER ('Header1')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_COMMENT ('////')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_COMMENT ('HiHo')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_COMMENT ('////')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:HEADER ('Header2')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('def')");
+  }
+
   public void testHeadingNewStyleWithInclude() {
     doTest("= Abc\ninclude::test.adoc[]\n",
       "AsciiDoc:HEADING ('= Abc')\n" +

@@ -266,6 +266,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 %state MULTILINE
 %state HEADER
+%state EOL_POP
 %state PREBLOCK
 %state STARTBLOCK
 %state DELIMITER
@@ -472,6 +473,17 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   }
 }
 
+<EOL_POP> {
+  "\n" {
+    yypopstate();
+    return AsciiDocTokenTypes.LINE_BREAK;
+  }
+  [^] {
+    yypopstate();
+    yypushback(yylength());
+  }
+}
+
 <DELIMITER, PREBLOCK> {
   ^ {PAGEBREAK} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.PAGEBREAK; }
   ^ {HORIZONTALRULE} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.HORIZONTALRULE; }
@@ -642,16 +654,18 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { yypushback(yylength()); yybegin(AFTER_SPACE); }
 }
 
-<PREBLOCK, SINGLELINE, PASSTHROUGH_NO_DELIMITER> {
+<PREBLOCK, SINGLELINE, PASSTHROUGH_NO_DELIMITER, HEADER> {
   {LINE_COMMENT} {
+    yypushstate();
+    yybegin(EOL_POP);
     return AsciiDocTokenTypes.LINE_COMMENT;
   }
 }
 
-<PREBLOCK, SINGLELINE, DELIMITER> {
-  {COMMENT_BLOCK_DELIMITER} $ { clearStyle(); resetFormatting(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
+<PREBLOCK, SINGLELINE, DELIMITER, HEADER> {
+  {COMMENT_BLOCK_DELIMITER} $ { clearStyle(); resetFormatting(); yypushstate(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
   {COMMENT_BLOCK_DELIMITER} / [^\/\n \t] { yypushback(yylength()); yybegin(STARTBLOCK);  }
-  {COMMENT_BLOCK_DELIMITER} { clearStyle(); resetFormatting(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
+  {COMMENT_BLOCK_DELIMITER} { clearStyle(); resetFormatting(); yypushstate(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
 }
 
 <AFTER_SPACE> {
@@ -1252,7 +1266,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <COMMENT_BLOCK> {
   ^ {COMMENT_BLOCK_DELIMITER} $ {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
-      yyinitialIfNotInBlock();
+      yybegin(EOL_POP);
       return AsciiDocTokenTypes.BLOCK_COMMENT;
     } else {
       return AsciiDocTokenTypes.BLOCK_COMMENT;
