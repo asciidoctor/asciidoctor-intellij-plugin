@@ -5,6 +5,7 @@ import com.intellij.lang.folding.CustomFoldingBuilder;
 import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -133,8 +134,10 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
       String text = node.getText();
       if (text.startsWith("{") && text.endsWith("}")) {
         title = COLLAPSABLE_ATTRIBUTES.get(text.substring(1, text.length() - 1));
-        if (title == null) {
+        if (title == null && !DumbService.isDumb(node.getPsi().getProject())) {
+          // checking dumb mode to avoid IndexNotReadyException
           Set<String> values = new HashSet<>();
+          iterateReferences:
           for (PsiReference reference : node.getPsi().getReferences()) {
             if (reference instanceof AsciiDocAttributeDeclarationReference) {
               for (ResolveResult resolveResult : ((AsciiDocAttributeDeclarationReference) reference).multiResolve(false)) {
@@ -143,15 +146,18 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
                   PsiElement parent = element.getParent();
                   if (parent instanceof AsciiDocAttributeDeclaration) {
                     values.add(((AsciiDocAttributeDeclaration) parent).getAttributeValue());
+                    if (values.size() > 1) {
+                      break iterateReferences;
+                    }
                   }
                 }
               }
             }
-            if (values.size() == 1) {
-              title = values.iterator().next();
-            } else {
-              title = text;
-            }
+          }
+          if (values.size() == 1) {
+            title = values.iterator().next();
+          } else {
+            title = text;
           }
         }
       } else {
