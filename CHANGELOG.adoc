@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - adding folding support for attributes showing their value (#416)
 - inline attributes can have multi-line content in brackets and continuations (#406)
 - re-enable grammar check for mono and italic text
+- when renaming block IDs, apply the correct validation pattern to allow for example `:` and `.` as part of IDs
 
 === 0.30.40
 

@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.rename.RenameInputValidator;
 import com.intellij.util.ProcessingContext;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
+import org.asciidoc.intellij.psi.AsciiDocBlockId;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagInDocument;
 import org.asciidoc.intellij.psi.AsciiDocTagDeclaration;
 import org.jetbrains.annotations.NotNull;
@@ -16,9 +17,12 @@ public class AsciiDocRenameInputValidator implements RenameInputValidator {
   private final ElementPattern<? extends PsiElement> myPattern = PlatformPatterns.or(
     PlatformPatterns.psiElement(AsciiDocIncludeTagInDocument.class),
     PlatformPatterns.psiElement(AsciiDocTagDeclaration.class),
+    PlatformPatterns.psiElement(AsciiDocBlockId.class),
     PlatformPatterns.psiElement(AsciiDocAttributeDeclarationName.class)
   );
   private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("[a-zA-Z0-9_-]*");
+  // source: BlockAnchorRx in Asciidoctor's rx.db
+  private static final Pattern BLOCK_ID_PATTERN = Pattern.compile("[\\p{Alpha}_:][\\w\\-:.]*");
 
   @NotNull
   @Override
@@ -28,6 +32,10 @@ public class AsciiDocRenameInputValidator implements RenameInputValidator {
 
   @Override
   public boolean isInputValid(@NotNull String newName, @NotNull PsiElement element, @NotNull ProcessingContext context) {
-    return IDENTIFIER_PATTERN.matcher(newName).matches();
+    if (element instanceof AsciiDocBlockId) {
+      return BLOCK_ID_PATTERN.matcher(newName).matches();
+    } else {
+      return IDENTIFIER_PATTERN.matcher(newName).matches();
+    }
   }
 }
