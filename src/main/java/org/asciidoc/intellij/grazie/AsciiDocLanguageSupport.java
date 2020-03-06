@@ -31,7 +31,9 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
     AsciiDocTokenTypes.LITERAL_BLOCK,
     AsciiDocTokenTypes.BLOCKREFTEXT,
     AsciiDocElementTypes.SECTION,
-    AsciiDocElementTypes.BLOCK
+    AsciiDocElementTypes.BLOCK,
+    AsciiDocElementTypes.MONO,
+    AsciiDocElementTypes.ITALIC
   );
 
   // all tokens that contain text that is part of a sentence and can be a sub-node of the elements above

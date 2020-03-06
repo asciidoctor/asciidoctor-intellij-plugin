@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - fix handling comments in header lines after a title (#414, #415)
 - adding folding support for attributes showing their value (#416)
 - inline attributes can have multi-line content in brackets and continuations (#406)
+- re-enable grammar check for mono and italic text
 
 === 0.30.40
 
