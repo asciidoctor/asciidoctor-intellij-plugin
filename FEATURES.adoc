@@ -84,10 +84,12 @@ Also, supports undo if the user is not happy with the result!
 The user can fold sections and blocks using the small +/- symbols on the left of the editor.
 Folded sections and blocks show their first line except when this is block id (like `\[[id]]`).
 
+[#folding-attributes]
 As an experimental feature, predefined attributes for character replacements like `+++{plus}+++` or `+++{quot}+++` and attributes are foldable as well.
 Attributes need to resolve to single declared value to be folded.
 As an experimental feature, the user needs to enable it in the settings of the plugin.
 
+Clicking on a folded attribute will unfold it.
 The hotkey to unfold one element is kbd:[Shift+NumPad+], the hotkey to fold one element is kbd:[Shift+NumPad-]
 The hotkey to unfold all elements is kbd:[Ctrl+Shift+NumPad+], the hotkey to fold all elements is kbd:[Ctrl+Shift+NumPad-].
 
