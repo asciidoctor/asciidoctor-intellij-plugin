@@ -31,9 +31,7 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
     AsciiDocTokenTypes.LITERAL_BLOCK,
     AsciiDocTokenTypes.BLOCKREFTEXT,
     AsciiDocElementTypes.SECTION,
-    AsciiDocElementTypes.BLOCK,
-    AsciiDocElementTypes.MONO,
-    AsciiDocElementTypes.ITALIC
+    AsciiDocElementTypes.BLOCK
   );
 
   // all tokens that contain text that is part of a sentence and can be a sub-node of the elements above
@@ -54,13 +52,16 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
     AsciiDocTokenTypes.RPAREN,
     AsciiDocTokenTypes.LBRACKET,
     AsciiDocTokenTypes.RBRACKET,
+    AsciiDocTokenTypes.BULLET,
     // keep the white space in here as blanks are necessary to separate words
     AsciiDocTokenTypes.WHITE_SPACE,
     AsciiDocTokenTypes.WHITE_SPACE_MONO,
     TokenType.WHITE_SPACE,
     AsciiDocElementTypes.URL, // can nest LINKTEXT
     AsciiDocElementTypes.REF, // can nest REFTEXT
-    AsciiDocElementTypes.LINK // can nest LINKTEXT
+    AsciiDocElementTypes.LINK, // can nest LINKTEXT
+    AsciiDocElementTypes.MONO, // will nest MONO
+    AsciiDocElementTypes.ITALIC // will nest ITALIC
   ), NODES_TO_CHECK);
 
   @NotNull
