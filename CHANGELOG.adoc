@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.41 (work in progress)
+=== 0.30.41
 
 - fix handling comments in header lines after a title (#414, #415)
 - adding folding support for attributes showing their value (#416)
