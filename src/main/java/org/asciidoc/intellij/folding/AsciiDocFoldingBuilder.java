@@ -160,6 +160,10 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
             title = text;
           }
         }
+        if (title == null) {
+          // dumb mode
+          title = text;
+        }
       } else {
         title = text;
       }
