@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - inline attributes can have multi-line content in brackets and continuations (#406)
 - re-enable grammar check for mono and italic text
 - when renaming block IDs, apply the correct validation pattern to allow for example `:` and `.` as part of IDs
+- don't mistake includes of external URLs as Antora style includes (#417)
 
 === 0.30.40
 

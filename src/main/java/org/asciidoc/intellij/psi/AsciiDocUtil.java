@@ -610,6 +610,8 @@ public class AsciiDocUtil {
 
   public static final Pattern ANTORA_PREFIX_AND_FAMILY_PATTERN = Pattern.compile("^[a-zA-Z0-9:._-]*(" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-zA-Z0-9:._-]*)?[$:]");
 
+  public static final Pattern URL_PREFIX_PATTERN = Pattern.compile("^(https?|file|ftp|irc)://");
+
   public static final Pattern ANTORA_PREFIX_PATTERN = Pattern.compile("^[a-zA-Z0-9:._-]*(" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-zA-Z0-9:._-]*)?[:]");
 
   public static final Pattern ANTORA_FAMILY_PATTERN = Pattern.compile("^[a-z]*(" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-z]*)?[$]");
@@ -634,6 +636,10 @@ public class AsciiDocUtil {
   }
 
   public static String replaceAntoraPrefix(Project project, VirtualFile moduleDir, String originalKey, String defaultFamily) {
+    Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(originalKey);
+    if (urlMatcher.find()) {
+      return originalKey;
+    }
     if (moduleDir != null) {
       return ApplicationManager.getApplication().runReadAction((Computable<String>) () -> {
         VirtualFile antoraModuleDir = moduleDir;

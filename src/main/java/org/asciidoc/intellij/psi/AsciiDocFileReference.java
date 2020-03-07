@@ -37,6 +37,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_SUPPORTED;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN;
 
 public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
   private static final int MAX_DEPTH = 10;
@@ -205,20 +206,23 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   private void resolve(String key, List<ResolveResult> results, int depth) {
     if (ANTORA_SUPPORTED.contains(macroName)) {
       if (depth == 0) {
-        if (AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(key).matches()) {
-          VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
-          if (antoraModuleDir != null) {
-            VirtualFile virtualFile = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, key);
-            if (virtualFile != null) {
-              PsiElement psiFile = PsiManager.getInstance(myElement.getProject()).findDirectory(virtualFile);
-              if (psiFile != null) {
-                results.add(new PsiElementResolveResult(psiFile));
-                return;
+        Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(key);
+        if (!urlMatcher.find()) {
+          if (AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(key).matches()) {
+            VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
+            if (antoraModuleDir != null) {
+              VirtualFile virtualFile = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, key);
+              if (virtualFile != null) {
+                PsiElement psiFile = PsiManager.getInstance(myElement.getProject()).findDirectory(virtualFile);
+                if (psiFile != null) {
+                  results.add(new PsiElementResolveResult(psiFile));
+                  return;
+                }
               }
             }
+          } else {
+            key = handleAntora(key);
           }
-        } else {
-          key = handleAntora(key);
         }
       }
     }
@@ -314,16 +318,19 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             toAntoraLookupItem(items, antoraModule);
           }
         } else if (AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(base).matches()) {
-          if (!"image".equals(macroName)) {
-            VirtualFile vf = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, base);
-            if (vf != null) {
-              toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(myElement.getProject().getBaseDir(), vf), '$');
-              toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement.getProject().getBaseDir(), vf), '$');
-              toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(myElement.getProject().getBaseDir(), vf), '$');
-              toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement.getProject().getBaseDir(), vf), '$');
-              toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(myElement.getProject().getBaseDir(), vf), '$');
+          Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(key);
+          if (!urlMatcher.find()) {
+            if (!"image".equals(macroName)) {
+              VirtualFile vf = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, base);
+              if (vf != null) {
+                toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(myElement.getProject().getBaseDir(), vf), '$');
+                toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement.getProject().getBaseDir(), vf), '$');
+                toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(myElement.getProject().getBaseDir(), vf), '$');
+                toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement.getProject().getBaseDir(), vf), '$');
+                toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(myElement.getProject().getBaseDir(), vf), '$');
+              }
+              return items.toArray();
             }
-            return items.toArray();
           }
         }
       }

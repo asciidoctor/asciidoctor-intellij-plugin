@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_PREFIX_AND_FAMILY_PATTERN;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN;
 
 /**
  * This {@link IncludeProcessor} translates Antora style includes to standard AsciiDoc includes.
@@ -27,6 +28,13 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
 
   @Override
   public boolean handles(String target) {
+    if (antoraModuleDir == null) {
+      return false;
+    }
+    Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(target);
+    if (urlMatcher.find()) {
+      return false;
+    }
     Matcher matcher = ANTORA_PREFIX_AND_FAMILY_PATTERN.matcher(target);
     if (matcher.find()) {
       // if the second character is a colon, this is probably an already expanded windows path name

@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_SUPPORTED;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN;
 
 public class AsciiDocInlineMacro extends ASTWrapperPsiElement {
   private static final Set<String> HAS_FILE_AS_BODY = new HashSet<>();
@@ -52,8 +53,9 @@ public class AsciiDocInlineMacro extends ASTWrapperPsiElement {
         int i = 0;
         boolean isAntora = false;
         if (ANTORA_SUPPORTED.contains(getMacroName())) {
+          Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(file);
           Matcher matcher = AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(file);
-          if (matcher.find()) {
+          if (!urlMatcher.find() && matcher.find()) {
             VirtualFile examplesDir = AsciiDocUtil.findAntoraModuleDir(this);
             if (examplesDir != null) {
               i += matcher.end();
