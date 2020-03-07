@@ -50,6 +50,10 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
     AsciiDocTokenTypes.MONOITALIC,
     AsciiDocTokenTypes.MONOBOLDITALIC,
     AsciiDocTokenTypes.END_OF_SENTENCE,
+    AsciiDocTokenTypes.LPAREN,
+    AsciiDocTokenTypes.RPAREN,
+    AsciiDocTokenTypes.LBRACKET,
+    AsciiDocTokenTypes.RBRACKET,
     // keep the white space in here as blanks are necessary to separate words
     AsciiDocTokenTypes.WHITE_SPACE,
     AsciiDocTokenTypes.WHITE_SPACE_MONO,
