@@ -62,6 +62,7 @@ public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiE
         String attributeName = declaration.getAttributeName();
         LookupElementBuilder lb = LookupElementBuilder.create(attributeName)
           .withIcon(AsciiDocIcons.ASCIIDOC_ICON)
+          .withCaseSensitivity(false)
           .withTailText(value, true)
           .withInsertHandler(getLookupElementInsertHandler(attributeName));
         if (declaration instanceof AsciiDocAttributeDeclaration) {

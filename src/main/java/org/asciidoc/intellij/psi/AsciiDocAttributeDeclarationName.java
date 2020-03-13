@@ -27,7 +27,7 @@ public class AsciiDocAttributeDeclarationName extends ASTWrapperPsiElement imple
   @Override
   public String getName() {
     ASTNode keyNode = this.getNode();
-    return keyNode.getText();
+    return keyNode.getText().replaceAll("[ \t]", "");
   }
 
   @Override

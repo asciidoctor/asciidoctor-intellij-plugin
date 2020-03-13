@@ -380,6 +380,14 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRIBUTE_NAME_END (':')");
   }
 
+  public void testAttributeWithBlanks() {
+    doTest(":attri b ute :",
+      "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME ('attri b ute ')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME_END (':')");
+  }
+
+
   public void testAttributeEmptyAtStart() {
     doTest(":attribute!:",
       "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +

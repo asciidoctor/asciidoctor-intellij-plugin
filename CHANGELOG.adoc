@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - upgrade to asciidoctorj-pdf:1.5.3
 - ignore non-text parts of section headings when passing contents on to grammar checker
 - smart-enter to complete `include`-macros and add `leveloffset` (#379)
+- handle attribute declaration with blanks; handle attribute names case-insensitive (#398)
 
 === 0.30.41
 

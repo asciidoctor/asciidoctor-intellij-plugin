@@ -70,6 +70,7 @@ public class AsciiDocCompletionContributor extends CompletionContributor {
             resultSet.addElement(LookupElementBuilder.create(attribute)
               .withTypeText(AsciiDocBundle.message(AsciiDocBundle.BUILTIN_ATTRIBUTE_PREFIX + attribute + ".values"))
               .withPresentableText(attribute)
+              .withCaseSensitivity(false)
               .withInsertHandler((insertionContext, item) -> {
                 // the finalizing : hasn't been entered yet, autocomplete it here
                 int offset = insertionContext.getStartOffset();
@@ -110,6 +111,7 @@ public class AsciiDocCompletionContributor extends CompletionContributor {
                           AsciiDocIncludeTagReferenceInComment tagReference = (AsciiDocIncludeTagReferenceInComment) reference;
                           if (!ids.contains(tagReference.getValue())) {
                             resultSet.addElement(LookupElementBuilder.create(tagReference.getValue())
+                              .withCaseSensitivity(false)
                               .withPresentableText(tagReference.getValue())
                             );
                             ids.add(tagReference.getValue());

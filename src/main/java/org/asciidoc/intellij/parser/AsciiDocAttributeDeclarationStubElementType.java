@@ -59,7 +59,7 @@ public class AsciiDocAttributeDeclarationStubElementType extends IStubElementTyp
   @Override
   public void indexStub(@NotNull AsciiDocAttributeDeclarationStub stub, @NotNull IndexSink sink) {
     if (stub.getAttributeName() != null) {
-      sink.occurrence(AsciiDocAttributeDeclarationKeyIndex.KEY, stub.getAttributeName());
+      sink.occurrence(AsciiDocAttributeDeclarationKeyIndex.KEY, stub.getAttributeName().toLowerCase());
     }
   }
 }

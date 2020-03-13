@@ -46,6 +46,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -223,6 +224,7 @@ public class AsciiDocUtil {
   static List<AttributeDeclaration> findAttributes(Project project, String key, PsiElement current) {
     List<AttributeDeclaration> result = new ArrayList<>();
 
+    key = key.toLowerCase(Locale.US);
     if (key.equals("snippets")) {
       augmentList(result, AsciiDocUtil.findSpringRestDocSnippets(current), "snippets");
     } else if (key.equals(FAMILY_PARTIAL + "sdir")) {

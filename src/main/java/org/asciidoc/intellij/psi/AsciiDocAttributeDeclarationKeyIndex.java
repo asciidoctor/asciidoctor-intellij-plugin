@@ -27,6 +27,7 @@ import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Locale;
 
 public class AsciiDocAttributeDeclarationKeyIndex extends StringStubIndexExtension<AsciiDocAttributeDeclaration> {
   public static final StubIndexKey<String, AsciiDocAttributeDeclaration> KEY = StubIndexKey.createIndexKey("asciidocAttributeDeclaration.index");
@@ -45,6 +46,6 @@ public class AsciiDocAttributeDeclarationKeyIndex extends StringStubIndexExtensi
 
   @Override
   public Collection<AsciiDocAttributeDeclaration> get(@NotNull String key, @NotNull Project project, @NotNull GlobalSearchScope scope) {
-    return StubIndex.getElements(getKey(), key, project, scope, AsciiDocAttributeDeclaration.class);
+    return StubIndex.getElements(getKey(), key.toLowerCase(Locale.US), project, scope, AsciiDocAttributeDeclaration.class);
   }
 }

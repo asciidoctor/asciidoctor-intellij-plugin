@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -133,7 +134,7 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
     } else if (node.getPsi() instanceof AsciiDocAttributeReference) {
       String text = node.getText();
       if (text.startsWith("{") && text.endsWith("}")) {
-        title = COLLAPSABLE_ATTRIBUTES.get(text.substring(1, text.length() - 1));
+        title = COLLAPSABLE_ATTRIBUTES.get(text.substring(1, text.length() - 1).toLowerCase(Locale.US));
         if (title == null && !DumbService.isDumb(node.getPsi().getProject())) {
           // checking dumb mode to avoid IndexNotReadyException
           Set<String> values = new HashSet<>();

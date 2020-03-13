@@ -256,6 +256,7 @@ INLINE_URL_WITH_DELIMITER = (https?|file|ftp|irc): "//" [^\n\s\[\]<]*([^\n\s\[\]
 INLINE_EMAIL_NO_DELIMITER = [[:letter:][:digit:]_](&amp;|[[:letter:][:digit:]_\-.%+])*@[[:letter:][:digit:]][[:letter:][:digit:]_\-.]*\.[a-zA-Z]{2,5}
 LINKEND = "]"
 ATTRIBUTE_NAME_START = ":"
+ATTRIBUTE_NAME_DECL = [a-zA-Z0-9_]+ [a-zA-Z0-9_ \t-]*
 ATTRIBUTE_NAME = [a-zA-Z0-9_]+ [a-zA-Z0-9_-]*
 ATTRIBUTE_NAME_END = ":"
 ATTRIBUTE_REF_START = "{"
@@ -386,7 +387,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <ATTRIBUTE_NAME> {
   {ATTRIBUTE_NAME_END} { yybegin(ATTRIBUTE_VAL); return AsciiDocTokenTypes.ATTRIBUTE_NAME_END; }
-  {AUTOCOMPLETE} | {ATTRIBUTE_NAME} { return AsciiDocTokenTypes.ATTRIBUTE_NAME; }
+  {AUTOCOMPLETE} | {ATTRIBUTE_NAME_DECL} { return AsciiDocTokenTypes.ATTRIBUTE_NAME; }
   "!"                { return AsciiDocTokenTypes.ATTRIBUTE_UNSET; } // can be at start or end of declaration
   "\n"               { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
   [^]                { yypushback(yylength()); yypopstate(); }
@@ -439,7 +440,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <HEADER, PREBLOCK> {
-  {ATTRIBUTE_NAME_START} / "!"? {AUTOCOMPLETE}? {ATTRIBUTE_NAME} "!"? {ATTRIBUTE_NAME_END} {
+  {ATTRIBUTE_NAME_START} / "!"? {AUTOCOMPLETE}? {ATTRIBUTE_NAME_DECL} "!"? {ATTRIBUTE_NAME_END} {
         if (!isEscaped()) {
           yypushstate();
           yybegin(ATTRIBUTE_NAME);
