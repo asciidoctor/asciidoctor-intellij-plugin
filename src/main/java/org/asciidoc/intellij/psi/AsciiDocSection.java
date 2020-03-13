@@ -9,6 +9,7 @@ import com.intellij.psi.tree.TokenSet;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.parser.AsciiDocParserImpl;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -144,5 +145,9 @@ public class AsciiDocSection extends ASTWrapperPsiElement implements AsciiDocSel
       throw new IllegalStateException("heading without heading");
     }
     return heading.getText();
+  }
+
+  public int headingLevel() {
+    return AsciiDocParserImpl.headingLevel(getText());
   }
 }

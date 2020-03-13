@@ -48,4 +48,8 @@ public class AsciiDocSmartEnterProcessorTest extends LightCodeInsightFixtureTest
   public void testClosingBlockMacro() {
     doTest();
   }
+
+  public void testIncludeLevel() {
+    doTest();
+  }
 }

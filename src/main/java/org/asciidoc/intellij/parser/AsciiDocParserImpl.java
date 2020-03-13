@@ -691,7 +691,7 @@ public class AsciiDocParserImpl {
   }
 
   @SuppressWarnings("FallThrough")
-  private static int headingLevel(@Nullable String headingText) {
+  public static int headingLevel(@Nullable String headingText) {
     if (headingText == null) {
       return 0;
     }

@@ -7,13 +7,20 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
+import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.psi.AsciiDocAttributeInBrackets;
+import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
+import org.asciidoc.intellij.psi.AsciiDocFileReference;
+import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
 
 public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
   private static final Logger LOG = Logger.getInstance(AsciiDocSmartEnterProcessor.class);
@@ -75,11 +82,60 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
           (atCaret.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_REF_END
             && atCaret.getNode().getTreeParent().getTreeParent().getElementType() == AsciiDocElementTypes.BLOCK_MACRO)) {
           if (atCaret.getNextSibling() == null) {
-            String textToInsert = "[]\n";
+            String textToInsert = "[";
             doc.insertString(atCaret.getTextRange().getEndOffset(), textToInsert);
-            caretTo = atCaret.getTextOffset() + atCaret.getTextLength() + 3;
+            caretTo = atCaret.getTextOffset() + atCaret.getTextLength() + textToInsert.length();
             commitChanges(project, editor, caretTo);
+            if (atCaret.getNextSibling() != null) {
+              atCaret = atCaret.getNextSibling();
+            }
             result = true;
+          }
+        }
+        if ((atCaret.getNode().getElementType() == AsciiDocTokenTypes.ATTRS_START ||
+          atCaret.getNode().getElementType() == AsciiDocTokenTypes.SEPARATOR)
+          && atCaret.getNode().getTreeParent().getElementType() == AsciiDocElementTypes.BLOCK_MACRO) {
+          if (atCaret.getNextSibling() == null) {
+            // the default
+            String textToInsert = "]\n";
+            PsiElement parent = atCaret.getParent();
+
+            // if this is an include-macro, try to add leveloffset-attribute to match
+            if (parent instanceof AsciiDocBlockMacro && ((AsciiDocBlockMacro) parent).getMacroName().equals("include")) {
+              PsiReference[] references = parent.getReferences();
+              if (references.length > 0 && references[references.length - 1] instanceof AsciiDocFileReference) {
+                // resolve file reference
+                AsciiDocFileReference fileReference = (AsciiDocFileReference) references[references.length - 1];
+                PsiElement resolve = fileReference.resolve();
+                if (resolve instanceof PsiFile && ((PsiFile) resolve).getFileType() == AsciiDocFileType.INSTANCE) {
+                  // get first section of referenced file
+                  Collection<AsciiDocSection> childrenOfType = PsiTreeUtil.findChildrenOfType(resolve, AsciiDocSection.class);
+                  if (childrenOfType.size() > 0) {
+                    AsciiDocSection next = childrenOfType.iterator().next();
+                    int includeLevel = next.headingLevel();
+                    AsciiDocSection parentSection = (AsciiDocSection) PsiTreeUtil.findFirstParent(parent, psiElement -> psiElement instanceof AsciiDocSection);
+                    if (parentSection != null) {
+                      // derive section level from current section
+                      int parentLevel = parentSection.headingLevel();
+                      int delta = parentLevel - includeLevel + 1;
+                      if (delta > 0) {
+                        textToInsert = "leveloffset=+" + delta + textToInsert;
+                      } else if (delta < 0) {
+                        textToInsert = "leveloffset=" + delta + textToInsert;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            doc.insertString(atCaret.getTextRange().getEndOffset(), textToInsert);
+            caretTo = atCaret.getTextOffset() + atCaret.getTextLength() + textToInsert.length();
+            commitChanges(project, editor, caretTo);
+            atCaret = getStatementAtCaret(editor, psiFile);
+            result = true;
+            if (atCaret == null) {
+              return result;
+            }
           }
         }
         if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.ATTRS_END) {

@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - show attribute name in dumb mode for folded value (#416)
 - upgrade to asciidoctorj-pdf:1.5.3
 - ignore non-text parts of section headings when passing contents on to grammar checker
+- smart-enter to complete `include`-macros and add `leveloffset` (#379)
 
 === 0.30.41
 
