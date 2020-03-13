@@ -101,7 +101,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testHeadingOldStyle() {
     doTest("Abc\n===\n\ndef",
-      "AsciiDoc:HEADING ('Abc\\n===')\n" +
+      "AsciiDoc:HEADING_OLDSTYLE ('Abc\\n===')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:EMPTY_LINE ('\\n')\n" +
         "AsciiDoc:TEXT ('def')");
@@ -109,7 +109,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testHeadingOldStyleWithHeaderSeparatedByBlankLine() {
     doTest("Abc\n===\nHeader\n\ndef",
-      "AsciiDoc:HEADING ('Abc\\n===')\n" +
+      "AsciiDoc:HEADING_OLDSTYLE ('Abc\\n===')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:HEADER ('Header')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -119,7 +119,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testHeadingOldStyleWithHeaderTwoLines() {
     doTest("Abc\n===\nHeader1\nHeader2\ndef",
-      "AsciiDoc:HEADING ('Abc\\n===')\n" +
+      "AsciiDoc:HEADING_OLDSTYLE ('Abc\\n===')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:HEADER ('Header1')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -206,7 +206,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testHeadingOldStyleWithHeaderTwoLinesAndAttribute() {
     doTest("Abc\n===\nHeader1\n:attr: val\nHeader2\ndef",
-      "AsciiDoc:HEADING ('Abc\\n===')\n" +
+      "AsciiDoc:HEADING_OLDSTYLE ('Abc\\n===')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:HEADER ('Header1')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -343,7 +343,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testOldStyleHeading() {
     doTest("Hi\n--\n",
-      "AsciiDoc:HEADING ('Hi\\n--')\n" +
+      "AsciiDoc:HEADING_OLDSTYLE ('Hi\\n--')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 

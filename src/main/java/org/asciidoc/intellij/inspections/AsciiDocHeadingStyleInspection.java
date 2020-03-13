@@ -10,6 +10,7 @@ import org.asciidoc.intellij.quickfix.AsciiDocConvertOldstyleHeading;
 import org.jetbrains.annotations.NotNull;
 
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_OLDSTYLE;
 
 /**
  * @author Alexander Schwartz 2016
@@ -31,10 +32,10 @@ public class AsciiDocHeadingStyleInspection extends AsciiDocInspectionBase {
           if (o.getNode().getText().startsWith("#")) {
             LocalQuickFix[] fixes = new LocalQuickFix[]{MARKDOWN_HEADING_QUICKFIX};
             holder.registerProblem(o, TEXT_HINT_MARKDOWN, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixes);
-          } else if (o.getNode().getText().indexOf('\n') != -1) {
-            LocalQuickFix[] fixes = new LocalQuickFix[]{OLDSTYLE_HEADING_QUICKFIX};
-            holder.registerProblem(o, TEXT_HINT_OLD_STYLE, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixes);
           }
+        } else if (o != null && o.getNode().getElementType() == HEADING_OLDSTYLE) {
+          LocalQuickFix[] fixes = new LocalQuickFix[]{OLDSTYLE_HEADING_QUICKFIX};
+          holder.registerProblem(o, TEXT_HINT_OLD_STYLE, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixes);
         }
         super.visitElement(o);
       }

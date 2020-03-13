@@ -5,6 +5,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.tree.TokenSet;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
@@ -20,12 +21,14 @@ import java.util.regex.Pattern;
  * @author yole
  */
 public class AsciiDocSection extends ASTWrapperPsiElement implements AsciiDocSelfDescribe {
+  private static final TokenSet HEADINGS = TokenSet.create(AsciiDocTokenTypes.HEADING, AsciiDocTokenTypes.HEADING_OLDSTYLE);
+
   public AsciiDocSection(@NotNull ASTNode node) {
     super(node);
   }
 
   public String getTitle() {
-    ASTNode heading = getNode().findChildByType(AsciiDocTokenTypes.HEADING);
+    ASTNode heading = getNode().findChildByType(HEADINGS);
     if (heading != null) {
       return trimHeading(heading.getText());
     }
@@ -81,6 +84,7 @@ public class AsciiDocSection extends ASTWrapperPsiElement implements AsciiDocSel
     if (keyToCompare.length() == ownKey.length()) {
       return true;
     }
+    //noinspection RedundantIfStatement
     if (keyToCompare.substring(ownKey.length()).matches("^_[0-9]*$")) {
       return true;
     }
@@ -135,7 +139,7 @@ public class AsciiDocSection extends ASTWrapperPsiElement implements AsciiDocSel
   @NotNull
   @Override
   public String getFoldedSummary() {
-    ASTNode heading = getNode().findChildByType(AsciiDocTokenTypes.HEADING);
+    ASTNode heading = getNode().findChildByType(HEADINGS);
     if (heading == null) {
       throw new IllegalStateException("heading without heading");
     }

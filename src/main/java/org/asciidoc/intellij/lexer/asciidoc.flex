@@ -371,7 +371,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
               headerLines = 0;
               yybegin(HEADER);
             }
-            return AsciiDocTokenTypes.HEADING;
+            return AsciiDocTokenTypes.HEADING_OLDSTYLE;
           } else {
             // pass this contents to the single line rules (second priority)
             yypushback(yylength());

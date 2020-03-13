@@ -121,6 +121,28 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
       // ignore "//" at start of line comment
       ranges.add(new IntRange(0, 1));
     }
+    if (psiElement.getNode().getElementType() == AsciiDocTokenTypes.HEADING && psiElement.getTextLength() >= 1) {
+      // ignore "##" or "==" at start of heading
+      String heading = psiElement.getText();
+      int i = 0;
+      char start = heading.charAt(0);
+      while (i < heading.length() && heading.charAt(i) == start) {
+        ++i;
+      }
+      while (i < heading.length() && heading.charAt(i) == ' ') {
+        ++i;
+      }
+      ranges.add(new IntRange(0, i - 1));
+    }
+    if (psiElement.getNode().getElementType() == AsciiDocTokenTypes.HEADING_OLDSTYLE && psiElement.getTextLength() >= 1) {
+      // ignore second line of heading
+      String heading = psiElement.getText();
+      int i = 0;
+      while (i < heading.length() && heading.charAt(i) != '\n') {
+        ++i;
+      }
+      ranges.add(new IntRange(i, heading.length()));
+    }
     return ranges;
   }
 }
