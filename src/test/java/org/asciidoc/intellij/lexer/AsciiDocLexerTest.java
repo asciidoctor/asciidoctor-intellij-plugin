@@ -896,6 +896,29 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINKEND (']')");
   }
 
+  public void testAttrInUrl() {
+    doTest("http://url.com{path}[text]",
+      "AsciiDoc:URL_LINK ('http://url.com')\n" +
+        "AsciiDoc:ATTRIBUTE_REF_START ('{')\n" +
+        "AsciiDoc:ATTRIBUTE_REF ('path')\n" +
+        "AsciiDoc:ATTRIBUTE_REF_END ('}')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKTEXT ('text')\n" +
+        "AsciiDoc:LINKEND (']')");
+  }
+
+  public void testAttrInLink() {
+    doTest("link:http://url.com{path}[text]",
+      "AsciiDoc:LINKSTART ('link:')\n" +
+        "AsciiDoc:URL_LINK ('http://url.com')\n" +
+        "AsciiDoc:ATTRIBUTE_REF_START ('{')\n" +
+        "AsciiDoc:ATTRIBUTE_REF ('path')\n" +
+        "AsciiDoc:ATTRIBUTE_REF_END ('}')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKTEXT ('text')\n" +
+        "AsciiDoc:LINKEND (']')");
+  }
+
   public void testLinkWithAttributeAutocomplete() {
     doTest("link:IntellijIdeaRulezzz test.adoc[]\n",
       "AsciiDoc:LINKSTART ('link:')\n" +

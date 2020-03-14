@@ -494,8 +494,12 @@ public class AsciiDocParserImpl {
     PsiBuilder.Marker inlineMacroMarker = myBuilder.mark();
     // avoid combining two links or two emails
     boolean seenLinkOrEmail = false;
-    while ((at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX) || at(LINKTEXT_START) || at(LINKTEXT) || at(URL_END) || at(LINKEND))
+    while ((at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX) || at(LINKTEXT_START) || at(LINKTEXT) || at(URL_END) || at(LINKEND) || at(ATTRIBUTE_REF_START))
       && newLines == 0) {
+      if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
+        continue;
+      }
       if (at(URL_LINK) || at(URL_EMAIL)) {
         if (!seenLinkOrEmail) {
           seenLinkOrEmail = true;
