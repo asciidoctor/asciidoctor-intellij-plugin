@@ -1,0 +1,3 @@
+= Section
+
+xref:xrefTitle[Section]<caret>

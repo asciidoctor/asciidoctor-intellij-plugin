@@ -1,0 +1,3 @@
+= Section
+
+xref:xrefTitleAfterBracket[<caret>

@@ -1049,7 +1049,12 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <LINKTEXT> {
-  {LINKEND}            { yypopstate(); return AsciiDocTokenTypes.LINKEND; }
+  {LINKEND}            { if (isEscaped()) {
+                           return AsciiDocTokenTypes.LINKTEXT;
+                         } else {
+                           yypopstate(); return AsciiDocTokenTypes.LINKEND;
+                         }
+                       }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
   {CONTINUATION} / {SPACE}* "\n" {
                          if (isPrefixedBy(SPACES)) {

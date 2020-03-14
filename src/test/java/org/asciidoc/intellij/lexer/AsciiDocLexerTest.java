@@ -887,6 +887,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:RBRACKET (']')");
   }
 
+  public void testEscapedLinkText() {
+    doTest("link:FILE[T\\]ext]",
+      "AsciiDoc:LINKSTART ('link:')\n" +
+        "AsciiDoc:LINKFILE ('FILE')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKTEXT ('T\\]ext')\n" +
+        "AsciiDoc:LINKEND (']')");
+  }
+
   public void testLinkWithAttributeAutocomplete() {
     doTest("link:IntellijIdeaRulezzz test.adoc[]\n",
       "AsciiDoc:LINKSTART ('link:')\n" +

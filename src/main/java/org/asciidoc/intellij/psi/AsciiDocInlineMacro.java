@@ -104,7 +104,7 @@ public class AsciiDocInlineMacro extends ASTWrapperPsiElement {
     return super.getReferences();
   }
 
-  private String getMacroName() {
+  public String getMacroName() {
     ASTNode idNode = getNode().findChildByType(AsciiDocTokenTypes.INLINE_MACRO_ID);
     if (idNode == null) {
       throw new IllegalStateException("Parser failure: block macro without ID found: " + getText());

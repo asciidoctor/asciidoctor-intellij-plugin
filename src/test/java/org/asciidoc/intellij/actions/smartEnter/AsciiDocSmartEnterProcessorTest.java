@@ -52,4 +52,12 @@ public class AsciiDocSmartEnterProcessorTest extends LightCodeInsightFixtureTest
   public void testIncludeLevel() {
     doTest();
   }
+
+  public void testXrefTitle() {
+    doTest();
+  }
+
+  public void testXrefTitleAfterBracket() {
+    doTest();
+  }
 }
