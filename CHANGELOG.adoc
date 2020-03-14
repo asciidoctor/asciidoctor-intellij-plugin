@@ -16,6 +16,7 @@ This document provides a high-level view of the changes introduced by release.
 - smart-enter to complete `include`-macros and add `leveloffset` (#379)
 - smart-enter to complete `xref`- and `link`-macros to add the referenced section title in the brackets (#378)
 - handle attribute declaration with blanks; handle attribute names case-insensitive (#398)
+- support Antora 2.3 component attributes (#385)
 
 === 0.30.41
 

@@ -420,6 +420,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("imagesdir", "/src/antoraModule/modules/ROOT/images")));
     assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("attachmentsdir", "/src/antoraModule/modules/ROOT/attachments")));
     assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("examplesdir", "/src/antoraModule/modules/ROOT/examples")));
+    assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("myattr", "myval")));
 
     AsciiDocBlockMacro[] macros = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocBlockMacro.class);
     assertNotNull(macros);

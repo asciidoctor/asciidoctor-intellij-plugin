@@ -30,6 +30,7 @@ import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.text.StringSearcher;
+import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.intellij.lang.annotations.Language;
@@ -245,6 +246,14 @@ public class AsciiDocUtil {
     return result;
   }
 
+  public static Map<String, String> collectAntoraAttributes(PsiElement element) {
+    VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(element);
+    if (antoraModuleDir != null) {
+      return AsciiDoc.collectAntoraAttributes(antoraModuleDir);
+    } else {
+      return Collections.emptyMap();
+    }
+  }
 
   static List<AttributeDeclaration> findAttributes(Project project, PsiElement current) {
     List<AttributeDeclaration> result = new ArrayList<>(findAttributes(project));
@@ -255,6 +264,8 @@ public class AsciiDocUtil {
     augmentList(result, AsciiDocUtil.findAntoraImagesDir(current), FAMILY_IMAGE + "sdir");
     augmentList(result, AsciiDocUtil.findAntoraAttachmentsDir(current), FAMILY_ATTACHMENT + "sdir");
     augmentList(result, AsciiDocUtil.findAntoraExamplesDir(current), FAMILY_EXAMPLE + "sdir");
+
+    collectAntoraAttributes(current).forEach((k, v) -> result.add(new AsciiDocAttributeDeclarationDummy(k, v)));
 
     return result;
   }

@@ -148,6 +148,10 @@ public class AsciiDocSection extends ASTWrapperPsiElement implements AsciiDocSel
   }
 
   public int headingLevel() {
-    return AsciiDocParserImpl.headingLevel(getText());
+    ASTNode heading = getNode().findChildByType(HEADINGS);
+    if (heading == null) {
+      throw new IllegalStateException("heading without heading");
+    }
+    return AsciiDocParserImpl.headingLevel(heading.getText());
   }
 }

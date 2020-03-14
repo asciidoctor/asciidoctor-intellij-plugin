@@ -19,6 +19,7 @@ import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.asciidoc.intellij.psi.AsciiDocBlock;
 import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.asciidoc.intellij.psi.AsciiDocSelfDescribe;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -134,10 +135,21 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
     } else if (node.getPsi() instanceof AsciiDocAttributeReference) {
       String text = node.getText();
       if (text.startsWith("{") && text.endsWith("}")) {
-        title = COLLAPSABLE_ATTRIBUTES.get(text.substring(1, text.length() - 1).toLowerCase(Locale.US));
+        String key = text.substring(1, text.length() - 1).toLowerCase(Locale.US);
+        title = COLLAPSABLE_ATTRIBUTES.get(key);
         if (title == null && !DumbService.isDumb(node.getPsi().getProject())) {
           // checking dumb mode to avoid IndexNotReadyException
           Set<String> values = new HashSet<>();
+
+          // search attributes contributed by Antora
+          Map<String, String> attributes = AsciiDocUtil.collectAntoraAttributes(node.getPsi());
+          attributes.forEach((k, v) -> {
+            if (k.toLowerCase(Locale.US).equals(key)) {
+              values.add(v);
+            }
+          });
+
+          // search regular attributes
           iterateReferences:
           for (PsiReference reference : node.getPsi().getReferences()) {
             if (reference instanceof AsciiDocAttributeDeclarationReference) {

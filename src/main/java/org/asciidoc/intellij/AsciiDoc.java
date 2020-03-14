@@ -582,32 +582,10 @@ public class AsciiDoc {
     }
   }
 
-  private Map<String, String> populateAntoraAttributes(String projectBasePath, File fileBaseDir, VirtualFile antoraModuleDir) {
+  public static Map<String, String> populateAntoraAttributes(String projectBasePath, File fileBaseDir, VirtualFile antoraModuleDir) {
     Map<String, String> result = new HashMap<>();
     if (antoraModuleDir != null) {
-      result.put("icons", "font");
-      result.put("env-site", "");
-      result.put("site-gen", "antora");
-      result.put("site-gen-antora", "");
-      result.put("page-module", antoraModuleDir.getName());
-
-      if (antoraModuleDir.getParent() != null && antoraModuleDir.getParent().getParent() != null) {
-        VirtualFile antoraFile = antoraModuleDir.getParent().getParent().findChild(ANTORA_YML);
-        if (antoraFile != null) {
-          ApplicationManager.getApplication().runReadAction(() -> {
-            Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
-            if (document != null) {
-              Yaml yaml = new Yaml();
-              Map<String, Object> antora = yaml.load(document.getText());
-              mapAttribute(result, antora, "name", "page-component-name");
-              mapAttribute(result, antora, "version", "page-component-version");
-              mapAttribute(result, antora, "title", "page-component-title");
-              mapAttribute(result, antora, "version", "page-version");
-              mapAttribute(result, antora, "display-version", "page-display-version");
-            }
-          });
-        }
-      }
+      result.putAll(collectAntoraAttributes(antoraModuleDir));
 
       VirtualFile projectBase = LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath));
       VirtualFile baseDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
@@ -631,6 +609,43 @@ public class AsciiDoc {
       }
       if (antoraExamplesDir != null) {
         result.put("examplesdir", antoraExamplesDir.getCanonicalPath());
+      }
+    }
+    return result;
+  }
+
+  public static Map<String, String> collectAntoraAttributes(VirtualFile antoraModuleDir) {
+    Map<String, String> result = new HashMap<>();
+    result.put("icons", "font");
+    result.put("env-site", "");
+    result.put("site-gen", "antora");
+    result.put("site-gen-antora", "");
+    result.put("page-module", antoraModuleDir.getName());
+
+    if (antoraModuleDir.getParent() != null && antoraModuleDir.getParent().getParent() != null) {
+      VirtualFile antoraFile = antoraModuleDir.getParent().getParent().findChild(ANTORA_YML);
+      if (antoraFile != null) {
+        ApplicationManager.getApplication().runReadAction(() -> {
+          Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
+          if (document != null) {
+            Yaml yaml = new Yaml();
+            Map<String, Object> antora = yaml.load(document.getText());
+            mapAttribute(result, antora, "name", "page-component-name");
+            mapAttribute(result, antora, "version", "page-component-version");
+            mapAttribute(result, antora, "title", "page-component-title");
+            mapAttribute(result, antora, "version", "page-version");
+            mapAttribute(result, antora, "display-version", "page-display-version");
+            Object asciidoc = antora.get("asciidoc");
+            if (asciidoc instanceof Map) {
+              @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
+              if (attributes instanceof Map) {
+                @SuppressWarnings("unchecked") Map<String, Object> map = (Map<String, Object>) attributes;
+                map.forEach((k, v) -> result.put(k, v.toString()));
+              }
+            }
+
+          }
+        });
       }
     }
     return result;
@@ -721,7 +736,7 @@ public class AsciiDoc {
     }
   }
 
-  private void mapAttribute(Map<String, String> result, Map<String, Object> antora, String nameSource, String nameTarget) {
+  private static void mapAttribute(Map<String, String> result, Map<String, Object> antora, String nameSource, String nameTarget) {
     Object value = antora.get(nameSource);
     if (value != null) {
       result.put(nameTarget, value.toString());
