@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.42
+=== 0.30.42 (preview, available from GitHub releases)
 
 - check monospace and italic text as part of a sentence
 - show attribute name in dumb mode for folded value (#416)
