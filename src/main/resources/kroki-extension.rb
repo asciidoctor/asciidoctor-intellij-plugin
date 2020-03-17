@@ -55,8 +55,8 @@ class KrokiProcessor
       # The JavaFX preview doesn't support SVG well, therefore we'll use PNG format...
       if format == 'svg'
         # ... unless the diagram library does not support PNG as output format!
-        # Currently, mermaid, nomnoml and svgbob only support SVG as output format.
-        format = 'png' unless diagram_type == :mermaid || diagram_type == :nomnoml || diagram_type == :svgbob
+        # Currently, mermaid, nomnoml, svgbob, wavedrom only support SVG as output format.
+        format = 'png' unless diagram_type == :mermaid || diagram_type == :nomnoml || diagram_type == :svgbob || diagram_type == :wavedrom
       end
       image_url = _create_image_src(doc, diagram_type, format, diagram_text)
       block_attrs = {
@@ -86,7 +86,7 @@ class KrokiProcessor
 end
 
 Extensions.register do
-  names = %w(plantuml ditaa graphviz blockdiag seqdiag actdiag nwdiag c4plantuml erd mermaid nomnoml svgbob umlet)
+  names = %w(plantuml ditaa graphviz blockdiag seqdiag actdiag nwdiag packetdiag rackdiag c4plantuml erd mermaid nomnoml svgbob umlet vega vegalite wavedrom)
   names.each { |name|
     block_macro KrokiBlockMacro, name
     block KrokiBlock, name
