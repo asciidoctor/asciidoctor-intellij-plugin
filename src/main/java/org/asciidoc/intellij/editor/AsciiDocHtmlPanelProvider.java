@@ -16,8 +16,6 @@ public abstract class AsciiDocHtmlPanelProvider {
   public static final ExtensionPointName<AsciiDocHtmlPanelProvider> EP_NAME =
     ExtensionPointName.create("org.asciidoc.intellij.html.panel.provider");
 
-  private static AsciiDocHtmlPanelProvider[] ourProviders = null;
-
   @NotNull
   public abstract AsciiDocHtmlPanel createHtmlPanel(Document document, Path imagesPath);
 
@@ -29,10 +27,7 @@ public abstract class AsciiDocHtmlPanelProvider {
 
   @NotNull
   public static AsciiDocHtmlPanelProvider[] getProviders() {
-    if (ourProviders == null) {
-      ourProviders = EP_NAME.getExtensions();
-    }
-    return ourProviders;
+    return EP_NAME.getExtensions();
   }
 
   @NotNull

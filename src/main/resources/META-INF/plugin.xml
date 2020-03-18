@@ -18,14 +18,8 @@
   <depends optional="true" config-file="java-features.xml">com.intellij.modules.java</depends>
   <depends optional="true" config-file="grazie-features.xml">tanvd.grazi</depends>
 
-  <project-components>
-    <component>
-      <implementation-class>org.asciidoc.intellij.toolbar.AsciiDocToolbarLoaderComponent</implementation-class>
-    </component>
-  </project-components>
-
   <extensionPoints>
-    <extensionPoint qualifiedName="org.asciidoc.intellij.html.panel.provider"
+    <extensionPoint qualifiedName="org.asciidoc.intellij.html.panel.provider" dynamic="true"
                     interface="org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider"/>
   </extensionPoints>
 
@@ -164,7 +158,8 @@
     <webBrowserUrlProvider implementation="org.asciidoc.intellij.web.AsciiDocBrowserUrlProvider"/>
     <customPasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteProvider" />
     <filePasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteProvider" />
-    <fileTypeFactory implementation="org.asciidoc.intellij.file.AsciiDocFileTypeFactory"/>
+    <fileType name="AsciiDoc" extensions="adoc;asciidoc;ad" fileNames=".asciidoctorconfig" language="AsciiDoc"
+              implementationClass="org.asciidoc.intellij.file.AsciiDocFileType" fieldName="INSTANCE"/>
     <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocSplitEditorProvider"/>
     <liveTemplateContext implementation="org.asciidoc.intellij.template.AsciiDocTemplateContextType$File"/>
     <defaultLiveTemplatesProvider implementation="org.asciidoc.intellij.template.AsciiDocTemplatesProvider"/>

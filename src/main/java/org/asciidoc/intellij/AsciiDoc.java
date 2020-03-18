@@ -106,17 +106,17 @@ public class AsciiDoc {
     }
   }
 
-  private static MaxHashMap instances = new MaxHashMap();
+  private static final MaxHashMap instances = new MaxHashMap();
 
-  private static PrependConfig prependConfig = new PrependConfig();
+  private static final PrependConfig prependConfig = new PrependConfig();
 
-  private static AntoraIncludeAdapter antoraIncludeAdapter = new AntoraIncludeAdapter();
+  private static final AntoraIncludeAdapter antoraIncludeAdapter = new AntoraIncludeAdapter();
 
-  private static AntoraImageAdapter antoraImageAdapter = new AntoraImageAdapter();
+  private static final AntoraImageAdapter antoraImageAdapter = new AntoraImageAdapter();
 
-  private static AttributesRetriever attributeRetriever = new AttributesRetriever();
+  private static final AttributesRetriever attributeRetriever = new AttributesRetriever();
 
-  private com.intellij.openapi.diagnostic.Logger log =
+  private final static com.intellij.openapi.diagnostic.Logger log =
     com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDoc.class);
 
   static {
