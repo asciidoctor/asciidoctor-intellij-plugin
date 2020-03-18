@@ -106,17 +106,17 @@ public class AsciiDoc {
     }
   }
 
-  private static final MaxHashMap instances = new MaxHashMap();
+  private static final MaxHashMap INSTANCES = new MaxHashMap();
 
-  private static final PrependConfig prependConfig = new PrependConfig();
+  private static final PrependConfig PREPEND_CONFIG = new PrependConfig();
 
-  private static final AntoraIncludeAdapter antoraIncludeAdapter = new AntoraIncludeAdapter();
+  private static final AntoraIncludeAdapter ANTORA_INCLUDE_ADAPTER = new AntoraIncludeAdapter();
 
-  private static final AntoraImageAdapter antoraImageAdapter = new AntoraImageAdapter();
+  private static final AntoraImageAdapter ANTORA_IMAGE_ADAPTER = new AntoraImageAdapter();
 
-  private static final AttributesRetriever attributeRetriever = new AttributesRetriever();
+  private static final AttributesRetriever ATTRIBUTES_RETRIEVER = new AttributesRetriever();
 
-  private final static com.intellij.openapi.diagnostic.Logger log =
+  private static final com.intellij.openapi.diagnostic.Logger LOG =
     com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDoc.class);
 
   static {
@@ -170,7 +170,7 @@ public class AsciiDoc {
       if (krokiEnabled) {
         md = md + ".kroki";
       }
-      Asciidoctor asciidoctor = instances.get(md);
+      Asciidoctor asciidoctor = INSTANCES.get(md);
       if (asciidoctor == null) {
         ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
         ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
@@ -190,7 +190,7 @@ public class AsciiDoc {
           if (entry == null) {
             // this happes for example with -Dfile.encoding=MS949 (Korean?)
             oldEncoding = encoding;
-            log.warn("unsupported encoding " + encoding + " in JRuby, defaulting to UTF-8");
+            LOG.warn("unsupported encoding " + encoding + " in JRuby, defaulting to UTF-8");
             System.setProperty("file.encoding", "UTF-8");
           }
         }
@@ -200,11 +200,11 @@ public class AsciiDoc {
           // require openssl library here to enable download content via https
           // requiring it later after other libraries have been loaded results in "undefined method `set_params' for #<OpenSSL::SSL::SSLContext"
           asciidoctor.requireLibrary("openssl");
-          asciidoctor.javaExtensionRegistry().preprocessor(prependConfig);
-          asciidoctor.javaExtensionRegistry().includeProcessor(antoraIncludeAdapter);
+          asciidoctor.javaExtensionRegistry().preprocessor(PREPEND_CONFIG);
+          asciidoctor.javaExtensionRegistry().includeProcessor(ANTORA_INCLUDE_ADAPTER);
           if (format == FileType.JAVAFX || format == FileType.HTML) {
-            asciidoctor.javaExtensionRegistry().postprocessor(antoraImageAdapter);
-            asciidoctor.javaExtensionRegistry().postprocessor(attributeRetriever);
+            asciidoctor.javaExtensionRegistry().postprocessor(ANTORA_IMAGE_ADAPTER);
+            asciidoctor.javaExtensionRegistry().postprocessor(ATTRIBUTES_RETRIEVER);
           }
           // disable JUL logging of captured messages
           // https://github.com/asciidoctor/asciidoctorj/issues/669
@@ -255,7 +255,7 @@ public class AsciiDoc {
               asciidoctor.rubyExtensionRegistry().requireLibrary(extension);
             }
           }
-          instances.put(md, asciidoctor);
+          INSTANCES.put(md, asciidoctor);
         } catch (IOException e) {
           throw new RuntimeException(e);
         } finally {
@@ -481,20 +481,20 @@ public class AsciiDoc {
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         asciidoctor.registerLogHandler(logHandler);
-        prependConfig.setConfig(config);
-        antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir);
-        antoraImageAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir);
+        PREPEND_CONFIG.setConfig(config);
+        ANTORA_INCLUDE_ADAPTER.setAntoraDetails(project, antoraModuleDir);
+        ANTORA_IMAGE_ADAPTER.setAntoraDetails(project, antoraModuleDir, fileBaseDir);
         try {
           return "<div id=\"content\">\n" + asciidoctor.convert(text,
             getDefaultOptions(FileType.JAVAFX, springRestDocsSnippets, attributes)) + "\n</div>";
         } finally {
-          imagesdir = attributeRetriever.getImagesdir();
-          prependConfig.setConfig("");
-          antoraIncludeAdapter.setAntoraDetails(null, null);
+          imagesdir = ATTRIBUTES_RETRIEVER.getImagesdir();
+          PREPEND_CONFIG.setConfig("");
+          ANTORA_INCLUDE_ADAPTER.setAntoraDetails(null, null);
           asciidoctor.unregisterLogHandler(logHandler);
         }
       } catch (Exception | ServiceConfigurationError ex) {
-        log.warn("unable to render AsciiDoc document", ex);
+        LOG.warn("unable to render AsciiDoc document", ex);
         logHandler.log(new LogRecord(Severity.FATAL, ex.getMessage()));
         StringBuilder response = new StringBuilder();
         response.append("unable to render AsciiDoc document");
@@ -538,20 +538,20 @@ public class AsciiDoc {
       Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
-        prependConfig.setConfig(config);
-        antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir);
+        PREPEND_CONFIG.setConfig(config);
+        ANTORA_INCLUDE_ADAPTER.setAntoraDetails(project, antoraModuleDir);
         asciidoctor.registerLogHandler(logHandler);
         try {
           asciidoctor.convertFile(file, getExportOptions(
             getDefaultOptions(format, springRestDocsSnippets, attributes), format));
         } finally {
-          prependConfig.setConfig("");
-          antoraIncludeAdapter.setAntoraDetails(null, null);
-          imagesdir = attributeRetriever.getImagesdir();
+          PREPEND_CONFIG.setConfig("");
+          ANTORA_INCLUDE_ADAPTER.setAntoraDetails(null, null);
+          imagesdir = ATTRIBUTES_RETRIEVER.getImagesdir();
           asciidoctor.unregisterLogHandler(logHandler);
         }
       } catch (Exception | ServiceConfigurationError ex) {
-        log.warn("unable to render AsciiDoc document", ex);
+        LOG.warn("unable to render AsciiDoc document", ex);
         logHandler.log(new LogRecord(Severity.FATAL, ex.getMessage()));
         StringBuilder response = new StringBuilder();
         response.append("unable to render AsciiDoc document");
