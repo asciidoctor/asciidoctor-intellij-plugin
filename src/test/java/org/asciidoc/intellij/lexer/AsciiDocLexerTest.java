@@ -907,6 +907,42 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINKEND (']')");
   }
 
+  public void testHtmlEntity() {
+    doTest("Hi&amp;Ho",
+      "AsciiDoc:TEXT ('Hi')\n" +
+        "AsciiDoc:HTML_ENTITY ('&amp;')\n" +
+        "AsciiDoc:TEXT ('Ho')");
+  }
+
+  public void testUnicodeDecimalEntity() {
+    doTest("Hi&#123;Ho",
+      "AsciiDoc:TEXT ('Hi')\n" +
+        "AsciiDoc:HTML_ENTITY ('&#123;')\n" +
+        "AsciiDoc:TEXT ('Ho')");
+  }
+
+  public void testUnicodeHexEntity() {
+    doTest("Hi&#x123Af;Ho",
+      "AsciiDoc:TEXT ('Hi')\n" +
+        "AsciiDoc:HTML_ENTITY ('&#x123Af;')\n" +
+        "AsciiDoc:TEXT ('Ho')");
+  }
+
+  public void testHtmlEntityEscaped() {
+    doTest("Hi\\&amp;Ho",
+      "AsciiDoc:TEXT ('Hi\\&amp;Ho')");
+  }
+
+  public void testUnicodeDecimalEntityEscaped() {
+    doTest("Hi\\&#123;Ho",
+      "AsciiDoc:TEXT ('Hi\\&#123;Ho')");
+  }
+
+  public void testUnicodeHexEntityEscaped() {
+    doTest("Hi\\&#x123Af;Ho",
+      "AsciiDoc:TEXT ('Hi\\&#x123Af;Ho')");
+  }
+
   public void testAttrInLink() {
     doTest("link:http://url.com{path}[text]",
       "AsciiDoc:LINKSTART ('link:')\n" +
@@ -1727,9 +1763,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
   public void testIfDef() {
     doTest("ifdef::attr[]",
       "AsciiDoc:BLOCK_MACRO_ID ('ifdef::')\n" +
-      "AsciiDoc:ATTRIBUTE_REF ('attr')\n" +
-      "AsciiDoc:ATTRS_START ('[')\n" +
-      "AsciiDoc:ATTRS_END (']')");
+        "AsciiDoc:ATTRIBUTE_REF ('attr')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTRS_END (']')");
   }
 
   public void testIfDefWithAttributeInBody() {

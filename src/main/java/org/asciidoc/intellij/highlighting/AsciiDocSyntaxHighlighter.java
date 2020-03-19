@@ -170,6 +170,7 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
       .put(AsciiDocTokenTypes.PAGEBREAK, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.HORIZONTALRULE, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.HEADER, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.HTML_ENTITY_OR_UNICODE, ASCIIDOC_MARKER)
       .build();
 
   @NotNull

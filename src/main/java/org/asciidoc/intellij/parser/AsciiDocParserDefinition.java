@@ -20,6 +20,7 @@ import org.asciidoc.intellij.psi.AsciiDocBlockAttributes;
 import org.asciidoc.intellij.psi.AsciiDocBlockId;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocFile;
+import org.asciidoc.intellij.psi.AsciiDocHtmlEntity;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagInDocument;
 import org.asciidoc.intellij.psi.AsciiDocInlineMacro;
 import org.asciidoc.intellij.psi.AsciiDocLink;
@@ -123,6 +124,9 @@ public class AsciiDocParserDefinition implements ParserDefinition {
     }
     if (node.getElementType() == AsciiDocElementTypes.ITALIC) {
       return new AsciiDocTextItalic(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.HTML_ENTITY) {
+      return new AsciiDocHtmlEntity(node);
     }
     if (node.getElementType() == AsciiDocElementTypes.INCLUDE_TAG) {
       return new AsciiDocIncludeTagInDocument(node);

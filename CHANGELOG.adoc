@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.43 (work in progress)
+
+- add folding for HTML entities (like `\&amp;`) and unicode characters (like `\&#x2020;`) (#423)
+
 === 0.30.42 (preview, available from GitHub releases)
 
 - check monospace and italic text as part of a sentence

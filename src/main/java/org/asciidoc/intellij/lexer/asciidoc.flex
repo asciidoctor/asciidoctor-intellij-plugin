@@ -953,6 +953,27 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {PASSTRHOUGH_INLINE} / {STRING}* {PASSTRHOUGH_INLINE} {
                            yypushstate(); yybegin(PASSTRHOUGH_INLINE); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
                          }
+  "&#" [0-9]+ ";" {
+          if (!isEscaped()) {
+            return AsciiDocTokenTypes.HTML_ENTITY_OR_UNICODE;
+          } else {
+            return textFormat();
+          }
+        }
+  "&#x" [0-9A-Fa-f]+ ";" {
+          if (!isEscaped()) {
+            return AsciiDocTokenTypes.HTML_ENTITY_OR_UNICODE;
+          } else {
+            return textFormat();
+          }
+        }
+  "&" [A-Za-z]+ ";" {
+          if (!isEscaped()) {
+            return AsciiDocTokenTypes.HTML_ENTITY_OR_UNICODE;
+          } else {
+            return textFormat();
+          }
+        }
   [^]                  { return textFormat(); }
 }
 

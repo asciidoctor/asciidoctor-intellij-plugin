@@ -12,11 +12,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
+import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationReference;
 import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.asciidoc.intellij.psi.AsciiDocBlock;
+import org.asciidoc.intellij.psi.AsciiDocHtmlEntity;
 import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.asciidoc.intellij.psi.AsciiDocSelfDescribe;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
@@ -79,6 +81,8 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
             // avoid replacing imagesdir, partialsdir, attachmentdir, etc. as this would be too verbose
             addDescriptors(element);
           }
+        } else if (element.getNode().getElementType() == AsciiDocTokenTypes.HTML_ENTITY_OR_UNICODE) {
+          addDescriptors(element);
         }
         super.visitElement(element);
         element.acceptChildren(this);
@@ -122,6 +126,8 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
       descriptors.add(new FoldingDescriptor(element, range));
     } else if (element instanceof AsciiDocAttributeReference) {
       descriptors.add(new FoldingDescriptor(element, range));
+    } else if (element instanceof AsciiDocHtmlEntity) {
+      descriptors.add(new FoldingDescriptor(element, range));
     }
   }
 
@@ -132,6 +138,8 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
       title = ((AsciiDocSelfDescribe) node.getPsi()).getFoldedSummary();
       title = StringUtil.shortenTextWithEllipsis(title, 50, 5);
       title += " ...";
+    } else if (node.getPsi() instanceof AsciiDocHtmlEntity) {
+      title = ((AsciiDocHtmlEntity) node.getPsi()).getDecodedText();
     } else if (node.getPsi() instanceof AsciiDocAttributeReference) {
       String text = node.getText();
       if (text.startsWith("{") && text.endsWith("}")) {

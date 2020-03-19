@@ -108,6 +108,7 @@ public interface AsciiDocTokenTypes {
   IElementType URL_END = new AsciiDocElementType("URL_END");
   IElementType URL_PREFIX = new AsciiDocElementType("URL_PREFIX");
   IElementType HEADER = new AsciiDocElementType("HEADER");
+  IElementType HTML_ENTITY_OR_UNICODE = new AsciiDocElementType("HTML_ENTITY");
 
   TokenSet TOKENS_TO_MERGE = TokenSet.create(TEXT, LISTING_TEXT, HEADING, TITLE_TOKEN, BLOCK_COMMENT,
     ATTR_NAME, BLOCK_MACRO_BODY, BLOCK_MACRO_ATTRIBUTES, INLINE_MACRO_BODY, INLINE_MACRO_ATTRIBUTES, PASSTRHOUGH_CONTENT,

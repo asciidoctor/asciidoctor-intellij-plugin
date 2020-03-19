@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Stack;
 
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ASSIGNMENT;
@@ -40,6 +41,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.EMPTY_LINE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ENUMERATION;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_OLDSTYLE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HTML_ENTITY_OR_UNICODE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_MACRO_BODY;
@@ -196,6 +198,9 @@ public class AsciiDocParserImpl {
       } else if (at(TITLE_TOKEN)) {
         parseTitle();
         continue;
+      } else if (at(HTML_ENTITY_OR_UNICODE)) {
+        parseHtmlEntityOrUnicode();
+        continue;
       } else if (at(ATTRIBUTE_NAME_START)) {
         parseAttributeDeclaration();
         continue;
@@ -288,6 +293,12 @@ public class AsciiDocParserImpl {
     dropPreBlock();
     closeBlocks();
     closeSections(0);
+  }
+
+  private void parseHtmlEntityOrUnicode() {
+    PsiBuilder.Marker marker = myBuilder.mark();
+    next();
+    marker.done(AsciiDocElementTypes.HTML_ENTITY);
   }
 
   private void parseMono() {

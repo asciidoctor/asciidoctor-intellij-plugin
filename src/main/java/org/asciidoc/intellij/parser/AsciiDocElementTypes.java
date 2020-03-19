@@ -30,5 +30,6 @@ public interface AsciiDocElementTypes {
   IElementType TITLE = new AsciiDocElementType("TITLE");
   IElementType MONO = new AsciiDocElementType("MONO");
   IElementType ITALIC = new AsciiDocElementType("ITALIC");
+  IElementType HTML_ENTITY = new AsciiDocElementType("HTML_ENTITY");
   IStubElementType<AsciiDocAttributeDeclarationStub, AsciiDocAttributeDeclaration> ATTRIBUTE_DECLARATION = new AsciiDocAttributeDeclarationStubElementType();
 }
