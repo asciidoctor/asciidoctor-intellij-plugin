@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.43 (work in progress)
+=== 0.30.43 (preview, available from GitHub releases)
 
 - add folding for HTML entities (like `\&amp;`) and unicode characters (like `\&#x2020;`) (#423)
 - avoid OOM when for example parsing contents with block markers that aren't trimmed (#424)
@@ -23,6 +23,10 @@ This document provides a high-level view of the changes introduced by release.
 - handle attribute declaration with blanks; handle attribute names case-insensitive (#398)
 - support Antora 2.3 component attributes (#385)
 - highlight and autocomplete attribute references in links
+
+=== 0.30.41.1
+
+- avoid OOM when for example parsing contents with block markers that aren't trimmed (#424)
 
 === 0.30.41
 
