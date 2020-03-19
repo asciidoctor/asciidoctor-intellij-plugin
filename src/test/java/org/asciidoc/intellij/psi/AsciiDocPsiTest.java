@@ -4,6 +4,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.asciidoc.intellij.file.AsciiDocFileType;
@@ -144,6 +145,14 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     AsciiDocBlock[] blocks = PsiTreeUtil.getChildrenOfType(psiFile, AsciiDocBlock.class);
     assertNotNull(blocks);
     assertEquals(2, blocks.length);
+  }
+
+  public void testListingWithBlankAfterDelimiter() {
+    PsiFile psiFile = configureByAsciiDoc("[source]\n---- \nfoo\n----\nText");
+    AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
+    assertNotNull(listing);
+    assertTrue(psiFile.getChildren()[1] instanceof PsiWhiteSpace);
+    assertSame(psiFile.getChildren()[2].getNode().getElementType(), AsciiDocTokenTypes.TEXT);
   }
 
   public void testListingLanguage() {

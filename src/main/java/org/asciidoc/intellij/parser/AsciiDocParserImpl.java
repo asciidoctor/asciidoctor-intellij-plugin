@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Stack;
 
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ASSIGNMENT;
@@ -375,6 +376,11 @@ public class AsciiDocParserImpl {
   }
 
   private void parseAttributeInBrackets(String macroId) {
+    if (emptyLines > 0) {
+      // avoid adding empty markers if empty lines already present
+      next();
+      return;
+    }
     PsiBuilder.Marker attributeInBracketMarker = myBuilder.mark();
     String name = null;
     while ((at(ATTR_NAME) || at(ASSIGNMENT) || at(URL_LINK) || at(ATTR_VALUE)
@@ -605,6 +611,8 @@ public class AsciiDocParserImpl {
       myBlockStartMarker = beginBlock();
     }
     String marker = myBuilder.getTokenText();
+    Objects.requireNonNull(marker);
+    marker = marker.trim();
     IElementType type = myBuilder.getTokenType();
     next();
     while (true) {
@@ -612,7 +620,7 @@ public class AsciiDocParserImpl {
         break;
       }
       // the block needs to be terminated by the same sequence that started it
-      if (at(type) && myBuilder.getTokenText() != null && myBuilder.getTokenText().equals(marker)) {
+      if (at(type) && myBuilder.getTokenText() != null && myBuilder.getTokenText().trim().equals(marker)) {
         next();
         break;
       }
