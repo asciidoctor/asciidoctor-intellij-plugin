@@ -12,7 +12,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
-import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationReference;
@@ -81,7 +80,7 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
             // avoid replacing imagesdir, partialsdir, attachmentdir, etc. as this would be too verbose
             addDescriptors(element);
           }
-        } else if (element.getNode().getElementType() == AsciiDocTokenTypes.HTML_ENTITY_OR_UNICODE) {
+        } else if (element instanceof AsciiDocHtmlEntity) {
           addDescriptors(element);
         }
         super.visitElement(element);
