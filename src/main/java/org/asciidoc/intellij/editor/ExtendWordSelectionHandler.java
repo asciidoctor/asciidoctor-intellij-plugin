@@ -1,8 +1,8 @@
 package org.asciidoc.intellij.editor;
 
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase;
-import com.intellij.diagnostic.LogEventException;
 import com.intellij.openapi.diagnostic.Attachment;
+import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
@@ -18,12 +18,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRS_END;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRS_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BOLD_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BOLD_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DOUBLE_QUOTE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_END;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LBRACKET;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKEND;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKTEXT_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LPAREN;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO_START;
@@ -56,6 +62,9 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
     SYMMETRIC_FORMATTING.put(DOUBLE_QUOTE, DOUBLE_QUOTE);
     SYMMETRIC_FORMATTING.put(LBRACKET, RBRACKET);
     SYMMETRIC_FORMATTING.put(LPAREN, RPAREN);
+    SYMMETRIC_FORMATTING.put(LINKTEXT_START, LINKEND);
+    SYMMETRIC_FORMATTING.put(ATTRS_START, ATTRS_END);
+    SYMMETRIC_FORMATTING.put(INLINE_ATTRS_START, INLINE_ATTRS_END);
     SYMMETRIC_FORMATTING.put(TYPOGRAPHIC_DOUBLE_QUOTE_START, TYPOGRAPHIC_DOUBLE_QUOTE_END);
     SYMMETRIC_FORMATTING.put(TYPOGRAPHIC_SINGLE_QUOTE_START, TYPOGRAPHIC_SINGLE_QUOTE_END);
   }
@@ -64,7 +73,7 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
   public List<TextRange> select(@NotNull PsiElement e, @NotNull CharSequence editorText, int cursorOffset, @NotNull Editor editor) {
     final TextRange originalRange = e.getTextRange();
     if (originalRange.getEndOffset() > editorText.length()) {
-      throw new LogEventException("Invalid element range in " + getClass(),
+      throw new RuntimeExceptionWithAttachments("Invalid element range in " + getClass(),
         "element=" + e +
           "; range=" + originalRange +
           "; text length=" + editorText.length() +
@@ -108,6 +117,9 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
         int endOffset = 0;
         if (endFormatting instanceof PsiWhiteSpace && endFormatting.getText().contains("\n")) {
           endOffset = -endFormatting.getTextLength() + endFormatting.getText().indexOf("\n");
+        }
+        if (SYMMETRIC_FORMATTING.get(startFormatting.getNode().getElementType()) == endFormatting.getNode().getElementType()) {
+          ranges.add(TextRange.create(startFormatting.getTextRange().getEndOffset(), endFormatting.getTextRange().getStartOffset()));
         }
         ranges.add(TextRange.create(startFormatting.getTextOffset() + startOffset, endFormatting.getTextRange().getEndOffset() + endOffset));
         // expand one step further and try again

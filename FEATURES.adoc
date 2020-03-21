@@ -90,7 +90,7 @@ Attributes need to resolve to single declared value to be folded.
 Folding is also available for HTML entities (like `\&amp;`) and unicode characters (like `\&#x2020;`).
 As an experimental feature, the user needs to enable it in the settings of the plugin.
 
-Clicking on a folded attribute will unfold it.
+Clicking on a folded attribute to unfold it.
 The hotkey to unfold one element is kbd:[Shift+NumPad+], the hotkey to fold one element is kbd:[Shift+NumPad-]
 The hotkey to unfold all elements is kbd:[Ctrl+Shift+NumPad+], the hotkey to fold all elements is kbd:[Ctrl+Shift+NumPad-].
 
@@ -138,7 +138,7 @@ The plugin uses constrained/unconstrained formatting as necessary.
 If the selected text already has the chosen formatting, the plugin removes the formatting from the selected text.
 
 // see: ExtendWordSelectionHandler
-The plugin will expand the current selection when the user presses kbd:[Ctrl+W] and will contract the current selection when the user presses kbd:[Ctrl+Shift+W].
+The plugin expands the current selection when the user presses kbd:[Ctrl+W] and contracts the current selection when the user presses kbd:[Ctrl+Shift+W].
 
 // see: AsciiDocSpellcheckingStrategy
 IntelliJ's built-in spell checker verifies all text areas of the document.
@@ -230,9 +230,9 @@ The user can use kbd:[Ctrl+Enter] to select a quick-fix to convert these to Asci
 The user can extract and inline includes.
 This is available from the "`Refactor`" context menu and via context-sensitive intentions via kbd:[Alt+Enter] ("`Inline Include Directive`" and "`Extract Include Directive`").
 // see: ExtractIncludeDialog.java
-Extract will extract either the selected text, the current block or the current section including subsections.
+_Extract_ extracts either the selected text, the current block or the current section including subsections.
 // see: InlineIncludeDialog.java
-Inline will inline the referenced file at the current include; optionally it can provide a preview, inline all occurrences of the file and delete the included file afterwards.
+_Inline_ inlines the referenced file at the current include; optionally it can provide a preview, inline all occurrences of the file and delete the included file afterwards.
 All of these changes can be undone (kbd:[Ctrl+Z]).
 
 The user can disable and enable intentions in "`Settings... | Editor | Intentions | AsciiDoc`".
@@ -289,7 +289,7 @@ Windows and Linux users have a drop down menu for this.
 MacOS users need to type the extension for the target file name (`.svg` or `.png`)
 
 The user can zoom in and out of the preview by holding kbd:[Ctrl] and scrolling the mouse wheel up or down.
-Clicking the middle mouse button whilst holding kbd:[Ctrl] will reset the zoom to 100%.
+Clicking the middle mouse button whilst holding kbd:[Ctrl] resets the zoom to 100%.
 
 === Advanced
 
@@ -304,7 +304,7 @@ If creating HTML succeeds, the exported file is opened in the system's default b
 
 ==== Spring REST Docs
 
-When writing documentation with https://docs.spring.io/spring-restdocs/docs/current/reference/html5/[Spring REST Docs], the preview plugin will auto-detect the folder `generated-snippets`.
+When writing documentation with https://docs.spring.io/spring-restdocs/docs/current/reference/html5/[Spring REST Docs], the preview plugin auto-detects the folder `generated-snippets`.
 It looks relative to the `pom.xml` for `target/generated-snippets` or relative to `build.gradle` or `build.gradle.kts` for `build/generated-snippets`.
 Once it finds this folder, it sets the snippets attributes and enables the `+++operation::[]+++` block macro.
 
