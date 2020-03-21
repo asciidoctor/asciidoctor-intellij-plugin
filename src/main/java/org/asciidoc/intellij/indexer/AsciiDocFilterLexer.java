@@ -74,6 +74,8 @@ public class AsciiDocFilterLexer extends BaseFilterLexer {
       scanWordsInToken(UsageSearchContext.IN_PLAIN_TEXT, false, false);
     } else if (tokenType == AsciiDocTokenTypes.BLOCKID) {
       addOccurrenceInToken(UsageSearchContext.IN_CODE);
+    } else if (tokenType == AsciiDocTokenTypes.LINKANCHOR) {
+      addOccurrenceInToken(UsageSearchContext.IN_CODE);
     } else if (JAVA_TOKENS.contains(tokenType)) {
       scanWordsInToken(UsageSearchContext.IN_PLAIN_TEXT | UsageSearchContext.IN_CODE, false, false);
     } else if (tokenType == AsciiDocTokenTypes.LISTING_TEXT || tokenType == AsciiDocTokenTypes.PASSTRHOUGH_CONTENT) {

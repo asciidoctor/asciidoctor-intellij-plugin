@@ -18,7 +18,7 @@ public class AsciiDocSectionTest {
     }
 
     @Override
-    protected String getAttribute(String idprefix) {
+    protected String getAttribute(String attr, String varDefault) {
       return "_";
     }
 

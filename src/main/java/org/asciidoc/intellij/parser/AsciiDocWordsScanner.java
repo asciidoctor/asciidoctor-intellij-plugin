@@ -8,6 +8,11 @@ import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 
 public class AsciiDocWordsScanner extends DefaultWordsScanner {
 
+  @Override
+  public int getVersion() {
+    return 1;
+  }
+
   public AsciiDocWordsScanner() {
     super(new AsciiDocLexer(),
       // identifiers

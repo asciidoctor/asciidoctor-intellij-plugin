@@ -13,6 +13,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class AsciiDocLink extends ASTWrapperPsiElement {
   public AsciiDocLink(@NotNull ASTNode node) {
@@ -67,6 +68,33 @@ public class AsciiDocLink extends ASTWrapperPsiElement {
     public TextRange getRangeInElement(@NotNull AsciiDocLink element) {
       return getBodyRange(element);
     }
+  }
+
+  @Nullable
+  public AsciiDocFileReference getAnchor() {
+    for (PsiReference reference : getReferences()) {
+      if (reference instanceof AsciiDocFileReference) {
+        if (((AsciiDocFileReference) reference).isAnchor()) {
+          return (AsciiDocFileReference) reference;
+        }
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  public AsciiDocSection resolveAnchorForSection() {
+    AsciiDocFileReference anchor = getAnchor();
+    if (anchor != null) {
+      PsiElement resolve = anchor.resolve();
+      if (resolve instanceof AsciiDocFile) {
+        resolve = resolve.getFirstChild();
+      }
+      if (resolve instanceof AsciiDocSection) {
+        return (AsciiDocSection) resolve;
+      }
+    }
+    return null;
   }
 
   public static TextRange getBodyRange(AsciiDocLink element) {

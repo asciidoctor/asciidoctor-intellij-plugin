@@ -243,6 +243,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
         new AsciiDocFileReference(element, macroName, file.substring(0, start),
           TextRange.create(range.getStartOffset() + start, range.getStartOffset() + file.length()),
           false)
+          .withAnchor(start > 0 && file.charAt(start - 1) == '#')
       );
       return references;
     } else {

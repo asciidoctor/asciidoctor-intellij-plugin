@@ -11,6 +11,8 @@ This document provides a high-level view of the changes introduced by release.
 
 - inline includes for sub-directories and Antora prefixes (#429)
 - extend selection now stops at more delimiters and withing delimiters (#425)
+- enlarge search scope for references to full project as documents (#427)
+- warn about anchors that reference a section without a block ID and offer a quick-fix to add the block ID to the section (#427)
 
 === 0.30.44 (preview, available from GitHub releases)
 
