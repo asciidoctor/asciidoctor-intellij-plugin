@@ -1,0 +1,1 @@
+link:<error descr="File doesn't resolve">notfound.adoc</error>[]

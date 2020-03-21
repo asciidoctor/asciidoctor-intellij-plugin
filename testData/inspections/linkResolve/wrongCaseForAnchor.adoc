@@ -1,0 +1,3 @@
+== Hi
+
+link:#<error descr="Anchor doesn't resolve">_Hi</error><caret>[]
