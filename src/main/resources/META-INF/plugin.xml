@@ -181,6 +181,7 @@
     <quoteHandler fileType="AsciiDoc" className="org.asciidoc.intellij.braces.AsciiDocQuoteHandler"/>
     <todoIndexer filetype="AsciiDoc" implementationClass="org.asciidoc.intellij.indexer.AsciiDocTodoIndexer"/>
     <idIndexer filetype="AsciiDoc" implementationClass="org.asciidoc.intellij.indexer.AsciiDocIdIndexer"/>
+    <useScopeEnlarger implementation="org.asciidoc.intellij.indexer.AsciiDocScopeEnlarger" />
     <applicationConfigurable id="Settings.AsciiDoc.Preview"
                              bundle="AsciiDocBundle"
                              groupId="language"
