@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.45 (work in progress)
+
+- inline includes for sub-directories and Antora prefixes (#429)
+
 === 0.30.44 (preview, available from GitHub releases)
 
 - fixing broken folding of attributes (#423)

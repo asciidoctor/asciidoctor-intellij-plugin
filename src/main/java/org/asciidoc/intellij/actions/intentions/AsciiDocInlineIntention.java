@@ -22,10 +22,7 @@ public class AsciiDocInlineIntention extends Intention {
       return false;
     }
     PsiNamedElement resolved = InlineIncludeDialog.resolve(element);
-    if (resolved == null) {
-      return false;
-    }
-    return true;
+    return resolved != null;
   }
 
   @Override
@@ -34,7 +31,7 @@ public class AsciiDocInlineIntention extends Intention {
     if (element == null) {
       return;
     }
-    PsiNamedElement resolved = InlineIncludeDialog.resolve(element);
+    PsiFile resolved = InlineIncludeDialog.resolve(element);
     if (resolved == null) {
       return;
     }

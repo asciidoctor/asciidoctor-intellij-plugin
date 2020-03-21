@@ -30,7 +30,7 @@ public class InlineIncludeAction extends AsciiDocAction {
     if (element == null) {
       return;
     }
-    PsiNamedElement resolved = InlineIncludeDialog.resolve(element);
+    PsiFile resolved = InlineIncludeDialog.resolve(element);
     if (resolved == null) {
       return;
     }

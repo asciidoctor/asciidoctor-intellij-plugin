@@ -4,7 +4,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.inline.InlineOptionsDialog;
 import org.asciidoc.intellij.AsciiDocBundle;
@@ -14,9 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class InlineIncludeDialog extends InlineOptionsDialog {
-  private final PsiNamedElement myResolve;
+  private final PsiFile myResolve;
 
-  public InlineIncludeDialog(@NotNull Project project, PsiElement element, PsiNamedElement resolve) {
+  public InlineIncludeDialog(@NotNull Project project, PsiElement element, PsiFile resolve) {
     super(project, false, element);
     this.myResolve = resolve;
     this.myInvokedOnReference = true;
@@ -93,16 +92,15 @@ public class InlineIncludeDialog extends InlineOptionsDialog {
   }
 
   @Nullable
-  public static PsiNamedElement resolve(PsiElement element) {
+  public static PsiFile resolve(PsiElement element) {
     PsiReference[] references = element.getReferences();
-    if (references.length != 1) {
-      return null;
+    for (int i = references.length - 1; i > 0; --i) {
+      PsiElement resolve = references[i].resolve();
+      if (resolve instanceof PsiFile) {
+        return (PsiFile) resolve;
+      }
     }
-    PsiElement resolve = references[0].resolve();
-    if (!(resolve instanceof PsiNamedElement)) {
-      return null;
-    }
-    return (PsiNamedElement) resolve;
+    return null;
   }
 
 }

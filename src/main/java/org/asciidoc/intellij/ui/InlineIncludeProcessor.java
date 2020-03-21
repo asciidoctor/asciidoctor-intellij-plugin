@@ -4,7 +4,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
@@ -13,6 +13,7 @@ import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewBundle;
 import com.intellij.usageView.UsageViewDescriptor;
+import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,11 +23,11 @@ import java.util.List;
 
 public class InlineIncludeProcessor extends BaseRefactoringProcessor {
   private PsiElement myElement;
-  private PsiNamedElement myResolved;
+  private PsiFile myResolved;
   private boolean myInlineThisOnly;
   private boolean myDeleteDeclaration;
 
-  public InlineIncludeProcessor(PsiElement element, Project project, PsiNamedElement resolved, boolean inlineThisOnly, boolean isDeleteDeclaration) {
+  public InlineIncludeProcessor(PsiElement element, Project project, PsiFile resolved, boolean inlineThisOnly, boolean isDeleteDeclaration) {
     super(project);
     myElement = element;
     myResolved = resolved;
@@ -49,6 +50,7 @@ public class InlineIncludeProcessor extends BaseRefactoringProcessor {
         return "AsciiDoc include to inline";
       }
 
+      @NotNull
       @Override
       public String getCodeReferencesText(int usagesCount, int filesCount) {
         return RefactoringBundle.message("invocations.to.be.inlined", UsageViewBundle.getReferencesString(usagesCount, filesCount));
@@ -73,8 +75,12 @@ public class InlineIncludeProcessor extends BaseRefactoringProcessor {
     List<UsageInfo> usages = new ArrayList<>();
     for (PsiReference ref : ReferencesSearch.search(myResolved, ProjectScope.getProjectScope(myProject), false)) {
       PsiElement element = ref.getElement();
-      UsageInfo info = new UsageInfo(element);
-      usages.add(info);
+      if (element instanceof AsciiDocBlockMacro) {
+        if ("include".equals(((AsciiDocBlockMacro) element).getMacroName())) {
+          UsageInfo info = new UsageInfo(element);
+          usages.add(info);
+        }
+      }
     }
     return usages.toArray(UsageInfo.EMPTY_ARRAY);
   }
