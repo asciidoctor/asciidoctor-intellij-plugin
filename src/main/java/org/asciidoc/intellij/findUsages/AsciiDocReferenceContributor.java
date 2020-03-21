@@ -234,7 +234,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
           references.add(
             new AsciiDocFileReference(element, macroName, file.substring(0, start),
               TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
-              true)
+              file.charAt(i) == '/')
           );
           start = i + 1;
         }

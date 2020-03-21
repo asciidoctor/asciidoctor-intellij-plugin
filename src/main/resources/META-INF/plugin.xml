@@ -231,6 +231,10 @@
                      groupName="General" enabledByDefault="true" level="WARNING"
                      shortName="AsciiDocAnchorWithoutIdInspection"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocAnchorWithoutIdInspection"/>
+    <localInspection language="AsciiDoc" displayName="Link Resolve inspection" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="ERROR"
+                     shortName="AsciiDocLinkResolveInspection"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocLinkResolveInspection"/>
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
     <stubElementTypeHolder class="org.asciidoc.intellij.parser.AsciiDocElementTypes"/>
     <stubIndex implementation="org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationKeyIndex"/>

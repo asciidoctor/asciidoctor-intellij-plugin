@@ -8,6 +8,7 @@ import com.intellij.psi.AbstractElementManipulator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
+import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.asciidoc.intellij.file.AsciiDocFileType;
@@ -71,7 +72,20 @@ public class AsciiDocLink extends ASTWrapperPsiElement {
   }
 
   @Nullable
-  public AsciiDocFileReference getAnchor() {
+  public AsciiDocFileReference getFileReference() {
+    for (PsiReference reference : getReferences()) {
+      if (reference instanceof AsciiDocFileReference) {
+        AsciiDocFileReference fileReference = (AsciiDocFileReference) reference;
+        if (!fileReference.isFolder() && !fileReference.isAnchor()) {
+          return (AsciiDocFileReference) reference;
+        }
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  public AsciiDocFileReference getAnchorReference() {
     for (PsiReference reference : getReferences()) {
       if (reference instanceof AsciiDocFileReference) {
         if (((AsciiDocFileReference) reference).isAnchor()) {
@@ -84,7 +98,7 @@ public class AsciiDocLink extends ASTWrapperPsiElement {
 
   @Nullable
   public AsciiDocSection resolveAnchorForSection() {
-    AsciiDocFileReference anchor = getAnchor();
+    AsciiDocFileReference anchor = getAnchorReference();
     if (anchor != null) {
       PsiElement resolve = anchor.resolve();
       if (resolve instanceof AsciiDocFile) {
@@ -95,6 +109,18 @@ public class AsciiDocLink extends ASTWrapperPsiElement {
       }
     }
     return null;
+  }
+
+  public void setAnchor(String anchor) {
+    PsiElement child = this.getFirstChild();
+    while (child != null) {
+      if (child.getNode().getElementType() == AsciiDocTokenTypes.LINKANCHOR) {
+        if (child instanceof LeafElement) {
+          ((LeafElement) child).replaceWithText(anchor);
+        }
+      }
+      child = child.getNextSibling();
+    }
   }
 
   public static TextRange getBodyRange(AsciiDocLink element) {
