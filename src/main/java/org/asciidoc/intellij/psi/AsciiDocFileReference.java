@@ -22,6 +22,7 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileInfoMan
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.IncorrectOperationException;
+import org.apache.commons.lang.ArrayUtils;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.completion.AsciiDocCompletionContributor;
 import org.jetbrains.annotations.NotNull;
@@ -472,7 +473,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       }
     }
 
-    final Object[] variants = new Object[candidates.length + items.size()];
+    Object[] variants = new Object[candidates.length + items.size()];
     for (int i = 0; i < candidates.length; i++) {
       PsiElement candidate = candidates[i];
       if (candidate instanceof PsiDirectory) {
@@ -489,6 +490,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
     for (int i = 0; i < items.size(); i++) {
       variants[i + candidates.length] = items.get(i);
+    }
+
+    if (base.length() == 0) {
+      variants = ArrayUtils.addAll(variants, getVariantsForAnchor());
     }
 
     return variants;

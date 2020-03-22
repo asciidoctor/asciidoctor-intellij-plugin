@@ -1,0 +1,4 @@
+[#id]
+= Section
+
+xref:id[Section]<caret>

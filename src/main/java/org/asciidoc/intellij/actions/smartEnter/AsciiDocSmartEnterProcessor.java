@@ -15,6 +15,7 @@ import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.psi.AsciiDocAttributeInBrackets;
+import org.asciidoc.intellij.psi.AsciiDocBlockId;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocLink;
@@ -211,6 +212,9 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
         // resolve file reference
         AsciiDocFileReference fileReference = (AsciiDocFileReference) references[references.length - 1];
         PsiElement resolve = fileReference.resolve();
+        if (resolve instanceof AsciiDocBlockId && resolve.getParent() instanceof AsciiDocSection) {
+          resolve = resolve.getParent();
+        }
         if (resolve instanceof PsiFile && ((PsiFile) resolve).getFileType() == AsciiDocFileType.INSTANCE) {
           // get first section of referenced file
           Collection<AsciiDocSection> childrenOfType = PsiTreeUtil.findChildrenOfType(resolve, AsciiDocSection.class);
