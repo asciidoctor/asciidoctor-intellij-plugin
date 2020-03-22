@@ -22,7 +22,7 @@ public class AsciiDocRenameInputValidator implements RenameInputValidator {
   );
   private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("[a-zA-Z0-9_-]*");
   // source: BlockAnchorRx in Asciidoctor's rx.db
-  private static final Pattern BLOCK_ID_PATTERN = Pattern.compile("[\\p{Alpha}_:][\\w\\-:.]*");
+  public static final Pattern BLOCK_ID_PATTERN = Pattern.compile("[\\p{Alpha}_:][\\w\\-:.]*");
 
   @NotNull
   @Override

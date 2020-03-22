@@ -160,7 +160,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
     List<ResolveResult> results = new ArrayList<>();
-    if (base.endsWith("#")) {
+    if (isAnchor) {
       return multiResolveAnchor(false);
     }
     resolve(base + key, results, 0);
@@ -170,10 +170,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   public ResolveResult[] multiResolveAnchor(boolean ignoreCase) {
     List<ResolveResult> results = new ArrayList<>();
     List<ResolveResult> fileResult = new ArrayList<>();
-    if (base.length() > 1) {
-      resolve(base.substring(0, base.length() - 1), fileResult, 0);
-    } else {
+    if (base.equals("#") || base.length() == 0) {
       fileResult.add(new PsiElementResolveResult(myElement.getContainingFile()));
+    } else {
+      resolve(base.substring(0, base.length() - 1), fileResult, 0);
     }
     List<LookupElementBuilder> items = new ArrayList<>();
     for (ResolveResult resolveResult : fileResult) {

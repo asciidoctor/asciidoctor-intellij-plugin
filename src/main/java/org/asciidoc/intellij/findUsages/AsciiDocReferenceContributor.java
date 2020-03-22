@@ -13,6 +13,7 @@ import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.util.ProcessingContext;
 import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.namesValidator.AsciiDocRenameInputValidator;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationReference;
 import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
@@ -260,7 +261,13 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
         new AsciiDocFileReference(element, macroName, file.substring(0, start),
           TextRange.create(range.getStartOffset() + start, range.getStartOffset() + file.length()),
           false)
-          .withAnchor(start > 0 && file.charAt(start - 1) == '#')
+          .withAnchor((start > 0 && file.charAt(start - 1) == '#')
+            // an xref can be only a block ID, then it is an anchor even without the # prefix
+            || ("xref".equals(macroName) && start == 0
+            && AsciiDocRenameInputValidator.BLOCK_ID_PATTERN.matcher(file).matches()
+            && !file.contains(".")
+            )
+          )
       );
       return references;
     } else {
