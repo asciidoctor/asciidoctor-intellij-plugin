@@ -196,6 +196,23 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
     if (element.getNode().findChildByType(AsciiDocTokenTypes.URL_LINK) != null) {
       return Collections.emptyList();
     }
+    if (element.getChildren().length > 0 && element.getChildren()[0] instanceof AsciiDocAttributeReference) {
+      AsciiDocAttributeReference ref = (AsciiDocAttributeReference) element.getChildren()[0];
+      if (ref.getText().endsWith("-url}")) {
+        return Collections.emptyList();
+      }
+      for (PsiReference reference : ref.getReferences()) {
+        PsiElement resolve = reference.resolve();
+        if (resolve instanceof AsciiDocAttributeDeclaration) {
+          String attributeValue = ((AsciiDocAttributeDeclaration) resolve).getAttributeValue();
+          if (attributeValue != null) {
+            if (URL_IN_ATTRIBUTE_VAL.matcher(attributeValue).find()) {
+              return Collections.emptyList();
+            }
+          }
+        }
+      }
+    }
     TextRange range = AsciiDocLink.getBodyRange((AsciiDocLink) element);
     if (!range.isEmpty()) {
       String file = element.getText().substring(range.getStartOffset(), range.getEndOffset());
@@ -305,7 +322,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
     );
   }
 
-  private Pattern urlInAttributeVal = Pattern.compile("(https?|file|ftp|irc)://[^\\s\\[\\]<]*([^\\s\\[\\]])");
+  public static final Pattern URL_IN_ATTRIBUTE_VAL = Pattern.compile("(https?|file|ftp|irc)://[^\\s\\[\\]<]*([^\\s\\[\\]])");
 
   private List<PsiReference> findUrlReferencesInAttributeDefinition(PsiElement element) {
     PsiElement child = element.getFirstChild();
@@ -314,7 +331,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
       child = child.getNextSibling();
     }
     if (child != null) {
-      Matcher urls = urlInAttributeVal.matcher(child.getText());
+      Matcher urls = URL_IN_ATTRIBUTE_VAL.matcher(child.getText());
       while (urls.find()) {
         result.add(new WebReference(
           element,

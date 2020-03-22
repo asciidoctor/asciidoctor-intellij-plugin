@@ -4,13 +4,12 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.TokenSet;
-import com.intellij.psi.util.PsiTreeUtil;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.parser.AsciiDocParserImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,15 +75,17 @@ public class AsciiDocSection extends ASTWrapperPsiElement implements AsciiDocSel
 
   @Nullable
   public AsciiDocBlockId getBlockId() {
-    for (PsiElement child : this.getChildren()) {
-      if (child instanceof AsciiDocBlockId) {
-        return (AsciiDocBlockId) child;
+    ASTNode child = this.getNode().getFirstChildNode();
+    while (child != null) {
+      if (child.getElementType() == AsciiDocElementTypes.BLOCKID) {
+        return (AsciiDocBlockId) child.getPsi();
       }
-      if (HEADINGS.contains(child.getNode().getElementType())) {
+      if (HEADINGS.contains(child.getElementType())) {
         break;
       }
+      child = child.getTreeNext();
     }
-    return PsiTreeUtil.findChildOfType(this, AsciiDocBlockId.class);
+    return null;
   }
 
   /**

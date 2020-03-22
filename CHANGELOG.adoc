@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.45 (work in progress)
+=== 0.30.45 (preview, available from GitHub releases)
 
 - inline includes for sub-directories and Antora prefixes (#429)
 - extend selection now stops at more delimiters and withing delimiters (#425)
