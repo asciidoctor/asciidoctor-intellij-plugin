@@ -314,6 +314,15 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("macro should resolve to file 'aaa.adoc'", "aaa.adoc", resolved.getName());
   }
 
+  public void testFrontmatter() {
+    // given...
+    PsiFile psiFile = configureByAsciiDoc("---\nhi: ho\n---");
+
+    // then...
+    AsciiDocFrontmatter frontmatter = PsiTreeUtil.getChildOfType(psiFile, AsciiDocFrontmatter.class);
+    assertNotNull("frontmatter should exist", frontmatter);
+  }
+
   public void testIncludeWithTag() {
     // given...
     PsiFile psiFile = configureByAsciiDoc("include::aaa.adoc[tags=hi]");

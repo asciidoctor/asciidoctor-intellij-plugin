@@ -23,7 +23,8 @@ public interface AsciiDocBlock extends PsiElement, AsciiDocSelfDescribe {
   enum Type {
     UNKNOWN,
     TABLE,
-    SIDEBAR, EXAMPLE, LITERAL, PASSTHROUGH, QUOTE, BLOCKMACRO, LISTING, VERSE
+    SIDEBAR, EXAMPLE, LITERAL, PASSTHROUGH, QUOTE, BLOCKMACRO, LISTING, VERSE,
+    FRONTMATTER
   }
 
   default Type getType() {

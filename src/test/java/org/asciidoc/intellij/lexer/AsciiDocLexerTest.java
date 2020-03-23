@@ -1916,6 +1916,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:TEXT ('mailto:doc.writer@example.com')");
   }
 
+  public void testFrontmatter() {
+    doTest("---\nhi: ho\n---",
+      "AsciiDoc:FRONTMATTER_DELIMITER ('---')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:FRONTMATTER ('hi: ho')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:FRONTMATTER_DELIMITER ('---')");
+  }
+
   @Override
   protected void doTest(@NonNls String text, @Nullable String expected) {
     super.doTest(text, expected);

@@ -666,6 +666,7 @@ public class AsciiDoc {
       .sourceHighlighter("coderay")
       .attribute("coderay-css", "style")
       .attribute("env", "idea")
+      .attribute("skip-front-matter")
       .attribute("env-idea");
 
     if (springRestDocsSnippets != null) {

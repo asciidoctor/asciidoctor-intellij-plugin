@@ -14,6 +14,9 @@ public class AsciiDocASTFactory extends ASTFactory {
     if (type == AsciiDocElementTypes.LISTING) {
       return new AsciiDocListing(type);
     }
+    if (type == AsciiDocElementTypes.FRONTMATTER) {
+      return new AsciiDocFrontmatter(type);
+    }
     if (type == AsciiDocElementTypes.PASSTHROUGH) {
       return new AsciiDocPassthrough(type);
     }

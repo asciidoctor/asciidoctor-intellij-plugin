@@ -337,6 +337,11 @@ To provide a common set of variables when rendering the preview, the plugin read
 Use this to optimize the preview the project contains a document that is split out to multiple include files.
 See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-project-specific-configurations[Wiki page] for details
 
+==== Front Matter
+
+Front matter is a https://asciidoctor.org/docs/user-manual/#static-website-generators[snippet of YAML at the beginning of a file used by static site generators].
+The plugin highlight the contents in the editor as YAML file and set the attribute `skip-front-matter` by default for the preview.
+
 ==== Extensions
 
 Asciidoctor Extensions can provide additional macros.

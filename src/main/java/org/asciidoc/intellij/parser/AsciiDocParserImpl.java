@@ -39,6 +39,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DESCRIPTION;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DOUBLE_QUOTE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.EMPTY_LINE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ENUMERATION;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.FRONTMATTER_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_OLDSTYLE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HTML_ENTITY_OR_UNICODE;
@@ -156,7 +157,8 @@ public class AsciiDocParserImpl {
       }
       emptyLines = 0;
 
-      if (at(BLOCK_MACRO_ID) || at(BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER) || at(LISTING_BLOCK_DELIMITER) || at(PASSTRHOUGH_BLOCK_DELIMITER)) {
+      if (at(BLOCK_MACRO_ID) || at(BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER) || at(LISTING_BLOCK_DELIMITER)
+        || at(PASSTRHOUGH_BLOCK_DELIMITER) || at(FRONTMATTER_DELIMITER)) {
         if (!continuation) {
           endEnumerationDelimiter();
           endBlockNoDelimiter();
@@ -188,6 +190,9 @@ public class AsciiDocParserImpl {
         continue;
       } else if (at(LISTING_BLOCK_DELIMITER)) {
         parseBlockElement(AsciiDocElementTypes.LISTING);
+        continue;
+      } else if (at(FRONTMATTER_DELIMITER)) {
+        parseBlockElement(AsciiDocElementTypes.FRONTMATTER);
         continue;
       } else if (at(PASSTRHOUGH_BLOCK_DELIMITER)) {
         parseBlockElement(AsciiDocElementTypes.PASSTHROUGH);

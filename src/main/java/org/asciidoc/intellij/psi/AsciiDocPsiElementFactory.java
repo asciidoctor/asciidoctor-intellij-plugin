@@ -41,6 +41,18 @@ public class AsciiDocPsiElementFactory {
   }
 
   @NotNull
+  public static AsciiDocFrontmatter createFrontmatter(@NotNull Project project,
+                                              @NotNull String text) {
+    final AsciiDocFile file = createFile(project, text);
+    AsciiDocFrontmatter listing = (AsciiDocFrontmatter) file.getFirstChild();
+    Objects.requireNonNull(listing, "frontmatter should have been found");
+    if (listing.getNextSibling() != null) {
+      throw new RuntimeException("unable to covert to one frontmatter: " + text);
+    }
+    return listing;
+  }
+
+  @NotNull
   public static AsciiDocPassthrough createPassthrough(@NotNull Project project,
                                                       @NotNull String text) {
     // append a "\n" so that the terminating element is recognized correctly (currently required in the lexer)

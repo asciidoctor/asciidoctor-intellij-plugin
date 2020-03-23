@@ -251,6 +251,8 @@
                              implementationClass="org.asciidoc.intellij.psi.AsciiDocRef$Manipulator"/>
     <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocListing"
                              implementationClass="org.asciidoc.intellij.psi.AsciiDocListing$Manipulator"/>
+    <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocFrontmatter"
+                             implementationClass="org.asciidoc.intellij.psi.AsciiDocFrontmatter$Manipulator"/>
     <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocLink"
                              implementationClass="org.asciidoc.intellij.psi.AsciiDocLink$Manipulator"/>
     <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocAttributeReference"

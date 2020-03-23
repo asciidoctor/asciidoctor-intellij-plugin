@@ -21,6 +21,7 @@ public interface AsciiDocElementTypes {
   IElementType BLOCKID = new AsciiDocElementType("BLOCKID");
   IElementType REF = new AsciiDocElementType("REF");
   IElementType LISTING = new AsciiDocElementType("LISTING");
+  IElementType FRONTMATTER = new AsciiDocElementType("FRONTMATTER");
   IElementType PASSTHROUGH = new AsciiDocElementType("PASSTHROUGH");
   IElementType LINK = new AsciiDocElementType("LINK");
   IElementType INCLUDE_TAG = new AsciiDocElementType("INCLUDE_TAG");

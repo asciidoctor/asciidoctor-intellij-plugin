@@ -6,6 +6,7 @@ import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.psi.PsiElement;
 import org.asciidoc.intellij.psi.AsciiDocElementWithLanguage;
+import org.asciidoc.intellij.psi.AsciiDocFrontmatter;
 import org.asciidoc.intellij.psi.AsciiDocListing;
 import org.asciidoc.intellij.psi.AsciiDocPassthrough;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -35,7 +36,7 @@ public class CodeFenceInjector implements MultiHostInjector {
   @NotNull
   @Override
   public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
-    return Arrays.asList(AsciiDocListing.class, AsciiDocPassthrough.class);
+    return Arrays.asList(AsciiDocListing.class, AsciiDocPassthrough.class, AsciiDocFrontmatter.class);
   }
 
   @Nullable

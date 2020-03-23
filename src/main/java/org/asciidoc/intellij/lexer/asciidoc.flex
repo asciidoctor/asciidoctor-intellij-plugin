@@ -268,6 +268,7 @@ DESCRIPTION = [^\n]+ {SPACE}* {DESCRIPTION_END}
 ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 %state MULTILINE
+%state FRONTMATTER
 %state HEADER
 %state EOL_POP
 %state PREBLOCK
@@ -339,6 +340,15 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <MULTILINE> {
+  "---" \n [a-zA-Z0-9_]+ ":" {
+        if (zzMarkedPos == yylength()) {
+          yybegin(FRONTMATTER); yypushstate(); yypushback(yylength()-3); yybegin(EOL_POP);
+          return AsciiDocTokenTypes.FRONTMATTER_DELIMITER;
+        } else {
+          yypushback(yylength()); yybegin(PREBLOCK);
+        }
+      }
+
   {HEADING_OLDSTYLE} {
         if (blockStack.size() > 0) {
           // headings must not be nested in block
@@ -1399,3 +1409,14 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ^ "include::" / [^\[\n]* {AUTOCOMPLETE} { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
 }
 
+<FRONTMATTER> {
+   ^ "---" [ \t]* $ {
+      yypushback(yylength() - 3);
+      yybegin(EOL_POP);
+      return AsciiDocTokenTypes.FRONTMATTER_DELIMITER;
+   }
+  ^ "---" / [^\.\n \t] { return AsciiDocTokenTypes.FRONTMATTER; }
+  ^ "---"  { yybegin(EOL_POP); return AsciiDocTokenTypes.FRONTMATTER_DELIMITER; }
+  "\n"                 { return AsciiDocTokenTypes.LINE_BREAK; }
+  [^]                  { return AsciiDocTokenTypes.FRONTMATTER; }
+}
