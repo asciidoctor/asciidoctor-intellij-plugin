@@ -630,6 +630,11 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('constrained')");
   }
 
+  public void testConstrainedNumber() {
+    doTest("11_11_11",
+      "AsciiDoc:TEXT ('11_11_11')");
+  }
+
   public void testItalicMultipleInSingleLine() {
     doTest("italic _constrained_ & __un__constrained",
       "AsciiDoc:TEXT ('italic')\n" +

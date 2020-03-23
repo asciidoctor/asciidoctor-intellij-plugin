@@ -65,7 +65,7 @@ import java.util.Stack;
   private boolean isUnconstrainedStart() {
     if(getTokenStart() > 0) {
       char c = zzBuffer.charAt(getTokenStart() -1);
-      if (Character.isAlphabetic(c) || c == '_' || c == ':' || c == ';' || c == '\\') {
+      if (Character.isAlphabetic(c) || Character.isDigit(c) || c == '_' || c == ':' || c == ';' || c == '\\') {
         return false;
       }
     }

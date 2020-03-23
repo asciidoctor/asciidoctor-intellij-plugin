@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - xrefs can point to local anchors without a prefixed hash (`#`) (#427)
 - support adding section titles if anchor points to block ID (#378)
 - supporting front matter style header in AsciiDoc files (#434)
+- treat numbers correctly for constrained/unconstrained formatting detection in syntax highlighting
 
 === 0.30.45 (preview, available from GitHub releases)
 
