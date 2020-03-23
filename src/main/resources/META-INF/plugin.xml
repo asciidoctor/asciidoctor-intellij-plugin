@@ -290,6 +290,11 @@
       <categoryKey>asciidoc.intention.category</categoryKey>
       <className>org.asciidoc.intellij.actions.intentions.AsciiDocInlineIntention</className>
     </intentionAction>
+    <intentionAction>
+      <bundleName>AsciiDocBundle</bundleName>
+      <categoryKey>asciidoc.intention.category</categoryKey>
+      <className>org.asciidoc.intellij.actions.intentions.AsciiDocAddBlockIdToSection</className>
+    </intentionAction>
     <renameInputValidator implementation="org.asciidoc.intellij.namesValidator.AsciiDocRenameInputValidator"/>
   </extensions>
 </idea-plugin>
