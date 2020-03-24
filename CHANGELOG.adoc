@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - supporting front matter style header in AsciiDoc files (#434)
 - treat numbers correctly for constrained/unconstrained formatting detection in syntax highlighting
 - intent to add the automatic block ID explicitly to a section (#435)
+- check the pattern of block IDs and reference anchors, also test if anchors resolve (#436)
 
 === 0.30.45 (preview, available from GitHub releases)
 

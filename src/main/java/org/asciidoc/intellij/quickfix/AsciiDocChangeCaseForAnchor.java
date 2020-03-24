@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixBase;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -34,7 +33,6 @@ public class AsciiDocChangeCaseForAnchor extends LocalQuickFixBase {
         ResolveResult[] resolveResultsAnchor = anchor.multiResolve(false);
         if (resolveResultsAnchor.length == 0) {
           ResolveResult[] resolveResultsAnchorCaseInsensitive = anchor.multiResolveAnchor(true);
-          LocalQuickFix[] fixes = new LocalQuickFix[]{};
           if (resolveResultsAnchorCaseInsensitive.length == 1) {
             PsiElement target = resolveResultsAnchorCaseInsensitive[0].getElement();
             if (target instanceof PsiNamedElement) {
@@ -51,6 +49,7 @@ public class AsciiDocChangeCaseForAnchor extends LocalQuickFixBase {
           }
         }
       }
+
     }
   }
 

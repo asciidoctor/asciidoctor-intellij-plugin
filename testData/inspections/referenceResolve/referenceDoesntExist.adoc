@@ -1,0 +1,2 @@
+
+<<<error descr="Anchor doesn't resolve">doesntexist</error>>>

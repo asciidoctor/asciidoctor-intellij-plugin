@@ -6,6 +6,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.util.IncorrectOperationException;
+import org.asciidoc.intellij.namesValidator.AsciiDocRenameInputValidator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,14 +19,11 @@ public class AsciiDocBlockId extends ASTWrapperPsiElement implements AsciiDocNam
   @Override
   public PsiElement getNameIdentifier() {
     ASTNode keyNode = this.getNode();
-    if (keyNode != null) {
-      return keyNode.getPsi();
-    } else {
-      return null;
-    }
+    return keyNode.getPsi();
   }
 
   @Override
+  @NotNull
   public String getName() {
     ASTNode keyNode = this.getNode();
     return keyNode.getText();
@@ -49,5 +47,9 @@ public class AsciiDocBlockId extends ASTWrapperPsiElement implements AsciiDocNam
   @Override
   public ItemPresentation getPresentation() {
     return super.getPresentation();
+  }
+
+  public boolean patternIsValid() {
+    return AsciiDocRenameInputValidator.BLOCK_ID_PATTERN.matcher(getName()).matches();
   }
 }

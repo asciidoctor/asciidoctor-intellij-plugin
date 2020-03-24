@@ -11,6 +11,7 @@ import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
 import icons.AsciiDocIcons;
+import org.asciidoc.intellij.namesValidator.AsciiDocRenameInputValidator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +24,10 @@ public class AsciiDocReference extends PsiReferenceBase<PsiElement> implements P
   public AsciiDocReference(@NotNull PsiElement element, TextRange textRange) {
     super(element, textRange);
     key = element.getText().substring(textRange.getStartOffset(), textRange.getEndOffset());
+  }
+
+  public boolean patternIsValid() {
+    return AsciiDocRenameInputValidator.BLOCK_ID_PATTERN.matcher(key).matches();
   }
 
   @NotNull
