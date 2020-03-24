@@ -1,0 +1,11 @@
+// suppress inspection "AsciiDocReferenceResolve" for whole file
+
+[[hi]]
+== Hi
+
+<<his>>
+
+// suppress inspection "AsciiDocReferencePattern"
+<<-his>>
+
+<<<error descr="Anchor pattern invalid, problem with prefix: '-'">-his</error>>>

@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - treat numbers correctly for constrained/unconstrained formatting detection in syntax highlighting
 - intent to add the automatic block ID explicitly to a section (#435)
 - check the pattern of block IDs and reference anchors, also test if anchors resolve (#436)
+- suppress inspections for a single line or a complete file using a line comment (#436)
 
 === 0.30.45 (preview, available from GitHub releases)
 

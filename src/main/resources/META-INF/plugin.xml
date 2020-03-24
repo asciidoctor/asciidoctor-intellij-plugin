@@ -209,40 +209,42 @@
     <searchEverywhereClassifier implementation="org.asciidoc.intellij.psi.AsciiDocSearchEverywhereClassifier"/>
     <localInspection language="AsciiDoc" displayName="Heading inspection" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="WARNING"
-                     shortName="AsciiDocHeadingStyleInspection"
+                     shortName="AsciiDocHeadingStyle"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocHeadingStyleInspection"/>
     <localInspection language="AsciiDoc" displayName="Pagebreak inspection" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="WARNING"
-                     shortName="AsciiDocPageBreakInspection"
+                     shortName="AsciiDocPageBreak"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocPageBreakInspection"/>
     <localInspection language="AsciiDoc" displayName="Horizontal rule inspection" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="WARNING"
-                     shortName="AsciiDocHorizontalRuleInspection"
+                     shortName="AsciiDocHorizontalRule"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocHorizontalRuleInspection"/>
     <localInspection language="AsciiDoc" displayName="Attribute continuation inspection" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="WARNING"
-                     shortName="AsciiDocAttributeContinuationInspection"
+                     shortName="AsciiDocAttributeContinuation"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocAttributeContinuationInspection"/>
     <localInspection language="AsciiDoc" displayName="Listing inspection" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="WARNING"
-                     shortName="AsciiDocListingStyleInspection"
+                     shortName="AsciiDocListingStyle"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocListingStyleInspection"/>
     <localInspection language="AsciiDoc" displayName="Anchor ID inspection" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="WARNING"
-                     shortName="AsciiDocAnchorWithoutIdInspection"
+                     shortName="AsciiDocAnchorWithoutId"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocAnchorWithoutIdInspection"/>
     <localInspection language="AsciiDoc" displayName="Link Resolve inspection" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="ERROR"
-                     shortName="AsciiDocLinkResolveInspection"
+                     shortName="AsciiDocLinkResolve"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocLinkResolveInspection"/>
     <localInspection language="AsciiDoc" displayName="Reference Anchor resolution inspection" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="ERROR"
-                     shortName="AsciiDocReferenceResolveInspection"
+                     shortName="AsciiDocReferenceResolve"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocReferenceResolveInspection"/>
     <localInspection language="AsciiDoc" displayName="Reference Anchor and Block ID pattern inspection" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="ERROR"
-                     shortName="AsciiDocReferencePatternInspection"
+                     shortName="AsciiDocReferencePattern"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocReferencePatternInspection"/>
+    <lang.inspectionSuppressor language="AsciiDoc"
+      implementationClass="org.asciidoc.intellij.inspections.AsciiDocInspectionSuppressor" />
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
     <stubElementTypeHolder class="org.asciidoc.intellij.parser.AsciiDocElementTypes"/>
     <stubIndex implementation="org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationKeyIndex"/>

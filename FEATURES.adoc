@@ -227,6 +227,26 @@ The editor runs inspections on the content.
 Once it finds for example Markdown-styled headings, Markdown-styled horizontal rules or Markdown-styled listings it highlights this as a warning.
 The user can use kbd:[Ctrl+Enter] to select a quick-fix to convert these to AsciiDoc syntax.
 
+// AsciiDocInspectionSuppressor
+To suppress an inspection for a given line line, use the quick-fix to add a comment on the line before:
+
+[source,asciidoc]
+----
+// suppress inspection "ReferencePattern"
+<<-ref>>
+----
+
+To suppress an inspection for a file, use the quick-fix to add a comment at the beginning of the file:
+
+[source,asciidoc]
+----
+// suppress inspection "ReferenceResolve" for whole file
+// ...
+<<ref>>
+----
+
+Use multiple lines to suppress multiple inspections, or separate multiple inspections with commas.
+
 The user can extract and inline includes.
 This is available from the "`Refactor`" context menu and via context-sensitive intentions via kbd:[Alt+Enter] ("`Inline Include Directive`" and "`Extract Include Directive`").
 // see: ExtractIncludeDialog.java
