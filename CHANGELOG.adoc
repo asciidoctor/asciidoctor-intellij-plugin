@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.46 (work in progress)
+=== 0.30.46 (preview, available from GitHub releases)
 
 - xrefs can point to local anchors without a prefixed hash (`#`) (#427)
 - support adding section titles if anchor points to block ID (#378)
