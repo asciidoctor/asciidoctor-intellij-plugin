@@ -41,7 +41,7 @@ intellij {
   // we support IC-2017.2, but PsiViewer is not available for the older version, therefore use IC-2018.1 to run it
   // Grazie is only available from 2019.2, therefore use IC-2019.2 to run it
   version 'IC-2019.3.1'
-  pluginName 'asciidoctor'
+  pluginName 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild false
   plugins = [
     'PsiViewer:193-SNAPSHOT', // used for debugging
