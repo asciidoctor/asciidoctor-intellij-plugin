@@ -17,7 +17,7 @@ import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
 import org.asciidoc.intellij.psi.AsciiDocAttributeInBrackets;
 import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.asciidoc.intellij.psi.AsciiDocBlockAttributes;
-import org.asciidoc.intellij.psi.AsciiDocBlockId;
+import org.asciidoc.intellij.psi.AsciiDocBlockIdImpl;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocHtmlEntity;
@@ -25,7 +25,7 @@ import org.asciidoc.intellij.psi.AsciiDocIncludeTagInDocument;
 import org.asciidoc.intellij.psi.AsciiDocInlineMacro;
 import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocRef;
-import org.asciidoc.intellij.psi.AsciiDocSection;
+import org.asciidoc.intellij.psi.AsciiDocSectionImpl;
 import org.asciidoc.intellij.psi.AsciiDocStandardBlock;
 import org.asciidoc.intellij.psi.AsciiDocTextItalic;
 import org.asciidoc.intellij.psi.AsciiDocTextMono;
@@ -78,7 +78,7 @@ public class AsciiDocParserDefinition implements ParserDefinition {
   @Override
   public PsiElement createElement(ASTNode node) {
     if (node.getElementType() == AsciiDocElementTypes.SECTION) {
-      return new AsciiDocSection(node);
+      return new AsciiDocSectionImpl(node);
     }
     if (node.getElementType() == AsciiDocElementTypes.BLOCK_MACRO) {
       return new AsciiDocBlockMacro(node);
@@ -96,7 +96,7 @@ public class AsciiDocParserDefinition implements ParserDefinition {
       return new AsciiDocAttributeInBrackets(node);
     }
     if (node.getElementType() == AsciiDocElementTypes.BLOCKID) {
-      return new AsciiDocBlockId(node);
+      return new AsciiDocBlockIdImpl(node);
     }
     if (node.getElementType() == AsciiDocElementTypes.REF) {
       return new AsciiDocRef(node);
@@ -140,7 +140,7 @@ public class AsciiDocParserDefinition implements ParserDefinition {
   }
 
   @Override
-  public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
+  public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
     return SpaceRequirements.MAY;
   }
 }

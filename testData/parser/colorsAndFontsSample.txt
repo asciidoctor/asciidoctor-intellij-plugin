@@ -1,5 +1,5 @@
 FILE
-  AsciiDocSection(AsciiDoc:SECTION)
+  AsciiDocSectionImpl(ASCIIDOC_SECTION)
     PsiElement(AsciiDoc:HEADING)('= Test AsciiDoc document')
     PsiWhiteSpace('\n')
     PsiWhiteSpace('\n')

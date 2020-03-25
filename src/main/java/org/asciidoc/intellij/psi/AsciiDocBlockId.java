@@ -1,55 +1,8 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import com.intellij.lang.ASTNode;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.tree.LeafElement;
-import com.intellij.util.IncorrectOperationException;
-import org.asciidoc.intellij.namesValidator.AsciiDocRenameInputValidator;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.navigation.NavigationItem;
+import com.intellij.psi.StubBasedPsiElement;
 
-public class AsciiDocBlockId extends ASTWrapperPsiElement implements AsciiDocNamedElement {
-  public AsciiDocBlockId(@NotNull ASTNode node) {
-    super(node);
-  }
-
-  @Nullable
-  @Override
-  public PsiElement getNameIdentifier() {
-    ASTNode keyNode = this.getNode();
-    return keyNode.getPsi();
-  }
-
-  @Override
-  @NotNull
-  public String getName() {
-    ASTNode keyNode = this.getNode();
-    return keyNode.getText();
-  }
-
-  @Override
-  public PsiElement setName(@NotNull String s) throws IncorrectOperationException {
-    ASTNode node = getNode().getFirstChildNode();
-    if (node instanceof LeafElement) {
-      ((LeafElement) node).replaceWithText(s);
-    } else {
-      throw new IncorrectOperationException("Bad child");
-    }
-    return this;
-  }
-
-  public String getId() {
-    return getName();
-  }
-
-  @Override
-  public ItemPresentation getPresentation() {
-    return super.getPresentation();
-  }
-
-  public boolean patternIsValid() {
-    return AsciiDocRenameInputValidator.BLOCK_ID_PATTERN.matcher(getName()).matches();
-  }
+public interface AsciiDocBlockId extends StubBasedPsiElement<AsciiDocBlockIdStub>, NavigationItem, AsciiDocNamedElement {
+  boolean patternIsValid();
 }

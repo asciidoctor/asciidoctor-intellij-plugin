@@ -1,7 +1,7 @@
 FILE
-  AsciiDocSection(AsciiDoc:SECTION)
+  AsciiDocSectionImpl(ASCIIDOC_SECTION)
     PsiElement(AsciiDoc:BLOCKIDSTART)('[#')
-    AsciiDocBlockId(AsciiDoc:BLOCKID)
+    AsciiDocBlockIdImpl(ASCIIDOC_BLOCKID)
       PsiElement(AsciiDoc:BLOCKID)('id')
     PsiElement(AsciiDoc:SEPARATOR)(',')
     PsiElement(AsciiDoc:BLOCKREFTEXT)('test')
@@ -13,7 +13,7 @@ FILE
     PsiElement(AsciiDoc:TEXT)('text')
   PsiWhiteSpace('\n')
   PsiWhiteSpace('\n')
-  AsciiDocSection(AsciiDoc:SECTION)
+  AsciiDocSectionImpl(ASCIIDOC_SECTION)
     AsciiDocBlockAttributes(AsciiDoc:BLOCK_ATTRIBUTES)
       PsiElement(AsciiDoc:ATTRS_START)('[')
       AsciiDocAttributeInBrackets(AsciiDoc:ATTRIBUTE_IN_BRACKETS)

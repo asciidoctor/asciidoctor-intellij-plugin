@@ -219,7 +219,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testDescriptionSection() {
     PsiFile psiFile = configureByAsciiDoc("== Section Title");
-    AsciiDocSection section = PsiTreeUtil.getChildOfType(psiFile, AsciiDocSection.class);
+    AsciiDocSectionImpl section = PsiTreeUtil.getChildOfType(psiFile, AsciiDocSectionImpl.class);
     assertNotNull(section);
     assertEquals("Section Title", section.getDescription());
     assertEquals("== Section Title", section.getFoldedSummary());
@@ -227,7 +227,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testDescriptionSectionWithId() {
     PsiFile psiFile = configureByAsciiDoc("[[id]]\n== Section Title");
-    AsciiDocSection section = PsiTreeUtil.getChildOfType(psiFile, AsciiDocSection.class);
+    AsciiDocSectionImpl section = PsiTreeUtil.getChildOfType(psiFile, AsciiDocSectionImpl.class);
     assertNotNull(section);
     assertEquals("Section Title", section.getDescription());
     assertEquals("== Section Title", section.getFoldedSummary());

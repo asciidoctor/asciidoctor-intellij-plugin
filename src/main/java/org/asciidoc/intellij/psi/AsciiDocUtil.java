@@ -3,11 +3,9 @@ package org.asciidoc.intellij.psi;
 import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -20,19 +18,13 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.impl.cache.CacheManager;
-import com.intellij.psi.impl.search.LowLevelSearchUtil;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileInfoManager;
-import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.text.CharArrayUtil;
-import com.intellij.util.text.StringSearcher;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocLanguage;
-import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -73,33 +65,27 @@ public class AsciiDocUtil {
   }
 
   static List<AsciiDocBlockId> findIds(Project project, String key) {
-    DumbService myDumbService = DumbService.getInstance(project);
-    List<AsciiDocBlockId> result = new ArrayList<>();
     if (key.length() == 0) {
-      return result;
+      return Collections.emptyList();
     }
-    PsiFile[] files = myDumbService.runReadActionInSmartMode(() -> CacheManager.SERVICE.getInstance(project).getFilesWithWord(key, UsageSearchContext.IN_CODE,
-      GlobalSearchScope.projectScope(project),
-      true));
-    final StringSearcher searcher = new StringSearcher(key, true, true, false);
-    for (PsiFile psiFile : files) {
-      if (psiFile.getLanguage() == AsciiDocLanguage.INSTANCE) {
-        final CharSequence text = ReadAction.compute(() -> psiFile.getViewProvider().getContents());
-        LowLevelSearchUtil.processTextOccurrences(text, 0, text.length(), searcher, null, index -> {
-          myDumbService.runReadActionInSmartMode(() -> {
-            PsiElement elementAt = psiFile.findElementAt(index);
-            if (elementAt != null) {
-              elementAt = elementAt.getParent();
-            }
-            if (elementAt instanceof AsciiDocBlockId) {
-              result.add((AsciiDocBlockId) elementAt);
-            }
-          });
-          return true;
-        });
+    List<AsciiDocBlockId> result = null;
+    final GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+    Collection<AsciiDocBlockId> asciiDocBlockIds = AsciiDocBlockIdKeyIndex.getInstance().get(key, project, scope);
+    ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
+    for (AsciiDocBlockId asciiDocBlockId : asciiDocBlockIds) {
+      VirtualFile virtualFile = asciiDocBlockId.getContainingFile().getVirtualFile();
+      if (index.isInLibrary(virtualFile)
+        || index.isExcluded(virtualFile)
+        || index.isInLibraryClasses(virtualFile)
+        || index.isInLibrarySource(virtualFile)) {
+        continue;
       }
+        if (result == null) {
+          result = new ArrayList<>();
+        }
+        result.add(asciiDocBlockId);
     }
-    return result;
+    return result != null ? result : Collections.emptyList();
   }
 
   public static List<PsiElement> findIds(Project project, VirtualFile virtualFile, String key) {
@@ -167,20 +153,20 @@ public class AsciiDocUtil {
 
   static List<AsciiDocBlockId> findIds(Project project) {
     List<AsciiDocBlockId> result = new ArrayList<>();
-    Collection<VirtualFile> virtualFiles =
-      FileTypeIndex.getFiles(AsciiDocFileType.INSTANCE, GlobalSearchScope.allScope(project));
     ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
-    for (VirtualFile virtualFile : virtualFiles) {
-      if (index.isInLibrary(virtualFile)
-        || index.isExcluded(virtualFile)
-        || index.isInLibraryClasses(virtualFile)
-        || index.isInLibrarySource(virtualFile)) {
-        continue;
-      }
-      AsciiDocFile asciiDocFile = (AsciiDocFile) PsiManager.getInstance(project).findFile(virtualFile);
-      if (asciiDocFile != null) {
-        Collection<AsciiDocBlockId> properties = PsiTreeUtil.findChildrenOfType(asciiDocFile, AsciiDocBlockId.class);
-        result.addAll(properties);
+    Collection<String> keys = AsciiDocSectionKeyIndex.getInstance().getAllKeys(project);
+    final GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+    for (String key : keys) {
+      Collection<AsciiDocBlockId> asciiDocBlockIds = AsciiDocBlockIdKeyIndex.getInstance().get(key, project, scope);
+      for (AsciiDocBlockId asciiDocBlockId : asciiDocBlockIds) {
+        VirtualFile virtualFile = asciiDocBlockId.getContainingFile().getVirtualFile();
+        if (index.isInLibrary(virtualFile)
+          || index.isExcluded(virtualFile)
+          || index.isInLibraryClasses(virtualFile)
+          || index.isInLibrarySource(virtualFile)) {
+          continue;
+        }
+        result.add(asciiDocBlockId);
       }
     }
     return result;

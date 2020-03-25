@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.47 (work in progress)
+
+- speedup lookups, validations and search-everywhere by using stub-based in indexes for block IDs and sections (#439)
+
 === 0.30.46 (preview, available from GitHub releases)
 
 - xrefs can point to local anchors without a prefixed hash (`#`) (#427)

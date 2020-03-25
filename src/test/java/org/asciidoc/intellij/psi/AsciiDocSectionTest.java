@@ -2,6 +2,7 @@ package org.asciidoc.intellij.psi;
 
 import com.intellij.psi.impl.source.tree.FileElement;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -9,7 +10,7 @@ import static org.junit.Assert.assertTrue;
 
 public class AsciiDocSectionTest {
 
-  private static class MockTitleAsciiDocSection extends AsciiDocSection {
+  private static class MockTitleAsciiDocSection extends AsciiDocSectionImpl {
     private String title;
 
     MockTitleAsciiDocSection(String title) {
@@ -22,6 +23,7 @@ public class AsciiDocSectionTest {
       return "_";
     }
 
+    @NotNull
     @Override
     public String getTitle() {
       return title;

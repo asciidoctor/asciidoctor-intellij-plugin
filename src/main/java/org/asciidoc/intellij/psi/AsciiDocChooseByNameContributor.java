@@ -15,14 +15,16 @@ public class AsciiDocChooseByNameContributor implements ChooseByNameContributor 
     List<AsciiDocSection> sections = AsciiDocFileUtil.findSections(project);
     List<String> names = new ArrayList<>(sections.size());
     for (AsciiDocSection section : sections) {
-      if (section.getTitle() != null && section.getTitle().length() > 0) {
-        names.add(section.getTitle());
+      String title = section.getTitle();
+      if (title.length() > 0) {
+        names.add(title);
       }
     }
     List<AsciiDocBlockId> ids = AsciiDocUtil.findIds(project);
     for (AsciiDocBlockId property : ids) {
-      if (property.getName() != null && property.getName().length() > 0) {
-        names.add(property.getName());
+      String name = property.getName();
+      if (name != null && name.length() > 0) {
+        names.add(name);
       }
     }
     return names.toArray(new String[0]);
