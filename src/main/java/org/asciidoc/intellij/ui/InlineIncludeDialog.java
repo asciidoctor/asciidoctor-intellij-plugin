@@ -8,6 +8,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.inline.InlineOptionsDialog;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
+import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -85,6 +86,11 @@ public class InlineIncludeDialog extends InlineOptionsDialog {
       if (!"include".equals(m.getMacroName())) {
         return null;
       }
+      // attributes like tags and leveloffset can't be inlined as of now
+      // TODO: see https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/437
+      if (m.hasAttributes()) {
+        return null;
+      }
       return element;
     }
 
@@ -94,8 +100,15 @@ public class InlineIncludeDialog extends InlineOptionsDialog {
   @Nullable
   public static PsiFile resolve(PsiElement element) {
     PsiReference[] references = element.getReferences();
-    for (int i = references.length - 1; i > 0; --i) {
-      PsiElement resolve = references[i].resolve();
+    for (int i = references.length - 1; i >= 0; --i) {
+      if (!(references[i] instanceof AsciiDocFileReference)) {
+        continue;
+      }
+      AsciiDocFileReference fileReference = (AsciiDocFileReference) references[i];
+      if (fileReference.isFolder() || fileReference.isAnchor()) {
+        continue;
+      }
+      PsiElement resolve = fileReference.resolve();
       if (resolve instanceof PsiFile) {
         return (PsiFile) resolve;
       }

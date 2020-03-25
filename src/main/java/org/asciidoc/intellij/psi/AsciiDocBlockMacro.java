@@ -203,6 +203,44 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
     return TextRange.create(start, end);
   }
 
+  public boolean hasAttributes() {
+    if (getAttributeRange().getLength() == 0) {
+      return false;
+    }
+    //noinspection RedundantIfStatement
+    if (getAttributeRange().substring(getText()).trim().length() == 0) {
+      return false;
+    }
+    return true;
+  }
+
+  public TextRange getAttributeRange() {
+    PsiElement child = this.getFirstChild();
+    // skip over pre-block until macro ID starts
+    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.BLOCK_MACRO_ID) {
+      child = child.getNextSibling();
+    }
+    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.ATTRS_START) {
+      child = child.getNextSibling();
+    }
+    while (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.ATTRS_START) {
+      child = child.getNextSibling();
+    }
+    if (child == null) {
+      return TextRange.EMPTY_RANGE;
+    }
+    int start = child.getStartOffsetInParent();
+    while (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.ATTRS_START) {
+      child = child.getNextSibling();
+    }
+    int end = start;
+    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.ATTRS_END) {
+      end = child.getStartOffsetInParent() + child.getTextLength();
+      child = child.getNextSibling();
+    }
+    return TextRange.create(start, end);
+  }
+
   @Override
   public Type getType() {
     return Type.BLOCKMACRO;
