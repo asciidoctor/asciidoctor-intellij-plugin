@@ -1,0 +1,3 @@
+:var: ab
+
+xref:{var}/missing.adoc[]

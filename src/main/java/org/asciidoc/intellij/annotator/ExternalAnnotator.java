@@ -20,7 +20,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
-import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFile;
+import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFileIntentionAction;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoctor.log.LogRecord;
 import org.asciidoctor.log.Severity;
@@ -161,7 +161,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
         if (document != null) {
           PsiElement element = file.findElementAt(document.getLineStartOffset(lineNumberForAnnotation));
           if (element != null && element.getParent() instanceof AsciiDocBlockMacro) {
-            annotation.registerFix(new AsciiDocCreateMissingFile((AsciiDocBlockMacro) element.getParent()));
+            annotation.registerFix(new AsciiDocCreateMissingFileIntentionAction(element.getParent()));
           }
         }
       }

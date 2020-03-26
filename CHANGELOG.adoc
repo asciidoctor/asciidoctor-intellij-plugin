@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.47 (work in progress)
 
 - speedup lookups, validations and search-everywhere by using stub-based in indexes for block IDs and sections (#439)
+- allow creating missing files from link and xref inline macros (#440)
 
 === 0.30.46 (preview, available from GitHub releases)
 

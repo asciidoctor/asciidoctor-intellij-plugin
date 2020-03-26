@@ -1,7 +1,7 @@
 package org.asciidoc.intellij.inspections;
 
 import com.intellij.psi.PsiDirectory;
-import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFile;
+import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFileIntentionAction;
 import org.junit.Assert;
 
 public class AsciiDocCreateMissingFileInspectionTest extends AsciiDocQuickFixTestBase {
@@ -14,7 +14,7 @@ public class AsciiDocCreateMissingFileInspectionTest extends AsciiDocQuickFixTes
   }
 
   public void testCreateMissingIncludeFile() {
-    doTest(AsciiDocCreateMissingFile.class, true);
+    doTest(AsciiDocCreateMissingFileIntentionAction.class, true);
     PsiDirectory parent = myFixture.getFile().getParent();
     Assert.assertNotNull(parent);
     PsiDirectory subdir = parent.findSubdirectory("ab");

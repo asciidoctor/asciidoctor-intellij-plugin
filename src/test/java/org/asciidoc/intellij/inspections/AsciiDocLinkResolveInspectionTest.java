@@ -1,6 +1,9 @@
 package org.asciidoc.intellij.inspections;
 
+import com.intellij.psi.PsiDirectory;
 import org.asciidoc.intellij.quickfix.AsciiDocChangeCaseForAnchor;
+import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFileQuickfix;
+import org.junit.Assert;
 
 public class AsciiDocLinkResolveInspectionTest extends AsciiDocQuickFixTestBase {
 
@@ -17,6 +20,15 @@ public class AsciiDocLinkResolveInspectionTest extends AsciiDocQuickFixTestBase 
 
   public void testFileDoesntExist() {
     doTestNoFix(AsciiDocChangeCaseForAnchor.NAME, true);
+  }
+
+  public void testCreateMissingXrefFile() {
+    doTest(AsciiDocCreateMissingFileQuickfix.NAME, true);
+    PsiDirectory parent = myFixture.getFile().getParent();
+    Assert.assertNotNull(parent);
+    PsiDirectory subdir = parent.findSubdirectory("ab");
+    Assert.assertNotNull(subdir);
+    Assert.assertNotNull(subdir.findFile("missing.adoc"));
   }
 
   @Override

@@ -29,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -77,7 +79,12 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         } else {
           parent.checkCreateSubdirectory(name);
         }
-      } catch (IncorrectOperationException e) {
+        // check if the name would be a valid path name
+        String path = parent.getVirtualFile().getCanonicalPath();
+        if (path != null) {
+          Paths.get(path, name);
+        }
+      } catch (IncorrectOperationException | InvalidPathException e) {
         return false;
       }
     }

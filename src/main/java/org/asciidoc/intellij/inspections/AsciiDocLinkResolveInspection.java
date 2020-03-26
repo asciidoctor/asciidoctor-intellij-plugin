@@ -9,6 +9,8 @@ import com.intellij.psi.ResolveResult;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.quickfix.AsciiDocChangeCaseForAnchor;
+import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFile;
+import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFileQuickfix;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,6 +20,7 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
   private static final String TEXT_HINT_FILE_DOESNT_RESOLVE = "File doesn't resolve";
   private static final String TEXT_HINT_ANCHOR_DOESNT_RESOLVE = "Anchor doesn't resolve";
   private static final AsciiDocChangeCaseForAnchor CHANGE_CASE_FOR_ANCHOR = new AsciiDocChangeCaseForAnchor();
+  private static final AsciiDocCreateMissingFileQuickfix CREATE_FILE = new AsciiDocCreateMissingFileQuickfix();
 
   @NotNull
   @Override
@@ -31,7 +34,12 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
           if (file != null) {
             ResolveResult[] resolveResults = file.multiResolve(false);
             if (resolveResults.length == 0) {
-              holder.registerProblem(o, TEXT_HINT_FILE_DOESNT_RESOLVE, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, file.getRangeInElement());
+              LocalQuickFix[] fixes = new LocalQuickFix[]{};
+              if (AsciiDocCreateMissingFile.isAvailable(o)) {
+                fixes = new LocalQuickFix[]{CREATE_FILE};
+              }
+              holder.registerProblem(o, TEXT_HINT_FILE_DOESNT_RESOLVE, ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                file.getRangeInElement(), fixes);
             } else if (resolveResults.length == 1) {
               fileResolved = true;
             }
