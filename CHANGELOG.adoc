@@ -7,10 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.47 (work in progress)
+=== 0.30.47 (preview, available from GitHub releases)
 
 - speedup lookups, validations and search-everywhere by using stub-based in indexes for block IDs and sections (#439)
 - allow creating missing files from link and xref inline macros (#440)
+- allow callouts with a dot instead of a number (`<.>`) to be parsed and re-formatted correctly (#443)
 
 === 0.30.46 (preview, available from GitHub releases)
 

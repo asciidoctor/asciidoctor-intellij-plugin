@@ -1233,6 +1233,24 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testListingWithCallout() {
+    doTest("----\n----\n<1> Callout 1\n<.> Callout 2",
+      "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CALLOUT ('<1>')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Callout')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('1')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CALLOUT ('<.>')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Callout')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('2')");
+  }
 
   public void testTitleAfterId() {
     doTest("[[id]]\n.Title\n====\nExample\n====",
