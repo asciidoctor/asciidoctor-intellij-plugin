@@ -2,12 +2,14 @@ package org.asciidoc.intellij.lexer;
 
 import com.intellij.lexer.Lexer;
 import com.intellij.testFramework.LexerTestCase;
+import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
  */
+@SuppressWarnings({"AsciiDocHeadingStyle", "AsciiDocLinkResolve", "AsciiDocAttributeContinuation", "AsciiDocReferenceResolve", "AsciiDocHorizontalRule"})
 public class AsciiDocLexerTest extends LexerTestCase {
   public void testSimple() {
     doTest("abc\ndef",
@@ -1295,6 +1297,20 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Mozart')");
   }
 
+  public void testHardBreakWithContnuation() {
+    doTest("* Test +\n+\nsecond line",
+      "AsciiDoc:BULLET ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Test')\n" +
+        "AsciiDoc:HARD_BREAK (' +')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CONTINUATION ('+')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('second')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('line')");
+  }
+
   public void testInitialEndOfSentenceAtEndOfLineSoThatItKeepsExistingWraps() {
     doTest("Wolfgang A.\nMozart",
       "AsciiDoc:TEXT ('Wolfgang')\n" +
@@ -1949,7 +1965,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   @Override
-  protected void doTest(@NonNls String text, @Nullable String expected) {
+  protected void doTest(@Language("asciidoc") @NonNls String text, @Nullable String expected) {
     super.doTest(text, expected);
   }
 
