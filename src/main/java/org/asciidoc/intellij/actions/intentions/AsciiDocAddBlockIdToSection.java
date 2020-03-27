@@ -32,6 +32,12 @@ public class AsciiDocAddBlockIdToSection extends Intention {
   @Nullable
   public static AsciiDocSection getSectionWithoutBlockIdAtCursor(PsiFile file, Editor editor) {
     PsiElement statementAtCaret = file.findElementAt(editor.getSelectionModel().getSelectionStart());
+    if (statementAtCaret == null &&
+      editor.getSelectionModel().getSelectionStart() == editor.getDocument().getTextLength() &&
+      editor.getDocument().getTextLength() > 0) {
+      // cursor is at the very end of the file, and there is document content, move one character
+      statementAtCaret = file.findElementAt(editor.getSelectionModel().getSelectionStart() - 1);
+    }
     if (statementAtCaret == null) {
       return null;
     }
@@ -47,7 +53,11 @@ public class AsciiDocAddBlockIdToSection extends Intention {
     if (!(statementAtCaret instanceof AsciiDocSection)) {
       return null;
     }
-    return (AsciiDocSection) statementAtCaret;
+    AsciiDocSection section = (AsciiDocSection) statementAtCaret;
+    if (section.getBlockId() != null) {
+      return null;
+    }
+    return section;
   }
 
   @Override

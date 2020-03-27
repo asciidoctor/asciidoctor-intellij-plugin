@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.48 (work in progress)
+
+- don't create an anchor via intent for a section when one is already present (#446)
+
 === 0.30.47 (preview, available from GitHub releases)
 
 - speedup lookups, validations and search-everywhere by using stub-based in indexes for block IDs and sections (#439)
