@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.Toggleable;
 import com.intellij.openapi.project.DumbAware;
 import org.asciidoc.intellij.actions.AsciiDocActionUtil;
 import org.asciidoc.intellij.ui.SplitFileEditor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 abstract class BaseChangeSplitLayoutAction extends AnAction implements DumbAware, Toggleable {
@@ -17,25 +18,25 @@ abstract class BaseChangeSplitLayoutAction extends AnAction implements DumbAware
   }
 
   @Override
-  public void update(AnActionEvent e) {
-    final SplitFileEditor splitFileEditor = AsciiDocActionUtil.findSplitEditor(e);
+  public void update(@NotNull AnActionEvent e) {
+    final SplitFileEditor<?, ?> splitFileEditor = AsciiDocActionUtil.findSplitEditor(e);
     e.getPresentation().setEnabledAndVisible(splitFileEditor != null);
 
     if (myLayoutToSet != null && splitFileEditor != null) {
-      e.getPresentation().putClientProperty(SELECTED_PROPERTY, splitFileEditor.getCurrentEditorLayout() == myLayoutToSet);
+      Toggleable.setSelected(e.getPresentation(), splitFileEditor.getCurrentEditorLayout() == myLayoutToSet);
     }
   }
 
   @Override
-  public void actionPerformed(AnActionEvent e) {
-    final SplitFileEditor splitFileEditor = AsciiDocActionUtil.findSplitEditor(e);
+  public void actionPerformed(@NotNull AnActionEvent e) {
+    final SplitFileEditor<?, ?> splitFileEditor = AsciiDocActionUtil.findSplitEditor(e);
 
     if (splitFileEditor != null) {
       if (myLayoutToSet == null) {
-        splitFileEditor.triggerLayoutChange();
+        splitFileEditor.triggerLayoutChange(true);
       } else {
-        splitFileEditor.triggerLayoutChange(myLayoutToSet);
-        e.getPresentation().putClientProperty(SELECTED_PROPERTY, true);
+        splitFileEditor.triggerLayoutChange(myLayoutToSet, true);
+        Toggleable.setSelected(e.getPresentation(), true);
       }
     }
   }

@@ -9,7 +9,6 @@ import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.TextEditor;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Couple;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -22,10 +21,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class AsciiDocActionUtil {
   @Nullable
-  public static SplitFileEditor findSplitEditor(AnActionEvent e) {
+  public static SplitFileEditor<?, ?> findSplitEditor(AnActionEvent e) {
     final FileEditor editor = e.getData(PlatformDataKeys.FILE_EDITOR);
     if (editor instanceof SplitFileEditor) {
-      return (SplitFileEditor) editor;
+      return (SplitFileEditor<?, ?>) editor;
     } else {
       return SplitFileEditor.PARENT_SPLIT_KEY.get(editor);
     }
@@ -33,7 +32,7 @@ public class AsciiDocActionUtil {
 
   @Nullable
   public static Editor findAsciiDocTextEditor(AnActionEvent e) {
-    final SplitFileEditor splitEditor = findSplitEditor(e);
+    final SplitFileEditor<?, ?> splitEditor = findSplitEditor(e);
     if (splitEditor == null) {
       // This fallback is used primarily for testing
 
@@ -45,10 +44,7 @@ public class AsciiDocActionUtil {
       }
     }
 
-    if (!(splitEditor.getMainEditor() instanceof TextEditor)) {
-      return null;
-    }
-    final TextEditor mainEditor = (TextEditor) splitEditor.getMainEditor();
+    final TextEditor mainEditor = splitEditor.getMainEditor();
     if (!mainEditor.getComponent().isVisible()) {
       return null;
     }
@@ -79,12 +75,9 @@ public class AsciiDocActionUtil {
                                                  @NotNull PsiElement element2,
                                                  @NotNull final IElementType elementType) {
     final PsiElement base = PsiTreeUtil.findCommonParent(element1, element2);
-    return PsiTreeUtil.findFirstParent(base, false, new Condition<PsiElement>() {
-      @Override
-      public boolean value(PsiElement element) {
-        final ASTNode node = element.getNode();
-        return node != null && node.getElementType() == elementType;
-      }
+    return PsiTreeUtil.findFirstParent(base, false, element -> {
+      final ASTNode node = element.getNode();
+      return node != null && node.getElementType() == elementType;
     });
   }
 }
