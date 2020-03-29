@@ -270,20 +270,7 @@ public class AsciiDocParserImpl {
         }
         blockAttrsMarker.done(AsciiDocElementTypes.REF);
       } else if (at(LINKSTART)) {
-        PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
-        next();
-        while (at(LINKFILE) || at(URL_LINK) || at(LINKANCHOR) || at(LINKTEXT_START) || at(SEPARATOR) || at(LINKTEXT)
-          || at(ATTRIBUTE_REF_START) || at(CONTINUATION) || at(LINKEND)) {
-          if (at(LINKEND)) {
-            next();
-            break;
-          } else if (at(ATTRIBUTE_REF_START)) {
-            parseAttributeReference();
-          } else {
-            next();
-          }
-        }
-        blockAttrsMarker.done(AsciiDocElementTypes.LINK);
+        parseLink();
       } else if (at(MONO_START)) {
         parseMono();
       } else if (at(ITALIC_START)) {
@@ -298,6 +285,23 @@ public class AsciiDocParserImpl {
     dropPreBlock();
     closeBlocks();
     closeSections(0);
+  }
+
+  private void parseLink() {
+    PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
+    next();
+    while (at(LINKFILE) || at(URL_LINK) || at(LINKANCHOR) || at(LINKTEXT_START) || at(SEPARATOR) || at(LINKTEXT)
+      || at(ATTRIBUTE_REF_START) || at(CONTINUATION) || at(LINKEND)) {
+      if (at(LINKEND)) {
+        next();
+        break;
+      } else if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
+      } else {
+        next();
+      }
+    }
+    blockAttrsMarker.done(AsciiDocElementTypes.LINK);
   }
 
   private void parseHtmlEntityOrUnicode() {
