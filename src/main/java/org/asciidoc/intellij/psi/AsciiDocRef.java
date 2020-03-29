@@ -6,13 +6,14 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.AbstractElementManipulator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
-public class AsciiDocRef extends ASTWrapperPsiElement {
+import java.util.ArrayList;
+
+public class AsciiDocRef extends ASTWrapperPsiElement implements HasAnchorReference, HasFileReference {
   public AsciiDocRef(@NotNull ASTNode node) {
     super(node);
   }
@@ -20,7 +21,51 @@ public class AsciiDocRef extends ASTWrapperPsiElement {
   @NotNull
   @Override
   public PsiReference[] getReferences() {
-    return ReferenceProvidersRegistry.getReferencesFromProviders(this);
+    TextRange range = getRangeOfBody(this);
+    if (!range.isEmpty()) {
+      String file = this.getText().substring(range.getStartOffset(), range.getEndOffset());
+      ArrayList<PsiReference> references = new ArrayList<>();
+      int start = 0;
+      int i = 0;
+      for (; i < file.length(); ++i) {
+        if (file.charAt(i) == '/' || file.charAt(i) == '#') {
+          references.add(
+            new AsciiDocFileReference(this, "<<", file.substring(0, start),
+              TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
+              true, false)
+          );
+          start = i + 1;
+        }
+      }
+      references.add(
+        new AsciiDocFileReference(this, "<<", file.substring(0, start),
+          TextRange.create(range.getStartOffset() + start, range.getStartOffset() + file.length()),
+          false, false)
+          .withAnchor(start == 0 || file.charAt(start - 1) == '#')
+      );
+      return references.toArray(new PsiReference[0]);
+    }
+    return super.getReferences();
+  }
+
+  private static TextRange getRangeOfBody(AsciiDocRef element) {
+    PsiElement child = element.getFirstChild();
+    // skip over start ID
+    while (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.REFSTART) {
+      child = child.getNextSibling();
+    }
+    if (child == null) {
+      return TextRange.EMPTY_RANGE;
+    }
+    int start = child.getStartOffsetInParent();
+    int end = start;
+    while (child != null
+      && child.getNode().getElementType() != AsciiDocTokenTypes.SEPARATOR
+      && child.getNode().getElementType() != AsciiDocTokenTypes.REFEND) {
+      end = child.getStartOffsetInParent() + child.getTextLength();
+      child = child.getNextSibling();
+    }
+    return TextRange.create(start, end);
   }
 
   public static class Manipulator extends AbstractElementManipulator<AsciiDocRef> {

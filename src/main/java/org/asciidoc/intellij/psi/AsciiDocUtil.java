@@ -154,7 +154,7 @@ public class AsciiDocUtil {
   static List<AsciiDocBlockId> findIds(Project project) {
     List<AsciiDocBlockId> result = new ArrayList<>();
     ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
-    Collection<String> keys = AsciiDocSectionKeyIndex.getInstance().getAllKeys(project);
+    Collection<String> keys = AsciiDocBlockIdKeyIndex.getInstance().getAllKeys(project);
     final GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
     for (String key : keys) {
       Collection<AsciiDocBlockId> asciiDocBlockIds = AsciiDocBlockIdKeyIndex.getInstance().get(key, project, scope);

@@ -1,1 +1,23 @@
 link:<error descr="File doesn't resolve">notfound.adoc</error>[]
+
+<<<error descr="Anchor doesn't resolve">doesntexist</error>>>
+
+== lowercasenoblanks
+
+<<<error descr="Anchor doesn't resolve">lowercasenoblanks</error>>>
+
+== Headline
+
+<<Headline>>
+
+<<_headline>>
+
+[id="hdlid"]
+== Headline with ID
+
+<<hdlid>>
+
+[#hdlid2]
+== Headline with ID
+
+<<hdlid2>>

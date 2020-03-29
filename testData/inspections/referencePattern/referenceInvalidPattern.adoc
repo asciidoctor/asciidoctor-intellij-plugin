@@ -2,5 +2,3 @@
 [[<error descr="Block ID pattern invalid, must not contain spaces or tabs">invalid blank</error>]]
 
 [[<error descr="Block ID pattern invalid, problem starting at '!'">invalid!exclamation</error>]]
-
-<<<error descr="Anchor pattern invalid, problem with prefix: '-'">-startwithminus</error>>>

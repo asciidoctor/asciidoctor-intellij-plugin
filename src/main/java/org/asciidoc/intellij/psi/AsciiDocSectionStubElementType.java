@@ -14,6 +14,10 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class AsciiDocSectionStubElementType extends IStubElementType<AsciiDocSectionStub, AsciiDocSection> {
+
+  // this contains "_" as this is a character often prefixed to IDs, sometimes not
+  public static final String NORMALIZED_CHARS_IN_INDEX = "[ ._-]";
+
   public AsciiDocSectionStubElementType() {
     super("ASCIIDOC_SECTION", AsciiDocLanguage.INSTANCE);
   }
@@ -54,7 +58,7 @@ public class AsciiDocSectionStubElementType extends IStubElementType<AsciiDocSec
   public void indexStub(@NotNull AsciiDocSectionStub stub, @NotNull IndexSink sink) {
     if (stub.getTitle() != null) {
       String normalizedKey = AsciiDocSectionImpl.INVALID_SECTION_ID_CHARS.matcher(stub.getTitle().toLowerCase(Locale.US)).replaceAll("");
-      normalizedKey = normalizedKey.replaceAll("[ .-]", "");
+      normalizedKey = normalizedKey.replaceAll(NORMALIZED_CHARS_IN_INDEX, "");
       sink.occurrence(AsciiDocSectionKeyIndex.KEY, normalizedKey);
     }
   }

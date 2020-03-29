@@ -68,7 +68,6 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REF;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFEND;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFFILE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SEPARATOR;
@@ -256,19 +255,7 @@ public class AsciiDocParserImpl {
       } else if (at(INLINE_MACRO_ID)) {
         parseInlineMacro();
       } else if (at(REFSTART)) {
-        PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
-        next();
-        while (at(REF) || at(REFEND) || at(REFFILE) || at(SEPARATOR) || at(REFTEXT) || at(ATTRIBUTE_REF_START)) {
-          if (at(REFEND)) {
-            next();
-            break;
-          } else if (at(ATTRIBUTE_REF_START)) {
-            parseAttributeReference();
-          } else {
-            next();
-          }
-        }
-        blockAttrsMarker.done(AsciiDocElementTypes.REF);
+        parseRef();
       } else if (at(LINKSTART)) {
         parseLink();
       } else if (at(MONO_START)) {
@@ -285,6 +272,22 @@ public class AsciiDocParserImpl {
     dropPreBlock();
     closeBlocks();
     closeSections(0);
+  }
+
+  private void parseRef() {
+    PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
+    next();
+    while (at(REF) || at(REFEND) || at(SEPARATOR) || at(REFTEXT) || at(ATTRIBUTE_REF_START)) {
+      if (at(REFEND)) {
+        next();
+        break;
+      } else if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
+      } else {
+        next();
+      }
+    }
+    blockAttrsMarker.done(AsciiDocElementTypes.REF);
   }
 
   private void parseLink() {
@@ -416,6 +419,10 @@ public class AsciiDocParserImpl {
         PsiBuilder.Marker tag = myBuilder.mark();
         next();
         tag.done(AsciiDocElementTypes.INCLUDE_TAG);
+      } else if (at(ATTR_VALUE) && "id".equals(name) && macroId == null) {
+        PsiBuilder.Marker blockIdMarker = myBuilder.mark();
+        next();
+        blockIdMarker.done(AsciiDocElementTypes.BLOCKID);
       } else {
         next();
       }

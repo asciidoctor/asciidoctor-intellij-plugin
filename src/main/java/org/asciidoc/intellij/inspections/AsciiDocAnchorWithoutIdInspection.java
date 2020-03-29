@@ -6,8 +6,8 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
-import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocSection;
+import org.asciidoc.intellij.psi.HasAnchorReference;
 import org.asciidoc.intellij.quickfix.AsciiDocAddBlockIdToSection;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,10 +24,10 @@ public class AsciiDocAnchorWithoutIdInspection extends AsciiDocInspectionBase {
     return new AsciiDocVisitor() {
       @Override
       public void visitElement(PsiElement o) {
-        if (o instanceof AsciiDocLink) {
-          AsciiDocSection section = ((AsciiDocLink) o).resolveAnchorForSection();
-          AsciiDocFileReference anchor = ((AsciiDocLink) o).getAnchorReference();
-          if (section != null && anchor != null && section.getBlockId() == null) {
+        if (o instanceof HasAnchorReference) {
+          AsciiDocSection section = ((HasAnchorReference) o).resolveAnchorForSection();
+          AsciiDocFileReference anchor = ((HasAnchorReference) o).getAnchorReference();
+          if (section != null && anchor != null && section.getBlockId() == null && !anchor.isPossibleRefText()) {
             LocalQuickFix[] fixes = new LocalQuickFix[]{ADD_BLOCK_ID_TO_SECTION};
             holder.registerProblem(o, TEXT_HINT_ANCHOR_WITHOUT_ID, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, anchor.getRangeInElement(), fixes);
           }

@@ -14,9 +14,8 @@ import com.intellij.util.IncorrectOperationException;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class AsciiDocLink extends ASTWrapperPsiElement {
+public class AsciiDocLink extends ASTWrapperPsiElement implements HasFileReference, HasAnchorReference {
   public AsciiDocLink(@NotNull ASTNode node) {
     super(node);
   }
@@ -69,46 +68,6 @@ public class AsciiDocLink extends ASTWrapperPsiElement {
     public TextRange getRangeInElement(@NotNull AsciiDocLink element) {
       return getBodyRange(element);
     }
-  }
-
-  @Nullable
-  public AsciiDocFileReference getFileReference() {
-    for (PsiReference reference : getReferences()) {
-      if (reference instanceof AsciiDocFileReference) {
-        AsciiDocFileReference fileReference = (AsciiDocFileReference) reference;
-        if (!fileReference.isFolder() && !fileReference.isAnchor()) {
-          return (AsciiDocFileReference) reference;
-        }
-      }
-    }
-    return null;
-  }
-
-  @Nullable
-  public AsciiDocFileReference getAnchorReference() {
-    for (PsiReference reference : getReferences()) {
-      if (reference instanceof AsciiDocFileReference) {
-        if (((AsciiDocFileReference) reference).isAnchor()) {
-          return (AsciiDocFileReference) reference;
-        }
-      }
-    }
-    return null;
-  }
-
-  @Nullable
-  public AsciiDocSection resolveAnchorForSection() {
-    AsciiDocFileReference anchor = getAnchorReference();
-    if (anchor != null) {
-      PsiElement resolve = anchor.resolve();
-      if (resolve instanceof AsciiDocFile) {
-        resolve = resolve.getFirstChild();
-      }
-      if (resolve instanceof AsciiDocSection) {
-        return (AsciiDocSection) resolve;
-      }
-    }
-    return null;
   }
 
   public void setAnchor(String anchor) {

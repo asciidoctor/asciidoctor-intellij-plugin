@@ -142,7 +142,6 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
       .put(AsciiDocTokenTypes.REFSTART, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.REFEND, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.REF, ASCIIDOC_MARKER)
-      .put(AsciiDocTokenTypes.REFFILE, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.URL_START, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.URL_END, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.URL_PREFIX, ASCIIDOC_MARKER)

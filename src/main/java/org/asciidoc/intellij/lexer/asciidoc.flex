@@ -403,7 +403,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                { yypushback(yylength()); yypopstate(); }
 }
 
-<ATTRIBUTE_VAL, INLINE_URL_NO_DELIMITER, INSIDE_LINE, DESCRIPTION, LINKFILE, LINKURL, BLOCK_MACRO, LINKTEXT, REFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE> {
+<ATTRIBUTE_VAL, INLINE_URL_NO_DELIMITER, INSIDE_LINE, DESCRIPTION, LINKFILE, LINKURL, BLOCK_MACRO, LINKTEXT, REFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE, REF> {
   {ATTRIBUTE_REF_START} ( {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} | [^}\n ]* {AUTOCOMPLETE} ) {
                          yypushback(yylength() - 1);
                          if (!isEscaped()) {
@@ -834,7 +834,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {RPAREN}             { return AsciiDocTokenTypes.RPAREN; }
   {LBRACKET}           { return AsciiDocTokenTypes.LBRACKET; }
   {RBRACKET}           { if (isInAttribute()) { yypushback(1); yypopstate(); } else { return AsciiDocTokenTypes.RBRACKET; } }
-  {REFSTART} / [^>\n]+ {REFEND} {
+  // see: InlineXrefMacroRx
+  {REFSTART} / [\w/.:{#] [^>\n]* {REFEND} {
                          if (!isEscaped()) {
                            yybegin(REF); return AsciiDocTokenTypes.REFSTART;
                          } else {
@@ -844,7 +845,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                        }
   // when typing a reference, it will not be complete due to the missing matching closing ref
   // therefore second variante for incomplete REF that will only be active during autocomplete
-  {REFSTART} / [^>\n ]* {AUTOCOMPLETE} {
+  {REFSTART} / ([\w/.:{#] [^>\n]* | "") {AUTOCOMPLETE} {
                          if (!isEscaped()) {
                            yybegin(REFAUTO); return AsciiDocTokenTypes.REFSTART;
                          } else {
@@ -1041,8 +1042,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <REF> {
   ","                  { yybegin(REFTEXT); return AsciiDocTokenTypes.SEPARATOR; }
-  "#"                  { return AsciiDocTokenTypes.SEPARATOR; }
-  [^#>\n]+ / "#"       { return AsciiDocTokenTypes.REFFILE; }
   [^]                  { return AsciiDocTokenTypes.REF; }
 }
 

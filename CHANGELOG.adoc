@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - don't create an anchor via intent for a section when one is already present (#446)
 - improve parser/lexer to support continuation after hard break
 - fix focus problems when switching preview modes using keyboard macros (#448)
+- improve checking reference anchors and resolving (#436)
 
 === 0.30.47 (preview, available from GitHub releases)
 

@@ -235,10 +235,6 @@
                      groupName="General" enabledByDefault="true" level="ERROR"
                      shortName="AsciiDocLinkResolve"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocLinkResolveInspection"/>
-    <localInspection language="AsciiDoc" displayName="Reference Anchor resolution inspection" groupPath="AsciiDoc"
-                     groupName="General" enabledByDefault="true" level="ERROR"
-                     shortName="AsciiDocReferenceResolve"
-                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocReferenceResolveInspection"/>
     <localInspection language="AsciiDoc" displayName="Reference Anchor and Block ID pattern inspection" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="ERROR"
                      shortName="AsciiDocReferencePattern"

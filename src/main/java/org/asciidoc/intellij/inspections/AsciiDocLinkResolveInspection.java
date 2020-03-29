@@ -7,7 +7,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
-import org.asciidoc.intellij.psi.AsciiDocLink;
+import org.asciidoc.intellij.psi.HasAnchorReference;
+import org.asciidoc.intellij.psi.HasFileReference;
 import org.asciidoc.intellij.quickfix.AsciiDocChangeCaseForAnchor;
 import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFile;
 import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFileQuickfix;
@@ -28,9 +29,9 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
     return new AsciiDocVisitor() {
       @Override
       public void visitElement(PsiElement o) {
-        boolean fileResolved = false;
-        if (o instanceof AsciiDocLink) {
-          AsciiDocFileReference file = ((AsciiDocLink) o).getFileReference();
+        boolean tryToResolveAnchor = true;
+        if (o instanceof HasFileReference) {
+          AsciiDocFileReference file = ((HasFileReference) o).getFileReference();
           if (file != null) {
             ResolveResult[] resolveResults = file.multiResolve(false);
             if (resolveResults.length == 0) {
@@ -40,22 +41,23 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
               }
               holder.registerProblem(o, TEXT_HINT_FILE_DOESNT_RESOLVE, ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 file.getRangeInElement(), fixes);
-            } else if (resolveResults.length == 1) {
-              fileResolved = true;
+              tryToResolveAnchor = false;
+            } else if (resolveResults.length > 1) {
+              tryToResolveAnchor = false;
             }
-            if (fileResolved) {
-              AsciiDocFileReference anchor = ((AsciiDocLink) o).getAnchorReference();
-              if (anchor != null) {
-                ResolveResult[] resolveResultsAnchor = anchor.multiResolve(false);
-                if (resolveResultsAnchor.length == 0) {
-                  ResolveResult[] resolveResultsAnchorCaseInsensitive = anchor.multiResolveAnchor(true);
-                  LocalQuickFix[] fixes = new LocalQuickFix[]{};
-                  if (resolveResultsAnchorCaseInsensitive.length == 1) {
-                    fixes = new LocalQuickFix[]{CHANGE_CASE_FOR_ANCHOR};
-                  }
-                  holder.registerProblem(o, TEXT_HINT_ANCHOR_DOESNT_RESOLVE, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, anchor.getRangeInElement(), fixes);
-                }
+          }
+        }
+        if (tryToResolveAnchor && o instanceof HasAnchorReference) {
+          AsciiDocFileReference anchor = ((HasAnchorReference) o).getAnchorReference();
+          if (anchor != null) {
+            ResolveResult[] resolveResultsAnchor = anchor.multiResolve(false);
+            if (resolveResultsAnchor.length == 0) {
+              ResolveResult[] resolveResultsAnchorCaseInsensitive = anchor.multiResolveAnchor(true);
+              LocalQuickFix[] fixes = new LocalQuickFix[]{};
+              if (resolveResultsAnchorCaseInsensitive.length == 1) {
+                fixes = new LocalQuickFix[]{CHANGE_CASE_FOR_ANCHOR};
               }
+              holder.registerProblem(o, TEXT_HINT_ANCHOR_DOESNT_RESOLVE, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, anchor.getRangeInElement(), fixes);
             }
           }
         }

@@ -23,8 +23,6 @@ import org.asciidoc.intellij.psi.AsciiDocIncludeTagInDocument;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInComment;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInDocument;
 import org.asciidoc.intellij.psi.AsciiDocLink;
-import org.asciidoc.intellij.psi.AsciiDocRef;
-import org.asciidoc.intellij.psi.AsciiDocReference;
 import org.asciidoc.intellij.psi.AsciiDocSimpleFileReference;
 import org.asciidoc.intellij.psi.AsciiDocTextItalic;
 import org.asciidoc.intellij.psi.AsciiDocTextMono;
@@ -43,32 +41,6 @@ import static com.intellij.patterns.PlatformPatterns.psiFile;
 public class AsciiDocReferenceContributor extends PsiReferenceContributor {
   @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
-
-    final PsiElementPattern.Capture<AsciiDocRef> refCapture =
-      psiElement(AsciiDocRef.class).inFile(psiFile(AsciiDocFile.class));
-
-    registrar.registerReferenceProvider(refCapture,
-      new PsiReferenceProvider() {
-        @NotNull
-        @Override
-        public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
-                                                     @NotNull ProcessingContext
-                                                       context) {
-          int start = 0;
-          PsiElement child = element.getFirstChild();
-          while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.REF) {
-            start += child.getTextLength();
-            child = child.getNextSibling();
-          }
-          if (child != null) {
-            return new PsiReference[]{
-              new AsciiDocReference(element, TextRange.create(start, start + child.getTextLength()))
-            };
-          } else {
-            return new PsiReference[]{};
-          }
-        }
-      });
 
     final PsiElementPattern.Capture<AsciiDocAttributeReference> attributeReferenceCapture =
       psiElement(AsciiDocAttributeReference.class).inFile(psiFile(AsciiDocFile.class));

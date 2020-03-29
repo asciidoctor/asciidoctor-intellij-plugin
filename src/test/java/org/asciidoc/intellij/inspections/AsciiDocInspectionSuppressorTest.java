@@ -8,7 +8,7 @@ public class AsciiDocInspectionSuppressorTest extends AsciiDocQuickFixTestBase {
   public void setUp() throws Exception {
     super.setUp();
     //noinspection unchecked
-    myFixture.enableInspections(AsciiDocReferenceResolveInspection.class, AsciiDocReferencePatternInspection.class);
+    myFixture.enableInspections(AsciiDocLinkResolveInspection.class, AsciiDocReferencePatternInspection.class);
   }
 
   public void testSuppressionsWork() {

@@ -861,9 +861,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:TEXT ('Text')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:REFSTART ('<<')\n" +
-        "AsciiDoc:REFFILE ('FILE')\n" +
-        "AsciiDoc:SEPARATOR ('#')\n" +
-        "AsciiDoc:REF ('REF')\n" +
+        "AsciiDoc:REF ('FILE#REF')\n" +
         "AsciiDoc:REFEND ('>>')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('More')\n" +
