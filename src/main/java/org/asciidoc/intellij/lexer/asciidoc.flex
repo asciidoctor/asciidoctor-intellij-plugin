@@ -195,6 +195,8 @@ LINE_COMMENT="//"[^\n]*
 COMMENT_BLOCK_DELIMITER = "////" "/"* {SPACE}*
 PASSTRHOUGH_BLOCK_DELIMITER = "++++" "+"* {SPACE}*
 LISTING_BLOCK_DELIMITER = "----" "-"* {SPACE}*
+// a listing might be terminated by an open block if this is what started it
+LISTING_BLOCK_DELIMITER_END = "--" "-"* {SPACE}*
 MARKDOWN_LISTING_BLOCK_DELIMITER = "```" {SPACE}*
 EXAMPLE_BLOCK_DELIMITER = "====" "="* {SPACE}*
 SIDEBAR_BLOCK_DELIMITER = "****" "*"* {SPACE}*
@@ -545,7 +547,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                           }
 
   ^ ({EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER}) $ {
-                            clearStyle();
                             resetFormatting();
                             String delimiter = yytext().toString().trim();
                             if(blockStack.contains(delimiter)) {
@@ -553,6 +554,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                                 blockStack.pop();
                               }
                             } else {
+                              if (delimiter.equals("--") && "source".equals(style)) {
+                                 clearStyle(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
+                              }
                               blockStack.push(delimiter);
                             }
                             yybegin(PREBLOCK);
@@ -564,7 +568,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ^ {OPEN_BLOCK_DELIMITER} / [^\n \t] { yypushback(yylength()); yybegin(STARTBLOCK); /* OPEN_BLOCK_DELIMITER */ }
   ^ {EXAMPLE_BLOCK_DELIMITER} / [^\=\n \t] { yypushback(yylength()); yybegin(STARTBLOCK); /* EXAMPLE_BLOCK_DELIMITER */ }
   ^ ({EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER})  {
-                            clearStyle();
                             resetFormatting();
                             String delimiter = yytext().toString().trim();
                             if(blockStack.contains(delimiter)) {
@@ -572,6 +575,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                                 blockStack.pop();
                               }
                             } else {
+                              if (delimiter.equals("--") && "source".equals(style)) {
+                                 clearStyle(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
+                              }
                               blockStack.push(delimiter);
                             }
                             yybegin(PREBLOCK);
@@ -1154,7 +1160,11 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <BLOCK_ATTRS> {
   [^\],=\n\t }]+ {
           if ((yytext().charAt(0) != '.' && yytext().charAt(0) != '%') && !yytext().toString().equals("role")) {
-            setStyle(yytext().toString());
+            String style = yytext().toString();
+            if (style.indexOf(",") != -1) {
+              style = style.substring(0, style.indexOf(","));
+            }
+            setStyle(style);
           }
           return AsciiDocTokenTypes.ATTR_NAME;
         }
@@ -1300,7 +1310,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <LISTING_BLOCK> {
-  ^ {LISTING_BLOCK_DELIMITER} $ {
+  ^ {LISTING_BLOCK_DELIMITER_END} $ {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(PREBLOCK);
       return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
@@ -1309,10 +1319,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
     }
   }
   // duplicating to handle end of file content
-  ^ {LISTING_BLOCK_DELIMITER} / [^\-\n \t] {
+  ^ {LISTING_BLOCK_DELIMITER_END} / [^\-\n \t] {
     return AsciiDocTokenTypes.LISTING_TEXT;
   }
-  ^ {LISTING_BLOCK_DELIMITER} | {MARKDOWN_LISTING_BLOCK_DELIMITER} {
+  ^ {LISTING_BLOCK_DELIMITER_END} | {MARKDOWN_LISTING_BLOCK_DELIMITER} {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(PREBLOCK);
       return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;

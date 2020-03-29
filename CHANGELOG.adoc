@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - improve parser/lexer to support continuation after hard break
 - fix focus problems when switching preview modes using keyboard macros (#448)
 - improve checking reference anchors and resolving (#436)
+- recognize open block with style source as listing (#401)
 
 === 0.30.47 (preview, available from GitHub releases)
 

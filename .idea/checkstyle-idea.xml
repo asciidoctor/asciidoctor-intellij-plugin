@@ -11,7 +11,7 @@
         <entry key="location-2" value="LOCAL_FILE:$PROJECT_DIR$/config/checkstyle/checkstyle.xml:AsciiDoc check" />
         <entry key="property-2.config_loc" value="" />
         <entry key="scan-before-checkin" value="false" />
-        <entry key="scanscope" value="JavaOnly" />
+        <entry key="scanscope" value="JavaOnlyWithTests" />
         <entry key="suppress-errors" value="false" />
       </map>
     </option>

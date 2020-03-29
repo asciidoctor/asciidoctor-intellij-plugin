@@ -12,6 +12,9 @@
     <!-- Suppress all checks in generated sources -->
     <suppress checks=".*" files="_AsciiDocLexer.java"/>
 
+    <!-- Suppress all checks in generated sources -->
+    <suppress checks="FileLength" files="AsciiDocLexerTest.java"/>
+
     <!-- Suppress all checks in geronimo -->
     <suppress checks=".*" files="org[\\/]apache[\\/]geronimo"/>
 

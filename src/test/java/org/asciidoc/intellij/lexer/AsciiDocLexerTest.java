@@ -1556,6 +1556,35 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Text')");
   }
 
+  public void testListingWithLanguage() {
+    doTest("[source,php]\nListing\n\nText",
+      "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('source')\n" +
+        "AsciiDoc:SEPARATOR (',')\n" +
+        "AsciiDoc:ATTR_NAME ('php')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_TEXT ('Listing')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testListingWithOpenBlock() {
+    doTest("[source]\n--\nListing\n--\nText",
+      "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('source')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('--')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_TEXT ('Listing')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('--')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
   public void testPassthroughWithNoDelimiters() {
     doTest("[pass]\nPas**ss**ss\n\nText",
       "AsciiDoc:ATTRS_START ('[')\n" +
