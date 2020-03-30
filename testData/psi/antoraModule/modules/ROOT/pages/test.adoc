@@ -10,4 +10,4 @@ include::{examplesdir}/example.txt[]
 
 include::{partialsdir}/part.adoc[]
 
-include::my-component:ROOT:part$part.adoc[]
+include::my-component:ROOT:partial$part.adoc[]

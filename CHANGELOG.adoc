@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - fix focus problems when switching preview modes using keyboard macros (#448)
 - improve checking reference anchors and resolving (#436)
 - recognize open block with style source as listing (#401)
+- Resolve two colons (`::`) as ROOT module in Antora modules instead of current module (#449)
 
 === 0.30.47 (preview, available from GitHub releases)
 

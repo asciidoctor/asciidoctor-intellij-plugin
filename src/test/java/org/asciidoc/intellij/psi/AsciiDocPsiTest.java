@@ -459,7 +459,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     // part include via module
     assertSize(3, macros[3].getReferences());
     assertEquals("my-component:ROOT", macros[3].getReferences()[0].getCanonicalText());
-    assertEquals("part", macros[3].getReferences()[1].getCanonicalText());
+    assertEquals("partial", macros[3].getReferences()[1].getCanonicalText());
     assertEquals("part.adoc", macros[3].getReferences()[2].getCanonicalText());
     // finish test here. Reference will not resolve in the test, files are "temp://" files
 

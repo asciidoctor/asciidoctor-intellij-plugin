@@ -80,10 +80,10 @@ public class AsciiDocUtil {
         || index.isInLibrarySource(virtualFile)) {
         continue;
       }
-        if (result == null) {
-          result = new ArrayList<>();
-        }
-        result.add(asciiDocBlockId);
+      if (result == null) {
+        result = new ArrayList<>();
+      }
+      result.add(asciiDocBlockId);
     }
     return result != null ? result : Collections.emptyList();
   }
@@ -693,61 +693,7 @@ public class AsciiDocUtil {
           otherFamily = defaultFamily;
         }
 
-        if (Objects.equals(myComponentName, otherComponentName)) {
-          otherComponentName = null;
-        }
-        if (otherComponentName == null && Objects.equals(myModuleName, otherModuleName)) {
-          otherModuleName = null;
-        }
-
-        if (otherModuleName != null && otherComponentName == null) {
-          antoraModuleDir = antoraModuleDir.getParent().findChild(otherModuleName);
-          if (antoraModuleDir == null) {
-            // might be a module in another component with the same name
-            otherComponentName = myComponentName;
-          }
-        }
-
-        if (otherComponentName != null) {
-          if (otherModuleName == null || otherModuleName.length() == 0) {
-            otherModuleName = myModuleName;
-          }
-          PsiFile[] files =
-            FilenameIndex.getFilesByName(project, ANTORA_YML, GlobalSearchScope.projectScope(project));
-          // sort by path proximity
-          Arrays.sort(files,
-            Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
-          ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
-          for (PsiFile file : files) {
-            if (index.isInLibrary(file.getVirtualFile())
-              || index.isExcluded(file.getVirtualFile())
-              || index.isInLibraryClasses(file.getVirtualFile())
-              || index.isInLibrarySource(file.getVirtualFile())) {
-              continue;
-            }
-            antora = yaml.load(file.getText());
-            if (!Objects.equals(otherComponentName, getAttributeAsString(antora, "name"))) {
-              continue;
-            }
-            if (!Objects.equals(myComponentVersion, getAttributeAsString(antora, "version"))) {
-              continue;
-            }
-            PsiDirectory parent = file.getParent();
-            if (parent == null) {
-              continue;
-            }
-            PsiDirectory antoraModulesDir = parent.findSubdirectory("modules");
-            if (antoraModulesDir == null) {
-              continue;
-            }
-            PsiDirectory antoraModule = antoraModulesDir.findSubdirectory(otherModuleName);
-            if (antoraModule == null) {
-              continue;
-            }
-            antoraModuleDir = antoraModule.getVirtualFile();
-            break;
-          }
-        }
+        antoraModuleDir = getOtherAntoraModuleDir(project, moduleDir, antoraModuleDir, myModuleName, myComponentName, myComponentVersion, otherComponentName, otherModuleName);
 
         VirtualFile baseDir = project.getBaseDir();
 
@@ -784,6 +730,71 @@ public class AsciiDocUtil {
       });
     }
     return originalKey;
+  }
+
+  @Nullable
+  @SuppressWarnings("checkstyle:ParameterNumber")
+  private static VirtualFile getOtherAntoraModuleDir(Project project, VirtualFile moduleDir, VirtualFile antoraModuleDir,
+                                                     String myModuleName, String myComponentName, String myComponentVersion,
+                                                     String otherComponentName, String otherModuleName) {
+    Map<String, Object> antora;
+    if (Objects.equals(myComponentName, otherComponentName)) {
+      otherComponentName = null;
+    }
+    if (otherComponentName == null && Objects.equals(myModuleName, otherModuleName)) {
+      otherModuleName = null;
+    }
+
+    if (otherModuleName != null && otherComponentName == null) {
+      antoraModuleDir = antoraModuleDir.getParent().findChild(otherModuleName);
+      if (antoraModuleDir == null) {
+        // might be a module in another component with the same name
+        otherComponentName = myComponentName;
+      }
+    }
+
+    if (otherComponentName != null) {
+      if (otherModuleName == null || otherModuleName.length() == 0) {
+        otherModuleName = "ROOT";
+      }
+      PsiFile[] files =
+        FilenameIndex.getFilesByName(project, ANTORA_YML, GlobalSearchScope.projectScope(project));
+      // sort by path proximity
+      Arrays.sort(files,
+        Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
+      ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
+      for (PsiFile file : files) {
+        if (index.isInLibrary(file.getVirtualFile())
+          || index.isExcluded(file.getVirtualFile())
+          || index.isInLibraryClasses(file.getVirtualFile())
+          || index.isInLibrarySource(file.getVirtualFile())) {
+          continue;
+        }
+        Yaml yaml = new Yaml();
+        antora = yaml.load(file.getText());
+        if (!Objects.equals(otherComponentName, getAttributeAsString(antora, "name"))) {
+          continue;
+        }
+        if (!Objects.equals(myComponentVersion, getAttributeAsString(antora, "version"))) {
+          continue;
+        }
+        PsiDirectory parent = file.getParent();
+        if (parent == null) {
+          continue;
+        }
+        PsiDirectory antoraModulesDir = parent.findSubdirectory("modules");
+        if (antoraModulesDir == null) {
+          continue;
+        }
+        PsiDirectory antoraModule = antoraModulesDir.findSubdirectory(otherModuleName);
+        if (antoraModule == null) {
+          continue;
+        }
+        antoraModuleDir = antoraModule.getVirtualFile();
+        break;
+      }
+    }
+    return antoraModuleDir;
   }
 
   @Nullable
@@ -842,7 +853,7 @@ public class AsciiDocUtil {
               if (Objects.equals(myComponentName, otherComponentName)) {
                 result.add(new AntoraModule(module.getName() + ":", otherComponentName, module.getName(), title, module));
               }
-              if (!Objects.equals(myComponentName, otherComponentName) && Objects.equals(myModuleName, module.getName())) {
+              if (module.getName().equals("ROOT")) {
                 result.add(new AntoraModule(otherComponentName + "::", otherComponentName, module.getName(), title, module));
               }
               result.add(new AntoraModule(otherComponentName + ":" + module.getName() + ":", otherComponentName, module.getName(), title, module));
@@ -891,61 +902,7 @@ public class AsciiDocUtil {
         }
       }
 
-      if (Objects.equals(myComponentName, otherComponentName)) {
-        otherComponentName = null;
-      }
-      if (otherComponentName == null && Objects.equals(myModuleName, otherModuleName)) {
-        otherModuleName = null;
-      }
-
-      if (otherModuleName != null && otherComponentName == null) {
-        antoraModuleDir = antoraModuleDir.getParent().findChild(otherModuleName);
-        if (antoraModuleDir == null) {
-          // might be a module in another component with the same name
-          otherComponentName = myComponentName;
-        }
-      }
-
-      if (otherComponentName != null) {
-        if (otherModuleName == null || otherModuleName.length() == 0) {
-          otherModuleName = myModuleName;
-        }
-        PsiFile[] files =
-          FilenameIndex.getFilesByName(project, ANTORA_YML, GlobalSearchScope.projectScope(project));
-        // sort by path proximity
-        Arrays.sort(files,
-          Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
-        ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
-        for (PsiFile file : files) {
-          if (index.isInLibrary(file.getVirtualFile())
-            || index.isExcluded(file.getVirtualFile())
-            || index.isInLibraryClasses(file.getVirtualFile())
-            || index.isInLibrarySource(file.getVirtualFile())) {
-            continue;
-          }
-          antora = yaml.load(file.getText());
-          if (!Objects.equals(otherComponentName, getAttributeAsString(antora, "name"))) {
-            continue;
-          }
-          if (!Objects.equals(myComponentVersion, getAttributeAsString(antora, "version"))) {
-            continue;
-          }
-          PsiDirectory parent = file.getParent();
-          if (parent == null) {
-            continue;
-          }
-          PsiDirectory antoraModulesDir = parent.findSubdirectory("modules");
-          if (antoraModulesDir == null) {
-            continue;
-          }
-          PsiDirectory antoraModule = antoraModulesDir.findSubdirectory(otherModuleName);
-          if (antoraModule == null) {
-            continue;
-          }
-          antoraModuleDir = antoraModule.getVirtualFile();
-          break;
-        }
-      }
+      antoraModuleDir = getOtherAntoraModuleDir(project, moduleDir, antoraModuleDir, myModuleName, myComponentName, myComponentVersion, otherComponentName, otherModuleName);
 
       return antoraModuleDir;
     });
