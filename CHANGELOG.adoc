@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.48 (work in progress)
+=== 0.30.48 (preview, available from GitHub releases)
 
 - don't create an anchor via intent for a section when one is already present (#446)
 - improve parser/lexer to support continuation after hard break
