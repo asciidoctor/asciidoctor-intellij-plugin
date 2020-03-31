@@ -297,5 +297,12 @@
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
+  <template name="ad-tag-include" value="$cmt$ tag::$tagname$[]&#10;$SELECTION$&#10;$cmt$ end::$tagname$[]" description="Surround with Tag for include marco" toReformat="true" toShortenFQNames="true">
+    <variable name="cmt" expression="lineCommentStart()" defaultValue="" alwaysStopAt="false" />
+    <variable name="tagname" expression="" defaultValue="&quot;tagname&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
 </templateSet>
 
