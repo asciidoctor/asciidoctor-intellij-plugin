@@ -89,7 +89,6 @@ public class AsciiDocFilterLexer extends BaseFilterLexer {
       // text can contain references to JavaClasses, therefore use code and plain text here
       scanWordsInToken(UsageSearchContext.IN_PLAIN_TEXT | UsageSearchContext.IN_CODE, false, false);
     }
-    advanceTodoItemCountsInToken();
     myDelegate.advance();
   }
 

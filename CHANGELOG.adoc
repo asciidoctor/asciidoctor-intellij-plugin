@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.50 (preview, available from GitHub releases)
+
+- index TODOs only in comments for TODO window (#452)
+
 === 0.30.49 (preview, available from GitHub releases)
 
 - improving link validation with Antora (#449)
