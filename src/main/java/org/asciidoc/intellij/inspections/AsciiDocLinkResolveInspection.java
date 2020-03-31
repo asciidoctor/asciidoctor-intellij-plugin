@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.HasAnchorReference;
+import org.asciidoc.intellij.psi.HasAntoraReference;
 import org.asciidoc.intellij.psi.HasFileReference;
 import org.asciidoc.intellij.quickfix.AsciiDocChangeCaseForAnchor;
 import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFile;
@@ -29,8 +30,19 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
     return new AsciiDocVisitor() {
       @Override
       public void visitElement(PsiElement o) {
-        boolean tryToResolveAnchor = true;
-        if (o instanceof HasFileReference) {
+        boolean continueResolving = true;
+        if (o instanceof HasAntoraReference) {
+          AsciiDocFileReference file = ((HasAntoraReference) o).getAntoraReference();
+          if (file != null) {
+            ResolveResult[] resolveResults = file.multiResolve(false);
+            if (resolveResults.length == 0) {
+              // if the antora reference doesn't resolve, don't continue
+              // as it might be a reference to an Antora component in another project
+              continueResolving = false;
+            }
+          }
+        }
+        if (continueResolving && o instanceof HasFileReference) {
           AsciiDocFileReference file = ((HasFileReference) o).getFileReference();
           if (file != null) {
             ResolveResult[] resolveResults = file.multiResolve(false);
@@ -41,13 +53,13 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
               }
               holder.registerProblem(o, TEXT_HINT_FILE_DOESNT_RESOLVE, ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 file.getRangeInElement(), fixes);
-              tryToResolveAnchor = false;
+              continueResolving = false;
             } else if (resolveResults.length > 1) {
-              tryToResolveAnchor = false;
+              continueResolving = false;
             }
           }
         }
-        if (tryToResolveAnchor && o instanceof HasAnchorReference) {
+        if (continueResolving && o instanceof HasAnchorReference) {
           AsciiDocFileReference anchor = ((HasAnchorReference) o).getAnchorReference();
           if (anchor != null) {
             ResolveResult[] resolveResultsAnchor = anchor.multiResolve(false);

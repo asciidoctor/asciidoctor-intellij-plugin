@@ -1172,11 +1172,45 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('`test')");
   }
 
-  public void testPassThroughInline() {
+  public void testPassThroughInlineThreePlus() {
     doTest("+++pt\npt2+++",
       "AsciiDoc:PASSTRHOUGH_INLINE_START ('+++')\n" +
         "AsciiDoc:PASSTRHOUGH_CONTENT ('pt\\npt2')\n" +
         "AsciiDoc:PASSTRHOUGH_INLINE_END ('+++')");
+  }
+
+  public void testPassThroughInlineOnePlus() {
+    doTest("+pt\np+t2+",
+      "AsciiDoc:PASSTRHOUGH_INLINE_START ('+')\n" +
+        "AsciiDoc:PASSTRHOUGH_CONTENT ('pt\\np+t2')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_END ('+')");
+  }
+
+  public void testPassThroughInlineTwoPlus() {
+    doTest("++pt\npt2++",
+      "AsciiDoc:PASSTRHOUGH_INLINE_START ('++')\n" +
+        "AsciiDoc:PASSTRHOUGH_CONTENT ('pt\\npt2')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_END ('++')");
+  }
+
+  public void testPassThroughDoublePlusAndSingle() {
+    doTest("++text++and +some+ other",
+      "AsciiDoc:PASSTRHOUGH_INLINE_START ('++')\n" +
+        "AsciiDoc:PASSTRHOUGH_CONTENT ('text')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_END ('++')\n" +
+        "AsciiDoc:TEXT ('and')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('+some+')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('other')");
+  }
+
+  public void testPassThroughRunOff() {
+    doTest("+pt+test\n\nHi",
+      "AsciiDoc:PASSTRHOUGH_INLINE_START ('+')\n" +
+        "AsciiDoc:PASSTRHOUGH_CONTENT ('pt+test\\n')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Hi')");
   }
 
   public void testLiteralBlock() {

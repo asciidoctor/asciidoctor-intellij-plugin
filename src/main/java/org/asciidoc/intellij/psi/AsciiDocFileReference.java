@@ -62,6 +62,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return isAnchor;
   }
 
+  public boolean isAntora() {
+    return isAntora;
+  }
+
   public boolean isFile() {
     return !isAnchor && !isFolder;
   }

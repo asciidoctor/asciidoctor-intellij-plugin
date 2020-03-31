@@ -429,6 +429,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
       getTestName(true) + "/modules/ROOT/examples/example.txt",
       getTestName(true) + "/modules/ROOT/images/image.txt",
       getTestName(true) + "/modules/ROOT/partials/part.adoc",
+      getTestName(true) + "/modules/module/pages/page.adoc",
       getTestName(true) + "/antora.yml"
     );
 
@@ -443,6 +444,14 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     AsciiDocBlockMacro[] macros = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocBlockMacro.class);
     assertNotNull(macros);
     assertSize(4, macros);
+
+    assertEquals(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component:ROOT:test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
+    assertEquals(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component::test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
+    assertEquals(AsciiDocUtil.replaceAntoraPrefix(macros[0], "ROOT:test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
+    assertEquals(AsciiDocUtil.replaceAntoraPrefix(macros[0], "ROOT:page$test.adoc", null), "/src/antoraModule/modules/ROOT/pages/test.adoc");
+    assertEquals(AsciiDocUtil.replaceAntoraPrefix(macros[0], "test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
+
+    assertEquals(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component:module:test.adoc", "page"), "/src/antoraModule/modules/module/pages/test.adoc");
 
     // image
     assertSize(1, macros[0].getReferences());

@@ -737,6 +737,7 @@ public class AsciiDocUtil {
   private static VirtualFile getOtherAntoraModuleDir(Project project, VirtualFile moduleDir, VirtualFile antoraModuleDir,
                                                      String myModuleName, String myComponentName, String myComponentVersion,
                                                      String otherComponentName, String otherModuleName) {
+    VirtualFile result = null;
     Map<String, Object> antora;
     if (Objects.equals(myComponentName, otherComponentName)) {
       otherComponentName = null;
@@ -745,11 +746,18 @@ public class AsciiDocUtil {
       otherModuleName = null;
     }
 
+    if (otherComponentName == null && otherModuleName == null) {
+      return antoraModuleDir;
+    }
+
     if (otherModuleName != null && otherComponentName == null) {
-      antoraModuleDir = antoraModuleDir.getParent().findChild(otherModuleName);
-      if (antoraModuleDir == null) {
+      result = antoraModuleDir.getParent().findChild(otherModuleName);
+      if (result == null) {
         // might be a module in another component with the same name
         otherComponentName = myComponentName;
+      }
+      if (result != null) {
+        return result;
       }
     }
 
@@ -790,11 +798,11 @@ public class AsciiDocUtil {
         if (antoraModule == null) {
           continue;
         }
-        antoraModuleDir = antoraModule.getVirtualFile();
+        result = antoraModule.getVirtualFile();
         break;
       }
     }
-    return antoraModuleDir;
+    return result;
   }
 
   @Nullable

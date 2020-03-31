@@ -21,3 +21,6 @@ link:<error descr="File doesn't resolve">notfound.adoc</error>[]
 == Headline with ID
 
 <<hdlid2>>
+
+// no error, as modules is unknown
+xref:component:module:test.adoc[]

@@ -55,7 +55,7 @@ import java.util.Stack;
     }
     if(getTokenEnd() < zzBuffer.length()) {
       char c = zzBuffer.charAt(getTokenEnd());
-      if (Character.isAlphabetic(c) || c == '_') {
+      if (Character.isAlphabetic(c) || Character.isDigit(c) || c == '_') {
         return false;
       }
     }
@@ -306,6 +306,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state PASSTRHOUGH_INLINE
 %state PASSTHROUGH_NO_DELIMITER
 %state PASSTHROUGH_NO_DELIMITER
+%state PASSTRHOUGH_INLINE_CONSTRAINED
+%state PASSTRHOUGH_INLINE_UNCONSTRAINED
 
 %state IFDEF_IFNDEF
 %state ATTR_PARSEABLE
@@ -835,7 +837,24 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            yybegin(MONO_SECOND_TRY);
                          }
                        }
-  // ITALIC END
+  // MONO END
+
+  // PASSTHROUGH START
+  "++" / [^+] {STRING}* "++" { yypushstate(); yybegin(PASSTRHOUGH_INLINE_CONSTRAINED); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START; }
+  "+" "+"? [^+] {WORD}* "+" { if (yytext().toString().startsWith("++") && yytext().toString().substring(2).contains("++")) {
+                                yypushback(yylength() - 2);
+                                yypushstate(); yybegin(PASSTRHOUGH_INLINE_CONSTRAINED); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
+                              }
+                              if(isUnconstrainedStart()) {
+                                yypushback(yylength() - 1);
+                                yypushstate(); yybegin(PASSTRHOUGH_INLINE_UNCONSTRAINED); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
+                              } else {
+                                yypushback(yylength() - 1);
+                                return textFormat();
+                         }
+                       }
+  // PASSTHROUGH END
+
   {LPAREN}             { return AsciiDocTokenTypes.LPAREN; }
   {RPAREN}             { return AsciiDocTokenTypes.RPAREN; }
   {LBRACKET}           { return AsciiDocTokenTypes.LBRACKET; }
@@ -1357,9 +1376,25 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { return AsciiDocTokenTypes.BLOCK_COMMENT; }
 }
 
+<PASSTRHOUGH_INLINE_CONSTRAINED, PASSTRHOUGH_INLINE, PASSTRHOUGH_INLINE_UNCONSTRAINED> {
+  // blank lines within pre block don't have an effect
+  ^ {SPACE}* "\n"           { yypushback(yylength()); yypopstate(); }
+}
+
 <PASSTRHOUGH_INLINE> {
   {PASSTRHOUGH_INLINE} { yypopstate(); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END; }
   [^]                  { return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
+}
+
+<PASSTRHOUGH_INLINE_CONSTRAINED> {
+  "++" { yypopstate(); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END; }
+  [^]                  { return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
+}
+
+<PASSTRHOUGH_INLINE_UNCONSTRAINED> {
+  "+" { if (isUnconstrainedEnd() && !isPrefixedBy("+".toCharArray())) { yypopstate(); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END; }
+        return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
+  [^]  { return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
 }
 
 <PASSTRHOUGH_BLOCK> {

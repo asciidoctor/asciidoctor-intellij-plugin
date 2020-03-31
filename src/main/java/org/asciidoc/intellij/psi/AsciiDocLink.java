@@ -15,7 +15,7 @@ import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
-public class AsciiDocLink extends ASTWrapperPsiElement implements HasFileReference, HasAnchorReference {
+public class AsciiDocLink extends ASTWrapperPsiElement implements HasFileReference, HasAnchorReference, HasAntoraReference {
   public AsciiDocLink(@NotNull ASTNode node) {
     super(node);
   }
