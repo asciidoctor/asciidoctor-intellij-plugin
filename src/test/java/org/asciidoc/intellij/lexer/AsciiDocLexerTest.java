@@ -1329,7 +1329,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Mozart')");
   }
 
-  public void testHardBreakWithContnuation() {
+  public void testHardBreakWithContinuation() {
     doTest("* Test +\n+\nsecond line",
       "AsciiDoc:BULLET ('*')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
@@ -1341,6 +1341,23 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('second')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('line')");
+  }
+
+  public void testHardBreakAtBlockEnd() {
+    doTest("|===\n" +
+      "|XX +\n" +
+      "|===\n" +
+      "\n" +
+      "== Title",
+      "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('|XX')\n" +
+        "AsciiDoc:HARD_BREAK (' +')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
+        "AsciiDoc:HEADING ('== Title')");
   }
 
   public void testInitialEndOfSentenceAtEndOfLineSoThatItKeepsExistingWraps() {

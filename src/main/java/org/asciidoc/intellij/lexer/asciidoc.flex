@@ -717,7 +717,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          }
                          return AsciiDocTokenTypes.LINE_BREAK; }
   {HARD_BREAK}
-                       { yypushback(1); yybegin(EOL_POP); return AsciiDocTokenTypes.HARD_BREAK; }
+                       { yypushback(1); return AsciiDocTokenTypes.HARD_BREAK; }
   // exceptions to END_OF_SENTENCE
   [:letter:] "." " "? [:letter:] "." { return textFormat(); } // i.e., e.g., ...
   "Dr." | "Prof." | "Ing." / {SPACE}* [^ \t\n] { return textFormat(); } // title inside a line as text if inside of a line

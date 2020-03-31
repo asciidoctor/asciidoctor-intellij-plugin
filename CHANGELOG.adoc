@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.50 (preview, available from GitHub releases)
 
 - index TODOs only in comments for TODO window (#452)
+- improve parser/lexer to support continuation after hard break (again)
 
 === 0.30.49 (preview, available from GitHub releases)
 
