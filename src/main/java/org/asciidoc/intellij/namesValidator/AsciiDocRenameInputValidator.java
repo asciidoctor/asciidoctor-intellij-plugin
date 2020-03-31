@@ -20,9 +20,9 @@ public class AsciiDocRenameInputValidator implements RenameInputValidator {
     PlatformPatterns.psiElement(AsciiDocBlockId.class),
     PlatformPatterns.psiElement(AsciiDocAttributeDeclarationName.class)
   );
-  private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("[a-zA-Z0-9_-]*");
+  private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("[\\p{Alnum}_-]*");
   // source: BlockAnchorRx in Asciidoctor's rx.rb
-  public static final Pattern BLOCK_ID_PATTERN = Pattern.compile("[\\p{Alpha}_:][\\w\\-:.]*");
+  public static final Pattern BLOCK_ID_PATTERN = Pattern.compile("[\\p{Alpha}_:][\\p{Alnum}\\w\\-:.]*");
 
   @NotNull
   @Override
