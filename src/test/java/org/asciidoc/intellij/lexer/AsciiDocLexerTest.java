@@ -969,6 +969,19 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testLinkInFormatting() {
+    doTest("`http://localhost:8080/`",
+      "AsciiDoc:MONO_START ('`')\n" +
+        "AsciiDoc:URL_LINK ('http://localhost:8080/')\n" +
+        "AsciiDoc:MONO_END ('`')");
+
+  }
+
+  public void testLinkCharLikeFormattingAtEnd() {
+    doTest("http://localhost:8080/`",
+      "AsciiDoc:URL_LINK ('http://localhost:8080/`')\n");
+  }
+
   public void testLinkWithTitleAndContinuation() {
     doTest("link:test.adoc[Title +\nContinuing]\n",
       "AsciiDoc:LINKSTART ('link:')\n" +

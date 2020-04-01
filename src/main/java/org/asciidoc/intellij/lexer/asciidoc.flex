@@ -1037,10 +1037,45 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <INLINE_URL_NO_DELIMITER> {
   ( ")"? [;:.,] | ")" ) $    { yypushback(yylength()); yypopstate(); }
-  ( ")"? [;:.,] ) [^\s\[\]]  { return AsciiDocTokenTypes.URL_LINK; }
-  ( ")" ) [^\s\[\];:.,]      { return AsciiDocTokenTypes.URL_LINK; }
+  ( ")"? [;:.,] ) [^\s\[\]`*_]  { return AsciiDocTokenTypes.URL_LINK; }
+  ( ")" ) [^\s\[\];:.,`*_]      { return AsciiDocTokenTypes.URL_LINK; }
   ( ")"? [;:.,] | ")" )      { yypushback(yylength()); yypopstate(); }
-
+  {MONO}               { if (singlemono && !doublemono && isUnconstrainedEnd()) {
+                           yypushback(yylength()); yypopstate();
+                         } else {
+                           return AsciiDocTokenTypes.URL_LINK;
+                         }
+                       }
+  {DOUBLEMONO}         { if (!singlemono && doublemono) {
+                           yypushback(yylength()); yypopstate();
+                         } else {
+                           return AsciiDocTokenTypes.URL_LINK;
+                         }
+                       }
+  {BOLD}               { if (singlebold && !doublebold && isUnconstrainedEnd()) {
+                           yypushback(yylength()); yypopstate();
+                         } else {
+                           return AsciiDocTokenTypes.URL_LINK;
+                         }
+                       }
+  {DOUBLEBOLD}         { if (!singlebold && doublebold) {
+                           yypushback(yylength()); yypopstate();
+                         } else {
+                           return AsciiDocTokenTypes.URL_LINK;
+                         }
+                       }
+  {ITALIC}               { if (singleitalic && !doubleitalic && isUnconstrainedEnd()) {
+                           yypushback(yylength()); yypopstate();
+                         } else {
+                           return AsciiDocTokenTypes.URL_LINK;
+                         }
+                       }
+  {DOUBLEITALIC}         { if (!singleitalic && doubleitalic) {
+                           yypushback(yylength()); yypopstate();
+                         } else {
+                           return AsciiDocTokenTypes.URL_LINK;
+                         }
+                       }
   [.,] {SPACE}+ $      { yypushback(yylength()); yypopstate(); }
   "["                  { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
   [\s\[\]]             { yypushback(yylength()); yypopstate(); }
