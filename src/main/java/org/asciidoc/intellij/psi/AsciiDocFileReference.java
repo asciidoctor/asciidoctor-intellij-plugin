@@ -785,4 +785,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return null;
   }
 
+  public boolean matches(PsiElement element) {
+    if (element instanceof AsciiDocBlockId) {
+      AsciiDocBlockId blockId = (AsciiDocBlockId) element;
+      if (isAnchor && key.equals(blockId.getName())) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

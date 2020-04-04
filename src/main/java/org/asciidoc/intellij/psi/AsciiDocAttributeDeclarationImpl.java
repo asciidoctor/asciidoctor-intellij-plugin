@@ -89,7 +89,7 @@ public class AsciiDocAttributeDeclarationImpl
   @NotNull
   @Override
   public PsiElement getNavigationElement() {
-    AsciiDocAttributeDeclarationName attributeName = findChildByType(AsciiDocElementTypes.ATTRIBUTE_DECLARATION_NAME);
+    AsciiDocAttributeDeclarationName attributeName = getAttributeDeclarationName();
     if (attributeName != null) {
       return attributeName;
     }
@@ -101,4 +101,8 @@ public class AsciiDocAttributeDeclarationImpl
     return getClass().getSimpleName() + "(" + getNode().getElementType().toString() + ")";
   }
 
+  @Override
+  public AsciiDocAttributeDeclarationName getAttributeDeclarationName() {
+    return findChildByType(AsciiDocElementTypes.ATTRIBUTE_DECLARATION_NAME);
+  }
 }

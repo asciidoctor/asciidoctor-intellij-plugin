@@ -10,6 +10,8 @@ import org.asciidoc.intellij.namesValidator.AsciiDocRenameInputValidator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class AsciiDocBlockIdImpl extends AsciiDocBlockIdStubElementImpl<AsciiDocBlockIdStub> implements AsciiDocBlockId, AsciiDocNamedElement {
 
   public AsciiDocBlockIdImpl(AsciiDocBlockIdStub stub, IStubElementType nodeType) {
@@ -18,6 +20,25 @@ public class AsciiDocBlockIdImpl extends AsciiDocBlockIdStubElementImpl<AsciiDoc
 
   public AsciiDocBlockIdImpl(@NotNull ASTNode node) {
     super(node);
+  }
+
+  /**
+   * Two elements are equivalent if the carry the same name and have been defined in the same file.
+   */
+  @Override
+  public boolean isEquivalentTo(PsiElement another) {
+    if (!(another instanceof AsciiDocBlockId)) {
+      return false;
+    }
+    String name1 = this.getName();
+    String name2 = ((AsciiDocBlockId) another).getName();
+    if (!name1.equals(name2)) {
+      return false;
+    }
+    if (Objects.equals(this.getContainingFile().getVirtualFile(), another.getContainingFile().getVirtualFile())) {
+      return false;
+    }
+    return true;
   }
 
   @Nullable

@@ -11,10 +11,31 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Locale;
+import java.util.Objects;
 
 public class AsciiDocAttributeDeclarationName extends ASTWrapperPsiElement implements AsciiDocNamedElement {
   public AsciiDocAttributeDeclarationName(@NotNull ASTNode node) {
     super(node);
+  }
+
+  @Override
+  public boolean isEquivalentTo(PsiElement another) {
+    if (!(another instanceof AsciiDocAttributeDeclarationName)) {
+      return false;
+    }
+    String myName = getName();
+    String otherName = ((AsciiDocAttributeDeclarationName) another).getName();
+    if (myName == null && otherName == null) {
+      return true;
+    }
+    if (myName == null || otherName == null) {
+      return false;
+    }
+    if (Objects.equals(myName.toLowerCase(Locale.US), otherName.toLowerCase(Locale.US))) {
+      return true;
+    }
+    return false;
   }
 
   @Nullable

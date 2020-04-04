@@ -7,6 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.51 (work in progress)
+
+- find-references shows also all declaration of attributes with the same name
+- search-everywhere also finds attribute declarations
+
 === 0.30.50 (preview, available from GitHub releases)
 
 - index TODOs only in comments for TODO window (#452)
