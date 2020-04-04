@@ -31,8 +31,8 @@ public class AsciiDocRenameInputValidatorTest {
 
   @Test
   public void shouldValidateUmlauts() {
-    Assert.assertTrue(validator.isInputValid("gärtner", anypsi, new ProcessingContext()));
-    Assert.assertTrue(validator.isInputValid("gärtner", blockid, new ProcessingContext()));
+    Assert.assertTrue(validator.isInputValid("g\u00e4rtner", anypsi, new ProcessingContext()));
+    Assert.assertTrue(validator.isInputValid("g\u00e4rtner", blockid, new ProcessingContext()));
   }
 
   @Test
