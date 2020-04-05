@@ -110,6 +110,7 @@ import java.util.Stack;
     singlemono = false;
     doublemono = false;
     typographicquote = false;
+    isTags = false;
   }
   private IElementType textFormat() {
     if(yystate() == DESCRIPTION) {
@@ -1241,7 +1242,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <BLOCK_MACRO> {
-  "["                  { yybegin(BLOCK_MACRO_ATTRS); return AsciiDocTokenTypes.ATTRS_START; }
+  "["                  { isTags = false; yybegin(BLOCK_MACRO_ATTRS); return AsciiDocTokenTypes.ATTRS_START; }
   [^]                  { return AsciiDocTokenTypes.BLOCK_MACRO_BODY; }
 }
 
