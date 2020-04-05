@@ -185,6 +185,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   private void multiResolveAnchor(List<LookupElementBuilder> items, String key, List<ResolveResult> results, boolean ignoreCase, int depth) {
+    if (depth > 10) {
+      return;
+    }
     Matcher matcher = ATTRIBUTES.matcher(key);
     if (matcher.find()) {
       String attributeName = matcher.group(1);

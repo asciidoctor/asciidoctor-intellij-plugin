@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.52 (work in progress)
 
 - avoid confusion in lexer about starting and ending listings if there are blanks in a line starting with dashes
+- avoid infinite recursion with too many attributes in anchors
 
 === 0.30.51 (preview, available from GitHub releases)
 
