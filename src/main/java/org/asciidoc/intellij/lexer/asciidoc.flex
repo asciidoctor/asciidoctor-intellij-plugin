@@ -834,6 +834,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            // might be a starting MONO, give it a second try
                            // didn't use look-ahead here to avoid problems with {TYPOGRAPHIC_DOUBLE_QUOTE_END}
                            yypushback(yylength());
+                           yypushstate();
                            yybegin(MONO_SECOND_TRY);
                          }
                        }
@@ -905,6 +906,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                              return AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END;
                            } else {
                              yypushback(yylength());
+                             yypushstate();
                              yybegin(MONO_SECOND_TRY);
                            }
                          }
@@ -923,6 +925,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                              return AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END;
                            } else {
                              yypushback(yylength());
+                             yypushstate();
                              yybegin(MONO_SECOND_TRY);
                            }
                          }
@@ -1015,7 +1018,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <MONO_SECOND_TRY> {
   {MONO} {MONO}? / [^\`\n \t] {WORD}* {MONO} {
-                         yybegin(INSIDE_LINE);
+                         yypopstate();
                          if(isUnconstrainedStart() && !singlemono && !doublemono) {
                             if (yylength() == 2) {
                               yypushback(1);
@@ -1027,12 +1030,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                             return textFormat();
                          }
                        }
-  [^]                  { yybegin(INSIDE_LINE); return textFormat(); }
-}
-
-<MONO_SECOND_TRY> {
                        // needed advance in case of no second try possible
-  [^]                  { yybegin(INSIDE_LINE); return textFormat(); }
+  [^]                  { yypopstate(); return textFormat(); }
 }
 
 <INLINE_URL_NO_DELIMITER> {
