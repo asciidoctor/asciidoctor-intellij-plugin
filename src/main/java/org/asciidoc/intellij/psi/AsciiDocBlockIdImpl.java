@@ -35,7 +35,7 @@ public class AsciiDocBlockIdImpl extends AsciiDocBlockIdStubElementImpl<AsciiDoc
     if (!name1.equals(name2)) {
       return false;
     }
-    if (Objects.equals(this.getContainingFile().getVirtualFile(), another.getContainingFile().getVirtualFile())) {
+    if (!Objects.equals(this.getContainingFile().getVirtualFile(), another.getContainingFile().getVirtualFile())) {
       return false;
     }
     return true;
@@ -63,6 +63,12 @@ public class AsciiDocBlockIdImpl extends AsciiDocBlockIdStubElementImpl<AsciiDoc
   public PsiElement setName(@NotNull String s) throws IncorrectOperationException {
     ASTNode node = getNode().getFirstChildNode();
     if (node instanceof LeafElement) {
+      ASTNode next = node.getTreeNext();
+      // this is a brute-force-approach to drop all other nodes except the first one in the case there are attribute names
+      while (next != null) {
+        next.getTreeParent().removeChild(next);
+        next = node.getTreeNext();
+      }
       ((LeafElement) node).replaceWithText(s);
     } else {
       throw new IncorrectOperationException("Bad child");

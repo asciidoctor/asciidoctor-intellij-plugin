@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - fix monospace formatting in description lists
 - allow curly braces in block IDs, as they can be used as attributes
 - don't try to resolve links with unresolved or ambiguous variants; don't resolve links starting at root level or lead to URLs, resolve attributes in anchors
+- parse attributes in anchor definitions
 
 === 0.30.50 (preview, available from GitHub releases)
 

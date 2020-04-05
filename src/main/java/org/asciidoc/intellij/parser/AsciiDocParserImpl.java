@@ -214,12 +214,22 @@ public class AsciiDocParserImpl {
       } else if (at(BLOCKIDSTART)) {
         markPreBlock();
         next();
-        while (at(BLOCKID) || at(BLOCKIDEND) || at(SEPARATOR) || at(BLOCKREFTEXT) || at(ATTRIBUTE_REF_START)) {
-          if (at(BLOCKID)) {
-            PsiBuilder.Marker blockIdMarker = myBuilder.mark();
+        PsiBuilder.Marker blockIdMarker = null;
+        while (at(BLOCKID) || at(ATTRIBUTE_REF_START)) {
+          if (blockIdMarker == null) {
+            blockIdMarker = myBuilder.mark();
+          }
+          if (at(ATTRIBUTE_REF_START)) {
+            parseAttributeReference();
+          } else {
             next();
-            blockIdMarker.done(AsciiDocElementTypes.BLOCKID);
-          } else if (at(ATTRIBUTE_REF_START)) {
+          }
+        }
+        if (blockIdMarker != null) {
+          blockIdMarker.done(AsciiDocElementTypes.BLOCKID);
+        }
+        while (at(BLOCKIDEND) || at(SEPARATOR) || at(BLOCKREFTEXT) || at(ATTRIBUTE_REF_START)) {
+          if (at(ATTRIBUTE_REF_START)) {
             parseAttributeReference();
           } else {
             next();
@@ -410,8 +420,6 @@ public class AsciiDocParserImpl {
       && emptyLines == 0) {
       if (at(URL_LINK)) {
         parseUrl();
-      } else if (at(ATTRIBUTE_REF_START)) {
-        parseAttributeReference();
       } else if (at(ATTR_NAME)) {
         name = myBuilder.getTokenText();
         next();
@@ -419,10 +427,18 @@ public class AsciiDocParserImpl {
         PsiBuilder.Marker tag = myBuilder.mark();
         next();
         tag.done(AsciiDocElementTypes.INCLUDE_TAG);
-      } else if (at(ATTR_VALUE) && "id".equals(name) && macroId == null) {
+      } else if ((at(ATTRIBUTE_REF_START) || at(ATTR_VALUE)) && "id".equals(name) && macroId == null) {
         PsiBuilder.Marker blockIdMarker = myBuilder.mark();
-        next();
+        while ((at(ATTRIBUTE_REF_START) || at(ATTR_VALUE)) && emptyLines == 0) {
+          if (at(ATTRIBUTE_REF_START)) {
+            parseAttributeReference();
+          } else {
+            next();
+          }
+        }
         blockIdMarker.done(AsciiDocElementTypes.BLOCKID);
+      } else if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
       } else {
         next();
       }

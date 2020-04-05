@@ -1,6 +1,8 @@
 package org.asciidoc.intellij.psi;
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
@@ -10,6 +12,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
+import org.intellij.lang.annotations.Language;
 
 import java.io.File;
 import java.util.Collection;
@@ -22,6 +25,7 @@ import java.util.Objects;
  *
  * @author yole
  */
+@SuppressWarnings({"AsciiDocLinkResolve", "AsciiDocHeadingStyle"})
 public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testImageBlockMacro() {
     PsiFile psiFile = configureByAsciiDoc("image::foo.png[Foo]");
@@ -29,6 +33,30 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("image", blockMacro.getMacroName());
     PsiReference[] references = blockMacro.getReferences();
     assertEquals(1, references.length);
+  }
+
+  public void testBlockId() {
+    PsiFile psiFile = configureByAsciiDoc("[#id]");
+    AsciiDocBlockId blockMacro = PsiTreeUtil.findChildOfType(psiFile, AsciiDocBlockId.class);
+    assertNotNull(blockMacro);
+    assertEquals(blockMacro.getName(), "id");
+  }
+
+  public void testBlockIdWithAttributeReference() {
+    PsiFile psiFile = configureByAsciiDoc("[#id{attr}]");
+    AsciiDocBlockId blockMacro = PsiTreeUtil.findChildOfType(psiFile, AsciiDocBlockId.class);
+    assertNotNull(blockMacro);
+    assertEquals(blockMacro.getName(), "id{attr}");
+  }
+
+  public void testBlockIdInBlockAttributesWithAttributeReference() {
+    PsiFile psiFile = configureByAsciiDoc("[id=\"id{attr}\"]");
+    AsciiDocBlockId blockMacro = PsiTreeUtil.findChildOfType(psiFile, AsciiDocBlockId.class);
+    assertNotNull(blockMacro);
+    assertEquals(blockMacro.getName(), "id{attr}");
+    AsciiDocBlockId newElement = WriteCommandAction.runWriteCommandAction(myFixture.getProject(),
+      (Computable<AsciiDocBlockId>) () -> (AsciiDocBlockId) blockMacro.setName("newid{newattr}"));
+    assertEquals(newElement.getName(), "newid{newattr}");
   }
 
   public void testExampleBlock() {
@@ -486,7 +514,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
 
   }
 
-  private PsiFile configureByAsciiDoc(String text) {
+  private PsiFile configureByAsciiDoc(@Language("asciidoc") String text) {
     return myFixture.configureByText(AsciiDocFileType.INSTANCE, text);
   }
 

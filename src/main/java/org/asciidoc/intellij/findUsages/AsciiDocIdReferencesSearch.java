@@ -64,7 +64,19 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
     boolean localSearch = false;
     if (scope instanceof GlobalSearchScope) {
       // when the user searches all references
-      files = myDumbService.runReadActionInSmartMode(() -> CacheManager.SERVICE.getInstance(element.getProject()).getFilesWithWord(name, UsageSearchContext.IN_CODE,
+      String nameToSearch = name;
+      if (element instanceof AsciiDocBlockId) {
+        // AsciiDoc block IDs contain attributes, these won't be in the index as words, therefore search only for the start part (or the attribute name)
+        int attributeStart = name.indexOf('{');
+        int attributeEnd = name.indexOf('}', attributeStart);
+        if (attributeStart > 0) {
+          nameToSearch = name.substring(0, attributeStart);
+        } else if (attributeEnd - (attributeStart + 1) > 0) {
+          nameToSearch = name.substring(attributeStart + 1, attributeEnd);
+        }
+      }
+      String nameFinal = nameToSearch;
+      files = myDumbService.runReadActionInSmartMode(() -> CacheManager.SERVICE.getInstance(element.getProject()).getFilesWithWord(nameFinal, UsageSearchContext.IN_CODE,
         (GlobalSearchScope) scope,
         false));
 
