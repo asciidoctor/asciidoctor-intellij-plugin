@@ -221,7 +221,7 @@ STRING = {NON_SPACE}+ \n? // something that doesn't have an empty line
 WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n] | {SPACE}* [^\n]*[^\ \t\n]
 WORDNOBRACKET = {SPACE}* [^\n\]]* {SPACE}* \n {SPACE}* [^\ \t\n\]] | {SPACE}* [^\n\]]*[^\ \t\n\]]
 BOLD = "*"
-BULLET = ("*"+|"-"+)
+BULLET = ("*"+|"-")
 ENUMERATION = ([0-9]*|[a-zA-Z]?)"."+
 CALLOUT = "<" ([0-9]+|".") ">"
 DOUBLEBOLD = {BOLD} {BOLD}
@@ -525,6 +525,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                        }
   // triple rules to handle EOF
   ^ {LISTING_BLOCK_DELIMITER} $ { clearStyle(); resetFormatting(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
+  ^ {LISTING_BLOCK_DELIMITER} {SPACE}+ "-" { yypushback(yylength()); yybegin(STARTBLOCK);  }
   ^ {LISTING_BLOCK_DELIMITER} / [^\-\n \t] { yypushback(yylength()); yybegin(STARTBLOCK);  }
   ^ {LISTING_BLOCK_DELIMITER} | {MARKDOWN_LISTING_BLOCK_DELIMITER} { clearStyle(); resetFormatting(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER; }
 
@@ -1373,6 +1374,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   }
   // duplicating to handle end of file content
   ^ {LISTING_BLOCK_DELIMITER_END} / [^\-\n \t] {
+    return AsciiDocTokenTypes.LISTING_TEXT;
+  }
+  ^ {LISTING_BLOCK_DELIMITER_END} {SPACE}+ "-" {
     return AsciiDocTokenTypes.LISTING_TEXT;
   }
   ^ {LISTING_BLOCK_DELIMITER_END} | {MARKDOWN_LISTING_BLOCK_DELIMITER} {

@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.52 (work in progress)
+
+- avoid confusion in lexer about starting and ending listings if there are blanks in a line starting with dashes
+
 === 0.30.51 (preview, available from GitHub releases)
 
 - find-references shows also all declaration of attributes with the same name

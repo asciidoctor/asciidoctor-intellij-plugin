@@ -43,6 +43,30 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('cccc')");
   }
 
+  public void testListingWithSpaceDash() {
+    doTest("----\nbbbb\n---- --\ncccc\n----\nText",
+      "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_TEXT ('bbbb')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_TEXT ('---- --')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_TEXT ('cccc')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testTextLookingLikeListing() {
+    doTest("---- --\nnolisting",
+      "AsciiDoc:TEXT ('----')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('--')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('nolisting')");
+  }
+
   public void testListingAtEndOfFile() {
     doTest("----\nlisting\n----",
       "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
