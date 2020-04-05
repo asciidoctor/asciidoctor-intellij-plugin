@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - find-references shows also all declaration of attributes with the same name
 - search-everywhere also finds attribute declarations
 - fix monospace formatting in description lists
+- allow curly braces in block IDs, as they can be used as attributes
 
 === 0.30.50 (preview, available from GitHub releases)
 

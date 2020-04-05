@@ -22,7 +22,9 @@ public class AsciiDocRenameInputValidator implements RenameInputValidator {
   );
   private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("[\\p{Alnum}_-]*", Pattern.UNICODE_CHARACTER_CLASS);
   // source: BlockAnchorRx in Asciidoctor's rx.rb
-  public static final Pattern BLOCK_ID_PATTERN = Pattern.compile("[\\p{Alpha}_:][\\p{Alnum}\\w\\-:.]*", Pattern.UNICODE_CHARACTER_CLASS);
+  // TODO: can contain attributes that we don't parse yet, therefore allow '{' and '}'
+  // TODO: attributes work here [#{attr}] and here [id={attr}], but not here [[{id}]]
+  public static final Pattern BLOCK_ID_PATTERN = Pattern.compile("[\\p{Alpha}_:{][\\p{Alnum}\\w\\-:.{}]*", Pattern.UNICODE_CHARACTER_CLASS);
 
   @NotNull
   @Override
