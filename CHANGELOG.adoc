@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.51 (work in progress)
+=== 0.30.51 (preview, available from GitHub releases)
 
 - find-references shows also all declaration of attributes with the same name
 - search-everywhere also finds attribute declarations
