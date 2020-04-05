@@ -14,6 +14,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class AsciiDocLink extends ASTWrapperPsiElement implements HasFileReference, HasAnchorReference, HasAntoraReference {
   public AsciiDocLink(@NotNull ASTNode node) {
@@ -80,6 +81,11 @@ public class AsciiDocLink extends ASTWrapperPsiElement implements HasFileReferen
       }
       child = child.getNextSibling();
     }
+  }
+
+  @Nullable
+  public String getResolvedBody() {
+    return AsciiDocUtil.resolveAttributes(this, getBodyRange(this).substring(getText()));
   }
 
   public static TextRange getBodyRange(AsciiDocLink element) {

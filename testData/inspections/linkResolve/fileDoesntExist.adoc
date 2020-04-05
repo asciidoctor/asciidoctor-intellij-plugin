@@ -24,3 +24,13 @@ link:<error descr="File doesn't resolve">notfound.adoc</error>[]
 
 // no error, as modules is unknown
 xref:component:module:test.adoc[]
+
+// no error, as link starts with "/" as this is probably an absolute link at the site
+link:/root[]
+
+// no error, as resolves to URL
+:myurl: http://any.org
+link:{myurl}[]
+
+// no error, as attribute doesn't resolve
+link:{noattr}[]

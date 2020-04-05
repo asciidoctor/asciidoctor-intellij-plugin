@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.swing.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -56,6 +57,8 @@ public class AsciiDocUtil {
   public static final String ANTORA_YML = "antora.yml";
 
   public static final Set<String> ANTORA_SUPPORTED = new HashSet<>();
+
+  public static final Pattern ATTRIBUTES = Pattern.compile("\\{([a-zA-Z0-9_]+[a-zA-Z0-9_-]*)}");
 
   static {
     ANTORA_SUPPORTED.addAll(Arrays.asList(
@@ -218,16 +221,26 @@ public class AsciiDocUtil {
     List<AttributeDeclaration> result = new ArrayList<>();
 
     key = key.toLowerCase(Locale.US);
+
     if (key.equals("snippets")) {
       augmentList(result, AsciiDocUtil.findSpringRestDocSnippets(current), "snippets");
-    } else if (key.equals(FAMILY_PARTIAL + "sdir")) {
-      augmentList(result, AsciiDocUtil.findAntoraPartials(current), FAMILY_PARTIAL + "sdir");
-    } else if (key.equals(FAMILY_IMAGE + "sdir")) {
-      augmentList(result, AsciiDocUtil.findAntoraImagesDir(current), FAMILY_IMAGE + "sdir");
-    } else if (key.equals(FAMILY_ATTACHMENT + "sdir")) {
-      augmentList(result, AsciiDocUtil.findAntoraAttachmentsDir(current), FAMILY_ATTACHMENT + "sdir");
-    } else if (key.equals(FAMILY_EXAMPLE + "sdir")) {
-      augmentList(result, AsciiDocUtil.findAntoraExamplesDir(current), FAMILY_EXAMPLE + "sdir");
+    }
+
+    VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(current);
+    if (antoraModuleDir != null) {
+      VirtualFile vf;
+      vf = current.getContainingFile().getVirtualFile();
+      if (vf == null) {
+        // when running autocomplete, there is only an original file
+        vf = current.getContainingFile().getOriginalFile().getVirtualFile();
+      }
+      if (vf != null && vf.getCanonicalPath() != null) {
+        Map<String, String> antoraAttributes = AsciiDoc.populateAntoraAttributes(project.getBasePath(), new File(vf.getCanonicalPath()), antoraModuleDir);
+        String value = antoraAttributes.get(key);
+        if (value != null) {
+          result.add(new AsciiDocAttributeDeclarationDummy(key, value));
+        }
+      }
     }
 
     // ignore other declarations when we found a specific value
@@ -630,6 +643,34 @@ public class AsciiDocUtil {
   private static final Pattern MODULE = Pattern.compile("^(?<module>[a-zA-Z0-9._-]*):");
   // family$
   private static final Pattern FAMILY = Pattern.compile("^(?<family>" + FAMILIES + ")\\$");
+
+  @Nullable
+  public static String resolveAttributes(PsiElement element, String val) {
+    Matcher matcher = ATTRIBUTES.matcher(val);
+    while (matcher.find()) {
+      String attributeName = matcher.group(1);
+      List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(element.getProject(), attributeName, element);
+      Set<String> values = new HashSet<>();
+      for (AttributeDeclaration declaration : declarations) {
+        String value = declaration.getAttributeValue();
+        if (values.size() == 0) {
+          values.add(value);
+        } else if (!values.contains(value)) {
+          return null;
+        }
+      }
+      if (values.size() == 1) {
+        String attrVal = values.iterator().next();
+        if (attrVal != null) {
+          val = matcher.replaceFirst(Matcher.quoteReplacement(attrVal));
+          matcher = ATTRIBUTES.matcher(val);
+        }
+      } else {
+        return null;
+      }
+    }
+    return val;
+  }
 
   public static String replaceAntoraPrefix(PsiElement myElement, String key, String defaultFamily) {
     VirtualFile antoraModuleDir = findAntoraModuleDir(myElement);

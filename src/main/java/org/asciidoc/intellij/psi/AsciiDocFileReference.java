@@ -42,12 +42,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_SUPPORTED;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.ATTRIBUTES;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN;
 
 public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
   private static final int MAX_DEPTH = 10;
   private static final Pattern URL = Pattern.compile("^\\p{Alpha}[\\p{Alnum}.+-]+:/{0,2}", Pattern.UNICODE_CHARACTER_CLASS);
-  private static final Pattern ATTRIBUTES = Pattern.compile("\\{([a-zA-Z0-9_]+[a-zA-Z0-9_-]*)}");
 
   private String key;
   private String macroName;
@@ -80,7 +80,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       return false;
     }
     String name = getRangeInElement().substring(myElement.getText());
-    name = resolveAttributes(name);
+    name = AsciiDocUtil.resolveAttributes(myElement, name);
     if (name != null) {
       try {
         if (isFolder) {
@@ -100,30 +100,11 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return true;
   }
 
-  @Nullable
-  private String resolveAttributes(String val) {
-    Matcher matcher = ATTRIBUTES.matcher(val);
-    while (matcher.find()) {
-      String attributeName = matcher.group(1);
-      List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName, myElement);
-      if (declarations.size() == 1) {
-        String attrVal = declarations.get(0).getAttributeValue();
-        if (attrVal != null) {
-          val = matcher.replaceFirst(Matcher.quoteReplacement(attrVal));
-          matcher = ATTRIBUTES.matcher(val);
-        }
-      } else if (declarations.size() > 1) {
-        return null;
-      }
-    }
-    return val;
-  }
-
 
   public PsiElement createFileOrFolder(PsiDirectory parent) {
     if (canBeCreated(parent)) {
       String name = getRangeInElement().substring(myElement.getText());
-      name = resolveAttributes(name);
+      name = AsciiDocUtil.resolveAttributes(myElement, name);
       if (name != null) {
         if (isFolder) {
           return parent.createSubdirectory(name);
@@ -199,6 +180,32 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         AsciiDocUtil.findBlockIds(items, element, 0);
       }
     }
+    multiResolveAnchor(items, key, results, ignoreCase, 0);
+    return results.toArray(new ResolveResult[0]);
+  }
+
+  private void multiResolveAnchor(List<LookupElementBuilder> items, String key, List<ResolveResult> results, boolean ignoreCase, int depth) {
+    Matcher matcher = ATTRIBUTES.matcher(key);
+    if (matcher.find()) {
+      String attributeName = matcher.group(1);
+      List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName, myElement);
+      Set<String> searched = new HashSet<>(declarations.size());
+      for (AttributeDeclaration decl : declarations) {
+        String value = decl.getAttributeValue();
+        if (value == null) {
+          continue;
+        }
+        if (searched.contains(value)) {
+          continue;
+        }
+        searched.add(value);
+        multiResolveAnchor(items, matcher.replaceFirst(Matcher.quoteReplacement(value)), results, ignoreCase, depth + 1);
+      }
+      if (results.size() > 0) {
+        return;
+      }
+      // if not found, try to match it with a block ID that has the attributes unreplaced
+    }
     for (LookupElementBuilder item : items) {
       PsiElement element = item.getPsiElement();
       if (ignoreCase) {
@@ -246,7 +253,6 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         }
       }
     }
-    return results.toArray(new ResolveResult[0]);
   }
 
   private boolean isPossibleRefText(String key) {

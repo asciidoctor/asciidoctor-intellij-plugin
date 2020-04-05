@@ -7,6 +7,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
+import org.asciidoc.intellij.psi.AsciiDocLink;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.psi.HasAnchorReference;
 import org.asciidoc.intellij.psi.HasAntoraReference;
 import org.asciidoc.intellij.psi.HasFileReference;
@@ -31,6 +33,17 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
       @Override
       public void visitElement(PsiElement o) {
         boolean continueResolving = true;
+        if (o instanceof AsciiDocLink) {
+          String resolvedBody = ((AsciiDocLink) o).getResolvedBody();
+          if (resolvedBody == null) {
+            return;
+          } else if (AsciiDocUtil.URL_PREFIX_PATTERN.matcher(resolvedBody).find()) {
+            // this is a URL, don't
+            return;
+          } else if (resolvedBody.startsWith("/")) {
+            return;
+          }
+        }
         if (o instanceof HasAntoraReference) {
           AsciiDocFileReference file = ((HasAntoraReference) o).getAntoraReference();
           if (file != null) {
