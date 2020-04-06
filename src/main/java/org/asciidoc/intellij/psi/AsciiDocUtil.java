@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -626,17 +627,21 @@ public class AsciiDocUtil {
     return antoraModuleDir;
   }
 
-  public static final Pattern ANTORA_PREFIX_AND_FAMILY_PATTERN = Pattern.compile("^[a-zA-Z0-9:._-]*(" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-zA-Z0-9:._-]*)?[$:]");
+  // can include attributes
+  public static final Pattern ANTORA_PREFIX_AND_FAMILY_PATTERN = Pattern.compile("^[a-zA-Z0-9:._@{}-]*(" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-zA-Z0-9:._{}@-]*)?[$:]");
 
   public static final Pattern URL_PREFIX_PATTERN = Pattern.compile("^(https?|file|ftp|irc)://");
 
-  public static final Pattern ANTORA_PREFIX_PATTERN = Pattern.compile("^[a-zA-Z0-9:._-]*(" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-zA-Z0-9:._-]*)?[:]");
+  // can include attributes
+  public static final Pattern ANTORA_PREFIX_PATTERN = Pattern.compile("^[a-zA-Z0-9:._{}@-]*(" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-zA-Z0-9:._{}@-]*)?[:]");
 
   public static final Pattern ANTORA_FAMILY_PATTERN = Pattern.compile("^[a-z]*(" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-z]*)?[$]");
 
   @Language("RegExp")
   private static final String FAMILIES = "(" + FAMILY_EXAMPLE + "|" + FAMILY_ATTACHMENT + "|" + FAMILY_PARTIAL + "|" + FAMILY_IMAGE + "|" + FAMILY_PAGE + ")";
 
+  // 2.0@
+  private static final Pattern VERSION = Pattern.compile("^(?<version>[a-zA-Z0-9._-]*)@");
   // component:module:
   private static final Pattern COMPONENT_MODULE = Pattern.compile("^(?<component>[a-zA-Z0-9._-]*):(?<module>[a-zA-Z0-9._-]*):");
   // module:
@@ -703,9 +708,16 @@ public class AsciiDocUtil {
         String myComponentName = getAttributeAsString(antora, "name");
         String myComponentVersion = getAttributeAsString(antora, "version");
 
+        String otherComponentVersion = null;
         String otherComponentName = null;
         String otherModuleName = null;
         String otherFamily = null;
+
+        Matcher version = VERSION.matcher(key);
+        if (version.find()) {
+          otherComponentVersion = version.group("version");
+          key = version.replaceFirst("");
+        }
 
         Matcher componentModule = COMPONENT_MODULE.matcher(key);
         if (componentModule.find()) {
@@ -733,7 +745,7 @@ public class AsciiDocUtil {
           otherFamily = defaultFamily;
         }
 
-        List<VirtualFile> otherDirs = getOtherAntoraModuleDir(project, moduleDir, moduleDir, myModuleName, myComponentName, myComponentVersion, otherComponentName, otherModuleName);
+        List<VirtualFile> otherDirs = getOtherAntoraModuleDir(project, moduleDir, myModuleName, myComponentName, myComponentVersion, otherComponentVersion, otherComponentName, otherModuleName);
         VirtualFile baseDir = project.getBaseDir();
         List<String> result = new ArrayList<>();
         for (VirtualFile otherDir : otherDirs) {
@@ -784,9 +796,9 @@ public class AsciiDocUtil {
   }
 
   @SuppressWarnings("checkstyle:ParameterNumber")
-  private static List<VirtualFile> getOtherAntoraModuleDir(Project project, VirtualFile moduleDir, VirtualFile antoraModuleDir,
-                                                     String myModuleName, String myComponentName, String myComponentVersion,
-                                                     String otherComponentName, String otherModuleName) {
+  private static List<VirtualFile> getOtherAntoraModuleDir(Project project, VirtualFile moduleDir,
+                                                           String myModuleName, String myComponentName, String myComponentVersion,
+                                                           String otherComponentVersion, String otherComponentName, String otherModuleName) {
     List<VirtualFile> result = new ArrayList<>();
     if (otherModuleName != null && otherComponentName == null) {
       otherComponentName = myComponentName;
@@ -794,6 +806,9 @@ public class AsciiDocUtil {
     if (otherComponentName == null && otherModuleName == null) {
       otherComponentName = myComponentName;
       otherModuleName = myModuleName;
+    }
+    if (otherComponentVersion == null && myComponentVersion != null) {
+      otherComponentVersion = myComponentVersion;
     }
 
     if (otherComponentName != null) {
@@ -818,7 +833,7 @@ public class AsciiDocUtil {
         if (!Objects.equals(otherComponentName, getAttributeAsString(antora, "name"))) {
           continue;
         }
-        if (!Objects.equals(myComponentVersion, getAttributeAsString(antora, "version"))) {
+        if (!Objects.equals(otherComponentVersion, getAttributeAsString(antora, "version"))) {
           continue;
         }
         PsiDirectory parent = file.getParent();
@@ -857,7 +872,6 @@ public class AsciiDocUtil {
       Arrays.sort(files,
         Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
       ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
-      String myModuleName = moduleDir.getName();
       VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
       if (antoraFile == null) {
         return result;
@@ -879,13 +893,15 @@ public class AsciiDocUtil {
           continue;
         }
         antora = yaml.load(file.getText());
-        if (!Objects.equals(myComponentVersion, getAttributeAsString(antora, "version"))) {
-          continue;
-        }
         String otherComponentName = getAttributeAsString(antora, "name");
+        String otherComponentVersion = getAttributeAsString(antora, "version");
         String title = getAttributeAsString(antora, "title");
         if (title != null && componentTitles.get(otherComponentName) == null) {
           componentTitles.put(otherComponentName, title);
+        }
+        String versionPrefix = "";
+        if (!Objects.equals(myComponentVersion, otherComponentVersion)) {
+          versionPrefix = otherComponentVersion + "@";
         }
         VirtualFile md = file.getVirtualFile().getParent().findChild("modules");
         if (md != null) {
@@ -893,17 +909,25 @@ public class AsciiDocUtil {
           for (VirtualFile module : modules) {
             if (MODULE.matcher(module.getName() + ":").matches()) {
               if (Objects.equals(myComponentName, otherComponentName)) {
-                result.add(new AntoraModule(module.getName() + ":", otherComponentName, module.getName(), title, module));
+                result.add(new AntoraModule(versionPrefix + module.getName() + ":", otherComponentName, module.getName(), title, module));
               }
               if (module.getName().equals("ROOT")) {
-                result.add(new AntoraModule(otherComponentName + "::", otherComponentName, module.getName(), title, module));
+                result.add(new AntoraModule(versionPrefix + otherComponentName + "::", otherComponentName, module.getName(), title, module));
               }
-              result.add(new AntoraModule(otherComponentName + ":" + module.getName() + ":", otherComponentName, module.getName(), title, module));
+              result.add(new AntoraModule(versionPrefix + otherComponentName + ":" + module.getName() + ":", otherComponentName, module.getName(), title, module));
             }
           }
         }
       }
-      for (AntoraModule antoraModule : result) {
+      Set<String> entries = new HashSet<>();
+      Iterator<AntoraModule> iterator = result.iterator();
+      while (iterator.hasNext()) {
+        AntoraModule antoraModule = iterator.next();
+        if (entries.contains(antoraModule.getPrefix())) {
+          iterator.remove();
+          continue;
+        }
+        entries.add(antoraModule.getPrefix());
         // title might not have been included on all modules, populate other if it has been set on some
         if (antoraModule.getTitle() == null) {
           antoraModule.setTitle(componentTitles.get(antoraModule.getComponent()));
@@ -913,7 +937,7 @@ public class AsciiDocUtil {
     });
   }
 
-  public static List<VirtualFile> resolvePrefix(Project project, VirtualFile moduleDir, String originalKey) {
+  public static List<VirtualFile> resolvePrefix(Project project, VirtualFile moduleDir, String otherKey) {
     return ApplicationManager.getApplication().runReadAction((Computable<List<VirtualFile>>) () -> {
       String myModuleName = moduleDir.getName();
       VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
@@ -931,19 +955,26 @@ public class AsciiDocUtil {
 
       String otherComponentName = null;
       String otherModuleName = null;
+      String otherComponentVersion = null;
 
-      Matcher componentModule = COMPONENT_MODULE.matcher(originalKey);
+      String key = otherKey;
+      Matcher version = VERSION.matcher(key);
+      if (version.find()) {
+        otherComponentVersion = version.group("version");
+        key = version.replaceFirst("");
+      }
+      Matcher componentModule = COMPONENT_MODULE.matcher(key);
       if (componentModule.find()) {
         otherComponentName = componentModule.group("component");
         otherModuleName = componentModule.group("module");
       } else {
-        Matcher module = MODULE.matcher(originalKey);
+        Matcher module = MODULE.matcher(key);
         if (module.find()) {
           otherModuleName = module.group("module");
         }
       }
 
-      return getOtherAntoraModuleDir(project, moduleDir, moduleDir, myModuleName, myComponentName, myComponentVersion, otherComponentName, otherModuleName);
+      return getOtherAntoraModuleDir(project, moduleDir, myModuleName, myComponentName, myComponentVersion, otherComponentVersion, otherComponentName, otherModuleName);
     });
   }
 

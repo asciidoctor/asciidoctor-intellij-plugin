@@ -269,13 +269,17 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   private List<String> handleAntora(String key) {
     if (isAntora) {
-      return AsciiDocUtil.replaceAntoraPrefix(myElement, key, null);
-    } else if (myElement instanceof AsciiDocLink && macroName.equals("xref") &&
-      // as long as no version has been specified
-      !key.contains("@")) {
+      String resolvedKey = AsciiDocUtil.resolveAttributes(myElement, key);
+      if (resolvedKey != null) {
+        return AsciiDocUtil.replaceAntoraPrefix(myElement, key, null);
+      }
+    } else if (myElement instanceof AsciiDocLink && macroName.equals("xref")) {
       if (AsciiDocUtil.findAntoraPagesDir(myElement) != null) {
         // if this is a link/xref, default to page family
-        return AsciiDocUtil.replaceAntoraPrefix(myElement, key, "page");
+        String resolvedKey = AsciiDocUtil.resolveAttributes(myElement, key);
+        if (resolvedKey != null) {
+          return AsciiDocUtil.replaceAntoraPrefix(myElement, resolvedKey, "page");
+        }
       }
     }
     return Collections.singletonList(key);
@@ -290,15 +294,18 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           if (AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(key).matches()) {
             VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
             if (antoraModuleDir != null) {
-              List<VirtualFile> virtualFiles = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, key);
-              for (VirtualFile virtualFile : virtualFiles) {
-                PsiElement psiFile = PsiManager.getInstance(myElement.getProject()).findDirectory(virtualFile);
-                if (psiFile != null) {
-                  results.add(new PsiElementResolveResult(psiFile));
+              String resolvedKey = AsciiDocUtil.resolveAttributes(myElement, key);
+              if (resolvedKey != null) {
+                List<VirtualFile> virtualFiles = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, resolvedKey);
+                for (VirtualFile virtualFile : virtualFiles) {
+                  PsiElement psiFile = PsiManager.getInstance(myElement.getProject()).findDirectory(virtualFile);
+                  if (psiFile != null) {
+                    results.add(new PsiElementResolveResult(psiFile));
+                  }
                 }
-              }
-              if (virtualFiles.size() > 0) {
-                return;
+                if (virtualFiles.size() > 0) {
+                  return;
+                }
               }
             }
           } else {
@@ -561,6 +568,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       }
     } else {
       // if no file has been specified, show anchors from project
+      // TODO: reduce the number of anchors if this is an Antora project if this is a nav page or a page
       List<AsciiDocBlockId> ids = AsciiDocUtil.findIds(myElement.getProject());
       for (final AsciiDocBlockId id : ids) {
         String name = id.getName();

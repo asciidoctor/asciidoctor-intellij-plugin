@@ -192,10 +192,6 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
       String macroName = ((AsciiDocLink) element).getMacroName();
       int start = 0;
       int i = 0;
-      if ("xref".equals(macroName) &&
-        file.contains("@")) {
-        return Collections.emptyList(); // Antora cross-references not supported at the moment
-      }
       ArrayList<PsiReference> references = new ArrayList<>();
       if ("xref".equals(macroName)) {
         Matcher matcher = AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(file);

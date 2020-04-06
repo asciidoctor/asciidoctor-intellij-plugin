@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - allow fully distributed components for Antora, where files for a module exist in multiple folders (#405)
 - fix directories for antora modules to be resolved to wrong path
 - don't try to resolve links traversing to a parent directory
+- support version numbers and attributes in Antora xrefs (#377)
 
 === 0.30.51 (preview, available from GitHub releases)
 
