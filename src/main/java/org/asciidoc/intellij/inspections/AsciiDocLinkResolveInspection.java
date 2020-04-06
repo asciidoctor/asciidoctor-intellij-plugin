@@ -40,7 +40,8 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
           } else if (AsciiDocUtil.URL_PREFIX_PATTERN.matcher(resolvedBody).find()) {
             // this is a URL, don't
             return;
-          } else if (resolvedBody.startsWith("/")) {
+          } else if (resolvedBody.startsWith("/") || resolvedBody.startsWith("../")) {
+            // probably a link to some other part of the site
             return;
           }
         }
