@@ -63,7 +63,7 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
         }
       }
       if (localModule != null) {
-        target = AsciiDocUtil.replaceAntoraPrefix(project, localModule, target, null);
+        target = AsciiDocUtil.replaceAntoraPrefix(project, localModule, target, null).get(0);
       }
       if (oldTarget.equals(target)) {
         String file = reader.getFile();

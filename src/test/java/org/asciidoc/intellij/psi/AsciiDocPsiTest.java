@@ -473,13 +473,12 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertNotNull(macros);
     assertSize(4, macros);
 
-    assertEquals(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component:ROOT:test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
-    assertEquals(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component::test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
-    assertEquals(AsciiDocUtil.replaceAntoraPrefix(macros[0], "ROOT:test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
-    assertEquals(AsciiDocUtil.replaceAntoraPrefix(macros[0], "ROOT:page$test.adoc", null), "/src/antoraModule/modules/ROOT/pages/test.adoc");
-    assertEquals(AsciiDocUtil.replaceAntoraPrefix(macros[0], "test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
-
-    assertEquals(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component:module:test.adoc", "page"), "/src/antoraModule/modules/module/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component:ROOT:test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component::test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "ROOT:test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "ROOT:page$test.adoc", null), "/src/antoraModule/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component:module:test.adoc", "page"), "/src/antoraModule/modules/module/pages/test.adoc");
 
     // image
     assertSize(1, macros[0].getReferences());
@@ -512,6 +511,11 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertSize(2, urls[1].getReferences());
     // finish test here. Reference will not resolve in the test, files are "temp://" files
 
+  }
+
+  private void assertSingleListEntry(List<String> list, String entry) {
+    assertSize(1, list);
+    assertEquals(entry, list.get(0));
   }
 
   private PsiFile configureByAsciiDoc(@Language("asciidoc") String text) {

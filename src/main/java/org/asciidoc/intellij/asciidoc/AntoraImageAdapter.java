@@ -9,6 +9,7 @@ import org.asciidoctor.extension.Postprocessor;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,13 +67,13 @@ public class AntoraImageAdapter extends Postprocessor {
 
   @Nullable
   private String prepareFile(String file) {
-    String replaced = AsciiDocUtil.replaceAntoraPrefix(project, antoraModuleDir, file, "image");
-    if (replaced.equals(file)) {
+    List<String> replaced = AsciiDocUtil.replaceAntoraPrefix(project, antoraModuleDir, file, "image");
+    if (replaced.size() == 1 && replaced.get(0).equals(file)) {
       // unable to replace; avoid loop
       return null;
     }
-    file = replaced;
-    String relativePath = FileUtil.getRelativePath(fileBaseDir, new File(replaced));
+    file = replaced.get(0);
+    String relativePath = FileUtil.getRelativePath(fileBaseDir, new File(file));
     if (relativePath != null) {
       relativePath = relativePath.replaceAll("\\\\", "/");
       file = relativePath;

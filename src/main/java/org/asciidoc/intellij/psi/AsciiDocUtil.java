@@ -672,32 +672,31 @@ public class AsciiDocUtil {
     return val;
   }
 
-  public static String replaceAntoraPrefix(PsiElement myElement, String key, String defaultFamily) {
+  public static List<String> replaceAntoraPrefix(PsiElement myElement, String key, String defaultFamily) {
     VirtualFile antoraModuleDir = findAntoraModuleDir(myElement);
     if (antoraModuleDir != null) {
       return replaceAntoraPrefix(myElement.getProject(), antoraModuleDir, key, defaultFamily);
     } else {
-      return key;
+      return Collections.singletonList(key);
     }
   }
 
-  public static String replaceAntoraPrefix(Project project, VirtualFile moduleDir, String originalKey, String defaultFamily) {
+  public static List<String> replaceAntoraPrefix(Project project, VirtualFile moduleDir, String originalKey, String defaultFamily) {
     Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(originalKey);
     if (urlMatcher.find()) {
-      return originalKey;
+      return Collections.singletonList(originalKey);
     }
     if (moduleDir != null) {
-      return ApplicationManager.getApplication().runReadAction((Computable<String>) () -> {
-        VirtualFile antoraModuleDir = moduleDir;
+      return ApplicationManager.getApplication().runReadAction((Computable<List<String>>) () -> {
         String key = originalKey;
-        String myModuleName = antoraModuleDir.getName();
-        VirtualFile antoraFile = antoraModuleDir.getParent().getParent().findChild(ANTORA_YML);
+        String myModuleName = moduleDir.getName();
+        VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
         if (antoraFile == null) {
-          return originalKey;
+          return Collections.singletonList(originalKey);
         }
         Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
         if (document == null) {
-          return originalKey;
+          return Collections.singletonList(originalKey);
         }
         Yaml yaml = new Yaml();
         Map<String, Object> antora = yaml.load(document.getText());
@@ -726,7 +725,7 @@ public class AsciiDocUtil {
           key = family.replaceFirst("");
         } else {
           if (defaultFamily == null) {
-            return originalKey;
+            return Collections.singletonList(originalKey);
           }
         }
 
@@ -734,72 +733,67 @@ public class AsciiDocUtil {
           otherFamily = defaultFamily;
         }
 
-        antoraModuleDir = getOtherAntoraModuleDir(project, moduleDir, antoraModuleDir, myModuleName, myComponentName, myComponentVersion, otherComponentName, otherModuleName);
-
+        List<VirtualFile> otherDirs = getOtherAntoraModuleDir(project, moduleDir, moduleDir, myModuleName, myComponentName, myComponentVersion, otherComponentName, otherModuleName);
         VirtualFile baseDir = project.getBaseDir();
-
-        VirtualFile target;
-        switch (otherFamily) {
-          case FAMILY_EXAMPLE:
-            target = AsciiDocUtil.findAntoraExamplesDir(baseDir, antoraModuleDir);
-            break;
-          case FAMILY_ATTACHMENT:
-            target = AsciiDocUtil.findAntoraAttachmentsDir(baseDir, antoraModuleDir);
-            break;
-          case FAMILY_PAGE:
-            target = AsciiDocUtil.findAntoraPagesDir(baseDir, antoraModuleDir);
-            break;
-          case FAMILY_PARTIAL:
-            target = AsciiDocUtil.findAntoraPartials(baseDir, antoraModuleDir);
-            break;
-          case FAMILY_IMAGE:
-            target = AsciiDocUtil.findAntoraImagesDir(baseDir, antoraModuleDir);
-            break;
-          default:
-            return originalKey;
+        List<String> result = new ArrayList<>();
+        for (VirtualFile otherDir : otherDirs) {
+          VirtualFile target;
+          switch (otherFamily) {
+            case FAMILY_EXAMPLE:
+              target = AsciiDocUtil.findAntoraExamplesDir(baseDir, otherDir);
+              break;
+            case FAMILY_ATTACHMENT:
+              target = AsciiDocUtil.findAntoraAttachmentsDir(baseDir, otherDir);
+              break;
+            case FAMILY_PAGE:
+              target = AsciiDocUtil.findAntoraPagesDir(baseDir, otherDir);
+              break;
+            case FAMILY_PARTIAL:
+              target = AsciiDocUtil.findAntoraPartials(baseDir, otherDir);
+              break;
+            case FAMILY_IMAGE:
+              target = AsciiDocUtil.findAntoraImagesDir(baseDir, otherDir);
+              break;
+            default:
+              continue;
+          }
+          if (target == null) {
+            continue;
+          }
+          String newKey = key;
+          if (newKey.length() != 0) {
+            newKey = "/" + newKey;
+          }
+          String value = target.getPath();
+          value = value.replaceAll("\\\\", "/");
+          newKey = value + newKey;
+          if (new File(newKey).exists()) {
+            // if the file exists, add it in first place
+            result.add(0, newKey);
+          } else {
+            result.add(newKey);
+          }
         }
-        if (target == null) {
-          return originalKey;
+        if (result.size() == 0) {
+          result.add(originalKey);
         }
-        if (key.length() != 0) {
-          key = "/" + key;
-        }
-        String value = target.getPath();
-        value = value.replaceAll("\\\\", "/");
-        key = value + key;
-        return key;
+        return result;
       });
     }
-    return originalKey;
+    return Collections.singletonList(originalKey);
   }
 
-  @Nullable
   @SuppressWarnings("checkstyle:ParameterNumber")
-  private static VirtualFile getOtherAntoraModuleDir(Project project, VirtualFile moduleDir, VirtualFile antoraModuleDir,
+  private static List<VirtualFile> getOtherAntoraModuleDir(Project project, VirtualFile moduleDir, VirtualFile antoraModuleDir,
                                                      String myModuleName, String myComponentName, String myComponentVersion,
                                                      String otherComponentName, String otherModuleName) {
-    VirtualFile result = null;
-    Map<String, Object> antora;
-    if (Objects.equals(myComponentName, otherComponentName)) {
-      otherComponentName = null;
-    }
-    if (otherComponentName == null && Objects.equals(myModuleName, otherModuleName)) {
-      otherModuleName = null;
-    }
-
-    if (otherComponentName == null && otherModuleName == null) {
-      return antoraModuleDir;
-    }
-
+    List<VirtualFile> result = new ArrayList<>();
     if (otherModuleName != null && otherComponentName == null) {
-      result = antoraModuleDir.getParent().findChild(otherModuleName);
-      if (result == null) {
-        // might be a module in another component with the same name
-        otherComponentName = myComponentName;
-      }
-      if (result != null) {
-        return result;
-      }
+      otherComponentName = myComponentName;
+    }
+    if (otherComponentName == null && otherModuleName == null) {
+      otherComponentName = myComponentName;
+      otherModuleName = myModuleName;
     }
 
     if (otherComponentName != null) {
@@ -820,7 +814,7 @@ public class AsciiDocUtil {
           continue;
         }
         Yaml yaml = new Yaml();
-        antora = yaml.load(file.getText());
+        Map<String, Object> antora = yaml.load(file.getText());
         if (!Objects.equals(otherComponentName, getAttributeAsString(antora, "name"))) {
           continue;
         }
@@ -839,8 +833,7 @@ public class AsciiDocUtil {
         if (antoraModule == null) {
           continue;
         }
-        result = antoraModule.getVirtualFile();
-        break;
+        result.add(antoraModule.getVirtualFile());
       }
     }
     return result;
@@ -920,11 +913,10 @@ public class AsciiDocUtil {
     });
   }
 
-  public static VirtualFile resolvePrefix(Project project, VirtualFile moduleDir, String originalKey) {
-    return ApplicationManager.getApplication().runReadAction((Computable<VirtualFile>) () -> {
-      VirtualFile antoraModuleDir = moduleDir;
-      String myModuleName = antoraModuleDir.getName();
-      VirtualFile antoraFile = antoraModuleDir.getParent().getParent().findChild(ANTORA_YML);
+  public static List<VirtualFile> resolvePrefix(Project project, VirtualFile moduleDir, String originalKey) {
+    return ApplicationManager.getApplication().runReadAction((Computable<List<VirtualFile>>) () -> {
+      String myModuleName = moduleDir.getName();
+      VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
       if (antoraFile == null) {
         return null;
       }
@@ -951,9 +943,7 @@ public class AsciiDocUtil {
         }
       }
 
-      antoraModuleDir = getOtherAntoraModuleDir(project, moduleDir, antoraModuleDir, myModuleName, myComponentName, myComponentVersion, otherComponentName, otherModuleName);
-
-      return antoraModuleDir;
+      return getOtherAntoraModuleDir(project, moduleDir, moduleDir, myModuleName, myComponentName, myComponentVersion, otherComponentName, otherModuleName);
     });
   }
 
