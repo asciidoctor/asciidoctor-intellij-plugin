@@ -234,8 +234,8 @@ public class AsciiDocUtil {
         // when running autocomplete, there is only an original file
         vf = current.getContainingFile().getOriginalFile().getVirtualFile();
       }
-      if (vf != null && vf.getCanonicalPath() != null) {
-        Map<String, String> antoraAttributes = AsciiDoc.populateAntoraAttributes(project.getBasePath(), new File(vf.getCanonicalPath()), antoraModuleDir);
+      if (vf != null && vf.getParent() != null && vf.getParent().getCanonicalPath() != null) {
+        Map<String, String> antoraAttributes = AsciiDoc.populateAntoraAttributes(project.getBasePath(), new File(vf.getParent().getCanonicalPath()), antoraModuleDir);
         String value = antoraAttributes.get(key);
         if (value != null) {
           result.add(new AsciiDocAttributeDeclarationDummy(key, value));

@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - avoid confusion in lexer about starting and ending listings if there are blanks in a line starting with dashes
 - avoid infinite recursion with too many attributes in anchors
 - allow fully distributed components for Antora, where files for a module exist in multiple folders (#405)
+- fix directories for antora modules to be resolved to wrong path
 
 === 0.30.51 (preview, available from GitHub releases)
 
