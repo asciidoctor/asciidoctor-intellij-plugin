@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.52 (work in progress)
+=== 0.30.52 (preview, available from GitHub releases)
 
 - avoid confusion in lexer about starting and ending listings if there are blanks in a line starting with dashes
 - avoid infinite recursion with too many attributes in anchors
