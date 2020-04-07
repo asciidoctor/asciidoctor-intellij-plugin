@@ -211,7 +211,7 @@ HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 // starting at the start of the line, but not with a dot
 // next line follwoing with only header marks
 HEADING_OLDSTYLE = {SPACE}* [^ _+\-#=~.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
-IFDEF_IFNDEF = ("ifdef"|"ifndef") "::"
+IFDEF_IFNDEF_ENDIF = ("ifdef"|"ifndef"|"endif") "::"
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
 INLINE_MACRO_START = [a-zA-Z0-9_]+":"
 TITLE_START = "."
@@ -310,7 +310,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state PASSTRHOUGH_INLINE_CONSTRAINED
 %state PASSTRHOUGH_INLINE_UNCONSTRAINED
 
-%state IFDEF_IFNDEF
+%state IFDEF_IFNDEF_ENDIF
 %state ATTR_PARSEABLE
 %state BLOCK_MACRO
 %state BLOCK_MACRO_ATTRS
@@ -508,7 +508,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <DELIMITER, PREBLOCK> {
   ^ {PAGEBREAK} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.PAGEBREAK; }
   ^ {HORIZONTALRULE} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.HORIZONTALRULE; }
-  {IFDEF_IFNDEF} / [^ \[\n] { yypushstate(); yybegin(IFDEF_IFNDEF); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  {IFDEF_IFNDEF_ENDIF} / [^ \[\n] { yypushstate(); yybegin(IFDEF_IFNDEF_ENDIF); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   {BLOCK_MACRO_START} / [^ \[\n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   // endif/ifeval/... allows the body to be empty, special case...
   ^ ("endif"|"ifeval"|"toc") "::" / [^ \n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
@@ -1225,11 +1225,11 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         }
 }
 
-<BLOCK_MACRO,IFDEF_IFNDEF> {
+<BLOCK_MACRO,IFDEF_IFNDEF_ENDIF> {
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
 }
 
-<IFDEF_IFNDEF> {
+<IFDEF_IFNDEF_ENDIF> {
   "["                  { yypushstate(); yybegin(ATTR_PARSEABLE); return AsciiDocTokenTypes.ATTRS_START; }
   [,+]                 { return AsciiDocTokenTypes.SEPARATOR; }
   [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_REF; }
