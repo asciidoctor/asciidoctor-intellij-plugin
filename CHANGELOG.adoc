@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.30.53 (preview, available from GitHub releases)
 
-- performance regression when editing large documents (#453)
+- fixing performance regression when editing large documents (#453)
 
 === 0.30.52 (preview, available from GitHub releases)
 
