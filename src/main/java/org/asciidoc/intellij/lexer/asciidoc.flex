@@ -218,9 +218,17 @@ TITLE_START = "."
 AUTOCOMPLETE = "IntellijIdeaRulezzz " // CompletionUtilCore.DUMMY_IDENTIFIER
 BLOCK_ATTRS_START = "["
 STRING = {NON_SPACE}+ \n? // something that doesn't have an empty line
+STRINGNOASTERISK   = [^\n\*]+ \n?
+STRINGNOUNDERSCORE = [^\n\_]+ \n?
+STRINGNOBACKTICK   = [^\n\`]+ \n?
+STRINGNOPLUS       = [^\n\+]+ \n?
 // something with a non-blank at the end, might contain a line break, but only if it doesn't separate the block
 WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n] | {SPACE}* [^\n]*[^\ \t\n]
-WORDNOBRACKET = {SPACE}* [^\n\]]* {SPACE}* \n {SPACE}* [^\ \t\n\]] | {SPACE}* [^\n\]]*[^\ \t\n\]]
+WORDNOBRACKET =  {SPACE}* [^\n\]]* {SPACE}* \n {SPACE}* [^\ \t\n\]] | {SPACE}* [^\n\]]*[^\ \t\n\]]
+WORDNOASTERISK = {SPACE}* [^\n\*]* {SPACE}* \n {SPACE}* [^\ \t\n\*] | {SPACE}* [^\n\*]*[^\ \t\n\*]
+WORDNOUNDERSCORE={SPACE}* [^\n\_]* {SPACE}* \n {SPACE}* [^\ \t\n\_] | {SPACE}* [^\n\_]*[^\ \t\n\_]
+WORDNOBACKTICK = {SPACE}* [^\n\`]* {SPACE}* \n {SPACE}* [^\ \t\n\`] | {SPACE}* [^\n\`]*[^\ \t\n\`]
+WORDNOPLUS =     {SPACE}* [^\n\+]* {SPACE}* \n {SPACE}* [^\ \t\n\+] | {SPACE}* [^\n\+]*[^\ \t\n\+]
 BOLD = "*"
 BULLET = ("*"+|"-")
 ENUMERATION = ([0-9]*|[a-zA-Z]?)"."+
@@ -449,7 +457,16 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           yypushback(yylength()); yybegin(STARTBLOCK);
         }
       }
-  ^ {SPACE}* "\n"           { if (isNoDel()) { blockStack.pop(); } resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.EMPTY_LINE; } // blank lines within pre block don't have an effect
+  ^ {SPACE}* "\n"           {
+        if (isNoDel()) { blockStack.pop(); }
+        resetFormatting();
+        if (style == null && blockStack.size() == 0 && stateStack.size() == 0) {
+          yybegin(YYINITIAL);
+        } else {
+          yybegin(MULTILINE);
+        }
+        return AsciiDocTokenTypes.EMPTY_LINE;
+      }
   {SPACE}* "\n"           { if (isNoDel()) { blockStack.pop(); } resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; } // blank lines within pre block don't have an effect
   ^ {TITLE_START} / [^ \t] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE_TOKEN; }
 }
@@ -644,10 +661,22 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ^ {SPACE}* "\n"           { clearStyle();
                          resetFormatting();
                          if (blockStack.size() == 0) {
-                           yybegin(MULTILINE);
+                           if (stateStack.size() == 0) {
+                             yybegin(YYINITIAL);
+                           } else {
+                             yybegin(MULTILINE);
+                           }
                          } else if (isNoDel()) {
                            blockStack.pop();
-                           yybegin(MULTILINE);
+                           if (blockStack.size() == 0) {
+                             if (stateStack.size() == 0) {
+                               yybegin(YYINITIAL);
+                             } else {
+                               yybegin(MULTILINE);
+                             }
+                           } else {
+                             yybegin(MULTILINE);
+                           }
                          } else {
                            yybegin(DELIMITER);
                          }
@@ -673,7 +702,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            return AsciiDocTokenTypes.WHITE_SPACE;
                          }
                        }
-  {CONTINUATION} / {SPACE}* "\n" {
+  {CONTINUATION} {SPACE}* "\n" {
+                         yypushback(yylength() - 1);
                          yybegin(DELIMITER);
                          return AsciiDocTokenTypes.CONTINUATION;
                        }
@@ -749,7 +779,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                        }
   // BOLD START
   // start something with ** only if it closes within the same block
-  {DOUBLEBOLD} / [^\*] {STRING}* {DOUBLEBOLD} { if(!singlebold) {
+  {DOUBLEBOLD} [^\*] ({STRINGNOASTERISK} | [^\*][\*][^\*])* {DOUBLEBOLD} {
+                         yypushback(yylength() -2 );
+                         if(!singlebold) {
                             doublebold = !doublebold; return doublebold ? AsciiDocTokenTypes.BOLD_START : AsciiDocTokenTypes.BOLD_END;
                          } else {
                             return textFormat();
@@ -762,10 +794,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            return textFormat();
                          }
                        }
-  {BOLD} {BOLD}? / [^\*\n \t] {WORD}* {BOLD} { if(isUnconstrainedStart() && !singlebold && !doublebold) {
-                            if (yylength() == 2) {
-                              yypushback(1);
-                            }
+  {BOLD} {BOLD}? [^\*\n \t] ({WORDNOASTERISK} | [ \t][\*] | [\*][\p{Letter}\p{Digit}_])* {BOLD} {
+                         yypushback(yylength() - 1);
+                         if(isUnconstrainedStart() && !singlebold && !doublebold) {
                             singlebold = true; return AsciiDocTokenTypes.BOLD_START;
                          } else if (singlebold && isUnconstrainedEnd()) {
                             singlebold = false; return AsciiDocTokenTypes.BOLD_END;
@@ -782,8 +813,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   // BOLD END
 
   // ITALIC START
-  // start something with ** only if it closes within the same block
-  {DOUBLEITALIC} / [^\_] {STRING}* {DOUBLEITALIC} { if(!singleitalic) {
+  // start something with __ only if it closes within the same block
+  {DOUBLEITALIC} [^\_] ({STRINGNOUNDERSCORE} | [^\_][\_][^\_])* {DOUBLEITALIC} {
+                         yypushback(yylength() - 2);
+                         if(!singleitalic) {
                             doubleitalic = !doubleitalic; return doubleitalic ? AsciiDocTokenTypes.ITALIC_START : AsciiDocTokenTypes.ITALIC_END;
                          } else {
                             return textFormat();
@@ -796,10 +829,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            return textFormat();
                          }
                        }
-  {ITALIC} {ITALIC}? / [^\_\n \t] {WORD}* {ITALIC} { if(isUnconstrainedStart() && !singleitalic && !doubleitalic) {
-                            if (yylength() == 2) {
-                              yypushback(1);
-                            }
+  {ITALIC} {ITALIC}? [^\_\n \t] ({WORDNOUNDERSCORE} | [ \t][\_] | [\_][\p{Letter}\p{Digit}_])* {ITALIC} {
+                         yypushback(yylength() - 1);
+                         if(isUnconstrainedStart() && !singleitalic && !doubleitalic) {
                             singleitalic = true; return AsciiDocTokenTypes.ITALIC_START;
                          } else if (singleitalic && isUnconstrainedEnd()) {
                             singleitalic = false; return AsciiDocTokenTypes.ITALIC_END;
@@ -817,7 +849,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
   // MONO START
   // start something with ** only if it closes within the same block
-  {DOUBLEMONO} / [^\`] {STRING}* {DOUBLEMONO} { if(!singlemono) {
+  {DOUBLEMONO} [^\`] ({STRINGNOBACKTICK} | [^\`][\`][^\`])* {DOUBLEMONO} {
+                         yypushback(yylength() - 2);
+                         if(!singlemono) {
                             doublemono = !doublemono; return doublemono ? AsciiDocTokenTypes.MONO_START : AsciiDocTokenTypes.MONO_END;
                          } else {
                             return textFormat();
@@ -843,8 +877,11 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   // MONO END
 
   // PASSTHROUGH START
-  "++" / [^+] {STRING}* "++" { yypushstate(); yybegin(PASSTRHOUGH_INLINE_CONSTRAINED); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START; }
-  "+" "+"? [^+] {WORD}* "+" { if (yytext().toString().startsWith("++") && yytext().toString().substring(2).contains("++")) {
+  "++" [^+] ({STRINGNOPLUS} | [^\+][\+][^\+])* "++" {
+                         yypushback(yylength() - 2);
+                         yypushstate(); yybegin(PASSTRHOUGH_INLINE_CONSTRAINED); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
+                       }
+  "+" "+"? [^+\n \t] ({WORDNOPLUS} | [ \t][\+] | [\+][\p{Letter}\p{Digit}_])* "+" { if (yycharat(0) == '+' && yycharat(1) == '+' && yytext().toString().substring(2).contains("++")) {
                                 yypushback(yylength() - 2);
                                 yypushstate(); yybegin(PASSTRHOUGH_INLINE_CONSTRAINED); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
                               }
@@ -891,7 +928,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          }
                        }
   {DOUBLE_QUOTE}       { return AsciiDocTokenTypes.DOUBLE_QUOTE; }
-  {TYPOGRAPHIC_DOUBLE_QUOTE_START} / [^\*\n \t] {WORD}* {TYPOGRAPHIC_DOUBLE_QUOTE_END} {
+  {TYPOGRAPHIC_DOUBLE_QUOTE_START} [^\*\n \t] {WORD}* {TYPOGRAPHIC_DOUBLE_QUOTE_END} {
+                           yypushback(yylength() - 2);
                            if (isUnconstrainedStart()) {
                              typographicquote = true;
                              return AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START;
@@ -912,7 +950,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                              yybegin(MONO_SECOND_TRY);
                            }
                          }
-  {TYPOGRAPHIC_SINGLE_QUOTE_START} / [^\*\n \t] {WORD}* {TYPOGRAPHIC_SINGLE_QUOTE_END} {
+  {TYPOGRAPHIC_SINGLE_QUOTE_START} [^\*\n \t] {WORD}* {TYPOGRAPHIC_SINGLE_QUOTE_END} {
+                           yypushback(yylength() - 2);
                            if (isUnconstrainedStart()) {
                              typographicquote = true;
                              return AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START;
@@ -991,7 +1030,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           return textFormat();
         }
       }
-  {PASSTRHOUGH_INLINE} / {STRING}* {PASSTRHOUGH_INLINE} {
+  {PASSTRHOUGH_INLINE} ({STRINGNOPLUS} | [^\+][^\+]{1,2}[^+] )* {PASSTRHOUGH_INLINE} {
+                           yypushback(yylength() - 3);
                            yypushstate(); yybegin(PASSTRHOUGH_INLINE); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
                          }
   "&#" [0-9]+ ";" {
@@ -1019,12 +1059,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <MONO_SECOND_TRY> {
-  {MONO} {MONO}? / [^\`\n \t] {WORD}* {MONO} {
+  {MONO} {MONO}? [^\`\n \t] ({WORDNOBACKTICK} | [ \t][\`] | [\`][\p{Letter}\p{Digit}_])* {MONO} {
+                         yypushback(yylength() - 1);
                          yypopstate();
                          if(isUnconstrainedStart() && !singlemono && !doublemono) {
-                            if (yylength() == 2) {
-                              yypushback(1);
-                            }
                             singlemono = true; return AsciiDocTokenTypes.MONO_START;
                          } else if (singlemono && isUnconstrainedEnd()) {
                             singlemono = false; return AsciiDocTokenTypes.MONO_END;
@@ -1214,7 +1252,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <BLOCK_ATTRS> {
   [^\],=\n\t }]+ {
-          if ((yytext().charAt(0) != '.' && yytext().charAt(0) != '%') && !yytext().toString().equals("role")) {
+          if ((yycharat(0) != '.' && yycharat(0) != '%') && !yytext().toString().equals("role")) {
             String style = yytext().toString();
             if (style.indexOf(",") != -1) {
               style = style.substring(0, style.indexOf(","));
