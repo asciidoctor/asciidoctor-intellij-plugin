@@ -1237,7 +1237,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:PASSTRHOUGH_INLINE_END ('++')\n" +
         "AsciiDoc:TEXT ('and')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:TEXT ('+some+')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_START ('+')\n" +
+        "AsciiDoc:PASSTRHOUGH_CONTENT ('some')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_END ('+')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('other')");
   }

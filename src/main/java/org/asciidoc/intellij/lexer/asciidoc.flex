@@ -34,6 +34,22 @@ import java.util.Stack;
 
   private Stack<String> blockStack = new Stack<>();
 
+  private int zzEndReadFinal;
+
+  public void setFinal(int endFinal) {
+    zzEndReadFinal = endFinal;
+  }
+
+  public void clearLookahead() {
+    zzEndRead = zzEndReadFinal;
+  }
+
+  public void limitLookahead() {
+    if (zzEndReadFinal > zzCurrentPos + 2000) {
+      zzEndRead = zzCurrentPos + 2000;
+    }
+  }
+
   private boolean isPrefixedBy(char[] prefix) {
     if(getTokenStart() > 0) {
       char c = zzBuffer.charAt(getTokenStart() -1);
@@ -203,7 +219,7 @@ EXAMPLE_BLOCK_DELIMITER = "====" "="* {SPACE}*
 SIDEBAR_BLOCK_DELIMITER = "****" "*"* {SPACE}*
 QUOTE_BLOCK_DELIMITER = "____" "_"* {SPACE}*
 LITERAL_BLOCK_DELIMITER = "...." "."* {SPACE}*
-TABLE_BLOCK_DELIMITER = "|===" "="* {SPACE}*
+TABLE_BLOCK_DELIMITER = [|!] "===" "="* {SPACE}*
 OPEN_BLOCK_DELIMITER = "--" {SPACE}*
 CONTINUATION = "+"
 HEADING_START = "="{1,6} {SPACE}+
@@ -223,12 +239,13 @@ STRINGNOUNDERSCORE = [^\n\_]+ \n?
 STRINGNOBACKTICK   = [^\n\`]+ \n?
 STRINGNOPLUS       = [^\n\+]+ \n?
 // something with a non-blank at the end, might contain a line break, but only if it doesn't separate the block
-WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n] | {SPACE}* [^\n]*[^\ \t\n]
-WORDNOBRACKET =  {SPACE}* [^\n\]]* {SPACE}* \n {SPACE}* [^\ \t\n\]] | {SPACE}* [^\n\]]*[^\ \t\n\]]
-WORDNOASTERISK = {SPACE}* [^\n\*]* {SPACE}* \n {SPACE}* [^\ \t\n\*] | {SPACE}* [^\n\*]*[^\ \t\n\*]
-WORDNOUNDERSCORE={SPACE}* [^\n\_]* {SPACE}* \n {SPACE}* [^\ \t\n\_] | {SPACE}* [^\n\_]*[^\ \t\n\_]
-WORDNOBACKTICK = {SPACE}* [^\n\`]* {SPACE}* \n {SPACE}* [^\ \t\n\`] | {SPACE}* [^\n\`]*[^\ \t\n\`]
-WORDNOPLUS =     {SPACE}* [^\n\+]* {SPACE}* \n {SPACE}* [^\ \t\n\+] | {SPACE}* [^\n\+]*[^\ \t\n\+]
+// a new line starting with a '|' might indicate a table; therefore stop there as well
+WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n\|] | {SPACE}* [^\n]*[^\ \t\n]
+WORDNOBRACKET =  {SPACE}* [^\n\]]* {SPACE}* \n {SPACE}* [^\ \t\n\]\|] | {SPACE}* [^\n\]]*[^\ \t\n\]]
+WORDNOASTERISK = {SPACE}* [^\n\*]* {SPACE}* \n {SPACE}* [^\ \t\n\*\|] | {SPACE}* [^\n\*]*[^\ \t\n\*]
+WORDNOUNDERSCORE={SPACE}* [^\n\_]* {SPACE}* \n {SPACE}* [^\ \t\n\_\|] | {SPACE}* [^\n\_]*[^\ \t\n\_]
+WORDNOBACKTICK = {SPACE}* [^\n\`]* {SPACE}* \n {SPACE}* [^\ \t\n\`\|] | {SPACE}* [^\n\`]*[^\ \t\n\`]
+WORDNOPLUS =     {SPACE}* [^\n\+]* {SPACE}* \n {SPACE}* [^\ \t\n\+\|] | {SPACE}* [^\n\+]*[^\ \t\n\+]
 BOLD = "*"
 BULLET = ("*"+|"-")
 ENUMERATION = ([0-9]*|[a-zA-Z]?)"."+
@@ -289,6 +306,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state DESCRIPTION
 %state AFTER_SPACE
 %state INSIDE_LINE
+%state PASSTHROUGH_SECOND_TRY
 %state MONO_SECOND_TRY
 %state REF
 %state REFTEXT
@@ -567,7 +585,14 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                             yypushback(yylength()); yybegin(STARTBLOCK);
                           }
 
-  ^ ({EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER}) $ {
+  ^ {TABLE_BLOCK_DELIMITER} $ {
+            resetFormatting();
+            style = null;
+            yybegin(PREBLOCK);
+            return AsciiDocTokenTypes.BLOCK_DELIMITER;
+          }
+
+  ^ ({EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER}) $ {
                             resetFormatting();
                             String delimiter = yytext().toString().trim();
                             if(blockStack.contains(delimiter)) {
@@ -588,7 +613,15 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ^ {TABLE_BLOCK_DELIMITER} / [^\=\n \t] { yypushback(yylength()); yybegin(STARTBLOCK); /* TABLE_BLOCK_DELIMITER */ }
   ^ {OPEN_BLOCK_DELIMITER} / [^\n \t] { yypushback(yylength()); yybegin(STARTBLOCK); /* OPEN_BLOCK_DELIMITER */ }
   ^ {EXAMPLE_BLOCK_DELIMITER} / [^\=\n \t] { yypushback(yylength()); yybegin(STARTBLOCK); /* EXAMPLE_BLOCK_DELIMITER */ }
-  ^ ({EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER})  {
+
+  ^ {TABLE_BLOCK_DELIMITER} {
+            resetFormatting();
+            style = null;
+            yybegin(PREBLOCK);
+            return AsciiDocTokenTypes.BLOCK_DELIMITER;
+          }
+
+  ^ ({EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER})  {
                             resetFormatting();
                             String delimiter = yytext().toString().trim();
                             if(blockStack.contains(delimiter)) {
@@ -748,6 +781,17 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            yybegin(DELIMITER);
                          }
                          return AsciiDocTokenTypes.LINE_BREAK; }
+  "\n" {SPACE}* "|"    { yypushback(yylength() - 1);
+                         if (isNoDelVerse()) {
+                           yybegin(SINGLELINE);
+                         } else {
+                           if (blockStack.size() == 0 && stateStack.size() == 0 && style == null) {
+                             yybegin(YYINITIAL);
+                           } else {
+                             yybegin(DELIMITER);
+                           }
+                         }
+                         return AsciiDocTokenTypes.LINE_BREAK; }
   {HARD_BREAK}
                        { yypushback(1); return AsciiDocTokenTypes.HARD_BREAK; }
   // exceptions to END_OF_SENTENCE
@@ -881,18 +925,14 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          yypushback(yylength() - 2);
                          yypushstate(); yybegin(PASSTRHOUGH_INLINE_CONSTRAINED); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
                        }
-  "+" "+"? [^+\n \t] ({WORDNOPLUS} | [ \t][\+] | [\+][\p{Letter}\p{Digit}_])* "+" { if (yycharat(0) == '+' && yycharat(1) == '+' && yytext().toString().substring(2).contains("++")) {
-                                yypushback(yylength() - 2);
-                                yypushstate(); yybegin(PASSTRHOUGH_INLINE_CONSTRAINED); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
-                              }
-                              if(isUnconstrainedStart()) {
-                                yypushback(yylength() - 1);
-                                yypushstate(); yybegin(PASSTRHOUGH_INLINE_UNCONSTRAINED); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
-                              } else {
-                                yypushback(yylength() - 1);
-                                return textFormat();
-                         }
+  "+" {
+                       if(isUnconstrainedStart()) {
+                         yypushback(yylength());
+                         yypushstate();
+                         yybegin(PASSTHROUGH_SECOND_TRY);
                        }
+
+  }
   // PASSTHROUGH END
 
   {LPAREN}             { return AsciiDocTokenTypes.LPAREN; }
@@ -1056,6 +1096,20 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           }
         }
   [^]                  { return textFormat(); }
+}
+
+<PASSTHROUGH_SECOND_TRY> {
+  "+" [^+\n \t] ({WORDNOPLUS} | [ \t][\+] | [\+][\p{Letter}\p{Digit}_])* "+" {
+              yypushback(yylength() - 1);
+              yypopstate();
+              if(isUnconstrainedStart()) {
+                yypushstate(); yybegin(PASSTRHOUGH_INLINE_UNCONSTRAINED); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
+              } else {
+                yypushback(yylength() - 1);
+                return textFormat();
+         }
+       }
+  [^]                  { yypopstate(); return textFormat(); }
 }
 
 <MONO_SECOND_TRY> {

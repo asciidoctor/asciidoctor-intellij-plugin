@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.54 (preview, available from GitHub releases)
+
+- improving performance when editing large tables (#453)
+
 === 0.30.53 (preview, available from GitHub releases)
 
 - fixing performance regression when editing large documents (#453)
