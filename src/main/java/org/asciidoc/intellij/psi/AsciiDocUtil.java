@@ -807,7 +807,11 @@ public class AsciiDocUtil {
       otherComponentName = myComponentName;
       otherModuleName = myModuleName;
     }
-    if (otherComponentVersion == null && myComponentVersion != null) {
+    boolean useLatest = false;
+    AntoraVersionDescriptor latestVersion = null;
+    if (otherComponentVersion == null && !Objects.equals(myComponentName, otherComponentName)) {
+      useLatest = true;
+    } else if (otherComponentVersion == null) {
       otherComponentVersion = myComponentVersion;
     }
 
@@ -833,8 +837,23 @@ public class AsciiDocUtil {
         if (!Objects.equals(otherComponentName, getAttributeAsString(antora, "name"))) {
           continue;
         }
-        if (!Objects.equals(otherComponentVersion, getAttributeAsString(antora, "version"))) {
-          continue;
+        if (!useLatest) {
+          if (!Objects.equals(otherComponentVersion, getAttributeAsString(antora, "version"))) {
+            continue;
+          }
+        } else {
+          AntoraVersionDescriptor otherVersion = new AntoraVersionDescriptor(getAttributeAsString(antora, "version"), getAttributeAsString(antora, "prerelease"));
+          if (latestVersion == null) {
+            latestVersion = otherVersion;
+          } else {
+            int compareResult = latestVersion.compareTo(otherVersion);
+            if (compareResult < 0) {
+              result.clear();
+              latestVersion = otherVersion;
+            } else {
+              continue;
+            }
+          }
         }
         PsiDirectory parent = file.getParent();
         if (parent == null) {
