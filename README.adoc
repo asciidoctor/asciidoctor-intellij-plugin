@@ -7,8 +7,8 @@ image:https://api.travis-ci.org/asciidoctor/asciidoctor-intellij-plugin.svg?bran
 image:https://img.shields.io/jetbrains/plugin/v/7391-asciidoc.svg[JetBrains Plugins,link=https://plugins.jetbrains.com/plugin/7391-asciidoc]
 image:https://img.shields.io/jetbrains/plugin/d/7391-asciidoc.svg[Downloads,link=https://plugins.jetbrains.com/plugin/7391-asciidoc]
 
-A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language.
-To support the authors of Asciidoctor, please consider supporting us via https://opencollective.com/asciidoctor[OpenCollective].
+A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc.) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language.
+It also supports https://antora.org/[Antora], the documentation CMS build with AsciiDoc.
 
 *To contribute as a developer, some issues are labeled with link:https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22["good first issue"].* Maintainers are willing to help.
 Feel free to choose these or any other ticket to participate, or create pull requests without a prior ticket.
@@ -61,7 +61,7 @@ This project is intended to be a safe, welcoming space for collaboration, and co
 
 == Copyright and Licensing
 
-Copyright (C) 2013-2019 Julien Viet, Erik Pragt and Alexander Schwartz.
+Copyright (C) 2013-2020 Julien Viet, Erik Pragt and Alexander Schwartz.
 Released under the Apache License, Version 2.0 (see link:LICENSE[LICENSE]).
 
 == Credits
