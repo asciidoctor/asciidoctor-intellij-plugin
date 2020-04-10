@@ -7,9 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.56 (work in progress)
+=== 0.30.56 (preview, available from GitHub releases)
 
 - support PlantUML diagrams in open blocks
+- fixing support for distributed Antora components when linking to a "`latest`" version (#405)
 
 === 0.30.55 (preview, available from GitHub releases)
 

@@ -850,7 +850,7 @@ public class AsciiDocUtil {
             if (compareResult < 0) {
               result.clear();
               latestVersion = otherVersion;
-            } else {
+            } else if (compareResult > 0) {
               continue;
             }
           }
