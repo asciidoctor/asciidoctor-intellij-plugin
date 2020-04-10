@@ -600,7 +600,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                                 blockStack.pop();
                               }
                             } else {
-                              if (delimiter.equals("--") && "source".equals(style)) {
+                              if (delimiter.equals("--") && ("source".equals(style) || "plantuml".equals(style))) {
                                  clearStyle(); yybegin(LISTING_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
                               }
                               blockStack.push(delimiter);
