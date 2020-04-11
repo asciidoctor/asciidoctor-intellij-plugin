@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.57 (preview, available from GitHub releases)
+
+- re-enable setting of attributes in plugin settings on IntelliJ 2020.1+ (#458)
+
 === 0.30.56 (preview, available from GitHub releases)
 
 - support PlantUML diagrams in open blocks

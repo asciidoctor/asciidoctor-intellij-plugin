@@ -99,6 +99,8 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     attributeTable = new AttributeTable();
     attributesPanel = new JPanel(new BorderLayout());
     attributesPanel.add(attributeTable.getComponent(), BorderLayout.CENTER);
+    // from 2020.1 onwards the attributes panel requires a width, otherwise it will have a zero width
+    attributesPanel.setMinimumSize(new Dimension(400, 100));
   }
 
   private void adjustKrokiOptions() {
