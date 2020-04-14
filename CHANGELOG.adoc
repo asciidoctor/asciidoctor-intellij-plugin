@@ -10,7 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.58 (preview, available from GitHub releases)
 
 - support bibliographic references when validating links and finding references (#459)
-- when an xref contains a component name, it will always link to the "`latest`" version (#405)
+- when an Antora xref contains a component name, it will always link to the "`latest`" version (#405)
 
 === 0.30.57
 
