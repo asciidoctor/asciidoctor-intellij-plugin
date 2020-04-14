@@ -276,6 +276,8 @@ TYPOGRAPHIC_SINGLE_QUOTE_START = "'`"
 TYPOGRAPHIC_SINGLE_QUOTE_END = "`'"
 ANCHORSTART = "[#"
 ANCHOREND = "]"
+BIBSTART = "[[["
+BIBEND = "]]]"
 LINKSTART = "link:"
 XREFSTART = "xref:"
 LINKTEXT_START = "["
@@ -317,6 +319,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state DOCTITLE
 %state ANCHORID
 %state ANCHORREFTEXT
+%state BIBSTART
+%state BIBID
+%state BIBNAME
 
 %state INLINE_URL_NO_DELIMITER
 %state INLINE_URL_IN_BRACKETS
@@ -434,7 +439,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                { yypushback(yylength()); yypopstate(); }
 }
 
-<ATTRIBUTE_VAL, INLINE_URL_NO_DELIMITER, INSIDE_LINE, DESCRIPTION, LINKFILE, LINKANCHOR, LINKURL, BLOCK_MACRO, LINKTEXT, REFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE, REF, ANCHORID> {
+<ATTRIBUTE_VAL, INLINE_URL_NO_DELIMITER, INSIDE_LINE, DESCRIPTION, LINKFILE, LINKANCHOR, LINKURL, BLOCK_MACRO, LINKTEXT, REFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE, REF, ANCHORID, BIBNAME> {
   {ATTRIBUTE_REF_START} ( {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} | [^}\n ]* {AUTOCOMPLETE} ) {
                          yypushback(yylength() - 1);
                          if (!isEscaped()) {
@@ -757,7 +762,38 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {COMMENT_BLOCK_DELIMITER} { clearStyle(); resetFormatting(); yypushstate(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
 }
 
+<BIBSTART> {
+  {SPACE} { return AsciiDocTokenTypes.WHITE_SPACE; }
+  {BIBSTART} { yybegin(BIBID); return AsciiDocTokenTypes.BIBSTART; }
+}
+
+<BIBID> {
+  "," { yybegin(BIBNAME); return AsciiDocTokenTypes.SEPARATOR; }
+}
+
+<BIBNAME> {
+  "]" {BIBEND} { return AsciiDocTokenTypes.BLOCKREFTEXT; }
+}
+
+<BIBNAME, BIBID> {
+  {BIBEND} { yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BIBEND; }
+}
+
+<BIBNAME> {
+  [^] { return AsciiDocTokenTypes.BLOCKREFTEXT; }
+}
+
+<BIBID> {
+  [^] { return AsciiDocTokenTypes.BLOCKID; }
+}
+
 <AFTER_SPACE> {
+  // bibtext doesn't allow for line breaks. Adding {STRING} at the end so that it is as long as the regular bullet match
+  {BULLET} / {SPACE}+ {BIBSTART} [^\n]* {BIBEND} {STRING} {
+        resetFormatting();
+        yybegin(BIBSTART);
+        return AsciiDocTokenTypes.BULLET;
+  }
   {BULLET} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BULLET; }
   {ENUMERATION} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ENUMERATION; }
   {DESCRIPTION} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); yypushstate(); yybegin(DESCRIPTION); yypushback(yylength()); }

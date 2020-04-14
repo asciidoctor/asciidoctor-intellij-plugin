@@ -7,7 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.57 (preview, available from GitHub releases)
+=== 0.30.58 (preview, available from GitHub releases)
+
+- support bibliographic references when validating links and finding references (#459)
+
+=== 0.30.57
 
 - re-enable setting of attributes in plugin settings on IntelliJ 2020.1+ (#458)
 

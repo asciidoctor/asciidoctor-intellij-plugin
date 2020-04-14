@@ -110,6 +110,8 @@ public interface AsciiDocTokenTypes {
   IElementType HTML_ENTITY_OR_UNICODE = new AsciiDocElementType("HTML_ENTITY");
   IElementType FRONTMATTER = new AsciiDocElementType("FRONTMATTER");
   IElementType FRONTMATTER_DELIMITER = new AsciiDocElementType("FRONTMATTER_DELIMITER");
+  IElementType BIBSTART = new AsciiDocElementType("BIBSTART");
+  IElementType BIBEND = new AsciiDocElementType("BIBEND");
 
   TokenSet TOKENS_TO_MERGE = TokenSet.create(TEXT, LISTING_TEXT, HEADING, TITLE_TOKEN, BLOCK_COMMENT,
     ATTR_NAME, BLOCK_MACRO_BODY, BLOCK_MACRO_ATTRIBUTES, INLINE_MACRO_BODY, INLINE_MACRO_ATTRIBUTES, PASSTRHOUGH_CONTENT,

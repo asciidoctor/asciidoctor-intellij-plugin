@@ -51,7 +51,10 @@ public class AsciiDocFilterLexer extends BaseFilterLexer {
     AsciiDocTokenTypes.LINKSTART,
     AsciiDocTokenTypes.BLOCK_MACRO_ID,
     AsciiDocTokenTypes.INLINE_MACRO_ID,
-    AsciiDocTokenTypes.URL_END
+    AsciiDocTokenTypes.URL_END,
+    AsciiDocTokenTypes.FRONTMATTER_DELIMITER,
+    AsciiDocTokenTypes.BIBSTART,
+    AsciiDocTokenTypes.BIBEND
   );
 
   private static final TokenSet JAVA_TOKENS = TokenSet.create(

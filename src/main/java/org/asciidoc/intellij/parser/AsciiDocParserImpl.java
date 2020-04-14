@@ -24,6 +24,8 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRS_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTR_LIST_SEP;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTR_NAME;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTR_VALUE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BIBEND;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BIBSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKID;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDEND;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDSTART;
@@ -266,6 +268,8 @@ public class AsciiDocParserImpl {
         parseInlineMacro();
       } else if (at(REFSTART)) {
         parseRef();
+      } else if (at(BIBSTART)) {
+        parseBib();
       } else if (at(LINKSTART)) {
         parseLink();
       } else if (at(MONO_START)) {
@@ -282,6 +286,21 @@ public class AsciiDocParserImpl {
     dropPreBlock();
     closeBlocks();
     closeSections(0);
+  }
+
+  private void parseBib() {
+    while (at(BIBSTART) || at(BIBEND) || at(SEPARATOR) || at(BLOCKREFTEXT) || at(BLOCKID) || at(ATTRIBUTE_REF_START)) {
+      if (at(BLOCKID)) {
+        // tests show: IDs in the bibliography can't contain attribute references
+        PsiBuilder.Marker blockIdMarker = myBuilder.mark();
+        next();
+        blockIdMarker.done(AsciiDocElementTypes.BLOCKID);
+      } else if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
+      } else {
+        next();
+      }
+    }
   }
 
   private void parseRef() {

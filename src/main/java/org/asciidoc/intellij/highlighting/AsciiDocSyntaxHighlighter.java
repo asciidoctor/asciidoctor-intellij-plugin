@@ -172,6 +172,8 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
       .put(AsciiDocTokenTypes.HEADER, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.HTML_ENTITY_OR_UNICODE, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.FRONTMATTER_DELIMITER, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.BIBSTART, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.BIBEND, ASCIIDOC_MARKER)
       .build();
 
   @NotNull

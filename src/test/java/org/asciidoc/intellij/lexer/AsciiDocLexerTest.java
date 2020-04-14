@@ -2091,6 +2091,19 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:FRONTMATTER_DELIMITER ('---')");
   }
 
+  public void testBibliography() {
+    doTest("* [[[bib,2]]] Book",
+      "AsciiDoc:BULLET ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:BIBSTART ('[[[')\n" +
+        "AsciiDoc:BLOCKID ('bib')\n" +
+        "AsciiDoc:SEPARATOR (',')\n" +
+        "AsciiDoc:BLOCKREFTEXT ('2')\n" +
+        "AsciiDoc:BIBEND (']]]')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Book')");
+  }
+
   @Override
   protected void doTest(@Language("asciidoc") @NonNls String text, @Nullable String expected) {
     super.doTest(text, expected);
