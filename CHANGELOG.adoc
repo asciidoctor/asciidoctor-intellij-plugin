@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.59 (preview, available from GitHub releases)
+
+- rebuild indexes for bibliographic references (#459)
+
 === 0.30.58 (preview, available from GitHub releases)
 
 - support bibliographic references when validating links and finding references (#459)
