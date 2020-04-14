@@ -17,13 +17,6 @@ public class AntoraVersionDescriptorTest {
   }
 
   @Test
-  public void shouldSortMasterHighest() {
-    AntoraVersionDescriptor master = new AntoraVersionDescriptor("master", null);
-    AntoraVersionDescriptor zeta = new AntoraVersionDescriptor("zeta", null);
-    assertOrder(zeta, master);
-  }
-
-  @Test
   public void shouldSortSemanticVersionsAlphabeticallyCaseInsensitive() {
     AntoraVersionDescriptor alpha = new AntoraVersionDescriptor("ALPHA", null);
     AntoraVersionDescriptor beta = new AntoraVersionDescriptor("beta", null);
@@ -60,9 +53,16 @@ public class AntoraVersionDescriptorTest {
 
   @Test
   public void shouldSortPrereleaseLast() {
-    AntoraVersionDescriptor first = new AntoraVersionDescriptor("1.0", null);
-    AntoraVersionDescriptor second = new AntoraVersionDescriptor("1.1", "alpha");
-    assertOrder(first, second);
+    AntoraVersionDescriptor regular = new AntoraVersionDescriptor("1.0", null);
+    AntoraVersionDescriptor prerelease = new AntoraVersionDescriptor("1.1", "alpha");
+    assertOrder(prerelease, regular);
+  }
+
+  @Test
+  public void shouldSortPrereleaseAlphabeticaly() {
+    AntoraVersionDescriptor alpha = new AntoraVersionDescriptor("1.1", "alpha");
+    AntoraVersionDescriptor beta = new AntoraVersionDescriptor("1.1", "beta");
+    assertOrder(alpha, beta);
   }
 
   private void assertOrder(AntoraVersionDescriptor first, AntoraVersionDescriptor second) {

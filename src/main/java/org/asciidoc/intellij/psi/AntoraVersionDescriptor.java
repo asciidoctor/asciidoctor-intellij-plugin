@@ -43,11 +43,12 @@ public class AntoraVersionDescriptor implements Comparable<AntoraVersionDescript
     if (version == null) {
       return 0;
     }
-    if (Objects.equals("master", version) && !Objects.equals("master", o.version)) {
+    if (prerelease == null && o.prerelease != null) {
       return 1;
-    }
-    if (!Objects.equals("master", version) && Objects.equals("master", o.version)) {
+    } else if (prerelease != null && o.prerelease == null) {
       return -1;
+    } else if (prerelease != null) {
+      return prerelease.compareToIgnoreCase(o.prerelease);
     }
     int result = -scheme.compareTo(o.scheme);
     if (result != 0) {
@@ -96,11 +97,7 @@ public class AntoraVersionDescriptor implements Comparable<AntoraVersionDescript
         return 1;
       }
     }
-    if (preA == null) {
-      return preB == null ? 0 : 1;
-    } else {
-      return preB == null ? -1 : preA.compareToIgnoreCase(preB);
-    }
+    return 0;
   }
 
   @Override

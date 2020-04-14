@@ -809,7 +809,7 @@ public class AsciiDocUtil {
     }
     boolean useLatest = false;
     AntoraVersionDescriptor latestVersion = null;
-    if (otherComponentVersion == null && !Objects.equals(myComponentName, otherComponentName)) {
+    if (otherComponentVersion == null && otherComponentName != null) {
       useLatest = true;
     } else if (otherComponentVersion == null) {
       otherComponentVersion = myComponentVersion;
