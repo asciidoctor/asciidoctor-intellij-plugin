@@ -479,6 +479,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
     assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "ROOT:test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
     assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "ROOT:page$test.adoc", null), "/src/antoraModule/modules/ROOT/pages/test.adoc");
     assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "1.0@test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
     assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component:module:test.adoc", "page"), "/src/antoraModule/modules/module/pages/test.adoc");
 
     // image
