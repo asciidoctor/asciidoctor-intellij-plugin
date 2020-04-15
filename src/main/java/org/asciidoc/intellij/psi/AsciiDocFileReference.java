@@ -240,8 +240,18 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       }
     }
     if (results.size() == 0) {
+      boolean findEverywhere = false;
       VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
       if (antoraModuleDir == null) {
+        findEverywhere = true;
+      } else if (base.equals("#") || base.length() == 0) {
+        String antoraPartialsCannonicalPath = AsciiDocUtil.findAntoraPartials(myElement).getCanonicalPath();
+        String myCanonicalPath = myElement.getContainingFile().getVirtualFile().getCanonicalPath();
+        if (myCanonicalPath != null && antoraPartialsCannonicalPath != null && myCanonicalPath.startsWith(antoraPartialsCannonicalPath)) {
+          findEverywhere = true;
+        }
+      }
+      if (findEverywhere) {
         // try to find section/anchor globally only if this is not Antora
         final List<AsciiDocBlockId> ids = AsciiDocUtil.findIds(myElement.getProject(), key);
         for (AsciiDocBlockId id : ids) {
