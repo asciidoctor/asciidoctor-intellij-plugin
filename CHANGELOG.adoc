@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.60 (work in progress)
 
 - allow links containing only version and page file name (#405)
+- check links even when anchor contains an unresolvable attribute
 
 === 0.30.59
 

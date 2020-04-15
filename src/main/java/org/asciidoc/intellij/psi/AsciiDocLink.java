@@ -83,9 +83,18 @@ public class AsciiDocLink extends ASTWrapperPsiElement implements HasFileReferen
     }
   }
 
+  /**
+   * Resolve the body with all its attributes. If only the anchor doesn't resolve, skip the anchor.
+   */
   @Nullable
   public String getResolvedBody() {
-    return AsciiDocUtil.resolveAttributes(this, getBodyRange(this).substring(getText()));
+    String text = getBodyRange(this).substring(getText());
+    String result = AsciiDocUtil.resolveAttributes(this, text);
+    if (result == null && text.indexOf('#') != -1) {
+      text = text.substring(0, text.indexOf('#'));
+      result = AsciiDocUtil.resolveAttributes(this, text);
+    }
+    return result;
   }
 
   public static TextRange getBodyRange(AsciiDocLink element) {
