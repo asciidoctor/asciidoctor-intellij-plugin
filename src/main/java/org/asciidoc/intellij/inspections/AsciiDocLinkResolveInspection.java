@@ -77,7 +77,8 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
           AsciiDocFileReference anchor = ((HasAnchorReference) o).getAnchorReference();
           if (anchor != null) {
             ResolveResult[] resolveResultsAnchor = anchor.multiResolve(false);
-            if (resolveResultsAnchor.length == 0) {
+            // only present an error if the anchor's attributes uniquely resolve
+            if (resolveResultsAnchor.length == 0 && AsciiDocUtil.resolveAttributes(o, anchor.getRangeInElement().substring(o.getText())) != null) {
               ResolveResult[] resolveResultsAnchorCaseInsensitive = anchor.multiResolveAnchor(true);
               LocalQuickFix[] fixes = new LocalQuickFix[]{};
               if (resolveResultsAnchorCaseInsensitive.length == 1) {
