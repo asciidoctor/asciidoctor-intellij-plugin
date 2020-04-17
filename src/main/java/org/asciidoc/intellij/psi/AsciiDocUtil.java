@@ -615,11 +615,19 @@ public class AsciiDocUtil {
 
   public static VirtualFile findAntoraModuleDir(PsiElement element) {
     VirtualFile antoraModuleDir = null;
-    VirtualFile vf;
-    vf = element.getContainingFile().getVirtualFile();
-    if (vf == null) {
-      // when running autocomplete, there is only an original file
-      vf = element.getContainingFile().getOriginalFile().getVirtualFile();
+    VirtualFile vf = null;
+    if (element instanceof PsiFile) {
+      vf = ((PsiFile) element).getVirtualFile();
+    } else if (element instanceof PsiDirectory) {
+      vf = ((PsiDirectory) element).getVirtualFile();
+    } else {
+      if (element.getContainingFile() != null) {
+        vf = element.getContainingFile().getVirtualFile();
+        if (vf == null) {
+          // when running autocomplete, there is only an original file
+          vf = element.getContainingFile().getOriginalFile().getVirtualFile();
+        }
+      }
     }
     if (vf != null) {
       antoraModuleDir = findAntoraModuleDir(element.getProject().getBaseDir(), vf);

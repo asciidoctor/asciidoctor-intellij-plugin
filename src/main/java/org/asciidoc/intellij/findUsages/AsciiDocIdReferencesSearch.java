@@ -4,6 +4,8 @@ import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -30,6 +32,7 @@ import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationKeyIndex;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
 import org.asciidoc.intellij.psi.AsciiDocBlockId;
 import org.asciidoc.intellij.psi.AsciiDocNamedElement;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -54,6 +57,18 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
       String name = ((AsciiDocNamedElement) element).getName();
       if (name != null) {
         search(consumer, element, name, scope);
+      }
+    } else if (element instanceof PsiDirectory) {
+      String name = ((PsiDirectory) element).getName();
+      if (name.endsWith("s")) {
+        // it might be a partials, attachments, etc. directory; search for the family and attribute
+        VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(element);
+        if (antoraModuleDir != null) {
+          // partials -> partial$
+          search(consumer, element, name.substring(0, name.length() - 1), scope);
+          // partials -> partialsdir
+          search(consumer, element, name + "dir", scope);
+        }
       }
     }
   }
