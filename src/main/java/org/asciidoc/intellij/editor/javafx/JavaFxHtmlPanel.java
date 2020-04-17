@@ -68,6 +68,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
@@ -556,9 +557,13 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   private String findTempImageFile(String filename, String imagesdir) {
-    Path file = imagesPath.resolve(filename);
-    if (Files.exists(file)) {
-      return file.toFile().toString();
+    try {
+      Path file = imagesPath.resolve(filename);
+      if (Files.exists(file)) {
+        return file.toFile().toString();
+      }
+    } catch (InvalidPathException e) {
+      log.info("problem decoding decode filename " + filename, e);
     }
     // when {imagesoutdir} is set, files created by asciidoctor-diagram end up in the root path of that dir, but HTML will still prepend {imagesdir}
     // try again with removed {imagesdir}
@@ -567,9 +572,13 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       String prefix = imagesdir + "/";
       if (filename.startsWith(prefix)) {
         filename = filename.substring(prefix.length());
-        file = imagesPath.resolve(filename);
-        if (Files.exists(file)) {
-          return file.toFile().toString();
+        try {
+          Path file = imagesPath.resolve(filename);
+          if (Files.exists(file)) {
+            return file.toFile().toString();
+          }
+        } catch (InvalidPathException e) {
+          log.info("problem decoding decode filename " + filename, e);
         }
       }
     }
@@ -577,9 +586,13 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     String shortenedFilename = filename;
     while (shortenedFilename.indexOf('/') != -1) {
       shortenedFilename = shortenedFilename.substring(shortenedFilename.indexOf('/') + 1);
-      file = imagesPath.resolve(shortenedFilename);
-      if (Files.exists(file)) {
-        return file.toFile().toString();
+      try {
+        Path file = imagesPath.resolve(shortenedFilename);
+        if (Files.exists(file)) {
+          return file.toFile().toString();
+        }
+      } catch (InvalidPathException e) {
+        log.info("problem decoding decode filename " + filename, e);
       }
     }
     return null;
