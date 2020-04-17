@@ -12,6 +12,7 @@ import com.intellij.util.IncorrectOperationException;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN;
 /**
  * @author yole
  */
-public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
+public class AsciiDocBlockMacro extends AsciiDocStandardBlock implements HasFileReference, HasAntoraReference {
   private static final Set<String> HAS_FILE_AS_BODY = new HashSet<>();
 
   static {
@@ -152,6 +153,25 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock {
   @Override
   public Icon getIcon(int ignored) {
     return AsciiDocIcons.Structure.MACRO;
+  }
+
+  @Nullable
+  public String getResolvedBody() {
+    String text = getRangeOfBody(this).substring(getText());
+    return AsciiDocUtil.resolveAttributes(this, text);
+  }
+
+  public AsciiDocAttributeInBrackets getAttribute(String attribute) {
+    PsiElement child = this.getFirstChild();
+    while (child != null) {
+      if (child instanceof AsciiDocAttributeInBrackets) {
+        if (((AsciiDocAttributeInBrackets) child).getAttrName().equals(attribute)) {
+          return (AsciiDocAttributeInBrackets) child;
+        }
+      }
+      child = child.getNextSibling();
+    }
+    return null;
   }
 
   public static class Manipulator extends AbstractElementManipulator<AsciiDocBlockMacro> {

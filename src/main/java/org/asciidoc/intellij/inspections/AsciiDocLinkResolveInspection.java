@@ -6,7 +6,10 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
+import org.asciidoc.intellij.psi.AsciiDocAttributeInBrackets;
+import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
+import org.asciidoc.intellij.psi.AsciiDocInlineMacro;
 import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.psi.HasAnchorReference;
@@ -16,6 +19,8 @@ import org.asciidoc.intellij.quickfix.AsciiDocChangeCaseForAnchor;
 import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFile;
 import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFileQuickfix;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.StringTokenizer;
 
 /**
  * @author Alexander Schwartz 2020
@@ -33,8 +38,33 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
       @Override
       public void visitElement(PsiElement o) {
         boolean continueResolving = true;
-        if (o instanceof AsciiDocLink) {
-          String resolvedBody = ((AsciiDocLink) o).getResolvedBody();
+        if (o instanceof AsciiDocBlockMacro) {
+          AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) o;
+          if (blockMacro.getMacroName().equals("include")) {
+            AsciiDocAttributeInBrackets opts = blockMacro.getAttribute("opts");
+            if (opts != null) {
+              String value = opts.getAttrValue();
+              if (value != null) {
+                StringTokenizer st = new StringTokenizer(value, ",");
+                while (st.hasMoreElements()) {
+                  if (st.nextToken().trim().equals("optional")) {
+                    continueResolving = false;
+                  }
+                }
+              }
+            }
+          }
+        }
+        if (continueResolving &&
+          (o instanceof AsciiDocLink || o instanceof AsciiDocBlockMacro || o instanceof AsciiDocInlineMacro)) {
+          String resolvedBody;
+          if (o instanceof AsciiDocLink) {
+            resolvedBody = ((AsciiDocLink) o).getResolvedBody();
+          } else if (o instanceof AsciiDocBlockMacro) {
+            resolvedBody = ((AsciiDocBlockMacro) o).getResolvedBody();
+          } else {
+            resolvedBody = ((AsciiDocInlineMacro) o).getResolvedBody();
+          }
           if (resolvedBody == null) {
             return;
           } else if (AsciiDocUtil.URL_PREFIX_PATTERN.matcher(resolvedBody).find()) {

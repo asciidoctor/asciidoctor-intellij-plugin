@@ -63,6 +63,19 @@ public class AsciiDocAttributeInBrackets extends ASTWrapperPsiElement {
 
   }
 
+  public String getAttrValue() {
+    TextRange bodyRange = getRangeOfBody(this);
+    if (bodyRange.isEmpty()) {
+      return null;
+    }
+    String value = bodyRange.substring(this.getText());
+    String resolvedValue = AsciiDocUtil.resolveAttributes(this, value);
+    if (resolvedValue != null) {
+      value = resolvedValue;
+    }
+    return value;
+  }
+
   public static class Manipulator extends AbstractElementManipulator<AsciiDocAttributeInBrackets> {
 
     @Override

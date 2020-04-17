@@ -7,12 +7,13 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.60 (work in progress)
+=== 0.30.60 (preview, available from GitHub releases)
 
 - allow links containing only version and page file name (#405)
 - check links even when anchor contains an unresolvable attribute
 - given an Antora partial and a local anchor, search the complete project for a reference when trying to resolve it
 - avoid NPE when an Antora component descriptor doesn't include a version (#460)
+- check links for files in block, inline and preprocessor macros
 
 === 0.30.59
 

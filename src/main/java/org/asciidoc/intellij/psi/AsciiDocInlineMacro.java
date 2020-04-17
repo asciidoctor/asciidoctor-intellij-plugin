@@ -13,6 +13,7 @@ import com.intellij.util.IncorrectOperationException;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import java.util.regex.Matcher;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_SUPPORTED;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN;
 
-public class AsciiDocInlineMacro extends ASTWrapperPsiElement {
+public class AsciiDocInlineMacro extends ASTWrapperPsiElement implements HasFileReference, HasAntoraReference {
   private static final Set<String> HAS_FILE_AS_BODY = new HashSet<>();
   static {
     HAS_FILE_AS_BODY.addAll(Arrays.asList(
@@ -111,6 +112,12 @@ public class AsciiDocInlineMacro extends ASTWrapperPsiElement {
     }
     return StringUtil.trimEnd(idNode.getText(), ":");
 
+  }
+
+  @Nullable
+  public String getResolvedBody() {
+    String text = getRangeOfBody(this).substring(getText());
+    return AsciiDocUtil.resolveAttributes(this, text);
   }
 
   @Override

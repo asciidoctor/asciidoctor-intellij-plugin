@@ -6,6 +6,10 @@ link:<error descr="File doesn't resolve">notfound.adoc</error>[]
 
 <<<error descr="Anchor doesn't resolve">lowercasenoblanks</error>>>
 
+image::<error descr="File doesn't resolve">filedoesntexist.png</error>[]
+
+image:<error descr="File doesn't resolve">filedoesntexist.png</error>[]
+
 == Headline
 
 <<Headline>>
