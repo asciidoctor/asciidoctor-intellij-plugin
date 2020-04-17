@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - allow links containing only version and page file name (#405)
 - check links even when anchor contains an unresolvable attribute
 - given an Antora partial and a local anchor, search the complete project for a reference when trying to resolve it
+- avoid NPE when an Antora component descriptor doesn't include a version (#460)
 
 === 0.30.59
 

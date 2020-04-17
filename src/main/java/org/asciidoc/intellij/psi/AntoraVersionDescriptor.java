@@ -24,21 +24,23 @@ public class AntoraVersionDescriptor implements Comparable<AntoraVersionDescript
   public AntoraVersionDescriptor(String version, String prerelease) {
     this.version = version;
     this.prerelease = prerelease;
-    Matcher matcher = SEMANTIC_PATTERN.matcher(version);
-    if (matcher.matches()) {
-      scheme = Scheme.SEMANTIC;
-    } else {
-      scheme = Scheme.NAMED;
+    if (version != null) {
+      Matcher matcher = SEMANTIC_PATTERN.matcher(version);
+      if (matcher.matches()) {
+        scheme = Scheme.SEMANTIC;
+      } else {
+        scheme = Scheme.NAMED;
+      }
     }
   }
 
   @Override
   public int compareTo(@NotNull AntoraVersionDescriptor o) {
     if (version == null && o.version != null) {
-      return 1;
+      return -1;
     }
     if (version != null && o.version == null) {
-      return -1;
+      return 1;
     }
     if (version == null) {
       return 0;

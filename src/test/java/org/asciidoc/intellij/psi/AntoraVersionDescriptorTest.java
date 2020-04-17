@@ -17,6 +17,13 @@ public class AntoraVersionDescriptorTest {
   }
 
   @Test
+  public void shouldSortNullVersionLast() {
+    AntoraVersionDescriptor aNull = new AntoraVersionDescriptor(null, null);
+    AntoraVersionDescriptor alpha = new AntoraVersionDescriptor("alpha", null);
+    assertOrder(aNull, alpha);
+  }
+
+  @Test
   public void shouldSortSemanticVersionsAlphabeticallyCaseInsensitive() {
     AntoraVersionDescriptor alpha = new AntoraVersionDescriptor("ALPHA", null);
     AntoraVersionDescriptor beta = new AntoraVersionDescriptor("beta", null);
