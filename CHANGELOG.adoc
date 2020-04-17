@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - given an Antora partial and a local anchor, search the complete project for a reference when trying to resolve it
 - avoid NPE when an Antora component descriptor doesn't include a version (#460)
 - check links for files in block, inline and preprocessor macros
+- enlarge search scope for finding references to all AsciiDoc documents in project independent of project's module dependencies
 
 === 0.30.59
 
