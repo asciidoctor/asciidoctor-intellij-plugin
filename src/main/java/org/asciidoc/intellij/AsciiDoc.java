@@ -41,6 +41,7 @@ import org.asciidoctor.Attributes;
 import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.Options;
 import org.asciidoctor.OptionsBuilder;
+import org.asciidoctor.jruby.AsciidoctorJRuby;
 import org.asciidoctor.log.LogHandler;
 import org.asciidoctor.log.LogRecord;
 import org.asciidoctor.log.Severity;
@@ -58,6 +59,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
@@ -195,7 +198,7 @@ public class AsciiDoc {
           }
         }
         try {
-          asciidoctor = Asciidoctor.Factory.create();
+          asciidoctor = createInstance();
           asciidoctor.registerLogHandler(logHandler);
           // require openssl library here to enable download content via https
           // requiring it later after other libraries have been loaded results in "undefined method `set_params' for #<OpenSSL::SSL::SSLContext"
@@ -271,6 +274,18 @@ public class AsciiDoc {
       }
       return asciidoctor;
     }
+  }
+
+  /**
+   * Create an instance of Asciidoctor.
+   */
+  private Asciidoctor createInstance() {
+    ClassLoader cl = AsciiDocAction.class.getClassLoader();
+    if (cl instanceof URLClassLoader) {
+      // Wrap an existing URLClassLoader with an empty list to prevent scanning of JARs by Ruby Runtime during Unit Tests.
+      cl = new URLClassLoader(new URL[]{}, cl);
+    }
+    return AsciidoctorJRuby.Factory.create(cl);
   }
 
   /**
@@ -473,8 +488,6 @@ public class AsciiDoc {
     Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
     synchronized (AsciiDoc.class) {
       CollectingLogHandler logHandler = new CollectingLogHandler();
-      ClassLoader old = Thread.currentThread().getContextClassLoader();
-      Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
       ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
       SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
@@ -515,7 +528,6 @@ public class AsciiDoc {
       } finally {
         SystemOutputHijacker.deregister();
         notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
-        Thread.currentThread().setContextClassLoader(old);
       }
     }
   }
@@ -534,8 +546,6 @@ public class AsciiDoc {
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
       ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
       SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
-      ClassLoader old = Thread.currentThread().getContextClassLoader();
-      Thread.currentThread().setContextClassLoader(AsciiDocAction.class.getClassLoader());
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         PREPEND_CONFIG.setConfig(config);
@@ -577,7 +587,6 @@ public class AsciiDoc {
         SystemOutputHijacker.deregister();
         Notifier notifier = this::notifyAlways;
         notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
-        Thread.currentThread().setContextClassLoader(old);
       }
     }
   }
