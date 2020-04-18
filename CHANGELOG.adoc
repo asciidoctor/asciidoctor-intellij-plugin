@@ -7,11 +7,12 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.61 (work in progress)
+=== 0.30.61 (preview, available from GitHub releases)
 
 - support find-references for Antora family names
 - adding a JSON schema for antora.yml to provide auto-completion, validation and quick-documentation (#461)
 - don't pick the latest version when referencing a local partial or module (#462)
+- support Antora xref syntax for PlantUML block macro as there is an extension for that
 
 === 0.30.60 (preview, available from GitHub releases)
 

@@ -64,7 +64,9 @@ public class AsciiDocUtil {
   static {
     ANTORA_SUPPORTED.addAll(Arrays.asList(
       // standard asciidoctor
-      "image", "include", "video", "audio", "xref"
+      "image", "include", "video", "audio", "xref",
+      // extensions
+      "plantuml"
     ));
   }
 
