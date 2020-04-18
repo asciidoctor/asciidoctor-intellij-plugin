@@ -1,7 +1,7 @@
 package org.asciidoc.intellij.inspections;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,7 +9,7 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class AsciiDocCodeInsightFixtureTestCase extends LightPlatformCodeInsightFixtureTestCase {
+public abstract class AsciiDocCodeInsightFixtureTestCase extends BasePlatformTestCase {
 
   @Override
   protected boolean isWriteActionRequired() {

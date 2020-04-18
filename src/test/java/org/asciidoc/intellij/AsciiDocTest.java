@@ -1,7 +1,7 @@
 package org.asciidoc.intellij;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -23,7 +23,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 /**
  * @author Alexander Schwartz 2018
  */
-public class AsciiDocTest extends LightPlatformCodeInsightFixtureTestCase {
+public class AsciiDocTest extends BasePlatformTestCase {
   private Logger log = Logger.getInstance(AsciiDocTest.class);
 
   private AsciiDoc asciidoc;

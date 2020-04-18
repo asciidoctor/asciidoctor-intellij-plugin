@@ -5,10 +5,10 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 
-public class AsciiDocListingManipulatorTest extends LightPlatformCodeInsightFixtureTestCase {
+public class AsciiDocListingManipulatorTest extends BasePlatformTestCase {
   public void testSimpleCodeFence() {
     doTest("[source,json]\n" +
         "----\n" +

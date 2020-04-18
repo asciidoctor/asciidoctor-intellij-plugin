@@ -8,7 +8,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
@@ -26,7 +26,7 @@ import java.util.Objects;
  * @author yole
  */
 @SuppressWarnings({"AsciiDocLinkResolve", "AsciiDocHeadingStyle"})
-public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
+public class AsciiDocPsiTest extends BasePlatformTestCase {
   public void testImageBlockMacro() {
     PsiFile psiFile = configureByAsciiDoc("image::foo.png[Foo]");
     AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) psiFile.getChildren()[0];

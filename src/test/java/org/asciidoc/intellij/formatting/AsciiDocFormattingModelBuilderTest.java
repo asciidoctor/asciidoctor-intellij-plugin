@@ -3,13 +3,13 @@ package org.asciidoc.intellij.formatting;
 import com.intellij.codeInsight.actions.FileInEditorProcessor;
 import com.intellij.codeInsight.actions.LayoutCodeOptions;
 import com.intellij.codeInsight.actions.ReformatCodeRunOptions;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 
 import java.io.File;
 
 import static com.intellij.codeInsight.actions.TextRangeType.WHOLE_FILE;
 
-public class AsciiDocFormattingModelBuilderTest extends LightPlatformCodeInsightFixtureTestCase {
+public class AsciiDocFormattingModelBuilderTest extends BasePlatformTestCase {
 
   @Override
   protected String getTestDataPath() {
