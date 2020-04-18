@@ -807,6 +807,13 @@ public class AsciiDocUtil {
   private static List<VirtualFile> getOtherAntoraModuleDir(Project project, VirtualFile moduleDir,
                                                            String myModuleName, String myComponentName, String myComponentVersion,
                                                            String otherComponentVersion, String otherComponentName, String otherModuleName) {
+    boolean useLatest = false;
+    AntoraVersionDescriptor latestVersion = null;
+    if (otherComponentVersion == null && otherComponentName != null) {
+      useLatest = true;
+    } else if (otherComponentVersion == null) {
+      otherComponentVersion = myComponentVersion;
+    }
     List<VirtualFile> result = new ArrayList<>();
     if (otherModuleName != null && otherComponentName == null) {
       otherComponentName = myComponentName;
@@ -814,13 +821,6 @@ public class AsciiDocUtil {
     if (otherComponentName == null && otherModuleName == null) {
       otherComponentName = myComponentName;
       otherModuleName = myModuleName;
-    }
-    boolean useLatest = false;
-    AntoraVersionDescriptor latestVersion = null;
-    if (otherComponentVersion == null && otherComponentName != null) {
-      useLatest = true;
-    } else if (otherComponentVersion == null) {
-      otherComponentVersion = myComponentVersion;
     }
 
     if (otherComponentName != null) {

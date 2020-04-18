@@ -4,10 +4,12 @@ image::image.txt[]
 
 link:{attachmentsdir}/attachment.txt[]
 
-xref:my-component:ROOT:test.adoc[]
+xref:module:test.adoc[]
 
 include::{examplesdir}/example.txt[]
 
 include::{partialsdir}/part.adoc[]
 
-include::my-component:ROOT:partial$part.adoc[]
+include::1.0@my-component:ROOT:partial$part.adoc[]
+
+include::partial$part.adoc[]

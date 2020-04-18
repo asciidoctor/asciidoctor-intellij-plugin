@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - support find-references for Antora family names
 - adding a JSON schema for antora.yml to provide auto-completion, validation and quick-documentation (#461)
+- don't pick the latest version when referencing a local partial or module (#462)
 
 === 0.30.60 (preview, available from GitHub releases)
 

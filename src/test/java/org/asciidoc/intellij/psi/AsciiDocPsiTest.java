@@ -452,35 +452,39 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testAntoraModule() {
     // given...
     PsiFile[] psiFile = myFixture.configureByFiles(
-      getTestName(true) + "/modules/ROOT/pages/test.adoc",
-      getTestName(true) + "/modules/ROOT/attachments/attachment.txt",
-      getTestName(true) + "/modules/ROOT/examples/example.txt",
-      getTestName(true) + "/modules/ROOT/images/image.txt",
-      getTestName(true) + "/modules/ROOT/partials/part.adoc",
-      getTestName(true) + "/modules/module/pages/page.adoc",
-      getTestName(true) + "/antora.yml"
+      getTestName(true) + "/componentV1/modules/ROOT/pages/test.adoc",
+      getTestName(true) + "/componentV1/modules/ROOT/attachments/attachment.txt",
+      getTestName(true) + "/componentV1/modules/ROOT/examples/example.txt",
+      getTestName(true) + "/componentV1/modules/ROOT/images/image.txt",
+      getTestName(true) + "/componentV1/modules/ROOT/partials/part.adoc",
+      getTestName(true) + "/componentV1/modules/module/pages/page.adoc",
+      getTestName(true) + "/componentV1/antora.yml",
+      getTestName(true) + "/componentV2/modules/ROOT/pages/test.adoc",
+      getTestName(true) + "/componentV2/modules/module/pages/test.adoc",
+      getTestName(true) + "/componentV2/antora.yml"
     );
 
     List<AttributeDeclaration> attributes = AsciiDocUtil.findAttributes(psiFile[0].getProject(), psiFile[0].getFirstChild());
 
-    assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("partialsdir", "/src/antoraModule/modules/ROOT/partials")));
-    assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("imagesdir", "/src/antoraModule/modules/ROOT/images")));
-    assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("attachmentsdir", "/src/antoraModule/modules/ROOT/attachments")));
-    assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("examplesdir", "/src/antoraModule/modules/ROOT/examples")));
+    assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("partialsdir", "/src/antoraModule/componentV1/modules/ROOT/partials")));
+    assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("imagesdir", "/src/antoraModule/componentV1/modules/ROOT/images")));
+    assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("attachmentsdir", "/src/antoraModule/componentV1/modules/ROOT/attachments")));
+    assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("examplesdir", "/src/antoraModule/componentV1/modules/ROOT/examples")));
     assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("myattr", "myval")));
 
     AsciiDocBlockMacro[] macros = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocBlockMacro.class);
     assertNotNull(macros);
-    assertSize(4, macros);
+    assertSize(5, macros);
 
-    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "1.0@my-component:ROOT:test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
-    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component:ROOT:test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
-    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component::test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
-    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "ROOT:test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
-    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "ROOT:page$test.adoc", null), "/src/antoraModule/modules/ROOT/pages/test.adoc");
-    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
-    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "1.0@test.adoc", "page"), "/src/antoraModule/modules/ROOT/pages/test.adoc");
-    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component:module:test.adoc", "page"), "/src/antoraModule/modules/module/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "1.0@my-component:ROOT:test.adoc", "page"), "/src/antoraModule/componentV1/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component:ROOT:test.adoc", "page"), "/src/antoraModule/componentV2/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component::test.adoc", "page"), "/src/antoraModule/componentV2/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "ROOT:test.adoc", "page"), "/src/antoraModule/componentV1/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "ROOT:page$test.adoc", null), "/src/antoraModule/componentV1/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "page$test.adoc", null), "/src/antoraModule/componentV1/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "test.adoc", "page"), "/src/antoraModule/componentV1/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "1.0@test.adoc", "page"), "/src/antoraModule/componentV1/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component:module:test.adoc", "page"), "/src/antoraModule/componentV2/modules/module/pages/test.adoc");
 
     // image
     assertSize(1, macros[0].getReferences());
@@ -496,7 +500,7 @@ public class AsciiDocPsiTest extends LightPlatformCodeInsightFixtureTestCase {
 
     // part include via module
     assertSize(3, macros[3].getReferences());
-    assertEquals("my-component:ROOT", macros[3].getReferences()[0].getCanonicalText());
+    assertEquals("1.0@my-component:ROOT", macros[3].getReferences()[0].getCanonicalText());
     assertEquals("partial", macros[3].getReferences()[1].getCanonicalText());
     assertEquals("part.adoc", macros[3].getReferences()[2].getCanonicalText());
     // finish test here. Reference will not resolve in the test, files are "temp://" files
