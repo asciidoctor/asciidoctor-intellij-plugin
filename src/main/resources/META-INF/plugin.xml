@@ -16,6 +16,7 @@
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html -->
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true" config-file="java-features.xml">com.intellij.modules.java</depends>
+  <depends optional="true" config-file="json-features.xml">com.intellij.modules.json</depends>
   <depends optional="true" config-file="grazie-features.xml">tanvd.grazi</depends>
 
   <extensionPoints>

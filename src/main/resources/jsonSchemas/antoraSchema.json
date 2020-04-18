@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Antora component descriptor antora.yml",
+  "required": [
+    "name",
+    "version"
+  ],
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name key is the component coordinate that’s used when the component is referenced in a page cross reference, image macro, included example, or included partial. The value can contain letters, numbers, underscores (_), hyphens (-), and periods (.). The value cannot contain blank spaces or forward slashes (/). Example: 'leaf'",
+      "examples": [
+        "leaf"
+      ],
+      "pattern": "^[^ /!\"$%&()=?\\[\\]*+#';:<>|]+$"
+    },
+    "version": {
+      "type": [
+        "string",
+        "number"
+      ],
+      "description": "The version key is the version coordinate in the resource ID, version segment in the page URL, and, when display_version isn’t set, the version name displayed in the UI. It’s also used to sort multiple versions of the same component. Examples: '1', 'v2.0-beta', 'rawhide'",
+      "examples": [
+        "1",
+        "v2.0-beta",
+        "rawhide"
+      ]
+    },
+    "display_version": {
+      "type": "string",
+      "description": "To display a version in the UI that is different from the value specified in version, set the display_version key. Examples: 'v2.0 Beta', 'Rawhide', '3.8 (EOL)'",
+      "examples": [
+        "v2.0 Beta",
+        "Rawhide",
+        "3.8 (EOL)"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "description": "The title key is the display name for the component.",
+      "examples": [
+        "Silver Leaf"
+      ]
+    },
+    "start_page": {
+      "type": "string",
+      "description": "By default, Antora looks for a file named index.adoc in the ROOT module of a component. It uses this page as the component’s start page (e.g., https://example.org/component-name/2.5/index.html). If there isn’t an index.adoc file in the ROOT module, you must specify a file as the start page in the component descriptor. Examples: 'security:get-started.adoc', 'ROOT:welcome.adoc', 'org-governance:help.adoc'",
+      "examples": [
+        "security:get-started.adoc",
+        "ROOT:welcome.adoc",
+        "org-governance:help.adoc"
+      ]
+    },
+    "prerelease": {
+      "type": "string",
+      "description": "The prerelease key is a marker that this version is considered prerelease. Prerelease versions are skipped when selecting the latest version of a component (unless all versions are prereleases, in which case the normal rules apply)."
+    },
+    "nav": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "Each value specifies the path to a navigation file (e.g., modules/name-of-module/name-of-nav-file.adoc). The order the values are listed in dictates the order the contents of the navigation files are assembled in the site’s component menu."
+      },
+      "description": "The nav key accepts a list of navigation files."
+    },
+    "asciidoc": {
+      "type": "object",
+      "properties": {
+        "attributes": {
+          "$ref": "#/definitions/asciidoc_attributes"
+        }
+      },
+      "description": "Configuration passed on to AsciiDoc processing"
+    }
+  },
+  "definitions": {
+    "asciidoc_attributes": {
+      "type": "object",
+      "description": "AsciiDoc Attributes",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-zA-Z0-9_]+[a-zA-Z0-9_-]*$": {
+          "type": [
+            "string",
+            "boolean",
+            "number"
+          ],
+          "description": "Attributes can be set and unset.\nTo hard set an attribute, simply enter its value. Hard set component version attributes can’t be reassigned or unset by a page.\nTo soft set an attribute, attach the @ modifier to the end of its value. A page can override soft set component version attributes.\nTo hard unset an attribute, assign it the tilde symbol (~). Hard unset component version attributes can’t be set by a page.\nTo soft unset an attribute, assign the value false. A page can override soft unset component version attributes."
+        }
+      }
+    }
+  }
+}

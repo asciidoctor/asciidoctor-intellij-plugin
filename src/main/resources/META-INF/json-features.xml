@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="JavaScript">
+    <JsonSchema.ProviderFactory implementation="org.asciidoc.intellij.antora.AsciiDocAntoraSchemaProviderFactory"/>
+  </extensions>
+</idea-plugin>
