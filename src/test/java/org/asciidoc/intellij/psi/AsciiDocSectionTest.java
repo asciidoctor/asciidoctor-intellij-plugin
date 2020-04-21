@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 public class AsciiDocSectionTest {
 
   private static class MockTitleAsciiDocSection extends AsciiDocSectionImpl {
-    private String title;
+    private final String title;
 
     MockTitleAsciiDocSection(String title) {
       super(new FileElement(AsciiDocTokenTypes.WHITE_SPACE, ""));

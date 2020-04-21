@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.61 (work in progress)
+
+- when referencing images in other Antora modules, assume image family for reference
+
 === 0.30.61 (preview, available from GitHub releases)
 
 - support find-references for Antora family names

@@ -281,7 +281,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     if (isAntora) {
       String resolvedKey = AsciiDocUtil.resolveAttributes(myElement, key);
       if (resolvedKey != null) {
-        return AsciiDocUtil.replaceAntoraPrefix(myElement, resolvedKey, null);
+        String defaultFamily = null;
+        if (macroName.equals("image")) {
+          defaultFamily = "image";
+        } else if (macroName.equals("xref")) {
+          defaultFamily = "page";
+        }
+        return AsciiDocUtil.replaceAntoraPrefix(myElement, resolvedKey, defaultFamily);
       }
     } else if (myElement instanceof AsciiDocLink && macroName.equals("xref")) {
       if (AsciiDocUtil.findAntoraPagesDir(myElement) != null) {
