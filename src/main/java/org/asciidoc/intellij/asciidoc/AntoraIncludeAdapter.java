@@ -72,8 +72,8 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
         }
         log(new LogRecord(Severity.ERROR,
           new AsciiDocCursor(file, reader.getDir(), reader.getDir(), reader.getLineNumber() - 1),
-          "Can't resolve Antora prefix " + matcher.group()));
-        reader.restoreLine("Unresolved Antora prefix '" + matcher.group() + "'- include::" + target + "[]");
+          "Can't resolve Antora prefix '" + matcher.group() + "' for target '" + target + "'"));
+        reader.restoreLine("Unresolved Antora reference - include::" + target + "[]");
         return;
       }
     } else {

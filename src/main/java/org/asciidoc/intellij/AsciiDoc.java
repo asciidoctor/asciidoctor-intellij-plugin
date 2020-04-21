@@ -29,8 +29,8 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.geronimo.gshell.io.SystemOutputHijacker;
 import org.asciidoc.intellij.actions.asciidoc.AsciiDocAction;
-import org.asciidoc.intellij.asciidoc.AntoraImageAdapter;
 import org.asciidoc.intellij.asciidoc.AntoraIncludeAdapter;
+import org.asciidoc.intellij.asciidoc.AntoraReferenceAdapter;
 import org.asciidoc.intellij.asciidoc.AttributesRetriever;
 import org.asciidoc.intellij.asciidoc.PrependConfig;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
@@ -45,6 +45,7 @@ import org.asciidoctor.jruby.AsciidoctorJRuby;
 import org.asciidoctor.log.LogHandler;
 import org.asciidoctor.log.LogRecord;
 import org.asciidoctor.log.Severity;
+import org.intellij.lang.annotations.Language;
 import org.jcodings.EncodingDB;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -114,8 +115,6 @@ public class AsciiDoc {
   private static final PrependConfig PREPEND_CONFIG = new PrependConfig();
 
   private static final AntoraIncludeAdapter ANTORA_INCLUDE_ADAPTER = new AntoraIncludeAdapter();
-
-  private static final AntoraImageAdapter ANTORA_IMAGE_ADAPTER = new AntoraImageAdapter();
 
   private static final AttributesRetriever ATTRIBUTES_RETRIEVER = new AttributesRetriever();
 
@@ -206,7 +205,6 @@ public class AsciiDoc {
           asciidoctor.javaExtensionRegistry().preprocessor(PREPEND_CONFIG);
           asciidoctor.javaExtensionRegistry().includeProcessor(ANTORA_INCLUDE_ADAPTER);
           if (format == FileType.JAVAFX || format == FileType.HTML) {
-            asciidoctor.javaExtensionRegistry().postprocessor(ANTORA_IMAGE_ADAPTER);
             asciidoctor.javaExtensionRegistry().postprocessor(ATTRIBUTES_RETRIEVER);
           }
           // disable JUL logging of captured messages
@@ -230,6 +228,21 @@ public class AsciiDoc {
             try (InputStream is = this.getClass().getResourceAsStream("/plantuml-png-patch.rb")) {
               if (is == null) {
                 throw new RuntimeException("unable to load script plantuml-png-patch.rb");
+              }
+              asciidoctor.rubyExtensionRegistry().loadClass(is);
+            }
+          }
+          if (format.backend.equals("html5")) {
+            try (InputStream is = this.getClass().getResourceAsStream("/html5-antora.rb")) {
+              if (is == null) {
+                throw new RuntimeException("unable to load script html5-antora.rb");
+              }
+              asciidoctor.rubyExtensionRegistry().loadClass(is);
+            }
+          } else if (format.backend.equals("pdf")) {
+            try (InputStream is = this.getClass().getResourceAsStream("/pdf-antora.rb")) {
+              if (is == null) {
+                throw new RuntimeException("unable to load script pdf-antora.rb");
               }
               asciidoctor.rubyExtensionRegistry().loadClass(is);
             }
@@ -464,19 +477,19 @@ public class AsciiDoc {
     void notify(ByteArrayOutputStream boasOut, ByteArrayOutputStream boasErr, List<LogRecord> logRecords);
   }
 
-  public String render(String text, List<String> extensions) {
+  public String render(@Language("asciidoc") String text, List<String> extensions) {
     return render(text, "", extensions, this::notify);
   }
 
-  public String render(String text, String config, List<String> extensions) {
+  public String render(@Language("asciidoc") String text, String config, List<String> extensions) {
     return render(text, config, extensions, this::notify);
   }
 
-  public String render(String text, String config, List<String> extensions, Notifier notifier) {
+  public String render(@Language("asciidoc") String text, String config, List<String> extensions, Notifier notifier) {
     return render(text, config, extensions, notifier, FileType.JAVAFX);
   }
 
-  public String render(String text, String config, List<String> extensions, Notifier notifier, FileType format) {
+  public String render(@Language("asciidoc") String text, String config, List<String> extensions, Notifier notifier, FileType format) {
     VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
       LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
@@ -496,7 +509,7 @@ public class AsciiDoc {
         asciidoctor.registerLogHandler(logHandler);
         PREPEND_CONFIG.setConfig(config);
         ANTORA_INCLUDE_ADAPTER.setAntoraDetails(project, antoraModuleDir);
-        ANTORA_IMAGE_ADAPTER.setAntoraDetails(project, antoraModuleDir, fileBaseDir);
+        AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir);
         try {
           return "<div id=\"content\">\n" + asciidoctor.convert(text,
             getDefaultOptions(FileType.JAVAFX, springRestDocsSnippets, attributes)) + "\n</div>";
@@ -550,6 +563,7 @@ public class AsciiDoc {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         PREPEND_CONFIG.setConfig(config);
         ANTORA_INCLUDE_ADAPTER.setAntoraDetails(project, antoraModuleDir);
+        AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir);
         asciidoctor.registerLogHandler(logHandler);
         try {
           asciidoctor.convertFile(file, getExportOptions(
