@@ -21,6 +21,9 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -566,14 +569,19 @@ public class AsciiDoc {
         AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir);
         asciidoctor.registerLogHandler(logHandler);
         try {
-          asciidoctor.convertFile(file, getExportOptions(
-            getDefaultOptions(format, springRestDocsSnippets, attributes), format));
+          ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+          if (indicator == null || !indicator.isCanceled()) {
+            asciidoctor.convertFile(file, getExportOptions(
+              getDefaultOptions(format, springRestDocsSnippets, attributes), format));
+          }
         } finally {
           PREPEND_CONFIG.setConfig("");
           ANTORA_INCLUDE_ADAPTER.setAntoraDetails(null, null);
           imagesdir = ATTRIBUTES_RETRIEVER.getImagesdir();
           asciidoctor.unregisterLogHandler(logHandler);
         }
+      } catch (ProcessCanceledException ex) {
+        throw ex;
       } catch (Exception | ServiceConfigurationError ex) {
         LOG.warn("unable to render AsciiDoc document", ex);
         logHandler.log(new LogRecord(Severity.FATAL, ex.getMessage()));

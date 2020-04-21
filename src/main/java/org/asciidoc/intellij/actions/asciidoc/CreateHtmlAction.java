@@ -9,8 +9,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -58,8 +58,10 @@ public class CreateHtmlAction extends AsciiDocAction {
     }
 
     ApplicationManager.getApplication().runWriteAction(() ->
-      ProgressManager.getInstance().executeProcessUnderProgress(() -> {
-        ApplicationManager.getApplication().saveAll();
+      ApplicationManager.getApplication().saveAll());
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+      ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+      ApplicationManager.getApplication().runReadAction(() -> {
         File fileBaseDir = new File("");
         VirtualFile parent = file.getParent();
         if (parent != null && parent.getCanonicalPath() != null) {
@@ -79,7 +81,9 @@ public class CreateHtmlAction extends AsciiDocAction {
             .refreshAndFindFileByUrl(changeFileExtensionToHtml(file.getUrl()));
           updateProjectView(virtualFile != null ? virtualFile : parent);
           if (virtualFile != null) {
-            BrowserUtil.browse(virtualFile);
+            if (!indicator.isCanceled()) {
+              BrowserUtil.browse(virtualFile);
+            }
           }
         } finally {
           if (tempImagesPath != null) {
@@ -90,8 +94,8 @@ public class CreateHtmlAction extends AsciiDocAction {
             }
           }
         }
-      }, new ProgressIndicatorBase()));
-
+      });
+    }, "Creating HTML", true, project);
   }
 
   private String changeFileExtensionToHtml(String filePath) {

@@ -9,8 +9,8 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -54,8 +54,10 @@ public class CreatePdfAction extends AsciiDocAction {
     }
 
     ApplicationManager.getApplication().runWriteAction(() ->
-      ProgressManager.getInstance().executeProcessUnderProgress(() -> {
-        ApplicationManager.getApplication().saveAll();
+      ApplicationManager.getApplication().saveAll());
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+      ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+      ApplicationManager.getApplication().runReadAction(() -> {
         File fileBaseDir = new File("");
         VirtualFile parent = file.getParent();
         if (parent != null && parent.getCanonicalPath() != null) {
@@ -73,7 +75,9 @@ public class CreatePdfAction extends AsciiDocAction {
             .refreshAndFindFileByUrl(file.getUrl().replaceAll("\\.(adoc|asciidoc|ad)$", ".pdf"));
           updateProjectView(virtualFile != null ? virtualFile : parent);
           if (virtualFile != null) {
-            new OpenFileDescriptor(project, virtualFile).navigate(true);
+            if (!indicator.isCanceled()) {
+              new OpenFileDescriptor(project, virtualFile).navigate(true);
+            }
           }
         } finally {
           if (tempImagesPath != null) {
@@ -84,8 +88,8 @@ public class CreatePdfAction extends AsciiDocAction {
             }
           }
         }
-      }, new ProgressIndicatorBase()));
-
+      });
+    }, "Creating PDF", true, project);
   }
 
   private void updateProjectView(VirtualFile virtualFile) {

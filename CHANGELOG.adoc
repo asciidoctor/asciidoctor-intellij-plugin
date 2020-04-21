@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - when referencing images in other Antora modules, assume image family for reference
 - refactoring resolving Antora targets for images and xrefs for HTML preview; now also works for PDFs (#441)
+- avoid deadlock when creating PDF/HTML; show cancelable popup
 
 === 0.30.61 (preview, available from GitHub releases)
 
