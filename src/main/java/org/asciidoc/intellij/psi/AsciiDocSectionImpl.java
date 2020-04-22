@@ -3,6 +3,7 @@ package org.asciidoc.intellij.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -13,6 +14,7 @@ import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.parser.AsciiDocParserImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
 import java.util.List;
@@ -70,6 +72,8 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
     return key;
   }
 
+  @SuppressWarnings("SameParameterValue")
+  @TestOnly
   protected String getAttribute(String attr, String defaultVal) {
     String val = defaultVal;
     List<AsciiDocAttributeDeclaration> idPrefixDecl = AsciiDocUtil.findAttributes(this.getProject(), attr);
@@ -100,6 +104,19 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
     return null;
   }
 
+  @Override
+  public String getAttribute(String name) {
+    for (PsiElement child : this.getChildren()) {
+      if (child instanceof AsciiDocBlockAttributes) {
+        return ((AsciiDocBlockAttributes) child).getAttribute(name);
+      }
+      if (HEADINGS.contains(getNode().getElementType())) {
+        break;
+      }
+    }
+    return null;
+  }
+
   /**
    * Compare a ID to the automatically generated ID of this section. Will ignore any numeric suffix in the ID.
    */
@@ -109,7 +126,7 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
     if (keyToCompare.length() < ownKey.length()) {
       return false;
     }
-    if (!keyToCompare.substring(0, ownKey.length()).equals(ownKey)) {
+    if (!keyToCompare.startsWith(ownKey)) {
       return false;
     }
     if (keyToCompare.length() == ownKey.length()) {
@@ -178,7 +195,7 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
   }
 
   @Override
-  public int headingLevel() {
+  public int getHeadingLevel() {
     ASTNode heading = getNode().findChildByType(HEADINGS);
     if (heading == null) {
       throw new IllegalStateException("heading without heading");

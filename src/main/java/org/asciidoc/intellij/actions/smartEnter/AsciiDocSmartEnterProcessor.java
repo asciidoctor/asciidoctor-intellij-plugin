@@ -245,11 +245,11 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
           Collection<AsciiDocSection> childrenOfType = PsiTreeUtil.findChildrenOfType(resolve, AsciiDocSection.class);
           if (childrenOfType.size() > 0) {
             AsciiDocSection next = childrenOfType.iterator().next();
-            int includeLevel = next.headingLevel();
+            int includeLevel = next.getHeadingLevel();
             AsciiDocSection parentSection = (AsciiDocSection) PsiTreeUtil.findFirstParent(parent, psiElement -> psiElement instanceof AsciiDocSection);
             if (parentSection != null) {
               // derive section level from current section
-              int parentLevel = parentSection.headingLevel();
+              int parentLevel = parentSection.getHeadingLevel();
               int delta = parentLevel - includeLevel + 1;
               if (delta > 0) {
                 textToInsert = "leveloffset=+" + delta + textToInsert;

@@ -512,7 +512,7 @@ public class AsciiDoc {
         asciidoctor.registerLogHandler(logHandler);
         PREPEND_CONFIG.setConfig(config);
         ANTORA_INCLUDE_ADAPTER.setAntoraDetails(project, antoraModuleDir);
-        AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir);
+        AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
         try {
           return "<div id=\"content\">\n" + asciidoctor.convert(text,
             getDefaultOptions(FileType.JAVAFX, springRestDocsSnippets, attributes)) + "\n</div>";
@@ -566,7 +566,7 @@ public class AsciiDoc {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         PREPEND_CONFIG.setConfig(config);
         ANTORA_INCLUDE_ADAPTER.setAntoraDetails(project, antoraModuleDir);
-        AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir);
+        AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
         asciidoctor.registerLogHandler(logHandler);
         try {
           ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();

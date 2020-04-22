@@ -1,32 +1,41 @@
 package org.asciidoc.intellij.asciidoc;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
+import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoctor.jruby.ast.impl.PhraseNodeImpl;
 import org.jruby.RubyObject;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_PREFIX_AND_FAMILY_PATTERN;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraNavFiles;
 
 public class AntoraReferenceAdapter {
 
-  public static void setAntoraDetails(Project project, VirtualFile antoraModuleDir, File fileBaseDir) {
+  public static void setAntoraDetails(Project project, VirtualFile antoraModuleDir, File fileBaseDir, String name) {
     AntoraReferenceAdapter.project = project;
     AntoraReferenceAdapter.antoraModuleDir = antoraModuleDir;
     AntoraReferenceAdapter.fileBaseDir = fileBaseDir;
+    AntoraReferenceAdapter.name = name;
   }
 
   private static Project project;
   private static VirtualFile antoraModuleDir;
   private static File fileBaseDir;
+  private static String name;
 
   public static void convertInlineAnchor(RubyObject node) {
     convertAntora(node, "inline_anchor");
@@ -45,8 +54,6 @@ public class AntoraReferenceAdapter {
       PhraseNodeImpl phraseNode = new PhraseNodeImpl(node);
       String outfileSuffix = (String) phraseNode.getDocument().getAttribute("outfilesuffix");
       String target = phraseNode.getTarget(); // example$page.html - the link, with .adoc already replaced to .html
-      String text = phraseNode.getText(); // default text as passed in brackets
-      boolean emptyText = Objects.equals(target, text);
       Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(target);
       if (urlMatcher.find()) {
         return;
@@ -73,7 +80,7 @@ public class AntoraReferenceAdapter {
         }
         target = target.substring(0, target.length() - outfileSuffix.length()) + ".adoc";
       }
-      String defaultFamily = null;
+      String defaultFamily;
       switch (type) {
         case "inline_anchor":
           defaultFamily = "page";
@@ -93,6 +100,44 @@ public class AntoraReferenceAdapter {
       target = replaced.get(0);
       VirtualFile sourceDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
       VirtualFile targetFile = LocalFileSystem.getInstance().findFileByIoFile(new File(target));
+      if (phraseNode.getText() == null && type.equals("inline_anchor") && targetFile != null && sourceDir != null) {
+        ApplicationManager.getApplication().runReadAction(() -> {
+          PsiFile file = PsiManager.getInstance(project).findFile(targetFile);
+          if (file != null) {
+            String refText = null;
+            Collection<AsciiDocAttributeDeclaration> attributeDeclarations = AsciiDocUtil.findPageAttributes(file);
+            for (AsciiDocAttributeDeclaration attributeDeclaration : attributeDeclarations) {
+              if (attributeDeclaration.getAttributeName().equals("navtitle")) {
+                VirtualFile sourceFile = sourceDir.findChild(name);
+                if (sourceFile != null) {
+                  Collection<VirtualFile> antoraNavFiles = findAntoraNavFiles(project, antoraModuleDir);
+                  if (antoraNavFiles.contains(sourceFile)) {
+                    refText = attributeDeclaration.getAttributeValue();
+                    break;
+                  }
+                }
+              }
+              if (attributeDeclaration.getAttributeName().equals("reftext")) {
+                refText = attributeDeclaration.getAttributeValue();
+                // don't break, there might be a "navtitle"
+              }
+            }
+            if (refText == null) {
+              Collection<AsciiDocSection> sections = PsiTreeUtil.findChildrenOfType(file, AsciiDocSection.class);
+              for (AsciiDocSection section : sections) {
+                if (section.getHeadingLevel() == 1) {
+                  refText = section.getTitle();
+                }
+                // only look at first section == title of document
+                break;
+              }
+            }
+            if (refText != null) {
+              phraseNode.setString("text", refText);
+            }
+          }
+        });
+      }
       String relativePath = null;
       if (sourceDir != null && targetFile != null) {
         relativePath = FileUtil.getRelativePath(fileBaseDir, new File(target));
@@ -117,5 +162,4 @@ public class AntoraReferenceAdapter {
       phraseNode.setString("target", target);
     }
   }
-
 }

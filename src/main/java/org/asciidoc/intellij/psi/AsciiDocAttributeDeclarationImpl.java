@@ -64,6 +64,9 @@ public class AsciiDocAttributeDeclarationImpl
       }
     }
     ASTNode attributeValue = getNode().findChildByType(AsciiDocTokenTypes.ATTRIBUTE_VAL);
+    if (isUnset()) {
+      return null;
+    }
     if (attributeValue != null) {
       StringBuilder sb = new StringBuilder();
       while (attributeValue != null) {

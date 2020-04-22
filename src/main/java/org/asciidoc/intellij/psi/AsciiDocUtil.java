@@ -489,6 +489,55 @@ public class AsciiDocUtil {
     return null;
   }
 
+  public static Collection<VirtualFile> findAntoraNavFiles(Project project, VirtualFile moduleDir) {
+    if (moduleDir.getParent() == null || !moduleDir.getParent().getName().equals("modules")) {
+      return Collections.emptyList();
+    }
+    VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
+    if (antoraFile == null) {
+      return Collections.emptyList();
+    }
+    Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
+    if (document == null) {
+      return Collections.emptyList();
+    }
+    Yaml myYaml = new Yaml();
+    Map<String, Object> myAntora = myYaml.load(document.getText());
+    String myComponentName = getAttributeAsString(myAntora, "name");
+    String myComponentVersion = getAttributeAsString(myAntora, "version");
+
+    PsiFile[] files =
+      FilenameIndex.getFilesByName(project, ANTORA_YML, GlobalSearchScope.projectScope(project));
+    ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
+    Collection<VirtualFile> result = new HashSet<>();
+    for (PsiFile file : files) {
+      if (index.isInLibrary(file.getVirtualFile())
+        || index.isExcluded(file.getVirtualFile())
+        || index.isInLibraryClasses(file.getVirtualFile())
+        || index.isInLibrarySource(file.getVirtualFile())) {
+        continue;
+      }
+      Yaml yaml = new Yaml();
+      Map<String, Object> antora = yaml.load(file.getText());
+      if (!Objects.equals(myComponentName, getAttributeAsString(antora, "name"))) {
+        continue;
+      }
+      if (!Objects.equals(myComponentVersion, getAttributeAsString(antora, "version"))) {
+        continue;
+      }
+      Object nav = antora.get("nav");
+      if (nav instanceof Collection) {
+        for (Object item : (Collection<?>) nav) {
+          VirtualFile fileByRelativePath = file.getVirtualFile().getParent().findFileByRelativePath(item.toString());
+          if (fileByRelativePath != null) {
+            result.add(fileByRelativePath);
+          }
+        }
+      }
+    }
+    return result;
+  }
+
   public static VirtualFile findSpringRestDocSnippets(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
@@ -1016,6 +1065,19 @@ public class AsciiDocUtil {
       }
     }
     return i;
+  }
+
+  public static Collection<AsciiDocAttributeDeclaration> findPageAttributes(PsiFile file) {
+    Collection<AsciiDocAttributeDeclaration> result = new ArrayList<>();
+    findPageAttributes(file, 0, result);
+    return result;
+  }
+
+  protected static boolean findPageAttributes(PsiFile file, int depth, Collection<AsciiDocAttributeDeclaration> result) {
+    if (depth > 64) {
+      return true;
+    }
+    return PsiTreeUtil.processElements(file, new PageAttributeProcessor(result, depth + 1));
   }
 
 }
