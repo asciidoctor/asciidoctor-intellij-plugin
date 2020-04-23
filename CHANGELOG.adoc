@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.63 (work in progress)
+
+- prevent scope-enlarger to break refactorings like introduce-variable (#466)
+
 === 0.30.62 (preview, available from GitHub releases)
 
 - when referencing images in other Antora modules, assume image family for reference

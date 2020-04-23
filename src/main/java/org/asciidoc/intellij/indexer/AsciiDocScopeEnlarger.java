@@ -12,7 +12,11 @@ public class AsciiDocScopeEnlarger extends UseScopeEnlarger {
   @Nullable
   @Override
   public SearchScope getAdditionalUseScope(@NotNull PsiElement element) {
-    // any element can be referenced from an AsciiDoc element within the same project (directory, file, image, or an ID in an AsciiDoc file)
-    return GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(element.getProject()), AsciiDocFileType.INSTANCE);
+    // not restricting to GlobalSearchScope breaks refactorings like extract-variable
+    if (element.getUseScope() instanceof GlobalSearchScope) {
+      // any element can be referenced from an AsciiDoc element within the same project (directory, file, image, or an ID in an AsciiDoc file)
+      return GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(element.getProject()), AsciiDocFileType.INSTANCE);
+    }
+    return null;
   }
 }
