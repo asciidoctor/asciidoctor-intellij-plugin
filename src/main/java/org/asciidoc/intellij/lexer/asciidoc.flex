@@ -966,8 +966,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          yypushback(yylength());
                          yypushstate();
                          yybegin(PASSTHROUGH_SECOND_TRY);
+                       } else {
+                         return textFormat();
                        }
-
   }
   // PASSTHROUGH END
 

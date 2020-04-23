@@ -7,7 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.59 (preview, available from GitHub releases)
+=== 0.30.59.1
+
+- prevent parsing to mis-align tokens after a `+` that could lead to their removal upon re-format (#463)
+
+=== 0.30.59
 
 - rebuild indexes for bibliographic references (#459)
 
