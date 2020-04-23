@@ -1,0 +1,3 @@
+= Index
+
+Should display as 'ref text': xref:xrefExample.adoc[]

@@ -1,0 +1,6 @@
+= Page with xref
+:reftext: ref text
+:navtitle: nav title
+
+xref:index.adoc[]
+

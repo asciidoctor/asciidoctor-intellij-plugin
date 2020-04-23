@@ -1,0 +1,14 @@
+site:
+  title: xref test
+  url: http://example.com
+  start_page: my-component::index.adoc
+content:
+  sources:
+  - url: ./../../..
+    start_paths: testData/psi/antoraXrefTest
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true
+output:
+  clean: true
