@@ -24,6 +24,12 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:LINE_COMMENT ('// bar')");
   }
 
+  public void testPassthroughStartButThatisText() {
+    doTest("+ ",
+      "AsciiDoc:TEXT ('+')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')");
+  }
+
   public void testListing() {
     doTest("some text at start\n----\nbbbb\n----\ncccc",
       "AsciiDoc:TEXT ('some')\n" +
@@ -1384,10 +1390,10 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testHardBreakAtBlockEnd() {
     doTest("|===\n" +
-      "|XX +\n" +
-      "|===\n" +
-      "\n" +
-      "== Title",
+        "|XX +\n" +
+        "|===\n" +
+        "\n" +
+        "== Title",
       "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('|XX')\n" +
