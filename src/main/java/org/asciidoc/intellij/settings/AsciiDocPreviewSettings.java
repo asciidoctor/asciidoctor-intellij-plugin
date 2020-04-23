@@ -86,6 +86,9 @@ public final class AsciiDocPreviewSettings {
   @Attribute("EnabledFoldedAttributeReferencedExperimental")
   private boolean myEnableAttributeFolding = false;
 
+  @Attribute("Zoom")
+  private Integer myZoom = 100;
+
   public AsciiDocPreviewSettings() {
   }
 
@@ -101,7 +104,8 @@ public final class AsciiDocPreviewSettings {
                                  boolean inplacePreviewRefresh,
                                  boolean enableKroki,
                                  String krokiUrl,
-                                 boolean enableAttributeFolding) {
+                                 boolean enableAttributeFolding,
+                                 int zoom) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
@@ -117,6 +121,7 @@ public final class AsciiDocPreviewSettings {
     myEnableKroki = enableKroki;
     myKrokiUrl = krokiUrl;
     myEnableAttributeFolding = enableAttributeFolding;
+    myZoom = zoom;
   }
 
   @NotNull
@@ -184,6 +189,10 @@ public final class AsciiDocPreviewSettings {
     return myEnableAttributeFolding;
   }
 
+  public int getZoom() {
+    return myZoom != null ? myZoom : 100;
+  }
+
   public List<String> getDisabledInjectionsByLanguageAsList() {
     List<String> list = new ArrayList<>();
     if (myDisabledInjectionsByLanguage != null) {
@@ -248,6 +257,9 @@ public final class AsciiDocPreviewSettings {
     if (myEnableAttributeFolding != that.myEnableAttributeFolding) {
       return false;
     }
+    if (!Objects.equals(myZoom, that.myZoom)) {
+      return false;
+    }
     return attributes.equals(that.attributes);
   }
 
@@ -268,6 +280,7 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + (myEnableKroki ? 1 : 0);
     result = 31 * result + Objects.hashCode(myKrokiUrl);
     result = 31 * result + (myEnableAttributeFolding ? 1 : 0);
+    result = 31 * result + Objects.hashCode(myZoom);
     return result;
   }
 

@@ -51,6 +51,7 @@ import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
+import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -132,7 +133,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
   private void render() {
     final String config = AsciiDoc.config(document, project);
-    final String content = document.getText();
+    final @Language("asciidoc") String content = document.getText();
     List<String> extensions = AsciiDoc.getExtensions(project);
 
     lazyExecutor.execute(() -> {
@@ -186,7 +187,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh(),
         settings.getAsciiDocPreviewSettings().isKrokiEnabled(),
         settings.getAsciiDocPreviewSettings().getKrokiUrl(),
-        settings.getAsciiDocPreviewSettings().isAttributeFoldingEnabled()));
+        settings.getAsciiDocPreviewSettings().isAttributeFoldingEnabled(),
+        settings.getAsciiDocPreviewSettings().getZoom()));
 
       /* the following will not work, IntellIJ will show the error "parent must be showing" when this is
          tiggered during startup. */

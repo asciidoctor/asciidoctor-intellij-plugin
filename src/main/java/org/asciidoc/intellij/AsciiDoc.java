@@ -420,7 +420,7 @@ public class AsciiDoc {
   }
 
   @NotNull
-  public static String config(Document document, Project project) {
+  public static @Language("asciidoc") String config(Document document, Project project) {
     VirtualFile currentFile = FileDocumentManager.getInstance().getFile(document);
     StringBuilder tempContent = new StringBuilder();
     if (currentFile != null) {

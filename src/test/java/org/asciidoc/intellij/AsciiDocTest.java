@@ -157,7 +157,8 @@ public class AsciiDocTest extends BasePlatformTestCase {
       true,
       true,
       "",
-      true));
+      true,
+      1));
     try {
       String html = asciidoc.render(":action: generates\n" +
         "\n" +
@@ -190,7 +191,8 @@ public class AsciiDocTest extends BasePlatformTestCase {
       true,
       true,
       "",
-      true));
+      true,
+      1));
     try {
       String html = asciidoc.render("[erd]\n" +
         "----\n" +
@@ -230,7 +232,8 @@ public class AsciiDocTest extends BasePlatformTestCase {
       true,
       true,
       "http://internal.secure.domain/kroki",
-      true));
+      true,
+      1));
     try {
       String html = asciidoc.render("[nomnoml]\n" +
         "----\n" +

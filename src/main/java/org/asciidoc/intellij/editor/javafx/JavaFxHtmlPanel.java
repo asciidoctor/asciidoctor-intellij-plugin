@@ -234,7 +234,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
             updateFontSmoothingType(myWebView, false);
             registerContextMenu(JavaFxHtmlPanel.this.myWebView);
             myWebView.setContextMenuEnabled(false);
-            myWebView.setZoom(JBUI.scale(1.f));
+            float uiZoom = (float) AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getZoom() / 100;
+            myWebView.setZoom(JBUI.scale(uiZoom));
             myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>", null));
 
             myWebView.addEventFilter(ScrollEvent.SCROLL, scrollEvent -> {

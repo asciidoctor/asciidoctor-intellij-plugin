@@ -15,8 +15,14 @@ import org.asciidoctor.SafeMode;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +58,8 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JBTextField myKrokiUrl;
   private JBTextField myLanguageForPassthrough;
   private JBCheckBox myEnabledAttributeFolding;
+  private JFormattedTextField myZoom;
+  private JPanel myZoomSettings;
 
   public JComponent getComponent() {
     return myMainPanel;
@@ -94,6 +102,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       } else {
         myLastItem = item;
       }
+      adjustZoomOptions();
     });
 
     attributeTable = new AttributeTable();
@@ -108,6 +117,15 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myKrokiUrlPanel.setVisible(true);
     } else {
       myKrokiUrlPanel.setVisible(false);
+    }
+  }
+
+  private void adjustZoomOptions() {
+    if (myPreviewPanelModel.getSelected() != null &&
+      myPreviewPanelModel.getSelected().getName().contains("JavaFX")) {
+      myZoomSettings.setVisible(true);
+    } else {
+      myZoomSettings.setVisible(false);
     }
   }
 
@@ -182,6 +200,12 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     myKrokiUrl.setTextToTriggerEmptyTextStatus("https://kroki.io");
 
+    NumberFormat rateFormat = NumberFormat.getPercentInstance();
+    rateFormat.setMinimumFractionDigits(0);
+    ((DecimalFormat) rateFormat).setParseBigDecimal(true);
+    rateFormat.setGroupingUsed(false);
+    myZoom.setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(rateFormat)));
+    myZoom.setValue(BigDecimal.valueOf(settings.getZoom(), 2));
   }
 
   @NotNull
@@ -201,10 +225,11 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     }
 
     return new AsciiDocPreviewSettings(mySplitLayoutModel.getSelectedItem(),
-      myPreviewPanelModel.getSelected(), myPreviewThemeModel.getSelectedItem(),  mySafeModeModel.getSelectedItem(), attributes,
+      myPreviewPanelModel.getSelected(), myPreviewThemeModel.getSelectedItem(), mySafeModeModel.getSelectedItem(), attributes,
       myVerticalLayout.isSelected(), myEditorTop.isSelected() || myEditorLeft.isSelected(), myEnableInjections.isSelected(),
       myLanguageForPassthrough.getText(), myDisabledInjectionsByLanguage.getText(),
       myShowAsciiDocWarningsAndErrorsInEditor.isSelected(), myInplacePreviewRefresh.isSelected(),
-      myEnableKroki.isSelected(), krokiUrl, myEnabledAttributeFolding.isSelected());
+      myEnableKroki.isSelected(), krokiUrl, myEnabledAttributeFolding.isSelected(),
+      ((BigDecimal) myZoom.getValue()).setScale(2, RoundingMode.UP).unscaledValue().intValue());
   }
 }
