@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.30.65 (preview, available from GitHub releases)
 
-- fix issue when displaying block image macro in preview (#441)
+- fix issue when displaying block image macro in preview for Antora (#441)
 - avoid deadlock when creating PDF/HTML; show cancelable popup
 - when preparing the preview for Antora, calculate image path from `imagesdir` (#468)
 
