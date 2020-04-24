@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.64 (preview, available from GitHub releases)
+
+- double-check whitespace before creating formatting model (#463)
+
 === 0.30.63 (preview, available from GitHub releases)
 
 - prevent scope-enlarger to break refactorings like introduce-variable (#466)

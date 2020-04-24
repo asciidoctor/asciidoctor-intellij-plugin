@@ -5,8 +5,11 @@ import com.intellij.formatting.Block;
 import com.intellij.formatting.Indent;
 import com.intellij.formatting.Spacing;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.Language;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.formatter.WhiteSpaceFormattingStrategy;
+import com.intellij.psi.formatter.WhiteSpaceFormattingStrategyFactory;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.TokenSet;
 import org.asciidoc.intellij.codeStyle.AsciiDocCodeStyleSettings;
@@ -17,26 +20,30 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class AsciiDocBlock extends AbstractBlock {
-
   private boolean verse = false;
   private boolean table = false;
   private boolean hardbreaks = false;
   private final CodeStyleSettings settings;
+  private final Map<Language, WhiteSpaceFormattingStrategy> wssCache;
 
   AsciiDocBlock(@NotNull ASTNode node, CodeStyleSettings settings) {
     super(node, null, Alignment.createAlignment());
     this.settings = settings;
+    this.wssCache = new HashMap<>();
   }
 
-  private AsciiDocBlock(@NotNull ASTNode node, CodeStyleSettings settings, boolean verse, boolean table, boolean hardbreaks) {
+  private AsciiDocBlock(@NotNull ASTNode node, CodeStyleSettings settings, boolean verse, boolean table, boolean hardbreaks, Map<Language, WhiteSpaceFormattingStrategy> wss) {
     super(node, null, Alignment.createAlignment());
     this.settings = settings;
     this.verse = verse;
     this.table = table;
     this.hardbreaks = hardbreaks;
+    this.wssCache = wss;
   }
 
   @Override
@@ -63,7 +70,17 @@ class AsciiDocBlock extends AbstractBlock {
     ASTNode child = myNode.getFirstChildNode();
     while (child != null) {
       if (!(child instanceof PsiWhiteSpace)) {
-        result.add(new AsciiDocBlock(child, settings, verse, table, hardbreaks));
+        result.add(new AsciiDocBlock(child, settings, verse, table, hardbreaks, wssCache));
+      } else {
+        WhiteSpaceFormattingStrategy myWhiteSpaceStrategy = wssCache.computeIfAbsent((((PsiWhiteSpace) child).getLanguage()),
+          WhiteSpaceFormattingStrategyFactory::getStrategy);
+        // double-check for a whitespace problem in lexer before re-formatting,
+        // otherwise non-whitespace characters might get lost!
+        CharSequence text = child.getChars();
+        int end = text.length();
+        if (myWhiteSpaceStrategy.check(text, 0, end) != end) {
+          throw new IllegalStateException("Whitespace element contains non-whitespace-characters: '" + child.getText() + "' at offset + " + child.getStartOffset());
+        }
       }
       child = child.getTreeNext();
     }
