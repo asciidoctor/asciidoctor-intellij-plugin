@@ -25,6 +25,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.apache.commons.io.IOUtils;
@@ -502,50 +503,52 @@ public class AsciiDoc {
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
     );
     Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
-    synchronized (AsciiDoc.class) {
-      CollectingLogHandler logHandler = new CollectingLogHandler();
-      ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
-      ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
-      SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
-      try {
-        Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
-        asciidoctor.registerLogHandler(logHandler);
-        PREPEND_CONFIG.setConfig(config);
-        ANTORA_INCLUDE_ADAPTER.setAntoraDetails(project, antoraModuleDir);
-        AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
+    return ApplicationManager.getApplication().runReadAction((Computable<String>) () -> {
+      synchronized (AsciiDoc.class) {
+        CollectingLogHandler logHandler = new CollectingLogHandler();
+        ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
+        ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
+        SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
         try {
-          return "<div id=\"content\">\n" + asciidoctor.convert(text,
-            getDefaultOptions(FileType.JAVAFX, springRestDocsSnippets, attributes)) + "\n</div>";
-        } finally {
-          imagesdir = ATTRIBUTES_RETRIEVER.getImagesdir();
-          PREPEND_CONFIG.setConfig("");
-          ANTORA_INCLUDE_ADAPTER.setAntoraDetails(null, null);
-          asciidoctor.unregisterLogHandler(logHandler);
-        }
-      } catch (Exception | ServiceConfigurationError ex) {
-        LOG.warn("unable to render AsciiDoc document", ex);
-        logHandler.log(new LogRecord(Severity.FATAL, ex.getMessage()));
-        StringBuilder response = new StringBuilder();
-        response.append("unable to render AsciiDoc document");
-        Throwable t = ex;
-        do {
-          response.append("<p>").append(t.getClass().getCanonicalName()).append(": ").append(t.getMessage());
-          if (t instanceof MainExitException && t.getMessage().startsWith("unknown encoding name")) {
-            response.append("<p>Either your local encoding is not supported by JRuby, or you passed an unrecognized value to the Java property 'file.encoding' either in the IntelliJ options file or via the JAVA_TOOL_OPTION environment variable.");
-            String property = SafePropertyAccessor.getProperty("file.encoding", null);
-            response.append("<p>encoding passed by system property 'file.encoding': ").append(property);
-            response.append("<p>available encodings (excuding aliases): ");
-            EncodingDB.getEncodings().forEach(entry -> response.append(entry.getEncoding().getCharsetName()).append(" "));
+          Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
+          asciidoctor.registerLogHandler(logHandler);
+          PREPEND_CONFIG.setConfig(config);
+          ANTORA_INCLUDE_ADAPTER.setAntoraDetails(project, antoraModuleDir);
+          AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
+          try {
+            return "<div id=\"content\">\n" + asciidoctor.convert(text,
+              getDefaultOptions(FileType.JAVAFX, springRestDocsSnippets, attributes)) + "\n</div>";
+          } finally {
+            imagesdir = ATTRIBUTES_RETRIEVER.getImagesdir();
+            PREPEND_CONFIG.setConfig("");
+            ANTORA_INCLUDE_ADAPTER.setAntoraDetails(null, null);
+            asciidoctor.unregisterLogHandler(logHandler);
           }
-          t = t.getCause();
-        } while (t != null);
-        response.append("<p>(the full exception stack trace is available in the IDE's log file. Visit menu item 'Help | Show Log in Explorer' to see the log)");
-        return response.toString();
-      } finally {
-        SystemOutputHijacker.deregister();
-        notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
+        } catch (Exception | ServiceConfigurationError ex) {
+          LOG.warn("unable to render AsciiDoc document", ex);
+          logHandler.log(new LogRecord(Severity.FATAL, ex.getMessage()));
+          StringBuilder response = new StringBuilder();
+          response.append("unable to render AsciiDoc document");
+          Throwable t = ex;
+          do {
+            response.append("<p>").append(t.getClass().getCanonicalName()).append(": ").append(t.getMessage());
+            if (t instanceof MainExitException && t.getMessage().startsWith("unknown encoding name")) {
+              response.append("<p>Either your local encoding is not supported by JRuby, or you passed an unrecognized value to the Java property 'file.encoding' either in the IntelliJ options file or via the JAVA_TOOL_OPTION environment variable.");
+              String property = SafePropertyAccessor.getProperty("file.encoding", null);
+              response.append("<p>encoding passed by system property 'file.encoding': ").append(property);
+              response.append("<p>available encodings (excuding aliases): ");
+              EncodingDB.getEncodings().forEach(entry -> response.append(entry.getEncoding().getCharsetName()).append(" "));
+            }
+            t = t.getCause();
+          } while (t != null);
+          response.append("<p>(the full exception stack trace is available in the IDE's log file. Visit menu item 'Help | Show Log in Explorer' to see the log)");
+          return response.toString();
+        } finally {
+          SystemOutputHijacker.deregister();
+          notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
+        }
       }
-    }
+    });
   }
 
   public void convertTo(File file, String config, List<String> extensions, FileType format) {
@@ -557,60 +560,63 @@ public class AsciiDoc {
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
     );
     Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
-    synchronized (AsciiDoc.class) {
-      CollectingLogHandler logHandler = new CollectingLogHandler();
-      ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
-      ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
-      SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
-      try {
-        Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
-        PREPEND_CONFIG.setConfig(config);
-        ANTORA_INCLUDE_ADAPTER.setAntoraDetails(project, antoraModuleDir);
-        AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
-        asciidoctor.registerLogHandler(logHandler);
+    ApplicationManager.getApplication().runReadAction((Computable<String>) () -> {
+      synchronized (AsciiDoc.class) {
+        CollectingLogHandler logHandler = new CollectingLogHandler();
+        ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
+        ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
+        SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
         try {
-          ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-          if (indicator == null || !indicator.isCanceled()) {
-            asciidoctor.convertFile(file, getExportOptions(
-              getDefaultOptions(format, springRestDocsSnippets, attributes), format));
+          Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
+          PREPEND_CONFIG.setConfig(config);
+          ANTORA_INCLUDE_ADAPTER.setAntoraDetails(project, antoraModuleDir);
+          AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
+          asciidoctor.registerLogHandler(logHandler);
+          try {
+            ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+            if (indicator == null || !indicator.isCanceled()) {
+              asciidoctor.convertFile(file, getExportOptions(
+                getDefaultOptions(format, springRestDocsSnippets, attributes), format));
+            }
+          } finally {
+            PREPEND_CONFIG.setConfig("");
+            ANTORA_INCLUDE_ADAPTER.setAntoraDetails(null, null);
+            imagesdir = ATTRIBUTES_RETRIEVER.getImagesdir();
+            asciidoctor.unregisterLogHandler(logHandler);
+          }
+        } catch (ProcessCanceledException ex) {
+          throw ex;
+        } catch (Exception | ServiceConfigurationError ex) {
+          LOG.warn("unable to render AsciiDoc document", ex);
+          logHandler.log(new LogRecord(Severity.FATAL, ex.getMessage()));
+          StringBuilder response = new StringBuilder();
+          response.append("unable to render AsciiDoc document");
+          Throwable t = ex;
+          do {
+            response.append("<p>").append(t.getClass().getCanonicalName()).append(": ").append(t.getMessage());
+            if (t instanceof MainExitException && t.getMessage().startsWith("unknown encoding name")) {
+              response.append("<p>Either your local encoding is not supported by JRuby, or you passed an unrecognized value to the Java property 'file.encoding' either in the IntelliJ options file or via the JAVA_TOOL_OPTION environment variable.");
+              String property = SafePropertyAccessor.getProperty("file.encoding", null);
+              response.append("<p>encoding passed by system property 'file.encoding': ").append(property);
+              response.append("<p>available encodings (excuding aliases): ");
+              EncodingDB.getEncodings().forEach(entry -> response.append(entry.getEncoding().getCharsetName()).append(" "));
+            }
+            t = t.getCause();
+          } while (t != null);
+          response.append("<p>(the full exception stack trace is available in the IDE's log file. Visit menu item 'Help | Show Log in Explorer' to see the log)");
+          try {
+            boasErr.write(response.toString().getBytes(StandardCharsets.UTF_8));
+          } catch (IOException e) {
+            throw new RuntimeException("Unable to write bytes");
           }
         } finally {
-          PREPEND_CONFIG.setConfig("");
-          ANTORA_INCLUDE_ADAPTER.setAntoraDetails(null, null);
-          imagesdir = ATTRIBUTES_RETRIEVER.getImagesdir();
-          asciidoctor.unregisterLogHandler(logHandler);
+          SystemOutputHijacker.deregister();
+          Notifier notifier = this::notifyAlways;
+          notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
         }
-      } catch (ProcessCanceledException ex) {
-        throw ex;
-      } catch (Exception | ServiceConfigurationError ex) {
-        LOG.warn("unable to render AsciiDoc document", ex);
-        logHandler.log(new LogRecord(Severity.FATAL, ex.getMessage()));
-        StringBuilder response = new StringBuilder();
-        response.append("unable to render AsciiDoc document");
-        Throwable t = ex;
-        do {
-          response.append("<p>").append(t.getClass().getCanonicalName()).append(": ").append(t.getMessage());
-          if (t instanceof MainExitException && t.getMessage().startsWith("unknown encoding name")) {
-            response.append("<p>Either your local encoding is not supported by JRuby, or you passed an unrecognized value to the Java property 'file.encoding' either in the IntelliJ options file or via the JAVA_TOOL_OPTION environment variable.");
-            String property = SafePropertyAccessor.getProperty("file.encoding", null);
-            response.append("<p>encoding passed by system property 'file.encoding': ").append(property);
-            response.append("<p>available encodings (excuding aliases): ");
-            EncodingDB.getEncodings().forEach(entry -> response.append(entry.getEncoding().getCharsetName()).append(" "));
-          }
-          t = t.getCause();
-        } while (t != null);
-        response.append("<p>(the full exception stack trace is available in the IDE's log file. Visit menu item 'Help | Show Log in Explorer' to see the log)");
-        try {
-          boasErr.write(response.toString().getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-          throw new RuntimeException("Unable to write bytes");
-        }
-      } finally {
-        SystemOutputHijacker.deregister();
-        Notifier notifier = this::notifyAlways;
-        notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
       }
-    }
+      return null;
+    });
   }
 
   public static Map<String, String> populateAntoraAttributes(String projectBasePath, File fileBaseDir, VirtualFile antoraModuleDir) {

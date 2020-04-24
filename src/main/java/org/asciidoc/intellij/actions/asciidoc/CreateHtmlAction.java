@@ -9,7 +9,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -59,32 +58,22 @@ public class CreateHtmlAction extends AsciiDocAction {
 
     ApplicationManager.getApplication().runWriteAction(() ->
       ApplicationManager.getApplication().saveAll());
-    ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-      ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+    VirtualFile parent = file.getParent();
+    boolean successful = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       ApplicationManager.getApplication().runReadAction(() -> {
-        File fileBaseDir = new File("");
-        VirtualFile parent = file.getParent();
-        if (parent != null && parent.getCanonicalPath() != null) {
-          // parent will be null if we use Language Injection and Fragment Editor
-          fileBaseDir = new File(parent.getCanonicalPath());
-        }
         Path tempImagesPath = AsciiDoc.tempImagesPath();
         try {
-
+          File fileBaseDir = new File("");
+          if (parent != null && parent.getCanonicalPath() != null) {
+            // parent will be null if we use Language Injection and Fragment Editor
+            fileBaseDir = new File(parent.getCanonicalPath());
+          }
           AsciiDoc asciiDoc = new AsciiDoc(project, fileBaseDir,
             tempImagesPath, file.getName());
           List<String> extensions = AsciiDoc.getExtensions(project);
           String config = AsciiDoc.config(editor.getDocument(), project);
 
           asciiDoc.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDoc.FileType.HTML);
-          VirtualFile virtualFile = VirtualFileManager.getInstance()
-            .refreshAndFindFileByUrl(changeFileExtensionToHtml(file.getUrl()));
-          updateProjectView(virtualFile != null ? virtualFile : parent);
-          if (virtualFile != null) {
-            if (!indicator.isCanceled()) {
-              BrowserUtil.browse(virtualFile);
-            }
-          }
         } finally {
           if (tempImagesPath != null) {
             try {
@@ -96,6 +85,16 @@ public class CreateHtmlAction extends AsciiDocAction {
         }
       });
     }, "Creating HTML", true, project);
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      VirtualFile virtualFile = VirtualFileManager.getInstance()
+        .refreshAndFindFileByUrl(changeFileExtensionToHtml(file.getUrl()));
+      updateProjectView(virtualFile != null ? virtualFile : parent);
+      if (virtualFile != null) {
+        if (successful) {
+          BrowserUtil.browse(virtualFile);
+        }
+      }
+    });
   }
 
   private String changeFileExtensionToHtml(String filePath) {

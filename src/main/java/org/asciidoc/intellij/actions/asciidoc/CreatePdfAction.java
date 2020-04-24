@@ -9,7 +9,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -55,30 +54,21 @@ public class CreatePdfAction extends AsciiDocAction {
 
     ApplicationManager.getApplication().runWriteAction(() ->
       ApplicationManager.getApplication().saveAll());
-    ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-      ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+    VirtualFile parent = file.getParent();
+    boolean successful = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       ApplicationManager.getApplication().runReadAction(() -> {
-        File fileBaseDir = new File("");
-        VirtualFile parent = file.getParent();
-        if (parent != null && parent.getCanonicalPath() != null) {
-          // parent will be null if we use Language Injection and Fragment Editor
-          fileBaseDir = new File(parent.getCanonicalPath());
-        }
         Path tempImagesPath = AsciiDoc.tempImagesPath();
         try {
+          File fileBaseDir = new File("");
+          if (parent != null && parent.getCanonicalPath() != null) {
+            // parent will be null if we use Language Injection and Fragment Editor
+            fileBaseDir = new File(parent.getCanonicalPath());
+          }
           AsciiDoc asciiDoc = new AsciiDoc(project, fileBaseDir,
             tempImagesPath, file.getName());
           List<String> extensions = AsciiDoc.getExtensions(project);
           String config = AsciiDoc.config(editor.getDocument(), project);
           asciiDoc.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDoc.FileType.PDF);
-          VirtualFile virtualFile = VirtualFileManager.getInstance()
-            .refreshAndFindFileByUrl(file.getUrl().replaceAll("\\.(adoc|asciidoc|ad)$", ".pdf"));
-          updateProjectView(virtualFile != null ? virtualFile : parent);
-          if (virtualFile != null) {
-            if (!indicator.isCanceled()) {
-              new OpenFileDescriptor(project, virtualFile).navigate(true);
-            }
-          }
         } finally {
           if (tempImagesPath != null) {
             try {
@@ -90,6 +80,16 @@ public class CreatePdfAction extends AsciiDocAction {
         }
       });
     }, "Creating PDF", true, project);
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      VirtualFile virtualFile = VirtualFileManager.getInstance()
+        .refreshAndFindFileByUrl(file.getUrl().replaceAll("\\.(adoc|asciidoc|ad)$", ".pdf"));
+      updateProjectView(virtualFile != null ? virtualFile : parent);
+      if (virtualFile != null) {
+        if (successful) {
+          new OpenFileDescriptor(project, virtualFile).navigate(true);
+        }
+      }
+    });
   }
 
   private void updateProjectView(VirtualFile virtualFile) {
