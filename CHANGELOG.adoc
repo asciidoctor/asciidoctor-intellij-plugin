@@ -36,6 +36,10 @@ This document provides a high-level view of the changes introduced by release.
 - check links for files in block, inline and preprocessor macros
 - enlarge search scope for finding references to all AsciiDoc documents in project independent of project's module dependencies
 
+=== 0.30.59.1
+
+- prevent parsing to mis-align tokens after a `+` that could lead to their removal upon re-format (#463)
+
 === 0.30.59
 
 - rebuild indexes for bibliographic references (#459)
