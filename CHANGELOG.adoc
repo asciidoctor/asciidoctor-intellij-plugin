@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - fix issue when displaying block image macro in preview (#441)
 - avoid deadlock when creating PDF/HTML; show cancelable popup
+- when preparing the preview for Antora, calculate image path from `imagesdir` (#468)
 
 === 0.30.64 (preview, available from GitHub releases)
 

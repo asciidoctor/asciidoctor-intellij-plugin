@@ -2,6 +2,7 @@ package org.asciidoc.intellij.asciidoc;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -15,6 +16,7 @@ import org.asciidoctor.jruby.ast.impl.PhraseNodeImpl;
 import org.jruby.RubyObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -24,6 +26,8 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraNavFiles;
 
 public class AntoraReferenceAdapter {
+  private static final com.intellij.openapi.diagnostic.Logger LOG =
+    com.intellij.openapi.diagnostic.Logger.getInstance(AntoraReferenceAdapter.class);
 
   public static void setAntoraDetails(Project project, VirtualFile antoraModuleDir, File fileBaseDir, String name) {
     AntoraReferenceAdapter.project = project;
@@ -148,7 +152,20 @@ public class AntoraReferenceAdapter {
       }
       String relativePath = null;
       if (sourceDir != null && targetFile != null) {
-        relativePath = FileUtil.getRelativePath(fileBaseDir, new File(target));
+        if (type.equals("image") || type.equals("inline_image")) {
+          // compute relative path from imagesdir for images as Asciidoctor will prepend this
+          String imagesdir = (String) phraseNode.getDocument().getAttribute("imagesdir");
+          File source = new File(fileBaseDir, imagesdir);
+          try {
+            File canonical = source.getCanonicalFile();
+            source = SystemInfoRt.isWindows && canonical.getAbsolutePath().contains(" ") ? source.getAbsoluteFile() : canonical;
+          } catch (IOException e) {
+            LOG.info("unable to compute canonical file from '" + fileBaseDir + "' and '" + imagesdir + "'", e);
+          }
+          relativePath = FileUtil.getRelativePath(source, new File(target));
+        } else {
+          relativePath = FileUtil.getRelativePath(fileBaseDir, new File(target));
+        }
         if (relativePath != null) {
           relativePath = relativePath.replaceAll("\\\\", "/");
         }
