@@ -10,7 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.63 (preview, available from GitHub releases)
 
 - prevent scope-enlarger to break refactorings like introduce-variable (#466)
-- prevent parsing to mis-align tokens after a `+` (#463)
+- prevent parsing to mis-align tokens after a `+` that could lead to their removal upon re-format (#463)
 
 === 0.30.62 (preview, available from GitHub releases)
 
