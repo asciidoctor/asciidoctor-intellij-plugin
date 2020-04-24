@@ -72,7 +72,7 @@ class AsciiDocBlock extends AbstractBlock {
       if (!(child instanceof PsiWhiteSpace)) {
         result.add(new AsciiDocBlock(child, settings, verse, table, hardbreaks, wssCache));
       } else {
-        WhiteSpaceFormattingStrategy myWhiteSpaceStrategy = wssCache.computeIfAbsent((((PsiWhiteSpace) child).getLanguage()),
+        WhiteSpaceFormattingStrategy myWhiteSpaceStrategy = wssCache.computeIfAbsent(((PsiWhiteSpace) child).getLanguage(),
           WhiteSpaceFormattingStrategyFactory::getStrategy);
         // double-check for a whitespace problem in lexer before re-formatting,
         // otherwise non-whitespace characters might get lost!

@@ -53,7 +53,15 @@ public class AntoraReferenceAdapter {
     if (antoraModuleDir != null) {
       PhraseNodeImpl phraseNode = new PhraseNodeImpl(node);
       String outfileSuffix = (String) phraseNode.getDocument().getAttribute("outfilesuffix");
-      String target = phraseNode.getTarget(); // example$page.html - the link, with .adoc already replaced to .html
+      String target;
+      if (type.equals("image")) {
+        target = (String) phraseNode.getAttribute("target");
+      } else {
+        target = phraseNode.getTarget(); // example$page.html - the link, with .adoc already replaced to .html
+      }
+      if (target == null) {
+        return;
+      }
       Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(target);
       if (urlMatcher.find()) {
         return;
@@ -100,7 +108,7 @@ public class AntoraReferenceAdapter {
       target = replaced.get(0);
       VirtualFile sourceDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
       VirtualFile targetFile = LocalFileSystem.getInstance().findFileByIoFile(new File(target));
-      if (phraseNode.getText() == null && type.equals("inline_anchor") && targetFile != null && sourceDir != null) {
+      if (type.equals("inline_anchor") && phraseNode.getText() == null && targetFile != null && sourceDir != null) {
         ApplicationManager.getApplication().runReadAction(() -> {
           PsiFile file = PsiManager.getInstance(project).findFile(targetFile);
           if (file != null) {
@@ -159,7 +167,11 @@ public class AntoraReferenceAdapter {
       if (anchor != null) {
         target = target + "#" + anchor;
       }
-      phraseNode.setString("target", target);
+      if (type.equals("image")) {
+        phraseNode.setAttribute("target", target, true);
+      } else {
+        phraseNode.setString("target", target);
+      }
     }
   }
 }
