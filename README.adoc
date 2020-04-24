@@ -13,10 +13,6 @@ It also supports https://antora.org/[Antora], the documentation CMS build with A
 *To contribute as a developer, some issues are labeled with link:https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22["good first issue"].* Maintainers are willing to help.
 Feel free to choose these or any other ticket to participate, or create pull requests without a prior ticket.
 
-*You can meet the maintainers in person:* Please ping them via eMail or chat before or during the event!
-
-* https://www.ahus1.de/[Alex] at https://www.devoxx.co.uk/[Deovxx UK], 2020-08-24..26
-
 == Installation
 
 You can install the plugin (named "`AsciiDoc`") from the plugins section inside your JetBrains IDE or download it from the https://plugins.jetbrains.com/plugin/7391[JetBrains Plugin Repository].
