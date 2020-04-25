@@ -155,12 +155,17 @@ public class AntoraReferenceAdapter {
         if (type.equals("image") || type.equals("inline_image")) {
           // compute relative path from imagesdir for images as Asciidoctor will prepend this
           String imagesdir = (String) phraseNode.getDocument().getAttribute("imagesdir");
-          File source = new File(fileBaseDir, imagesdir);
-          try {
-            File canonical = source.getCanonicalFile();
-            source = SystemInfoRt.isWindows && canonical.getAbsolutePath().contains(" ") ? source.getAbsoluteFile() : canonical;
-          } catch (IOException e) {
-            LOG.info("unable to compute canonical file from '" + fileBaseDir + "' and '" + imagesdir + "'", e);
+          File source;
+          if (imagesdir != null) {
+            source = new File(fileBaseDir, imagesdir);
+            try {
+              File canonical = source.getCanonicalFile();
+              source = SystemInfoRt.isWindows && canonical.getAbsolutePath().contains(" ") ? source.getAbsoluteFile() : canonical;
+            } catch (IOException e) {
+              LOG.info("unable to compute canonical file from '" + fileBaseDir + "' and '" + imagesdir + "'", e);
+            }
+          } else {
+            source = fileBaseDir;
           }
           relativePath = FileUtil.getRelativePath(source, new File(target));
         } else {
