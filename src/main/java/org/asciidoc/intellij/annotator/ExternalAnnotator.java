@@ -156,7 +156,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
           .append(")");
       }
       annotation.setTooltip(sb.toString());
-      if (logRecord.getMessage().startsWith("include file not found")) {
+      if (logRecord.getMessage() != null && logRecord.getMessage().startsWith("include file not found")) {
         Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
         if (document != null) {
           PsiElement element = file.findElementAt(document.getLineStartOffset(lineNumberForAnnotation));
