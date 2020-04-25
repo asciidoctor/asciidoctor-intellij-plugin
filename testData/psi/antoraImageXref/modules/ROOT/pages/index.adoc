@@ -1,0 +1,10 @@
+= Index
+
+image::image.txt[xref=_header]
+image::image.txt[xref=ROOT:index.adoc]
+
+image:image.txt[xref=_header]
+image:image.txt[xref=ROOT:index.adoc]
+
+[#_header]
+== Header

@@ -284,12 +284,15 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         String defaultFamily = null;
         if (macroName.equals("image")) {
           defaultFamily = "image";
-        } else if (macroName.equals("xref")) {
+        } else if (macroName.equals("xref") || macroName.equals("xref-attr")) {
           defaultFamily = "page";
         }
         return AsciiDocUtil.replaceAntoraPrefix(myElement, resolvedKey, defaultFamily);
       }
-    } else if (myElement instanceof AsciiDocLink && macroName.equals("xref")) {
+    } else if ((myElement instanceof AsciiDocLink && macroName.equals("xref")) ||
+      (myElement.getParent() instanceof AsciiDocBlockMacro && ((AsciiDocBlockMacro) myElement.getParent()).getMacroName().equals("image") && macroName.equals("xref-attr")) ||
+      (myElement.getParent() instanceof AsciiDocInlineMacro && ((AsciiDocInlineMacro) myElement.getParent()).getMacroName().equals("image") && macroName.equals("xref-attr"))
+    ) {
       if (AsciiDocUtil.findAntoraPagesDir(myElement) != null) {
         // if this is a link/xref, default to page family
         String resolvedKey = AsciiDocUtil.resolveAttributes(myElement, key);
@@ -384,7 +387,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             }
           }
         }
-      } else if ("link".endsWith(macroName) || "xref".endsWith(macroName) || "<<".equals(macroName)) {
+      } else if ("link".endsWith(macroName) || "xref".endsWith(macroName) || macroName.equals("xref-attr") || "<<".equals(macroName)) {
         file = resolve(key + ".adoc");
         if (file != null) {
           results.add(new PsiElementResolveResult(file));
@@ -462,7 +465,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         getVariants(base, collector, 0);
         getVariants("{imagesdir}/" + base, collector, 0);
       }
-    } else if ("link".equals(macroName) || "xref".equals(macroName)) {
+    } else if ("link".equals(macroName) || "xref".equals(macroName) || "xref-attr".equals(macroName)) {
       getVariants(base, collector, 0);
       getVariants(base + ".adoc", collector, 0);
       if (base.endsWith(".html")) {

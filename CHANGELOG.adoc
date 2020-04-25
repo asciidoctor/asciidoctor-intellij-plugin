@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.66 (preview, available from GitHub releases)
 
 - avoid NPE in Antora mode when referencing an image in another component and current component doesn't have an imagesdir folder (#468)
+- suport `xref` attribute for images
 
 === 0.30.65 (preview, available from GitHub releases)
 

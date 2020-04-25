@@ -3,6 +3,7 @@ package org.asciidoc.intellij.psi;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.util.Computable;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
@@ -516,6 +517,40 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     // xref
     assertSize(2, urls[1].getReferences());
     // finish test here. Reference will not resolve in the test, files are "temp://" files
+
+  }
+
+  @SuppressWarnings("checkstyle:AvoidNestedBlocks")
+  public void testAntoraImageXref() {
+    // given...
+    PsiFile[] psiFile = myFixture.configureByFiles(
+      getTestName(true) + "/modules/ROOT/pages/index.adoc",
+      getTestName(true) + "/modules/ROOT/images/image.txt",
+      getTestName(true) + "/antora.yml"
+    );
+
+    AsciiDocBlockMacro[] macros = PsiTreeUtil.getChildrenOfType(psiFile[0].getChildren()[0], AsciiDocBlockMacro.class);
+    assertNotNull(macros);
+    assertSize(2, macros);
+
+    {
+      AsciiDocAttributeInBrackets[] attributes = PsiTreeUtil.getChildrenOfType(macros[0], AsciiDocAttributeInBrackets.class);
+      assertNotNull(attributes);
+      assertSize(1, attributes);
+
+      assertSize(1, attributes[0].getReferences());
+      assertInstanceOf(attributes[0].getReferences()[0].resolve(), AsciiDocBlockIdImpl.class);
+    }
+
+    {
+      AsciiDocAttributeInBrackets[] attributes = PsiTreeUtil.getChildrenOfType(macros[1], AsciiDocAttributeInBrackets.class);
+      assertNotNull(attributes);
+      assertSize(1, attributes);
+
+      assertSize(2, attributes[0].getReferences());
+      assertInstanceOf(attributes[0].getReferences()[0].resolve(), PsiDirectory.class);
+      // second reference to file doesn't resolve in tests
+    }
 
   }
 

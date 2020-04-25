@@ -9,9 +9,11 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.namesValidator.AsciiDocRenameInputValidator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AsciiDocAttributeInBrackets extends ASTWrapperPsiElement {
@@ -46,6 +48,57 @@ public class AsciiDocAttributeInBrackets extends ASTWrapperPsiElement {
             new AsciiDocFileReference(this, "link-attr", file.substring(0, start),
               TextRange.create(rangeOfBody.getStartOffset() + start, rangeOfBody.getStartOffset() + file.length()),
               false)
+          );
+          return references.toArray(new PsiReference[0]);
+        }
+      }
+    }
+    if ("xref".equals(getAttrName())) {
+      TextRange rangeOfBody = getRangeOfBody(this);
+      if (!TextRange.EMPTY_RANGE.equals(rangeOfBody)) {
+        String file = rangeOfBody.substring(this.getText());
+        if (!LINK.matcher(file).find()) {
+          ArrayList<PsiReference> references = new ArrayList<>();
+          int start = 0;
+          int i = 0;
+          Matcher matcher = AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(file);
+          if (matcher.find()) {
+            i += matcher.end();
+            references.add(
+              new AsciiDocFileReference(this, "xref-attr", file.substring(0, start),
+                TextRange.create(rangeOfBody.getStartOffset() + start, rangeOfBody.getStartOffset() + i - 1),
+                true, true, 1)
+            );
+            start = i;
+          }
+          matcher = AsciiDocUtil.ANTORA_FAMILY_PATTERN.matcher(file.substring(start));
+          if (matcher.find()) {
+            i += matcher.end();
+            references.add(
+              new AsciiDocFileReference(this, "xref-attr", file.substring(0, start),
+                TextRange.create(rangeOfBody.getStartOffset() + start, rangeOfBody.getStartOffset() + i - 1),
+                true, true, 1)
+            );
+            start = i;
+          }
+          for (; i < file.length(); ++i) {
+            if (file.charAt(i) == '/') {
+              references.add(
+                new AsciiDocFileReference(this, "xref-attr", file.substring(0, start),
+                  TextRange.create(rangeOfBody.getStartOffset() + start, rangeOfBody.getStartOffset() + i),
+                  true));
+              start = i + 1;
+            }
+          }
+          references.add(
+            new AsciiDocFileReference(this, "xref-attr", file.substring(0, start),
+              TextRange.create(rangeOfBody.getStartOffset() + start, rangeOfBody.getStartOffset() + file.length()),
+              false).withAnchor((start > 0 && file.charAt(start - 1) == '#')
+              // an xref can be only a block ID, then it is an anchor even without the # prefix
+              || (start == 0
+              && AsciiDocRenameInputValidator.BLOCK_ID_PATTERN.matcher(file).matches()
+              && !file.contains("."))
+            )
           );
           return references.toArray(new PsiReference[0]);
         }
