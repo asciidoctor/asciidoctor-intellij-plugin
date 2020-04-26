@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.68 (work in progress)
 
 - find-grained read/write locking when creating preview, HTML or PDF
+- allow incremental parsing for sections
 
 === 0.30.67 (preview, available from GitHub releases)
 
