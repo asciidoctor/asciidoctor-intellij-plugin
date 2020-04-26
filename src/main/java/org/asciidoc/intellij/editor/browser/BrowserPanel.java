@@ -3,10 +3,12 @@ package org.asciidoc.intellij.editor.browser;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
@@ -150,7 +152,7 @@ public class BrowserPanel implements Closeable {
 
   @NotNull
   public String getHtml(@NotNull VirtualFile file, @NotNull Project project) {
-    Document document = FileDocumentManager.getInstance().getDocument(file);
+    Document document = ApplicationManager.getApplication().runReadAction((Computable<Document>) () -> FileDocumentManager.getInstance().getDocument(file));
     Objects.requireNonNull(document);
     final String config = AsciiDoc.config(document, project);
     List<String> extensions = AsciiDoc.getExtensions(project);

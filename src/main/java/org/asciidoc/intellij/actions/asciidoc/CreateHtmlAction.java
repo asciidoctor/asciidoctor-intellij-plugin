@@ -60,30 +60,27 @@ public class CreateHtmlAction extends AsciiDocAction {
       ApplicationManager.getApplication().saveAll());
     VirtualFile parent = file.getParent();
     boolean successful = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-      ApplicationManager.getApplication().runReadAction(() -> {
-        Path tempImagesPath = AsciiDoc.tempImagesPath();
-        try {
-          File fileBaseDir = new File("");
-          if (parent != null && parent.getCanonicalPath() != null) {
-            // parent will be null if we use Language Injection and Fragment Editor
-            fileBaseDir = new File(parent.getCanonicalPath());
-          }
-          AsciiDoc asciiDoc = new AsciiDoc(project, fileBaseDir,
-            tempImagesPath, file.getName());
-          List<String> extensions = AsciiDoc.getExtensions(project);
-          String config = AsciiDoc.config(editor.getDocument(), project);
-
-          asciiDoc.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDoc.FileType.HTML);
-        } finally {
-          if (tempImagesPath != null) {
-            try {
-              FileUtils.deleteDirectory(tempImagesPath.toFile());
-            } catch (IOException _ex) {
-              Logger.getInstance(AsciiDocPreviewEditor.class).warn("could not remove temp folder", _ex);
-            }
+      Path tempImagesPath = AsciiDoc.tempImagesPath();
+      try {
+        File fileBaseDir = new File("");
+        if (parent != null && parent.getCanonicalPath() != null) {
+          // parent will be null if we use Language Injection and Fragment Editor
+          fileBaseDir = new File(parent.getCanonicalPath());
+        }
+        AsciiDoc asciiDoc = new AsciiDoc(project, fileBaseDir,
+          tempImagesPath, file.getName());
+        List<String> extensions = AsciiDoc.getExtensions(project);
+        String config = AsciiDoc.config(editor.getDocument(), project);
+        asciiDoc.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDoc.FileType.HTML);
+      } finally {
+        if (tempImagesPath != null) {
+          try {
+            FileUtils.deleteDirectory(tempImagesPath.toFile());
+          } catch (IOException _ex) {
+            Logger.getInstance(AsciiDocPreviewEditor.class).warn("could not remove temp folder", _ex);
           }
         }
-      });
+      }
     }, "Creating HTML", true, project);
     ApplicationManager.getApplication().runWriteAction(() -> {
       VirtualFile virtualFile = VirtualFileManager.getInstance()

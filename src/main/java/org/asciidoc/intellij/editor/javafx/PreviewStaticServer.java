@@ -1,7 +1,6 @@
 package org.asciidoc.intellij.editor.javafx;
 
 import com.intellij.ide.browsers.OpenInBrowserRequest;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -237,16 +236,12 @@ public class PreviewStaticServer extends HttpRequestHandler {
   }
 
   private void sendDocument(FullHttpRequest request, @NotNull VirtualFile file, @NotNull Project project, @NotNull Channel channel) {
-    ReadAction.compute(() -> {
-        String html = getBrowserPanel().getHtml(file, project);
-        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(html.getBytes(StandardCharsets.UTF_8)));
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
-        response.headers().set(HttpHeaderNames.CACHE_CONTROL, "max-age=5, private, must-revalidate");
-        response.headers().set("Referrer-Policy", "no-referrer");
-        Responses.send(response, channel, request);
-        return true;
-      }
-    );
+    String html = getBrowserPanel().getHtml(file, project);
+    FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(html.getBytes(StandardCharsets.UTF_8)));
+    response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
+    response.headers().set(HttpHeaderNames.CACHE_CONTROL, "max-age=5, private, must-revalidate");
+    response.headers().set("Referrer-Policy", "no-referrer");
+    Responses.send(response, channel, request);
   }
 
   private static void sendResource(@NotNull HttpRequest request,
