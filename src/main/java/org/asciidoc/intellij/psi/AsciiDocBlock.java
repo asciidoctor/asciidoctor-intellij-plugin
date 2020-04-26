@@ -15,6 +15,8 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDEND;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKREFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_COMMENT;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINEIDEND;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINEIDSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_COMMENT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SEPARATOR;
 
@@ -43,6 +45,7 @@ public interface AsciiDocBlock extends PsiElement, AsciiDocSelfDescribe {
 
   TokenSet INSIGNIFICANT_TOKENS_FOR_FOLDING = TokenSet.create(
     BLOCKID, BLOCKIDEND, SEPARATOR, BLOCKREFTEXT, BLOCKIDSTART, AsciiDocElementTypes.BLOCKID,
+    INLINEIDEND, INLINEIDSTART,
     TokenType.WHITE_SPACE, LINE_COMMENT, BLOCK_COMMENT
   );
 

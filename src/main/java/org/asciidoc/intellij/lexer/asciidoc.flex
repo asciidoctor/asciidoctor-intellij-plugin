@@ -268,6 +268,8 @@ PAGEBREAK = "<<<" "<"* {SPACE}*
 HORIZONTALRULE = ("-" {SPACE}* "-" {SPACE}* "-" {SPACE}*) |  ("*" {SPACE}* "*" {SPACE}* "*" {SPACE}*) |  ("_" {SPACE}* "_" {SPACE}* "_" {SPACE}*) | "'''" "'"*
 BLOCKIDSTART = "[["
 BLOCKIDEND = "]]"
+INLINEIDSTART = "[["
+INLINEIDEND = "]]"
 SINGLE_QUOTE = "'"
 DOUBLE_QUOTE = "\""
 TYPOGRAPHIC_DOUBLE_QUOTE_START = "\"`"
@@ -315,6 +317,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state REFAUTO
 %state BLOCKID
 %state BLOCKREFTEXT
+%state INLINEID
+%state INLINEREFTEXT
 %state HEADING
 %state DOCTITLE
 %state ANCHORID
@@ -439,7 +443,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                { yypushback(yylength()); yypopstate(); }
 }
 
-<ATTRIBUTE_VAL, INLINE_URL_NO_DELIMITER, INSIDE_LINE, DESCRIPTION, LINKFILE, LINKANCHOR, LINKURL, BLOCK_MACRO, LINKTEXT, REFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE, REF, ANCHORID, BIBNAME> {
+<ATTRIBUTE_VAL, INLINE_URL_NO_DELIMITER, INSIDE_LINE, DESCRIPTION, LINKFILE, LINKANCHOR, LINKURL, BLOCK_MACRO, LINKTEXT, REFTEXT, INLINEREFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE, REF, ANCHORID, BIBNAME> {
   {ATTRIBUTE_REF_START} ( {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} | [^}\n ]* {AUTOCOMPLETE} ) {
                          yypushback(yylength() - 1);
                          if (!isEscaped()) {
@@ -1132,6 +1136,15 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
             return textFormat();
           }
         }
+  {INLINEIDSTART} / [^\]\n]+ {INLINEIDEND} {
+                         if (!isEscaped()) {
+                           yypushstate(); yybegin(INLINEID); return AsciiDocTokenTypes.INLINEIDSTART;
+                         } else {
+                           yypushback(1);
+                           return AsciiDocTokenTypes.LBRACKET;
+                         }
+                       }
+
   [^]                  { return textFormat(); }
 }
 
@@ -1303,6 +1316,19 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <BLOCKREFTEXT> {
+  [^]                  { return AsciiDocTokenTypes.BLOCKREFTEXT; }
+}
+
+<INLINEID, INLINEREFTEXT> {
+  {BLOCKIDEND}         { yypopstate(); return AsciiDocTokenTypes.INLINEIDEND; }
+}
+
+<INLINEID> {
+  ","                  { yybegin(BLOCKREFTEXT); return AsciiDocTokenTypes.SEPARATOR; }
+  [^]                  { return AsciiDocTokenTypes.BLOCKID; }
+}
+
+<INLINEREFTEXT> {
   [^]                  { return AsciiDocTokenTypes.BLOCKREFTEXT; }
 }
 

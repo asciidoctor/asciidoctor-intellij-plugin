@@ -80,6 +80,8 @@ public interface AsciiDocTokenTypes {
   IElementType BLOCKID = new AsciiDocElementType("BLOCKID");
   IElementType BLOCKREFTEXT = new AsciiDocElementType("BLOCKREFTEXT");
   IElementType BLOCKIDEND = new AsciiDocElementType("BLOCKIDEND");
+  IElementType INLINEIDSTART = new AsciiDocElementType("INLINEIDSTART");
+  IElementType INLINEIDEND = new AsciiDocElementType("INLINEIDEND");
   IElementType SEPARATOR = new AsciiDocElementType("SEPARATOR");
   IElementType TYPOGRAPHIC_DOUBLE_QUOTE_START = new AsciiDocElementType("TYPOGRAPHIC_DOUBLE_QUOTE_START");
   IElementType TYPOGRAPHIC_DOUBLE_QUOTE_END = new AsciiDocElementType("TYPOGRAPHIC_DOUBLE_QUOTE_END");

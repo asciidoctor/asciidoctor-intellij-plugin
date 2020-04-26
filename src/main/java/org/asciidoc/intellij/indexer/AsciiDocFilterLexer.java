@@ -20,6 +20,8 @@ public class AsciiDocFilterLexer extends BaseFilterLexer {
     AsciiDocTokenTypes.LINE_BREAK,
     AsciiDocTokenTypes.BLOCKIDSTART,
     AsciiDocTokenTypes.BLOCKIDEND,
+    AsciiDocTokenTypes.INLINEIDSTART,
+    AsciiDocTokenTypes.INLINEIDEND,
     AsciiDocTokenTypes.RPAREN,
     AsciiDocTokenTypes.LBRACKET,
     AsciiDocTokenTypes.RBRACKET,

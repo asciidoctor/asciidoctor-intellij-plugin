@@ -2110,6 +2110,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Book')");
   }
 
+  public void testInlineId() {
+    doTest("The [[id]] word",
+      "AsciiDoc:TEXT ('The')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:INLINEIDSTART ('[[')\n" +
+        "AsciiDoc:BLOCKID ('id')\n" +
+        "AsciiDoc:INLINEIDEND (']]')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('word')");
+  }
+
   @Override
   protected void doTest(@Language("asciidoc") @NonNls String text, @Nullable String expected) {
     super.doTest(text, expected);

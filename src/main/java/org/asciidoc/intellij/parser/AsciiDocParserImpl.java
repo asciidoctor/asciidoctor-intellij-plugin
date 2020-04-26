@@ -45,6 +45,8 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.FRONTMATTER_DELIMIT
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_OLDSTYLE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HTML_ENTITY_OR_UNICODE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINEIDEND;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINEIDSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_MACRO_BODY;
@@ -214,29 +216,7 @@ public class AsciiDocParserImpl {
         parseBlockAttributes();
         continue;
       } else if (at(BLOCKIDSTART)) {
-        markPreBlock();
-        next();
-        PsiBuilder.Marker blockIdMarker = null;
-        while (at(BLOCKID) || at(ATTRIBUTE_REF_START)) {
-          if (blockIdMarker == null) {
-            blockIdMarker = myBuilder.mark();
-          }
-          if (at(ATTRIBUTE_REF_START)) {
-            parseAttributeReference();
-          } else {
-            next();
-          }
-        }
-        if (blockIdMarker != null) {
-          blockIdMarker.done(AsciiDocElementTypes.BLOCKID);
-        }
-        while (at(BLOCKIDEND) || at(SEPARATOR) || at(BLOCKREFTEXT) || at(ATTRIBUTE_REF_START)) {
-          if (at(ATTRIBUTE_REF_START)) {
-            parseAttributeReference();
-          } else {
-            next();
-          }
-        }
+        parseBlockId();
         continue;
       } else if (at(CONTINUATION)) {
         newLines = 0;
@@ -264,6 +244,8 @@ public class AsciiDocParserImpl {
 
       if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
         parseUrl();
+      } else if (at(INLINEIDSTART)) {
+        parseInlineId();
       } else if (at(INLINE_MACRO_ID)) {
         parseInlineMacro();
       } else if (at(REFSTART)) {
@@ -286,6 +268,58 @@ public class AsciiDocParserImpl {
     dropPreBlock();
     closeBlocks();
     closeSections(0);
+  }
+
+  private void parseBlockId() {
+    markPreBlock();
+    next();
+    PsiBuilder.Marker blockIdMarker = null;
+    while (at(BLOCKID) || at(ATTRIBUTE_REF_START)) {
+      if (blockIdMarker == null) {
+        blockIdMarker = myBuilder.mark();
+      }
+      if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
+      } else {
+        next();
+      }
+    }
+    if (blockIdMarker != null) {
+      blockIdMarker.done(AsciiDocElementTypes.BLOCKID);
+    }
+    while (at(BLOCKIDEND) || at(SEPARATOR) || at(BLOCKREFTEXT) || at(ATTRIBUTE_REF_START)) {
+      if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
+      } else {
+        next();
+      }
+    }
+  }
+
+  private void parseInlineId() {
+    markPreBlock();
+    next();
+    PsiBuilder.Marker blockIdMarker = null;
+    while (at(BLOCKID) || at(ATTRIBUTE_REF_START)) {
+      if (blockIdMarker == null) {
+        blockIdMarker = myBuilder.mark();
+      }
+      if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
+      } else {
+        next();
+      }
+    }
+    if (blockIdMarker != null) {
+      blockIdMarker.done(AsciiDocElementTypes.BLOCKID);
+    }
+    while (at(INLINEIDEND) || at(SEPARATOR) || at(BLOCKREFTEXT) || at(ATTRIBUTE_REF_START)) {
+      if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
+      } else {
+        next();
+      }
+    }
   }
 
   private void parseBib() {

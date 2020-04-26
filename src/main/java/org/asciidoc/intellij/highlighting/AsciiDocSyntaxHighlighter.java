@@ -152,6 +152,8 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
       .put(AsciiDocTokenTypes.LINKEND, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.BLOCKIDSTART, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.BLOCKIDEND, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.INLINEIDSTART, ASCIIDOC_MARKER)
+      .put(AsciiDocTokenTypes.INLINEIDEND, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.BLOCKID, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.BLOCK_DELIMITER, ASCIIDOC_MARKER)
