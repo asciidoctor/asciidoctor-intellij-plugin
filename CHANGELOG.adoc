@@ -9,6 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.30.68 (work in progress)
 
+- avoid exception when creating a cover image for PDF
 - find-grained read/write locking when creating preview, HTML or PDF
 - allow incremental parsing for sections
 - support inline anchors in regular text (#469)

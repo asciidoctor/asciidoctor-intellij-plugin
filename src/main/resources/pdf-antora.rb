@@ -16,9 +16,9 @@ module ResolveAntoraPdf
     org.asciidoc.intellij.asciidoc.AntoraReferenceAdapter.convertInlineImage(node)
     super(node)
   end
-  def convert_image(node)
+  def convert_image(node, opts = {})
     org.asciidoc.intellij.asciidoc.AntoraReferenceAdapter.convertImage(node)
-    super(node)
+    super(node, opts)
   end
 end
 
