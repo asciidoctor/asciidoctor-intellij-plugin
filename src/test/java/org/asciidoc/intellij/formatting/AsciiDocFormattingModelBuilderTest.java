@@ -39,8 +39,7 @@ public class AsciiDocFormattingModelBuilderTest extends BasePlatformTestCase {
     doTest(new ReformatCodeRunOptions(WHOLE_FILE));
   }
 
-  // test fails as verse formatting is broken
-  public void ignoredTestVerse() {
+  public void testVerse() {
     doTest(new ReformatCodeRunOptions(WHOLE_FILE));
   }
 }

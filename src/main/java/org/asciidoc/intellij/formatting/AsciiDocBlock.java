@@ -72,7 +72,8 @@ class AsciiDocBlock extends AbstractBlock {
       if (!(child instanceof PsiWhiteSpace)) {
         // every child will align with the the parent, no additional indents due to alignment
         // as leading blanks in Asciidoc in a line can either change the meaning
-        result.add(new AsciiDocBlock(child, settings, verse, table, hardbreaks, wssCache, getAlignment()));
+        // verse blocks with have their own alignment so that they can add spaces as needed to the beginning of the line
+        result.add(new AsciiDocBlock(child, settings, verse, table, hardbreaks, wssCache, verse ? Alignment.createAlignment() : getAlignment()));
       } else {
         WhiteSpaceFormattingStrategy myWhiteSpaceStrategy = wssCache.computeIfAbsent(((PsiWhiteSpace) child).getLanguage(),
           WhiteSpaceFormattingStrategyFactory::getStrategy);
@@ -383,7 +384,7 @@ class AsciiDocBlock extends AbstractBlock {
         }
       }
       if (i < 0 || chars[i] == '\n') {
-        return Indent.getIndent(Indent.Type.NONE, spaces, false, false);
+        return Indent.getSpaceIndent(spaces, true);
       }
     }
     return Indent.getAbsoluteNoneIndent();
