@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - find-grained read/write locking when creating preview, HTML or PDF
 - allow incremental parsing for sections
 - support inline anchors in regular text (#469)
+- adding incremental table parsing on cell-level (#467)
 
 === 0.30.67 (preview, available from GitHub releases)
 

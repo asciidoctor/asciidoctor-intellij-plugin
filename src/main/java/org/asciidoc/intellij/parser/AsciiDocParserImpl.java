@@ -35,6 +35,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_BODY;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ID;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BOLDITALIC;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BULLET;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.CELLSEPARATOR;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.CONTINUATION;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DESCRIPTION;
@@ -161,7 +162,7 @@ public class AsciiDocParserImpl {
       emptyLines = 0;
 
       if (at(BLOCK_MACRO_ID) || at(BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER) || at(LISTING_BLOCK_DELIMITER)
-        || at(PASSTRHOUGH_BLOCK_DELIMITER) || at(FRONTMATTER_DELIMITER)) {
+        || at(PASSTRHOUGH_BLOCK_DELIMITER) || at(FRONTMATTER_DELIMITER) || at(CELLSEPARATOR)) {
         if (!continuation) {
           endEnumerationDelimiter();
           endBlockNoDelimiter();
@@ -217,6 +218,10 @@ public class AsciiDocParserImpl {
         continue;
       } else if (at(BLOCKIDSTART)) {
         parseBlockId();
+        continue;
+      } else if (at(CELLSEPARATOR)) {
+        dropPreBlock();
+        next();
         continue;
       } else if (at(CONTINUATION)) {
         newLines = 0;

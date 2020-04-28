@@ -122,11 +122,25 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testTable() {
     doTest("|====\n" +
-        "|1|2|3\n" +
+        "|1|2|3\n\n" +
+        "|4|5|6\n" +
         "|====",
       "AsciiDoc:BLOCK_DELIMITER ('|====')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TEXT ('|1|2|3')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:TEXT ('1')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:TEXT ('2')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:TEXT ('3')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:TEXT ('4')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:TEXT ('5')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:TEXT ('6')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:BLOCK_DELIMITER ('|====')");
   }
@@ -1396,7 +1410,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "== Title",
       "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TEXT ('|XX')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:TEXT ('XX')\n" +
         "AsciiDoc:HARD_BREAK (' +')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +

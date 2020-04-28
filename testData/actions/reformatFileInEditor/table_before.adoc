@@ -1,0 +1,9 @@
+[cols="a"]
+|===
+|[source,json]
+----
+{
+    "hello": "world"
+}
+----
+|===

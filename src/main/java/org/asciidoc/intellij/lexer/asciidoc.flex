@@ -29,25 +29,45 @@ import java.util.Stack;
   private boolean isTags = false;
   private String style = null;
   private int headerLines = 0;
+  private char tableChar = 0;
 
   private Stack<Integer> stateStack = new Stack<>();
 
   private Stack<String> blockStack = new Stack<>();
 
   private int zzEndReadFinal;
+  private int zzCachedEndRead;
 
   public void setFinal(int endFinal) {
     zzEndReadFinal = endFinal;
+    zzCachedEndRead = 0;
   }
 
   public void clearLookahead() {
     zzEndRead = zzEndReadFinal;
   }
 
-  public void limitLookahead() {
+  public int limitLookahead() {
     if (zzEndReadFinal > zzCurrentPos + 2000) {
       zzEndRead = zzCurrentPos + 2000;
+    } else {
+      zzEndRead = zzEndReadFinal;
     }
+    if (zzCurrentPos < zzEndReadFinal && tableChar != 0) {
+      if (zzCachedEndRead >= zzCurrentPos +3 && zzBuffer.charAt(zzCachedEndRead -2) == tableChar && zzBuffer.charAt(zzCachedEndRead -2 -1) != '\\' && zzBuffer.charAt(zzCachedEndRead -2 +1) != '=') {
+        zzEndRead = zzCachedEndRead;
+      } else {
+        int nextstop = zzCurrentPos + 1;
+        while (nextstop < zzEndRead -2) {
+          if (zzBuffer.charAt(nextstop) == tableChar && zzBuffer.charAt(nextstop) -1 != '\\' && zzBuffer.charAt(nextstop+1) != '=') {
+            zzCachedEndRead = zzEndRead = nextstop +2;
+            break;
+          }
+          ++ nextstop;
+        }
+      }
+    }
+    return zzEndRead;
   }
 
   private boolean isPrefixedBy(char[] prefix) {
@@ -220,6 +240,7 @@ SIDEBAR_BLOCK_DELIMITER = "****" "*"* {SPACE}*
 QUOTE_BLOCK_DELIMITER = "____" "_"* {SPACE}*
 LITERAL_BLOCK_DELIMITER = "...." "."* {SPACE}*
 TABLE_BLOCK_DELIMITER = [|!] "===" "="* {SPACE}*
+CELLPREFIX = ([0-9][+*])?[\^<>]?[\.]?([0-9][+])?[\^<>]?[aehlmdsv]?
 OPEN_BLOCK_DELIMITER = "--" {SPACE}*
 CONTINUATION = "+"
 HEADING_START = "="{1,6} {SPACE}+
@@ -239,13 +260,12 @@ STRINGNOUNDERSCORE = [^\n\_]+ \n?
 STRINGNOBACKTICK   = [^\n\`]+ \n?
 STRINGNOPLUS       = [^\n\+]+ \n?
 // something with a non-blank at the end, might contain a line break, but only if it doesn't separate the block
-// a new line starting with a '|' might indicate a table; therefore stop there as well
-WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n\|] | {SPACE}* [^\n]*[^\ \t\n]
-WORDNOBRACKET =  {SPACE}* [^\n\]]* {SPACE}* \n {SPACE}* [^\ \t\n\]\|] | {SPACE}* [^\n\]]*[^\ \t\n\]]
-WORDNOASTERISK = {SPACE}* [^\n\*]* {SPACE}* \n {SPACE}* [^\ \t\n\*\|] | {SPACE}* [^\n\*]*[^\ \t\n\*]
-WORDNOUNDERSCORE={SPACE}* [^\n\_]* {SPACE}* \n {SPACE}* [^\ \t\n\_\|] | {SPACE}* [^\n\_]*[^\ \t\n\_]
-WORDNOBACKTICK = {SPACE}* [^\n\`]* {SPACE}* \n {SPACE}* [^\ \t\n\`\|] | {SPACE}* [^\n\`]*[^\ \t\n\`]
-WORDNOPLUS =     {SPACE}* [^\n\+]* {SPACE}* \n {SPACE}* [^\ \t\n\+\|] | {SPACE}* [^\n\+]*[^\ \t\n\+]
+WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n] | {SPACE}* [^\n]*[^\ \t\n]
+WORDNOBRACKET =  {SPACE}* [^\n\]]* {SPACE}* \n {SPACE}* [^\ \t\n\]] | {SPACE}* [^\n\]]*[^\ \t\n\]]
+WORDNOASTERISK = {SPACE}* [^\n\*]* {SPACE}* \n {SPACE}* [^\ \t\n\*] | {SPACE}* [^\n\*]*[^\ \t\n\*]
+WORDNOUNDERSCORE={SPACE}* [^\n\_]* {SPACE}* \n {SPACE}* [^\ \t\n\_] | {SPACE}* [^\n\_]*[^\ \t\n\_]
+WORDNOBACKTICK = {SPACE}* [^\n\`]* {SPACE}* \n {SPACE}* [^\ \t\n\`] | {SPACE}* [^\n\`]*[^\ \t\n\`]
+WORDNOPLUS =     {SPACE}* [^\n\+]* {SPACE}* \n {SPACE}* [^\ \t\n\+] | {SPACE}* [^\n\+]*[^\ \t\n\+]
 BOLD = "*"
 BULLET = ("*"+|"-")
 ENUMERATION = ([0-9]*|[a-zA-Z]?)"."+
@@ -376,7 +396,16 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 // IntelliJ might do partial parsing from any YYINITIAL inside a document
 // therefore only return here is no other state (i.e. bold) needs to be preserved
 <YYINITIAL> {
-  [^]                  { yypushback(yylength()); clearStyle(); resetFormatting(); blockStack.clear(); stateStack.clear(); yybegin(MULTILINE); }
+  [^]                  {
+        if (isPrefixedBy("|".toCharArray())) {
+          tableChar = '|';
+          zzEndReadL = limitLookahead();
+        } else {
+          tableChar = 0;
+          zzEndReadL = limitLookahead();
+        }
+        yypushback(yylength()); clearStyle(); resetFormatting(); blockStack.clear(); stateStack.clear(); yybegin(MULTILINE);
+      }
 }
 
 <MULTILINE> {
@@ -487,7 +516,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ^ {SPACE}* "\n"           {
         if (isNoDel()) { blockStack.pop(); }
         resetFormatting();
-        if (style == null && blockStack.size() == 0 && stateStack.size() == 0) {
+        if (style == null && blockStack.size() == 0 && stateStack.size() == 0 && tableChar == 0) {
           yybegin(YYINITIAL);
         } else {
           yybegin(MULTILINE);
@@ -597,6 +626,13 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ^ {TABLE_BLOCK_DELIMITER} $ {
             resetFormatting();
             style = null;
+            if (tableChar == 0) {
+              tableChar = yycharat(0);
+              zzEndReadL = limitLookahead();
+            } else {
+              tableChar = 0;
+              zzEndReadL = limitLookahead();
+            }
             yybegin(PREBLOCK);
             return AsciiDocTokenTypes.BLOCK_DELIMITER;
           }
@@ -626,6 +662,13 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ^ {TABLE_BLOCK_DELIMITER} {
             resetFormatting();
             style = null;
+            if (tableChar == 0) {
+              tableChar = yycharat(0);
+              zzEndReadL = limitLookahead();
+            } else {
+              tableChar = 0;
+              zzEndReadL = limitLookahead();
+            }
             yybegin(PREBLOCK);
             return AsciiDocTokenTypes.BLOCK_DELIMITER;
           }
@@ -703,7 +746,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ^ {SPACE}* "\n"           { clearStyle();
                          resetFormatting();
                          if (blockStack.size() == 0) {
-                           if (stateStack.size() == 0) {
+                           if (stateStack.size() == 0 && tableChar == 0) {
                              yybegin(YYINITIAL);
                            } else {
                              yybegin(MULTILINE);
@@ -711,7 +754,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          } else if (isNoDel()) {
                            blockStack.pop();
                            if (blockStack.size() == 0) {
-                             if (stateStack.size() == 0) {
+                             if (stateStack.size() == 0 && tableChar == 0) {
                                yybegin(YYINITIAL);
                              } else {
                                yybegin(MULTILINE);
@@ -748,6 +791,23 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          yypushback(yylength() - 1);
                          yybegin(DELIMITER);
                          return AsciiDocTokenTypes.CONTINUATION;
+                       }
+  {CELLPREFIX} "|"    {  zzEndReadL = limitLookahead();
+                         if (yycharat(yylength() - 1) == tableChar && !isEscaped()) {
+                           if (isNoDelVerse()) {
+                             yybegin(SINGLELINE);
+                           } else {
+                             if (blockStack.size() == 0 && stateStack.size() == 0 && style == null) {
+                               yybegin(YYINITIAL);
+                             } else {
+                               yybegin(SINGLELINE);
+                             }
+                           }
+                           resetFormatting();
+                           return AsciiDocTokenTypes.CELLSEPARATOR;
+                         } else {
+                           yypushback(yylength()); yybegin(AFTER_SPACE);
+                         }
                        }
   [^]                  { yypushback(yylength()); yybegin(AFTER_SPACE); }
 }
@@ -821,17 +881,23 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            yybegin(DELIMITER);
                          }
                          return AsciiDocTokenTypes.LINE_BREAK; }
-  "\n" {SPACE}* "|"    { yypushback(yylength() - 1);
-                         if (isNoDelVerse()) {
-                           yybegin(SINGLELINE);
-                         } else {
-                           if (blockStack.size() == 0 && stateStack.size() == 0 && style == null) {
-                             yybegin(YYINITIAL);
+  {CELLPREFIX} "|"     { zzEndReadL = limitLookahead();
+                         if (tableChar == yycharat(yylength()-1) && !isEscaped()) {
+                           if (isNoDelVerse()) {
+                             yybegin(SINGLELINE);
                            } else {
-                             yybegin(DELIMITER);
+                             if (blockStack.size() == 0 && stateStack.size() == 0 && style == null) {
+                               yybegin(YYINITIAL);
+                             } else {
+                               yybegin(SINGLELINE);
+                             }
                            }
+                           resetFormatting();
+                           return AsciiDocTokenTypes.CELLSEPARATOR;
+                         } else {
+                           return textFormat();
                          }
-                         return AsciiDocTokenTypes.LINE_BREAK; }
+                       }
   {HARD_BREAK}
                        { yypushback(1); return AsciiDocTokenTypes.HARD_BREAK; }
   // exceptions to END_OF_SENTENCE

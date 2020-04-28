@@ -85,6 +85,14 @@ public class AsciiDocStandardBlock extends ASTWrapperPsiElement implements Ascii
         } else {
           type = Type.QUOTE;
         }
+      } else if (d.startsWith("-")) {
+        if ("verse".equals(getStyle())) {
+          type = Type.VERSE;
+        }
+      }
+    } else {
+      if ("verse".equals(getStyle())) {
+        type = Type.VERSE;
       }
     }
     return type;

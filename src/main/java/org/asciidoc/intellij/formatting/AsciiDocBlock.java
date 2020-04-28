@@ -37,8 +37,8 @@ class AsciiDocBlock extends AbstractBlock {
     this.wssCache = new HashMap<>();
   }
 
-  private AsciiDocBlock(@NotNull ASTNode node, CodeStyleSettings settings, boolean verse, boolean table, boolean hardbreaks, Map<Language, WhiteSpaceFormattingStrategy> wss) {
-    super(node, null, Alignment.createAlignment());
+  private AsciiDocBlock(@NotNull ASTNode node, CodeStyleSettings settings, boolean verse, boolean table, boolean hardbreaks, Map<Language, WhiteSpaceFormattingStrategy> wss, Alignment alignment) {
+    super(node, null, alignment);
     this.settings = settings;
     this.verse = verse;
     this.table = table;
@@ -70,7 +70,9 @@ class AsciiDocBlock extends AbstractBlock {
     ASTNode child = myNode.getFirstChildNode();
     while (child != null) {
       if (!(child instanceof PsiWhiteSpace)) {
-        result.add(new AsciiDocBlock(child, settings, verse, table, hardbreaks, wssCache));
+        // every child will align with the the parent, no additional indents due to alignment
+        // as leading blanks in Asciidoc in a line can either change the meaning
+        result.add(new AsciiDocBlock(child, settings, verse, table, hardbreaks, wssCache, getAlignment()));
       } else {
         WhiteSpaceFormattingStrategy myWhiteSpaceStrategy = wssCache.computeIfAbsent(((PsiWhiteSpace) child).getLanguage(),
           WhiteSpaceFormattingStrategyFactory::getStrategy);
@@ -157,6 +159,11 @@ class AsciiDocBlock extends AbstractBlock {
       return Spacing.createSpacing(0, 0, 0, false, 0);
     }
 
+    // if a block starts within a cell, start a new line for the block
+    if (isCellStart(child1) && isBlock(child2)) {
+      return Spacing.createSpacing(0, 0, 1, false, 0);
+    }
+
     // before and after a block have one blank line, but not with if there is an continuation ("+")
     if (!table && isBlock(child2) && !isContinuation(child1) && !isBlockStart(child1)) {
       return Spacing.createSpacing(0, 0, 2, false, 0);
@@ -166,6 +173,11 @@ class AsciiDocBlock extends AbstractBlock {
     }
 
     return Spacing.createSpacing(0, 999, 0, true, 999);
+  }
+
+  private boolean isCellStart(Block block) {
+    return block instanceof AsciiDocBlock &&
+      AsciiDocTokenTypes.CELLSEPARATOR.equals(((AsciiDocBlock) block).getNode().getElementType());
   }
 
   private static boolean isAttributeDeclaration(Block block) {
