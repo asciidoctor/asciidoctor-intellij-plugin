@@ -866,7 +866,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <DESCRIPTION> {
-  {DESCRIPTION_END} { yypopstate(); return AsciiDocTokenTypes.DESCRIPTION; }
+  {DESCRIPTION_END} / [ \t\n] { yypopstate(); return AsciiDocTokenTypes.DESCRIPTION; }
 }
 
 <TITLE> {

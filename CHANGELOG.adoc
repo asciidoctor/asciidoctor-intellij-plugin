@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - support inline anchors in regular text (#469)
 - adding incremental table parsing on cell-level (#467)
 - fixing indents for verse after reformat (#467)
+- support definitions with two colons in the term (#472)
 
 === 0.30.67 (preview, available from GitHub releases)
 

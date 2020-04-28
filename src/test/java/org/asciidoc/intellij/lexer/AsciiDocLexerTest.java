@@ -1623,6 +1623,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('description')");
   }
 
+  public void testDescriptionWithMultipleColons() {
+    doTest("a property::ext:: description",
+      "AsciiDoc:DESCRIPTION ('a')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:DESCRIPTION ('property::ext::')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('description')");
+  }
+
   public void testDescriptionWithFormatting() {
     doTest("`property`:: description",
       "AsciiDoc:MONO_START ('`')\n" +
