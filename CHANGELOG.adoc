@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.68 (work in progress)
+=== 0.30.68 (preview, available from GitHub releases)
 
 - avoid exception when creating a cover image for PDF
 - find-grained read/write locking when creating preview, HTML or PDF
@@ -16,6 +16,7 @@ This document provides a high-level view of the changes introduced by release.
 - adding incremental table parsing on cell-level (#467)
 - fixing indents for verse after reformat (#467)
 - support definitions with two colons in the term (#472)
+- adding table cell as re-parseable element in PSI tree (#467)
 
 === 0.30.67 (preview, available from GitHub releases)
 

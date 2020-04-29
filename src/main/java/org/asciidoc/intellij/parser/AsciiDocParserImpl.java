@@ -109,10 +109,13 @@ public class AsciiDocParserImpl {
     final String delimiter;
     @SuppressWarnings("checkstyle:visibilitymodifier")
     final PsiBuilder.Marker marker;
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    final IElementType type;
 
-    BlockMarker(String delimiter, PsiBuilder.Marker marker) {
+    BlockMarker(String delimiter, PsiBuilder.Marker marker, IElementType type) {
       this.delimiter = delimiter;
       this.marker = marker;
+      this.type = type;
     }
 
   }
@@ -220,8 +223,7 @@ public class AsciiDocParserImpl {
         parseBlockId();
         continue;
       } else if (at(CELLSEPARATOR)) {
-        dropPreBlock();
-        next();
+        parseBlock();
         continue;
       } else if (at(CONTINUATION)) {
         newLines = 0;
@@ -637,6 +639,10 @@ public class AsciiDocParserImpl {
       return;
     }
     delimiter = delimiter.trim();
+    if (myBuilder.getTokenType() == CELLSEPARATOR) {
+      // the last character of the cell separator defines the separator, for example the "|"
+      delimiter = delimiter.substring(delimiter.length() - 1);
+    }
     boolean existsInStack = false;
     for (BlockMarker m : myBlockMarker) {
       if (m.delimiter.equals(delimiter)) {
@@ -649,13 +655,16 @@ public class AsciiDocParserImpl {
       // close all non-matching blocks
       while (!myBlockMarker.peek().delimiter.equals(delimiter)) {
         BlockMarker currentBlock = myBlockMarker.pop();
-        currentBlock.marker.done(AsciiDocElementTypes.BLOCK);
+        currentBlock.marker.done(currentBlock.type);
       }
-      next();
+      if (myBuilder.getTokenType() != CELLSEPARATOR) {
+        next();
+      }
       // close this block
       BlockMarker currentBlock = myBlockMarker.pop();
-      currentBlock.marker.done(AsciiDocElementTypes.BLOCK);
-    } else {
+      currentBlock.marker.done(currentBlock.type);
+    }
+    if (!existsInStack || myBuilder.getTokenType() == CELLSEPARATOR) {
       PsiBuilder.Marker myBlockStartMarker;
       if (myPreBlockMarker != null) {
         myBlockStartMarker = myPreBlockMarker;
@@ -663,7 +672,13 @@ public class AsciiDocParserImpl {
       } else {
         myBlockStartMarker = beginBlock();
       }
-      myBlockMarker.push(new BlockMarker(delimiter, myBlockStartMarker));
+      IElementType type;
+      if (myBuilder.getTokenType() == CELLSEPARATOR) {
+        type = AsciiDocElementTypes.CELL;
+      } else {
+        type = AsciiDocElementTypes.BLOCK;
+      }
+      myBlockMarker.push(new BlockMarker(delimiter, myBlockStartMarker, type));
       next();
     }
   }
@@ -676,7 +691,7 @@ public class AsciiDocParserImpl {
     } else {
       myBlockStartMarker = beginBlock();
     }
-    myBlockMarker.push(new BlockMarker("nodel", myBlockStartMarker));
+    myBlockMarker.push(new BlockMarker("nodel", myBlockStartMarker, AsciiDocElementTypes.BLOCK));
   }
 
   private void endBlockNoDelimiter() {
@@ -695,7 +710,7 @@ public class AsciiDocParserImpl {
     } else {
       myBlockStartMarker = beginBlock();
     }
-    myBlockMarker.push(new BlockMarker("enum", myBlockStartMarker));
+    myBlockMarker.push(new BlockMarker("enum", myBlockStartMarker, AsciiDocElementTypes.BLOCK));
   }
 
   private void endEnumerationDelimiter() {

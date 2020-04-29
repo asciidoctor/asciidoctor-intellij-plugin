@@ -353,7 +353,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 %state LISTING_BLOCK
 %state LISTING_NO_DELIMITER
-%state LISTING_NO_DELIMITER
 
 %state COMMENT_BLOCK
 %state LITERAL_BLOCK
@@ -507,7 +506,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         yypushback(yylength()); yybegin(SINGLELINE);
       }
   ^ [ \t]+ [^ \t\n] {
-        if (style == null) {
+        if (style == null && !isPrefixedBy(new char[] {tableChar})) { // when running incremental lexing, this will be a false-positive for a beginning of the line for a cell
           yybegin(LISTING_NO_DELIMITER); return AsciiDocTokenTypes.LISTING_TEXT;
         } else {
           yypushback(yylength()); yybegin(STARTBLOCK);
