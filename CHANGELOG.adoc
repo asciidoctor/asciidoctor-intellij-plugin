@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.69 (work in progress)
+
+- add support for PacketDiag, RackDiag, Vega, Vega-Lite and WaveDrom (thanks to @Mogztter) (#422)
+
 === 0.30.68 (preview, available from GitHub releases)
 
 - avoid exception when creating a cover image for PDF
