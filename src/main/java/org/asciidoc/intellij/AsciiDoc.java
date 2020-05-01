@@ -504,6 +504,7 @@ public class AsciiDoc {
     );
     validateAccess();
     Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
+    attributes.putAll(populateDocumentAttributes(fileBaseDir, name));
     synchronized (AsciiDoc.class) {
       CollectingLogHandler logHandler = new CollectingLogHandler();
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
@@ -548,6 +549,17 @@ public class AsciiDoc {
         notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
       }
     }
+  }
+
+  private Map<String, String> populateDocumentAttributes(File fileBaseDir, String name) {
+    Map<String, String> attributes = new HashMap<>();
+    attributes.put("docname", name.replaceAll("\\..*$", ""));
+    if (name.contains(".")) {
+      attributes.put("docfilesuffix", name.replaceAll("^(.*)(\\..*)$", "$2"));
+    }
+    attributes.put("docfile", new File(fileBaseDir, name).getAbsolutePath());
+    attributes.put("docdir", fileBaseDir.getAbsolutePath());
+    return attributes;
   }
 
   private void validateAccess() {

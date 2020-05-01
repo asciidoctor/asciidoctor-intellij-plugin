@@ -13,6 +13,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
+import org.assertj.core.api.Assertions;
 import org.intellij.lang.annotations.Language;
 
 import java.io.File;
@@ -104,7 +105,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertEquals(3, blockMacro.getChildren().length);
     AsciiDocAttributeReference ref = (AsciiDocAttributeReference) blockMacro.getChildren()[0];
     assertEquals(AsciiDocAttributeDeclarationReference.class, ref.getReferences()[0].getClass());
-    assertEquals(1, ref.getReferences()[0].getVariants().length);
+    Assertions.assertThat(ref.getReferences()[0].getVariants()).hasSizeGreaterThan(1);
+    Assertions.assertThat(((LookupElementBuilder) ref.getReferences()[0].getVariants()[0]).getLookupString()).isEqualTo("hi");
   }
 
   public void testIncompleteBlockMacroWithAttributesInNewLine() {

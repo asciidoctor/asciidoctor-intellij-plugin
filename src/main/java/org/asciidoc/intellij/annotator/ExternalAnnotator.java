@@ -79,6 +79,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
     try {
       AsciiDoc asciiDoc = new AsciiDoc(file.getProject(), fileBaseDir,
         tempImagesPath, name);
+      asciidocAnnotationResultType.setDocname(new File(fileBaseDir, name).getAbsolutePath());
       asciiDoc.render(collectedInfo.getContent(), collectedInfo.getConfig(), collectedInfo.getExtensions(), (boasOut, boasErr, logRecords)
         -> asciidocAnnotationResultType.setLogRecords(logRecords));
     } finally {
@@ -112,7 +113,9 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
       Integer lineNumber = null;
       // the line number used for creating the annotation (starting with 0)
       int lineNumberForAnnotation = 0;
-      if (logRecord.getCursor() != null && logRecord.getCursor().getFile() == null && logRecord.getCursor().getLineNumber() >= 0) {
+      if (logRecord.getCursor() != null
+        && (logRecord.getCursor().getFile() == null || logRecord.getCursor().getFile().equals(annotationResult.getDocname()))
+        && logRecord.getCursor().getLineNumber() >= 0) {
         lineNumber = logRecord.getCursor().getLineNumber();
         lineNumberForAnnotation = lineNumber - 1;
         if (lineNumberForAnnotation < 0) {
@@ -133,7 +136,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
       StringBuilder sb = new StringBuilder();
       sb.append(StringEscapeUtils.escapeHtml4(logRecord.getMessage()));
       if (logRecord.getCursor() != null) {
-        if (logRecord.getCursor().getFile() == null) {
+        if (logRecord.getCursor().getFile() == null || logRecord.getCursor().getFile().equals(annotationResult.getDocname())) {
           sb.append("<br>(")
             .append(StringEscapeUtils.escapeHtml4(file.getVirtualFile().getName()));
           if (lineNumber != null) {

@@ -226,7 +226,38 @@ public class AsciiDocUtil {
     key = key.toLowerCase(Locale.US);
 
     if (key.equals("snippets")) {
-      augmentList(result, AsciiDocUtil.findSpringRestDocSnippets(current), "snippets");
+      augmentList(result, AsciiDocUtil.findSpringRestDocSnippets(current), key);
+    }
+
+    if (key.equals("docname")) {
+      String name = current.getContainingFile().getName();
+      result.add(new AsciiDocAttributeDeclarationDummy(key, name.replaceAll("\\..*$", "")));
+    }
+
+    if (key.equals("docfilesuffix")) {
+      String name = current.getContainingFile().getName();
+      if (name.contains(".")) {
+        result.add(new AsciiDocAttributeDeclarationDummy(key, name.replaceAll("^(.*)(\\..*)$", "$2")));
+      }
+    }
+
+    if (key.equals("docfile")) {
+      VirtualFile vf = current.getContainingFile().getVirtualFile();
+      if (vf == null) {
+        vf = current.getContainingFile().getOriginalFile().getVirtualFile();
+      }
+      augmentList(result, vf, key);
+    }
+
+    if (key.equals("docdir")) {
+      VirtualFile vf = current.getContainingFile().getVirtualFile();
+      if (vf == null) {
+        vf = current.getContainingFile().getOriginalFile().getVirtualFile();
+      }
+      if (vf != null) {
+        vf = vf.getParent();
+      }
+      augmentList(result, vf, key);
     }
 
     VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(current);
@@ -274,6 +305,22 @@ public class AsciiDocUtil {
     augmentList(result, AsciiDocUtil.findAntoraExamplesDir(current), FAMILY_EXAMPLE + "sdir");
 
     collectAntoraAttributes(current).forEach((k, v) -> result.add(new AsciiDocAttributeDeclarationDummy(k, v)));
+
+    String name = current.getContainingFile().getName();
+    result.add(new AsciiDocAttributeDeclarationDummy("docname", name.replaceAll("\\..*$", "")));
+    if (name.contains(".")) {
+      result.add(new AsciiDocAttributeDeclarationDummy("docfilesuffix", name.replaceAll("^(.*)(\\..*)$", "$2")));
+    }
+
+    VirtualFile vf = current.getContainingFile().getVirtualFile();
+    if (vf == null) {
+      vf = current.getContainingFile().getOriginalFile().getVirtualFile();
+    }
+    augmentList(result, vf, "docfile");
+    if (vf != null) {
+      vf = vf.getParent();
+      augmentList(result, vf, "docdir");
+    }
 
     return result;
   }

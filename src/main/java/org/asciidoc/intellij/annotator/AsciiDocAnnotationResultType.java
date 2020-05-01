@@ -11,6 +11,7 @@ public class AsciiDocAnnotationResultType {
 
   private final Document document;
   private List<LogRecord> logRecords;
+  private String docname;
 
   public AsciiDocAnnotationResultType(Document document) {
     this.document = document;
@@ -22,6 +23,14 @@ public class AsciiDocAnnotationResultType {
 
   public List<LogRecord> getLogRecords() {
     return logRecords;
+  }
+
+  public void setDocname(String docname) {
+    this.docname = docname;
+  }
+
+  public String getDocname() {
+    return docname;
   }
 
   public static class Message {
