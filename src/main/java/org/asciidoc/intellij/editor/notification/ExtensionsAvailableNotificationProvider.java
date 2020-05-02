@@ -26,7 +26,7 @@ public class ExtensionsAvailableNotificationProvider extends EditorNotifications
 
   @Nullable
   @Override
-  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull final FileEditor fileEditor) {
+  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull final FileEditor fileEditor, @NotNull Project project) {
     if (file.getFileType() != AsciiDocFileType.INSTANCE) {
       return null;
     }

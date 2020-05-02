@@ -4,11 +4,12 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
-import com.intellij.util.ui.JBUI;
+import com.intellij.ui.scale.JBUIScale;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -33,7 +34,7 @@ public class JavaFxMightBeBlurredNotificationProvider extends EditorNotification
 
   @Nullable
   @Override
-  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull final FileEditor fileEditor) {
+  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull final FileEditor fileEditor, @NotNull Project project) {
     // only in AsciiDoc files
     if (file.getFileType() != AsciiDocFileType.INSTANCE) {
       return null;
@@ -51,30 +52,48 @@ public class JavaFxMightBeBlurredNotificationProvider extends EditorNotification
       return null;
     }
 
-    // don't show if workaround for JDK8 active
+    // don't show if workaround for blurred preview active
     if ("false".equalsIgnoreCase(System.getProperty("sun.java2d.uiScale.enabled"))) {
       return null;
     }
 
-    // seems to be problem only on Windows 10
-    if (!"Windows 10".equals(System.getProperty("os.name"))) {
-      return null;
-    }
+    String message;
 
-    // seems to be problem with JDK8, and fixed on JRE11+
-    if (!"1.8".equals(System.getProperty("java.specification.version"))) {
-      return null;
-    }
+    switch (System.getProperty("os.name")) {
+      case "Windows 10":
+        // seems to be problem with JDK8, and fixed on JRE11+
+        if (!"1.8".equals(System.getProperty("java.specification.version"))) {
+          return null;
+        }
 
-    // if there is no fraction, don't show message
-    float scale = JBUI.sysScale();
-    float fraction = scale - (int) scale;
-    if (fraction < 0.05f || fraction > 0.95f) {
-      return null;
+        // if there is no fraction, don't show message
+        float winScale = JBUIScale.sysScale();
+        float fraction = winScale - (int) winScale;
+        if (fraction < 0.05f || fraction > 0.95f) {
+          return null;
+        }
+
+        message = "Fractional scale detected on Windows/JBR8, JavaFX preview could be blurry.";
+
+        break;
+
+      case "Linux":
+        float linScale = JBUIScale.sysScale();
+        if (linScale > 0.95f && linScale < 1.05f) {
+          // no scaling on Linux, don't show message
+          return null;
+        }
+
+        message = "Scaled display detected on Linux, JavaFX preview could be blurry.";
+
+        break;
+
+      default:
+        return null;
     }
 
     final EditorNotificationPanel panel = new EditorNotificationPanel();
-    panel.setText("Fractional scale detected on Windows/JBR8, JavaFX preview could be blurry.");
+    panel.setText(message);
     panel.createActionLabel("Yes, the preview is blurry, show me how to fix it!", ()
       -> BrowserUtil.browse("https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Blurry-preview"));
     panel.createActionLabel("Do not show again", () -> {

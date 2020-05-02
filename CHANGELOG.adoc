@@ -7,10 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.69 (work in progress)
+=== 0.30.69
 
 - add support for PacketDiag, RackDiag, Vega, Vega-Lite and WaveDrom (thanks to @Mogztter) (#422)
 - set attributes document related attributes like `docname` for preview (#475)
+- show notification about a possibly blurry preview also on Linux if display is scaled (#464)
 
 === 0.30.68 (preview, available from GitHub releases)
 

@@ -12,7 +12,6 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
-import org.asciidoc.intellij.editor.AsciiDocSplitEditor;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
@@ -41,7 +40,7 @@ public class SpringBootRestDocsNotificationProvider extends EditorNotifications.
 
   @Nullable
   @Override
-  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull final FileEditor fileEditor) {
+  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull final FileEditor fileEditor, @NotNull Project project) {
     // only in AsciiDoc files
     if (file.getFileType() != AsciiDocFileType.INSTANCE) {
       return null;
@@ -51,18 +50,6 @@ public class SpringBootRestDocsNotificationProvider extends EditorNotifications.
     if (PropertiesComponent.getInstance().getBoolean(SPRING_REST_DOCS_AVAILABLE)) {
       return null;
     }
-
-    // find about the current project
-    Project project;
-    if (fileEditor instanceof AsciiDocSplitEditor) {
-      project = ((AsciiDocSplitEditor) fileEditor).getEditor().getProject();
-      if (project == null) {
-        return null;
-      }
-    } else {
-      return null;
-    }
-
 
     // find out if operation block macro is used
     PsiFile psiFile = PsiManager.getInstance(project).findFile(file);

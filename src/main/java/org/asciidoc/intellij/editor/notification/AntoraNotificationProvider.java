@@ -9,7 +9,6 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
-import org.asciidoc.intellij.editor.AsciiDocSplitEditor;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +33,7 @@ public class AntoraNotificationProvider extends EditorNotifications.Provider<Edi
 
   @Nullable
   @Override
-  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull final FileEditor fileEditor) {
+  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull final FileEditor fileEditor, @NotNull Project project) {
     // only in AsciiDoc files
     if (file.getFileType() != AsciiDocFileType.INSTANCE) {
       return null;
@@ -42,17 +41,6 @@ public class AntoraNotificationProvider extends EditorNotifications.Provider<Edi
 
     // only if not previously disabled
     if (PropertiesComponent.getInstance().getBoolean(ANTORA_AVAILABLE)) {
-      return null;
-    }
-
-    // find about the current project
-    Project project;
-    if (fileEditor instanceof AsciiDocSplitEditor) {
-      project = ((AsciiDocSplitEditor) fileEditor).getEditor().getProject();
-      if (project == null) {
-        return null;
-      }
-    } else {
       return null;
     }
 

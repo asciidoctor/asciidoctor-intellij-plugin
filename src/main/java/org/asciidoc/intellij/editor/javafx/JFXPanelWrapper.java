@@ -1,8 +1,8 @@
 package org.asciidoc.intellij.editor.javafx;
 
+import com.intellij.ui.JreHiDpiUtil;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.FieldAccessor;
-import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
 import com.sun.javafx.embed.EmbeddedSceneInterface;
 import com.sun.javafx.tk.TKScene;
 import javafx.application.Platform;
@@ -34,10 +34,10 @@ public class JFXPanelWrapper extends JFXPanel {
   @Override
   public void addNotify() {
     super.addNotify();
-    if (UIUtil.isJreHiDPIEnabled()) {
+    if (JreHiDpiUtil.isJreHiDPIEnabled()) {
       // JFXPanel is scaled asynchronously after first repaint, what may lead
       // to showing unscaled content. To work it around, set "scaleFactor" ahead.
-      int scale = Math.round(JBUI.sysScale(this));
+      int scale = Math.round(JBUIScale.sysScale(this));
       MY_SCALE_FACTOR_ACCESSOR.set(this, scale);
       Scene scene = getScene();
       // If scene is null then it will be set later and super.setEmbeddedScene(..) will init its scale properly,
