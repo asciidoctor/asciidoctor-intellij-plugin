@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - avoid NPE when auto-completing a local anchor in an Antora project (#481)
 - upgrade to asciidoctorj-diagram 2.0.2 and asciidoctorj 2.3.0. This also upgrades to PlantUML 1.2020.6
+- avoid exception when resolving temporary image file name for preview in the browser
 
 === 0.30.69
 
