@@ -264,7 +264,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       true,
       "",
       true,
-      0));
+      1));
     try {
       String html = asciidoc.render("[wavedrom]\n" +
         "....\n" +
@@ -299,7 +299,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       true,
       "",
       true,
-      0));
+      1));
     try {
       String html = asciidoc.render("[vega]\n" +
         "....\n" +
