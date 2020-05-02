@@ -1,0 +1,13 @@
+<error descr="First occurrence of duplicate target name \"name1\", another occurrence at duplicateDiagramName.adoc: line 8">[plantuml,name1,svg]</error>
+----
+@startuml
+Bob->Alice: hello1
+@enduml
+----
+
+<error descr="Duplicate target name \"name1\", will overwrite file, first occurrence at duplicateDiagramName.adoc: line 1">[plantuml,name1,svg]</error>
+----
+@startuml
+Bob->Alice: hello2
+@enduml
+----

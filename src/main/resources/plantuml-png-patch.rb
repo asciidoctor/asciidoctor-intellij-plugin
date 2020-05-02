@@ -1,5 +1,5 @@
 require 'asciidoctor/extensions'
-require 'asciidoctor-diagram/plantuml/extension'
+require 'asciidoctor-diagram'
 
 include ::Asciidoctor
 
@@ -17,6 +17,8 @@ module SvgToPngHack
     parent.document.set_attr('figure-number', fignum)
     # render a second time for PNG to be used in preview
     attributes['format'] = 'png'
+    # prevent duplicate detection for the second run
+    attributes['secondrun'] = 'true'
     super(parent, reader_or_target, attributes)
   end
 end
@@ -24,12 +26,14 @@ end
 # Duplicate target names from different diagrams will overwrite each others files. Therefore, issue a warning.
 
 def check_duplicate_target(attributes, location, parent)
-  if attributes['target']
-    attr_name = 'plantuml-target-name-' + attributes['target']
+  if attributes['target'] && !attributes.key?('secondrun')
+    attr_name = 'asciidoctor-diagram-target-name-' + attributes['target']
     original_location = parent.document.attr(attr_name)
+    # if previous location found, and previous location is not current location
+    # this allows for the second run to create both SVG and PNG
     if original_location
-      logger.error message_with_context 'Duplicate target name, will overwrite file, first occurrence at ' + original_location.line_info, source_location: location
-      logger.error message_with_context 'First occurrence of duplicate target name, another occurrence at ' + location.line_info, source_location: original_location
+      logger.error message_with_context 'Duplicate target name "' + attributes['target'] + '", will overwrite file, first occurrence at ' + original_location.line_info, source_location: location
+      logger.error message_with_context 'First occurrence of duplicate target name "' + attributes['target'] + '", another occurrence at ' + location.line_info, source_location: original_location
     else
       parent.document.set_attr(attr_name, location)
     end
@@ -59,22 +63,18 @@ end
 
 class Diagram::PlantUmlBlockProcessor
   prepend SvgToPngHack
-  prepend DuplicateNameBlockHack
 end
 
 class Diagram::PlantUmlBlockMacroProcessor
   prepend SvgToPngHack
-  prepend DuplicateNameBlockMacroHack
 end
 
 class Diagram::SaltBlockProcessor
   prepend SvgToPngHack
-  prepend DuplicateNameBlockHack
 end
 
 class Diagram::SaltBlockMacroProcessor
   prepend SvgToPngHack
-  prepend DuplicateNameBlockMacroHack
 end
 
 class Diagram::DiagramBlockProcessor
@@ -82,133 +82,5 @@ class Diagram::DiagramBlockProcessor
 end
 
 class Diagram::DiagramBlockMacroProcessor
-  prepend DuplicateNameBlockMacroHack
-end
-
-class Diagram::VegaBlockProcessor
-  prepend DuplicateNameBlockHack
-end
-
-class Diagram::VegaBlockMacroProcessor
-  prepend DuplicateNameBlockMacroHack
-end
-
-class Diagram::VegaBlockProcessor
-  prepend DuplicateNameBlockHack
-end
-
-class Diagram::VegaBlockMacroProcessor
-  prepend DuplicateNameBlockMacroHack
-end
-
-class Diagram::UmletBlockProcessor
-  prepend DuplicateNameBlockHack
-end
-
-class Diagram::UmletBlockMacroProcessor
-  prepend DuplicateNameBlockMacroHack
-end
-
-class Diagram::TikZBlockProcessor
-  prepend DuplicateNameBlockHack
-end
-
-class Diagram::TikZBlockMacroProcessor
-  prepend DuplicateNameBlockMacroHack
-end
-
-class Diagram::SyntraxBlockProcessor
-  prepend DuplicateNameBlockHack
-end
-
-class Diagram::SyntraxBlockMacroProcessor
-  prepend DuplicateNameBlockMacroHack
-end
-
-class Diagram::SyntraxBlockProcessor
-  prepend DuplicateNameBlockHack
-end
-
-class Diagram::SyntraxBlockMacroProcessor
-  prepend DuplicateNameBlockMacroHack
-end
-
-class Diagram::SvgBobBlockProcessor
-  prepend DuplicateNameBlockHack
-end
-
-class Diagram::SvgBobBlockMacroProcessor
-  prepend DuplicateNameBlockMacroHack
-end
-
-class Diagram::ShaapeBlockProcessor
-  prepend DuplicateNameBlockHack
-end
-
-class Diagram::ShaapeBlockMacroProcessor
-  prepend DuplicateNameBlockMacroHack
-end
-
-class Diagram::NomnomlBlockProcessor
-  prepend DuplicateNameBlockHack
-end
-
-class Diagram::NomnomlBlockMacroProcessor
-  prepend DuplicateNameBlockMacroHack
-end
-
-class Diagram::MscBlockProcessor
-  prepend DuplicateNameBlockHack
-end
-
-class Diagram::MscBlockMacroProcessor
-  prepend DuplicateNameBlockMacroHack
-end
-
-class Diagram::MermaidBlockProcessor
-  prepend DuplicateNameBlockHack
-end
-
-class Diagram::MermaidBlockMacroProcessor
-  prepend DuplicateNameBlockMacroHack
-end
-
-class Diagram::MermaidBlockProcessor
-  prepend DuplicateNameBlockHack
-end
-
-class Diagram::MermaidBlockMacroProcessor
-  prepend DuplicateNameBlockMacroHack
-end
-
-class Diagram::GraphvizBlockProcessor
-  prepend DuplicateNameBlockHack
-end
-
-class Diagram::GraphvizBlockMacroProcessor
-  prepend DuplicateNameBlockMacroHack
-end
-
-class Diagram::ErdBlockProcessor
-  prepend DuplicateNameBlockHack
-end
-
-class Diagram::ErdBlockMacroProcessor
-  prepend DuplicateNameBlockMacroHack
-end
-
-class Diagram::DitaaBlockProcessor
-  prepend DuplicateNameBlockHack
-end
-
-class Diagram::DitaaBlockMacroProcessor
-  prepend DuplicateNameBlockMacroHack
-end
-
-class Diagram::AsciiToSvgBlockProcessor
-  prepend DuplicateNameBlockHack
-end
-
-class Diagram::AsciiToSvgBlockMacroProcessor
   prepend DuplicateNameBlockMacroHack
 end
