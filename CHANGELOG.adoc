@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.70 (work in progress)
+
+- avoid NPE when auto-completing a local anchor in an Antora project (#481)
+
 === 0.30.69
 
 - add support for PacketDiag, RackDiag, Vega, Vega-Lite and WaveDrom (thanks to @Mogztter) (#422)

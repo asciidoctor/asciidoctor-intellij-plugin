@@ -356,6 +356,7 @@ public class AsciiDocUtil {
     return (AsciiDocFile) PsiFileFactory.getInstance(project).createFileFromText("a.adoc", AsciiDocLanguage.INSTANCE, text);
   }
 
+  @Nullable
   public static VirtualFile findAntoraPartials(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
@@ -641,6 +642,7 @@ public class AsciiDocUtil {
     return springRestDocSnippets;
   }
 
+  @Nullable
   public static VirtualFile findAntoraPartials(PsiElement element) {
     VirtualFile antoraPartials = null;
     VirtualFile vf;
