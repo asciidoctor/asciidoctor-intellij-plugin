@@ -92,6 +92,10 @@ public class BrowserPanel implements Closeable {
   private String myFontAwesomeCssLink;
   @Nullable
   private String myDejavuCssLink;
+  @Nullable
+  private String myGoogleFontsCssLink;
+  @Nullable
+  private String myDroidSansMonoCssLink;
 
   private SignWithMac signWithMac = new SignWithMac();
 
@@ -125,6 +129,8 @@ public class BrowserPanel implements Closeable {
       }
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
+      myGoogleFontsCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/googlefonts.css") + "\">";
+      myDroidSansMonoCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/droidsansmono.css") + "\">";
     } catch (IOException e) {
       String message = "Unable to combine CSS resources: " + e.getMessage();
       log.error(message, e);
@@ -345,7 +351,7 @@ public class BrowserPanel implements Closeable {
 
     /* Add CSS line and JavaScript */
     return html
-      .replace("<head>", "<head>" + getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myDejavuCssLink)
+      .replace("<head>", "<head>" + getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDroidSansMonoCssLink + myDejavuCssLink)
       .replace("</body>", getScriptingLines() + "</body>");
   }
 

@@ -146,6 +146,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   private String myFontAwesomeCssLink;
   @Nullable
   private String myDejavuCssLink;
+  @Nullable
+  private String myGoogleFontsCssLink;
   @NotNull
   private final ScrollPreservingListener myScrollPreservingListener = new ScrollPreservingListener();
   @NotNull
@@ -209,6 +211,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       }
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
+      myGoogleFontsCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/googlefonts.css") + "\">";
     } catch (IOException e) {
       String message = "Unable to combine CSS resources: " + e.getMessage();
       log.error(message, e);
@@ -320,9 +323,10 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/350
     css = css.replaceAll("word-wrap:break-word", "disabled-word-wrap:break-word");
 
-    // JavaFX doesn't load 'DejaVu Sans Mono' font when 'Droid Sans Mono' is listed first
+    // JavaFX doesn't support synthetic bold/italic, and Droid Sans Mono doesn't have bold/italic styles delivered
     // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/193
-    css = css.replaceAll("(\"Noto Serif\"|\"Open Sans\"|\"Droid Sans Mono\"),", "");
+    // https://bugs.openjdk.java.net/browse/JDK-8089405
+    css = css.replaceAll("(\"Droid Sans Mono\"),", "");
 
     return css;
   }
@@ -692,7 +696,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
     /* Add CSS line and JavaScript for auto-scolling and clickable links */
     return html
-      .replace("<head>", "<head>" + getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myDejavuCssLink)
+      .replace("<head>", "<head>" + getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink)
       .replace("</body>", getScriptingLines() + "</body>");
   }
 

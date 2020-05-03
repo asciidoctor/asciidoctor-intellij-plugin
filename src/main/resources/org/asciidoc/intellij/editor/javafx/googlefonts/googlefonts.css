@@ -1,0 +1,40 @@
+@font-face {
+    font-family: 'Noto Serif';
+    src:url('NotoSerif-BoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Noto Serif';
+    src:url('NotoSerif-Bold.ttf') format('truetype');
+    font-weight: bold;
+}
+@font-face {
+    font-family: 'Noto Serif';
+    src:url('NotoSerif-Italic.ttf') format('truetype');
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Noto Serif';
+    src:url('NotoSerif-Regular.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'Open Sans';
+    src:url('OpenSans-BoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Open Sans';
+    src:url('OpenSans-Bold.ttf') format('truetype');
+    font-weight: bold;
+}
+@font-face {
+    font-family: 'Open Sans';
+    src:url('OpenSans-Italic.ttf') format('truetype');
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Open Sans';
+    src:url('OpenSans-Regular.ttf') format('truetype');
+}

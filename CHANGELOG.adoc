@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.71 (work in progress)
+
+- bundled font "Droid Sans Mono" for preview in browser; bundled "`Noto Serif`" and "`Open Sans`" for JavaFX preview in IDE and in browser (#478)
+
 === 0.30.70
 
 - avoid NPE when auto-completing a local anchor in an Antora project (#481)
