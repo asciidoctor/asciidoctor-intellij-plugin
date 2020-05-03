@@ -13,6 +13,6 @@ public class AsciiDocFileElementType extends IStubFileElementType<PsiFileStub<As
 
   @Override
   public int getStubVersion() {
-    return 8;
+    return 9;
   }
 }
