@@ -525,6 +525,8 @@ public class AsciiDoc {
           ANTORA_INCLUDE_ADAPTER.setAntoraDetails(null, null);
           asciidoctor.unregisterLogHandler(logHandler);
         }
+      } catch (ProcessCanceledException ex) {
+        throw ex;
       } catch (Exception | ServiceConfigurationError ex) {
         LOG.warn("unable to render AsciiDoc document", ex);
         logHandler.log(new LogRecord(Severity.FATAL, ex.getMessage()));

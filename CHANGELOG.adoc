@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.71 (work in progress)
 
 - bundled font "Droid Sans Mono" for preview in browser; bundled "`Noto Serif`" and "`Open Sans`" for JavaFX preview in IDE and in browser (#478)
+- avoid logging `ProcessCanceledException` when rendering AsciiDoc for example in validation (#481)
 
 === 0.30.70
 
