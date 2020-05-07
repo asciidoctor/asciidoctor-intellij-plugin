@@ -10,6 +10,7 @@ import org.asciidoc.intellij.ui.SplitFileEditor;
 import org.asciidoctor.SafeMode;
 import org.junit.Assert;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
@@ -47,6 +48,45 @@ public class AsciiDocTest extends BasePlatformTestCase {
     String html = asciidoc.render("this is *bold*.", Collections.emptyList());
     assertThat(html).withFailMessage("should contain formatted output").contains("<strong>bold</strong>");
     assertThat(html).withFailMessage("should contain data line to allow navigation to source line in preview").contains("data-line-stdin-1");
+  }
+
+  public void testShouldUseCustomStylesheet() throws IOException {
+    File testCss = new File(System.getProperty("java.io.tmpdir"), "test.css");
+    try (BufferedWriter writer = Files.newBufferedWriter(testCss.toPath(), UTF_8)) {
+      writer.write("/* testcss */");
+      writer.flush();
+      String html = asciidoc.render(":stylesheet: test.css", Collections.emptyList());
+      html = "<head></head>" + html;
+      html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes());
+      assertThat(html).withFailMessage("should contain testcss").contains("testcss");
+      assertThat(html).withFailMessage("should not contain standardcss").doesNotContain("standardcss");
+    }
+    if (!testCss.delete()) {
+      throw new RuntimeException("unable to delete file");
+    }
+  }
+
+  public void testShouldUseDocInfoHeader() throws IOException {
+    File docinfoHeader = new File(System.getProperty("java.io.tmpdir"), "docinfo.html");
+    File docinfoFooter = new File(System.getProperty("java.io.tmpdir"), "docinfo-footer.html");
+    try (BufferedWriter writerHeader = Files.newBufferedWriter(docinfoHeader.toPath(), UTF_8);
+         BufferedWriter writerFooter = Files.newBufferedWriter(docinfoFooter.toPath(), UTF_8)) {
+      writerHeader.write("<!-- myHeader -->");
+      writerHeader.flush();
+      writerFooter.write("<!-- myFooter -->");
+      writerFooter.flush();
+      String html = asciidoc.render(":docinfo: shared", Collections.emptyList());
+      html = "<head></head><body>" + html + "</body>";
+      html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes());
+      assertThat(html).contains("myHeader");
+      assertThat(html).contains("myFooter");
+    }
+    if (!docinfoHeader.delete()) {
+      throw new RuntimeException("unable to delete file");
+    }
+    if (!docinfoFooter.delete()) {
+      throw new RuntimeException("unable to delete file");
+    }
   }
 
   public void testShouldRenderPdf() throws IOException {

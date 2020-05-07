@@ -248,6 +248,9 @@ public final class AsciiDocPreviewSettings {
     if (myShowAsciiDocWarningsAndErrorsInEditor != that.myShowAsciiDocWarningsAndErrorsInEditor) {
       return false;
     }
+    if (myInplacePreviewRefresh != that.myInplacePreviewRefresh) {
+      return false;
+    }
     if (myEnableKroki != that.myEnableKroki) {
       return false;
     }

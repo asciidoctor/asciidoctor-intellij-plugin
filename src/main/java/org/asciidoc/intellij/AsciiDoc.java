@@ -79,6 +79,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceConfigurationError;
+import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_YML;
@@ -94,11 +95,6 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.findSpringRestDocSnippets;
  * @author Julien Viet
  */
 public class AsciiDoc {
-
-  /**
-   * Stores the contents of attribute imagesdir of laster rendering.
-   */
-  private String imagesdir;
 
   private static class MaxHashMap extends LinkedHashMap<String, Asciidoctor> {
     @Override
@@ -517,10 +513,9 @@ public class AsciiDoc {
         ANTORA_INCLUDE_ADAPTER.setAntoraDetails(project, antoraModuleDir);
         AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
         try {
-          return "<div id=\"content\">\n" + asciidoctor.convert(text,
+          return "<div id=\"content\"" + (antoraModuleDir != null ? " class=\"doc\"" : "") + ">\n" + asciidoctor.convert(text,
             getDefaultOptions(FileType.JAVAFX, springRestDocsSnippets, attributes)) + "\n</div>";
         } finally {
-          imagesdir = ATTRIBUTES_RETRIEVER.getImagesdir();
           PREPEND_CONFIG.setConfig("");
           ANTORA_INCLUDE_ADAPTER.setAntoraDetails(null, null);
           asciidoctor.unregisterLogHandler(logHandler);
@@ -616,7 +611,6 @@ public class AsciiDoc {
         } finally {
           PREPEND_CONFIG.setConfig("");
           ANTORA_INCLUDE_ADAPTER.setAntoraDetails(null, null);
-          imagesdir = ATTRIBUTES_RETRIEVER.getImagesdir();
           asciidoctor.unregisterLogHandler(logHandler);
         }
       } catch (ProcessCanceledException ex) {
@@ -785,8 +779,8 @@ public class AsciiDoc {
     return opts.asMap();
   }
 
-  public String getImagesDir() {
-    return imagesdir;
+  public Map<String, String> getAttributes() {
+    return ATTRIBUTES_RETRIEVER.getAttributes();
   }
 
   public enum FileType {
@@ -812,6 +806,104 @@ public class AsciiDoc {
     if (value != null) {
       result.put(nameTarget, value.toString());
     }
+  }
+
+  @NotNull
+  public static String enrichPage(@NotNull String html, String standardCss, @NotNull Map<String, String> attributes) {
+    /* Add CSS line */
+    String stylesheet = attributes.get("stylesheet");
+    if (stylesheet != null && stylesheet.length() != 0) {
+      // custom stylesheet set
+      String stylesdir = attributes.get("stylesdir");
+      VirtualFile stylesdirVf = LocalFileSystem.getInstance().findFileByPath(attributes.get("docdir"));
+      if (stylesdirVf != null) {
+        if (stylesdir != null && stylesdir.length() != 0) {
+          File stylesdirFile = new File(stylesdir);
+          if (!stylesdirFile.isAbsolute()) {
+            stylesdirVf = stylesdirVf.findFileByRelativePath(stylesdir);
+          } else {
+            stylesdirVf = LocalFileSystem.getInstance().findFileByIoFile(stylesdirFile);
+          }
+        }
+        if (stylesdirVf != null) {
+          VirtualFile stylesheetVf = stylesdirVf.findChild(stylesheet);
+          if (stylesheetVf != null) {
+            String css;
+            try (InputStream is = stylesheetVf.getInputStream()) {
+              css = IOUtils.toString(is);
+            } catch (IOException ex) {
+              css = "/* unable to read CSS from " + stylesdirVf.getCanonicalPath() + ": " + ex.getMessage() + " */";
+            }
+            html = html
+              .replace("<head>", "<head>" + "<style>" + css + "</style>");
+          }
+        }
+      }
+    } else {
+      // use standard stylesheet
+      if (standardCss != null) {
+        html = html
+          .replace("<head>", "<head>" + standardCss);
+      }
+    }
+
+    String docinfo = attributes.get("docinfo");
+    if (docinfo != null && docinfo.length() != 0) {
+      // custom stylesheet set
+      String docinfodir = attributes.get("docinfodir");
+      VirtualFile docinfodirVf = LocalFileSystem.getInstance().findFileByPath(attributes.get("docdir"));
+      if (docinfodirVf != null) {
+        if (docinfodir != null && docinfodir.length() != 0) {
+          File docinfodirFile = new File(docinfodir);
+          if (!docinfodirFile.isAbsolute()) {
+            docinfodirVf = docinfodirVf.findFileByRelativePath(docinfodir);
+          } else {
+            docinfodirVf = LocalFileSystem.getInstance().findFileByIoFile(docinfodirFile);
+          }
+        }
+        if (docinfodirVf != null) {
+          StringTokenizer st = new StringTokenizer(docinfo, ",");
+          while (st.hasMoreTokens()) {
+            String token = st.nextToken().trim();
+            if (token.equals("shared") || token.equals("shared-head") || token.equals("private") || token.equals("private-head")) {
+              String prefix = "";
+              if (token.startsWith("private")) {
+                prefix = attributes.get("docname") + "-";
+              }
+              VirtualFile file = docinfodirVf.findChild(prefix + "docinfo.html");
+              if (file != null) {
+                String content;
+                try (InputStream is = file.getInputStream()) {
+                  content = IOUtils.toString(is);
+                } catch (IOException ex) {
+                  content = "<!-- unable to read contents from from " + file.getCanonicalPath() + ": " + ex.getMessage() + " -->";
+                }
+                html = html
+                  .replace("</head>", content + "</head>");
+              }
+            }
+            if (token.equals("shared") || token.equals("shared-footer") || token.equals("private") || token.equals("private-footer")) {
+              String prefix = "";
+              if (token.startsWith("private")) {
+                prefix = attributes.get("docname") + "-";
+              }
+              VirtualFile file = docinfodirVf.findChild(prefix + "docinfo-footer.html");
+              if (file != null) {
+                String content;
+                try (InputStream is = file.getInputStream()) {
+                  content = IOUtils.toString(is);
+                } catch (IOException ex) {
+                  content = "<!-- unable to read contents from from " + file.getCanonicalPath() + ": " + ex.getMessage() + " -->";
+                }
+                html = html
+                  .replace("</body>",  content + "</body>");
+              }
+            }
+          }
+        }
+      }
+    }
+    return html;
   }
 
 }

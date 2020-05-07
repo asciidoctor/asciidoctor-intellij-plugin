@@ -24,13 +24,12 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Map;
 
 import static org.asciidoc.intellij.util.UIUtil.loadStyleSheet;
 
 final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
-  private static final int FOCUS_ELEMENT_DY = 100;
-
-  private Logger log = Logger.getInstance(JeditorHtmlPanel.class);
+  private final Logger log = Logger.getInstance(JeditorHtmlPanel.class);
 
   @NotNull
   private final JEditorPane jEditorPane;
@@ -91,7 +90,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   @Override
-  public void setHtml(@NotNull String html, String imagesdir) {
+  public void setHtml(@NotNull String html, Map<String, String> ignored) {
     myLastRenderedHtml = html;
     EditorKit kit = jEditorPane.getEditorKit();
     javax.swing.text.Document doc = kit.createDefaultDocument();
@@ -113,7 +112,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   private void updatePreviewOnEDT(final javax.swing.text.Document doc) {
-    /**
+    /*
      * call jEditorPane.setDocument in the EDT to avoid flicker
      *
      * @see http://en.wikipedia.org/wiki/Event_dispatching_thread)

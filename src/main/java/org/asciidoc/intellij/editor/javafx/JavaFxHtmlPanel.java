@@ -27,8 +27,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.PsiNavigateUtil;
-import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.sun.javafx.application.PlatformImpl;
 import javafx.application.Platform;
@@ -46,6 +46,7 @@ import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
@@ -76,6 +77,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -166,6 +168,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   private volatile CountDownLatch rendered = new CountDownLatch(1);
   private volatile boolean forceRefresh = false;
   private volatile long stamp = 0;
+  private volatile String frameHtml = null;
 
   JavaFxHtmlPanel(Document document, Path imagesPath) {
 
@@ -238,8 +241,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
             registerContextMenu(JavaFxHtmlPanel.this.myWebView);
             myWebView.setContextMenuEnabled(false);
             float uiZoom = (float) AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getZoom() / 100;
-            myWebView.setZoom(JBUI.scale(uiZoom));
-            myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>", null));
+            myWebView.setZoom(JBUIScale.scale(uiZoom));
+            myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>", Collections.emptyMap()));
 
             myWebView.addEventFilter(ScrollEvent.SCROLL, scrollEvent -> {
               // touch pads send lots of events with deltaY == 0, not handling them here
@@ -252,9 +255,9 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
                   + 1;
                 zoom = zoom * factor;
                 // define minimum/maximum zoom
-                if (zoom < JBUI.scale(0.1f)) {
+                if (zoom < JBUIScale.scale(0.1f)) {
                   zoom = 0.1;
-                } else if (zoom > JBUI.scale(10.f)) {
+                } else if (zoom > JBUIScale.scale(10.f)) {
                   zoom = 10;
                 }
                 myWebView.setZoom(zoom);
@@ -264,7 +267,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
             myWebView.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
               if (mouseEvent.isControlDown() && mouseEvent.getButton() == MouseButton.MIDDLE) {
-                myWebView.setZoom(JBUI.scale(1f));
+                myWebView.setZoom(JBUIScale.scale(1f));
                 mouseEvent.consume();
               }
             });
@@ -468,7 +471,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   @Override
-  public synchronized void setHtml(@NotNull String htmlParam, String imagesdir) {
+  public synchronized void setHtml(@NotNull String htmlParam, Map<String, String> attributes) {
     rendered = new CountDownLatch(1);
     stamp += 1;
     if (stamp > 10000) {
@@ -478,6 +481,11 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     }
     long iterationStamp = stamp;
     runInPlatformWhenAvailable(() -> {
+      String emptyFrame = prepareHtml(wrapHtmlForPage(""), attributes);
+      if (!emptyFrame.equals(frameHtml)) {
+        forceRefresh = true;
+        frameHtml = emptyFrame;
+      }
       String html = htmlParam;
       if (isDarcula()) {
         // clear out coderay inline CSS colors as they are barely readable in darcula theme
@@ -487,7 +495,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       boolean result = false;
       final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
       if (!forceRefresh && settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")) {
-        final String htmlToReplace = StringEscapeUtils.escapeEcmaScript(prepareHtml(html, imagesdir));
+        final String htmlToReplace = StringEscapeUtils.escapeEcmaScript(prepareHtml(html, attributes));
         // try to replace the HTML contents using JavaScript to avoid flickering MathML
         try {
           boolean ml = false; // set to "true" to test for memory leaks in HTML/JavaScript
@@ -542,10 +550,9 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       // if not successful using JavaScript (like on first rendering attempt), set full content
       if (!result) {
         forceRefresh = false;
-        html = "<html><head></head><body><div style='position:fixed;top:0;left:0;background-color:#eeeeee;color:red;z-index:99;'><div id='mathjaxerrortext'></div><pre style='color:red' id='mathjaxerrorformula'></pre></div>"
-          + html
-          + "<script>window.iterationStamp=" + iterationStamp + " </script></body>";
-        final String htmlToRender = prepareHtml(html, imagesdir);
+        html = html + "<script>window.iterationStamp=" + iterationStamp + " </script>";
+        html = wrapHtmlForPage(html);
+        final String htmlToRender = prepareHtml(html, attributes);
         JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().loadContent(htmlToRender);
       }
     });
@@ -559,6 +566,13 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     } catch (InterruptedException e) {
       log.warn("interrupted while waiting for refresh to complete");
     }
+  }
+
+  @NotNull
+  private String wrapHtmlForPage(String html) {
+    return "<html><head></head><body><div id=\"header\"></div><div style='position:fixed;top:0;left:0;background-color:#eeeeee;color:red;z-index:99;'><div id='mathjaxerrortext'></div><pre style='color:red' id='mathjaxerrorformula'></pre></div>"
+      + html
+      + "</body></html>";
   }
 
   private String findTempImageFile(String filename, String imagesdir) {
@@ -603,7 +617,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     return null;
   }
 
-  private String prepareHtml(@NotNull String html, String imagesdir) {
+  private String prepareHtml(@NotNull String html, @NotNull Map<String, String> attributes) {
     /* for each image we'll calculate a MD5 sum of its content. Once the content changes, MD5 and therefore the URL
      * will change. The changed URL is necessary for the JavaFX web view to display the new content, as each URL
      * will be loaded only once by the JavaFX web view. */
@@ -617,7 +631,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       } catch (UnsupportedEncodingException e) {
         throw new RuntimeException(e);
       }
-      String tmpFile = findTempImageFile(file, imagesdir);
+      String tmpFile = findTempImageFile(file, attributes.get("imagesdir"));
       String md5;
       String replacement;
       if (tmpFile != null) {
@@ -661,7 +675,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
       } catch (UnsupportedEncodingException e) {
         throw new RuntimeException(e);
       }
-      String tmpFile = findTempImageFile(file, imagesdir);
+      String tmpFile = findTempImageFile(file, attributes.get("imagesdir"));
       String md5;
       String replacement;
       if (tmpFile != null) {
@@ -693,10 +707,10 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     // filter out Twitter's JavaScript, as it is problematic for JDK8 JavaFX
     // see: https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/235
     html = html.replaceAll("(?i)<script [a-z ]*src=\"https://platform\\.twitter\\.com/widgets\\.js\" [^>]*></script>", "");
+    html = AsciiDoc.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes);
 
-    /* Add CSS line and JavaScript for auto-scolling and clickable links */
+    /* Add JavaScript for auto-scolling and clickable links */
     return html
-      .replace("<head>", "<head>" + getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink)
       .replace("</body>", getScriptingLines() + "</body>");
   }
 

@@ -40,6 +40,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.regex.MatchResult;
@@ -178,8 +179,8 @@ public class BrowserPanel implements Closeable {
       html = html.replaceAll("<span style=\"color:#[a-zA-Z0-9]*;?", "<span style=\"");
       html = html.replaceAll("<span style=\"background-color:#[a-zA-Z0-9]*;?", "<span style=\"");
     }
-    html = "<html><head></head><body>" + html + "</body>";
-    html = prepareHtml(html, project, asciiDoc.getImagesDir());
+    html = "<html><head></head><body><div id=\"header\"></div>" + html + "<div id=\"footer\"></div></body></html>";
+    html = prepareHtml(html, project, asciiDoc.getAttributes());
     return html;
   }
 
@@ -230,11 +231,12 @@ public class BrowserPanel implements Closeable {
     return signWithMac.signFile(file);
   }
 
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   public boolean checkMac(@NotNull String file, @NotNull String mac) {
     return signWithMac.checkMac(file, mac);
   }
 
-  private String prepareHtml(@NotNull String html, Project project, String imagesdir) {
+  private String prepareHtml(@NotNull String html, Project project, Map<String, String> attributes) {
     /* for each image we'll calculate a MD5 sum of its content. Once the content changes, MD5 and therefore the URL
      * will change. The changed URL is necessary for the Browser to display the new content, as each URL
      * will be loaded only once due to caching. Also each URL to a local image will be signed so that it can be retrieved securely afterwards */
@@ -251,7 +253,7 @@ public class BrowserPanel implements Closeable {
       } catch (UnsupportedEncodingException e) {
         throw new RuntimeException(e);
       }
-      String tmpFile = findTempImageFile(file, imagesdir);
+      String tmpFile = findTempImageFile(file, attributes.get("imagesdir"));
       String md5;
       String replacement;
       if (tmpFile != null) {
@@ -350,9 +352,9 @@ public class BrowserPanel implements Closeable {
     }
 
     /* Add CSS line and JavaScript */
-    return html
-      .replace("<head>", "<head>" + getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDroidSansMonoCssLink + myDejavuCssLink)
-      .replace("</body>", getScriptingLines() + "</body>");
+    html = AsciiDoc.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDroidSansMonoCssLink + myDejavuCssLink, attributes);
+    html = html.replace("</body>", getScriptingLines() + "</body>");
+    return html;
   }
 
   @NotNull

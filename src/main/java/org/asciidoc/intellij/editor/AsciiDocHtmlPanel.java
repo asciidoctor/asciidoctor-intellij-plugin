@@ -7,12 +7,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Map;
 
 public abstract class AsciiDocHtmlPanel implements Disposable {
   @NotNull
   public abstract JComponent getComponent();
 
-  public abstract void setHtml(@NotNull String html, String imagesdir);
+  public abstract void setHtml(@NotNull String html, Map<String, String> attributes);
 
   public abstract void render();
 

@@ -313,6 +313,38 @@ Clicking the middle mouse button whilst holding kbd:[Ctrl] resets the zoom to 10
 
 === Advanced
 
+==== Custom stylesheets for the preview
+
+The user can provide custom stylesheets for the preview to make the preview look similar to the live site they will publish the content to.
+
+Do do this, prepare an `.asciidoctorconfig` file with settings to replace the stylesheet or to add custom headers.
+
+WARNING: If you reference remote content like fonts or stylesheets, these will require an online connection to load them.
+Therefore the user will not be able to work off-line any more.
+You can provide an attribute to switch on/switch off the custom stylesheets.
+
+..asciidoctorconfigdir
+[source,asciidoc]
+----
+// define in the AsciiDoc plugin's settings the attribute `css-online-preview`
+// to show the preview using the latest stylesheets from the nightly preview.
+// Will only work when online. Will pull fonts and CSS on opening the preview.
+\ifdef::css-online-preview[]
+:stylesdir: {asciidoctorconfigdir}/.asciidoctor
+:stylesheet: preview-stylesheet.css
+\endif::[]
+----
+
+..asciidoctor/preview-stylesheet.css
+[source,css]
+----
+@import url("https://mysite.com/site.css");
+@import url("https://fonts.googleapis.com/css?...");
+body {
+  /* ... */
+}
+----
+
 ==== Creating HTML and PDF
 
 The user can choose _Create PDF from current file_ to convert the file in the current AsciiDoc editor to a PDF using AsciiDoctor PDF version 1.5.x.

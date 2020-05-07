@@ -142,7 +142,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           currentContent = config + content;
           String markup = asciidoc.get().render(content, config, extensions);
           if (markup != null) {
-            myPanel.setHtml(markup, asciidoc.get().getImagesDir());
+            myPanel.setHtml(markup, asciidoc.get().getAttributes());
           }
         }
         if (currentLineNo != targetLineNo) {
