@@ -7,11 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.71 (work in progress)
+=== 0.30.71 (preview, available from GitHub releases)
 
 - bundled font "Droid Sans Mono" for preview in browser; bundled "`Noto Serif`" and "`Open Sans`" for JavaFX preview in IDE and in browser. Removed DejaVu Sans and DejaVu Serif from plugin bundle. (#478)
 - avoid logging `ProcessCanceledException` when rendering AsciiDoc for example in validation (#481)
-- provide custom stylesheet for preview using attributes `stylesheet` and `docinfo` (#487)
+- provide custom stylesheet for the preview using attributes `stylesheet` and `docinfo` (#487)
 
 === 0.30.70
 
