@@ -19,13 +19,7 @@ You can install the plugin (named "`AsciiDoc`") from the plugins section inside 
 
 The most advanced and recommended preview mode (and default for new installations) is JavaFX.
 
-To use the JavaFX preview instead of the Swing preview, you'll need to run IntelliJ with 64bit Java and JavaFX installed.
-Oracle JDK installations include JavaFX, but can make the IDE unstable and crash.
-Pre-bundled OpenJDK installations usually don't include JavaFX.
-Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
-
-From 2017.1 onwards a JetBrains OpenJDK 64bit is included even in the Windows versions.
-Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to be most stable in the JetBrains JDK. See https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Selecting the JDK version the IDE will run under] for more details.
+Refer to the link:https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/installation.html[installation] for a detailed overview of the features.
 
 == Features
 
@@ -35,7 +29,7 @@ Please only use the JDK provided by JetBrains, as the JavaFX rendering seems to 
 * Refactor Markdown to AsciiDoc: Right click on a file, or use the Refactor menu, and the Markdown document will be replaced by the AsciiDoc equivalent.
 Also, supports undo if the user is not happy with the result!
 
-Refer to the link:FEATURES.adoc[Features list] for a detailed overview of the features.
+Refer to the link:https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/features.html[Features list] for a detailed overview of the features.
 
 If you are missing features, please don't hesitate to let me know on Twitter: http://www.twitter.com/ahus1de[@ahus1de] or create an issue in the GitHub issue tracker!
 

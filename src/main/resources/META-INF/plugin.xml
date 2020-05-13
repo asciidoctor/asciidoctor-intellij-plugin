@@ -1,4 +1,4 @@
-<idea-plugin url="https://github.com/asciidoctor/asciidoctor-intellij-plugin">
+<idea-plugin url="https://intellij-asciidoc-plugin.ahus1.de/">
   <id>org.asciidoctor.intellij.asciidoc</id>
   <name>AsciiDoc</name>
   <version>0.0.1</version>

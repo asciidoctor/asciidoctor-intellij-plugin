@@ -1,0 +1,38 @@
+= Overview of the IntelliJ AsciiDoc Plugin
+:navtitle: Overview
+
+////
+This is the start page of plugin's documentation, and therefore likely the first thing people read.
+This doc provides a brief overview of the functionality this plugin provides.
+
+Write about why it is a good idea to use AsciiDoc and the plugin (and maybe when not to use it).
+Mention unique-selling-propositions (USP) that differentiate this plugin from others.
+
+Assumed reader type: someone who is new to the plugin, but might have heard about AsciiDoc before.
+////
+
+Write documentation without leaving your IDE.
+Preview your docs locally before publishing them.
+Collaborate using a version control system.
+Publish with confidence using automated builds.
+
+== Writing technical documentation
+
+When writing technical documentation, it needs at team effort where everyone contributes and collaborates.
+For the content you write you want to be able to publish for different audiences in different target formats like static HTML pages, in-line help or PDFs.
+
+== Why to use AsciiDoc and IntelliJ
+
+The AsciiDoc format allows you to write your content once and automate its publishing using standard build automation tools.
+
+The IntelliJ family of IDEs like IntelliJ IDEA, GoLand, WebStorm or PyCharm allows you to efficiently navigate and edit your content. It allows you to collaborate with other developers writers using version control systems like Git.
+
+== How this plugin helps writers and developers
+
+This plugin adds AsciiDoc functionality to your IDE to make your productive when writing your technical documentation.
+
+It provides the writer with
+
+* a context-sensitive editor,
+* a configurable preview and
+* itegrations to the AsciiDoc ecosystem.

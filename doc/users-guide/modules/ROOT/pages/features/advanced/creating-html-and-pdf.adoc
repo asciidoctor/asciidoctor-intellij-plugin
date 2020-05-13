@@ -1,0 +1,10 @@
+= Creating HTML and PDF
+:navtitle: HTML and PDF
+
+The user can choose _Create PDF from current file_ to convert the file in the current AsciiDoc editor to a PDF using AsciiDoctor PDF version 1.5.x.
+If creating the PDF succeeds, the PDF is opened in the system's PDF viewer.
+To find out more how to configure the output and formatting, please visit https://asciidoctor.org/docs/asciidoctor-pdf/.
+
+The user can also choose _Create HTML from current file_ to convert the file to HTML format.
+If creating HTML succeeds, the exported file is opened in the system's default browser.
+

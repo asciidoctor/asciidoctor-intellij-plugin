@@ -1,0 +1,7 @@
+= Contributing
+
+[NOTE]
+--
+This documentation website is still work in progress.
+The content for contributors is currently only available in the https://github.com/asciidoctor/asciidoctor-intellij-plugin/blob/master/CONTRIBUTING.adoc[contributor guide in this plugin's GitHub repository].
+--

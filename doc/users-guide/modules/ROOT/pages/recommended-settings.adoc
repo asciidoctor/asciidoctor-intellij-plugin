@@ -1,0 +1,28 @@
+= Recommended settings
+
+// make preview work on non-Antora sites, for example GitHub
+ifndef::env-site[]
+:imagesdir: ../images
+endif::[]
+
+Take a minute to for the essential configuration settings of the plugin.
+
+== Configuring editor
+
+. An AsciiDoc recommended practice is _one sentence per line_.
++
+This works best with soft-wraps enabled.
+Go to menu:File[Settings... > Editor > General > Soft Wraps] and enable soft wrap for the file extension you use for AsciiDoc files (usually *.adoc)
++
+image::enable-softwrap.png[Editor settings showing soft wrap]
+
+== Configuring preview
+
+. To get the best preview experience, switch the preview browser to _JavaFX WebView_.
++
+Go to menu menu:File[Settings... > Languages & Frameworks > AsciiDoc] to review or change this setting.
+If JavaFX preview is not available, refer to xref:installation.adoc#prerequisites[Installation Prerequisites]
++
+image::settings-asciidoc.png[AsciiDoc settings]
+
+If your preview is blurry, https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Blurry-preview[follow these instructions to remedy this].

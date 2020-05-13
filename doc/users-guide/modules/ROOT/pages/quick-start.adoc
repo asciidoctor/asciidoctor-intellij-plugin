@@ -1,0 +1,43 @@
+= Quick Start
+
+// make preview work on non-Antora sites, for example GitHub
+ifndef::env-site[]
+:imagesdir: ../images
+endif::[]
+
+A minimal guide for those already familiar with their JetBrains IntelliJ based IDE.
+Continue to section xref:installation.adoc[] for a more detailed guide.
+
+== Prerequisite
+
+. An installed JetBrains IDE like IntelliJ IDEA, GoLand, WebStorm or PyCharm. +
+This plugin fully supports the free IntelliJ IDEA Community edition.
+
+[WARNING]
+--
+Please the pre-bundled JetBrains Runtime 11 to run your IDE. This provides the best live preview based on JavaFX. You can check this in the menu menu:Help[About].
+
+It should state:
+
+====
+[%hardbreaks]
+Runtime version: 11.0...
+VM: OpenJDK 64-Bit Server VM by JetBrains s.r.o
+====
+
+Please refer to xref:installation.adoc#prerequisites[Installation Prerequisites] if this is not the case.
+--
+
+== Plugin installation
+
+. Install the _AsciiDoc_ plugin from the JetBrains marketplace.
++
+image::install-plugin-marketplace-closeup.png[Install AsciiDoc plugin from marketplace]
+
+. Restart your IDE to activate the plugin.
+
+For detailed installation instructions, please follow the instructions in section xref:installation.adoc[].
+
+== Post installation
+
+include::partial$installation-complete.adoc[]

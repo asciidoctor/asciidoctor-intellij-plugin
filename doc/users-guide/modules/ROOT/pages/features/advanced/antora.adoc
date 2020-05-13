@@ -1,0 +1,25 @@
+= Antora
+
+When working in an https://antora.org/[Antora project], the plugin supports:
+
+* Attributes _partialsdir_, _examplesdir_, _attachmentsdir_, _imagesdir_ and _pagesdir_ resolve to their absolute path of the partials, examples, attachments, images and pages folder of the current module.
+This way the following resolves in the editor and the preview:
++
+[source,asciidoc]
+----
+\include::{partialsdir}/test.adoc[]
+----
+
+* Reference other components and modules resolve for xref, image and include macros.
+The following works in the editor (xref, include and image) and in the preview (for include and image):
++
+[source,asciidoc]
+----
+\include::component:module:partial$snippet.adoc[]
+xref::component:module:document.adoc[]
+image::my-image-in-the-current-module.png[]
+image::component:module:my-image-in-another-module.png[]
+----
+
+See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Antora-support[Wiki page] for details
+

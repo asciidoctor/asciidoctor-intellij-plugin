@@ -1,0 +1,53 @@
+= Features of the preview
+:navtitle: Preview
+:uri-kroki: https://kroki.io
+:uri-asciidoctor-diagrams-gh: https://github.com/asciidoctor/asciidoctor-diagram
+:uri-asciidoctor-diagrams-execs: {uri-asciidoctor-diagrams-gh}#specifying-diagram-generator-paths
+
+// make preview work on non-Antora sites, for example GitHub
+ifndef::env-site[]
+:imagesdir: ../images
+endif::[]
+
+Per default the preview is on the right side of a vertical split screen.
+Using the configuration, the user can change the split to horizontal, and change the position of the preview.
+
+The plugin uses https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] 2.x to render the preview.
+
+Per default the plugin runs Asciidoctor in safe mode _UNSAFE_ which is also the default when a user runs Asciidoctor from the command line.
+The user can change the behavior to other modes like _SERVER_ and _SECURE_ in the plugin's settings.
+See section https://asciidoctor.org/docs/user-manual/#running-asciidoctor-securely[Running Asciidoctor securely in the Asciidoctor User Manual] for more information about this feature.
+
+When the user enters formulas using AsciiDoctor's math support, the preview renders them using MathML.
+If the formula can't be parsed by MathML, the preview shows an error popup.
+
+It renders the content of the editor including all referenced includes, images and diagrams like PlantUML on the fly.
+// see: plantuml-png-patch.rb
+As JavaFX has a problem displaying SVG files correctly, the plugin displays all diagrams as PNG. +
+By default, the plugin uses {uri-asciidoctor-diagrams-gh}[Asciidoctor Diagram]
+that depends on locally installed tools to generate images (ie. {uri-asciidoctor-diagrams-execs}[executables] available in your `PATH` environment variable).
+Alternatively, you can use {uri-kroki}[Kroki] instead of Asciidoctor Diagram to render diagrams:
+
+image::kroki-settings.png[]
+
+When Kroki is enabled, the plugin sends the text diagrams to an instance of Kroki to display them as images in the preview.
+By default, it sends your diagrams to the free public cloud instance {uri-kroki}[kroki.io], but you can install Kroki on your own infrastructure.
+Once you've installed Kroki, make sure to update the server URL to point to your instance.
+
+When the user moves the cursor in the editor, the preview scrolls the text into the preview.
+
+When the user clicks on text in the preview, the editor moves the cursor to the clicked text.
+This is accurate at block level, unfortunately not yet on line or character level.
+
+When the user clicks on an external URL, the preview opens it in an external browser.
+
+When the user clicks on a relative link within the project (usually a `\link:[]` reference), the preview opens the referenced file in a new editor.
+
+When the user right-clicks on an image, the editor shows a dialog to save the file to the local file system.
+For diagrams like PlantUML it offers to save the files as PNG or SVG.
+Windows and Linux users have a drop down menu for this.
+MacOS users need to type the extension for the target file name (`.svg` or `.png`)
+
+The user can zoom in and out of the preview by holding kbd:[Ctrl] and scrolling the mouse wheel up or down.
+Clicking the middle mouse button whilst holding kbd:[Ctrl] resets the zoom to 100%.
+

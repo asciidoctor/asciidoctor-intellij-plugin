@@ -1,0 +1,25 @@
+= Frequently asked questions (FAQ)
+:navtitle: Frequently asked questions
+
+Missing an entry in the FAQ list? Please open an issue in the https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issues^] for this project.
+
+[NOTE]
+--
+This documentation website is still work in progress.
+More content is available in the https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki[wiki of this plugin's GitHub repository].
+--
+
+== Troubleshooting
+
+=== Something is not working as I expect it to work, where can I get help?
+
+Please open an issue in the https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issues^] for this project.
+
+== Supporting the project
+
+=== I'm a user of the plugin, where can I show my support?
+
+Please consider adding a rating for the pluigin in the https://plugins.jetbrains.com/plugin/7391-asciidoc[JetBrains Marketplace].
+
+This plugin is based on Asciidoctor and a lot of ideas from its community.
+To support Asciidoctor, please consider contribute funds via https://opencollective.com/asciidoctor[Opencollective].

@@ -1,0 +1,4 @@
+= Front matter
+
+Front matter is a https://asciidoctor.org/docs/user-manual/#static-website-generators[snippet of YAML at the beginning of a file used by static site generators].
+The plugin highlight the contents in the editor as YAML file and set the attribute `skip-front-matter` by default for the preview.

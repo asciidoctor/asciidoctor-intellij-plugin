@@ -1,0 +1,8 @@
+title: Contributor’s Guide
+name: contributors-guide
+version: master
+nav:
+  - modules/ROOT/nav.adoc
+asciidoc:
+  attributes:
+    experimental: ''

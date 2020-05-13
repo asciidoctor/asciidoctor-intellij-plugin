@@ -1,0 +1,18 @@
+* xref:index.adoc[]
+* xref:quick-start.adoc[]
+* xref:installation.adoc[]
+* xref:recommended-settings.adoc[]
+* xref:features.adoc[]
+** xref:features/editor.adoc[]
+** xref:features/preview.adoc[]
+** Advanced
+// the following list is sorted alphabetically.
+// Please keep it sorted when adding new content.
+*** xref:features/advanced/antora.adoc[]
+*** xref:features/advanced/asciidoctorconfig-file.adoc[]
+*** xref:features/advanced/asciidoctor-extensions.adoc[]
+*** xref:features/advanced/stylesheets.adoc[]
+*** xref:features/advanced/frontmatter.adoc[]
+*** xref:features/advanced/creating-html-and-pdf.adoc[]
+*** xref:features/advanced/spring-rest-docs.adoc[]
+* xref:faq.adoc[]

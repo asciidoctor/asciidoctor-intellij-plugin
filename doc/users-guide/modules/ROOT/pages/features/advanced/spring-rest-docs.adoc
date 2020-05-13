@@ -1,0 +1,7 @@
+= Spring REST Docs
+
+When writing documentation with https://docs.spring.io/spring-restdocs/docs/current/reference/html5/[Spring REST Docs], the preview plugin auto-detects the folder `generated-snippets`.
+
+It looks relative to the `pom.xml` for `target/generated-snippets` or relative to `build.gradle` or `build.gradle.kts` for `build/generated-snippets`.
+
+Once it finds this folder, it sets the snippets attributes and enables the `+++operation::[]+++` block macro.

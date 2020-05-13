@@ -1,0 +1,6 @@
+= Asciidoctor Config File
+
+To provide a common set of variables when rendering the preview, the plugin reads an _.asciidoctorconfig_ configuration file.
+Use this to optimize the preview the project contains a document that is split out to multiple include files.
+See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-project-specific-configurations[Wiki page] for details
+

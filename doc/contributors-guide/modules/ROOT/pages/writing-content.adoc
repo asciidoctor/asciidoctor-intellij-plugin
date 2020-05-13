@@ -1,0 +1,33 @@
+= Contribution documentation
+
+This guideline enables contributors to write in a style that is comprehensible for the reader.
+
+== Picturing the Reader
+
+Don't assume people are developers and have worked with IntelliJ before -- this should be for writers or business analysts as well, and also for first-time IntelliJ users.
+
+Naming the actor, using the active voice and the present tense makes it easier for non-native speakers to understand this document.
+Adding the shortcuts should help users new to IntelliJ.
+
+Each sentence should be on its own line in the AsciiDoc source.
+
+== Check lists for writing content
+
+Name the actor::
+Examples: user, preview, editor, plugin
+
+Provide Keyboard shortcuts::
+Example: `+kbd:[Alt+7]+` displays as kbd:[Alt+7]
+
+Use active voice::
+Good: "The preview displays the result" +
+Bad: "The result is displayed"
+
+Use present tense::
+Good: "The preview displays the result" +
+Bad: "The preview will display the result"
+
+Use only one capital letter for Keyboard shortcuts::
+Good: kbd:[Alt+7] +
+Bad: kbd:[ALT+7]
+
