@@ -76,6 +76,12 @@ public class AntoraReferenceAdapter {
           // if the second character is a colon, this is probably an already expanded windows path name
           return;
         }
+      } else {
+        if (type.equals("image")) {
+          // it is an image, this will be looked up in the imagesdir anyway, no change necessary
+          // this ensures that for example generated PlantUML will not have a full path prefix
+          return;
+        }
       }
       int anchorIndex = target.indexOf('#');
       String anchor = null;

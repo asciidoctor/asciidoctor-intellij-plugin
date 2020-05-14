@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.72 (preview, available from GitHub releases)
+
+- Fix displaying PlantUML images in Antora environment when image directory is present (#489)
+
 === 0.30.71 (preview, available from GitHub releases)
 
 - bundled font "Droid Sans Mono" for preview in browser; bundled "`Noto Serif`" and "`Open Sans`" for JavaFX preview in IDE and in browser. Removed DejaVu Sans and DejaVu Serif from plugin bundle. (#478)

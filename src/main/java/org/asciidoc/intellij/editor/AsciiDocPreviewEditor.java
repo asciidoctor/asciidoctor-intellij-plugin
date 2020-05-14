@@ -63,6 +63,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
@@ -494,7 +495,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       // reset contents in preview with latest CSS headers
       if (settings.getAsciiDocPreviewSettings().getPreviewTheme() == AsciiDocHtmlPanel.PreviewTheme.INTELLIJ) {
         currentContent = null;
-        myPanel.setHtml("", null);
+        myPanel.setHtml("", Collections.emptyMap());
         renderIfVisible();
       }
     }

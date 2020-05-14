@@ -24,6 +24,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.asciidoc.intellij.util.UIUtil.loadStyleSheet;
@@ -90,7 +91,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   @Override
-  public void setHtml(@NotNull String html, Map<String, String> ignored) {
+  public void setHtml(@NotNull String html, @NotNull Map<String, String> ignored) {
     myLastRenderedHtml = html;
     EditorKit kit = jEditorPane.getEditorKit();
     javax.swing.text.Document doc = kit.createDefaultDocument();
@@ -126,7 +127,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
 
   @Override
   public void render() {
-    setHtml(myLastRenderedHtml, null);
+    setHtml(myLastRenderedHtml, Collections.emptyMap());
   }
 
   @Override

@@ -471,7 +471,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   @Override
-  public synchronized void setHtml(@NotNull String htmlParam, Map<String, String> attributes) {
+  public synchronized void setHtml(@NotNull String htmlParam, @NotNull Map<String, String> attributes) {
     rendered = new CountDownLatch(1);
     stamp += 1;
     if (stamp > 10000) {
@@ -618,6 +618,40 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   }
 
   private String prepareHtml(@NotNull String html, @NotNull Map<String, String> attributes) {
+    if (JavaFxHtmlPanelProvider.isInitialized()) {
+      // Antora plugin might resolve some absolute URLs, convert them to localfile so they get their MD5 that prevents caching
+      Pattern pattern = Pattern.compile("<img src=\"file:///([^\"]*)\"");
+      Matcher matcher = pattern.matcher(html);
+      while (matcher.find()) {
+        final MatchResult matchResult = matcher.toMatchResult();
+        String file = matchResult.group(1);
+        try {
+          file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
+        } catch (UnsupportedEncodingException e) {
+          throw new RuntimeException(e);
+        }
+        String tmpFile = findTempImageFile(file, null);
+        String md5;
+        String replacement;
+        if (tmpFile != null) {
+          md5 = calculateMd5(tmpFile, null);
+          tmpFile = tmpFile.replaceAll("\\\\", "/");
+          try {
+            tmpFile = URLEncoder.encode(tmpFile, StandardCharsets.UTF_8.name());
+          } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+          }
+          replacement = "<img src=\"localfile://" + md5 + "/" + tmpFile + "\"";
+        } else {
+          md5 = calculateMd5(file, base);
+          replacement = "<img src=\"localfile://" + md5 + "/" + base + "/" + file + "\"";
+        }
+        html = html.substring(0, matchResult.start()) +
+          replacement + html.substring(matchResult.end());
+        matcher.reset(html);
+      }
+    }
+
     /* for each image we'll calculate a MD5 sum of its content. Once the content changes, MD5 and therefore the URL
      * will change. The changed URL is necessary for the JavaFX web view to display the new content, as each URL
      * will be loaded only once by the JavaFX web view. */

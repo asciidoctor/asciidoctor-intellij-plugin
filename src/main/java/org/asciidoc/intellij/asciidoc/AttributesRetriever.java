@@ -3,7 +3,9 @@ package org.asciidoc.intellij.asciidoc;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.extension.Postprocessor;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -13,7 +15,7 @@ import java.util.regex.Matcher;
  * Retrieve attribute as of after the document was rendered. For now only retrieve imagesdir.
  */
 public class AttributesRetriever extends Postprocessor {
-  private volatile Map<String, String> attributes;
+  private volatile Map<String, String> attributes = Collections.emptyMap();
 
   @Override
   public String process(Document document, String output) {
@@ -43,7 +45,7 @@ public class AttributesRetriever extends Postprocessor {
     return output;
   }
 
-  public Map<String, String> getAttributes() {
+  public @NotNull Map<String, String> getAttributes() {
     return attributes;
   }
 }
