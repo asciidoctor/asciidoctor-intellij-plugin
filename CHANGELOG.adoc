@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.73
+
+- Don't report broken file reference for YouTube and Vimeo video macros (#490)
+
 === 0.30.72 (preview, available from GitHub releases)
 
 - Fix displaying PlantUML images in Antora environment when image directory is present (#489)

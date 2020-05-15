@@ -8,6 +8,7 @@ import com.intellij.psi.AbstractElementManipulator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
@@ -17,7 +18,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 
@@ -49,6 +52,12 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock implements HasFile
   @Override
   public PsiReference[] getReferences() {
     if (HAS_FILE_AS_BODY.contains(getMacroName())) {
+      if (getMacroName().equals("video")) {
+        if (getTypeOfVideo() != null) {
+          // this is an embedded YouTube/Vimeo video, there is no file reference here
+          return super.getReferences();
+        }
+      }
       TextRange range = getRangeOfBody(this);
       if (!range.isEmpty()) {
         String file = this.getText().substring(range.getStartOffset(), range.getEndOffset());
@@ -134,6 +143,33 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock implements HasFile
       }
     }
     return super.getReferences();
+  }
+
+  private static final Collection<String> VIDEO_SERVICES = new HashSet<>();
+
+  static {
+    VIDEO_SERVICES.add("vimeo");
+    VIDEO_SERVICES.add("youtube");
+  }
+
+  private String getTypeOfVideo() {
+    AsciiDocAttributeInBrackets[] attributes = PsiTreeUtil.getChildrenOfType(this, AsciiDocAttributeInBrackets.class);
+    if (attributes == null || attributes.length == 0) {
+      return null;
+    }
+    // first positional argument
+    if (attributes[0].getAttrValue() == null && VIDEO_SERVICES.contains(attributes[0].getAttrName().toLowerCase(Locale.US))) {
+      return attributes[0].getAttrName();
+    }
+    for (AsciiDocAttributeInBrackets attribute : attributes) {
+      // poster can be placeholder or the name of the video service
+      if (attribute.getAttrName().toLowerCase(Locale.US).equals("poster")) {
+        if (attributes[0].getAttrValue() != null && VIDEO_SERVICES.contains(attributes[0].getAttrValue().toLowerCase(Locale.US))) {
+          return attribute.getAttrValue();
+        }
+      }
+    }
+    return null;
   }
 
   @Override

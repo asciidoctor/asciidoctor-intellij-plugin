@@ -37,6 +37,30 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertEquals(1, references.length);
   }
 
+  public void testVideoBlockMacroLocal() {
+    PsiFile psiFile = configureByAsciiDoc("video::foo.mp4[]");
+    AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) psiFile.getChildren()[0];
+    assertEquals("video", blockMacro.getMacroName());
+    PsiReference[] references = blockMacro.getReferences();
+    assertEquals(1, references.length);
+  }
+
+  public void testVideoBlockMacroRemotePlain() {
+    PsiFile psiFile = configureByAsciiDoc("video::foo.mp4[youtube]");
+    AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) psiFile.getChildren()[0];
+    assertEquals("video", blockMacro.getMacroName());
+    PsiReference[] references = blockMacro.getReferences();
+    assertEquals(0, references.length);
+  }
+
+  public void testVideoBlockMacroRemoteAttribute() {
+    PsiFile psiFile = configureByAsciiDoc("video::foo.mp4[poster=vimeo]");
+    AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) psiFile.getChildren()[0];
+    assertEquals("video", blockMacro.getMacroName());
+    PsiReference[] references = blockMacro.getReferences();
+    assertEquals(0, references.length);
+  }
+
   public void testBlockId() {
     PsiFile psiFile = configureByAsciiDoc("[#id]");
     AsciiDocBlockId blockMacro = PsiTreeUtil.findChildOfType(psiFile, AsciiDocBlockId.class);
