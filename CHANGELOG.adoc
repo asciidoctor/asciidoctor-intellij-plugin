@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.74 (work in progress)
+
+- log errors to event log when Antora YAML file can't be parsed
+
 === 0.30.73
 
 - Don't report broken file reference for YouTube and Vimeo video macros (#490)

@@ -16,6 +16,8 @@
 package org.asciidoc.intellij;
 
 import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
@@ -27,6 +29,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
@@ -57,6 +60,7 @@ import org.jruby.platform.Platform;
 import org.jruby.util.ByteList;
 import org.jruby.util.SafePropertyAccessor;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -693,26 +697,71 @@ public class AsciiDoc {
           Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
           if (document != null) {
             Yaml yaml = new Yaml();
-            Map<String, Object> antora = yaml.load(document.getText());
-            mapAttribute(result, antora, "name", "page-component-name");
-            mapAttribute(result, antora, "version", "page-component-version");
-            mapAttribute(result, antora, "title", "page-component-title");
-            mapAttribute(result, antora, "version", "page-version");
-            mapAttribute(result, antora, "display-version", "page-display-version");
-            Object asciidoc = antora.get("asciidoc");
-            if (asciidoc instanceof Map) {
-              @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
-              if (attributes instanceof Map) {
-                @SuppressWarnings("unchecked") Map<String, Object> map = (Map<String, Object>) attributes;
-                map.forEach((k, v) -> result.put(k, v.toString()));
+            try {
+              Map<String, Object> antora = readAntoraYaml(antoraFile);
+              mapAttribute(result, antora, "name", "page-component-name");
+              mapAttribute(result, antora, "version", "page-component-version");
+              mapAttribute(result, antora, "title", "page-component-title");
+              mapAttribute(result, antora, "version", "page-version");
+              mapAttribute(result, antora, "display-version", "page-display-version");
+              Object asciidoc = antora.get("asciidoc");
+              if (asciidoc instanceof Map) {
+                @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
+                if (attributes instanceof Map) {
+                  @SuppressWarnings("unchecked") Map<String, Object> map = (Map<String, Object>) attributes;
+                  map.forEach((k, v) -> result.put(k, v.toString()));
+                }
               }
+            } catch (YAMLException ignored) {
+              // continue without detailed Antora informatoin
             }
-
           }
         });
       }
     }
     return result;
+  }
+
+  public static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup("asciidoctor",
+    NotificationDisplayType.NONE, true);
+
+
+  public static Map<String, Object> readAntoraYaml(VirtualFile antoraFile) {
+    try {
+      Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
+      if (document == null) {
+        throw new YAMLException("unable to read file");
+      }
+      Yaml yaml = new Yaml();
+      return yaml.load(document.getText());
+    } catch (YAMLException ex) {
+      handleAntoraYamlException(ex, antoraFile.getCanonicalPath());
+      throw ex;
+    }
+  }
+
+  public static Map<String, Object> readAntoraYaml(PsiFile antoraFile) {
+    try {
+      Yaml yaml = new Yaml();
+      return yaml.load(antoraFile.getText());
+    } catch (YAMLException ex) {
+      String fileName = null;
+      VirtualFile virtualFile = antoraFile.getVirtualFile();
+      if (virtualFile != null) {
+        fileName = virtualFile.getCanonicalPath();
+      }
+      handleAntoraYamlException(ex, fileName);
+      throw new YAMLException("Error when reading file " + fileName);
+    }
+  }
+
+  private static void handleAntoraYamlException(YAMLException ex, @Nullable String canonicalPath) {
+    String message = canonicalPath + ": " + ex.getMessage();
+    LOG.warn("Error reading Antora component information", ex);
+    Notification notification = NOTIFICATION_GROUP.createNotification("Error reading Antora component information", message,
+      NotificationType.ERROR, null);
+    notification.setImportant(true);
+    Notifications.Bus.notify(notification);
   }
 
   public Map<String, Object> getExportOptions(Map<String, Object> options, FileType fileType) {
@@ -896,7 +945,7 @@ public class AsciiDoc {
                   content = "<!-- unable to read contents from from " + file.getCanonicalPath() + ": " + ex.getMessage() + " -->";
                 }
                 html = html
-                  .replace("</body>",  content + "</body>");
+                  .replace("</body>", content + "</body>");
               }
             }
           }

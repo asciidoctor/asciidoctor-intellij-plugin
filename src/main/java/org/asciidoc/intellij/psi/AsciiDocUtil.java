@@ -5,7 +5,6 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -28,7 +27,7 @@ import org.asciidoc.intellij.AsciiDocLanguage;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import javax.swing.*;
 import java.io.File;
@@ -49,6 +48,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AsciiDocUtil {
+  private static final com.intellij.openapi.diagnostic.Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDocUtil.class);
 
   public static final String FAMILY_EXAMPLE = "example";
   public static final String FAMILY_ATTACHMENT = "attachment";
@@ -545,14 +545,15 @@ public class AsciiDocUtil {
     if (antoraFile == null) {
       return Collections.emptyList();
     }
-    Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
-    if (document == null) {
+    String myComponentName;
+    String myComponentVersion;
+    try {
+      Map<String, Object> myAntora = AsciiDoc.readAntoraYaml(antoraFile);
+      myComponentName = getAttributeAsString(myAntora, "name");
+      myComponentVersion = getAttributeAsString(myAntora, "version");
+    } catch (YAMLException ex) {
       return Collections.emptyList();
     }
-    Yaml myYaml = new Yaml();
-    Map<String, Object> myAntora = myYaml.load(document.getText());
-    String myComponentName = getAttributeAsString(myAntora, "name");
-    String myComponentVersion = getAttributeAsString(myAntora, "version");
 
     PsiFile[] files =
       FilenameIndex.getFilesByName(project, ANTORA_YML, GlobalSearchScope.projectScope(project));
@@ -565,8 +566,13 @@ public class AsciiDocUtil {
         || index.isInLibrarySource(file.getVirtualFile())) {
         continue;
       }
-      Yaml yaml = new Yaml();
-      Map<String, Object> antora = yaml.load(file.getText());
+      Map<String, Object> antora;
+      try {
+        antora = AsciiDoc.readAntoraYaml(antoraFile);
+      } catch (YAMLException ex) {
+        continue;
+      }
+
       if (!Objects.equals(myComponentName, getAttributeAsString(antora, "name"))) {
         continue;
       }
@@ -807,12 +813,12 @@ public class AsciiDocUtil {
         if (antoraFile == null) {
           return Collections.singletonList(originalKey);
         }
-        Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
-        if (document == null) {
+        Map<String, Object> antora;
+        try {
+          antora = AsciiDoc.readAntoraYaml(antoraFile);
+        } catch (YAMLException ex) {
           return Collections.singletonList(originalKey);
         }
-        Yaml yaml = new Yaml();
-        Map<String, Object> antora = yaml.load(document.getText());
         String myComponentName = getAttributeAsString(antora, "name");
         String myComponentVersion = getAttributeAsString(antora, "version");
 
@@ -940,8 +946,12 @@ public class AsciiDocUtil {
           || index.isInLibrarySource(file.getVirtualFile())) {
           continue;
         }
-        Yaml yaml = new Yaml();
-        Map<String, Object> antora = yaml.load(file.getText());
+        Map<String, Object> antora;
+        try {
+          antora = AsciiDoc.readAntoraYaml(file);
+        } catch (YAMLException ex) {
+          continue;
+        }
         if (!Objects.equals(otherComponentName, getAttributeAsString(antora, "name"))) {
           continue;
         }
@@ -1003,12 +1013,12 @@ public class AsciiDocUtil {
       if (antoraFile == null) {
         return result;
       }
-      Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
-      if (document == null) {
+      Map<String, Object> antora;
+      try {
+        antora = AsciiDoc.readAntoraYaml(antoraFile);
+      } catch (YAMLException ex) {
         return result;
       }
-      Yaml yaml = new Yaml();
-      Map<String, Object> antora = yaml.load(document.getText());
       String myComponentName = getAttributeAsString(antora, "name");
       String myComponentVersion = getAttributeAsString(antora, "version");
       Map<String, String> componentTitles = new HashMap<>();
@@ -1019,7 +1029,11 @@ public class AsciiDocUtil {
           || index.isInLibrarySource(file.getVirtualFile())) {
           continue;
         }
-        antora = yaml.load(file.getText());
+        try {
+          antora = AsciiDoc.readAntoraYaml(file);
+        } catch (YAMLException ex) {
+          continue;
+        }
         String otherComponentName = getAttributeAsString(antora, "name");
         String otherComponentVersion = getAttributeAsString(antora, "version");
         String title = getAttributeAsString(antora, "title");
@@ -1071,12 +1085,12 @@ public class AsciiDocUtil {
       if (antoraFile == null) {
         return null;
       }
-      Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
-      if (document == null) {
+      Map<String, Object> antora;
+      try {
+        antora = AsciiDoc.readAntoraYaml(antoraFile);
+      } catch (YAMLException ex) {
         return null;
       }
-      Yaml yaml = new Yaml();
-      Map<String, Object> antora = yaml.load(document.getText());
       String myComponentName = getAttributeAsString(antora, "name");
       String myComponentVersion = getAttributeAsString(antora, "version");
 
