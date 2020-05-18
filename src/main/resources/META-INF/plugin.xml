@@ -154,7 +154,9 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <!--
     <editorActionHandler action="EditorPaste" implementationClass="org.asciidoc.intellij.actions.editorAction.AsciiDocPasteImageHandler" order="first"/>
+    -->
     <typedHandler implementation="org.asciidoc.intellij.actions.FormattingQuotedTypedHandler" order="first" />
     <webBrowserUrlProvider implementation="org.asciidoc.intellij.web.AsciiDocBrowserUrlProvider"/>
     <customPasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteProvider" />

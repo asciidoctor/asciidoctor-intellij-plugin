@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.1 (preview, available from GitHub releases)
+
+- disable paste-image-handler as it is broken 2020.2: This is a temporary release while no EAP version of 2020.2 is available. Only users of 2020.2 should install it. (#486)
+
 === 0.30.74 (work in progress)
 
 - log errors to event log when Antora YAML file can't be parsed
