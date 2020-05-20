@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.74 (work in progress)
+=== 0.30.74 (preview, available from GitHub releases)
 
 - log errors to event log when Antora YAML file can't be parsed
 - force a refresh of any visible AsciiDoc preview if a file in the project has been changed, enabling working in split views and multiple editors (#492)
