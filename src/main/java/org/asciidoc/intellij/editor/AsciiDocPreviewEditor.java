@@ -42,6 +42,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Alarm;
@@ -238,6 +241,18 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         renderIfVisible();
       }
     }, this);
+
+    // Listen to any file modification in the project.
+    MessageBusConnection connection = project.getMessageBus().connect(this);
+    connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
+      @Override
+      public void after(@NotNull List<? extends VFileEvent> events) {
+        // As an include might have been modified, force the refresh of the preview
+        currentContent = null;
+        renderIfVisible();
+      }
+    });
+
   }
 
   @Contract("_, _, _, null, null -> fail")
