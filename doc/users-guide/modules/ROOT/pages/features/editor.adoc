@@ -60,6 +60,20 @@ When the user selected some text and types a formatting character like `_` or `*
 The plugin uses constrained/unconstrained formatting as necessary.
 If the selected text already has the chosen formatting, the plugin removes the formatting from the selected text.
 
+// see: CodeFenceInjector, CodeFenceErrorHighlightingIntention
+When the user adds a source code block with information about the language, the plugin will highlight the code block if the language is supported by IntelliJ.
+A source block like the following will receive JSON highlighting:
+
+[source,asciidoc]
+-----
+[source,json]
+----
+{ "key": "value" }
+----
+-----
+
+In the settings the user can enable and disable this feature, including fine-tuning on a per-language level and if errors should be highlighted or not.
+
 // see: ExtendWordSelectionHandler
 The plugin expands the current selection when the user presses kbd:[Ctrl+W] and contracts the current selection when the user presses kbd:[Ctrl+Shift+W].
 

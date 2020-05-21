@@ -60,6 +60,9 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JBCheckBox myEnabledAttributeFolding;
   private JFormattedTextField myZoom;
   private JPanel myZoomSettings;
+  private JBCheckBox myHideErrorsInSourceBlocks;
+  private JBTextField myHideErrorsByLanguage;
+  private JBLabel myHideErrorsByLanguageLabel;
 
   public JComponent getComponent() {
     return myMainPanel;
@@ -175,8 +178,10 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     myEnableInjections.addItemListener(e -> {
       myDisableLanguageInjection.setVisible(myEnableInjections.isSelected());
+      myHideErrorsInSourceBlocks.setVisible(myEnableInjections.isSelected());
     });
     myDisableLanguageInjection.setVisible(myEnableInjections.isSelected());
+    myHideErrorsInSourceBlocks.setVisible(myEnableInjections.isSelected());
 
     myLanguageForPassthrough.setText(settings.getLanguageForPassthrough());
 
@@ -190,9 +195,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     myKrokiUrl.setText(settings.getKrokiUrl());
 
-    myEnableKroki.addItemListener(e -> {
-      adjustKrokiOptions();
-    });
+    myEnableKroki.addItemListener(e -> adjustKrokiOptions());
 
     adjustKrokiOptions();
 
@@ -206,6 +209,15 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     rateFormat.setGroupingUsed(false);
     myZoom.setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(rateFormat)));
     myZoom.setValue(BigDecimal.valueOf(settings.getZoom(), 2));
+    myHideErrorsInSourceBlocks.setSelected(settings.isHideErrorsInSourceBlocks());
+    myHideErrorsInSourceBlocks.addItemListener(e -> {
+      myHideErrorsByLanguage.setVisible(!myHideErrorsInSourceBlocks.isSelected());
+      myHideErrorsByLanguageLabel.setVisible(!myHideErrorsInSourceBlocks.isSelected());
+    });
+    myHideErrorsByLanguage.setVisible(!myHideErrorsInSourceBlocks.isSelected());
+    myHideErrorsByLanguageLabel.setVisible(!myHideErrorsInSourceBlocks.isSelected());
+
+    myHideErrorsByLanguage.setText(settings.getHideErrorsByLanguage());
   }
 
   @NotNull
@@ -230,6 +242,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myLanguageForPassthrough.getText(), myDisabledInjectionsByLanguage.getText(),
       myShowAsciiDocWarningsAndErrorsInEditor.isSelected(), myInplacePreviewRefresh.isSelected(),
       myEnableKroki.isSelected(), krokiUrl, myEnabledAttributeFolding.isSelected(),
-      ((BigDecimal) myZoom.getValue()).setScale(2, RoundingMode.UP).unscaledValue().intValue());
+      ((BigDecimal) myZoom.getValue()).setScale(2, RoundingMode.UP).unscaledValue().intValue(),
+      myHideErrorsInSourceBlocks.isSelected(), myHideErrorsByLanguage.getText());
   }
 }

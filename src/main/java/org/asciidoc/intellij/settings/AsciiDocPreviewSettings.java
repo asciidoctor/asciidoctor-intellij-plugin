@@ -89,6 +89,13 @@ public final class AsciiDocPreviewSettings {
   @Attribute("Zoom")
   private Integer myZoom = 100;
 
+  @Attribute("HideErrorsInSourceBlocks")
+  private boolean myHideErrorsInSourceBlocks = false;
+
+  @Attribute("HideErrorsByLanguage")
+  @Nullable
+  private String myHideErrorsByLanguage;
+
   public AsciiDocPreviewSettings() {
   }
 
@@ -105,7 +112,9 @@ public final class AsciiDocPreviewSettings {
                                  boolean enableKroki,
                                  String krokiUrl,
                                  boolean enableAttributeFolding,
-                                 int zoom) {
+                                 int zoom,
+                                 boolean hideErrorsInSourceBlocks,
+                                 @Nullable String hideErrorsByLanguage) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
@@ -122,6 +131,8 @@ public final class AsciiDocPreviewSettings {
     myKrokiUrl = krokiUrl;
     myEnableAttributeFolding = enableAttributeFolding;
     myZoom = zoom;
+    myHideErrorsInSourceBlocks = hideErrorsInSourceBlocks;
+    myHideErrorsByLanguage = hideErrorsByLanguage;
   }
 
   @NotNull
@@ -263,6 +274,12 @@ public final class AsciiDocPreviewSettings {
     if (!Objects.equals(myZoom, that.myZoom)) {
       return false;
     }
+    if (myHideErrorsInSourceBlocks != that.myHideErrorsInSourceBlocks) {
+      return false;
+    }
+    if (!Objects.equals(myHideErrorsByLanguage, that.myHideErrorsByLanguage)) {
+      return false;
+    }
     return attributes.equals(that.attributes);
   }
 
@@ -284,12 +301,40 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + Objects.hashCode(myKrokiUrl);
     result = 31 * result + (myEnableAttributeFolding ? 1 : 0);
     result = 31 * result + Objects.hashCode(myZoom);
+    result = 31 * result + (myHideErrorsInSourceBlocks ? 1 : 0);
+    result = 31 * result + Objects.hashCode(myHideErrorsByLanguage);
     return result;
   }
 
   public String getLanguageForPassthrough() {
     // any old setting of null (not set) will default to 'html'
     return myLanguageForPassthrough == null ? "html" : myLanguageForPassthrough;
+  }
+
+  public boolean isHideErrorsInSourceBlocks() {
+    return myHideErrorsInSourceBlocks;
+  }
+
+  public void setHideErrorsInSourceBlocks(boolean hideErrorsInSourceBlocks) {
+    this.myHideErrorsInSourceBlocks = hideErrorsInSourceBlocks;
+  }
+
+  public String getHideErrorsByLanguage() {
+    return myHideErrorsByLanguage;
+  }
+
+  public void setHideErrorsByLanguage(String hideErrorsByLanguage) {
+    this.myHideErrorsByLanguage = hideErrorsByLanguage;
+  }
+
+  public List<String> getHiddenErrorsByLanguageAsList() {
+    List<String> list = new ArrayList<>();
+    if (myHideErrorsByLanguage != null) {
+      Arrays.asList(myHideErrorsByLanguage.split(";")).forEach(
+        entry -> list.add(entry.trim().toLowerCase(Locale.US))
+      );
+    }
+    return list;
   }
 
   public interface Holder {

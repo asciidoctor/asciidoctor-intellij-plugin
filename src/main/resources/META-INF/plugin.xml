@@ -306,5 +306,11 @@
       <className>org.asciidoc.intellij.actions.intentions.AsciiDocAddBlockIdToSection</className>
     </intentionAction>
     <renameInputValidator implementation="org.asciidoc.intellij.namesValidator.AsciiDocRenameInputValidator"/>
+    <intentionAction>
+      <bundleName>AsciiDocBundle</bundleName>
+      <categoryKey>asciidoc.intention.category</categoryKey>
+      <className>org.asciidoc.intellij.injection.AsciiDocCodeFenceErrorHighlightingIntention</className>
+    </intentionAction>
+    <highlightErrorFilter implementation="org.asciidoc.intellij.injection.AsciiDocCodeFenceErrorHighlightingIntention$CodeFenceHighlightErrorFilter"/>
   </extensions>
 </idea-plugin>

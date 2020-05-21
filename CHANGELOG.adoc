@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.75 (work in progress)
 
 - parse preprocessor macros like `ifdef` in document header with highlighting of variables and autocomplete
+- for language injection the error highlighting can be suppressed in the settings
 
 === 0.30.74 (preview, available from GitHub releases)
 
