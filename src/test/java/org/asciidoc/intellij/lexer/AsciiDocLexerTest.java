@@ -120,6 +120,22 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('def')");
   }
 
+  public void testHeaderIfDef() {
+    doTest("= Abc\nifdef::hi[]\nxx\nendif::[]",
+      "AsciiDoc:HEADING ('= Abc')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_MACRO_ID ('ifdef::')\n" +
+        "AsciiDoc:ATTRIBUTE_REF ('hi')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:HEADER ('xx')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_MACRO_ID ('endif::')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTRS_END (']')");
+  }
+
   public void testTable() {
     doTest("|====\n" +
         "|1|2|3\n\n" +

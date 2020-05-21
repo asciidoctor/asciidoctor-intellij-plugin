@@ -248,7 +248,8 @@ HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 // starting at the start of the line, but not with a dot
 // next line follwoing with only header marks
 HEADING_OLDSTYLE = {SPACE}* [^ _+\-#=~.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
-IFDEF_IFNDEF_ENDIF = ("ifdef"|"ifndef"|"endif") "::"
+IFDEF_IFNDEF = ("ifdef"|"ifndef"|"endif") "::"
+ENDIF = "endif::"
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
 INLINE_MACRO_START = [a-zA-Z0-9_]+":"
 TITLE_START = "."
@@ -546,6 +547,26 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   }
 }
 
+<EOL_POP> {
+  "\n" {
+    yypopstate();
+    return AsciiDocTokenTypes.LINE_BREAK;
+  }
+  {SPACE} {
+    return AsciiDocTokenTypes.WHITE_SPACE;
+  }
+  [^] {
+    yypopstate();
+    yypushback(yylength());
+  }
+}
+
+<DELIMITER, PREBLOCK, HEADER> {
+  {IFDEF_IFNDEF} / [^ \[\n] { yypushstate(); yybegin(IFDEF_IFNDEF_ENDIF); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  // endif/ifeval allows the body to be empty, special case...
+  ^ ("endif"|"ifeval") "::" / [^ \n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+}
+
 <HEADER> {
   ^{SPACE}* "\n" {
         yypushback(yylength());
@@ -563,27 +584,12 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   }
 }
 
-<EOL_POP> {
-  "\n" {
-    yypopstate();
-    return AsciiDocTokenTypes.LINE_BREAK;
-  }
-  {SPACE} {
-    return AsciiDocTokenTypes.WHITE_SPACE;
-  }
-  [^] {
-    yypopstate();
-    yypushback(yylength());
-  }
-}
-
 <DELIMITER, PREBLOCK> {
   ^ {PAGEBREAK} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.PAGEBREAK; }
   ^ {HORIZONTALRULE} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.HORIZONTALRULE; }
-  {IFDEF_IFNDEF_ENDIF} / [^ \[\n] { yypushstate(); yybegin(IFDEF_IFNDEF_ENDIF); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   {BLOCK_MACRO_START} / [^ \[\n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
-  // endif/ifeval/... allows the body to be empty, special case...
-  ^ ("endif"|"ifeval"|"toc") "::" / [^ \n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  // toc allows the body to be empty, special case...
+  ^ ("toc") "::" / [^ \n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   // if it starts like a block attribute, but has characters afer the closing bracket, it's not
   {BLOCK_ATTRS_START} / [^\[\#] ([^\]\"\']* | (\" [^\"\n]* \") | (\' [^\"\n]* \') )* "]" [ \t]* [^\n] { yypushback(yylength()); yybegin(STARTBLOCK); }
   {BLOCK_ATTRS_START} / [^\[] { yybegin(MULTILINE); yypushstate(); clearStyle(); yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.ATTRS_START; }
