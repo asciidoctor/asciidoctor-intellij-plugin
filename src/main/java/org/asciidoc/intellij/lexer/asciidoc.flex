@@ -249,7 +249,6 @@ HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 // next line follwoing with only header marks
 HEADING_OLDSTYLE = {SPACE}* [^ _+\-#=~.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
 IFDEF_IFNDEF = ("ifdef"|"ifndef"|"endif") "::"
-ENDIF = "endif::"
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
 INLINE_MACRO_START = [a-zA-Z0-9_]+":"
 TITLE_START = "."
