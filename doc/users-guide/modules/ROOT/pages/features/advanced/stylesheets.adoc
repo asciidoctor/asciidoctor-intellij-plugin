@@ -1,32 +1,70 @@
 = Custom stylesheets for the preview
 :navtitle: Custom stylesheets
 
-The user can provide custom stylesheets for the preview to make the preview look similar to the live site they will publish the content to.
+The user can provide custom stylesheets for the preview to make the preview look similar to the live site they publish the content to.
 
-Do do this, prepare an `.asciidoctorconfig` file with settings to replace the stylesheet or to add custom headers.
+== Configuring stylesheets
 
-WARNING: If you reference remote content like fonts or stylesheets, these will require an online connection to load them.
-Therefore the user will not be able to work off-line any more.
-You can provide an attribute to switch on/switch off the custom stylesheets.
+This chapter walks you through the steps to prepare an _.asciidoctorconfig_ file to either replace the stylesheet or to add additional styles to the HTML header.
 
+The _.asciidoctorconfig_ file will configure the preview of all AsciiDoc files in the folder where it is located and this folder's subfolders.
+See "`xref:features/advanced/asciidoctorconfig-file.adoc[]`" for more details.
+
+WARNING: If the configuration references remote content like fonts or stylesheets, these will require an online connection for the preview to load them.
+Therefore, the user will not be able to work off-line anymore.
+Consider using a conditional like `ifdef` to provide an attribute for the user to switch off the custom stylesheets when they are offline.
+
+=== Replace default stylesheet
+
+This replaces the standard stylesheet with a custom stylesheet.
+
+WARNING: The stylesheet will be embedded in the preview, therefore relative links to the local file system will not work.
+
+. Create a file _.asciidoctorconfig_ with the following contents:
++
 ..asciidoctorconfig
 [source,asciidoc]
 ----
-// define in the AsciiDoc plugin's settings the attribute `css-online-preview`
-// to show the preview using the latest stylesheets from the nightly preview.
-// Will only work when online. Will pull fonts and CSS on opening the preview.
-\ifdef::css-online-preview[]
-:stylesdir: {asciidoctorconfigdir}/.asciidoctor
-:stylesheet: preview-stylesheet.css
-\endif::[]
+:stylesdir: {asciidoctorconfigdir}/.asciidoctor <1>
+:stylesheet: preview-stylesheet.css <2>
 ----
+<.> point to a directory with the stylesheet. As this uses \{asciidoctorconfigdir}, the folder is relative to the _.asciidoctorconfig_ file.
+<.> filename of the stylesheet to be used
 
+. Place your stylesheet in the _.asciidoctor_ folder
++
 ..asciidoctor/preview-stylesheet.css
 [source,css]
 ----
-@import url("https://mysite.com/site.css");
-@import url("https://fonts.googleapis.com/css?...");
 body {
   /* ... */
 }
+----
+
+=== Add additional styles or HTML headers
+
+This adds additional styles in addition to the default stylesheet.
+The chapter https://asciidoctor.org/docs/user-manual/#docinfo-file["`Docinfo Files`" in the Asciidoctor User Manual^] provides more information about this capability.
+
+. Create a file _.asciidoctorconfig_ with the following contents:
++
+..asciidoctorconfig
+[source,asciidoc]
+----
+:docinfodir: {asciidoctorconfigdir}/.asciidoctor <1>
+:docinfo: shared <2>
+----
+<.> point to a directory with docinfo files. As this uses \{asciidoctorconfigdir}, the folder is relative to the _.asciidoctorconfig_ file.
+<.> tell the renderer to include the shared docinfo file `docinfo.html`
+
+. Place your _docinfo.html_ in the _.asciidoctor_ folder
++
+..asciidoctor/docinfo.html
+[source]
+----
+<style>
+body {
+  /* ... */
+}
+</style>
 ----
