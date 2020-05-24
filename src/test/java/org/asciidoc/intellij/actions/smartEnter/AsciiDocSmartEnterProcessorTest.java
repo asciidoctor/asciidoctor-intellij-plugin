@@ -4,13 +4,13 @@ import com.intellij.codeInsight.editorActions.smartEnter.SmartEnterProcessor;
 import com.intellij.codeInsight.editorActions.smartEnter.SmartEnterProcessors;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.AsciiDocTestingUtil;
 
 import java.util.List;
 
-public class AsciiDocSmartEnterProcessorTest extends LightCodeInsightFixtureTestCase {
+public class AsciiDocSmartEnterProcessorTest extends BasePlatformTestCase {
 
   @Override
   protected String getTestDataPath() {
