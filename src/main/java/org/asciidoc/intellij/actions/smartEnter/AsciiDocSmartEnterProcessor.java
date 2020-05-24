@@ -67,18 +67,27 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
           doc.insertString(atCaret.getTextRange().getEndOffset(), textToInsert);
           caretTo = atCaret.getTextOffset() + atCaret.getTextLength() + 1;
           commitChanges(project, editor, caretTo);
+          atCaret = getStatementAtCaret(editor, psiFile);
+          if (atCaret == null || atCaret.getNode() == null) {
+            return result;
+          }
           result = true;
         }
         if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.ATTR_NAME) {
-          if (atCaret.getNextSibling() == null) {
+          if (atCaret.getNextSibling() == null &&
+            atCaret.getParent().getNextSibling() != null &&
+            atCaret.getParent().getNextSibling().getNode().getElementType() == AsciiDocTokenTypes.ATTRS_END) {
+            atCaret = atCaret.getParent().getNextSibling();
+          } else if (atCaret.getNextSibling() == null) {
             String textToInsert = "]";
             doc.insertString(atCaret.getTextRange().getEndOffset(), textToInsert);
             caretTo = atCaret.getTextOffset() + atCaret.getTextLength() + 1;
             commitChanges(project, editor, caretTo);
+            atCaret = getStatementAtCaret(editor, psiFile);
+            if (atCaret == null || atCaret.getNode() == null) {
+              return result;
+            }
             result = true;
-          }
-          if (atCaret.getNextSibling() == null && atCaret.getParent().getNextSibling() == AsciiDocTokenTypes.ATTRS_END) {
-            atCaret = atCaret.getParent().getNextSibling();
           }
         }
         if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.BLOCK_MACRO_BODY ||

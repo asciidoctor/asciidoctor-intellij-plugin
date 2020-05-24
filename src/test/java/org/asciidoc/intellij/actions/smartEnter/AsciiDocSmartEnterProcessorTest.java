@@ -41,6 +41,10 @@ public class AsciiDocSmartEnterProcessorTest extends LightCodeInsightFixtureTest
     doTest();
   }
 
+  public void testSourceBlockAutocompleteInsideBracket() {
+    doTest();
+  }
+
   public void testPlantumlBlockAutocomplete() {
     doTest();
   }

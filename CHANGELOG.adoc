@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - parse preprocessor macros like `ifdef` in document header with highlighting of variables and autocomplete
 - for language injection the error highlighting can be suppressed in the settings
+- auto-complete source block when cursor is inside block attributes (#494)
 
 === 0.30.74 (preview, available from GitHub releases)
 
