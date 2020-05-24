@@ -55,7 +55,7 @@ The chapter https://asciidoctor.org/docs/user-manual/#docinfo-file["`Docinfo Fil
 :docinfo: shared <2>
 ----
 <.> point to a directory with docinfo files. As this uses \{asciidoctorconfigdir}, the folder is relative to the _.asciidoctorconfig_ file.
-<.> tell the renderer to include the shared docinfo file `docinfo.html`
+<.> tell the renderer to include the shared docinfo file _docinfo.html_
 
 . Place your _docinfo.html_ in the _.asciidoctor_ folder
 +
