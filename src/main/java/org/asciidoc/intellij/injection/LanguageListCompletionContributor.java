@@ -7,12 +7,15 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.DeferredIconImpl;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.psi.AsciiDocAttributeInBrackets;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class LanguageListCompletionContributor extends CompletionContributor {
 
@@ -25,11 +28,32 @@ public class LanguageListCompletionContributor extends CompletionContributor {
   @Override
   public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
     final PsiElement completionElement = parameters.getPosition();
-    if (PsiUtilCore.getElementType(completionElement) == AsciiDocTokenTypes.ATTR_NAME &&
-      completionElement.getPrevSibling() != null &&
-      completionElement.getPrevSibling().getPrevSibling() != null &&
-      completionElement.getPrevSibling().getPrevSibling().getText().equals("source")) {
-      doFillVariants(parameters, result);
+    if (PsiUtilCore.getElementType(completionElement) == AsciiDocTokenTypes.ATTR_NAME) {
+      PsiElement element = completionElement.getParent();
+      if (!(element instanceof AsciiDocAttributeInBrackets)) {
+        return;
+      }
+      element = element.getPrevSibling();
+      while (true) {
+        if (element == null) {
+          return;
+        }
+        if (element instanceof PsiWhiteSpace) {
+          element = element.getPrevSibling();
+          continue;
+        }
+        if (element.getNode().getElementType() == AsciiDocTokenTypes.SEPARATOR) {
+          element = element.getPrevSibling();
+          continue;
+        }
+        if (!(element instanceof AsciiDocAttributeInBrackets)) {
+          return;
+        }
+        break;
+      }
+      if (Objects.equals(((AsciiDocAttributeInBrackets) element).getAttrName(), "source")) {
+        doFillVariants(parameters, result);
+      }
     }
   }
 
