@@ -2,6 +2,7 @@ package org.asciidoc.intellij.completion;
 
 import com.intellij.codeInsight.lookup.CharFilter;
 import com.intellij.codeInsight.lookup.Lookup;
+import com.intellij.codeInsight.lookup.LookupFocusDegree;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +24,7 @@ public class AsciiDocCharFilter extends CharFilter {
       if (lookup instanceof LookupImpl) {
         // when opened by AutoPopupController, the lookup will only be SEMI_FOCUSED
         // set to FOCUSED, otherwise selection will not work in LookupTypeHandler
-        ((LookupImpl) lookup).setFocusDegree(LookupImpl.FocusDegree.FOCUSED);
+        ((LookupImpl) lookup).setLookupFocusDegree(LookupFocusDegree.FOCUSED);
       }
       return Result.SELECT_ITEM_AND_FINISH_LOOKUP;
     }
