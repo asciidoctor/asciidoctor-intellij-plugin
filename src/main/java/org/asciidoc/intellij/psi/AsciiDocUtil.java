@@ -178,7 +178,7 @@ public class AsciiDocUtil {
     return result;
   }
 
-  static List<AsciiDocAttributeDeclaration> findAttributes(Project project, String key) {
+  public static List<AsciiDocAttributeDeclaration> findAttributes(Project project, String key) {
     List<AsciiDocAttributeDeclaration> result = null;
     final GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
     Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(key, project, scope);
