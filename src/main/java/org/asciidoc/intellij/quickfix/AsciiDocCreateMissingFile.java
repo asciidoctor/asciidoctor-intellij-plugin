@@ -6,6 +6,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
+import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 
 /**
@@ -41,6 +42,12 @@ public interface AsciiDocCreateMissingFile {
 
   static boolean isAvailable(PsiElement element) {
     boolean isAvailable = false;
+    if (element instanceof AsciiDocBlockMacro) {
+      // this will create empty files, doesn't make sense for images
+      if (((AsciiDocBlockMacro) element).getMacroName().equals("image")) {
+        return false;
+      }
+    }
     PsiDirectory parent = element.getContainingFile().getParent();
     if (parent != null) {
       for (PsiReference r : element.getReferences()) {

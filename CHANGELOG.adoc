@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - for language injection the error highlighting can be suppressed in the settings
 - auto-complete source block when cursor is at the end of block attributes (#494)
 - suggest languages when typing a comma as in `[source,]` (#494)
+- don't suggest creating a missing file if it is an image (#496)
 
 === 0.30.74 (preview, available from GitHub releases)
 
