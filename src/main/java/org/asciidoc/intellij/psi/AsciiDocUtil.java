@@ -744,7 +744,7 @@ public class AsciiDocUtil {
   // can include attributes
   public static final Pattern ANTORA_PREFIX_AND_FAMILY_PATTERN = Pattern.compile("^[a-zA-Z0-9:._@{}-]*(" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-zA-Z0-9:._{}@-]*)?[$:@]");
 
-  public static final Pattern URL_PREFIX_PATTERN = Pattern.compile("^(https?|file|ftp|irc)://");
+  public static final Pattern URL_PREFIX_PATTERN = Pattern.compile("^((https?|file|ftp|irc)://|data:)");
 
   // can include attributes
   public static final Pattern ANTORA_PREFIX_PATTERN = Pattern.compile("^[a-zA-Z0-9:._{}@-]*(" + CompletionUtilCore.DUMMY_IDENTIFIER + "[a-zA-Z0-9:._{}@-]*)?[:@]");
