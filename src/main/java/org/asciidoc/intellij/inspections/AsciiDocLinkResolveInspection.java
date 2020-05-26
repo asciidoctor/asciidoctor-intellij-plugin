@@ -57,30 +57,12 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
             }
           }
           if (blockMacro.getMacroName().equals("image")) {
-            List<AsciiDocAttributeDeclaration> imagesdirs = AsciiDocUtil.findAttributes(o.getProject(), "imagesdir");
-            // if there is an imagesdir declaration in the same file before the image, and it contain an URL, don't continue
-            for (AsciiDocAttributeDeclaration decl : imagesdirs) {
-              if (decl.getContainingFile().equals(o.getContainingFile()) &&
-                decl.getTextOffset() < o.getTextOffset() &&
-                AsciiDocFileReference.URL.matcher(decl.getAttributeValue()).find()) {
-                continueResolving = false;
-                break;
-              }
-            }
+            continueResolving = hasImagesDirAsUrl(o);
           }
         }
         if (o instanceof AsciiDocInlineMacro) {
           if (((AsciiDocInlineMacro) o).getMacroName().equals("image")) {
-            List<AsciiDocAttributeDeclaration> imagesdirs = AsciiDocUtil.findAttributes(o.getProject(), "imagesdir");
-            // if there is an imagesdir declaration in the same file before the image, and it contain an URL, don't continue
-            for (AsciiDocAttributeDeclaration decl : imagesdirs) {
-              if (decl.getContainingFile().equals(o.getContainingFile()) &&
-                decl.getTextOffset() < o.getTextOffset() &&
-                AsciiDocFileReference.URL.matcher(decl.getAttributeValue()).find()) {
-                continueResolving = false;
-                break;
-              }
-            }
+            continueResolving = hasImagesDirAsUrl(o);
           }
         }
         if (continueResolving &&
@@ -155,5 +137,22 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
         super.visitElement(o);
       }
     };
+  }
+
+  private boolean hasImagesDirAsUrl(PsiElement o) {
+    boolean continueResolving = true;
+    List<AsciiDocAttributeDeclaration> imagesdirs = AsciiDocUtil.findAttributes(o.getProject(), "imagesdir");
+    // if there is an imagesdir declaration in the same file before the image, and it contain an URL, don't continue
+    for (AsciiDocAttributeDeclaration decl : imagesdirs) {
+      String val = decl.getAttributeValue();
+      if (decl.getContainingFile().equals(o.getContainingFile()) &&
+        decl.getTextOffset() < o.getTextOffset() &&
+        val != null &&
+        AsciiDocFileReference.URL.matcher(val).find()) {
+        continueResolving = false;
+        break;
+      }
+    }
+    return continueResolving;
   }
 }
