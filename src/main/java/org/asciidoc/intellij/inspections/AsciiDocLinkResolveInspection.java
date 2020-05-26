@@ -62,7 +62,7 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
             for (AsciiDocAttributeDeclaration decl : imagesdirs) {
               if (decl.getContainingFile().equals(o.getContainingFile()) &&
                 decl.getTextOffset() < o.getTextOffset() &&
-                AsciiDocUtil.URL_PREFIX_PATTERN.matcher(decl.getAttributeValue()).find()) {
+                AsciiDocFileReference.URL.matcher(decl.getAttributeValue()).find()) {
                 continueResolving = false;
                 break;
               }
@@ -76,7 +76,7 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
             for (AsciiDocAttributeDeclaration decl : imagesdirs) {
               if (decl.getContainingFile().equals(o.getContainingFile()) &&
                 decl.getTextOffset() < o.getTextOffset() &&
-                AsciiDocUtil.URL_PREFIX_PATTERN.matcher(decl.getAttributeValue()).find()) {
+                AsciiDocFileReference.URL.matcher(decl.getAttributeValue()).find()) {
                 continueResolving = false;
                 break;
               }
@@ -86,17 +86,23 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
         if (continueResolving &&
           (o instanceof AsciiDocLink || o instanceof AsciiDocBlockMacro || o instanceof AsciiDocInlineMacro)) {
           String resolvedBody;
+          String macroName = "";
           if (o instanceof AsciiDocLink) {
             resolvedBody = ((AsciiDocLink) o).getResolvedBody();
           } else if (o instanceof AsciiDocBlockMacro) {
             resolvedBody = ((AsciiDocBlockMacro) o).getResolvedBody();
+            macroName = ((AsciiDocBlockMacro) o).getMacroName();
           } else {
             resolvedBody = ((AsciiDocInlineMacro) o).getResolvedBody();
+            macroName = ((AsciiDocInlineMacro) o).getMacroName();
           }
           if (resolvedBody == null) {
             return;
           } else if (AsciiDocUtil.URL_PREFIX_PATTERN.matcher(resolvedBody).find()) {
             // this is a URL, don't
+            return;
+          } else if (AsciiDocFileReference.URL.matcher(resolvedBody).find() && macroName.equals("image")) {
+            // this is a data URI for an image, don't
             return;
           } else if (resolvedBody.startsWith("/") || resolvedBody.startsWith("../")) {
             // probably a link to some other part of the site

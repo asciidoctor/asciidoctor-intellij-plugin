@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.75 (work in progress)
+=== 0.30.75 (preview, available from GitHub releases)
 
 - parse preprocessor macros like `ifdef` in document header with highlighting of variables and autocomplete
 - for language injection the error highlighting can be suppressed in the settings
@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - suggest languages when typing a comma as in `[source,]` (#494)
 - don't suggest creating a missing file if it is an image (#496)
 - don't reporting a missing image if the imagesdir is set in the same file (#497)
+- don't reporting a missing image for data URIs (#497)
 
 === 0.30.74 (preview, available from GitHub releases)
 
