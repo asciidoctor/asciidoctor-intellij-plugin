@@ -236,12 +236,39 @@ public class BrowserPanel implements Closeable {
     return signWithMac.checkMac(file, mac);
   }
 
+  @SuppressWarnings("checkstyle:MethodLength")
   private String prepareHtml(@NotNull String html, Project project, Map<String, String> attributes) {
+    // Antora plugin might resolve some absolute URLs, convert them to localfile so they get their MD5 that prevents caching
+    Pattern pattern = Pattern.compile("<img src=\"file:///([^\"]*)\"");
+    Matcher matcher = pattern.matcher(html);
+    while (matcher.find()) {
+      final MatchResult matchResult = matcher.toMatchResult();
+      String file = matchResult.group(1);
+      try {
+        file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
+      } catch (UnsupportedEncodingException e) {
+        throw new RuntimeException(e);
+      }
+      String tmpFile = findTempImageFile(file, null);
+      String md5;
+      String replacement;
+      if (tmpFile != null) {
+        md5 = calculateMd5(tmpFile, null);
+        replacement = "<img src=\"image?file=" + signFile(tmpFile) + "&amp;hash=" + md5 + "\"";
+      } else {
+        md5 = calculateMd5(file, base);
+        replacement = "<img src=\"image?file=" + signFile(base + "/" + file) + "&amp;hash=" + md5 + "\"";
+      }
+      html = html.substring(0, matchResult.start()) +
+        replacement + html.substring(matchResult.end());
+      matcher.reset(html);
+    }
+
     /* for each image we'll calculate a MD5 sum of its content. Once the content changes, MD5 and therefore the URL
      * will change. The changed URL is necessary for the Browser to display the new content, as each URL
      * will be loaded only once due to caching. Also each URL to a local image will be signed so that it can be retrieved securely afterwards */
-    Pattern pattern = Pattern.compile("<img src=\"([^:\"]*)\"");
-    Matcher matcher = pattern.matcher(html);
+    pattern = Pattern.compile("<img src=\"([^:\"]*)\"");
+    matcher = pattern.matcher(html);
     while (matcher.find()) {
       final MatchResult matchResult = matcher.toMatchResult();
       String file = matchResult.group(1);

@@ -64,6 +64,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
    * taken from Asciidoctor rx.rb, UriSniffRx
    */
   public static final Pattern URL = Pattern.compile("^\\p{Alpha}[\\p{Alnum}.+-]+:/{0,2}", Pattern.UNICODE_CHARACTER_CLASS);
+  public static final String FILE_PREFIX = "file:///";
 
   private String key;
   private String macroName;
@@ -317,6 +318,11 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         }
         return AsciiDocUtil.replaceAntoraPrefix(myElement, resolvedKey, defaultFamily);
       }
+    } else if (macroName.equals("image")) {
+      VirtualFile antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(myElement);
+      if (antoraImagesDir != null) {
+        return Collections.singletonList(antoraImagesDir.getCanonicalPath() + "/" + key);
+      }
     } else if ((myElement instanceof AsciiDocLink && macroName.equals("xref")) ||
       (myElement.getParent() instanceof AsciiDocBlockMacro && ((AsciiDocBlockMacro) myElement.getParent()).getMacroName().equals("image") && macroName.equals("xref-attr")) ||
       (myElement.getParent() instanceof AsciiDocInlineMacro && ((AsciiDocInlineMacro) myElement.getParent()).getMacroName().equals("image") && macroName.equals("xref-attr"))
@@ -365,7 +371,11 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       return;
     }
     for (String k : keys) {
+      int c = results.size();
       resolveAttributes(k, results, depth);
+      if (results.size() == c && "image".equals(macroName) && k.equals(key) && depth == 0) {
+        resolveAttributes("{imagesdir}/" + k, results, depth);
+      }
     }
   }
 
@@ -387,34 +397,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         resolve(matcher.replaceFirst(Matcher.quoteReplacement(value)), results, depth + 1);
       }
     } else {
-      // if this is an image, and we are inside an Antora module, just look in the Antora path
-      VirtualFile antoraImagesDir = null;
-      if ("image".equals(macroName)) {
-        antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(myElement);
-        if (antoraImagesDir != null) {
-          key = antoraImagesDir.getCanonicalPath() + "/" + key;
-        }
-      }
       PsiElement file = resolve(key);
       if (file != null) {
         results.add(new PsiElementResolveResult(file));
-      } else if ("image".equals(macroName) && antoraImagesDir == null) {
-        // if it is an image, iterate over all available imagesdir declarations
-        if (!URL.matcher(key).matches()) {
-          List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), "imagesdir", myElement);
-          for (AttributeDeclaration decl : declarations) {
-            if (decl.getAttributeValue() == null) {
-              continue;
-            }
-            if (URL.matcher(decl.getAttributeValue()).matches()) {
-              continue;
-            }
-            file = resolve(decl.getAttributeValue() + "/" + key);
-            if (file != null) {
-              results.add(new PsiElementResolveResult(file));
-            }
-          }
-        }
       } else if ("link".endsWith(macroName) || "xref".endsWith(macroName) || macroName.equals("xref-attr") || "<<".equals(macroName)) {
         file = resolve(key + ".adoc");
         if (file != null) {
@@ -427,6 +412,20 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         }
       }
     }
+  }
+
+  @NotNull
+  private String removeFileProtocolPrefix(String value) {
+    if (value.startsWith(FILE_PREFIX)) {
+      if (SystemInfo.isWindows) {
+        // file:///c:/... -> c:/...
+        value = value.substring(FILE_PREFIX.length());
+      } else {
+        // file:///etc/... -> /etc/...
+        value = value.substring(FILE_PREFIX.length() - 1);
+      }
+    }
+    return value;
   }
 
   @Nullable
@@ -781,6 +780,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   private PsiElement resolve(String fileName) {
+    fileName = removeFileProtocolPrefix(fileName);
+    if (URL.matcher(fileName).matches()) {
+      return null;
+    }
     PsiElement element = getElement();
     PsiFile myFile = element.getContainingFile();
     if (myFile == null) {

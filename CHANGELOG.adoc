@@ -7,6 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.76 (preview, available from GitHub releases)
+
+- improved support for URIs starting with `file:`, allowing to use them as an `imagesdir` attribute (#498)
+- fix intellsense and link checking for images in other Antora modules (#500)
+
 === 0.30.75 (preview, available from GitHub releases)
 
 - parse preprocessor macros like `ifdef` in document header with highlighting of variables and autocomplete
