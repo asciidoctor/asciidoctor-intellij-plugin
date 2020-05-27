@@ -1,7 +1,22 @@
-= Contributing
+= Why contributions are important
+:navtitle: Why contribute
 
-[NOTE]
---
-This documentation website is still work in progress.
-The content for contributors is currently only available in the https://github.com/asciidoctor/asciidoctor-intellij-plugin/blob/master/CONTRIBUTING.adoc[contributor guide in this plugin's GitHub repository].
---
+This plugin is an open source project.
+All the work is done by users and enthusiasts, usually in their spare time.
+With all the help it received from users and maintainers as ideas, feedback and code it wouldn't be where it is today.
+
+To continue to be useful and to evolve, this plugin needs continuing contributions.
+
+== What you can do
+
+There are multiple ways where you can help:
+
+* joining the discussions
+* giving feedback on ideas
+* testing new releases
+* contributing source code to fix issues or add new functionality
+
+NOTE: Please ask questions to the maintainers for anything that is missing (either via email or via a GitHub ticket), and we'll update it.
+
+There are two chapters: "`xref:contribute-as-a-user.adoc[]`" and "`xref:contribute-as-a-coder.adoc[]`"
+

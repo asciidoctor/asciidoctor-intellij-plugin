@@ -2,6 +2,7 @@
 Alexander Schwartz
 :experimental:
 :url-ci-travis: https://travis-ci.org/asciidoctor/asciidoctor-intellij-plugin
+:homepage-url: https://intellij-asciidoc-plugin.ahus1.de/
 
 image:https://api.travis-ci.org/asciidoctor/asciidoctor-intellij-plugin.svg?branch=master[link={url-ci-travis}]
 image:https://img.shields.io/jetbrains/plugin/v/7391-asciidoc.svg[JetBrains Plugins,link=https://plugins.jetbrains.com/plugin/7391-asciidoc]
@@ -19,7 +20,7 @@ You can install the plugin (named "`AsciiDoc`") from the plugins section inside 
 
 The most advanced and recommended preview mode (and default for new installations) is JavaFX.
 
-Refer to the link:https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/installation.html[installation] for a detailed overview of the features.
+Refer to the link:{homepage-url}/docs/users-guide/installation.html[installation] for a detailed overview of the features.
 
 == Features
 
@@ -29,7 +30,7 @@ Refer to the link:https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/ins
 * Refactor Markdown to AsciiDoc: Right click on a file, or use the Refactor menu, and the Markdown document will be replaced by the AsciiDoc equivalent.
 Also, supports undo if the user is not happy with the result!
 
-Refer to the link:https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/features.html[Features list] for a detailed overview of the features.
+Refer to the link:{homepage-url}/docs/users-guide/features.html[Features list] for a detailed overview of the features.
 
 If you are missing features, please don't hesitate to let me know on Twitter: http://www.twitter.com/ahus1de[@ahus1de] or create an issue in the GitHub issue tracker!
 
@@ -46,7 +47,7 @@ For the conversion of Markdown to AsciiDoc, we use Pegdown and the https://githu
 Issues that can give you a good start are https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22[have the label "`good first issue`"] and maintainers are willing to help.
 Feel free to choose these or any other ticket to contribute, or even create pull requests without a prior ticket.
 
-Please have a look at the link:CONTRIBUTING.adoc["`How to Build and Contribute`"] documentation.
+Please have a look at the {homepage-url}/docs/contributors-guide/index.html["`Contributor Guide`"].
 This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the link:CODE_OF_CONDUCT.adoc[Contributor Covenant code of conduct].
 
 == Copyright and Licensing

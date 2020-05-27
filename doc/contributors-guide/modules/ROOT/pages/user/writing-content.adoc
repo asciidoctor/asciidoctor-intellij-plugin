@@ -1,8 +1,12 @@
-= Contribution documentation
+= Writing user documentation
+
+User documentation is essential to make the plugin approachable for all types of users.
+
+== Write for your readers
 
 This guideline enables contributors to write in a style that is comprehensible for the reader.
 
-== Picturing the Reader
+=== Picturing the Reader
 
 Don't assume people are developers and have worked with IntelliJ before -- this should be for writers or business analysts as well, and also for first-time IntelliJ users.
 
@@ -11,7 +15,7 @@ Adding the shortcuts should help users new to IntelliJ.
 
 Each sentence should be on its own line in the AsciiDoc source.
 
-== Check lists for writing content
+=== Check lists for writing content
 
 Name the actor::
 Examples: user, preview, editor, plugin
@@ -20,14 +24,20 @@ Provide Keyboard shortcuts::
 Example: `+kbd:[Alt+7]+` displays as kbd:[Alt+7]
 
 Use active voice::
-Good: "The preview displays the result" +
-Bad: "The result is displayed"
+Active voice: "`The preview displays the result`" +
+Passive voice: "`The result is displayed`"
 
 Use present tense::
-Good: "The preview displays the result" +
-Bad: "The preview will display the result"
+Present tense: "`The preview displays the result`" +
+Future tense: "`The preview will display the result`"
 
 Use only one capital letter for Keyboard shortcuts::
-Good: kbd:[Alt+7] +
-Bad: kbd:[ALT+7]
+Consistent: kbd:[Alt+7] +
+Inconsistent: kbd:[ALT+7]
+
+== Location of content
+
+All user documentation is published on the plugin's web site at https://intellij-asciidoc-plugin.ahus1.de/
+
+The sources of the documentation reside in the Git repository https://github.com/asciidoctor/asciidoctor-intellij-plugin in the folder _doc/user-guide_.
 

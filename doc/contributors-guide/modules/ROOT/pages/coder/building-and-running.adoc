@@ -1,0 +1,84 @@
+= Building and Running the plugin
+:navtitle: Building and running
+
+== Local Build
+
+This plugin is built using Gradle.
+If you build or run it the first time it will download the community edition of IntelliJ automatically.
+You don't need to install Gradle, you just need to install Java and make it available in the path.
+
+If you have developed the plugin before it changed to Gradle you might want to remove the contents of your `.idea` folder to trigger a re-import of the Gradle project.
+
+To build this plugin, you need to run:
+
+----
+./gradlew -Dfile.encoding=UTF-8 buildPlugin
+----
+
+The ZIP file with plugin to distribute will be located in `build/distributions`.
+
+[NOTE]
+====
+The `plugin.xml` inside the archive will state version `0.0.1` unless you specify an environment variable `TRAVIS_TAG` that holds a release number.
+This ensures that a temporarily locally build plugin will be overwritten by the JetBrains plugin update site.
+====
+
+== Running the development version locally
+
+To run the plugin for development you'll need to start
+
+----
+./gradlew -Dfile.encoding=UTF-8 runIde
+----
+
+To run all tests and the CheckStyle validations you'll need to start
+
+----
+./gradlew -Dfile.encoding=UTF-8 check
+----
+
+== Running the plugin from with the IDE
+
+=== About
+
+You most likely want to do this for fast turnaround times when running single tests, and debugging both tests and the plugin itself.
+Please use IntelliJ IDEA as an IDE for developing on this plugin.
+
+You can use the most recent version of the IDE.
+The `build.gradle` file specifies the minimum version for all users of the plugin, but when developing you are free to use a more recent version.
+
+=== Setup Tasks
+
+. Checkout the GitHub project and import it as a gradle project.
+
+. Ensure to install the following two plugin in your IDE (your IDE should recommend to install them once you open the project):
++
+--
+GrammarKit:: Helps with highlighting and code completion in Grammar files (*.flex).
+
+PsiViewer:: Helps analyzing the PSI (abstract syntax tree) created from the plugin in the IDE.
+
+CheckStyle:: This project contains a ready-to-go CheckStyle configuration that will work both in the IDE and in gradle.
+--
+
+. Go to "Project Structure... | Platform Settings | SDK":
+
+.. add "JetBrains JDK 8" (see <<JDK>> above where to download)
+
+.. choose "JetBrains JDK 8" as the JDK for this project
+
+=== Validation Tasks
+
+Perform these tasks to ensure that your setup is ready for development.
+
+. Run the test cases from `AsciiDocLexerTest.java` to see that running tests works in your setup
+
+. There are two ready-to-go run configurations checked in to git that that you can run:
++
+--
+buildPlugin:: building the plugin as a ZIP-file that you can then install locally into your IDE
+
+runIde:: runs an IntelliJ community edition with the AsciiDoc plugin enabled.
+You can choose to run it in debug mode.
+--
+

@@ -1,0 +1,18 @@
+= Subscribe to new preview releases
+
+A preview release contains new functionality or fixed bugs.
+While automated tests catch some of the bugs, some other bugs might pass unnoticed.
+Or the implementation misses a corner case that no-one has thought of before.
+
+_You can help by testing preview releases!_
+
+== Subscribe on GitHub
+
+The maintainers publish new releases of the plugin on GitHub a few days of weeks before they are published on the IntelliJ plugin repository.
+The release notes contain information about the newly included functionality or fixed bugs.
+
+On GitHub you can subscribe to a repository to receive email notifications once a preview release is available.
+Use the watch-control on the https://github.com/asciidoctor/asciidoctor-intellij-plugin[GitHub page of the plugin] and choose "`Releases only`" to get emails only when a new pre-release is available.
+
+image::watch-for-releases.png[]
+

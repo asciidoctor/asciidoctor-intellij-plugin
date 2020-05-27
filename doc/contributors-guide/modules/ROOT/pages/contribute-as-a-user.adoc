@@ -1,0 +1,12 @@
+= Contribute as a user
+
+There are several ways how to support the development of the plugin as a user of the plugin.
+No programming skills required!
+
+Read more on how you can help:
+
+* xref:user/join-discussion-on-github.adoc[]
+* xref:user/subscribe-to-new-releases.adoc[]
+* xref:user/add-eap-repository-to-ide.adoc[]
+
+

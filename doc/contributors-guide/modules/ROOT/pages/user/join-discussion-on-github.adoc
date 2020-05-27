@@ -1,0 +1,11 @@
+= Join the discussion on GitHub
+
+The developers of the plugin need feedback how they should implement a new idea and if a new functionality is useful to users or not.
+
+_You can help by providing feedback!_
+
+== Discussion on GitHub
+
+To participate in the discussions have a look at the open https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issues].
+You can join the discussion or subscribe to issues you are interested in.
+Once the maintainers publish a preview version of the plugin, you can test the new version.
