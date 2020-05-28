@@ -92,13 +92,17 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
   }
 
   @Nullable
-  @Override
+  @SuppressWarnings({"UnstableApiUsage", "MissingOverride"})
+  // to be removed in 2020.2, remove @Override to keep compatibility
+  // @Override
   public Set<Typo.Category> getIgnoredTypoCategories(@NotNull PsiElement psiElement, @NotNull PsiElement psiElement1) {
     return Collections.emptySet();
   }
 
+  @SuppressWarnings({"UnstableApiUsage", "MissingOverride"})
   @NotNull
-  @Override
+  // to be removed in 2020.2, remove @Override to keep compatibility
+  // @Override
   public List<ReplaceCharRule> getReplaceCharRules(@NotNull PsiElement psiElement) {
     return Collections.emptyList();
   }

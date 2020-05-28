@@ -129,7 +129,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertEquals(3, blockMacro.getChildren().length);
     AsciiDocAttributeReference ref = (AsciiDocAttributeReference) blockMacro.getChildren()[0];
     assertEquals(AsciiDocAttributeDeclarationReference.class, ref.getReferences()[0].getClass());
-    Assertions.assertThat(ref.getReferences()[0].getVariants()).hasSizeGreaterThan(1);
+    Assertions.assertThat(ref.getReferences()[0].getVariants().length).isGreaterThan(1);
     Assertions.assertThat(((LookupElementBuilder) ref.getReferences()[0].getVariants()[0]).getLookupString()).isEqualTo("hi");
   }
 

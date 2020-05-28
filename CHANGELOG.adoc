@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.2 (work in progress)
+
+- increase compatibility with Grazie grammar checker in 2020.2
+
 === 0.30.77 (preview, available from GitHub releases)
 
 - improved support for URIs starting with `file:`, allowing to use them as an `imagesdir` attribute (#498)
