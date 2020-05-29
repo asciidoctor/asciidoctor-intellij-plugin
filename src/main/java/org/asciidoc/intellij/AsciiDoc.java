@@ -19,8 +19,6 @@ import com.intellij.ide.plugins.CannotUnloadPluginException;
 import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
@@ -770,10 +768,6 @@ public class AsciiDoc {
     return result;
   }
 
-  public static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup("asciidoctor",
-    NotificationDisplayType.NONE, true);
-
-
   public static Map<String, Object> readAntoraYaml(VirtualFile antoraFile) {
     try {
       Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
@@ -806,7 +800,7 @@ public class AsciiDoc {
   private static void handleAntoraYamlException(YAMLException ex, @Nullable String canonicalPath) {
     String message = canonicalPath + ": " + ex.getMessage();
     LOG.warn("Error reading Antora component information", ex);
-    Notification notification = NOTIFICATION_GROUP.createNotification("Error reading Antora component information", message,
+    Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Error reading Antora component information", message,
       NotificationType.ERROR, null);
     notification.setImportant(true);
     Notifications.Bus.notify(notification);
