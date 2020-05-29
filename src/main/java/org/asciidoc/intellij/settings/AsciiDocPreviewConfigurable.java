@@ -12,12 +12,6 @@ import javax.swing.*;
 public class AsciiDocPreviewConfigurable implements SearchableConfigurable {
   @Nullable
   private AsciiDocPreviewSettingsForm myForm = null;
-  @NotNull
-  private AsciiDocApplicationSettings myAsciiDocApplicationSettings;
-
-  public AsciiDocPreviewConfigurable(@NotNull AsciiDocApplicationSettings asciiDocApplicationSettings) {
-    myAsciiDocApplicationSettings = asciiDocApplicationSettings;
-  }
 
   @NotNull
   @Override
@@ -51,17 +45,20 @@ public class AsciiDocPreviewConfigurable implements SearchableConfigurable {
 
   @Override
   public boolean isModified() {
-    return !getForm().getAsciiDocPreviewSettings().equals(myAsciiDocApplicationSettings.getAsciiDocPreviewSettings());
+    AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+    return !getForm().getAsciiDocPreviewSettings().equals(settings.getAsciiDocPreviewSettings());
   }
 
   @Override
   public void apply() throws ConfigurationException {
-    myAsciiDocApplicationSettings.setAsciiDocPreviewSettings(getForm().getAsciiDocPreviewSettings());
+    AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+    settings.setAsciiDocPreviewSettings(getForm().getAsciiDocPreviewSettings());
   }
 
   @Override
   public void reset() {
-    getForm().setAsciiDocPreviewSettings(myAsciiDocApplicationSettings.getAsciiDocPreviewSettings());
+    AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+    getForm().setAsciiDocPreviewSettings(settings.getAsciiDocPreviewSettings());
   }
 
   @Override
