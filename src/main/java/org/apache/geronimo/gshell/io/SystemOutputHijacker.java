@@ -177,7 +177,12 @@ public class SystemOutputHijacker
   public static synchronized void deregister() {
     StreamRegistration cur = registration(true);
 
-    registrations.set(cur.previous);
+    if (cur.previous == null) {
+      // this avoid a ThreadLocal that could case a class loader leak
+      registrations.remove();
+    } else {
+      registrations.set(cur.previous);
+    }
   }
 
   /**
