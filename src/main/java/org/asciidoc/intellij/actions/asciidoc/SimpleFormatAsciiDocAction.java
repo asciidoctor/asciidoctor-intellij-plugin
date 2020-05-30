@@ -2,12 +2,13 @@ package org.asciidoc.intellij.actions.asciidoc;
 
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
 
 /**
  * @author Michael Krausse (ehmkah)
  */
-public abstract class SimpleFormatAsciiDocAction extends FormatAsciiDocAction {
+public abstract class SimpleFormatAsciiDocAction extends FormatAsciiDocAction implements DumbAware {
 
   public abstract String getFormatCharacter();
 

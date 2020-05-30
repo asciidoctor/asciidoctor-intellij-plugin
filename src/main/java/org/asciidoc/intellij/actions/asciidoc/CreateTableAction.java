@@ -7,12 +7,13 @@ import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import org.asciidoc.intellij.ui.CreateTableDialog;
 import org.jetbrains.annotations.NotNull;
 
-public class CreateTableAction extends AsciiDocAction {
+public class CreateTableAction extends AsciiDocAction implements DumbAware {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent event) {

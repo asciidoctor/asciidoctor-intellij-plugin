@@ -2,12 +2,13 @@ package org.asciidoc.intellij.actions.asciidoc;
 
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
 
 /**
  * @author Erik Pragt
  */
-public class MakeStrikethrough extends FormatAsciiDocAction {
+public class MakeStrikethrough extends FormatAsciiDocAction implements DumbAware {
   private static final String LINE_THROUGH = "[.line-through]";
 
   @Override
