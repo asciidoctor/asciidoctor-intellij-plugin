@@ -26,7 +26,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.util.Producer;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.ImageUtil;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
@@ -297,7 +297,7 @@ public class PasteImageAction extends AsciiDocAction {
   }
 
   private BufferedImage toBufferedImage(@NotNull Image image) {
-    BufferedImage bufferedImage = UIUtil.createImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+    BufferedImage bufferedImage = ImageUtil.createImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
     Graphics2D bImageGraphics = bufferedImage.createGraphics();
     bImageGraphics.drawImage(image, null, null);
     return bufferedImage;
