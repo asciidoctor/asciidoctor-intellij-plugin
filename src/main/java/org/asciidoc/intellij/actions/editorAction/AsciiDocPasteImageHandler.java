@@ -31,9 +31,9 @@ import java.awt.datatransfer.Transferable;
  */
 public class AsciiDocPasteImageHandler extends EditorActionHandler implements EditorTextInsertHandler {
 
-  private final EditorTextInsertHandler myOriginalHandler;
+  private final EditorActionHandler myOriginalHandler;
 
-  public AsciiDocPasteImageHandler(EditorTextInsertHandler originalAction) {
+  public AsciiDocPasteImageHandler(EditorActionHandler originalAction) {
     myOriginalHandler = originalAction;
   }
 
@@ -66,7 +66,11 @@ public class AsciiDocPasteImageHandler extends EditorActionHandler implements Ed
     }
 
     if (myOriginalHandler != null) {
-      myOriginalHandler.execute(editor, dataContext, producer);
+      if (myOriginalHandler instanceof EditorTextInsertHandler) {
+        ((EditorTextInsertHandler) myOriginalHandler).execute(editor, dataContext, producer);
+      } else {
+        throw new IllegalStateException("original handler is not an instance of EditorTextInsertHandler, this is strange - please report: " + myOriginalHandler.getClass());
+      }
     }
   }
 
