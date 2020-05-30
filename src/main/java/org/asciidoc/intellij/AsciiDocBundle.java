@@ -1,11 +1,12 @@
 package org.asciidoc.intellij;
 
 import com.intellij.CommonBundle;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.PropertyKey;
+
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.PropertyKey;
 
 public class AsciiDocBundle {
   @NotNull

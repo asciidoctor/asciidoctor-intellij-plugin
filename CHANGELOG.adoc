@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.31.2 (work in progress)
 
 - increase compatibility with Grazie grammar checker in 2020.2
+- updated deprecated methods in plugin's Java code
 
 === 0.30.77 (preview, available from GitHub releases)
 
