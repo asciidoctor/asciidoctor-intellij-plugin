@@ -31,7 +31,6 @@ public class AsciiDocToolbarPanel extends JPanel implements Disposable {
   public AsciiDocToolbarPanel(Editor editor, @NotNull final JComponent targetComponentForActions) {
     super(new BorderLayout());
     myEditor = editor;
-    myEditor.putUserData(AsciiDocToolbarLoaderComponent.ASCII_DOC_TOOLBAR, this);
 
     JPanel myLinksPanel = new JPanel(new FlowLayout());
     JPanel panel = new JPanel(new BorderLayout());
@@ -87,7 +86,6 @@ public class AsciiDocToolbarPanel extends JPanel implements Disposable {
 
   @Override
   public void dispose() {
-    myEditor.putUserData(AsciiDocToolbarLoaderComponent.ASCII_DOC_TOOLBAR, null);
     myEditor = null;
   }
 }
