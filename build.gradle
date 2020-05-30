@@ -2,6 +2,7 @@ buildscript {
   repositories {
     jcenter()
     maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+    maven { url 'https://www.jetbrains.com/intellij-repository/snapshots' }
   }
   dependencies {
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.21.0'
@@ -37,15 +38,13 @@ allprojects {
 }
 
 intellij {
-  // we support IC-2017.2, but PsiViewer is not available for the older version, therefore use IC-2018.1 to run it
-  // Grazie is only available from 2019.2, therefore use IC-2019.2 to run it
-  version 'IC-2019.3.1'
+  version '202.4357.23-EAP-SNAPSHOT'
   pluginName 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild false
   plugins = [
-    'PsiViewer:193-SNAPSHOT', // used for debugging
-    'PlantUML integration:2.22.0', // used to test highlighting of plantuml diagrams
-    'tanvd.grazi:2019.3-6.2.stable', // used for spell and grammer checking checking
+    'PsiViewer:202-SNAPSHOT.3', // used for debugging
+    'PlantUML integration:2.25.2', // used to test highlighting of plantuml diagrams
+    'tanvd.grazi:202.4357.25', // used for spell and grammer checking checking
     'java' // used to integrate into the build via AsciiDocTargetScopeProvider
   ]
 }

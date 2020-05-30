@@ -15,6 +15,9 @@
  */
 package org.asciidoc.intellij;
 
+import com.intellij.ide.plugins.CannotUnloadPluginException;
+import com.intellij.ide.plugins.DynamicPluginListener;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
@@ -27,9 +30,11 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.messages.MessageBusConnection;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
@@ -82,6 +87,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ServiceConfigurationError;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
@@ -115,6 +121,8 @@ public class AsciiDoc {
 
   private static final MaxHashMap INSTANCES = new MaxHashMap();
 
+  private static boolean shutdown = false;
+
   private static final PrependConfig PREPEND_CONFIG = new PrependConfig();
 
   private static final AntoraIncludeAdapter ANTORA_INCLUDE_ADAPTER = new AntoraIncludeAdapter();
@@ -126,6 +134,36 @@ public class AsciiDoc {
 
   static {
     SystemOutputHijacker.install();
+    MessageBusConnection busConnection = ProjectManager.getInstance().getDefaultProject().getMessageBus().connect();
+    busConnection.subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
+      @Override
+      public void checkUnloadPlugin(@NotNull IdeaPluginDescriptor pluginDescriptor) throws CannotUnloadPluginException {
+        if (pluginDescriptor.getPluginId() != null
+          && Objects.equals(pluginDescriptor.getPluginId().getIdString(), "org.asciidoctor.intellij.asciidoc")) {
+          synchronized (AsciiDoc.class) {
+            if (INSTANCES.size() > 0) {
+              throw new CannotUnloadPluginException("expecting JRuby classloader issues, don't allow unloading");
+            }
+          }
+        }
+      }
+
+      @Override
+      public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
+        if (pluginDescriptor.getPluginId() != null
+          && Objects.equals(pluginDescriptor.getPluginId().getIdString(), "org.asciidoctor.intellij.asciidoc")) {
+          LOG.info("shutting down Asciidoctor instances");
+          synchronized (AsciiDoc.class) {
+            shutdown = true;
+            INSTANCES.forEach((key, value) -> value.close());
+            INSTANCES.clear();
+            if (SystemOutputHijacker.isInstalled()) {
+              SystemOutputHijacker.uninstall();
+            }
+          }
+        }
+      }
+    });
   }
 
   /**
@@ -151,6 +189,9 @@ public class AsciiDoc {
 
   private Asciidoctor initWithExtensions(List<String> extensions, boolean springRestDocs, FileType format) {
     synchronized (AsciiDoc.class) {
+      if (shutdown) {
+        throw new ProcessCanceledException();
+      }
       boolean extensionsEnabled;
       AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
       if (extensions.size() > 0) {
@@ -507,6 +548,9 @@ public class AsciiDoc {
     Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
     attributes.putAll(populateDocumentAttributes(fileBaseDir, name));
     synchronized (AsciiDoc.class) {
+      if (shutdown) {
+        throw new ProcessCanceledException();
+      }
       CollectingLogHandler logHandler = new CollectingLogHandler();
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
       ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
@@ -597,6 +641,9 @@ public class AsciiDoc {
     Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
     validateAccess();
     synchronized (AsciiDoc.class) {
+      if (shutdown) {
+        throw new ProcessCanceledException();
+      }
       CollectingLogHandler logHandler = new CollectingLogHandler();
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
       ByteArrayOutputStream boasErr = new ByteArrayOutputStream();

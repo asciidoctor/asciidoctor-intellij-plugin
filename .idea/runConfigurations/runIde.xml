@@ -15,7 +15,7 @@
       </option>
       <option name="vmOptions" value="-Dfile.encoding=UTF-8" />
     </ExternalSystemSettings>
-    <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+    <GradleScriptDebugEnabled>false</GradleScriptDebugEnabled>
     <method v="2" />
   </configuration>
 </component>

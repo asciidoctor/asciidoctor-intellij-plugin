@@ -38,6 +38,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
@@ -156,6 +157,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         ApplicationManager.getApplication().invokeLater(myHtmlPanelWrapper::repaint);
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
+      } catch (ProcessCanceledException e) {
+        currentContent = "";
       } catch (Exception ex) {
         String message = "Error rendering preview: " + ex.getMessage();
         log.error(message, ex);

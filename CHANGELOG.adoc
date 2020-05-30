@@ -7,10 +7,12 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.2 (work in progress)
+=== 0.31.2 (preview, available from GitHub releases)
 
 - increase compatibility with Grazie grammar checker in 2020.2
 - updated deprecated methods in plugin's Java code
+- fixing paste-image-from-clipboard for 2020.2 EAP (#486)
+- make AsciiDoc a dynamic plugin that doesn't require restarting the IDE on installation. Restart still necessary for uninstall/upgrade (#391)
 
 === 0.30.77 (preview, available from GitHub releases)
 
