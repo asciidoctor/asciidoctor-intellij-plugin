@@ -53,7 +53,7 @@ public class CodeFenceInjector implements MultiHostInjector {
     if (!AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isEnabledInjections()) {
       return null;
     } else {
-      return LanguageGuesser.INSTANCE.guessLanguage(langName);
+      return LanguageGuesser.guessLanguage(langName);
     }
   }
 }

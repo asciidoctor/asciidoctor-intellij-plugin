@@ -58,7 +58,7 @@ public class LanguageListCompletionContributor extends CompletionContributor {
   }
 
   private static void doFillVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
-    for (Map.Entry<String, Language> entry : LanguageGuesser.INSTANCE.getLangToLanguageMap().entrySet()) {
+    for (Map.Entry<String, Language> entry : LanguageGuesser.getLangToLanguageMap().entrySet()) {
       final Language language = entry.getValue();
 
       final LookupElementBuilder lookupElementBuilder =

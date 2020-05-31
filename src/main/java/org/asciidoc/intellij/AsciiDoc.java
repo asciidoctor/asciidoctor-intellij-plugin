@@ -160,6 +160,7 @@ public class AsciiDoc {
             }
           }
         }
+        busConnection.dispose();
       }
     });
   }

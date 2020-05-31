@@ -2,7 +2,6 @@ package org.asciidoc.intellij.injection;
 
 import com.intellij.lang.Language;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
-import com.intellij.openapi.util.NotNullLazyValue;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 import org.jetbrains.annotations.NotNull;
@@ -15,46 +14,36 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public enum LanguageGuesser {
-  INSTANCE;
+public class LanguageGuesser {
 
-  private static final NotNullLazyValue<List<EmbeddedTokenTypesProvider>> EMBEDDED_TOKEN_TYPE_PROVIDERS =
-    new NotNullLazyValue<List<EmbeddedTokenTypesProvider>>() {
-      @NotNull
-      @Override
-      protected List<EmbeddedTokenTypesProvider> compute() {
-        return Arrays.asList(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME.getExtensions());
-      }
-    };
+  private static List<EmbeddedTokenTypesProvider> embeddedTokenTypesProviders() {
+    return Arrays.asList(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME.getExtensions());
+  }
 
-  private static final NotNullLazyValue<Map<String, Language>> LANG_ID_TO_LANGUAGE = new NotNullLazyValue<Map<String, Language>>() {
-    @NotNull
-    @Override
-    protected Map<String, Language> compute() {
-      final HashMap<String, Language> result = new HashMap<>();
-      for (Language language : Language.getRegisteredLanguages()) {
-        if (language.getID().isEmpty()) {
-          continue;
-        }
-
-        result.put(language.getID().toLowerCase(Locale.US), language);
+  private static Map<String, Language> langIdToLanguage() {
+    final HashMap<String, Language> result = new HashMap<>();
+    for (Language language : Language.getRegisteredLanguages()) {
+      if (language.getID().isEmpty()) {
+        continue;
       }
 
-      final Language javascriptLanguage = result.get("javascript");
-      if (javascriptLanguage != null) {
-        result.put("js", javascriptLanguage);
-      }
-      return result;
+      result.put(language.getID().toLowerCase(Locale.US), language);
     }
-  };
+
+    final Language javascriptLanguage = result.get("javascript");
+    if (javascriptLanguage != null) {
+      result.put("js", javascriptLanguage);
+    }
+    return result;
+  }
 
   @NotNull
-  public Map<String, Language> getLangToLanguageMap() {
-    return Collections.unmodifiableMap(LANG_ID_TO_LANGUAGE.getValue());
+  public static Map<String, Language> getLangToLanguageMap() {
+    return Collections.unmodifiableMap(langIdToLanguage());
   }
 
   @Nullable
-  public Language guessLanguage(@NotNull String languageName) {
+  public static Language guessLanguage(@NotNull String languageName) {
     String[] parts = languageName.split("-", -1);
     String lang = null;
     if ("source".equals(parts[0])) {
@@ -73,11 +62,11 @@ public enum LanguageGuesser {
       return null;
     }
 
-    final Language languageFromMap = LANG_ID_TO_LANGUAGE.getValue().get(lang.toLowerCase(Locale.US));
+    final Language languageFromMap = langIdToLanguage().get(lang.toLowerCase(Locale.US));
     if (languageFromMap != null) {
       return languageFromMap;
     }
-    for (EmbeddedTokenTypesProvider provider : EMBEDDED_TOKEN_TYPE_PROVIDERS.getValue()) {
+    for (EmbeddedTokenTypesProvider provider : embeddedTokenTypesProviders()) {
       if (provider.getName().equalsIgnoreCase(languageName)) {
         return provider.getElementType().getLanguage();
       }
