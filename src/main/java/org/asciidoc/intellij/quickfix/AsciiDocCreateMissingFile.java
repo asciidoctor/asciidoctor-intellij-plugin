@@ -48,18 +48,21 @@ public interface AsciiDocCreateMissingFile {
         return false;
       }
     }
-    PsiDirectory parent = element.getContainingFile().getParent();
-    if (parent != null) {
-      for (PsiReference r : element.getReferences()) {
-        if (r instanceof AsciiDocFileReference) {
-          AsciiDocFileReference adr = (AsciiDocFileReference) r;
-          PsiElement resolved = r.resolve();
-          if (resolved instanceof PsiDirectory) {
-            parent = (PsiDirectory) resolved;
-          } else if (resolved == null) {
-            if (adr.canBeCreated(parent)) {
-              isAvailable = true;
-              break;
+    PsiFile containingFile = element.getContainingFile();
+    if (containingFile != null) {
+      PsiDirectory parent = containingFile.getParent();
+      if (parent != null) {
+        for (PsiReference r : element.getReferences()) {
+          if (r instanceof AsciiDocFileReference) {
+            AsciiDocFileReference adr = (AsciiDocFileReference) r;
+            PsiElement resolved = r.resolve();
+            if (resolved instanceof PsiDirectory) {
+              parent = (PsiDirectory) resolved;
+            } else if (resolved == null) {
+              if (adr.canBeCreated(parent)) {
+                isAvailable = true;
+                break;
+              }
             }
           }
         }
