@@ -3,7 +3,6 @@ package org.asciidoc.intellij.builder;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.compiler.impl.BuildTargetScopeProvider;
 import com.intellij.openapi.compiler.CompileScope;
-import com.intellij.openapi.compiler.CompilerFilter;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -24,11 +23,11 @@ import java.util.List;
 public class AsciiDocTargetScopeProvider extends BuildTargetScopeProvider {
   @NotNull
   @Override
-  public List<CmdlineRemoteProto.Message.ControllerMessage.ParametersMessage.TargetTypeBuildScope> getBuildTargetScopes(@NotNull CompileScope baseScope, @NotNull CompilerFilter filter, @NotNull Project project, boolean forceBuild) {
+  public List<CmdlineRemoteProto.Message.ControllerMessage.ParametersMessage.TargetTypeBuildScope> getBuildTargetScopes(@NotNull CompileScope baseScope, @NotNull Project project, boolean forceBuild) {
     for (Module module : ModuleManager.getInstance(project).getModules()) {
       clearProblemsForAsciidocFiles(module, project);
     }
-    return super.getBuildTargetScopes(baseScope, filter, project, forceBuild);
+    return super.getBuildTargetScopes(baseScope, project, forceBuild);
   }
 
   private static void clearProblemsForAsciidocFiles(Module module, Project project) {
