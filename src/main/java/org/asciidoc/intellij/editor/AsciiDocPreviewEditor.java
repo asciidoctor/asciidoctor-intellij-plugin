@@ -31,8 +31,8 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.EditorColorsListener;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
@@ -80,7 +80,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   public static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup("asciidoctor",
     NotificationDisplayType.NONE, true);
 
-  private Logger log = Logger.getInstance(AsciiDocPreviewEditor.class);
+  private final Logger log = Logger.getInstance(AsciiDocPreviewEditor.class);
 
   /**
    * single threaded with one task queue (one for each editor window).
@@ -99,7 +99,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    * The {@link Document} previewed in this editor.
    */
   private final Document document;
-  private Project project;
+  private final Project project;
 
   /**
    * The directory which holds the temporary images.
@@ -118,7 +118,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /**
    * .
    */
-  private FutureTask<AsciiDoc> asciidoc = new FutureTask<>(new Callable<AsciiDoc>() {
+  private final FutureTask<AsciiDoc> asciidoc = new FutureTask<>(new Callable<AsciiDoc>() {
     @Override
     public AsciiDoc call() {
       File fileBaseDir = new File("");
@@ -237,12 +237,12 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     settingsConnection.subscribe(EditorColorsManager.TOPIC, editorColorsListener);
 
     // Get asciidoc asynchronously
-    new Thread(() -> asciidoc.run()).start();
+    new Thread(asciidoc::run).start();
 
     // Listen to the document modifications.
-    this.document.addDocumentListener(new DocumentAdapter() {
+    this.document.addDocumentListener(new DocumentListener() {
       @Override
-      public void documentChanged(DocumentEvent e) {
+      public void documentChanged(@NotNull DocumentEvent e) {
         renderIfVisible();
       }
     }, this);
