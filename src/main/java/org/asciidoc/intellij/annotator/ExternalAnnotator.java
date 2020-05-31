@@ -1,6 +1,6 @@
 package org.asciidoc.intellij.annotator;
 
-import com.intellij.lang.annotation.Annotation;
+import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.diagnostic.Logger;
@@ -128,11 +128,12 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
           lineNumberForAnnotation = 0;
         }
       }
-      Annotation annotation = holder.createAnnotation(severity,
+      AnnotationBuilder ab = holder.newAnnotation(severity,
+        logRecord.getMessage()).range(
         TextRange.from(
           annotationResult.getDocument().getLineStartOffset(lineNumberForAnnotation),
-          annotationResult.getDocument().getLineEndOffset(lineNumberForAnnotation) - annotationResult.getDocument().getLineStartOffset(lineNumberForAnnotation)),
-        logRecord.getMessage());
+          annotationResult.getDocument().getLineEndOffset(lineNumberForAnnotation) - annotationResult.getDocument().getLineStartOffset(lineNumberForAnnotation))
+      );
       StringBuilder sb = new StringBuilder();
       sb.append(StringEscapeUtils.escapeHtml4(logRecord.getMessage()));
       if (logRecord.getCursor() != null) {
@@ -158,19 +159,20 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
           .append(StringEscapeUtils.escapeHtml4(logRecord.getSourceMethodName()))
           .append(")");
       }
-      annotation.setTooltip(sb.toString());
+      ab = ab.tooltip(sb.toString());
       if (logRecord.getMessage() != null && logRecord.getMessage().startsWith("include file not found")) {
         Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
         if (document != null) {
           PsiElement element = file.findElementAt(document.getLineStartOffset(lineNumberForAnnotation));
           if (element != null && element.getParent() instanceof AsciiDocBlockMacro) {
-            annotation.registerFix(new AsciiDocCreateMissingFileIntentionAction(element.getParent()));
+            ab = ab.withFix(new AsciiDocCreateMissingFileIntentionAction(element.getParent()));
           }
         }
       }
       if (severity.compareTo(HighlightSeverity.ERROR) >= 0) {
         problems.add(theProblemSolver.convertToProblem(file.getVirtualFile(), lineNumberForAnnotation, 0, new String[]{logRecord.getMessage()}));
       }
+      ab.create();
     }
     // consider using reportProblemsFromExternalSource available from 2019.x?
     theProblemSolver.reportProblems(file.getVirtualFile(), problems);
