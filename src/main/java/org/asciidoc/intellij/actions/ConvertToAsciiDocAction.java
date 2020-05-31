@@ -17,6 +17,7 @@ import org.asciidoc.intellij.util.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import static nl.jworks.markdown_to_asciidoc.Converter.convertMarkdownToAsciiDoc;
 
@@ -41,7 +42,7 @@ public class ConvertToAsciiDocAction extends AnAction {
     }
 
     final VirtualFile virtualFile = file.getVirtualFile();
-    ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(virtualFile);
+    ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(Collections.singleton(virtualFile));
 
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
