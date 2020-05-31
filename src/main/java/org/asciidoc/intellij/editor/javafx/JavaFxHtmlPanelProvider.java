@@ -14,16 +14,17 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Hashtable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
   public static final ProviderInfo INFO = new ProviderInfo("JavaFX WebView", JavaFxHtmlPanelProvider.class.getName());
-  private Logger log = Logger.getInstance(JavaFxHtmlPanelProvider.class);
+  private static final Logger LOG = Logger.getInstance(JavaFxHtmlPanelProvider.class);
   private static final AtomicBoolean HAS_WAITED = new AtomicBoolean(false);
 
-  private static boolean initialized;
+  private static volatile boolean initialized;
 
   /**
    * Initialization might fail if a different StreamHandlerFactory has already been registered.
@@ -45,6 +46,30 @@ public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
           "is installed (currently 'Fabric for Android Studio' is one known conflict).", NotificationType.WARNING, null);
       notification.setImportant(false);
       Notifications.Bus.notify(notification);
+    }
+  }
+
+  public static void beforePluginUnload() {
+    if (initialized) {
+      try {
+        Field fieldStreamHandlerLock = URL.class.getDeclaredField("streamHandlerLock");
+        fieldStreamHandlerLock.setAccessible(true);
+        Object streamHandlerLock = fieldStreamHandlerLock.get(null);
+        //noinspection SynchronizationOnLocalVariableOrMethodParameter
+        synchronized (streamHandlerLock) {
+          Field fieldFactory = URL.class.getDeclaredField("factory");
+          fieldFactory.setAccessible(true);
+          fieldFactory.set(null, null);
+          Field fieldHandlers = URL.class.getDeclaredField("handlers");
+          fieldHandlers.setAccessible(true);
+          Hashtable<?, ?> handlers = (Hashtable<?, ?>) fieldHandlers.get(null);
+          handlers.clear();
+        }
+        initialized = false;
+        LOG.info("deregistered LocalfileURLStreamHandlerFactory");
+      } catch (NoSuchFieldException | IllegalAccessException e) {
+        LOG.error("error shutting down Asciidoctor instances", e);
+      }
     }
   }
 
@@ -98,15 +123,15 @@ public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
           HAS_WAITED.set(true);
         }
         if (startupLatch.getCount() == 1) {
-          log.warn("JavaFX is stuck");
+          LOG.warn("JavaFX is stuck");
           // previous initialization failed, JavaFX not available
           return true;
         }
       }
     } catch (NoClassDefFoundError ex) {
-      log.debug("can't find class PlatformImpl", ex);
+      LOG.debug("can't find class PlatformImpl", ex);
     } catch (NoSuchFieldException | IllegalAccessException ex) {
-      log.error("can't read state of PlatformImpl", ex);
+      LOG.error("can't read state of PlatformImpl", ex);
     }
     return false;
   }

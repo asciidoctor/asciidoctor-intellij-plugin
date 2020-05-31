@@ -10,7 +10,7 @@ buildscript {
 }
 
 plugins {
-  id "org.jetbrains.intellij" version "0.4.17"
+  id "org.jetbrains.intellij" version "0.4.21"
   id "org.jetbrains.grammarkit" version "2018.3.1"
   id "checkstyle"
   id 'org.asciidoctor.jvm.convert' version '2.2.0'
@@ -77,7 +77,12 @@ patchPluginXml {
 }
 
 runIde {
-  jvmArgs = ['-Xmx1024m']
+  jvmArgs = ['-Xmx1024m','-XX:+UnlockDiagnosticVMOptions']
+
+  // should not automatically reload plugin on change in IDE, as JRuby is not very good at this
+  systemProperty('idea.auto.reload.plugins', 'false')
+
+  systemProperty('ide.plugins.snapshot.on.unload.fail', 'true')
 }
 
 publishPlugin {

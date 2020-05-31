@@ -16,14 +16,10 @@
 package org.asciidoc.intellij;
 
 import com.intellij.lang.Language;
-import com.intellij.openapi.fileTypes.SingleLazyInstanceSyntaxHighlighterFactory;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
-import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiManager;
-import org.asciidoc.intellij.highlighting.AsciiDocSyntaxHighlighter;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -40,13 +36,6 @@ public class AsciiDocLanguage extends Language {
 
   private AsciiDocLanguage() {
     super(LANGUAGE_NAME);
-    SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(this, new SingleLazyInstanceSyntaxHighlighterFactory() {
-      @Override
-      @NotNull
-      protected SyntaxHighlighter createHighlighter() {
-        return new AsciiDocSyntaxHighlighter();
-      }
-    });
   }
 
   public static boolean isAsciiDocFile(@NotNull Project project, @NotNull VirtualFile file) {

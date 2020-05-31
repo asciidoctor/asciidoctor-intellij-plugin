@@ -16,8 +16,6 @@
 package org.asciidoc.intellij;
 
 import com.intellij.ide.plugins.CannotUnloadPluginException;
-import com.intellij.ide.plugins.DynamicPluginListener;
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -28,11 +26,9 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.messages.MessageBusConnection;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
@@ -70,6 +66,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
@@ -82,13 +79,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.ServiceConfigurationError;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_YML;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraAttachmentsDirRelative;
@@ -132,37 +130,54 @@ public class AsciiDoc {
 
   static {
     SystemOutputHijacker.install();
-    MessageBusConnection busConnection = ProjectManager.getInstance().getDefaultProject().getMessageBus().connect();
-    busConnection.subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
-      @Override
-      public void checkUnloadPlugin(@NotNull IdeaPluginDescriptor pluginDescriptor) throws CannotUnloadPluginException {
-        if (pluginDescriptor.getPluginId() != null
-          && Objects.equals(pluginDescriptor.getPluginId().getIdString(), "org.asciidoctor.intellij.asciidoc")) {
-          synchronized (AsciiDoc.class) {
-            if (INSTANCES.size() > 0) {
-              throw new CannotUnloadPluginException("expecting JRuby classloader issues, don't allow unloading");
-            }
-          }
-        }
-      }
+  }
 
-      @Override
-      public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
-        if (pluginDescriptor.getPluginId() != null
-          && Objects.equals(pluginDescriptor.getPluginId().getIdString(), "org.asciidoctor.intellij.asciidoc")) {
-          LOG.info("shutting down Asciidoctor instances");
-          synchronized (AsciiDoc.class) {
-            shutdown = true;
-            INSTANCES.forEach((key, value) -> value.close());
-            INSTANCES.clear();
-            if (SystemOutputHijacker.isInstalled()) {
-              SystemOutputHijacker.uninstall();
-            }
-          }
-        }
-        busConnection.dispose();
+  public static void checkUnloadPlugin() {
+    synchronized (AsciiDoc.class) {
+      if (INSTANCES.size() > 0) {
+        // as beforePluginUnload() is incomplete, vote against reloading
+        // as an incomplete unload would leave the user with disabled AsciiDoc funtionality until the next restart.
+        throw new CannotUnloadPluginException("expecting JRuby classloader issues, don't allow unloading");
       }
-    });
+    }
+  }
+
+  public static void beforePluginUnload() {
+    LOG.info("shutting down Asciidoctor instances");
+    synchronized (AsciiDoc.class) {
+      shutdown = true;
+      LOG.info("about to shutdown " + INSTANCES.size() + " instances");
+      INSTANCES.forEach((key, value) -> {
+        value.unregisterAllExtensions();
+        value.close();
+      });
+      LOG.info("all instances shut down");
+      INSTANCES.clear();
+      if (SystemOutputHijacker.isInstalled()) {
+        SystemOutputHijacker.uninstall();
+      }
+      try {
+        Class<?> shutdownHooks = Class.forName("java.lang.ApplicationShutdownHooks");
+        Field fieldHooks = shutdownHooks.getDeclaredField("hooks");
+        fieldHooks.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        IdentityHashMap<Thread, Thread> hooks = (IdentityHashMap<Thread, Thread>) fieldHooks.get(null);
+        List<Thread> jrubyShutdownThreads = hooks.keySet().stream().filter(thread -> thread.getClass().getName().startsWith("org.jruby.util.JRubyClassLoader")).collect(Collectors.toList());
+        jrubyShutdownThreads.forEach(thread -> {
+          // as we want to run this shutdown thing now until it completes
+          // noinspection CallToThreadRun
+          thread.run();
+          Runtime.getRuntime().removeShutdownHook(thread);
+        });
+      } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
+        LOG.error("unable to de-register shutdown hook", e);
+      }
+      System.gc();
+      // still, this is not enough; there are dangling ThreadLocals like "org.jruby.Ruby$FStringEqual"
+      // in addition to that: classes are marked at "Held by JVM" and not unloaded. Reason is unknown, maybe
+      // "custom class loaders when they are in the process of loading classes" as of
+      // https://www.yourkit.com/docs/java/help/gc_roots.jsp
+    }
   }
 
   /**
@@ -553,7 +568,7 @@ public class AsciiDoc {
       CollectingLogHandler logHandler = new CollectingLogHandler();
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
       ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
-      SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
+      // SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         asciidoctor.registerLogHandler(logHandler);
@@ -590,7 +605,7 @@ public class AsciiDoc {
         response.append("<p>(the full exception stack trace is available in the IDE's log file. Visit menu item 'Help | Show Log in Explorer' to see the log)");
         return response.toString();
       } finally {
-        SystemOutputHijacker.deregister();
+        // SystemOutputHijacker.deregister();
         notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
       }
     }
@@ -646,7 +661,7 @@ public class AsciiDoc {
       CollectingLogHandler logHandler = new CollectingLogHandler();
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
       ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
-      SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
+      // SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         PREPEND_CONFIG.setConfig(config);
@@ -690,7 +705,7 @@ public class AsciiDoc {
           throw new RuntimeException("Unable to write bytes");
         }
       } finally {
-        SystemOutputHijacker.deregister();
+        // SystemOutputHijacker.deregister();
         Notifier notifier = this::notifyAlways;
         notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
       }
@@ -891,6 +906,7 @@ public class AsciiDoc {
     public String toString() {
       return backend;
     }
+
   }
 
   private static void mapAttribute(Map<String, String> result, Map<String, Object> antora, String nameSource, String nameTarget) {

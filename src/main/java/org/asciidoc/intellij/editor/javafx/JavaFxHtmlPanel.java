@@ -235,7 +235,9 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
           return;
         }
         try {
-          PlatformImpl.startup(() -> {
+          // don't pass a lambda as startup as this will lead to classloader leak
+          PlatformImpl.startup(new Thread());
+          PlatformImpl.runLater(() -> {
             myWebView = new WebView();
 
             updateFontSmoothingType(myWebView, false);

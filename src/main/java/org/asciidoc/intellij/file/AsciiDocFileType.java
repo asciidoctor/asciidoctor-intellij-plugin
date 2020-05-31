@@ -15,22 +15,39 @@
  */
 package org.asciidoc.intellij.file;
 
+import com.intellij.ide.plugins.CannotUnloadPluginException;
+import com.intellij.ide.plugins.DynamicPluginListener;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.util.messages.MessageBusConnection;
 import icons.AsciiDocIcons;
+import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocLanguage;
+import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Locale;
+import java.util.Objects;
 
-/** @author Julien Viet */
+/**
+ * @author Julien Viet
+ */
 public class AsciiDocFileType extends LanguageFileType {
 
-  /** The {@link AsciiDocFileType} instance. */
+  private static final com.intellij.openapi.diagnostic.Logger LOG =
+    com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDocFileType.class);
+
+  /**
+   * The {@link AsciiDocFileType} instance.
+   */
   public static final AsciiDocFileType INSTANCE = new AsciiDocFileType();
-  /** . */
-  public static final String[] DEFAULT_ASSOCIATED_EXTENSIONS = {"adoc", "asciidoc", "ad" };
+  /**
+   * .
+   */
+  public static final String[] DEFAULT_ASSOCIATED_EXTENSIONS = {"adoc", "asciidoc", "ad"};
 
   private AsciiDocFileType() {
     super(AsciiDocLanguage.INSTANCE);
@@ -82,4 +99,36 @@ public class AsciiDocFileType extends LanguageFileType {
     }
     return filename;
   }
+
+  /*
+   * This takes care of unloading the plugin on uninstalls or updates.
+   * WARNING: A dynamic unload will usually only succeed when the application is NOT in debug mode;
+   * classes might be marked as "JNI Global" due to this, and not reclaimed, and then unloading fails.
+   */
+  static {
+    LOG.info("setup of subscription");
+    MessageBusConnection busConnection = ApplicationManager.getApplication().getMessageBus().connect();
+    busConnection.subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
+      @Override
+      public void checkUnloadPlugin(@NotNull IdeaPluginDescriptor pluginDescriptor) throws CannotUnloadPluginException {
+        if (pluginDescriptor.getPluginId() != null
+          && Objects.equals(pluginDescriptor.getPluginId().getIdString(), "org.asciidoctor.intellij.asciidoc")) {
+          LOG.info("checkUnloadPlugin");
+          AsciiDoc.checkUnloadPlugin();
+        }
+      }
+
+      @Override
+      public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
+        if (pluginDescriptor.getPluginId() != null
+          && Objects.equals(pluginDescriptor.getPluginId().getIdString(), "org.asciidoctor.intellij.asciidoc")) {
+          LOG.info("beforePluginUnload");
+          AsciiDoc.beforePluginUnload();
+          JavaFxHtmlPanelProvider.beforePluginUnload();
+          busConnection.dispose();
+        }
+      }
+    });
+  }
+
 }
