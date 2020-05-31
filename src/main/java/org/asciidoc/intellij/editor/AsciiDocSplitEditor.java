@@ -1,8 +1,8 @@
 package org.asciidoc.intellij.editor;
 
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.event.CaretAdapter;
 import com.intellij.openapi.editor.event.CaretEvent;
+import com.intellij.openapi.editor.event.CaretListener;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.pom.Navigatable;
 import org.asciidoc.intellij.ui.SplitFileEditor;
@@ -44,7 +44,7 @@ public class AsciiDocSplitEditor extends SplitFileEditor<TextEditor, AsciiDocPre
     getMainEditor().navigateTo(navigatable);
   }
 
-  private static class MyCaretListener extends CaretAdapter {
+  private static class MyCaretListener implements CaretListener {
     @NotNull
     private final AsciiDocPreviewEditor myPreviewFileEditor;
 
