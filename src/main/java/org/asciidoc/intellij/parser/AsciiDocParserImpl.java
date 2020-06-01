@@ -517,6 +517,8 @@ public class AsciiDocParserImpl {
         parseUrl();
       } else if (at(INLINE_MACRO_ID)) {
         parseInlineMacro();
+      } else if (at(REFSTART)) {
+        parseRef();
       } else {
         next();
       }

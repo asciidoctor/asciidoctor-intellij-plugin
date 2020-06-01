@@ -7,6 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.78 (work in progress)
+
+- fix parsing of second level enumeration in the editor
+- titles parse references
+
 === 0.30.77 (preview, available from GitHub releases)
 
 - improved support for URIs starting with `file:`, allowing to use them as an `imagesdir` attribute (#498)

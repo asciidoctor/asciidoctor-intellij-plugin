@@ -502,7 +502,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 // everything that will not render after a [source] as literal text
 // especially: titles, block attributes, block ID, etc.
 <PREBLOCK> {
-  ^ [ \t]+ ({BULLET} {SPACE}+ {STRING} | {ENUMERATION} {SPACE}+ {STRING} | {DESCRIPTION} {SPACE}+ {STRING} | {DESCRIPTION} {SPACE}* "\n" )  {
+  ^ [ \t]* ({BULLET} {SPACE}+ {STRING} | {ENUMERATION} {SPACE}+ {STRING} | {DESCRIPTION} {SPACE}+ {STRING} | {DESCRIPTION} {SPACE}* "\n" )  {
         yypushback(yylength()); yybegin(SINGLELINE);
       }
   ^ [ \t]+ [^ \t\n] {
