@@ -1,0 +1,33 @@
+= Changing content and layout of the start page
+:navtitle: Changing the start page
+
+Follow these steps to change content and layout of the start page.
+
+== Prerequisites
+
+If you want to preview your changes locally:
+
+. https://www.ruby-lang.org/en/documentation/installation/[Ruby] environment
+. Basic knowledge of the static site generator https://jekyllrb.com/[Jekyll]
+
+== How-to steps
+
+. Fork and clone this repository: https://github.com/ahus1/intellij-asciidoc-plugin.ahus1.de
+. Change content in sub-folder _startpage_
+. Test your changes (recommended for every non-trivial change):
+.. Install Jekyll using bundler:
++
+----
+gem install bundler
+bundler install
+----
+.. Run Jekyll once to create a static website in folder _site:
++
+----
+jekyll serve --source startpage --destination _site
+----
+.. Open start page preview on http://127.0.0.1:4000/
+
+. Create a pull-request on GitHub
+
+Once a maintainer approves the pull request your changes will be visible on the plugin's homepage.

@@ -1,0 +1,51 @@
+= Changing the documentation theme
+
+Follow these steps to change the layout and functionality of the Antora documentation theme.
+
+== Prerequisites
+
+If you want to preview your changes locally:
+
+. https://nodejs.org/en/[Node] environment
+. https://classic.yarnpkg.com/en/docs/install/[Yarn] installed
+. Basic knowledge on how to use https://antora.org/[Antora]
+
+== How-to steps
+
+. Fork and clone this repository: https://github.com/ahus1/intellij-asciidoc-plugin.ahus1.de
+. Fork and clone the plugin's repository: https://github.com/asciidoctor/asciidoctor-intellij-plugin to a folder named _asciidoctor-intellij-plugin_ as a sibling to the first repository.
++
+If you choose a different folder, you'll need to adapt the folders in _antora-playbook-author.yml_.
+. Change content for the theme in files _antora-playbook.yml_ and _antora-playbook-author.yml_ or sub-folder __antora_
+. Test your changes (recommended for every non-trivial change):
+.. Install node packages dependencies:
++
+----
+yarn install
+----
+.. Set enviroment variables to enable search index creation
++
+----
+set DOCSEARCH_ENABLED=true
+set DOCSEARCH_ENGINE=lunr
+----
+.. Build the static documentation website
++
+----
+yarn author
+----
+.. Start a minimal webserver to browse the documentation
++
+----
+yarn serve
+----
+.. Open documentation preview on http://127.0.0.1:5000/docs/
+.. *Optional:* To add the start page to the website, follow the steps in xref:docs/change-startpage.adoc[], then run the following command:
++
+----
+jekyll build --source startpage --destination _site
+----
+. Create a pull-request on GitHub
+
+Once a maintainer approves the pull request your changes will be visible on the plugin's homepage.
+

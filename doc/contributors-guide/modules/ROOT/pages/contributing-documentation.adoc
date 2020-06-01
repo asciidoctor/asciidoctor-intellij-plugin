@@ -1,0 +1,39 @@
+= Contributing documentation
+
+User documentation is essential to make the plugin approachable for all types of users.
+
+This page provides an introduction where documentation content exists and how it is structured.
+With this knowledge you can choose the matching how-to to change the content you need to change.
+
+== What sources exist to build the plugin's web site?
+
+The documentation for this plugin is hosted on plugin's homepage https://intellij-asciidoc-plugin.ahus1.de/
+
+It has the following areas:
+
+Start page::
+All files related to the start page are in the Git repository https://github.com/ahus1/intellij-asciidoc-plugin.ahus1.de in the folder _startpage_.
+That folder contains both the content (look for AsciiDoc files with the extension _.adoc_) plus several theme and assets related files.
+The start page is built with the https://jekyllrb.com/[Jekyll] static site generator.
+
+Documentation::
+All documentation content on the website is next to the plugin's code at https://github.com/asciidoctor/asciidoctor-intellij-plugin in the sub-folder _doc_.
+The theme for this site is in the Git repository https://github.com/ahus1/intellij-asciidoc-plugin.ahus1.de in the folder __antora_.
+The user's guide and the contributor's guide a build with the https://antora.org/[Antora] documentation site generator.
+
+Configuration files for hosting::
+The plugin's homepage is hosted on https://www.netlify.com/[Netlify].
+Configuration files for hosting are in https://github.com/ahus1/intellij-asciidoc-plugin.ahus1.de. Files like _netlify.toml_, _build.sh_ and _redirects_ instruct Netlify how to build and publish this site.
+A sub-folder _lambda_ contains scripts to notify the maintainers of successful and unsuccessful deploys.
+
+== Further reading
+
+There are three how-tos to walk you through changing the content of the website:
+
+* xref:docs/edit-documentation-content.adoc[]
+* xref:docs/change-documentation-theme.adoc[]
+* xref:docs/change-startpage.adoc[]
+
+A more general guide on how to write documentation:
+
+* xref:docs/writing-user-documentation.adoc[]

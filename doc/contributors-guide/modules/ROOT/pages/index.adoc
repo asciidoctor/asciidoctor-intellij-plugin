@@ -18,5 +18,9 @@ There are multiple ways where you can help:
 
 NOTE: Please ask questions to the maintainers for anything that is missing (either via email or via a GitHub ticket), and we'll update it.
 
-There are two chapters: "`xref:contribute-as-a-user.adoc[]`" and "`xref:contribute-as-a-coder.adoc[]`"
+There are three chapters:
+
+* xref:contribute-as-a-user.adoc[]
+* xref:contribute-as-a-coder.adoc[]
+* xref:contributing-documentation.adoc[]
 
