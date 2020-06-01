@@ -13,6 +13,8 @@ This document provides a high-level view of the changes introduced by release.
 - updated deprecated methods in plugin's Java code
 - fixing paste-image-from-clipboard for 2020.2 EAP (#486)
 - make AsciiDoc a dynamic plugin that doesn't require restarting the IDE on installation. Restart still necessary for uninstall/upgrade (#391)
+- fix parsing of second level enumeration in the editor
+- titles parse references
 
 === 0.30.77 (preview, available from GitHub releases)
 

@@ -1845,6 +1845,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Item')");
   }
 
+  public void testEnumerationSecondLevel() {
+    doTest(".. Item",
+      "AsciiDoc:ENUMERATION ('..')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Item')");
+  }
+
   public void testEnumerationNumber() {
     doTest("1. Item",
       "AsciiDoc:ENUMERATION ('1.')\n" +
