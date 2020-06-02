@@ -8,9 +8,13 @@ Use this to avoid manual downloads of pre-releases.
 
 Follow these steps to add the repository to your IDE:
 
-. Go to menu:File[Settings... > Plugins > (Gear Icon) > Manage plugin repositories...]
+. Go to menu:File[Settings... > Plugins]
++
+image::adding-eap-repository.png[]
+. Click on the "`Gear Icon`" (icon:gear[])
+. Select "`Manage Plugin Repositories...`"
 . add https://plugins.jetbrains.com/plugins/eap/list?pluginId=7391 as an additional repository
 
 Use the https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issue numbers] given in the release notes to join the discussion on the respective GitHub issues.
 
-Open new issues if a new release breaks doesn't work as expected in your project.
+Open new issues if a new release breaks existing functionality or doesn't work as expected in your project.
