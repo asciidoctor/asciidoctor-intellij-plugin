@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.3 (work in progress)
+
+- fix showing icon macros in preview in Antora mode
+
 === 0.31.2 (preview, available from GitHub releases)
 
 - increase compatibility with Grazie grammar checker in 2020.2

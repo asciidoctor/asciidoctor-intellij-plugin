@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_PREFIX_AND_FAMILY_PATTERN;
@@ -53,9 +54,16 @@ public class AntoraReferenceAdapter {
     convertAntora(node, "image");
   }
 
+  @SuppressWarnings("checkstyle:MethodLength")
   public static void convertAntora(RubyObject node, String type) {
     if (antoraModuleDir != null) {
       PhraseNodeImpl phraseNode = new PhraseNodeImpl(node);
+      if (type.equals("inline_image")) {
+        String nodeType = phraseNode.getType();
+        if (Objects.equals(nodeType, "icon")) {
+          return;
+        }
+      }
       String outfileSuffix = (String) phraseNode.getDocument().getAttribute("outfilesuffix");
       String target;
       if (type.equals("image")) {
