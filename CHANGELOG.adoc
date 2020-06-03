@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - fix parsing of second level enumeration in the editor
 - titles parse references
 - fix showing icon macros in preview in Antora mode
+- handling null values in Antora module descriptor, parsing special values `~` and `@` (#504)
 
 === 0.30.77 (preview, available from GitHub releases)
 
