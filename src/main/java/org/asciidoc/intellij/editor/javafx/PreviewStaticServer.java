@@ -5,7 +5,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
@@ -58,11 +57,13 @@ public class PreviewStaticServer extends HttpRequestHandler {
   }
 
   @NotNull
-  public static String createCSP(@NotNull List<String> scripts, @NotNull List<String> styles) {
-    return "default-src 'none'; script-src " + StringUtil.join(scripts, " ") + "; "
-      + "style-src https: " + StringUtil.join(styles, " ") + "; "
-      + "img-src file: *; connect-src 'none'; font-src *; " +
-      "object-src 'none'; media-src 'none'; child-src 'none';";
+  public static String createCSP() {
+    return "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/scripts/").toExternalForm() + "; "
+      + "style-src 'unsafe-inline' https: http: " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/styles/").toExternalForm() + "; "
+      + "img-src file: localfile: *; connect-src 'none'; font-src *; " +
+      "object-src file: localfile: *;" + // used for interactive SVGs
+      "media-src 'none'; child-src 'none'; " +
+      "frame-src https://player.vimeo.com/ https://www.youtube.com/"; // used for vimeo/youtube iframes
   }
 
   @NotNull
@@ -109,6 +110,11 @@ public class PreviewStaticServer extends HttpRequestHandler {
   @Override
   public boolean isSupported(@NotNull FullHttpRequest request) {
     return super.isSupported(request) && request.uri().startsWith(PREFIX);
+  }
+
+  @Override
+  public boolean isAccessible(@NotNull HttpRequest request) {
+    return request.uri().startsWith(PREFIX + "styles/") || request.uri().startsWith(PREFIX + "scripts/") || super.isAccessible(request);
   }
 
   @Override

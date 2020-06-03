@@ -12,7 +12,7 @@
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->
-  <idea-version since-build="202.4357.23"/> <!-- 2020.2 EAP -->
+  <idea-version since-build="202.5103.13"/> <!-- 2020.2 EAP -->
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html -->
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true" config-file="java-features.xml">com.intellij.modules.java</depends>
@@ -27,6 +27,7 @@
   <extensions defaultExtensionNs="org.asciidoc.intellij">
     <html.panel.provider implementation="org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider"/>
     <html.panel.provider implementation="org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider"/>
+    <html.panel.provider implementation="org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider"/>
   </extensions>
 
   <actions>

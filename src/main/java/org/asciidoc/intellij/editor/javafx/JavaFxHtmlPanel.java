@@ -13,6 +13,7 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.CaretState;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
@@ -86,9 +87,9 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
+public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
 
-  private Logger log = Logger.getInstance(JavaFxHtmlPanel.class);
+  private final Logger log = Logger.getInstance(JavaFxHtmlPanel.class);
 
   private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = new NotNullLazyValue<String>() {
     @NotNull
@@ -170,6 +171,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
   private volatile boolean forceRefresh = false;
   private volatile long stamp = 0;
   private volatile String frameHtml = null;
+  private Editor editor;
 
   JavaFxHtmlPanel(Document document, Path imagesPath) {
 
@@ -270,7 +272,8 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
 
             myWebView.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
               if (mouseEvent.isControlDown() && mouseEvent.getButton() == MouseButton.MIDDLE) {
-                myWebView.setZoom(JBUIScale.scale(1f));
+                float zoom = (float) AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getZoom() / 100;
+                myWebView.setZoom(JBUIScale.scale(zoom));
                 mouseEvent.consume();
               }
             });
@@ -744,7 +747,7 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
     // filter out Twitter's JavaScript, as it is problematic for JDK8 JavaFX
     // see: https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/235
     html = html.replaceAll("(?i)<script [a-z ]*src=\"https://platform\\.twitter\\.com/widgets\\.js\" [^>]*></script>", "");
-    html = AsciiDoc.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes);
+    html = AsciiDoc.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes);
 
     /* Add JavaScript for auto-scolling and clickable links */
     return html
@@ -796,6 +799,16 @@ public class JavaFxHtmlPanel extends AsciiDocHtmlPanel {
         myScrollPreservingListener.myScrollY = ((Number) result).intValue();
       }
     });
+  }
+
+  @Override
+  public Editor getEditor() {
+    return editor;
+  }
+
+  @Override
+  public void setEditor(Editor editor) {
+    this.editor = editor;
   }
 
   @Override

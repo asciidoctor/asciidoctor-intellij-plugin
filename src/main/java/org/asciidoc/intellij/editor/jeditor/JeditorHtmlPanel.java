@@ -5,6 +5,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBScrollPane;
@@ -29,7 +30,7 @@ import java.util.Map;
 
 import static org.asciidoc.intellij.util.UIUtil.loadStyleSheet;
 
-final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
+final class JeditorHtmlPanel implements AsciiDocHtmlPanel {
   private final Logger log = Logger.getInstance(JeditorHtmlPanel.class);
 
   @NotNull
@@ -38,6 +39,7 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
   private final JBScrollPane scrollPane;
   @NotNull
   private String myLastRenderedHtml = "";
+  private Editor editor;
 
 
   JeditorHtmlPanel(Document document) {
@@ -133,6 +135,16 @@ final class JeditorHtmlPanel extends AsciiDocHtmlPanel {
   @Override
   public void scrollToLine(int line, int lineCount) {
     // NOOP
+  }
+
+  @Override
+  public Editor getEditor() {
+    return editor;
+  }
+
+  @Override
+  public void setEditor(Editor editor) {
+    this.editor = editor;
   }
 
   @Override

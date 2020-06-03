@@ -9,18 +9,16 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Map;
 
-public abstract class AsciiDocHtmlPanel implements Disposable {
+public interface AsciiDocHtmlPanel extends Disposable {
   @NotNull
-  public abstract JComponent getComponent();
+  JComponent getComponent();
 
-  public abstract void setHtml(@NotNull String html, @NotNull Map<String, String> attributes);
+  void setHtml(@NotNull String html, @NotNull Map<String, String> attributes);
 
-  public abstract void render();
-
-  private Editor editor;
+  void render();
 
   @NotNull
-  protected static String getCssLines(@Nullable String inlineCss) {
+  static String getCssLines(@Nullable String inlineCss) {
     StringBuilder result = new StringBuilder();
 
     if (inlineCss != null) {
@@ -29,17 +27,13 @@ public abstract class AsciiDocHtmlPanel implements Disposable {
     return result.toString();
   }
 
-  public abstract void scrollToLine(int line, int lineCount);
+  void scrollToLine(int line, int lineCount);
 
-  public Editor getEditor() {
-    return editor;
-  }
+  Editor getEditor();
 
-  public void setEditor(Editor editor) {
-    this.editor = editor;
-  }
+  void setEditor(Editor editor);
 
-  public enum PreviewTheme {
+  enum PreviewTheme {
     INTELLIJ(AsciiDocBundle.message("asciidoc.preview.intellij")),
     ASCIIDOC(AsciiDocBundle.message("asciidoc.preview.asciidoc")),
     DARCULA(AsciiDocBundle.message("asciidoc.preview.darcula"));

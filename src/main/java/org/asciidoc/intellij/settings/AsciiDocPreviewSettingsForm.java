@@ -125,7 +125,8 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
   private void adjustZoomOptions() {
     if (myPreviewPanelModel.getSelected() != null &&
-      myPreviewPanelModel.getSelected().getName().contains("JavaFX")) {
+      (myPreviewPanelModel.getSelected().getName().contains("JavaFX") ||
+        myPreviewPanelModel.getSelected().getName().contains("JCEF"))) {
       myZoomSettings.setVisible(true);
     } else {
       myZoomSettings.setVisible(false);
