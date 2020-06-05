@@ -1,4 +1,4 @@
-= Contributing documentation
+= Contribute as a writer
 
 User documentation is essential to make the plugin approachable for all types of users.
 

@@ -1,0 +1,8 @@
+= Upgrading Asciidoctor
+
+Follow these steps:
+
+. update `build.gradle` with the latest available AsciidoctorJ release
+
+`JavaFxHtmlPanel` will automatically load the most recent style sheets and patch them accordingly at runtime.
+

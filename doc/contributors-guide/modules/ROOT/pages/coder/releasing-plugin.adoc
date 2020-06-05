@@ -1,0 +1,25 @@
+= Releasing a new version of the plugin
+:navtitle: Releasing the plugin
+
+== Publishing a preview version
+
+. Update _CHANGELOG.adoc_ with th latest changes for the release
+. Push all changes to GitHub
+. Create a Release in the GitHub releases.
+This allows you to also create a tag.
+Name the tag like the release (for example: `0.28.2`)
+. Travis CI will then https://travis-ci.org/asciidoctor/asciidoctor-intellij-plugin/builds[build the release]
+The `plugin.xml` included in the build will contain the release version and the most recent entries from the change log.
+TravisCI will publish a binary to:
++
+--
+* https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases[GitHub releases] (attached as `asciidoctor-intellij-plugin.zip`)
+* https://plugins.jetbrains.com/plugin/7391-asciidoc/versions[EAP (early access program) repository], see "`xref::user/add-eap-repository-to-ide.adoc[]`" for more information.
+--
+
+== Publishing a stable version
+
+. Edit the _CHANGELOG.adoc_ and remove the "`(preview ...)`" additions here
+. Copy the link of the `asciidoctor-intellij-plugin.zip` on GitHub releases to the clipboard
+. Go to the https://plugins.jetbrains.com/plugin/edit?pluginId=7391[JetBrains plugin repository] and upload the plugin to the stable repository using '`Get file from URL`'
+

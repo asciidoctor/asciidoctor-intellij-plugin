@@ -1,0 +1,15 @@
+= Inspections
+
+Inspections allow highlighting of issues in the editor.
+They also allow for quick fixes that the user can select using kbd:[Ctrl+Enter].
+One example is the inspection that turns Markdown-styled headings into AsciiDoc styled headings.
+
+An inspection contains the following elements:
+
+* inspection (`AsciiDocHeadingStyleInspection.java`)
+* registration of inspection in `plugin.xml`
+* description (`AsciiDocHeadingsStyleInspection.java`)
+* one or more quick-fixes (`AsciiDocConvertMarkdownHeading.java`)
+* test case (`AsciiDocHeadingStyleInspectionTest.java`)
+* test data fore before/after quickfix (`markdownHeading.adoc` and `markdownHeading-after.adoc`)
+

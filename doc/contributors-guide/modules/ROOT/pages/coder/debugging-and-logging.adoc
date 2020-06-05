@@ -1,0 +1,21 @@
+= Debugging and Logging
+
+IntelliJ will interrupt threads for better interactivity.
+The disadvantage is that this is also triggered when the developer debugs the plugin.
+To disable this functionality find the action "`Disable ProcessCanceledException`" once the IDE is started.
+The settings is reset after each restart.
+
+To enable logging at debug and trace level the user (or devloper) can change settings via menu:Help[Debug Log Settings] and enter (including the hash at the beginning) a logger name.
+
+.Enable debug logging for AsciiDoc the parser
+----
+#org.asciidoc.intellij.parser.AsciiDocParserImpl
+----
+
+.Enable trace logging for AsciiDoc the parser
+----
+#org.asciidoc.intellij.parser.AsciiDocParserImpl:trace
+----
+
+In the code use `LOG.isDebugEnabled()` and `LOG.isTraceEnabled()` to check if logging is enabled.
+

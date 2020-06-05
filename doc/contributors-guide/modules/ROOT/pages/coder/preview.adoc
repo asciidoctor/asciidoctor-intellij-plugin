@@ -1,0 +1,35 @@
+= Rendering the preview
+:navtitle: Rendering preview
+
+== Rendering AsciiDoc to HTML
+
+The central class and method to create AsciiDoc from HTML is `AsciiDoc.render()`.
+It is implemented as a singleton.
+
+It registers custom Asciidoctor extensions that are needed for improve the preview.
+It also enables custom extensions in the `.asciidoctorconfig` folder.
+
+== Displaying the HTML as a preview
+
+There is a `JeditorHtmlPanel` (for Swing) and a `JavaFxHtmlPanel` (for JavaFX) preview.
+
+The JavaFX preview is the current default preview.
+It is available when the user is running 64bit JDK with JavaFX (the default JDK for JetBrains IDE).
+
+For the JavaFX preview the HTML is enriched with CSS and JavaScript.
+
+The JavaFX preview uses JavaScript to scroll the preview to the current position: once the user moves the cursor, the cursor line is transmitted to the preview using `scrollToLine()` and repositions the preview using JavaScript.
+
+When the user interacts with the JavaFX preview (for example clicks on a text or a link), there is a bridge `JavaPanelBridge` back from JavaScript to Java to trigger actions like scrolling the editor or opening a link in the browser.
+
+== Debugging the preview
+
+You can log information from the JavaFX preview the preview using
+
+[source,javascript]
+----
+window.JavaPanelBridge.log("...")
+----
+
+this will call the method `JavaPanelBridge#log`, an inner class of `JavaFxHtmlPanel`.
+

@@ -22,5 +22,5 @@ There are three chapters:
 
 * xref:contribute-as-a-user.adoc[]
 * xref:contribute-as-a-coder.adoc[]
-* xref:contributing-documentation.adoc[]
+* xref:contribute-as-a-writer.adoc[]
 
