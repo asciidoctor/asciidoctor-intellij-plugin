@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.3 (work in progress)
+=== 0.31.3 (preview, available from GitHub releases)
 
 - fix showing icon macros in preview in Antora mode
 - handling null values in Antora module descriptor, parsing special values `~` and `@` (#504)
