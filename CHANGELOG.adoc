@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.78 (work in progress)
+=== 0.30.78
 
 - fix parsing of second level enumeration in the editor
 - titles parse references
