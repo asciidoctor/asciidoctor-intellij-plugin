@@ -13,7 +13,7 @@ The rest of the plugin's functionality is unaffected.
 To work around the exception follow these steps:
 
 . Vote for MPS to remedy the situation: https://youtrack.jetbrains.com/issue/MPS-31202[MPS-31202]
-. Download the "`AsciiDoc MPS add-on`": link:{attachmentsdir}/asciidoctor-intellij-plugin-mps.jar[asciidoctor-intellij-plugin-mps.zip]
+. Download the "`AsciiDoc MPS add-on`": link:{attachmentsdir}/asciidoctor-intellij-plugin-mps.jar[asciidoctor-intellij-plugin-mps.jar]
 . Go to menu:File[Settings... > Plugins > Gear Icon] (icon:gear[])
 . Choose menu:Install plugin from disk...[]
 . Choose the downloaded file in the file selection dialogue
