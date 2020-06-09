@@ -16,3 +16,4 @@
 *** xref:features/advanced/creating-html-and-pdf.adoc[]
 *** xref:features/advanced/spring-rest-docs.adoc[]
 * xref:faq.adoc[]
+** xref:faq/troubleshooting-mps.adoc[]

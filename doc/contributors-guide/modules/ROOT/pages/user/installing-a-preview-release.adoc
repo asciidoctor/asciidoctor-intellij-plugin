@@ -10,7 +10,8 @@ Each release has a title and a short description linking to the GitHub issues th
 To try out a preview release:
 
 . Download the new release file `asciidoctor-intellij-plugin.zip`
-. Go to menu:File[Settings... > Plugins > (Gear Icon) > Install plugin from disk...]
+. Go to menu:File[Settings... > Plugins > Gear Icon] (icon:gear[])
+. Choose menu:Install plugin from disk...[]
 . Choose the downloaded file in the file selection dialogue
 . Restart the IDE to activate the new plugin version
 
