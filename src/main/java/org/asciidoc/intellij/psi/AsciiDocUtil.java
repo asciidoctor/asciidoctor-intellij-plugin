@@ -5,6 +5,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -913,6 +914,10 @@ public class AsciiDocUtil {
   private static List<VirtualFile> getOtherAntoraModuleDir(Project project, VirtualFile moduleDir,
                                                            String myModuleName, String myComponentName, String myComponentVersion,
                                                            String otherComponentVersion, String otherComponentName, String otherModuleName) {
+    if (project.isDisposed()) {
+      // FilenameIndex.getFilesByName will otherwise log an error later
+      throw new ProcessCanceledException();
+    }
     boolean useLatest = false;
     AntoraVersionDescriptor latestVersion = null;
     if (otherComponentVersion == null && otherComponentName != null) {
