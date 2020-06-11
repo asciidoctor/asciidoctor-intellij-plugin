@@ -593,6 +593,27 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testContinuationsThatLookLikeAHeading() {
+    doTest("1. one\n" +
+        "+\n" +
+        "to\n" +
+        "+\n" +
+        "2. two",
+      "AsciiDoc:ENUMERATION ('1.')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('one')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CONTINUATION ('+')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('to')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CONTINUATION ('+')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:ENUMERATION ('2.')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('two')");
+  }
+
   public void testContinuationAfter() {
     doTest("--\n+\n",
       "AsciiDoc:BLOCK_DELIMITER ('--')\n" +
