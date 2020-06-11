@@ -793,7 +793,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                        }
   {CONTINUATION} {SPACE}* "\n" {
                          yypushback(yylength() - 1);
-                         yybegin(DELIMITER);
+                         yybegin(PREBLOCK);
+                         yypushstate();
+                         yybegin(EOL_POP);
                          return AsciiDocTokenTypes.CONTINUATION;
                        }
   {CELLPREFIX} "|"    {  zzEndReadL = limitLookahead();
