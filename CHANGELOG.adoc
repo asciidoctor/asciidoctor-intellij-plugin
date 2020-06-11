@@ -9,8 +9,8 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.30.79 (preview, available from GitHub releases)
 
-. avoid error "`Directory index is already disposed for Project`"
-. a continuation can't be followed by a heading (#508)
+- avoid error "`Directory index is already disposed for Project`"
+- a continuation can't be followed by a heading (#508)
 
 === 0.30.78
 
