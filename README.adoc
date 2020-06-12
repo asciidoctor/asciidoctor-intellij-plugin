@@ -52,12 +52,13 @@ This project is intended to be a safe, welcoming space for collaboration, and co
 
 == Copyright and Licensing
 
-Copyright (C) 2013-2020 Julien Viet, Erik Pragt and Alexander Schwartz.
+Copyright (C) 2013-2020 Julien Viet, Erik Pragt, Alexander Schwartz and the individual contributors.
 Released under the Apache License, Version 2.0 (see link:LICENSE[LICENSE]).
 
 == Credits
 
-This plugin is based on the https://github.com/nicoulaj/idea-markdown[Intellij Markdown plugin by Julien Nicoulaud].
+An early version of the plugin is based on the https://github.com/nicoulaj/idea-markdown[Intellij Markdown plugin by Julien Nicoulaud].
+Later versions took inspiration from the JetBrains Markdown plugin.
 
 Also, great help was received from Erik Pragt, Harro Lissenberg, Alexander Schwartz and Dan Allen.
 Thank you all for your support!
