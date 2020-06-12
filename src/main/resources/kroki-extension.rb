@@ -52,6 +52,7 @@ class KrokiProcessor
       title = attrs['title']
       target = attrs['target']
       format = attrs['format'] || 'svg'
+      align = attrs['align']
       # The JavaFX preview doesn't support SVG well, therefore we'll use PNG format...
       if format == 'svg'
         # ... unless the diagram library does not support PNG as output format!
@@ -63,8 +64,16 @@ class KrokiProcessor
           'role' => role ? "#{role} kroki" : 'kroki',
           'target' => image_url,
           'alt' => target || 'diagram',
-          'title' => title
+          'title' => title,
+          'format' => format,
+          'align' => align
       }
+      if (width = attrs['width'])
+        block_attrs['width'] = width
+      end
+      if (height = attrs['height'])
+        block_attrs['height'] = height
+      end
       if block_id
         block_attrs['id'] = block_id
       end
