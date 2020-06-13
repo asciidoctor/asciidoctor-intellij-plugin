@@ -120,6 +120,7 @@ dependencies {
   testCompile 'junit:junit:4.12'
   testCompile 'com.tngtech.archunit:archunit-junit4:0.10.2'
   testCompile group: 'org.assertj', name: 'assertj-core', version: '3.6.1'
+  testCompile 'io.github.java-diff-utils:java-diff-utils:4.5'
 }
 
 def genRoot = file('gen')
