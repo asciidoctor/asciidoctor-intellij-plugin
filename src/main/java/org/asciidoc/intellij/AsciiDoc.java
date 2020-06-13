@@ -102,6 +102,12 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.findSpringRestDocSnippets;
  */
 public class AsciiDoc {
 
+  /**
+   * Base directory to look up includes.
+   */
+  private File fileBaseDir;
+  private String name;
+
   private static class MaxHashMap extends LinkedHashMap<String, Asciidoctor> {
     @Override
     protected boolean removeEldestEntry(Map.Entry<String, Asciidoctor> eldest) {
@@ -181,15 +187,17 @@ public class AsciiDoc {
   }
 
   /**
-   * Base directory to look up includes.
+   * Update file name and folder. File name might change if file is renamed or moved.
    */
-  private final File fileBaseDir;
+  public void updateFileName(File fileBaseDir, String name) {
+    this.fileBaseDir = fileBaseDir;
+    this.name = name;
+  }
 
   /**
    * Images directory.
    */
   private final Path imagesPath;
-  private final String name;
   private final String projectBasePath;
   private final Project project;
 

@@ -145,9 +145,21 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       try {
         if (!(config + content).equals(currentContent)) {
           currentContent = config + content;
-          String markup = asciidoc.get().render(content, config, extensions);
+          AsciiDoc instance = asciidoc.get();
+          VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+          if (file != null) {
+            String name = file.getName();
+            File fileBaseDir = new File("");
+            VirtualFile parent = file.getParent();
+            if (parent != null && parent.getCanonicalPath() != null) {
+              // parent will be null if we use Language Injection and Fragment Editor
+              fileBaseDir = new File(parent.getCanonicalPath());
+            }
+            instance.updateFileName(fileBaseDir, name);
+          }
+          String markup = instance.render(content, config, extensions);
           if (markup != null) {
-            myPanel.setHtml(markup, asciidoc.get().getAttributes());
+            myPanel.setHtml(markup, instance.getAttributes());
           }
         }
         if (currentLineNo != targetLineNo) {
