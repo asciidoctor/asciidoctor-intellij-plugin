@@ -33,6 +33,7 @@ import org.jsoup.Jsoup
 
 allprojects {
   repositories {
+    mavenLocal()
     jcenter()
   }
 }
