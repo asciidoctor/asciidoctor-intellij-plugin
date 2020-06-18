@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.80 (preview, available from GitHub releases)
+
+- workaround for IndexOutOfBoundsException when on MacOS X, possibly due to window manager / accessibility issues (#499)
+
 === 0.30.79 (preview, available from GitHub releases)
 
 - avoid error "`Directory index is already disposed for Project`"
