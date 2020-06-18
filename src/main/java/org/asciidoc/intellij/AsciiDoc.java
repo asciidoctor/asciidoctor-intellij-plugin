@@ -865,10 +865,10 @@ public class AsciiDoc {
     AttributesBuilder builder = AttributesBuilder.attributes()
       .showTitle(true)
       .backend(fileType.backend)
-      .sourceHighlighter("coderay")
-      .attribute("coderay-css", "style")
+      .sourceHighlighter("coderay@")
+      .attribute("coderay-css@", "style")
       .attribute("env", "idea")
-      .attribute("skip-front-matter")
+      .attribute("skip-front-matter@")
       .attribute("env-idea");
 
     if (springRestDocsSnippets != null) {
@@ -881,7 +881,7 @@ public class AsciiDoc {
 
     String graphvizDot = System.getenv("GRAPHVIZ_DOT");
     if (graphvizDot != null) {
-      builder.attribute("graphvizdot", graphvizDot);
+      builder.attribute("graphvizdot@", graphvizDot);
     }
 
     Attributes attrs = builder.get();

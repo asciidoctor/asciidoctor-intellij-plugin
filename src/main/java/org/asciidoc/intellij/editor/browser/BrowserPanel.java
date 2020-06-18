@@ -116,17 +116,16 @@ public class BrowserPanel implements Closeable {
         + "/data/stylesheets/asciidoctor-default.css")) {
         myInlineCss = IOUtils.toString(is);
       }
-
-      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
-        myInlineCssDarcula = myInlineCss + IOUtils.toString(is);
-      }
-      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("coderay-darcula.css")) {
-        myInlineCssDarcula += IOUtils.toString(is);
-      }
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
         + asciidoctorVersion
         + "/data/stylesheets/coderay-asciidoctor.css")) {
         myInlineCss += IOUtils.toString(is);
+      }
+      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("rouge-github.css")) {
+        myInlineCss += IOUtils.toString(is);
+      }
+      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
+        myInlineCssDarcula = myInlineCss + IOUtils.toString(is);
       }
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
@@ -173,11 +172,6 @@ public class BrowserPanel implements Closeable {
       base = file.getParent().getPath();
     } else {
       base = "";
-    }
-    if (isDarcula()) {
-      // clear out coderay inline CSS colors as they are barely readable in darcula theme
-      html = html.replaceAll("<span style=\"color:#[a-zA-Z0-9]*;?", "<span style=\"");
-      html = html.replaceAll("<span style=\"background-color:#[a-zA-Z0-9]*;?", "<span style=\"");
     }
     html = "<html><head></head><body><div id=\"header\"></div>" + html + "<div id=\"footer\"></div></body></html>";
     html = prepareHtml(html, project, asciiDoc.getAttributes());

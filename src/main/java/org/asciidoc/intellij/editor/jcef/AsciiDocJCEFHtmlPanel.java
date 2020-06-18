@@ -192,16 +192,16 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       String asciidoctorVersion = p.getProperty("version.asciidoctor");
       myInlineCss = extractAndPatchAsciidoctorCss(asciidoctorVersion);
 
-      try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
-        myInlineCssDarcula = myInlineCss + IOUtils.toString(stream);
-      }
-      try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("coderay-darcula.css")) {
-        myInlineCssDarcula += IOUtils.toString(stream);
-      }
       try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
         + asciidoctorVersion
         + "/data/stylesheets/coderay-asciidoctor.css")) {
         myInlineCss += IOUtils.toString(stream);
+      }
+      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("rouge-github.css")) {
+        myInlineCss += IOUtils.toString(is);
+      }
+      try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
+        myInlineCssDarcula = myInlineCss + IOUtils.toString(stream);
       }
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
@@ -351,11 +351,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       frameHtml = emptyFrame;
     }
     String html = htmlParam;
-    if (isDarcula()) {
-      // clear out coderay inline CSS colors as they are barely readable in darcula theme
-      html = html.replaceAll("<span style=\"color:#[a-zA-Z0-9]*;?", "<span style=\"");
-      html = html.replaceAll("<span style=\"background-color:#[a-zA-Z0-9]*;?", "<span style=\"");
-    }
     boolean result = false;
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     if (!forceRefresh && settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")) {

@@ -113,7 +113,7 @@ dependencies {
    * https://github.com/asciidoctor/asciidoctorj-pdf/issues/25
    */
   compile 'org.yaml:snakeyaml:1.23'
-  compile 'org.asciidoctor:asciidoctorj:2.3.0'
+  compile 'org.asciidoctor:asciidoctorj:2.3.1'
   compile 'commons-io:commons-io:2.4'
   compile 'nl.jworks.markdown_to_asciidoc:markdown_to_asciidoc:1.1'
   compile 'org.apache.commons:commons-text:1.8'
