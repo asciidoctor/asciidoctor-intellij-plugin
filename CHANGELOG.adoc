@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.80 (preview, available from GitHub releases)
 
 - workaround for IndexOutOfBoundsException when on MacOS X, possibly due to window manager / accessibility issues (#499)
+- supporting `rouge` as code syntax highlighter in preview. Documents can now override the code highlighter. Improved code syntax highlighting for preview in dark mode (#505)
 
 === 0.30.79 (preview, available from GitHub releases)
 

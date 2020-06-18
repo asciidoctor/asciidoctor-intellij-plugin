@@ -1,14 +1,16 @@
 #content>h1:first-child:not([class]), body {background-color: #45494a;color: #bbbbbb}
-pre {background-color: #626262 !important;color: #bbbbbb}
-pre>code, *:not(pre)>code, .hljs {background-color: #626262 !important;color: #bbbbbb}
+.content > pre {
+    filter: invert(90%) hue-rotate(180deg);
+}
+
 a, a:hover, a:focus { color: #589df6; }
 
 table.tableblock, th.tableblock, td.tableblock{color: #bbbbbb}
 
 /* was: rgba(0,0,0,.8) */
-table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{color: #bbbbbb}
+table:not(.linenotable):not(.CodeRay) thead tr th,table thead tr td,table:not(.linenotable):not(.CodeRay) tfoot tr th,table:not(.linenotable):not(.CodeRay) tfoot tr td{color: #bbbbbb}
 abbr,acronym{color: #bbbbbb}
-table tr th,table tr td{color: #bbbbbb}
+table:not(.linenotable):not(.CodeRay) tr th,table tr td{color: #bbbbbb}
 kbd{background-color: #626262 !important;color: #bbbbbb;-webkit-box-shadow: 0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #777 inset;box-shadow: 0 1px 0 rgba(0,0,0,0.2),0 0 0 .1em #777 inset}
 .menuseq,.menu{color: #bbbbbb}
 #footer{color: #bbbbbb}
@@ -18,7 +20,6 @@ tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color: #bbbbbb}
 /* was: rgba(0,0,0,.85) */
 .paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{color: #bbbbbb}
 .quoteblock blockquote,.quoteblock blockquote p{color: #bbbbbb}
-.verseblock pre{color: #bbbbbb}
 #content>h1:first-child:not([class]){color: #bbbbbb}
 #header .details br+span.author:before{color: #bbbbbb}
 #header .details span.email a{color: #bbbbbb}
@@ -33,11 +34,11 @@ blockquote cite a,blockquote cite a:visited {color: #bbbbbb}
 .quoteblock .attribution cite,.verseblock .attribution cite{color: #bbbbbb}
 
 /* was: f8f8f7 */
-table tbody tr{background:#45494a}
-table tr.even,table tr.alt,table tr:nth-of-type(even){background:#626262}
+table:not(.linenotable):not(.CodeRay) tbody tr{background:#45494a}
+table:not(.linenotable):not(.CodeRay) tr.even,table tr.alt,table tr:nth-of-type(even){background:#626262}
 
 /* was f7f8f7 */
-table thead,table tfoot{background:#626262}
+table:not(.linenotable):not(.CodeRay) thead,table tfoot{background:#626262}
 tbody tr th{background:#626262}
 
 /* was: 7a2518 */
@@ -48,7 +49,6 @@ tbody tr th{background:#626262}
 
 /* was: f7f7f8 */
 .exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
-.literalblock pre,.listingblock pre:not(.highlight),.listingblock pre[class="highlight"],.listingblock pre[class^="highlight "],.listingblock pre.CodeRay,.listingblock pre.prettyprint{background:#626262}
 
 #toc {background-color:#626262 !important; border-color:#626262 !important;}
 
