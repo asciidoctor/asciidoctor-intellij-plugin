@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - a continuation can't be followed by a heading (#508)
 - when renaming or moving a file, update the folder and file name for the preview (#506)
 - supporting `rouge` as code syntax highlighter in preview. Documents can now override the code highlighter. Improved code syntax highlighting for preview in dark mode (#505)
+- workaround for IndexOutOfBoundsException when on MacOS X, possibly due to window manager / accessibility issues (#499)
 
 === 0.31.3 (preview, available from GitHub releases)
 
