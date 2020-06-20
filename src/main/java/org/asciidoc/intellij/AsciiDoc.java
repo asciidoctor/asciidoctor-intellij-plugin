@@ -40,6 +40,7 @@ import org.asciidoc.intellij.asciidoc.AttributesRetriever;
 import org.asciidoc.intellij.asciidoc.PrependConfig;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
+import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Attributes;
@@ -889,7 +890,8 @@ public class AsciiDoc {
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     if (imagesPath != null) {
       if (fileType == FileType.JAVAFX) {
-        if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())) {
+        if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())
+         || settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(AsciiDocJCEFHtmlPanelProvider.class.getName())) {
           attrs.setAttribute("outdir", imagesPath.toAbsolutePath().normalize().toString());
           // this prevents asciidoctor diagram to render images to a folder {outdir}/{imagesdir} ...
           // ... that might then be outside of the temporary folder as {imagesdir} might traverse to a parent folder

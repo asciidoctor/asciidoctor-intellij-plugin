@@ -8,6 +8,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.CaretState;
@@ -15,12 +16,17 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.ScrollType;
+import com.intellij.openapi.fileChooser.FileChooserFactory;
+import com.intellij.openapi.fileChooser.FileSaverDescriptor;
+import com.intellij.openapi.fileChooser.FileSaverDialog;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.jcef.JBCefJSQuery;
 import com.intellij.ui.jcef.JCEFHtmlPanel;
@@ -42,6 +48,7 @@ import org.cef.handler.CefLoadHandlerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,8 +61,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +78,7 @@ import java.util.regex.Pattern;
 
 public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtmlPanel {
 
-  private final Logger log = Logger.getInstance(AsciiDocJCEFHtmlPanel.class);
+  private static final Logger LOG = Logger.getInstance(AsciiDocJCEFHtmlPanel.class);
 
   private final Path imagesPath;
 
@@ -79,6 +88,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private JBCefJSQuery myScrollEditorToLine;
   private JBCefJSQuery myZoomDelta;
   private JBCefJSQuery myZoomReset;
+  private JBCefJSQuery mySaveImage;
   private JBCefJSQuery myBrowserLog;
   private JBCefJSQuery myOpenLink;
   private volatile CountDownLatch rendered = new CountDownLatch(1);
@@ -113,6 +123,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       return new StringBuilder()
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("scrollToElement.js")).append("\"></script>\n")
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processLinks.js")).append("\"></script>\n")
+        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processImages.js")).append("\"></script>\n")
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("pickSourceLine.js")).append("\"></script>\n")
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("mouseEvents.js")).append("\"></script>\n")
         .append("<script type=\"text/x-mathjax-config\">\n" +
@@ -212,7 +223,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       myGoogleFontsCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/googlefonts.css") + "\">";
     } catch (IOException e) {
       String message = "Unable to combine CSS resources: " + e.getMessage();
-      log.error(message, e);
+      LOG.error(message, e);
       Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
         .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
       // increase event log counter
@@ -246,6 +257,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     if (myZoomReset != null) {
       Disposer.dispose(myZoomReset);
     }
+    if (mySaveImage != null) {
+      Disposer.dispose(mySaveImage);
+    }
     if (myOpenLink != null) {
       Disposer.dispose(myOpenLink);
     }
@@ -257,9 +271,8 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     myScrollEditorToLine = JBCefJSQuery.create(this);
     myZoomDelta = JBCefJSQuery.create(this);
     myZoomReset = JBCefJSQuery.create(this);
+    mySaveImage = JBCefJSQuery.create(this);
     myOpenLink = JBCefJSQuery.create(this);
-
-    // TODO: click on image to save
 
     myJSQuerySetScrollY.addHandler((scrollY) -> {
       try {
@@ -267,7 +280,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
           myScrollPreservingListener.myScrollY = Integer.parseInt(scrollY);
         }
       } catch (NumberFormatException e) {
-        log.warn("unable to parse scroll Y", e);
+        LOG.warn("unable to parse scroll Y", e);
       }
       return null;
     });
@@ -281,7 +294,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
           }
         }
       } catch (NumberFormatException e) {
-        log.warn("unable set iteration stamp", e);
+        LOG.warn("unable set iteration stamp", e);
       }
       return null;
     });
@@ -301,10 +314,12 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
     myScrollEditorToLine.addHandler((r) -> {
       try {
-        int line = (int) Math.round(Double.parseDouble(r));
-        scrollEditorToLine(line);
+        if (r.length() != 0) {
+          int line = (int) Math.round(Double.parseDouble(r));
+          scrollEditorToLine(line);
+        }
       } catch (NumberFormatException e) {
-        log.warn("unable parse line number", e);
+        LOG.warn("unable parse line number: " + r, e);
       }
       return null;
     });
@@ -325,7 +340,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
           getCefBrowser().setZoomLevel(uiZoom - 1);
         }
       } catch (NumberFormatException e) {
-        log.warn("unable parse line number", e);
+        LOG.warn("unable parse line number: " + r, e);
       }
       return null;
     });
@@ -336,10 +351,95 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       return null;
     });
 
+    mySaveImage.addHandler(r -> {
+      ApplicationManager.getApplication().invokeLater(() ->
+          saveImage(r),
+        ModalityState.stateForComponent(getComponent()));
+      return null;
+    });
+
     myOpenLink.addHandler((r) -> {
       openLink(r);
       return null;
     });
+  }
+
+  private VirtualFile saveImageLastDir = null;
+
+  private void saveImage(@NotNull String path) {
+    String parent = imagesPath.getFileName().toString();
+    try {
+      path = URLDecoder.decode(path, StandardCharsets.UTF_8.name());
+    } catch (UnsupportedEncodingException e) {
+      LOG.warn("unable to decode URL " + path, e);
+      return;
+    }
+    int indexOfParent = path.indexOf(parent);
+    if (indexOfParent == -1) {
+      // parent string not found for image, image not generated by preview?
+      LOG.warn("found path " + path + " without " + parent);
+      return;
+    }
+    String subPath = path.substring(indexOfParent + parent.length() + 1);
+    if (subPath.contains("?")) {
+      subPath = subPath.substring(0, subPath.indexOf("?"));
+    }
+    Path imagePath = imagesPath.resolve(subPath);
+    if (imagePath.toFile().exists()) {
+      File file = imagePath.toFile();
+      String fileName = imagePath.getFileName().toString();
+      ArrayList<String> extensions = new ArrayList<>();
+      int lastDotIndex = fileName.lastIndexOf('.');
+      if (lastDotIndex > 0 && !fileName.endsWith(".")) {
+        extensions.add(fileName.substring(lastDotIndex + 1));
+      }
+      // set static file name if image name has been generated dynamically
+      final String fileNameNoExt;
+      if (fileName.matches("diag-[0-9a-f]{32}\\.[a-z]+")) {
+        fileNameNoExt = "image";
+      } else {
+        fileNameNoExt = lastDotIndex > 0 ? fileName.substring(0, lastDotIndex) : fileName;
+      }
+      // check if also a SVG exists for the provided PNG
+      if (extensions.contains("png") &&
+        new File(file.getParent(), fileName.substring(0, lastDotIndex) + ".svg").exists()) {
+        extensions.add("svg");
+      }
+      final FileSaverDescriptor descriptor = new FileSaverDescriptor("Export Image to", "Choose the destination file",
+        extensions.toArray(new String[]{}));
+      FileSaverDialog saveFileDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, (Project) null);
+
+      VirtualFile baseDir = saveImageLastDir;
+
+      if (baseDir == null) {
+        baseDir = parentDirectory;
+      }
+
+      VirtualFile finalBaseDir = baseDir;
+
+      VirtualFileWrapper destination = saveFileDialog.save(finalBaseDir, fileNameNoExt);
+      if (destination != null) {
+        try {
+          saveImageLastDir = LocalFileSystem.getInstance().findFileByIoFile(destination.getFile().getParentFile());
+          Path src = imagePath;
+          // if the destination ends with .svg, but the source doesn't, patch the source file name as the user chose a different file type
+          if (destination.getFile().getAbsolutePath().endsWith(".svg") && !src.endsWith(".svg")) {
+            src = new File(src.toFile().getAbsolutePath().replaceAll("\\.png$", ".svg")).toPath();
+          }
+          Files.copy(src, destination.getFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+          LocalFileSystem.getInstance().refreshAndFindFileByIoFile(destination.getFile());
+        } catch (IOException ex) {
+          String message = "Can't save file: " + ex.getMessage();
+          Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+            .createNotification("Error in plugin", message, NotificationType.ERROR, null);
+          // increase event log counter
+          notification.setImportant(true);
+          Notifications.Bus.notify(notification);
+        }
+      }
+    } else {
+      LOG.warn("file not found to save: " + path);
+    }
   }
 
   private String extractAndPatchAsciidoctorCss(String asciidoctorVersion) throws IOException {
@@ -403,6 +503,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "function finish() {" +
             "if ('__IntelliJTools' in window) {" +
             "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
+            "__IntelliJTools.processImages && __IntelliJTools.processImages();" +
             "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ");" +
             (ml ? "window.setTimeout(function(){ updateContent(); }, 10); " : "") +
             "}" +
@@ -445,7 +546,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         result = replaceResult;
       } catch (RuntimeException | InterruptedException e) {
         // might happen when rendered output is not valid HTML due to passtrough content
-        log.warn("unable to use JavaScript for update", e);
+        LOG.warn("unable to use JavaScript for update", e);
       }
     }
     // if not successful using JavaScript (like on first rendering attempt), set full content
@@ -461,12 +562,12 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       // slow down the rendering of the next version of the preview until the rendering if the current version is complete
       // this prevents us building up a queue that would lead to a lagging preview
       if (htmlParam.length() > 0 && !rendered.await(3, TimeUnit.SECONDS)) {
-        log.warn("rendering didn't complete in time, might be slow or broken");
+        LOG.warn("rendering didn't complete in time, might be slow or broken");
         forceRefresh = true;
         reregisterHandlers();
       }
     } catch (InterruptedException e) {
-      log.warn("interrupted while waiting for refresh to complete");
+      LOG.warn("interrupted while waiting for refresh to complete");
     }
   }
 
@@ -495,11 +596,13 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       if (tmpFile != null) {
         md5 = calculateMd5(tmpFile, null);
         tmpFile = tmpFile.replaceAll("\\\\", "/");
+        /*
         try {
           tmpFile = URLEncoder.encode(tmpFile, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
           throw new RuntimeException(e);
         }
+         */
         replacement = "<img src=\"file://" + tmpFile + "?" + md5 + "\"";
       } else {
         md5 = calculateMd5(file, base);
@@ -572,7 +675,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         return file.toFile().toString();
       }
     } catch (InvalidPathException e) {
-      log.info("problem decoding decode filename " + filename, e);
+      LOG.info("problem decoding decode filename " + filename, e);
     }
     // when {imagesoutdir} is set, files created by asciidoctor-diagram end up in the root path of that dir, but HTML will still prepend {imagesdir}
     // try again with removed {imagesdir}
@@ -587,7 +690,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             return file.toFile().toString();
           }
         } catch (InvalidPathException e) {
-          log.info("problem decoding decode filename " + filename, e);
+          LOG.info("problem decoding decode filename " + filename, e);
         }
       }
     }
@@ -601,7 +704,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
           return file.toFile().toString();
         }
       } catch (InvalidPathException e) {
-        log.info("problem decoding decode filename " + filename, e);
+        LOG.info("problem decoding decode filename " + filename, e);
       }
     }
     return null;
@@ -724,10 +827,14 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "}," +
             "zoomReset : function() {" +
             myZoomReset.inject(null) +
+            "}," +
+            "saveImage : function(src) {" +
+            mySaveImage.inject("src") +
             "}" +
             "};" +
             "if ('__IntelliJTools' in window) {" +
             "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
+            "__IntelliJTools.processImages && __IntelliJTools.processImages();" +
             "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ");" +
             "__IntelliJTools.addMouseHandler && __IntelliJTools.addMouseHandler();" +
             "}; " +
@@ -752,7 +859,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     } else if ("file".equalsIgnoreCase(scheme) || scheme == null) {
       openInEditor(uri);
     } else {
-      log.warn("won't open URI as it might be unsafe: " + uri);
+      LOG.warn("won't open URI as it might be unsafe: " + uri);
     }
   }
 
@@ -771,14 +878,14 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         tmpTargetFile = parentDirectory.findFileByRelativePath(path.replaceAll("\\.html$", ".adoc"));
       }
       if (tmpTargetFile == null) {
-        log.warn("unable to find file for " + uri);
+        LOG.warn("unable to find file for " + uri);
         return false;
       }
       targetFile = tmpTargetFile;
 
       Project project = ProjectUtil.guessProjectForContentFile(targetFile);
       if (project == null) {
-        log.warn("unable to find project for " + uri);
+        LOG.warn("unable to find project for " + uri);
         return false;
       }
 

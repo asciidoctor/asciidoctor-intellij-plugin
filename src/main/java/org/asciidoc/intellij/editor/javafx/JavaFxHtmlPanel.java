@@ -390,7 +390,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       }
       // check if also a SVG exists for the provided PNG
       if (extensions.contains("png") &&
-        new File(file.getParent(), fileNameNoExt + ".svg").exists()) {
+        new File(file.getParent(), fileName.substring(0, lastDotIndex) + ".svg").exists()) {
         extensions.add("svg");
       }
       final FileSaverDescriptor descriptor = new FileSaverDescriptor("Export Image to", "Choose the destination file",
@@ -405,27 +405,26 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
 
       VirtualFile finalBaseDir = baseDir;
 
-      SwingUtilities.invokeLater(() -> {
-        VirtualFileWrapper destination = saveFileDialog.save(finalBaseDir, fileNameNoExt);
-        if (destination != null) {
-          try {
-            saveImageLastDir = LocalFileSystem.getInstance().findFileByIoFile(destination.getFile().getParentFile());
-            Path src = imagePath;
-            // if the destination ends with .svg, but the source doesn't, patch the source file name as the user chose a different file type
-            if (destination.getFile().getAbsolutePath().endsWith(".svg") && !src.endsWith(".svg")) {
-              src = new File(src.toFile().getAbsolutePath().replaceAll("\\.png$", ".svg")).toPath();
-            }
-            Files.copy(src, destination.getFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
-          } catch (IOException ex) {
-            String message = "Can't save file: " + ex.getMessage();
-            Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
-              .createNotification("Error in plugin", message, NotificationType.ERROR, null);
-            // increase event log counter
-            notification.setImportant(true);
-            Notifications.Bus.notify(notification);
+      VirtualFileWrapper destination = saveFileDialog.save(finalBaseDir, fileNameNoExt);
+      if (destination != null) {
+        try {
+          saveImageLastDir = LocalFileSystem.getInstance().findFileByIoFile(destination.getFile().getParentFile());
+          Path src = imagePath;
+          // if the destination ends with .svg, but the source doesn't, patch the source file name as the user chose a different file type
+          if (destination.getFile().getAbsolutePath().endsWith(".svg") && !src.endsWith(".svg")) {
+            src = new File(src.toFile().getAbsolutePath().replaceAll("\\.png$", ".svg")).toPath();
           }
+          Files.copy(src, destination.getFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+          LocalFileSystem.getInstance().refreshAndFindFileByIoFile(destination.getFile());
+        } catch (IOException ex) {
+          String message = "Can't save file: " + ex.getMessage();
+          Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+            .createNotification("Error in plugin", message, NotificationType.ERROR, null);
+          // increase event log counter
+          notification.setImportant(true);
+          Notifications.Bus.notify(notification);
         }
-      });
+      }
     } else {
       LOG.warn("file not found to save: " + path);
     }

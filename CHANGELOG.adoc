@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.5 (preview, available from GitHub releases)
+
+- implementing save generated image and zoom for JCEF preview (#390)
+
 === 0.31.4 (preview, available from GitHub releases)
 
 - avoid error "`Directory index is already disposed for Project`"
