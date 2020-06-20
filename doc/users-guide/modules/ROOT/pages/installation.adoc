@@ -13,6 +13,12 @@ To use this plugin, you need to have one of the IntelliJ family of IDEs like Int
 All default download packages include the JetBrains Runtime 11, a pre-bundled OpenJDK runtime environment.
 Please use the pre-bundled JetBrains Runtime to run the IDE as it includes JavaFX (which is required for a rich preview) and proves to be the most stable.
 
+From IntelliJ 2020.2 onward the plugin support the JCEF browser preview.
+It uses and embedded Chrome browser with up-to-date JavaScript and CSS handling.
+It is only included in the recent JetBrains runtimes.
+As it is a fairly recent addition it is marked "`experimental`".
+Once it matures, it will be the next default preview.
+
 If you've already installed the IDE and the plugin, continue to section xref:features.adoc[].
 
 If you have the IDE installed already, continue to the next section <<installplugin>>.
@@ -25,10 +31,11 @@ You can download them from the JetBrains homepage: link:https://www.jetbrains.co
 
 === More information on JDKs
 
-To use the JavaFX preview instead of the Swing preview, you'll need to run IntelliJ with 64bit Java and JavaFX
-installed.
+To use the JavaFX preview instead of the Swing preview, you'll need to run IntelliJ with 64bit Java and JavaFX installed.
 Oracle JDK installations include JavaFX, but can make the IDE unstable and crash.
 OpenJDK included with for example an Linux distribution usually don't include JavaFX.
+
+The event more advanced JCEF preview will only work with JetBrains OpenJDK runtime.
 
 Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
