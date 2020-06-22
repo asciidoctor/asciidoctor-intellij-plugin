@@ -56,7 +56,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -290,6 +289,11 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         if (r != null && r.length() > 0 && !r.equals("undefined")) {
           long iterationStamp = Integer.parseInt(r);
           if (stamp == iterationStamp) {
+            rendered.countDown();
+          }
+        } else if (r != null && r.equals("undefined")) {
+          // TODO: find out why the first result is undefined
+          if (stamp == 1) {
             rendered.countDown();
           }
         }
@@ -552,7 +556,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     // if not successful using JavaScript (like on first rendering attempt), set full content
     if (!result) {
       forceRefresh = false;
-      html = html + "<script>window.iterationStamp=" + iterationStamp + "; window.JavaPanelBridge && window.JavaPanelBridge.rendered(iterationStamp); </script>";
+      html = html + "<script>window.iterationStamp=" + iterationStamp + ";</script>";
       html = wrapHtmlForPage(html);
       final String htmlToRender = prepareHtml(html, attributes);
       super.setHtml(htmlToRender);
@@ -577,11 +581,38 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   }
 
   private String prepareHtml(@NotNull String html, @NotNull Map<String, String> attributes) {
+    // Antora plugin might resolve some absolute URLs, convert them to localfile so they get their MD5 that prevents caching
+    Pattern pattern = Pattern.compile("<img src=\"file:///([^\"?]*)\"");
+    Matcher matcher = pattern.matcher(html);
+    while (matcher.find()) {
+      final MatchResult matchResult = matcher.toMatchResult();
+      String file = matchResult.group(1);
+      try {
+        file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
+      } catch (UnsupportedEncodingException e) {
+        throw new RuntimeException(e);
+      }
+      String tmpFile = findTempImageFile(file, null);
+      String md5;
+      String replacement;
+      if (tmpFile != null) {
+        md5 = calculateMd5(tmpFile, null);
+        tmpFile = tmpFile.replaceAll("\\\\", "/");
+        replacement = "<img src=\"file://" + tmpFile + "?" + md5 + "\"";
+      } else {
+        md5 = calculateMd5(file, base);
+        replacement = "<img src=\"file://" + base.replaceAll("%3A", ":") + "/" + file + "?" + md5 + "\"";
+      }
+      html = html.substring(0, matchResult.start()) +
+        replacement + html.substring(matchResult.end());
+      matcher.reset(html);
+    }
+
     /* for each image we'll calculate a MD5 sum of its content. Once the content changes, MD5 and therefore the URL
      * will change. The changed URL is necessary for the JavaFX web view to display the new content, as each URL
      * will be loaded only once by the JavaFX web view. */
-    Pattern pattern = Pattern.compile("<img src=\"([^:\"]*)\"");
-    Matcher matcher = pattern.matcher(html);
+    pattern = Pattern.compile("<img src=\"([^:\"]*)\"");
+    matcher = pattern.matcher(html);
     while (matcher.find()) {
       final MatchResult matchResult = matcher.toMatchResult();
       String file = matchResult.group(1);
@@ -596,13 +627,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       if (tmpFile != null) {
         md5 = calculateMd5(tmpFile, null);
         tmpFile = tmpFile.replaceAll("\\\\", "/");
-        /*
-        try {
-          tmpFile = URLEncoder.encode(tmpFile, StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException e) {
-          throw new RuntimeException(e);
-        }
-         */
         replacement = "<img src=\"file://" + tmpFile + "?" + md5 + "\"";
       } else {
         md5 = calculateMd5(file, base);
@@ -633,12 +657,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       String replacement;
       if (tmpFile != null) {
         md5 = calculateMd5(tmpFile, null);
-        tmpFile = tmpFile.replaceAll("\\\\", "/");
-        try {
-          tmpFile = URLEncoder.encode(tmpFile, StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException e) {
-          throw new RuntimeException(e);
-        }
         replacement = "<object " + other + "data=\"file://" + tmpFile + "?" + md5 + "\"";
       } else {
         md5 = calculateMd5(file, base);
