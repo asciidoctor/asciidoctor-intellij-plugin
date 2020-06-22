@@ -184,7 +184,9 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   }
 
   void renderIfVisible() {
-    if (getComponent().isVisible()) {
+    // visible = preview is enabled
+    // displayable = editor window is visible as it is the active editor in a group
+    if (getComponent().isVisible() && getComponent().isDisplayable()) {
       render();
     }
   }
@@ -249,7 +251,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     settingsConnection.subscribe(EditorColorsManager.TOPIC, editorColorsListener);
 
     // Get asciidoc asynchronously
-    new Thread(asciidoc::run).start();
+    new Thread(asciidoc).start();
 
     // Listen to the document modifications.
     this.document.addDocumentListener(new DocumentListener() {

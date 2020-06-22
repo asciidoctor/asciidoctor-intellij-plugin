@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.31.6 (work in progress)
 
 - simplify JavaFX image preview to work with standard `file:` URLs (#390)
+- don't re-render editor previews in background (#390)
 
 === 0.31.5 (preview, available from GitHub releases)
 
