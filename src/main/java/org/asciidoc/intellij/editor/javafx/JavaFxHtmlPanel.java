@@ -68,7 +68,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -653,45 +652,38 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
   }
 
   private String prepareHtml(@NotNull String html, @NotNull Map<String, String> attributes) {
-    if (JavaFxHtmlPanelProvider.isInitialized()) {
-      // Antora plugin might resolve some absolute URLs, convert them to localfile so they get their MD5 that prevents caching
-      Pattern pattern = Pattern.compile("<img src=\"file:///([^\"]*)\"");
-      Matcher matcher = pattern.matcher(html);
-      while (matcher.find()) {
-        final MatchResult matchResult = matcher.toMatchResult();
-        String file = matchResult.group(1);
-        try {
-          file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
-        } catch (UnsupportedEncodingException e) {
-          throw new RuntimeException(e);
-        }
-        String tmpFile = findTempImageFile(file, null);
-        String md5;
-        String replacement;
-        if (tmpFile != null) {
-          md5 = calculateMd5(tmpFile, null);
-          tmpFile = tmpFile.replaceAll("\\\\", "/");
-          try {
-            tmpFile = URLEncoder.encode(tmpFile, StandardCharsets.UTF_8.name());
-          } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-          }
-          replacement = "<img src=\"localfile://" + md5 + "/" + tmpFile + "\"";
-        } else {
-          md5 = calculateMd5(file, base);
-          replacement = "<img src=\"localfile://" + md5 + "/" + base + "/" + file + "\"";
-        }
-        html = html.substring(0, matchResult.start()) +
-          replacement + html.substring(matchResult.end());
-        matcher.reset(html);
+    // Antora plugin might resolve some absolute URLs, convert them to localfile so they get their MD5 that prevents caching
+    Pattern pattern = Pattern.compile("<img src=\"file:///([^\"]*)\"");
+    Matcher matcher = pattern.matcher(html);
+    while (matcher.find()) {
+      final MatchResult matchResult = matcher.toMatchResult();
+      String file = matchResult.group(1);
+      try {
+        file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
+      } catch (UnsupportedEncodingException e) {
+        throw new RuntimeException(e);
       }
+      String tmpFile = findTempImageFile(file, null);
+      String md5;
+      String replacement;
+      if (tmpFile != null) {
+        md5 = calculateMd5(tmpFile, null);
+        tmpFile = tmpFile.replaceAll("\\\\", "/");
+        replacement = "<img src=\"file://" + tmpFile.replaceAll("%3A", ":") + "?" + md5 + "\"";
+      } else {
+        md5 = calculateMd5(file, base);
+        replacement = "<img src=\"file://" + base.replaceAll("%3A", ":") + "/" + file + "?" + md5 + "\"";
+      }
+      html = html.substring(0, matchResult.start()) +
+        replacement + html.substring(matchResult.end());
+      matcher.reset(html);
     }
 
     /* for each image we'll calculate a MD5 sum of its content. Once the content changes, MD5 and therefore the URL
      * will change. The changed URL is necessary for the JavaFX web view to display the new content, as each URL
      * will be loaded only once by the JavaFX web view. */
-    Pattern pattern = Pattern.compile("<img src=\"([^:\"]*)\"");
-    Matcher matcher = pattern.matcher(html);
+    pattern = Pattern.compile("<img src=\"([^:\"]*)\"");
+    matcher = pattern.matcher(html);
     while (matcher.find()) {
       final MatchResult matchResult = matcher.toMatchResult();
       String file = matchResult.group(1);
@@ -706,23 +698,10 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       if (tmpFile != null) {
         md5 = calculateMd5(tmpFile, null);
         tmpFile = tmpFile.replaceAll("\\\\", "/");
-        try {
-          tmpFile = URLEncoder.encode(tmpFile, StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException e) {
-          throw new RuntimeException(e);
-        }
-        if (JavaFxHtmlPanelProvider.isInitialized()) {
-          replacement = "<img src=\"localfile://" + md5 + "/" + tmpFile + "\"";
-        } else {
-          replacement = "<img src=\"file://" + tmpFile + "\"";
-        }
+        replacement = "<img src=\"file://" + tmpFile + "?" + md5 + "\"";
       } else {
         md5 = calculateMd5(file, base);
-        if (JavaFxHtmlPanelProvider.isInitialized()) {
-          replacement = "<img src=\"localfile://" + md5 + "/" + base + "/" + file + "\"";
-        } else {
-          replacement = "<img src=\"file://" + base.replaceAll("%3A", ":") + "/" + file + "\"";
-        }
+        replacement = "<img src=\"file://" + base.replaceAll("%3A", ":") + "/" + file + "?" + md5 + "\"";
       }
       html = html.substring(0, matchResult.start()) +
         replacement + html.substring(matchResult.end());
@@ -749,24 +728,10 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       String replacement;
       if (tmpFile != null) {
         md5 = calculateMd5(tmpFile, null);
-        tmpFile = tmpFile.replaceAll("\\\\", "/");
-        try {
-          tmpFile = URLEncoder.encode(tmpFile, StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException e) {
-          throw new RuntimeException(e);
-        }
-        if (JavaFxHtmlPanelProvider.isInitialized()) {
-          replacement = "<object " + other + "data=\"localfile://" + md5 + "/" + tmpFile + "\"";
-        } else {
-          replacement = "<object " + other + "data=\"file://" + tmpFile + "\"";
-        }
+        replacement = "<object " + other + "data=\"file://" + tmpFile + "?" + md5 + "\"";
       } else {
         md5 = calculateMd5(file, base);
-        if (JavaFxHtmlPanelProvider.isInitialized()) {
-          replacement = "<object " + other + "data=\"localfile://" + md5 + "/" + base + "/" + file + "\"";
-        } else {
-          replacement = "<object " + other + "data=\"file://" + base.replaceAll("%3A", ":") + "/" + file + "\"";
-        }
+        replacement = "<object " + other + "data=\"file://" + base.replaceAll("%3A", ":") + "/" + file + "?" + md5 + "\"";
       }
       html = html.substring(0, matchResult.start()) +
         replacement + html.substring(matchResult.end());

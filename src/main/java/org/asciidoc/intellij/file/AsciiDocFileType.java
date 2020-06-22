@@ -24,7 +24,6 @@ import com.intellij.util.messages.MessageBusConnection;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocLanguage;
-import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -124,7 +123,6 @@ public class AsciiDocFileType extends LanguageFileType {
           && Objects.equals(pluginDescriptor.getPluginId().getIdString(), "org.asciidoctor.intellij.asciidoc")) {
           LOG.info("beforePluginUnload");
           AsciiDoc.beforePluginUnload();
-          JavaFxHtmlPanelProvider.beforePluginUnload();
           busConnection.dispose();
         }
       }

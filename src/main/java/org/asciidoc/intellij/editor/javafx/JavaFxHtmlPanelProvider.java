@@ -1,20 +1,14 @@
 package org.asciidoc.intellij.editor.javafx;
 
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.sun.javafx.application.PlatformImpl;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
-import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
-import java.net.URL;
 import java.nio.file.Path;
-import java.util.Hashtable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -23,55 +17,6 @@ public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
   public static final ProviderInfo INFO = new ProviderInfo("JavaFX WebView", JavaFxHtmlPanelProvider.class.getName());
   private static final Logger LOG = Logger.getInstance(JavaFxHtmlPanelProvider.class);
   private static final AtomicBoolean HAS_WAITED = new AtomicBoolean(false);
-
-  private static volatile boolean initialized;
-
-  /**
-   * Initialization might fail if a different StreamHandlerFactory has already been registered.
-   * Ask here if this is the case.
-   */
-  public static boolean isInitialized() {
-    return initialized;
-  }
-
-  static {
-    try {
-      URL.setURLStreamHandlerFactory(new LocalfileURLStreamHandlerFactory());
-      initialized = true;
-    } catch (Error error) {
-      initialized = false;
-      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
-        .createNotification("Message during initialization", "Can't register URLStreamHandlerFactory, " +
-          "reloading of images in JavaFX preview will not work. Possible root cause: a conflicting plugin " +
-          "is installed (currently 'Fabric for Android Studio' is one known conflict).", NotificationType.WARNING, null);
-      notification.setImportant(false);
-      Notifications.Bus.notify(notification);
-    }
-  }
-
-  public static void beforePluginUnload() {
-    if (initialized) {
-      try {
-        Field fieldStreamHandlerLock = URL.class.getDeclaredField("streamHandlerLock");
-        fieldStreamHandlerLock.setAccessible(true);
-        Object streamHandlerLock = fieldStreamHandlerLock.get(null);
-        //noinspection SynchronizationOnLocalVariableOrMethodParameter
-        synchronized (streamHandlerLock) {
-          Field fieldFactory = URL.class.getDeclaredField("factory");
-          fieldFactory.setAccessible(true);
-          fieldFactory.set(null, null);
-          Field fieldHandlers = URL.class.getDeclaredField("handlers");
-          fieldHandlers.setAccessible(true);
-          Hashtable<?, ?> handlers = (Hashtable<?, ?>) fieldHandlers.get(null);
-          handlers.clear();
-        }
-        initialized = false;
-        LOG.info("deregistered LocalfileURLStreamHandlerFactory");
-      } catch (NoSuchFieldException | IllegalAccessException e) {
-        LOG.error("error shutting down Asciidoctor instances", e);
-      }
-    }
-  }
 
   @NotNull
   @Override
