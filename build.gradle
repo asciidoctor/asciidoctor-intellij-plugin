@@ -1,7 +1,7 @@
 buildscript {
   repositories {
     jcenter()
-    maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+    maven { url 'https://dl.bintray.com/jetbrains/intellij-plugin-service' }
     maven { url 'https://www.jetbrains.com/intellij-repository/snapshots' }
   }
   dependencies {
@@ -11,7 +11,7 @@ buildscript {
 
 plugins {
   id "org.jetbrains.intellij" version "0.4.21"
-  id "org.jetbrains.grammarkit" version "2018.3.1"
+  id "org.jetbrains.grammarkit" version "2020.2.1"
   id "checkstyle"
   id 'org.asciidoctor.jvm.convert' version '2.2.0'
   // once windows classpaths get too long, use this dependency to make them shorter again
@@ -102,8 +102,8 @@ test {
 dependencies {
   errorprone 'com.google.errorprone:error_prone_core:2.3.2'
   errorproneJavac 'com.google.errorprone:javac:9+181-r4173-1'
-  compile 'org.asciidoctor:asciidoctorj-diagram:2.0.2'
-  compile 'org.asciidoctor:asciidoctorj-pdf:1.5.3'
+  implementation 'org.asciidoctor:asciidoctorj-diagram:2.0.2'
+  implementation 'org.asciidoctor:asciidoctorj-pdf:1.5.3'
   /* snakeyaml is s used by asciidoctorj-pdf, but is actually provided within jruby-stdlib
    * a snakeyaml version in the classpath takes precedence, but IntelliJ includes a version that is too old
    * therefore this plugin includes the same version of snakeyaml that is already included in jruby-stdlib
@@ -112,14 +112,14 @@ dependencies {
    * double check the snakeyaml version.
    * https://github.com/asciidoctor/asciidoctorj-pdf/issues/25
    */
-  compile 'org.yaml:snakeyaml:1.23'
-  compile 'org.asciidoctor:asciidoctorj:2.3.1'
-  compile 'commons-io:commons-io:2.4'
-  compile 'nl.jworks.markdown_to_asciidoc:markdown_to_asciidoc:1.1'
-  compile 'org.apache.commons:commons-text:1.8'
-  testCompile 'junit:junit:4.12'
-  testCompile 'com.tngtech.archunit:archunit-junit4:0.10.2'
-  testCompile group: 'org.assertj', name: 'assertj-core', version: '3.6.1'
+  implementation 'org.yaml:snakeyaml:1.23'
+  implementation 'org.asciidoctor:asciidoctorj:2.3.1'
+  implementation 'commons-io:commons-io:2.4'
+  implementation 'nl.jworks.markdown_to_asciidoc:markdown_to_asciidoc:1.1'
+  implementation 'org.apache.commons:commons-text:1.8'
+  testImplementation 'junit:junit:4.12'
+  testImplementation 'com.tngtech.archunit:archunit-junit4:0.10.2'
+  testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.6.1'
 }
 
 def genRoot = file('gen')
