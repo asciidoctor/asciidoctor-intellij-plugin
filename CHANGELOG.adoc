@@ -7,10 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.6 (work in progress)
+=== 0.31.6 (preview, available from GitHub releases)
 
 - simplify JavaFX image preview to work with standard `file:` URLs (#390)
 - don't re-render editor previews in background (#390)
+- don't allow in-place upgrading of plugin until further testing (#512)
 
 === 0.31.5 (preview, available from GitHub releases)
 
