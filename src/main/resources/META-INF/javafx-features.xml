@@ -1,0 +1,3 @@
+<idea-plugin>
+  <!-- left empty intentionally. JavaFX might have been provided by other means depending on the JDK, therefore rely on  -->
+</idea-plugin>

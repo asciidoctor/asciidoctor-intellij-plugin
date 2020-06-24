@@ -8,9 +8,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 
-@SuppressWarnings("UnstableApiUsage")
 public class AsciiDocJCEFHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
-  public static final ProviderInfo INFO = new ProviderInfo("JCEF Browser (Experimental)", AsciiDocJCEFHtmlPanelProvider.class.getName());
+  public static final ProviderInfo INFO = new ProviderInfo("JCEF Browser", AsciiDocJCEFHtmlPanelProvider.class.getName());
 
   @NotNull
   @Override

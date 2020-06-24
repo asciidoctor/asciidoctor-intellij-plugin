@@ -7,6 +7,12 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.7 (work in progress)
+
+- declare intellilang features as optional dependency
+- declare JavaFX as optional dependency
+- add notification that JCEF can be enabled if it is available and user is using Swing preview
+
 === 0.31.6 (preview, available from GitHub releases)
 
 - simplify JavaFX image preview to work with standard `file:` URLs (#390)

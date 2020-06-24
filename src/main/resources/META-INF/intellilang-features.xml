@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <multiHostInjector implementation="org.asciidoc.intellij.injection.CodeFenceInjector"/>
+  </extensions>
+</idea-plugin>
