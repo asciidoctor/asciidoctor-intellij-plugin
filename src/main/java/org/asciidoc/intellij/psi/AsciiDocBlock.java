@@ -88,7 +88,7 @@ public interface AsciiDocBlock extends PsiElement, AsciiDocSelfDescribe {
 
   @Nullable
   default String getStyle() {
-    AsciiDocBlockAttributes attrs = PsiTreeUtil.findChildOfType(this, AsciiDocBlockAttributes.class);
+    AsciiDocBlockAttributes attrs = PsiTreeUtil.getChildOfType(this, AsciiDocBlockAttributes.class);
     if (attrs != null) {
       return attrs.getFirstPositionalAttribute();
     }
