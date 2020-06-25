@@ -131,6 +131,13 @@ import java.util.Stack;
     return false;
   }
 
+  private boolean isNoDelList() {
+    if(blockStack.size() > 0 && blockStack.peek().startsWith("nodel-list")) {
+      return true;
+    }
+    return false;
+  }
+
   private boolean isNoDelVerse() {
     if(blockStack.size() > 0 && blockStack.peek().startsWith("nodel-verse")) {
       return true;
@@ -221,7 +228,7 @@ import java.util.Stack;
     if (blockStack.size() == 0 && style == null) {
       yybegin(YYINITIAL);
     } else {
-      yybegin(MULTILINE);
+      yybegin(PREBLOCK);
     }
   }
 %}
@@ -328,7 +335,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state DELIMITER
 %state SINGLELINE
 %state DESCRIPTION
-%state AFTER_SPACE
+%state LIST
 %state INSIDE_LINE
 %state PASSTHROUGH_SECOND_TRY
 %state MONO_SECOND_TRY
@@ -499,12 +506,92 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_VAL; }
 }
 
+<LIST, PREBLOCK> {
+  // bibtext doesn't allow for line breaks. Adding {STRING} at the end so that it is as long as the regular bullet match
+  {BULLET} / {SPACE}+ {BIBSTART} [^\n]* {BIBEND} {STRING} {
+        String delimiter = "nodel-list-bullet-" + yytext();
+        while (blockStack.contains(delimiter)) {
+          blockStack.pop();
+        }
+        blockStack.push(delimiter);
+        resetFormatting();
+        yybegin(BIBSTART);
+        return AsciiDocTokenTypes.BULLET;
+  }
+  {BULLET} / {SPACE}+ {STRING} {
+        String delimiter = "nodel-list-bullet-" + yytext();
+        while (blockStack.contains(delimiter)) {
+          blockStack.pop();
+        }
+        blockStack.push(delimiter);
+        resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BULLET;
+      }
+  {ENUMERATION} / {SPACE}+ {STRING} {
+        String delimiter = "nodel-list-enum-" + yytext();
+        while (blockStack.contains(delimiter)) {
+          blockStack.pop();
+        }
+        blockStack.push(delimiter);
+        resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ENUMERATION;
+      }
+  {DESCRIPTION} / {SPACE}+ {STRING} {
+        String delimiter = "nodel-list-desc-";
+        int end = getTokenEnd();
+        char c = zzBuffer.charAt(end-1);
+        int start = getTokenEnd() - 1;
+        while (zzBuffer.charAt(start) == c) {
+          -- start;
+        }
+        delimiter += zzBuffer.subSequence(start+1, end);
+        while (blockStack.contains(delimiter)) {
+          blockStack.pop();
+        }
+        blockStack.push(delimiter);
+        resetFormatting(); yybegin(INSIDE_LINE); yypushstate(); yybegin(DESCRIPTION); yypushback(yylength());
+      }
+  {DESCRIPTION} / {SPACE}* "\n" {
+        String delimiter = "nodel-list-desc-";
+        int end = getTokenEnd();
+        char c = zzBuffer.charAt(end-1);
+        int start = getTokenEnd() - 1;
+        while (zzBuffer.charAt(start) == c) {
+          -- start;
+        }
+        delimiter += zzBuffer.subSequence(start+1, end);
+        while (blockStack.contains(delimiter)) {
+          blockStack.pop();
+        }
+        blockStack.push(delimiter);
+        resetFormatting(); yybegin(INSIDE_LINE); yypushstate(); yybegin(DESCRIPTION); yypushback(yylength());
+      }
+  ^ {CALLOUT} / {SPACE}+ {STRING} {
+        String delimiter = "nodel-list-callout";
+        while (blockStack.contains(delimiter)) {
+          blockStack.pop();
+        }
+        blockStack.push(delimiter);
+        resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.CALLOUT;
+      }
+}
+
+<LIST> {
+  ^ {CONTINUATION} {SPACE}* "\n" {
+                         yypushback(yylength() - 1);
+                         yybegin(LIST);
+                         yypushstate();
+                         yybegin(EOL_POP);
+                         return AsciiDocTokenTypes.CONTINUATION;
+                       }
+}
+
 // everything that will not render after a [source] as literal text
 // especially: titles, block attributes, block ID, etc.
-<PREBLOCK> {
-  ^ [ \t]* ({BULLET} {SPACE}+ {STRING} | {ENUMERATION} {SPACE}+ {STRING} | {DESCRIPTION} {SPACE}+ {STRING} | {DESCRIPTION} {SPACE}* "\n" )  {
-        yypushback(yylength()); yybegin(SINGLELINE);
+<PREBLOCK, DELIMITER, LIST> {
+  ^ [ \t]+ / ({BULLET} {SPACE}+ {STRING} | {ENUMERATION} {SPACE}+ {STRING} | {DESCRIPTION} {SPACE}+ {STRING} | {DESCRIPTION} {SPACE}* "\n" )  {
+        yybegin(LIST); return AsciiDocTokenTypes.WHITE_SPACE;
       }
+}
+<PREBLOCK> {
   ^ [ \t]+ [^ \t\n] {
         if (style == null && !isPrefixedBy(new char[] {tableChar})) { // when running incremental lexing, this will be a false-positive for a beginning of the line for a cell
           yybegin(LISTING_NO_DELIMITER); return AsciiDocTokenTypes.LISTING_TEXT;
@@ -560,7 +647,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   }
 }
 
-<DELIMITER, PREBLOCK, HEADER> {
+<DELIMITER, LIST, PREBLOCK, HEADER> {
   {IFDEF_IFNDEF} / [^ \[\n] { yypushstate(); yybegin(IFDEF_IFNDEF_ENDIF); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   // endif/ifeval allows the body to be empty, special case...
   ^ ("endif"|"ifeval") "::" / [^ \n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
@@ -583,11 +670,29 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   }
 }
 
-<DELIMITER, PREBLOCK> {
+<PREBLOCK> {
   ^ {PAGEBREAK} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.PAGEBREAK; }
   ^ {HORIZONTALRULE} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.HORIZONTALRULE; }
   {BLOCK_MACRO_START} / [^ \[\n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   // toc allows the body to be empty, special case...
+  ^ {HEADING_START} | {HEADING_START_MARKDOWN} / {NON_SPACE} { if (blockStack.size() == 0) {
+                              int level = 0;
+                              CharSequence prefix = yytext();
+                              while (prefix.length() > level && (prefix.charAt(level) == '#' || prefix.charAt(level) == '=')) {
+                                ++ level;
+                              }
+                              if (level == 1 && style == null) {
+                                yybegin(DOCTITLE);
+                              } else {
+                                yybegin(HEADING);
+                              }
+                              clearStyle(); resetFormatting(); return AsciiDocTokenTypes.HEADING;
+                            }
+                            yypushback(yylength()); yybegin(STARTBLOCK);
+                          }
+}
+
+<DELIMITER, PREBLOCK, LIST> {
   ^ ("toc") "::" / [^ \n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   // if it starts like a block attribute, but has characters afer the closing bracket, it's not
   {BLOCK_ATTRS_START} / [^\[\#] ([^\]\"\']* | (\" [^\"\n]* \") | (\' [^\"\n]* \') )* "]" [ \t]* [^\n] { yypushback(yylength()); yybegin(STARTBLOCK); }
@@ -611,22 +716,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ^ {PASSTRHOUGH_BLOCK_DELIMITER} / [^\+\n \t] { yypushback(yylength()); yybegin(STARTBLOCK);  }
   ^ {PASSTRHOUGH_BLOCK_DELIMITER} { clearStyle(); resetFormatting(); yybegin(PASSTRHOUGH_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER; }
 
-  ^ {HEADING_START} | {HEADING_START_MARKDOWN} / {NON_SPACE} { if (blockStack.size() == 0) {
-                              int level = 0;
-                              CharSequence prefix = yytext();
-                              while (prefix.length() > level && (prefix.charAt(level) == '#' || prefix.charAt(level) == '=')) {
-                                ++ level;
-                              }
-                              if (level == 1 && style == null) {
-                                yybegin(DOCTITLE);
-                              } else {
-                                yybegin(HEADING);
-                              }
-                              clearStyle(); resetFormatting(); return AsciiDocTokenTypes.HEADING;
-                            }
-                            yypushback(yylength()); yybegin(STARTBLOCK);
-                          }
-
   ^ {TABLE_BLOCK_DELIMITER} $ {
             resetFormatting();
             style = null;
@@ -638,6 +727,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
               zzEndReadL = limitLookahead();
             }
             yybegin(PREBLOCK);
+            yypushstate();
+            yybegin(EOL_POP);
             return AsciiDocTokenTypes.BLOCK_DELIMITER;
           }
 
@@ -655,6 +746,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                               blockStack.push(delimiter);
                             }
                             yybegin(PREBLOCK);
+                            yypushstate();
+                            yybegin(EOL_POP);
                             return AsciiDocTokenTypes.BLOCK_DELIMITER;
                           }
   ^ {QUOTE_BLOCK_DELIMITER} / [^\_\n \t] { yypushback(yylength()); yybegin(STARTBLOCK); /* QUOTE_BLOCK_DELIMITER */ }
@@ -674,6 +767,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
               zzEndReadL = limitLookahead();
             }
             yybegin(PREBLOCK);
+            yypushstate();
+            yybegin(EOL_POP);
             return AsciiDocTokenTypes.BLOCK_DELIMITER;
           }
 
@@ -691,6 +786,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                               blockStack.push(delimiter);
                             }
                             yybegin(PREBLOCK);
+                            yypushstate();
+                            yybegin(EOL_POP);
                             return AsciiDocTokenTypes.BLOCK_DELIMITER;
                           }
 
@@ -699,8 +796,15 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ^ {LITERAL_BLOCK_DELIMITER} { clearStyle(); resetFormatting(); yybegin(LITERAL_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER; }
 }
 
-<DELIMITER> {
+<DELIMITER, LIST> {
   {SPACE}* "\n"           { yypushback(yylength()); yybegin(PREBLOCK); } // blank lines don't have an effect
+}
+
+<LIST> {
+  [^]                  { yypushback(yylength()); yybegin(INSIDE_LINE); }
+}
+
+<DELIMITER> {
   [^] {
     yypushback(yylength()); yybegin(SINGLELINE);
   }
@@ -733,6 +837,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                                 blockStack.pop();
                               }
                               yybegin(PREBLOCK);
+                              yypushstate();
+                              yybegin(EOL_POP);
                               return AsciiDocTokenTypes.BLOCK_DELIMITER;
                             } else {
                               yybegin(INSIDE_LINE);
@@ -743,7 +849,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <SINGLELINE> {
   "[" [^\]\n]+ "]" / "#" { return textFormat(); } // attribute, not handled yet
-  ^ {CALLOUT} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.CALLOUT; }
   ^ {ADMONITION} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ADMONITION; }
   /* a blank line, it separates blocks. Don't return YYINITIAL here, as writing on a blank line might change the meaning
   of the previous blocks combined (for example there is now an italic formatting spanning the two combined blocks) */
@@ -784,7 +889,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          return AsciiDocTokenTypes.LINE_BREAK;
                        }
   ^ "::"                 { yybegin(INSIDE_LINE); return textFormat(); } // avoid end-of-sentence
-  [ \t]+               { yybegin(AFTER_SPACE);
+  [ \t]+               { yybegin(INSIDE_LINE);
                          if (singlemono || doublemono) {
                            return AsciiDocTokenTypes.WHITE_SPACE_MONO;
                          } else {
@@ -812,10 +917,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            resetFormatting();
                            return AsciiDocTokenTypes.CELLSEPARATOR;
                          } else {
-                           yypushback(yylength()); yybegin(AFTER_SPACE);
+                           yypushback(yylength()); yybegin(INSIDE_LINE);
                          }
                        }
-  [^]                  { yypushback(yylength()); yybegin(AFTER_SPACE); }
+  [^]                  { yypushback(yylength()); yybegin(INSIDE_LINE); }
 }
 
 <PREBLOCK, SINGLELINE, PASSTHROUGH_NO_DELIMITER, HEADER> {
@@ -857,20 +962,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^] { return AsciiDocTokenTypes.BLOCKID; }
 }
 
-<AFTER_SPACE> {
-  // bibtext doesn't allow for line breaks. Adding {STRING} at the end so that it is as long as the regular bullet match
-  {BULLET} / {SPACE}+ {BIBSTART} [^\n]* {BIBEND} {STRING} {
-        resetFormatting();
-        yybegin(BIBSTART);
-        return AsciiDocTokenTypes.BULLET;
-  }
-  {BULLET} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.BULLET; }
-  {ENUMERATION} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ENUMERATION; }
-  {DESCRIPTION} / {SPACE}+ {STRING} { resetFormatting(); yybegin(INSIDE_LINE); yypushstate(); yybegin(DESCRIPTION); yypushback(yylength()); }
-  {DESCRIPTION} / {SPACE}* "\n" { resetFormatting(); yybegin(INSIDE_LINE); yypushstate(); yybegin(DESCRIPTION); yypushback(yylength()); }
-  [^]                  { yypushback(yylength()); yybegin(INSIDE_LINE); }
-}
-
 <DESCRIPTION> {
   {DESCRIPTION_END} / [ \t\n] { yypopstate(); return AsciiDocTokenTypes.DESCRIPTION; }
 }
@@ -881,7 +972,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <INSIDE_LINE, DESCRIPTION, TITLE> {
-  "\n"                 { if (isNoDelVerse()) {
+  "\n"                 { if (isNoDelList()) {
+                           yybegin(LIST);
+                         } else if (isNoDel()) {
                            yybegin(SINGLELINE);
                          } else {
                            yybegin(DELIMITER);
@@ -1379,7 +1472,12 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <BLOCKID, BLOCKREFTEXT> {
-  {BLOCKIDEND}         { yybegin(PREBLOCK); return AsciiDocTokenTypes.BLOCKIDEND; }
+  {BLOCKIDEND}         {
+        yybegin(PREBLOCK);
+        yypushstate();
+        yybegin(EOL_POP);
+        return AsciiDocTokenTypes.BLOCKIDEND;
+      }
 }
 
 <BLOCKID> {
@@ -1405,7 +1503,12 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <ANCHORID, ANCHORREFTEXT> {
-  {ANCHOREND}         { yybegin(PREBLOCK); return AsciiDocTokenTypes.BLOCKIDEND; }
+  {ANCHOREND}         {
+        yybegin(PREBLOCK);
+        yypushstate();
+        yybegin(EOL_POP);
+        return AsciiDocTokenTypes.BLOCKIDEND;
+      }
 }
 
 <ANCHORID> {
@@ -1595,6 +1698,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ^ {LISTING_BLOCK_DELIMITER_END} $ {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
       yybegin(PREBLOCK);
+      yypushstate();
+      yybegin(EOL_POP);
       return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
     } else {
       return AsciiDocTokenTypes.LISTING_TEXT;
@@ -1609,7 +1714,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   }
   ^ {LISTING_BLOCK_DELIMITER_END} | {MARKDOWN_LISTING_BLOCK_DELIMITER} {
     if (yytext().toString().trim().length() == blockDelimiterLength) {
-      yybegin(PREBLOCK);
+      yyinitialIfNotInBlock();
+      yypushstate();
+      yybegin(EOL_POP);
       return AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
     } else {
       return AsciiDocTokenTypes.LISTING_TEXT;

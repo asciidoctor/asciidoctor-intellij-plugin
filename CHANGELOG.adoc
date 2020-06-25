@@ -7,10 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.30.81 (work in progress)
+=== 0.30.81 (preview, available from GitHub releases)
 
 - avoid error "`ProcessCanceledException should not be logged`"
 - show block type of current block, in structure view don't pick look it up from a child element (#511)
+- reworking handling of list items and their contexts to prevent false positive list items and headlines in editor's AST (#508)
 
 === 0.30.80 (preview, available from GitHub releases)
 
