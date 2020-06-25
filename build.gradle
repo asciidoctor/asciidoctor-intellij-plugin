@@ -39,13 +39,13 @@ allprojects {
 }
 
 intellij {
-  version '202.5792.28-EAP-SNAPSHOT'
+  version 'IC-202.5958.24-EAP-SNAPSHOT'
   pluginName 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild false
   plugins = [
     'PsiViewer:202-SNAPSHOT.3', // used for debugging
     'PlantUML integration:2.25.2', // used to test highlighting of plantuml diagrams
-    'tanvd.grazi:202.5792.17', // used for spell and grammer checking checking
+    'tanvd.grazi:202.5958.10', // used for spell and grammar checking checking
     'com.intellij.javafx:1.0.1',
     'org.intellij.intelliLang', //
     'java' // used to integrate into the build via AsciiDocTargetScopeProvider
