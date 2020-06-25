@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - declare JavaFX as optional dependency
 - add notification that JCEF can be enabled if it is available and user is using Swing preview
 - show block type of current block, in structure view don't pick look it up from a child element (#511)
+- reworking handling of list items and their contexts to prevent false positive list items and headlines in editor's AST (#508)
 
 === 0.31.6 (preview, available from GitHub releases)
 

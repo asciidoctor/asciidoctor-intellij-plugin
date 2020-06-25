@@ -115,7 +115,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:EMPTY_LINE ('\\n')\n" +
         "AsciiDoc:TEXT ('abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:HEADING ('== Def')\n" +
+        "AsciiDoc:TEXT ('==')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Def')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('def')");
   }
@@ -1395,6 +1397,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('2')");
   }
 
+  public void testNoCallout() {
+    doTest("Test\n" +
+      "<1> Test", "AsciiDoc:TEXT ('Test')\n" +
+      "AsciiDoc:LINE_BREAK ('\\n')\n" +
+      "AsciiDoc:LT ('<')\n" +
+      "AsciiDoc:TEXT ('1')\n" +
+      "AsciiDoc:GT ('>')\n" +
+      "AsciiDoc:WHITE_SPACE (' ')\n" +
+      "AsciiDoc:TEXT ('Test')");
+  }
+
   public void testTitleAfterId() {
     doTest("[[id]]\n.Title\n====\nExample\n====",
       "AsciiDoc:BLOCKIDSTART ('[[')\n" +
@@ -1673,6 +1686,70 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('description')");
   }
 
+  public void testDescriptionLong() {
+    doTest("A:: B\nC::: D",
+      "AsciiDoc:DESCRIPTION ('A::')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('B')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:DESCRIPTION ('C:::')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('D')");
+  }
+
+  public void testDescriptionWithContinuationAndListing() {
+    doTest("X:: Y\n" +
+        "+\n" +
+        "----\n" +
+        "----\n" +
+        "== Hi",
+      "AsciiDoc:DESCRIPTION ('X::')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Y')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CONTINUATION ('+')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('==')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Hi')");
+  }
+
+  public void testDescriptionWithContinuationAndExample() {
+    doTest("X:: Y\n" +
+        "+\n" +
+        "====\n" +
+        "====\n" +
+        "== Hi",
+      "AsciiDoc:DESCRIPTION ('X::')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Y')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CONTINUATION ('+')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('==')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Hi')");
+  }
+
+  public void testHeadingAfterListing() {
+    doTest("----\n" +
+        "----\n" +
+        "== Hi",
+      "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:HEADING ('== Hi')");
+  }
+
   public void testDescriptionWithMultipleColons() {
     doTest("a property::ext:: description",
       "AsciiDoc:DESCRIPTION ('a')\n" +
@@ -1866,6 +1943,45 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Item')");
   }
 
+  public void testEnumerationWithBlank() {
+    doTest("* item 1\n" +
+      " * item 2\n", "AsciiDoc:BULLET ('*')\n" +
+      "AsciiDoc:WHITE_SPACE (' ')\n" +
+      "AsciiDoc:TEXT ('item')\n" +
+      "AsciiDoc:WHITE_SPACE (' ')\n" +
+      "AsciiDoc:TEXT ('1')\n" +
+      "AsciiDoc:LINE_BREAK ('\\n')\n" +
+      "AsciiDoc:WHITE_SPACE (' ')\n" +
+      "AsciiDoc:BULLET ('*')\n" +
+      "AsciiDoc:WHITE_SPACE (' ')\n" +
+      "AsciiDoc:TEXT ('item')\n" +
+      "AsciiDoc:WHITE_SPACE (' ')\n" +
+      "AsciiDoc:TEXT ('2')\n" +
+      "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testNoEnumeration() {
+    doTest("Das\n" +
+      "* Test", "AsciiDoc:TEXT ('Das')\n" +
+      "AsciiDoc:LINE_BREAK ('\\n')\n" +
+      "AsciiDoc:TEXT ('*')\n" +
+      "AsciiDoc:WHITE_SPACE (' ')\n" +
+      "AsciiDoc:TEXT ('Test')");
+  }
+
+  public void testItemWithListing() {
+    doTest("* item\n" +
+        "----\n" +
+        "----",
+      "AsciiDoc:BULLET ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('item')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')");
+  }
+
   public void testEnumerationSecondLevel() {
     doTest(".. Item",
       "AsciiDoc:ENUMERATION ('..')\n" +
@@ -1983,6 +2099,20 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRS_START ('[')\n" +
         "AsciiDoc:ATTR_NAME ('other:[hi]')\n" +
         "AsciiDoc:ATTRS_END (']')");
+  }
+
+  public void testBlockMacroAfterList() {
+    doTest("* Item\n" +
+      "\n" +
+      "blockmacro::content[]", "AsciiDoc:BULLET ('*')\n" +
+      "AsciiDoc:WHITE_SPACE (' ')\n" +
+      "AsciiDoc:TEXT ('Item')\n" +
+      "AsciiDoc:LINE_BREAK ('\\n')\n" +
+      "AsciiDoc:EMPTY_LINE ('\\n')\n" +
+      "AsciiDoc:BLOCK_MACRO_ID ('blockmacro::')\n" +
+      "AsciiDoc:BLOCK_MACRO_BODY ('content')\n" +
+      "AsciiDoc:ATTRS_START ('[')\n" +
+      "AsciiDoc:ATTRS_END (']')");
   }
 
   public void testExampleWithListingNoDelimiter() {
