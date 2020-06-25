@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.81 (work in progress)
 
 - avoid error "`ProcessCanceledException should not be logged`"
+- show block type of current block, in structure view don't pick look it up from a child element (#511)
 
 === 0.30.80 (preview, available from GitHub releases)
 

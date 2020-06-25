@@ -232,6 +232,24 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertEquals("image::", macro.getFoldedSummary());
   }
 
+  public void testDescriptionNestedNote() {
+    PsiFile psiFile = configureByAsciiDoc("[#id]\n" +
+      "Test:: Value\n" +
+      "+\n" +
+      "[NOTE]\n" +
+      "====\n" +
+      "Note\n" +
+      "====");
+    AsciiDocBlock block = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlock.class);
+    assertNotNull(block);
+    assertEquals("(Block)", block.getDescription());
+    assertEquals("Test::", block.getFoldedSummary());
+    block = PsiTreeUtil.getChildOfType(block, AsciiDocBlock.class);
+    assertNotNull(block);
+    assertEquals("[NOTE]", block.getDescription());
+    assertEquals("[NOTE]", block.getFoldedSummary());
+  }
+
   public void testDescriptionImageWithTitle() {
     PsiFile psiFile = configureByAsciiDoc(".Title\nimage::test.adoc[]");
     AsciiDocBlockMacro macro = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlockMacro.class);
@@ -401,6 +419,17 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
   }
 
   public void testNestedAttribute() {
+    // given...
+    PsiFile psiFile = configureByAsciiDoc(":myattr: {otherattr}val");
+
+    // then...
+    AsciiDocAttributeDeclaration declaration = PsiTreeUtil.getChildOfType(psiFile, AsciiDocAttributeDeclaration.class);
+    AsciiDocAttributeReference reference = PsiTreeUtil.getChildOfType(declaration, AsciiDocAttributeReference.class);
+    assertNotNull("declaration should exist", declaration);
+    assertNotNull("reference should exist", reference);
+  }
+
+  public void testDesc() {
     // given...
     PsiFile psiFile = configureByAsciiDoc(":myattr: {otherattr}val");
 
