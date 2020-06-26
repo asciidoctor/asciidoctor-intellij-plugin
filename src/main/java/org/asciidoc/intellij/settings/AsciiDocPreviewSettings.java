@@ -7,6 +7,7 @@ import com.intellij.util.xmlb.annotations.Tag;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
+import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
 import org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider;
 import org.asciidoc.intellij.ui.SplitFileEditor;
 import org.asciidoctor.SafeMode;
@@ -34,9 +35,14 @@ public final class AsciiDocPreviewSettings {
   private AsciiDocHtmlPanelProvider.ProviderInfo myHtmlPanelProviderInfo = JeditorHtmlPanelProvider.INFO;
 
   {
-    final AsciiDocHtmlPanelProvider.AvailabilityInfo availabilityInfo = new JavaFxHtmlPanelProvider().isAvailable();
+    AsciiDocHtmlPanelProvider.AvailabilityInfo availabilityInfo = new JavaFxHtmlPanelProvider().isAvailable();
     if (availabilityInfo == AsciiDocHtmlPanelProvider.AvailabilityInfo.AVAILABLE) {
       myHtmlPanelProviderInfo = JavaFxHtmlPanelProvider.INFO;
+    } else {
+      availabilityInfo = new AsciiDocJCEFHtmlPanelProvider().isAvailable();
+      if (availabilityInfo == AsciiDocHtmlPanelProvider.AvailabilityInfo.AVAILABLE) {
+        myHtmlPanelProviderInfo = AsciiDocJCEFHtmlPanelProvider.INFO;
+      }
     }
   }
 
@@ -160,7 +166,29 @@ public final class AsciiDocPreviewSettings {
 
   @NotNull
   public AsciiDocHtmlPanelProvider.ProviderInfo getHtmlPanelProviderInfo() {
-    return myHtmlPanelProviderInfo;
+    AsciiDocHtmlPanelProvider.ProviderInfo provider = this.myHtmlPanelProviderInfo;
+    if (Objects.equals(provider, JavaFxHtmlPanelProvider.INFO)) {
+      AsciiDocHtmlPanelProvider.AvailabilityInfo javaFxAvailable = new JavaFxHtmlPanelProvider().isAvailable();
+      if (Objects.equals(javaFxAvailable, AsciiDocHtmlPanelProvider.AvailabilityInfo.UNAVAILABLE)) {
+        AsciiDocHtmlPanelProvider.AvailabilityInfo jcefAvailable = new AsciiDocJCEFHtmlPanelProvider().isAvailable();
+        if (Objects.equals(jcefAvailable, AsciiDocHtmlPanelProvider.AvailabilityInfo.AVAILABLE)) {
+          provider = AsciiDocJCEFHtmlPanelProvider.INFO;
+        } else {
+          provider = JeditorHtmlPanelProvider.INFO;
+        }
+      }
+    } else if (Objects.equals(provider, AsciiDocJCEFHtmlPanelProvider.INFO)) {
+      AsciiDocHtmlPanelProvider.AvailabilityInfo jcefAvailable = new AsciiDocJCEFHtmlPanelProvider().isAvailable();
+      if (Objects.equals(jcefAvailable, AsciiDocHtmlPanelProvider.AvailabilityInfo.UNAVAILABLE)) {
+        AsciiDocHtmlPanelProvider.AvailabilityInfo javaFxAvailable = new JavaFxHtmlPanelProvider().isAvailable();
+        if (Objects.equals(javaFxAvailable, AsciiDocHtmlPanelProvider.AvailabilityInfo.AVAILABLE)) {
+          provider = JavaFxHtmlPanelProvider.INFO;
+        } else {
+          provider = JeditorHtmlPanelProvider.INFO;
+        }
+      }
+    }
+    return provider;
   }
 
   @NotNull
