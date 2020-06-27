@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.7 (work in progress)
+=== 0.31.7 (preview, available from GitHub releases)
 
 - declare intellilang features as optional dependency
 - declare JavaFX as optional dependency
