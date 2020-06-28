@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.82 (preview, available from GitHub releases)
+
+- mark indexes to be rebuilt due to AST changes (#508)
+
 === 0.30.81 (preview, available from GitHub releases)
 
 - avoid error "`ProcessCanceledException should not be logged`"
