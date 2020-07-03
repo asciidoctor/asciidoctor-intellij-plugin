@@ -1,0 +1,95 @@
+= Asciidoclet
+// see: AsciiDocJavaDocInfoGenerator
+
+The https://github.com/asciidoctor/asciidoclet[Asciidoclet^] project allows developers to write their code API documentation using AsciiDoc.
+This plugin can render the Asciidoc contents when previewing the documentation.
+
+[NOTE]
+====
+Support for this is available from release AsciiDoc Plugin release 0.31.9.
+
+This feature is in its early development and marked "`experimental`".
+Its functionality might change over time.
+====
+
+== How to use it
+
+Users need to enable this feature in the plugin's settings:
+
+. Open the menu menu:File[Settings... > Languages & Frameworks > AsciiDoc]
+. Check the checkbox "`Enable Asciidoclet support (AsciiDoc in Javadoc)`"
+
+Once this check-box is enabled, the Quick-Help (kbd:[Ctrl+Q]) will render all Javadoc-comments as AsciiDoc.
+This is a global setting for all projects.
+
+Since IDEA release 2020.1 users can choose to show Javadoc comments rendered in the editor.
+See chapter https://www.jetbrains.com/help/idea/working-with-code-documentation.html#toggle-rendered-view["`Render Javadocs`"] in the IDEA documentation for more information.
+
+== Detection of Asciidoclet vs. Javadoc
+
+When working in different projects there might AsciiDoc used in some files, but not in others.
+Libraries might use JavaDoc, some not.
+
+As default the plugin will render all Javadoc contents as AsciiDoc with the following exception:
+
+. If the Javadoc contents contain a HTML tag `<p>` the plugin assumes the contents should be rendered as standard Javadoc without the AsciiDoc conversion.
+
+== Preview while editing Asciidoclet
+
+When editing Javadoc content users can open a quick docs in a separate window that stays open permanently.
+It will always show the documentation related to the current cursor's position.
+
+When editing the Javadoc contents, the documentation window will show the update Asciidoc rendered version with a short delay.
+
+To show the documentation window choose the menu item menu:View[Tool Windows > Documentation] (sometimes hidden based on the current context at the cursor position) or by pressing kbd:[Ctrl+Q] twice.
+
+== Limitations
+
+=== Annotations in Javadoc code snippets
+
+While Asciidoclet supports annotations within Javadoc code snippets, this plugin doesn't as it breaks parsing of the content.
+
+Instead of writing content like this:
+
+[subs="+quotes,+macros"]
+----
+pass:[/**]
+ * [source,java]
+ * --
+ *     ##@##SuppressWarnings("UnusedDeclaration")
+ *     /\*...*/
+ * --
+...
+----
+
+Please rewrite it like this:
+
+[subs="+quotes,+macros"]
+----
+pass:[/**]
+ * [source,java]
+ * --
+ *     ##{at}##SuppressWarnings("UnusedDeclaration")
+ *     /\*...*/
+ * --
+...
+----
+
+=== Start path of includes
+
+Includes will use path relative to the root of the project.
+While Asciidoclet allows users to override the path on the command line, the plugin doesn't allow for in the current version.
+
+=== HTML styling of Asciidoclet
+
+When viewing rendered Asciidoclet content in the documentation window IDEA supports only a limited amount of CSS styling.
+One example are section headlines: they all have the same size and font as regular text.
+
+=== Syntax Highlighting when writing Asciidoclet
+
+The current version of the plugin doesn't provide AsciiDoc language injection for the Javadoc content.
+Therefore writers miss autocompletion in the editor.
+Please vote for this in issue https://youtrack.jetbrains.com/issue/IDEA-231876[IDEA-231876] at JetBrains to raise attention for this or contribute to the IntelliJ community edition.
+
+
+

@@ -73,7 +73,8 @@ public class JCEFCouldBeEnabledNotificationProvider extends EditorNotifications.
           oldPreviewSettings.isAttributeFoldingEnabled(),
           oldPreviewSettings.getZoom(),
           oldPreviewSettings.isHideErrorsInSourceBlocks(),
-          oldPreviewSettings.getHideErrorsByLanguage()));
+          oldPreviewSettings.getHideErrorsByLanguage(),
+          oldPreviewSettings.isAsciidocletEnabled()));
         EditorNotifications.updateAll();
       } else {
         Logger.getInstance(JCEFCouldBeEnabledNotificationProvider.class).warn("Could not install and apply JCEF");

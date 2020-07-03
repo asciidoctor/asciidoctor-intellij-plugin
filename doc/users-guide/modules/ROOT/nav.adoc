@@ -9,6 +9,7 @@
 // the following list is sorted alphabetically.
 // Please keep it sorted when adding new content.
 *** xref:features/advanced/antora.adoc[]
+*** xref:features/advanced/asciidoclet.adoc[]
 *** xref:features/advanced/asciidoctorconfig-file.adoc[]
 *** xref:features/advanced/asciidoctor-extensions.adoc[]
 *** xref:features/advanced/stylesheets.adoc[]
