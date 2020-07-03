@@ -63,6 +63,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JBCheckBox myHideErrorsInSourceBlocks;
   private JBTextField myHideErrorsByLanguage;
   private JBLabel myHideErrorsByLanguageLabel;
+  private JBCheckBox myAsciidocletEnabled;
 
   public JComponent getComponent() {
     return myMainPanel;
@@ -216,6 +217,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     });
     myHideErrorsByLanguage.setVisible(!myHideErrorsInSourceBlocks.isSelected());
     myHideErrorsByLanguageLabel.setVisible(!myHideErrorsInSourceBlocks.isSelected());
+    myAsciidocletEnabled.setSelected(settings.isAsciidocletEnabled());
 
     myHideErrorsByLanguage.setText(settings.getHideErrorsByLanguage());
   }
@@ -243,6 +245,6 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myShowAsciiDocWarningsAndErrorsInEditor.isSelected(), myInplacePreviewRefresh.isSelected(),
       myEnableKroki.isSelected(), krokiUrl, myEnabledAttributeFolding.isSelected(),
       ((BigDecimal) myZoom.getValue()).setScale(2, RoundingMode.UP).unscaledValue().intValue(),
-      myHideErrorsInSourceBlocks.isSelected(), myHideErrorsByLanguage.getText());
+      myHideErrorsInSourceBlocks.isSelected(), myHideErrorsByLanguage.getText(), myAsciidocletEnabled.isSelected());
   }
 }

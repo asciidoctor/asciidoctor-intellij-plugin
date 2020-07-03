@@ -96,6 +96,9 @@ public final class AsciiDocPreviewSettings {
   @Nullable
   private String myHideErrorsByLanguage;
 
+  @Attribute("asciidocletEnabledExperimental")
+  private boolean myAsciidocletEnabled = false;
+
   public AsciiDocPreviewSettings() {
   }
 
@@ -114,7 +117,8 @@ public final class AsciiDocPreviewSettings {
                                  boolean enableAttributeFolding,
                                  int zoom,
                                  boolean hideErrorsInSourceBlocks,
-                                 @Nullable String hideErrorsByLanguage) {
+                                 @Nullable String hideErrorsByLanguage,
+                                 boolean asciidocletEnabled) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
@@ -133,6 +137,7 @@ public final class AsciiDocPreviewSettings {
     myZoom = zoom;
     myHideErrorsInSourceBlocks = hideErrorsInSourceBlocks;
     myHideErrorsByLanguage = hideErrorsByLanguage;
+    myAsciidocletEnabled = asciidocletEnabled;
   }
 
   @NotNull
@@ -218,6 +223,10 @@ public final class AsciiDocPreviewSettings {
     return myShowAsciiDocWarningsAndErrorsInEditor;
   }
 
+  public boolean isAsciidocletEnabled() {
+    return myAsciidocletEnabled;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -280,6 +289,9 @@ public final class AsciiDocPreviewSettings {
     if (!Objects.equals(myHideErrorsByLanguage, that.myHideErrorsByLanguage)) {
       return false;
     }
+    if (myAsciidocletEnabled != that.myAsciidocletEnabled) {
+      return false;
+    }
     return attributes.equals(that.attributes);
   }
 
@@ -303,6 +315,7 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + Objects.hashCode(myZoom);
     result = 31 * result + (myHideErrorsInSourceBlocks ? 1 : 0);
     result = 31 * result + Objects.hashCode(myHideErrorsByLanguage);
+    result = 31 * result + (myAsciidocletEnabled ? 1 : 0);
     return result;
   }
 

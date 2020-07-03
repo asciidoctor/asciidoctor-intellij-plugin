@@ -77,14 +77,19 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceConfigurationError;
+import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_YML;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraAttachmentsDirRelative;
@@ -99,6 +104,8 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.findSpringRestDocSnippets;
  * @author Julien Viet
  */
 public class AsciiDoc {
+
+  private static final ReentrantLock LOCK = new ReentrantLock();
 
   private static class MaxHashMap extends LinkedHashMap<String, Asciidoctor> {
     @Override
@@ -150,146 +157,144 @@ public class AsciiDoc {
   }
 
   private Asciidoctor initWithExtensions(List<String> extensions, boolean springRestDocs, FileType format) {
-    synchronized (AsciiDoc.class) {
-      boolean extensionsEnabled;
-      AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
-      if (extensions.size() > 0) {
-        asciiDocApplicationSettings.setExtensionsPresent(projectBasePath, true);
-      }
-      String md;
-      if (Boolean.TRUE.equals(asciiDocApplicationSettings.getExtensionsEnabled(projectBasePath))) {
-        extensionsEnabled = true;
-        md = calcMd(projectBasePath, extensions);
-      } else {
-        extensionsEnabled = false;
-        md = calcMd(projectBasePath, Collections.emptyList());
-      }
-      if (springRestDocs) {
-        md = md + ".restdoc";
-      }
-      if (format == FileType.JAVAFX || format == FileType.HTML) {
-        // special ruby extensions loaded for JAVAFX and HTML
-        md = md + "." + format.name();
-      }
-      boolean krokiEnabled = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isKrokiEnabled();
-      if (krokiEnabled) {
-        md = md + ".kroki";
-      }
-      Asciidoctor asciidoctor = INSTANCES.get(md);
-      if (asciidoctor == null) {
-        ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
-        ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
-        SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
-        LogHandler logHandler = new IntellijLogHandler("initialize");
-        String oldEncoding = null;
-        if (Platform.IS_WINDOWS) {
+    boolean extensionsEnabled;
+    AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
+    if (extensions.size() > 0) {
+      asciiDocApplicationSettings.setExtensionsPresent(projectBasePath, true);
+    }
+    String md;
+    if (Boolean.TRUE.equals(asciiDocApplicationSettings.getExtensionsEnabled(projectBasePath))) {
+      extensionsEnabled = true;
+      md = calcMd(projectBasePath, extensions);
+    } else {
+      extensionsEnabled = false;
+      md = calcMd(projectBasePath, Collections.emptyList());
+    }
+    if (springRestDocs) {
+      md = md + ".restdoc";
+    }
+    if (format == FileType.JAVAFX || format == FileType.HTML) {
+      // special ruby extensions loaded for JAVAFX and HTML
+      md = md + "." + format.name();
+    }
+    boolean krokiEnabled = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isKrokiEnabled();
+    if (krokiEnabled) {
+      md = md + ".kroki";
+    }
+    Asciidoctor asciidoctor = INSTANCES.get(md);
+    if (asciidoctor == null) {
+      ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
+      ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
+      SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
+      LogHandler logHandler = new IntellijLogHandler("initialize");
+      String oldEncoding = null;
+      if (Platform.IS_WINDOWS) {
           /* There is an initialization procedure in Ruby.java that will abort
              when the encoding in file.encoding is not known to JRuby. Therefore default to UTF-8 in this case
              as a most sensible default. */
-          String encoding = System.getProperty("file.encoding", "UTF-8");
-          ByteList bytes = ByteList.create(encoding);
-          EncodingDB.Entry entry = EncodingDB.getEncodings().get(bytes.getUnsafeBytes(), bytes.getBegin(), bytes.getBegin() + bytes.getRealSize());
-          if (entry == null) {
-            entry = EncodingDB.getAliases().get(bytes.getUnsafeBytes(), bytes.getBegin(), bytes.getBegin() + bytes.getRealSize());
-          }
-          if (entry == null) {
-            // this happes for example with -Dfile.encoding=MS949 (Korean?)
-            oldEncoding = encoding;
-            LOG.warn("unsupported encoding " + encoding + " in JRuby, defaulting to UTF-8");
-            System.setProperty("file.encoding", "UTF-8");
-          }
+        String encoding = System.getProperty("file.encoding", "UTF-8");
+        ByteList bytes = ByteList.create(encoding);
+        EncodingDB.Entry entry = EncodingDB.getEncodings().get(bytes.getUnsafeBytes(), bytes.getBegin(), bytes.getBegin() + bytes.getRealSize());
+        if (entry == null) {
+          entry = EncodingDB.getAliases().get(bytes.getUnsafeBytes(), bytes.getBegin(), bytes.getBegin() + bytes.getRealSize());
         }
-        try {
-          asciidoctor = createInstance();
-          asciidoctor.registerLogHandler(logHandler);
-          // require openssl library here to enable download content via https
-          // requiring it later after other libraries have been loaded results in "undefined method `set_params' for #<OpenSSL::SSL::SSLContext"
-          asciidoctor.requireLibrary("openssl");
-          asciidoctor.javaExtensionRegistry().preprocessor(PREPEND_CONFIG);
-          asciidoctor.javaExtensionRegistry().includeProcessor(ANTORA_INCLUDE_ADAPTER);
-          if (format == FileType.JAVAFX || format == FileType.HTML) {
-            asciidoctor.javaExtensionRegistry().postprocessor(ATTRIBUTES_RETRIEVER);
-          }
-          // disable JUL logging of captured messages
-          // https://github.com/asciidoctor/asciidoctorj/issues/669
-          Logger.getLogger("asciidoctor").setUseParentHandlers(false);
-
-          if (!krokiEnabled) {
-            asciidoctor.requireLibrary("asciidoctor-diagram");
-          }
-
-          if (format == FileType.JAVAFX) {
-            try (InputStream is = this.getClass().getResourceAsStream("/sourceline-treeprocessor.rb")) {
-              if (is == null) {
-                throw new RuntimeException("unable to load script sourceline-treeprocessor.rb");
-              }
-              asciidoctor.rubyExtensionRegistry().loadClass(is).treeprocessor("SourceLineTreeProcessor");
-            }
-          }
-
-          if (format == FileType.JAVAFX) {
-            try (InputStream is = this.getClass().getResourceAsStream("/plantuml-png-patch.rb")) {
-              if (is == null) {
-                throw new RuntimeException("unable to load script plantuml-png-patch.rb");
-              }
-              asciidoctor.rubyExtensionRegistry().loadClass(is);
-            }
-          }
-          if (format.backend.equals("html5")) {
-            try (InputStream is = this.getClass().getResourceAsStream("/html5-antora.rb")) {
-              if (is == null) {
-                throw new RuntimeException("unable to load script html5-antora.rb");
-              }
-              asciidoctor.rubyExtensionRegistry().loadClass(is);
-            }
-          } else if (format.backend.equals("pdf")) {
-            try (InputStream is = this.getClass().getResourceAsStream("/pdf-antora.rb")) {
-              if (is == null) {
-                throw new RuntimeException("unable to load script pdf-antora.rb");
-              }
-              asciidoctor.rubyExtensionRegistry().loadClass(is);
-            }
-          }
-
-          if (springRestDocs) {
-            try (InputStream is = this.getClass().getResourceAsStream("/springrestdoc-operation-blockmacro.rb")) {
-              if (is == null) {
-                throw new RuntimeException("unable to load script springrestdoc-operation-blockmacro.rb");
-              }
-              asciidoctor.rubyExtensionRegistry().loadClass(is);
-            }
-          }
-
-          if (krokiEnabled) {
-            try (InputStream is = this.getClass().getResourceAsStream("/kroki-extension.rb")) {
-              if (is == null) {
-                throw new RuntimeException("unable to load script kroki-extension.rb");
-              }
-              asciidoctor.rubyExtensionRegistry().loadClass(is);
-            }
-          }
-
-          if (extensionsEnabled) {
-            for (String extension : extensions) {
-              asciidoctor.rubyExtensionRegistry().requireLibrary(extension);
-            }
-          }
-          INSTANCES.put(md, asciidoctor);
-        } catch (IOException e) {
-          throw new RuntimeException(e);
-        } finally {
-          if (oldEncoding != null) {
-            System.setProperty("file.encoding", oldEncoding);
-          }
-          if (asciidoctor != null) {
-            asciidoctor.unregisterLogHandler(logHandler);
-          }
-          SystemOutputHijacker.deregister();
-          notify(boasOut, boasErr, Collections.emptyList());
+        if (entry == null) {
+          // this happes for example with -Dfile.encoding=MS949 (Korean?)
+          oldEncoding = encoding;
+          LOG.warn("unsupported encoding " + encoding + " in JRuby, defaulting to UTF-8");
+          System.setProperty("file.encoding", "UTF-8");
         }
       }
-      return asciidoctor;
+      try {
+        asciidoctor = createInstance();
+        asciidoctor.registerLogHandler(logHandler);
+        // require openssl library here to enable download content via https
+        // requiring it later after other libraries have been loaded results in "undefined method `set_params' for #<OpenSSL::SSL::SSLContext"
+        asciidoctor.requireLibrary("openssl");
+        asciidoctor.javaExtensionRegistry().preprocessor(PREPEND_CONFIG);
+        asciidoctor.javaExtensionRegistry().includeProcessor(ANTORA_INCLUDE_ADAPTER);
+        if (format == FileType.JAVAFX || format == FileType.HTML) {
+          asciidoctor.javaExtensionRegistry().postprocessor(ATTRIBUTES_RETRIEVER);
+        }
+        // disable JUL logging of captured messages
+        // https://github.com/asciidoctor/asciidoctorj/issues/669
+        Logger.getLogger("asciidoctor").setUseParentHandlers(false);
+
+        if (!krokiEnabled) {
+          asciidoctor.requireLibrary("asciidoctor-diagram");
+        }
+
+        if (format == FileType.JAVAFX) {
+          try (InputStream is = this.getClass().getResourceAsStream("/sourceline-treeprocessor.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script sourceline-treeprocessor.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is).treeprocessor("SourceLineTreeProcessor");
+          }
+        }
+
+        if (format == FileType.JAVAFX) {
+          try (InputStream is = this.getClass().getResourceAsStream("/plantuml-png-patch.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script plantuml-png-patch.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
+          }
+        }
+        if (format.backend.equals("html5")) {
+          try (InputStream is = this.getClass().getResourceAsStream("/html5-antora.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script html5-antora.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
+          }
+        } else if (format.backend.equals("pdf")) {
+          try (InputStream is = this.getClass().getResourceAsStream("/pdf-antora.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script pdf-antora.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
+          }
+        }
+
+        if (springRestDocs) {
+          try (InputStream is = this.getClass().getResourceAsStream("/springrestdoc-operation-blockmacro.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script springrestdoc-operation-blockmacro.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
+          }
+        }
+
+        if (krokiEnabled) {
+          try (InputStream is = this.getClass().getResourceAsStream("/kroki-extension.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script kroki-extension.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
+          }
+        }
+
+        if (extensionsEnabled) {
+          for (String extension : extensions) {
+            asciidoctor.rubyExtensionRegistry().requireLibrary(extension);
+          }
+        }
+        INSTANCES.put(md, asciidoctor);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      } finally {
+        if (oldEncoding != null) {
+          System.setProperty("file.encoding", oldEncoding);
+        }
+        if (asciidoctor != null) {
+          asciidoctor.unregisterLogHandler(logHandler);
+        }
+        SystemOutputHijacker.deregister();
+        notify(boasOut, boasErr, Collections.emptyList());
+      }
     }
+    return asciidoctor;
   }
 
   /**
@@ -423,6 +428,12 @@ public class AsciiDoc {
   public static @Language("asciidoc")
   String config(Document document, Project project) {
     VirtualFile currentFile = FileDocumentManager.getInstance().getFile(document);
+    return config(currentFile, project);
+  }
+
+  @NotNull
+  public static @Language("asciidoc")
+  String config(VirtualFile currentFile, Project project) {
     StringBuilder tempContent = new StringBuilder();
     if (currentFile != null) {
       VirtualFile folder = currentFile.getParent();
@@ -503,10 +514,10 @@ public class AsciiDoc {
       LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
     );
-    validateAccess();
     Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
     attributes.putAll(populateDocumentAttributes(fileBaseDir, name));
-    synchronized (AsciiDoc.class) {
+    lock();
+    try {
       CollectingLogHandler logHandler = new CollectingLogHandler();
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
       ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
@@ -550,6 +561,8 @@ public class AsciiDoc {
         SystemOutputHijacker.deregister();
         notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
       }
+    } finally {
+      unlock();
     }
   }
 
@@ -564,7 +577,7 @@ public class AsciiDoc {
     return attributes;
   }
 
-  private void validateAccess() {
+  private static int validateAccess() {
     /* This class will lock on AsciiDoc.java so that only one instance of Asciidoctor is running at any time. This
     allows re-using the instances that are expensive to create (both in terms of memory and cpu seconds).
     When rendering an AsciiDoc document, this requires read-access to document for example to resolve Antora information
@@ -575,15 +588,21 @@ public class AsciiDoc {
     process 3: already acquired read-lock, now waiting for AsciiDoc lock -> will not proceed due to 2
      */
     if (ApplicationManager.getApplication().isWriteAccessAllowed()) {
-      throw new IllegalStateException("no read access should be allowed here as it might cause a deadlock");
+      throw new IllegalStateException("no write access should be allowed here as it might cause a deadlock");
     }
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       // in unit test mode there is always read-access allowed
-      return;
+      return 0;
     }
     if (ApplicationManager.getApplication().isReadAccessAllowed()) {
+      // the AsciiDocJavaDocInfoGenerator will get here with an existing ReadLock, use a timeout here to avoid a deadlock.
+      Set<StackTraceElement> nonblocking = Arrays.stream(Thread.currentThread().getStackTrace()).filter(stackTraceElement -> stackTraceElement.getClassName().endsWith("AsciiDocJavaDocInfoGenerator")).collect(Collectors.toSet());
+      if (nonblocking.size() > 0) {
+        return 20;
+      }
       throw new IllegalStateException("no read access should be allowed here as it might cause a deadlock");
     }
+    return 0;
   }
 
   public void convertTo(File file, String config, List<String> extensions, FileType format) {
@@ -595,8 +614,9 @@ public class AsciiDoc {
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
     );
     Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
-    validateAccess();
-    synchronized (AsciiDoc.class) {
+
+    lock();
+    try {
       CollectingLogHandler logHandler = new CollectingLogHandler();
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
       ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
@@ -648,7 +668,29 @@ public class AsciiDoc {
         Notifier notifier = this::notifyAlways;
         notifier.notify(boasOut, boasErr, logHandler.getLogRecords());
       }
+    } finally {
+      unlock();
     }
+  }
+
+  private static void lock() {
+    int timeout = validateAccess();
+    if (timeout == 0) {
+      LOCK.lock();
+    } else {
+      try {
+        if (!LOCK.tryLock(timeout, TimeUnit.SECONDS)) {
+          LOG.warn("unabel to acquire lock after timeout");
+          throw new ProcessCanceledException(new RuntimeException("unable to acquire lock after timeout"));
+        }
+      } catch (InterruptedException e) {
+        throw new RuntimeException("unable to acquire lock", e);
+      }
+    }
+  }
+
+  private static void unlock() {
+    LOCK.unlock();
   }
 
   public static Map<String, String> populateAntoraAttributes(String projectBasePath, File fileBaseDir, VirtualFile antoraModuleDir) {
