@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.31.9 (work in progress)
 
 - first support for Asciidoclet (#103)
+- don't show hint to install JavaFX when JCEF is available
 
 === 0.31.8 (preview, available from GitHub releases)
 
