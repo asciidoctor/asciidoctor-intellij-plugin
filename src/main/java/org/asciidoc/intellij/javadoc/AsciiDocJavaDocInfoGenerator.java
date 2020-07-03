@@ -18,6 +18,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * This post-processes Javadoc content with the AsciiDoc processor to support
+ * <a href="https://github.com/asciidoctor/asciidoclet">Asciidoclet</a>.
+ *
+ * @author Alexander Schwartz (alexander.schwartz@gmx.net) 2020
+ */
 public class AsciiDocJavaDocInfoGenerator extends JavaDocInfoGenerator {
   public static final String START = "<div class='content'>\n";
   public static final String END = "</div>";
@@ -45,23 +51,37 @@ public class AsciiDocJavaDocInfoGenerator extends JavaDocInfoGenerator {
     if (html != null) {
       int start = html.indexOf(START);
       int end = html.lastIndexOf(END);
+      // in some places the IntelliJ code adds a <p> right before the div, remove that as well.
       if (html.substring(end - 3, end).equals("<p>")) {
         end -= 3;
       }
+
+      // extract real AsciiDoc content
       @Language("asciidoc") String content = html.substring(start + START.length(), end);
+
+      // remove indentation spaces at beginning of the line
       int c = 0;
       while (content.length() > c && content.charAt(c) == ' ') {
         c++;
       }
       content = content.replaceAll("\n" + content.substring(0, c), "\n");
       content = content.substring(c);
+
+      // standard replacements of Asciidoclet
       content = content.replaceAll("\\\\/", "/");
       content = content.replaceAll("\\{at}", "@");
       content = content.replaceAll("\\{slash}", "/");
+
+      // change links to classes created by JavaDoc to pass-through content
       content = content.replaceAll("(</?(code|a)[^\n>]*>)", "+++$1+++");
+
+      // if the result contains <p> or <strong> HTML tags, the content was HTML-formatted Javadoc,
+      // therefore don't post-process this content.
       if (content.contains("<p>") || content.contains("<strong>")) {
         return html;
       }
+
+      // Convert AsciiDoc content to HTML
       PsiFile psiFile = element.getContainingFile();
       VirtualFile virtualFile = null;
       if (psiFile != null) {
@@ -82,7 +102,6 @@ public class AsciiDocJavaDocInfoGenerator extends JavaDocInfoGenerator {
         AsciiDoc asciiDoc = new AsciiDoc(project, fileBaseDir,
           tempImagesPath, name);
         content = asciiDoc.render(content, config, extensions);
-        html = html.substring(0, start + START.length()) + content + html.substring(end);
       } finally {
         if (tempImagesPath != null) {
           try {
@@ -92,6 +111,9 @@ public class AsciiDocJavaDocInfoGenerator extends JavaDocInfoGenerator {
           }
         }
       }
+
+      // place processed AsciiDoc content inside original HTML frame
+      html = html.substring(0, start + START.length()) + content + html.substring(end);
     }
     return html;
   }
