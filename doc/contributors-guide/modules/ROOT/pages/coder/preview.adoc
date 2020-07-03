@@ -23,22 +23,24 @@ Its capabilities to display HTML and CSS are limited, therefore the preview is n
 
 The JavaFX preview is the current default preview.
 It is available when the user is running 64bit JDK with JavaFX (the default JDK for JetBrains IDE).
+Starting with release 2020.2 JetBrains doesn't ship JavaFX prebundled.
+User can install the https://plugins.jetbrains.com/plugin/14250-javafx-runtime-for-plugins[JavaFX for plguins^] on 64bit JREs to to re-enable the JavaFX preview.
 
 The JCEF preview is available from IntelliJ 2020.2 onwards when running the IDE with JetBrains Runtime.
 
 The JavaFX and JCEF previews use HTML enriched with CSS and JavaScript.
 They use JavaScript to scroll the preview to the current position: once the user moves the cursor, the cursor line is transmitted to the preview using `scrollToLine()` and repositions the preview using JavaScript.
 
-When the user interacts with the JavaFX preview (for example clicks on a text or a link), there is a bridge `JavaPanelBridge` back from JavaScript to Java to trigger actions like scrolling the editor or opening a link in the browser.
+When the user interacts with the JavaFX or JCEF preview (for example clicks on a text or a link), there is a bridge `JavaPanelBridge` back from JavaScript to Java to trigger actions like scrolling the editor or opening a link in the browser.
 
 == Debugging the preview
 
-You can log information from the JavaFX preview the preview using
+You can log information from the JavaFX or JCEF preview the preview using
 
 [source,javascript]
 ----
 window.JavaPanelBridge.log("...")
 ----
 
-this will call the method `JavaPanelBridge#log`, an inner class of `JavaFxHtmlPanel`.
+this will call the method `JavaPanelBridge#log`, an inner class of `JavaFxHtmlPanel` for the JavaFX preview and `myBrowserLog.addHandler` for the JCEF preview.
 

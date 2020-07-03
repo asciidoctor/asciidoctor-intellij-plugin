@@ -11,13 +11,14 @@ endif::[]
 To use this plugin, you need to have one of the IntelliJ family of IDEs like IntelliJ IDEA, GoLand, WebStorm or PyCharm installed.
 
 All default download packages include the JetBrains Runtime 11, a pre-bundled OpenJDK runtime environment.
-Please use the pre-bundled JetBrains Runtime to run the IDE as it includes JavaFX (which is required for a rich preview) and proves to be the most stable.
+Please use the pre-bundled JetBrains Runtime to run the IDE as it proves to be the most stable.
 
-From IntelliJ 2020.2 onward the plugin support the JCEF browser preview.
+Up to and including IntelliJ IDEA 2020.1 the pre-bundled OpenJDK includes JavaFX, with is required for a rich preview.
+Starting with IDEA 2020.1 the JavaFX preview is only available after installing https://plugins.jetbrains.com/plugin/14250-javafx-runtime-for-plugins[JavaFX for plugins^].
+
+From IntelliJ 2020.2 onward the plugin supports the JCEF browser preview.
 It uses and embedded Chrome browser with up-to-date JavaScript and CSS handling.
 It is only included in the recent JetBrains runtimes.
-As it is a fairly recent addition it is marked "`experimental`".
-Once it matures, it will be the next default preview.
 
 If you've already installed the IDE and the plugin, continue to section xref:features.adoc[].
 

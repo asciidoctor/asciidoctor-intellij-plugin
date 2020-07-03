@@ -18,7 +18,7 @@ Feel free to choose these or any other ticket to participate, or create pull req
 
 You can install the plugin (named "`AsciiDoc`") from the plugins section inside your JetBrains IDE or download it from the https://plugins.jetbrains.com/plugin/7391[JetBrains Plugin Repository].
 
-The most advanced and recommended preview mode (and default for new installations) is JavaFX.
+The most advanced and recommended preview modes (and default for new installations) are JavaFX and JCEF.
 
 Refer to the link:{homepage-url}/docs/users-guide/installation.html[installation] for a detailed overview of the features.
 
