@@ -103,8 +103,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   @NotNull
   private String base;
   private VirtualFile parentDirectory;
-  private int lineCount;
-  private volatile boolean forceRefresh = false;
+  private volatile int lineCount;
+  private volatile int line;
+  private volatile boolean forceRefresh = true;
   private volatile long stamp = 0;
   private volatile boolean replaceResult = false;
   private volatile String frameHtml = null;
@@ -210,13 +211,13 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
         + asciidoctorVersion
         + "/data/stylesheets/coderay-asciidoctor.css")) {
-        myInlineCss += IOUtils.toString(stream);
+        myInlineCss += IOUtils.toString(stream, StandardCharsets.UTF_8);
       }
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("rouge-github.css")) {
-        myInlineCss += IOUtils.toString(is);
+        myInlineCss += IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
-        myInlineCssDarcula = myInlineCss + IOUtils.toString(stream);
+        myInlineCssDarcula = myInlineCss + IOUtils.toString(stream, StandardCharsets.UTF_8);
       }
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
@@ -456,7 +457,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     try (InputStream steam = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
       + asciidoctorVersion
       + "/data/stylesheets/asciidoctor-default.css")) {
-      css = IOUtils.toString(steam);
+      css = IOUtils.toString(steam, StandardCharsets.UTF_8);
     }
 
     // the following lines have been added for JavaFX
@@ -481,8 +482,21 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   @Nullable
   private String myGoogleFontsCssLink;
 
+  private boolean tobeDisposed = false;
+  private volatile boolean hasLoadedOnce = false;
+
   @Override
   public synchronized void setHtml(@NotNull String htmlParam, @NotNull Map<String, String> attributes) {
+    getCefBrowser().setFocus(true);
+    if (tobeDisposed) {
+      return;
+    }
+    if (getCefBrowser().getFocusedFrame() == null && hasLoadedOnce) {
+      // the CEF browser might have terminated after an initial rendering (seen with 202.6109.22)
+      // dispose this component so that it will be reloaded.
+      disposeMyself();
+      return;
+    }
     rendered = new CountDownLatch(1);
     replaceResultLatch = new CountDownLatch(1);
     stamp += 1;
@@ -571,12 +585,24 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       // this prevents us building up a queue that would lead to a lagging preview
       if (htmlParam.length() > 0 && !rendered.await(3, TimeUnit.SECONDS)) {
         LOG.warn("rendering didn't complete in time, might be slow or broken");
-        forceRefresh = true;
-        reregisterHandlers();
+        if (getCefBrowser().getFocusedFrame() == null) {
+          disposeMyself();
+        } else {
+          forceRefresh = true;
+          reregisterHandlers();
+        }
       }
     } catch (InterruptedException e) {
       LOG.warn("interrupted while waiting for refresh to complete");
     }
+  }
+
+  private void disposeMyself() {
+    LOG.warn("triggering disposal of preview");
+    ApplicationManager.getApplication().getMessageBus()
+      .syncPublisher(AsciiDocPreviewEditor.RefreshPreviewListener.TOPIC)
+      .refreshPreview(this);
+    tobeDisposed = true;
   }
 
   @NotNull
@@ -688,6 +714,12 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     Disposer.dispose(myJSQuerySetScrollY);
     Disposer.dispose(myRenderedResult);
     Disposer.dispose(myRenderedIteration);
+    Disposer.dispose(myBrowserLog);
+    Disposer.dispose(myScrollEditorToLine);
+    Disposer.dispose(myZoomDelta);
+    Disposer.dispose(myZoomReset);
+    Disposer.dispose(mySaveImage);
+    Disposer.dispose(myOpenLink);
   }
 
   private String findTempImageFile(String filename, String imagesdir) {
@@ -785,6 +817,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   @Override
   public void scrollToLine(int line, int lineCount) {
     this.lineCount = lineCount;
+    this.line = line;
     getCefBrowser().executeJavaScript(
       "if ('__IntelliJTools' in window) " +
         "__IntelliJTools.scrollToLine(" + line + ", " + lineCount + ");",
@@ -819,6 +852,10 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             myJSQuerySetScrollY.inject("value"),
           getCefBrowser().getURL(), 0);
       } else {
+        if (!hasLoadedOnce && myScrollPreservingListener.myScrollY == 0) {
+          scrollToLine(line, lineCount);
+        }
+        hasLoadedOnce = true;
         getCefBrowser().executeJavaScript("document.documentElement.scrollTop = ({} || document.body).scrollTop = " + myScrollY,
           getCefBrowser().getURL(), 0);
       }

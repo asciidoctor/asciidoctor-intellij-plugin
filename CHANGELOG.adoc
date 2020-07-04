@@ -7,11 +7,12 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.9 (work in progress)
+=== 0.31.9 (preview, available from GitHub releases)
 
 - first support for Asciidoclet (#103)
 - don't show hint to install JavaFX when JCEF is available
 - Most recent 2020.2 EAP builds suggest that JavaFX will no longer pre-bundled with the IDE, instead JCEF will be included. Docs updated with link to https://plugins.jetbrains.com/plugin/14250-javafx-runtime-for-plugins[JavaFX for plugins^]
+- workaround for JCEF preview disappearing, workaround of restoring the preview component (#517)
 
 === 0.31.8 (preview, available from GitHub releases)
 

@@ -51,6 +51,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.Alarm;
 import com.intellij.util.FileContentUtilCore;
 import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.messages.Topic;
 import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -191,7 +192,6 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     }
   }
 
-  @Nullable("Null means leave current panel")
   private AsciiDocHtmlPanelProvider retrievePanelProvider(@NotNull AsciiDocApplicationSettings settings) {
     final AsciiDocHtmlPanelProvider.ProviderInfo providerInfo = settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo();
 
@@ -231,6 +231,23 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     return provider;
   }
 
+  private class MyRefreshPreviewListener implements RefreshPreviewListener {
+    @Override
+    public void refreshPreview(@NotNull AsciiDocHtmlPanel panel) {
+      mySwingAlarm.addRequest(() -> {
+        synchronized (this) {
+          if (panel == myPanel) {
+            final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+            myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, retrievePanelProvider(settings));
+            myPanel.scrollToLine(targetLineNo, document.getLineCount());
+          }
+          currentContent = null; // force a refresh of the preview by resetting the current memorized content
+          renderIfVisible();
+        }
+      }, 0, ModalityState.stateForComponent(getComponent()));
+    }
+  }
+
   public AsciiDocPreviewEditor(final Document document, Project project) {
 
     this.document = document;
@@ -243,13 +260,18 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
 
     myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, null, retrievePanelProvider(settings));
+    myPanel.scrollToLine(targetLineNo, document.getLineCount());
 
     MessageBusConnection settingsConnection = ApplicationManager.getApplication().getMessageBus().connect(this);
+
     AsciiDocApplicationSettings.SettingsChangedListener settingsChangedListener = new MyUpdatePanelOnSettingsChangedListener();
     settingsConnection.subscribe(AsciiDocApplicationSettings.SettingsChangedListener.TOPIC, settingsChangedListener);
 
     MyEditorColorsListener editorColorsListener = new MyEditorColorsListener();
     settingsConnection.subscribe(EditorColorsManager.TOPIC, editorColorsListener);
+
+    MyRefreshPreviewListener refreshPreviewListener = new MyRefreshPreviewListener();
+    settingsConnection.subscribe(RefreshPreviewListener.TOPIC, refreshPreviewListener);
 
     // Get asciidoc asynchronously
     new Thread(asciidoc).start();
@@ -477,7 +499,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    */
   @Override
   public void dispose() {
-    Disposer.dispose(this);
+    Disposer.dispose(myPanel);
     if (tempImagesPath != null) {
       try {
         FileUtils.deleteDirectory(tempImagesPath.toFile());
@@ -508,6 +530,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       mySwingAlarm.addRequest(() -> {
         synchronized (this) {
           myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
+          myPanel.scrollToLine(targetLineNo, document.getLineCount());
         }
         currentContent = null; // force a refresh of the preview by resetting the current memorized content
         renderIfVisible();
@@ -535,4 +558,10 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       }
     }
   }
+
+  public interface RefreshPreviewListener {
+    Topic<AsciiDocPreviewEditor.RefreshPreviewListener> TOPIC = Topic.create("AsciiDocRefreshPreview", AsciiDocPreviewEditor.RefreshPreviewListener.class);
+    void refreshPreview(@NotNull AsciiDocHtmlPanel panel);
+  }
+
 }
