@@ -29,6 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.jcef.JBCefJSQuery;
+import com.intellij.ui.jcef.JBCefPsiNavigationUtils;
 import com.intellij.ui.jcef.JCEFHtmlPanel;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.PsiNavigateUtil;
@@ -363,6 +364,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     });
 
     myOpenLink.addHandler((r) -> {
+      if (JBCefPsiNavigationUtils.INSTANCE.navigateTo(r)) {
+        return null;
+      }
       openLink(r);
       return null;
     });
