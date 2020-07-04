@@ -14,7 +14,7 @@ All default download packages include the JetBrains Runtime 11, a pre-bundled Op
 Please use the pre-bundled JetBrains Runtime to run the IDE as it proves to be the most stable.
 
 Up to and including IntelliJ IDEA 2020.1 the pre-bundled OpenJDK includes JavaFX, with is required for a rich preview.
-Starting with IDEA 2020.2 the JavaFX preview is only available after installing https://plugins.jetbrains.com/plugin/14250-javafx-runtime-for-plugins[JavaFX for plugins^].
+Starting with IDEA 2020.2 the JavaFX preview is only available after installing the plugin https://plugins.jetbrains.com/plugin/14250-javafx-runtime-for-plugins["`JavaFX for plugins`"^].
 
 From IntelliJ 2020.2 onward the plugin supports the JCEF browser preview.
 It uses and embedded Chrome browser with up-to-date JavaScript and CSS handling.
