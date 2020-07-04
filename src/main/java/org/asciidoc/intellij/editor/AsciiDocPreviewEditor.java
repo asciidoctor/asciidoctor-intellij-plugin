@@ -372,16 +372,21 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   @Override
   public void selectNotify() {
     myHtmlPanelWrapper.repaint();
-    ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-      // project might be already closed (yes, this really happens when you work in multiple projects opened in separate windows)
-      if (!project.isDisposed()) {
-        currentContent = null; // force a refresh of the preview by resetting the current memorized content
-        reprocessAnnotations();
-        // save the content in all other editors as their content might be referenced in preview
-        ApplicationManager.getApplication().saveAll();
-        renderIfVisible();
+    ApplicationManager.getApplication().invokeLater(() -> {
+      // don't try to run save-all in paralle, therefore synchronize on current class
+      synchronized (this) {
+        ApplicationManager.getApplication().runWriteAction(() -> {
+          // project might be already closed (yes, this really happens when you work in multiple projects opened in separate windows)
+          if (!project.isDisposed()) {
+            currentContent = null; // force a refresh of the preview by resetting the current memorized content
+            reprocessAnnotations();
+            // save the content in all other editors as their content might be referenced in preview
+            ApplicationManager.getApplication().saveAll();
+            renderIfVisible();
+          }
+        });
       }
-    }), ModalityState.NON_MODAL);
+    }, ModalityState.NON_MODAL);
   }
 
   private void reprocessAnnotations() {
