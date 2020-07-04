@@ -278,7 +278,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     myJSQuerySetScrollY.addHandler((scrollY) -> {
       try {
         if (scrollY != null && scrollY.length() > 0) {
-          myScrollPreservingListener.myScrollY = Integer.parseInt(scrollY);
+          myScrollPreservingListener.myScrollY = (int) Double.parseDouble(scrollY);
         }
       } catch (NumberFormatException e) {
         LOG.warn("unable to parse scroll Y", e);
@@ -585,7 +585,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       // this prevents us building up a queue that would lead to a lagging preview
       if (htmlParam.length() > 0 && !rendered.await(3, TimeUnit.SECONDS)) {
         LOG.warn("rendering didn't complete in time, might be slow or broken");
-        if (getCefBrowser().getFocusedFrame() == null) {
+        if (getCefBrowser().getFocusedFrame() == null || this.isDisposed()) {
           disposeMyself();
         } else {
           forceRefresh = true;
