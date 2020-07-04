@@ -70,6 +70,10 @@ public class AsciiDocJavaDocInfoGenerator extends JavaDocInfoGenerator {
 
     if (html != null) {
       int start = html.indexOf(START);
+      if (start == -1) {
+        // no Javadoc content found
+        return html;
+      }
       int end = html.lastIndexOf(END);
       // in some places the IntelliJ code adds a <p> right before the div, remove that as well.
       if (html.substring(end - 3, end).equals("<p>")) {
