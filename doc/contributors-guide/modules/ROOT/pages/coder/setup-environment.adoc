@@ -11,8 +11,22 @@ As some parts of the code still support Java 8 and JavaFX 8, you can't develop w
 The plugin will still run in environments with Java 11.
 
 JetBrains JDK 8::
-Comes with a bundled JavaFX, download here: https://bintray.com/jetbrains/intellij-jdk[JetBrains OpenJDK 8]
+Comes with a bundled JavaFX, download here: https://bintray.com/jetbrains/intellij-jdk[JetBrains OpenJDK 8].
 This way you can develop with the JDK that is also running the JetBrains IDE.
+
+For the Gradle build tool to pick up the Java version, point the environment variable `JAVA_HOME` to the folder with the JDK:
+
+.Setting the environment variable on Linux/MacOS
+----
+export JAVA_HOME=...
+----
+
+.Setting the environment variable on Windows
+----
+JAVA_HOME=c:\workspace\...
+----
+
+== Alternative JDKs
 
 Oracle JDK 8::
 Meets both dependencies, JavaFX is bundled with it out-of-the box.
