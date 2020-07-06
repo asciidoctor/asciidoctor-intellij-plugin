@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.83 (preview, available from GitHub releases)
+
+- publish file information to allow status with a filename in IntelliJ Discord plugin (#518)
+
 === 0.30.82 (preview, available from GitHub releases)
 
 - mark indexes to be rebuilt due to AST changes (#508)
