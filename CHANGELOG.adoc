@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.11 (preview, available from GitHub releases)
+
+- publish file information to allow status with a filename in IntelliJ Discord plugin (#518)
+
 === 0.31.10 (preview, available from GitHub releases)
 
 - don't lose focus of editor for JCEF preview (#517)
