@@ -487,7 +487,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
   @Override
   public synchronized void setHtml(@NotNull String htmlParam, @NotNull Map<String, String> attributes) {
-    getCefBrowser().setFocus(true);
     if (tobeDisposed) {
       return;
     }
