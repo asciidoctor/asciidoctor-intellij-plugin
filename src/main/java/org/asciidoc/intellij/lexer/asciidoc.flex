@@ -1164,7 +1164,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            return AsciiDocTokenTypes.LT;
                          }
                         }
-  (->|=>|<-|<=)        { return textFormat(); } // avoid errors to be recognized as LT/GT
+  (->|=>|<-|<=)        { return AsciiDocTokenTypes.ARROW; } // avoid errors to be recognized as LT/GT
   {LT}                 { return AsciiDocTokenTypes.LT; }
   {GT}                 { return AsciiDocTokenTypes.GT; }
   {SINGLE_QUOTE}       { if (isUnconstrainedStart() || isUnconstrainedEnd()) {

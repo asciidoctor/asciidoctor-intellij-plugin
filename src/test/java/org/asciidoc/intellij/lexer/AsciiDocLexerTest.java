@@ -777,6 +777,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('constrained')");
   }
 
+  public void testArrow() {
+    doTest("-> => <- <=",
+      "AsciiDoc:ARROW ('->')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:ARROW ('=>')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:ARROW ('<-')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:ARROW ('<=')");
+  }
+
   public void testBoldAtBeginningAndEndOfLineDouble() {
     doTest("**bold**",
       "AsciiDoc:BOLD_START ('**')\n" +

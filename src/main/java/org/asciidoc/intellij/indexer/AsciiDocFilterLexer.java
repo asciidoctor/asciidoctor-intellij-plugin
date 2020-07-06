@@ -39,6 +39,7 @@ public class AsciiDocFilterLexer extends BaseFilterLexer {
     AsciiDocTokenTypes.ITALIC_START,
     AsciiDocTokenTypes.ITALIC_END,
     AsciiDocTokenTypes.MONO_START,
+    AsciiDocTokenTypes.ARROW,
     AsciiDocTokenTypes.MONO_END,
     AsciiDocTokenTypes.BOLD_START,
     AsciiDocTokenTypes.BOLD_END,
