@@ -12,6 +12,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.UserDataHolderBase;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.JBSplitter;
 import org.asciidoc.intellij.AsciiDocBundle;
@@ -264,6 +265,12 @@ public abstract class SplitFileEditor<E1 extends TextEditor, E2 extends FileEdit
   public void dispose() {
     Disposer.dispose(myMainEditor);
     Disposer.dispose(mySecondEditor);
+  }
+
+  @Nullable
+  @Override
+  public VirtualFile getFile() {
+    return getMainEditor().getFile();
   }
 
   static class MyFileEditorState implements FileEditorState {
