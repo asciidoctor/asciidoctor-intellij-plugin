@@ -76,14 +76,19 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
     }
   }
 
-  // new interface method as part of 2020.1 release
-  @SuppressWarnings("MissingOverride")
-  // @Override
+  @Override
   public boolean isEnabledByDefault() {
     return true;
   }
 
-  // TODO: consider implementing getContextRootTextDomain(), available from 2020.1
+  @NotNull
+  @Override
+  public TextDomain getContextRootTextDomain(@NotNull PsiElement root) {
+    if (root instanceof PsiComment) {
+      return TextDomain.COMMENTS;
+    }
+    return TextDomain.PLAIN_TEXT;
+  }
 
   @Nullable
   @Override
