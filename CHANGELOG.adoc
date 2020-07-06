@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.31.11 (preview, available from GitHub releases)
 
-- publish file information to allow status with a filename in IntelliJ Discord plugin (#518)
+- publish file information to allow status with a filename in IntelliJ Discord plugin (thanks to @NonNullDinu) (#518)
 
 === 0.31.10 (preview, available from GitHub releases)
 
