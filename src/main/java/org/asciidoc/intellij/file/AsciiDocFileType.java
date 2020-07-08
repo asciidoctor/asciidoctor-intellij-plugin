@@ -115,6 +115,7 @@ public class AsciiDocFileType extends LanguageFileType {
           LOG.info("checkUnloadPlugin");
           // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/512
           // another reason: on windows even after unloading JAR file of the plugin still be locked and can't be deleted, making uninstall impossible
+          // https://youtrack.jetbrains.com/issue/IDEA-244471
           throw new CannotUnloadPluginException("unloading mechanism is not safe, incomplete unloading might lead to strange exceptions");
           // AsciiDoc.checkUnloadPlugin();
         }
