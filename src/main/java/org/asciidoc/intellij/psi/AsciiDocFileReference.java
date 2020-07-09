@@ -249,8 +249,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           AsciiDocSection section = null;
           if (element instanceof AsciiDocSection) {
             section = (AsciiDocSection) element;
-          }
-          if (element != null && element.getParent() instanceof AsciiDocSection) {
+          } else if (element != null && element.getParent() instanceof AsciiDocSection) {
             // the items would only return the
             section = (AsciiDocSection) element.getParent();
           }

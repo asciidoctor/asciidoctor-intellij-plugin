@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.84 (preview, available from GitHub releases)
+
+- fix resolving of references by their titles
+
 === 0.30.83 (preview, available from GitHub releases)
 
 - publish file information to allow status with a filename in IntelliJ Discord plugin (thanks to @NonNullDinu) (#518)
