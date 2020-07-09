@@ -247,7 +247,14 @@
         },
         "start_path": {
           "type": "string",
-          "description": "Start path within the Git repository to find the antora."
+          "description": "Start path within the Git repository to find the Antora."
+        },
+        "start_paths": {
+          "type": [
+            "array",
+            "string"
+          ],
+          "description": "Start paths within the Git repository to find the Antora."
         },
         "branches": {
           "type": [
