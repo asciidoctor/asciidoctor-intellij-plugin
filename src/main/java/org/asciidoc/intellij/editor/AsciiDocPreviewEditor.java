@@ -421,13 +421,13 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
               ApplicationManager.getApplication().runWriteAction(() -> {
                 // project might be already closed (yes, this really happens when you work in multiple projects opened in separate windows)
                 if (!project.isDisposed()) {
-                  currentContent = null; // force a refresh of the preview by resetting the current memorized content
                   // save the content in all other editors as their content might be referenced in preview
                   // don't use ApplicationManager.getApplication().saveAll() as it will save in the background and will save settings as well
                   for (Document unsavedDocument : FileDocumentManager.getInstance().getUnsavedDocuments()) {
                     FileDocumentManager.getInstance().saveDocument(unsavedDocument);
                   }
                   reprocessAnnotations();
+                  currentContent = null; // force a refresh of the preview by resetting the current memorized content
                   renderIfVisible();
                 }
               });
@@ -435,8 +435,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
               SAVE_ALL_LOCK.unlock();
             }
           } else {
-            currentContent = null; // force a refresh of the preview by resetting the current memorized content
             reprocessAnnotations();
+            currentContent = null; // force a refresh of the preview by resetting the current memorized content
             renderIfVisible();
             log.warn("unable to acquire lock for save-all-docs");
           }
@@ -446,8 +446,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       });
     } else {
       if (!project.isDisposed()) {
-        currentContent = null; // force a refresh of the preview by resetting the current memorized content
         reprocessAnnotations();
+        currentContent = null; // force a refresh of the preview by resetting the current memorized content
         renderIfVisible();
       }
     }
