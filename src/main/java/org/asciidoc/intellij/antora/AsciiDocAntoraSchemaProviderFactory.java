@@ -9,22 +9,22 @@ import com.jetbrains.jsonSchema.extension.SchemaType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 public class AsciiDocAntoraSchemaProviderFactory implements JsonSchemaProviderFactory {
   @NotNull
   @Override
   public List<JsonSchemaFileProvider> getProviders(@NotNull Project project) {
-    return Collections.singletonList(new MyJsonSchemaFileProvider());
+    return Arrays.asList(new AntoraComponentSchemaFileProvider(), new AntoraPlaybookSchemaFileProvider());
   }
 
-  public static class MyJsonSchemaFileProvider implements JsonSchemaFileProvider {
+  public static class AntoraComponentSchemaFileProvider implements JsonSchemaFileProvider {
 
     private final NullableLazyValue<VirtualFile> mySchemaFile;
 
-    public MyJsonSchemaFileProvider() {
-      mySchemaFile = NullableLazyValue.createValue(() -> JsonSchemaProviderFactory.getResourceFile(AsciiDocAntoraSchemaProviderFactory.class, "/jsonSchemas/antoraSchema.json"));
+    public AntoraComponentSchemaFileProvider() {
+      mySchemaFile = NullableLazyValue.createValue(() -> JsonSchemaProviderFactory.getResourceFile(AsciiDocAntoraSchemaProviderFactory.class, "/jsonSchemas/antoraComponentSchema.json"));
     }
 
     @Override
@@ -35,7 +35,39 @@ public class AsciiDocAntoraSchemaProviderFactory implements JsonSchemaProviderFa
     @NotNull
     @Override
     public String getName() {
-      return "Antora Schema";
+      return "Antora Component Schema";
+    }
+
+    @Nullable
+    @Override
+    public VirtualFile getSchemaFile() {
+      return mySchemaFile.getValue();
+    }
+
+    @NotNull
+    @Override
+    public SchemaType getSchemaType() {
+      return SchemaType.embeddedSchema;
+    }
+  }
+
+  public static class AntoraPlaybookSchemaFileProvider implements JsonSchemaFileProvider {
+
+    private final NullableLazyValue<VirtualFile> mySchemaFile;
+
+    public AntoraPlaybookSchemaFileProvider() {
+      mySchemaFile = NullableLazyValue.createValue(() -> JsonSchemaProviderFactory.getResourceFile(AsciiDocAntoraSchemaProviderFactory.class, "/jsonSchemas/antoraPlaybookSchema.json"));
+    }
+
+    @Override
+    public boolean isAvailable(@NotNull VirtualFile file) {
+      return file.getName().endsWith(".yml") && file.getName().contains("antora") && file.getName().contains("playbook");
+    }
+
+    @NotNull
+    @Override
+    public String getName() {
+      return "Antora Playbook Schema";
     }
 
     @Nullable

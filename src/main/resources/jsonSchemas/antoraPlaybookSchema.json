@@ -1,0 +1,262 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Antora component descriptor antora-playbook.yml",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "site": {
+      "properties": {
+        "start_page": {
+          "type": "string",
+          "description": "The start page for the site, redirected from the site index."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the site."
+        },
+        "url": {
+          "type": "string",
+          "description": "The base URL (absolute URL or pathname) of the published site. Should not include a trailing slash."
+        },
+        "robots": {
+          "type": "string",
+          "description": "Controls generation of robots.txt if site.url is set (allowed values: allow, disallow, or custom string).",
+          "examples": [
+            "allow",
+            "disallow"
+          ]
+        },
+        "keys": {
+          "type": "object",
+          "description": "An API key (in the form name=value) to pass to the UI model. May be specified multiple times."
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "properties": {
+        "branches": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "description": "Branches as comma-separated list, an array or a list. Negate entries by prepending with a '!', use '*' as a wildcard.",
+          "default": [
+            "v*",
+            "master"
+          ]
+        },
+        "edit_url": {
+          "type": [
+            "boolean",
+            "string"
+          ],
+          "description": "The default edit URL setting when no specific setting is provided.",
+          "default": true
+        },
+        "sources": {
+          "type": "array",
+          "description": "The list of git repositories + branch patterns to use.",
+          "default": [],
+          "items": {
+            "$ref": "#/definitions/source"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "documentation": "The default tag pattern to use when no specific pattern is provided."
+        }
+      },
+      "description": "The prerelease key is a marker that this version is considered prerelease. Prerelease versions are skipped when selecting the latest version of a component (unless all versions are prereleases, in which case the normal rules apply)."
+    },
+    "ui": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "bundle": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "description": "The URL of the UI bundle. Can be a path on the local filesystem."
+            },
+            "snapshot": {
+              "type": "boolean",
+              "description": "Whether the bundle URL points to a snapshot that changes over time."
+            },
+            "start_path": {
+              "type": "string",
+              "description": "The relative path inside the bundle from which to start reading files.",
+              "default": ""
+            }
+          }
+        },
+        "output_dir": {
+          "type": "string",
+          "description": "The output directory path relative to the site root where the UI files should be written.",
+          "default": "_"
+        },
+        "default_layout": {
+          "type": "string",
+          "description": "The default layout to apply to pages that do not specify a layout."
+        },
+        "supplemental_files": {
+          "type": [
+            "array",
+            "string"
+          ],
+          "description": "Supplemental file list or a directory of files to append to the UI bundle."
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cache_dir": {
+          "description": "The cache directory. (default: antora folder under cache dir for current user)",
+          "type": "string"
+        },
+        "fetch": {
+          "description": "Download updates from remote resources. Includes content repositories and the UI bundle.",
+          "type": "boolean",
+          "default": false
+        },
+        "pull": {
+          "description": "(Deprecated; to be removed in Antora 3) Download updates from remote resources. Use --fetch instead.",
+          "type": "boolean"
+        },
+        "quiet": {
+          "description": "Do not write any messages to stdout.",
+          "type": "boolean",
+          "default": false
+        },
+        "silent": {
+          "description": "Suppress all messages.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "asciidoc": {
+      "type": "object",
+      "properties": {
+        "attributes": {
+          "$ref": "#/definitions/asciidoc_attributes"
+        },
+        "extensions": {
+          "type": "array",
+          "description": "A list of require paths for registering extensions per instance of the AsciiDoc processor.",
+          "default": []
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "clean": {
+          "type": "boolean",
+          "description": "Remove destination path before publishing (fs only).",
+          "default": false
+        },
+        "dir": {
+          "type": "string",
+          "description": "The directory where the site should be published. (default: build/site)"
+        },
+        "destinations": {
+          "type": "array",
+          "description": "A list of destinations where the generated site should be published."
+        }
+      }
+    },
+    "git": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "credentials": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "The path to a git credentials file matching the format used by git-credential-store."
+            },
+            "contents": {
+              "type": "string",
+              "description": "The git credentials data matching the format used by git-credentials-store (optionally comma-separated)."
+            }
+          }
+        },
+        "ensure_git_suffix": {
+          "type": "boolean",
+          "description": "Instructs the git client to automatically append .git to the repository URL if absent.",
+          "default": true
+        },
+        "ensureGitSuffix": {
+          "type": "boolean",
+          "description": "(Deprecated; to be removed in Antora 3) Instructs the git client to automatically append .git to the repository URL if absent."
+        }
+      }
+    },
+    "urls": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "html_extension_style": {
+          "type": "string",
+          "description": "The user-facing URL extension to use for HTML pages.",
+          "pattern": "(default|drop|indexify)",
+          "default": "default"
+        },
+        "redirect_facility": {
+          "type": "string",
+          "description": "The facility for handling page alias and start page redirections.",
+          "pattern": "(disabled|httpd|netlify|nginx|static)",
+          "default": "static"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "asciidoc_attributes": {
+      "type": "object",
+      "description": "AsciiDoc Attributes",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[a-zA-Z0-9_]+[a-zA-Z0-9_-]*$": {
+          "type": [
+            "string",
+            "boolean",
+            "number"
+          ],
+          "description": "Attributes can be set and unset.\nTo hard set an attribute, simply enter its value. Hard set component version attributes can’t be reassigned or unset by a page.\nTo soft set an attribute, attach the @ modifier to the end of its value. A page can override soft set component version attributes.\nTo hard unset an attribute, assign it the tilde symbol (~). Hard unset component version attributes can’t be set by a page.\nTo soft unset an attribute, assign the value false. A page can override soft unset component version attributes."
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "description": "Source",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "URL to Git repository. Can also be a relative file path."
+        },
+        "start_path": {
+          "type": "string",
+          "description": "Start path within the Git repository to find the antora."
+        },
+        "branches": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "description": "Branches as comma-separated list, an array or a list. Negate entries by prepending with a '!', use '*' as a wildcard."
+        }
+      }
+    }
+  }
+}
