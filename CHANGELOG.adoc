@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.30.84 (preview, available from GitHub releases)
 
 - fix resolving of references by their titles
+- avoid blocking lock when switching AsciiDoc editor when trying to save contents of changed documents (#520)
 
 === 0.30.83 (preview, available from GitHub releases)
 
