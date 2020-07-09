@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.31.12 (work in progress)
 
 - highlighting and spell checking improved for arrows
+- fix resolving of references by their titles
 
 === 0.31.11 (preview, available from GitHub releases)
 
