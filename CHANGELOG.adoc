@@ -7,11 +7,12 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.12 (work in progress)
+=== 0.31.12 (preview, available from GitHub releases)
 
 - highlighting and spell checking improved for arrows
 - fix resolving of references by their titles
 - support of JSON schema for Antora playbooks
+- avoid blocking lock when switching AsciiDoc editor when trying to save contents of changed documents (#520)
 
 === 0.31.11 (preview, available from GitHub releases)
 
