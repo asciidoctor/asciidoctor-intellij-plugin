@@ -72,8 +72,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author Julien Viet
@@ -84,8 +82,6 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     NotificationDisplayType.NONE, true);
 
   private final Logger log = Logger.getInstance(AsciiDocPreviewEditor.class);
-
-  private static final ReentrantLock SAVE_ALL_LOCK = new ReentrantLock();
 
   /**
    * single threaded with one task queue (one for each editor window).
@@ -414,35 +410,20 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     myHtmlPanelWrapper.repaint();
     if (FileDocumentManager.getInstance().getUnsavedDocuments().length > 0) {
       ApplicationManager.getApplication().invokeLater(() -> {
-        try {
-          // don't try to run save-all in parallel, therefore synchronize
-          if (SAVE_ALL_LOCK.tryLock(5, TimeUnit.SECONDS)) {
-            try {
-              ApplicationManager.getApplication().runWriteAction(() -> {
-                // project might be already closed (yes, this really happens when you work in multiple projects opened in separate windows)
-                if (!project.isDisposed()) {
-                  // save the content in all other editors as their content might be referenced in preview
-                  // don't use ApplicationManager.getApplication().saveAll() as it will save in the background and will save settings as well
-                  for (Document unsavedDocument : FileDocumentManager.getInstance().getUnsavedDocuments()) {
-                    FileDocumentManager.getInstance().saveDocument(unsavedDocument);
-                  }
-                  reprocessAnnotations();
-                  currentContent = null; // force a refresh of the preview by resetting the current memorized content
-                  renderIfVisible();
-                }
-              });
-            } finally {
-              SAVE_ALL_LOCK.unlock();
+        // don't try to run save-all in parallel, therefore synchronize
+        ApplicationManager.getApplication().runWriteAction(() -> {
+          // project might be already closed (yes, this really happens when you work in multiple projects opened in separate windows)
+          if (!project.isDisposed()) {
+            // save the content in all other editors as their content might be referenced in preview
+            // don't use ApplicationManager.getApplication().saveAll() as it will save in the background and will save settings as well
+            for (Document unsavedDocument : FileDocumentManager.getInstance().getUnsavedDocuments()) {
+              FileDocumentManager.getInstance().saveDocument(unsavedDocument);
             }
-          } else {
             reprocessAnnotations();
             currentContent = null; // force a refresh of the preview by resetting the current memorized content
             renderIfVisible();
-            log.warn("unable to acquire lock for save-all-docs");
           }
-        } catch (InterruptedException e) {
-          log.warn("interrupted while save-all-docs", e);
-        }
+        });
       });
     } else {
       if (!project.isDisposed()) {
