@@ -199,8 +199,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       true,
       1,
       false,
-      "",
-      false));
+      ""));
     try {
       String html = asciidoc.render(":action: generates\n" +
         "\n" +
@@ -236,8 +235,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       true,
       1,
       false,
-      "",
-      false));
+      ""));
     try {
       String html = asciidoc.render("[erd]\n" +
         "----\n" +
@@ -280,8 +278,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       true,
       1,
       false,
-      "",
-      false));
+      ""));
     try {
       String html = asciidoc.render("[nomnoml]\n" +
         "----\n" +
@@ -315,8 +312,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       true,
       1,
       false,
-      "",
-      false));
+      ""));
     try {
       String html = asciidoc.render("[wavedrom]\n" +
         "....\n" +
@@ -353,8 +349,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       true,
       1,
       false,
-      "",
-      false));
+      ""));
     try {
       String html = asciidoc.render("[vega]\n" +
         "....\n" +

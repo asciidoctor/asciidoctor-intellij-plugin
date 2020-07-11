@@ -668,7 +668,10 @@ public class AsciiDoc {
     }
     if (ApplicationManager.getApplication().isReadAccessAllowed()) {
       // the AsciiDocJavaDocInfoGenerator will get here with an existing ReadLock, use a timeout here to avoid a deadlock.
-      Set<StackTraceElement> nonblocking = Arrays.stream(Thread.currentThread().getStackTrace()).filter(stackTraceElement -> stackTraceElement.getClassName().endsWith("AsciiDocJavaDocInfoGenerator")).collect(Collectors.toSet());
+      Set<StackTraceElement> nonblocking = Arrays.stream(Thread.currentThread().getStackTrace()).filter(stackTraceElement ->
+        stackTraceElement.getClassName().endsWith("AsciiDocJavaDocInfoGenerator") ||
+        stackTraceElement.getClassName().endsWith("AsciidocletJavaDocInfoGenerator")
+      ).collect(Collectors.toSet());
       if (nonblocking.size() > 0) {
         return 20;
       }

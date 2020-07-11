@@ -7,9 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.13 (work in progress)
+=== 0.31.13 (preview, available from GitHub releases)
 
 - support of JSON schema for Antora playbooks, support `start_paths` property
+- move Asciidoclet to separate plugin (#521)
 
 === 0.31.12 (preview, available from GitHub releases)
 

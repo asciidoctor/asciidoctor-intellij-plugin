@@ -4,8 +4,6 @@
     <psi.referenceContributor implementation="org.asciidoc.intellij.findUsages.AsciiDocJavaReferenceContributor"/>
     <lang.findUsagesProvider language="AsciiDoc" implementationClass="org.asciidoc.intellij.findUsages.AsciiDocFindJavaProvider"/>
     <referencesSearch implementation="org.asciidoc.intellij.findUsages.AsciiDocJavaReferencesSearch"/>
-    <applicationService overrides="true" serviceInterface="com.intellij.codeInsight.javadoc.JavaDocInfoGeneratorFactory"
-                        serviceImplementation="org.asciidoc.intellij.javadoc.AsciiDocJavaDocInfoGeneratorFactory"/>
   </extensions>
 </idea-plugin>
 
