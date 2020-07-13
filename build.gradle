@@ -104,8 +104,6 @@ test {
 dependencies {
   errorprone 'com.google.errorprone:error_prone_core:2.3.2'
   errorproneJavac 'com.google.errorprone:javac:9+181-r4173-1'
-  implementation 'org.asciidoctor:asciidoctorj-diagram:2.0.2'
-  implementation 'org.asciidoctor:asciidoctorj-pdf:1.5.3'
   /* snakeyaml is s used by asciidoctorj-pdf, but is actually provided within jruby-stdlib
    * a snakeyaml version in the classpath takes precedence, but IntelliJ includes a version that is too old
    * therefore this plugin includes the same version of snakeyaml that is already included in jruby-stdlib
@@ -119,6 +117,8 @@ dependencies {
   implementation 'commons-io:commons-io:2.4'
   implementation 'nl.jworks.markdown_to_asciidoc:markdown_to_asciidoc:1.1'
   implementation 'org.apache.commons:commons-text:1.8'
+  testImplementation 'org.asciidoctor:asciidoctorj-diagram:2.0.2'
+  testImplementation 'org.asciidoctor:asciidoctorj-pdf:1.5.3'
   testImplementation 'junit:junit:4.12'
   testImplementation 'com.tngtech.archunit:archunit-junit4:0.10.2'
   testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.6.1'

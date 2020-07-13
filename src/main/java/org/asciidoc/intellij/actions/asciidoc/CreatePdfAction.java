@@ -2,6 +2,9 @@ package org.asciidoc.intellij.actions.asciidoc;
 
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -16,15 +19,22 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
+import org.asciidoc.intellij.AsciiDocBundle;
+import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
+import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 
 public class CreatePdfAction extends AsciiDocAction {
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.CreatePdfAction";
+
+  private static final com.intellij.openapi.diagnostic.Logger LOG =
+    com.intellij.openapi.diagnostic.Logger.getInstance(CreatePdfAction.class);
 
   private Project project;
 
@@ -53,6 +63,24 @@ public class CreatePdfAction extends AsciiDocAction {
       return;
     }
 
+    if (!AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJPdf()) {
+      // download all element, as we can't detect if the PDF contains maybe diagrams
+      AsciiDocDownloaderUtil.downloadAsciidoctorJPdf(project, () -> {
+        Notifications.Bus
+          .notify(new Notification("asciidoc", AsciiDocBundle.message("asciidoc.download.title"),
+            AsciiDocBundle.message("asciidoc.download.asciidoctorj-pdf.success"),
+            NotificationType.INFORMATION));
+        this.actionPerformed(event);
+      }, e -> {
+        LOG.warn("unable to download", e);
+        Notifications.Bus
+          .notify(new Notification("asciidoc", AsciiDocBundle.message("asciidoc.download.title"),
+            AsciiDocBundle.message("asciidoc.download.asciidoctorj-pdf.failed") + ": " + e.getMessage(),
+            NotificationType.ERROR));
+      });
+      return;
+    }
+
     if (FileDocumentManager.getInstance().getUnsavedDocuments().length > 0) {
       ApplicationManager.getApplication().runWriteAction(() -> {
         for (Document unsavedDocument : FileDocumentManager.getInstance().getUnsavedDocuments()) {
@@ -74,6 +102,9 @@ public class CreatePdfAction extends AsciiDocAction {
         List<String> extensions = AsciiDoc.getExtensions(project);
         String config = AsciiDoc.config(editor.getDocument(), project);
         asciiDoc.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDoc.FileType.PDF);
+        if (Objects.equals("true", asciiDoc.getAttributes().get("asciidoctor-diagram-missing-diagram-extension"))) {
+          AsciiDocDownloadNotificationProvider.showNotification();
+        }
       } finally {
         if (tempImagesPath != null) {
           try {

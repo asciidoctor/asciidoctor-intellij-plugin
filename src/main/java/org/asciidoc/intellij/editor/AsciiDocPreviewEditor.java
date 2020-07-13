@@ -54,6 +54,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
 import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
+import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 import org.intellij.lang.annotations.Language;
@@ -70,6 +71,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
@@ -159,6 +161,11 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
             instance.updateFileName(fileBaseDir, name);
           }
           String markup = instance.render(content, config, extensions);
+          if (Objects.equals("true", instance.getAttributes().get("asciidoctor-diagram-missing-diagram-extension"))) {
+            if (getComponent().isVisible() && getComponent().isDisplayable()) {
+              AsciiDocDownloadNotificationProvider.showNotification();
+            }
+          }
           if (markup != null) {
             myPanel.setHtml(markup, instance.getAttributes());
           }

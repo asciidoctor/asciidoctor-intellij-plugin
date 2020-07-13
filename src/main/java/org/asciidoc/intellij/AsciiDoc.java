@@ -38,6 +38,7 @@ import org.asciidoc.intellij.asciidoc.AntoraIncludeAdapter;
 import org.asciidoc.intellij.asciidoc.AntoraReferenceAdapter;
 import org.asciidoc.intellij.asciidoc.AttributesRetriever;
 import org.asciidoc.intellij.asciidoc.PrependConfig;
+import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
@@ -68,6 +69,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
@@ -222,6 +224,7 @@ public class AsciiDoc {
     this.project = project;
   }
 
+  @SuppressWarnings("checkstyle:MethodLength")
   private Asciidoctor initWithExtensions(List<String> extensions, boolean springRestDocs, FileType format) {
     if (shutdown) {
       throw new ProcessCanceledException();
@@ -249,6 +252,14 @@ public class AsciiDoc {
     boolean krokiEnabled = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isKrokiEnabled();
     if (krokiEnabled) {
       md = md + ".kroki";
+    }
+    boolean diagramPresent = isDiagramPresent();
+    if (diagramPresent) {
+      md = md + ".diagram";
+    }
+    boolean pdfPresent = isPdfPresent();
+    if (pdfPresent) {
+      md = md + ".pdf";
     }
     Asciidoctor asciidoctor = INSTANCES.get(md);
     if (asciidoctor == null) {
@@ -289,8 +300,15 @@ public class AsciiDoc {
         // https://github.com/asciidoctor/asciidoctorj/issues/669
         Logger.getLogger("asciidoctor").setUseParentHandlers(false);
 
-        if (!krokiEnabled) {
+        if (!krokiEnabled && diagramPresent) {
           asciidoctor.requireLibrary("asciidoctor-diagram");
+        } else if (!diagramPresent) {
+          try (InputStream is = this.getClass().getResourceAsStream("/diagram-placeholder.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script diagram-placeholder.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
+          }
         }
 
         if (format == FileType.JAVAFX) {
@@ -302,7 +320,7 @@ public class AsciiDoc {
           }
         }
 
-        if (format == FileType.JAVAFX) {
+        if (format == FileType.JAVAFX && diagramPresent) {
           try (InputStream is = this.getClass().getResourceAsStream("/plantuml-png-patch.rb")) {
             if (is == null) {
               throw new RuntimeException("unable to load script plantuml-png-patch.rb");
@@ -366,12 +384,59 @@ public class AsciiDoc {
     return asciidoctor;
   }
 
+  private boolean isDiagramPresent() {
+    boolean diagramPresent = AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().exists();
+    if (!diagramPresent) {
+      // try to find it in the class path for tests
+      try (InputStream is = this.getClass().getResourceAsStream("/gems/asciidoctor-diagram-" +
+        AsciiDocDownloaderUtil.ASCIIDOCTORJ_DIAGRAM_VERSION + "/lib/asciidoctor-diagram.rb")) {
+        if (is != null) {
+          diagramPresent = true;
+        }
+      } catch (IOException ex) {
+        throw new RuntimeException("unable to open stream", ex);
+      }
+    }
+    return diagramPresent;
+  }
+
+  private boolean isPdfPresent() {
+    boolean pdfPresent = AsciiDocDownloaderUtil.getAsciidoctorJPdfFile().exists();
+    if (!pdfPresent) {
+      // try to find it in the class path for tests
+      try (InputStream is = this.getClass().getResourceAsStream("/gems/asciidoctor-pdf-" +
+        AsciiDocDownloaderUtil.ASCIIDOCTORJ_PDF_VERSION + "/lib/asciidoctor-pdf.rb")) {
+        if (is != null) {
+          pdfPresent = true;
+        }
+      } catch (IOException ex) {
+        throw new RuntimeException("unable to open stream", ex);
+      }
+    }
+    return pdfPresent;
+  }
+
   /**
    * Create an instance of Asciidoctor.
    */
   private Asciidoctor createInstance() {
     ClassLoader cl = AsciiDocAction.class.getClassLoader();
-    if (cl instanceof URLClassLoader) {
+    List<URL> urls = new ArrayList<>();
+    try {
+      File file1 = AsciiDocDownloaderUtil.getAsciidoctorJPdfFile();
+      if (file1.exists()) {
+        urls.add(file1.toURI().toURL());
+      }
+      File file2 = AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile();
+      if (file2.exists()) {
+        urls.add(file2.toURI().toURL());
+      }
+    } catch (MalformedURLException e) {
+      throw new RuntimeException("unable to add AsciidoctorJ to class path");
+    }
+    if (urls.size() > 0) {
+      cl = new URLClassLoader(urls.toArray(new URL[]{}), cl);
+    } else if (cl instanceof URLClassLoader) {
       // Wrap an existing URLClassLoader with an empty list to prevent scanning of JARs by Ruby Runtime during Unit Tests.
       cl = new URLClassLoader(new URL[]{}, cl);
     }
@@ -396,7 +461,7 @@ public class AsciiDoc {
           Path parent = FileSystems.getDefault().getPath(s).getParent();
           if (!folders.contains(parent)) {
             folders.add(parent);
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(parent, path -> Files.isDirectory(path))) {
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(parent, Files::isDirectory)) {
               for (Path p : stream) {
                 scanForRubyFiles(p, md);
               }
