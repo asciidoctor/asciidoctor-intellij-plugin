@@ -6,6 +6,7 @@ import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -56,8 +57,13 @@ public class CreateHtmlAction extends AsciiDocAction {
       return;
     }
 
-    ApplicationManager.getApplication().runWriteAction(() ->
-      ApplicationManager.getApplication().saveAll());
+    if (FileDocumentManager.getInstance().getUnsavedDocuments().length > 0) {
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        for (Document unsavedDocument : FileDocumentManager.getInstance().getUnsavedDocuments()) {
+          FileDocumentManager.getInstance().saveDocument(unsavedDocument);
+        }
+      });
+    }
     VirtualFile parent = file.getParent();
     boolean successful = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       Path tempImagesPath = AsciiDoc.tempImagesPath();
