@@ -62,10 +62,8 @@ public class AsciiDocDownloadNotificationProvider extends EditorNotifications.Pr
         EditorNotifications.updateAll();
       }, (e) -> {
         LOG.warn("unable to download", e);
-        Notifications.Bus
-          .notify(new Notification("asciidoc", AsciiDocBundle.message("asciidoc.download.title"),
-            AsciiDocBundle.message("asciidoc.download.asciidoctorj-diagram.failed") + ": " + e.getMessage(),
-            NotificationType.ERROR));
+        notification = true;
+        EditorNotifications.updateAll();
       });
     });
     panel.createActionLabel("Hide", () -> {

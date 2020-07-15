@@ -1,21 +1,28 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.asciidoc.intellij.download;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationAction;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.download.DownloadableFileDescription;
 import com.intellij.util.download.DownloadableFileService;
 import com.intellij.util.download.FileDownloader;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
@@ -25,9 +32,16 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Helping to download additional resources from the Internet.
+ * It automates the download and provides callbacks once the files are present.
+ * It displays notifications when the download fails and allows the user to pick a file that they downloaded
+ * manually and moves it to the target folder.
+ */
 public class AsciiDocDownloaderUtil {
 
   private static final Logger LOG = Logger.getInstance(AsciiDocDownloaderUtil.class);
@@ -58,7 +72,7 @@ public class AsciiDocDownloaderUtil {
   }
 
   public static File getAsciidoctorJPdfFile() {
-    String fileName = DOWNLOAD_PATH + File.separator + "asciidoctorj-pdf-" + ASCIIDOCTORJ_DIAGRAM_VERSION + ".jar";
+    String fileName = DOWNLOAD_PATH + File.separator + "asciidoctorj-pdf-" + ASCIIDOCTORJ_PDF_VERSION + ".jar";
     return new File(fileName);
   }
 
@@ -82,7 +96,7 @@ public class AsciiDocDownloaderUtil {
   }
 
   public static void downloadAsciidoctorJPdf(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
-    String downloadName = "asciidoctorj-pdf-" + ASCIIDOCTORJ_DIAGRAM_VERSION + ".jar";
+    String downloadName = "asciidoctorj-pdf-" + ASCIIDOCTORJ_PDF_VERSION + ".jar";
     String url = "https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-pdf/" +
       ASCIIDOCTORJ_PDF_VERSION +
       "/asciidoctorj-pdf-" +
@@ -113,30 +127,84 @@ public class AsciiDocDownloaderUtil {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         try {
-          List<Pair<File, DownloadableFileDescription>> pairs = downloader.download(new File(DOWNLOAD_PATH));
-          Pair<File, DownloadableFileDescription> first = ContainerUtil.getFirstItem(pairs);
-          File file = first != null ? first.first : null;
-          if (file != null) {
-            try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(file))) {
-              String hash = DigestUtils.sha1Hex(is);
-              if (!downloadHash.equals(hash)) {
-                throw new IOException("Hash of downloaded file '" + file.getAbsolutePath() + "' doesn't match (expected: " + ASCIIDOCTORJ_PDF_HASH + ", got: " + hash);
-              }
-            }
-            if (!file.renameTo(new File(fileName))) {
-              throw new IOException("Unable to rename file '" + file.getAbsolutePath() + "' +  to + '" + downloadName + "'");
-            }
-            ApplicationManager.getApplication().invokeLater(() -> {
-              ApplicationManager.getApplication().getMessageBus()
-                .syncPublisher(AsciiDocApplicationSettings.SettingsChangedListener.TOPIC)
-                .onSettingsChange(AsciiDocApplicationSettings.getInstance());
-              onSuccess.run();
-            });
+          List<VirtualFile> files = downloader.downloadFilesWithProgress(DOWNLOAD_PATH, project, null);
+          if (files == null || files.size() == 0)   {
+            throw new IOException("Download failed");
           }
+          File file = files.get(0).toNioPath().toFile();
+          try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(file))) {
+            String hash = DigestUtils.sha1Hex(is);
+            if (!downloadHash.equals(hash)) {
+              throw new IOException("Hash of downloaded file doesn't match (expected: " + ASCIIDOCTORJ_PDF_HASH + ", got: " + hash + ")");
+            }
+          }
+          if (!file.renameTo(new File(fileName))) {
+            throw new IOException("Unable to rename file '" + file.getAbsolutePath() + "' +  to + '" + downloadName + "'");
+          }
+          ApplicationManager.getApplication().invokeLater(() -> {
+            ApplicationManager.getApplication().getMessageBus()
+              .syncPublisher(AsciiDocApplicationSettings.SettingsChangedListener.TOPIC)
+              .onSettingsChange(AsciiDocApplicationSettings.getInstance());
+            onSuccess.run();
+          });
         } catch (IOException e) {
           LOG.warn("Can't download content '" + downloadUrl + "' as '" + fileName + "'", e);
+          createFailureNotification(e, true);
           ApplicationManager.getApplication().invokeLater(() -> onFailure.consume(e));
         }
+      }
+
+      private void createFailureNotification(IOException e, boolean download) {
+        Notifications.Bus
+          .notify(new Notification("asciidoc", AsciiDocBundle.message("asciidoc.download.title"),
+              (download ? AsciiDocBundle.message("asciidoc.download.failed") + ": " + "Can't download <a href=\"" + downloadUrl + "\">" + downloadUrl + "</a>" : "Copy failed. Can't copy " + downloadName) + " to folder " + directory.getAbsolutePath() + ": " + e.getMessage() + "."
+                + (download ? "" : " If you haven't downloaded the file yet, you can download it from <a href=\"" + downloadUrl + "\">" + downloadUrl + "</a>"),
+              NotificationType.ERROR,
+              new NotificationListener.UrlOpeningListener(false)
+            )
+              .addAction(NotificationAction.createSimpleExpiring(
+                "Retry download", () -> download(downloadName, downloadUrl, downloadHash, project, onSuccess, onFailure)))
+              .addAction(NotificationAction.createSimpleExpiring(
+                "Pick local file...", () -> {
+                  @NotNull VirtualFile[] virtualFiles = FileChooser.chooseFiles(FileChooserDescriptorFactory.createSingleFileDescriptor()
+                      .withFileFilter(virtualFile -> virtualFile.getName().equals(downloadName))
+                      .withTitle("Pick Local File...")
+                      .withDescription("Please select file '" + downloadName + "' on your local disk."),
+                    project, null);
+                  try {
+                    if (virtualFiles.length == 1) {
+                      if (virtualFiles[0].isDirectory()) {
+                        throw new IOException("Directory selected. Please select a file named '" + downloadName + "'!");
+                      }
+                      if (!virtualFiles[0].getName().equals(downloadName)) {
+                        throw new IOException("Wrong file selected. Please select a file named '" + downloadName + "'!");
+                      }
+                      try (BufferedInputStream is = new BufferedInputStream(virtualFiles[0].getInputStream())) {
+                        String hash = DigestUtils.sha1Hex(is);
+                        if (!downloadHash.equals(hash)) {
+                          throw new IOException("Hash of selected file doesn't match (expected: " + ASCIIDOCTORJ_PDF_HASH + ", got: " + hash + ")");
+                        }
+                      }
+                      Path sourcePath = virtualFiles[0].getFileSystem().getNioPath(virtualFiles[0]);
+                      if (sourcePath == null) {
+                        throw new IOException("unable to so pick source path");
+                      }
+                      FileUtils.copyFile(sourcePath.toFile(), new File(directory, downloadName));
+                      ApplicationManager.getApplication().invokeLater(() -> {
+                        ApplicationManager.getApplication().getMessageBus()
+                          .syncPublisher(AsciiDocApplicationSettings.SettingsChangedListener.TOPIC)
+                          .onSettingsChange(AsciiDocApplicationSettings.getInstance());
+                        onSuccess.run();
+                      });
+                    } else {
+                      throw new IOException("No file selected. Please select a file named '" + downloadName + "'!");
+                    }
+                  } catch (IOException ex) {
+                    createFailureNotification(ex, false);
+                  }
+                }
+              )),
+            project);
       }
     };
     BackgroundableProcessIndicator processIndicator = new BackgroundableProcessIndicator(task);

@@ -71,13 +71,7 @@ public class CreatePdfAction extends AsciiDocAction {
             AsciiDocBundle.message("asciidoc.download.asciidoctorj-pdf.success"),
             NotificationType.INFORMATION));
         this.actionPerformed(event);
-      }, e -> {
-        LOG.warn("unable to download", e);
-        Notifications.Bus
-          .notify(new Notification("asciidoc", AsciiDocBundle.message("asciidoc.download.title"),
-            AsciiDocBundle.message("asciidoc.download.asciidoctorj-pdf.failed") + ": " + e.getMessage(),
-            NotificationType.ERROR));
-      });
+      }, e -> LOG.warn("unable to download", e));
       return;
     }
 
