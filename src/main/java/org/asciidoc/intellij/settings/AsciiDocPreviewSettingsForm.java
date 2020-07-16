@@ -1,13 +1,18 @@
 package org.asciidoc.intellij.settings;
 
+import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.CollectionComboBoxModel;
+import com.intellij.ui.ContextHelpLabel;
 import com.intellij.ui.EnumComboBoxModel;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBRadioButton;
 import com.intellij.ui.components.JBTextField;
+import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.util.containers.ContainerUtil;
+import org.asciidoc.intellij.AsciiDocBundle;
+import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.ui.SplitFileEditor;
@@ -63,6 +68,16 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JBCheckBox myHideErrorsInSourceBlocks;
   private JBTextField myHideErrorsByLanguage;
   private JBLabel myHideErrorsByLanguageLabel;
+  private LinkLabel<?> myDownloadDependenciesLink;
+  private ContextHelpLabel myDownloadDependenciesHelp;
+  private JPanel myDownloadDependenciesPanel;
+  private JBLabel myDownloadDependenciesComplete;
+  private JPanel myDownloadDependenciesFailedDiagram;
+  private LinkLabel<?> myDownloadDependenciesFailedDiagramBrowser;
+  private LinkLabel<?> myDownloadDependenciesFailedDiagramPickFile;
+  private LinkLabel<?> myDownloadDependenciesFailedPdfBrowser;
+  private LinkLabel<?> myDownloadDependenciesFailedPdfPickFile;
+  private JPanel myDownloadDependenciesFailedPdf;
 
   public JComponent getComponent() {
     return myMainPanel;
@@ -113,6 +128,12 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     attributesPanel.add(attributeTable.getComponent(), BorderLayout.CENTER);
     // from 2020.1 onwards the attributes panel requires a width, otherwise it will have a zero width
     attributesPanel.setMinimumSize(new Dimension(400, 100));
+    myDownloadDependenciesHelp = ContextHelpLabel.create(
+      AsciiDocBundle.message(
+        "asciidoc.download.folderandcontents",
+        (AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().getName() + " and " + AsciiDocDownloaderUtil.getAsciidoctorJPdfFile().getName()),
+        AsciiDocDownloaderUtil.DOWNLOAD_PATH)
+    );
   }
 
   private void adjustKrokiOptions() {
@@ -130,6 +151,26 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myZoomSettings.setVisible(true);
     } else {
       myZoomSettings.setVisible(false);
+    }
+  }
+
+  private void adjustDownloadDependenciesOptions() {
+    if (AsciiDocDownloaderUtil.downloadComplete()) {
+      myDownloadDependenciesComplete.setVisible(true);
+      myDownloadDependenciesLink.setVisible(false);
+      myDownloadDependenciesHelp.setVisible(false);
+      myDownloadDependenciesFailedDiagram.setVisible(false);
+      myDownloadDependenciesFailedPdf.setVisible(false);
+    } else {
+      myDownloadDependenciesLink.setVisible(true);
+      myDownloadDependenciesHelp.setVisible(true);
+      myDownloadDependenciesComplete.setVisible(false);
+      if (AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().exists()) {
+        myDownloadDependenciesFailedDiagram.setVisible(false);
+      }
+      if (AsciiDocDownloaderUtil.getAsciidoctorJPdfFile().exists()) {
+        myDownloadDependenciesFailedPdf.setVisible(false);
+      }
     }
   }
 
@@ -219,6 +260,39 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     myHideErrorsByLanguageLabel.setVisible(!myHideErrorsInSourceBlocks.isSelected());
 
     myHideErrorsByLanguage.setText(settings.getHideErrorsByLanguage());
+
+    myDownloadDependenciesLink.setListener((source, data) -> {
+      AsciiDocDownloaderUtil.download(null, this::adjustDownloadDependenciesOptions, throwable -> {
+        if (!AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().exists()) {
+          myDownloadDependenciesFailedDiagram.setVisible(true);
+        }
+        if (!AsciiDocDownloaderUtil.getAsciidoctorJPdfFile().exists()) {
+          myDownloadDependenciesFailedPdf.setVisible(true);
+        }
+      });
+    }, null);
+
+    myDownloadDependenciesFailedDiagramBrowser.setListener((source, data) -> {
+      BrowserUtil.browse(AsciiDocDownloaderUtil.getAsciidoctorJDiagramUrl());
+    }, null);
+
+    myDownloadDependenciesFailedDiagramPickFile.setListener((source, data) -> {
+      AsciiDocDownloaderUtil.pickAsciidoctorJDiagram(null, this::adjustDownloadDependenciesOptions, throwable ->
+        myDownloadDependenciesFailedDiagramPickFile.setText("Pick failed: " + throwable.getMessage()));
+    }, null);
+
+    myDownloadDependenciesFailedPdfBrowser.setListener((source, data) -> {
+      BrowserUtil.browse(AsciiDocDownloaderUtil.getAsciidoctorJPdfUrl());
+    }, null);
+
+    myDownloadDependenciesFailedPdfPickFile.setListener((source, data) -> {
+      AsciiDocDownloaderUtil.pickAsciidoctorJPdf(null, this::adjustDownloadDependenciesOptions, throwable ->
+        myDownloadDependenciesFailedPdfPickFile.setText("Pick failed: " + throwable.getMessage()));
+    }, null);
+
+    adjustDownloadDependenciesOptions();
+    myDownloadDependenciesFailedDiagram.setVisible(false);
+    myDownloadDependenciesFailedPdf.setVisible(false);
   }
 
   @NotNull
