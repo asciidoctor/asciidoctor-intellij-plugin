@@ -78,19 +78,19 @@
                 id="org.asciidoc.intellij.actions.editorlayout.EditorOnlyLayoutChangeAction"
                 text="Show Editor Only"
                 description="Sets AsciiDoc editor layout to show editor only"
-                icon="AsciiDocIcons.Layout.EDITOR_ONLY">
+                icon="AllIcons.General.LayoutEditorOnly">
         </action>
         <action class="org.asciidoc.intellij.actions.editorlayout.EditorAndPreviewLayoutChangeAction"
                 id="org.asciidoc.intellij.actions.editorlayout.EditorAndPreviewLayoutChangeAction"
                 text="Show Editor and Preview"
                 description="Sets AsciiDoc editor layout to show editor and preview in split"
-                icon="AsciiDocIcons.Layout.EDITOR_PREVIEW">
+                icon="AllIcons.General.LayoutEditorPreview">
         </action>
         <action class="org.asciidoc.intellij.actions.editorlayout.PreviewOnlyLayoutChangeAction"
                 id="org.asciidoc.intellij.actions.editorlayout.PreviewOnlyLayoutChangeAction"
                 text="Show Preview Only"
                 description="Sets AsciiDoc editor layout to show preview only"
-                icon="AsciiDocIcons.Layout.PREVIEW_ONLY">
+                icon="AllIcons.General.LayoutPreviewOnly">
         </action>
         <action class="org.asciidoc.intellij.actions.asciidoc.ToggleSoftWrapsAction"
                 id="org.asciidoc.intellij.actions.asciidoc.ToggleSoftWrapsAction"

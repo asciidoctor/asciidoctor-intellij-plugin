@@ -30,23 +30,11 @@ public class AsciiDocIcons {
     } catch (NoClassDefFoundError e) {
       icon = null;
     }
-    if ((icon == null || icon.getIconHeight() == 1) && path.endsWith(".svg")) {
-      // when trying to load SVG icons on an older version, they will be returned as 1x1 icon
-      // if this is the case, fallback to PNG icons
-      path = path.substring(0, path.length() - 4) + ".png";
-      icon = IconLoader.getIcon(path, AsciiDocIcons.class);
-    }
     return icon;
   }
 
   /** The AsciiDoc {@link Icon}. */
   public static final Icon ASCIIDOC_ICON = load("/icons/asciidoc.svg");
-
-  public static class Layout {
-    public static final Icon EDITOR_ONLY = load("/icons/layout/Editor_only.png"); // 16x16
-    public static final Icon EDITOR_PREVIEW = load("/icons/layout/Editor_preview.png"); // 16x16
-    public static final Icon PREVIEW_ONLY = load("/icons/layout/Preview_only.png"); // 16x16
-  }
 
   public static class EditorActions {
     public static final Icon BOLD = load("/icons/editor_actions/Bold.svg"); // 16x16
