@@ -125,7 +125,7 @@ To update the preview in the browser the user needs to refresh the contents by p
 The user can open an AsciiDoc file in an external tool (like for example Google Chrome with the https://github.com/asciidoctor/asciidoctor-browser-extension[Asciidoctor Extension] installed).
 To do this, add Chrome as an https://www.jetbrains.com/help/idea/settings-tools-external-tools.html[external Tool in the settings].
 Provide `$FilePath$` as the argument so that Chrome knows where to find the file.
-The user can assign a shortcut to the external tool using "`Help | Find action... | (type the name of external tool) | kbd:[Alt+Enter] | (type the shortcut of choice) | OK`".
+The user can assign a shortcut to the external tool using menu:Help[Find action... > (type the name of external tool) > kbd:[Alt+Enter] > (type the shortcut of choice) > OK].
 
 == Writing
 
@@ -192,20 +192,23 @@ _Extract_ extracts either the selected text, the current block or the current se
 _Inline_ inlines the referenced file at the current include; optionally it can provide a preview, inline all occurrences of the file and delete the included file afterwards.
 
 // see: AsciiDocAdmonitionToBlockIntention.java and AsciiDocAdmonitionToBlockAction.java
-.(Available from release 0.31.35)
+.Available from release 0.31.35:
 The user can change single-line admonition to a block-style admonition.
 This is available from the "`Refactor"` context menu and as a context-sensitive intention "`Refactor to block admonition`" via kbd:[Alt+Enter]. It is available when user places the cursor on the start of single-line admonition (like for example `NOTE:`).
 
 All of these changes can be undone (kbd:[Ctrl+Z]).
+Refactorings will re-format the refactored block. See the section about <<reformatting>> on how to configure this.
 
-The user can disable and enable intentions in "`Settings... | Editor | Intentions | AsciiDoc`".
+The user can disable and enable intentions in menu:Settings...[Editor > Intentions > AsciiDoc].
+
+[[reformatting,reformatting]]
+== Reformatting
 
 The user can reformat the source in the editor using "`Reformat Code`" (kbd:[Ctrl+Alt+L]).
-The user can disable formatting completely or configure parameters using "`Settings... | Editor | Code Style | AsciiDoc`".
+
+The user can disable formatting completely or configure parameters using  menu:Settings...[Editor > Code Style > AsciiDoc].
 Currently it adjusts empty lines around headings, lists and blocks.
 It also adjusts spaces around list items.
 
 By default, it re-format blocks to the one-sentence-per-line convention.
 The user can disable this in the code style settings.
-
-NOTE: The code style functionality may change as this feature is still in its early stages.
