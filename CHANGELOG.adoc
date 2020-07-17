@@ -7,9 +7,13 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.15 (work in progress)
+
+- add intention to refactor single-line admonition to block-style admonition (#514)
+
 === 0.31.14 (preview, available from GitHub releases)
 
-- Support for diagrams and PDF will be downloaded on-demand (#515)
+- support for diagrams and PDF will be downloaded on-demand (#515)
 
 === 0.31.13 (preview, available from GitHub releases)
 

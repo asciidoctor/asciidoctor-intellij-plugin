@@ -1,0 +1,4 @@
+NOTE: foo
+bar
+
+other

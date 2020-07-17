@@ -190,6 +190,12 @@ This is available from the "`Refactor`" context menu and via context-sensitive i
 _Extract_ extracts either the selected text, the current block or the current section including subsections.
 // see: InlineIncludeDialog.java
 _Inline_ inlines the referenced file at the current include; optionally it can provide a preview, inline all occurrences of the file and delete the included file afterwards.
+
+// see: AsciiDocAdmonitionToBlockIntention.java and AsciiDocAdmonitionToBlockAction.java
+.(Available from release 0.31.35)
+The user can change single-line admonition to a block-style admonition.
+This is available from the "`Refactor"` context menu and as a context-sensitive intention "`Refactor to block admonition`" via kbd:[Alt+Enter]. It is available when user places the cursor on the start of single-line admonition (like for example `NOTE:`).
+
 All of these changes can be undone (kbd:[Ctrl+Z]).
 
 The user can disable and enable intentions in "`Settings... | Editor | Intentions | AsciiDoc`".

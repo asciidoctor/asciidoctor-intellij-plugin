@@ -154,6 +154,16 @@
       <add-to-group group-id="IntroduceActionsGroup" anchor="last"/>
     </group>
 
+    <group id="AsciiDocAdmonitionToBlock" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
+      <action id="org.asciidoc.intellij.actions.refactor.AsciiDocAdmonitionToBlockAction"
+              class="org.asciidoc.intellij.actions.refactor.AsciiDocAdmonitionToBlockAction"
+              text="Admonition to Block..."
+              description="Change the Admonition from single-line to block-style">
+      </action>
+      <separator/>
+      <add-to-group group-id="RefactoringMenu" anchor="last"/>
+    </group>
+
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -317,6 +327,11 @@
       <bundleName>AsciiDocBundle</bundleName>
       <categoryKey>asciidoc.intention.category</categoryKey>
       <className>org.asciidoc.intellij.injection.AsciiDocCodeFenceErrorHighlightingIntention</className>
+    </intentionAction>
+    <intentionAction>
+      <bundleName>AsciiDocBundle</bundleName>
+      <categoryKey>asciidoc.intention.category</categoryKey>
+      <className>org.asciidoc.intellij.actions.intentions.AsciiDocAdmonitionToBlockIntention</className>
     </intentionAction>
     <highlightErrorFilter implementation="org.asciidoc.intellij.injection.AsciiDocCodeFenceErrorHighlightingIntention$CodeFenceHighlightErrorFilter"/>
   </extensions>

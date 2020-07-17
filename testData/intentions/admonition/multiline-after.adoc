@@ -1,0 +1,6 @@
+<caret>[NOTE]
+====
+foo bar
+====
+
+other
