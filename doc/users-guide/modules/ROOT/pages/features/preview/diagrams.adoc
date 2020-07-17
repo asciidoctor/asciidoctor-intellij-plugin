@@ -1,0 +1,42 @@
+= Diagrams in the preview
+:uri-asciidoctor-diagrams-gh: https://github.com/asciidoctor/asciidoctor-diagram
+:uri-asciidoctor-diagrams-execs: {uri-asciidoctor-diagrams-gh}#specifying-diagram-generator-paths
+:uri-kroki: https://kroki.io
+
+// make preview work on non-Antora sites, for example GitHub
+ifndef::env-site[]
+:imagesdir: ../../images
+endif::[]
+
+The preview of the AsciiDoc plugin supports rendering the diagrams in of your AsciiDoc documents. Two different types of diagram renderes are supported: <<asciidoctor-diagram>> and <<kroki>>.
+
+[[asciidoctor-diagram,Asciidoctor Diagram]]
+== Using Asciidoctor Diagram
+
+By default, the plugin uses {uri-asciidoctor-diagrams-gh}[Asciidoctor Diagram]
+that depends on locally installed tools to generate images (ie. {uri-asciidoctor-diagrams-execs}[executables] available in your `PATH` environment variable).
+
+Asciidoctor Diagram renders the content of the editor including all referenced includes, images and diagrams like PlantUML on the fly.
+// see: plantuml-png-patch.rb
+As JavaFX has a problem displaying SVG files correctly, the plugin displays all diagrams as PNG.
+
+=== Downloading Asciidoctor Diagram
+
+As of AsciiDoc Plugin version 0.31.14+ Asciidoctor Diagram is no longer included in the plugin as default as it adds approximately 15 MB to the download of the installation and each update.
+
+// see: diagram-placeholder.rb + AsciiDocDownloadNotificationProvider.java
+When the preview includes a diagram, the plugin shows an editor notification asking the user to download the necessary dependency.
+
+include::partial$download-dependencies.adoc[]
+
+[[kroki,Kroki]]
+== Using Kroki
+
+Alternatively, the plugin supports {uri-kroki}[Kroki] instead of Asciidoctor Diagram to render diagrams. Use the plugin's settings to enable Kroki:
+
+image::kroki-settings.png[]
+
+When Kroki is enabled, the plugin sends the text diagrams to an instance of Kroki to display them as images in the preview.
+By default, it sends your diagrams to the free public cloud instance {uri-kroki}[kroki.io], but users can install Kroki on their own infrastructure.
+Once the custom instance is set up, update the server URL in the plugin's settings to point to it.
+

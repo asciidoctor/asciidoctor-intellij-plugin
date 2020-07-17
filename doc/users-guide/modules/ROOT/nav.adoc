@@ -5,6 +5,7 @@
 * xref:features.adoc[]
 ** xref:features/editor.adoc[]
 ** xref:features/preview.adoc[]
+*** xref:features/preview/diagrams.adoc[]
 ** Advanced
 // the following list is sorted alphabetically.
 // Please keep it sorted when adding new content.

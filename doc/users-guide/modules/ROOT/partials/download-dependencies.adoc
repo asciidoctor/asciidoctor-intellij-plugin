@@ -1,0 +1,8 @@
+The download requires a working internet connection.
+When the download fails the IDE prompts to check proxy settings or to retry the download.
+The IDE's event log contains instructions for a manual download of the file.
+
+The dependencies will be cached locally.
+A new download will only be necessary when the AsciiDoc plugin requires a newer version.
+
+Users can force the download by selecting "`Download AsciiDoc dependencies for diagrams and PDF creation`" in the settings of the plugin.
