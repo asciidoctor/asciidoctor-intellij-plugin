@@ -157,7 +157,7 @@
     <group id="AsciiDocAdmonitionToBlock" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
       <action id="org.asciidoc.intellij.actions.refactor.AsciiDocAdmonitionToBlockAction"
               class="org.asciidoc.intellij.actions.refactor.AsciiDocAdmonitionToBlockAction"
-              text="Admonition to Block..."
+              text="Admonition to Block"
               description="Change the Admonition from single-line to block-style">
       </action>
       <separator/>
