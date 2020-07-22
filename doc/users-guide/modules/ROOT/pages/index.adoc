@@ -35,4 +35,4 @@ It provides the writer with
 
 * a context-sensitive editor,
 * a configurable preview and
-* itegrations to the AsciiDoc ecosystem.
+* integrations to the AsciiDoc ecosystem.
