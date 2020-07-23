@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.30.85
 
-- avoid blocking lock when switching AsciiDoc editor when trying to save contents of changed documents (#520)
+- allow block macros after continuations in lists (#524)
 
 === 0.30.84
 
