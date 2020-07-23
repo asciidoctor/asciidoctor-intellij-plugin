@@ -595,6 +595,22 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testContinuationInList() {
+    doTest("* Hi\n" +
+      "+\n" +
+      "image::animage.png[]",
+      "AsciiDoc:BULLET ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Hi')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CONTINUATION ('+')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_MACRO_ID ('image::')\n" +
+        "AsciiDoc:BLOCK_MACRO_BODY ('animage.png')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTRS_END (']')");
+  }
+
   public void testContinuationsThatLookLikeAHeading() {
     doTest("1. one\n" +
         "+\n" +

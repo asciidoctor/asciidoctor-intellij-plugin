@@ -577,7 +577,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <LIST> {
   ^ {CONTINUATION} {SPACE}* "\n" {
                          yypushback(yylength() - 1);
-                         yybegin(LIST);
+                         yybegin(PREBLOCK);
                          yypushstate();
                          yybegin(EOL_POP);
                          return AsciiDocTokenTypes.CONTINUATION;

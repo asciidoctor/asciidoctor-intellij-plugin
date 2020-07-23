@@ -7,10 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.15 (work in progress)
+=== 0.31.15 (preview, available from GitHub releases)
 
 - add intention to refactor single-line admonition to block-style admonition (#514)
 - Upgrade to asciidoctorj 2.4.0, JRuby 9.2.12.0 and Rouge 3.21.0
+- allow block macros after continuations in lists (#524)
 
 === 0.31.14 (preview, available from GitHub releases)
 
