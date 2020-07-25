@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.lexer;
 
+import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.lexer.Lexer;
 import com.intellij.testFramework.LexerTestCase;
 import org.intellij.lang.annotations.Language;
@@ -2126,6 +2127,46 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRS_START ('[')\n" +
         "AsciiDoc:ATTR_NAME ('other:[hi]')\n" +
         "AsciiDoc:ATTRS_END (']')");
+  }
+
+  public void testBlockMacroAutocompleteWithOtherMacroInSameLine() {
+    doTest("xref:" + CompletionUtilCore.DUMMY_IDENTIFIER + " and other xref:complete[] normal text",
+      "AsciiDoc:LINKSTART ('xref:')\n" +
+        "AsciiDoc:LINKFILE ('IntellijIdeaRulezzz ')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('and')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('other')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:LINKSTART ('xref:')\n" +
+        "AsciiDoc:LINKFILE ('complete')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('normal')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('text')");
+  }
+
+  public void testBlockMacroAutocompleteCompleteMacroWithOtherMacroInSameLine() {
+    doTest("xref:" + CompletionUtilCore.DUMMY_IDENTIFIER + "complete[] and other xref:complete[] normal text",
+      "AsciiDoc:LINKSTART ('xref:')\n" +
+        "AsciiDoc:LINKFILE ('IntellijIdeaRulezzz complete')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('and')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('other')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:LINKSTART ('xref:')\n" +
+        "AsciiDoc:LINKFILE ('complete')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('normal')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('text')");
   }
 
   public void testBlockMacroAfterList() {

@@ -1270,8 +1270,14 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\[\n\"`]* | "") ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" ({WORDNOBRACKET}*|"[" [^\]\n]* "]")*  "]") {
         if (!isEscaped()) {
           yypushstate();
-          yybegin(INLINE_MACRO);
-          return AsciiDocTokenTypes.INLINE_MACRO_ID;
+          if (yytext().toString().equals("xref:")) {
+            // this might be an icomplete xref with autocomplete as this pattern is less strict than the xref pattern
+            yybegin(LINKFILE);
+            return AsciiDocTokenTypes.LINKSTART;
+          } else {
+            yybegin(INLINE_MACRO);
+            return AsciiDocTokenTypes.INLINE_MACRO_ID;
+          }
         } else {
           return textFormat();
         }
@@ -1641,6 +1647,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   "\n"                 { yypopstate(); yypushback(yylength()); }
   "["                  { yypushstate(); yybegin(INLINE_MACRO_ATTRS); return AsciiDocTokenTypes.INLINE_ATTRS_START; }
   "]"                  { yypopstate(); return AsciiDocTokenTypes.INLINE_ATTRS_END; }
+  "IntellijIdeaRulezzz " / [^\t \n:]* "[" { return AsciiDocTokenTypes.INLINE_MACRO_BODY; }
+  "IntellijIdeaRulezzz " { yypopstate(); return AsciiDocTokenTypes.INLINE_MACRO_BODY; }
   [^]                  { return AsciiDocTokenTypes.INLINE_MACRO_BODY; }
 }
 

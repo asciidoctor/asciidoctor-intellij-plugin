@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.15 (work in progress)
+
+- fix autocomplete for incomplete macros in lines with more marcos and/or brackets (#526)
+
 === 0.31.15 (preview, available from GitHub releases)
 
 - add intention to refactor single-line admonition to block-style admonition (#514)
