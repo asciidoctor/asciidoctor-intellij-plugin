@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.30.86
+
+- fix autocomplete for incomplete macros in lines with more marcos and/or brackets (#526)
+
 === 0.30.85
 
 - allow block macros after continuations in lists (#524)
