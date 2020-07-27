@@ -1,5 +1,8 @@
 = Creating HTML and PDF
+:description: Create HTML and PDF from an AsciiDoc file directly from your IDE.
 :navtitle: HTML and PDF
+
+{description}
 
 == Creating a HTML file
 

@@ -1,5 +1,8 @@
 = Features of the Editor
+:description: Summary of the features of the editor for navigation, writing and reformatting.
 :navtitle: Editor
+
+{description}
 
 == Navigation
 
@@ -20,7 +23,7 @@ The hotkey to unfold all elements is kbd:[Ctrl+Shift+NumPad+], the hotkey to fol
 // see: AsciiDocStructureViewElement
 The structure of the file kbd:[Alt+7] shows the hierarchy of sections and blocks with titles.
 This contains (if available) the first block attribute element (like \[source], \[quote] or \[verse]) and the title of the block or section.
-If an element like an `image::[]` references another file, it shows the icon of the file and the file's name.
+If an element like an `image::[]` references another file, it shows the icon and the name of the file.
 If an `include::[]` references an AsciiDoc file, it includes the file as a sub-tree in the structure view.
 Clicking on either a referenced file or an element of a sub-tree opens the referenced file.
 
@@ -28,7 +31,7 @@ Clicking on either a referenced file or an element of a sub-tree opens the refer
 The search all view kbd:[Shift]kbd:[Shift] shows section titles and IDs of blocks.
 
 The breadcrumbs view (bottom of the editor) shows the hierarchy leading to the current sections and blocks.
-It contains the same elements like in the structure view for the cursor position.
+It contains the same elements as in the structure view for the cursor position.
 
 AsciiDoc recommends the https://asciidoctor.org/docs/asciidoc-recommended-practices/#one-sentence-per-line[one-sentence-per-line] style.
 To avoid scrolling horizontally, the user should enable soft-wrap in the IDE. Go to menu:Settings[Editor > General], scroll to menu:Soft Wrap[], add the AsciiDoc file extension (if not already pre-populated) and activate the check box "`Soft-wrap files`".
@@ -46,7 +49,7 @@ This works similarly for attributes (`\{attrib}` and `:attrib:`).
 // see: AsciiDocTextMono and AsciiDocTextItalic in the PSI Tree
 // see: AsciiDocReferenceContributor and AsciiDocJavaReferenceContributor for the creation of references
 // see: AsciiDocJavaReference for the resolution of Java classes
-The user can navigate using kbd:[Ctrl+Click] and kbd:[Ctrl+B] from a file name or Java class name in backticks (as mono spaced text like +++`filename.txt`+++ or +++`JavaClassName`+++) or in underscopes (as italic text like +++_filename.txt_+++ or +++_JavaClassName_+++).
+The user can navigate using kbd:[Ctrl+Click] and kbd:[Ctrl+B] from a file name or Java class name in backticks (as mono spaced text like +++`filename.txt`+++ or +++`JavaClassName`+++) or in underscores (as italic text like +++_filename.txt_+++ or +++_JavaClassName_+++).
 The plugin tries to rename occurrences of files and Java classes in the AsciiDoc file when the user renames the file or the class.
 
 // see: AsciiDocDocumentationProvider
@@ -61,7 +64,7 @@ The plugin uses constrained/unconstrained formatting as necessary.
 If the selected text already has the chosen formatting, the plugin removes the formatting from the selected text.
 
 // see: CodeFenceInjector, CodeFenceErrorHighlightingIntention
-When the user adds a source code block with information about the language, the plugin will highlight the code block if the language is supported by IntelliJ.
+When the user adds a source code block with information about the language, the plugin will highlight the code block if IntelliJ supports the language.
 A source block like the following will receive JSON highlighting:
 
 [source,asciidoc]
@@ -108,7 +111,7 @@ When the text contains Markdown style headings (starting with `#`) or old style 
 The editor supports a default and dark theme.
 The user can change the colors of the theme in the IDE settings.
 
-When using listings with `[source,lang]`, the plugin triggers language injection to the following code block when the language is supported by the IDE (either by default, or by a language plugin).
+When using listings with `[source,lang]`, the plugin triggers language injection to the following code block when the IDE supports the language (either by default, or by a language plugin).
 This allows syntax highlighting and code completion specific to the language of the code block.
 The user can disable this feature in the settings completely or for selected languages.
 For the user to re-format the code block, use "`Edit Fragment`" (kbd:[Alt+Enter]) and "`Reformat Code`" ( kbd:[Ctrl+Shift+L]).
@@ -133,8 +136,8 @@ The user can assign a shortcut to the external tool using menu:Help[Find action.
 When adding block attributes, the plugin supports statement completion (also known as "`Smart Enter`") using the shortcut kbd:[Shift+Ctrl+Enter].
 For example:
 
-. a `[source,java` receives a closing bracket and two listing separator lines.
-. An `include::text.adoc` receives an opening bracket, a `leveloffset=` if it can be derived from the current file's context and the context of the included file, and a closing bracket.
+. a snippet `[source,java` receives a closing bracket and two listing separator lines.
+. a snippet `include::text.adoc` receives an opening bracket, a `leveloffset=` if it can be derived from the current file's context and the context of the included file, and a closing bracket.
 
 // see: AsciiDocBraceMatcher
 When the user opens a quote or a bracket, the plugin automatically adds a closing quote if it followed by whitespace or a closing bracket.
@@ -142,7 +145,7 @@ When the user opens a quote or a bracket, the plugin automatically adds a closin
 For references, attributes and images, and several macros like include, image and diagrams it provides auto-completion using kbd:[Ctrl+Space].
 References and attributes support renaming within a project.
 
-When auto-completing folder and file names in macros, the plugin tries to resolves attributes using their values specified in the current file or other files.
+When auto-completing folder and file names in macros, the plugin tries to resolve attributes using their values specified in the current file or other files.
 For image macros it tries to find a declaration of the _imagesDir_ attribute either in any of the AsciiDoc files of the project.
 
 There are several live templates included.
@@ -165,19 +168,19 @@ Once it finds for example Markdown-styled headings, Markdown-styled horizontal r
 The user can use kbd:[Ctrl+Enter] to select a quick-fix to convert these to AsciiDoc syntax.
 
 // AsciiDocInspectionSuppressor
-To suppress an inspection for a given line line, use the quick-fix to add a comment on the line before:
+To suppress an inspection for a given line, use the quick-fix to add a comment on the line before:
 
 [source,asciidoc]
 ----
-// suppress inspection "ReferencePattern"
-<<-ref>>
+// suppress inspection "AsciiDocReferencePattern"
+[[invalid!]]
 ----
 
 To suppress an inspection for a file, use the quick-fix to add a comment at the beginning of the file:
 
 [source,asciidoc]
 ----
-// suppress inspection "ReferenceResolve" for whole file
+// suppress inspection "AsciiDocLinkResolve" for whole file
 // ...
 <<ref>>
 ----

@@ -1,5 +1,6 @@
 = Features of the IntelliJ AsciiDoc plugin
 :navtitle: Features
+:description: This plugin has a context-sensitive editor, configurable preview and can convert Markdown to AsciiDoc.
 
 This document details the features available in the plugin to users of the plugin.
 Use it as a reference guide to find out what the plugin can do today.

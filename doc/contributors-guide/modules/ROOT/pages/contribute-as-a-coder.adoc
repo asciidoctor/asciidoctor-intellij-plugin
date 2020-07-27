@@ -1,6 +1,7 @@
 = Contribute as a coder
+:description: This document enables you to enhance the plugin when you are new to either the project, or developing in an area you haven't previously worked in before.
 
-This document enables you to enhance the plugin when you are new to either the project, or developing in an area you haven't previously worked in before.
+{description}
 
 The following sections walk you through the initial setup of the development setup first, then through different areas of the plugin.
 

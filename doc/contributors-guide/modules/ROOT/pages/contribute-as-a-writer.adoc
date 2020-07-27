@@ -1,8 +1,9 @@
 = Contribute as a writer
+:description: This page provides an introduction where documentation content exists and how it is structured.
 
 User documentation is essential to make the plugin approachable for all types of users.
+{description}
 
-This page provides an introduction where documentation content exists and how it is structured.
 With this knowledge you can choose the matching how-to to change the content you need to change.
 
 == What sources exist to build the plugin's web site?

@@ -1,4 +1,5 @@
 = Features of the preview
+:description: Per default the preview is on the right side of a vertical split screen and shows the rendered contents of the editor.
 :navtitle: Preview
 
 Per default the preview is on the right side of a vertical split screen.

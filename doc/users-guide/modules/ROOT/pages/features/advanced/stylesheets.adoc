@@ -1,7 +1,8 @@
 = Custom stylesheets for the preview
 :navtitle: Custom stylesheets
+:description: The user can provide custom stylesheets for the preview to make the preview look similar to the live site they publish the content to.
 
-The user can provide custom stylesheets for the preview to make the preview look similar to the live site they publish the content to.
+{description}
 
 == Configuring stylesheets
 

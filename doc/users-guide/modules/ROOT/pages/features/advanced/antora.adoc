@@ -1,4 +1,5 @@
 = Antora
+:description: This plugin support Antora attributes like 'imagesdir' and 'examplesdir'. It also resolves xrefs and includes in the preview.
 
 When working in an https://antora.org/[Antora project], the plugin supports:
 

@@ -1,11 +1,12 @@
-= Why contributions are important
+= Why contributions are essential
+:description: To continue to be useful and to evolve, this plugin needs continuing contributions.
 :navtitle: Why contribute
 
 This plugin is an open source project.
 All the work is done by users and enthusiasts, usually in their spare time.
 With all the help it received from users and maintainers as ideas, feedback and code it wouldn't be where it is today.
 
-To continue to be useful and to evolve, this plugin needs continuing contributions.
+{description}
 
 == What you can do
 

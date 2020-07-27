@@ -1,5 +1,6 @@
 = Frequently asked questions (FAQ)
 :navtitle: Frequently asked questions
+:description: Find answers to previously asked questions, or open a new issue to find a solution to your issue.
 
 Missing an entry in the FAQ list? Please open an issue in the https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issues^] for this project.
 

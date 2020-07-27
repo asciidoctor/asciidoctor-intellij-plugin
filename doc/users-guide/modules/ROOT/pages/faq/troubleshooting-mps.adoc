@@ -1,4 +1,5 @@
 = Troubleshooting problems when working with MPS
+:description: This describes solutions for PluginExceptions when using MPS as an IDE.
 :navtitle: Troubleshooting MPS
 
 This chapter summarizes known problems and possible remedies for users working with MPS.

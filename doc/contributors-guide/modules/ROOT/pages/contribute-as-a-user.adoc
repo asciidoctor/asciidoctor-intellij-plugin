@@ -1,7 +1,8 @@
 = Contribute as a user
-
-There are several ways how to support the development of the plugin as a user of the plugin.
+:description: There are several ways how to support the development of the plugin as a user of the plugin. \
 No programming skills required!
+
+{description}
 
 Read more on how you can help:
 

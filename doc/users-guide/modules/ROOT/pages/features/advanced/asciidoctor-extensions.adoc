@@ -1,5 +1,7 @@
 = Asciidoctor Extensions
+:description: Asciidoctor Extensions can provide additional macros using Ruby code. These are executed when rendering the preview.
 
 Asciidoctor Extensions can provide additional macros.
 To see the rendered result in the preview, the plugin can use extensions during rendering.
-See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-for-Asciidoctor-Extensions[Wiki page] for details
+
+See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-for-Asciidoctor-Extensions[Wiki page] for details.

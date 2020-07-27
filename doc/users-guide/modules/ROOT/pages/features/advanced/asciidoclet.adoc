@@ -1,5 +1,6 @@
 = Asciidoclet
 // see: AsciiDocJavaDocInfoGenerator
+:description: This plugin show a preview of Asciidoclet content, when AsciiDoc is part of Javadoc API documentation.
 
 The https://github.com/asciidoctor/asciidoclet[Asciidoclet^] project allows developers to write their code Javadoc API documentation using AsciiDoc.
 This plugin renders the AsciiDoc contents when previewing the documentation.

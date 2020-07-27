@@ -1,11 +1,12 @@
 = Recommended settings
+:description: Take a minute for the essential configuration settings of the plugin.
 
 // make preview work on non-Antora sites, for example GitHub
 ifndef::env-site[]
 :imagesdir: ../images
 endif::[]
 
-Take a minute to for the essential configuration settings of the plugin.
+{description}
 
 == Configuring editor
 

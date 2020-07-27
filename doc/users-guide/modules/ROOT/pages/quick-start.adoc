@@ -1,11 +1,12 @@
 = Quick Start
+:description: A minimal installation guide for those already familiar with their JetBrains IntelliJ based IDE.
 
 // make preview work on non-Antora sites, for example GitHub
 ifndef::env-site[]
 :imagesdir: ../images
 endif::[]
 
-A minimal guide for those already familiar with their JetBrains IntelliJ based IDE.
+{description}
 Continue to section xref:installation.adoc[] for a more detailed guide.
 
 == Prerequisite

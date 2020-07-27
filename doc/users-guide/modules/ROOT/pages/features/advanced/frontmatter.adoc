@@ -1,4 +1,10 @@
 = Front matter
+:description: Front matter is a snippet of YAML at the beginning of a file used by static site generators.
 
 Front matter is a https://asciidoctor.org/docs/user-manual/#static-website-generators[snippet of YAML at the beginning of a file used by static site generators].
-The plugin highlight the contents in the editor as YAML file and set the attribute `skip-front-matter` by default for the preview.
+
+== How it works
+
+The plugins highlight the contents in the editor as YAML content.
+
+It set the attribute `skip-front-matter` by default for the preview, therefore hiding the front matter in the preview.
