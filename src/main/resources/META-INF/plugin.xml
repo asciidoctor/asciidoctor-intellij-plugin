@@ -258,6 +258,14 @@
                      groupName="General" enabledByDefault="true" level="ERROR"
                      shortName="AsciiDocReferencePattern"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocReferencePatternInspection"/>
+    <localInspection language="AsciiDoc" displayName="Description length inspection" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="WARNING"
+                     shortName="AsciiDocDescriptionLength"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocDescriptionLengthInspection"/>
+    <localInspection language="AsciiDoc" displayName="Description exists inspection for Antora page" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="false" level="WARNING"
+                     shortName="AsciiDocDescriptionExists"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocDescriptionExistsInspection"/>
     <lang.inspectionSuppressor language="AsciiDoc"
       implementationClass="org.asciidoc.intellij.inspections.AsciiDocInspectionSuppressor" />
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>

@@ -291,7 +291,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
         "AsciiDoc:ATTRIBUTE_NAME ('attr')\n" +
         "AsciiDoc:ATTRIBUTE_NAME_END (':')\n" +
-        "AsciiDoc:ATTRIBUTE_VAL (' val')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:ATTRIBUTE_VAL ('val')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:HEADER ('Header2')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -479,7 +480,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
         "AsciiDoc:ATTRIBUTE_NAME ('attr')\n" +
         "AsciiDoc:ATTRIBUTE_NAME_END (':')\n" +
-        "AsciiDoc:ATTRIBUTE_VAL (' icon:check[]')");
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:ATTRIBUTE_VAL ('icon:check[]')");
   }
 
   public void testAttributeInTitle() {
@@ -516,7 +518,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
         "AsciiDoc:ATTRIBUTE_NAME ('attribute')\n" +
         "AsciiDoc:ATTRIBUTE_NAME_END (':')\n" +
-        "AsciiDoc:ATTRIBUTE_VAL (' value')");
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:ATTRIBUTE_VAL ('value')");
   }
 
   public void testAttributeWithNestedAttributeAndValue() {
@@ -524,7 +527,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
         "AsciiDoc:ATTRIBUTE_NAME ('attribute')\n" +
         "AsciiDoc:ATTRIBUTE_NAME_END (':')\n" +
-        "AsciiDoc:ATTRIBUTE_VAL (' ')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:ATTRIBUTE_REF_START ('{')\n" +
         "AsciiDoc:ATTRIBUTE_REF ('otherattr')\n" +
         "AsciiDoc:ATTRIBUTE_REF_END ('}')\n" +
@@ -539,7 +542,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
         "AsciiDoc:ATTRIBUTE_NAME ('attribute')\n" +
         "AsciiDoc:ATTRIBUTE_NAME_END (':')\n" +
-        "AsciiDoc:ATTRIBUTE_VAL (' value')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:ATTRIBUTE_VAL ('value')\n" +
         "AsciiDoc:ATTRIBUTE_CONTINUATION (' \\\\n ')\n" +
         "AsciiDoc:ATTRIBUTE_VAL ('continue on the next line')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -557,7 +561,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
         "AsciiDoc:ATTRIBUTE_NAME ('attribute')\n" +
         "AsciiDoc:ATTRIBUTE_NAME_END (':')\n" +
-        "AsciiDoc:ATTRIBUTE_VAL (' value')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:ATTRIBUTE_VAL ('value')\n" +
         "AsciiDoc:ATTRIBUTE_CONTINUATION_LEGACY (' +\\n ')\n" +
         "AsciiDoc:ATTRIBUTE_VAL ('continue on the next line')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -2227,7 +2232,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
         "AsciiDoc:ATTRIBUTE_NAME ('other')\n" +
         "AsciiDoc:ATTRIBUTE_NAME_END (':')\n" +
-        "AsciiDoc:ATTRIBUTE_VAL (' val')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:ATTRIBUTE_VAL ('val')\n" +
         "AsciiDoc:ATTRS_END (']')");
   }
 

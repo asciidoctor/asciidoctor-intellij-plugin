@@ -203,6 +203,14 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
     return AsciiDocParserImpl.headingLevel(heading.getText());
   }
 
+  public PsiElement getHeadingElement() {
+    ASTNode heading = getNode().findChildByType(HEADINGS);
+    if (heading == null) {
+      throw new IllegalStateException("heading without heading");
+    }
+    return heading.getPsi();
+  }
+
   @Override
   public String toString() {
     return getClass().getSimpleName() + "(" + getNode().getElementType().toString() + ")";

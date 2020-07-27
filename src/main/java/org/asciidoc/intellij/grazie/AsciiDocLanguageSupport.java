@@ -11,6 +11,7 @@ import com.intellij.psi.tree.TokenSet;
 import kotlin.ranges.IntRange;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
+import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,6 +54,7 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
     AsciiDocTokenTypes.LBRACKET,
     AsciiDocTokenTypes.RBRACKET,
     AsciiDocTokenTypes.BULLET,
+    AsciiDocTokenTypes.ATTRIBUTE_VAL, // will only get here if attribute is classified to contain spell checkable content
     // keep the white space in here as blanks are necessary to separate words
     AsciiDocTokenTypes.WHITE_SPACE,
     AsciiDocTokenTypes.WHITE_SPACE_MONO,
@@ -69,6 +71,12 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
   public ElementBehavior getElementBehavior(@NotNull PsiElement root, @NotNull PsiElement child) {
     if (root != child && NODES_TO_CHECK.contains(child.getNode().getElementType())) {
       return ElementBehavior.ABSORB;
+    } else if (root != child && child instanceof AsciiDocAttributeDeclarationImpl) {
+      if (((AsciiDocAttributeDeclarationImpl) child).hasSpellCheckableContent()) {
+        return ElementBehavior.ABSORB;
+      } else {
+        return ElementBehavior.STEALTH;
+      }
     } else if (TEXT_TOKENS.contains(child.getNode().getElementType())) {
       return ElementBehavior.TEXT;
     } else {
@@ -97,14 +105,14 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
   }
 
   @Nullable
-  @SuppressWarnings({"UnstableApiUsage", "MissingOverride"})
+  @SuppressWarnings({"UnstableApiUsage", "MissingOverride", "deprecation"})
   // to be removed in 2020.2, remove @Override to keep compatibility
   // @Override
   public Set<Typo.Category> getIgnoredTypoCategories(@NotNull PsiElement psiElement, @NotNull PsiElement psiElement1) {
     return Collections.emptySet();
   }
 
-  @SuppressWarnings({"UnstableApiUsage", "MissingOverride"})
+  @SuppressWarnings({"UnstableApiUsage", "MissingOverride", "deprecation"})
   @NotNull
   // to be removed in 2020.2, remove @Override to keep compatibility
   // @Override

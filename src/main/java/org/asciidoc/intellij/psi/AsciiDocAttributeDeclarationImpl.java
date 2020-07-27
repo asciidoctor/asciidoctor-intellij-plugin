@@ -11,9 +11,16 @@ import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public class AsciiDocAttributeDeclarationImpl
-        extends AsciiDocAttributeDeclarationStubElementImpl<AsciiDocAttributeDeclarationStub>
-        implements AsciiDocAttributeDeclaration {
+  extends AsciiDocAttributeDeclarationStubElementImpl<AsciiDocAttributeDeclarationStub>
+  implements AsciiDocAttributeDeclaration {
+
+  private static final Set<String> ATTRIBUTES_WITH_TEXT_CONTENT = new HashSet<>(Arrays.asList("description",
+    "title", "doctitle", "navtitle", "reftext"));
 
   public AsciiDocAttributeDeclarationImpl(AsciiDocAttributeDeclarationStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
@@ -63,9 +70,12 @@ public class AsciiDocAttributeDeclarationImpl
         return value;
       }
     }
-    ASTNode attributeValue = getNode().findChildByType(AsciiDocTokenTypes.ATTRIBUTE_VAL);
     if (isUnset()) {
       return null;
+    }
+    ASTNode attributeValue = getNode().findChildByType(AsciiDocTokenTypes.ATTRIBUTE_NAME_END);
+    if (attributeValue != null) {
+      attributeValue = attributeValue.getTreeNext();
     }
     if (attributeValue != null) {
       StringBuilder sb = new StringBuilder();
@@ -107,5 +117,10 @@ public class AsciiDocAttributeDeclarationImpl
   @Override
   public AsciiDocAttributeDeclarationName getAttributeDeclarationName() {
     return findChildByType(AsciiDocElementTypes.ATTRIBUTE_DECLARATION_NAME);
+  }
+
+  public boolean hasSpellCheckableContent() {
+    String name = getAttributeName();
+    return ATTRIBUTES_WITH_TEXT_CONTENT.contains(name.toLowerCase());
   }
 }

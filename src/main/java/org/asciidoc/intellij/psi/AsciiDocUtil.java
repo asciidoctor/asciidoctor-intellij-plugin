@@ -408,7 +408,7 @@ public class AsciiDocUtil {
     return null;
   }
 
-  public static VirtualFile findAntoraPagesDir(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+  public static @Nullable VirtualFile findAntoraPagesDir(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
@@ -706,7 +706,7 @@ public class AsciiDocUtil {
     return antoraAttachmentsDir;
   }
 
-  public static VirtualFile findAntoraPagesDir(PsiElement element) {
+  public static @Nullable VirtualFile findAntoraPagesDir(PsiElement element) {
     VirtualFile antoraPagesDir = null;
     VirtualFile vf;
     vf = element.getContainingFile().getVirtualFile();

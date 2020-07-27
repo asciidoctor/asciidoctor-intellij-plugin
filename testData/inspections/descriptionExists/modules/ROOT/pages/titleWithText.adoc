@@ -1,0 +1,2 @@
+<warning descr="Description attribute is missing">= <caret>Title</warning>
+:navtitle: xxx

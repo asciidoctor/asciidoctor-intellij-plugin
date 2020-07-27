@@ -390,6 +390,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 %state ATTRIBUTE_NAME
 %state ATTRIBUTE_VAL
+%state ATTRIBUTE_VAL_WS
 %state ATTRIBUTE_REF
 
 %state LINKFILE
@@ -471,11 +472,16 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <ATTRIBUTE_NAME> {
-  {ATTRIBUTE_NAME_END} { yybegin(ATTRIBUTE_VAL); return AsciiDocTokenTypes.ATTRIBUTE_NAME_END; }
+  {ATTRIBUTE_NAME_END} { yybegin(ATTRIBUTE_VAL_WS); return AsciiDocTokenTypes.ATTRIBUTE_NAME_END; }
   {AUTOCOMPLETE} | {ATTRIBUTE_NAME_DECL} { return AsciiDocTokenTypes.ATTRIBUTE_NAME; }
   "!"                { return AsciiDocTokenTypes.ATTRIBUTE_UNSET; } // can be at start or end of declaration
   "\n"               { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
   [^]                { yypushback(yylength()); yypopstate(); }
+}
+
+<ATTRIBUTE_VAL_WS> {
+  " " { return AsciiDocTokenTypes.WHITE_SPACE; }
+  [^]                { yypushback(yylength());  yybegin(ATTRIBUTE_VAL); }
 }
 
 <ATTRIBUTE_VAL, INLINE_URL_NO_DELIMITER, INSIDE_LINE, DESCRIPTION, LINKFILE, LINKANCHOR, LINKURL, BLOCK_MACRO, LINKTEXT, REFTEXT, INLINEREFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE, REF, ANCHORID, BIBNAME> {

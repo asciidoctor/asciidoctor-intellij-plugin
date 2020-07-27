@@ -6,6 +6,7 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy;
 import com.intellij.spellchecker.tokenizer.Tokenizer;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationImpl;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -34,10 +35,18 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
 
   @NotNull
   @Override
-  public Tokenizer getTokenizer(PsiElement element) {
+  public Tokenizer<?> getTokenizer(PsiElement element) {
     IElementType elementType = element.getNode().getElementType();
     if (TEXT_TOKENS.contains(elementType)) {
       return TEXT_TOKENIZER;
+    }
+    if (elementType == AsciiDocTokenTypes.ATTRIBUTE_VAL) {
+      if (element.getParent() instanceof AsciiDocAttributeDeclarationImpl) {
+        AsciiDocAttributeDeclarationImpl attribute = (AsciiDocAttributeDeclarationImpl) element.getParent();
+        if (attribute.hasSpellCheckableContent()) {
+          return TEXT_TOKENIZER;
+        }
+      }
     }
     return EMPTY_TOKENIZER;
   }
