@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.15 (preview, available from GitHub releases)
+=== 0.31.16 (preview, available from GitHub releases)
 
 - fix autocomplete for incomplete macros in lines with more marcos and/or brackets (#526)
 - page attributes like description and title are spell checked and validated (#527)
