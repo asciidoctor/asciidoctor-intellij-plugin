@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.31.17 (work in progress)
 
 - fix handling multiple unconstrained formattings in a single row (#528)
+- within AsciiDoc files, don't report well-known attribute names as spelling errors (#528)
 
 === 0.31.16 (preview, available from GitHub releases)
 

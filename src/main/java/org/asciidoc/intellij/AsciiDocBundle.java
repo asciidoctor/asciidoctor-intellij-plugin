@@ -21,6 +21,10 @@ public class AsciiDocBundle {
     return AbstractBundle.message(BUNDLE, key, params);
   }
 
+  public static boolean containsAttribute(String attributeName) {
+    return BUNDLE.containsKey(BUILTIN_ATTRIBUTE_PREFIX + attributeName + ".text");
+  }
+
   public static List<String> getBuiltInAttributesList() {
     return BUNDLE.keySet().stream()
       .filter(key -> key.startsWith(BUILTIN_ATTRIBUTE_PREFIX))
