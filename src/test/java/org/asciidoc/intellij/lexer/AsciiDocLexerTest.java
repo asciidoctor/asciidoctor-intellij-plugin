@@ -686,6 +686,32 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('world')");
   }
 
+  public void testBoldDoubleMultiple() {
+    doTest("**E**quivalent **M**odulo",
+      "AsciiDoc:BOLD_START ('**')\n" +
+        "AsciiDoc:BOLD ('E')\n" +
+        "AsciiDoc:BOLD_END ('**')\n" +
+        "AsciiDoc:TEXT ('quivalent')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:BOLD_START ('**')\n" +
+        "AsciiDoc:BOLD ('M')\n" +
+        "AsciiDoc:BOLD_END ('**')\n" +
+        "AsciiDoc:TEXT ('odulo')");
+  }
+
+  public void testItalicDoubleMultiple() {
+    doTest("__E__quivalent __M__odulo",
+      "AsciiDoc:ITALIC_START ('__')\n" +
+        "AsciiDoc:ITALIC ('E')\n" +
+        "AsciiDoc:ITALIC_END ('__')\n" +
+        "AsciiDoc:TEXT ('quivalent')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:ITALIC_START ('__')\n" +
+        "AsciiDoc:ITALIC ('M')\n" +
+        "AsciiDoc:ITALIC_END ('__')\n" +
+        "AsciiDoc:TEXT ('odulo')");
+  }
+
   public void testNonBoldWithBlockBreak() {
     doTest("Hello **bold\n\n** world",
       "AsciiDoc:TEXT ('Hello')\n" +

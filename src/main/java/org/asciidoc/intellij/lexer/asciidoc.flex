@@ -1049,14 +1049,19 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            return textFormat();
                          }
                        }
-  {BOLD} {BOLD}? [^\*\n \t] ({WORDNOASTERISK} | [ \t][\*] | [\*][\p{Letter}\p{Digit}_])* {BOLD} {
-                         yypushback(yylength() - 1);
-                         if(isUnconstrainedStart() && !singlebold && !doublebold) {
-                            singlebold = true; return AsciiDocTokenTypes.BOLD_START;
-                         } else if (singlebold && isUnconstrainedEnd()) {
-                            singlebold = false; return AsciiDocTokenTypes.BOLD_END;
+  {BOLD} {BOLD}? [^\*\n \t] ({WORDNOASTERISK} | [ \t][\*][^\*] | [\*][\p{Letter}\p{Digit}_])* {BOLD} {
+                         if (doublebold && yytext().toString().startsWith("**")) {
+                           yypushback(yylength() - 2);
+                           doublebold = false; return AsciiDocTokenTypes.BOLD_END;
                          } else {
-                            return textFormat();
+                           yypushback(yylength() - 1);
+                           if(isUnconstrainedStart() && !singlebold && !doublebold) {
+                             singlebold = true; return AsciiDocTokenTypes.BOLD_START;
+                           } else if (singlebold && isUnconstrainedEnd()) {
+                             singlebold = false; return AsciiDocTokenTypes.BOLD_END;
+                           } else {
+                             return textFormat();
+                           }
                          }
                        }
   {BOLD}               { if(singlebold && !doublebold && isUnconstrainedEnd()) {
@@ -1084,14 +1089,19 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            return textFormat();
                          }
                        }
-  {ITALIC} {ITALIC}? [^\_\n \t] ({WORDNOUNDERSCORE} | [ \t][\_] | [\_][\p{Letter}\p{Digit}_])* {ITALIC} {
-                         yypushback(yylength() - 1);
-                         if(isUnconstrainedStart() && !singleitalic && !doubleitalic) {
-                            singleitalic = true; return AsciiDocTokenTypes.ITALIC_START;
-                         } else if (singleitalic && isUnconstrainedEnd()) {
-                            singleitalic = false; return AsciiDocTokenTypes.ITALIC_END;
+  {ITALIC} {ITALIC}? [^\_\n \t] ({WORDNOUNDERSCORE} | [ \t][\_][^\_] | [\_][\p{Letter}\p{Digit}_])* {ITALIC} {
+                         if (doubleitalic && yytext().toString().startsWith("__")) {
+                           yypushback(yylength() - 2);
+                           doubleitalic = false; return AsciiDocTokenTypes.ITALIC_END;
                          } else {
-                            return textFormat();
+                           yypushback(yylength() - 1);
+                           if(isUnconstrainedStart() && !singleitalic && !doubleitalic) {
+                              singleitalic = true; return AsciiDocTokenTypes.ITALIC_START;
+                           } else if (singleitalic && isUnconstrainedEnd()) {
+                              singleitalic = false; return AsciiDocTokenTypes.ITALIC_END;
+                           } else {
+                              return textFormat();
+                           }
                          }
                        }
   {ITALIC}               { if(singleitalic && !doubleitalic && isUnconstrainedEnd()) {
