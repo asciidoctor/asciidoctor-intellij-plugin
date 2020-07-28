@@ -122,7 +122,12 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
 
   @Override
   public boolean isMyContextRoot(@NotNull PsiElement psiElement) {
-    return NODES_TO_CHECK.contains(psiElement.getNode().getElementType()) || psiElement instanceof PsiComment;
+    if (psiElement instanceof AsciiDocAttributeDeclarationImpl &&
+      ((AsciiDocAttributeDeclarationImpl) psiElement).hasSpellCheckableContent()) {
+      return true;
+    }
+    return NODES_TO_CHECK.contains(psiElement.getNode().getElementType())
+      || psiElement instanceof PsiComment;
   }
 
   @Override
