@@ -1,26 +1,51 @@
 package org.asciidoc.intellij.grazie;
 
-import com.intellij.grazie.grammar.Typo;
-import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy;
-import com.intellij.grazie.grammar.strategy.impl.ReplaceCharRule;
-import com.intellij.grazie.grammar.strategy.impl.RuleGroup;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.TokenSet;
-import kotlin.ranges.IntRange;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationImpl;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+public class AsciiDocLanguageSupport {
 
-public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
+  public enum Behavior {
+    /**
+     * A PSI element that contains a nested text and should be ignored.
+     * <p>
+     * Example: The "Headline" is a nested element in the section; it is treated as its own sentence.
+     * <p>
+     * <pre>
+     * == Headline
+     * More text
+     * </pre>
+     * <p>
+     */
+    ABSORB,
+    /**
+     * A PSI element that <b>WILL NOT</b> be printed, adjacent text is part of the same word.
+     * <p>
+     * Example: the "**" would be STEALTH<br>
+     * <code>**b**old</code> is one word "bold"
+     */
+    STEALTH,
+    /**
+     * A PSI that contains text that should be spell and grammar checked.
+     * <p>
+     * Example: the "b" and "old" would be TEXT<br>
+     * <code>**b**old</code> is one word "bold"
+     */
+    TEXT,
+    /**
+     * A PSI that that <b>WILL</b> be printed, adjacent text represents different words.
+     * <p>
+     * Example: the "->" would be "SEPARATE"<br>
+     * <code>one->two</code> is two words "one" and "two"
+     */
+    SEPARATE
+  }
 
   // all tokens that contain full sentences that can be checked for grammar and spelling.
   private static final TokenSet NODES_TO_CHECK = TokenSet.create(
@@ -34,6 +59,31 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
     AsciiDocElementTypes.SECTION,
     AsciiDocElementTypes.BLOCK
   );
+
+  // all tokens that contain full sentences that can be checked for grammar and spelling.
+  private static final TokenSet SEPARATOR_TOKENS = TokenSet.create(
+    AsciiDocTokenTypes.ARROW,
+    AsciiDocTokenTypes.LBRACKET,
+    AsciiDocTokenTypes.RBRACKET,
+    AsciiDocTokenTypes.LPAREN,
+    AsciiDocTokenTypes.RPAREN,
+    AsciiDocTokenTypes.LT,
+    AsciiDocTokenTypes.GT,
+    AsciiDocTokenTypes.DOUBLE_QUOTE,
+    AsciiDocTokenTypes.SINGLE_QUOTE,
+    AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START,
+    AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END,
+    AsciiDocTokenTypes.ASSIGNMENT,
+    AsciiDocTokenTypes.CELLSEPARATOR,
+    AsciiDocTokenTypes.END_OF_SENTENCE,
+    AsciiDocTokenTypes.BULLET,
+    AsciiDocTokenTypes.ENUMERATION,
+    AsciiDocTokenTypes.ADMONITION,
+    AsciiDocTokenTypes.CALLOUT,
+    AsciiDocTokenTypes.LT,
+    AsciiDocTokenTypes.GT
+  );
+
 
   // all tokens that contain text that is part of a sentence and can be a sub-node of the elements above
   private static final TokenSet TEXT_TOKENS = TokenSet.orSet(TokenSet.create(
@@ -66,61 +116,24 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
     AsciiDocElementTypes.ITALIC // will nest ITALIC
   ), NODES_TO_CHECK);
 
-  @NotNull
-  @Override
-  public ElementBehavior getElementBehavior(@NotNull PsiElement root, @NotNull PsiElement child) {
+  public Behavior getElementBehavior(@NotNull PsiElement root, @NotNull PsiElement child) {
     if (root != child && NODES_TO_CHECK.contains(child.getNode().getElementType())) {
-      return ElementBehavior.ABSORB;
+      return Behavior.ABSORB;
     } else if (root != child && child instanceof AsciiDocAttributeDeclarationImpl) {
       if (((AsciiDocAttributeDeclarationImpl) child).hasSpellCheckableContent()) {
-        return ElementBehavior.ABSORB;
+        return Behavior.ABSORB;
       } else {
-        return ElementBehavior.STEALTH;
+        return Behavior.STEALTH;
       }
+    } else if (SEPARATOR_TOKENS.contains(child.getNode().getElementType())) {
+      return Behavior.SEPARATE;
     } else if (TEXT_TOKENS.contains(child.getNode().getElementType())) {
-      return ElementBehavior.TEXT;
+      return Behavior.TEXT;
     } else {
-      return ElementBehavior.STEALTH;
+      return Behavior.STEALTH;
     }
   }
 
-  @Override
-  public boolean isEnabledByDefault() {
-    return true;
-  }
-
-  @NotNull
-  @Override
-  public TextDomain getContextRootTextDomain(@NotNull PsiElement root) {
-    if (root instanceof PsiComment) {
-      return TextDomain.COMMENTS;
-    }
-    return TextDomain.PLAIN_TEXT;
-  }
-
-  @Nullable
-  @Override
-  public RuleGroup getIgnoredRuleGroup(@NotNull PsiElement root, @NotNull PsiElement child) {
-    return null;
-  }
-
-  @Nullable
-  @SuppressWarnings({"UnstableApiUsage", "MissingOverride", "deprecation"})
-  // to be removed in 2020.2, remove @Override to keep compatibility
-  // @Override
-  public Set<Typo.Category> getIgnoredTypoCategories(@NotNull PsiElement psiElement, @NotNull PsiElement psiElement1) {
-    return Collections.emptySet();
-  }
-
-  @SuppressWarnings({"UnstableApiUsage", "MissingOverride", "deprecation"})
-  @NotNull
-  // to be removed in 2020.2, remove @Override to keep compatibility
-  // @Override
-  public List<ReplaceCharRule> getReplaceCharRules(@NotNull PsiElement psiElement) {
-    return Collections.emptyList();
-  }
-
-  @Override
   public boolean isMyContextRoot(@NotNull PsiElement psiElement) {
     if (psiElement instanceof AsciiDocAttributeDeclarationImpl &&
       ((AsciiDocAttributeDeclarationImpl) psiElement).hasSpellCheckableContent()) {
@@ -130,41 +143,4 @@ public class AsciiDocLanguageSupport implements GrammarCheckingStrategy {
       || psiElement instanceof PsiComment;
   }
 
-  @Override
-  public boolean isTypoAccepted(@NotNull PsiElement psiElement, @NotNull IntRange intRange, @NotNull IntRange intRange1) {
-    return true;
-  }
-
-  @NotNull
-  @Override
-  public LinkedHashSet<IntRange> getStealthyRanges(@NotNull PsiElement psiElement, @NotNull CharSequence charSequence) {
-    LinkedHashSet<IntRange> ranges = new LinkedHashSet<>();
-    if (psiElement.getNode().getElementType() == AsciiDocTokenTypes.LINE_COMMENT && psiElement.getTextLength() >= 2) {
-      // ignore "//" at start of line comment
-      ranges.add(new IntRange(0, 1));
-    }
-    if (psiElement.getNode().getElementType() == AsciiDocTokenTypes.HEADING && psiElement.getTextLength() >= 1) {
-      // ignore "##" or "==" at start of heading
-      String heading = psiElement.getText();
-      int i = 0;
-      char start = heading.charAt(0);
-      while (i < heading.length() && heading.charAt(i) == start) {
-        ++i;
-      }
-      while (i < heading.length() && heading.charAt(i) == ' ') {
-        ++i;
-      }
-      ranges.add(new IntRange(0, i - 1));
-    }
-    if (psiElement.getNode().getElementType() == AsciiDocTokenTypes.HEADING_OLDSTYLE && psiElement.getTextLength() >= 1) {
-      // ignore second line of heading
-      String heading = psiElement.getText();
-      int i = 0;
-      while (i < heading.length() && heading.charAt(i) != '\n') {
-        ++i;
-      }
-      ranges.add(new IntRange(i, heading.length()));
-    }
-    return ranges;
-  }
 }

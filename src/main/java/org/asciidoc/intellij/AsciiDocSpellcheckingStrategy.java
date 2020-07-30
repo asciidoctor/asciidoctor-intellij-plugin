@@ -1,6 +1,5 @@
 package org.asciidoc.intellij;
 
-import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -23,9 +22,15 @@ import org.jetbrains.annotations.NotNull;
 public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
   private final AsciiDocLanguageSupport languageSupport = new AsciiDocLanguageSupport();
 
+  /**
+   * Return a tokenizer it it is a file's top child, or if is a content root.
+   * If it is a context root, the tokenizer will analyze if text tokens are separated by non-printable tokens
+   * and will combine them to words.
+   */
+  @SuppressWarnings("rawtypes")
   @NotNull
   @Override
-  public Tokenizer<?> getTokenizer(PsiElement element) {
+  public Tokenizer getTokenizer(PsiElement element) {
     // run tokenizing on all top level elements in the file and those marked as root elements in the language support.
     if (languageSupport.isMyContextRoot(element) || element.getParent() instanceof PsiFile) {
       return new Tokenizer<PsiElement>() {
@@ -45,6 +50,9 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
     return EMPTY_TOKENIZER;
   }
 
+  /**
+   * After each word-separating token, flush the text contents to the token consumer.
+   */
   private class TokenizingElementVisitor extends PsiElementVisitor {
     private final PsiElement root;
     private final TokenConsumer consumer;
@@ -58,7 +66,7 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
 
     @Override
     public void visitElement(@NotNull PsiElement child) {
-      GrammarCheckingStrategy.ElementBehavior elementBehavior = languageSupport.getElementBehavior(root, child);
+      AsciiDocLanguageSupport.Behavior elementBehavior = languageSupport.getElementBehavior(root, child);
       switch (elementBehavior) {
         case STEALTH:
         case ABSORB:
@@ -68,8 +76,9 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
             length = 0;
           }
           break;
+        case SEPARATE:
         case TEXT:
-          if (child instanceof PsiWhiteSpace) {
+          if (child instanceof PsiWhiteSpace || elementBehavior == AsciiDocLanguageSupport.Behavior.SEPARATE) {
             flush();
             length += child.getTextLength();
             offset += length;

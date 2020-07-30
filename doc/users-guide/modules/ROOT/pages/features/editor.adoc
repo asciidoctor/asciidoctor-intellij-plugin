@@ -84,12 +84,12 @@ The plugin expands the current selection when the user presses kbd:[Ctrl+W] and 
 IntelliJ's built-in spell checker verifies all text areas of the document.
 It underlines unknown words with a green wavy line.
 With the context menu the user can change the spelling or to add the word to the project's dictionary.
-To enable spell-checking support for other languages, the user can add a dictionary file via "`Editor | Spelling`".
+To enable spell-checking support for other languages, the user can add a dictionary file via menu:File[Settings... > Editor > Spelling].
 Dictionaries are available online for example at http://www.winedt.org/dict.html.
 Word lists need to be in the UTF-8 format to work.
 
 [[grazie]]
-// see: AsciiDocLanguageSupport
+// see: AsciiDocGrazieLanguageSupport
 Once the user installed the https://plugins.jetbrains.com/plugin/12175-grazie/[Grazie plugin] the editor highlights possible grammar and spelling mistakes.
 For now text must be included in a section or block to be checked.
 A minimal file would therefore contain at least a heading and some text.

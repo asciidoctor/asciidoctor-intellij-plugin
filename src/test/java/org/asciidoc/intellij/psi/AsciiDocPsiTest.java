@@ -3,20 +3,28 @@ package org.asciidoc.intellij.psi;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.spellchecker.inspections.Splitter;
+import com.intellij.spellchecker.tokenizer.TokenConsumer;
+import com.intellij.spellchecker.tokenizer.Tokenizer;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import org.asciidoc.intellij.AsciiDocSpellcheckingStrategy;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.assertj.core.api.Assertions;
 import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -416,6 +424,41 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     AsciiDocFile resolved = (AsciiDocFile) macro.getReferences()[0].resolve();
     assertNotNull("macro should resolve", resolved);
     assertEquals("macro should resolve to file 'aaa.adoc'", "aaa.adoc", resolved.getName());
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public void testSpellCheck() {
+    // given...
+    PsiFile psiFile = configureByAsciiDoc("// not within block, therefore separate elements\n" +
+      "**E**quivalent\n\n" +
+      "// within block, therefore split by word breaks\n" +
+      "== Heading\n**E**quivalent **M**odulo");
+
+    AsciiDocSpellcheckingStrategy spellcheckingStrategy = new AsciiDocSpellcheckingStrategy();
+
+    List<String> tokens = new ArrayList<>();
+    TokenConsumer tk = new TokenConsumer() {
+      @Override
+      public void consumeToken(PsiElement element, String text, boolean useRename, int offset, TextRange rangeToCheck, Splitter splitter) {
+        tokens.add(text);
+      }
+    };
+    psiFile.accept(new PsiElementVisitor() {
+      @Override
+      public void visitElement(@NotNull PsiElement element) {
+        Tokenizer tokenizer = spellcheckingStrategy.getTokenizer(element);
+        tokenizer.tokenize(element, tk);
+        element.acceptChildren(this);
+      }
+    });
+    // for now headings prefix and comment prefix remain in the text, as the spell checker will ignore them anyway
+    Assertions.assertThat(tokens).containsExactly("// not within block, therefore separate elements",
+      "E",
+      "quivalent",
+      "// within block, therefore split by word breaks",
+      "Equivalent",
+      "Modulo",
+      "== Heading");
   }
 
   public void testNestedAttribute() {
