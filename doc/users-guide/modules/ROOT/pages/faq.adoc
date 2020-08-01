@@ -16,6 +16,11 @@ More content is available in the https://github.com/asciidoctor/asciidoctor-inte
 
 See xref:faq/troubleshooting-mps.adoc[] for more information.
 
+=== The preview doesn't show some remote images! Is this a proxy issue?
+
+The JCEF preview doesn't support the IDE's proxy settings.
+See xref:faq/jcef-no-proxy-support.adoc[] for more information.
+
 === Something is not working as I expect it to work, where can I get help?
 
 Please open an issue in the https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issues^] for this project.

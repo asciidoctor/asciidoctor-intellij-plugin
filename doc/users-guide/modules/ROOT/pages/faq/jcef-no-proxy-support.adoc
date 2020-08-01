@@ -1,0 +1,34 @@
+= Proxy issues with the JCEF preview
+:navtitle: Proxy issues JCEF preview
+:description: JCEF preview doesn't support proxy settings. Please use the JavaFX preview.
+
+{description}
+See below how to do that.
+
+== Symptom: Remote content not shown
+
+Images and other referenced remote content might not show up in the preview.
+
+Local files within the project show without problems.
+
+== Environment: JCEF preview and behind proxy
+
+The plugin's settings in menu:File[Settings... > Languages & Frameworks > AsciiDoc > Preview Browser] shows that "`JCEF Browser`" is used.
+
+The user is behind a proxy, and the content in the preview includes remote files.
+
+== Cause: JCEF doesn't support proxies
+
+The JCEF preview doesn't support the IDE's proxy settings.
+
+https://youtrack.jetbrains.com/issue/JBR-2605[This is a known issue with the JCEF preview.
+Please watch and vote for this issue in the JetBrains issue tracker].
+
+== Workaround: Use JavaFX preview
+
+The plugin supports different kinds of previews: Swing, JavaFX and JCEF.
+
+As a workaround, consider using the JavaFX preview.
+
+include::partial$javafx-preview-requires-plugin.adoc[]
+Once JavaFX is available, the user can change the preview to JavaFX in the plugin's settings via menu:File[Settings... > Languages & Frameworks > AsciiDoc > Preview Browser].
