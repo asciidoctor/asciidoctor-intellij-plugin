@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.17 (work in progress)
+=== 0.31.17 (preview, available from GitHub releases)
 
 - fix handling multiple unconstrained formattings in a single row (#528)
 - within AsciiDoc files, don't report well-known attribute names as spelling errors (#528)
