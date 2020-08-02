@@ -21,6 +21,12 @@ See xref:faq/troubleshooting-mps.adoc[] for more information.
 The JCEF preview doesn't support the IDE's proxy settings.
 See xref:faq/jcef-no-proxy-support.adoc[] for more information.
 
+=== The preview doesn't show and in the notification I see "`Errno::ENOENT message`".
+
+This might be due to non-US-ASCII characters in folder names.
+
+See xref:faq/errno-enoent.adoc[] for more information.
+
 === Something is not working as I expect it to work, where can I get help?
 
 Please open an issue in the https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issues^] for this project.

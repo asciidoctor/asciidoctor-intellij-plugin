@@ -1,0 +1,38 @@
+= Error Message Errno ENOENT and no preview
+:navtitle: Error Message ENOENT
+:description: Problems with folder names with non-US-ASCII characters. See below for the remedy.
+
+{description}
+
+== Symptom: Errno::ENOENT message
+
+When rendering a preview, an error message like the following appears in the console:
+
+----
+Error rendering asciidoctor: org.jruby.exceptions.RaiseException: (Errno::ENOENT) file:/C:/Users/....gemspec
+----
+
+The preview doesn't show.
+
+== Environment: Windows or a non-UTF-8 default encoding
+
+This seems to happen mostly on Windows systems as they don't default to UTF-8 charsets.
+Linux systems usually default to UTF-8 and are not affected.
+
+== Cause: Folder names with non-US-ASCII characters
+
+Running Microsoft Windows there seems to be a problem that JRuby can't read a folder name when contains non-US-ASCII characters that would require an UTF-8 encoding.
+
+This has been documented first in https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/210[Issue 210]
+
+== Remedy: Add file encoding VM option to IDE
+
+Please put the following as a new line at the end of IDE's VM options file:
+
+----
+-Dfile.encoding=UTF-8
+----
+
+You can open the file from your IDE via menu:Help[Edit custom VM options...].
+
+The https://www.jetbrains.com/help/idea/tuning-the-ide.html[online documentation of IntelliJ] explains where to find this file in the local file system.

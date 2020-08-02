@@ -19,4 +19,5 @@
 *** xref:features/advanced/spring-rest-docs.adoc[]
 * xref:faq.adoc[]
 ** xref:faq/jcef-no-proxy-support.adoc[]
+** xref:faq/errno-enoent.adoc[]
 ** xref:faq/troubleshooting-mps.adoc[]
