@@ -2,7 +2,8 @@
 :navtitle: Frequently asked questions
 :description: Find answers to previously asked questions, or open a new issue to find a solution to your issue.
 
-Missing an entry in the FAQ list? Please open an issue in the https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issues^] for this project.
+Missing an entry in the FAQ list?
+Please open an issue in the https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issues^] for this project.
 
 [NOTE]
 --
@@ -27,6 +28,12 @@ This is an automatic reformatting option in the IDE's settings.
 Stripping leading spaces should not change your rendered output.
 
 See xref:faq/indent-missing-on-pasting.adoc[] for more information.
+
+=== How to avoid scrolling left/right for long lines?
+
+An AsciiDoc recommended practice is to have link:https://asciidoctor.org/docs/asciidoc-recommended-practices/[_one sentence per line_].
+
+See xref:recommended-settings.adoc#configuring-editor[section "`Configuring editor`" in chapter "`Recommended settings`"] on how to enable soft-wrap.
 
 === The preview doesn't show and in the notification I see "`Errno::ENOENT message`".
 
