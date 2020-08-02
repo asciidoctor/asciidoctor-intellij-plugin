@@ -21,6 +21,13 @@ See xref:faq/troubleshooting-mps.adoc[] for more information.
 The JCEF preview doesn't support the IDE's proxy settings.
 See xref:faq/jcef-no-proxy-support.adoc[] for more information.
 
+=== Pasting from clipboard removes leading spaces (aka indent). Why?
+
+This is an automatic reformatting option in the IDE's settings.
+Stripping leading spaces should not change your rendered output.
+
+See xref:faq/indent-missing-on-pasting.adoc[] for more information.
+
 === The preview doesn't show and in the notification I see "`Errno::ENOENT message`".
 
 This might be due to non-US-ASCII characters in folder names.
