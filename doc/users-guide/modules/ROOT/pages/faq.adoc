@@ -41,9 +41,22 @@ This might be due to non-US-ASCII characters in folder names.
 
 See xref:faq/errno-enoent.adoc[] for more information.
 
+=== The preview could not find executable to render diagrams
+
+Some diagram types need external helpers to render diagrams in the preview.
+
+See xref:faq/could-not-find-dot-executable.adoc[] for more information.
+
 === Something is not working as I expect it to work, where can I get help?
 
 Please open an issue in the https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issues^] for this project.
+
+=== Could not find the 'dot' (or other) executable. How to fix it?
+
+Some diagram types need helper applications installed locally.
+Another alternative is to use a cloud based renderer like Kroki.
+
+See xref:faq/could-not-find-dot-executable.adoc[] for more information.
 
 == Supporting the project
 

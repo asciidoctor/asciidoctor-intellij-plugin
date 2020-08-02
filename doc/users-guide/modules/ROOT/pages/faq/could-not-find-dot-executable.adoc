@@ -1,0 +1,43 @@
+= Could not find executable to render diagrams
+:description: To render diagram previews, 'dot' or other helpers need to be in the path or specified as a document attribute. See this guide how to add or enable Kroki.
+:uri-kroki: https://kroki.io
+
+https://github.com/asciidoctor/asciidoctor-diagram[Asciidoctor Diagram] adds capabilities to render diagrams in an AsciiDoc document.
+
+{description}
+
+== Symptom: Could not find the 'dot' (or other) executable
+
+When adding a diagram to the AsciiDoc file, the preview doesn't show diagram, but an error message like:
+
+====
+Could not find the 'dot' executable in PATH; add it to the PATH or specify its location using the 'graphvizdot' document attribute
+====
+
+== Cause: Helper executable not found
+
+When using https://github.com/asciidoctor/asciidoctor-diagram[asciidoctor-diagram], some of the diagrams will need external helper applications like for example https://www.graphviz.org/[Graphviz] for creating the diagram.
+
+== Remedies
+
+=== Remedy 1: Adding executable to PATH or document attribute
+
+Most of the time you can make diagrams work by adding the executable (like Graphiz' dot-executable) to the PATH environment variable.
+
+If this doesn't work for you, there are other possibilities depending on the diagram type.
+PlantUML will search for Graphviz using multiple well-known folders and will look for the executable.
+If an environment variable `GRAPHVIZ_DOT` exists, it will use the executable stated there.
+
+If you still receive the error message, go to the settings of the AsciiDoc plugin, and add it as an attribute.
+For the error message above the attribute is `graphvizdot`. The value is the full path including the executable, for example `C:\Program Files (x86)\Graphviz2.38\bin\dot.exe`
+
+=== Remedy 2: Use Kroki as a cloud-based renderer for diagrams
+
+This plugin supports {uri-kroki}[Kroki] to render diagrams.
+Kroki is available as cloud based service and as a self-hosted service.
+
+See xref:features/preview/diagrams.adoc[section about Kroki in the chapter "`Diagrams in the preview`"].
+
+== Background
+
+See chapter xref:features/preview/diagrams.adoc[] for more information.

@@ -33,7 +33,9 @@ include::partial$download-dependencies.adoc[]
 [[kroki,Kroki]]
 == Using Kroki
 
-Alternatively, the plugin supports {uri-kroki}[Kroki] instead of Asciidoctor Diagram to render diagrams. Use the plugin's settings to enable Kroki:
+Alternatively, the plugin supports {uri-kroki}[Kroki] instead of Asciidoctor Diagram to render diagrams.
+
+Use the plugin's settings to enable Kroki:
 
 image::kroki-settings.png[]
 
