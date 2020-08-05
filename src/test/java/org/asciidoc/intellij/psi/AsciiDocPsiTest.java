@@ -432,7 +432,10 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiFile psiFile = configureByAsciiDoc("// not within block, therefore separate elements\n" +
       "**E**quivalent\n\n" +
       "// within block, therefore split by word breaks\n" +
-      "== Heading\n**E**quivalent **M**odulo");
+      "== Heading\n**E**quivalent **M**odulo\n" +
+      "|===\n" +
+      "| Cell contents.\n" +
+      "|===");
 
     AsciiDocSpellcheckingStrategy spellcheckingStrategy = new AsciiDocSpellcheckingStrategy();
 
@@ -458,7 +461,9 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "// within block, therefore split by word breaks",
       "Equivalent",
       "Modulo",
-      "== Heading");
+      "== Heading",
+      "Cell",
+      "contents.");
   }
 
   public void testNestedAttribute() {
