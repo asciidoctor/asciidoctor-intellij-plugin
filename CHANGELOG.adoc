@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.18 (preview, available from GitHub releases)
+
+- regressions grammar check: end-of-sentences not forwarded to grammar check, text in cells not grammar or spell checked (#528)
+
 === 0.31.17 (preview, available from GitHub releases)
 
 - fix handling multiple unconstrained formattings in a single row (#528)

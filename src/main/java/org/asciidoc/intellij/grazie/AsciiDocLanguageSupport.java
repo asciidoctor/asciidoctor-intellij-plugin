@@ -57,25 +57,27 @@ public class AsciiDocLanguageSupport {
     AsciiDocTokenTypes.LITERAL_BLOCK,
     AsciiDocTokenTypes.BLOCKREFTEXT,
     AsciiDocElementTypes.SECTION,
-    AsciiDocElementTypes.BLOCK
+    AsciiDocElementTypes.BLOCK,
+    AsciiDocElementTypes.CELL
   );
 
-  // all tokens that contain full sentences that can be checked for grammar and spelling.
+  /** All tokens that contain full sentences that can be checked for grammar and spelling.
+   * The contents of these tokens will not be forwarded to the grammar or spell checker.
+   * Example: END_OF_SENTENCE is in the Text category, as it needs to be passed to the grammar checker as a ".", "?" or other text,
+   * so that the grammar checker recognizes the end of a sentence.
+   */
   private static final TokenSet SEPARATOR_TOKENS = TokenSet.create(
     AsciiDocTokenTypes.ARROW,
     AsciiDocTokenTypes.LBRACKET,
     AsciiDocTokenTypes.RBRACKET,
     AsciiDocTokenTypes.LPAREN,
     AsciiDocTokenTypes.RPAREN,
-    AsciiDocTokenTypes.LT,
-    AsciiDocTokenTypes.GT,
     AsciiDocTokenTypes.DOUBLE_QUOTE,
     AsciiDocTokenTypes.SINGLE_QUOTE,
     AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START,
     AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END,
     AsciiDocTokenTypes.ASSIGNMENT,
     AsciiDocTokenTypes.CELLSEPARATOR,
-    AsciiDocTokenTypes.END_OF_SENTENCE,
     AsciiDocTokenTypes.BULLET,
     AsciiDocTokenTypes.ENUMERATION,
     AsciiDocTokenTypes.ADMONITION,
