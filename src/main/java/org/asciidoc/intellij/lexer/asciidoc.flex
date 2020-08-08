@@ -610,6 +610,18 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         return AsciiDocTokenTypes.EMPTY_LINE;
       }
   {SPACE}* "\n"           { if (isNoDel()) { blockStack.pop(); } resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; } // blank lines within pre block don't have an effect
+  ^ {TITLE_START} {CELLPREFIX} "|"  {
+                         if (yycharat(yylength() - 1) == tableChar && !isEscaped()) {
+                           // we're inside a table, stop here and continue in SINGLELINE to do cell logic
+                           yypushback(yylength());
+                           yybegin(SINGLELINE);
+                         } else {
+                           // we're not inside a table. As it starts with a dot, it's a title
+                           yypushback(yylength() - 1);
+                           resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE_TOKEN;
+                         }
+                       }
+  ^ {TITLE_START} / [^ \t] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE_TOKEN; }
 }
 
 <HEADER, PREBLOCK> {
@@ -919,8 +931,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            yypushback(yylength()); yybegin(INSIDE_LINE);
                          }
                        }
-
-  ^ {TITLE_START} / [^ \t] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE_TOKEN; }
   [^]                  { yypushback(yylength()); yybegin(INSIDE_LINE); }
 }
 
