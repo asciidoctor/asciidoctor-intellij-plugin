@@ -1479,6 +1479,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:TEXT ('Test')");
   }
 
+  public void testNoTitle() {
+    doTest("text\n.notitle",
+      "AsciiDoc:TEXT ('text')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('.notitle')");
+  }
+
   public void testTitleAfterId() {
     doTest("[[id]]\n.Title\n====\nExample\n====",
       "AsciiDoc:BLOCKIDSTART ('[[')\n" +
