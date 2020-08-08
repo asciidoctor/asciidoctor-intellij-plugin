@@ -616,7 +616,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         return AsciiDocTokenTypes.EMPTY_LINE;
       }
   {SPACE}* "\n"           { if (isNoDel()) { blockStack.pop(); } resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; } // blank lines within pre block don't have an effect
-  ^ {TITLE_START} / [^ \t] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE_TOKEN; }
 }
 
 <HEADER, PREBLOCK> {
@@ -926,6 +925,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            yypushback(yylength()); yybegin(INSIDE_LINE);
                          }
                        }
+
+  ^ {TITLE_START} / [^ \t] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE_TOKEN; }
   [^]                  { yypushback(yylength()); yybegin(INSIDE_LINE); }
 }
 

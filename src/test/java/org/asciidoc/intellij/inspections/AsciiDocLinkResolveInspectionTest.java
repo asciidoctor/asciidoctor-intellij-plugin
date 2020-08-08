@@ -22,6 +22,10 @@ public class AsciiDocLinkResolveInspectionTest extends AsciiDocQuickFixTestBase 
     doTestNoFix(AsciiDocChangeCaseForAnchor.NAME, true);
   }
 
+  public void testLocalAnchor() {
+    doTestNoFix(AsciiDocChangeCaseForAnchor.NAME, true);
+  }
+
   public void testCreateMissingXrefFile() {
     doTest(AsciiDocCreateMissingFileQuickfix.NAME, true);
     PsiDirectory parent = myFixture.getFile().getParent();
