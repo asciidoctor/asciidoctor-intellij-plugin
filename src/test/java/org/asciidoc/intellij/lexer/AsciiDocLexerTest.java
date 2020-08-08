@@ -1486,6 +1486,12 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('.notitle')");
   }
 
+  public void testTitleThatLooksLikeATableCell() {
+    doTest(".|notatable",
+      "AsciiDoc:TITLE_TOKEN ('.')\n" +
+        "AsciiDoc:TEXT ('|notatable')");
+  }
+
   public void testTitleAfterId() {
     doTest("[[id]]\n.Title\n====\nExample\n====",
       "AsciiDoc:BLOCKIDSTART ('[[')\n" +
