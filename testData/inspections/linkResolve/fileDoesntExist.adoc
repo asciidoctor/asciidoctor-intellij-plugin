@@ -2,29 +2,9 @@ link:<error descr="File doesn't resolve">notfound.adoc</error>[]
 
 <<<error descr="Anchor doesn't resolve">doesntexist</error>>>
 
-== lowercasenoblanks
-
-<<<error descr="Anchor doesn't resolve">lowercasenoblanks</error>>>
-
 image::<error descr="File doesn't resolve">filedoesntexist.png</error>[]
 
 image:<error descr="File doesn't resolve">filedoesntexist.png</error>[]
-
-== Headline
-
-<<Headline>>
-
-<<_headline>>
-
-[id="hdlid"]
-== Headline with ID
-
-<<hdlid>>
-
-[#hdlid2]
-== Headline with ID
-
-<<hdlid2>>
 
 // no error, as modules is unknown
 xref:component:module:test.adoc[]
