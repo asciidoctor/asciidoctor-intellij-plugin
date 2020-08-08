@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.19 (work in progress)
+
+- pasting image from the clipboard remembers previous selection for file type and target folder (#477)
+
 === 0.31.18 (preview, available from GitHub releases)
 
 - regressions grammar check: end-of-sentences not forwarded to grammar check, text in cells not grammar or spell checked (#528)

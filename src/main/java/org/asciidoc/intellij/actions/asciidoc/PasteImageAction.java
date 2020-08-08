@@ -24,6 +24,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.util.Producer;
 import com.intellij.util.ui.ImageUtil;
@@ -33,6 +34,7 @@ import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.ui.RadioButtonDialog;
 import org.jdesktop.swingx.action.BoundAction;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -44,8 +46,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class PasteImageAction extends AsciiDocAction {
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.PasteImageAction";
@@ -54,6 +62,36 @@ public class PasteImageAction extends AsciiDocAction {
   private static final String ACTION_INSERT_REFERENCE = "actionInsertReference";
   private static final String ACTION_SAVE_PNG = "actionSavePng";
   private static final String ACTION_SAVE_JPEG = "actionSaveJpeg";
+
+  /**
+   * remember previously selected file format in current session.
+   */
+  private static volatile String previousFileFormat;
+  /**
+   * remember previously selected target folder scenario in current session.
+   * To be used for new files outside of an Antora component context.
+   */
+  private static volatile String previousTargetAnyFile;
+  /**
+   * remember previously selected target folder per file.
+   * Limited to last 100 files.
+   */
+  private static final Map<String, String> PREVIOUS_TARGET_DIRECTORY_BY_FILE = Collections.synchronizedMap(new LinkedHashMap<String, String>(100, (float) 0.7, true) {
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+      return size() > 100;
+    }
+  });
+  /**
+   * remember previously selected target folder per Antora module.
+   * Limited to last 100 modules.
+   */
+  private static final Map<String, String> PREVIOUS_TARGET_DIRECTORY_BY_ANTORA_MODULE = Collections.synchronizedMap(new LinkedHashMap<String, String>(100, (float) 0.7, true) {
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+      return size() > 100;
+    }
+  });
 
   private Project project;
 
@@ -105,11 +143,15 @@ public class PasteImageAction extends AsciiDocAction {
       return;
     }
 
-    VirtualFile initialTargetDirectory = file.getParent();
+    VirtualFile initialTargetDirectory = retrieveMemorizedPreviousTarget();
 
-    VirtualFile antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(project.getBaseDir(), file.getParent());
-    if (antoraImagesDir != null) {
-      initialTargetDirectory = antoraImagesDir;
+    if (initialTargetDirectory == null || !initialTargetDirectory.exists()) {
+      initialTargetDirectory = file.getParent();
+
+      VirtualFile antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(project.getBaseDir(), file.getParent());
+      if (antoraImagesDir != null) {
+        initialTargetDirectory = antoraImagesDir;
+      }
     }
 
     CopyPasteManager manager = CopyPasteManager.getInstance();
@@ -127,11 +169,19 @@ public class PasteImageAction extends AsciiDocAction {
 
   private void pastImageFlavour(VirtualFile initialTargetDirectory, CopyPasteManager manager) {
     List<Action> options = new ArrayList<>();
-    options.add(new BoundAction("PNG (good for screen shots, diagrams and line art)", ACTION_SAVE_PNG));
-    options.add(new BoundAction("JPEG (good for photo images)", ACTION_SAVE_JPEG));
+    BoundAction png = new BoundAction("PNG (good for screen shots, diagrams and line art)", ACTION_SAVE_PNG);
+    options.add(png);
+    BoundAction jpeg = new BoundAction("JPEG (good for photo images)", ACTION_SAVE_JPEG);
+    options.add(jpeg);
+    if (Objects.equals(previousFileFormat, ACTION_SAVE_JPEG)) {
+      jpeg.setSelected(true);
+    } else {
+      png.setSelected(true);
+    }
     RadioButtonDialog dialog = new RadioButtonDialog("Import Image Data from Clipboard", "Which format do you want the image to be saved to?", options);
     dialog.show();
     if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+      previousFileFormat = dialog.getSelectedActionCommand();
       final int offset = editor.getCaretModel().getOffset();
       try {
         Image image = manager.getContents(DataFlavor.imageFlavor);
@@ -142,8 +192,10 @@ public class PasteImageAction extends AsciiDocAction {
         final FileSaverDescriptor descriptor = new FileSaverDescriptor("Save Image to", "Choose the destination file");
         FileSaverDialog saveFileDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, (Project) null);
         String ext = ACTION_SAVE_PNG.equals(dialog.getSelectedActionCommand()) ? "png" : "jpg";
-        VirtualFileWrapper destination = saveFileDialog.save(initialTargetDirectory, "file." + ext);
+        String date = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS").format(new Date());
+        VirtualFileWrapper destination = saveFileDialog.save(initialTargetDirectory, "image-" + date + "." + ext);
         if (destination != null) {
+          memorizeTargetFolder(destination);
           CommandProcessor.getInstance().executeCommand(project,
             () -> ApplicationManager.getApplication().runWriteAction(
               () -> {
@@ -211,6 +263,7 @@ public class PasteImageAction extends AsciiDocAction {
               FileSaverDialog saveFileDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, (Project) null);
               VirtualFileWrapper destination = saveFileDialog.save(initialTargetDirectory, imageFile.getName());
               if (destination != null) {
+                memorizeTargetFolder(destination);
                 CommandProcessor.getInstance().executeCommand(project,
                   () -> ApplicationManager.getApplication().runWriteAction(
                     () -> {
@@ -250,6 +303,40 @@ public class PasteImageAction extends AsciiDocAction {
     }
   }
 
+  private void memorizeTargetFolder(VirtualFileWrapper destination) {
+    VirtualFile targetFolder = LocalFileSystem.getInstance().findFileByIoFile(destination.getFile().getParentFile());
+    if (targetFolder != null) {
+      String destinationAsUrl = targetFolder.getUrl();
+      PREVIOUS_TARGET_DIRECTORY_BY_FILE.put(file.getUrl(), destinationAsUrl);
+      String antoraImagesDir = AsciiDocUtil.findAntoraImagesDirRelative(project.getBaseDir(), file.getParent());
+      if (antoraImagesDir != null) {
+        PREVIOUS_TARGET_DIRECTORY_BY_ANTORA_MODULE.put(antoraImagesDir, destinationAsUrl);
+      }
+      previousTargetAnyFile = destinationAsUrl;
+    }
+  }
+
+  @Nullable
+  private VirtualFile retrieveMemorizedPreviousTarget() {
+    VirtualFile initialTargetDirectory = null;
+
+    String previousTarget = PREVIOUS_TARGET_DIRECTORY_BY_FILE.get(file.getUrl());
+    if (previousTarget == null) {
+      String antoraImagesDir = AsciiDocUtil.findAntoraImagesDirRelative(project.getBaseDir(), file.getParent());
+      if (antoraImagesDir != null) {
+        previousTarget = PREVIOUS_TARGET_DIRECTORY_BY_ANTORA_MODULE.get(antoraImagesDir);
+      } else {
+        /* use previously used target folder only outside Antora, as Antora imagesdir should be the default
+           when saving an image in a new Antora component. */
+        previousTarget = previousTargetAnyFile;
+      }
+    }
+    if (previousTarget != null) {
+      initialTargetDirectory = VirtualFileManager.getInstance().findFileByUrl(previousTarget);
+    }
+    return initialTargetDirectory;
+  }
+
   private VirtualFile createOrReplaceTarget(VirtualFileWrapper destination) throws IOException {
     VirtualFile target = LocalFileSystem.getInstance().findFileByIoFile(destination.getFile());
     if (target == null) {
@@ -263,7 +350,7 @@ public class PasteImageAction extends AsciiDocAction {
   }
 
   private void insertImageReference(VirtualFile imageFile, int offset) {
-    String relativePath = VfsUtil.getPath(file, imageFile, '/');
+    String relativePath = VfsUtil.findRelativePath(file, imageFile, '/');
     if (relativePath == null) {
       // null case happens if parent file and image file are on different file systems
       // in this case show the full original path of the image as this is what a user would expect
