@@ -1,0 +1,10 @@
+== Table containing figures
+|===
+.^a|[#anchorinverticallyalignedcell]
+.Figure header
+image::http://localhost:8080/anything.png[]
+|===
+
+<<anchorinverticallyalignedcell>>
+
+
