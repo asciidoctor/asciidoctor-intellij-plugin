@@ -10,9 +10,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.fileChooser.FileSaverDescriptor;
 import com.intellij.openapi.fileChooser.FileSaverDialog;
+import com.intellij.openapi.fileChooser.ex.FileSaverDialogImpl;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.ide.CopyPasteManager;
@@ -21,11 +21,14 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
+import com.intellij.ui.mac.MacFileSaverDialog;
 import com.intellij.util.Producer;
 import com.intellij.util.ui.ImageUtil;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
@@ -38,6 +41,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -190,7 +195,7 @@ public class PasteImageAction extends AsciiDocAction {
         }
         BufferedImage bufferedImage = toBufferedImage(image);
         final FileSaverDescriptor descriptor = new FileSaverDescriptor("Save Image to", "Choose the destination file");
-        FileSaverDialog saveFileDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, (Project) null);
+        FileSaverDialog saveFileDialog = createSaveFileDialog(descriptor, project);
         String ext = ACTION_SAVE_PNG.equals(dialog.getSelectedActionCommand()) ? "png" : "jpg";
         String date = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS").format(new Date());
         VirtualFileWrapper destination = saveFileDialog.save(initialTargetDirectory, "image-" + date + "." + ext);
@@ -237,6 +242,60 @@ public class PasteImageAction extends AsciiDocAction {
     }
   }
 
+  /**
+   * Create FileSaverDialog where modified file name takes precedence over selected file in tree.
+   * <p>
+   * Uses original logic from FileChooserFactory.getInstance().createSaveFileDialog(),
+   * but enhances it to cover the following situation:
+   * <ol>
+   * <li> user select file in tree
+   * <li> user changes file name of selected file
+   * <li> user clicks OK
+   * </ol>
+   * <b>Default behavior:</b> selected file in tree takes precedence
+   * <br>
+   * <b>This behavior:</b> when changing file name, the parent folder of the selected file is chosen in the tree,
+   * therefore the edited file name takes precedence.
+   */
+  private FileSaverDialog createSaveFileDialog(FileSaverDescriptor descriptor, Project project) {
+    return SystemInfo.isMac && Registry.is("ide.mac.native.save.dialog", true)
+      ? new MacFileSaverDialog(descriptor, project) : new FileSaverDialogImpl(descriptor, project) {
+      @Override
+      protected void init() {
+        super.init();
+        myFileName.getDocument().addDocumentListener(new DocumentListener() {
+          @Override
+          public void insertUpdate(DocumentEvent e) {
+            changed();
+          }
+
+          @Override
+          public void removeUpdate(DocumentEvent e) {
+            changed();
+          }
+
+          @Override
+          public void changedUpdate(DocumentEvent e) {
+            changed();
+          }
+
+          private void changed() {
+            // when the file name changes AND has focus, then this is the user editing and not an automatic update after selecting a file.
+            if (myFileName.hasFocus()) {
+              // if the selected item is a file (not a directory), change the selection to the parent folder.
+              // this is the symmetric logic as in FileSaverDialogImpl.getFile()
+              if (myFileSystemTree.getSelectedFile() != null && !myFileSystemTree.getSelectedFile().isDirectory()) {
+                // now switch to parent folder of the file
+                myFileSystemTree.select(myFileSystemTree.getSelectedFile().getParent(), () -> {
+                });
+              }
+            }
+          }
+        });
+      }
+    };
+  }
+
   private void pasteJavaFileListFlavour(VirtualFile initialTargetDirectory, CopyPasteManager manager) {
     List<File> fileList = manager.getContents(DataFlavor.javaFileListFlavor);
     if (fileList != null) {
@@ -260,7 +319,7 @@ public class PasteImageAction extends AsciiDocAction {
           switch (dialog.getSelectedActionCommand()) {
             case ACTION_COPY_FILE:
               final FileSaverDescriptor descriptor = new FileSaverDescriptor("Copy Image to", "Choose the destination file");
-              FileSaverDialog saveFileDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, (Project) null);
+              FileSaverDialog saveFileDialog = createSaveFileDialog(descriptor, project);
               VirtualFileWrapper destination = saveFileDialog.save(initialTargetDirectory, imageFile.getName());
               if (destination != null) {
                 memorizeTargetFolder(destination);
