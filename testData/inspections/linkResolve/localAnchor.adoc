@@ -1,0 +1,30 @@
+== lowercasenoblanks
+
+<<<error descr="Anchor doesn't resolve">lowercasenoblanks</error>>>
+
+== Headline
+
+<<Headline>>
+
+<<_headline>>
+
+[id="hdlid"]
+== Headline with ID
+
+<<hdlid>>
+
+[#hdlid2]
+== Headline with ID
+
+<<hdlid2>>
+
+== Table containing figures
+|===
+.^a|[#anchorinverticallyalignedcell]
+.Figure header
+image::http://localhost:8080/anything.png[]
+|===
+
+<<anchorinverticallyalignedcell>>
+
+

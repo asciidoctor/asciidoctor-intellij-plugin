@@ -164,6 +164,18 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:BLOCK_DELIMITER ('|====')");
   }
 
+  public void testTableWithVerticalAlignment() {
+    doTest("|====\n" +
+        ".^|1\n" +
+        "|====",
+      "AsciiDoc:BLOCK_DELIMITER ('|====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CELLSEPARATOR ('.^|')\n" +
+        "AsciiDoc:TEXT ('1')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('|====')");
+  }
+
   public void testTableCellWithLeadingBlanks() {
     doTest("|====\n" +
         "|  1\n" +
@@ -1465,6 +1477,19 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:GT ('>')\n" +
       "AsciiDoc:WHITE_SPACE (' ')\n" +
       "AsciiDoc:TEXT ('Test')");
+  }
+
+  public void testNoTitle() {
+    doTest("text\n.notitle",
+      "AsciiDoc:TEXT ('text')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('.notitle')");
+  }
+
+  public void testTitleThatLooksLikeATableCell() {
+    doTest(".|notatable",
+      "AsciiDoc:TITLE_TOKEN ('.')\n" +
+        "AsciiDoc:TEXT ('|notatable')");
   }
 
   public void testTitleAfterId() {
