@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.19 (work in progress)
+=== 0.31.19 (preview, available from GitHub releases)
 
 - pasting image from the clipboard remembers previous selection for file type and target folder (#477)
 - fix highlighting to distinguish a cell with vertical alignment from title in tables (thanks to @valhallasw) (#529)
