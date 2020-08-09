@@ -12,7 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - pasting image from the clipboard remembers previous selection for file type and target folder (#477)
 - fix highlighting to distinguish a cell with vertical alignment from title in tables (thanks to @valhallasw) (#529)
 - when saving an image from the clipboard, changed file name in textbox should take precedence (#530)
-- fix occationally broken autocomplete of maros at end of line (#526)
+- fix occasionally broken autocomplete of macros at the end of line (#526)
 
 === 0.31.18 (preview, available from GitHub releases)
 
