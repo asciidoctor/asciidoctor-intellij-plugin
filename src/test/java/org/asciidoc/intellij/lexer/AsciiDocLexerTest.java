@@ -615,8 +615,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testContinuationInList() {
     doTest("* Hi\n" +
-      "+\n" +
-      "image::animage.png[]",
+        "+\n" +
+        "image::animage.png[]",
       "AsciiDoc:BULLET ('*')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('Hi')\n" +
@@ -2202,6 +2202,12 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('normal')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('text')");
+  }
+
+  public void testBlockMacroAutocompleteAtEndOfLine() {
+    doTest("xref:" + CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED,
+      "AsciiDoc:LINKSTART ('xref:')\n" +
+        "AsciiDoc:LINKFILE ('IntellijIdeaRulezzz')");
   }
 
   public void testBlockMacroAutocompleteCompleteMacroWithOtherMacroInSameLine() {
