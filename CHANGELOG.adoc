@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.31.19 (work in progress)
 
 - pasting image from the clipboard remembers previous selection for file type and target folder (#477)
+- fix highlighting to distinguish a cell with vertical alignment from title in tables (thanks to @valhallasw) (#529)
 
 === 0.31.18 (preview, available from GitHub releases)
 
