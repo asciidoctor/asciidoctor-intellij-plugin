@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 @SuppressWarnings({"AsciiDocHeadingStyle", "AsciiDocLinkResolve", "AsciiDocAttributeContinuation", "AsciiDocReferenceResolve", "AsciiDocHorizontalRule"})
 public class AsciiDocLexerTest extends LexerTestCase {
   public void testSimple() {
-    doTest("abc\ndexf",
+    doTest("abc\ndef",
       "AsciiDoc:TEXT ('abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('def')");
