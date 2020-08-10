@@ -30,7 +30,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:LINE_COMMENT ('// bar')");
   }
 
-  public void testPassthroughStartButThatisText() {
+  public void testPassthroughStartButThatIsText() {
     doTest("+ ",
       "AsciiDoc:TEXT ('+')\n" +
         "AsciiDoc:WHITE_SPACE (' ')");
