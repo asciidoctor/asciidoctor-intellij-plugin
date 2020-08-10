@@ -8,12 +8,17 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 /**
+ * Test cases covering lexing rules in asciidoc.flex.
+ * To learn more about lexing, visit the contributor's guide for coders:
+ * <a href="https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-and-parsing.html">Lexing and parsing AsciiDoc files</a>.
+ *
  * @author yole
+ * @author Alexander Schwartz (alexander.schwartz@gmx.net)
  */
 @SuppressWarnings({"AsciiDocHeadingStyle", "AsciiDocLinkResolve", "AsciiDocAttributeContinuation", "AsciiDocReferenceResolve", "AsciiDocHorizontalRule"})
 public class AsciiDocLexerTest extends LexerTestCase {
   public void testSimple() {
-    doTest("abc\ndef",
+    doTest("abc\ndexf",
       "AsciiDoc:TEXT ('abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('def')");

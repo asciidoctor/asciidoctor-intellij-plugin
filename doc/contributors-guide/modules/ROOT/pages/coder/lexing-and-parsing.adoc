@@ -1,4 +1,5 @@
 = Lexing and parsing AsciiDoc files
+:description: How to enhance lexing and parsing for AsciiDoc content to improve for example syntax highlighting.
 :navtitle: Lexing and parsing
 
 Lexing and parsing input files is the beginning of both highlighting the code in the editor and building auto-completion and refactoring functionality.
@@ -9,7 +10,7 @@ Lexing and parsing input files is the beginning of both highlighting the code in
 Lexing chops the input file into a stream of tokens.
 Each token has a type and a snippet of characters.
 
-The standard to do this in IntelliJ is https://jflex.de[JFlex].
+The standard tool in IntelliJ is https://jflex.de[JFlex].
 
 The heart of lexing is `asciidoc.flex`.
 It defines multiple states, and uses a lot of functionality and tweaking to parse AsciiDoc.
@@ -19,24 +20,29 @@ If the content of the token types should be spell-checked, add the token types t
 
 Once you change `asciidoc.flex`, you should run `gradlew compileJava` to generate the parser code.
 
-A test suite for the lexer in `AsciiDocLexerTest`.
+A test suite for the lexer is in `AsciiDocLexerTest`.
 I recommend running it from the IDE.
-Each test case contains a `doTest()` method that parses one snippet of AsciiDoc and compares it to an expected "`golden master`" result.
+Each test case contains a `+doTest(...)+` method that parses one snippet of AsciiDoc and compares it to an expected "`golden master`" result.
 
 A typical developer workflow for enhancing the lexer looks like this:
 
-. change `asciidoc.flex` in the IDE, adding new entries to `AsciiDocTokenTypes` as needed
-. run `gradlew compileJava` on the command line
-. add a test case to `AsciiDocLexerTest` and run it from the IDE
-. if lexing doesn't work yet as expected repeat from step 1 when
-. if lexing returns the expected result, update the `expected` parameter in the test
+. Change `asciidoc.flex` in the IDE, adding new entries to `AsciiDocTokenTypes` as needed.
+. Run `gradlew compileJava` on the command line.
+. Add a test case to `AsciiDocLexerTest` and run it from the IDE.
+. If lexing doesn't yet work as expected repeat from step 1.
+. If lexing returns the expected result, update the `expected` parameter in the test.
+
+There is a ready-to-use run-configuration in Intellij called "`AsciiDocLexerTest`" that will re-generate the lexer and run the tests in one go.
 
 [WARNING]
 --
 Things to consider when parsing AsciiDoc with JFlex:
 
-* JFlex has originally been designed to parse Java code. AsciiDoc is different
-* There are no wrong characters in AsciiDoc. If you get the syntax wrong, the characters are printed normally "`as is`", while only a matching set of for example asterisks (`*`) produces bold text.
+* JFlex has originally been designed to parse Java code.
+AsciiDoc is different.
+* There are no wrong characters in AsciiDoc.
+If you get the syntax wrong, the converts usually prints them "`as is`".
+Only a matching set of for example asterisks (`*`) produces bold text.
 --
 
 Here some JFlex rules for AsciiDoc together with an explanation of the why:
@@ -86,24 +92,24 @@ The function `textFormat()` uses them to determine the current token type from a
 Other states memorize the length of block separator line to find the matching closing separator.
 --
 
-qualifying matches, push back and state change::
+Qualifying matches, push back and state change::
 +
 --
 After a match the Java code checks additional conditions like if this is an unconstrained position in the stream.
 If the code decides to discard the match, two possible strategies out of several are:
 
-. push back all but the first character, and return the token type for the single character (for example when an double-asterisk occurs, but no bold text is to end here, see `\{DOUBLEMONO}` in the lexer).
+. Push back all but the first character, and return the token type for the single character (for example when an double-asterisk occurs, but no bold text is to end here, see `\{DOUBLEMONO}` in the lexer).
 
-. push back the complete text and continue with a different state using `yybegin()` (for example when matching a `\{HEADING_OLDSTYLE}` in the `MULTILINE` state).
+. Push back the complete text and continue with a different state using `yybegin()` (for example when matching a `\{HEADING_OLDSTYLE}` in the `MULTILINE` state).
 
-. some of the expressions can be prefixed with a backslash (`\`) to escape the expression.
+. Some of the expressions can be prefixed with a backslash (`\`) to escape the expression.
 Use `isEscaped()` to check if it has been escaped.
 
 Unfortunately, the parser can't continue with other matches in the same state.
 To work around this issue blocks are parsed first in state `MULTILINE`, then in state `SINGLELINE`, and finally `INSIDE_LINE` to implement a hierarchy and some ordering of matches.
 --
 
-auto-completion::
+Auto-completion::
 +
 --
 Expressions described above match expressions once they have their closing syntax completed and it is essential for the correct highlighting.
@@ -154,7 +160,8 @@ The `AsciiDocParserDefinition` separates white space and comments from functiona
 It also serves as a factory for all `PsiElement`s like `AsciiDocSection` for sections and `AsciiDocBlock` for blocks.
 
 `AsciiDocParserImpl` encodes the logic how to group the tokens to a tree.
-To do this, it has several strategies. This outline summaries the most distinct strategies:
+To do this, it has several strategies.
+This outline summaries the most distinct strategies:
 
 References::
 +
@@ -172,7 +179,8 @@ Then the block continues up to the point where the same marker occurs again.
 
 But the block can be preceded for example by a title (it starts with a dot, following by the title itself, like `.Title`).
 This title is part of the block.
-To support this `TITLE` and several other elements call `markPreBlock()` to memorize the first token that is part of a following block. It is stored in a variable `myPreBlockMarker`.
+To support this `TITLE` and several other elements call `markPreBlock()` to memorize the first token that is part of a following block.
+It is stored in a variable `myPreBlockMarker`.
 
 When parsing of the block starts and the `myPreBlockMarker` is set, it uses this marker.
 If the marker is not set, is creates a new marker at the start of the block delimiter.
@@ -238,7 +246,8 @@ If you expected these differences for example because you changed the parser or 
 NOTE: Please check in the golden master file to the Git repository!
 --
 
-So why are there two types of tests? Each has its own strengths!
+So why are there two types of tests?
+Each has its own strengths!
 
 The golden master approach will trigger even on minor changes to the output and gives you the chance to approve or reject the changes.
 The downside is that these tests will fail when there are unrelated changes because they check too many things.

@@ -141,6 +141,11 @@ sourceSets {
 grammarKit {
 }
 
+task showLinkToContributorGuide {
+  println("\nFirst time contributing to this plugin? Have a look at the IntelliJ AsciiDoc Plugin contributor's guide for coders:\n" +
+    "https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/contribute-as-a-coder.html\n")
+}
+
 task generateAsciidocLexer(type: GenerateLexer) {
   source = "src/main/java/org/asciidoc/intellij/lexer/asciidoc.flex"
   targetDir = "gen/org/asciidoc/intellij/lexer"
@@ -151,5 +156,15 @@ task generateAsciidocLexer(type: GenerateLexer) {
 compileJava {
   options.errorprone.excludedPaths = '.*_AsciiDocLexer.*'
   options.errorprone.error('StreamResourceLeak') // enforce errors where there would be warning in the standard only
+  // will print link to contributor guide at the start of each build
+  dependsOn showLinkToContributorGuide
   dependsOn generateAsciidocLexer
+}
+
+// ensure to print hint to contributor's guide on build failures again
+gradle.taskGraph.afterTask { Task task, TaskState state ->
+  if (state.failure) {
+    println("\nA build step failed. Maybe the the IntelliJ AsciiDoc Plugin contributor's guide for coders can give a hint?\n" +
+      "https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/contribute-as-a-coder.html\n")
+  }
 }

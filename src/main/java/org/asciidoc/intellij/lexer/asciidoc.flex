@@ -4,6 +4,11 @@ import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
 import java.util.Stack;
 
+/*
+To find out more about lexing, have a look at the contributor's guide for coders at:
+https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-and-parsing.html
+*/
+
 %%
 
 %class _AsciiDocLexer
