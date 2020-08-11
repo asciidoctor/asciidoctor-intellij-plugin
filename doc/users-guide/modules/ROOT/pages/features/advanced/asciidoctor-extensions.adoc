@@ -1,7 +1,47 @@
 = Asciidoctor Extensions
-:description: Asciidoctor Extensions can provide additional macros using Ruby code. These are executed when rendering the preview.
+:description: Asciidoctor Extensions can provide additional macros using Ruby or Java code. These are executed when rendering the preview.
 
-Asciidoctor Extensions can provide additional macros.
-To see the rendered result in the preview, the plugin can use extensions during rendering.
+Asciidoctor Extensions can provide for example additional custom macros or post-processing of the AsciiDoc AST.
+To see the rendered result in the preview, the plugin can use extensions while rendering it.
 
-See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-for-Asciidoctor-Extensions[Wiki page] for details.
+[WARNING]
+====
+This is an experimental feature starting with version 0.23.0. While it is experimental names, conventions and functionality may change.
+Support for AsciidoctorJ extensions is available from 0.31.19.
+====
+
+== Situation
+
+When there are extensions for Asciidoctor used in a command line build, users want to see their effect on the preview rendered within your JetBrains IDE.
+
+To find out more about extensions, have a look at the https://github.com/asciidoctor/asciidoctor-extensions-lab[Asciidoctor Extensions Lab] or the https://asciidoctor.org/docs/extensions/[Asciidoctor Extensions List].
+
+== Solution
+
+The plugin will search the directory _.asciidoctor/lib_ in the root of the project and load all files with the extension "`rb`" as Asciidoctor extensions and all files with the extension "`jar`" as AsciidoctorJ extensions.
+
+AsciidoctorJ extensions must use the https://github.com/asciidoctor/asciidoctorj/blob/master/docs/integrator-guide.adoc#automatically-loading-extensions[service loader mechanism of AsciidoctorJ] to register themselves.
+
+If a user doesn't want to store ruby or JAR files in their code repository, a user may choose to add a download or build script that populates this folder.
+Using a configuration file like `.gitignore` can ensure that the script is checked in to the repository, while the downloaded files are not checked in.
+
+== Behavior
+
+The user working with the IDE needs to trust the Ruby or Java code of the extensions, as the code will run with the privileges of the user inside the IDE.
+When a developer runs for example a build script in a repository, executing some else's code is expected behavior.
+Running someone else's code when viewing an Asciidoctor document is unexpected.
+Therefore, the user needs to confirm to enable Asciidoctor extensions once per project and IDE restart.
+
+== Caveats
+
+Extensions run in the same JVM as the IDE.
+Errors in extentions might consume lots of memory, CPU and might crash the IDE.
+Changing extensions at runtime re-instantiates the Asciidoctor and JRuby runtime, which will lead to memory leaks.
+
+== Example
+
+Please see the Arquillian Smart Testing project for an example: https://github.com/arquillian/smart-testing/tree/master/.asciidoctor/lib
+
+== Ecosystem
+
+Users can use Asciidoctor command line to render the output with the plugins from the _.asciidoctor/lib_ directory.

@@ -29,6 +29,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
@@ -286,7 +287,7 @@ public class AsciiDoc {
         }
       }
       try {
-        asciidoctor = createInstance();
+        asciidoctor = createInstance(extensionsEnabled ? extensions : Collections.emptyList());
         asciidoctor.registerLogHandler(logHandler);
         // require openssl library here to enable download content via https
         // requiring it later after other libraries have been loaded results in "undefined method `set_params' for #<OpenSSL::SSL::SSLContext"
@@ -364,7 +365,9 @@ public class AsciiDoc {
 
         if (extensionsEnabled) {
           for (String extension : extensions) {
-            asciidoctor.rubyExtensionRegistry().requireLibrary(extension);
+            if (extension.toLowerCase().endsWith(".rb")) {
+              asciidoctor.rubyExtensionRegistry().requireLibrary(extension);
+            }
           }
         }
         INSTANCES.put(md, asciidoctor);
@@ -419,7 +422,7 @@ public class AsciiDoc {
   /**
    * Create an instance of Asciidoctor.
    */
-  private Asciidoctor createInstance() {
+  private Asciidoctor createInstance(List<String> extensions) {
     ClassLoader cl = AsciiDocAction.class.getClassLoader();
     List<URL> urls = new ArrayList<>();
     try {
@@ -432,15 +435,46 @@ public class AsciiDoc {
         urls.add(file2.toURI().toURL());
       }
     } catch (MalformedURLException e) {
-      throw new RuntimeException("unable to add AsciidoctorJ to class path");
+      throw new RuntimeException("unable to add JAR AsciidoctorJ to class path", e);
     }
+    File tempDirectory = null;
+    for (String extension : extensions) {
+      if (extension.toLowerCase().endsWith(".jar")) {
+        File jar = new File(extension);
+        try {
+          if (jar.exists()) {
+            // copy JAR to temporary folder to avoid locking the original file on Windows
+            if (tempDirectory == null) {
+              tempDirectory = Files.createTempDirectory("asciidoctor-intellij").toFile();
+            }
+            File target = new File(tempDirectory, jar.getName());
+            FileUtils.copyFile(jar, target);
+            urls.add(target.toURI().toURL());
+          }
+        } catch (MalformedURLException e) {
+          throw new RuntimeException("unable to add JAR '" + extension + "' AsciidoctorJ to class path", e);
+        } catch (IOException e) {
+          throw new RuntimeException("unable to create temporary folder");
+        }
+      }
+    }
+
     if (urls.size() > 0) {
       cl = new URLClassLoader(urls.toArray(new URL[]{}), cl);
     } else if (cl instanceof URLClassLoader) {
       // Wrap an existing URLClassLoader with an empty list to prevent scanning of JARs by Ruby Runtime during Unit Tests.
       cl = new URLClassLoader(new URL[]{}, cl);
     }
-    return AsciidoctorJRuby.Factory.create(cl);
+
+    ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+    try {
+      // set classloader for current thread as otherwise JRubyAsciidoctor#processRegistrations() will not register extensions
+      Thread.currentThread().setContextClassLoader(cl);
+      return AsciidoctorJRuby.Factory.create(cl);
+    } finally {
+      Thread.currentThread().setContextClassLoader(oldCl);
+    }
+
   }
 
   /**
@@ -502,7 +536,8 @@ public class AsciiDoc {
       !AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isShowAsciiDocWarningsAndErrorsInEditor());
   }
 
-  public void notifyAlways(ByteArrayOutputStream boasOut, ByteArrayOutputStream boasErr, List<LogRecord> logRecords) {
+  public void notifyAlways(ByteArrayOutputStream boasOut, ByteArrayOutputStream
+    boasErr, List<LogRecord> logRecords) {
     notify(boasOut, boasErr, logRecords, true);
   }
 
@@ -614,7 +649,10 @@ public class AsciiDoc {
     List<String> extensions = new ArrayList<>();
     if (lib != null) {
       for (VirtualFile vf : lib.getChildren()) {
-        if ("rb".equals(vf.getExtension())) {
+        if ("rb".toLowerCase().equals(vf.getExtension())) {
+          extensions.add(vf.getCanonicalPath());
+        }
+        if ("jar".toLowerCase().equals(vf.getExtension())) {
           extensions.add(vf.getCanonicalPath());
         }
       }
@@ -635,11 +673,13 @@ public class AsciiDoc {
     return render(text, config, extensions, this::notify);
   }
 
-  public String render(@Language("asciidoc") String text, String config, List<String> extensions, Notifier notifier) {
+  public String render(@Language("asciidoc") String text, String config, List<String> extensions, Notifier
+    notifier) {
     return render(text, config, extensions, notifier, FileType.JAVAFX);
   }
 
-  public String render(@Language("asciidoc") String text, String config, List<String> extensions, Notifier notifier, FileType format) {
+  public String render(@Language("asciidoc") String text, String config, List<String> extensions, Notifier
+    notifier, FileType format) {
     VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
       LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
@@ -735,7 +775,7 @@ public class AsciiDoc {
       // the AsciiDocJavaDocInfoGenerator will get here with an existing ReadLock, use a timeout here to avoid a deadlock.
       Set<StackTraceElement> nonblocking = Arrays.stream(Thread.currentThread().getStackTrace()).filter(stackTraceElement ->
         stackTraceElement.getClassName().endsWith("AsciiDocJavaDocInfoGenerator") ||
-        stackTraceElement.getClassName().endsWith("AsciidocletJavaDocInfoGenerator")
+          stackTraceElement.getClassName().endsWith("AsciidocletJavaDocInfoGenerator")
       ).collect(Collectors.toSet());
       if (nonblocking.size() > 0) {
         return 20;
@@ -836,7 +876,8 @@ public class AsciiDoc {
     LOCK.unlock();
   }
 
-  public static Map<String, String> populateAntoraAttributes(String projectBasePath, File fileBaseDir, VirtualFile antoraModuleDir) {
+  public static Map<String, String> populateAntoraAttributes(String projectBasePath, File fileBaseDir, VirtualFile
+    antoraModuleDir) {
     Map<String, String> result = new HashMap<>();
     if (antoraModuleDir != null) {
       result.putAll(collectAntoraAttributes(antoraModuleDir));
@@ -977,7 +1018,8 @@ public class AsciiDoc {
   }
 
   @SuppressWarnings("checkstyle:ParameterNumber")
-  private Map<String, Object> getDefaultOptions(FileType fileType, VirtualFile springRestDocsSnippets, Map<String, String> attributes) {
+  private Map<String, Object> getDefaultOptions(FileType fileType, VirtualFile
+    springRestDocsSnippets, Map<String, String> attributes) {
     AttributesBuilder builder = AttributesBuilder.attributes()
       .showTitle(true)
       .backend(fileType.backend)
@@ -1057,7 +1099,8 @@ public class AsciiDoc {
 
   }
 
-  private static void mapAttribute(Map<String, String> result, Map<String, Object> antora, String nameSource, String nameTarget) {
+  private static void mapAttribute(Map<String, String> result, Map<String, Object> antora, String
+    nameSource, String nameTarget) {
     Object value = antora.get(nameSource);
     if (value != null) {
       result.put(nameTarget, value.toString());
@@ -1065,7 +1108,8 @@ public class AsciiDoc {
   }
 
   @NotNull
-  public static String enrichPage(@NotNull String html, String standardCss, @NotNull Map<String, String> attributes) {
+  public static String enrichPage(@NotNull String html, String
+    standardCss, @NotNull Map<String, String> attributes) {
     /* Add CSS line */
     String stylesheet = attributes.get("stylesheet");
     if (stylesheet != null && stylesheet.length() != 0) {
