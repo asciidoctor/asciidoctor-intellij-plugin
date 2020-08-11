@@ -164,7 +164,7 @@ compileJava {
 // ensure to print hint to contributor's guide on build failures again
 gradle.taskGraph.afterTask { Task task, TaskState state ->
   if (state.failure) {
-    println("\nA build step failed. Maybe the the IntelliJ AsciiDoc Plugin contributor's guide for coders can give a hint?\n" +
+    println("\nA build step failed. Maybe the IntelliJ AsciiDoc Plugin contributor's guide can give a hint?\n" +
       "https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/contribute-as-a-coder.html\n")
   }
 }
