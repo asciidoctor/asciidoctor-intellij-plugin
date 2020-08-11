@@ -934,7 +934,7 @@ public class AsciiDoc {
               if (asciidoc instanceof Map) {
                 @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
                 if (attributes instanceof Map) {
-                  @SuppressWarnings("unchecked") Map<String, Object> map = (Map<String, Object>) attributes;
+                  @SuppressWarnings("unchecked") Map<Object, Object> map = (Map<Object, Object>) attributes;
                   map.forEach((k, v) -> {
                     String vs;
                     if (v == null) {
@@ -958,7 +958,7 @@ public class AsciiDoc {
                         vs = vs.substring(0, vs.length() - 1);
                       }
                     }
-                    result.put(k, vs);
+                    result.put(k.toString(), vs);
                   });
                 }
               }

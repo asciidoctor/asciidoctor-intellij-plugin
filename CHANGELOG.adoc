@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.31.20 (preview, available from GitHub releases)
 
 - support AsciidoctorJ extensions in the preview (#532)
+- support numeric attribute names in `antora.yml` AsciiDoc attributes (#258)
 
 === 0.31.19 (preview, available from GitHub releases)
 
