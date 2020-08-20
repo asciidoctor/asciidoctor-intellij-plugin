@@ -254,7 +254,7 @@ HEADING_START = "="{1,6} {SPACE}+
 HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 // starting at the start of the line, but not with a dot
 // next line follwoing with only header marks
-HEADING_OLDSTYLE = {SPACE}* [^ _+\-#=~.\n\t\[].* "\n" [-=~\^+]+ {SPACE}* "\n"
+HEADING_OLDSTYLE = [^ .\n\t].* "\n" [-=~\^+]+ {SPACE}* "\n"
 IFDEF_IFNDEF = ("ifdef"|"ifndef"|"endif") "::"
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
 INLINE_MACRO_START = [a-zA-Z0-9_]+":"
@@ -446,10 +446,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           if(heading.length() >= underlining.length() -1
              && heading.length() <= underlining.length() +1
              && sameCharactersInSecondLine
-             // only plus signs are never a heading but a continuation (single plus) or something else
-             && !heading.matches("^\\+*$")
-             // only minus signs are never a heading but block (double minus), a horizontal rule (triple minus) or something else
-             && !heading.matches("^-*$")) {
+             // no line (or block) comments please
+             && !heading.matches("//.*")
+             // needs to contain alphanumeric character - see SetextSectionTitleRx
+             && heading.matches(".*\\p{Alnum}.*")) {
             // push back the second newline of the pattern
             yypushback(1);
             resetFormatting();
