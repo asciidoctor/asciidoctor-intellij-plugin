@@ -7,9 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.21 (work in progress)
+=== 0.31.21 (preview, available from GitHub releases)
 
 - fixed incorrect parsing of setext style section titles (#535)
+- backport CSS table fix from upcoming Asciidoctor release 2.0.11 (#537)
 
 === 0.31.20 (preview, available from GitHub releases)
 

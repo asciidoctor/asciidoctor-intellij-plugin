@@ -468,6 +468,10 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     // https://bugs.openjdk.java.net/browse/JDK-8089405
     css = css.replaceAll("(\"Droid Sans Mono\"),", "");
 
+    // Backport of inner table outside border of inner cell due in Asciidoctor 2.0.11
+    // https://github.com/asciidoctor/asciidoctor/issues/3370
+    css = css.replaceAll(Pattern.quote("td.tableblock>.content>:last-child.sidebarblock{margin-bottom:0}"), "td.tableblock>.content{margin-bottom:1.25em}");
+
     return css;
   }
 

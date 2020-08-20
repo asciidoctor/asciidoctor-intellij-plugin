@@ -203,16 +203,16 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       String asciidoctorVersion = p.getProperty("version.asciidoctor");
       myInlineCss = extractAndPatchAsciidoctorCss(asciidoctorVersion);
 
-      try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
+      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
         + asciidoctorVersion
         + "/data/stylesheets/coderay-asciidoctor.css")) {
-        myInlineCss += IOUtils.toString(stream);
+        myInlineCss += IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("rouge-github.css")) {
-        myInlineCss += IOUtils.toString(is);
+        myInlineCss += IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
-        myInlineCssDarcula = myInlineCss + IOUtils.toString(stream);
+        myInlineCssDarcula = myInlineCss + IOUtils.toString(stream, StandardCharsets.UTF_8);
       }
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
@@ -317,10 +317,10 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
   private String extractAndPatchAsciidoctorCss(String asciidoctorVersion) throws IOException {
     String css;
 
-    try (InputStream steam = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
+    try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
       + asciidoctorVersion
       + "/data/stylesheets/asciidoctor-default.css")) {
-      css = IOUtils.toString(steam);
+      css = IOUtils.toString(is, StandardCharsets.UTF_8);
     }
 
     // asian characters won't display with text-rendering:optimizeLegibility
@@ -335,6 +335,10 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/193
     // https://bugs.openjdk.java.net/browse/JDK-8089405
     css = css.replaceAll("(\"Droid Sans Mono\"),", "");
+
+    // Backport of inner table outside border of inner cell due in Asciidoctor 2.0.11
+    // https://github.com/asciidoctor/asciidoctor/issues/3370
+    css = css.replaceAll(Pattern.quote("td.tableblock>.content>:last-child.sidebarblock{margin-bottom:0}"), "td.tableblock>.content{margin-bottom:1.25em}");
 
     return css;
   }
