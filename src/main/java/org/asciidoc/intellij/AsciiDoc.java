@@ -945,7 +945,7 @@ public class AsciiDoc {
           if (stylesheetVf != null) {
             String css;
             try (InputStream is = stylesheetVf.getInputStream()) {
-              css = IOUtils.toString(is);
+              css = IOUtils.toString(is, StandardCharsets.UTF_8);
             } catch (IOException ex) {
               css = "/* unable to read CSS from " + stylesdirVf.getCanonicalPath() + ": " + ex.getMessage() + " */";
             }
@@ -989,7 +989,7 @@ public class AsciiDoc {
               if (file != null) {
                 String content;
                 try (InputStream is = file.getInputStream()) {
-                  content = IOUtils.toString(is);
+                  content = IOUtils.toString(is, StandardCharsets.UTF_8);
                 } catch (IOException ex) {
                   content = "<!-- unable to read contents from from " + file.getCanonicalPath() + ": " + ex.getMessage() + " -->";
                 }
@@ -1006,7 +1006,7 @@ public class AsciiDoc {
               if (file != null) {
                 String content;
                 try (InputStream is = file.getInputStream()) {
-                  content = IOUtils.toString(is);
+                  content = IOUtils.toString(is, StandardCharsets.UTF_8);
                 } catch (IOException ex) {
                   content = "<!-- unable to read contents from from " + file.getCanonicalPath() + ": " + ex.getMessage() + " -->";
                 }

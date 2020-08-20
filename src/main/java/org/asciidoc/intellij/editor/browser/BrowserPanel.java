@@ -114,18 +114,21 @@ public class BrowserPanel implements Closeable {
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
         + asciidoctorVersion
         + "/data/stylesheets/asciidoctor-default.css")) {
-        myInlineCss = IOUtils.toString(is);
+        myInlineCss = IOUtils.toString(is, StandardCharsets.UTF_8);
+        // Backport of inner table outside border of inner cell due in Asciidoctor 2.0.11
+        // https://github.com/asciidoctor/asciidoctor/issues/3370
+        myInlineCss = myInlineCss.replaceAll(Pattern.quote("td.tableblock>.content>:last-child.sidebarblock{margin-bottom:0}"), "td.tableblock>.content{margin-bottom:1.25em}");
       }
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
         + asciidoctorVersion
         + "/data/stylesheets/coderay-asciidoctor.css")) {
-        myInlineCss += IOUtils.toString(is);
+        myInlineCss += IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("rouge-github.css")) {
-        myInlineCss += IOUtils.toString(is);
+        myInlineCss += IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
-        myInlineCssDarcula = myInlineCss + IOUtils.toString(is);
+        myInlineCssDarcula = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
