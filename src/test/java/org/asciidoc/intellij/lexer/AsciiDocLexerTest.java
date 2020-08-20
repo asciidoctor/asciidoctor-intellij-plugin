@@ -223,6 +223,24 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('def')");
   }
 
+  public void testNonHeadingAsItHasNoAlphanumericCharacter() {
+    doTest("****\n" +
+        "++++\n",
+      "AsciiDoc:BLOCK_DELIMITER ('****')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:PASSTRHOUGH_BLOCK_DELIMITER ('++++')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testNonHeadingAsItIsAComment() {
+    doTest("// c\n" +
+        "++++\n",
+      "AsciiDoc:LINE_COMMENT ('// c')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:PASSTRHOUGH_BLOCK_DELIMITER ('++++')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
   public void testHeadingNewStyleWithHeaderTwoLines() {
     doTest("= Abc\nHeader1\nHeader2\ndef",
       "AsciiDoc:HEADING ('= Abc')\n" +
