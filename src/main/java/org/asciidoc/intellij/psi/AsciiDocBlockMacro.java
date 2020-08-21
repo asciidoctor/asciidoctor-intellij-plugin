@@ -40,7 +40,9 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock implements HasFile
       // asciidoctor diagram
       "a2s", "actdiag", "blockdiag", "ditaa", "erd", "graphviz", "meme", "mermaid", "msc",
       "nwdiag", "packetdiag", "plantuml", "rackdiag", "seqdiag", "shaape", "svgbob",
-      "syntrax", "umlet", "vega", "vegalite", "wavedrom"
+      "syntrax", "umlet", "vega", "vegalite", "wavedrom",
+      // others we know of
+      "liquibase" // https://github.com/uniqueck/asciidoctorj-liquibase-extension
     ));
   }
 
