@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.22 (preview, available from GitHub releases)
+
+- improved spelling and grammar checking for reference texts (#539)
+
 === 0.31.21 (preview, available from GitHub releases)
 
 - fixed incorrect parsing of setext style section titles (#535)

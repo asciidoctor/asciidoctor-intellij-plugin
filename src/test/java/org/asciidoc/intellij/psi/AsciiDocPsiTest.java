@@ -433,6 +433,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "**E**quivalent\n\n" +
       "// within block, therefore split by word breaks\n" +
       "== Heading\n**E**quivalent **M**odulo\n" +
+      "A <<id,reftext>>.\n" +
       "|===\n" +
       "| Cell contents.\n" +
       "|===");
@@ -462,6 +463,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "Equivalent",
       "Modulo",
       "== Heading",
+      "A",
+      "reftext.",
       "Cell",
       "contents.");
   }

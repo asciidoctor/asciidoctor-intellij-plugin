@@ -83,6 +83,8 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
             length += child.getTextLength();
             offset += length;
             length = 0;
+          } else if (child.getFirstChild() != null) {
+            child.acceptChildren(this);
           } else {
             sb.append(child.getText());
             length += child.getTextLength();

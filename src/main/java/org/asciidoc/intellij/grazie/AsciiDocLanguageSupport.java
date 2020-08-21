@@ -98,6 +98,7 @@ public class AsciiDocLanguageSupport {
     AsciiDocTokenTypes.DESCRIPTION,
     AsciiDocTokenTypes.LINKTEXT,
     AsciiDocTokenTypes.BLOCKREFTEXT,
+    AsciiDocTokenTypes.REFTEXT,
     AsciiDocTokenTypes.MONOITALIC,
     AsciiDocTokenTypes.MONOBOLDITALIC,
     AsciiDocTokenTypes.END_OF_SENTENCE,
