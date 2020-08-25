@@ -21,7 +21,7 @@ import static com.intellij.ide.actions.ShowSettingsUtilImpl.showSettingsDialog;
  */
 public class EnableSoftWrapNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> implements DumbAware {
   private static final Key<EditorNotificationPanel> KEY = Key.create("Enable Softwrap for Asciidoctor");
-  public static final int LEVEL_TO_TRIGGER_NOTIFICATION = 5;
+  public static final int LEVEL_TO_TRIGGER_NOTIFICATION = 2;
 
   private static final String SOFTWRAP_AVAILABLE = "asciidoc.softwrap.enable";
   private static AtomicInteger netActivations = new AtomicInteger();
