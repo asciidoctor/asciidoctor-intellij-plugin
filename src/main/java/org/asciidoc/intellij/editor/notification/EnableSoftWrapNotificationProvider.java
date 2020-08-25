@@ -64,7 +64,7 @@ public class EnableSoftWrapNotificationProvider extends EditorNotifications.Prov
 
     final EditorNotificationPanel panel = new EditorNotificationPanel();
     panel.setText("You enabled Soft Wrap multiple times. Do you want to enable it permanently?");
-    panel.createActionLabel("Yes, take me to the settings (then scroll down)!", ()
+    panel.createActionLabel("Yes, take me to the Soft Wrap settings!", ()
       -> {
       netActivations.set(0);
       EditorNotifications.updateAll();
