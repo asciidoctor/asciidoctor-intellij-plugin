@@ -462,9 +462,9 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "// within block, therefore split by word breaks",
       "Equivalent",
       "Modulo",
-      "== Heading",
       "A",
       "reftext.",
+      "== Heading",
       "Cell",
       "contents.");
   }
