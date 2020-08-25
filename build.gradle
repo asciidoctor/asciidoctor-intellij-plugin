@@ -39,7 +39,7 @@ allprojects {
 }
 
 intellij {
-  version 'IC-2020.2'
+  version 'IC-2020.2.1'
   pluginName 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild false
   plugins = [
