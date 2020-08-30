@@ -34,9 +34,12 @@ Therefore, the user needs to confirm to enable Asciidoctor extensions once per p
 
 == Caveats
 
+[WARNING]
+====
 Extensions run in the same JVM as the IDE.
-Errors in extentions might consume lots of memory, CPU and might crash the IDE.
+Errors in extensions might consume lots of memory, CPU and might crash the IDE.
 Changing extensions at runtime re-instantiates the Asciidoctor and JRuby runtime, which will lead to memory leaks.
+====
 
 == Example
 
