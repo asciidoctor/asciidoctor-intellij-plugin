@@ -600,6 +600,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         }
       }
   ^ {SPACE}* "\n"           {
+        while (isNoDelList()) { blockStack.pop(); }
         if (isNoDel()) { blockStack.pop(); }
         resetFormatting();
         if (style == null && blockStack.size() == 0 && stateStack.size() == 0 && tableChar == 0) {
