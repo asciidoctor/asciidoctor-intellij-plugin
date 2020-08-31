@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.23 (preview, available from GitHub releases)
+
+- an empty line ends a list, even a multilevel list (#542)
+
 === 0.31.22 (preview, available from GitHub releases)
 
 - improved spelling and grammar checking for reference texts (#539)

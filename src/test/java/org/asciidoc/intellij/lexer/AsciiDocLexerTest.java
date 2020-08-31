@@ -1444,6 +1444,23 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testNestedList() {
+    doTest("* item\n" +
+        "** item\n" +
+        "\n" +
+        "== Section",
+      "AsciiDoc:BULLET ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('item')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BULLET ('**')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('item')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
+        "AsciiDoc:HEADING ('== Section')");
+  }
+
   public void testNestedQuotedBlock() {
     doTest("____\nQuoted\n_____\nDoubleQuote\n_____\n____\n",
       "AsciiDoc:BLOCK_DELIMITER ('____')\n" +
