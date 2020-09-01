@@ -14,12 +14,12 @@ To use this plugin, you need to have one of the IntelliJ family of IDEs like Int
 All default download packages include the JetBrains Runtime 11, a pre-bundled OpenJDK runtime environment.
 Please use the pre-bundled JetBrains Runtime to run the IDE as it proves to be the most stable.
 
-Up to and including IntelliJ IDEA 2020.1 the pre-bundled OpenJDK includes JavaFX, wich is required for a rich preview.
-include::partial$javafx-preview-requires-plugin.adoc[]
+Up to and including IntelliJ IDEA 2020.1 the pre-bundled OpenJDK includes JavaFX, which is required for a rich preview in 2020.1 and earlier.
 
-From IntelliJ 2020.2 onward the plugin supports the JCEF browser preview.
+From IntelliJ 2020.2 onward the plugin supports the JCEF browser preview that is pre-bundled in the JetBrains runtime that pre-bundled with 2020.2 and later.
 It uses and embedded Chrome browser with up-to-date JavaScript and CSS handling.
-It is only included in the recent JetBrains runtimes.
+
+include::partial$javafx-preview-requires-plugin.adoc[]
 
 If you've already installed the IDE and the plugin, continue to section xref:features.adoc[].
 
