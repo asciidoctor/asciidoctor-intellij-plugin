@@ -24,7 +24,7 @@ This document provides a high-level view of the changes introduced by release.
 - fixed incorrect parsing of setext style section titles (#535)
 - backport CSS table fix from upcoming Asciidoctor release 2.0.11 (#537)
 
-=== 0.31.20 (preview, available from GitHub releases)
+=== 0.31.20
 
 - support AsciidoctorJ extensions in the preview (#532)
 - support numeric attribute names in `antora.yml` AsciiDoc attributes (#258)
