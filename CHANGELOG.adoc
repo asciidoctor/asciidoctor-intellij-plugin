@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.31.24 (work in progress)
 
-- fix highlighting where table cells have no spaces in front (#546)
+- fix highlighting where table cells have no spaces in front (#545)
 
 === 0.31.23 (preview, available from GitHub releases)
 
