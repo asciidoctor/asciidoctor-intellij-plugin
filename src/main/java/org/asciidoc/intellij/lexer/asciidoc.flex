@@ -994,7 +994,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          return AsciiDocTokenTypes.LINE_BREAK; }
   {CELLPREFIX} "|"     { zzEndReadL = limitLookahead();
                          if (tableChar == yycharat(yylength()-1) && !isEscaped()) {
-                           if (isNoDelVerse()) {
+                           if (yylength() > 1 && !isPrefixedBy(SPACES)) {
+                             yypushback(1);
+                             return textFormat();
+                           } else if (isNoDelVerse()) {
                              yybegin(SINGLELINE);
                            } else {
                              if (blockStack.size() == 0 && stateStack.size() == 0 && style == null) {

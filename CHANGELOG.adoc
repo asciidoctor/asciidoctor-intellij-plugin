@@ -9,6 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.30.87 (work in progress)
 
+- fix highlighting where table cells have no spaces in front (#545)
 - an empty line ends a list, even a multilevel list (#542)
 - fixed incorrect parsing of setext style section titles (#535)
 - support numeric attribute names in `antora.yml` AsciiDoc attributes (#258)
