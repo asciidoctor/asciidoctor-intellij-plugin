@@ -194,6 +194,21 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:BLOCK_DELIMITER ('|====')");
   }
 
+  public void testTableWithNoBlanks() {
+    doTest("|===\n" +
+        "|Name|Type|\n" +
+        "|===",
+      "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:TEXT ('Name')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:TEXT ('Type')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('|===')");
+  }
+
   public void testHeadingOldStyle() {
     doTest("Abc\n===\n\ndef",
       "AsciiDoc:HEADING_OLDSTYLE ('Abc\\n===')\n" +

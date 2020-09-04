@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.24 (work in progress)
+
+- fix highlighting where table cells have no spaces in front (#546)
+
 === 0.31.23 (preview, available from GitHub releases)
 
 - an empty line ends a list, even a multilevel list (#542)
