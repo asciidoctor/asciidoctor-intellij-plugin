@@ -7,9 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.24 (work in progress)
+=== 0.31.24 (preview, available from GitHub releases)
 
 - fix highlighting where table cells have no spaces in front (#545)
+- edge cases for highlighting inline macros with blanks (#546)
 
 === 0.31.23 (preview, available from GitHub releases)
 

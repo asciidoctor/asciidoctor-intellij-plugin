@@ -2,6 +2,7 @@ package org.asciidoc.intellij.lexer;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
+import org.asciidoc.intellij.psi.AsciiDocInlineMacro;
 import java.util.Stack;
 
 /*
@@ -167,7 +168,7 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
     if(yystate() == ATTRIBUTE_VAL) {
       return AsciiDocTokenTypes.ATTRIBUTE_VAL;
     }
-    if(yystate() == LINKFILE) {
+    if(yystate() == LINKFILE || yystate() == LINKFILEWITHBLANK) {
       return AsciiDocTokenTypes.LINKFILE;
     }
     if(yystate() == BLOCK_MACRO) {
@@ -399,6 +400,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state ATTRIBUTE_REF
 
 %state LINKFILE
+%state LINKFILEWITHBLANK
 %state LINKURL
 %state LINKANCHOR
 %state LINKTEXT
@@ -489,7 +491,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                { yypushback(yylength());  yybegin(ATTRIBUTE_VAL); }
 }
 
-<ATTRIBUTE_VAL, INLINE_URL_NO_DELIMITER, INSIDE_LINE, DESCRIPTION, LINKFILE, LINKANCHOR, LINKURL, BLOCK_MACRO, LINKTEXT, REFTEXT, INLINEREFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE, REF, ANCHORID, BIBNAME> {
+<ATTRIBUTE_VAL, INLINE_URL_NO_DELIMITER, INSIDE_LINE, DESCRIPTION, LINKFILE, LINKFILEWITHBLANK, LINKANCHOR, LINKURL, BLOCK_MACRO, LINKTEXT, REFTEXT, INLINEREFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE, REF, ANCHORID, BIBNAME> {
   {ATTRIBUTE_REF_START} ( {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} | [^}\n ]* {AUTOCOMPLETE} ) {
                          yypushback(yylength() - 1);
                          if (!isEscaped()) {
@@ -1303,11 +1305,11 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           return textFormat();
         }
       }
-  {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\[\n\"`]* | "") ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" ({WORDNOBRACKET}*|"[" [^\]\n]* "]")*  "]") {
+  {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\s\[\n\"`]* | "") ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" ({WORDNOBRACKET}*|"[" [^\]\n]* "]")*  "]") {
         if (!isEscaped()) {
           yypushstate();
           if (yytext().toString().equals("xref:")) {
-            // this might be an icomplete xref with autocomplete as this pattern is less strict than the xref pattern
+            // this might be an incomplete xref with autocomplete as this pattern is less strict than the xref pattern
             yybegin(LINKFILE);
             return AsciiDocTokenTypes.LINKSTART;
           } else {
@@ -1318,6 +1320,25 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           return textFormat();
         }
       }
+  // support for blanks in well-known macros as long as the target doesn't contain a colon (that could indicate a the next real macro)
+  {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\[\n\"`:]* | "") "[" ({WORDNOBRACKET}*|"[" [^\]\n]* "]")*  "]" {
+          if (!isEscaped()) {
+            yypushstate();
+            if (yytext().toString().equals("xref:")) {
+              // this might be an xref with a blank as this pattern is less strict than the xref pattern
+              yybegin(LINKFILEWITHBLANK);
+              return AsciiDocTokenTypes.LINKSTART;
+            } else if (AsciiDocInlineMacro.HAS_FILE_AS_BODY.contains(zzBuffer.subSequence(zzStartRead, zzMarkedPos - 1).toString())) {
+              yybegin(INLINE_MACRO);
+              return AsciiDocTokenTypes.INLINE_MACRO_ID;
+            } else {
+              yypushback(1);
+              return textFormat();
+            }
+          } else {
+            return textFormat();
+          }
+        }
   {PASSTRHOUGH_INLINE} ({STRINGNOPLUS} | [^\+][^\+]{1,2}[^+] )* {PASSTRHOUGH_INLINE} {
                            yypushback(yylength() - 3);
                            yypushstate(); yybegin(PASSTRHOUGH_INLINE); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
@@ -1464,12 +1485,16 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { return AsciiDocTokenTypes.REF; }
 }
 
-<LINKFILE, LINKANCHOR, LINKURL> {
+<LINKFILEWITHBLANK>    {
+  \s                   { return AsciiDocTokenTypes.LINKFILE; }
+}
+
+<LINKFILE, LINKFILEWITHBLANK, LINKANCHOR, LINKURL> {
   {LINKTEXT_START}     { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
   [ \t]                { yypushback(1); yypopstate(); }
 }
 
-<LINKFILE> {
+<LINKFILE, LINKFILEWITHBLANK> {
   "#"                  { yybegin(LINKANCHOR); return AsciiDocTokenTypes.SEPARATOR; }
   [a-zA-Z]{2,6} "://"        { yybegin(LINKURL); return AsciiDocTokenTypes.URL_LINK; }
   "+++" [a-zA-Z]{2,6} "://" {WORD}+ "+++"    { yybegin(LINKURL); return AsciiDocTokenTypes.URL_LINK; }

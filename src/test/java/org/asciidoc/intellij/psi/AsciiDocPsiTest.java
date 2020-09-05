@@ -491,6 +491,20 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertNotNull("reference should exist", reference);
   }
 
+  public void testXrefResolution() {
+    // given...
+    PsiFile psiFile = configureByAsciiDoc("xref:A Section[]\n<<A Section>>\nxref:_a_section[]\n\n== A Section\n");
+
+    // then...
+    AsciiDocLink[] links = PsiTreeUtil.getChildrenOfType(psiFile, AsciiDocLink.class);
+    for (AsciiDocLink link : links) {
+      PsiReference[] references = link.getReferences();
+      Assertions.assertThat(references).hasSize(1);
+      PsiElement declaration = references[0].resolve();
+      assertNotNull("declaration should exist", declaration);
+    }
+  }
+
   @Override
   protected String getTestDataPath() {
     return new File("testData/" + getBasePath()).getAbsolutePath() + "/psi/";
