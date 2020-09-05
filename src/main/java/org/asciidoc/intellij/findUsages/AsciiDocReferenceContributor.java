@@ -230,10 +230,13 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
           TextRange.create(range.getStartOffset() + start, range.getStartOffset() + file.length()),
           false)
           .withAnchor((start > 0 && file.charAt(start - 1) == '#')
-            // an xref can be only a block ID, then it is an anchor even without the # prefix
-            || ("xref".equals(macroName) && start == 0
-            && AsciiDocRenameInputValidator.BLOCK_ID_PATTERN.matcher(file).matches()
-            && !file.contains(".")
+              || ("xref".equals(macroName) && start == 0
+              // an xref can be only a block ID, then it is an anchor even without the # prefix
+              && (AsciiDocRenameInputValidator.BLOCK_ID_PATTERN.matcher(file).matches()
+              // or it is just a section heading, then it contains at least one blank and some uppercase letters
+              || (file.contains(" ") && !file.toLowerCase().equals(file)
+            ))
+              && !file.contains(".")
             )
           )
       );

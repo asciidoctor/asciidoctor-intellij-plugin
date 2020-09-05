@@ -26,7 +26,7 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_SUPPORTED;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN;
 
 public class AsciiDocInlineMacro extends ASTWrapperPsiElement implements HasFileReference, HasAntoraReference {
-  private static final Set<String> HAS_FILE_AS_BODY = new HashSet<>();
+  public static final Set<String> HAS_FILE_AS_BODY = new HashSet<>();
   static {
     HAS_FILE_AS_BODY.addAll(Arrays.asList(
       // standard asciidoctor

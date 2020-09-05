@@ -2184,6 +2184,45 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('text')");
   }
 
+  public void testInlineMacroThatIsIncompleteAndHasAnInlineMacroOnTheSameLine() {
+    doTest("weight:120kg label:procedure[]",
+      "AsciiDoc:TEXT ('weight:120kg')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:INLINE_MACRO_ID ('label:')\n" +
+        "AsciiDoc:INLINE_MACRO_BODY ('procedure')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
+  }
+
+  public void testInlineMacroThatSupportsBlanks() {
+    doTest("xref:This has Blanks[]",
+      "AsciiDoc:LINKSTART ('xref:')\n" +
+        "AsciiDoc:LINKFILE ('This has Blanks')\n" +
+        "AsciiDoc:LINKTEXT_START ('[')\n" +
+        "AsciiDoc:LINKEND (']')");
+  }
+
+  public void testInlineMacroThatDoesntSupportBlanks() {
+    doTest("label:This is a label[]",
+      "AsciiDoc:TEXT ('label:This')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('is')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('a')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('label')\n" +
+        "AsciiDoc:LBRACKET ('[')\n" +
+        "AsciiDoc:RBRACKET (']')");
+  }
+
+  public void testInlineMacroThatSupportFileNames() {
+    doTest("image:file with blank.png[]",
+      "AsciiDoc:INLINE_MACRO_ID ('image:')\n" +
+        "AsciiDoc:INLINE_MACRO_BODY ('file with blank.png')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
+  }
+
   public void testBlockMacroWithBracketsInside() {
     doTest("macro::text[other:[hi]]",
       "AsciiDoc:BLOCK_MACRO_ID ('macro::')\n" +
