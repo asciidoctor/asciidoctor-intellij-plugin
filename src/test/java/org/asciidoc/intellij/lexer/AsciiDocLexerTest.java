@@ -476,6 +476,20 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testBlockTypeLookingLikeAHeading() {
+    doTest("[TIP]\n=====\nTip\n=====\n",
+      "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('TIP')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('=====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Tip')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('=====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
 
   public void testAttributeUsage() {
     doTest("This is an {attribute} more text.",

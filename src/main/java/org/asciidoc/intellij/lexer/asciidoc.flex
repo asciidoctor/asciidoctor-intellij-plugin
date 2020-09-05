@@ -457,7 +457,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
              // no line (or block) comments please
              && !heading.matches("//.*")
              // needs to contain alphanumeric character - see SetextSectionTitleRx
-             && heading.matches(".*\\p{Alnum}.*")) {
+             && heading.matches(".*\\p{Alnum}.*")
+             // if it is in brackets, it is a block type
+             && !heading.matches("\\[.*\\]")) {
             // push back the second newline of the pattern
             yypushback(1);
             resetFormatting();

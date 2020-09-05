@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.25 (work in progress)
+
+- block types should never be treated as setext style section header (#545)
+
 === 0.31.24 (preview, available from GitHub releases)
 
 - fix highlighting where table cells have no spaces in front (#545)
