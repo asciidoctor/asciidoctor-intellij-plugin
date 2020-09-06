@@ -472,6 +472,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     // https://github.com/asciidoctor/asciidoctor/issues/3370
     css = css.replaceAll(Pattern.quote("td.tableblock>.content>:last-child.sidebarblock{margin-bottom:0}"), "td.tableblock>.content{margin-bottom:1.25em}");
 
+    // otherwise embedded SVG images will be skewed to full height of one browser window
+    css = css.replaceAll(Pattern.quote("object,embed{height:100%}"), "");
+
     return css;
   }
 

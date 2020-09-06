@@ -53,6 +53,12 @@ class KrokiProcessor
       target = attrs['target']
       format = attrs['format'] || 'svg'
       align = attrs['align']
+      # The JavaFX preview doesn't support SVG well, therefore we'll use PNG format...
+      if format == 'svg'
+        # ... unless the diagram library does not support PNG as output format!
+        # Currently, mermaid, nomnoml, svgbob, wavedrom only support SVG as output format.
+        format = 'png' unless diagram_type == :mermaid || diagram_type == :nomnoml || diagram_type == :svgbob || diagram_type == :wavedrom
+      end
       image_url = _create_image_src(doc, diagram_type, format, diagram_text)
       block_attrs = {
           'role' => role ? "#{role} kroki" : 'kroki',

@@ -79,11 +79,19 @@ public class AsciiDocListing extends AbstractAsciiDocCodeBlock {
       return null;
     }
     List<AsciiDocAttributeInBrackets> attr = new ArrayList<>(PsiTreeUtil.findChildrenOfType(this, AsciiDocAttributeInBrackets.class));
-    if (attr.size() >= 2 && "source".equalsIgnoreCase(attr.get(0).getText())) {
+    String firstAttr = null;
+    if (attr.size() >= 1) {
+      firstAttr = attr.get(0).getText();
+      int locationOfPercent = firstAttr.indexOf("%"); // this handles for example "plantuml%interactive"
+      if (locationOfPercent != -1) {
+        firstAttr = firstAttr.substring(0, locationOfPercent);
+      }
+    }
+    if (attr.size() >= 2 && "source".equalsIgnoreCase(firstAttr)) {
       return "source-" + attr.get(1).getText();
-    } else if (attr.size() >= 1 && "plantuml".equalsIgnoreCase(attr.get(0).getText())) {
+    } else if ("plantuml".equalsIgnoreCase(firstAttr)) {
       return "diagram-plantuml";
-    } else if (attr.size() >= 1 && "graphviz".equalsIgnoreCase(attr.get(0).getText())) {
+    } else if ("graphviz".equalsIgnoreCase(firstAttr)) {
       return "diagram-graphviz";
     }
     return null;

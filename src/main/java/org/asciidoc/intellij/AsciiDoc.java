@@ -246,7 +246,7 @@ public class AsciiDoc {
     if (springRestDocs) {
       md = md + ".restdoc";
     }
-    if (format == FileType.JAVAFX || format == FileType.HTML) {
+    if (format == FileType.JAVAFX || format == FileType.JCEF || format == FileType.HTML) {
       // special ruby extensions loaded for JAVAFX and HTML
       md = md + "." + format.name();
     }
@@ -294,7 +294,7 @@ public class AsciiDoc {
         asciidoctor.requireLibrary("openssl");
         asciidoctor.javaExtensionRegistry().preprocessor(PREPEND_CONFIG);
         asciidoctor.javaExtensionRegistry().includeProcessor(ANTORA_INCLUDE_ADAPTER);
-        if (format == FileType.JAVAFX || format == FileType.HTML) {
+        if (format == FileType.JAVAFX || format == FileType.HTML || format == FileType.JCEF) {
           asciidoctor.javaExtensionRegistry().postprocessor(ATTRIBUTES_RETRIEVER);
         }
         // disable JUL logging of captured messages
@@ -312,7 +312,7 @@ public class AsciiDoc {
           }
         }
 
-        if (format == FileType.JAVAFX) {
+        if (format == FileType.JAVAFX || format == FileType.JCEF) {
           try (InputStream is = this.getClass().getResourceAsStream("/sourceline-treeprocessor.rb")) {
             if (is == null) {
               throw new RuntimeException("unable to load script sourceline-treeprocessor.rb");
@@ -325,6 +325,13 @@ public class AsciiDoc {
           try (InputStream is = this.getClass().getResourceAsStream("/plantuml-png-patch.rb")) {
             if (is == null) {
               throw new RuntimeException("unable to load script plantuml-png-patch.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
+          }
+        } else if (format == FileType.JCEF && diagramPresent) {
+          try (InputStream is = this.getClass().getResourceAsStream("/plantuml-patch.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script plantuml-patch.rb");
             }
             asciidoctor.rubyExtensionRegistry().loadClass(is);
           }
@@ -355,11 +362,20 @@ public class AsciiDoc {
         }
 
         if (krokiEnabled) {
-          try (InputStream is = this.getClass().getResourceAsStream("/kroki-extension.rb")) {
-            if (is == null) {
-              throw new RuntimeException("unable to load script kroki-extension.rb");
+          if (format == FileType.JAVAFX) {
+            try (InputStream is = this.getClass().getResourceAsStream("/kroki-extension-png.rb")) {
+              if (is == null) {
+                throw new RuntimeException("unable to load script kroki-extension-png.rb");
+              }
+              asciidoctor.rubyExtensionRegistry().loadClass(is);
             }
-            asciidoctor.rubyExtensionRegistry().loadClass(is);
+          } else {
+            try (InputStream is = this.getClass().getResourceAsStream("/kroki-extension.rb")) {
+              if (is == null) {
+                throw new RuntimeException("unable to load script kroki-extension.rb");
+              }
+              asciidoctor.rubyExtensionRegistry().loadClass(is);
+            }
           }
         }
 
@@ -675,7 +691,14 @@ public class AsciiDoc {
 
   public String render(@Language("asciidoc") String text, String config, List<String> extensions, Notifier
     notifier) {
-    return render(text, config, extensions, notifier, FileType.JAVAFX);
+    final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+    FileType fileType;
+    if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(AsciiDocJCEFHtmlPanelProvider.class.getName())) {
+      fileType = FileType.JCEF;
+    } else {
+      fileType = FileType.JAVAFX;
+    }
+    return render(text, config, extensions, notifier, fileType);
   }
 
   public String render(@Language("asciidoc") String text, String config, List<String> extensions, Notifier
@@ -707,7 +730,7 @@ public class AsciiDoc {
         AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
         try {
           return "<div id=\"content\"" + (antoraModuleDir != null ? " class=\"doc\"" : "") + ">\n" + asciidoctor.convert(text,
-            getDefaultOptions(FileType.JAVAFX, springRestDocsSnippets, attributes)) + "\n</div>";
+            getDefaultOptions(format, springRestDocsSnippets, attributes)) + "\n</div>";
         } finally {
           PREPEND_CONFIG.setConfig("");
           ANTORA_INCLUDE_ADAPTER.setAntoraDetails(null, null);
@@ -1084,6 +1107,7 @@ public class AsciiDoc {
     PDF("pdf"),
     HTML("html5"),
     JAVAFX("html5"),
+    JCEF("html5"),
     JEDITOR("html5");
 
     private final String backend;

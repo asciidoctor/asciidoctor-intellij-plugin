@@ -63,7 +63,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
       + "img-src file: localfile: *; connect-src 'none'; font-src *; " +
       "object-src file: localfile: *;" + // used for interactive SVGs
       "media-src 'none'; child-src 'none'; " +
-      "frame-src https://player.vimeo.com/ https://www.youtube.com/"; // used for vimeo/youtube iframes
+      "frame-src 'self' https://player.vimeo.com/ https://www.youtube.com/"; // used for vimeo/youtube iframes
   }
 
   @NotNull

@@ -60,9 +60,6 @@ public class BrowserPanel implements Closeable {
     protected String compute() {
       //noinspection StringBufferReplaceableByString
       return new StringBuilder()
-        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("scrollToElement.js")).append("\"></script>\n")
-        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processLinks.js")).append("\"></script>\n")
-        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("pickSourceLine.js")).append("\"></script>\n")
         .append("<script type=\"text/x-mathjax-config\">\n" +
           "MathJax.Hub.Config({\n" +
           "  messageStyle: \"none\",\n" +
@@ -118,6 +115,8 @@ public class BrowserPanel implements Closeable {
         // Backport of inner table outside border of inner cell due in Asciidoctor 2.0.11
         // https://github.com/asciidoctor/asciidoctor/issues/3370
         myInlineCss = myInlineCss.replaceAll(Pattern.quote("td.tableblock>.content>:last-child.sidebarblock{margin-bottom:0}"), "td.tableblock>.content{margin-bottom:1.25em}");
+        // otherwise embedded SVG images will be skewed to full height of one browser window
+        myInlineCss = myInlineCss.replaceAll(Pattern.quote("object,embed{height:100%}"), "");
       }
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
         + asciidoctorVersion
