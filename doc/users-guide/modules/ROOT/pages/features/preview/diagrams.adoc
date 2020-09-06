@@ -86,7 +86,10 @@ note right
 end note
 ----
 
-NOTE: The preview of the diagram in this documentation is non-interactive, as the target link of the note would not resolve.
+[NOTE]
+====
+In this documentation the image above is non-interactive, as the target link of the note would not resolve.
+====
 
 === Avoid flicker in preview on refresh
 
