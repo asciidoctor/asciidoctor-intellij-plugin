@@ -41,6 +41,18 @@ When Kroki is enabled, the plugin sends the text diagrams to an instance of Krok
 By default, it sends the diagrams to the free public cloud instance {uri-kroki}[kroki.io], but users can install Kroki on their own infrastructure.
 Once the custom instance is set up, update the server URL in the plugin's settings to point to it.
 
+=== Inline diagrams with Kroki
+
+When using the diagram option `inline`, users will need to set the attribute `allow-uri-read` in the plugin's settings to allow the download of the diagrams at render time.
+
+[WARNING]
+====
+As Kroki will in inline-mode fetch the diagrams synchronously when preparing the preview, a slow or unavailable internet connection to the user's Kroki server can slow down or break the preview.
+
+To avoid this, consider using `interactive` for Kroki diagrams as an alternative.
+See <<interative-vs-inlined>> and <<avoid-flicker>> for a discussion of tradeoffs.
+====
+
 == Advanced options
 
 === PNG-only JavaFX preview
@@ -51,6 +63,7 @@ Therefore the plugin displays all diagrams in the JavaFX preview as PNGs, even w
 
 When using IntelliJ 2020.2+ and plugin version 0.31.25+, the JCEF preview will show diagrams as SVGs when the user specifies SVG as the diagram format.
 
+[#interative-vs-inlined]
 === Interactive vs inlined SVGs
 
 SVGs support interactions with the user, for example hovering or links.
@@ -91,6 +104,7 @@ end note
 In this documentation the image above is non-interactive, as the target link of the note would not resolve.
 ====
 
+[#avoid-flicker]
 === Avoid flicker in preview on refresh
 
 Using inlined diagrams instead of interactive diagrams in the preview prevents flickering on refreshed content.
