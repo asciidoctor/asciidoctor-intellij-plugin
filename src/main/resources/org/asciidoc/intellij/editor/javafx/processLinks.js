@@ -10,20 +10,31 @@ window.__IntelliJTools.processClick = function (event) {
     return false;
   }
 
-  if (this.href[0] == '#') {
-    var elementId = this.href.substring(1)
+  var href;
+  if (this.href instanceof SVGAnimatedString) {
+    href = this.href.baseVal;
+  } else {
+    href = this.href;
+  }
+
+  if (href[0] === '#') {
+    var elementId = href.substring(1)
     var elementById = document.getElementById(elementId);
     if (elementById) {
       elementById.scrollIntoView();
     }
   } else {
-    window.JavaPanelBridge.openLink(this.href);
+    window.JavaPanelBridge.openLink(href);
   }
 
   return false;
 }
 
 window.__IntelliJTools.processLinks = function () {
+  // This will work for inlined SVG diagrams.
+  // This will NOT work for interactive SVG diagrams, as these will be inaccessible for JavaScript
+  //    (possibly due to file:// URLs and cross-domain concerns in browsers)
+
   var links = document.getElementsByTagName("a");
   // window.JavaPanelBridge.log(links.length)
   for (var i = 0; i < links.length; ++i) {
