@@ -15,11 +15,9 @@ The preview of the AsciiDoc plugin supports rendering the diagrams in the previe
 == Using Asciidoctor Diagram
 
 By default, the plugin uses {uri-asciidoctor-diagrams-gh}[Asciidoctor Diagram]
-that depends on locally installed tools to generate images (ie. {uri-asciidoctor-diagrams-execs}[executables] available in your `PATH` environment variable).
+that depends on locally installed tools to generate images (ie. {uri-asciidoctor-diagrams-execs}[executables] available in the `PATH` environment variable).
 
 Asciidoctor Diagram renders the content of the editor including all referenced includes, images and diagrams like PlantUML on the fly.
-// see: plantuml-png-patch.rb
-As JavaFX has a problem displaying SVG files correctly, the plugin displays all diagrams as PNG.
 
 === Downloading Asciidoctor Diagram
 
@@ -40,6 +38,67 @@ Use the plugin's settings to enable Kroki:
 image::kroki-settings.png[]
 
 When Kroki is enabled, the plugin sends the text diagrams to an instance of Kroki to display them as images in the preview.
-By default, it sends your diagrams to the free public cloud instance {uri-kroki}[kroki.io], but users can install Kroki on their own infrastructure.
+By default, it sends the diagrams to the free public cloud instance {uri-kroki}[kroki.io], but users can install Kroki on their own infrastructure.
 Once the custom instance is set up, update the server URL in the plugin's settings to point to it.
 
+== Advanced options
+
+=== PNG-only JavaFX preview
+
+// see: plantuml-png-patch.rb and kroki-extension.rb
+As JavaFX has a problem displaying SVG files correctly.
+Therefore the plugin displays all diagrams in the JavaFX preview as PNGs, even when the user specifies SVG as the diagram format.
+
+When using IntelliJ 2020.2+ and plugin version 0.31.25+, the JCEF preview will show diagrams as SVGs when the user specifies SVG as the diagram format.
+
+=== Interactive vs inlined SVGs
+
+SVGs support interactions with the user, for example hovering or links.
+This is only available when the user adds the option `interactive` or `inline` to diagrams or SVG images.
+See https://asciidoctor.org/docs/user-manual/#taming-svgs[section "`Taming SVGs`" in the Asciidoctor manual].
+
+[NOTE]
+====
+Only when a SVG or diagram is inlined, the plugin will redirect clicks on links in the preview to local AsciiDoc files.
+====
+
+The following PlantUML example renders a diagram in the preview showing a note "`Link to class-demo.adoc`" with a link.
+When the user clicks on the note, the plugin resolves the link `class-demo.html` to the workspace file `class-demo.adoc`.
+
+.Source code for diagram
+[source,asciidoc]
+-----
+[plantuml,demo,svg,opts="inline"]
+----
+class Demo
+note right
+[[class-demo.html Link to class-demo.adoc]]
+end note
+----
+-----
+
+.Diagram as displayed in the preview
+[plantuml,demo,svg]
+----
+class Demo
+note right
+[[class-demo.html Link to class-demo.adoc]]
+end note
+----
+
+NOTE: The preview of the diagram in this documentation is non-interactive, as the target link of the note would not resolve.
+
+=== Avoid flicker in preview on refresh
+
+Using inlined diagrams instead of interactive diagrams in the preview prevents flickering on refreshed content.
+If inlining should be used only for IntelliJ preview, consider a conditional attribute like in the following listing.
+
+[source,plantuml]
+-----
+\ifdef::env-idea[:plantuml-opts: inline]
+
+[plantuml,demo,svg,opts="{plantuml-opts}"]
+----
+...
+----
+-----
