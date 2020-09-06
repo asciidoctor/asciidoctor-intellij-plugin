@@ -362,20 +362,11 @@ public class AsciiDoc {
         }
 
         if (krokiEnabled) {
-          if (format == FileType.JAVAFX) {
-            try (InputStream is = this.getClass().getResourceAsStream("/kroki-extension-png.rb")) {
-              if (is == null) {
-                throw new RuntimeException("unable to load script kroki-extension-png.rb");
-              }
-              asciidoctor.rubyExtensionRegistry().loadClass(is);
+          try (InputStream is = this.getClass().getResourceAsStream("/kroki-extension.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script kroki-extension.rb");
             }
-          } else {
-            try (InputStream is = this.getClass().getResourceAsStream("/kroki-extension.rb")) {
-              if (is == null) {
-                throw new RuntimeException("unable to load script kroki-extension.rb");
-              }
-              asciidoctor.rubyExtensionRegistry().loadClass(is);
-            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
           }
         }
 
@@ -1086,6 +1077,9 @@ public class AsciiDoc {
       String krokiUrl = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getKrokiUrl();
       if (!StringUtils.isEmpty(krokiUrl)) {
         attrs.setAttribute("kroki-server-url", krokiUrl);
+      }
+      if (fileType == FileType.JAVAFX) {
+        attrs.setAttribute("kroki-force-png", "true");
       }
     }
 

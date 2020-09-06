@@ -706,7 +706,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     html = AsciiDoc.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes);
 
     html = html.replaceAll("<head>", "<head>\n" +
-      "<meta http-equiv=\"Content-Security-Policy\" content=\"" + PreviewStaticServer.createCSP() + "\">");
+      "<meta http-equiv=\"Content-Security-Policy\" content=\"" + PreviewStaticServer.createCSP(attributes) + "\">");
 
     /* Add JavaScript for auto-scolling and clickable links */
     return html

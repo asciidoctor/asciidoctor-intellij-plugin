@@ -21,8 +21,10 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.asciidoc.intellij.editor.browser.BrowserPanel;
+import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.BuiltInServerManager;
@@ -36,6 +38,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,14 +59,27 @@ public class PreviewStaticServer extends HttpRequestHandler {
     return HttpRequestHandler.Companion.getEP_NAME().findExtension(PreviewStaticServer.class);
   }
 
-  @NotNull
-  public static String createCSP() {
-    return "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/scripts/").toExternalForm() + "; "
+  public static String createCSP(@NotNull Map<String, String> attributes) {
+    String result = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/scripts/").toExternalForm() + "; "
       + "style-src 'unsafe-inline' https: http: " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/styles/").toExternalForm() + "; "
       + "img-src file: localfile: *; connect-src 'none'; font-src *; " +
       "object-src file: localfile: *;" + // used for interactive SVGs
       "media-src 'none'; child-src 'none'; " +
       "frame-src 'self' https://player.vimeo.com/ https://www.youtube.com/"; // used for vimeo/youtube iframes
+    final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+    if (settings.getAsciiDocPreviewSettings().isKrokiEnabled()) {
+      // add Kroki URL for interactive (=embedded) diagrams
+      if (!StringUtils.isEmpty(settings.getAsciiDocPreviewSettings().getKrokiUrl())) {
+        result += " " + settings.getAsciiDocPreviewSettings().getKrokiUrl();
+      } else {
+        result += " https://kroki.io";
+      }
+    }
+    String attributeKrokiServerUrl = attributes.get("kroki-server-url");
+    if (!StringUtils.isEmpty(attributeKrokiServerUrl)) {
+      result += " " + attributeKrokiServerUrl;
+    }
+    return result;
   }
 
   @NotNull
