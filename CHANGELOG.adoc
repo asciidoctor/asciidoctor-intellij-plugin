@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.26 (preview, available from GitHub releases)
+
+- Regression: keep temporary diagram files in a temporary folder for JCEF preview (#548)
+
 === 0.31.25 (preview, available from GitHub releases)
 
 - block types should never be treated as setext style section header (#545)

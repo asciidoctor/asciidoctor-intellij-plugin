@@ -1060,7 +1060,7 @@ public class AsciiDoc {
 
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     if (imagesPath != null) {
-      if (fileType == FileType.JAVAFX) {
+      if (fileType == FileType.JAVAFX || fileType == FileType.JCEF) {
         if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())
           || settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(AsciiDocJCEFHtmlPanelProvider.class.getName())) {
           attrs.setAttribute("outdir", imagesPath.toAbsolutePath().normalize().toString());
