@@ -483,9 +483,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     if ("image".equals(macroName)) {
       VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
       if (antoraModuleDir != null) {
-        for (String base : AsciiDocUtil.replaceAntoraPrefix(myElement, base, "image")) {
-          getVariants(base, collector, 0);
-        }
+        getVariants(base, collector, 0);
       } else {
         // this is not antora, therefore try with and without imagesdir
         getVariants(base, collector, 0);
