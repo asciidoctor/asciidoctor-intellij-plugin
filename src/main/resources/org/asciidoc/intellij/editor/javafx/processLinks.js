@@ -14,7 +14,7 @@ window.__IntelliJTools.processClick = function (event) {
   if (this.href instanceof SVGAnimatedString) {
     href = this.href.baseVal;
   } else {
-    href = this.href;
+    href = this.getAttribute("href");
   }
 
   if (href[0] === '#') {
