@@ -49,21 +49,26 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
     zzCachedEndRead = 0;
   }
 
-  public void clearLookahead() {
+  public int clearLookahead() {
     zzEndRead = zzEndReadFinal;
+    return zzEndRead;
   }
 
   public int limitLookahead() {
-    if (zzEndReadFinal > zzCurrentPos + 2000) {
-      zzEndRead = zzCurrentPos + 2000;
+    return limitLookahead(zzCurrentPos);
+  }
+
+  public int limitLookahead(int zzCurrentPosL) {
+    if (zzEndReadFinal > zzCurrentPosL + 2000) {
+      zzEndRead = zzCurrentPosL + 2000;
     } else {
       zzEndRead = zzEndReadFinal;
     }
-    if (zzCurrentPos < zzEndReadFinal && tableChar != 0) {
-      if (zzCachedEndRead >= zzCurrentPos +3 && zzBuffer.charAt(zzCachedEndRead -2) == tableChar && zzBuffer.charAt(zzCachedEndRead -2 -1) != '\\' && zzBuffer.charAt(zzCachedEndRead -2 +1) != '=') {
+    if (zzCurrentPosL < zzEndReadFinal && tableChar != 0) {
+      if (zzCachedEndRead >= zzCurrentPosL +3 && zzBuffer.charAt(zzCachedEndRead -2) == tableChar && zzBuffer.charAt(zzCachedEndRead -2 -1) != '\\' && zzBuffer.charAt(zzCachedEndRead -2 +1) != '=') {
         zzEndRead = zzCachedEndRead;
       } else {
-        int nextstop = zzCurrentPos + 1;
+        int nextstop = zzCurrentPosL + 1;
         while (nextstop < zzEndRead -2) {
           if (zzBuffer.charAt(nextstop) == tableChar && zzBuffer.charAt(nextstop) -1 != '\\' && zzBuffer.charAt(nextstop+1) != '=') {
             zzCachedEndRead = zzEndRead = nextstop +2;
@@ -337,6 +342,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state HEADER
 %state EOL_POP
 %state PREBLOCK
+%state LINECOMMENT
 %state STARTBLOCK
 %state DELIMITER
 %state SINGLELINE
@@ -413,10 +419,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  {
         if (isPrefixedBy("|".toCharArray())) {
           tableChar = '|';
-          zzEndReadL = limitLookahead();
+          zzEndReadL = limitLookahead(zzCurrentPosL);
         } else {
           tableChar = 0;
-          zzEndReadL = limitLookahead();
+          zzEndReadL = limitLookahead(zzCurrentPosL);
         }
         yypushback(yylength()); clearStyle(); resetFormatting(); blockStack.clear(); stateStack.clear(); yybegin(MULTILINE);
       }
@@ -461,6 +467,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
              // if it is in brackets, it is a block type
              && !heading.matches("\\[.*\\]")) {
             // push back the second newline of the pattern
+
             yypushback(1);
             resetFormatting();
             if (underlining.startsWith("=") && style == null) {
@@ -748,10 +755,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
             style = null;
             if (tableChar == 0) {
               tableChar = yycharat(0);
-              zzEndReadL = limitLookahead();
+              zzEndReadL = limitLookahead(zzCurrentPosL);
             } else {
               tableChar = 0;
-              zzEndReadL = limitLookahead();
+              zzEndReadL = limitLookahead(zzCurrentPosL);
             }
             yybegin(PREBLOCK);
             yypushstate();
@@ -788,10 +795,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
             style = null;
             if (tableChar == 0) {
               tableChar = yycharat(0);
-              zzEndReadL = limitLookahead();
+              zzEndReadL = limitLookahead(zzCurrentPosL);
             } else {
               tableChar = 0;
-              zzEndReadL = limitLookahead();
+              zzEndReadL = limitLookahead(zzCurrentPosL);
             }
             yybegin(PREBLOCK);
             yypushstate();
@@ -930,7 +937,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          yybegin(EOL_POP);
                          return AsciiDocTokenTypes.CONTINUATION;
                        }
-  {CELLPREFIX} "|"    {  zzEndReadL = limitLookahead();
+  {CELLPREFIX} "|"    {  zzEndReadL = limitLookahead(zzCurrentPosL);
                          if (yycharat(yylength() - 1) == tableChar && !isEscaped()) {
                            if (isNoDelVerse()) {
                              yybegin(SINGLELINE);
@@ -950,10 +957,24 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { yypushback(yylength()); yybegin(INSIDE_LINE); }
 }
 
-<PREBLOCK, SINGLELINE, PASSTHROUGH_NO_DELIMITER, HEADER> {
+<LINECOMMENT> {
+  "\n" {
+    yypopstate();
+    return AsciiDocTokenTypes.LINE_BREAK;
+  }
+  [^] {
+    return AsciiDocTokenTypes.LINE_COMMENT;
+  }
+}
+
+<PREBLOCK, SINGLELINE, PASSTHROUGH_NO_DELIMITER, HEADER, LIST> {
   {LINE_COMMENT} {
+    // the line comment might be stopped while reading a comment within a table up until the cell separator
+    if (tableChar != 0) {
+      zzEndReadL = limitLookahead(zzCurrentPosL);
+    }
     yypushstate();
-    yybegin(EOL_POP);
+    yybegin(LINECOMMENT);
     return AsciiDocTokenTypes.LINE_COMMENT;
   }
 }
@@ -1007,7 +1028,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            yybegin(DELIMITER);
                          }
                          return AsciiDocTokenTypes.LINE_BREAK; }
-  {CELLPREFIX} "|"     { zzEndReadL = limitLookahead();
+  {CELLPREFIX} "|"     { zzEndReadL = limitLookahead(zzCurrentPosL);
                          if (tableChar == yycharat(yylength()-1) && !isEscaped()) {
                            if (yylength() > 1 && !isPrefixedBy(SPACES)) {
                              yypushback(1);

@@ -7,6 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.27 (work in progress)
+
+- Handle line comments in enumerations
+- Handle line comments with cell separator characters in tables
+
 === 0.31.26 (preview, available from GitHub releases)
 
 - Regression: keep temporary diagram files in a temporary folder for JCEF preview (#548)

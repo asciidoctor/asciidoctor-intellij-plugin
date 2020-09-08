@@ -30,6 +30,27 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:LINE_COMMENT ('// bar')");
   }
 
+  public void testLineCommentAfterEnumeration() {
+    doTest("* item\n// comment",
+      "AsciiDoc:BULLET ('*')\n" +
+      "AsciiDoc:WHITE_SPACE (' ')\n" +
+      "AsciiDoc:TEXT ('item')\n" +
+      "AsciiDoc:LINE_BREAK ('\\n')\n" +
+      "AsciiDoc:LINE_COMMENT ('// comment')");
+  }
+
+  public void testLineCommentWithCellCharacterInTable() {
+    doTest("|===\n" +
+        "//|comment\n" +
+        "|===\n",
+      "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LINE_COMMENT ('//|comment')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
   public void testPassthroughStartButThatIsText() {
     doTest("+ ",
       "AsciiDoc:TEXT ('+')\n" +
