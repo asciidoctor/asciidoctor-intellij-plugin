@@ -37,6 +37,7 @@ public interface AsciiDocElementTypes {
   IElementType MONO = new AsciiDocElementType("MONO");
   IElementType ITALIC = new AsciiDocElementType("ITALIC");
   IElementType HTML_ENTITY = new AsciiDocElementType("HTML_ENTITY");
+  IElementType HEADING = new AsciiDocElementType("HEADING");
   IStubElementType<AsciiDocAttributeDeclarationStub, AsciiDocAttributeDeclaration> ATTRIBUTE_DECLARATION = new AsciiDocAttributeDeclarationStubElementType();
   IStubElementType<AsciiDocSectionStub, AsciiDocSection> SECTION = new AsciiDocSectionStubElementType();
   IStubElementType<AsciiDocBlockIdStub, AsciiDocBlockId> BLOCKID = new AsciiDocBlockIdStubElementType();

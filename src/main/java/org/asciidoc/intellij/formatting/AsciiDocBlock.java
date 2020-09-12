@@ -323,7 +323,8 @@ class AsciiDocBlock extends AbstractBlock {
   private static boolean isSection(Block block) {
     return block instanceof AsciiDocBlock &&
       (AsciiDocElementTypes.SECTION.equals(((AsciiDocBlock) block).getNode().getElementType())
-        || AsciiDocTokenTypes.HEADING.equals(((AsciiDocBlock) block).getNode().getElementType())
+        || AsciiDocTokenTypes.HEADING_TOKEN.equals(((AsciiDocBlock) block).getNode().getElementType())
+        || AsciiDocElementTypes.HEADING.equals(((AsciiDocBlock) block).getNode().getElementType())
         || AsciiDocTokenTypes.HEADING_OLDSTYLE.equals(((AsciiDocBlock) block).getNode().getElementType()));
   }
 

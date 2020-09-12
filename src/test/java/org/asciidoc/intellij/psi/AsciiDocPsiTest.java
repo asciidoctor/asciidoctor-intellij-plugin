@@ -312,6 +312,16 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertNotNull(section);
     assertEquals("Section Title", section.getDescription());
     assertEquals("== Section Title", section.getFoldedSummary());
+    assertNotNull(section.getBlockId());
+  }
+
+  public void testDescriptionSectionWithIdAtEndOfLine() {
+    PsiFile psiFile = configureByAsciiDoc("== Section Title [[id]]");
+    AsciiDocSectionImpl section = PsiTreeUtil.getChildOfType(psiFile, AsciiDocSectionImpl.class);
+    assertNotNull(section);
+    assertEquals("Section Title", section.getDescription());
+    assertEquals("== Section Title [[id]]", section.getFoldedSummary());
+    assertNotNull(section.getBlockId());
   }
 
   public void testLinkInlineMacro() {

@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.asciidoc.intellij.psi.AsciiDocFile;
+import org.asciidoc.intellij.psi.AsciiDocHeading;
 import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
@@ -79,7 +80,9 @@ public class AsciiDocConvertOldstyleHeading extends LocalQuickFixBase {
     AsciiDocFile file = AsciiDocUtil.createFileFromText(project, text);
     AsciiDocSection section = PsiTreeUtil.findChildOfType(file, AsciiDocSection.class);
     Objects.requireNonNull(section, "there should be a section from the text passed as argument");
-    return section.getFirstChild();
+    AsciiDocHeading heading = PsiTreeUtil.findChildOfType(section, AsciiDocHeading.class);
+    Objects.requireNonNull(heading, "there should be a heading from the text passed as argument");
+    return heading;
   }
 
 }

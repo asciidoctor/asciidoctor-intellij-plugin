@@ -1,6 +1,7 @@
 FILE
   AsciiDocSectionImpl(ASCIIDOC_SECTION)
-    PsiElement(AsciiDoc:HEADING)('= Test AsciiDoc document')
+    AsciiDocHeading(AsciiDoc:HEADING)
+      PsiElement(AsciiDoc:HEADING_TOKEN)('= Test AsciiDoc document')
     PsiWhiteSpace('\n')
     PsiWhiteSpace('\n')
     PsiComment(AsciiDoc:LINE_COMMENT)('// line comment')

@@ -43,8 +43,8 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DOUBLE_QUOTE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.EMPTY_LINE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ENUMERATION;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.FRONTMATTER_DELIMITER;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_OLDSTYLE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_TOKEN;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HTML_ENTITY_OR_UNICODE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINEIDEND;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINEIDSTART;
@@ -156,7 +156,7 @@ public class AsciiDocParserImpl {
       if (emptyLines > 0) {
         endBlockNoDelimiter();
       }
-      if ((at(HEADING) || at(HEADING_OLDSTYLE))) {
+      if ((at(HEADING_TOKEN) || at(HEADING_OLDSTYLE))) {
         endEnumerationDelimiter();
       }
       if (emptyLines > 0 && !at(ENUMERATION) && !at(BULLET) && !at(DESCRIPTION) && !at(CONTINUATION)) {
@@ -174,18 +174,9 @@ public class AsciiDocParserImpl {
         }
       }
 
-      if ((at(HEADING) || at(HEADING_OLDSTYLE)) && myBlockMarker.size() == 0) {
-        int level = headingLevel(myBuilder.getTokenText());
-        closeSections(level);
-        PsiBuilder.Marker marker;
-        if (myPreBlockMarker != null) {
-          marker = myPreBlockMarker;
-          myPreBlockMarker = null;
-        } else {
-          marker = myBuilder.mark();
-        }
-        SectionMarker newMarker = new SectionMarker(level, marker);
-        mySectionStack.push(newMarker);
+      if ((at(HEADING_TOKEN) || at(HEADING_OLDSTYLE)) && myBlockMarker.size() == 0) {
+        parseHeading();
+        continue;
       } else if (at(BLOCK_MACRO_ID)) {
         parseBlockMacro();
         continue;
@@ -252,6 +243,7 @@ public class AsciiDocParserImpl {
       if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
         parseUrl();
       } else if (at(INLINEIDSTART)) {
+        markPreBlock();
         parseInlineId();
       } else if (at(INLINE_MACRO_ID)) {
         parseInlineMacro();
@@ -275,6 +267,34 @@ public class AsciiDocParserImpl {
     dropPreBlock();
     closeBlocks();
     closeSections(0);
+  }
+
+  private void parseHeading() {
+    int level = headingLevel(myBuilder.getTokenText());
+    closeSections(level);
+    PsiBuilder.Marker marker;
+    if (myPreBlockMarker != null) {
+      marker = myPreBlockMarker;
+      myPreBlockMarker = null;
+    } else {
+      marker = myBuilder.mark();
+    }
+    SectionMarker newMarker = new SectionMarker(level, marker);
+    mySectionStack.push(newMarker);
+
+    PsiBuilder.Marker heading = myBuilder.mark();
+    newLines = 0;
+    while ((at(HEADING_TOKEN) || at(HEADING_OLDSTYLE) || at(INLINEIDSTART) || at(ATTRIBUTE_REF_START))
+      && newLines == 0) {
+      if (at(INLINEIDSTART)) {
+        parseInlineId();
+      } else if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
+      } else {
+        next();
+      }
+    }
+    heading.done(AsciiDocElementTypes.HEADING);
   }
 
   private void parseBlockId() {
@@ -304,7 +324,6 @@ public class AsciiDocParserImpl {
   }
 
   private void parseInlineId() {
-    markPreBlock();
     next();
     PsiBuilder.Marker blockIdMarker = null;
     while (at(BLOCKID) || at(ATTRIBUTE_REF_START)) {

@@ -59,7 +59,7 @@ public class PageAttributeProcessor implements PsiElementProcessor<PsiElement> {
       }
     } else if (titleSeen && element.getNode().getElementType() == AsciiDocTokenTypes.EMPTY_LINE) {
       return false;
-    } else if (element.getNode().getElementType() == AsciiDocTokenTypes.HEADING) {
+    } else if (element.getNode().getElementType() == AsciiDocTokenTypes.HEADING_TOKEN) {
       return true;
     } else if (element.getNode().getElementType() == AsciiDocTokenTypes.HEADER) {
       return true;

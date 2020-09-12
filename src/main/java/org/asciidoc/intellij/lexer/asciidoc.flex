@@ -500,7 +500,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                { yypushback(yylength());  yybegin(ATTRIBUTE_VAL); }
 }
 
-<ATTRIBUTE_VAL, INLINE_URL_NO_DELIMITER, INSIDE_LINE, DESCRIPTION, LINKFILE, LINKFILEWITHBLANK, LINKANCHOR, LINKURL, BLOCK_MACRO, LINKTEXT, REFTEXT, INLINEREFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE, REF, ANCHORID, BIBNAME> {
+<ATTRIBUTE_VAL, INLINE_URL_NO_DELIMITER, INSIDE_LINE, DOCTITLE, HEADING, DESCRIPTION, LINKFILE, LINKFILEWITHBLANK, LINKANCHOR, LINKURL, BLOCK_MACRO, LINKTEXT, REFTEXT, INLINEREFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE, REF, ANCHORID, BIBNAME> {
   {ATTRIBUTE_REF_START} ( {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} | [^}\n ]* {AUTOCOMPLETE} ) {
                          yypushback(yylength() - 1);
                          if (!isEscaped()) {
@@ -687,6 +687,17 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ^ ("endif"|"ifeval") "::" / [^ \n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
 }
 
+<HEADING, DOCTITLE> {
+    {INLINEIDSTART} / [^\]\n]+ {INLINEIDEND} {
+                           if (!isEscaped()) {
+                             yypushstate(); yybegin(INLINEID); return AsciiDocTokenTypes.INLINEIDSTART;
+                           } else {
+                             yypushback(1);
+                             return AsciiDocTokenTypes.HEADER;
+                           }
+                         }
+}
+
 <HEADER> {
   ^{SPACE}* "\n" {
         yypushback(yylength());
@@ -720,7 +731,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                               } else {
                                 yybegin(HEADING);
                               }
-                              clearStyle(); resetFormatting(); return AsciiDocTokenTypes.HEADING;
+                              clearStyle(); resetFormatting(); return AsciiDocTokenTypes.HEADING_TOKEN;
                             }
                             yypushback(yylength()); yybegin(STARTBLOCK);
                           }
@@ -1619,7 +1630,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <DOCTITLE, HEADING> {
-  [^]                  { return AsciiDocTokenTypes.HEADING; }
+  [^]                  { return AsciiDocTokenTypes.HEADING_TOKEN; }
 }
 
 <BLOCK_MACRO_ATTRS, BLOCK_ATTRS> {

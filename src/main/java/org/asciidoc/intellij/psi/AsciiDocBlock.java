@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
@@ -40,7 +41,16 @@ public interface AsciiDocBlock extends PsiElement, AsciiDocSelfDescribe {
       return null;
     }
     String text = titleNode.getText();
-    return text.length() >= 1 ? text.substring(1) : "";
+    text = text.length() >= 1 ? text.substring(1) : "";
+    try {
+      String resolved = AsciiDocUtil.resolveAttributes(this, text);
+      if (resolved != null) {
+        text = resolved;
+      }
+    } catch (IndexNotReadyException ex) {
+      // noop
+    }
+    return text;
   }
 
   TokenSet INSIGNIFICANT_TOKENS_FOR_FOLDING = TokenSet.create(

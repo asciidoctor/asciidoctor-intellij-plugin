@@ -49,7 +49,7 @@ public class AsciiDocLanguageSupport {
 
   // all tokens that contain full sentences that can be checked for grammar and spelling.
   private static final TokenSet NODES_TO_CHECK = TokenSet.create(
-    AsciiDocTokenTypes.HEADING,
+    AsciiDocTokenTypes.HEADING_TOKEN,
     AsciiDocTokenTypes.HEADING_OLDSTYLE,
     AsciiDocTokenTypes.TITLE_TOKEN,
     AsciiDocTokenTypes.LINE_COMMENT,

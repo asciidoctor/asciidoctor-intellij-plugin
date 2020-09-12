@@ -6,12 +6,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.tree.TokenSet;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
-import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
-import org.asciidoc.intellij.parser.AsciiDocElementTypes;
-import org.asciidoc.intellij.parser.AsciiDocParserImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -26,8 +22,6 @@ import java.util.regex.Pattern;
  * @author yole
  */
 public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDocSectionStub> implements AsciiDocSelfDescribe, AsciiDocSection {
-  private static final TokenSet HEADINGS = TokenSet.create(AsciiDocTokenTypes.HEADING, AsciiDocTokenTypes.HEADING_OLDSTYLE);
-
   public AsciiDocSectionImpl(AsciiDocSectionStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
@@ -43,9 +37,9 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
     if (stub != null) {
       return stub.getTitle();
     }
-    ASTNode heading = getNode().findChildByType(HEADINGS);
+    AsciiDocHeading heading = findChildByClass(AsciiDocHeading.class);
     if (heading != null) {
-      return trimHeading(heading.getText());
+      return heading.getHeadingText();
     }
     return "<untitled>";
   }
@@ -91,15 +85,15 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
   @Nullable
   @Override
   public AsciiDocBlockId getBlockId() {
-    ASTNode child = this.getNode().getFirstChildNode();
+    PsiElement child = this.getFirstChild();
     while (child != null) {
-      if (child.getElementType() == AsciiDocElementTypes.BLOCKID) {
-        return (AsciiDocBlockId) child.getPsi();
+      if (child instanceof AsciiDocBlockId) {
+        return (AsciiDocBlockId) child;
       }
-      if (HEADINGS.contains(child.getElementType())) {
-        break;
+      if (child instanceof AsciiDocHeading) {
+        return ((AsciiDocHeading) child).getBlockId();
       }
-      child = child.getTreeNext();
+      child = child.getNextSibling();
     }
     return null;
   }
@@ -110,7 +104,7 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
       if (child instanceof AsciiDocBlockAttributes) {
         return ((AsciiDocBlockAttributes) child).getAttribute(name);
       }
-      if (HEADINGS.contains(getNode().getElementType())) {
+      if (child instanceof AsciiDocHeading) {
         break;
       }
     }
@@ -149,20 +143,6 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
     super.accept(visitor);
   }
 
-  private static String trimHeading(String text) {
-    if (text.charAt(0) == '=') {
-      // new style heading
-      text = StringUtil.trimLeading(text, '=').trim();
-    } else if (text.charAt(0) == '#') {
-      // markdown style heading
-      text = StringUtil.trimLeading(text, '#').trim();
-    } else {
-      // old style heading
-      text = text.replaceAll("[-=~^+\n \t]*$", "");
-    }
-    return text;
-  }
-
   @Override
   public String getName() {
     return getTitle();
@@ -187,28 +167,28 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
   @NotNull
   @Override
   public String getFoldedSummary() {
-    ASTNode heading = getNode().findChildByType(HEADINGS);
+    AsciiDocHeading heading = findChildByClass(AsciiDocHeading.class);
     if (heading == null) {
-      throw new IllegalStateException("heading without heading");
+      throw new IllegalStateException("section without heading");
     }
     return heading.getText();
   }
 
   @Override
   public int getHeadingLevel() {
-    ASTNode heading = getNode().findChildByType(HEADINGS);
+    AsciiDocHeading heading = findChildByClass(AsciiDocHeading.class);
     if (heading == null) {
-      throw new IllegalStateException("heading without heading");
+      throw new IllegalStateException("section without heading");
     }
-    return AsciiDocParserImpl.headingLevel(heading.getText());
+    return heading.getHeadingLevel();
   }
 
   public PsiElement getHeadingElement() {
-    ASTNode heading = getNode().findChildByType(HEADINGS);
+    AsciiDocHeading heading = findChildByClass(AsciiDocHeading.class);
     if (heading == null) {
-      throw new IllegalStateException("heading without heading");
+      throw new IllegalStateException("section without heading");
     }
-    return heading.getPsi();
+    return heading;
   }
 
   @Override

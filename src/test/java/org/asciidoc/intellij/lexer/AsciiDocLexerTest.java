@@ -137,7 +137,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testHeading() {
     doTest("= Abc\n\nabc\n== Def\ndef",
-      "AsciiDoc:HEADING ('= Abc')\n" +
+      "AsciiDoc:HEADING_TOKEN ('= Abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:EMPTY_LINE ('\\n')\n" +
         "AsciiDoc:TEXT ('abc')\n" +
@@ -149,9 +149,27 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('def')");
   }
 
+  public void testDoctitleWithBlockId() {
+    doTest("= [[id]] Title",
+      "AsciiDoc:HEADING_TOKEN ('= ')\n" +
+        "AsciiDoc:INLINEIDSTART ('[[')\n" +
+        "AsciiDoc:BLOCKID ('id')\n" +
+        "AsciiDoc:INLINEIDEND (']]')\n" +
+        "AsciiDoc:HEADING_TOKEN (' Title')");
+  }
+
+  public void testSectionWithBlockId() {
+    doTest("== [[id]] Section",
+      "AsciiDoc:HEADING_TOKEN ('== ')\n" +
+        "AsciiDoc:INLINEIDSTART ('[[')\n" +
+        "AsciiDoc:BLOCKID ('id')\n" +
+        "AsciiDoc:INLINEIDEND (']]')\n" +
+        "AsciiDoc:HEADING_TOKEN (' Section')");
+  }
+
   public void testHeaderIfDef() {
     doTest("= Abc\nifdef::hi[]\nxx\nendif::[]",
-      "AsciiDoc:HEADING ('= Abc')\n" +
+      "AsciiDoc:HEADING_TOKEN ('= Abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:BLOCK_MACRO_ID ('ifdef::')\n" +
         "AsciiDoc:ATTRIBUTE_REF ('hi')\n" +
@@ -279,7 +297,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testHeadingNewStyleWithHeaderTwoLines() {
     doTest("= Abc\nHeader1\nHeader2\ndef",
-      "AsciiDoc:HEADING ('= Abc')\n" +
+      "AsciiDoc:HEADING_TOKEN ('= Abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:HEADER ('Header1')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -290,7 +308,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testHeadingNewStyleWithHeaderTwoLinesAndLineComment() {
     doTest("= Abc\nHeader1\n// Comment\nHeader2\ndef",
-      "AsciiDoc:HEADING ('= Abc')\n" +
+      "AsciiDoc:HEADING_TOKEN ('= Abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:HEADER ('Header1')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -303,7 +321,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testHeadingNewStyleWithHeaderTwoLinesAndBlockComment() {
     doTest("= Abc\nHeader1\n////\nHiHo\n////\nHeader2\ndef",
-      "AsciiDoc:HEADING ('= Abc')\n" +
+      "AsciiDoc:HEADING_TOKEN ('= Abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:HEADER ('Header1')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -320,7 +338,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testHeadingNewStyleWithInclude() {
     doTest("= Abc\ninclude::test.adoc[]\n",
-      "AsciiDoc:HEADING ('= Abc')\n" +
+      "AsciiDoc:HEADING_TOKEN ('= Abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:BLOCK_MACRO_ID ('include::')\n" +
         "AsciiDoc:BLOCK_MACRO_BODY ('test.adoc')\n" +
@@ -332,7 +350,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
   public void testHeadingMarkdownStyleWithHeaderTwoLines() {
     //noinspection AsciiDocHeadingStyleInspection
     doTest("# Abc\nHeader1\nHeader2\ndef",
-      "AsciiDoc:HEADING ('# Abc')\n" +
+      "AsciiDoc:HEADING_TOKEN ('# Abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:HEADER ('Header1')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -347,7 +365,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTR_NAME ('appendix')\n" +
         "AsciiDoc:ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:HEADING ('= Abc')\n" +
+        "AsciiDoc:HEADING_TOKEN ('= Abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('Text')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
@@ -1508,7 +1526,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('item')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:EMPTY_LINE ('\\n')\n" +
-        "AsciiDoc:HEADING ('== Section')");
+        "AsciiDoc:HEADING_TOKEN ('== Section')");
   }
 
   public void testNestedQuotedBlock() {
@@ -1654,7 +1672,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:EMPTY_LINE ('\\n')\n" +
-        "AsciiDoc:HEADING ('== Title')");
+        "AsciiDoc:HEADING_TOKEN ('== Title')");
   }
 
   public void testInitialEndOfSentenceAtEndOfLineSoThatItKeepsExistingWraps() {
@@ -1921,7 +1939,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LISTING_BLOCK_DELIMITER ('----')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:HEADING ('== Hi')");
+        "AsciiDoc:HEADING_TOKEN ('== Hi')");
   }
 
   public void testDescriptionWithMultipleColons() {

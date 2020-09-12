@@ -21,6 +21,7 @@ import org.asciidoc.intellij.psi.AsciiDocBlockIdImpl;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocCell;
 import org.asciidoc.intellij.psi.AsciiDocFile;
+import org.asciidoc.intellij.psi.AsciiDocHeading;
 import org.asciidoc.intellij.psi.AsciiDocHtmlEntity;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagInDocument;
 import org.asciidoc.intellij.psi.AsciiDocInlineMacro;
@@ -134,6 +135,9 @@ public class AsciiDocParserDefinition implements ParserDefinition {
     }
     if (node.getElementType() == AsciiDocElementTypes.INCLUDE_TAG) {
       return new AsciiDocIncludeTagInDocument(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.HEADING) {
+      return new AsciiDocHeading(node);
     }
     throw new UnsupportedOperationException("Unknown node type " + node.getElementType());
   }

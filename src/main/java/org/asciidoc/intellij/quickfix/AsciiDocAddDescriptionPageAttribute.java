@@ -38,7 +38,7 @@ public class AsciiDocAddDescriptionPageAttribute extends LocalQuickFixBase {
     }
     if (!nlFound) {
       PsiElement newline = createAttributeDeclaration(project, "\n");
-      anchor = anchor.getParent().addRangeAfter(newline.getFirstChild(), newline.getLastChild(), anchor);
+      anchor = anchor.getParent().addRangeAfter(newline.getFirstChild(), newline.getLastChild(), anchor).getParent();
       anchor = anchor.getNextSibling();
     }
     if (anchor.getNextSibling() instanceof PsiWhiteSpace && anchor.getNextSibling().getText().equals("\n")) {

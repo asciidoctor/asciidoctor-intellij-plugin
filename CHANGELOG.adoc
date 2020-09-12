@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.28 (work in progress)
+
+- support anchors and attribute references in section titles (#469)
+
 === 0.31.27 (preview, available from GitHub releases)
 
 - handle line comments in enumerations

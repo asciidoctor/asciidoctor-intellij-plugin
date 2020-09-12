@@ -91,7 +91,7 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
       // ignore "//" at start of line comment
       ranges.add(new IntRange(0, 1));
     }
-    if (psiElement.getNode().getElementType() == AsciiDocTokenTypes.HEADING && psiElement.getTextLength() >= 1) {
+    if (psiElement.getNode().getElementType() == AsciiDocTokenTypes.HEADING_TOKEN && psiElement.getTextLength() >= 1) {
       // ignore "##" or "==" at start of heading
       String heading = psiElement.getText();
       int i = 0;
