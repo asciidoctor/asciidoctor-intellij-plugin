@@ -12,7 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - support anchors and attribute references in section titles (#469)
 - upgrade to AsciidoctorJ 2.4.1
 
-=== 0.31.27 (preview, available from GitHub releases)
+=== 0.31.27
 
 - handle line comments in enumerations
 - handle line comments with cell separator characters in tables
