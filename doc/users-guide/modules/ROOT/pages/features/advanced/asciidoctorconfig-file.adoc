@@ -4,5 +4,70 @@
 To provide a common set of variables when rendering the preview, the plugin reads an _.asciidoctorconfig_ configuration file.
 Use this to optimize the preview the project contains a document that is split out to multiple include files.
 
-See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Support-project-specific-configurations[Wiki page] for details.
+== Situation
+
+There are usually specific settings for each project that apply to all AsciiDoc sources: these might be the image directory or activating experimental options.
+
+While documents have all the settings in your root document, files that it includes will not have these settings when they render in the IDE's preview.
+
+== Solution
+
+A file called _.asciidoctorconfig_ will contain a snippet that will be pre-pended before rendering the AsciiDoc file.
+
+The IntelliJ IDE also provides a variable _asciidoctorconfigdir_ that you can use to set base directory variables.
+
+Sample content:
+
+[source,asciidoc]
+----
+// .asciidoctorconfig
+:experimental:
+:icons: font
+:myprojectbasedir: {asciidoctorconfigdir}
+----
+
+The handling will be a mixture of behaviors like https://editorconfig.org/[_.editorconfig_] and _.gitconfig._
+
+Please note that _ifndef_/_ifdef_ macros won't work in a file called _.asciidoctorconfig_ (they work only in files that have the extension _.adoc_) To work around this, rename the file to _.asciidoctorconfig.adoc_.
+This will work the same way like _.asciidoctorconfig_.
+
+== Behavior
+
+The internal order of processing is as follows:
+
+. load the _.asciidoctorconfig_ file from the root of the project tree (most general configuration)
+. load the _.asciidoctorconfig_ files from the different directories leading to the specific file to be rendered
+. load the _.asciidoctorconfig_ file from current folder where the file to be rendered resides (most specific to the file opened)
+. Prepend all the files found in the previous steps to the file to be rendered and render it in the preview.
+
+== Benefits
+
+* project specific configuration is possible
+* hierarchical configuration is possible
+* use the AsciiDoc syntax the user is familiar with (even includes work)
+
+== Ecosystem
+
+=== Generating a .asciidoctorconfig file during project build
+
+For Gradle is an _asciidoctorEditorConfig_ task available to create a .asciidoctorconfig via a build task.
+See https://github.com/asciidoctor/asciidoctor-gradle-plugin/blob/master/docs/src/docs/asciidoc/parts/asciidoctoreditorconfig-plugin.adoc[the docs for the 3.2+ release of the asciidoctor-gradle-plugin] for more details.
+
+=== Using the .asciidoctorconfig file for rendering regular AsciiDoc documents
+
+While this is currently only supported by the IntelliJ plugin, users can use AsciiDoc's include syntax to include the _.asciidoctorconfig_ files in the root document and use it to render the document using for example command line tools.
+
+[source,asciidoc]
+----
+// root.adoc
+
+\include::.asciidoctorconfig[]
+
+= My Root Document
+
+\include::chapter01.adoc[]
+
+\include::chapter01.adoc[]
+----
+
 
