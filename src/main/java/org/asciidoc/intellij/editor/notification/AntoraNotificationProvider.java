@@ -53,7 +53,7 @@ public class AntoraNotificationProvider extends EditorNotifications.Provider<Edi
     final EditorNotificationPanel panel = new EditorNotificationPanel();
     panel.setText("It seems you are editing a document that is part of an Antora module. Do you want to learn more how this plugin can support you?");
     panel.createActionLabel("Yes, tell me more!", ()
-      -> BrowserUtil.browse("https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Antora-support"));
+      -> BrowserUtil.browse("https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/features/advanced/antora.html"));
     panel.createActionLabel("Do not show again", () -> {
       PropertiesComponent.getInstance().setValue(ANTORA_AVAILABLE, true);
       EditorNotifications.updateAll();

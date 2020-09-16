@@ -1,26 +1,88 @@
 = Antora
 :description: This plugin support Antora attributes like 'imagesdir' and 'examplesdir'. It also resolves xrefs and includes in the preview.
 
-When working in an https://antora.org/[Antora project], the plugin supports:
+https://antora.org/[Antora] helps to write and publish documentation web sites.
+It allows combining documentation from multiple repositories into a single website.
 
-* Attributes _partialsdir_, _examplesdir_, _attachmentsdir_, _imagesdir_ and _pagesdir_ resolve to their absolute path of the partials, examples, attachments, images and pages folder of the current module.
-This way the following resolves in the editor and the preview:
-+
+Each documentation component contains an `antora.yml` file https://docs.antora.org/antora/2.3/standard-directories/[with a common directory structure] with meta information about that component.
+
+== Pre-Requisites
+
+You need to upgrade to version 0.30.31 or later of the plugin.
+Initial support has been added in issue https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/373[#373].
+
+== Detection of Antora
+
+The plugin will activate Antora support once it finds a file `antora.yml` and a sub-folder `modules`.
+Antora will be active for all AsciiDoc files located in folders below such a file.
+
+== Support provided by the plugin
+
+Once the plugin detects Antora, it activates its Antora features.
+
+For `include::[]` and `+xref:[]+` macros the plugin supports the Antora families as long as it can resolve the references in the current project.
+For references outside the current module or component it locates `antora.yml` files and find the targets of the references.
+
+It sets multiple attributes to allow referencing files with the current Antora module:
+
+imagesdir:: pointing to `images` of the current module (or `assets/images`, the Antora pre-2.1 style, if that folder exists)
+
+partialsdir:: pointing to `partials` of the current module (or `pages/_partials`, the Antora pre-1.1 style, if that folder exists)
+
+attachmentsdir:: pointing to `attachments` of the current module (or `assets/attachments`, the Antora pre-2.1 style, if that folder exists)
+
+examplesdir:: pointing to `examples` of the current module
+
+page-*:: These and several other intrinsic attributes are supported for the preview like `page-component-version`, `page-module` etc.
+
+Any of these attributes is set only if the directory exists.
+While `imagesdir` and `attachmentsdir` use a relative path so that they work best with image and link macros, `examplesdir` and `partialsdir` use an absolute path that works best with includes macros.
+
+In the editor the user can autocomplete filenames using kbd:[Ctrl+Space] and can navigate to a folder or file using kbd:[Ctrl+B].
+
+The preview renders images, includes and links.
+It also resolves https://docs.antora.org/antora/2.3/page/reftext-and-navtitle/[reftext and navtitle in the preview^] (new in Antora 2.3)
+The user can click on links in the preview and they will open in the editor if they link to a local Antora page.
+
 [source,asciidoc]
+------
+// images from the assets/images folder - no prefix necessary as imagesdir attribute is set
+image::animage.png[some image]
+
+// offer downloads
+link:{attachmentsdir}/file.zip[Download]
+
+// include content into a page
+\include::partial$some-recurring-content.adoc[]
+\include::{partialsdir}/some-recurring-content.adoc[]
+\include::component:module:partial$some-recurring-content.adoc[]
+
+// include snippets from examples
+[source,java]
 ----
-\include::{partialsdir}/test.adoc[]
+\include::example$test.java[tags=e1]
+\include::{examplesdir}/test.java[tags=e1]
+\include::component:module:example$test.java[tags=e1]
 ----
 
-* Reference other components and modules resolve for xref, image and include macros.
-The following works in the editor (xref, include and image) and in the preview (for include and image):
-+
-[source,asciidoc]
-----
-\include::component:module:partial$snippet.adoc[]
-xref::component:module:document.adoc[]
-image::my-image-in-the-current-module.png[]
-image::component:module:my-image-in-another-module.png[]
-----
+// reference documents in the same module
+xref:mail-component.adoc[SMTP]
 
-See https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Antora-support[Wiki page] for details
+// reference documents in a different component and module
+xref:component:module:mail-component.adoc[SMTP]
+------
+
+== Example projects
+
+Antora::
+Site: https://docs.antora.org/ +
+Source code: https://gitlab.com/antora/antora/-/tree/master/docs
+
+Debezium::
+Site: https://debezium.io/documentation/reference/index.html +
+Source code: https://github.com/debezium/debezium/tree/master/documentation
+
+IntelliJ plugin for AsciiDoc::
+Site: https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/index.html +
+Source code: https://github.com/asciidoctor/asciidoctor-intellij-plugin/tree/master/doc
 
