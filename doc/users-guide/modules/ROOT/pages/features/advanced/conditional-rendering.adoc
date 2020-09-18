@@ -1,0 +1,44 @@
+= Conditional Rendering of Content
+:description: Define paragraphs in the document that show or hide when the document previewed in the IDE.
+:navtitle: Conditional Rendering
+
+{description}
+
+== Situation
+
+A user wants show or hide paragraphs within a document when it is previewed in the IDE.
+
+== Solution
+
+IntelliJ sets the variables _env-idea_ and _env_ so that the user can render the texts differently when working with the Asciidoc plugin.
+
+The plugin sets the variable _env-idea_ to _defined_, therefore the following works:
+
+[source,asciidoc]
+----
+\ifndef::env-idea[]
+render this text only WHEN NOT running IntelliJ Asciidoctor Plugin
+\endif::[]
+
+\ifdef::env-idea[]
+render this text only ONLY IF running IntelliJ Asciidoctor Plugin
+\endif::[]
+----
+
+The plugin sets the variable _env_ to the value _idea_, therefore the following works:
+
+[source,asciidoc]
+----
+\ifeval::[{env}!=idea]
+render this text only WHEN NOT running IntelliJ Asciidoctor Plugin
+\endif::[]
+
+\ifeval::[{env}==idea]
+render this text only ONLY IF running IntelliJ Asciidoctor Plugin
+\endif::[]
+----
+
+== Futher reading
+
+You can read more about directives in the https://asciidoctor.org/docs/user-manual/#conditional-preprocessor-directives[Asciidoctor User's manual, chapter '`Conditional Preprocessor Directives`'].
+

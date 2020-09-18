@@ -13,6 +13,7 @@
 *** xref:features/advanced/asciidoclet.adoc[]
 *** xref:features/advanced/asciidoctorconfig-file.adoc[]
 *** xref:features/advanced/asciidoctor-extensions.adoc[]
+*** xref:features/advanced/conditional-rendering.adoc[]
 *** xref:features/advanced/stylesheets.adoc[]
 *** xref:features/advanced/frontmatter.adoc[]
 *** xref:features/advanced/creating-html-and-pdf.adoc[]
