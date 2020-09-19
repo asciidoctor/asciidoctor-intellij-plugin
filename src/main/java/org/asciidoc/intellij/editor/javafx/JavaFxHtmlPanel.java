@@ -28,7 +28,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.JBColor;
-import com.intellij.ui.javafx.JFXPanelWrapper;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.PsiNavigateUtil;
 import com.intellij.util.ui.UIUtil;

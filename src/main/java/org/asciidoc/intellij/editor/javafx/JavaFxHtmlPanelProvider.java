@@ -36,12 +36,14 @@ public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
     }
 
     try {
-      if (Class.forName("javafx.scene.web.WebView", false, getClass().getClassLoader()) != null) {
-        if (isJavaFxStuck()) {
-          return AvailabilityInfo.UNAVAILABLE;
-        }
-        return AvailabilityInfo.AVAILABLE;
+      // will throw ClassNotFoundException when JavaFX is not available, which is the case in:
+      // * some non-JetBrains JDKs
+      // * the latest JetBrains JDKs unless JavaFX plugin is installed
+      Class.forName("javafx.scene.web.WebView", false, getClass().getClassLoader());
+      if (isJavaFxStuck()) {
+        return AvailabilityInfo.UNAVAILABLE;
       }
+      return AvailabilityInfo.AVAILABLE;
     } catch (ClassNotFoundException ignored) {
     }
 

@@ -7,10 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.28 (work in progress)
+=== 0.31.28 (preview, available from GitHub releases)
 
 - support anchors and attribute references in section titles (#469)
 - upgrade to AsciidoctorJ 2.4.1
+- internalize classes so JavaFX preview continues to work in IntelliJ 2020.3 and Android Studio 4.2
 
 === 0.31.27
 

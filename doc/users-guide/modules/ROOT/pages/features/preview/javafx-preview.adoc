@@ -1,0 +1,48 @@
+= JavaFX Preview
+:description: JavaFX preview allows a rich preview of AsciiDoc content.
+
+{description}
+
+[NOTE]
+====
+Starting from IntelliJ 2020.2 and plugin version 0.31.x the most advanced preview mode is JCEF.
+JetBrains deprecated JavaFX usage in plugins.
+Future versions of the IDE might not support the JavaFX preview at all.
+====
+
+== Why to use the JavaFX preview
+
+The JavaFX preview provides better HTML preview and additional features like scroll-to-view and opening links in the browser.
+
+== Limitations of the JavaFX preview
+
+The JavaFX preview has only limited support for SVGs in AsciiDoc documents.
+Use the JCEF preview for better SVG support and improved rendering on high-resolution displays.
+
+== When you can use JavaFX preview
+
+The JavaFX preview works on a 64bit JDK and needs JavaFX installed.
+Please use the JDK provided by JetBrains for best results.
+Please use the JetBrains OpenJDK 11 runtime whenever possible.
+
+include::partial$javafx-preview-requires-plugin.adoc[]
+
+=== Selecting a different JetBrains JDK using the "`Choose Runtime`" plugin
+
+This is recommended for Android Studio 4.0 that includes JetBrains OpenJDK 8 as default without JavaFX support.
+
+NOTE: See xref:features/preview/jcef-preview.adoc[] for more information on Android Studio 4.2.
+
+* Install the plugin "`Choose Runtime`" as described in the JetBrains knowledge base "`https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Selecting the JDK version the IDE will run under^]`".
+* Choose a runtime "jbrsdk-11_0_7-...-x64-b956.14.tar.gz" or later and install it. The IDE will restart.
+* Go to the settings of the AsciiDoc plugin and check if the preview is set to "`JavaFX WebView`".Change it to "`JavaFX WebView`" if this is not the case.
+
+include::partial$javafx-preview-requires-plugin.adoc[]
+
+== Known Problems with Non-JetBrains-JDKs
+
+* OpenJDK installations provided on Linux OS sometimes don't include JavaFX, therefore the JavaFX preview is not available.
+Please use the JetBrains JDK.
+
+* Oracle JDK JavaFX package on Windows is less stable compared to the OpenJDK provided by Jetbrains and might lead to a crashing IDE.
+Please use the JetBrains JDK.

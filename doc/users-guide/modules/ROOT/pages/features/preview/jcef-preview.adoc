@@ -1,0 +1,33 @@
+= JCEF Preview
+:description: JCEF preview allows the most advanced rich preview of AsciiDoc content.
+
+{description}
+
+[NOTE]
+====
+This is available from IntelliJ 2020.2+ and plugin version 0.31.x.
+====
+
+== Why to use the JCEF preview
+
+The JCEF preview provides better HTML preview and additional features like scroll-to-view and opening links in the browser.
+As the preview is based on an up-to-date Google Chrome rendering engine, it offers in-par rendering compared to modern browsers.
+This includes rendering of fonts and SVGs.
+
+== Limitations of the JCEF preview
+
+
+== When you can use JavaFX preview
+
+JCEF preview is only available from IntelliJ 2020.2+ and plugin version 0.31.x.
+It requires that the user runs on the pre-packaged JetBrains OpenJDK 11.
+
+=== Selecting a different JetBrains JDK using the "`Choose Runtime`" plugin
+
+This is recommended for Android Studio 4.2 that doesn't ship with neither JavaFX nor JCEF support.
+
+JavaFX preview that used to work with Android Studio 4.0 will not work with Android Studio 4.2 as it doesn't package the necessary classes in the IDE. Therefore, follow these steps to enable JCEF preview for Android Studio.
+
+* Install the plugin "`Choose Runtime`" as described in the JetBrains knowledge base "`https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Selecting the JDK version the IDE will run under^]`".
+* Choose a runtime "jbrsdk-11_0_8-...-x64-b944.34.tar.gz" or later and install it. The IDE will restart.
+* Go to the settings of the AsciiDoc plugin and check if the preview is set to "`JCEF Browser`". Change it to "`JCEF Browser`" if this is not the case.
