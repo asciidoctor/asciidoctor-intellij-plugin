@@ -46,9 +46,9 @@ public class JavaFxInitializationIsStuckNotificationProvider extends EditorNotif
     }
 
     final EditorNotificationPanel panel = new EditorNotificationPanel();
-    panel.setText("JavaFX initialization is stuck. Fallback to Swing preview until this is resolved.");
+    panel.setText("JavaFX initialization is stuck. Falling back to Swing preview until this is resolved.");
     panel.createActionLabel("Show me how to fix it!", ()
-      -> BrowserUtil.browse("https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/JavaFX-initialization-stuck"));
+      -> BrowserUtil.browse("https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/faq/javafx-initialization-stuck.html"));
     panel.createActionLabel("Do not show again", () -> {
       PropertiesComponent.getInstance().setValue(DONT_NOTIFY_STUCK_JAVAFX, true);
       EditorNotifications.updateAll();

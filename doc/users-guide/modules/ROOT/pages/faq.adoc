@@ -62,7 +62,7 @@ See xref:faq/could-not-find-dot-executable.adoc[] for more information.
 
 === I'm a user of the plugin, where can I show my support?
 
-Please consider adding a rating for the pluigin in the https://plugins.jetbrains.com/plugin/7391-asciidoc[JetBrains Marketplace].
+Please consider adding a rating for the plugin in the https://plugins.jetbrains.com/plugin/7391-asciidoc[JetBrains Marketplace].
 
 This plugin is based on Asciidoctor and a lot of ideas from its community.
-To support Asciidoctor, please consider contribute funds via https://opencollective.com/asciidoctor[Opencollective].
+To support Asciidoctor, please consider contribute funds via https://opencollective.com/asciidoctor[Open Collective].
