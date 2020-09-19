@@ -38,7 +38,7 @@ render this text only ONLY IF running IntelliJ Asciidoctor Plugin
 \endif::[]
 ----
 
-== Futher reading
+== Further reading
 
 You can read more about directives in the https://asciidoctor.org/docs/user-manual/#conditional-preprocessor-directives[Asciidoctor User's manual, chapter '`Conditional Preprocessor Directives`'].
 
