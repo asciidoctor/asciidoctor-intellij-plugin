@@ -340,6 +340,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state MULTILINE
 %state FRONTMATTER
 %state HEADER
+%state INSIDE_HEADER_LINE
 %state EOL_POP
 %state PREBLOCK
 %state LINECOMMENT
@@ -698,7 +699,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          }
 }
 
-<HEADER> {
+<HEADER, INSIDE_HEADER_LINE> {
   ^{SPACE}* "\n" {
         yypushback(yylength());
         yybegin(PREBLOCK);
@@ -707,9 +708,24 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         ++ headerLines;
         if (headerLines >= 3) {
           yybegin(PREBLOCK);
+        } else {
+          yybegin(HEADER);
         }
         return AsciiDocTokenTypes.LINE_BREAK;
   }
+}
+
+<HEADER> {
+  [ \t] {
+        return AsciiDocTokenTypes.HEADER;
+      }
+  [^] {
+        yybegin(INSIDE_HEADER_LINE);
+        return AsciiDocTokenTypes.HEADER;
+  }
+}
+
+<INSIDE_HEADER_LINE> {
   [^] {
         return AsciiDocTokenTypes.HEADER;
   }
@@ -1924,7 +1940,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 // include is the only allowed block macro in these types of block
-<LITERAL_BLOCK, LISTING_BLOCK, PASSTRHOUGH_BLOCK, LISTING_NO_DELIMITER, SINGLELINE, HEADER> {
+<LITERAL_BLOCK, LISTING_BLOCK, PASSTRHOUGH_BLOCK, LISTING_NO_DELIMITER, SINGLELINE, HEADER, LIST> {
   ^ "include::" / [^\[\n]* "[" [^\]\n]* "]" {SPACE}* \n { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   ^ "include::" / [^\[\n]* {AUTOCOMPLETE} { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
 }

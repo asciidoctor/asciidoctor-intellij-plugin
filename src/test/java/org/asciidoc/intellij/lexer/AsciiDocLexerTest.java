@@ -307,10 +307,10 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   public void testHeadingNewStyleWithHeaderTwoLinesAndLineComment() {
-    doTest("= Abc\nHeader1\n// Comment\nHeader2\ndef",
+    doTest("= Abc\nHeader1 // no comment\n// Comment\nHeader2\ndef",
       "AsciiDoc:HEADING_TOKEN ('= Abc')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:HEADER ('Header1')\n" +
+        "AsciiDoc:HEADER ('Header1 // no comment')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LINE_COMMENT ('// Comment')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
