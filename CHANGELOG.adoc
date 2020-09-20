@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - support anchors and attribute references in section titles (#469)
 - upgrade to AsciidoctorJ 2.4.1
 - internalize classes so JavaFX preview continues to work in IntelliJ 2020.3 and Android Studio 4.2
+- update IntellIJ API usage to be in-line with upcoming 2020.3
 
 === 0.31.27
 

@@ -8,8 +8,6 @@ import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -25,8 +23,6 @@ import org.jetbrains.annotations.NotNull;
  * Heavily inspired by {@link SelectionQuotingTypedHandler}, but different as it toggles the formatting.
  */
 public class FormattingQuotedTypedHandler extends TypedHandlerDelegate {
-  public static final ExtensionPointName<SelectionQuotingTypedHandler.DequotingFilter> EP_NAME =
-    ExtensionPointName.create("com.intellij.selectionDequotingFilter");
 
   @NotNull
   @Override
@@ -53,7 +49,7 @@ public class FormattingQuotedTypedHandler extends TypedHandlerDelegate {
         char lastChar = selectedText.charAt(selectedText.length() - 1);
         String newText = null;
         while (selectedText.length() > 1 && firstChar == lastChar && firstChar == c
-          && isDelimiter(firstChar) && !shouldSkipReplacementOfQuotesOrBraces(file, editor, selectedText, c)) {
+          && isDelimiter(firstChar) && !SelectionQuotingTypedHandler.shouldSkipReplacementOfQuotesOrBraces(file, editor, selectedText, c)) {
           selectedText = selectedText.substring(1, selectedText.length() - 1);
           firstChar = selectedText.charAt(0);
           lastChar = selectedText.charAt(selectedText.length() - 1);
@@ -98,15 +94,6 @@ public class FormattingQuotedTypedHandler extends TypedHandlerDelegate {
       }
     }
     return super.beforeSelectionRemoved(c, project, editor, file);
-  }
-
-  private static boolean shouldSkipReplacementOfQuotesOrBraces(PsiFile psiFile, Editor editor, String selectedText, char c) {
-    for (SelectionQuotingTypedHandler.DequotingFilter filter : Extensions.getExtensions(EP_NAME)) {
-      if (filter.skipReplacementQuotesOrBraces(psiFile, editor, selectedText, c)) {
-        return true;
-      }
-    }
-    return false;
   }
 
   private static boolean isDelimiter(final char c) {
