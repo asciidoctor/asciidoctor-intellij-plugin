@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.31.29 (preview, available from GitHub releases)
 
 - fix link to JCEF preview documentation (#555)
+- fix description attribute inspection for Antora documents (regression to #469)
 
 === 0.31.28 (preview, available from GitHub releases)
 
