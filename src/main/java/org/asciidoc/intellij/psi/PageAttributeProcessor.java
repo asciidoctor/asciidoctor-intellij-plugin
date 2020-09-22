@@ -39,6 +39,9 @@ public class PageAttributeProcessor implements PsiElementProcessor<PsiElement> {
     if (PsiTreeUtil.getParentOfType(element, AsciiDocBlockId.class, false) != null) {
       return true;
     }
+    if (PsiTreeUtil.getParentOfType(element, AsciiDocHeading.class, false) != null) {
+      return true;
+    }
     if (element instanceof AsciiDocBlockMacro) {
       AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) element;
       if (blockMacro.getMacroName().equals("include")) {
@@ -59,8 +62,6 @@ public class PageAttributeProcessor implements PsiElementProcessor<PsiElement> {
       }
     } else if (titleSeen && element.getNode().getElementType() == AsciiDocTokenTypes.EMPTY_LINE) {
       return false;
-    } else if (element.getNode().getElementType() == AsciiDocTokenTypes.HEADING_TOKEN) {
-      return true;
     } else if (element.getNode().getElementType() == AsciiDocTokenTypes.HEADER) {
       return true;
     } else if (element.getNode().getElementType() == AsciiDocTokenTypes.BLOCKIDSTART) {

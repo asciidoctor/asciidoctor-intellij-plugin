@@ -50,7 +50,7 @@ public class ChangeJdkForJCEFNotificationProvider extends EditorNotifications.Pr
     final EditorNotificationPanel panel = new EditorNotificationPanel();
     panel.setText("You could enable the advanced JCEF preview if you would change to JetBrains 64bit JDK with JCEF support.");
     panel.createActionLabel("Yes, tell me more!", ()
-      -> BrowserUtil.browse("https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/preview/jcef-preview.html"));
+      -> BrowserUtil.browse("https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/features/preview/jcef-preview.html"));
     panel.createActionLabel("Do not show again", () -> {
       PropertiesComponent.getInstance().setValue(DONT_ASK_TO_CHANGE_JDK_FOR_JCEF, true);
       EditorNotifications.updateAll();

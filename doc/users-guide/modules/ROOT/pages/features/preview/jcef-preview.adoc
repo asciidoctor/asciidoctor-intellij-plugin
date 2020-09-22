@@ -16,6 +16,9 @@ This includes rendering of fonts and SVGs.
 
 == Limitations of the JCEF preview
 
+The JCEF preview doesn't support the IntelliJ proxy configuration yet.
+Therefore, remote images in the preview will not show if you are behind a proxy.
+See '`xref:faq/jcef-no-proxy-support.adoc[]`' for more information
 
 == When you can use JavaFX preview
 

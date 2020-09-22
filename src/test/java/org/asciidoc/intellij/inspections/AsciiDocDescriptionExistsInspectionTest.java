@@ -17,17 +17,20 @@ public class AsciiDocDescriptionExistsInspectionTest extends AsciiDocQuickFixTes
   }
 
   public void testAddMissingDescriptionTitleWithExistingAttributes() {
-    String testName = getTestName(true);
     myFixture.testHighlighting("modules/ROOT/pages/titleWithAttributes.adoc", "antora.yml");
     applySingleQuickFix("Add page attribute description");
     myFixture.checkResultByFile("modules/ROOT/pages/titleWithAttributes-after.adoc", true);
   }
 
   public void testAddMissingDescriptionTitleWithWithText() {
-    String testName = getTestName(true);
     myFixture.testHighlighting("modules/ROOT/pages/titleWithText.adoc", "antora.yml");
     applySingleQuickFix("Add page attribute description");
     myFixture.checkResultByFile("modules/ROOT/pages/titleWithText-after.adoc", true);
+  }
+
+  public void testDescriptionExists() {
+    // show that existing description is recognized
+    myFixture.testHighlighting("modules/ROOT/pages/descriptionExists.adoc", "antora.yml");
   }
 
   @Override
