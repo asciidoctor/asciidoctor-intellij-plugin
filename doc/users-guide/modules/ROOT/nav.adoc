@@ -7,6 +7,7 @@
 ** xref:features/preview.adoc[]
 *** xref:features/preview/diagrams.adoc[]
 *** xref:features/preview/javafx-preview.adoc[]
+*** xref:features/preview/jcef-preview.adoc[]
 ** Advanced
 // the following list is sorted alphabetically.
 // Please keep it sorted when adding new content.
