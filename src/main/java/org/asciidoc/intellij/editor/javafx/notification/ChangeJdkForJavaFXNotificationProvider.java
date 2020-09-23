@@ -59,7 +59,7 @@ public class ChangeJdkForJavaFXNotificationProvider extends EditorNotifications.
     final EditorNotificationPanel panel = new EditorNotificationPanel();
     panel.setText("You could enable the advanced JavaFX preview if you would change to JetBrains 64bit JDK with JavaFX support.");
     panel.createActionLabel("Yes, tell me more!", ()
-      -> BrowserUtil.browse("https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/preview/javafx-preview.html"));
+      -> BrowserUtil.browse("https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/features/preview/javafx-preview.html"));
     panel.createActionLabel("Do not show again", () -> {
       PropertiesComponent.getInstance().setValue(DONT_ASK_TO_CHANGE_JDK_FOR_JAVAFX, true);
       EditorNotifications.updateAll();

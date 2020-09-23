@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.30
+
+- fix link to JavaFX preview documentation (#555)
+
 === 0.31.29
 
 - fix link to JCEF preview documentation (#555)
