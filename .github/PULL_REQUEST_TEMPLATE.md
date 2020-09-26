@@ -13,18 +13,18 @@
 - [ ] Yes
 - [ ] No
 
-If yes, please describe the impact and migration path for existing documents:
+If yes, please describe the breaking change:
 
-**The PR fulfills these requirements:**
+**Please try to ensure:**
 
-- [ ] When resolving a specific issue, reference it in the PR's title (e.g. `fix #xxx`, where "xxx" is the issue number)
+- When resolving a specific issue, reference it in the PR's title (e.g. `fix #xxx`, where "xxx" is the issue number)
 
 If you're adding or changing functionality:
-- [ ] Existing tests are passing: https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/building-and-running.html
-- [ ] Optional: New/updated tests included. Maintainers will help new contributors writing tests.
+- Existing tests should pass: https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/building-and-running.html
+- Try to add new or update tests. Maintainers will help new contributors.
 
 If adding a **new feature**:
-- [ ] Feature documentation updated: https://github.com/asciidoctor/asciidoctor-intellij-plugin/blob/master/doc/users-guide/modules/ROOT/pages/features/
+- Update the feature documentation: https://github.com/asciidoctor/asciidoctor-intellij-plugin/blob/master/doc/users-guide/modules/ROOT/pages/features/
 
 **Other information:**
 
