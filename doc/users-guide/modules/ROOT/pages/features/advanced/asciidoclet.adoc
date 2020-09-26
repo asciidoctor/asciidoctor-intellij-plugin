@@ -76,6 +76,58 @@ When editing the Javadoc contents, the documentation window will show the update
 
 To show the documentation window choose the menu item menu:View[Tool Windows > Documentation] (sometimes hidden based on the current context at the cursor position) or by pressing kbd:[Ctrl+Q] twice.
 
+== Reformatting Settings
+
+The default setup of IntelliJ will add the HTML tag `<p>` on blank lines in Asciidoclet content.
+This will break the AsciiDoc syntax.
+
+This is due to IntelliJ treating Asciidoclet as JavaDoc when reformatting.
+
+A minimal recommended setting is to disable adding `<p>` to empty lines.
+
+To disable this, use either IDE's settings, or use an EditorConfig file.
+The instructions below describe both approaches.
+
+=== Configure Reformatting of AsciiDoclet via IDE Settings
+
+The user can change the settings via menu:File[Settings... > Editor > Code Style > Java > JavaDoc > Other] and uncheck the option '`Generate "<p>" on empty lines`'.
+
+The changes are effective once the user confirms the settings via _Apply_ or _OK_.
+
+.IntelliJ's AsciiDoc formatting settings
+image::javadoc-formatting-settings.png[]
+
+=== Configure Reformatting of AsciiDoclet via EditorConfig
+
+IntelliJ supports the https://editorconfig.org/[EditorConfig] standard to configure re-formatting options on a per-project and per-folder level.
+Read and find out more about it in the https://blog.jetbrains.com/idea/2019/06/managing-code-style-on-a-directory-level-with-editorconfig/[IntelliJ blog].
+
+All IntelliJ reformatting options are available in EditorConfig files and are prefixed with `ij_`.
+Autocompletion shows all available options.
+The _.editorconfig_ file affects all project files in its folder and its sub-folders.
+A file with `root = true` is usually located in the root folder of the project and indicates the main configuration file.
+Additional _.editorconfig_ files in sub-folder can override settings in the file tree they are located in.
+
+After creating the file, re-opening the project might be necessary for the IntelliJ settings to take effect.
+
+Find an example below.
+
+..editorconfig example with AsciiDoclet settings
+[source,editorconfig]
+----
+# .editorconfig
+# see https://editorconfig.org/ for the documentation
+root = true
+
+[*.java]
+ij_java_doc_add_p_tag_on_empty_lines = false
+
+# optional: also preserve all line breaks
+# ij_java_doc_preserve_line_breaks = true
+# optional: disable all JavaDoc formatting
+# ij_java_doc_enable_formatting = false
+----
+
 == Limitations
 
 === Annotations in Javadoc code snippets
