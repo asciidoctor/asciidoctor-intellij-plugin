@@ -6,9 +6,6 @@
 - [ ] Bugfix
 - [ ] Feature
 - [ ] Documentation
-- [ ] Code style update
-- [ ] Refactor
-- [ ] Build-related changes
 - [ ] Other, please describe:
 
 **Does this PR introduce a breaking change?** (check one)
@@ -20,14 +17,14 @@ If yes, please describe the impact and migration path for existing documents:
 
 **The PR fulfills these requirements:**
 
-- [ ] When resolving a specific issue, it's referenced in the PR's title (e.g. `fix #xxx[,#xxx]`, where "xxx" is the issue number)
+- [ ] When resolving a specific issue, reference it in the PR's title (e.g. `fix #xxx`, where "xxx" is the issue number)
 
 If you're adding or changing functionality:
-- [ ] All tests are passing: https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/building-and-running.html
-- [ ] New/updated tests are included
+- [ ] Existing tests are passing: https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/building-and-running.html
+- [ ] Optional: New/updated tests included. Maintainers will help new contributors writing tests.
 
 If adding a **new feature**:
-- [ ] Feature documentation is updated: https://github.com/asciidoctor/asciidoctor-intellij-plugin/blob/master/doc/users-guide/modules/ROOT/pages/features.adoc
+- [ ] Feature documentation updated: https://github.com/asciidoctor/asciidoctor-intellij-plugin/blob/master/doc/users-guide/modules/ROOT/pages/features/
 
 **Other information:**
 
