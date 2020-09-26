@@ -18,8 +18,11 @@ Consider using a conditional like `ifdef` to provide an attribute for the user t
 === Replace default stylesheet
 
 This replaces the standard stylesheet with a custom stylesheet.
+You can use local content, or link to a remote stylesheet.
 
-WARNING: The stylesheet will be embedded in the preview, therefore relative links to the local file system will not work.
+==== Using local project's content
+
+NOTE: The stylesheet will be embedded in the preview, therefore relative links to the local file system will not work.
 
 . Create a file _.asciidoctorconfig_ with the following contents:
 +
@@ -40,6 +43,41 @@ WARNING: The stylesheet will be embedded in the preview, therefore relative link
 body {
   /* ... */
 }
+----
+
+==== Using a remote stylesheet
+
+Once the document or the configuration set the `linkcss` attribute, the preview will link to an external stylesheet and will no longer embed the stylesheet.
+
+Apply the following steps:
+
+. Create a file _.asciidoctorconfig_ with the following contents:
++
+..asciidoctorconfig
+[source,asciidoc]
+----
+:linkcss:
+:stylesdir: https://example.com/css
+:stylesheet: preview-stylesheet.css
+----
+. Host an external stylesheet +
+In the example above, the preview will fetch it from \https://example.com/css/preview-stylesheet.css
++
+.preview-stylesheet.css
+[source,css]
+----
+body {
+  /* ... */
+}
+----
+
+The https://github.com/darshandsoni/asciidoctor-skins[asciidoctor-skins] project hosts multiple stylesheets you can link to. The following example uses a dark skin.
+
+.Dark theme based on the asciidoctor-skins project
+----
+:linkcss:
+:stylesdir: https://darshandsoni.com/asciidoctor-skins/css
+:stylesheet: dark.css
 ----
 
 === Add additional styles or HTML headers

@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.31 (preview, available from GitHub releases)
+
+- support `linkcss` attribute for custom stylesheets in the preview (#556)
+
 === 0.31.30
 
 - fix link to JavaFX preview documentation (#555)

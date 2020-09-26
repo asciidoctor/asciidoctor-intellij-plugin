@@ -66,6 +66,16 @@ public class AsciiDocTest extends BasePlatformTestCase {
     }
   }
 
+  public void testShouldUseLinkedStylesheet() {
+    String html = asciidoc.render(":linkcss:\n" +
+      ":stylesdir: https://example.com\n" +
+      ":stylesheet: dark.css", Collections.emptyList());
+    html = "<head></head>" + html;
+    html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes());
+    assertThat(html).withFailMessage("should contain testcss").containsPattern("<link[^>]*https://example.com/dark.css");
+    assertThat(html).withFailMessage("should not contain standardcss").doesNotContain("standardcss");
+  }
+
   public void testShouldUseDocInfoHeader() throws IOException {
     File docinfoHeader = new File(System.getProperty("java.io.tmpdir"), "docinfo.html");
     File docinfoFooter = new File(System.getProperty("java.io.tmpdir"), "docinfo-footer.html");

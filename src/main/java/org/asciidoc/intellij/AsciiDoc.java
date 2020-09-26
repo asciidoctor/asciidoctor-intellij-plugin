@@ -1131,30 +1131,44 @@ public class AsciiDoc {
     /* Add CSS line */
     String stylesheet = attributes.get("stylesheet");
     if (stylesheet != null && stylesheet.length() != 0) {
-      // custom stylesheet set
+      String linkcss = attributes.get("linkcss");
       String stylesdir = attributes.get("stylesdir");
-      VirtualFile stylesdirVf = LocalFileSystem.getInstance().findFileByPath(attributes.get("docdir"));
-      if (stylesdirVf != null) {
-        if (stylesdir != null && stylesdir.length() != 0) {
-          File stylesdirFile = new File(stylesdir);
-          if (!stylesdirFile.isAbsolute()) {
-            stylesdirVf = stylesdirVf.findFileByRelativePath(stylesdir);
-          } else {
-            stylesdirVf = LocalFileSystem.getInstance().findFileByIoFile(stylesdirFile);
-          }
+      if (linkcss != null) {
+        String css = stylesheet;
+        if (stylesdir != null) {
+          css = stylesdir + "/" + stylesheet;
         }
+        html = html
+          .replace("<head>", "<head>" + "<link rel='stylesheet' type='text/css' href='" + css + "' />");
+      } else {
+        // custom stylesheet set
+        VirtualFile stylesdirVf = LocalFileSystem.getInstance().findFileByPath(attributes.get("docdir"));
         if (stylesdirVf != null) {
-          VirtualFile stylesheetVf = stylesdirVf.findChild(stylesheet);
-          if (stylesheetVf != null) {
-            String css;
-            try (InputStream is = stylesheetVf.getInputStream()) {
-              css = IOUtils.toString(is, StandardCharsets.UTF_8);
-            } catch (IOException ex) {
-              css = "/* unable to read CSS from " + stylesdirVf.getCanonicalPath() + ": " + ex.getMessage() + " */";
+          String css;
+          if (stylesdir != null && stylesdir.length() != 0) {
+            File stylesdirFile = new File(stylesdir);
+            if (!stylesdirFile.isAbsolute()) {
+              stylesdirVf = stylesdirVf.findFileByRelativePath(stylesdir);
+            } else {
+              stylesdirVf = LocalFileSystem.getInstance().findFileByIoFile(stylesdirFile);
             }
-            html = html
-              .replace("<head>", "<head>" + "<style>" + css + "</style>");
           }
+          if (stylesdirVf == null) {
+            css = "/* unable to find CSS at '" + stylesdir + "' */";
+          } else {
+            VirtualFile stylesheetVf = stylesdirVf.findChild(stylesheet);
+            if (stylesheetVf != null) {
+              try (InputStream is = stylesheetVf.getInputStream()) {
+                css = IOUtils.toString(is, StandardCharsets.UTF_8);
+              } catch (IOException ex) {
+                css = "/* unable to read CSS from " + stylesdirVf.getCanonicalPath() + ": " + ex.getMessage() + " */";
+              }
+            } else {
+              css = "/* unable to find stylesheet '" + stylesheet + "' */";
+            }
+          }
+          html = html
+            .replace("<head>", "<head>" + "<style>" + css + "</style>");
         }
       }
     } else {
