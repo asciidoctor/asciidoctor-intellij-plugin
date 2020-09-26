@@ -1085,7 +1085,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {END_OF_SENTENCE} / {SPACE}+ [^\p{Uppercase}\n]* [\p{Lowercase}\p{Digit}] // standard text if followed by lower case character or digit
                        { return textFormat(); }
   ({END_OF_SENTENCE} | (" "? ":")) / {SPACE}* \n // end of sentence at end of line
-                       { if (!doublemono && !singlemono && !isPrefixedBy(NUMBERS)) {
+                       { if (!doublemono && !singlemono) {
                            return AsciiDocTokenTypes.END_OF_SENTENCE;
                          } else {
                            return textFormat();

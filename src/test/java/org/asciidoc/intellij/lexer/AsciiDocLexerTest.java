@@ -689,10 +689,11 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   public void testNoAttributeAfterText() {
-    doTest("Text\n:attribute1:\n",
+    doTest("Text\n:attribute:\n",
       "AsciiDoc:TEXT ('Text')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TEXT (':attribute1:')\n" +
+        "AsciiDoc:TEXT (':attribute')\n" +
+        "AsciiDoc:END_OF_SENTENCE (':')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
@@ -1685,13 +1686,28 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Mozart')");
   }
 
-  public void testDonWrapIfFollowedByNumberInsideLine() {
+  public void testDontWrapIfFollowedByNumberInsideLine() {
     doTest("Ch. 9 important",
       "AsciiDoc:TEXT ('Ch.')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('9')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('important')");
+  }
+
+  public void testDontWrapWhenNumberWithDotInsideLine() {
+    doTest("CSS3. Text",
+      "AsciiDoc:TEXT ('CSS3.')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testKeepWrapWithNumberAndDotAtEndOfLine() {
+    doTest("CSS3.\nText",
+      "AsciiDoc:TEXT ('CSS3')\n" +
+        "AsciiDoc:END_OF_SENTENCE ('.')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')");
   }
 
   public void testDonWrapIfFollowedByNumberNextLineLine() {
