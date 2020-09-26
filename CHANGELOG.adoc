@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.32 (work in progress)
+
+- for nested includes, highlight errors in the parent files (#550)
+
 === 0.31.31 (preview, available from GitHub releases)
 
 - support `linkcss` attribute for custom stylesheets in the preview (#556)

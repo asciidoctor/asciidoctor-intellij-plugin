@@ -14,12 +14,16 @@ import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
+import org.asciidoc.intellij.psi.AsciiDocFile;
+import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFileIntentionAction;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoctor.log.LogRecord;
@@ -31,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -42,6 +47,8 @@ import java.util.List;
  */
 public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnnotator<
   AsciiDocInfoType, AsciiDocAnnotationResultType> {
+
+  public static final String INCLUDE_FILE_NOT_FOUND = "include file not found";
 
   @Nullable
   @Override
@@ -103,7 +110,10 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
       if (logRecord.getSeverity() == Severity.DEBUG) {
         continue;
       }
-      if (logRecord.getMessage() != null && logRecord.getMessage().startsWith("possible invalid reference:")) {
+      if (logRecord.getMessage() == null) {
+        continue;
+      }
+      if (logRecord.getMessage().startsWith("possible invalid reference:")) {
         /* TODO: these messages are not helpful in IntelliJ as they have no line number
            and for splitted documents they provide too many false positives */
         continue;
@@ -127,6 +137,8 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
           the error messages might have line numbers greater than the current document */
           lineNumberForAnnotation = 0;
         }
+      } else if (logRecord.getMessage().startsWith(INCLUDE_FILE_NOT_FOUND)) {
+        lineNumberForAnnotation = findLineByInclude(file, logRecord, 0);
       }
       AnnotationBuilder ab = holder.newAnnotation(severity,
         logRecord.getMessage()).range(
@@ -160,7 +172,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
           .append(")");
       }
       ab = ab.tooltip(sb.toString());
-      if (logRecord.getMessage() != null && logRecord.getMessage().startsWith("include file not found")) {
+      if (logRecord.getMessage() != null && logRecord.getMessage().startsWith(INCLUDE_FILE_NOT_FOUND)) {
         Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
         if (document != null) {
           PsiElement element = file.findElementAt(document.getLineStartOffset(lineNumberForAnnotation));
@@ -176,6 +188,48 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
     }
     // consider using reportProblemsFromExternalSource available from 2019.x?
     theProblemSolver.reportProblems(file.getVirtualFile(), problems);
+  }
+
+  /**
+   * For a given log record, find the source in the include tree, then traverse upwards to propagate the line number.
+   */
+  private int findLineByInclude(PsiFile psiFile, LogRecord log, int level) {
+    // prevent too many recursions
+    if (level > 64) {
+      return -1;
+    }
+    String file = log.getCursor().getFile();
+    int line = log.getCursor().getLineNumber();
+    if (psiFile.getVirtualFile().getCanonicalPath() != null && psiFile.getVirtualFile().getCanonicalPath().equals(file)) {
+      return line;
+    }
+    Collection<AsciiDocBlockMacro> includes = PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocBlockMacro.class);
+    for (AsciiDocBlockMacro macro : includes) {
+      if (!"include".equals(macro.getMacroName())) {
+        continue;
+      }
+      List<PsiReference> references = Arrays.asList(macro.getReferences());
+      Collections.reverse(references);
+      for (PsiReference reference : references) {
+        if (reference instanceof AsciiDocFileReference) {
+          AsciiDocFileReference fileReference = (AsciiDocFileReference) reference;
+          if (!fileReference.isFolder()) {
+            PsiElement resolved = fileReference.resolve();
+            if (resolved instanceof AsciiDocFile) {
+              int targetLine = findLineByInclude((PsiFile) resolved, log, level + 1);
+              if (targetLine != -1) {
+                Document document = PsiDocumentManager.getInstance(psiFile.getProject()).getDocument(psiFile);
+                if (document != null) {
+                  return document.getLineNumber(macro.getTextOffset());
+                }
+              }
+            }
+          }
+          break;
+        }
+      }
+    }
+    return -1;
   }
 
   private HighlightSeverity toSeverity(Severity severity) {
