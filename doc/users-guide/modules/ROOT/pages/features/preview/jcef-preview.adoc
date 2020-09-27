@@ -20,7 +20,7 @@ The JCEF preview doesn't support the IntelliJ proxy configuration yet.
 Therefore, remote images in the preview will not show if you are behind a proxy.
 See '`xref:faq/jcef-no-proxy-support.adoc[]`' for more information
 
-== When you can use JavaFX preview
+== When you can use JCEF preview
 
 JCEF preview is only available from IntelliJ 2020.2+ and plugin version 0.31.x.
 It requires that the user runs on the pre-packaged JetBrains OpenJDK 11.

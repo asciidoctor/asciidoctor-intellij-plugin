@@ -95,7 +95,7 @@ public class JavaFxMightBeBlurredNotificationProvider extends EditorNotification
     final EditorNotificationPanel panel = new EditorNotificationPanel();
     panel.setText(message);
     panel.createActionLabel("Yes, the preview is blurry, show me how to fix it!", ()
-      -> BrowserUtil.browse("https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Blurry-preview"));
+      -> BrowserUtil.browse("https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/faq/blurry-preview.html"));
     panel.createActionLabel("Do not show again", () -> {
       PropertiesComponent.getInstance().setValue(ASCIIDOC_PREVIEW_MIGHT_BE_BLURRY, true);
       EditorNotifications.updateAll();

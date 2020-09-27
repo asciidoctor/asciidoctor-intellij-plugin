@@ -5,22 +5,13 @@
 Missing an entry in the FAQ list?
 Please open an issue in the https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issues^] for this project.
 
-[NOTE]
---
-This documentation website is still work in progress.
-More content is available in the https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki[wiki of this plugin's GitHub repository].
---
-
-== Troubleshooting
+== General Troubles
 
 === I'm using MPS and see exceptions, how can I fix this?
 
 See xref:faq/troubleshooting-mps.adoc[] for more information.
 
-=== The preview doesn't show some remote images! Is this a proxy issue?
-
-The JCEF preview doesn't support the IDE's proxy settings.
-See xref:faq/jcef-no-proxy-support.adoc[] for more information.
+== Editor Troubles
 
 === Pasting from clipboard removes leading spaces (aka indent). Why?
 
@@ -35,6 +26,13 @@ An AsciiDoc recommended practice is to have link:https://asciidoctor.org/docs/as
 
 See xref:recommended-settings.adoc#configuring-editor[section "`Configuring editor`" in chapter "`Recommended settings`"] on how to enable soft-wrap.
 
+== Preview Troubles
+
+=== The preview doesn't show some remote images! Is this a proxy issue?
+
+The JCEF preview doesn't support the IDE's proxy settings.
+See xref:faq/jcef-no-proxy-support.adoc[] for more information.
+
 === The preview doesn't show and in the notification I see "`Errno::ENOENT message`".
 
 This might be due to non-US-ASCII characters in folder names.
@@ -47,9 +45,18 @@ Some diagram types need external helpers to render diagrams in the preview.
 
 See xref:faq/could-not-find-dot-executable.adoc[] for more information.
 
-=== Something is not working as I expect it to work, where can I get help?
+=== The preview is blurry!
 
-Please open an issue in the https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issues^] for this project.
+This sometimes happens when using the JavaFX preview on high resolution displays.
+
+See xref:faq/blurry-preview.adoc[] for more information.
+
+=== The preview is ugly!
+
+This sometimes happens when using Swing preview.
+This activates when neither JavaFX or JCEF preview are available.
+
+See chapters '`xref:features/preview/jcef-preview.adoc[]`' and '`xref:features/preview/javafx-preview.adoc[]`' for more information.
 
 === Could not find the 'dot' (or other) executable. How to fix it?
 
@@ -57,6 +64,12 @@ Some diagram types need helper applications installed locally.
 Another alternative is to use a cloud based renderer like Kroki.
 
 See xref:faq/could-not-find-dot-executable.adoc[] for more information.
+
+== Other Troubles
+
+=== Something is not working as I expect it to work, where can I get help?
+
+Please open an issue in the https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issues^] for this project.
 
 == Supporting the project
 

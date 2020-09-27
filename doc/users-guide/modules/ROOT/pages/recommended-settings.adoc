@@ -30,4 +30,4 @@ If neither JavaFX of JCEF preview is not available, refer to xref:installation.a
 +
 image::settings-asciidoc.png[AsciiDoc settings]
 
-If your preview is blurry, https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Blurry-preview[follow these instructions to remedy this].
+If your preview is blurry, xref:faq/blurry-preview.adoc[follow these instructions to remedy this].

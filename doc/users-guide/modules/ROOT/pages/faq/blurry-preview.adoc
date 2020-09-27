@@ -1,0 +1,79 @@
+= Blurry preview when using JavaFX
+:navtitle: JavaFX blurry preview
+:description: When the characters in the preview look blurry, while the editor shows sharp characters.
+
+{description}
+
+== Symptom
+
+When the preview of the AsciiDoc Plugin (usually on the right) is blurry: While the characters in the editor on the left look sharp, the characters in the preview on the right look blurry.
+
+You can see examples of this in the https://youtrack.jetbrains.com/issue/IDEA-213110[JetBrains Ticket IDEA-213110]
+
+== Environment
+
+This only happens when using the JavaFX preview.
+The current combinations seems to be:
+
+* Operating System Windows 10, +
+JavaFX preview +
+a high resolution display with a fractional scaling (for example 125% or 175%), +
+IntelliJ running on OpenJDK 8 / JetBrains Runtime 8
+
+or
+
+* Operating System Linux (for example Fedora 31 Wayland), +
+JavaFX preview +
+a high resolution display with scaling factor 200% or more, +
+IntelliJ running on OpenJDK or JetBrains Runtime (any version)
+
+== How do I fix this?
+
+There are four alternatives to fix this:
+
+* If on IntelliJ 2020.2+: <<change_jcef,Change to JCEF preview>>
+* If running on Linux users or running JDK 8: <<change_uiscale,Configure option _sun.java2d.uiScale.enabled_>>
+* For Windows users: <<change_reinstall,Reinstall IDE with JetBrains Runtime 11>>
+* To change Runtime of existing IDE: <<change_runtimeplugin,Install the '`Choose Runtime`' plugin>>
+
+[#change_jcef]
+=== Change to JCEF preview
+
+This JCEF preview embeds a Chromium based browser in the IDE.
+As it supports high resolution displays and is the preview technology recommended by JetBrains, follow the instructions in the chapter '`xref:features/preview/jcef-preview.adoc[]`' to activate it.
+
+[#change_uiscale]
+=== Configure option _sun.java2d.uiScale.enabled_
+
+Apply the following steps:
+
+. Go to Menu entry menu:Help[Edit Custom VM Options...]
+. Remove any previous set option containing `sun.java2d.uiScale.enabled`
+. Add the following line to the options:
++
+----
+-Dsun.java2d.uiScale.enabled=false
+----
+. Restart the IDE
+
+[#change_reinstall]
+=== Upgrade to JetBrains Runtime 11 for running the IDE
+
+Use one of the following options:
+
+* Download IntelliJ (or PyCharm, WebStorm, etc.) with JetBrains Runtime 11 (JBR11).
+This is available from release 2019.1, and will be the default starting from 2019.2. +
+When downloading click on the format (pre-populated with .EXE for windows users) to select the JBR11 bundle https://www.jetbrains.com/idea/download/#section=windows[from the download page].
+
+* Use the https://www.jetbrains.com/toolbox/[JetBrains Toolbox application^] to download the JBR11 version
+
+[#change_runtimeplugin]
+=== Download a JetBrains Runtime using the "`Choose Runtime`" plugin
+
+* Install the plugin "`Choose Runtime`" as described in the JetBrains knowledge base "`https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Selecting the JDK version the IDE will run under^]`".
+* Choose a runtime "jbrsdk-11_0_8-...-x64-b944.34.tar.gz" or later and install it. The IDE will restart.
+* Go to the settings of the AsciiDoc plugin and check if the preview is set to "`JCEF Browser`" (recommended if available) or "`JavaFX WebView`".
+
+== Help, preview is still blurry!
+
+Please open a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issue], so that the maintainers can investigate the issue further.
