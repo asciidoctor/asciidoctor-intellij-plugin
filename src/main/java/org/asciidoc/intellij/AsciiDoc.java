@@ -1135,7 +1135,8 @@ public class AsciiDoc {
       String stylesdir = attributes.get("stylesdir");
       if (linkcss != null) {
         String css = stylesheet;
-        if (stylesdir != null) {
+        // stylesdir default value is ".", therefore ignore it
+        if (stylesdir != null && !stylesdir.equals(".")) {
           css = stylesdir + "/" + stylesheet;
         }
         html = html

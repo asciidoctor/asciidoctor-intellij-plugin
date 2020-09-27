@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - for nested includes, highlight errors in the parent files (#550)
 - a number before a punctuation mark treated as end of sentence only when at end of a line (#470)
+- fix `linkcss` support when no `stylesdir` has been defined (#556)
 
 === 0.31.31 (preview, available from GitHub releases)
 

@@ -66,10 +66,19 @@ public class AsciiDocTest extends BasePlatformTestCase {
     }
   }
 
-  public void testShouldUseLinkedStylesheet() {
+  public void testShouldUseLinkedStylesheetAndDir() {
     String html = asciidoc.render(":linkcss:\n" +
       ":stylesdir: https://example.com\n" +
       ":stylesheet: dark.css", Collections.emptyList());
+    html = "<head></head>" + html;
+    html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes());
+    assertThat(html).withFailMessage("should contain testcss").containsPattern("<link[^>]*https://example.com/dark.css");
+    assertThat(html).withFailMessage("should not contain standardcss").doesNotContain("standardcss");
+  }
+
+  public void testShouldUseLinkedStylesheetWithoutDir() {
+    String html = asciidoc.render(":linkcss:\n" +
+      ":stylesheet: https://example.com/dark.css", Collections.emptyList());
     html = "<head></head>" + html;
     html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes());
     assertThat(html).withFailMessage("should contain testcss").containsPattern("<link[^>]*https://example.com/dark.css");
