@@ -1,12 +1,56 @@
 = Spring REST Docs
-:description: The plugin supports the operation::[]-macro: It provides auto-complete for the editor and renders the contents in preview.
+:description: The plugin supports the operation::[]-macro: It provides auto-complete for the editor and renders the contents in the preview.
 
-The plugin supports the `operation::[]`-macro: It provides auto-complete for the editor and renders the contents in preview.
+https://docs.spring.io/spring-restdocs/docs/current/reference/html5/[Spring REST Docs] allows the developer to write API documentation using information recorded in test cases. The plugin supports the `operation::[]`-macro of Spring REST Docs in the editor and the preview.
+
+NOTE: This is requires version 0.30.6+ of the plugin.
+
+== What Spring REST Docs provides
+
+https://docs.spring.io/spring-restdocs/docs/current/reference/html5/[Spring REST Docs] allows the developer to write API documentation using information recorded in test cases.
+These ensure that the examples in the documentation work with the current version of the code.
+
+When running the tests, Spring REST Docs creates a folder `generated-snippets` with the recorded examples.
+The developer can reference these snippets in the documentation.
+
+== What the AsciiDoc plugin provides
+
+This plugin supports the developers when documenting their Spring REST Docs.
+It provides auto-complete for the editor and renders a preview, that shows the documentation content together with the recorded examples of the tests.
+
+NOTE: As the editor support requires the `generated-snippets` folder to be present, users need to run their tests to create and populate it *before* the editor support activates.
 
 == How it works
 
-When writing documentation with https://docs.spring.io/spring-restdocs/docs/current/reference/html5/[Spring REST Docs], the preview plugin auto-detects the folder `generated-snippets`.
+All recoded Spring REST docs tests are located in the folder `generated-snippets`.
+This signals the plugin to enable the Spring REST docs functionality.
 
 It looks relative to the `pom.xml` for `target/generated-snippets` or relative to `build.gradle` or `build.gradle.kts` for `build/generated-snippets`.
 
-Once it finds this folder, it sets the `snippets` attribute and enables the `+++operation::[]+++` block macro.
+Once the plugin detects Spring REST Docs it
+
+* sets the `snippets` attribute to the generated snippets folder, therefore includes like this work:
++
+[source,asciidoc]
+----
+\include::{snippets}/headers-example/response-headers.adoc[]
+----
++
+File names auto-complete when using kbd:[Ctrl+Space].
+Press kbd:[Ctrl+B] to navigate to the folder or file.
+
+* activates the operation:xxx[] macro, therefore the following works:
++
+[source,asciidoc]
+----
+operation::index-example[snippets='response-fields,http-response,links']
+----
++
+Operation names auto-complete when using kbd:[Ctrl+Space].
+Press kbd:[Ctrl+B] to navigate to the folder.
+
+== Example project
+
+The Spring REST Docs projects provides an example project how to set up things: https://github.com/spring-projects/spring-restdocs/tree/master/samples/rest-notes-spring-hateoas
+
+As the editor support requires the generated-snippets folder to be present, users need to run their tests to create and populate it before the editor support activates.

@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.32 (work in progress)
+=== 0.31.32 (preview, available from GitHub releases)
 
 - for nested includes, highlight errors in the parent files (#550)
 - a number before a punctuation mark treated as end of sentence only when at end of a line (#470)

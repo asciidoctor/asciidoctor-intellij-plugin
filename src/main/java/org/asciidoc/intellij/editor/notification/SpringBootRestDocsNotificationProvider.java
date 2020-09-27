@@ -76,7 +76,7 @@ public class SpringBootRestDocsNotificationProvider extends EditorNotifications.
     final EditorNotificationPanel panel = new EditorNotificationPanel();
     panel.setText("It seems you are editing a Spring REST Docs spec. Do you want to learn more how this plugin can support you?");
     panel.createActionLabel("Yes, tell me more!", ()
-      -> BrowserUtil.browse("https://github.com/asciidoctor/asciidoctor-intellij-plugin/wiki/Spring-REST-Docs-support"));
+      -> BrowserUtil.browse("https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/features/advanced/spring-rest-docs.html"));
     panel.createActionLabel("Do not show again", () -> {
       PropertiesComponent.getInstance().setValue(SPRING_REST_DOCS_AVAILABLE, true);
       EditorNotifications.updateAll();
