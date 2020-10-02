@@ -1,0 +1,106 @@
+= Creating PDFs for non-latin languages and extra fonts
+:description: How to use custom fonts when creating PDFs from the IDE
+:navtitle: PDFs with non-latin fonts
+
+{description}.
+
+== Situation
+
+When creating a PDF from the IDE, the embedded Asciidoctor PDF needs true type fonts (TTFs) that include the characters included in the AsciiDoc source.
+Once the setup is complete, the user can choose _Create PDF from current file_ from the editor's action toolbar to convert the file.
+
+== Setup for Chinese fonts
+
+Follow these steps to prepare an AsciiDoc file to be rendered as PDF with Chinese characters.
+A complete example is available in https://github.com/ahus1/asciidoctor-deepdive/tree/master/manual-zh_CN[@ahus1's AsciiDoc deep dive collection].
+
+. Add a header to the document to specify folders and configurations:
++
+[source,text]
+----
+= 标题
+:pdf-themesdir: themes <1>
+:pdf-theme: zh_CN <2>
+:pdf-fontsdir: fonts <3>
+
+This is a show case for Chinese letters in AsciiDocs.
+
+這要幹嘛的？
+
+產生沒有意義的文字組合，供排版時填充版面用，但不會因為字義而左右版型的判斷。
+----
+<.> Folder name with a theme file
+<.> Name of the theme
+<.> Folder with fonts referenced in theme
+. Create a theme file _zh_CN-theme.yml_ in folder _themes_:
++
+.themes/zh_CN-theme.yml
+[source,yaml]
+----
+# default theme at https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/default-theme.yml
+extends: default
+font:
+  fallbacks:
+    - kaigen-gothic-cn
+  catalog:
+    # These are the KaiGen Gothic CN fonts, download them from
+    # https://github.com/minjiex/kaigen-gothic/tree/master/dist/CN
+    kaigen-gothic-cn:
+      normal: KaiGenGothicCN-Regular.ttf
+      bold: KaiGenGothicCN-Bold.ttf
+      italic: KaiGenGothicCN-Regular.ttf
+      bold_italic: KaiGenGothicCN-Bold.ttf
+    Noto Serif:
+      normal: GEM_FONTS_DIR/notoserif-regular-subset.ttf
+      bold: GEM_FONTS_DIR/notoserif-bold-subset.ttf
+      italic: GEM_FONTS_DIR/notoserif-italic-subset.ttf
+      bold_italic: GEM_FONTS_DIR/notoserif-bold_italic-subset.ttf
+    # M+ 1mn supports ASCII and the circled numbers used for conums
+    M+ 1mn:
+      normal: GEM_FONTS_DIR/mplus1mn-regular-subset.ttf
+      bold: GEM_FONTS_DIR/mplus1mn-bold-subset.ttf
+      italic: GEM_FONTS_DIR/mplus1mn-italic-subset.ttf
+      bold_italic: GEM_FONTS_DIR/mplus1mn-bold_italic-subset.ttf
+base:
+  font_family: kaigen-gothic-cn
+----
+. Populate the _fonts_ folder with _KaiGenGothicCN*.ttf_ files downloaded from _https://github.com/minjiex/kaigen-gothic/tree/master/dist/CN_
+
+Once the setup is complete, the user can use the _Create PDF from current file_ from the editor's action toolbar to convert the file.
+
+== Setup for Japanese, Korean and Taiwanese fonts
+
+Follow the instructions above, and use the fonts available in https://github.com/minjiex/kaigen-gothic/tree/master/dist[@minjiex's kaigen-gothic^] repository or other TTF fonts.
+
+== Advanced Features
+
+When using a multi-file document, users want to avoid putting the PDF attributes in each file, but still want to be able to create PDF previews from each file.
+
+A solution to this is an _.asciidoctorconfig_ file that contains the attributes.
+The AsciiDoc plugin will apply the attributes in this file to each file and its subfolders.
+A typical file would look like this:
+
+..asciidoctorconfig
+[source,asciidoc]
+----
+:pdf-fontsdir: {asciidoctorconfigdir}/fonts
+:pdf-themesdir: {asciidoctorconfigdir}/themes
+:pdf-theme: zh_CN
+----
+
+Read more about this feature in the chapter "`xref:features/advanced/asciidoctorconfig-file.adoc[]`".
+
+== Further reading
+
+You find more documentation reading the chapter https://github.com/asciidoctor/asciidoctor-pdf#support-for-non-latin-languages["`Support for Non-Latin Languages`" in Asciidoctor PDF's documentation].
+
+== Public examples
+
+There is https://github.com/diguage/jdk-source-analysis[@diguage's "`JDK source code analysis`" document] available.
+It contains AsciiDoc in Chinese plus a working setup for an _.asciidoctorconfig_ file.
+As fonts the author chosen Source Han Serif and converted them to TTF.
+You'll need to download the fonts in _cfg/fonts_ first to make it work.
+
+image::pdf-with-chinese-characters-preview.png[]
+
+

@@ -19,6 +19,7 @@
 *** xref:features/advanced/stylesheets.adoc[]
 *** xref:features/advanced/frontmatter.adoc[]
 *** xref:features/advanced/creating-html-and-pdf.adoc[]
+*** xref:features/advanced/pdf-non-latin-languages.adoc[]
 *** xref:features/advanced/spring-rest-docs.adoc[]
 * xref:faq.adoc[]
 ** xref:faq/indent-missing-on-pasting.adoc[]
