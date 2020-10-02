@@ -20,6 +20,12 @@ The JCEF preview doesn't support the IntelliJ proxy configuration yet.
 Therefore, remote images in the preview will not show if you are behind a proxy.
 See '`xref:faq/jcef-no-proxy-support.adoc[]`' for more information
 
+== Benefits of the JCEF preview
+
+JCEF preview is an embedded Chrome browser.
+After https://jetbrains.org/intellij/sdk/docs/reference_guide/internal_actions/enabling_internal.html[ enabling the internal mode^] users can right-click on the preview and use "`Open DevTools`".
+This opens a fully equipped Chrome developer tools window that allows users to inspect the HTML created in the preview and to view the JavaScript console of the preview.
+
 == When you can use JCEF preview
 
 JCEF preview is only available from IntelliJ 2020.2+ and plugin version 0.31.x.
@@ -34,3 +40,7 @@ JavaFX preview that used to work with Android Studio 4.0 will not work with Andr
 * Install the plugin "`Choose Runtime`" as described in the JetBrains knowledge base "`https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Selecting the JDK version the IDE will run under^]`".
 * Choose a runtime "jbrsdk-11_0_8-...-x64-b944.34.tar.gz" or later and install it. The IDE will restart.
 * Go to the settings of the AsciiDoc plugin and check if the preview is set to "`JCEF Browser`". Change it to "`JCEF Browser`" if this is not the case.
+
+=== Troubleshooting JCEF
+
+Please follow the https://intellij-support.jetbrains.com/hc/en-us/articles/360016644459-Reporting-JCEF-problems[JetBrains Knowledge Base article on "`Reporting JCEF Problems`"].

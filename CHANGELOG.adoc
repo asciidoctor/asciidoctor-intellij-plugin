@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.33 (preview, available from GitHub releases)
+
+- prevent blank preview on Windows when user folder contains non-ASCII characters (#543)
+
 === 0.31.32 (preview, available from GitHub releases)
 
 - for nested includes, highlight errors in the parent files (#550)

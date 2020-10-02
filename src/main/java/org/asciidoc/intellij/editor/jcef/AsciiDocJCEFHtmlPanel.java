@@ -119,7 +119,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     @NotNull
     @Override
     protected String compute() {
-      final Class<JavaFxHtmlPanel> clazz = JavaFxHtmlPanel.class;
       //noinspection StringBufferReplaceableByString
       return new StringBuilder()
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("scrollToElement.js")).append("\"></script>\n")
@@ -164,7 +163,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   static {
     String url = "about:blank";
     try {
-      url = AsciiDocJCEFHtmlPanel.class.getResource(AsciiDocJCEFHtmlPanel.class.getSimpleName() + ".class").toExternalForm();
+      // JCEF will complain with a "Not allowed to load local resource" error when non-ascii characters are included in this random URL
+      // therefore using toASCIIString()
+      url = AsciiDocJCEFHtmlPanel.class.getResource(AsciiDocJCEFHtmlPanel.class.getSimpleName() + ".class").toURI().toASCIIString();
     } catch (Exception ignored) {
     }
     OUR_CLASS_URL = url;
