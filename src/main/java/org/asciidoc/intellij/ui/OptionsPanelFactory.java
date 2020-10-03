@@ -1,6 +1,6 @@
 package org.asciidoc.intellij.ui;
 
-import groovy.lang.Tuple2;
+import com.intellij.openapi.util.Pair;
 import org.jdesktop.swingx.action.AbstractActionExt;
 
 import javax.swing.*;
@@ -9,7 +9,7 @@ import java.util.List;
 
 public final class OptionsPanelFactory {
 
-  public static Tuple2<JPanel, ButtonGroup> createOptionPanelWithButtonGroup(final List<Action> options) {
+  public static Pair<JPanel, ButtonGroup> createOptionPanelWithButtonGroup(final List<Action> options) {
     JPanel optionsPanel = new JPanel(new GridLayout(options.size(), 1));
     ButtonGroup buttonGroup = new ButtonGroup();
 
@@ -33,6 +33,6 @@ public final class OptionsPanelFactory {
       optionsPanel.add(radioButton);
     }
 
-    return new Tuple2<>(optionsPanel, buttonGroup);
+    return new Pair<>(optionsPanel, buttonGroup);
   }
 }

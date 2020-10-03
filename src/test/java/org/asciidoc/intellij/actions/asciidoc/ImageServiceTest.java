@@ -8,31 +8,40 @@ import org.junit.Test;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class ImageServiceTest {
 
   @Test
-  public void returnsZeroWhenFileIsNull() throws ExecutionException, InterruptedException {
-    int imageWidth = ImageService.getImageWidth(null).get();
+  public void returnsEmptyWhenFileIsNull() throws ExecutionException, InterruptedException {
+    Optional<Integer> imageWidthOption = ImageService.getImageWidth(null).get();
 
-    assertEquals(imageWidth, 0);
+    assertFalse(imageWidthOption.isPresent());
   }
 
   @Test
-  public void returnsZeroForNonPngJpegFiles()  throws ExecutionException, InterruptedException, IOException {
-    int imageWidth = ImageService.getImageWidth(createVirtualFile("testFiles/test-image.svg")).get();
+  public void returnsEmptyForNonPngJpegFiles() throws ExecutionException, InterruptedException, IOException {
+    Optional<Integer> imageWidthOption = ImageService
+      .getImageWidth(createVirtualFile("testFiles/test-image.svg"))
+      .get();
 
-    assertEquals(imageWidth, 0);
+    assertFalse(imageWidthOption.isPresent());
   }
 
   @Test
-  public void returnsTheActualFileWidth() throws ExecutionException, InterruptedException, IOException {
-    int imageWidth = ImageService.getImageWidth(createVirtualFile("testFiles/test-image-width-20px.png")).get();
+  public void returnsOptionWithActualFileWidth() throws ExecutionException, InterruptedException, IOException {
+    Optional<Integer> imageWidthOption = ImageService
+      .getImageWidth(createVirtualFile("testFiles/test-image-width-20px.png"))
+      .get();
 
-    assertEquals(imageWidth, 20);
+    assertTrue(imageWidthOption.isPresent());
+    assertThat(imageWidthOption.get(), is(20));
   }
 
   private VirtualFile createVirtualFile(final String path) throws IOException {

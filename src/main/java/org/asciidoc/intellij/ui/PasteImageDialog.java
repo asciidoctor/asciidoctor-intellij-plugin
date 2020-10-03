@@ -1,7 +1,8 @@
 package org.asciidoc.intellij.ui;
 
 import com.intellij.openapi.ui.DialogWrapper;
-import groovy.lang.Tuple2;
+import com.intellij.openapi.util.Pair;
+import com.intellij.ui.components.fields.IntegerField;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -11,7 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import static org.asciidoc.intellij.ui.FormatterFactory.createIntegerFormatter;
+import static java.awt.event.ItemEvent.SELECTED;
+import static java.lang.Integer.MAX_VALUE;
 import static org.asciidoc.intellij.ui.OptionsPanelFactory.createOptionPanelWithButtonGroup;
 
 public final class PasteImageDialog extends DialogWrapper {
@@ -19,20 +21,21 @@ public final class PasteImageDialog extends DialogWrapper {
   private static final String DIALOG_TITLE = "Import Image File from Clipboard";
   private static final String DIALOG_ACTION_DESCRIPTION =
     "Would you like to copy the image file or only import a reference?";
+  private static final int MINIMUM_IMAGE_WIDTH = 5;
 
   private final ButtonGroup buttonGroup;
   private final JPanel optionsPanel;
-  private final JFormattedTextField widthInputField;
+  private final IntegerField widthInputField;
   private final JCheckBox includeWidthCheckbox;
 
   public static PasteImageDialog create(final List<Action> options,
-                                        final CompletableFuture<Integer> initialWidthFuture) {
-    Tuple2<JPanel, ButtonGroup> optionPanelWithButtonGroup = createOptionPanelWithButtonGroup(options);
+                                        final CompletableFuture<Optional<Integer>> initialWidthFuture) {
+    Pair<JPanel, ButtonGroup> optionPanelWithButtonGroup = createOptionPanelWithButtonGroup(options);
 
     return new PasteImageDialog(
       optionPanelWithButtonGroup.getSecond(),
       optionPanelWithButtonGroup.getFirst(),
-      new JFormattedTextField(createIntegerFormatter()),
+      new IntegerField("imageWidth", MINIMUM_IMAGE_WIDTH, MAX_VALUE),
       new JCheckBox("Include width", false),
       initialWidthFuture
     );
@@ -40,9 +43,9 @@ public final class PasteImageDialog extends DialogWrapper {
 
   private PasteImageDialog(final ButtonGroup buttonGroup,
                            final JPanel optionsPanel,
-                           final JFormattedTextField widthInputField,
+                           final IntegerField widthInputField,
                            final JCheckBox includeWidthCheckbox,
-                           final CompletableFuture<Integer> initialWidthFuture) {
+                           final CompletableFuture<Optional<Integer>> initialWidthFuture) {
     super(false);
     this.buttonGroup = buttonGroup;
     this.optionsPanel = optionsPanel;
@@ -51,7 +54,7 @@ public final class PasteImageDialog extends DialogWrapper {
     setupDialog(initialWidthFuture);
   }
 
-  private void setupDialog(final CompletableFuture<Integer> initialWidthFuture) {
+  private void setupDialog(final CompletableFuture<Optional<Integer>> initialWidthFuture) {
     setTitle(DIALOG_TITLE);
     setResizable(false);
     setupIncludeWidthCheckbox();
@@ -60,22 +63,22 @@ public final class PasteImageDialog extends DialogWrapper {
   }
 
   private void setupIncludeWidthCheckbox() {
-    includeWidthCheckbox.addItemListener(this::enableWidthFieldOnSelect);
-    includeWidthCheckbox.setToolTipText("Enabled once width has been loaded");
     includeWidthCheckbox.setEnabled(false);
+    includeWidthCheckbox.setToolTipText("Enabled once width has been loaded");
+    includeWidthCheckbox.addItemListener(this::enableWidthFieldOnSelect);
   }
 
   private void enableWidthFieldOnSelect(ItemEvent event) {
-    widthInputField.setEnabled(event.getStateChange() == ItemEvent.SELECTED);
+    widthInputField.setEnabled(event.getStateChange() == SELECTED);
   }
 
   @SuppressWarnings("FutureReturnValueIgnored")
-  private void setupWidthInputField(final CompletableFuture<Integer> initialWidthFuture) {
+  private void setupWidthInputField(final CompletableFuture<Optional<Integer>> initialWidthFuture) {
     widthInputField.setEnabled(false);
-    widthInputField.setToolTipText("Set image width in pixel");
+    widthInputField.setToolTipText("Set image width in pixel (minimum value 5)");
 
     initialWidthFuture.thenAccept(initialWidth -> {
-      widthInputField.setValue(initialWidth);
+      widthInputField.setValue(initialWidth.orElse(MINIMUM_IMAGE_WIDTH));
       includeWidthCheckbox.setEnabled(true);
     });
   }
@@ -107,7 +110,7 @@ public final class PasteImageDialog extends DialogWrapper {
 
   public Optional<Integer> getWidth() {
     return includeWidthCheckbox.isSelected()
-      ? Optional.of((int) widthInputField.getValue())
+      ? Optional.of(widthInputField.getValue())
       : Optional.empty();
   }
 }

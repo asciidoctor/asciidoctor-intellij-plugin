@@ -1,7 +1,7 @@
 package org.asciidoc.intellij.ui;
 
 import com.intellij.openapi.ui.DialogWrapper;
-import groovy.lang.Tuple2;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +22,7 @@ public class RadioButtonDialog extends DialogWrapper {
     setTitle(title);
     this.text = text;
 
-    Tuple2<JPanel, ButtonGroup> optionPanelWithButtonGroup = createOptionPanelWithButtonGroup(options);
+    Pair<JPanel, ButtonGroup> optionPanelWithButtonGroup = createOptionPanelWithButtonGroup(options);
     optionsPanel = optionPanelWithButtonGroup.getFirst();
     buttonGroup = optionPanelWithButtonGroup.getSecond();
     setResizable(false);

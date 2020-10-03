@@ -5,31 +5,29 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
+import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public final class ImageService {
 
-  private static final int FALLBACK_IMAGE_WIDTH = 0;
-
   // Currently it is only possible to return the width from PNG and JPEG files
-  public static CompletableFuture<Integer> getImageWidth(final VirtualFile virtualFile) {
+  public static CompletableFuture<Optional<Integer>> getImageWidth(final VirtualFile virtualFile) {
     return virtualFile == null
-      ? CompletableFuture.completedFuture(FALLBACK_IMAGE_WIDTH)
+      ? CompletableFuture.completedFuture(Optional.empty())
       : CompletableFuture.supplyAsync(() -> extractImageWidth(virtualFile));
   }
 
-  private static int extractImageWidth(final VirtualFile virtualFile) {
-    BufferedImage image = readVirtualFile(virtualFile);
-
-    return image != null
-      ? image.getWidth()
-      : FALLBACK_IMAGE_WIDTH;
+  private static Optional<Integer> extractImageWidth(final VirtualFile virtualFile) {
+    return Optional.ofNullable(readVirtualFile(virtualFile))
+      .map(BufferedImage::getWidth);
   }
 
+  @Nullable
   private static BufferedImage readVirtualFile(final VirtualFile virtualFile) {
     try {
       return ImageIO.read(virtualFile.getInputStream());
