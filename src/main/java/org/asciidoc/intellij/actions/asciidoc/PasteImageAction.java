@@ -34,6 +34,7 @@ import com.intellij.util.ui.ImageUtil;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
+import org.asciidoc.intellij.ui.PasteImageDialog;
 import org.asciidoc.intellij.ui.RadioButtonDialog;
 import org.jdesktop.swingx.action.BoundAction;
 import org.jetbrains.annotations.NotNull;
@@ -59,6 +60,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+
+import static org.asciidoc.intellij.actions.asciidoc.ImageService.getImageWidth;
 
 public class PasteImageAction extends AsciiDocAction {
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.PasteImageAction";
@@ -209,7 +213,7 @@ public class PasteImageAction extends AsciiDocAction {
                   try (OutputStream outputStream = target.getOutputStream(this)) {
                     boolean written = ImageIO.write(bufferedImage, ext, outputStream);
                     if (written) {
-                      insertImageReference(destination.getVirtualFile(), offset);
+                      insertImageReference(destination.getVirtualFile(), offset, Optional.empty());
                       updateProjectView(target);
                     } else {
                       String message = "Can't save image, no appropriate writer found for selected format.";
@@ -310,7 +314,9 @@ public class PasteImageAction extends AsciiDocAction {
           onlyReference.setSelected(true);
         }
         options.add(onlyReference);
-        RadioButtonDialog dialog = new RadioButtonDialog("Import Image File from Clipboard", "Would you like to copy the image file or only import a reference?", options);
+
+        PasteImageDialog dialog = PasteImageDialog.create(options, getImageWidth(imageVirtualFile));
+
         dialog.show();
 
         if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
@@ -330,7 +336,7 @@ public class PasteImageAction extends AsciiDocAction {
                         VirtualFile target = createOrReplaceTarget(destination);
                         try (OutputStream outputStream = target.getOutputStream(this)) {
                           Files.copy(imageFile.toPath(), outputStream);
-                          insertImageReference(destination.getVirtualFile(), offset);
+                          insertImageReference(destination.getVirtualFile(), offset, dialog.getWidth());
                           updateProjectView(target);
                         }
                       } catch (IOException ex) {
@@ -349,7 +355,7 @@ public class PasteImageAction extends AsciiDocAction {
             case ACTION_INSERT_REFERENCE:
               CommandProcessor.getInstance().executeCommand(project,
                 () -> ApplicationManager.getApplication().runWriteAction(() ->
-                  insertImageReference(LocalFileSystem.getInstance().findFileByIoFile(imageFile), offset)
+                  insertImageReference(LocalFileSystem.getInstance().findFileByIoFile(imageFile), offset, dialog.getWidth())
                 ), null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
               );
               break;
@@ -408,7 +414,7 @@ public class PasteImageAction extends AsciiDocAction {
     return target;
   }
 
-  private void insertImageReference(VirtualFile imageFile, int offset) {
+  private void insertImageReference(final VirtualFile imageFile, final int offset, final Optional<Integer> width) {
     String relativePath = VfsUtil.findRelativePath(file, imageFile, '/');
     if (relativePath == null) {
       // null case happens if parent file and image file are on different file systems
@@ -423,7 +429,10 @@ public class PasteImageAction extends AsciiDocAction {
         relativePath = relativePath.substring(antoraImagesDir.length());
       }
     }
-    String insert = "image::" + relativePath + "[]";
+
+    String options = createImageOptionsString(width);
+
+    String insert = "image::" + relativePath + "[" + options + "]";
     if (offset > 0 && editor.getDocument().getCharsSequence().charAt(offset - 1) != '\n') {
       insert = "\n" + insert;
     }
@@ -433,6 +442,11 @@ public class PasteImageAction extends AsciiDocAction {
     }
     editor.getDocument().insertString(offset, insert);
     editor.getCaretModel().moveToOffset(offset + cursorOffset);
+  }
+
+  @NotNull
+  private String createImageOptionsString(final Optional<Integer> width) {
+    return width.map(widthValue -> "width=" + widthValue).orElse("");
   }
 
   private void updateProjectView(VirtualFile virtualFile) {
