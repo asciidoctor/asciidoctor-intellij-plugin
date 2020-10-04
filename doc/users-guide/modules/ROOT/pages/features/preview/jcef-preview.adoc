@@ -20,6 +20,9 @@ The JCEF preview doesn't support the IntelliJ proxy configuration yet.
 Therefore, remote images in the preview will not show if you are behind a proxy.
 See '`xref:faq/jcef-no-proxy-support.adoc[]`' for more information.
 
+Once a JCEF preview is open in a project, it now and then brings the focus to the project when editing files in a different window.
+See JetBrains issue https://youtrack.jetbrains.com/issue/IDEA-247541["`JCEF: steals focus from a different frame`"] for more information.
+
 == Benefits of the JCEF preview
 
 JCEF preview is an embedded Chrome browser.
@@ -38,8 +41,10 @@ This is recommended for Android Studio 4.2 that doesn't ship with neither JavaFX
 JavaFX preview that used to work with Android Studio 4.0 will not work with Android Studio 4.2 as it doesn't package the necessary classes in the IDE. Therefore, follow these steps to enable JCEF preview for Android Studio.
 
 * Install the plugin "`Choose Runtime`" as described in the JetBrains knowledge base "`https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Selecting the JDK version the IDE will run under^]`".
-* Choose a runtime "jbrsdk-11_0_8-...-x64-b944.34.tar.gz" or later and install it. The IDE will restart.
-* Go to the settings of the AsciiDoc plugin and check if the preview is set to "`JCEF Browser`". Change it to "`JCEF Browser`" if this is not the case.
+* Choose a runtime "jbrsdk-11_0_8-...-x64-b944.34.tar.gz" or later and install it.
+The IDE will restart.
+* Go to the settings of the AsciiDoc plugin and check if the preview is set to "`JCEF Browser`".
+Change it to "`JCEF Browser`" if this is not the case.
 
 === Troubleshooting JCEF
 
