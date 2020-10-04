@@ -78,7 +78,7 @@ public final class PasteImageDialog extends DialogWrapper {
     widthInputField.setToolTipText("Set image width in pixel (minimum value 5)");
 
     initialWidthFuture.thenAccept(initialWidth -> {
-      widthInputField.setValue(initialWidth.orElse(MINIMUM_IMAGE_WIDTH));
+      initialWidth.ifPresent(widthInputField::setValue);
       includeWidthCheckbox.setEnabled(true);
     });
   }
