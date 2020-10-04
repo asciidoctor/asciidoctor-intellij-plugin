@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.34 (work in progress)
+
+- dialog to paste an image allows adding the width for the image (thanks to @martingreilinger) (#412, #559)
+
 === 0.31.33 (preview, available from GitHub releases)
 
 - prevent blank preview on Windows when user folder contains non-ASCII characters (#543)

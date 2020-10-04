@@ -167,7 +167,7 @@ public class PasteImageAction extends AsciiDocAction {
     if (manager.areDataFlavorsAvailable(DataFlavor.javaFileListFlavor)) {
       pasteJavaFileListFlavour(initialTargetDirectory, manager);
     } else if (manager.areDataFlavorsAvailable(DataFlavor.imageFlavor)) {
-      pastImageFlavour(initialTargetDirectory, manager);
+      pasteImageFlavour(initialTargetDirectory, manager);
     } else {
       JPanel panel = new JPanel(new GridLayout(2, 0));
       panel.add(new JLabel("Clipboard doesn't contain an image."));
@@ -176,7 +176,7 @@ public class PasteImageAction extends AsciiDocAction {
     }
   }
 
-  private void pastImageFlavour(VirtualFile initialTargetDirectory, CopyPasteManager manager) {
+  private void pasteImageFlavour(VirtualFile initialTargetDirectory, CopyPasteManager manager) {
     List<Action> options = new ArrayList<>();
     BoundAction png = new BoundAction("PNG (good for screen shots, diagrams and line art)", ACTION_SAVE_PNG);
     options.add(png);
