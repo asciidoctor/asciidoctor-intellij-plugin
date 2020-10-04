@@ -1,9 +1,12 @@
 package org.asciidoc.intellij.ui;
 
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Pair;
 import com.intellij.ui.components.fields.IntegerField;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -80,6 +83,7 @@ public final class PasteImageDialog extends DialogWrapper {
     initialWidthFuture.thenAccept(initialWidth -> {
       initialWidth.ifPresent(widthInputField::setValue);
       includeWidthCheckbox.setEnabled(true);
+      includeWidthCheckbox.setToolTipText(null);
     });
   }
 
@@ -106,6 +110,23 @@ public final class PasteImageDialog extends DialogWrapper {
 
   public String getSelectedActionCommand() {
     return buttonGroup.getSelection().getActionCommand();
+  }
+
+  @Override
+  protected boolean postponeValidation() {
+    return false;
+  }
+
+  @Override
+  protected @Nullable ValidationInfo doValidate() {
+    if (widthInputField.isEnabled()) {
+      try {
+        widthInputField.validateContent();
+      } catch (ConfigurationException e) {
+        return new ValidationInfo(e.getMessage().substring(widthInputField.getValueName() != null ? widthInputField.getValueName().length() + 1 : 0), widthInputField);
+      }
+    }
+    return super.doValidate();
   }
 
   public Optional<Integer> getWidth() {
