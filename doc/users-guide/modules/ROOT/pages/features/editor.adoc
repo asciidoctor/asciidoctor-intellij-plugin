@@ -210,7 +210,7 @@ The user can disable and enable intentions in menu:Settings...[Editor > Intentio
 The user can reformat the source in the editor using "`Reformat Code`" (kbd:[Ctrl+Alt+L]).
 
 The user can disable formatting completely or configure parameters using  menu:Settings...[Editor > Code Style > AsciiDoc].
-Currently it adjusts empty lines around headings, lists and blocks.
+Currently, it adjusts empty lines around headings, lists and blocks.
 It also adjusts spaces around list items.
 
 By default, it re-format blocks to the one-sentence-per-line convention.

@@ -17,7 +17,7 @@ import org.jetbrains.jps.api.CmdlineRemoteProto;
 import java.util.List;
 
 /**
- * This is a dummy provider to clear all error in asciidoctor files and re-trigger a code analyze for the
+ * This is a dummy provider to clear all errors in asciidoctor files and re-trigger a new code analysis for the
  * currently selected/open files using {@link DaemonCodeAnalyzer}.
  */
 public class AsciiDocTargetScopeProvider extends BuildTargetScopeProvider {

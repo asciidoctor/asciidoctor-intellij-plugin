@@ -34,7 +34,7 @@ public class AsciiDocPreviewEditorProvider implements FileEditorProvider, Possib
   public static final String EDITOR_TYPE_ID = AsciiDocLanguage.LANGUAGE_NAME + "PreviewEditor";
 
   /**
-   * Check wether this {@link FileEditorProvider} can create a valid {@link FileEditor} for the file.
+   * Check whether this {@link FileEditorProvider} can create a valid {@link FileEditor} for the file.
    *
    * @param project the project context.
    * @param file    the file to be tested for acceptance. This parameter must never be <code>null</code>.
@@ -72,7 +72,7 @@ public class AsciiDocPreviewEditorProvider implements FileEditorProvider, Possib
   }
 
   /**
-   * Deserialize state from the specified <code>sourceElemet</code>.
+   * Deserialize state from the specified <code>sourceElement</code>.
    * <p/>
    * Does not do anything as {@link AsciiDocPreviewEditor} is stateless.
    *

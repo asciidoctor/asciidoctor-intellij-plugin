@@ -37,7 +37,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Helping to download additional resources from the Internet.
+ * Helps downloading additional resources from the Internet.
  * It automates the download and provides callbacks once the files are present.
  * It displays notifications when the download fails and allows the user to pick a file that they downloaded
  * manually and moves it to the target folder.

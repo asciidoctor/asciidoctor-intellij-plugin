@@ -21,7 +21,7 @@ If you want to preview your changes locally:
 gem install bundler
 bundler install
 ----
-.. Run Jekyll once to create a static website in folder _site:
+.. Run Jekyll once to create a static website inside the `_site` folder:
 +
 ----
 jekyll serve --source startpage --destination _site

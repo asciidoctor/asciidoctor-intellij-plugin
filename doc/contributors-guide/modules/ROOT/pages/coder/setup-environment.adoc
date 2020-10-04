@@ -4,7 +4,7 @@
 [[JDK]]
 == Choosing a Java Version and Distribution
 
-Currently JDK 8 and JavaFX is required to build and run the plugin.
+Currently, JDK 8 and JavaFX is required to build and run the plugin.
 
 The JetBrains JDK 8 distribution is recommended for development.
 As some parts of the code still support Java 8 and JavaFX 8, you can't develop with Java 11 at the moment.

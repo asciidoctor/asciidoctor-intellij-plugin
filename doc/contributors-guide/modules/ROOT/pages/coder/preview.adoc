@@ -24,7 +24,7 @@ Its capabilities to display HTML and CSS are limited, therefore the preview is n
 The JavaFX preview is the current default preview.
 It is available when the user is running 64bit JDK with JavaFX (the default JDK for JetBrains IDE).
 Starting with release 2020.2 JetBrains doesn't ship JavaFX prebundled.
-User can install the https://plugins.jetbrains.com/plugin/14250-javafx-runtime-for-plugins[JavaFX for plguins^] on 64bit JREs to to re-enable the JavaFX preview.
+User can install the https://plugins.jetbrains.com/plugin/14250-javafx-runtime-for-plugins[JavaFX for plguins^] on 64bit JREs to re-enable the JavaFX preview.
 
 The JCEF preview is available from IntelliJ 2020.2 onwards when running the IDE with JetBrains Runtime.
 

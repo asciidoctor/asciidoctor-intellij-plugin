@@ -51,7 +51,7 @@ The `build.gradle` file specifies the minimum version for all users of the plugi
 
 . Checkout the GitHub project and import it as a gradle project.
 
-. Ensure to install the following two plugin in your IDE (your IDE should recommend to install them once you open the project):
+. Ensure to install the following plugins (your IDE should recommend installing them once you open the project):
 +
 --
 GrammarKit:: Helps with highlighting and code completion in Grammar files (*.flex).
@@ -71,9 +71,9 @@ CheckStyle:: This project contains a ready-to-go CheckStyle configuration that w
 
 Perform these tasks to ensure that your setup is ready for development.
 
-. Run the test cases from `AsciiDocLexerTest.java` to see that running tests works in your setup
+. Run the test cases from `AsciiDocLexerTest.java` to see that running tests works in your setup.
 
-. There are two ready-to-go run configurations checked in to git that that you can run:
+. There are two ready-to-go run configurations checked in to git that you can run:
 +
 --
 buildPlugin:: building the plugin as a ZIP-file that you can then install locally into your IDE

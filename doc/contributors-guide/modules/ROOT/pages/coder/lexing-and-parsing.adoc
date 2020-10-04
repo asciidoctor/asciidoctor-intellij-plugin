@@ -102,7 +102,7 @@ If the code decides to discard the match, two possible strategies out of several
 
 . Push back the complete text and continue with a different state using `yybegin()` (for example when matching a `\{HEADING_OLDSTYLE}` in the `MULTILINE` state).
 
-. Some of the expressions can be prefixed with a backslash (`\`) to escape the expression.
+. Some expressions can be prefixed with a backslash (`\`) to escape the expression.
 Use `isEscaped()` to check if it has been escaped.
 
 Unfortunately, the parser can't continue with other matches in the same state.
@@ -134,9 +134,9 @@ In the case for references (`\<<ref>>`) there are two rules, one for regular par
 Highlighting is coloring the text in the editor.
 
 The file `AsciiDocSyntaxHighlighter` defines one `TextAttributesKey` to each entry in `AsciiDocTokenTypes` parsed during lexing.
-Currently several tokens have the same highlighting `ASCIIDOC_MARKER`, so users have the same color for the pointy brackets around references references (`\<<ref>>`)and markers for bold (`\*bold*`).
+Currently, several tokens have the same highlighting `ASCIIDOC_MARKER`, so users have the same color for the pointy brackets around references (`\<<ref>>`)and markers for bold (`\*bold*`).
 
-Once you add a new `TextAttributesKey`, you should either
+Once you add a new `TextAttributesKey`, you should either:
 
 . reference an existing color (like `ASCIIDOC_COMMENT` references `DefaultLanguageHighlighterColors.LINE_COMMENT`) OR
 . add a color the AsciiDoc themes `AsciidocDefault.xml` and `AsciidocDarcula.xml`
@@ -168,7 +168,7 @@ References::
 --
 Once it sees the start token `REFSTART` (usually two opening pointy brackets, like `<<`), it sets a marker.
 Then it reads all tokens that are valid inside a reference.
-Once the are no more valid tokens for a reference, it marks this block as a `AsciiDocElementTypes.REF`.
+Once there are no more valid tokens for a reference, it marks this block as a `AsciiDocElementTypes.REF`.
 --
 
 Blocks::
@@ -196,7 +196,7 @@ They can have pre-block elements as well.
 In addition to standard blocks they build a hierarchy:
 Each section has a level determined by the number of equal signs at the start (or, if it is an old style heading by the character underlining the heading).
 
-Whenever a section with the same level like the one before starts, the previous section needs to be closed.
+Whenever a section with the same level as the one before starts, the previous section needs to be closed.
 Whenever a section of a higher order (let's say two equal signs at the start, like `==`) starts, all open sections with a lower order must be closed (in this case with three or more equal signs at the start).
 This logic is encapsulated in `closeSections()`.
 It is also called at the end of the document to close all sections at the end of the document.
@@ -214,7 +214,7 @@ There is also a keyboard shortcut for this.
 
 === Testing
 
-The are unit tests for the parser.
+There are unit tests for the parser.
 You can run them from your IDE.
 The tests come in two variants:
 

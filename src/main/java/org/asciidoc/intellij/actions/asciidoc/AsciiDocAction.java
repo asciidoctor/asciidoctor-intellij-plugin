@@ -9,7 +9,8 @@ import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Actions extending this class only apply to AsciiDoc documents.
+ * Base class for creating AsciiDoc actions.
+ * These actions will only apply to AsciiDoc documents.
  *
  * @author Erik Pragt
  */

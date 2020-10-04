@@ -23,7 +23,7 @@ The IntelliJ AsciiDoc Plugin adds to your IDE:
 * Recognizes the AsciiDoc file extension (.adoc, .asciidoc, .ad)
 * Toolbar and context menu for basic formatting and to create tables.
 
-Learn more about it in section xref:features/editor.adoc[].
+Learn more about it in the xref:features/editor.adoc[] section.
 
 == Configurable preview
 
@@ -32,7 +32,7 @@ Learn more about it in section xref:features/editor.adoc[].
 Per default it has a vertical split and the preview is on the right.
 Use the settings to flip editor and preview and change to a horizontal split.
 
-Learn more about it in section xref:features/preview.adoc[].
+Learn more about it in the xref:features/preview.adoc[] section.
 
 == Integrations to the AsciiDoc ecosystem
 

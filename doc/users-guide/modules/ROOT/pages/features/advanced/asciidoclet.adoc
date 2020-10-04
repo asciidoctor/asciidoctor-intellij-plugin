@@ -65,7 +65,7 @@ Libraries might use JavaDoc, some not.
 
 As default the plugin will render all Javadoc contents as AsciiDoc with the following exception:
 
-. If the Javadoc contents contain a HTML tag `<p>` the plugin assumes the contents should be rendered as standard Javadoc without the AsciiDoc conversion.
+. If the Javadoc contents contain an HTML tag `<p>` the plugin assumes the contents should be rendered as standard Javadoc without the AsciiDoc conversion.
 
 == Preview while editing Asciidoclet
 
@@ -173,7 +173,7 @@ One example are section headlines: they all have the same size and font as regul
 === Syntax Highlighting when writing Asciidoclet
 
 The current version of the plugin doesn't provide AsciiDoc language injection for the Javadoc content.
-Therefore writers miss autocompletion in the editor.
+Therefore, writers miss autocompletion in the editor.
 Please vote for this in issue https://youtrack.jetbrains.com/issue/IDEA-231876[IDEA-231876] at JetBrains to raise attention for this or contribute to the IntelliJ community edition.
 
 
