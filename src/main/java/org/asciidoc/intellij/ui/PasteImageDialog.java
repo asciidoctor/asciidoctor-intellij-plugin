@@ -24,7 +24,7 @@ public final class PasteImageDialog extends DialogWrapper {
   private static final String DIALOG_TITLE = "Import Image File from Clipboard";
   private static final String DIALOG_ACTION_DESCRIPTION =
     "Would you like to copy the image file or only import a reference?";
-  private static final int MINIMUM_IMAGE_WIDTH = 5;
+  private static final String WIDTH_INPUT_FIELD_NAME = "imageWidth";
 
   private final ButtonGroup buttonGroup;
   private final JPanel optionsPanel;
@@ -38,7 +38,7 @@ public final class PasteImageDialog extends DialogWrapper {
     return new PasteImageDialog(
       optionPanelWithButtonGroup.getSecond(),
       optionPanelWithButtonGroup.getFirst(),
-      new IntegerField("imageWidth", MINIMUM_IMAGE_WIDTH, MAX_VALUE),
+      new IntegerField(WIDTH_INPUT_FIELD_NAME, 0, MAX_VALUE),
       new JCheckBox("Include width", false),
       initialWidthFuture
     );
@@ -78,7 +78,8 @@ public final class PasteImageDialog extends DialogWrapper {
   @SuppressWarnings("FutureReturnValueIgnored")
   private void setupWidthInputField(final CompletableFuture<Optional<Integer>> initialWidthFuture) {
     widthInputField.setEnabled(false);
-    widthInputField.setToolTipText("Set image width in pixel (minimum value 5)");
+    widthInputField.setCanBeEmpty(true);
+    widthInputField.setToolTipText("Set image width in pixel");
 
     initialWidthFuture.thenAccept(initialWidth -> {
       initialWidth.ifPresent(widthInputField::setValue);
@@ -89,7 +90,7 @@ public final class PasteImageDialog extends DialogWrapper {
 
   @Override
   protected @NotNull JComponent createCenterPanel() {
-    JPanel panel = new JPanel(new GridLayout(3, 0));
+    final JPanel panel = new JPanel(new GridLayout(3, 0));
 
     panel.add(new JLabel(DIALOG_ACTION_DESCRIPTION));
     panel.add(optionsPanel);
@@ -100,7 +101,7 @@ public final class PasteImageDialog extends DialogWrapper {
 
   @NotNull
   private JPanel createWidthPanel() {
-    JPanel widthPanel = new JPanel(new GridLayout(1, 2));
+    final JPanel widthPanel = new JPanel(new GridLayout(1, 2));
 
     widthPanel.add(includeWidthCheckbox);
     widthPanel.add(widthInputField);
@@ -123,7 +124,8 @@ public final class PasteImageDialog extends DialogWrapper {
       try {
         widthInputField.validateContent();
       } catch (ConfigurationException e) {
-        return new ValidationInfo(e.getMessage().substring(widthInputField.getValueName() != null ? widthInputField.getValueName().length() + 1 : 0), widthInputField);
+        final String errorMessageWithoutFieldNamePrefix = e.getMessage().substring(WIDTH_INPUT_FIELD_NAME.length() + 1);
+        return new ValidationInfo(errorMessageWithoutFieldNamePrefix, widthInputField);
       }
     }
     return super.doValidate();
@@ -131,7 +133,7 @@ public final class PasteImageDialog extends DialogWrapper {
 
   public Optional<Integer> getWidth() {
     return includeWidthCheckbox.isSelected()
-      ? Optional.of(widthInputField.getValue())
+      ? Optional.of(widthInputField.getValue()).filter(width -> !width.equals(0))
       : Optional.empty();
   }
 }
