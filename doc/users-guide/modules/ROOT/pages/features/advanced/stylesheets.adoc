@@ -33,9 +33,9 @@ NOTE: The stylesheet will be embedded in the preview, therefore relative links t
 :stylesheet: preview-stylesheet.css <2>
 ----
 <.> point to a directory with the stylesheet. As this uses \{asciidoctorconfigdir}, the folder is relative to the _.asciidoctorconfig_ file.
-<.> filename of the stylesheet to be used
+<.> filename of the stylesheet to be used.
 
-. Place your stylesheet in the _.asciidoctor_ folder
+. Place your stylesheet in the _.asciidoctor_ folder:
 +
 ..asciidoctor/preview-stylesheet.css
 [source,css]

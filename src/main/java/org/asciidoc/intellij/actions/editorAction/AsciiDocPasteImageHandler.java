@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.datatransfer.Transferable;
 
 /**
- * Page an image from the clipboard when in editor.
+ * Paste an image from the clipboard when in editor.
  * Inspired by {@link com.intellij.codeInsight.editorActions.PasteHandler} and
  * https://plugins.jetbrains.com/plugin/8446-paste-images-into-markdown who showed me how to use this API.
  */

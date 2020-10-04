@@ -16,7 +16,7 @@ Could not find the 'dot' executable in PATH; add it to the PATH or specify its l
 
 == Cause: Helper executable not found
 
-When using https://github.com/asciidoctor/asciidoctor-diagram[asciidoctor-diagram], some of the diagrams will need external helper applications like for example https://www.graphviz.org/[Graphviz] for creating the diagram.
+When using https://github.com/asciidoctor/asciidoctor-diagram[asciidoctor-diagram], some diagrams will need external helper applications like for example https://www.graphviz.org/[Graphviz] for creating the diagram.
 
 == Remedies
 

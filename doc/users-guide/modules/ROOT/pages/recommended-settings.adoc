@@ -26,7 +26,7 @@ image::enable-softwrap.png[Editor settings showing soft wrap]
 . To get the best preview experience, switch the preview browser to _JavaFX WebView_ or _JCEF Browser_.
 +
 Go to menu menu:File[Settings... > Languages & Frameworks > AsciiDoc] to review or change this setting.
-If neither JavaFX of JCEF preview is not available, refer to xref:installation.adoc#prerequisites[Installation Prerequisites]
+If neither JavaFX of JCEF preview is not available, refer to xref:installation.adoc#prerequisites[Installation Prerequisites].
 +
 image::settings-asciidoc.png[AsciiDoc settings]
 

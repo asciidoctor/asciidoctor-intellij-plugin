@@ -37,7 +37,6 @@ Inconsistent: kbd:[ALT+7]
 
 == Location of content
 
-All user documentation is published on the plugin's web site at https://intellij-asciidoc-plugin.ahus1.de/
+All user documentation is published on the plugin's website at https://intellij-asciidoc-plugin.ahus1.de/
 
 The sources of the documentation reside in the Git repository https://github.com/asciidoctor/asciidoctor-intellij-plugin in the folder _doc/user-guide_.
-

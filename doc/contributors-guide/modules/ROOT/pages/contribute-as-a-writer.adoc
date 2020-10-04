@@ -6,9 +6,9 @@ User documentation is essential to make the plugin approachable for all types of
 
 With this knowledge you can choose the matching how-to to change the content you need to change.
 
-== What sources exist to build the plugin's web site?
+== What sources exist to build the plugin's website?
 
-The documentation for this plugin is hosted on plugin's homepage https://intellij-asciidoc-plugin.ahus1.de/
+The documentation for this plugin is hosted on the plugin's homepage https://intellij-asciidoc-plugin.ahus1.de/
 
 It has the following areas:
 

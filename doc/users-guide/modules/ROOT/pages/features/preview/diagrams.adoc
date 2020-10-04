@@ -9,7 +9,8 @@ ifndef::env-site[]
 :imagesdir: ../../images
 endif::[]
 
-The preview of the AsciiDoc plugin supports rendering the diagrams in the preview. Two different types of diagram renderes are supported: <<asciidoctor-diagram>> and <<kroki>>.
+The preview of the AsciiDoc plugin supports rendering the diagrams in the preview.
+Two different types of diagram renderer are supported: <<asciidoctor-diagram>> and <<kroki>>.
 
 [[asciidoctor-diagram,Asciidoctor Diagram]]
 == Using Asciidoctor Diagram
@@ -72,7 +73,7 @@ See https://asciidoctor.org/docs/user-manual/#taming-svgs[section "`Taming SVGs`
 
 [NOTE]
 ====
-Only when a SVG or diagram is inlined, the plugin will redirect clicks on links in the preview to local AsciiDoc files.
+Only when an SVG or diagram is inlined, the plugin will redirect clicks on links in the preview to local AsciiDoc files.
 ====
 
 The following PlantUML example renders a diagram in the preview showing a note "`Link to class-demo.adoc`" with a link.

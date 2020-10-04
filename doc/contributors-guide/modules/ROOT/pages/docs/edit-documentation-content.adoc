@@ -10,7 +10,7 @@ The preview of GitHub doesn't take into account the Antora macros, therefore con
 
 Follow these steps to change the documentation content on the plugin's homepage with just the browser:
 
-. Click on the "`Edit this page`" link on the documentation web site of the plugin
+. Click on the "`Edit this page`" link on the documentation website of the plugin
 . Edit the content
 . Follow the instructions on the end of the page to commit the changes, creating a fork of the repository and submitting a pull request
 

@@ -6,7 +6,6 @@ import com.intellij.psi.impl.cache.impl.todo.LexerBasedTodoIndexer;
 import org.jetbrains.annotations.NotNull;
 
 /**
- *
  * @author Michael Krausse (ehmkah)
  */
 public class AsciiDocTodoIndexer extends LexerBasedTodoIndexer {

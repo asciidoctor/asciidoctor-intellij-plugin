@@ -3,7 +3,7 @@
 
 == Publishing a preview version
 
-. Update _CHANGELOG.adoc_ with th latest changes for the release
+. Update _CHANGELOG.adoc_ with the latest changes for the release
 . Push all changes to GitHub
 . Create a Release in the GitHub releases.
 This allows you to also create a tag.
