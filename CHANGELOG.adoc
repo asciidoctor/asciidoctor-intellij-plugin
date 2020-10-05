@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.34 (work in progress)
+=== 0.31.34 (preview, available from GitHub releases)
 
 - dialog to paste an image allows adding the width for the image (thanks to @martingreilinger) (#412, #559)
 - upgrade to asciidoctorj-diagram 2.0.5 (thanks to @pepijnve) (#561)
