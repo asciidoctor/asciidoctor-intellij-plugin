@@ -46,11 +46,15 @@ public class AsciiDocDownloaderUtil {
 
   private static final Logger LOG = Logger.getInstance(AsciiDocDownloaderUtil.class);
 
+  // when updating the version, also update the SHA1 hash!
+  // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-pdf
   public static final String ASCIIDOCTORJ_PDF_VERSION = "1.5.3";
   private static final String ASCIIDOCTORJ_PDF_HASH = "ccaccbef0af5b5e836ff983f5ed682ff3e063851";
 
+  // when updating the version, also update the SHA1 hash!
+  // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram
   public static final String ASCIIDOCTORJ_DIAGRAM_VERSION = "2.0.5";
-  private static final String ASCIIDOCTORJ_DIAGRAM_HASH = "f0b7b9bcecc20a7aeece8733996d3fe75eb7ed5b";
+  private static final String ASCIIDOCTORJ_DIAGRAM_HASH = "f4a408317f6c2e5bf42f26547185c66685b32957";
 
   private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
   // this is similar to the path where for example the grazie plugin places its dictionaries
@@ -163,7 +167,7 @@ public class AsciiDocDownloaderUtil {
           try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(file))) {
             String hash = DigestUtils.sha1Hex(is);
             if (!downloadHash.equals(hash)) {
-              throw new IOException("Hash of downloaded file doesn't match (expected: " + ASCIIDOCTORJ_PDF_HASH + ", got: " + hash + ")");
+              throw new IOException("Hash of downloaded file doesn't match (expected: " + downloadHash + ", got: " + hash + ")");
             }
           }
           if (!file.renameTo(new File(fileName))) {
