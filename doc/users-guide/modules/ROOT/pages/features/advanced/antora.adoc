@@ -78,6 +78,14 @@ Antora::
 Site: https://docs.antora.org/ +
 Source code: https://gitlab.com/antora/antora/-/tree/master/docs
 
+Apache Camel::
+Site: https://camel.apache.org/manual/latest/ +
+Source code: https://github.com/apache/camel/tree/master/docs/user-manual
+
+Apache Camel Kafka Connector::
+Site: https://camel.apache.org/camel-kafka-connector/latest/ +
+Source code: https://github.com/apache/camel-kafka-connector/tree/master/docs
+
 Debezium::
 Site: https://debezium.io/documentation/reference/index.html +
 Source code: https://github.com/debezium/debezium/tree/master/documentation
