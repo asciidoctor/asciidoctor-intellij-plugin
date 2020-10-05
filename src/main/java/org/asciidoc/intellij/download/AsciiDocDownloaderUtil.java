@@ -49,7 +49,7 @@ public class AsciiDocDownloaderUtil {
   public static final String ASCIIDOCTORJ_PDF_VERSION = "1.5.3";
   private static final String ASCIIDOCTORJ_PDF_HASH = "ccaccbef0af5b5e836ff983f5ed682ff3e063851";
 
-  public static final String ASCIIDOCTORJ_DIAGRAM_VERSION = "2.0.2";
+  public static final String ASCIIDOCTORJ_DIAGRAM_VERSION = "2.0.5";
   private static final String ASCIIDOCTORJ_DIAGRAM_HASH = "f0b7b9bcecc20a7aeece8733996d3fe75eb7ed5b";
 
   private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
