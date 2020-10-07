@@ -1702,6 +1702,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { isTags = false; return AsciiDocTokenTypes.ATTR_NAME; }
 }
 
+<ATTRS_DOUBLE_QUOTE, ATTRS_SINGLE_QUOTE, ATTRS_NO_QUOTE> {
+  [ \t] {if (isTags) { return AsciiDocTokenTypes.WHITE_SPACE; } else { return AsciiDocTokenTypes.ATTR_VALUE; }}
+}
+
 <ATTRS_DOUBLE_QUOTE_START> {
   "\"" { yybegin(ATTRS_DOUBLE_QUOTE); return AsciiDocTokenTypes.DOUBLE_QUOTE; }
 }
@@ -1718,6 +1722,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <ATTRS_SINGLE_QUOTE> {
   "\\\'" { return AsciiDocTokenTypes.ATTR_VALUE; }
   "\'" { yypopstate(); return AsciiDocTokenTypes.SINGLE_QUOTE; }
+}
+
+<ATTRS_SINGLE_QUOTE,ATTRS_DOUBLE_QUOTE> {
+  [,;] { if (isTags) { return AsciiDocTokenTypes.ATTR_LIST_SEP; } else { return AsciiDocTokenTypes.ATTR_VALUE; } }
 }
 
 <ATTRS_NO_QUOTE> {
