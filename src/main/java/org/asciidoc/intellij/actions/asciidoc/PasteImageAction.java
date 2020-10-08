@@ -35,7 +35,6 @@ import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.ui.PasteImageDialog;
-import org.asciidoc.intellij.ui.RadioButtonDialog;
 import org.jdesktop.swingx.action.BoundAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,8 +60,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import static org.asciidoc.intellij.actions.asciidoc.ImageService.getImageWidth;
+import static org.asciidoc.intellij.ui.PasteImageDialog.createPasteImageDataDialog;
 
 public class PasteImageAction extends AsciiDocAction {
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.PasteImageAction";
@@ -187,17 +188,23 @@ public class PasteImageAction extends AsciiDocAction {
     } else {
       png.setSelected(true);
     }
-    RadioButtonDialog dialog = new RadioButtonDialog("Import Image Data from Clipboard", "Which format do you want the image to be saved to?", options);
-    dialog.show();
-    if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-      previousFileFormat = dialog.getSelectedActionCommand();
-      final int offset = editor.getCaretModel().getOffset();
-      try {
-        Image image = manager.getContents(DataFlavor.imageFlavor);
-        if (image == null) {
-          throw new IOException("Unable to read image from clipboard");
-        }
-        BufferedImage bufferedImage = toBufferedImage(image);
+
+    try {
+      final BufferedImage bufferedImage = Optional
+        .<Image>ofNullable(manager.getContents(DataFlavor.imageFlavor))
+        .map(this::toBufferedImage)
+        .orElseThrow(() -> new IOException("Unable to read image from clipboard"));
+
+      final CompletableFuture<Optional<Integer>> initialWidthFuture =
+        CompletableFuture.completedFuture(Optional.of(bufferedImage.getWidth()));
+      final PasteImageDialog dialog = createPasteImageDataDialog(options, initialWidthFuture);
+
+      dialog.show();
+
+      if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+        previousFileFormat = dialog.getSelectedActionCommand();
+
+        final int offset = editor.getCaretModel().getOffset();
         final FileSaverDescriptor descriptor = new FileSaverDescriptor("Save Image to", "Choose the destination file");
         FileSaverDialog saveFileDialog = createSaveFileDialog(descriptor, project);
         String ext = ACTION_SAVE_PNG.equals(dialog.getSelectedActionCommand()) ? "png" : "jpg";
@@ -213,7 +220,7 @@ public class PasteImageAction extends AsciiDocAction {
                   try (OutputStream outputStream = target.getOutputStream(this)) {
                     boolean written = ImageIO.write(bufferedImage, ext, outputStream);
                     if (written) {
-                      insertImageReference(destination.getVirtualFile(), offset, Optional.empty());
+                      insertImageReference(destination.getVirtualFile(), offset, dialog.getWidth());
                       updateProjectView(target);
                     } else {
                       String message = "Can't save image, no appropriate writer found for selected format.";
@@ -235,14 +242,14 @@ public class PasteImageAction extends AsciiDocAction {
               }), "Paste Image", AsciiDocFileType.INSTANCE.getName(), UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
           );
         }
-      } catch (IOException e) {
-        String message = "Can't paste image, " + e.getMessage();
-        Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
-          .createNotification("Error in plugin", message, NotificationType.ERROR, null);
-        // increase event log counter
-        notification.setImportant(true);
-        Notifications.Bus.notify(notification);
       }
+    } catch (IOException e) {
+      String message = "Can't paste image, " + e.getMessage();
+      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+        .createNotification("Error in plugin", message, NotificationType.ERROR, null);
+      // increase event log counter
+      notification.setImportant(true);
+      Notifications.Bus.notify(notification);
     }
   }
 
@@ -315,7 +322,7 @@ public class PasteImageAction extends AsciiDocAction {
         }
         options.add(onlyReference);
 
-        PasteImageDialog dialog = PasteImageDialog.create(options, getImageWidth(imageVirtualFile));
+        final PasteImageDialog dialog = PasteImageDialog.createPasteImageFileDialog(options, getImageWidth(imageVirtualFile));
 
         dialog.show();
 

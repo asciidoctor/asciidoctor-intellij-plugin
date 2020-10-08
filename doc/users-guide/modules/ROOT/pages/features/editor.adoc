@@ -157,8 +157,8 @@ Users can add their own live templates to avoid repetitive typing and to ensure 
 The user can copy images from the clipboard into the document.
 To do that user selects "`Paste image from clipboard`" from the editor's icon menu or from the context menu.
 If the clipboard contains a reference to an existing file, the user can choose to copy the file to the project or to just create a reference to the image in the AsciiDoc document.
-In addition, the user can set the image `width` via the dialog.
 If the clipboard contains an image, the user can choose to create a JPEG or PNG file from the clipboard and add the reference to the document.
+In both cases, the user has the additional option to set the image `width`.
 
 As a shortcut the user can also use kbd:[Ctrl+C] and kbd:[Ctrl+V] to add references to images from within the project to a document.
 This shortcut doesn't work yet for copying contents from outside the project.
