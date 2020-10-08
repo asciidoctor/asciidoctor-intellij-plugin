@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.35 (work in progress)
+
+- dialog to paste an image from clipboard allows adding the width (thanks to @martingreilinger) (#412, #563)
+
 === 0.31.34 (preview, available from GitHub releases)
 
 - dialog to paste an image allows adding the width for the image (thanks to @martingreilinger) (#412, #559)
