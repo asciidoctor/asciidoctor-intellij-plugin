@@ -393,6 +393,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state ATTRS_NO_QUOTE
 %state ATTRS_SINGLE_QUOTE_START
 %state ATTRS_DOUBLE_QUOTE_START
+%state ATTR_VAL_START
 %state BLOCK_ATTRS
 
 %state INLINE_MACRO
@@ -1652,7 +1653,12 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <BLOCK_MACRO_ATTRS, BLOCK_ATTRS> {
   "=" / "\"" ( [^\"\n] | "\\\"" )* "\"" { yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
   "=" / "\'" ( [^\'\n] | "\\\'" )* "\'" { yypushstate(); yybegin(ATTRS_SINGLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
-  "=" { yypushstate(); yybegin(ATTRS_NO_QUOTE); return AsciiDocTokenTypes.ASSIGNMENT; }
+  "=" { yypushstate(); yybegin(ATTRS_NO_QUOTE);
+      if (isTags) {
+        yypushstate();
+        yybegin(ATTR_VAL_START);
+      }
+      return AsciiDocTokenTypes.ASSIGNMENT; }
   ","                  { return AsciiDocTokenTypes.SEPARATOR; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
@@ -1707,11 +1713,21 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <ATTRS_DOUBLE_QUOTE_START> {
-  "\"" { yybegin(ATTRS_DOUBLE_QUOTE); return AsciiDocTokenTypes.DOUBLE_QUOTE; }
+  "\"" { yybegin(ATTRS_DOUBLE_QUOTE);
+      if (isTags) {
+        yypushstate();
+        yybegin(ATTR_VAL_START);
+      }
+      return AsciiDocTokenTypes.DOUBLE_QUOTE; }
 }
 
 <ATTRS_SINGLE_QUOTE_START> {
-  "\'" { yybegin(ATTRS_SINGLE_QUOTE); return AsciiDocTokenTypes.SINGLE_QUOTE; }
+  "\'" { yybegin(ATTRS_SINGLE_QUOTE);
+      if (isTags) {
+        yypushstate();
+        yybegin(ATTR_VAL_START);
+      }
+      return AsciiDocTokenTypes.SINGLE_QUOTE; }
 }
 
 <ATTRS_DOUBLE_QUOTE> {
@@ -1726,6 +1742,13 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <ATTRS_SINGLE_QUOTE,ATTRS_DOUBLE_QUOTE> {
   [,;] { if (isTags) { return AsciiDocTokenTypes.ATTR_LIST_SEP; } else { return AsciiDocTokenTypes.ATTR_VALUE; } }
+}
+
+<ATTR_VAL_START> {
+  "!" { yypopstate();
+        return AsciiDocTokenTypes.ATTR_LIST_OP; }
+  {SPACE} { return AsciiDocTokenTypes.WHITE_SPACE; }
+  [^] { yypushback(yylength()); yypopstate(); }
 }
 
 <ATTRS_NO_QUOTE> {

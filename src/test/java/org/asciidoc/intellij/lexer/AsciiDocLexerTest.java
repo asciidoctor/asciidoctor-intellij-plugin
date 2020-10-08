@@ -151,6 +151,21 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:ATTRS_END (']')");
   }
 
+  public void testIncludeWithNegatedTag() {
+    doTest("include::file.adoc[tags=\" !tag1!\"]",
+      "AsciiDoc:BLOCK_MACRO_ID ('include::')\n" +
+        "AsciiDoc:BLOCK_MACRO_BODY ('file.adoc')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('tags')\n" +
+        "AsciiDoc:ASSIGNMENT ('=')\n" +
+        "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:ATTR_LIST_OP ('!')\n" +
+        "AsciiDoc:ATTR_VALUE ('tag1!')\n" +
+        "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +
+        "AsciiDoc:ATTRS_END (']')");
+  }
+
   public void testHeading() {
     doTest("= Abc\n\nabc\n== Def\ndef",
       "AsciiDoc:HEADING_TOKEN ('= Abc')\n" +

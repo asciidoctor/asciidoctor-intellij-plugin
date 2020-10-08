@@ -21,6 +21,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_UNSET;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_VAL;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRS_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRS_START;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTR_LIST_OP;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTR_LIST_SEP;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTR_NAME;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTR_VALUE;
@@ -444,7 +445,7 @@ public class AsciiDocParserImpl {
     markPreBlock();
     PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
     next();
-    while (at(ATTR_NAME) || at(ATTR_VALUE) || at(ATTRS_END) || at(SEPARATOR) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP)
+    while (at(ATTR_NAME) || at(ATTR_VALUE) || at(ATTRS_END) || at(SEPARATOR) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP) || at(ATTR_LIST_OP)
       || at(SINGLE_QUOTE) || at(DOUBLE_QUOTE) || at(ASSIGNMENT) || at(URL_LINK)) {
       if (at(ATTRS_END)) {
         next();
@@ -468,7 +469,7 @@ public class AsciiDocParserImpl {
     String macroId = myBuilder.getTokenText();
     next();
     while ((at(INLINE_MACRO_BODY) || at(ATTR_NAME) || at(ASSIGNMENT) || at(URL_LINK) || at(ATTR_VALUE) || at(SEPARATOR) || at(INLINE_ATTRS_START) || at(INLINE_ATTRS_END)
-      || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP))
+      || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP) || at(ATTR_LIST_OP))
       && newLines == 0) {
       if (at(INLINE_ATTRS_END)) {
         next();
@@ -495,7 +496,7 @@ public class AsciiDocParserImpl {
     PsiBuilder.Marker attributeInBracketMarker = myBuilder.mark();
     String name = null;
     while ((at(ATTR_NAME) || at(ASSIGNMENT) || at(URL_LINK) || at(ATTR_VALUE)
-      || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP) || at(CONTINUATION))
+      || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP) || at(ATTR_LIST_OP) || at(CONTINUATION))
       && emptyLines == 0) {
       if (at(URL_LINK)) {
         parseUrl();
@@ -593,7 +594,7 @@ public class AsciiDocParserImpl {
       next();
     }
     while ((at(BLOCK_MACRO_BODY) || at(ATTRIBUTE_REF_START) || at(ATTR_NAME) || at(ATTR_VALUE) || at(SEPARATOR) || at(ATTRS_START) || at(ATTRS_END)
-      || at(ASSIGNMENT) || at(SINGLE_QUOTE) || at(DOUBLE_QUOTE) || at(ATTRIBUTE_REF) || at(BLOCK_MACRO_ID) || at(ATTR_LIST_SEP)
+      || at(ASSIGNMENT) || at(SINGLE_QUOTE) || at(DOUBLE_QUOTE) || at(ATTRIBUTE_REF) || at(BLOCK_MACRO_ID) || at(ATTR_LIST_SEP) || at(ATTR_LIST_OP)
       || at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX) || at(INLINE_MACRO_ID) || at(ATTRIBUTE_NAME_START))
       && newLines == 0) {
       if (at(ATTRS_END)) {

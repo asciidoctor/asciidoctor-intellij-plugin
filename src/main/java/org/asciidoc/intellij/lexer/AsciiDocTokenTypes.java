@@ -42,6 +42,7 @@ public interface AsciiDocTokenTypes {
   IElementType BLOCK_MACRO_ATTRIBUTES = new AsciiDocElementType("BLOCK_MACRO_ATTRIBUTES");
   IElementType ATTRS_START = new AsciiDocElementType("ATTRS_START");
   IElementType ATTR_LIST_SEP = new AsciiDocElementType("ATTR_LIST_SEP");
+  IElementType ATTR_LIST_OP = new AsciiDocElementType("ATTR_LIST_OP");
   IElementType ATTR_NAME = new AsciiDocElementType("ATTR_NAME");
   IElementType ATTR_VALUE = new AsciiDocElementType("ATTR_VALUE");
   IElementType ATTRS_END = new AsciiDocElementType("ATTRS_END");
