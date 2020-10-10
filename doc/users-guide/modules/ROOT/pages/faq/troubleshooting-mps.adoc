@@ -5,6 +5,17 @@
 This chapter summarizes known problems and possible remedies for users working with MPS.
 If your issue is not listed here, please open a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[new issue on GitHub].
 
+== Symptom: exception "`Wrong dependency type: class com.intellij.openapi.util.Key`" while editing a document
+
+This seems to be a known problem with MPS: https://youtrack.jetbrains.com/issue/MPS-30801[MPS-30801].
+
+Please vote on the issue above for MPS to provide a remedy.
+
+No workaround is available as of today.
+See https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/502[asciidoctor-intellij-plugin#502] for more details and a discussion.
+
+If you found a workaround for this problem, please open a new issue or edit this document.
+
 == Symptom: PluginException at IDE startup mentioning "`RefactoringMenu`"
 
 [NOTE]
@@ -31,13 +42,3 @@ Follow these steps:
 
 You can read more about this in the related GitHub issue https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/502[asciidoctor-intellij-plugin#502].
 
-== Symptom: exception "`Wrong dependency type: class com.intellij.openapi.util.Key`" while editing a document
-
-This seems to be a known problem with MPS: https://youtrack.jetbrains.com/issue/MPS-30801[MPS-30801].
-
-Please vote on the issue above for MPS to provide a remedy.
-
-No workaround is available as of today.
-See https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/502[asciidoctor-intellij-plugin#502] for more details and a discussion.
-
-If you found a workaround for this problem, please open a new issue or edit this document.
