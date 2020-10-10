@@ -7,6 +7,13 @@ If your issue is not listed here, please open a https://github.com/asciidoctor/a
 
 == Symptom: PluginException at IDE startup mentioning "`RefactoringMenu`"
 
+[NOTE]
+====
+This problem doesn't appear in MPS 2020.2.2 anymore.
+It is no longer necessary to install the "`AsciiDoc MPS add-on`".
+====
+
+This problem was first observed on MPS 2019.3.4.
 The assumed cause for this is MPS removing menu items compared to IntelliJ core.
 This leads to the exception at startup time.
 The rest of the plugin's functionality is unaffected.
