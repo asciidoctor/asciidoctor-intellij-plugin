@@ -79,6 +79,12 @@ patchPluginXml {
   pluginDescription "${file('src/main/resources/META-INF/description.html').getText('UTF-8')}"
 }
 
+intellij {
+  // use the alternativeIdePath to specifiy for example a path to MPS
+  // at least on Windows it doesn't recognize the IDE's JBR, therefore run Gradle with the JBR runtime directly
+  // alternativeIdePath "..."
+}
+
 runIde {
   jvmArgs = ['-Xmx1024m','-XX:+UnlockDiagnosticVMOptions']
   // should not automatically reload plugin on change in IDE, as JRuby is not very good at this
