@@ -1,16 +1,18 @@
-package org.asciidoc.intellij.ui;
+package org.asciidoc.intellij.ui.components;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Integer.MAX_VALUE;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
 
 public class ImageWidthFieldTest {
 
@@ -34,28 +36,26 @@ public class ImageWidthFieldTest {
   @Test
   public void setsValueWhenInitializeWidthFutureCompletesAndInvokesRunnable() {
     final Integer newValue = 500;
-    final CompletableFuture<Optional<Integer>> initialWidthFuture = CompletableFuture.completedFuture(Optional.of(newValue));
-    // TODO replace with proper mocking once available
-    final AtomicBoolean runnableWasExecuted = new AtomicBoolean(false);
+    final CompletableFuture<Optional<Integer>> initialWidthFuture = completedFuture(Optional.of(newValue));
+    final Runnable onInitializationCompleted = Mockito.spy(Runnable.class);
 
-    widthField.initializeWith(initialWidthFuture, () -> runnableWasExecuted.set(true));
+    widthField.initializeWith(initialWidthFuture, onInitializationCompleted);
 
     assertEquals(widthField.getValue(), newValue);
-    assertTrue(runnableWasExecuted.get());
+    verify(onInitializationCompleted).run();
   }
 
   @Test
   public void ignoresFutureResultWhenCompletesWithAnEmptyOptionalButStillInvokesRunnable() {
-    final CompletableFuture<Optional<Integer>> initialWidthFuture = CompletableFuture.completedFuture(Optional.empty());
-    // TODO replace with proper mocking once available
-    final AtomicBoolean runnableWasExecuted = new AtomicBoolean(false);
+    final CompletableFuture<Optional<Integer>> initialWidthFuture = completedFuture(Optional.empty());
+    final Runnable onInitializationCompleted = Mockito.spy(Runnable.class);
     final Integer previousValue = 320;
     widthField.setValue(previousValue);
 
-    widthField.initializeWith(initialWidthFuture, () -> runnableWasExecuted.set(true));
+    widthField.initializeWith(initialWidthFuture, onInitializationCompleted);
 
     assertEquals(widthField.getValue(), previousValue);
-    assertTrue(runnableWasExecuted.get());
+    verify(onInitializationCompleted).run();
   }
 
   @Test
@@ -76,5 +76,14 @@ public class ImageWidthFieldTest {
 
     assertTrue(valueOption.isPresent());
     assertEquals(valueOption.get(), imageWidth);
+  }
+
+  @Test
+  public void setsANewPreferredWidth() {
+    final int expectedWidth = 70;
+
+    int preferredWidth = widthField.getPreferredSize().width;
+
+    assertEquals(preferredWidth, expectedWidth);
   }
 }

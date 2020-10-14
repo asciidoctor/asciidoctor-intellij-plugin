@@ -1,8 +1,9 @@
-package org.asciidoc.intellij.ui;
+package org.asciidoc.intellij.ui.components;
 
 import com.intellij.ui.components.fields.IntegerField;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -34,5 +35,10 @@ public final class ImageWidthField extends IntegerField {
 
   private boolean excludeZero(@NotNull final Integer width) {
     return !width.equals(0);
+  }
+
+  @Override
+  public @NotNull Dimension getPreferredSize() {
+    return new Dimension(70, (int) super.getPreferredSize().getHeight());
   }
 }
