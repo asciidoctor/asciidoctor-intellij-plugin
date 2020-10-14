@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.31.35 (work in progress)
 
 - dialog to paste an image from clipboard allows adding the width (thanks to @martingreilinger) (#412, #563)
+- if an Antora xref misses a file extension, show a warning in the editor and offer a quick-fix if possible (#480)
 
 === 0.31.34 (preview, available from GitHub releases)
 

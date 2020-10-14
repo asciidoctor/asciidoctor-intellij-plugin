@@ -96,7 +96,8 @@ public class AsciiDocAttributeDeclarationImpl
       }
       return val;
     }
-    return null;
+    // the attribute is defined, therefore its default value is an empty string
+    return "";
   }
 
   @NotNull

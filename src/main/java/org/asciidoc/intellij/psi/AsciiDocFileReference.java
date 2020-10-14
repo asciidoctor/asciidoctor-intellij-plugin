@@ -413,6 +413,24 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     }
   }
 
+  public boolean inspectAntoraXrefWithoutExtension() {
+    if (!"xref".endsWith(macroName)) {
+      return false;
+    }
+    if (!isFile()) {
+      return false;
+    }
+    if (!isAntora && AsciiDocUtil.findAntoraModuleDir(myElement) == null) {
+      return false;
+    }
+    String resolvedKey = AsciiDocUtil.resolveAttributes(myElement, key);
+    if (resolvedKey != null) {
+      key = resolvedKey;
+    }
+    // file has an extension if it contains a dot; it might contain an extension if it has an unresolved reference.
+    return !key.contains(".") && !key.contains("{");
+  }
+
   @NotNull
   private String removeFileProtocolPrefix(String value) {
     if (value.startsWith(FILE_PREFIX)) {
@@ -842,7 +860,12 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     // check if file name is absolute path
     VirtualFile fileByPath;
     try {
-      if (SystemInfo.isWindows) {
+      if (element.getContainingFile().getVirtualFile().getFileSystem().getProtocol().equals("temp")) {
+        VirtualFile vf = element.getContainingFile().getVirtualFile().getFileSystem().findFileByPath(fileName);
+        if (vf != null) {
+          return PsiManager.getInstance(element.getProject()).findFile(vf);
+        }
+      } else if (SystemInfo.isWindows) {
         if (fileName.startsWith("/")) {
           fileName = fileName.replace('/', '\\');
         }

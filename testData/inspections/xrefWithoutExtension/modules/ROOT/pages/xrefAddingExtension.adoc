@@ -1,0 +1,7 @@
+[#hi]
+= Hi!
+
+xref:xrefAddingExtension.adoc[]
+
+// anchor #hi is necessary, as it would otherwise not treat the part in front of it as a file
+xref:<warning descr="Antora xref should always have a file extension; skipping the extension '.adoc' is deprecated from Antora 3.0 onwards"><caret>xrefAddingExtension</warning>#hi[]

@@ -1,0 +1,8 @@
+[#hi]
+= Hi!
+
+:noextension:
+
+// as the file name contains an attribute value, no quickfix will be available
+xref:<warning descr="Antora xref should always have a file extension; skipping the extension '.adoc' is deprecated from Antora 3.0 onwards">xrefAddingExtension{noextension}</warning>#hi[]
+

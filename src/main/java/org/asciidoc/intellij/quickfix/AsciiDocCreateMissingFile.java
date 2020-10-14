@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.quickfix;
 
 import com.intellij.ide.actions.OpenFileAction;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -31,7 +32,7 @@ public interface AsciiDocCreateMissingFile {
             if (e instanceof PsiDirectory) {
               parent = (PsiDirectory) e;
             } else {
-              OpenFileAction.openFile(((PsiFile) e).getVirtualFile(), project);
+              ApplicationManager.getApplication().invokeLater(() -> OpenFileAction.openFile(((PsiFile) e).getVirtualFile(), project));
               break;
             }
           }

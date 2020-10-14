@@ -268,6 +268,10 @@
                      groupName="General" enabledByDefault="false" level="WARNING"
                      shortName="AsciiDocDescriptionExists"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocDescriptionExistsInspection"/>
+    <localInspection language="AsciiDoc" displayName="Antora xref should always have file extension" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="WARNING"
+                     shortName="AsciiDocXrefWithFileExtension"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocXrefWithoutExtensionInspection"/>
     <lang.inspectionSuppressor language="AsciiDoc"
       implementationClass="org.asciidoc.intellij.inspections.AsciiDocInspectionSuppressor" />
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
