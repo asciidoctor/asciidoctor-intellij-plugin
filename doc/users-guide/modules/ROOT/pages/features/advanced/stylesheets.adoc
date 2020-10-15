@@ -84,8 +84,16 @@ The https://github.com/darshandsoni/asciidoctor-skins[asciidoctor-skins] project
 
 === Add additional styles or HTML headers
 
-This adds additional styles in addition to the default stylesheet.
+This adds additional styles and HTML headers in addition to the default stylesheet.
 The chapter https://asciidoctor.org/docs/user-manual/#docinfo-file["`Docinfo Files`" in the Asciidoctor User Manual^] provides more information about this capability.
+
+[NOTE]
+====
+* The contents will be embedded in the preview, therefore relative links to the local file system will not work.
+* Attribute substitution is not yet supported by the plugin
+====
+
+Follow these steps to enable Docinfo Files:
 
 . Create a file _.asciidoctorconfig_ with the following contents:
 +
