@@ -33,6 +33,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.geronimo.gshell.io.SystemOutputHijacker;
 import org.asciidoc.intellij.actions.asciidoc.AsciiDocAction;
 import org.asciidoc.intellij.asciidoc.AntoraIncludeAdapter;
@@ -94,9 +95,11 @@ import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_YML;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.ATTRIBUTES;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraAttachmentsDirRelative;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraExamplesDir;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraImagesDirRelative;
@@ -1211,6 +1214,7 @@ public class AsciiDoc {
                 } catch (IOException ex) {
                   content = "<!-- unable to read contents from from " + file.getCanonicalPath() + ": " + ex.getMessage() + " -->";
                 }
+                content = replaceAttributes(content, attributes);
                 html = html
                   .replace("</head>", content + "</head>");
               }
@@ -1228,6 +1232,7 @@ public class AsciiDoc {
                 } catch (IOException ex) {
                   content = "<!-- unable to read contents from from " + file.getCanonicalPath() + ": " + ex.getMessage() + " -->";
                 }
+                content = replaceAttributes(content, attributes);
                 html = html
                   .replace("</body>", content + "</body>");
               }
@@ -1237,6 +1242,25 @@ public class AsciiDoc {
       }
     }
     return html;
+  }
+
+  private static String replaceAttributes(String template, Map<String, String> attributes) {
+    Matcher matcher = ATTRIBUTES.matcher(template);
+    Map<String, MutableInt> recursionProtection = new HashMap<>();
+    while (matcher.find()) {
+      String attributeName = matcher.group(1);
+      String attributeValue = attributes.get(attributeName);
+      if (attributeValue != null) {
+        MutableInt recursionCounter = recursionProtection.computeIfAbsent(attributeName, s -> new MutableInt(0));
+        if (recursionCounter.intValue() > 20 || recursionProtection.size() > 100) {
+          return template;
+        }
+        recursionCounter.increment();
+        template = matcher.replaceAll(Matcher.quoteReplacement(attributeValue));
+        matcher = ATTRIBUTES.matcher(template);
+      }
+    }
+    return template;
   }
 
 }
