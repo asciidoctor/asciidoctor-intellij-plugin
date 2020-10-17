@@ -8,6 +8,8 @@ Read more on how you can help:
 
 * xref:user/join-discussion-on-github.adoc[]
 * xref:user/subscribe-to-new-releases.adoc[]
+* xref:user/installing-a-preview-release.adoc[]
 * xref:user/add-eap-repository-to-ide.adoc[]
 
+If you want to give a financial contribution, continue to "`xref:contribute-as-a-sponsor.adoc[]`".
 

@@ -1,9 +1,12 @@
 * xref:index.adoc[]
+
 * xref:contribute-as-a-user.adoc[]
-*** xref:user/join-discussion-on-github.adoc[]
-*** xref:user/subscribe-to-new-releases.adoc[]
-*** xref:user/installing-a-preview-release.adoc[]
-*** xref:user/add-eap-repository-to-ide.adoc[]
+** xref:user/write-a-review.adoc[]
+** xref:user/join-discussion-on-github.adoc[]
+** xref:user/subscribe-to-new-releases.adoc[]
+** xref:user/installing-a-preview-release.adoc[]
+** xref:user/add-eap-repository-to-ide.adoc[]
+
 * xref:contribute-as-a-coder.adoc[]
 ** xref:coder/setup-environment.adoc[]
 ** xref:coder/building-and-running.adoc[]
@@ -14,8 +17,11 @@
 ** xref:coder/preview.adoc[]
 ** xref:coder/upgrading-asciidoctor.adoc[]
 ** xref:coder/releasing-plugin.adoc[]
+
 * xref:contribute-as-a-writer.adoc[]
 ** xref:docs/edit-documentation-content.adoc[]
 ** xref:docs/change-documentation-theme.adoc[]
 ** xref:docs/change-startpage.adoc[]
 ** xref:docs/writing-user-documentation.adoc[]
+
+* xref:contribute-as-a-sponsor.adoc[]

@@ -88,6 +88,23 @@ public class AsciiDocApplicationSettings implements PersistentStateComponent<Asc
     @Property(surroundWithTag = false)
     @NotNull
     private AsciiDocPreviewSettings myPreviewSettings = AsciiDocPreviewSettings.DEFAULT;
+    private String pluginVersion;
+
+    public String getPluginVersion() {
+      return pluginVersion;
+    }
+
+    public void setPluginVersion(String pluginVersion) {
+      this.pluginVersion = pluginVersion;
+    }
+  }
+
+  public String getVersion() {
+    return myState.getPluginVersion();
+  }
+
+  public void setVersion(String version) {
+    myState.setPluginVersion(version);
   }
 
   public interface SettingsChangedListener {

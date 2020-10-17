@@ -1,0 +1,12 @@
+= Contribute as a sponsor
+:description: Helping to keep the plugin going by supporting its foundations financially.
+
+{description}
+
+This plugin is maintained in someone free time.
+Several users contributed ideas and code.
+To deliver all the value it borrows a lot of functionality from the Asciidoctor ecosystem.
+
+*To support the Asciidoctor ecosystem,* support the https://opencollective.com/asciidoctor[Asciidoctor Open Collective^].
+
+*To support the maintainer of the plugin,* consider https://github.com/sponsors/ahus1[becoming one of his GitHub sponsors^].

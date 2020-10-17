@@ -1,0 +1,14 @@
+= Write a review
+:description: Writing a review in JetBrains Marketplace is valuable feedback and motivation for the authors.
+
+{description}
+Reviews on the JetBrains marketplace help other users to find out what plugins work, and what don't.
+
+**If you like what you see:**
+Go to the https://plugins.jetbrains.com/plugin/7391-asciidoc/reviews[AsciiDoc plugin's page on the JetBrains marketplace].
+Log in with your JetBrains account and write a review.
+
+**If you find that something is not working as you expect it to work:**
+https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[Open a GitHub issue] so that the plugin can be improved.
+GitHub allows for other users and developers to join the discussion and find the best working solution.
+
