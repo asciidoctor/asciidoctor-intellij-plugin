@@ -57,6 +57,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:WHITE_SPACE (' ')");
   }
 
+  public void testPassthroughEscaped() {
+    doTest("\\+test *bold* test+",
+      "AsciiDoc:TEXT ('\\+test')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:BOLD_START ('*')\n" +
+        "AsciiDoc:BOLD ('bold')\n" +
+        "AsciiDoc:BOLD_END ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('test+')");
+  }
+
   public void testListing() {
     doTest("some text at start\n----\nbbbb\n----\ncccc",
       "AsciiDoc:TEXT ('some')\n" +
@@ -1494,6 +1505,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:PASSTRHOUGH_INLINE_START ('++')\n" +
         "AsciiDoc:PASSTRHOUGH_CONTENT ('pt\\npt2')\n" +
         "AsciiDoc:PASSTRHOUGH_INLINE_END ('++')");
+  }
+
+  public void testPassThroughInlineTwoPlusEscaped() {
+    doTest("\\++npt++",
+      "AsciiDoc:TEXT ('\\+')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_START ('+')\n" +
+        "AsciiDoc:PASSTRHOUGH_CONTENT ('npt')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_END ('+')\n" +
+        "AsciiDoc:TEXT ('+')");
   }
 
   public void testPassThroughDoublePlusAndSingle() {
