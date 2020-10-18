@@ -5,6 +5,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Pair;
 import com.intellij.ui.components.JBTextField;
+import org.asciidoc.intellij.actions.asciidoc.ImageAttributes;
 import org.asciidoc.intellij.ui.components.ImageAttributesPanel;
 import org.asciidoc.intellij.ui.components.ImageWidthField;
 import org.asciidoc.intellij.ui.components.PasteOptionPanel;
@@ -18,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static org.asciidoc.intellij.ui.OptionsPanelFactory.createOptionPanelWithButtonGroup;
 
-public final class PasteImageDialog extends DialogWrapper {
+public final class PasteImageDialog extends DialogWrapper implements ImageAttributes {
 
   private final ButtonGroup buttonGroup;
   private final PasteOptionPanel pasteOptionPanel;
@@ -113,6 +114,7 @@ public final class PasteImageDialog extends DialogWrapper {
     return buttonGroup.getSelection().getActionCommand();
   }
 
+  @Override
   public Optional<Integer> getWidth() {
     final ImageWidthField widthField = attributesPanel.getWidthField();
 
@@ -121,11 +123,12 @@ public final class PasteImageDialog extends DialogWrapper {
       : Optional.empty();
   }
 
+  @Override
   public Optional<String> getAlt() {
     final JBTextField altField = attributesPanel.getAltField();
 
     return altField.isEnabled()
-      ? Optional.ofNullable(altField.getText())
+      ? Optional.ofNullable(altField.getText()).filter(alt -> !alt.isEmpty())
       : Optional.empty();
   }
 }

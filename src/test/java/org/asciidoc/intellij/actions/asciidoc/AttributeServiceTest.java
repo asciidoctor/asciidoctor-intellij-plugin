@@ -19,9 +19,9 @@ public class AttributeServiceTest {
 
   @Test
   public void mapsAttributesToCommaSeparatedLabelValueString() {
-    final Pair<String, Optional<?>> attribute1 = new Pair<>("a1", Optional.of("1"));
-    final Pair<String, Optional<?>> attribute2 = new Pair<>("a2", Optional.of(2));
-    final Pair<String, Optional<?>> attribute3 = new Pair<>("a3", Optional.of(true));
+    final Pair<Optional<?>, Optional<String>> attribute1 = new Pair<>(Optional.of("1"), Optional.of("a1"));
+    final Pair<Optional<?>, Optional<String>> attribute2 = new Pair<>(Optional.of(2), Optional.of("a2"));
+    final Pair<Optional<?>, Optional<String>> attribute3 = new Pair<>(Optional.of(true), Optional.of("a3"));
 
     final String attributes = service.toAttributeString(attribute1, attribute2, attribute3);
 
@@ -29,9 +29,20 @@ public class AttributeServiceTest {
   }
 
   @Test
+  public void mapsAttributesWithOptionalLabelCorrectly() {
+    final Pair<Optional<?>, Optional<String>> attribute1 = new Pair<>(Optional.of("source"), Optional.empty());
+    final Pair<Optional<?>, Optional<String>> attribute2 = new Pair<>(Optional.of("java"), Optional.empty());
+    final Pair<Optional<?>, Optional<String>> attribute3 = new Pair<>(Optional.of("\"Example 1\""), Optional.of("title"));
+
+    final String attributes = service.toAttributeString(attribute1, attribute2, attribute3);
+
+    assertEquals(attributes, "source,java,title=\"Example 1\"");
+  }
+
+  @Test
   public void filtersEmptyOptionalValues() {
-    final Pair<String, Optional<?>> attribute = new Pair<>("attribute", Optional.of(true));
-    final Pair<String, Optional<?>> empty = new Pair<>("empty", Optional.empty());
+    final Pair<Optional<?>, Optional<String>> attribute = new Pair<>(Optional.of(true), Optional.of("attribute"));
+    final Pair<Optional<?>, Optional<String>> empty = new Pair<>(Optional.empty(), Optional.of("empty"));
 
     final String attributes = service.toAttributeString(attribute, empty);
 

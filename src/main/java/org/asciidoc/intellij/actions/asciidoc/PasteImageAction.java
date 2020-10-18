@@ -22,7 +22,6 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -110,10 +109,10 @@ public class PasteImageAction extends AsciiDocAction {
   private Editor editor;
 
   private VirtualFile file;
-  private final AttributeService attributeService;
+  private final ImageAttributeService attributeService;
 
   public PasteImageAction() {
-    this.attributeService = ServiceManager.getService(AttributeService.class);
+    this.attributeService = ServiceManager.getService(ImageAttributeService.class);
   }
 
   public static boolean imageAvailable(Producer<Transferable> producer) {
@@ -227,7 +226,7 @@ public class PasteImageAction extends AsciiDocAction {
                   try (OutputStream outputStream = target.getOutputStream(this)) {
                     boolean written = ImageIO.write(bufferedImage, ext, outputStream);
                     if (written) {
-                      insertImageReference(destination.getVirtualFile(), offset, getImageAttributes(dialog));
+                      insertImageReference(destination.getVirtualFile(), offset, attributeService.toAttributeString(dialog));
                       updateProjectView(target);
                     } else {
                       String message = "Can't save image, no appropriate writer found for selected format.";
@@ -350,7 +349,7 @@ public class PasteImageAction extends AsciiDocAction {
                         VirtualFile target = createOrReplaceTarget(destination);
                         try (OutputStream outputStream = target.getOutputStream(this)) {
                           Files.copy(imageFile.toPath(), outputStream);
-                          insertImageReference(destination.getVirtualFile(), offset, getImageAttributes(dialog));
+                          insertImageReference(destination.getVirtualFile(), offset, attributeService.toAttributeString(dialog));
                           updateProjectView(target);
                         }
                       } catch (IOException ex) {
@@ -369,7 +368,7 @@ public class PasteImageAction extends AsciiDocAction {
             case ACTION_INSERT_REFERENCE:
               CommandProcessor.getInstance().executeCommand(project,
                 () -> ApplicationManager.getApplication().runWriteAction(() -> {
-                  insertImageReference(LocalFileSystem.getInstance().findFileByIoFile(imageFile), offset, getImageAttributes(dialog));
+                  insertImageReference(LocalFileSystem.getInstance().findFileByIoFile(imageFile), offset, attributeService.toAttributeString(dialog));
                   }
                 ), null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
               );
@@ -381,13 +380,6 @@ public class PasteImageAction extends AsciiDocAction {
         }
       }
     }
-  }
-
-  private @NotNull String getImageAttributes(final @NotNull PasteImageDialog dialog) {
-    return attributeService.toAttributeString(
-      new Pair<>("width", dialog.getWidth()),
-      new Pair<>("alt", dialog.getAlt().filter(alt -> !alt.isEmpty()).map(alt -> "\"" + alt + "\""))
-    );
   }
 
   private void memorizeTargetFolder(VirtualFileWrapper destination) {
