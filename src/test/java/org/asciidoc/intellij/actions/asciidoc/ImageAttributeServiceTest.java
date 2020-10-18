@@ -1,7 +1,6 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.util.Pair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,13 +26,22 @@ public class ImageAttributeServiceTest {
   @Mock
   private AttributeService attributeService;
 
+  @Mock
+  private MacroAttribute attributeWithLabel;
+
+  @Mock
+  private MacroAttribute attributeInQuotesWithLabel;
+
+
   private MockedStatic<ServiceManager> mockedServiceManager;
+  private MockedStatic<MacroAttribute> mockedMacroAttribute;
 
   private ImageAttributeService service;
 
   @Before
   public void setup() {
     mockedServiceManager = Mockito.mockStatic(ServiceManager.class);
+    mockedMacroAttribute = Mockito.mockStatic(MacroAttribute.class);
 
     mockedServiceManager.when(() -> ServiceManager.getService(AttributeService.class))
       .thenReturn(attributeService);
@@ -44,40 +52,25 @@ public class ImageAttributeServiceTest {
   @After
   public void teardown() {
     mockedServiceManager.close();
+    mockedMacroAttribute.close();
   }
 
   @Test
-  public void shouldPassAttributeLabelPairsCorrectlyToTheAttributeService() {
+  public void shouldPassMacroAttributesCorrectlyToTheAttributeService() {
     final Optional<Integer> widthOption = Optional.of(250);
-    final String alt = "Image description";
+    final Optional<String> altOption = Optional.of("Image description");
     final String attributeString = "attributeString";
     when(attributeService.toAttributeString(any())).thenReturn(attributeString);
     when(imageAttributes.getWidth()).thenReturn(widthOption);
-    when(imageAttributes.getAlt()).thenReturn(Optional.of(alt));
+    when(imageAttributes.getAlt()).thenReturn(altOption);
+    mockedMacroAttribute.when(() -> MacroAttribute.createWithLabel(widthOption, "width"))
+      .thenReturn(attributeWithLabel);
+    mockedMacroAttribute.when(() -> MacroAttribute.createInQuotesWithLabel(altOption, "alt"))
+      .thenReturn(attributeInQuotesWithLabel);
 
     final String result = service.toAttributeString(imageAttributes);
 
     assertEquals(result, attributeString);
-    verify(attributeService).toAttributeString(
-      new Pair<>(widthOption, Optional.of("width")),
-      new Pair<>(Optional.of("\"" + alt + "\""), Optional.of("alt"))
-    );
+    verify(attributeService).toAttributeString(attributeWithLabel, attributeInQuotesWithLabel);
   }
-
-  @Test
-  public void shouldEscapeQuotesInAltText() {
-    final String alt = "a quote: \"";
-    final String attributeString = "attributeString";
-    when(attributeService.toAttributeString(any())).thenReturn(attributeString);
-    when(imageAttributes.getAlt()).thenReturn(Optional.of(alt));
-
-    final String result = service.toAttributeString(imageAttributes);
-
-    assertEquals(result, attributeString);
-    verify(attributeService).toAttributeString(
-      new Pair<>(Optional.empty(), Optional.of("width")),
-      new Pair<>(Optional.of("\"a quote: \\\"\""), Optional.of("alt"))
-    );
-  }
-
 }

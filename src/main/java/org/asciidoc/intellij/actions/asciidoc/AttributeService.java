@@ -1,7 +1,6 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
 import com.intellij.openapi.components.Service;
-import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -12,19 +11,17 @@ import java.util.stream.Stream;
 public final class AttributeService {
 
   /**
-   * Takes a list of attributes and transforms them into an attribute string.
-   * Attributes consist of a value-abel {@link com.intellij.openapi.util.Pair}.
-   * Empty {@link java.util.Optional} {@code values} will be ignored.
-   * Present {@link java.util.Optional} {@code labels} will be prefixed ({@code "<label>="}).
+   * Takes a list of {@link MacroAttribute}s and transforms them into an attribute string.
+   * {@link MacroAttribute}s without a value will be ignored.
    *
-   * @param attributes list of attributes consisting of a value-label {@link com.intellij.openapi.util.Pair}
-   * @return list of attribute values and labels if present, concatenated by comma.
+   * @param attributes list of {@link MacroAttribute}s
+   * @return list of attribute strings concatenated by comma.
    */
-  @SafeVarargs
-  public final @NotNull String toAttributeString(@NotNull final Pair<Optional<?>, Optional<String>>... attributes) {
+  public @NotNull String toAttributeString(@NotNull final MacroAttribute... attributes) {
     return Stream.of(attributes)
-      .filter(labelValuePair -> labelValuePair.first.isPresent())
-      .map(labelValuePair -> labelValuePair.second.map(label -> label + "=").orElse("") + labelValuePair.first.get())
+      .filter(MacroAttribute::hasValue)
+      .map(MacroAttribute::asAttributeStringOption)
+      .map(Optional::get)
       .collect(Collectors.joining(","));
   }
 }

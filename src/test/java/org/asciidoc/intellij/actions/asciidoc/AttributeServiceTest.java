@@ -1,12 +1,16 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
-import com.intellij.openapi.util.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class AttributeServiceTest {
 
@@ -18,21 +22,10 @@ public class AttributeServiceTest {
   }
 
   @Test
-  public void shouldMapAttributesToCommaSeparatedLabelValueString() {
-    final Pair<Optional<?>, Optional<String>> attribute1 = new Pair<>(Optional.of("1"), Optional.of("a1"));
-    final Pair<Optional<?>, Optional<String>> attribute2 = new Pair<>(Optional.of(2), Optional.of("a2"));
-    final Pair<Optional<?>, Optional<String>> attribute3 = new Pair<>(Optional.of(true), Optional.of("a3"));
-
-    final String attributes = service.toAttributeString(attribute1, attribute2, attribute3);
-
-    assertEquals("a1=1,a2=2,a3=true", attributes);
-  }
-
-  @Test
-  public void shouldMapAttributesWithEmptyAndNonEmptyOptionalLabelCorrectly() {
-    final Pair<Optional<?>, Optional<String>> attribute1 = new Pair<>(Optional.of("source"), Optional.empty());
-    final Pair<Optional<?>, Optional<String>> attribute2 = new Pair<>(Optional.of("java"), Optional.empty());
-    final Pair<Optional<?>, Optional<String>> attribute3 = new Pair<>(Optional.of("\"Example 1\""), Optional.of("title"));
+  public void shouldMapMacroAttributesToLabelString() {
+    final MacroAttribute attribute1 = mockedMacroAttribute(Optional.of("source"));
+    final MacroAttribute attribute2 = mockedMacroAttribute(Optional.of("java"));
+    final MacroAttribute attribute3 = mockedMacroAttribute(Optional.of("title=\"Example 1\""));
 
     final String attributes = service.toAttributeString(attribute1, attribute2, attribute3);
 
@@ -40,17 +33,27 @@ public class AttributeServiceTest {
   }
 
   @Test
-  public void shouldFiltersEmptyOptionalValues() {
-    final Pair<Optional<?>, Optional<String>> attribute = new Pair<>(Optional.of(true), Optional.of("attribute"));
-    final Pair<Optional<?>, Optional<String>> empty = new Pair<>(Optional.empty(), Optional.of("empty"));
+  public void shouldFilterEmptyMacroAttributes() {
+    final MacroAttribute attribute = mockedMacroAttribute(Optional.of("alt=\"Some alt text\""));
+    final MacroAttribute empty = mockedMacroAttribute(Optional.empty());
 
     final String attributes = service.toAttributeString(attribute, empty);
 
-    assertEquals("attribute=true", attributes);
+    assertEquals("alt=\"Some alt text\"", attributes);
+    verify(empty, never()).asAttributeStringOption();
   }
 
   @Test
   public void shouldReturnAnEmptyStringIfInvokedWithoutArgs() {
     assertEquals("", service.toAttributeString());
+  }
+
+  private @NotNull MacroAttribute mockedMacroAttribute(final @NotNull Optional<String> stringValueOption) {
+    final MacroAttribute attribute = mock(MacroAttribute.class);
+
+    when(attribute.hasValue()).thenReturn(stringValueOption.isPresent());
+    when(attribute.asAttributeStringOption()).thenReturn(stringValueOption);
+
+    return attribute;
   }
 }
