@@ -12,13 +12,13 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class AttributeServiceTest {
+public class MacroAttributeServiceTest {
 
-  private AttributeService service;
+  private MacroAttributeService service;
 
   @Before
   public void setup() {
-    service = new AttributeService();
+    service = new MacroAttributeService();
   }
 
   @Test

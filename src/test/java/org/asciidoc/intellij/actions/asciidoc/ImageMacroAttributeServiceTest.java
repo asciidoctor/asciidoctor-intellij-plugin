@@ -18,13 +18,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ImageAttributeServiceTest {
+public class ImageMacroAttributeServiceTest {
 
   @Mock
   private ImageAttributes imageAttributes;
 
   @Mock
-  private AttributeService attributeService;
+  private MacroAttributeService macroAttributeService;
 
   @Mock
   private MacroAttribute attributeWithLabel;
@@ -36,17 +36,17 @@ public class ImageAttributeServiceTest {
   private MockedStatic<ServiceManager> mockedServiceManager;
   private MockedStatic<MacroAttribute> mockedMacroAttribute;
 
-  private ImageAttributeService service;
+  private ImageMacroAttributeService service;
 
   @Before
   public void setup() {
     mockedServiceManager = Mockito.mockStatic(ServiceManager.class);
     mockedMacroAttribute = Mockito.mockStatic(MacroAttribute.class);
 
-    mockedServiceManager.when(() -> ServiceManager.getService(AttributeService.class))
-      .thenReturn(attributeService);
+    mockedServiceManager.when(() -> ServiceManager.getService(MacroAttributeService.class))
+      .thenReturn(macroAttributeService);
 
-    service = new ImageAttributeService();
+    service = new ImageMacroAttributeService();
   }
 
   @After
@@ -60,7 +60,7 @@ public class ImageAttributeServiceTest {
     final Optional<Integer> widthOption = Optional.of(250);
     final Optional<String> altOption = Optional.of("Image description");
     final String attributeString = "attributeString";
-    when(attributeService.toAttributeString(any())).thenReturn(attributeString);
+    when(macroAttributeService.toAttributeString(any())).thenReturn(attributeString);
     when(imageAttributes.getWidth()).thenReturn(widthOption);
     when(imageAttributes.getAlt()).thenReturn(altOption);
     mockedMacroAttribute.when(() -> MacroAttribute.createWithLabel(widthOption, "width"))
@@ -71,6 +71,6 @@ public class ImageAttributeServiceTest {
     final String result = service.toAttributeString(imageAttributes);
 
     assertEquals(result, attributeString);
-    verify(attributeService).toAttributeString(attributeWithLabel, attributeInQuotesWithLabel);
+    verify(macroAttributeService).toAttributeString(attributeWithLabel, attributeInQuotesWithLabel);
   }
 }

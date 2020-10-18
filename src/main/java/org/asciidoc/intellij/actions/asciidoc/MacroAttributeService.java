@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public final class AttributeService {
+public final class MacroAttributeService {
 
   /**
    * Takes a list of {@link MacroAttribute}s and transforms them into an attribute string.

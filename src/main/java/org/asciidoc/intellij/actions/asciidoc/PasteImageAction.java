@@ -109,10 +109,10 @@ public class PasteImageAction extends AsciiDocAction {
   private Editor editor;
 
   private VirtualFile file;
-  private final ImageAttributeService attributeService;
+  private final ImageMacroAttributeService attributeService;
 
   public PasteImageAction() {
-    this.attributeService = ServiceManager.getService(ImageAttributeService.class);
+    this.attributeService = ServiceManager.getService(ImageMacroAttributeService.class);
   }
 
   public static boolean imageAvailable(Producer<Transferable> producer) {
