@@ -15,7 +15,6 @@ public final class MacroAttribute {
     return new MacroAttribute(valueOption, Optional.of(label), false);
   }
 
-
   public static MacroAttribute createInQuotesWithLabel(@NotNull final Optional<?> valueOption,
                                                        @NotNull final String label) {
     return new MacroAttribute(valueOption, Optional.of(label), true);
