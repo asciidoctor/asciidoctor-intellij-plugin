@@ -37,7 +37,7 @@ public class ImageAttributeServiceTest {
   }
 
   @Test
-  public void passesAttributeLabelPairsCorrectlyToTheAttributeService() {
+  public void shouldPassAttributeLabelPairsCorrectlyToTheAttributeService() {
     final Optional<Integer> widthOption = Optional.of(250);
     final String alt = "Image description";
     final String attributeString = "attributeString";
@@ -53,4 +53,21 @@ public class ImageAttributeServiceTest {
       new Pair<>(Optional.of("\"" + alt + "\""), Optional.of("alt"))
     );
   }
+
+  @Test
+  public void shouldEscapeQuotesInAltText() {
+    final String alt = "a quote: \"";
+    final String attributeString = "attributeString";
+    when(attributeService.toAttributeString(any())).thenReturn(attributeString);
+    when(imageAttributes.getAlt()).thenReturn(Optional.of(alt));
+
+    final String result = service.toAttributeString(imageAttributes);
+
+    assertEquals(result, attributeString);
+    verify(attributeService).toAttributeString(
+      new Pair<>(Optional.empty(), Optional.of("width")),
+      new Pair<>(Optional.of("\"a quote: \\\"\""), Optional.of("alt"))
+    );
+  }
+
 }

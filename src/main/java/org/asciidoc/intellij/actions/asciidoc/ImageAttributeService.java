@@ -22,7 +22,7 @@ public final class ImageAttributeService {
   public @NotNull String toAttributeString(@NotNull final ImageAttributes attributes) {
     return attributeService.toAttributeString(
       new Pair<>(attributes.getWidth(), Optional.of(WIDTH_LABEL)),
-      new Pair<>(attributes.getAlt().map(alt -> "\"" + alt + "\""), Optional.of(ALT_LABEL))
+      new Pair<>(attributes.getAlt().map(alt -> "\"" + alt.replaceAll("\"", "\\\\\"") + "\""), Optional.of(ALT_LABEL))
     );
   }
 }
