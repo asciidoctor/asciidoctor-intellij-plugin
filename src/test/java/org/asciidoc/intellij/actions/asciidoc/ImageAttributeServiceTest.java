@@ -2,10 +2,12 @@ package org.asciidoc.intellij.actions.asciidoc;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.util.Pair;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -25,15 +27,23 @@ public class ImageAttributeServiceTest {
   @Mock
   private AttributeService attributeService;
 
+  private MockedStatic<ServiceManager> mockedServiceManager;
+
   private ImageAttributeService service;
 
   @Before
   public void setup() {
-    Mockito.mockStatic(ServiceManager.class)
-      .when(() -> ServiceManager.getService(AttributeService.class))
+    mockedServiceManager = Mockito.mockStatic(ServiceManager.class);
+
+    mockedServiceManager.when(() -> ServiceManager.getService(AttributeService.class))
       .thenReturn(attributeService);
 
     service = new ImageAttributeService();
+  }
+
+  @After
+  public void teardown() {
+    mockedServiceManager.close();
   }
 
   @Test
