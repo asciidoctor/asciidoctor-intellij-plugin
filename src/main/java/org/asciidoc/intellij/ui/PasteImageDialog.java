@@ -4,24 +4,26 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Pair;
+import com.intellij.ui.components.JBTextField;
+import org.asciidoc.intellij.actions.asciidoc.ImageAttributes;
+import org.asciidoc.intellij.ui.components.ImageAttributesPanel;
+import org.asciidoc.intellij.ui.components.ImageWidthField;
+import org.asciidoc.intellij.ui.components.PasteOptionPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static org.asciidoc.intellij.ui.OptionsPanelFactory.createOptionPanelWithButtonGroup;
 
-public final class PasteImageDialog extends DialogWrapper {
+public final class PasteImageDialog extends DialogWrapper implements ImageAttributes {
 
-  private final ImageWidthField widthInputField = new ImageWidthField();
-  private final IncludeWidthCheckBox includeWidthCheckbox = new IncludeWidthCheckBox();
-  private final String dialogActionDescription;
   private final ButtonGroup buttonGroup;
-  private final JPanel optionsPanel;
+  private final PasteOptionPanel pasteOptionPanel;
+  private final ImageAttributesPanel attributesPanel;
 
   public static PasteImageDialog createPasteImageFileDialog(final List<Action> options,
                                                             final CompletableFuture<Optional<Integer>> initialWidthFuture) {
@@ -51,57 +53,39 @@ public final class PasteImageDialog extends DialogWrapper {
 
     return new PasteImageDialog(
       dialogTitle,
-      dialogActionDescription,
-      initialWidthFuture,
-      optionPanelWithButtonGroup.getSecond(),
-      optionPanelWithButtonGroup.getFirst()
+      new PasteOptionPanel(dialogActionDescription, optionPanelWithButtonGroup.getFirst()),
+      new ImageAttributesPanel(initialWidthFuture),
+      optionPanelWithButtonGroup.getSecond()
     );
   }
 
   private PasteImageDialog(final String dialogTitle,
-                           final String dialogActionDescription,
-                           final CompletableFuture<Optional<Integer>> initialWidthFuture,
-                           final ButtonGroup buttonGroup,
-                           final JPanel optionsPanel) {
+                           final PasteOptionPanel pasteOptionPanel,
+                           final ImageAttributesPanel attributesPanel,
+                           final ButtonGroup buttonGroup) {
     super(false);
-    this.dialogActionDescription = dialogActionDescription;
+    this.pasteOptionPanel = pasteOptionPanel;
+    this.attributesPanel = attributesPanel;
     this.buttonGroup = buttonGroup;
-    this.optionsPanel = optionsPanel;
-    setupDialog(dialogTitle, initialWidthFuture);
+    setupDialog(dialogTitle);
   }
 
-  private void setupDialog(final String dialogTitle, final CompletableFuture<Optional<Integer>> initialWidthFuture) {
+  private void setupDialog(final String dialogTitle) {
     setTitle(dialogTitle);
     setResizable(false);
-    includeWidthCheckbox.onStateChanged(widthInputField::setEnabled);
-    widthInputField.initializeWith(initialWidthFuture, this::enableCheckboxAndRemoveTooltip);
     init();
-  }
-
-  private void enableCheckboxAndRemoveTooltip() {
-    includeWidthCheckbox.setEnabled(true);
-    includeWidthCheckbox.setToolTipText(null);
   }
 
   @Override
   protected @NotNull JComponent createCenterPanel() {
-    final JPanel panel = new JPanel(new GridLayout(3, 0));
+    final JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
-    panel.add(new JLabel(dialogActionDescription));
-    panel.add(optionsPanel);
-    panel.add(createWidthPanel());
+    panel.add(pasteOptionPanel);
+    panel.add(Box.createVerticalStrut(10));
+    panel.add(attributesPanel);
 
     return panel;
-  }
-
-  @NotNull
-  private JPanel createWidthPanel() {
-    final JPanel widthPanel = new JPanel(new GridLayout(1, 2));
-
-    widthPanel.add(includeWidthCheckbox);
-    widthPanel.add(widthInputField);
-
-    return widthPanel;
   }
 
   @Override
@@ -111,14 +95,16 @@ public final class PasteImageDialog extends DialogWrapper {
 
   @Override
   protected @Nullable ValidationInfo doValidate() {
-    if (widthInputField.isEnabled()) {
+    final ImageWidthField widthField = attributesPanel.getWidthField();
+
+    if (widthField.isEnabled()) {
       try {
-        widthInputField.validateContent();
+        widthField.validateContent();
       } catch (final ConfigurationException exception) {
         final String errorMessageWithoutFieldNamePrefix = exception
           .getMessage()
           .substring(ImageWidthField.FIELD_NAME.length() + 1);
-        return new ValidationInfo(errorMessageWithoutFieldNamePrefix, widthInputField);
+        return new ValidationInfo(errorMessageWithoutFieldNamePrefix, widthField);
       }
     }
     return super.doValidate();
@@ -128,9 +114,21 @@ public final class PasteImageDialog extends DialogWrapper {
     return buttonGroup.getSelection().getActionCommand();
   }
 
+  @Override
   public Optional<Integer> getWidth() {
-    return includeWidthCheckbox.isSelected()
-      ? widthInputField.getValueOption()
+    final ImageWidthField widthField = attributesPanel.getWidthField();
+
+    return widthField.isEnabled()
+      ? widthField.getValueOption()
+      : Optional.empty();
+  }
+
+  @Override
+  public Optional<String> getAlt() {
+    final JBTextField altField = attributesPanel.getAltField();
+
+    return altField.isEnabled()
+      ? Optional.ofNullable(altField.getText()).filter(alt -> !alt.isEmpty())
       : Optional.empty();
   }
 }
