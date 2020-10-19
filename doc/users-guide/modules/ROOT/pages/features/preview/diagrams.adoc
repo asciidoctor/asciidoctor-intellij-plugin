@@ -69,11 +69,15 @@ When using IntelliJ 2020.2+ and plugin version 0.31.25+, the JCEF preview will s
 
 SVGs support interactions with the user, for example hovering or links.
 This is only available when the user adds the option `interactive` or `inline` to diagrams or SVG images.
+Only when an SVG or diagram is inlined, the plugin will redirect clicks on links in the preview to local AsciiDoc files.
 See https://asciidoctor.org/docs/user-manual/#taming-svgs[section "`Taming SVGs`" in the Asciidoctor manual].
 
-[NOTE]
+[WARNING]
 ====
-Only when an SVG or diagram is inlined, the plugin will redirect clicks on links in the preview to local AsciiDoc files.
+* When using existing SVGs images in Asciidoctor, use `**opts=**inline` to inline exsting SVGs
+* When using Kroki, use `**opts=**inline` and set `allow-uri-read` in the plugin's settings
+* When using Asciidoctor Diagram, use `**svg-type=**inline` to inline generated SVG
+* As this requires SVG support in the preview, this only works with the JCEF preview.
 ====
 
 The following PlantUML example renders a diagram in the preview showing a note "`Link to class-demo.adoc`" with a link.
@@ -82,7 +86,8 @@ When the user clicks on the note, the plugin resolves the link `class-demo.html`
 .Source code for diagram
 [source,asciidoc]
 -----
-[plantuml,demo,svg,opts="inline"]
+// setting both opts and svg-type to make it work with both Kroki and Asciidoctor Diagram
+[plantuml,demo,svg,opts="inline",svg-type="inline"]
 ----
 class Demo
 note right
@@ -115,7 +120,8 @@ If inlining should be used only for IntelliJ preview, consider a conditional att
 -----
 \ifdef::env-idea[:plantuml-opts: inline]
 
-[plantuml,demo,svg,opts="{plantuml-opts}"]
+// setting both opts and svg-type to make it work with both Kroki and Asciidoctor Diagram
+[plantuml,demo,svg,opts="{plantuml-opts}",svg-type="{plantuml-opts}"]
 ----
 ...
 ----
