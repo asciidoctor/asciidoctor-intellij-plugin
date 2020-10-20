@@ -3,6 +3,7 @@ package org.asciidoc.intellij.annotator;
 import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -20,6 +21,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.AsciiDoc;
+import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocFile;
@@ -50,11 +52,13 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
 
   public static final String INCLUDE_FILE_NOT_FOUND = "include file not found";
 
+  private final AsciiDocExtensionService extensionService = ServiceManager.getService(AsciiDocExtensionService.class);
+
   @Nullable
   @Override
   public AsciiDocInfoType collectInformation(@NotNull PsiFile file, @NotNull Editor editor, boolean hasErrors) {
     final String config = AsciiDoc.config(editor.getDocument(), file.getProject());
-    List<String> extensions = AsciiDoc.getExtensions(file.getProject());
+    List<String> extensions = extensionService.getExtensions(file.getProject());
     return new AsciiDocInfoType(file, editor, editor.getDocument().getText(), config, extensions);
   }
 

@@ -3,6 +3,7 @@ package org.asciidoc.intellij.psi;
 import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
@@ -586,11 +587,12 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             if (!"image".equals(macroName)) {
               List<VirtualFile> vfs = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, base);
               for (VirtualFile vf : vfs) {
-                toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(myElement.getProject().getBaseDir(), vf), '$');
-                toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement.getProject().getBaseDir(), vf), '$');
-                toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(myElement.getProject().getBaseDir(), vf), '$');
-                toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement.getProject().getBaseDir(), vf), '$');
-                toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(myElement.getProject().getBaseDir(), vf), '$');
+                final VirtualFile projectDir = ProjectUtil.guessProjectDir(myElement.getProject());
+                toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(projectDir, vf), '$');
+                toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(projectDir, vf), '$');
+                toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(projectDir, vf), '$');
+                toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(projectDir, vf), '$');
+                toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(projectDir, vf), '$');
               }
               return items.toArray();
             }

@@ -91,9 +91,9 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
         }
       }
       String nameFinal = nameToSearch;
-      files = myDumbService.runReadActionInSmartMode(() -> CacheManager.SERVICE.getInstance(element.getProject()).getFilesWithWord(nameFinal, UsageSearchContext.IN_CODE,
-        (GlobalSearchScope) scope,
-        false));
+      files = myDumbService.runReadActionInSmartMode(() ->
+        CacheManager.getInstance(element.getProject())
+          .getFilesWithWord(nameFinal, UsageSearchContext.IN_CODE, (GlobalSearchScope) scope, false));
 
       if (element instanceof AsciiDocAttributeDeclarationName) {
         Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(name, element.getProject(),

@@ -25,6 +25,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -54,6 +55,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
 import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
+import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
@@ -84,7 +86,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     NotificationDisplayType.NONE, true);
 
   private final Logger log = Logger.getInstance(AsciiDocPreviewEditor.class);
-
+  private final AsciiDocExtensionService extensionService = ServiceManager.getService(AsciiDocExtensionService.class);
   /**
    * single threaded with one task queue (one for each editor window).
    */
@@ -139,7 +141,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   private void render() {
     final String config = AsciiDoc.config(document, project);
     final @Language("asciidoc") String content = document.getText();
-    List<String> extensions = AsciiDoc.getExtensions(project);
+    List<String> extensions = extensionService.getExtensions(project);
 
     lazyExecutor.execute(() -> {
       try {

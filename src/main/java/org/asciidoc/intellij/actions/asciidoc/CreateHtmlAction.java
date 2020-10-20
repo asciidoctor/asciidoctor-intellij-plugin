@@ -5,6 +5,7 @@ import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -16,6 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
+import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 
 import java.io.File;
@@ -30,6 +32,7 @@ public class CreateHtmlAction extends AsciiDocAction {
 
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.CreateHtmlAction";
 
+  private final AsciiDocExtensionService extensionService = ServiceManager.getService(AsciiDocExtensionService.class);
   private Project project;
 
   @Override
@@ -73,10 +76,9 @@ public class CreateHtmlAction extends AsciiDocAction {
           // parent will be null if we use Language Injection and Fragment Editor
           fileBaseDir = new File(parent.getCanonicalPath());
         }
-        AsciiDoc asciiDoc = new AsciiDoc(project, fileBaseDir,
-          tempImagesPath, file.getName());
-        List<String> extensions = AsciiDoc.getExtensions(project);
+        AsciiDoc asciiDoc = new AsciiDoc(project, fileBaseDir, tempImagesPath, file.getName());
         String config = AsciiDoc.config(editor.getDocument(), project);
+        List<String> extensions = extensionService.getExtensions(project);
         asciiDoc.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDoc.FileType.HTML);
       } finally {
         if (tempImagesPath != null) {

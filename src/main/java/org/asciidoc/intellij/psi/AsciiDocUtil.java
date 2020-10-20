@@ -51,6 +51,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.intellij.openapi.project.ProjectUtil.guessProjectDir;
+
 import static org.asciidoc.intellij.psi.AsciiDocBlockIdStubElementType.BLOCK_ID_WITH_VAR;
 
 public class AsciiDocUtil {
@@ -432,7 +434,7 @@ public class AsciiDocUtil {
   }
 
   @Nullable
-  public static VirtualFile findAntoraPartials(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+  public static VirtualFile findAntoraPartials(@Nullable VirtualFile projectBasePath, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
@@ -449,7 +451,7 @@ public class AsciiDocUtil {
           }
         }
       }
-      if (projectBasePath.equals(dir)) {
+      if (projectBasePath != null && projectBasePath.equals(dir)) {
         break;
       }
       dir = dir.getParent();
@@ -457,7 +459,7 @@ public class AsciiDocUtil {
     return null;
   }
 
-  public static VirtualFile findAntoraAttachmentsDir(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+  public static VirtualFile findAntoraAttachmentsDir(@Nullable VirtualFile projectBasePath, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
@@ -474,7 +476,7 @@ public class AsciiDocUtil {
           return attachments;
         }
       }
-      if (projectBasePath.equals(dir)) {
+      if (projectBasePath != null && projectBasePath.equals(dir)) {
         break;
       }
       dir = dir.getParent();
@@ -482,7 +484,8 @@ public class AsciiDocUtil {
     return null;
   }
 
-  public static @Nullable VirtualFile findAntoraPagesDir(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+  public static @Nullable VirtualFile
+  findAntoraPagesDir(@Nullable VirtualFile projectBasePath, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
@@ -492,7 +495,7 @@ public class AsciiDocUtil {
           return pages;
         }
       }
-      if (projectBasePath.equals(dir)) {
+      if (projectBasePath != null && projectBasePath.equals(dir)) {
         break;
       }
       dir = dir.getParent();
@@ -500,14 +503,14 @@ public class AsciiDocUtil {
     return null;
   }
 
-  public static VirtualFile findAntoraModuleDir(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+  public static VirtualFile findAntoraModuleDir(@Nullable VirtualFile projectBasePath, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
         dir.getParent().getParent().findChild(ANTORA_YML) != null) {
         return dir;
       }
-      if (projectBasePath.equals(dir)) {
+      if (projectBasePath != null && projectBasePath.equals(dir)) {
         break;
       }
       dir = dir.getParent();
@@ -515,7 +518,7 @@ public class AsciiDocUtil {
     return null;
   }
 
-  public static String findAntoraImagesDirRelative(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+  public static String findAntoraImagesDirRelative(@Nullable VirtualFile projectBasePath, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
     StringBuilder imagesDir = new StringBuilder();
     while (dir != null) {
@@ -533,7 +536,7 @@ public class AsciiDocUtil {
           return imagesDir + FAMILY_IMAGE + "s";
         }
       }
-      if (projectBasePath.equals(dir)) {
+      if (projectBasePath != null && projectBasePath.equals(dir)) {
         break;
       }
       dir = dir.getParent();
@@ -569,7 +572,7 @@ public class AsciiDocUtil {
     return null;
   }
 
-  public static VirtualFile findAntoraImagesDir(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+  public static VirtualFile findAntoraImagesDir(@Nullable VirtualFile projectBasePath, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
@@ -586,7 +589,7 @@ public class AsciiDocUtil {
           return images;
         }
       }
-      if (projectBasePath.equals(dir)) {
+      if (projectBasePath != null && projectBasePath.equals(dir)) {
         break;
       }
       dir = dir.getParent();
@@ -594,7 +597,7 @@ public class AsciiDocUtil {
     return null;
   }
 
-  public static VirtualFile findAntoraExamplesDir(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+  public static VirtualFile findAntoraExamplesDir(@Nullable VirtualFile projectBasePath, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
@@ -604,7 +607,7 @@ public class AsciiDocUtil {
           return examples;
         }
       }
-      if (projectBasePath.equals(dir)) {
+      if (projectBasePath != null && projectBasePath.equals(dir)) {
         break;
       }
       dir = dir.getParent();
@@ -718,7 +721,7 @@ public class AsciiDocUtil {
       vf = element.getContainingFile().getOriginalFile().getVirtualFile();
     }
     if (vf != null) {
-      springRestDocSnippets = findSpringRestDocSnippets(element.getProject().getBaseDir(), vf);
+      springRestDocSnippets = findSpringRestDocSnippets(guessProjectDir(element.getProject()), vf);
     }
     return springRestDocSnippets;
   }
@@ -733,7 +736,7 @@ public class AsciiDocUtil {
       vf = element.getContainingFile().getOriginalFile().getVirtualFile();
     }
     if (vf != null) {
-      antoraPartials = findAntoraPartials(element.getProject().getBaseDir(), vf);
+      antoraPartials = findAntoraPartials(guessProjectDir(element.getProject()), vf);
     }
     return antoraPartials;
   }
@@ -747,7 +750,7 @@ public class AsciiDocUtil {
       vf = element.getContainingFile().getOriginalFile().getVirtualFile();
     }
     if (vf != null) {
-      antoraImagesDir = findAntoraImagesDir(element.getProject().getBaseDir(), vf);
+      antoraImagesDir = findAntoraImagesDir(guessProjectDir(element.getProject()), vf);
     }
     return antoraImagesDir;
   }
@@ -761,7 +764,7 @@ public class AsciiDocUtil {
       vf = element.getContainingFile().getOriginalFile().getVirtualFile();
     }
     if (vf != null) {
-      antoraExamplesDir = findAntoraExamplesDir(element.getProject().getBaseDir(), vf);
+      antoraExamplesDir = findAntoraExamplesDir(guessProjectDir(element.getProject()), vf);
     }
     return antoraExamplesDir;
   }
@@ -775,7 +778,7 @@ public class AsciiDocUtil {
       vf = element.getContainingFile().getOriginalFile().getVirtualFile();
     }
     if (vf != null) {
-      antoraAttachmentsDir = findAntoraAttachmentsDir(element.getProject().getBaseDir(), vf);
+      antoraAttachmentsDir = findAntoraAttachmentsDir(guessProjectDir(element.getProject()), vf);
     }
     return antoraAttachmentsDir;
   }
@@ -789,7 +792,7 @@ public class AsciiDocUtil {
       vf = element.getContainingFile().getOriginalFile().getVirtualFile();
     }
     if (vf != null) {
-      antoraPagesDir = findAntoraPagesDir(element.getProject().getBaseDir(), vf);
+      antoraPagesDir = findAntoraPagesDir(guessProjectDir(element.getProject()), vf);
     }
     return antoraPagesDir;
   }
@@ -811,7 +814,7 @@ public class AsciiDocUtil {
       }
     }
     if (vf != null) {
-      antoraModuleDir = findAntoraModuleDir(element.getProject().getBaseDir(), vf);
+      antoraModuleDir = findAntoraModuleDir(guessProjectDir(element.getProject()), vf);
     }
     return antoraModuleDir;
   }
@@ -935,7 +938,7 @@ public class AsciiDocUtil {
         }
 
         List<VirtualFile> otherDirs = getOtherAntoraModuleDir(project, moduleDir, myModuleName, myComponentName, myComponentVersion, otherComponentVersion, otherComponentName, otherModuleName);
-        VirtualFile baseDir = project.getBaseDir();
+        VirtualFile baseDir = guessProjectDir(project);
         List<String> result = new ArrayList<>();
         for (VirtualFile otherDir : otherDirs) {
           VirtualFile target;
