@@ -4,6 +4,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -16,6 +17,7 @@ import com.intellij.util.ui.UIUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.asciidoc.intellij.AsciiDoc;
+import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanel;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
@@ -50,7 +52,8 @@ import java.util.regex.Pattern;
 public class BrowserPanel implements Closeable {
 
   private final Path imagesPath;
-  private Logger log = Logger.getInstance(JavaFxHtmlPanel.class);
+  private final Logger log = Logger.getInstance(JavaFxHtmlPanel.class);
+  private final AsciiDocExtensionService extensionService = ServiceManager.getService(AsciiDocExtensionService.class);
 
   private String base;
 
@@ -164,7 +167,7 @@ public class BrowserPanel implements Closeable {
     Document document = ApplicationManager.getApplication().runReadAction((Computable<Document>) () -> FileDocumentManager.getInstance().getDocument(file));
     Objects.requireNonNull(document);
     final String config = AsciiDoc.config(document, project);
-    List<String> extensions = AsciiDoc.getExtensions(project);
+    List<String> extensions = extensionService.getExtensions(project);
     Objects.requireNonNull(file.getParent().getCanonicalPath(), "we will have files, these will always have a parent directory");
     AsciiDoc asciiDoc = new AsciiDoc(project, new File(file.getParent().getCanonicalPath()),
       imagesPath, file.getName());

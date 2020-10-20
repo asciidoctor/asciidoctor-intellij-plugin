@@ -32,7 +32,6 @@ public class ImageMacroAttributeServiceTest {
   @Mock
   private MacroAttribute attributeInQuotesWithLabel;
 
-
   private MockedStatic<ServiceManager> mockedServiceManager;
   private MockedStatic<MacroAttribute> mockedMacroAttribute;
 

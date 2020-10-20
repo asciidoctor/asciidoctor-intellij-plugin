@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.template;
 
 import com.intellij.codeInsight.template.EverywhereContextType;
+import com.intellij.codeInsight.template.TemplateActionContext;
 import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -18,9 +19,10 @@ public abstract class AsciiDocTemplateContextType extends TemplateContextType {
   }
 
   @Override
-  public boolean isInContext(@NotNull PsiFile file, int offset) {
+  public boolean isInContext(@NotNull final TemplateActionContext templateActionContext) {
+    final PsiFile file = templateActionContext.getFile();
     if (file.getViewProvider().getBaseLanguage().isKindOf(AsciiDocLanguage.INSTANCE)) {
-      PsiElement element = file.findElementAt(offset);
+      PsiElement element = file.findElementAt(templateActionContext.getStartOffset());
       return element != null && !(element instanceof PsiWhiteSpace);
     }
     return false;

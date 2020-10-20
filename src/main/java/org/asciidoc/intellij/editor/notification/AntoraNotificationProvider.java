@@ -5,6 +5,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
@@ -45,7 +46,7 @@ public class AntoraNotificationProvider extends EditorNotifications.Provider<Edi
     }
 
     // find out if we're in an Antora module
-    VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(project.getBaseDir(), file.getParent());
+    VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(ProjectUtil.guessProjectDir(project), file.getParent());
     if (antoraModuleDir == null) {
       return null;
     }

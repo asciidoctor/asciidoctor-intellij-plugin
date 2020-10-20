@@ -649,27 +649,6 @@ public class AsciiDoc {
     return tempContent.toString();
   }
 
-  @NotNull
-  public static List<String> getExtensions(Project project) {
-    VirtualFile lib = project.getBaseDir().findChild(".asciidoctor");
-    if (lib != null) {
-      lib = lib.findChild("lib");
-    }
-
-    List<String> extensions = new ArrayList<>();
-    if (lib != null) {
-      for (VirtualFile vf : lib.getChildren()) {
-        if ("rb".toLowerCase().equals(vf.getExtension())) {
-          extensions.add(vf.getCanonicalPath());
-        }
-        if ("jar".toLowerCase().equals(vf.getExtension())) {
-          extensions.add(vf.getCanonicalPath());
-        }
-      }
-    }
-    return extensions;
-  }
-
   @FunctionalInterface
   public interface Notifier {
     void notify(ByteArrayOutputStream boasOut, ByteArrayOutputStream boasErr, List<LogRecord> logRecords);
@@ -683,8 +662,7 @@ public class AsciiDoc {
     return render(text, config, extensions, this::notify);
   }
 
-  public String render(@Language("asciidoc") String text, String config, List<String> extensions, Notifier
-    notifier) {
+  public String render(@Language("asciidoc") String text, String config, List<String> extensions, Notifier notifier) {
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     FileType fileType;
     if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(AsciiDocJCEFHtmlPanelProvider.class.getName())) {
@@ -695,8 +673,11 @@ public class AsciiDoc {
     return render(text, config, extensions, notifier, fileType);
   }
 
-  public String render(@Language("asciidoc") String text, String config, List<String> extensions, Notifier
-    notifier, FileType format) {
+  public String render(@Language("asciidoc") String text,
+                       String config,
+                       List<String> extensions,
+                       Notifier notifier,
+                       FileType format) {
     VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
       LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)

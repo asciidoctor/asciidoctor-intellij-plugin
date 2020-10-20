@@ -30,7 +30,10 @@ public class AsciiDocDocumentationProvider extends AbstractDocumentationProvider
 
   @Nullable
   @Override
-  public PsiElement getCustomDocumentationElement(@NotNull Editor editor, @NotNull PsiFile file, @Nullable PsiElement contextElement) {
+  public PsiElement getCustomDocumentationElement(@NotNull final Editor editor,
+                                                  @NotNull final PsiFile file,
+                                                  @Nullable final PsiElement contextElement,
+                                                  final int targetOffset) {
     if (contextElement != null && (contextElement.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_NAME ||
       contextElement.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_REF)) {
       String key = contextElement.getNode().getText();
@@ -56,7 +59,7 @@ public class AsciiDocDocumentationProvider extends AbstractDocumentationProvider
       }
       lookingForAttribute = lookingForAttribute.getParent();
     }
-    return super.getCustomDocumentationElement(editor, file, contextElement);
+    return super.getCustomDocumentationElement(editor, file, contextElement, targetOffset);
   }
 
   @Override

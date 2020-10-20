@@ -55,9 +55,9 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
     PsiFile[] files;
     if (scope instanceof GlobalSearchScope) {
       // when the user searches all references
-      files = myDumbService.runReadActionInSmartMode(() -> CacheManager.SERVICE.getInstance(element.getProject()).getFilesWithWord(name, UsageSearchContext.IN_CODE,
-        (GlobalSearchScope) scope,
-        false));
+      files = myDumbService.runReadActionInSmartMode(() ->
+        CacheManager.getInstance(element.getProject())
+          .getFilesWithWord(name, UsageSearchContext.IN_CODE, (GlobalSearchScope) scope, false));
       if (files.length == 0) {
         return;
       }

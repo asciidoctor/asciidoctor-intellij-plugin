@@ -7,6 +7,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -20,6 +21,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocBundle;
+import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
@@ -33,8 +35,8 @@ import java.util.Objects;
 public class CreatePdfAction extends AsciiDocAction {
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.CreatePdfAction";
 
-  private static final com.intellij.openapi.diagnostic.Logger LOG =
-    com.intellij.openapi.diagnostic.Logger.getInstance(CreatePdfAction.class);
+  private static final Logger LOG = Logger.getInstance(CreatePdfAction.class);
+  private final AsciiDocExtensionService extensionService = ServiceManager.getService(AsciiDocExtensionService.class);
 
   private Project project;
 
@@ -91,9 +93,8 @@ public class CreatePdfAction extends AsciiDocAction {
           // parent will be null if we use Language Injection and Fragment Editor
           fileBaseDir = new File(parent.getCanonicalPath());
         }
-        AsciiDoc asciiDoc = new AsciiDoc(project, fileBaseDir,
-          tempImagesPath, file.getName());
-        List<String> extensions = AsciiDoc.getExtensions(project);
+        AsciiDoc asciiDoc = new AsciiDoc(project, fileBaseDir, tempImagesPath, file.getName());
+        List<String> extensions = extensionService.getExtensions(project);
         String config = AsciiDoc.config(editor.getDocument(), project);
         asciiDoc.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDoc.FileType.PDF);
         if (Objects.equals("true", asciiDoc.getAttributes().get("asciidoctor-diagram-missing-diagram-extension"))) {
