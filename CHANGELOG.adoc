@@ -7,12 +7,12 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.35 (work in progress)
+=== 0.31.35 (preview, available from GitHub releases)
 
 - dialog to paste an image from clipboard allows adding the width (thanks to @martingreilinger) (#412, #563)
 - if an Antora xref misses a file extension, show a warning in the editor and offer a quick-fix if possible (#480)
 - support attribute substitution in docinfo header and footer (#567)
-- show notification with latest changes on plugin updates
+- show notification with the latest changes on plugin updates
 - passthrough content can be escaped with a backslash for syntax highlighting/parsing
 - add support for the alt text attribute in the PasteImageDialog (thanks to @martingreilinger) (#570, #566)
 - limit search depth when attribute is declared in a lot of files with different values and plugin tries to resolve a file reference
