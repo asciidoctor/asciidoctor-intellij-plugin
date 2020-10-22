@@ -29,8 +29,6 @@ def check_duplicate_target(attributes, location, parent)
   if attributes['target'] && !attributes.key?('secondrun')
     attr_name = 'asciidoctor-diagram-target-name-' + attributes['target']
     original_location = parent.document.attr(attr_name)
-    # if previous location found, and previous location is not current location
-    # this allows for the second run to create both SVG and PNG
     if original_location
       logger.error message_with_context 'Duplicate target name "' + attributes['target'] + '", will overwrite file, first occurrence at ' + original_location.line_info, source_location: location
       logger.error message_with_context 'First occurrence of duplicate target name "' + attributes['target'] + '", another occurrence at ' + location.line_info, source_location: original_location

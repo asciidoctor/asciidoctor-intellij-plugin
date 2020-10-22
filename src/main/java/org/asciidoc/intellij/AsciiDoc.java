@@ -249,7 +249,7 @@ public class AsciiDoc {
     if (springRestDocs) {
       md = md + ".restdoc";
     }
-    if (format == FileType.JAVAFX || format == FileType.JCEF || format == FileType.HTML) {
+    if (format == FileType.JAVAFX || format == FileType.JCEF || format == FileType.HTML || format == FileType.BROWSER) {
       // special ruby extensions loaded for JAVAFX and HTML
       md = md + "." + format.name();
     }
@@ -297,7 +297,7 @@ public class AsciiDoc {
         asciidoctor.requireLibrary("openssl");
         asciidoctor.javaExtensionRegistry().preprocessor(PREPEND_CONFIG);
         asciidoctor.javaExtensionRegistry().includeProcessor(ANTORA_INCLUDE_ADAPTER);
-        if (format == FileType.JAVAFX || format == FileType.HTML || format == FileType.JCEF) {
+        if (format == FileType.JAVAFX || format == FileType.HTML || format == FileType.JCEF || format == FileType.BROWSER) {
           asciidoctor.javaExtensionRegistry().postprocessor(ATTRIBUTES_RETRIEVER);
         }
         // disable JUL logging of captured messages
@@ -1028,7 +1028,7 @@ public class AsciiDoc {
   }
 
   public Map<String, Object> getExportOptions(Map<String, Object> options, FileType fileType) {
-    if (fileType == FileType.HTML) {
+    if (fileType == FileType.HTML || fileType == FileType.BROWSER) {
       options.put(Options.HEADER_FOOTER, true);
     }
     return options;
@@ -1063,9 +1063,9 @@ public class AsciiDoc {
 
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     if (imagesPath != null) {
-      if (fileType == FileType.JAVAFX || fileType == FileType.JCEF) {
+      if (fileType == FileType.JAVAFX || fileType == FileType.JCEF || fileType == FileType.BROWSER) {
         if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())
-          || settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(AsciiDocJCEFHtmlPanelProvider.class.getName())) {
+          || settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(AsciiDocJCEFHtmlPanelProvider.class.getName()) || fileType == FileType.BROWSER) {
           attrs.setAttribute("outdir", imagesPath.toAbsolutePath().normalize().toString());
           // this prevents asciidoctor diagram to render images to a folder {outdir}/{imagesdir} ...
           // ... that might then be outside of the temporary folder as {imagesdir} might traverse to a parent folder
@@ -1103,6 +1103,7 @@ public class AsciiDoc {
   public enum FileType {
     PDF("pdf"),
     HTML("html5"),
+    BROWSER("html5"),
     JAVAFX("html5"),
     JCEF("html5"),
     JEDITOR("html5");
