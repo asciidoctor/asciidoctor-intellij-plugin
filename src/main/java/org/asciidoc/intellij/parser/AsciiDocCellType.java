@@ -39,6 +39,21 @@ public class AsciiDocCellType extends AsciiDocLazyElementType implements IRepars
     if (lastChar == ' ' || lastChar == '\n' || lastChar == '\t') {
       return false;
     }
+    // reparseable content should contain at least some text
+    if (buffer.length() == 0) {
+      return false;
+    }
+    char firstChar = buffer.charAt(0);
+    // for now, only standard tables with "|" are supported
+    if (firstChar != '|') {
+      return false;
+    }
+    // if a "|" occurs within the text, don't try to reparse it; let's stay safe here
+    for (int i = 1; i < buffer.length(); ++i) {
+      if (buffer.charAt(i) == firstChar) {
+        return false;
+      }
+    }
     return true;
   }
 
