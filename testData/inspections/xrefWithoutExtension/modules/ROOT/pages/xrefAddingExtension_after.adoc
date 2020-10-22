@@ -5,3 +5,5 @@ xref:xrefAddingExtension.adoc[]
 
 // anchor #hi is necessary, as it would otherwise not treat the part in front of it as a file
 xref:<caret>xrefAddingExtension.adoc#hi[]
+
+xref:#hi[]

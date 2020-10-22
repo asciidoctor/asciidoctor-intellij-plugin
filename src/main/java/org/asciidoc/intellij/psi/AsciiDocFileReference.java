@@ -65,6 +65,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
    */
   public static final Pattern URL = Pattern.compile("^\\p{Alpha}[\\p{Alnum}.+-]+:/{0,2}", Pattern.UNICODE_CHARACTER_CLASS);
   public static final String FILE_PREFIX = "file:///";
+  public static final int MAX_GLOBAL_ATTRIBUTE_SEARCH = 10;
 
   private String key;
   private String macroName;
@@ -210,7 +211,30 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       String attributeName = matcher.group(1);
       List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName, myElement);
       Set<String> searched = new HashSet<>(declarations.size());
+      boolean searchOnlyCurrentFile = false;
+      if (declarations.size() > 15) {
+        // check to avoid explosion of values
+        for (AttributeDeclaration decl : declarations) {
+          String value = decl.getAttributeValue();
+          if (value == null) {
+            continue;
+          }
+          if (searched.contains(value)) {
+            continue;
+          }
+          searched.add(value);
+          if (searched.size() > MAX_GLOBAL_ATTRIBUTE_SEARCH) {
+            // in the case that the attribute has been defined in lots of places, restrict it to declarations in current file
+            searchOnlyCurrentFile = true;
+            break;
+          }
+        }
+        searched.clear();
+      }
       for (AttributeDeclaration decl : declarations) {
+        if (searchOnlyCurrentFile && decl instanceof AsciiDocAttributeDeclarationImpl && ((AsciiDocAttributeDeclarationImpl) decl).getContainingFile() != myElement.getContainingFile()) {
+          continue;
+        }
         String value = decl.getAttributeValue();
         if (value == null) {
           continue;
@@ -219,6 +243,12 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           continue;
         }
         searched.add(value);
+        if (declarations.size() > 10) {
+          // in the case that the attribute has been defined in lots of places, restrict it to declarations in current file
+          if (decl instanceof AsciiDocAttributeDeclarationImpl && ((AsciiDocAttributeDeclarationImpl) decl).getContainingFile() != myElement.getContainingFile()) {
+            continue;
+          }
+        }
         multiResolveAnchor(items, matcher.replaceFirst(Matcher.quoteReplacement(value)), results, ignoreCase, depth + 1);
       }
       if (results.size() > 0) {
@@ -418,6 +448,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       return false;
     }
     if (!isFile()) {
+      return false;
+    }
+    if (key.length() == 0) {
+      // just the part before a hash (#)
       return false;
     }
     if (!isAntora && AsciiDocUtil.findAntoraModuleDir(myElement) == null) {

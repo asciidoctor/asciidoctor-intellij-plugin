@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - show notification with latest changes on plugin updates
 - passthrough content can be escaped with a backslash for syntax highlighting/parsing
 - add support for the alt text attribute in the PasteImageDialog (thanks to @martingreilinger) (#570, #566)
+- limit search depth when attribute is declared in a lot of files with different values and plugin tries to resolve a file reference
 
 === 0.31.34 (preview, available from GitHub releases)
 
