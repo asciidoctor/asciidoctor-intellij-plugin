@@ -1,1 +1,3 @@
+= The page in the other module
+:description: a description
 :page-aliases: ROOT:oldpagename.adoc
