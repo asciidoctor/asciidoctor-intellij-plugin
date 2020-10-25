@@ -894,7 +894,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     // check if file name is absolute path
     VirtualFile fileByPath;
     try {
-      if (element.getContainingFile().getVirtualFile().getFileSystem().getProtocol().equals("temp")) {
+      if (element.getContainingFile().getVirtualFile() != null &&
+        element.getContainingFile().getVirtualFile().getFileSystem().getProtocol().equals("temp")) {
         VirtualFile vf = element.getContainingFile().getVirtualFile().getFileSystem().findFileByPath(fileName);
         if (vf != null) {
           return PsiManager.getInstance(element.getProject()).findFile(vf);
