@@ -1,16 +1,11 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class MacroAttributeServiceTest {
 
@@ -23,9 +18,9 @@ public class MacroAttributeServiceTest {
 
   @Test
   public void shouldMapMacroAttributesToLabelString() {
-    final MacroAttribute attribute1 = mockedMacroAttribute(Optional.of("source"));
-    final MacroAttribute attribute2 = mockedMacroAttribute(Optional.of("java"));
-    final MacroAttribute attribute3 = mockedMacroAttribute(Optional.of("title=\"Example 1\""));
+    final MacroAttribute attribute1 = new MacroAttribute(Optional.of("source"), Optional.empty(), false);
+    final MacroAttribute attribute2 = new MacroAttribute(Optional.of("java"), Optional.empty(), false);
+    final MacroAttribute attribute3 = new MacroAttribute(Optional.of("Example 1"), Optional.of("title"), true);
 
     final String attributes = service.toAttributeString(attribute1, attribute2, attribute3);
 
@@ -34,13 +29,12 @@ public class MacroAttributeServiceTest {
 
   @Test
   public void shouldFilterEmptyMacroAttributes() {
-    final MacroAttribute attribute = mockedMacroAttribute(Optional.of("alt=\"Some alt text\""));
-    final MacroAttribute empty = mockedMacroAttribute(Optional.empty());
+    final MacroAttribute attribute = new MacroAttribute(Optional.of("Some alt text"), Optional.of("alt"), true);
+    final MacroAttribute empty = new MacroAttribute(Optional.empty(), Optional.empty(), false);
 
     final String attributes = service.toAttributeString(attribute, empty);
 
     assertEquals("alt=\"Some alt text\"", attributes);
-    verify(empty, never()).asAttributeStringOption();
   }
 
   @Test
@@ -48,12 +42,4 @@ public class MacroAttributeServiceTest {
     assertEquals("", service.toAttributeString());
   }
 
-  private @NotNull MacroAttribute mockedMacroAttribute(final @NotNull Optional<String> stringValueOption) {
-    final MacroAttribute attribute = mock(MacroAttribute.class);
-
-    when(attribute.hasValue()).thenReturn(stringValueOption.isPresent());
-    when(attribute.asAttributeStringOption()).thenReturn(stringValueOption);
-
-    return attribute;
-  }
 }

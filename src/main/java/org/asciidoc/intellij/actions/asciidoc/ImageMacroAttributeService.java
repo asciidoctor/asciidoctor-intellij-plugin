@@ -3,6 +3,7 @@ package org.asciidoc.intellij.actions.asciidoc;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.components.ServiceManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
 @Service
 public final class ImageMacroAttributeService {
@@ -12,8 +13,15 @@ public final class ImageMacroAttributeService {
 
   private final MacroAttributeService macroAttributeService;
 
+  // is created by ServiceManager
+  @SuppressWarnings("unused")
   public ImageMacroAttributeService() {
     macroAttributeService = ServiceManager.getService(MacroAttributeService.class);
+  }
+
+  @TestOnly
+  public ImageMacroAttributeService(MacroAttributeService macroAttributeService) {
+    this.macroAttributeService = macroAttributeService;
   }
 
   public @NotNull String toAttributeString(@NotNull final ImageAttributes attributes) {
