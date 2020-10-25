@@ -41,6 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -400,7 +401,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   @SuppressWarnings("StringSplitter")
   private void resolveAntoraPageAlias(String key, List<ResolveResult> results, int depth) {
-    if (!isAnchor() && !isFolder() && depth == 0) {
+    if (isAntora() && !isAnchor() && !isFolder() && depth == 0) {
       List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), "page-aliases", myElement);
       Map<String, String> myAttributes = AsciiDocUtil.collectAntoraAttributes(myElement);
       parseAntoraPrefix(key, myAttributes);
@@ -425,13 +426,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             continue;
           }
           parseAntoraPrefix(element, elementAttributes);
-          if (!myAttributes.get("page-component-name").equals(elementAttributes.get("page-component-name"))) {
+          if (!Objects.equals(myAttributes.get("page-component-name"), elementAttributes.get("page-component-name"))) {
             continue;
           }
-          if (!myAttributes.get("page-component-version").equals(elementAttributes.get("page-component-version"))) {
+          if (!Objects.equals(myAttributes.get("page-component-version"), elementAttributes.get("page-component-version"))) {
             continue;
           }
-          if (!myAttributes.get("page-module").equals(elementAttributes.get("page-module"))) {
+          if (!Objects.equals(myAttributes.get("page-module"), elementAttributes.get("page-module"))) {
             continue;
           }
           if (!shortElement.equals(shortKey)) {
