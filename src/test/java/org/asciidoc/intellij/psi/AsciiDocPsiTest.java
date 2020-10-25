@@ -125,7 +125,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertEquals(2, blockMacro.getReferences().length);
     assertEquals(AsciiDocFileReference.class, blockMacro.getReferences()[0].getClass());
     // parent folder should be visible
-    assertEquals(3, blockMacro.getReferences()[0].getVariants().length);
+    assertEquals(4, blockMacro.getReferences()[0].getVariants().length);
     assertTrue(((LookupElementBuilder) blockMacro.getReferences()[0].getVariants()[0]).getAllLookupStrings().contains(".."));
   }
 
@@ -531,13 +531,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     Objects.requireNonNull(macros);
     assertSize(2, macros);
 
-    PsiReference[] referencesOperation = macros[0].getReferences();
-    assertSize(1, referencesOperation);
-    // finish test here. Reference will not resolve in the test, files are "temp://" files
-
-    PsiReference[] referencesInclude = macros[1].getReferences();
-    assertSize(3, referencesInclude);
-    // finish test here. Reference will not resolve in the test, files are "temp://" files
+    assertReferencesResolve(macros[0], 1);
+    assertReferencesResolve(macros[1], 3);
   }
 
   public void testGradleKtsSnippets() {
@@ -551,13 +546,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     Objects.requireNonNull(macros);
     assertSize(2, macros);
 
-    PsiReference[] referencesOperation = macros[0].getReferences();
-    assertSize(1, referencesOperation);
-    // finish test here. Reference will not resolve in the test, files are "temp://" files
-
-    PsiReference[] referencesInclude = macros[1].getReferences();
-    assertSize(3, referencesInclude);
-    // finish test here. Reference will not resolve in the test, files are "temp://" files
+    assertReferencesResolve(macros[0], 1);
+    assertReferencesResolve(macros[1], 3);
   }
 
   public void testMavenSnippets() {
@@ -570,14 +560,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     AsciiDocBlockMacro[] macros = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocBlockMacro.class);
     Objects.requireNonNull(macros);
     assertSize(2, macros);
-
-    PsiReference[] referencesOperation = macros[0].getReferences();
-    assertSize(1, referencesOperation);
-    // finish test here. Reference will not resolve in the test, files are "temp://" files
-
-    PsiReference[] referencesInclude = macros[1].getReferences();
-    assertSize(3, referencesInclude);
-    // finish test here. Reference will not resolve in the test, files are "temp://" files
+    assertReferencesResolve(macros[0], 1);
+    assertReferencesResolve(macros[1], 3);
   }
 
   public void testAntoraModule() {
@@ -618,36 +602,39 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component:module:test.adoc", "page"), "/src/antoraModule/componentV2/modules/module/pages/test.adoc");
 
     // image
-    assertSize(1, macros[0].getReferences());
-    // finish test here. Reference will not resolve in the test, files are "temp://" files
+    assertReferencesResolve(macros[0], 1);
 
     // examples include
-    assertSize(2, macros[1].getReferences());
-    // finish test here. Reference will not resolve in the test, files are "temp://" files
+    assertReferencesResolve(macros[1], 2);
 
     // partials include
-    assertSize(2, macros[2].getReferences());
-    // finish test here. Reference will not resolve in the test, files are "temp://" files
+    assertReferencesResolve(macros[2], 2);
 
     // part include via module
-    assertSize(3, macros[3].getReferences());
+    assertReferencesResolve(macros[3], 3);
     assertEquals("1.0@my-component:ROOT", macros[3].getReferences()[0].getCanonicalText());
     assertEquals("partial", macros[3].getReferences()[1].getCanonicalText());
     assertEquals("part.adoc", macros[3].getReferences()[2].getCanonicalText());
-    // finish test here. Reference will not resolve in the test, files are "temp://" files
 
     AsciiDocLink[] urls = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocLink.class);
     assertNotNull(urls);
-    assertSize(2, urls);
+    assertSize(3, urls);
 
     // link
-    assertSize(2, urls[0].getReferences());
-    // finish test here. Reference will not resolve in the test, files are "temp://" files
+    assertReferencesResolve(urls[0], 2);
 
-    // xref
-    assertSize(2, urls[1].getReferences());
-    // finish test here. Reference will not resolve in the test, files are "temp://" files
+    // xref to page in other module
+    assertReferencesResolve(urls[1], 2);
 
+    // xref to old page name
+    assertReferencesResolve(urls[2], 1);
+  }
+
+  private void assertReferencesResolve(PsiElement element, int numberOfReferences) {
+    assertSize(numberOfReferences, element.getReferences());
+    for (PsiReference reference : element.getReferences()) {
+      assertNotNull("reference didn't resolve: '" + reference.getRangeInElement().substring(element.getText()) + "' in '" + element.getText() + "'", reference.resolve());
+    }
   }
 
   @SuppressWarnings("checkstyle:AvoidNestedBlocks")

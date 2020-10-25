@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class AsciiDocBlockIdStubElementType extends IStubElementType<AsciiDocBlockIdStub, AsciiDocBlockId> {
+
+  public static final String BLOCK_ID_WITH_VAR = "#VAR#";
+
   public AsciiDocBlockIdStubElementType() {
     super("ASCIIDOC_BLOCKID", AsciiDocLanguage.INSTANCE);
   }
@@ -52,6 +55,10 @@ public class AsciiDocBlockIdStubElementType extends IStubElementType<AsciiDocBlo
   @Override
   public void indexStub(@NotNull AsciiDocBlockIdStub stub, @NotNull IndexSink sink) {
     if (stub.getName() != null) {
+      if (AsciiDocUtil.ATTRIBUTES.matcher(stub.getName()).matches()) {
+        // add an additional entry to find all block IDs with an attribute more easily
+        sink.occurrence(AsciiDocBlockIdKeyIndex.KEY, BLOCK_ID_WITH_VAR);
+      }
       sink.occurrence(AsciiDocBlockIdKeyIndex.KEY, stub.getName());
     }
   }

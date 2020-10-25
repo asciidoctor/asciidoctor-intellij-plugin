@@ -11,6 +11,7 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Iconable;
+import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -32,6 +33,7 @@ import org.yaml.snakeyaml.error.YAMLException;
 
 import javax.swing.*;
 import java.io.File;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,9 +46,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.asciidoc.intellij.psi.AsciiDocBlockIdStubElementType.BLOCK_ID_WITH_VAR;
 
 public class AsciiDocUtil {
   private static final com.intellij.openapi.diagnostic.Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDocUtil.class);
@@ -61,6 +66,7 @@ public class AsciiDocUtil {
   public static final Set<String> ANTORA_SUPPORTED = new HashSet<>();
 
   public static final Pattern ATTRIBUTES = Pattern.compile("\\{([a-zA-Z0-9_]+[a-zA-Z0-9_-]*)}");
+  public static final int MAX_DEPTH = 10;
 
   static {
     ANTORA_SUPPORTED.addAll(Arrays.asList(
@@ -77,22 +83,90 @@ public class AsciiDocUtil {
     }
     List<AsciiDocBlockId> result = null;
     final GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
-    Collection<AsciiDocBlockId> asciiDocBlockIds = AsciiDocBlockIdKeyIndex.getInstance().get(key, project, scope);
     ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
+    Collection<AsciiDocBlockId> asciiDocBlockIds = AsciiDocBlockIdKeyIndex.getInstance().get(key, project, scope);
     for (AsciiDocBlockId asciiDocBlockId : asciiDocBlockIds) {
-      VirtualFile virtualFile = asciiDocBlockId.getContainingFile().getVirtualFile();
-      if (index.isInLibrary(virtualFile)
-        || index.isExcluded(virtualFile)
-        || index.isInLibraryClasses(virtualFile)
-        || index.isInLibrarySource(virtualFile)) {
-        continue;
+      result = collectBlockId(result, index, asciiDocBlockId);
+    }
+    if (result == null) {
+      // if no block IDs have been found, search for block IDs that have attribute that need to resolve
+      asciiDocBlockIds = AsciiDocBlockIdKeyIndex.getInstance().get(BLOCK_ID_WITH_VAR, project, scope);
+      for (AsciiDocBlockId asciiDocBlockId : asciiDocBlockIds) {
+        String name = asciiDocBlockId.getName();
+        if (!matchKeyWithName(name, key, project, new ArrayDeque<>())) {
+          continue;
+        }
+        result = collectBlockId(result, index, asciiDocBlockId);
       }
-      if (result == null) {
-        result = new ArrayList<>();
-      }
-      result.add(asciiDocBlockId);
     }
     return result != null ? result : Collections.emptyList();
+  }
+
+  @NotNull
+  private static List<AsciiDocBlockId> collectBlockId(List<AsciiDocBlockId> result, ProjectFileIndex index, AsciiDocBlockId asciiDocBlockId) {
+    VirtualFile virtualFile = asciiDocBlockId.getContainingFile().getVirtualFile();
+    if (index.isInLibrary(virtualFile)
+      || index.isExcluded(virtualFile)
+      || index.isInLibraryClasses(virtualFile)
+      || index.isInLibrarySource(virtualFile)) {
+      return result;
+    }
+    if (result == null) {
+      result = new ArrayList<>();
+    }
+    result.add(asciiDocBlockId);
+    return result;
+  }
+
+  private static boolean matchKeyWithName(String name, String key, Project project, ArrayDeque<Trinity<String, String, String>> stack) {
+    if (stack.size() > MAX_DEPTH) {
+      return false;
+    }
+    if (name.equals(key)) {
+      return true;
+    }
+    if (stack.stream().anyMatch(p -> p.getThird().equals(key))) {
+      return false;
+    }
+    Matcher matcherName = ATTRIBUTES.matcher(name);
+    if (matcherName.find()) {
+      if (matcherName.start() > key.length()) {
+        return false;
+      }
+      if (!Objects.equals(key.substring(0, matcherName.start()), name.substring(0, matcherName.start()))) {
+        return false;
+      }
+
+      String attributeName = matcherName.group(1);
+      Optional<Trinity<String, String, String>> alreadyInStack = stack.stream().filter(p -> p.getFirst().equals(attributeName)).findAny();
+      if (alreadyInStack.isPresent()) {
+        // ensure that all occurrences in the replacement get the same value
+        stack.push(alreadyInStack.get());
+        if (matchKeyWithName(matcherName.replaceAll(Matcher.quoteReplacement(alreadyInStack.get().getSecond())), key, project, stack)) {
+          return true;
+        }
+        stack.pop();
+      } else {
+        List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(project, attributeName);
+        Set<String> searched = new HashSet<>(declarations.size());
+        for (AttributeDeclaration decl : declarations) {
+          String value = decl.getAttributeValue();
+          if (value == null) {
+            continue;
+          }
+          if (searched.contains(value)) {
+            continue;
+          }
+          searched.add(value);
+          stack.push(new Trinity<>(attributeName, value, key));
+          if (matchKeyWithName(matcherName.replaceAll(Matcher.quoteReplacement(value)), key, project, stack)) {
+            return true;
+          }
+          stack.pop();
+        }
+      }
+    }
+    return false;
   }
 
   public static List<PsiElement> findIds(Project project, VirtualFile virtualFile, String key) {

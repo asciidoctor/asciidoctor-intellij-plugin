@@ -6,6 +6,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -32,12 +33,17 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -65,7 +71,6 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
    */
   public static final Pattern URL = Pattern.compile("^\\p{Alpha}[\\p{Alnum}.+-]+:/{0,2}", Pattern.UNICODE_CHARACTER_CLASS);
   public static final String FILE_PREFIX = "file:///";
-  public static final int MAX_GLOBAL_ATTRIBUTE_SEARCH = 10;
 
   private String key;
   private String macroName;
@@ -198,22 +203,29 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         AsciiDocUtil.findBlockIds(items, element, 0);
       }
     }
-    multiResolveAnchor(items, key, results, ignoreCase, 0);
+    multiResolveAnchor(items, key, results, ignoreCase, new ArrayDeque<>());
     return results.toArray(new ResolveResult[0]);
   }
 
-  private void multiResolveAnchor(List<LookupElementBuilder> items, String key, List<ResolveResult> results, boolean ignoreCase, int depth) {
-    if (depth > 10) {
+  private void multiResolveAnchor(List<LookupElementBuilder> items, String key, List<ResolveResult> results, boolean ignoreCase, ArrayDeque<Trinity<String, String, String>> stack) {
+    if (stack.size() > 10) {
+      return;
+    }
+    if (stack.stream().anyMatch(p -> p.getThird().equals(key))) {
       return;
     }
     Matcher matcher = ATTRIBUTES.matcher(key);
     if (matcher.find()) {
       String attributeName = matcher.group(1);
-      List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName, myElement);
-      Set<String> searched = new HashSet<>(declarations.size());
-      boolean searchOnlyCurrentFile = false;
-      if (declarations.size() > 15) {
-        // check to avoid explosion of values
+      Optional<Trinity<String, String, String>> alreadyInStack = stack.stream().filter(p -> p.getFirst().equals(attributeName)).findAny();
+      if (alreadyInStack.isPresent()) {
+        // ensure that all occurrences in the replacement get the same value
+        stack.push(alreadyInStack.get());
+        multiResolveAnchor(items, matcher.replaceAll(Matcher.quoteReplacement(alreadyInStack.get().getSecond())), results, ignoreCase, stack);
+        stack.pop();
+      } else {
+        List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName, myElement);
+        Set<String> searched = new HashSet<>(declarations.size());
         for (AttributeDeclaration decl : declarations) {
           String value = decl.getAttributeValue();
           if (value == null) {
@@ -223,33 +235,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             continue;
           }
           searched.add(value);
-          if (searched.size() > MAX_GLOBAL_ATTRIBUTE_SEARCH) {
-            // in the case that the attribute has been defined in lots of places, restrict it to declarations in current file
-            searchOnlyCurrentFile = true;
-            break;
-          }
+          stack.add(new Trinity<>(attributeName, value, key));
+          multiResolveAnchor(items, matcher.replaceAll(Matcher.quoteReplacement(value)), results, ignoreCase, stack);
+          stack.pop();
         }
-        searched.clear();
-      }
-      for (AttributeDeclaration decl : declarations) {
-        if (searchOnlyCurrentFile && decl instanceof AsciiDocAttributeDeclarationImpl && ((AsciiDocAttributeDeclarationImpl) decl).getContainingFile() != myElement.getContainingFile()) {
-          continue;
-        }
-        String value = decl.getAttributeValue();
-        if (value == null) {
-          continue;
-        }
-        if (searched.contains(value)) {
-          continue;
-        }
-        searched.add(value);
-        if (declarations.size() > 10) {
-          // in the case that the attribute has been defined in lots of places, restrict it to declarations in current file
-          if (decl instanceof AsciiDocAttributeDeclarationImpl && ((AsciiDocAttributeDeclarationImpl) decl).getContainingFile() != myElement.getContainingFile()) {
-            continue;
-          }
-        }
-        multiResolveAnchor(items, matcher.replaceFirst(Matcher.quoteReplacement(value)), results, ignoreCase, depth + 1);
       }
       if (results.size() > 0) {
         return;
@@ -405,6 +394,87 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       if (results.size() == c && "image".equals(macroName) && k.equals(key) && depth == 0) {
         resolveAttributes("{imagesdir}/" + k, results, depth);
       }
+    }
+    resolveAntoraPageAlias(key, results, depth);
+  }
+
+  @SuppressWarnings("StringSplitter")
+  private void resolveAntoraPageAlias(String key, List<ResolveResult> results, int depth) {
+    if (!isAnchor() && !isFolder() && depth == 0) {
+      List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), "page-aliases", myElement);
+      Map<String, String> myAttributes = AsciiDocUtil.collectAntoraAttributes(myElement);
+      parseAntoraPrefix(key, myAttributes);
+      for (AttributeDeclaration decl : declarations) {
+        String shortKey = normalizeKeyForSearch(key);
+        String value = decl.getAttributeValue();
+        if (value == null) {
+          continue;
+        }
+        if (!value.contains(shortKey)) {
+          continue;
+        }
+        if (!(decl instanceof AsciiDocAttributeDeclarationImpl)) {
+          continue;
+        }
+        AsciiDocAttributeDeclarationImpl declImpl = (AsciiDocAttributeDeclarationImpl) decl;
+        Map<String, String> otherAttributes = AsciiDocUtil.collectAntoraAttributes(declImpl);
+        for (String element : value.split("[ ,]+")) {
+          Map<String, String> elementAttributes = new HashMap<>(otherAttributes);
+          String shortElement = normalizeKeyForSearch(element);
+          if (!shortElement.contains(shortKey)) {
+            continue;
+          }
+          parseAntoraPrefix(element, elementAttributes);
+          if (!myAttributes.get("page-component-name").equals(elementAttributes.get("page-component-name"))) {
+            continue;
+          }
+          if (!myAttributes.get("page-component-version").equals(elementAttributes.get("page-component-version"))) {
+            continue;
+          }
+          if (!myAttributes.get("page-module").equals(elementAttributes.get("page-module"))) {
+            continue;
+          }
+          if (!shortElement.equals(shortKey)) {
+            continue;
+          }
+          results.add(new PsiElementResolveResult(declImpl.getContainingFile()));
+        }
+      }
+    }
+  }
+
+  @NotNull
+  private String normalizeKeyForSearch(String key) {
+    String shortKey = key.replaceAll(".adoc$", "");
+    shortKey = shortKey.replaceAll("^.*\\$", "");
+    shortKey = shortKey.replaceAll("^.*:", "");
+    return shortKey;
+  }
+
+  private void parseAntoraPrefix(String element, Map<String, String> elementAttributes) {
+    int start = 0;
+    int i = 0;
+    Matcher matcher = AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(element);
+    if (matcher.find()) {
+      i += matcher.end();
+      String tmp = element.substring(start, i - 1);
+      StringTokenizer tokenizer = new StringTokenizer(tmp, ":", false);
+      if (tokenizer.countTokens() == 1) {
+        String module = tokenizer.nextToken();
+        if (!module.equals(".") && module.length() > 0) {
+          elementAttributes.put("page-module", module);
+        }
+      } else {
+        String component = tokenizer.nextToken();
+        String module = tokenizer.nextToken();
+        if (!component.equals(".") && component.length() > 0) {
+          elementAttributes.put("page-component", component);
+        }
+        if (!module.equals(".") && module.length() > 0) {
+          elementAttributes.put("page-module", module);
+        }
+      }
+      start = i;
     }
   }
 
@@ -898,7 +968,11 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         element.getContainingFile().getVirtualFile().getFileSystem().getProtocol().equals("temp")) {
         VirtualFile vf = element.getContainingFile().getVirtualFile().getFileSystem().findFileByPath(fileName);
         if (vf != null) {
-          return PsiManager.getInstance(element.getProject()).findFile(vf);
+          PsiElement result = PsiManager.getInstance(element.getProject()).findFile(vf);
+          if (result == null) {
+            result = PsiManager.getInstance(element.getProject()).findDirectory(vf);
+          }
+          return result;
         }
       } else if (SystemInfo.isWindows) {
         if (fileName.startsWith("/")) {

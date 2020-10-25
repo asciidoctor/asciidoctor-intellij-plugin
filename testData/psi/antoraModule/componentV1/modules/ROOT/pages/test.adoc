@@ -4,7 +4,9 @@ image::image.txt[]
 
 link:{attachmentsdir}/attachment.txt[]
 
-xref:module:test.adoc[]
+xref:module:page.adoc[]
+
+xref:oldpagename.adoc[]
 
 include::{examplesdir}/example.txt[]
 

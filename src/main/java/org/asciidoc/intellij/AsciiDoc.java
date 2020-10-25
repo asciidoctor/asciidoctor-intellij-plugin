@@ -901,6 +901,9 @@ public class AsciiDoc {
 
       VirtualFile projectBase = LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath));
       VirtualFile baseDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
+      if (baseDir == null) {
+        baseDir = antoraModuleDir.getFileSystem().findFileByPath(fileBaseDir.getPath());
+      }
       VirtualFile antoraPages = findAntoraPagesDir(projectBase, baseDir);
       VirtualFile antoraPartials = findAntoraPartials(projectBase, baseDir);
       String antoraImagesDir = findAntoraImagesDirRelative(projectBase, baseDir);
