@@ -401,44 +401,47 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   @SuppressWarnings("StringSplitter")
   private void resolveAntoraPageAlias(String key, List<ResolveResult> results, int depth) {
-    if (isAntora() && !isAnchor() && !isFolder() && depth == 0) {
-      List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), "page-aliases", myElement);
-      Map<String, String> myAttributes = AsciiDocUtil.collectAntoraAttributes(myElement);
-      parseAntoraPrefix(key, myAttributes);
-      for (AttributeDeclaration decl : declarations) {
-        String shortKey = normalizeKeyForSearch(key);
-        String value = decl.getAttributeValue();
-        if (value == null) {
-          continue;
-        }
-        if (!value.contains(shortKey)) {
-          continue;
-        }
-        if (!(decl instanceof AsciiDocAttributeDeclarationImpl)) {
-          continue;
-        }
-        AsciiDocAttributeDeclarationImpl declImpl = (AsciiDocAttributeDeclarationImpl) decl;
-        Map<String, String> otherAttributes = AsciiDocUtil.collectAntoraAttributes(declImpl);
-        for (String element : value.split("[ ,]+")) {
-          Map<String, String> elementAttributes = new HashMap<>(otherAttributes);
-          String shortElement = normalizeKeyForSearch(element);
-          if (!shortElement.contains(shortKey)) {
+    if (ANTORA_SUPPORTED.contains(macroName) && !isAnchor() && !isFolder() && depth == 0) {
+      VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
+      if (antoraModuleDir != null) {
+        List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), "page-aliases", myElement);
+        Map<String, String> myAttributes = AsciiDocUtil.collectAntoraAttributes(myElement);
+        parseAntoraPrefix(key, myAttributes);
+        for (AttributeDeclaration decl : declarations) {
+          String shortKey = normalizeKeyForSearch(key);
+          String value = decl.getAttributeValue();
+          if (value == null) {
             continue;
           }
-          parseAntoraPrefix(element, elementAttributes);
-          if (!Objects.equals(myAttributes.get("page-component-name"), elementAttributes.get("page-component-name"))) {
+          if (!value.contains(shortKey)) {
             continue;
           }
-          if (!Objects.equals(myAttributes.get("page-component-version"), elementAttributes.get("page-component-version"))) {
+          if (!(decl instanceof AsciiDocAttributeDeclarationImpl)) {
             continue;
           }
-          if (!Objects.equals(myAttributes.get("page-module"), elementAttributes.get("page-module"))) {
-            continue;
+          AsciiDocAttributeDeclarationImpl declImpl = (AsciiDocAttributeDeclarationImpl) decl;
+          Map<String, String> otherAttributes = AsciiDocUtil.collectAntoraAttributes(declImpl);
+          for (String element : value.split("[ ,]+")) {
+            Map<String, String> elementAttributes = new HashMap<>(otherAttributes);
+            String shortElement = normalizeKeyForSearch(element);
+            if (!shortElement.contains(shortKey)) {
+              continue;
+            }
+            parseAntoraPrefix(element, elementAttributes);
+            if (!Objects.equals(myAttributes.get("page-component-name"), elementAttributes.get("page-component-name"))) {
+              continue;
+            }
+            if (!Objects.equals(myAttributes.get("page-component-version"), elementAttributes.get("page-component-version"))) {
+              continue;
+            }
+            if (!Objects.equals(myAttributes.get("page-module"), elementAttributes.get("page-module"))) {
+              continue;
+            }
+            if (!shortElement.equals(shortKey)) {
+              continue;
+            }
+            results.add(new PsiElementResolveResult(declImpl.getContainingFile()));
           }
-          if (!shortElement.equals(shortKey)) {
-            continue;
-          }
-          results.add(new PsiElementResolveResult(declImpl.getContainingFile()));
         }
       }
     }
