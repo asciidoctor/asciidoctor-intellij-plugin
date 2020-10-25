@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.36 (work in progress)
+=== 0.31.36 (preview, available from GitHub releases)
 
 - more restrictive re-parsing of cells to avoid Inconsistent reparse error (#571)
 - fixing NPE when auto-completing xrefs, regression in 0.31.35 (#577)
