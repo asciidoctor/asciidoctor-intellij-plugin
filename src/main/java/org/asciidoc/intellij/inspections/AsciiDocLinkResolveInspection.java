@@ -83,6 +83,9 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
           } else if (AsciiDocUtil.URL_PREFIX_PATTERN.matcher(resolvedBody).find()) {
             // this is a URL, don't
             return;
+          } else if (o instanceof AsciiDocLink && ((AsciiDocLink) o).getMacroName().equals("link") && resolvedBody.startsWith("about:")) {
+            // this is a special about: URL, don't report this as an error
+            return;
           } else if (AsciiDocFileReference.URL.matcher(resolvedBody).find() && macroName.equals("image")) {
             // this is a data URI for an image, don't
             return;
