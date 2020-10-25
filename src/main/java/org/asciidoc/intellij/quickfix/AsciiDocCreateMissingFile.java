@@ -10,6 +10,8 @@ import com.intellij.psi.PsiReference;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 
+import java.util.regex.Pattern;
+
 /**
  * @author Alexander Schwartz 2019
  */
@@ -43,13 +45,18 @@ public interface AsciiDocCreateMissingFile {
 
   static boolean isAvailable(PsiElement element) {
     boolean isAvailable = false;
+    PsiFile containingFile = element.getContainingFile();
     if (element instanceof AsciiDocBlockMacro) {
-      // this will create empty files, doesn't make sense for images
+      // this will create empty files, doesn't make sense for all images
       if (((AsciiDocBlockMacro) element).getMacroName().equals("image")) {
-        return false;
+        // in case of image macro with a draw.io image, create empty file makes sense
+        String fileName = element.getFirstChild().getNextSibling().getText();
+        boolean isDrawioFile = Pattern.matches("^.*[.](drawio|dio)[.](svg|png)$", fileName);
+        if (!isDrawioFile) {
+          return false;
+        }
       }
     }
-    PsiFile containingFile = element.getContainingFile();
     if (containingFile != null) {
       PsiDirectory parent = containingFile.getParent();
       if (parent != null) {
