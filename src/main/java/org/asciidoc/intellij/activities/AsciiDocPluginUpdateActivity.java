@@ -32,6 +32,7 @@ public class AsciiDocPluginUpdateActivity implements StartupActivity, DumbAware 
       return;
     }
     String version = plugin.getVersion();
+    version = "0.31.36";
     String oldVersion = settings.getVersion();
     boolean updated = !version.equals(oldVersion);
     if (updated) {
@@ -39,7 +40,7 @@ public class AsciiDocPluginUpdateActivity implements StartupActivity, DumbAware 
 
       // collect the recent changes the user hasn't seen yet
       StringBuilder changes = new StringBuilder();
-      Matcher matcher = Pattern.compile("(?ms)<h3[^>]*>(?<version>[0-9.]).*?</div>").matcher(plugin.getChangeNotes());
+      Matcher matcher = Pattern.compile("(?ms)<h3[^>]*>(?<version>[0-9.]+).*?</div>").matcher(plugin.getChangeNotes());
       int count = 0;
       while (matcher.find()) {
         if (matcher.group("version").equals(oldVersion)) {
