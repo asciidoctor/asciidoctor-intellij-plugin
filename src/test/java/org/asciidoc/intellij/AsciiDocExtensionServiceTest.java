@@ -16,10 +16,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.apache.commons.compress.utils.Lists.newArrayList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -55,7 +54,7 @@ public class AsciiDocExtensionServiceTest {
 
     final List<String> extensions = service.getExtensions(project);
 
-    assertEquals(newArrayList(), extensions);
+    assertThat(extensions).isEmpty();
   }
 
   @Test
@@ -65,8 +64,7 @@ public class AsciiDocExtensionServiceTest {
 
     final List<String> extensions = service.getExtensions(project);
 
-    assertEquals(newArrayList(), extensions);
-    verify(virtualFile).findChild(ASCIIDOCTOR_CONFIG_FILE_NAME);
+    assertThat(extensions).isEmpty();
   }
 
   @Test
@@ -77,9 +75,7 @@ public class AsciiDocExtensionServiceTest {
 
     final List<String> extensions = service.getExtensions(project);
 
-    assertEquals(newArrayList(), extensions);
-    verify(virtualFile).findChild(ASCIIDOCTOR_CONFIG_FILE_NAME);
-    verify(virtualFile).findChild(LIB_DIRECTORY_NAME);
+    assertThat(extensions).isEmpty();
   }
 
   @Test
@@ -91,10 +87,7 @@ public class AsciiDocExtensionServiceTest {
 
     final List<String> extensions = service.getExtensions(project);
 
-    assertEquals(newArrayList(), extensions);
-    verify(virtualFile).findChild(ASCIIDOCTOR_CONFIG_FILE_NAME);
-    verify(virtualFile).findChild(LIB_DIRECTORY_NAME);
-    verify(virtualFile).getChildren();
+    assertThat(extensions).isEmpty();
   }
 
   @Test
@@ -106,10 +99,7 @@ public class AsciiDocExtensionServiceTest {
 
     final List<String> extensions = service.getExtensions(project);
 
-    assertEquals(newArrayList(), extensions);
-    verify(virtualFile).findChild(ASCIIDOCTOR_CONFIG_FILE_NAME);
-    verify(virtualFile).findChild(LIB_DIRECTORY_NAME);
-    verify(virtualFile).getChildren();
+    assertThat(extensions).isEmpty();
   }
 
   @Test
@@ -124,12 +114,7 @@ public class AsciiDocExtensionServiceTest {
 
     final List<String> extensions = service.getExtensions(project);
 
-    assertEquals(newArrayList(), extensions);
-    verify(virtualFile).findChild(ASCIIDOCTOR_CONFIG_FILE_NAME);
-    verify(virtualFile).findChild(LIB_DIRECTORY_NAME);
-    verify(virtualFile).getChildren();
-    verify(fileWithNoExtension).getExtension();
-    verify(nonAsciiDocExtensionFile).getExtension();
+    assertThat(extensions).isEmpty();
   }
 
   @Test
@@ -144,14 +129,7 @@ public class AsciiDocExtensionServiceTest {
 
     final List<String> extensions = service.getExtensions(project);
 
-    assertEquals(newArrayList(), extensions);
-    verify(virtualFile).findChild(ASCIIDOCTOR_CONFIG_FILE_NAME);
-    verify(virtualFile).findChild(LIB_DIRECTORY_NAME);
-    verify(virtualFile).getChildren();
-    verify(jarExtensionFile).getExtension();
-    verify(jarExtensionFile).getCanonicalPath();
-    verify(rubyExtensionFile).getExtension();
-    verify(rubyExtensionFile).getCanonicalPath();
+    assertThat(extensions).isEmpty();
   }
 
   @Test
@@ -169,13 +147,6 @@ public class AsciiDocExtensionServiceTest {
     final List<String> extensions = service.getExtensions(project);
 
     assertEquals(Arrays.asList(path1, path2), extensions);
-    verify(virtualFile).findChild(ASCIIDOCTOR_CONFIG_FILE_NAME);
-    verify(virtualFile).findChild(LIB_DIRECTORY_NAME);
-    verify(virtualFile).getChildren();
-    verify(jarExtensionFile).getExtension();
-    verify(jarExtensionFile).getCanonicalPath();
-    verify(rubyExtensionFile).getExtension();
-    verify(rubyExtensionFile).getCanonicalPath();
   }
 
   private void mockProjectDir(final VirtualFile projectDirFile) {
