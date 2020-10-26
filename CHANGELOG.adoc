@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.31.37 (work in progress)
 
 - only show changes from the previously installed version in the notification balloon
+- integration with DrawIO-Plugin: intent to create empty SVG when DrawIO file is missing and plugin is installed (#575)
 
 === 0.31.36 (preview, available from GitHub releases)
 
