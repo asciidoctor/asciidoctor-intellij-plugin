@@ -2,6 +2,7 @@ package org.asciidoc.intellij.quickfix;
 
 import com.intellij.ide.actions.OpenFileAction;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -49,10 +50,12 @@ public interface AsciiDocCreateMissingFile {
     if (element instanceof AsciiDocBlockMacro) {
       // this will create empty files, doesn't make sense for all images
       if (((AsciiDocBlockMacro) element).getMacroName().equals("image")) {
-        // in case of image macro with a draw.io image, create empty file makes sense
+        // in case of image macro with a draw.io image and the plugin is installed,
+        // creating an empty file makes sense
         String fileName = element.getFirstChild().getNextSibling().getText();
         boolean isDrawioFile = Pattern.matches("^.*[.](drawio|dio)[.](svg|png)$", fileName);
-        if (!isDrawioFile) {
+        boolean isDrawioPluginInstalled = PluginId.findId("de.docs_as_co.intellij.plugin.drawio") != null;
+        if (!isDrawioPluginInstalled || !isDrawioFile) {
           return false;
         }
       }
