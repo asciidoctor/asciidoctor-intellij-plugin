@@ -13,7 +13,7 @@ Follow these steps to add the repository to your IDE:
 image::adding-eap-repository.png[]
 . Click on the "`Gear Icon`" (icon:gear[])
 . Select "`Manage Plugin Repositories...`"
-. Add https://plugins.jetbrains.com/plugins/eap/list?pluginId=7391 as an additional repository
+. Add `+https://plugins.jetbrains.com/plugins/eap/list?pluginId=7391+` as an additional repository
 
 Use the https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issue numbers] given in the release notes to join the discussion on the respective GitHub issues.
 
