@@ -65,19 +65,15 @@ public class AsciiDocUtil {
   public static final String FAMILY_PAGE = "page";
   public static final String ANTORA_YML = "antora.yml";
 
-  public static final Set<String> ANTORA_SUPPORTED = new HashSet<>();
+  public static final Set<String> ANTORA_SUPPORTED = new HashSet<>(Arrays.asList(
+    // standard asciidoctor
+    "image", "include", "video", "audio", "xref", "xref-attr",
+    // extensions
+    "plantuml"
+  ));
 
   public static final Pattern ATTRIBUTES = Pattern.compile("\\{([a-zA-Z0-9_]+[a-zA-Z0-9_-]*)}");
   public static final int MAX_DEPTH = 10;
-
-  static {
-    ANTORA_SUPPORTED.addAll(Arrays.asList(
-      // standard asciidoctor
-      "image", "include", "video", "audio", "xref", "xref-attr",
-      // extensions
-      "plantuml"
-    ));
-  }
 
   static List<AsciiDocBlockId> findIds(Project project, String key) {
     if (key.length() == 0) {
