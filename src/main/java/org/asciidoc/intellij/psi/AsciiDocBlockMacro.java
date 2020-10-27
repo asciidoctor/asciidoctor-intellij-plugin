@@ -31,20 +31,16 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN;
  * @author yole
  */
 public class AsciiDocBlockMacro extends AsciiDocStandardBlock implements HasFileReference, HasAntoraReference {
-  private static final Set<String> HAS_FILE_AS_BODY = new HashSet<>();
-
-  static {
-    HAS_FILE_AS_BODY.addAll(Arrays.asList(
-      // standard asciidoctor
-      "image", "include", "video", "audio",
-      // asciidoctor diagram
-      "a2s", "actdiag", "blockdiag", "ditaa", "erd", "graphviz", "meme", "mermaid", "msc",
-      "nwdiag", "packetdiag", "plantuml", "rackdiag", "seqdiag", "shaape", "svgbob",
-      "syntrax", "umlet", "vega", "vegalite", "wavedrom",
-      // others we know of
-      "liquibase" // https://github.com/uniqueck/asciidoctorj-liquibase-extension
-    ));
-  }
+  private static final Set<String> HAS_FILE_AS_BODY = new HashSet<>(Arrays.asList(
+     // standard asciidoctor
+     "image", "include", "video", "audio",
+     // asciidoctor diagram
+     "a2s", "actdiag", "blockdiag", "ditaa", "erd", "graphviz", "meme", "mermaid", "msc",
+     "nwdiag", "packetdiag", "plantuml", "rackdiag", "seqdiag", "shaape", "svgbob",
+     "syntrax", "umlet", "vega", "vegalite", "wavedrom",
+     // others we know of
+     "liquibase" // https://github.com/uniqueck/asciidoctorj-liquibase-extension
+  ));
 
   public AsciiDocBlockMacro(@NotNull ASTNode node) {
     super(node);
@@ -147,12 +143,10 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock implements HasFile
     return super.getReferences();
   }
 
-  private static final Collection<String> VIDEO_SERVICES = new HashSet<>();
-
-  static {
-    VIDEO_SERVICES.add("vimeo");
-    VIDEO_SERVICES.add("youtube");
-  }
+  private static final Collection<String> VIDEO_SERVICES = new HashSet<>(Arrays.asList(
+    "vimeo",
+    "youtube"
+  ));
 
   private String getTypeOfVideo() {
     AsciiDocAttributeInBrackets[] attributes = PsiTreeUtil.getChildrenOfType(this, AsciiDocAttributeInBrackets.class);

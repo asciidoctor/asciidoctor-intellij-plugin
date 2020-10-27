@@ -26,17 +26,14 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_SUPPORTED;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN;
 
 public class AsciiDocInlineMacro extends ASTWrapperPsiElement implements HasFileReference, HasAntoraReference {
-  public static final Set<String> HAS_FILE_AS_BODY = new HashSet<>();
-  static {
-    HAS_FILE_AS_BODY.addAll(Arrays.asList(
+  public static final Set<String> HAS_FILE_AS_BODY = new HashSet<>(Arrays.asList(
       // standard asciidoctor
       "image", "video", "audio",
       // asciidoctor diagram
       "a2s", "actdiag", "blockdiag", "ditaa", "erd", "graphviz", "meme", "mermaid", "msc",
       "nwdiag", "packetdiag", "plantuml", "rackdiag", "seqdiag", "shaape", "svgbob",
       "syntrax", "umlet", "vega", "vegalite", "wavedrom"
-    ));
-  }
+  ));
 
   public AsciiDocInlineMacro(@NotNull ASTNode node) {
     super(node);
