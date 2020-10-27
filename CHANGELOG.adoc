@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.37 (work in progress)
+=== 0.31.37 (preview, available from GitHub releases)
 
 - only show changes from the previously installed version in the notification balloon
 - integration with DrawIO-Plugin: intent to create empty SVG when DrawIO file is missing and plugin is installed (thanks to @rdmueller) (#575, #578)
