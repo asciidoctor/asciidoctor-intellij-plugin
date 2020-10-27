@@ -151,12 +151,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
    */
   public AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, TextRange textRange,
                                boolean isFolder, boolean isAntora) {
-    super(element, textRange);
-    this.macroName = macroName;
-    this.base = base;
-    this.isFolder = isFolder;
-    this.isAntora = isAntora;
-    key = element.getText().substring(textRange.getStartOffset(), textRange.getEndOffset());
+      this(element, macroName, base, textRange, isFolder, isAntora, 0);
   }
 
   public AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, TextRange textRange,
@@ -171,12 +166,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   public AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, TextRange textRange,
                                boolean isFolder) {
-    super(element, textRange);
-    this.macroName = macroName;
-    this.base = base;
-    this.isFolder = isFolder;
-    this.isAntora = false;
-    key = element.getText().substring(textRange.getStartOffset(), textRange.getEndOffset());
+      this(element, macroName, base, textRange, isFolder, false, 0);
   }
 
   @NotNull
