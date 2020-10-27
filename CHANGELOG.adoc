@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - only show changes from the previously installed version in the notification balloon
 - integration with DrawIO-Plugin: intent to create empty SVG when DrawIO file is missing and plugin is installed (thanks to @rdmueller) (#575, #578)
 - highlight bash code snippets with shell script plugin (#568)
+- finalized support for Antora `page-aliases`; now working in preview as well (#574)
 
 === 0.31.36 (preview, available from GitHub releases)
 

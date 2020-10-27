@@ -1241,7 +1241,7 @@ public class AsciiDoc {
           return template;
         }
         recursionCounter.increment();
-        template = matcher.replaceAll(Matcher.quoteReplacement(attributeValue));
+        template = new StringBuilder(template).replace(matcher.start(), matcher.end(), attributeValue).toString();
         matcher = ATTRIBUTES.matcher(template);
       }
     }

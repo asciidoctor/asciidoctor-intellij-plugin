@@ -45,7 +45,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -207,13 +206,15 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       return;
     }
     Matcher matcher = ATTRIBUTES.matcher(key);
-    if (matcher.find()) {
+    int start = 0;
+    while (matcher.find(start)) {
       String attributeName = matcher.group(1);
       Optional<Trinity<String, String, String>> alreadyInStack = stack.stream().filter(p -> p.getFirst().equals(attributeName)).findAny();
       if (alreadyInStack.isPresent()) {
         // ensure that all occurrences in the replacement get the same value
         stack.push(alreadyInStack.get());
-        multiResolveAnchor(items, matcher.replaceAll(Matcher.quoteReplacement(alreadyInStack.get().getSecond())), results, ignoreCase, stack);
+        String newName = new StringBuilder(key).replace(matcher.start(), matcher.end(), alreadyInStack.get().getSecond()).toString();
+        multiResolveAnchor(items, newName, results, ignoreCase, stack);
         stack.pop();
       } else {
         List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName, myElement);
@@ -228,13 +229,15 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           }
           searched.add(value);
           stack.add(new Trinity<>(attributeName, value, key));
-          multiResolveAnchor(items, matcher.replaceAll(Matcher.quoteReplacement(value)), results, ignoreCase, stack);
+          String newName = new StringBuilder(key).replace(matcher.start(), matcher.end(), value).toString();
+          multiResolveAnchor(items, newName, results, ignoreCase, stack);
           stack.pop();
         }
       }
       if (results.size() > 0) {
         return;
       }
+      start = matcher.end();
       // if not found, try to match it with a block ID that has the attributes unreplaced
     }
     for (LookupElementBuilder item : items) {
@@ -280,11 +283,11 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
       if (antoraModuleDir == null) {
         findEverywhere = true;
-      } else if (base.equals("#") || base.length() == 0) {
+      } else if (base.endsWith("#") || base.length() == 0) {
         VirtualFile antoraPartials = AsciiDocUtil.findAntoraPartials(myElement);
         if (antoraPartials != null) {
           String antoraPartialsCanonicalPath = antoraPartials.getCanonicalPath();
-          String myCanonicalPath = myElement.getContainingFile().getVirtualFile().getCanonicalPath();
+          String myCanonicalPath = myElement.getContainingFile().getOriginalFile().getVirtualFile().getCanonicalPath();
           if (myCanonicalPath != null && antoraPartialsCanonicalPath != null && myCanonicalPath.startsWith(antoraPartialsCanonicalPath)) {
             findEverywhere = true;
           }
@@ -392,7 +395,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   @SuppressWarnings("StringSplitter")
   private void resolveAntoraPageAlias(String key, List<ResolveResult> results, int depth) {
-    if (ANTORA_SUPPORTED.contains(macroName) && !isAnchor() && !isFolder() && depth == 0) {
+    if (ANTORA_SUPPORTED.contains(macroName) && !isAnchor() && !isFolder() && depth == 0 && results.size() == 0) {
       VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
       if (antoraModuleDir != null) {
         List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), "page-aliases", myElement);
@@ -412,13 +415,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           }
           AsciiDocAttributeDeclarationImpl declImpl = (AsciiDocAttributeDeclarationImpl) decl;
           Map<String, String> otherAttributes = AsciiDocUtil.collectAntoraAttributes(declImpl);
-          for (String element : value.split("[ ,]+")) {
+          for (String element : value.split(",")) {
             Map<String, String> elementAttributes = new HashMap<>(otherAttributes);
-            String shortElement = normalizeKeyForSearch(element);
+            String shortElement = normalizeKeyForSearch(element.trim());
             if (!shortElement.contains(shortKey)) {
               continue;
             }
-            parseAntoraPrefix(element, elementAttributes);
+            parseAntoraPrefix(element.trim(), elementAttributes);
             if (!Objects.equals(myAttributes.get("page-component-name"), elementAttributes.get("page-component-name"))) {
               continue;
             }
@@ -439,56 +442,67 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   @NotNull
-  private String normalizeKeyForSearch(String key) {
+  public static String normalizeKeyForSearch(String key) {
     String shortKey = key.replaceAll(".adoc$", "");
     shortKey = shortKey.replaceAll("^.*\\$", "");
     shortKey = shortKey.replaceAll("^.*:", "");
     return shortKey;
   }
 
-  private void parseAntoraPrefix(String element, Map<String, String> elementAttributes) {
-    int start = 0;
-    int i = 0;
+  public static void parseAntoraPrefix(String element, Map<String, String> elementAttributes) {
     Matcher matcher = AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(element);
     if (matcher.find()) {
-      i += matcher.end();
-      String tmp = element.substring(start, i - 1);
-      StringTokenizer tokenizer = new StringTokenizer(tmp, ":", false);
-      if (tokenizer.countTokens() == 1) {
-        String module = tokenizer.nextToken();
-        if (!module.equals(".") && module.length() > 0) {
+      Matcher version = AsciiDocUtil.VERSION.matcher(element);
+      if (version.find()) {
+        elementAttributes.put("page-component-version", version.group("version"));
+        element = version.replaceFirst("");
+      }
+      Matcher componentModuleMatcher = AsciiDocUtil.COMPONENT_MODULE.matcher(element);
+      if (componentModuleMatcher.find()) {
+        String component = componentModuleMatcher.group("component");
+        if (component.length() > 0 && !component.equals(".")) {
+          elementAttributes.put("page-component", component);
+        }
+        String module = componentModuleMatcher.group("module");
+        if (module.length() > 0 && !module.equals(".")) {
           elementAttributes.put("page-module", module);
         }
       } else {
-        String component = tokenizer.nextToken();
-        String module = tokenizer.nextToken();
-        if (!component.equals(".") && component.length() > 0) {
-          elementAttributes.put("page-component", component);
-        }
-        if (!module.equals(".") && module.length() > 0) {
-          elementAttributes.put("page-module", module);
+        Matcher moduleMatcher = AsciiDocUtil.MODULE.matcher(element);
+        if (moduleMatcher.find()) {
+          String module = moduleMatcher.group("module");
+          if (module.length() > 0 && !module.equals(".")) {
+            elementAttributes.put("page-module", module);
+          }
         }
       }
-      start = i;
     }
   }
 
   private void resolveAttributes(String key, List<ResolveResult> results, int depth) {
     Matcher matcher = ATTRIBUTES.matcher(key);
     if (matcher.find()) {
-      String attributeName = matcher.group(1);
-      List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName, myElement);
-      Set<String> searched = new HashSet<>(declarations.size());
-      for (AttributeDeclaration decl : declarations) {
-        String value = decl.getAttributeValue();
-        if (value == null) {
-          continue;
+      int start = 0;
+      while (matcher.find(start)) {
+        String attributeName = matcher.group(1);
+        List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName, myElement);
+        Set<String> searched = new HashSet<>(declarations.size());
+        for (AttributeDeclaration decl : declarations) {
+          String value = decl.getAttributeValue();
+          if (value == null) {
+            continue;
+          }
+          if (searched.contains(value)) {
+            continue;
+          }
+          searched.add(value);
+          String newKey = new StringBuilder(key).replace(matcher.start(), matcher.end(), value).toString();
+          resolve(newKey, results, depth + 1);
         }
-        if (searched.contains(value)) {
-          continue;
+        if (results.size() > 0) {
+          return;
         }
-        searched.add(value);
-        resolve(matcher.replaceFirst(Matcher.quoteReplacement(value)), results, depth + 1);
+        start = matcher.end();
       }
     } else {
       PsiElement file = resolve(key);

@@ -52,7 +52,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.intellij.openapi.project.ProjectUtil.guessProjectDir;
-
 import static org.asciidoc.intellij.psi.AsciiDocBlockIdStubElementType.BLOCK_ID_WITH_VAR;
 
 public class AsciiDocUtil {
@@ -127,7 +126,8 @@ public class AsciiDocUtil {
       return false;
     }
     Matcher matcherName = ATTRIBUTES.matcher(name);
-    if (matcherName.find()) {
+    int start = 0;
+    while (matcherName.find(start)) {
       if (matcherName.start() > key.length()) {
         return false;
       }
@@ -140,7 +140,8 @@ public class AsciiDocUtil {
       if (alreadyInStack.isPresent()) {
         // ensure that all occurrences in the replacement get the same value
         stack.push(alreadyInStack.get());
-        if (matchKeyWithName(matcherName.replaceAll(Matcher.quoteReplacement(alreadyInStack.get().getSecond())), key, project, stack)) {
+        String newName = new StringBuilder(name).replace(matcherName.start(), matcherName.end(), alreadyInStack.get().getSecond()).toString();
+        if (matchKeyWithName(newName, key, project, stack)) {
           return true;
         }
         stack.pop();
@@ -157,12 +158,17 @@ public class AsciiDocUtil {
           }
           searched.add(value);
           stack.push(new Trinity<>(attributeName, value, key));
-          if (matchKeyWithName(matcherName.replaceAll(Matcher.quoteReplacement(value)), key, project, stack)) {
+          String newName = new StringBuilder(name).replace(matcherName.start(), matcherName.end(), value).toString();
+          if (matchKeyWithName(newName, key, project, stack)) {
             return true;
           }
           stack.pop();
         }
+        if (searched.size() > 0) {
+          break;
+        }
       }
+      start = matcherName.end();
     }
     return false;
   }
@@ -829,13 +835,13 @@ public class AsciiDocUtil {
   private static final String FAMILIES = "(" + FAMILY_EXAMPLE + "|" + FAMILY_ATTACHMENT + "|" + FAMILY_PARTIAL + "|" + FAMILY_IMAGE + "|" + FAMILY_PAGE + ")";
 
   // 2.0@
-  private static final Pattern VERSION = Pattern.compile("^(?<version>[a-zA-Z0-9._-]*)@");
+  public static final Pattern VERSION = Pattern.compile("^(?<version>[a-zA-Z0-9._-]*)@");
   // component:module:
-  private static final Pattern COMPONENT_MODULE = Pattern.compile("^(?<component>[a-zA-Z0-9._-]*):(?<module>[a-zA-Z0-9._-]*):");
+  public static final Pattern COMPONENT_MODULE = Pattern.compile("^(?<component>[a-zA-Z0-9._-]*):(?<module>[a-zA-Z0-9._-]*):");
   // module:
-  private static final Pattern MODULE = Pattern.compile("^(?<module>[a-zA-Z0-9._-]*):");
+  public static final Pattern MODULE = Pattern.compile("^(?<module>[a-zA-Z0-9._-]*):");
   // family$
-  private static final Pattern FAMILY = Pattern.compile("^(?<family>" + FAMILIES + ")\\$");
+  public static final Pattern FAMILY = Pattern.compile("^(?<family>" + FAMILIES + ")\\$");
 
   @Nullable
   public static String resolveAttributes(PsiElement element, String val) {
@@ -933,6 +939,7 @@ public class AsciiDocUtil {
           otherFamily = defaultFamily;
         }
 
+        String backup = null;
         List<VirtualFile> otherDirs = getOtherAntoraModuleDir(project, moduleDir, myModuleName, myComponentName, myComponentVersion, otherComponentVersion, otherComponentName, otherModuleName);
         VirtualFile baseDir = guessProjectDir(project);
         List<String> result = new ArrayList<>();
@@ -971,16 +978,64 @@ public class AsciiDocUtil {
             // if the file exists, add it in first place
             result.add(0, newKey);
           } else {
-            result.add(newKey);
+            backup = newKey;
           }
         }
+        if (result.size() == 0 && Objects.equals(defaultFamily, "page")) {
+          resolvePageAliases(project, key, myModuleName, myComponentName, myComponentVersion, result);
+        }
         if (result.size() == 0) {
-          result.add(originalKey);
+          if (backup != null) {
+            result.add(backup);
+          } else {
+            result.add(originalKey);
+          }
         }
         return result;
       });
     }
     return Collections.singletonList(originalKey);
+  }
+
+  @SuppressWarnings("StringSplitter")
+  private static void resolvePageAliases(Project project, String key, String myModuleName, String myComponentName, String myComponentVersion, List<String> result) {
+    List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(project, "page-aliases");
+    for (AttributeDeclaration decl : declarations) {
+      String shortKey = AsciiDocFileReference.normalizeKeyForSearch(key);
+      String value = decl.getAttributeValue();
+      if (value == null) {
+        continue;
+      }
+      if (!value.contains(shortKey)) {
+        continue;
+      }
+      if (!(decl instanceof AsciiDocAttributeDeclarationImpl)) {
+        continue;
+      }
+      AsciiDocAttributeDeclarationImpl declImpl = (AsciiDocAttributeDeclarationImpl) decl;
+      Map<String, String> otherAttributes = AsciiDocUtil.collectAntoraAttributes(declImpl);
+      for (String element : value.split(",")) {
+        Map<String, String> elementAttributes = new HashMap<>(otherAttributes);
+        String shortElement = AsciiDocFileReference.normalizeKeyForSearch(element.trim());
+        if (!shortElement.contains(shortKey)) {
+          continue;
+        }
+        AsciiDocFileReference.parseAntoraPrefix(element.trim(), elementAttributes);
+        if (!Objects.equals(myComponentName, elementAttributes.get("page-component-name"))) {
+          continue;
+        }
+        if (!Objects.equals(myComponentVersion, elementAttributes.get("page-component-version"))) {
+          continue;
+        }
+        if (!Objects.equals(myModuleName, elementAttributes.get("page-module"))) {
+          continue;
+        }
+        if (!shortElement.equals(shortKey)) {
+          continue;
+        }
+        result.add(declImpl.getContainingFile().getVirtualFile().getCanonicalPath());
+      }
+    }
   }
 
   @SuppressWarnings("checkstyle:ParameterNumber")

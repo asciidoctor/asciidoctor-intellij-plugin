@@ -55,7 +55,7 @@ public class AsciiDocBlockIdStubElementType extends IStubElementType<AsciiDocBlo
   @Override
   public void indexStub(@NotNull AsciiDocBlockIdStub stub, @NotNull IndexSink sink) {
     if (stub.getName() != null) {
-      if (AsciiDocUtil.ATTRIBUTES.matcher(stub.getName()).matches()) {
+      if (AsciiDocUtil.ATTRIBUTES.matcher(stub.getName()).find()) {
         // add an additional entry to find all block IDs with an attribute more easily
         sink.occurrence(AsciiDocBlockIdKeyIndex.KEY, BLOCK_ID_WITH_VAR);
       }
