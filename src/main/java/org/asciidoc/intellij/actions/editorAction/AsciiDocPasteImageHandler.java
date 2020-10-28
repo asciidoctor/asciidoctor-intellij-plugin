@@ -38,9 +38,9 @@ public class AsciiDocPasteImageHandler extends EditorActionHandler implements Ed
   }
 
   @Override
-  public void doExecute(@NotNull final Editor editor, Caret caret, final DataContext dataContext) {
+  protected void doExecute(@NotNull final Editor editor, Caret caret, final DataContext dataContext) {
     assert caret == null : "Invocation of 'paste' operation for specific caret is not supported";
-    execute(editor, dataContext, null);
+    super.doExecute(editor, caret, dataContext);
   }
 
   @Override
