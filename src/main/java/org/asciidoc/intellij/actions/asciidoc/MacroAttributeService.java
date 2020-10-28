@@ -3,7 +3,6 @@ package org.asciidoc.intellij.actions.asciidoc;
 import com.intellij.openapi.components.Service;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,9 +18,7 @@ public final class MacroAttributeService {
    */
   public @NotNull String toAttributeString(@NotNull final MacroAttribute... attributes) {
     return Stream.of(attributes)
-      .filter(MacroAttribute::hasValue)
-      .map(MacroAttribute::asAttributeStringOption)
-      .map(Optional::get)
+      .flatMap(attribute -> attribute.asAttributeStringOption().map(Stream::of).orElseGet(Stream::empty))
       .collect(Collectors.joining(","));
   }
 }

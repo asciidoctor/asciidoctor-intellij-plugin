@@ -3,8 +3,6 @@ package org.asciidoc.intellij.actions.asciidoc;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Optional;
-
 import static org.junit.Assert.assertEquals;
 
 public class MacroAttributeServiceTest {
@@ -18,9 +16,9 @@ public class MacroAttributeServiceTest {
 
   @Test
   public void shouldMapMacroAttributesToLabelString() {
-    final MacroAttribute attribute1 = new MacroAttribute(Optional.of("source"), Optional.empty(), false);
-    final MacroAttribute attribute2 = new MacroAttribute(Optional.of("java"), Optional.empty(), false);
-    final MacroAttribute attribute3 = new MacroAttribute(Optional.of("Example 1"), Optional.of("title"), true);
+    final MacroAttribute attribute1 = MacroAttribute.createWithLabel("source", null);
+    final MacroAttribute attribute2 = MacroAttribute.createWithLabel("java", null);
+    final MacroAttribute attribute3 = MacroAttribute.createInQuotesWithLabel("Example 1", "title");
 
     final String attributes = service.toAttributeString(attribute1, attribute2, attribute3);
 
@@ -29,8 +27,8 @@ public class MacroAttributeServiceTest {
 
   @Test
   public void shouldFilterEmptyMacroAttributes() {
-    final MacroAttribute attribute = new MacroAttribute(Optional.of("Some alt text"), Optional.of("alt"), true);
-    final MacroAttribute empty = new MacroAttribute(Optional.empty(), Optional.empty(), false);
+    final MacroAttribute attribute = MacroAttribute.createInQuotesWithLabel("Some alt text", "alt");
+    final MacroAttribute empty = MacroAttribute.createWithLabel(null, null);
 
     final String attributes = service.toAttributeString(attribute, empty);
 
