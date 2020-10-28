@@ -1,30 +1,25 @@
-<!-- PULL REQUEST TEMPLATE -->
-<!-- (Update "[ ]" to "[x]" to check a box) -->
-
-**What kind of change does this PR introduce?** (check at least one)
-
+## What kind of change does this PR introduce?
+<!-- Place an `x` in all the boxes that apply -->
 - [ ] Bugfix
 - [ ] Feature
 - [ ] Documentation
 - [ ] Other, please describe:
 
-**Does this PR introduce a breaking change?** (check one)
-
-- [ ] Yes
+## Does this PR introduce a breaking change?** (check one)
+<!-- Place an `x` in one of the boxes -->
 - [ ] No
+- [ ] Yes
 
-If yes, please describe the breaking change:
+<!-- If yes, please describe the breaking change below -->
 
-**Please try to ensure:**
+## Checklist:
+<!-- Go over all the following points, and place an `x` in all the boxes that apply. -->
+<!-- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
+- [ ] I have read the [**CONTRIBUTING**](https://github.com/asciidoctor/asciidoctor-intellij-plugin/blob/master/CONTRIBUTING.adoc) document.
+- [ ] I have given my PR a descriptive name. If it resolves a specific issue, I referenced it in the form of `fix #xxx`, where `xxx` is the issue number.
+- [ ] I have updated the [documentation](https://github.com/asciidoctor/asciidoctor-intellij-plugin/blob/master/doc/users-guide/modules/ROOT/pages/features/) to reflect the changes introduced by this PR.
+- [ ] I have added tests to cover my changes.
+- [ ] All new and [existing](https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/building-and-running.html) tests passed.
 
-- When resolving a specific issue, reference it in the PR's title (e.g. `fix #xxx`, where "xxx" is the issue number)
-
-If you're adding or changing functionality:
-- Existing tests should pass: https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/building-and-running.html
-- Try to add new or update tests. Maintainers will help new contributors.
-
-If adding a **new feature**:
-- Update the feature documentation: https://github.com/asciidoctor/asciidoctor-intellij-plugin/blob/master/doc/users-guide/modules/ROOT/pages/features/
-
-**Other information:**
+<!-- Please add any additional remarks below -->
 
