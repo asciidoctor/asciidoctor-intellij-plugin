@@ -939,18 +939,9 @@ public class AsciiDoc {
                   map.forEach((k, v) -> {
                     String vs;
                     if (v == null) {
-                      // null -> not allowed in YAML file as attribute value
-                      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("AsciiDoc attribute '" + k + "' is null in " + antoraFile.getCanonicalPath(),
-                        "Will be treated as unset. Use either false to explicitly unset, or set by providing for example an empty string ''",
-                        NotificationType.ERROR, null);
-                      notification.setImportant(true);
-                      Notifications.Bus.notify(notification);
                       vs = null;
                     } else if (v instanceof Boolean && !(Boolean) v) {
                       // false -> soft unset
-                      vs = null;
-                    } else if (v instanceof String && v.equals("~")) {
-                      // "~" -> hard unset
                       vs = null;
                     } else {
                       vs = v.toString();

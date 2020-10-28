@@ -85,9 +85,10 @@
           "type": [
             "string",
             "boolean",
-            "number"
+            "number",
+            "null"
           ],
-          "description": "Attributes can be set and unset.\nTo hard set an attribute, simply enter its value. Hard set component version attributes can’t be reassigned or unset by a page.\nTo soft set an attribute, attach the @ modifier to the end of its value. A page can override soft set component version attributes.\nTo hard unset an attribute, assign it the tilde symbol (~). Hard unset component version attributes can’t be set by a page.\nTo soft unset an attribute, assign the value false. A page can override soft unset component version attributes."
+          "description": "Attributes can be set and unset.\nTo hard set an attribute, simply enter its value. Hard set component version attributes can’t be reassigned or unset by a page.\nTo soft set an attribute, attach the @ modifier to the end of its value. A page can override soft set component version attributes.\nTo hard unset an attribute, assign it the tilde symbol without quotes (~). Hard unset component version attributes can’t be set by a page.\nTo soft unset an attribute, assign the value false. A page can override soft unset component version attributes."
         }
       }
     }

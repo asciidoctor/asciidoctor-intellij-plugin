@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.38 (preview, available from GitHub releases)
+
+- attributes in Antora component descriptor should support null values (#581)
+
 === 0.31.37 (preview, available from GitHub releases)
 
 - only show changes from the previously installed version in the notification balloon
