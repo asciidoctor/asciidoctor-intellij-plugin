@@ -1,0 +1,88 @@
+= Keymap
+:navtitle: Keymap
+:description: Keyboard shortcuts.
+
+== Windows/Linux
+
+[caption=]
+.General
+[width="75%",cols="4,3",grid="bot",options="header"]
+|===
+^| Description ^| Shortcut
+| Search everywhere | kbd:[Double Shift]
+| Smart code completion | kbd:[Ctrl+Shift+Space]
+| Show intention actions and quick-fixes | kbd:[At+Enter]
+| Open corresponding tool window | kbd:[Alt+ ++#[0-9]++]
+| Open Settings dialog | kbd:[Ctrl+Alt+S]
+| Find Action | kbd:[Ctrl+Shift+A]
+|===
+
+[caption=]
+.Editing
+[width="75%",cols="4,3",grid="bot",options="header"]
+|===
+^| Description ^| Shortcut
+| Extend selection | kbd:[Ctrl+W]
+| Shrink selection | kbd:[Ctrl+Shift+W]
+| Toggle bold for selected text | kbd:[*]
+| Toggle emphasize for selected text | kbd:[_]
+| Show intention actions and quick-fixes | kbd:[Alt+Enter]
+| Reformat code | kbd:[Ctrl+Alt+L]
+| Auto-indent line(s) | kbd:[Ctrl+Alt+I]
+| Indent/unindent selected lines | kbd:[Tab] / kbd:[Shift+Tab]
+| Cut current line to clipboard  | kbd:[Ctrl+X],kbd:[Shift+Delete]
+| Copy current line to clipboard | kbd:[Ctrl+C],kbd:[Ctrl+Insert]
+| Paste from clipboard | kbd:[Ctrl+V],kbd:[Shift+Insert]
+| Duplicate current line  | kbd:[Ctrl+D]
+| Delete line at caret | kbd:[Ctrl+Y]
+| Smart line join | kbd:[Ctrl+Shift+J]
+| Smart line split | kbd:[Ctrl+Enter]
+| Start new line | kbd:[Shift+Enter]
+| Toggle case for word at caret or selected block | kbd:[Ctrl+Shift+U]
+| Delete to word start | kbd:[Ctrl+Delete]
+| Close active editor tab | kbd:[Ctrl+F4]
+| Basic code completion | kbd:[Ctrl+Space]
+| Smart code completion | kbd:[Ctrl+Shift+Space]
+| Complete statement | kbd:[Ctrl+Shift+Enter]
+| Quick documentation lookup | kbd:[Ctrl+Q]
+| Brief Info | kbd:[Ctrl+mouse]
+| Generate code... | kbd:[Alt+Insert]
+| Comment/uncomment with line comment | kbd:[Ctrl+/]
+| Comment/uncomment with block comment | kbd:[Ctrl+Shift+/]
+| Select till code block end | kbd:[Ctrl+Shift++[+]
+| Select till code block start | kbd:[Ctrl+Shift++]+]
+|===
+
+[caption=]
+.Navigating
+[width="75%",cols="4,3",grid="bot",options="header"]
+|===
+^| Description ^| Shortcut
+| Go to class | kbd:[Ctrl+N]
+| Go to file | kbd:[Ctrl+Shift+N]
+| Go to symbol | kbd:[Ctrl+Alt+Shift+N]
+| Go to next/previous editor tab | kbd:[Alt+Right/Left]
+| Go back to previous tool window | kbd:[F12]
+| Go to editor (from tool window) | kbd:[Esc]
+| Hide active or last active window | kbd:[Shift+Esc]
+| Go to line | kbd:[Ctrl+G]
+| Recent files popup | kbd:[Ctrl+E]
+| Navigate back/forward | kbd:[Ctrl+Alt+Left/Right]
+| Navigate to last edit location | kbd:[Ctrl+Shift+Backspace]
+| Select current file or symbol in any view | kbd:[Alt+F1]
+| Go to declaration | kbd:[Ctrl+B],kbd:[Ctrl+Click]
+| File structure popup | kbd:[Ctrl+F12]
+| Show navigation bar | kbd:[Alt+Home]
+| Toggle bookmark | kbd:[F11]
+| Toggle bookmark with mnemonic | kbd:[Ctrl+F11]
+| Go to numbered bookmark | kbd:[Ctrl+ ++#[0-9]++]
+| Show bookmarks | kbd:[Shift+F11]
+
+|===
+
+
+
+
+
+
+
