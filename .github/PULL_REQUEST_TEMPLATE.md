@@ -19,6 +19,7 @@
 - [ ] I have given my PR a descriptive name. If it resolves a specific issue, I referenced it in the form of `fix #xxx` (where `xxx` is the issue number).
 - [ ] I have updated the [documentation](https://github.com/asciidoctor/asciidoctor-intellij-plugin/blob/master/doc/users-guide/modules/ROOT/pages/features/) to reflect the changes introduced by this PR.
 - [ ] I have added tests to cover my changes.
+- [ ] I need help writing a test to cover my change (Maintainers are willing to help).
 - [ ] All new and [existing](https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/building-and-running.html) tests passed.
 
 <!-- Please add any additional remarks below -->
