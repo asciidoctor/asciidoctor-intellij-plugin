@@ -2,6 +2,17 @@
 :navtitle: Keymap
 :description: Keyboard shortcuts.
 
+This is a list of keyboard shortcuts.
+Keyboard shortcuts enable users to navigate efficiently in their IDE without reaching to the mouse.
+
+////
+When adding entries, keep keymap for Windows and Linux in the same order.
+When adding a shortcut for one OS, lookup the corresponding shortcut for the other OS using the reference card below.
+
+Reference card of the default key map
+https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA_ReferenceCard.pdf
+////
+
 == Windows/Linux
 
 [caption=]
@@ -33,7 +44,8 @@
 | Indent/unindent selected lines | kbd:[Tab] / kbd:[Shift+Tab]
 | Cut current line to clipboard  | kbd:[Ctrl+X],kbd:[Shift+Delete]
 | Copy current line to clipboard | kbd:[Ctrl+C],kbd:[Ctrl+Insert]
-| Paste from clipboard | kbd:[Ctrl+V],kbd:[Shift+Insert]
+| Paste from clipboard +
+(text or images) | kbd:[Ctrl+V],kbd:[Shift+Insert]
 | Duplicate current line  | kbd:[Ctrl+D]
 | Delete line at caret | kbd:[Ctrl+Y]
 | Smart line join | kbd:[Ctrl+Shift+J]
@@ -43,11 +55,16 @@
 | Delete to word end | kbd:[Ctrl+Delete]
 | Delete to word start | kbd:[Ctrl+Backspace]
 | Close active editor tab | kbd:[Ctrl+F4]
-| Basic code completion | kbd:[Ctrl+Space]
-| Smart code completion | kbd:[Ctrl+Shift+Space]
-| Complete statement | kbd:[Ctrl+Shift+Enter]
+| Basic code completion +
+(for example file names) | kbd:[Ctrl+Space]
+| Smart code completion +
+(for example file names) | kbd:[Ctrl+Shift+Space]
+| Complete statement +
+(for example macros) | kbd:[Ctrl+Shift+Enter]
 | Quick documentation lookup | kbd:[Ctrl+Q]
 | Brief Info | kbd:[Ctrl+mouse]
+| Expand/collapse block or attribute | kbd:[Ctrl+NumPad+] / kbd:[NumPad-]
+| Expand/collapse all | kbd:[Ctrl+Shift+NumPad+] / kbd:[NumPad-]
 | Comment/uncomment with line comment | kbd:[Ctrl+/]
 | Comment/uncomment with block comment | kbd:[Ctrl+Shift+/]
 | Select till code block end | kbd:[Ctrl+Shift++]+]
@@ -67,6 +84,10 @@
 | Go to editor (from tool window) | kbd:[Esc]
 | Hide active or last active window | kbd:[Shift+Esc]
 | Go to line | kbd:[Ctrl+G]
+| Find in current file | kbd:[Ctrl+F]
+| Replace in current file | kbd:[Ctrl+R]
+| Rename +
+(for example ID or file name) | kbd:[Shift+F6]
 | Recent files popup | kbd:[Ctrl+E]
 | Navigate back/forward | kbd:[Ctrl+Alt+Left/Right]
 | Navigate to last edit location | kbd:[Ctrl+Shift+Backspace]
@@ -113,7 +134,8 @@
 | Indent/unindent selected lines | kbd:[Right] / kbd:[⇧+Right]
 | Cut current line to clipboard  | kbd:[⌘+X]
 | Copy current line to clipboard | kbd:[⌘+C]
-| Paste from clipboard | kbd:[⌘+V]
+| Paste from clipboard +
+(text or images) | kbd:[⌘+V]
 | Duplicate current line  | kbd:[⌘+D]
 | Delete line at caret | kbd:[⌘+Backspace]
 | Smart line join | kbd:[⌃+⇧+J]
@@ -123,11 +145,16 @@
 | Delete to word start | kbd:[⌥+Backspace]
 | Delete to word end | kbd:[⌥+Delete]
 | Close active editor tab | kbd:[⌘+W]
-| Basic code completion | kbd:[^+Space]
-| Smart code completion | kbd:[^+⇧+Space]
-| Complete statement | kbd:[⌘+⇧+Enter]
+| Basic code completion +
+(for example file names) | kbd:[^+Space]
+| Smart code completion +
+(for example file names) | kbd:[^+⇧+Space]
+| Complete statement +
+(for example macros) | kbd:[⌘+⇧+Enter]
 | Quick documentation lookup | kbd:[^+J]
 | Brief Info | kbd:[⌘+mouse]
+| Expand/collapse block or attribute | kbd:[⌘ + ++ + ++] / kbd:[⌘+-]
+| Expand/collapse all | kbd:[⌘ + ⇧ + ++ + ++] / kbd:[⌘ + ⇧+-]
 | Comment/uncomment with line comment | kbd:[⌘+/]
 | Comment/uncomment with block comment | kbd:[⌘+⌥+/]
 | Select till code block end | kbd:[⌘] + kbd:[⇧] + kbd:[+]+]
@@ -147,6 +174,10 @@
 | Go to editor (from tool window) | kbd:[Esc]
 | Hide active or last active window | kbd:[⇧+Esc]
 | Go to line | kbd:[⌘+L]
+| Find in current file | kbd:[⌘+F]
+| Replace in current file | kbd:[⌘+R]
+| Rename +
+(for example ID or file name) | kbd:[⇧+F6]
 | Recent files popup | kbd:[⌘+E]
 | Navigate back/forward | kbd:[⌘+⌥+Left/Right]
 | Navigate to last edit location | kbd:[⌘+⇧+Backspace]
