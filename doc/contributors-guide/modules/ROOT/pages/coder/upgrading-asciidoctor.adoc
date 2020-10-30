@@ -2,7 +2,7 @@
 
 Follow these steps:
 
-. update `build.gradle` with the latest available AsciidoctorJ release
+. Update `build.gradle` with the latest available AsciidoctorJ release
 
 The preview of `JavaFxHtmlPanel` and `AsciiDocJCEFHtmlPanel` and will automatically load the most recent style sheets and patch them accordingly at runtime.
 
