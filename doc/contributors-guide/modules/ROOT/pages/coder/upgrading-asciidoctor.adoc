@@ -1,8 +1,14 @@
-= Upgrading Asciidoctor
+= Upgrading Asciidoctor and other dependencies
+:description: Upgrading Asciidoctor and other dependencies to stay up-to-date.
+:navtitle: Upgrading Asciidoctor
 
-Follow these steps:
+{description}
 
-. Update `build.gradle` with the latest available AsciidoctorJ release
+== How to upgrade
 
-The previews of `JavaFxHtmlPanel` and `AsciiDocJCEFHtmlPanel` will automatically load the most recent style sheets and patch them accordingly at runtime.
+Update `build.gradle` with the latest available AsciidoctorJ, AsciidoctorJ-PDF and AsciidoctorJ-Diagram release.
 
+See the detailed comments in `build.gradle` for other places that need to be in line on every upgrade:
+
+* The version of `snakeyaml` needs to be updated in line with JRuby that is a transitive dependency of AsciidoctorJ.
+* The class `AsciiDocDownloaderUtil` holds the version numbers and SHA1 hashes of AsciidoctorJ-PDF and AsciidoctorJ-Diagram for a deferred download in the IDE.
