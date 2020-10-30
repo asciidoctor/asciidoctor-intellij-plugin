@@ -7,9 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.39 (work in progress)
+=== 0.31.39 (preview, available from GitHub releases)
 
 - added https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/features/keymap.html[Keymap to user manual] (thanks to @EEM86) (#565, #586)
+- adjusted content security policy to allow for data-URIs images in JCEF preview (#229)
 
 === 0.31.38 (preview, available from GitHub releases)
 

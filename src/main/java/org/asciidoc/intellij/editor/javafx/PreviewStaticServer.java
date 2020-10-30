@@ -62,7 +62,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
   public static String createCSP(@NotNull Map<String, String> attributes) {
     String result = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/scripts/").toExternalForm() + "; "
       + "style-src 'unsafe-inline' https: http: " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/styles/").toExternalForm() + "; "
-      + "img-src file: localfile: *; connect-src 'none'; font-src *; " +
+      + "img-src file: data: localfile: *; connect-src 'none'; font-src *; " +
       "object-src file: localfile: *;" + // used for interactive SVGs
       "media-src 'none'; child-src 'none'; " +
       "frame-src 'self' https://player.vimeo.com/ https://www.youtube.com/"; // used for vimeo/youtube iframes
