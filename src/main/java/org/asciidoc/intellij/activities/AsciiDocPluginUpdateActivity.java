@@ -32,7 +32,6 @@ public class AsciiDocPluginUpdateActivity implements StartupActivity, DumbAware 
       return;
     }
     String version = plugin.getVersion();
-    version = "0.31.36";
     String oldVersion = settings.getVersion();
     boolean updated = !version.equals(oldVersion);
     if (updated) {
