@@ -12,7 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - added https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/features/keymap.html[Keymap to user manual] (thanks to @EEM86) (#565, #586)
 - adjusted content security policy to allow for data-URIs images in JCEF preview (#229)
 
-=== 0.31.38 (preview, available from GitHub releases)
+=== 0.31.38
 
 - attributes in Antora component descriptor should support null values (#581)
 
@@ -46,7 +46,7 @@ This document provides a high-level view of the changes introduced by release.
 - dialog to paste an image allows adding the width for the image (thanks to @martingreilinger) (#412, #559)
 - upgrade to asciidoctorj-diagram 2.0.5 (thanks to @pepijnve) (#561)
 
-=== 0.31.33 (preview, available from GitHub releases)
+=== 0.31.33
 
 - prevent blank preview on Windows when user folder contains non-ASCII characters (#543)
 
