@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: AsciiDoc Plugin User's Guide
+    url: https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/index.html
+    about: Learn about the provided features.
+  - name: FQA & Trouble Shooting
+    url: https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/faq.html
+    about: Having issues? Check the FAQ and trouble shooting guide before creating an issue.
