@@ -1,0 +1,2 @@
+For Android Studio 4.0+, enable xref:features/preview/javafx-preview.adoc#choose-jdk[JavaFX preview by upgrading the bundled JDK].
+For Android Studio 4.2+, enable xref:features/preview/jcef-preview.adoc#choose-jdk[JCEF preview by upgrading the bundled JDK].

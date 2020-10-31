@@ -34,9 +34,10 @@ This opens a fully equipped Chrome developer tools window that allows users to i
 JCEF preview is only available from IntelliJ 2020.2+ and plugin version 0.31.x.
 It requires that the user runs on the pre-packaged JetBrains OpenJDK 11.
 
+[[choose-jdk]]
 === Selecting a different JetBrains JDK using the "`Choose Runtime`" plugin
 
-This is recommended for Android Studio 4.2 that doesn't ship with neither JavaFX nor JCEF support.
+This is recommended for Android Studio 4.2 that doesn't ship with either JavaFX or JCEF support.
 You can watch https://issuetracker.google.com/issues/159933628[this issue] or https://issuetracker.google.com/issues/167661932[this issue] in Android Studio's issue tracker for the progress.
 
 JavaFX preview that used to work with Android Studio 4.0 will not work with Android Studio 4.2 as it doesn't package the necessary classes in the IDE. Therefore, follow these steps to enable JCEF preview for Android Studio.

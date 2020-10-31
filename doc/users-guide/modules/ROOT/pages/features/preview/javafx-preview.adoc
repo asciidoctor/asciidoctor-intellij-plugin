@@ -27,6 +27,7 @@ Please use the JetBrains OpenJDK 11 runtime whenever possible.
 
 include::partial$javafx-preview-requires-plugin.adoc[]
 
+[[choose-jdk]]
 === Selecting a different JetBrains JDK using the "`Choose Runtime`" plugin
 
 This is recommended for Android Studio 4.0 that includes JetBrains OpenJDK 8 as default without JavaFX support.

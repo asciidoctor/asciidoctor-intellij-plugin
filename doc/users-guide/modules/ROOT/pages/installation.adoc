@@ -10,6 +10,7 @@ endif::[]
 == Prerequisites
 
 To use this plugin, you need to have one of the IntelliJ family of IDEs like IntelliJ IDEA, GoLand, WebStorm or PyCharm installed.
+See below for <<google-android-studio,Android Studio>> and <<intellij-mps,IntelliJ MPS>>.
 
 All default download packages include the JetBrains Runtime 11, a pre-bundled OpenJDK runtime environment.
 Please use the pre-bundled JetBrains Runtime to run the IDE as it proves to be the most stable.
@@ -31,6 +32,23 @@ You can still download them and use them with a free, time-limited evaluation su
 
 You can download them from the JetBrains homepage: link:https://www.jetbrains.com/idea/download/[^]
 
+[#google-android-studio]
+=== Google Android Studio
+
+If you use Android Studio, go ahead and <<installplugin,install the plugin>>.
+
+Afterwards:
+include::partial$android-studio-next-steps.adoc[]
+
+[#intellij-mps]
+=== IntelliJ MPS
+
+If you use MPS, go ahead and <<installplugin,install the plugin>>.
+
+Support will be limited as MPS doesn't have all the APIs the plugin can hook into.
+Have a look at xref:faq/troubleshooting-mps.adoc[].
+Please open an issue on GitHub if you want to contribute to make MPS support better.
+
 === More information on JDKs
 
 To use the JavaFX preview instead of the Swing preview, you'll need to run IntelliJ with 64bit Java and JavaFX installed.
@@ -41,7 +59,7 @@ The event more advanced JCEF preview will only work with JetBrains OpenJDK runti
 
 Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
-Read more about choosing the JDK version of the IDE in the JetBrains knowledge base entry "`https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Selecting the JDK version the IDE will run under]`"
+Read more about choosing the JDK version of the IDE in the JetBrains knowledge base entry "`https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Selecting the JDK version the IDE will run under]`".
 
 [#installplugin]
 == Installing the plugin
@@ -49,14 +67,14 @@ Read more about choosing the JDK version of the IDE in the JetBrains knowledge b
 To activate the support for AsciiDoc in the IDE the plugin you must install the plugin.
 There are several possibilities to install the plugin:
 
-Installing from JetBrains marketplace with an Internet Connection:
+Installing from JetBrains marketplace with an Internet Ccnnection:
 
-. via the xref:marketplace-via-settings[IDE's settings from JetBrains marketplace]
+. Via the xref:marketplace-via-settings[IDE's settings from JetBrains marketplace].
 
 If your IDE doesn't have internet access configured:
 
 [start=2]
-. download the installation archive via your browser and install it from disk
+. Download the installation archive via your browser and install it from disk.
 
 ////
 TODO: document the following possibilities
@@ -76,7 +94,7 @@ This requires a working internet connection in your IDE.
 
 Steps::
 +
-. Open the IDE's setting via menu:File[Settings...] +
+. Open the IDE's setting via menu:File[Settings...]. +
 This opens the following menu:
 +
 .Settings menu when installing from JetBrains Marketplace
