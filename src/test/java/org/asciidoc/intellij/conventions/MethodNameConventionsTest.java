@@ -10,7 +10,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods;
 
 @RunWith(ArchUnitRunner.class)
 @AnalyzeClasses(packages = "org.asciidoc.intellij")
-public class TestMethodNameConventionsTest {
+public class MethodNameConventionsTest {
 
   @ArchTest
   public static final ArchRule CHECK_TEST_METHOD_PREFIX = methods()
