@@ -24,7 +24,7 @@ public class ImageWidthFieldTest {
   }
 
   @Test
-  public void isSetupCorrectly() {
+  public void shouldSetupCorrectly() {
     assertEquals(widthField.getMinValue(), 0);
     assertEquals(widthField.getMaxValue(), MAX_VALUE);
     assertEquals(widthField.getValueName(), "imageWidth");
@@ -34,7 +34,7 @@ public class ImageWidthFieldTest {
   }
 
   @Test
-  public void setsValueWhenInitializeWidthFutureCompletesAndInvokesRunnable() {
+  public void shouldSetsValueWhenInitializeWidthFutureCompletesAndInvokesRunnable() {
     final Integer newValue = 500;
     final CompletableFuture<Optional<Integer>> initialWidthFuture = completedFuture(Optional.of(newValue));
     final Runnable onInitializationCompleted = Mockito.spy(Runnable.class);
@@ -46,7 +46,7 @@ public class ImageWidthFieldTest {
   }
 
   @Test
-  public void ignoresFutureResultWhenCompletesWithAnEmptyOptionalButStillInvokesRunnable() {
+  public void shouldIgnoreFutureResultWhenCompletesWithAnEmptyOptionalButStillInvokesRunnable() {
     final CompletableFuture<Optional<Integer>> initialWidthFuture = completedFuture(Optional.empty());
     final Runnable onInitializationCompleted = Mockito.spy(Runnable.class);
     final Integer previousValue = 320;
@@ -59,7 +59,7 @@ public class ImageWidthFieldTest {
   }
 
   @Test
-  public void returnsEmptyOptionWhenValueIsZero() {
+  public void shouldReturnEmptyOptionWhenValueIsZero() {
     widthField.setValue(0);
 
     final Optional<Integer> valueOption = widthField.getValueOption();
@@ -68,7 +68,7 @@ public class ImageWidthFieldTest {
   }
 
   @Test
-  public void returnsOptionWhenValueIsAPositiveInteger() {
+  public void shouldReturnOptionWhenValueIsAPositiveInteger() {
     final Integer imageWidth = 234;
     widthField.setValue(imageWidth);
 
@@ -79,7 +79,7 @@ public class ImageWidthFieldTest {
   }
 
   @Test
-  public void setsANewPreferredWidth() {
+  public void shouldSetANewPreferredWidth() {
     final int expectedWidth = 70;
 
     int preferredWidth = widthField.getPreferredSize().width;
