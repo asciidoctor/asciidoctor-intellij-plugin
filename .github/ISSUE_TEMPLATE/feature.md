@@ -4,16 +4,18 @@ about: Missing or fancy a feature? Suggest it here.
 labels: 'enhancement'
 ---
 
-## Description
+## Why the new feature should be added
 
 <!--
     Give a short overview of your suggested feature.
-    Consider describing a use case and why do you think it will benefit the plugin.
+    Please describe why the feature will benefit users of the plugin.
+    Provide the context in which the feature will work best.
 -->
 
-## Acceptance Criteria
+## How the new feature should work
 
 <!--
-    Describe your expected behaviour.
-    Consider adding a mockup or Asciidoctor example.
+    What the current behavior of the plugin?
+    What is the new expected behaviour?
+    Consider adding a mockup or AsciiDoc example.
 -->
