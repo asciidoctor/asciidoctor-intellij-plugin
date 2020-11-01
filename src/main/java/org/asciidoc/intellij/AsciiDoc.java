@@ -1107,6 +1107,35 @@ public class AsciiDoc {
   @NotNull
   public static String enrichPage(@NotNull String html, String
     standardCss, @NotNull Map<String, String> attributes) {
+
+    /* Add body classes */
+    String doctype = attributes.get("doctype");
+    String bodyClass = "";
+    if (doctype != null && doctype.length() != 0) {
+      bodyClass += doctype + " ";
+    }
+
+    String tocClass = attributes.get("toc-class");
+    String toc = attributes.get("toc");
+    if (tocClass != null && toc != null) {
+      bodyClass += tocClass + " ";
+      String tocPosition = attributes.get("toc-position");
+      if (tocPosition != null && tocPosition.length() != 0) {
+        bodyClass += "toc-" + tocPosition + " ";
+      }
+      if (tocClass.length() > 0) {
+        // in embedded mode, the class of the toc is always set to 'toc'
+        // this way it will not be placed left or right using the standard CSS
+        // this replacement fixes it by setting it to the real 'toc-class'
+        html = html.replaceAll("<div id=\"toc\" class=\"toc\">", "<div id=\"toc\" class=\"" + tocClass + "\">\n");
+      }
+    }
+
+    if (bodyClass.length() > 0) {
+      html = html
+        .replace("<body>", "<body class='" + bodyClass + "' />");
+    }
+
     /* Add CSS line */
     String stylesheet = attributes.get("stylesheet");
     if (stylesheet != null && stylesheet.length() != 0) {
