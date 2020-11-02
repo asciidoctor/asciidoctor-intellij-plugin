@@ -9,7 +9,7 @@ import static org.junit.Assert.assertFalse;
 public class AttributeCheckBoxTest {
 
   @Test
-  public void isSetupCorrectly() {
+  public void shouldSetupCorrectly() {
     final String text = "Width:";
     final String toolTip = "Enabled once width has been loaded";
 
@@ -22,7 +22,7 @@ public class AttributeCheckBoxTest {
   }
 
   @Test
-  public void invokesSelectedActionOnStateChange() {
+  public void shouldInvokeSelectedActionOnStateChange() {
     final AttributeCheckBox checkBox = new AttributeCheckBox("");
 
     checkBox.onStateChanged(Assert::assertTrue);

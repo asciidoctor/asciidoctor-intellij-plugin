@@ -19,14 +19,14 @@ import static org.junit.Assert.assertTrue;
 public class ImageServiceTest {
 
   @Test
-  public void returnsEmptyWhenFileIsNull() throws ExecutionException, InterruptedException {
+  public void shouldReturnEmptyWhenFileIsNull() throws ExecutionException, InterruptedException {
     Optional<Integer> imageWidthOption = ImageService.getImageWidth(null).get();
 
     assertFalse(imageWidthOption.isPresent());
   }
 
   @Test
-  public void returnsEmptyForNonPngJpegFiles() throws ExecutionException, InterruptedException, IOException {
+  public void shouldReturnsEmptyForNonPngJpegFiles() throws ExecutionException, InterruptedException, IOException {
     Optional<Integer> imageWidthOption = ImageService
       .getImageWidth(createVirtualFile("testFiles/test-image.svg"))
       .get();
@@ -35,7 +35,7 @@ public class ImageServiceTest {
   }
 
   @Test
-  public void returnsOptionWithActualFileWidth() throws ExecutionException, InterruptedException, IOException {
+  public void shouldReturnOptionWithActualFileWidth() throws ExecutionException, InterruptedException, IOException {
     Optional<Integer> imageWidthOption = ImageService
       .getImageWidth(createVirtualFile("testFiles/test-image-width-20px.png"))
       .get();
