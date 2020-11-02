@@ -12,28 +12,24 @@ public class MacroAttributeTest {
 
   @Test
   public void shouldHandleEmptyValues() {
-    MacroAttribute attribute = new MacroAttribute(Optional.empty(), Optional.empty(), false);
+    MacroAttribute attribute = MacroAttribute.createWithLabel(null, null);
 
-    assertFalse(attribute.hasValue());
     assertFalse(attribute.asAttributeStringOption().isPresent());
-
   }
 
   @Test
   public void shouldHandleEmptyQuotedValues() {
-    MacroAttribute attribute = new MacroAttribute(Optional.empty(), Optional.empty(), true);
+    MacroAttribute attribute = MacroAttribute.createInQuotesWithLabel(null, null);
 
-    assertFalse(attribute.hasValue());
     assertFalse(attribute.asAttributeStringOption().isPresent());
   }
 
   @Test
   public void shouldStringifyValueForAttributeString() {
-    MacroAttribute attribute = new MacroAttribute(Optional.of(250), Optional.empty(), false);
+    MacroAttribute attribute = MacroAttribute.createWithLabel(250, null);
 
     Optional<String> stringOptional = attribute.asAttributeStringOption();
 
-    assertTrue(attribute.hasValue());
     assertTrue(stringOptional.isPresent());
     assertEquals("250", stringOptional.get());
   }
@@ -41,48 +37,40 @@ public class MacroAttributeTest {
 
   @Test
   public void shouldEscapeDoubleQuotesInAttributeString() {
-    MacroAttribute attribute = new MacroAttribute(Optional.of("Message \"with\" quotes"), Optional.empty(), false);
+    MacroAttribute attribute = MacroAttribute.createWithLabel("Message \"with\" quotes", null);
 
     Optional<String> stringOptional = attribute.asAttributeStringOption();
 
-    assertTrue(attribute.hasValue());
     assertTrue(stringOptional.isPresent());
     assertEquals("Message \\\"with\\\" quotes", stringOptional.get());
   }
 
   @Test
   public void shouldQuoteValueInAttributeString() {
-    MacroAttribute attribute = new MacroAttribute(Optional.of(true), Optional.empty(), true);
+    MacroAttribute attribute = MacroAttribute.createInQuotesWithLabel(true, null);
 
     Optional<String> stringOptional = attribute.asAttributeStringOption();
 
-    assertTrue(attribute.hasValue());
     assertTrue(stringOptional.isPresent());
     assertEquals("\"true\"", stringOptional.get());
   }
 
   @Test
   public void shouldIncludeLabelCorrectlyInAttributeString() {
-    MacroAttribute attribute = new MacroAttribute(Optional.of(75), Optional.of("width"), false);
+    MacroAttribute attribute = MacroAttribute.createWithLabel(75, "width");
 
     Optional<String> stringOptional = attribute.asAttributeStringOption();
 
-    assertTrue(attribute.hasValue());
     assertTrue(stringOptional.isPresent());
     assertEquals("width=75", stringOptional.get());
   }
 
   @Test
   public void shouldIncludeLabelWithQuotedValueAndEscapedDoubleQuotesCorrectlyInAttributeString() {
-    MacroAttribute attribute = new MacroAttribute(
-      Optional.of("Image of \"the\" person"),
-      Optional.of("alt"),
-      true
-    );
+    MacroAttribute attribute = MacroAttribute.createInQuotesWithLabel("Image of \"the\" person", "alt");
 
     Optional<String> stringOptional = attribute.asAttributeStringOption();
 
-    assertTrue(attribute.hasValue());
     assertTrue(stringOptional.isPresent());
     assertEquals("alt=\"Image of \\\"the\\\" person\"", stringOptional.get());
   }

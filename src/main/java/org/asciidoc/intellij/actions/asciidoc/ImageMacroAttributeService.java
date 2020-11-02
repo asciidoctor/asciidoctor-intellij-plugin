@@ -26,8 +26,8 @@ public final class ImageMacroAttributeService {
 
   public @NotNull String toAttributeString(@NotNull final ImageAttributes attributes) {
     return macroAttributeService.toAttributeString(
-      MacroAttribute.createWithLabel(attributes.getWidth(), WIDTH_LABEL),
-      MacroAttribute.createInQuotesWithLabel(attributes.getAlt(), ALT_LABEL)
+      MacroAttribute.createWithLabel(attributes.getWidth().orElse(null), WIDTH_LABEL),
+      MacroAttribute.createInQuotesWithLabel(attributes.getAlt().orElse(null), ALT_LABEL)
     );
   }
 }
