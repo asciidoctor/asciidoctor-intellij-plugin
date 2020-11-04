@@ -103,7 +103,11 @@
                 text="PDF"
                 description="Create PDF from current file">
         </action>
-
+        <action class="org.asciidoc.intellij.actions.asciidoc.CreatePdfFromPreviewAction"
+                id="org.asciidoc.intellij.actions.asciidoc.CreatePdfFromPreviewAction"
+                text="Web PDF"
+                description="Create PDF from preview">
+        </action>
         <action class="org.asciidoc.intellij.actions.asciidoc.CreateHtmlAction"
                 id="org.asciidoc.intellij.actions.asciidoc.CreateHtmlAction"
                 text="HTML"

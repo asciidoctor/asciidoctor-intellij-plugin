@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public interface AsciiDocHtmlPanel extends Disposable {
   @NotNull
@@ -32,6 +33,14 @@ public interface AsciiDocHtmlPanel extends Disposable {
   Editor getEditor();
 
   void setEditor(Editor editor);
+
+  default void printToPdf(String canonicalPath, Consumer<Boolean> success) {
+    throw new IllegalArgumentException();
+  }
+
+  default boolean isPrintingSupported() {
+    return false;
+  }
 
   enum PreviewTheme {
     INTELLIJ(AsciiDocBundle.message("asciidoc.preview.intellij")),

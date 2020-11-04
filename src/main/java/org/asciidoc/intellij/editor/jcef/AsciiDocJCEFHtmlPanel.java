@@ -72,6 +72,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -86,6 +87,19 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private JBCefJSQuery myRenderedIteration;
   private JBCefJSQuery myRenderedResult;
   private JBCefJSQuery myScrollEditorToLine;
+
+  @Override
+  public void printToPdf(String target, Consumer<Boolean> success) {
+    getCefBrowser().printToPDF(target, null, (s, b) -> {
+      success.accept(b);
+    });
+  }
+
+  @Override
+  public boolean isPrintingSupported() {
+    return true;
+  }
+
   private JBCefJSQuery myZoomDelta;
   private JBCefJSQuery myZoomReset;
   private JBCefJSQuery mySaveImage;

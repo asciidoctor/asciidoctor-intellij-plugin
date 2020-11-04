@@ -76,6 +76,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
+import java.util.function.Consumer;
 
 /**
  * @author Julien Viet
@@ -234,6 +235,14 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     }
 
     return provider;
+  }
+
+  public void printToPdf(String canonicalPath, Consumer<Boolean> success) {
+    myPanel.printToPdf(canonicalPath, success);
+  }
+
+  public boolean isPrintingSupported() {
+    return myPanel.isPrintingSupported();
   }
 
   private class MyRefreshPreviewListener implements RefreshPreviewListener {
