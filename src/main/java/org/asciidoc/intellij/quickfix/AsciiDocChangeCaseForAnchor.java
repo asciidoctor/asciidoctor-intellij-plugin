@@ -10,7 +10,6 @@ import org.asciidoc.intellij.psi.AsciiDocBlockId;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocSection;
-import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -53,8 +52,4 @@ public class AsciiDocChangeCaseForAnchor extends LocalQuickFixBase {
     }
   }
 
-  @NotNull
-  private static PsiElement createBlockId(@NotNull Project project, @NotNull String text) {
-    return AsciiDocUtil.createFileFromText(project, text);
-  }
 }

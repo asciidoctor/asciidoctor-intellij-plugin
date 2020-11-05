@@ -276,6 +276,10 @@
                      groupName="General" enabledByDefault="true" level="WARNING"
                      shortName="AsciiDocXrefWithFileExtension"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocXrefWithoutExtensionInspection"/>
+    <localInspection language="AsciiDoc" displayName="An xref should not use a natural reference" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="WARNING"
+                     shortName="AsciiDocXrefWithNaturalCrossReference"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocXrefWithNaturalCrossReferenceInspection"/>
     <lang.inspectionSuppressor language="AsciiDoc"
       implementationClass="org.asciidoc.intellij.inspections.AsciiDocInspectionSuppressor" />
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>

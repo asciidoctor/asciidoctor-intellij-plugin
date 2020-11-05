@@ -1,0 +1,7 @@
+// preferred syntax
+<<A Section>>
+
+// unintended use
+xref:<warning descr="An xref macro should not contain a natural cross reference.">A Section<caret></warning>[]
+
+== A Section

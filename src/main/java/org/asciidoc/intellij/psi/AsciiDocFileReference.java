@@ -544,6 +544,36 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return !key.contains(".") && !key.contains("{");
   }
 
+  public boolean inspectAntoraXrefWithoutNaturalReference() {
+    if (!"xref".endsWith(macroName)) {
+      return false;
+    }
+    if (isFile()) {
+      return false;
+    }
+    if (key.length() == 0) {
+      // just the part before a hash (#)
+      return false;
+    }
+    String resolvedKey = AsciiDocUtil.resolveAttributes(myElement, key);
+    if (resolvedKey != null) {
+      key = resolvedKey;
+    }
+    // unsure if it has an unresolved reference
+    if (key.contains("{")) {
+      return false;
+    }
+    // a dot indicates a file name
+    if (key.contains(".")) {
+      return false;
+    }
+    // natural reference: needs a space an capitalization
+    if (!key.contains(" ") || key.toLowerCase().equals(key)) {
+      return false;
+    }
+    return true;
+  }
+
   @NotNull
   private String removeFileProtocolPrefix(String value) {
     if (value.startsWith(FILE_PREFIX)) {

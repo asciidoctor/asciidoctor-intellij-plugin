@@ -7,15 +7,15 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocLink;
-import org.asciidoc.intellij.quickfix.AsciiDocAddAdocExtensionToXref;
+import org.asciidoc.intellij.quickfix.AsciiDocChangeXrefWithNaturalCrossReferenceToId;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexander Schwartz 2020
  */
-public class AsciiDocXrefWithoutExtensionInspection extends AsciiDocInspectionBase {
-  private static final String TEXT_HINT_ALWAYS_WITH_FILE_EXTENSION = "Antora xref should always have a file extension; skipping the extension '.adoc' is deprecated from Antora 3.0 onwards";
-  private static final AsciiDocAddAdocExtensionToXref ADD_ADOC_EXTENSION = new AsciiDocAddAdocExtensionToXref();
+public class AsciiDocXrefWithNaturalCrossReferenceInspection extends AsciiDocInspectionBase {
+  private static final String TEXT_HINT_NO_NATURAL_CROSS_REFERENCE = "An xref macro should not contain a natural cross reference.";
+  private static final AsciiDocChangeXrefWithNaturalCrossReferenceToId CHANGE_TO_INLINE_REF = new AsciiDocChangeXrefWithNaturalCrossReferenceToId();
 
   @NotNull
   @Override
@@ -26,15 +26,15 @@ public class AsciiDocXrefWithoutExtensionInspection extends AsciiDocInspectionBa
         if (o instanceof AsciiDocLink) {
           AsciiDocLink link = (AsciiDocLink) o;
           if (link.getMacroName().equals("xref")) {
-            AsciiDocFileReference reference = link.getFileReference();
+            AsciiDocFileReference reference = link.getAnchorReference();
             if (reference != null) {
-              if (reference.inspectAntoraXrefWithoutExtension()) {
+              if (reference.inspectAntoraXrefWithoutNaturalReference()) {
                 LocalQuickFix[] fixes = null;
-                if (ADD_ADOC_EXTENSION.canFix(link)) {
+                if (CHANGE_TO_INLINE_REF.canFix(link)) {
                   // offer a quick fix only if it can be fixed
-                  fixes = new LocalQuickFix[]{ADD_ADOC_EXTENSION};
+                  fixes = new LocalQuickFix[]{CHANGE_TO_INLINE_REF};
                 }
-                holder.registerProblem(o, TEXT_HINT_ALWAYS_WITH_FILE_EXTENSION, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, reference.getRangeInElement(), fixes);
+                holder.registerProblem(o, TEXT_HINT_NO_NATURAL_CROSS_REFERENCE, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, reference.getRangeInElement(), fixes);
               }
             }
           }
@@ -43,5 +43,4 @@ public class AsciiDocXrefWithoutExtensionInspection extends AsciiDocInspectionBa
       }
     };
   }
-
 }

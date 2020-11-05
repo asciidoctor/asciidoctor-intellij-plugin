@@ -1,0 +1,7 @@
+// preferred syntax
+<<A Section>>
+
+// unintended use
+xref:_a_section[]
+
+== A Section

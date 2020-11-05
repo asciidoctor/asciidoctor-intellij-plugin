@@ -114,6 +114,23 @@ public class AsciiDocLink extends ASTWrapperPsiElement implements HasFileReferen
     return TextRange.create(start, end);
   }
 
+  public static TextRange getFileRange(AsciiDocLink element) {
+    PsiElement child = element.getFirstChild();
+    while (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.LINKSTART) {
+      child = child.getNextSibling();
+    }
+    if (child == null) {
+      return TextRange.EMPTY_RANGE;
+    }
+    int start = child.getStartOffsetInParent();
+    int end = start;
+    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.LINKTEXT_START) {
+      end = child.getStartOffsetInParent() + child.getTextLength();
+      child = child.getNextSibling();
+    }
+    return TextRange.create(start, end);
+  }
+
   public String getMacroName() {
     ASTNode idNode = getNode().findChildByType(AsciiDocTokenTypes.LINKSTART);
     if (idNode == null) {
