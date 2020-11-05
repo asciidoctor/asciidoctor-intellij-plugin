@@ -34,12 +34,25 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
   @NotNull
   public String getTitle() {
     final AsciiDocSectionStub stub = getGreenStub();
-    if (stub != null) {
+    if (stub != null && !AsciiDocUtil.ATTRIBUTES.matcher(stub.getTitle()).find()) {
       return stub.getTitle();
     }
     AsciiDocHeading heading = findChildByClass(AsciiDocHeading.class);
     if (heading != null) {
-      return heading.getHeadingText();
+      return heading.getHeadingText(true);
+    }
+    return "<untitled>";
+  }
+
+  /**
+   * Return the title without substituting attributes. Use this to build a stub index, as otherwise
+   * the IDE would report "Reentrant indexing", and the index would not update when attributes update.
+   */
+  @NotNull
+  public String getTitleNoSubstitution() {
+    AsciiDocHeading heading = findChildByClass(AsciiDocHeading.class);
+    if (heading != null) {
+      return heading.getHeadingText(false);
     }
     return "<untitled>";
   }

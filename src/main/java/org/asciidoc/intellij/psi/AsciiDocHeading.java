@@ -45,7 +45,7 @@ public class AsciiDocHeading extends ASTWrapperPsiElement {
     return text;
   }
 
-  public String getHeadingText() {
+  public String getHeadingText(boolean substitution) {
     StringBuilder sb = new StringBuilder();
     PsiElement child = getFirstChild();
     boolean hasAttribute = false;
@@ -58,7 +58,7 @@ public class AsciiDocHeading extends ASTWrapperPsiElement {
       }
       child = child.getNextSibling();
     }
-    if (hasAttribute) {
+    if (hasAttribute && substitution) {
       try {
         String resolved = AsciiDocUtil.resolveAttributes(this, sb.toString());
         if (resolved != null) {

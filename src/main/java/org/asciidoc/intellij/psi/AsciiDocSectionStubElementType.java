@@ -30,6 +30,8 @@ import java.util.Objects;
 
 public class AsciiDocSectionStubElementType extends IStubElementType<AsciiDocSectionStub, AsciiDocSection> implements IReparseableElementTypeBase, ICustomParsingType {
 
+  public static final String SECTION_WITH_VAR = "#VAR#";
+
   // this contains "_" as this is a character often prefixed to IDs, sometimes not
   public static final String NORMALIZED_CHARS_IN_INDEX = "[ ._-]";
 
@@ -45,7 +47,7 @@ public class AsciiDocSectionStubElementType extends IStubElementType<AsciiDocSec
   @NotNull
   @Override
   public AsciiDocSectionStub createStub(@NotNull AsciiDocSection psi, StubElement parentStub) {
-    return new AsciiDocSectionStubImpl(parentStub, psi.getTitle());
+    return new AsciiDocSectionStubImpl(parentStub, ((AsciiDocSectionImpl) psi).getTitleNoSubstitution());
   }
 
   @NotNull
@@ -74,6 +76,10 @@ public class AsciiDocSectionStubElementType extends IStubElementType<AsciiDocSec
     if (stub.getTitle() != null) {
       String normalizedKey = AsciiDocSectionImpl.INVALID_SECTION_ID_CHARS.matcher(stub.getTitle().toLowerCase(Locale.US)).replaceAll("");
       normalizedKey = normalizedKey.replaceAll(NORMALIZED_CHARS_IN_INDEX, "");
+      if (AsciiDocUtil.ATTRIBUTES.matcher(stub.getTitle()).find()) {
+        // add an additional entry to find all block IDs with an attribute more easily
+        sink.occurrence(AsciiDocBlockIdKeyIndex.KEY, SECTION_WITH_VAR);
+      }
       sink.occurrence(AsciiDocSectionKeyIndex.KEY, normalizedKey);
     }
   }
