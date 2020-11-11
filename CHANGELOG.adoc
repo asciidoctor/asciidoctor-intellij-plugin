@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - support toc left/right in preview (#590)
 - natural cross references should use pointy brackets, not xrefs (#549)
 - avoid exception "`Reentrant indexing`" with headings with attributes
+- upgrade to AsciidoctorJ 2.4.2/Asciidoctor 2.0.12
 
 === 0.31.39 (preview, available from GitHub releases)
 
