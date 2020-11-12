@@ -1,0 +1,1 @@
+<warning descr="An 'toc' should always be a block macro (macro name followed by two colons)"><caret>toc:</warning>test[]

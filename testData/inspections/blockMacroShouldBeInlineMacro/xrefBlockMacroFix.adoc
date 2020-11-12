@@ -1,0 +1,1 @@
+<warning descr="An 'xref' should always be an inline macro (macro name followed by one colon)"><caret>xref::</warning>test[]

@@ -280,6 +280,14 @@
                      groupName="General" enabledByDefault="true" level="WARNING"
                      shortName="AsciiDocXrefWithNaturalCrossReference"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocXrefWithNaturalCrossReferenceInspection"/>
+    <localInspection language="AsciiDoc" displayName="Inline macro used with block macro syntax" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="WARNING"
+                     shortName="AsciiDocBlockMacroShouldBeInlineMacro"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocBlockMacroShouldBeInlineMacroInspection"/>
+    <localInspection language="AsciiDoc" displayName="Preprocessor or block macro used with inline macro syntax" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="WARNING"
+                     shortName="AsciiDocInlineMacroShouldBeBlockOrPreprocessorMacro"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocInlineMacroShouldBeBlockOrPreprocessorMacroInspection"/>
     <lang.inspectionSuppressor language="AsciiDoc"
       implementationClass="org.asciidoc.intellij.inspections.AsciiDocInspectionSuppressor" />
     <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>

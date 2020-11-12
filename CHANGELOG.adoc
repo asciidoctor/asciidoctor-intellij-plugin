@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.41 (work in progress)
+
+- inspection to warn when inline macro `xref` is used with two colons like a block macro (#456)
+
 === 0.31.40 (preview, available from GitHub releases)
 
 - support toc left/right in preview (#590)

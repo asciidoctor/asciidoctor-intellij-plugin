@@ -1,0 +1,1 @@
+<warning descr="An 'include' should always be a preprocessor macro (macro name followed by two colons)"><caret>include:</warning>test[]
