@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.31.41 (work in progress)
 
 - inspection to warn when inline macro `xref` is used with two colons like a block macro (#456)
+- level up with latest Spring REST docs macro
 
 === 0.31.40 (preview, available from GitHub releases)
 

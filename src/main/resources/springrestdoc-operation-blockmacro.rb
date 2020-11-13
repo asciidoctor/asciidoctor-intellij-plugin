@@ -32,7 +32,7 @@ class OperationBlockMacro < Asciidoctor::Extensions::BlockMacroProcessor
     snippets = snippets_to_include(snippet_names, snippets_dir, operation)
     if snippets.empty?
       location = parent.document.reader.cursor_at_mark
-      logger.warn message_with_context"No snippets were found for operation #{operation} in"\
+      logger.warn message_with_context "No snippets were found for operation #{operation} in "\
            "#{snippets_dir}", source_location: location
       "No snippets found for operation::#{operation}"
     else
@@ -42,6 +42,7 @@ class OperationBlockMacro < Asciidoctor::Extensions::BlockMacroProcessor
 
   def do_read_snippets(snippets, parent, operation, snippet_titles)
     content = StringIO.new
+    content.set_encoding "UTF-8"
     section_id = parent.id
     snippets.each do |snippet|
       append_snippet_block(content, snippet, section_id,
@@ -51,13 +52,14 @@ class OperationBlockMacro < Asciidoctor::Extensions::BlockMacroProcessor
   end
 
   def add_blocks(content, doc, parent)
-    options = { safe: doc.options[:safe], attributes: doc.attributes }
+    options = { safe: doc.options[:safe], attributes: doc.attributes.clone }
+    options[:attributes].delete 'leveloffset'
     fragment = Asciidoctor.load content, options
     # use a template to get the correct sectname and level for blocks to append
     template = create_section(parent, '', {})
     fragment.blocks.each do |b|
       b.parent = parent
-      # might be a standard block in case 'No snippets were found for operation'
+      # might be a standard block and no section in case of 'No snippets were found for operation'
       if b.respond_to?(:sectname)
         b.sectname = template.sectname
       end
@@ -84,9 +86,9 @@ class OperationBlockMacro < Asciidoctor::Extensions::BlockMacroProcessor
     operation_dir = File.join snippets_dir, operation
     return [] unless Dir.exist? operation_dir
     Dir.entries(operation_dir)
-        .sort
-        .select { |file| file.end_with? '.adoc' }
-        .map { |file| Snippet.new(File.join(operation_dir, file), file[0..-6]) }
+       .sort
+       .select { |file| file.end_with? '.adoc' }
+       .map { |file| Snippet.new(File.join(operation_dir, file), file[0..-6]) }
   end
 
   def append_snippet_block(content, snippet, section_id,
@@ -97,7 +99,7 @@ class OperationBlockMacro < Asciidoctor::Extensions::BlockMacroProcessor
 
   def write_content(content, snippet, operation, parent)
     if File.file? snippet.path
-      content.puts File.readlines(snippet.path).join
+      content.puts File.readlines(snippet.path, :encoding => 'UTF-8').join
     else
       location = parent.document.reader.cursor_at_mark
       logger.warn message_with_context "Snippet #{snippet.name} not found at #{snippet.path} for"\
