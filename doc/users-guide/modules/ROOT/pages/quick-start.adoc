@@ -16,7 +16,7 @@ This plugin fully supports the free IntelliJ IDEA Community edition.
 
 [WARNING]
 --
-Please the pre-bundled JetBrains OpenJDK Runtime 11 to run your IDE. This provides the best live preview based on JavaFX or JCEF. You can check this in the menu menu:Help[About].
+Please use the pre-bundled JetBrains OpenJDK Runtime 11 to run your IDE. This provides the best live preview based on JavaFX or JCEF. You can check this in the menu menu:Help[About].
 
 It should state:
 
