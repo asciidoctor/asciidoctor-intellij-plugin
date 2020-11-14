@@ -4,6 +4,7 @@
 !/.idea/checkstyle-idea.xml
 !/.idea/codeStyles
 !/.idea/codeStyles/*.xml
+!/.idea/vcs.xml
 .gradle
 *.iml
 build/
