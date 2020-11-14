@@ -26,7 +26,7 @@ public class ImageServiceTest {
   }
 
   @Test
-  public void shouldReturnsEmptyForNonPngJpegFiles() throws ExecutionException, InterruptedException, IOException {
+  public void shouldReturnEmptyForNonPngJpegFiles() throws ExecutionException, InterruptedException, IOException {
     Optional<Integer> imageWidthOption = ImageService
       .getImageWidth(createVirtualFile("testFiles/test-image.svg"))
       .get();
