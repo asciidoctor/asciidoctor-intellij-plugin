@@ -138,6 +138,7 @@ For example:
 
 . a snippet `[source,java` receives a closing bracket and two listing separator lines.
 . a snippet `include::text.adoc` receives an opening bracket, a `leveloffset=` if it can be derived from the current file's context and the context of the included file, and a closing bracket.
+. a snippet `xref:file.adoc#section` will add the section's title and the brackets.
 
 // see: AsciiDocBraceMatcher
 When the user opens a quote or a bracket, the plugin automatically adds a closing quote if it followed by whitespace or a closing bracket.

@@ -17,7 +17,7 @@ public class AsciiDocTriggerAutoCompleteTypedHandler extends TypedHandlerDelegat
   public @NotNull Result charTyped(char charTyped, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
     if (file.getFileType().equals(AsciiDocFileType.INSTANCE)) {
       // will not see single quotes (') and double quotes (") as they will be handled by the quote handler
-      if (charTyped == ':' // might be the start of an attribute declaration: ':attribute:'
+      if (charTyped == ':' // might be the start of an attribute declaration: ':attribute:', or the body of a macro: 'xref:file.adoc[]`
         || charTyped == '{' // might be the start of an attribute reference: '{attribute}'
         || charTyped == '<' // might be the start of an anchor reference: '<<anchor>>'
         || charTyped == '#' // might be the start of an anchor in an xref: 'xref:file.adoc#anchor[]'
