@@ -2319,6 +2319,27 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('text')");
   }
 
+  public void testInlineMacroWithPassthrough() {
+    doTest("kbd:[+]+]",
+      "AsciiDoc:INLINE_MACRO_ID ('kbd:')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_START ('+')\n" +
+        "AsciiDoc:PASSTRHOUGH_CONTENT (']')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_END ('+')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
+  }
+
+  public void testInlineMacroWithTextAndPassthrough() {
+    doTest("kbd:[text++]++]",
+      "AsciiDoc:INLINE_MACRO_ID ('kbd:')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_MACRO_BODY ('text')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_START ('++')\n" +
+        "AsciiDoc:PASSTRHOUGH_CONTENT (']')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_END ('++')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
+  }
+
   public void testInlineMacroMultiLine() {
     doTest("image:image.png[Text\nText]",
       "AsciiDoc:INLINE_MACRO_ID ('image:')\n" +

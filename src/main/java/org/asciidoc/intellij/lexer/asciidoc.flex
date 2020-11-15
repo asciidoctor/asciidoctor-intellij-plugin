@@ -188,6 +188,9 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
     if(yystate() == BLOCKREFTEXT) {
       return AsciiDocTokenTypes.BLOCKREFTEXT;
     }
+    if(yystate() == INLINE_MACRO_ATTRS_PASSTHROUGH) {
+      return AsciiDocTokenTypes.INLINE_MACRO_BODY;
+    }
     if((doublemono || singlemono) && (singlebold || doublebold) && (doubleitalic || singleitalic)) {
       return AsciiDocTokenTypes.MONOBOLDITALIC;
     } else if((doublemono || singlemono) && (singlebold || doublebold)) {
@@ -400,7 +403,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 %state INLINE_MACRO
 %state INLINE_MACRO_URL
+%state INLINE_MACRO_PASSTHROUGH
 %state INLINE_MACRO_ATTRS
+%state INLINE_MACRO_ATTRS_PASSTHROUGH
 
 %state TITLE
 
@@ -1049,6 +1054,38 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   "\n"                 { yyinitialIfNotInBlock(); return AsciiDocTokenTypes.LINE_BREAK; }
 }
 
+<INSIDE_LINE, DESCRIPTION, TITLE, INLINE_MACRO_ATTRS_PASSTHROUGH> {
+  // PASSTHROUGH START
+  "++" [^+] ({STRINGNOPLUS} | [^\+][\+][^\+])* "++" {
+                         if (isEscaped()) {
+                           yypushback(yylength() - 1);
+                           return textFormat();
+                         } else {
+                           yypushback(yylength() - 2);
+                           yypushstate(); yybegin(PASSTRHOUGH_INLINE_CONSTRAINED); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
+                         }
+                       }
+  "+" {
+                       if(isUnconstrainedStart() && !isEscaped()) {
+                         yypushback(yylength());
+                         yypushstate();
+                         yybegin(PASSTHROUGH_SECOND_TRY);
+                       } else {
+                         return textFormat();
+                       }
+  }
+  {PASSTRHOUGH_INLINE} ({STRINGNOPLUS} | [^\+][^\+]{1,2}[^+] )* {PASSTRHOUGH_INLINE} {
+                           if (isEscaped()) {
+                             yypushback(yylength() - 2);
+                             return textFormat();
+                           } else {
+                             yypushback(yylength() - 3);
+                             yypushstate(); yybegin(PASSTRHOUGH_INLINE); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
+                           }
+                         }
+  // PASSTHROUGH END
+}
+
 <INSIDE_LINE, DESCRIPTION, TITLE> {
   "\n"                 { if (isNoDelList()) {
                            yybegin(LIST);
@@ -1216,27 +1253,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                        }
   // MONO END
 
-  // PASSTHROUGH START
-  "++" [^+] ({STRINGNOPLUS} | [^\+][\+][^\+])* "++" {
-                         if (isEscaped()) {
-                           yypushback(yylength() - 1);
-                           return textFormat();
-                         } else {
-                           yypushback(yylength() - 2);
-                           yypushstate(); yybegin(PASSTRHOUGH_INLINE_CONSTRAINED); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
-                         }
-                       }
-  "+" {
-                       if(isUnconstrainedStart() && !isEscaped()) {
-                         yypushback(yylength());
-                         yypushstate();
-                         yybegin(PASSTHROUGH_SECOND_TRY);
-                       } else {
-                         return textFormat();
-                       }
-  }
-  // PASSTHROUGH END
-
   {LPAREN}             { return AsciiDocTokenTypes.LPAREN; }
   {RPAREN}             { return AsciiDocTokenTypes.RPAREN; }
   {LBRACKET}           { return AsciiDocTokenTypes.LBRACKET; }
@@ -1370,6 +1386,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
             // this might be an incomplete xref with autocomplete as this pattern is less strict than the xref pattern
             yybegin(LINKFILE);
             return AsciiDocTokenTypes.LINKSTART;
+          } else if (yytext().toString().equals("kbd:")) {
+            // kbd may have passthrough sequences
+            yybegin(INLINE_MACRO_PASSTHROUGH);
+            return AsciiDocTokenTypes.INLINE_MACRO_ID;
           } else {
             yybegin(INLINE_MACRO);
             return AsciiDocTokenTypes.INLINE_MACRO_ID;
@@ -1397,15 +1417,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
             return textFormat();
           }
         }
-  {PASSTRHOUGH_INLINE} ({STRINGNOPLUS} | [^\+][^\+]{1,2}[^+] )* {PASSTRHOUGH_INLINE} {
-                           if (isEscaped()) {
-                             yypushback(yylength() - 2);
-                             return textFormat();
-                           } else {
-                             yypushback(yylength() - 3);
-                             yypushstate(); yybegin(PASSTRHOUGH_INLINE); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
-                           }
-                         }
   "&#" [0-9]+ ";" {
           if (!isEscaped()) {
             return AsciiDocTokenTypes.HTML_ENTITY_OR_UNICODE;
@@ -1811,9 +1822,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { return AsciiDocTokenTypes.URL_LINK; }
 }
 
-<INLINE_MACRO> {
+<INLINE_MACRO, INLINE_MACRO_PASSTHROUGH, INLINE_MACRO_ATTRS_PASSTHROUGH> {
   "\n"                 { yypopstate(); yypushback(yylength()); }
-  "["                  { yypushstate(); yybegin(INLINE_MACRO_ATTRS); return AsciiDocTokenTypes.INLINE_ATTRS_START; }
+  "["                  { yypushstate(); yybegin(yystate() == INLINE_MACRO ? INLINE_MACRO_ATTRS : INLINE_MACRO_ATTRS_PASSTHROUGH); return AsciiDocTokenTypes.INLINE_ATTRS_START; }
   "]"                  { yypopstate(); return AsciiDocTokenTypes.INLINE_ATTRS_END; }
   "IntellijIdeaRulezzz " / [^\t \n:]* "[" { return AsciiDocTokenTypes.INLINE_MACRO_BODY; }
   "IntellijIdeaRulezzz " { yypopstate(); return AsciiDocTokenTypes.INLINE_MACRO_BODY; }

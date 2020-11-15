@@ -72,6 +72,9 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONOITALIC;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_CONTENT;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REF;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFEND;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFSTART;
@@ -469,13 +472,15 @@ public class AsciiDocParserImpl {
     String macroId = myBuilder.getTokenText();
     next();
     while ((at(INLINE_MACRO_BODY) || at(ATTR_NAME) || at(ASSIGNMENT) || at(URL_LINK) || at(ATTR_VALUE) || at(SEPARATOR) || at(INLINE_ATTRS_START) || at(INLINE_ATTRS_END)
-      || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP) || at(ATTR_LIST_OP))
+      || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP) || at(ATTR_LIST_OP) || at(PASSTRHOUGH_INLINE_START))
       && newLines == 0) {
       if (at(INLINE_ATTRS_END)) {
         next();
         break;
       } else if (at(URL_LINK)) {
         parseUrl();
+      } else if (at(PASSTRHOUGH_INLINE_START)) {
+        parsePassthrough();
       } else if (at(ATTR_NAME)) {
         parseAttributeInBrackets(macroId);
       } else if (at(ATTRIBUTE_REF_START)) {
@@ -485,6 +490,19 @@ public class AsciiDocParserImpl {
       }
     }
     inlineMacroMarker.done(AsciiDocElementTypes.INLINE_MACRO);
+  }
+
+  private void parsePassthrough() {
+    while (at(PASSTRHOUGH_INLINE_START)) {
+      next();
+    }
+    while (at(PASSTRHOUGH_CONTENT) || at(PASSTRHOUGH_INLINE_END)) {
+      if (at(PASSTRHOUGH_INLINE_END)) {
+        next();
+        break;
+      }
+      next();
+    }
   }
 
   private void parseAttributeInBrackets(String macroId) {
