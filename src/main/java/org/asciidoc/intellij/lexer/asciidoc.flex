@@ -393,6 +393,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state ATTRS_NO_QUOTE
 %state ATTRS_SINGLE_QUOTE_START
 %state ATTRS_DOUBLE_QUOTE_START
+%state ATTRS_SINGLE_QUOTE_START_NO_CLOSE
+%state ATTRS_DOUBLE_QUOTE_START_NO_CLOSE
 %state ATTR_VAL_START
 %state BLOCK_ATTRS
 
@@ -1661,8 +1663,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <BLOCK_MACRO_ATTRS, BLOCK_ATTRS> {
-  "=" / "\"" ( [^\"\n] | "\\\"" )* "\"" { yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
-  "=" / "\'" ( [^\'\n] | "\\\'" )* "\'" { yypushstate(); yybegin(ATTRS_SINGLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
+  "=" / {SPACE}* "\"" ( [^\"\n] | "\\\"" )* "\"" { yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
+  "=" / {SPACE}* "\'" ( [^\'\n] | "\\\'" )* "\'" { yypushstate(); yybegin(ATTRS_SINGLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
+  "=" / {SPACE}* "\"" { yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE_START_NO_CLOSE); return AsciiDocTokenTypes.ASSIGNMENT; }
+  "=" / {SPACE}* "\'" { yypushstate(); yybegin(ATTRS_SINGLE_QUOTE_START_NO_CLOSE); return AsciiDocTokenTypes.ASSIGNMENT; }
   "=" { yypushstate(); yybegin(ATTRS_NO_QUOTE);
       if (isTags) {
         yypushstate();
@@ -1723,29 +1727,41 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <ATTRS_DOUBLE_QUOTE_START> {
+  {SPACE} {
+      return AsciiDocTokenTypes.WHITE_SPACE;
+  }
   "\"" { yybegin(ATTRS_DOUBLE_QUOTE);
-      if (isTags) {
-        yypushstate();
-        yybegin(ATTR_VAL_START);
-      }
-      return AsciiDocTokenTypes.DOUBLE_QUOTE; }
+        if (isTags) {
+          yypushstate();
+          yybegin(ATTR_VAL_START);
+        }
+        return AsciiDocTokenTypes.DOUBLE_QUOTE; }
 }
 
 <ATTRS_SINGLE_QUOTE_START> {
+  {SPACE} {
+      return AsciiDocTokenTypes.WHITE_SPACE;
+  }
   "\'" { yybegin(ATTRS_SINGLE_QUOTE);
-      if (isTags) {
-        yypushstate();
-        yybegin(ATTR_VAL_START);
-      }
-      return AsciiDocTokenTypes.SINGLE_QUOTE; }
+        if (isTags) {
+          yypushstate();
+          yybegin(ATTR_VAL_START);
+        }
+        return AsciiDocTokenTypes.SINGLE_QUOTE; }
 }
 
 <ATTRS_DOUBLE_QUOTE> {
+  {SPACE} {
+      return AsciiDocTokenTypes.WHITE_SPACE;
+  }
   "\\\"" { return AsciiDocTokenTypes.ATTR_VALUE; }
   "\"" { yypopstate(); return AsciiDocTokenTypes.DOUBLE_QUOTE; }
 }
 
 <ATTRS_SINGLE_QUOTE> {
+  {SPACE} {
+      return AsciiDocTokenTypes.WHITE_SPACE;
+  }
   "\\\'" { return AsciiDocTokenTypes.ATTR_VALUE; }
   "\'" { yypopstate(); return AsciiDocTokenTypes.SINGLE_QUOTE; }
 }
@@ -1804,9 +1820,39 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { return AsciiDocTokenTypes.INLINE_MACRO_BODY; }
 }
 
+<ATTRS_DOUBLE_QUOTE_START_NO_CLOSE> {
+  {SPACE} {
+      return AsciiDocTokenTypes.WHITE_SPACE;
+  }
+  "\"" {
+      yybegin(ATTRS_NO_QUOTE);
+      return AsciiDocTokenTypes.DOUBLE_QUOTE;
+  }
+  [^] {
+      yybegin(ATTRS_NO_QUOTE);
+      return AsciiDocTokenTypes.DOUBLE_QUOTE;
+  }
+}
+
+<ATTRS_SINGLE_QUOTE_START_NO_CLOSE> {
+  {SPACE} {
+      return AsciiDocTokenTypes.WHITE_SPACE;
+  }
+  "'" {
+      yybegin(ATTRS_NO_QUOTE);
+      return AsciiDocTokenTypes.SINGLE_QUOTE;
+  }
+  [^] {
+      yybegin(ATTRS_NO_QUOTE);
+      return AsciiDocTokenTypes.SINGLE_QUOTE;
+  }
+}
+
 <INLINE_MACRO_ATTRS> {
-  "=" / "\"" ( [^\"\n] | "\\\"" )* "\"" { yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
-  "=" / "\'" ( [^\'\n] | "\\\'" )* "\'" { yypushstate(); yybegin(ATTRS_SINGLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
+  "=" / {SPACE}* "\"" ( [^\"\n] | "\\\"" )* "\"" { yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
+  "=" / {SPACE}* "\'" ( [^\'\n] | "\\\'" )* "\'" { yypushstate(); yybegin(ATTRS_SINGLE_QUOTE_START); return AsciiDocTokenTypes.ASSIGNMENT; }
+  "=" / {SPACE}* "\"" { yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE_START_NO_CLOSE); return AsciiDocTokenTypes.ASSIGNMENT; }
+  "=" / {SPACE}* "\'" { yypushstate(); yybegin(ATTRS_SINGLE_QUOTE_START_NO_CLOSE); return AsciiDocTokenTypes.ASSIGNMENT; }
   "=" { yypushstate(); yybegin(ATTRS_NO_QUOTE); return AsciiDocTokenTypes.ASSIGNMENT; }
   "\n" {SPACE}* "\n"   { yypopstate(); yypushback(yylength()); }
   {CONTINUATION} / {SPACE}* "\n" {

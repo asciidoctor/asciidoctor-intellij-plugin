@@ -144,6 +144,8 @@ When the user opens a quote or a bracket, the plugin automatically adds a closin
 
 For references, attributes and images, and several macros like include, image and diagrams it provides auto-completion using kbd:[Ctrl+Space].
 References and attributes support renaming within a project.
+// see: AsciiDocTriggerAutoCompleteTypedHandler
+Typing characters like kbd:[{], kbd:[<], or kbd:[:] as part of a macro or attribute definition will open the auto-completion dialog as well.
 
 When auto-completing folder and file names in macros, the plugin tries to resolve attributes using their values specified in the current file or other files.
 For image macros it tries to find a declaration of the _imagesDir_ attribute either in any of the AsciiDoc files of the project.

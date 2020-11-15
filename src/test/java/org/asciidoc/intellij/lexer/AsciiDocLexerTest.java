@@ -146,6 +146,31 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRS_END (']')");
   }
 
+  public void testIncludeWithIncompleteQuote() {
+    doTest("include::file.adoc[tags='xx]",
+      "AsciiDoc:BLOCK_MACRO_ID ('include::')\n" +
+        "AsciiDoc:BLOCK_MACRO_BODY ('file.adoc')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('tags')\n" +
+        "AsciiDoc:ASSIGNMENT ('=')\n" +
+        "AsciiDoc:SINGLE_QUOTE (''')\n" +
+        "AsciiDoc:ATTR_VALUE ('xx')\n" +
+        "AsciiDoc:ATTRS_END (']')");
+  }
+
+  public void testIncludeWithBlankAndIncompleteQuote() {
+    doTest("include::file.adoc[tags= 'xx]",
+      "AsciiDoc:BLOCK_MACRO_ID ('include::')\n" +
+        "AsciiDoc:BLOCK_MACRO_BODY ('file.adoc')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('tags')\n" +
+        "AsciiDoc:ASSIGNMENT ('=')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:SINGLE_QUOTE (''')\n" +
+        "AsciiDoc:ATTR_VALUE ('xx')\n" +
+        "AsciiDoc:ATTRS_END (']')");
+  }
+
   public void testIncludeWithTagsQuotedWithBlank() {
     doTest("include::file.adoc[tags=\"tag1; tag2\"]",
       "AsciiDoc:BLOCK_MACRO_ID ('include::')\n" +

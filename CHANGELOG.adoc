@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - inspection to warn when inline macro `xref` is used with two colons like a block macro, or a preprocessor like `include` or block macro like `toc` is used as an inline macro (#456)
 - level up with latest Spring REST docs macro
+- trigger autocomplete for attributes, references and file names when typing characters like `{`, `<` or `:` (#596)
 
 === 0.31.40 (preview, available from GitHub releases)
 

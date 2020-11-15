@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class AsciiDocQuoteHandler implements QuoteHandler {
   private static final TokenSet QUOTE_TYPES = TokenSet.create(AsciiDocTokenTypes.DOUBLE_QUOTE,
-                                                              AsciiDocTokenTypes.SINGLE_QUOTE);
+    AsciiDocTokenTypes.SINGLE_QUOTE);
 
   @Override
   public boolean isClosingQuote(HighlighterIterator iterator, int offset) {
@@ -41,8 +41,12 @@ public class AsciiDocQuoteHandler implements QuoteHandler {
     final CharSequence chars = iterator.getDocument().getCharsSequence();
 
     return getRangeOfThisType(chars, offset).getLength() != 1 ||
-           ((offset <= 0 || Character.isWhitespace(chars.charAt(offset - 1)))
-            && (offset + 1 >= chars.length() || Character.isWhitespace(chars.charAt(offset + 1))));
+      ((offset <= 0 || isSeparator(chars.charAt(offset - 1)))
+        && (offset + 1 >= chars.length() || isSeparator(chars.charAt(offset + 1))));
+  }
+
+  private boolean isSeparator(char c) {
+    return Character.isWhitespace(c) || c == '=' || c == ']' || c == ',';
   }
 
   @Override
