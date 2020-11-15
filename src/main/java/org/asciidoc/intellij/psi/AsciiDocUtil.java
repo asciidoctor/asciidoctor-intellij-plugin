@@ -383,6 +383,8 @@ public class AsciiDocUtil {
     augmentList(result, AsciiDocUtil.findAntoraAttachmentsDir(current), FAMILY_ATTACHMENT + "sdir");
     augmentList(result, AsciiDocUtil.findAntoraExamplesDir(current), FAMILY_EXAMPLE + "sdir");
 
+    augmentAsciidoctorconfigDir(result, project, current);
+
     collectAntoraAttributes(current).forEach((k, v) -> result.add(new AsciiDocAttributeDeclarationDummy(k, v)));
 
     String name = current.getContainingFile().getName();
@@ -402,6 +404,31 @@ public class AsciiDocUtil {
     }
 
     return result;
+  }
+
+  private static void augmentAsciidoctorconfigDir(List<AttributeDeclaration> result, Project project, PsiElement current) {
+    VirtualFile currentFile = current.getContainingFile().getOriginalFile().getVirtualFile();
+    if (currentFile != null) {
+      VirtualFile folder = currentFile.getParent();
+      if (folder != null) {
+        while (true) {
+          for (String configName : new String[]{".asciidoctorconfig", ".asciidoctorconfig.adoc"}) {
+            VirtualFile configFile = folder.findChild(configName);
+            if (configFile != null) {
+              result.add(new AsciiDocAttributeDeclarationDummy("asciidoctorconfigdir", folder.getCanonicalPath()));
+              return;
+            }
+          }
+          if (folder.getPath().equals(project.getBasePath())) {
+            break;
+          }
+          folder = folder.getParent();
+          if (folder == null) {
+            break;
+          }
+        }
+      }
+    }
   }
 
   static void augmentList(List<AttributeDeclaration> list, VirtualFile file, String attributeName) {

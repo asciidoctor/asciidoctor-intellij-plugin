@@ -7,12 +7,13 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.41 (work in progress)
+=== 0.31.41 (preview, available from GitHub releases)
 
 - inspection to warn when inline macro `xref` is used with two colons like a block macro, or a preprocessor like `include` or block macro like `toc` is used as an inline macro (#456)
 - level up with latest Spring REST docs macro
 - trigger autocomplete for attributes, references and file names when typing characters like `{`, `<` or `:` (#596)
 - parse pass-through content in kbd-macro correctly for syntax highlighting
+- add attribute _asciidoctorconfigdir_ to auto-completed attributes values
 
 === 0.31.40 (preview, available from GitHub releases)
 
