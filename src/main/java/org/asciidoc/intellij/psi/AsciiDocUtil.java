@@ -258,10 +258,15 @@ public class AsciiDocUtil {
   }
 
   public static List<AsciiDocAttributeDeclaration> findAttributes(Project project, String key) {
+    return findAttributes(project, key, false);
+  }
+
+  public static List<AsciiDocAttributeDeclaration> findAttributes(Project project, String key, boolean onlyAntora) {
     List<AsciiDocAttributeDeclaration> result = null;
     final GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
     Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(key, project, scope);
     ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
+    Map<VirtualFile, Boolean> cache = new HashMap<>();
     for (AsciiDocAttributeDeclaration asciiDocAttributeDeclaration : asciiDocAttributeDeclarations) {
       VirtualFile virtualFile = asciiDocAttributeDeclaration.getContainingFile().getVirtualFile();
       if (index.isInLibrary(virtualFile)
@@ -269,6 +274,11 @@ public class AsciiDocUtil {
         || index.isInLibraryClasses(virtualFile)
         || index.isInLibrarySource(virtualFile)) {
         continue;
+      }
+      if (onlyAntora) {
+        if (!cache.computeIfAbsent(virtualFile.getParent(), s -> findAntoraModuleDir(project.getBaseDir(), s) != null)) {
+          continue;
+        }
       }
       if (result == null) {
         result = new ArrayList<>();
@@ -279,10 +289,15 @@ public class AsciiDocUtil {
   }
 
   static List<AsciiDocAttributeDeclaration> findAttributes(Project project) {
+    return findAttributes(project, false);
+  }
+
+  static List<AsciiDocAttributeDeclaration> findAttributes(Project project, boolean onlyAntora) {
     List<AsciiDocAttributeDeclaration> result = new ArrayList<>();
     ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
     Collection<String> keys = AsciiDocAttributeDeclarationKeyIndex.getInstance().getAllKeys(project);
     final GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+    Map<VirtualFile, Boolean> cache = new HashMap<>();
     for (String key : keys) {
       Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(key, project, scope);
       for (AsciiDocAttributeDeclaration asciiDocAttributeDeclaration : asciiDocAttributeDeclarations) {
@@ -292,6 +307,11 @@ public class AsciiDocUtil {
           || index.isInLibraryClasses(virtualFile)
           || index.isInLibrarySource(virtualFile)) {
           continue;
+        }
+        if (onlyAntora) {
+          if (!cache.computeIfAbsent(virtualFile.getParent(), s -> findAntoraModuleDir(project.getBaseDir(), s) != null)) {
+            continue;
+          }
         }
         result.add(asciiDocAttributeDeclaration);
       }
@@ -358,7 +378,7 @@ public class AsciiDocUtil {
 
     // ignore other declarations when we found a specific value
     if (result.size() == 0) {
-      result.addAll(findAttributes(project, key));
+      result.addAll(findAttributes(project, key, antoraModuleDir != null));
     }
 
     return result;
@@ -374,18 +394,22 @@ public class AsciiDocUtil {
   }
 
   static List<AttributeDeclaration> findAttributes(Project project, PsiElement current) {
-    List<AttributeDeclaration> result = new ArrayList<>(findAttributes(project));
+
+    VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(current);
+
+    List<AttributeDeclaration> result = new ArrayList<>(findAttributes(project, antoraModuleDir != null));
 
     augmentList(result, AsciiDocUtil.findSpringRestDocSnippets(current), "snippets");
 
-    augmentList(result, AsciiDocUtil.findAntoraPartials(current), FAMILY_PARTIAL + "sdir");
-    augmentList(result, AsciiDocUtil.findAntoraImagesDir(current), FAMILY_IMAGE + "sdir");
-    augmentList(result, AsciiDocUtil.findAntoraAttachmentsDir(current), FAMILY_ATTACHMENT + "sdir");
-    augmentList(result, AsciiDocUtil.findAntoraExamplesDir(current), FAMILY_EXAMPLE + "sdir");
+    if (antoraModuleDir != null) {
+      augmentList(result, AsciiDocUtil.findAntoraPartials(current), FAMILY_PARTIAL + "sdir");
+      augmentList(result, AsciiDocUtil.findAntoraImagesDir(current), FAMILY_IMAGE + "sdir");
+      augmentList(result, AsciiDocUtil.findAntoraAttachmentsDir(current), FAMILY_ATTACHMENT + "sdir");
+      augmentList(result, AsciiDocUtil.findAntoraExamplesDir(current), FAMILY_EXAMPLE + "sdir");
+      collectAntoraAttributes(current).forEach((k, v) -> result.add(new AsciiDocAttributeDeclarationDummy(k, v)));
+    }
 
     augmentAsciidoctorconfigDir(result, project, current);
-
-    collectAntoraAttributes(current).forEach((k, v) -> result.add(new AsciiDocAttributeDeclarationDummy(k, v)));
 
     String name = current.getContainingFile().getName();
     result.add(new AsciiDocAttributeDeclarationDummy("docname", name.replaceAll("\\..*$", "")));
@@ -1026,7 +1050,7 @@ public class AsciiDocUtil {
 
   @SuppressWarnings("StringSplitter")
   private static void resolvePageAliases(Project project, String key, String myModuleName, String myComponentName, String myComponentVersion, List<String> result) {
-    List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(project, "page-aliases");
+    List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(project, "page-aliases", true);
     for (AttributeDeclaration decl : declarations) {
       String shortKey = AsciiDocFileReference.normalizeKeyForSearch(key);
       String value = decl.getAttributeValue();

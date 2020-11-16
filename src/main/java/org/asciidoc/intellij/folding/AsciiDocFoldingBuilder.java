@@ -8,7 +8,9 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
@@ -150,18 +152,34 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
 
           // search attributes contributed by Antora
           Map<String, String> attributes = AsciiDocUtil.collectAntoraAttributes(node.getPsi());
+          boolean onlyAntora = attributes.size() > 0;
           attributes.forEach((k, v) -> {
             if (k.toLowerCase(Locale.US).equals(key)) {
               values.add(v);
             }
           });
 
+          Map<VirtualFile, Boolean> cache = new HashMap<>();
           // search regular attributes
           iterateReferences:
           for (PsiReference reference : node.getPsi().getReferences()) {
             if (reference instanceof AsciiDocAttributeDeclarationReference) {
               for (ResolveResult resolveResult : ((AsciiDocAttributeDeclarationReference) reference).multiResolve(false)) {
                 PsiElement element = resolveResult.getElement();
+                if (onlyAntora) {
+                  PsiFile file = element.getContainingFile();
+                  if (file != null) {
+                    VirtualFile vf = file.getVirtualFile();
+                    if (vf == null) {
+                      vf = file.getOriginalFile().getVirtualFile();
+                    }
+                    if (vf != null) {
+                      if (!cache.computeIfAbsent(vf, s -> AsciiDocUtil.findAntoraModuleDir(element.getProject().getBaseDir(), s) != null)) {
+                        continue;
+                      }
+                    }
+                  }
+                }
                 if (element instanceof AsciiDocAttributeDeclarationName) {
                   PsiElement parent = element.getParent();
                   if (parent instanceof AsciiDocAttributeDeclaration) {

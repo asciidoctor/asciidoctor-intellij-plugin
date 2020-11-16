@@ -30,7 +30,7 @@ public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiE
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
     Project project = myElement.getProject();
-    final List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(project, key);
+    final List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(project, key, AsciiDocUtil.findAntoraModuleDir(myElement) != null);
     List<ResolveResult> results = new ArrayList<>();
     for (AsciiDocAttributeDeclaration declaration : declarations) {
       results.add(new PsiElementResolveResult(declaration.getNavigationElement()));
