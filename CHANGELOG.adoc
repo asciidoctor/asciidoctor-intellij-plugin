@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.31.42 (work in progress)
 
 - when editing content in an Antora module, resolve attributes only within other Antora content of the project (#596)
+- enable brace matcher to type closing curly braces automatically
 
 === 0.31.41 (preview, available from GitHub releases)
 

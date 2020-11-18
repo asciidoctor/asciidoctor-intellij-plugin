@@ -77,15 +77,20 @@ public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiE
   @NotNull
   private InsertHandler<LookupElement> getLookupElementInsertHandler(String attributeName) {
     return (insertionContext, item) -> {
-      // the finalizing } hasn't been entered yet, autocomplete it here
       int offset = insertionContext.getStartOffset();
       PsiElement element = insertionContext.getFile().findElementAt(offset);
-      if (element != null && element.getNode() != null
-        && element.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_REF) {
-        offset += attributeName.length();
-        insertionContext.getDocument().insertString(offset, "}");
-        offset += 1;
-        insertionContext.getEditor().getCaretModel().moveToOffset(offset);
+      if (element != null && element.getNode() != null) {
+        if (element.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_REF) {
+          // the finalizing } hasn't been entered yet, autocomplete it here
+          offset += attributeName.length();
+          insertionContext.getDocument().insertString(offset, "}");
+          offset += 1;
+          insertionContext.getEditor().getCaretModel().moveToOffset(offset);
+        } else {
+          offset += attributeName.length();
+          offset += 1; // skip the trailing curly brace
+          insertionContext.getEditor().getCaretModel().moveToOffset(offset);
+        }
       }
     };
   }

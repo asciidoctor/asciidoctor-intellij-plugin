@@ -510,10 +510,18 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <ATTRIBUTE_VAL, INLINE_URL_NO_DELIMITER, INSIDE_LINE, DOCTITLE, HEADING, DESCRIPTION, LINKFILE, LINKFILEWITHBLANK, LINKANCHOR, LINKURL, BLOCK_MACRO, LINKTEXT, REFTEXT, INLINEREFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE, REF, ANCHORID, BIBNAME> {
-  {ATTRIBUTE_REF_START} ( {ATTRIBUTE_NAME} {ATTRIBUTE_REF_END} | [^}\n ]* {AUTOCOMPLETE} ) {
+  {ATTRIBUTE_REF_START} ( {ATTRIBUTE_NAME}? {ATTRIBUTE_REF_END} | [^}\n ]* {AUTOCOMPLETE} ) {
                          yypushback(yylength() - 1);
                          if (!isEscaped()) {
                            yypushstate(); yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
+                         } else {
+                           textFormat();
+                         }
+                       }
+  // parse the start of a REF to allow brace-matcher to autocomplete this
+  {ATTRIBUTE_REF_START} {
+                         if (!isEscaped()) {
+                           return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
                          } else {
                            textFormat();
                          }

@@ -72,14 +72,21 @@ public class AsciiDocCompletionContributor extends CompletionContributor {
               .withPresentableText(attribute)
               .withCaseSensitivity(false)
               .withInsertHandler((insertionContext, item) -> {
-                // the finalizing : hasn't been entered yet, autocomplete it here
                 int offset = insertionContext.getStartOffset();
                 PsiElement element = insertionContext.getFile().findElementAt(offset);
-                if (element != null && element.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_NAME) {
-                  offset += attribute.length();
-                  insertionContext.getDocument().insertString(offset, ":");
-                  offset += 1;
-                  insertionContext.getEditor().getCaretModel().moveToOffset(offset);
+                if (element != null) {
+                  if (element.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_NAME) {
+                    // the finalizing : hasn't been entered yet, autocomplete it here
+                    offset += attribute.length();
+                    insertionContext.getDocument().insertString(offset, ":");
+                    offset += 1;
+                    insertionContext.getEditor().getCaretModel().moveToOffset(offset);
+                  } else {
+                    // the finalizing : is already there
+                    offset += attribute.length();
+                    offset += 1;
+                    insertionContext.getEditor().getCaretModel().moveToOffset(offset);
+                  }
                 }
               })
             );
