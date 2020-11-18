@@ -31,7 +31,6 @@ This document provides a high-level view of the changes introduced by release.
 
 - added https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/features/keymap.html[Keymap to user manual] (thanks to @EEM86) (#565, #586)
 - adjusted content security policy to allow for data-URIs images in JCEF preview (#229)
-- upgrade to AsciidoctorJ 2.4.2/Asciidoctor 2.0.12
 
 === 0.31.38
 
