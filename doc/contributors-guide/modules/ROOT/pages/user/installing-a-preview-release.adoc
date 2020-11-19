@@ -1,6 +1,7 @@
 = Installing a preview release
+:description: Preview-releases can be installed manually from the GitHub releases page.
 
-Preview-releases can be installed manually from the GitHub releases page.
+{description}
 
 == Installing a preview-release
 
@@ -9,7 +10,7 @@ Each release has a title and a short description linking to the GitHub issues th
 
 To try out a preview release:
 
-. Download the new release file `asciidoctor-intellij-plugin.zip`
+. Download the new release file `asciidoctor-intellij-plugin-xx.xx.xx.zip`
 . Go to menu:File[Settings... > Plugins > Gear Icon] (icon:gear[])
 . Choose menu:Install plugin from disk...[]
 . Choose the downloaded file in the file selection dialogue

@@ -1,10 +1,10 @@
 = IntelliJ AsciiDoc Plugin
 Alexander Schwartz
 :experimental:
-:url-ci-travis: https://travis-ci.org/asciidoctor/asciidoctor-intellij-plugin
 :homepage-url: https://intellij-asciidoc-plugin.ahus1.de/
+:github: https://github.com/asciidoctor/asciidoctor-intellij-plugin
 
-image:https://api.travis-ci.org/asciidoctor/asciidoctor-intellij-plugin.svg?branch=master[link={url-ci-travis}]
+image:{github}/workflows/Build/badge.svg?branch=master[Build Status (GitHub Workflow Build), link={github}/actions?query=workflow%3ABuild+branch%3Amaster]
 image:https://img.shields.io/jetbrains/plugin/v/7391-asciidoc.svg[JetBrains Plugins,link=https://plugins.jetbrains.com/plugin/7391-asciidoc]
 image:https://img.shields.io/jetbrains/plugin/d/7391-asciidoc.svg[Downloads,link=https://plugins.jetbrains.com/plugin/7391-asciidoc]
 

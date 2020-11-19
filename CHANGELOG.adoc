@@ -7,13 +7,14 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.42 (work in progress)
+=== 0.31.43 (preview, available from GitHub releases)
 
 - fix highlighting for escaped URL in formatting quotes
 - only references with a hash contain a file name, otherwise keep slashes as part of the anchor
 - support attributes in inline macro body
+- first build on GitHub actions instead of Travis CI (#597)
 
-=== 0.31.42 (preview, available from GitHub releases)
+=== 0.31.42
 
 - when editing content in an Antora module, resolve attributes only within other Antora content of the project (#596)
 - enable brace matcher to type closing curly braces automatically

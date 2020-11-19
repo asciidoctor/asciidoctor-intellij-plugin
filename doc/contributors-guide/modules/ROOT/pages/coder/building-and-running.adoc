@@ -19,7 +19,7 @@ The ZIP file with plugin to distribute will be located in `build/distributions`.
 
 [NOTE]
 ====
-The `plugin.xml` inside the archive will state version `0.0.1` unless you specify an environment variable `TRAVIS_TAG` that holds a release number.
+The `plugin.xml` inside the archive will state version `0.0.1` unless you specify an environment variable `VERSION` that holds a release number.
 This ensures that a temporarily locally build plugin will be overwritten by the JetBrains plugin update site.
 ====
 

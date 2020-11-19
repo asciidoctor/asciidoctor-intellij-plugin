@@ -10,7 +10,7 @@ buildscript {
 }
 
 plugins {
-  id "org.jetbrains.intellij" version "0.4.26"
+  id "org.jetbrains.intellij" version "0.6.3"
   id "org.jetbrains.grammarkit" version "2020.2.1"
   id "checkstyle"
   id 'org.asciidoctor.jvm.convert' version '2.2.0'
@@ -18,6 +18,8 @@ plugins {
   id "com.github.ManifestClasspath" version "0.1.0-RELEASE"
   id 'net.ltgt.errorprone' version '0.8.1' apply false
 }
+
+version = System.getenv('VERSION')
 
 checkstyle {
   toolVersion '8.30'
@@ -62,7 +64,7 @@ asciidoctor {
 
 patchPluginXml {
   dependsOn asciidoctor
-  version System.getenv('TRAVIS_TAG')
+  version version
   changeNotes = {
     Jsoup.parse(file('build/docs/CHANGELOG.html').getText('UTF-8'))
       .select("#releasenotes").get(0).nextElementSibling().children()
@@ -93,15 +95,19 @@ runIde {
   systemProperty('ide.plugins.snapshot.on.unload.fail', 'true')
 }
 
+runPluginVerifier {
+  ideVersions(project.pluginVerifierIdeVersions)
+}
+
 publishPlugin {
   username 'ahus1'
-  token System.getenv('PLUGIN_REPO_TOKEN')
+  token System.getenv('PUBLISH_TOKEN')
   channels 'eap'
 }
 
 test {
   testLogging {
-    // this show the full exception on failed tests on travis
+    // this show the full exception on failed tests on the build server
     exceptionFormat = 'full'
   }
 }
@@ -156,7 +162,6 @@ task generateAsciidocLexer(type: GenerateLexer) {
   source = "src/main/java/org/asciidoc/intellij/lexer/asciidoc.flex"
   targetDir = "gen/org/asciidoc/intellij/lexer"
   targetClass = "_AsciiDocLexer"
-  purgeOldFiles = true
 }
 
 compileJava {
