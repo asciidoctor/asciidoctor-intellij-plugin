@@ -58,7 +58,7 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
   }
 
   // taken from Asciidoctor (rx.rb#InvalidSectionIdCharsRx)
-  public static final Pattern INVALID_SECTION_ID_CHARS = Pattern.compile("<[^>]+>|&(?:[a-z][a-z]+\\d{0,2}|#\\d\\d\\d{0,4}|#x[\\da-f][\\da-f][\\da-f]{0,3});|[^ \\w\\-.]+?");
+  public static final Pattern INVALID_SECTION_ID_CHARS = Pattern.compile("(?U)<[^>]+>|&(?:[a-z][a-z]+\\d{0,2}|#\\d\\d\\d{0,4}|#x[\\da-f][\\da-f][\\da-f]{0,3});|[^ \\w\\-.]+?");
 
   /**
    * Produces the ID from a section like Asciidoctor (section.rb#generate_id).

@@ -802,7 +802,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           .withIcon(AsciiDocIcons.Structure.SECTION)
           .withTypeText(section.getContainingFile().getName())
         );
-        if (section.getTitle().matches("^[\\w/.:{#].*")
+        if (section.getTitle().matches("(?U)^[\\w/.:{#].*")
           && isPossibleRefText(section.getTitle())) {
           items.add(LookupElementBuilder.create(section, section.getTitle())
             .withCaseSensitivity(true)

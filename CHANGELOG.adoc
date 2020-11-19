@@ -7,10 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.31.42 (work in progress)
+=== 0.31.42 (preview, available from GitHub releases)
 
 - when editing content in an Antora module, resolve attributes only within other Antora content of the project (#596)
 - enable brace matcher to type closing curly braces automatically
+- keep non-ASCII characters in automatic references for section titles (#598)
 
 === 0.31.41 (preview, available from GitHub releases)
 
