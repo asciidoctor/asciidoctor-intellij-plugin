@@ -7,6 +7,8 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.44 (work in progress)
+
 === 0.31.43 (preview, available from GitHub releases)
 
 - fix highlighting for escaped URL in formatting quotes
