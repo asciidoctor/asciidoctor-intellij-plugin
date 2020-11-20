@@ -2645,6 +2645,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:URL_END ('>')");
   }
 
+  public void testUrlEscapedInMonoSpace() {
+    doTest("`\\http://www.gmx.net` text",
+      "AsciiDoc:MONO_START ('`')\n" +
+        "AsciiDoc:MONO ('\\http://www.gmx.net')\n" +
+        "AsciiDoc:MONO_END ('`')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('text')");
+  }
+
   public void testUrlInBracketsWithSpace() {
     doTest("<http://www.gmx.net >",
       "AsciiDoc:LT ('<')\n" +

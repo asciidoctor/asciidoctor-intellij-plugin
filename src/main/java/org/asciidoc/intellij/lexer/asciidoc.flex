@@ -1338,6 +1338,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          }
   {INLINE_URL_NO_DELIMITER} {
         if (isEscaped() || isPrefixedBy(COLONSLASH)) {
+          yypushback(yylength() - 1);
           return textFormat();
         } else {
           yypushstate();

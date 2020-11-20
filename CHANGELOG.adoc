@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.31.42 (work in progress)
+
+- fix highlighting for escaped URL in formatting quotes
+
 === 0.31.42 (preview, available from GitHub releases)
 
 - when editing content in an Antora module, resolve attributes only within other Antora content of the project (#596)
