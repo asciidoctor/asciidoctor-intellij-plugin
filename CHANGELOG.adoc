@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - fix highlighting for escaped URL in formatting quotes
 - only references with a hash contain a file name, otherwise keep slashes as part of the anchor
+- support attributes in inline macro body
 
 === 0.31.42 (preview, available from GitHub releases)
 

@@ -2319,6 +2319,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('text')");
   }
 
+  public void testInlineMacroWithAttributeInBody() {
+    doTest("image:{url}/image.png[]",
+      "AsciiDoc:INLINE_MACRO_ID ('image:')\n" +
+        "AsciiDoc:ATTRIBUTE_REF_START ('{')\n" +
+        "AsciiDoc:ATTRIBUTE_REF ('url')\n" +
+        "AsciiDoc:ATTRIBUTE_REF_END ('}')\n" +
+        "AsciiDoc:INLINE_MACRO_BODY ('/image.png')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
+  }
+
   public void testInlineMacroWithPassthrough() {
     doTest("kbd:[+]+]",
       "AsciiDoc:INLINE_MACRO_ID ('kbd:')\n" +
