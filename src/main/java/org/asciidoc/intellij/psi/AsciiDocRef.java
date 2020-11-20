@@ -27,14 +27,17 @@ public class AsciiDocRef extends ASTWrapperPsiElement implements HasAnchorRefere
       ArrayList<PsiReference> references = new ArrayList<>();
       int start = 0;
       int i = 0;
-      for (; i < file.length(); ++i) {
-        if (file.charAt(i) == '/' || file.charAt(i) == '#') {
-          references.add(
-            new AsciiDocFileReference(this, "<<", file.substring(0, start),
-              TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
-              true, false)
-          );
-          start = i + 1;
+      // only references with a hash contain a file name before the hash
+      if (file.indexOf('#') != -1) {
+        for (; i < file.length(); ++i) {
+          if (file.charAt(i) == '/' || file.charAt(i) == '#') {
+            references.add(
+              new AsciiDocFileReference(this, "<<", file.substring(0, start),
+                TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
+                true, false)
+            );
+            start = i + 1;
+          }
         }
       }
       references.add(
