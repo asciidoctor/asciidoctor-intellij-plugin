@@ -38,3 +38,13 @@ It provides the writer with...
 * a context-sensitive editor,
 * a configurable preview and
 * integrations to the AsciiDoc ecosystem.
+
+== Where to go from here
+
+To continue your journey,
+
+* visit the (short) xref:quick-start.adoc[] guide or (in depth) xref:installation.adoc[] guide,
+* read about the xref:features.adoc[], or
+* use the navigation on the left to learn about a specific topic you are interested in.
+
+If you got questions, please raise them as a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[new GitHub issue].
