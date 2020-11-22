@@ -23,6 +23,11 @@ See '`xref:faq/jcef-no-proxy-support.adoc[]`' for more information.
 Once a JCEF preview is open in a project, it now and then brings the focus to the project when editing files in a different window.
 See JetBrains issue https://youtrack.jetbrains.com/issue/IDEA-247541["`JCEF: steals focus from a different frame`"] for more information.
 
+On MacOS there is no copy-and-paste from the JCEF preview in IntelliJ 2020.2.
+Unfortunately this is nothing this plugin can fix as it needs to be fixed by the IntelliJ platform.
+Apparently this is fixed in IntelliJ 2020.3 (see issues https://youtrack.jetbrains.com/issue/IDEA-241604/[IDEA-241604] and https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/533[asciidoctor-intellij-plugin/#322]).
+As a workaround, open the preview in the browser by clicking on your favorite browser symbol when hovering in the upper right corner of the editor and copy the contents from the browser window.
+
 == Benefits of the JCEF preview
 
 JCEF preview is an embedded Chrome browser.
