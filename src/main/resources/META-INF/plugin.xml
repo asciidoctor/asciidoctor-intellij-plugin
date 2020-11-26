@@ -15,11 +15,11 @@
   <idea-version since-build="202.6109.22"/> <!-- 2020.2 EAP -->
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html -->
   <depends>com.intellij.modules.lang</depends>
-  <depends optional="true" config-file="javafx-features.xml">com.intellij.javafx</depends>
-  <depends optional="true" config-file="intellilang-features.xml">org.intellij.intelliLang</depends>
-  <depends optional="true" config-file="java-features.xml">com.intellij.modules.java</depends>
-  <depends optional="true" config-file="json-features.xml">com.intellij.modules.json</depends>
-  <depends optional="true" config-file="grazie-features.xml">tanvd.grazi</depends>
+  <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-javafx.xml">com.intellij.javafx</depends>
+  <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-intellilang.xml">org.intellij.intelliLang</depends>
+  <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-java.xml">com.intellij.modules.java</depends>
+  <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-json.xml">com.intellij.modules.json</depends>
+  <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-grazie.xml">tanvd.grazi</depends>
 
   <extensionPoints>
     <extensionPoint qualifiedName="org.asciidoc.intellij.html.panel.provider" dynamic="true"
