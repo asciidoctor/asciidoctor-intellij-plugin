@@ -16,7 +16,8 @@ plugins {
   id 'org.asciidoctor.jvm.convert' version '2.2.0'
   // once windows classpaths get too long, use this dependency to make them shorter again
   id "com.github.ManifestClasspath" version "0.1.0-RELEASE"
-  id 'net.ltgt.errorprone' version '0.8.1' apply false
+  // https://github.com/tbroyer/gradle-errorprone-plugin
+  id 'net.ltgt.errorprone' version '1.3.0' apply false
 }
 
 version = System.getenv('VERSION')
@@ -40,15 +41,17 @@ allprojects {
   }
 }
 
+// enforce target classfile version of 8
+
 intellij {
-  version 'IC-2020.2.3'
+  version 'IC-203.5981.41-EAP-SNAPSHOT'
   pluginName 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild false
   plugins = [
-    'PsiViewer:202-SNAPSHOT.3', // used for debugging
+    'PsiViewer:203-SNAPSHOT', // used for debugging
     'PlantUML integration:2.25.2', // used to test highlighting of plantuml diagrams
-    'tanvd.grazi:202.6397.21', // used for spell and grammar checking checking
-    'com.intellij.javafx:1.0.2',
+    'tanvd.grazi', // used for spell and grammar checking checking
+    'com.intellij.javafx:1.0.3',
     'org.intellij.intelliLang', //
     'java' // used to integrate into the build via AsciiDocTargetScopeProvider
   ]
@@ -114,7 +117,6 @@ test {
 
 dependencies {
   errorprone 'com.google.errorprone:error_prone_core:2.3.2'
-  errorproneJavac 'com.google.errorprone:javac:9+181-r4173-1'
   /* snakeyaml is s used by asciidoctorj-pdf, but is actually provided within jruby-stdlib
    * a snakeyaml version in the classpath takes precedence, but IntelliJ includes a version that is too old
    * therefore this plugin includes the same version of snakeyaml that is already included in jruby-stdlib
@@ -158,6 +160,13 @@ task showLinkToContributorGuide {
     "https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/contribute-as-a-coder.html\n")
 }
 
+task checkJavaVersion {
+  if (JavaVersion.current() != JavaVersion.VERSION_11) {
+    throw new GradleException("As of plugin version 0.34.x, this build must be run with Java 11, see:\n" +
+      "https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/setup-environment.html")
+  }
+}
+
 task generateAsciidocLexer(type: GenerateLexer) {
   source = "src/main/java/org/asciidoc/intellij/lexer/asciidoc.flex"
   targetDir = "gen/org/asciidoc/intellij/lexer"
@@ -167,8 +176,12 @@ task generateAsciidocLexer(type: GenerateLexer) {
 compileJava {
   options.errorprone.excludedPaths = '.*_AsciiDocLexer.*'
   options.errorprone.error('StreamResourceLeak') // enforce errors where there would be warning in the standard only
+  // as long as the plugin supports 2020.2 as well, keep source and target compatibility for JDK 8
+  options.compilerArgs.addAll(['--release', '8'])
   // will print link to contributor guide at the start of each build
   dependsOn showLinkToContributorGuide
+  // checking that we run on JDK 11, as this is required to compile against IC 2020.3
+  dependsOn checkJavaVersion
   dependsOn generateAsciidocLexer
 }
 

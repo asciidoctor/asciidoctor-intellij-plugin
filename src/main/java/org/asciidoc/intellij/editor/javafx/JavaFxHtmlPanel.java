@@ -44,7 +44,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import netscape.javascript.JSObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.AsciiDoc;
@@ -55,7 +54,6 @@ import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.w3c.dom.html.HTMLImageElement;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,6 +62,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
@@ -341,18 +341,14 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
   private void registerContextMenu(WebView webView) {
     webView.setOnMousePressed(e -> {
       if (e.getButton() == MouseButton.SECONDARY) {
-        JSObject object = getJavaScriptObjectAtLocation(webView, e);
-        if (object instanceof HTMLImageElement) {
-          String src = ((HTMLImageElement) object).getAttribute("src");
-          ApplicationManager.getApplication().invokeLater(() -> saveImage(src));
-        }
+        getJavaScriptObjectAtLocation(webView, e);
       }
     });
   }
 
-  private JSObject getJavaScriptObjectAtLocation(WebView webView, MouseEvent e) {
-    String script = String.format("document.elementFromPoint(%s,%s);", e.getX(), e.getY());
-    return (JSObject) webView.getEngine().executeScript(script);
+  private void getJavaScriptObjectAtLocation(WebView webView, MouseEvent e) {
+    String script = String.format("elem = document.elementFromPoint(%s,%s); window.JavaPanelBridge.saveImage(elem.src)", e.getX(), e.getY());
+    webView.getEngine().executeScript(script);
   }
 
   private void saveImage(@NotNull String path) {
@@ -858,6 +854,12 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       }
     }
 
+    public void saveImage(@NotNull String path) {
+      ApplicationManager.getApplication().invokeLater(() -> {
+        JavaFxHtmlPanel.this.saveImage(path);
+      });
+    }
+
     private boolean openInEditor(@NotNull URI uri) {
       return ReadAction.compute(() -> {
         String anchor = uri.getFragment();
@@ -939,9 +941,14 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
       if (newValue == State.SUCCEEDED) {
         try {
-          JSObject win
-            = (JSObject) getWebViewGuaranteed().getEngine().executeScript("window");
-          win.setMember("JavaPanelBridge", bridge);
+          try {
+            // rewrote code so that it compiles with standard JDK 11
+            Object win = getWebViewGuaranteed().getEngine().executeScript("window");
+            Method setMember = win.getClass().getMethod("setMember", String.class, Object.class);
+            setMember.invoke(win, "JavaPanelBridge", bridge);
+          } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+          }
           JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
             "if ('__IntelliJTools' in window) {" +
               "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +

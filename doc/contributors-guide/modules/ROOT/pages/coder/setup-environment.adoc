@@ -1,18 +1,18 @@
 = Setup of the development environment
+:description: Prepare for developing for the IntelliJ AsciiDoc plugin.
 :navtitle: Setup environment
+
+{description}
 
 [[JDK]]
 == Choosing a Java Version and Distribution
 
-Currently, JDK 8 and JavaFX is required to build and run the plugin.
+Starting with IntelliJ 2020.3 and plugin version 0.32.x, JDK 11 is required to build the plugin.
+https://blog.jetbrains.com/platform/2020/09/intellij-project-migrates-to-java-11/[See the JDK 11 announcement in the JetBrains blog for details].
 
-The JetBrains JDK 8 distribution is recommended for development.
-As some parts of the code still support Java 8 and JavaFX 8, you can't develop with Java 11 at the moment.
-The plugin will still run in environments with Java 11.
+As the 0.32.x releases support also IntelliJ 2020.2.x, programming is restricted to use only Java 8 functionality, so that the plugin runs on both JDK 8 and JDK 11.
 
-JetBrains JDK 8::
-Comes with a bundled JavaFX, download here: https://confluence.jetbrains.com/display/JBR/JetBrains+Runtime[JetBrains OpenJDK 8].
-This way you can develop with the JDK that is also running the JetBrains IDE.
+JetBrains recommends https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html[Amazon Corretto JDK] for development, but other distributions based on OpenJDK should work as well.
 
 For the Gradle build tool to pick up the Java version, point the environment variable `JAVA_HOME` to the folder with the JDK:
 
@@ -42,6 +42,7 @@ gradlew --version
 
 The output should be similar to:
 
+[%nowrap]
 ----
 ------------------------------------------------------------
 Gradle ...
@@ -53,17 +54,8 @@ Revision:     ...
 Kotlin:       ...
 Groovy:       ...
 Ant:          ...
-JVM:          1.8.0_...-release (JetBrains s.r.o ...)
+JVM:          11.0.x (Amazon.com Inc. 11.0....)
 OS:           ...
 ----
 
-== Alternative JDKs
-
-Oracle JDK 8::
-Meets both dependencies, JavaFX is bundled with it out-of-the box.
-This is easy to give development a start if it is already installed on your machine, but will be different from most user's installations.
-
-OpenJDK 8::
-Is usually distributed without JavaFX; you probably need to install JavaFX manually.
-This is usually the least preferred approach, although in practice Linux users often run JetBrains IDEA with the JDK provided by their local Linux distribution (that now and then leads to difficulties).
 

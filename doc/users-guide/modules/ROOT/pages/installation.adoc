@@ -52,6 +52,7 @@ Please open an issue on GitHub if you want to contribute to make MPS support bet
 === More information on JDKs
 
 To use the JavaFX preview instead of the Swing preview, you'll need to run IntelliJ with 64bit Java and JavaFX installed.
+Starting with IntelliJ 2020.3, the JetBrains platform requires JDK 11 to run.
 Oracle JDK installations include JavaFX, but can make the IDE unstable and crash.
 OpenJDK included with for example an Linux distribution usually don't include JavaFX.
 
@@ -74,7 +75,7 @@ Installing from JetBrains marketplace with an Internet Ccnnection:
 If your IDE doesn't have internet access configured:
 
 [start=2]
-. Download the installation archive via your browser and install it from disk.
+. Download the installation archive xref:download-install-from-disk[via your browser and install it from disk].
 
 ////
 TODO: document the following possibilities
