@@ -9,6 +9,8 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.31.44 (work in progress)
 
+- fix right-click-saves-image in JavaFX preview
+
 === 0.31.43 (preview, available from GitHub releases)
 
 - fix highlighting for escaped URL in formatting quotes

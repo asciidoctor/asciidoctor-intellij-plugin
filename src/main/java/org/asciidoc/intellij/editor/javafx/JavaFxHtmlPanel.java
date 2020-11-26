@@ -370,6 +370,11 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       return;
     }
     String subPath = path.substring(indexOfParent + parent.length() + 1);
+    // question mark with a hash might still be on this image
+    int qm = subPath.indexOf("?");
+    if (qm != -1) {
+      subPath = subPath.substring(0, qm);
+    }
     Path imagePath = imagesPath.resolve(subPath);
     if (imagePath.toFile().exists()) {
       File file = imagePath.toFile();
