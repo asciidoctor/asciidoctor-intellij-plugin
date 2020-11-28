@@ -11,6 +11,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.WhiteSpaceFormattingStrategy;
 import com.intellij.psi.formatter.WhiteSpaceFormattingStrategyFactory;
 import com.intellij.psi.formatter.common.AbstractBlock;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.asciidoc.intellij.codeStyle.AsciiDocCodeStyleSettings;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
@@ -123,7 +124,7 @@ class AsciiDocBlock extends AbstractBlock {
     }
 
     // have one blank line before and after a heading
-    if (!verse && !table && ((isSection(child1) && !isHeader(child2) && !isAttributeDeclaration(child2)) || isSection(child2))) {
+    if (!verse && !table && (isSection(child1) && !isPartOfSameHeading(child1, child2) && !isAttributeDeclaration(child2) && !isHeader(child2))) {
       return Spacing.createSpacing(0, 0, 2, false, 0);
     }
 
@@ -176,6 +177,24 @@ class AsciiDocBlock extends AbstractBlock {
     return Spacing.createSpacing(0, 999, 0, true, 999);
   }
 
+  private boolean isPartOfSameHeading(Block child1, Block child2) {
+    ASTNode node1 = ((AsciiDocBlock) child2).getNode();
+    ASTNode node2 = ((AsciiDocBlock) child1).getNode();
+    node1 = getHeadingFor(node1);
+    node2 = getHeadingFor(node2);
+    return node1 != null && node1 == node2;
+  }
+
+  private ASTNode getHeadingFor(ASTNode node) {
+    do {
+      if (node.getElementType() == AsciiDocElementTypes.HEADING) {
+        break;
+      }
+      node = node.getTreeParent();
+    } while (node != null);
+    return node;
+  }
+
   private boolean isCellStart(Block block) {
     return block instanceof AsciiDocBlock &&
       AsciiDocTokenTypes.CELLSEPARATOR.equals(((AsciiDocBlock) block).getNode().getElementType());
@@ -184,11 +203,6 @@ class AsciiDocBlock extends AbstractBlock {
   private static boolean isAttributeDeclaration(Block block) {
     return block instanceof AsciiDocBlock &&
       AsciiDocElementTypes.ATTRIBUTE_DECLARATION.equals(((AsciiDocBlock) block).getNode().getElementType());
-  }
-
-  private static boolean isHeader(Block block) {
-    return block instanceof AsciiDocBlock &&
-      AsciiDocTokenTypes.HEADER.equals(((AsciiDocBlock) block).getNode().getElementType());
   }
 
   private boolean lineStartsWithEnumeration(Block block) {
@@ -323,9 +337,23 @@ class AsciiDocBlock extends AbstractBlock {
   private static boolean isSection(Block block) {
     return block instanceof AsciiDocBlock &&
       (AsciiDocElementTypes.SECTION.equals(((AsciiDocBlock) block).getNode().getElementType())
-        || AsciiDocTokenTypes.HEADING_TOKEN.equals(((AsciiDocBlock) block).getNode().getElementType())
-        || AsciiDocElementTypes.HEADING.equals(((AsciiDocBlock) block).getNode().getElementType())
-        || AsciiDocTokenTypes.HEADING_OLDSTYLE.equals(((AsciiDocBlock) block).getNode().getElementType()));
+        || isChildOf(AsciiDocElementTypes.HEADING, block));
+  }
+
+  private static boolean isHeader(Block block) {
+    return block instanceof AsciiDocBlock &&
+      (AsciiDocTokenTypes.HEADER.equals(((AsciiDocBlock) block).getNode().getElementType()));
+  }
+
+  private static boolean isChildOf(IElementType element, Block block) {
+    ASTNode node = ((AsciiDocBlock) block).getNode();
+    do {
+      if (node.getElementType() == element) {
+        return true;
+      }
+      node = node.getTreeParent();
+    } while (node != null);
+    return false;
   }
 
   private static boolean isBullet(Block block) {
