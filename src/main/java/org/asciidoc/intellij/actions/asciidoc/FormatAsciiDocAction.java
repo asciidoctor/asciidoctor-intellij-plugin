@@ -83,6 +83,8 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
     return true;
   }
 
+  /** Check if character at cursor or left of cursor is a whitespace.
+   */
   private static boolean isWhitespaceAtCaret(Editor editor) {
     final Document doc = editor.getDocument();
 
@@ -91,7 +93,19 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
       return true;
     }
 
-    final char c = doc.getCharsSequence().charAt(offset);
+    char c = doc.getCharsSequence().charAt(offset);
+    if (isWhitepace(c)) {
+      if (offset > 0) {
+        // retrieve character left of cursor
+        c = doc.getCharsSequence().charAt(offset - 1);
+        return isWhitepace(c);
+      }
+      return true;
+    }
+    return false;
+  }
+
+  private static boolean isWhitepace(char c) {
     return c == ' ' || c == '\t' || c == '\n';
   }
 
@@ -99,6 +113,7 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
     SelectionModel selectionModel = editor.getSelectionModel();
     if (!selectionModel.hasSelection()) {
       if (!isWhitespaceAtCaret(editor)) {
+        // If the cursor is not at a whitespace, it is safe to expand the current selection like "Ctrl+W" in the IDE
         int selectionStart = selectionModel.getSelectionStart();
         int selectionEnd = selectionModel.getSelectionEnd();
         selectionModel.selectWordAtCaret(false);

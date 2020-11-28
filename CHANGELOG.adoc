@@ -7,12 +7,13 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.1 (work in progress)
+=== 0.32.1 (preview, available from GitHub releases)
 
 - fix right-click-saves-image in JavaFX preview
 - changing development to JDK 11 in line with IntelliJ 2020.3 platform
 - don't break section titles with custom IDs or attributes on automatic reformat (#604)
 - don't use title with replaced attribute as PsiElement's name as IntelliJ might throw an "`PSI and index do not match"` exception
+- formatting of words via actions in the toolbar now works with the cursor placed at the end of the word (#602)
 
 === 0.31.43 (preview, available from GitHub releases)
 
