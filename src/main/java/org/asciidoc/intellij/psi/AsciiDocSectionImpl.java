@@ -158,7 +158,9 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
 
   @Override
   public String getName() {
-    return getTitle();
+    // must not return title with substitution, as this would confuse IntelliJ when it re-constructs the PSIStub
+    // and it might throw an exception "PSI and index do not match."
+    return getTitleNoSubstitution();
   }
 
   @Override
