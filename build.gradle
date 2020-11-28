@@ -74,6 +74,7 @@ patchPluginXml {
       .subList(0, 20)
       .stream().map { e ->
       e.html()
+        .replaceAll('\\(work in progress\\)', '')
         .replaceAll('\\(preview, available from GitHub releases\\)', '')
         .replaceAll('#([0-9]+)', '<a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/$1">#$1</a>')
         // regex for GitHub user names from https://github.com/shinnn/github-username-regex
