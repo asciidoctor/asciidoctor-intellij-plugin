@@ -19,9 +19,9 @@ public class AsciiDocChooseByNameContributor implements ChooseByNameContributor 
     List<AsciiDocAttributeDeclaration> attributes = AsciiDocUtil.findAttributes(project);
     Set<String> names = new HashSet<>(sections.size() + ids.size() + attributes.size());
     for (AsciiDocSection section : sections) {
-      String name = section.getName();
-      if (name != null && name.length() > 0) {
-        names.add(name);
+      String title = section.getTitle();
+      if (title.length() > 0) {
+        names.add(title);
       }
     }
     for (AsciiDocBlockId property : ids) {
