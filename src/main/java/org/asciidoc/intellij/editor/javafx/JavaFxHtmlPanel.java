@@ -945,6 +945,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
             // rewrote code so that it compiles with standard JDK 11
             Object win = getWebViewGuaranteed().getEngine().executeScript("window");
             Method setMember = win.getClass().getMethod("setMember", String.class, Object.class);
+            setMember.setAccessible(true);
             setMember.invoke(win, "JavaPanelBridge", bridge);
           } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
