@@ -58,7 +58,7 @@ public class AsciiDocSectionStubElementType extends IStubElementType<AsciiDocSec
 
   @Override
   public void serialize(@NotNull AsciiDocSectionStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-    dataStream.writeName(stub.getTitle());
+    dataStream.writeName(stub.getTitleNoSubstitution());
   }
 
   @NotNull
@@ -73,12 +73,12 @@ public class AsciiDocSectionStubElementType extends IStubElementType<AsciiDocSec
 
   @Override
   public void indexStub(@NotNull AsciiDocSectionStub stub, @NotNull IndexSink sink) {
-    if (stub.getTitle() != null) {
-      String normalizedKey = AsciiDocSectionImpl.INVALID_SECTION_ID_CHARS.matcher(stub.getTitle().toLowerCase(Locale.US)).replaceAll("");
+    if (stub.getTitleNoSubstitution() != null) {
+      String normalizedKey = AsciiDocSectionImpl.INVALID_SECTION_ID_CHARS.matcher(stub.getTitleNoSubstitution().toLowerCase(Locale.US)).replaceAll("");
       normalizedKey = normalizedKey.replaceAll(NORMALIZED_CHARS_IN_INDEX, "");
-      if (AsciiDocUtil.ATTRIBUTES.matcher(stub.getTitle()).find()) {
+      if (AsciiDocUtil.ATTRIBUTES.matcher(stub.getTitleNoSubstitution()).find()) {
         // add an additional entry to find all block IDs with an attribute more easily
-        sink.occurrence(AsciiDocBlockIdKeyIndex.KEY, SECTION_WITH_VAR);
+        sink.occurrence(AsciiDocSectionKeyIndex.KEY, SECTION_WITH_VAR);
       }
       sink.occurrence(AsciiDocSectionKeyIndex.KEY, normalizedKey);
     }

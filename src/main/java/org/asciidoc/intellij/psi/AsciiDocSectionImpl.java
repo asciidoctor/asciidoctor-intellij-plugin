@@ -34,8 +34,8 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
   @NotNull
   public String getTitle() {
     final AsciiDocSectionStub stub = getGreenStub();
-    if (stub != null && !AsciiDocUtil.ATTRIBUTES.matcher(stub.getTitle()).find()) {
-      return stub.getTitle();
+    if (stub != null && !AsciiDocUtil.ATTRIBUTES.matcher(stub.getTitleNoSubstitution()).find()) {
+      return stub.getTitleNoSubstitution();
     }
     AsciiDocHeading heading = findChildByClass(AsciiDocHeading.class);
     if (heading != null) {
@@ -50,6 +50,10 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
    */
   @NotNull
   public String getTitleNoSubstitution() {
+    final AsciiDocSectionStub stub = getGreenStub();
+    if (stub != null) {
+      return stub.getTitleNoSubstitution();
+    }
     AsciiDocHeading heading = findChildByClass(AsciiDocHeading.class);
     if (heading != null) {
       return heading.getHeadingText(false);
