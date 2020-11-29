@@ -15,15 +15,37 @@ Initial support has been added in issue https://github.com/asciidoctor/asciidoct
 
 The plugin will activate Antora support once it finds a file `antora.yml` and a sub-folder `modules`.
 Antora will be active for all AsciiDoc files located in folders below such a file.
+Once the plugin detects Antora, it activates its Antora features.
 
 == Support provided by the plugin
 
-Once the plugin detects Antora, it activates its Antora features.
+=== Antora references support
 
-For `include::[]` and `+xref:[]+` macros the plugin supports the Antora families as long as it can resolve the references in the current project.
-For references outside the current module or component it locates `antora.yml` files and find the targets of the references.
+When using the Antora xref macro like `+xref:version@component:module:page.adoc[]+`, the plugin will resolve links to the specific version, component and module with in the current projects.
+For this it searches all available `antora.yaml` files in the current project.
 
-It sets multiple attributes to allow referencing files with the current Antora module:
+For `include::[]` macros the plugin supports the Antora families like `partial$`, `example$` and `page$`.
+
+=== Antora editor support
+
+In the editor the user can autocomplete filenames and references using kbd:[Ctrl+Space] and can navigate to a folder or file using kbd:[Ctrl+B].
+
+=== Antora YAML schema support
+
+When editing an `antora.yml` or `antora-playbook.yml` file, the plugin provides JSON-Schema support for validation, auto-completion and documentation.
+Press kbd:[Ctrl+Q] for quick help on each attribute.
+
+=== Antora preview support
+
+The preview renders images, includes and links.
+It also resolves https://docs.antora.org/antora/2.3/page/reftext-and-navtitle/[reftext and navtitle in the preview^] (new in Antora 2.3).
+The user can click on links in the preview and they will open in the editor if they link to a local Antora page.
+
+=== Antora attributes support
+
+The plugin reads all attributes defined in the module's `antora.yml` file's _asciidoc.attributes_ section and uses this for the preview and auto-completion.
+
+The plugin sets multiple attributes to allow referencing files with the current Antora module:
 
 imagesdir:: pointing to `images` of the current module (or `assets/images`, the Antora pre-2.1 style, if that folder exists)
 
@@ -38,11 +60,7 @@ page-*:: These and several other intrinsic attributes are supported for the prev
 Any of these attributes is set only if the directory exists.
 While `imagesdir` and `attachmentsdir` use a relative path so that they work best with image and link macros, `examplesdir` and `partialsdir` use an absolute path that works best with includes macros.
 
-In the editor the user can autocomplete filenames using kbd:[Ctrl+Space] and can navigate to a folder or file using kbd:[Ctrl+B].
-
-The preview renders images, includes and links.
-It also resolves https://docs.antora.org/antora/2.3/page/reftext-and-navtitle/[reftext and navtitle in the preview^] (new in Antora 2.3)
-The user can click on links in the preview and they will open in the editor if they link to a local Antora page.
+=== Examples of supported Antora syntax
 
 [source,asciidoc]
 ------
