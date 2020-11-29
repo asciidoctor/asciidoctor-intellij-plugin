@@ -27,8 +27,12 @@ public class AsciiDocSectionKeyIndex extends StringStubIndexExtension<AsciiDocSe
 
   @Override
   public Collection<AsciiDocSection> get(@NotNull String key, @NotNull Project project, @NotNull GlobalSearchScope scope) {
-    String normalizedKey = AsciiDocSectionImpl.INVALID_SECTION_ID_CHARS.matcher(key.toLowerCase(Locale.US)).replaceAll("");
-    normalizedKey = normalizedKey.replaceAll(AsciiDocSectionStubElementType.NORMALIZED_CHARS_IN_INDEX, "");
-    return StubIndex.getElements(getKey(), normalizedKey, project, scope, AsciiDocSection.class);
+    if (key.equals(AsciiDocSectionStubElementType.SECTION_WITH_VAR)) {
+      return StubIndex.getElements(getKey(), key, project, scope, AsciiDocSection.class);
+    } else {
+      String normalizedKey = AsciiDocSectionImpl.INVALID_SECTION_ID_CHARS.matcher(key.toLowerCase(Locale.US)).replaceAll("");
+      normalizedKey = normalizedKey.replaceAll(AsciiDocSectionStubElementType.NORMALIZED_CHARS_IN_INDEX, "");
+      return StubIndex.getElements(getKey(), normalizedKey, project, scope, AsciiDocSection.class);
+    }
   }
 }

@@ -19,7 +19,9 @@ public class AsciiDocFileUtil {
     }
     List<AsciiDocSection> result = null;
     final GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
-    Collection<AsciiDocSection> asciiDocSections = AsciiDocSectionKeyIndex.getInstance().get(key, project, scope);
+    Collection<AsciiDocSection> asciiDocSections = new ArrayList<>();
+    asciiDocSections.addAll(AsciiDocSectionKeyIndex.getInstance().get(key, project, scope));
+    asciiDocSections.addAll(AsciiDocSectionKeyIndex.getInstance().get(AsciiDocSectionStubElementType.SECTION_WITH_VAR, project, scope));
     ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
     for (AsciiDocSection asciiDocSection : asciiDocSections) {
       VirtualFile virtualFile = asciiDocSection.getContainingFile().getVirtualFile();

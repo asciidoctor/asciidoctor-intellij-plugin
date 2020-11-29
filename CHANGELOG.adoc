@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - rework JavaFX handling with JDK 11 to avoid inaccessible exception
 - rework parsing of `kbd` macro to prevent runaway escapes
 - fixing wrong indexing of section titles with attributes causing "`PSI and index do not match`"
+- choose-by-name will find sections with replaced attributes
 
 === 0.32.1 (preview, available from GitHub releases)
 
