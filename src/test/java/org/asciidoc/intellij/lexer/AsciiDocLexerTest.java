@@ -2340,6 +2340,31 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:INLINE_ATTRS_END (']')");
   }
 
+  public void testInlineMacroWithPassthroughAndSpaces() {
+    doTest("kbd:[X + ++ + ++]",
+      "AsciiDoc:INLINE_MACRO_ID ('kbd:')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_MACRO_BODY ('X')\n" +
+        "AsciiDoc:SEPARATOR (' + ')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_START ('++')\n" +
+        "AsciiDoc:PASSTRHOUGH_CONTENT (' + ')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_END ('++')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
+  }
+
+  public void testInlineMacroWithNoPassthrough() {
+    doTest("kbd:[⌃+X+X]+",
+      "AsciiDoc:INLINE_MACRO_ID ('kbd:')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_MACRO_BODY ('⌃')\n" +
+        "AsciiDoc:SEPARATOR ('+')\n" +
+        "AsciiDoc:INLINE_MACRO_BODY ('X')\n" +
+        "AsciiDoc:SEPARATOR ('+')\n" +
+        "AsciiDoc:INLINE_MACRO_BODY ('X')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
+        "AsciiDoc:TEXT ('+')");
+  }
+
   public void testInlineMacroWithTextAndPassthrough() {
     doTest("kbd:[text++]++]",
       "AsciiDoc:INLINE_MACRO_ID ('kbd:')\n" +
