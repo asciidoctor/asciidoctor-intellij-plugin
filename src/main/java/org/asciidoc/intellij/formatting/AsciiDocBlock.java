@@ -342,7 +342,7 @@ class AsciiDocBlock extends AbstractBlock {
 
   private static boolean isHeader(Block block) {
     return block instanceof AsciiDocBlock &&
-      (AsciiDocTokenTypes.HEADER.equals(((AsciiDocBlock) block).getNode().getElementType()));
+      AsciiDocTokenTypes.HEADER.equals(((AsciiDocBlock) block).getNode().getElementType());
   }
 
   private static boolean isChildOf(IElementType element, Block block) {
