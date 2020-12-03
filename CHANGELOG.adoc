@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.3 (work in progress)
+
+- initial support for light edit mode (#606)
+
 === 0.32.2 (preview, available from GitHub releases)
 
 - rework JavaFX handling with JDK 11 to avoid inaccessible exception

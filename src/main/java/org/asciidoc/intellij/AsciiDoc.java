@@ -679,11 +679,11 @@ public class AsciiDoc {
                        Notifier notifier,
                        FileType format) {
     VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
-      LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
+      LocalFileSystem.getInstance().findFileByPath(projectBasePath),
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
     );
     VirtualFile antoraModuleDir = findAntoraModuleDir(
-      LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
+      LocalFileSystem.getInstance().findFileByPath(projectBasePath),
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
     );
     Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
@@ -785,10 +785,10 @@ public class AsciiDoc {
 
   public void convertTo(File file, String config, List<String> extensions, FileType format) {
     VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
-      LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
+      LocalFileSystem.getInstance().findFileByPath(projectBasePath),
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir));
     VirtualFile antoraModuleDir = findAntoraModuleDir(
-      LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath)),
+      LocalFileSystem.getInstance().findFileByPath(projectBasePath),
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
     );
     Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
@@ -880,7 +880,7 @@ public class AsciiDoc {
     if (antoraModuleDir != null) {
       result.putAll(collectAntoraAttributes(antoraModuleDir));
 
-      VirtualFile projectBase = LocalFileSystem.getInstance().findFileByIoFile(new File(projectBasePath));
+      VirtualFile projectBase = LocalFileSystem.getInstance().findFileByPath(projectBasePath);
       VirtualFile baseDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
       if (baseDir == null) {
         baseDir = antoraModuleDir.getFileSystem().findFileByPath(fileBaseDir.getPath());

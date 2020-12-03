@@ -6,6 +6,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -262,6 +263,9 @@ public class AsciiDocUtil {
   }
 
   public static List<AsciiDocAttributeDeclaration> findAttributes(Project project, String key, boolean onlyAntora) {
+    if (DumbService.isDumb(project)) {
+      return Collections.emptyList();
+    }
     List<AsciiDocAttributeDeclaration> result = null;
     final GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
     Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(key, project, scope);
@@ -723,7 +727,7 @@ public class AsciiDocUtil {
     return result;
   }
 
-  public static VirtualFile findSpringRestDocSnippets(VirtualFile projectBasePath, VirtualFile fileBaseDir) {
+  public static VirtualFile findSpringRestDocSnippets(@Nullable VirtualFile projectBasePath, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       VirtualFile pom = dir.findChild("pom.xml");
@@ -756,7 +760,7 @@ public class AsciiDocUtil {
           }
         }
       }
-      if (projectBasePath.equals(dir)) {
+      if (Objects.equals(projectBasePath, dir)) {
         break;
       }
       dir = dir.getParent();
@@ -1113,7 +1117,7 @@ public class AsciiDocUtil {
       otherModuleName = myModuleName;
     }
 
-    if (otherComponentName != null) {
+    if (otherComponentName != null && !DumbService.isDumb(project)) {
       if (otherModuleName == null || otherModuleName.length() == 0) {
         otherModuleName = "ROOT";
       }
@@ -1185,6 +1189,9 @@ public class AsciiDocUtil {
   }
 
   public static List<AntoraModule> collectPrefixes(Project project, VirtualFile moduleDir) {
+    if (DumbService.isDumb(project)) {
+      return Collections.emptyList();
+    }
     return ApplicationManager.getApplication().runReadAction((Computable<List<AntoraModule>>) () -> {
       PsiFile[] files =
         FilenameIndex.getFilesByName(project, ANTORA_YML, GlobalSearchScope.projectScope(project));
