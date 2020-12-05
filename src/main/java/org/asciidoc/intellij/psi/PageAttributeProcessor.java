@@ -30,6 +30,9 @@ public class PageAttributeProcessor implements PsiElementProcessor<PsiElement> {
       result.add((AsciiDocAttributeDeclaration) element);
       return true;
     }
+    if (element instanceof AsciiDocFrontmatter || PsiTreeUtil.getParentOfType(element, AsciiDocFrontmatter.class) != null) {
+      return true;
+    }
     if (PsiTreeUtil.getParentOfType(element, AsciiDocAttributeDeclaration.class) != null) {
       return true;
     }

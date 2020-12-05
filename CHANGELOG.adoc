@@ -7,7 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.3 (work in progress)
+=== 0.32.4 (work in progress)
+
+- recognize front matter when parsing page attributes
+
+=== 0.32.3 (preview, available from GitHub releases)
 
 - initial support for light edit mode (#606)
 
