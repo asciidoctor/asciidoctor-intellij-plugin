@@ -1,6 +1,7 @@
 = Writing user documentation
+:description: User documentation is essential to make the plugin approachable for all types of users.
 
-User documentation is essential to make the plugin approachable for all types of users.
+{description}
 
 == Write for your readers
 
@@ -12,8 +13,6 @@ Don't assume people are developers and have worked with IntelliJ before -- this 
 
 Naming the actor, using the active voice and the present tense makes it easier for non-native speakers to understand this document.
 Adding the shortcuts should help users new to IntelliJ.
-
-Each sentence should be on its own line in the AsciiDoc source.
 
 === Check lists for writing content
 
@@ -34,6 +33,19 @@ Future tense: "`The preview will display the result`"
 Use only one capital letter for Keyboard shortcuts::
 Consistent: kbd:[Alt+7] +
 Inconsistent: kbd:[ALT+7]
+
+== Conventions in the source code
+
+These conventions help writers find their way when they browse the documentation's source code and lets them focus on the content.
+Writers can use the reformat functionality of the plugin using the shortcut kbd:[Ctrl+Alt+L] to apply these conventions.
+
+Each sentence should be on its own line in the AsciiDoc source::
+This is a recommended best practice as it prevents reflows due to reformatting and enables writers to move sentences and re-arrange paragraphs with less effort.
+This practice works best when writers enable word-wrap in their editor.
+Read more https://asciidoctor.org/docs/asciidoc-recommended-practices/[this and other best practices on the Asciidoctor homepage].
+
+Keep blank lines after section headings::
+This makes easier for writers navigate browse through the code of the page.
 
 == Location of content
 
