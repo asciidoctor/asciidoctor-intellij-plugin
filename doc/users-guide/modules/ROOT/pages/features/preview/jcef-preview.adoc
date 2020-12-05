@@ -6,6 +6,8 @@
 [NOTE]
 ====
 This is available from IntelliJ 2020.2+ and plugin version 0.31.x.
+
+Please update to IntelliJ 2020.2.4+ or 2020.3+ for best experience, as this fixes some limitation of earlier versions.
 ====
 
 == Why to use the JCEF preview
@@ -14,18 +16,19 @@ The JCEF preview provides better HTML preview and additional features like scrol
 As the preview is based on an up-to-date Google Chrome rendering engine, it offers in-par rendering compared to modern browsers.
 This includes rendering of fonts and SVGs.
 
+[[limitations]]
 == Limitations of the JCEF preview
 
 The JCEF preview doesn't support the IntelliJ proxy configuration yet.
 Therefore, remote images in the preview will not show if you are behind a proxy.
 See '`xref:faq/jcef-no-proxy-support.adoc[]`' for more information.
 
-Once a JCEF preview is open in a project, it now and then brings the focus to the project when editing files in a different window.
+Once a JCEF preview is open in a project, it now and then brings the focus to the project when editing files in a different window in IntelliJ 2020.2.
+This is fixed in the https://blog.jetbrains.com/idea/2020/11/intellij-idea-2020-2-4/[2020.2.4] and 2020.3 release.
 See JetBrains issue https://youtrack.jetbrains.com/issue/IDEA-247541["`JCEF: steals focus from a different frame`"] for more information.
 
 On MacOS there is no copy-and-paste from the JCEF preview in IntelliJ 2020.2.
-Unfortunately this is nothing this plugin can fix as it needs to be fixed by the IntelliJ platform.
-Apparently this is fixed in IntelliJ 2020.3 (see issues https://youtrack.jetbrains.com/issue/IDEA-241604/[IDEA-241604] and https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/533[asciidoctor-intellij-plugin/#322]).
+This is fixed in IntelliJ 2020.3 (see issues https://youtrack.jetbrains.com/issue/IDEA-241604/[IDEA-241604] and https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/533[asciidoctor-intellij-plugin/#322]).
 As a workaround, open the preview in the browser by clicking on your favorite browser symbol when hovering in the upper right corner of the editor and copy the contents from the browser window.
 
 == Benefits of the JCEF preview
