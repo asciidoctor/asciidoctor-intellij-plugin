@@ -8,9 +8,8 @@ buildscript {
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.21.0'
   }
 }
-
 plugins {
-  id "org.jetbrains.intellij" version "0.6.3"
+  id "org.jetbrains.intellij" version "0.6.5"
   id "org.jetbrains.grammarkit" version "2020.2.1"
   id "checkstyle"
   id 'org.asciidoctor.jvm.convert' version '2.2.0'
@@ -44,7 +43,7 @@ allprojects {
 // enforce target classfile version of 8
 
 intellij {
-  version 'IC-203.5981.41-EAP-SNAPSHOT'
+  version 'IC-2020.3' // 'IC-203.5981.41-EAP-SNAPSHOT'
   pluginName 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild false
   plugins = [
