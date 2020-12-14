@@ -304,5 +304,19 @@
       <option name="OTHER" value="true" />
     </context>
   </template>
+  <template name="ad-admonition-block" value="[$TYPE$]&#10;====&#10;$TEXT$&#10;====" description="inserts an admonition block" toReformat="false" toShortenFQNames="false">
+    <variable name="TYPE" expression="enum(&quot;NOTE&quot;,&quot;TIP&quot;,&quot;IMPORTANT&quot;,&quot;CAUTION&quot;,&quot;WARNING&quot;)" defaultValue="NOTE" alwaysStopAt="true" />
+    <variable name="TEXT" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-admonition-para" value="$TYPE$: $TEXT$&#10;" description="inserts an admonition paragraph" toReformat="false" toShortenFQNames="false">
+    <variable name="TYPE" expression="enum(&quot;NOTE&quot;,&quot;TIP&quot;,&quot;IMPORTANT&quot;,&quot;CAUTION&quot;,&quot;WARNING&quot;)" defaultValue="" alwaysStopAt="true" />
+    <variable name="TEXT" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
 </templateSet>
 
