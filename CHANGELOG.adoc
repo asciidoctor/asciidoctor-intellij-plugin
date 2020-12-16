@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.4 (work in progress)
 
 - recognize front matter when parsing page attributes
+- add block and paragraph admonition live template (thanks to @rdmueller) (#609,  #611)
 
 === 0.32.3 (preview, available from GitHub releases)
 
