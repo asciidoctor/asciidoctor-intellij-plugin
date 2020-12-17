@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - recognize front matter when parsing page attributes
 - add block and paragraph admonition live template (thanks to @rdmueller) (#609,  #611)
+- support bibliography anchors alone on a line (#614)
 
 === 0.32.3 (preview, available from GitHub releases)
 

@@ -225,6 +225,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:HEADING_TOKEN (' Title')");
   }
 
+  public void testBibBlock() {
+    doTest("= [[id]] Title",
+      "AsciiDoc:HEADING_TOKEN ('= ')\n" +
+        "AsciiDoc:INLINEIDSTART ('[[')\n" +
+        "AsciiDoc:BLOCKID ('id')\n" +
+        "AsciiDoc:INLINEIDEND (']]')\n" +
+        "AsciiDoc:HEADING_TOKEN (' Title')");
+  }
+
   public void testSectionWithBlockId() {
     doTest("== [[id]] Section",
       "AsciiDoc:HEADING_TOKEN ('== ')\n" +
@@ -2754,6 +2763,19 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:BLOCKREFTEXT ('2')\n" +
         "AsciiDoc:BIBEND (']]]')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Book')");
+  }
+
+  public void testBibliographyOnNewLine() {
+    doTest("* [[[bib,2]]]\nBook",
+      "AsciiDoc:BULLET ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:BIBSTART ('[[[')\n" +
+        "AsciiDoc:BLOCKID ('bib')\n" +
+        "AsciiDoc:SEPARATOR (',')\n" +
+        "AsciiDoc:BLOCKREFTEXT ('2')\n" +
+        "AsciiDoc:BIBEND (']]]')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:TEXT ('Book')");
   }
 

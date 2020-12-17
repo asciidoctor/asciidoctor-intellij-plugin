@@ -548,7 +548,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <LIST, PREBLOCK> {
   // bibtext doesn't allow for line breaks. Adding {STRING} at the end so that it is as long as the regular bullet match
-  {BULLET} / {SPACE}+ {BIBSTART} [^\n]* {BIBEND} {STRING} {
+  {BULLET} / {SPACE}+ {BIBSTART} [^\n]* {BIBEND} ({STRING} | \n) {
         String delimiter = "nodel-list-bullet-" + yytext();
         while (blockStack.contains(delimiter)) {
           blockStack.pop();
@@ -776,7 +776,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {BLOCK_ATTRS_START} / [^\[\#] ([^\]\"\']* | (\" [^\"\n]* \") | (\' [^\"\n]* \') )* "]" [ \t]* [^\n] { yypushback(yylength()); yybegin(STARTBLOCK); }
   {BLOCK_ATTRS_START} / [^\[] { yybegin(MULTILINE); yypushstate(); clearStyle(); yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.ATTRS_START; }
   {ANCHORSTART} / [^\]\n]+ {ANCHOREND} { resetFormatting(); yybegin(ANCHORID); return AsciiDocTokenTypes.BLOCKIDSTART; }
-  {BLOCKIDSTART} / [^\]\n]+ {BLOCKIDEND} {
+  {BLOCKIDSTART} / [^\[\]\n]* {BLOCKIDEND} {
                          if (!isEscaped()) {
                            yybegin(BLOCKID); return AsciiDocTokenTypes.BLOCKIDSTART;
                          } else {
