@@ -11,9 +11,6 @@ import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class AsciiDocListing extends AbstractAsciiDocCodeBlock {
   AsciiDocListing(IElementType type) {
     super(type);
@@ -78,21 +75,24 @@ public class AsciiDocListing extends AbstractAsciiDocCodeBlock {
     if (element == null) {
       return null;
     }
-    List<AsciiDocAttributeInBrackets> attr = new ArrayList<>(PsiTreeUtil.findChildrenOfType(this, AsciiDocAttributeInBrackets.class));
-    String firstAttr = null;
-    if (attr.size() >= 1) {
-      firstAttr = attr.get(0).getText();
-      int locationOfPercent = firstAttr.indexOf("%"); // this handles for example "plantuml%interactive"
-      if (locationOfPercent != -1) {
-        firstAttr = firstAttr.substring(0, locationOfPercent);
+    AsciiDocBlockAttributes blockAttributes = PsiTreeUtil.findChildOfType(this, AsciiDocBlockAttributes.class);
+    if (blockAttributes != null) {
+      String[] attr = blockAttributes.getAttributes();
+      String firstAttr = null;
+      if (attr.length >= 1) {
+        firstAttr = attr[0];
+        int locationOfPercent = firstAttr.indexOf("%"); // this handles for example "plantuml%interactive"
+        if (locationOfPercent != -1) {
+          firstAttr = firstAttr.substring(0, locationOfPercent);
+        }
       }
-    }
-    if (attr.size() >= 2 && "source".equalsIgnoreCase(firstAttr)) {
-      return "source-" + attr.get(1).getText();
-    } else if ("plantuml".equalsIgnoreCase(firstAttr)) {
-      return "diagram-plantuml";
-    } else if ("graphviz".equalsIgnoreCase(firstAttr)) {
-      return "diagram-graphviz";
+      if (attr.length >= 2 && "source".equalsIgnoreCase(firstAttr)) {
+        return "source-" + attr[1];
+      } else if ("plantuml".equalsIgnoreCase(firstAttr)) {
+        return "diagram-plantuml";
+      } else if ("graphviz".equalsIgnoreCase(firstAttr)) {
+        return "diagram-graphviz";
+      }
     }
     return null;
   }
