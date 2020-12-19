@@ -136,7 +136,7 @@ dependencies {
   testImplementation 'org.asciidoctor:asciidoctorj-pdf:1.5.3'
 
   testImplementation 'junit:junit:4.12'
-  testImplementation 'com.tngtech.archunit:archunit-junit4:0.14.1'
+  testImplementation 'com.tngtech.archunit:archunit-junit4:0.15.0'
   testImplementation 'org.assertj:assertj-core:3.6.1'
   testCompile 'org.mockito:mockito-core:3.6.28'
 }
