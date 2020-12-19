@@ -54,7 +54,8 @@ public interface AsciiDocCreateMissingFile {
         // creating an empty file makes sense
         String fileName = element.getFirstChild().getNextSibling().getText();
         boolean isDrawioFile = Pattern.matches("^.*[.](drawio|dio)[.](svg|png)$", fileName);
-        boolean isDrawioPluginInstalled = PluginId.findId("de.docs_as_co.intellij.plugin.drawio") != null;
+        boolean isDrawioPluginInstalled = PluginId.findId("de.docs_as_co.intellij.plugin.drawio") != null
+          || PluginId.findId("de.docs_as_co.intellij.plugin.diagramsnet") != null;
         if (!isDrawioPluginInstalled || !isDrawioFile) {
           return false;
         }
