@@ -18,6 +18,7 @@ When the user moves the cursor in the editor, the preview scrolls the text into 
 
 When the user clicks on text in the preview, the editor moves the cursor to the clicked text.
 This is accurate at block level, unfortunately not yet on line or character level.
+If the content is the preview is part of an included file, the editor opens the included file (new in plugin version 0.32.5).
 
 When the user clicks on an external URL, the preview opens it in an external browser.
 

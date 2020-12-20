@@ -7,7 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.4 (work in progress)
+=== 0.32.5 (work in progress)
+
+- if content in the preview is from an included file, click on the content in the preview opens included file (#557)
+
+=== 0.32.4 (preview, available from GitHub releases)
 
 - recognize front matter when parsing page attributes
 - add block and paragraph admonition live template (thanks to @rdmueller) (#609,  #611)

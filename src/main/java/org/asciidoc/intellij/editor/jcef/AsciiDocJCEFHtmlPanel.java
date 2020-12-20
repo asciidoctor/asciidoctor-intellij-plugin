@@ -2,8 +2,10 @@ package org.asciidoc.intellij.editor.jcef;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.actions.OpenFileAction;
+import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
+import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -24,10 +26,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.ui.jcef.JBCefJSQuery;
 import com.intellij.ui.jcef.JBCefPsiNavigationUtils;
 import com.intellij.ui.jcef.JCEFHtmlPanel;
@@ -333,17 +339,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       return null;
     });
 
-    myScrollEditorToLine.addHandler((r) -> {
-      try {
-        if (r.length() != 0) {
-          int line = (int) Math.round(Double.parseDouble(r));
-          scrollEditorToLine(line);
-        }
-      } catch (NumberFormatException e) {
-        LOG.warn("unable parse line number: " + r, e);
-      }
-      return null;
-    });
+    myScrollEditorToLine.addHandler(this::handleScrollEditorLine);
 
     myZoomDelta.addHandler((r) -> {
       try {
@@ -386,6 +382,44 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       openLink(r);
       return null;
     });
+  }
+
+  @Nullable
+  private JBCefJSQuery.Response handleScrollEditorLine(String r) {
+    try {
+      if (r.length() != 0) {
+        int split = r.indexOf(':');
+        int line = (int) Math.round(Double.parseDouble(r.substring(0, split)));
+        String file = r.substring(split + 1);
+        if (file.equals("stdin")) {
+          scrollEditorToLine(line);
+        } else {
+          ApplicationManager.getApplication().invokeLater(() -> {
+            VirtualFile targetFile = VirtualFileManager.getInstance().findFileByUrl("file://" + file);
+            if (targetFile != null) {
+              Project project = ProjectUtil.guessProjectForContentFile(targetFile);
+              if (project != null) {
+                if (LightEdit.owns(project)) {
+                  OpenFileAction.openFile(targetFile, project);
+                } else {
+                  int offset = -1;
+                  PsiFile psiFile = PsiManager.getInstance(project).findFile(targetFile);
+                  if (psiFile != null && line > 0) {
+                    offset = StringUtil.lineColToOffset(psiFile.getText(), line - 1, 0);
+                  }
+                  PsiNavigationSupport.getInstance().createNavigatable(project, targetFile, offset).navigate(true);
+                }
+              } else {
+                LOG.warn("unable to identify project: " + targetFile);
+              }
+            }
+          });
+        }
+      }
+    } catch (NumberFormatException e) {
+      LOG.warn("unable parse line number: " + r, e);
+    }
+    return null;
   }
 
   private VirtualFile saveImageLastDir = null;

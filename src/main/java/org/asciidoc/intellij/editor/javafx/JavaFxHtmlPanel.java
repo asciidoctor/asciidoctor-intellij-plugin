@@ -3,8 +3,10 @@ package org.asciidoc.intellij.editor.javafx;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.actions.OpenFileAction;
+import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
+import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -23,15 +25,20 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.PsiNavigateUtil;
 import com.intellij.util.ui.UIUtil;
 import com.sun.javafx.application.PlatformImpl;
+import com.sun.javafx.webkit.WebConsoleListener;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -274,6 +281,10 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
                 myWebView.setZoom(JBUIScale.scale(zoom));
                 mouseEvent.consume();
               }
+            });
+
+            WebConsoleListener.setDefaultListener((webView, message, lineNumber, sourceId) -> {
+              LOG.warn("Console message: " + message + "[at " + lineNumber + "]");
             });
 
             final WebEngine engine = myWebView.getEngine();
@@ -908,21 +919,51 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       });
     }
 
-    public void scrollEditorToLine(int sourceLine) {
-      if (sourceLine <= 0) {
-        Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Setting cursor position", "line number " + sourceLine + " requested for cursor position, ignoring",
+    /**
+     * With the JCEF allback only one argument can be passed.
+     * Therefore do it here as well.
+     */
+    public void scrollEditorToLine(String argument) {
+      int split = argument.indexOf(':');
+      int line = (int) Math.round(Double.parseDouble(argument.substring(0, split)));
+      String file = argument.substring(split + 1);
+      if (line <= 0) {
+        Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Setting cursor position", "line number " + line + " requested for cursor position, ignoring",
           NotificationType.INFORMATION, null);
         notification.setImportant(false);
         return;
       }
-      ApplicationManager.getApplication().invokeLater(
-        () -> {
-          getEditor().getCaretModel().setCaretsAndSelections(
-            Collections.singletonList(new CaretState(new LogicalPosition(sourceLine - 1, 0), null, null))
-          );
-          getEditor().getScrollingModel().scrollToCaret(ScrollType.CENTER_UP);
-        }
-      );
+      if (file.equals("stdin")) {
+        ApplicationManager.getApplication().invokeLater(
+          () -> {
+            getEditor().getCaretModel().setCaretsAndSelections(
+              Collections.singletonList(new CaretState(new LogicalPosition(line - 1, 0), null, null))
+            );
+            getEditor().getScrollingModel().scrollToCaret(ScrollType.CENTER_UP);
+          }
+        );
+      } else {
+        ApplicationManager.getApplication().invokeLater(() -> {
+          VirtualFile targetFile = VirtualFileManager.getInstance().findFileByUrl("file://" + file);
+          if (targetFile != null) {
+            Project project = ProjectUtil.guessProjectForContentFile(targetFile);
+            if (project != null) {
+              if (LightEdit.owns(project)) {
+                OpenFileAction.openFile(targetFile, project);
+              } else {
+                int offset = -1;
+                PsiFile psiFile = PsiManager.getInstance(project).findFile(targetFile);
+                if (psiFile != null) {
+                  offset = StringUtil.lineColToOffset(psiFile.getText(), line - 1, 0);
+                }
+                PsiNavigationSupport.getInstance().createNavigatable(project, targetFile, offset).navigate(true);
+              }
+            } else {
+              LOG.warn("unable to identify project: " + targetFile);
+            }
+          }
+        });
+      }
     }
 
     public void log(@Nullable String text) {

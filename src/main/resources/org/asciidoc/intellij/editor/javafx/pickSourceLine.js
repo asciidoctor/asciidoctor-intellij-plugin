@@ -8,14 +8,18 @@ window.__IntelliJTools.getLine = function (node) {
   }
   var classes = node.className.split(' ');
 
+  // JavaFX WebView doesn't support named groups, therefore don't use them here
+  var re = /^data-line-(.*)-([0-9]*)$/;
+
   for (var i = 0; i < classes.length; i++) {
-    var className = classes[i]
-    if (className.match(/^data-line-stdin-/)) {
-      return Number(className.substr("data-line-stdin-".length));
+    var className = classes[i];
+    var found = className.match(re);
+    if (found) {
+      return found;
     }
   }
 
-  return null
+  return null;
 }
 
 window.__IntelliJTools.lineCount = 0;
@@ -31,33 +35,44 @@ window.__IntelliJTools.lineCount = 0;
 
 window.__IntelliJTools.scrollEditorToLine = function (event) {
   try {
-    var sourceLine = window.__IntelliJTools.getLine(this)
-
     var blocks = document.getElementsByClassName('has-source-line');
     var startY;
-    var startLine;
+    var startFile = 'stdin';
+    var startLine = 1;
     var endY;
     var endLine = window.__IntelliJTools.lineCount;
-
+    var endFile = 'stdin';
     for (var i = 0; i < blocks.length; i++) {
-      var block = blocks[i]
-      var lineOfBlock = window.__IntelliJTools.getLine(block);
-      if (lineOfBlock <= sourceLine) {
+      var block = blocks[i];
+      var result = window.__IntelliJTools.getLine(block);
+      if (result === null) {
+        continue;
+      }
+      var fileOfBlock = result[1];
+      var lineOfBlock = Number(result[2]);
+      if (event.clientY + window.scrollY > window.__IntelliJTools.calculateOffset(block)) {
         startY = window.__IntelliJTools.calculateOffset(block)
-        startLine = lineOfBlock
+        startLine = lineOfBlock;
+        startFile = fileOfBlock;
         // there might be no further block, therefore assume that the end is at the end of this block
-        endY = startY + block.offsetHeight
-      } else if (lineOfBlock > sourceLine) {
+        endY = startY + block.offsetHeight;
+      } else if (event.clientY + window.scrollY < window.__IntelliJTools.calculateOffset(block)) {
         endY = window.__IntelliJTools.calculateOffset(block)
         endLine = lineOfBlock - 1;
-        break
+        endFile = fileOfBlock;
+        break;
       }
     }
-    var editorLine = startLine + (event.clientY + window.scrollY - startY) * (endLine - startLine) / (endY - startY)
-    window.JavaPanelBridge.scrollEditorToLine(editorLine)
-    event.stopPropagation()
+    var editorLine;
+    if (startFile === endFile) {
+      editorLine = startLine + (event.clientY + window.scrollY - startY) * (endLine - startLine) / (endY - startY);
+    } else {
+      editorLine = startLine;
+    }
+    window.JavaPanelBridge.scrollEditorToLine(editorLine + ":" + startFile);
+    event.stopPropagation();
   } catch (e) {
-    window.JavaPanelBridge.log("can't pick source line", JSON.stringify(e));
+    window.JavaPanelBridge.log("can't pick source line: " + JSON.stringify(e));
   }
 }
 
