@@ -172,7 +172,6 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <lang.syntaxHighlighter language="AsciiDoc"  implementationClass="org.asciidoc.intellij.highlighting.AsciiDocSyntaxHighlighter" />
-    <editorActionHandler action="EditorPaste" implementationClass="org.asciidoc.intellij.actions.editorAction.AsciiDocPasteImageHandler" order="first"/>
     <typedHandler implementation="org.asciidoc.intellij.actions.FormattingQuotedTypedHandler" order="first" id="asciidocformattingquoted"/>
     <typedHandler implementation="org.asciidoc.intellij.actions.AsciiDocTriggerAutoCompleteTypedHandler" order="after asciidocformattingquoted"/>
     <webBrowserUrlProvider implementation="org.asciidoc.intellij.web.AsciiDocBrowserUrlProvider"/>

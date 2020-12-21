@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.5 (work in progress)
 
 - if content in the preview is from an included file, click on the content in the preview opens included file (#557)
+- stop implementing an EditorActionHandler as pasting of images seems to work without it (#605)
 
 === 0.32.4 (preview, available from GitHub releases)
 
