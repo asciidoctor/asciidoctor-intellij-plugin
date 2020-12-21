@@ -240,7 +240,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
             )
           )
       );
-      return references;
+      return Collections.unmodifiableList(references);
     } else {
       return Collections.emptyList();
     }

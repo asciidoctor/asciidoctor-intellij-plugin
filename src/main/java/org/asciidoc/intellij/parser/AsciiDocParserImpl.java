@@ -91,6 +91,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_START;
 /**
  * @author yole
  */
+@SuppressWarnings("JdkObsolete") // this class still uses "Stack", and ErrorProne complains about it
 public class AsciiDocParserImpl {
   private static final com.intellij.openapi.diagnostic.Logger LOG =
     com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDocParserImpl.class);

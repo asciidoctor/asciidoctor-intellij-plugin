@@ -49,7 +49,7 @@ public abstract class SplitFileEditor<E1 extends TextEditor, E2 extends FileEdit
   private boolean myEditorFirst;
   private JBSplitter mySplitter;
 
-  public SplitFileEditor(@NotNull E1 mainEditor, @NotNull E2 secondEditor) {
+  protected SplitFileEditor(@NotNull E1 mainEditor, @NotNull E2 secondEditor) {
     myMainEditor = mainEditor;
     mySecondEditor = secondEditor;
 

@@ -22,15 +22,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 /**
  * @author Julien Viet
  */
 public class AsciiDocFileType extends LanguageFileType {
-
-  private static final com.intellij.openapi.diagnostic.Logger LOG =
-    com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDocFileType.class);
 
   /**
    * The {@link AsciiDocFileType} instance.
@@ -39,7 +38,7 @@ public class AsciiDocFileType extends LanguageFileType {
   /**
    * .
    */
-  public static final String[] DEFAULT_ASSOCIATED_EXTENSIONS = {"adoc", "asciidoc", "ad"};
+  public static final List<String> DEFAULT_ASSOCIATED_EXTENSIONS = Arrays.asList("adoc", "asciidoc", "ad");
 
   private AsciiDocFileType() {
     super(AsciiDocLanguage.INSTANCE);
@@ -60,7 +59,7 @@ public class AsciiDocFileType extends LanguageFileType {
   @Override
   @NotNull
   public String getDefaultExtension() {
-    return DEFAULT_ASSOCIATED_EXTENSIONS[0];
+    return DEFAULT_ASSOCIATED_EXTENSIONS.get(0);
   }
 
   @Override

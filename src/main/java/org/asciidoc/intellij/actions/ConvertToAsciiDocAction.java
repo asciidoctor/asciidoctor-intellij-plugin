@@ -29,7 +29,7 @@ import static nl.jworks.markdown_to_asciidoc.Converter.convertMarkdownToAsciiDoc
 public class ConvertToAsciiDocAction extends AnAction {
   private Logger log = Logger.getInstance(ConvertToAsciiDocAction.class);
 
-  public static final String[] MARKDOWN_EXTENSIONS = {"markdown", "mkd", "md"};
+  private static final String[] MARKDOWN_EXTENSIONS = {"markdown", "mkd", "md"};
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent event) {

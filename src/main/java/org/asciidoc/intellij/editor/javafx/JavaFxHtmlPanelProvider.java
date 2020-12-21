@@ -45,6 +45,7 @@ public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
       }
       return AvailabilityInfo.AVAILABLE;
     } catch (ClassNotFoundException ignored) {
+      LOG.debug("no JavaFX found");
     }
 
     return AvailabilityInfo.UNAVAILABLE;
@@ -65,7 +66,8 @@ public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
           // wait a bit to allow initialization to finish, but only once
           try {
             startupLatch.await(5, TimeUnit.SECONDS);
-          } catch (InterruptedException ignored) {
+          } catch (InterruptedException ex) {
+            LOG.warn("interrupted while waiting", ex);
           }
           HAS_WAITED.set(true);
         }

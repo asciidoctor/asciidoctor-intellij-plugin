@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 /**
  * A kind of hacky class to display a custom component ({@link TableSizer}) in a menu like way. The rest of menu items
- * is based on declared actions with ids starting by {@Link SUB_ACTIONS_PREFIX}.
+ * is based on declared actions with ids starting by SUB_ACTIONS_PREFIX.
  *
  * @author bbrenne
  */

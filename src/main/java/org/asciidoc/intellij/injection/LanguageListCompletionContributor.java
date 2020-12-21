@@ -52,12 +52,12 @@ public class LanguageListCompletionContributor extends CompletionContributor {
         break;
       }
       if (Objects.equals(((AsciiDocAttributeInBrackets) element).getAttrName(), "source")) {
-        doFillVariants(parameters, result);
+        doFillVariants(result);
       }
     }
   }
 
-  private static void doFillVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
+  private static void doFillVariants(@NotNull CompletionResultSet result) {
     for (Map.Entry<String, Language> entry : LanguageGuesser.getLangToLanguageMap().entrySet()) {
       final Language language = entry.getValue();
 

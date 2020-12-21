@@ -186,7 +186,8 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       // JCEF will complain with a "Not allowed to load local resource" error when non-ascii characters are included in this random URL
       // therefore using toASCIIString()
       url = AsciiDocJCEFHtmlPanel.class.getResource(AsciiDocJCEFHtmlPanel.class.getSimpleName() + ".class").toURI().toASCIIString();
-    } catch (Exception ignored) {
+    } catch (Exception ex) {
+      LOG.warn("unable to initialize url", ex);
     }
     OUR_CLASS_URL = url;
   }

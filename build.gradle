@@ -176,6 +176,7 @@ task generateAsciidocLexer(type: GenerateLexer) {
 compileJava {
   options.errorprone.excludedPaths = '.*_AsciiDocLexer.*'
   options.errorprone.error('StreamResourceLeak') // enforce errors where there would be warning in the standard only
+  options.errorprone.disable('MissingSummary')
   // as long as the plugin supports 2020.2 as well, keep source and target compatibility for JDK 8
   options.compilerArgs.addAll(['--release', '8'])
   // will print link to contributor guide at the start of each build

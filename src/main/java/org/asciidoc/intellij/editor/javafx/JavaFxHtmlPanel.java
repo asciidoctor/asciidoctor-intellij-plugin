@@ -100,7 +100,6 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     @NotNull
     @Override
     protected String compute() {
-      final Class<JavaFxHtmlPanel> clazz = JavaFxHtmlPanel.class;
       //noinspection StringBufferReplaceableByString
       return new StringBuilder()
         .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("scrollToElement.js")).append("\"></script>\n")

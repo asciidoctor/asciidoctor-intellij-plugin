@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
   name = "AsciidocApplicationSettings",
   storages = @Storage("asciidoc.xml")
 )
+@SuppressWarnings("SameNameButDifferent")
 public class AsciiDocApplicationSettings implements PersistentStateComponent<AsciiDocApplicationSettings.State>,
   AsciiDocPreviewSettings.Holder {
 

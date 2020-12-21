@@ -76,12 +76,12 @@ public class FilenameUtils {
    * <p>
    * This method will handle a file in either Unix or Windows format.
    * The text after the last forward or backslash is returned.
-   * <pre>
+   * <pre>{@code
    * a/b/c.txt --> c.txt
    * a.txt     --> a.txt
    * a/b/c     --> c
    * a/b/c/    --> ""
-   * </pre>
+   * }</pre>
    * <p>
    * The output will be the same irrespective of the machine that the code is running on.
    *
@@ -101,12 +101,12 @@ public class FilenameUtils {
    * <p>
    * This method will handle a file in either Unix or Windows format.
    * The text after the last forward or backslash and before the last dot is returned.
-   * <pre>
+   * <pre>{@code
    * a/b/c.txt --> c
    * a.txt     --> a
    * a/b/c     --> c
    * a/b/c/    --> ""
-   * </pre>
+   * }</pre>
    * <p>
    * The output will be the same irrespective of the machine that the code is running on.
    *
@@ -122,13 +122,12 @@ public class FilenameUtils {
    * <p>
    * This method returns the textual part of the filename after the last dot.
    * There must be no directory separator after the dot.
-   * <pre>
+   * <pre>{@code
    * foo.txt      --> "txt"
    * a/b/c.jpg    --> "jpg"
    * a/b.txt/c    --> ""
    * a/b/c        --> ""
-   * </pre>
-   * <p>
+   * }</pre>
    * The output will be the same irrespective of the machine that the code is running on.
    *
    * @param filename the filename to retrieve the extension of.
@@ -153,12 +152,12 @@ public class FilenameUtils {
    * <p>
    * This method returns the textual part of the filename before the last dot.
    * There must be no directory separator after the dot.
-   * <pre>
+   * <pre>{@code
    * foo.txt    --> foo
    * a\b\c.jpg  --> a\b\c
    * a\b\c      --> a\b\c
    * a.b\c      --> a.b\c
-   * </pre>
+   * }</pre>
    * <p>
    * The output will be the same irrespective of the machine that the code is running on.
    *

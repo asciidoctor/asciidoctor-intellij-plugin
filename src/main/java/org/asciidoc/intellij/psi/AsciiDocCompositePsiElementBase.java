@@ -14,7 +14,7 @@ import java.util.List;
 public abstract class AsciiDocCompositePsiElementBase extends ASTWrapperPsiElement implements AsciiDocCompositePsiElement {
   public static final int PRESENTABLE_TEXT_LENGTH = 50;
 
-  public AsciiDocCompositePsiElementBase(@NotNull ASTNode node) {
+  protected AsciiDocCompositePsiElementBase(@NotNull ASTNode node) {
     super(node);
   }
 

@@ -53,10 +53,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -215,7 +216,7 @@ public class PasteImageAction extends AsciiDocAction {
         final FileSaverDescriptor descriptor = new FileSaverDescriptor("Save Image to", "Choose the destination file");
         FileSaverDialog saveFileDialog = createSaveFileDialog(descriptor, project);
         String ext = ACTION_SAVE_PNG.equals(dialog.getSelectedActionCommand()) ? "png" : "jpg";
-        String date = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS").format(new Date());
+        String date = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss-SSS").format(LocalDate.now(ZoneId.systemDefault()));
         VirtualFileWrapper destination = saveFileDialog.save(initialTargetDirectory, "image-" + date + "." + ext);
         if (destination != null) {
           memorizeTargetFolder(destination);

@@ -16,7 +16,6 @@ import com.intellij.psi.tree.TokenSet;
 import org.asciidoc.intellij.codeStyle.AsciiDocCodeStyleSettings;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
-import org.asciidoc.intellij.psi.AsciiDocBlock.Type;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,10 +56,10 @@ class AsciiDocBlock extends AbstractBlock {
     if (myNode.getPsi() instanceof org.asciidoc.intellij.psi.AsciiDocBlock) {
       // if this is inside a verse, pass this information down to all children
       org.asciidoc.intellij.psi.AsciiDocBlock block = (org.asciidoc.intellij.psi.AsciiDocBlock) myNode.getPsi();
-      if (block.getType() == Type.VERSE) {
+      if (block.getType() == org.asciidoc.intellij.psi.AsciiDocBlock.Type.VERSE) {
         verse = true;
       }
-      if (block.getType() == Type.TABLE) {
+      if (block.getType() ==  org.asciidoc.intellij.psi.AsciiDocBlock.Type.VERSE) {
         table = true;
       }
       if ("%hardbreaks".equals(block.getStyle())) {
@@ -203,22 +202,6 @@ class AsciiDocBlock extends AbstractBlock {
   private static boolean isAttributeDeclaration(Block block) {
     return block instanceof AsciiDocBlock &&
       AsciiDocElementTypes.ATTRIBUTE_DECLARATION.equals(((AsciiDocBlock) block).getNode().getElementType());
-  }
-
-  private boolean lineStartsWithEnumeration(Block block) {
-    ASTNode node = ((AsciiDocBlock) block).getNode().getTreePrev();
-    while (node != null) {
-      // linebreaks are now Whitespace, no type associated any more
-      if ("\n".equals(node.getText())) {
-        return false;
-      }
-      if (node.getElementType() == AsciiDocTokenTypes.BULLET
-        || node.getElementType() == AsciiDocTokenTypes.ENUMERATION) {
-        return true;
-      }
-      node = node.getTreePrev();
-    }
-    return false;
   }
 
   private boolean isBlockStart(Block block) {

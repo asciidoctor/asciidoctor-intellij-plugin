@@ -41,8 +41,8 @@ public class AsciiDocLanguageSupport {
     /**
      * A PSI that that <b>WILL</b> be printed, adjacent text represents different words.
      * <p>
-     * Example: the "->" would be "SEPARATE"<br>
-     * <code>one->two</code> is two words "one" and "two"
+     * Example: the {@code ->} would be "SEPARATE"<br>
+     * {@code one->two} is two words "one" and "two"
      */
     SEPARATE
   }

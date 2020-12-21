@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.toolbar;
 
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -22,15 +21,12 @@ import static org.asciidoc.intellij.actions.asciidoc.TableMenuAction.SUB_ACTIONS
 /**
  * inspired by {@link com.intellij.ui.EditorNotificationPanel}.
  */
-public class AsciiDocToolbarPanel extends JPanel implements Disposable {
+public class AsciiDocToolbarPanel extends JPanel {
 
   private static final String ASCII_DOC_ACTION_GROUP_ID = "AsciiDoc.TextFormatting";
 
-  private Editor myEditor;
-
   public AsciiDocToolbarPanel(Editor editor, @NotNull final JComponent targetComponentForActions) {
     super(new BorderLayout());
-    myEditor = editor;
 
     JPanel myLinksPanel = new JPanel(new FlowLayout());
     JPanel panel = new JPanel(new BorderLayout());
@@ -83,9 +79,4 @@ public class AsciiDocToolbarPanel extends JPanel implements Disposable {
     return editorToolbar;
   }
 
-
-  @Override
-  public void dispose() {
-    myEditor = null;
-  }
 }

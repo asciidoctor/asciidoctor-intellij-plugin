@@ -56,8 +56,6 @@ import static com.intellij.openapi.project.ProjectUtil.guessProjectDir;
 import static org.asciidoc.intellij.psi.AsciiDocBlockIdStubElementType.BLOCK_ID_WITH_VAR;
 
 public class AsciiDocUtil {
-  private static final com.intellij.openapi.diagnostic.Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDocUtil.class);
-
   public static final String FAMILY_EXAMPLE = "example";
   public static final String FAMILY_ATTACHMENT = "attachment";
   public static final String FAMILY_PARTIAL = "partial";

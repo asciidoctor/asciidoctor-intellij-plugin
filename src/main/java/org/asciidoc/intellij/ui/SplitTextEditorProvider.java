@@ -26,7 +26,7 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
   @NotNull
   private final String myEditorTypeId;
 
-  public SplitTextEditorProvider(@NotNull FileEditorProvider firstProvider, @NotNull FileEditorProvider secondProvider) {
+  protected SplitTextEditorProvider(@NotNull FileEditorProvider firstProvider, @NotNull FileEditorProvider secondProvider) {
     myFirstProvider = firstProvider;
     mySecondProvider = secondProvider;
 

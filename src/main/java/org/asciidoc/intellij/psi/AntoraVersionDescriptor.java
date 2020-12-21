@@ -59,11 +59,11 @@ public class AntoraVersionDescriptor implements Comparable<AntoraVersionDescript
     if (scheme == Scheme.NAMED) {
       return version.compareToIgnoreCase(o.version);
     } else {
-      return compareSemantic(version, prerelease, o.version, o.prerelease);
+      return compareSemantic(version, o.version);
     }
   }
 
-  private int compareSemantic(String a, String preA, String b, String preB) {
+  private int compareSemantic(String a, String b) {
     StringTokenizer numsA = new StringTokenizer(a, ".");
     StringTokenizer numsB = new StringTokenizer(b, ".");
     for (int i = 0; i < 3; i++) {

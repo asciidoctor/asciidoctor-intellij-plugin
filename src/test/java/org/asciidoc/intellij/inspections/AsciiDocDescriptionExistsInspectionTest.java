@@ -10,7 +10,6 @@ public class AsciiDocDescriptionExistsInspectionTest extends AsciiDocQuickFixTes
   }
 
   public void testAddMissingDescriptionJustTitle() {
-    String testName = getTestName(true);
     myFixture.testHighlighting("modules/ROOT/pages/justTitle.adoc", "antora.yml");
     applySingleQuickFix("Add page attribute description");
     myFixture.checkResultByFile("modules/ROOT/pages/justTitle-after.adoc", true);
