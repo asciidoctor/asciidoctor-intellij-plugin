@@ -38,11 +38,8 @@ public class AsciiDocChangeToBlockOrPreprocessorMacro extends LocalQuickFixBase 
 
   @NotNull
   private static PsiElement createMacro(@NotNull Project project, @NotNull String text) {
-    AsciiDocFile file = AsciiDocUtil.createFileFromText(project, text);
+    AsciiDocFile file = AsciiDocUtil.createFileFromText(project, text + "\n");
     PsiElement child = file.getFirstChild();
-    if (child.getNextSibling() != null) {
-      throw new IllegalStateException("created two children where there should only be one: " + child.getNextSibling().getText());
-    }
     if (!child.getText().equals(text)) {
       throw new IllegalStateException("text differs: " + child.getText());
     }
