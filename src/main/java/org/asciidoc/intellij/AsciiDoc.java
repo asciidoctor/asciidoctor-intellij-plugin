@@ -44,6 +44,7 @@ import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Attributes;
@@ -614,6 +615,7 @@ public class AsciiDoc {
   public static @Language("asciidoc")
   String config(VirtualFile currentFile, Project project) {
     StringBuilder tempContent = new StringBuilder();
+    List<VirtualFile> roots = AsciiDocUtil.getRoots(project);
     if (currentFile != null) {
       VirtualFile folder = currentFile.getParent();
       if (folder != null) {
@@ -636,7 +638,7 @@ public class AsciiDoc {
               });
             }
           }
-          if (folder.getPath().equals(project.getBasePath())) {
+          if (roots.contains(folder)) {
             break;
           }
           folder = folder.getParent();
@@ -679,14 +681,14 @@ public class AsciiDoc {
                        Notifier notifier,
                        FileType format) {
     VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
-      LocalFileSystem.getInstance().findFileByPath(projectBasePath),
+      project,
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
     );
     VirtualFile antoraModuleDir = findAntoraModuleDir(
-      LocalFileSystem.getInstance().findFileByPath(projectBasePath),
+      project,
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
     );
-    Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
+    Map<String, String> attributes = populateAntoraAttributes(project, fileBaseDir, antoraModuleDir);
     attributes.putAll(populateDocumentAttributes(fileBaseDir, name));
     lock();
     try {
@@ -785,13 +787,13 @@ public class AsciiDoc {
 
   public void convertTo(File file, String config, List<String> extensions, FileType format) {
     VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
-      LocalFileSystem.getInstance().findFileByPath(projectBasePath),
+      project,
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir));
     VirtualFile antoraModuleDir = findAntoraModuleDir(
-      LocalFileSystem.getInstance().findFileByPath(projectBasePath),
+      project,
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
     );
-    Map<String, String> attributes = populateAntoraAttributes(projectBasePath, fileBaseDir, antoraModuleDir);
+    Map<String, String> attributes = populateAntoraAttributes(project, fileBaseDir, antoraModuleDir);
 
     lock();
     try {
@@ -874,22 +876,21 @@ public class AsciiDoc {
     LOCK.unlock();
   }
 
-  public static Map<String, String> populateAntoraAttributes(String projectBasePath, File fileBaseDir, VirtualFile
+  public static Map<String, String> populateAntoraAttributes(@NotNull Project project, File fileBaseDir, VirtualFile
     antoraModuleDir) {
     Map<String, String> result = new HashMap<>();
     if (antoraModuleDir != null) {
       result.putAll(collectAntoraAttributes(antoraModuleDir));
 
-      VirtualFile projectBase = LocalFileSystem.getInstance().findFileByPath(projectBasePath);
       VirtualFile baseDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
       if (baseDir == null) {
         baseDir = antoraModuleDir.getFileSystem().findFileByPath(fileBaseDir.getPath());
       }
-      VirtualFile antoraPages = findAntoraPagesDir(projectBase, baseDir);
-      VirtualFile antoraPartials = findAntoraPartials(projectBase, baseDir);
-      String antoraImagesDir = findAntoraImagesDirRelative(projectBase, baseDir);
-      String antoraAttachmentsDir = findAntoraAttachmentsDirRelative(projectBase, baseDir);
-      VirtualFile antoraExamplesDir = findAntoraExamplesDir(projectBase, baseDir);
+      VirtualFile antoraPages = findAntoraPagesDir(project, baseDir);
+      VirtualFile antoraPartials = findAntoraPartials(project, baseDir);
+      String antoraImagesDir = findAntoraImagesDirRelative(project, baseDir);
+      String antoraAttachmentsDir = findAntoraAttachmentsDirRelative(project, baseDir);
+      VirtualFile antoraExamplesDir = findAntoraExamplesDir(project, baseDir);
 
       if (antoraPages != null) {
         result.put("pagesdir", antoraPages.getCanonicalPath());

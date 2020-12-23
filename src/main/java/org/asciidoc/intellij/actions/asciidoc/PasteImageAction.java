@@ -18,7 +18,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.DialogBuilder;
@@ -166,7 +165,7 @@ public class PasteImageAction extends AsciiDocAction {
     if (initialTargetDirectory == null || !initialTargetDirectory.exists()) {
       initialTargetDirectory = file.getParent();
 
-      VirtualFile antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(ProjectUtil.guessProjectDir(project), file.getParent());
+      VirtualFile antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(project, file.getParent());
       if (antoraImagesDir != null) {
         initialTargetDirectory = antoraImagesDir;
       }
@@ -389,7 +388,7 @@ public class PasteImageAction extends AsciiDocAction {
     if (targetFolder != null) {
       String destinationAsUrl = targetFolder.getUrl();
       PREVIOUS_TARGET_DIRECTORY_BY_FILE.put(file.getUrl(), destinationAsUrl);
-      String antoraImagesDir = AsciiDocUtil.findAntoraImagesDirRelative(ProjectUtil.guessProjectDir(project), file.getParent());
+      String antoraImagesDir = AsciiDocUtil.findAntoraImagesDirRelative(project, file.getParent());
       if (antoraImagesDir != null) {
         PREVIOUS_TARGET_DIRECTORY_BY_ANTORA_MODULE.put(antoraImagesDir, destinationAsUrl);
       }
@@ -403,7 +402,7 @@ public class PasteImageAction extends AsciiDocAction {
 
     String previousTarget = PREVIOUS_TARGET_DIRECTORY_BY_FILE.get(file.getUrl());
     if (previousTarget == null) {
-      String antoraImagesDir = AsciiDocUtil.findAntoraImagesDirRelative(ProjectUtil.guessProjectDir(project), file.getParent());
+      String antoraImagesDir = AsciiDocUtil.findAntoraImagesDirRelative(project, file.getParent());
       if (antoraImagesDir != null) {
         previousTarget = PREVIOUS_TARGET_DIRECTORY_BY_ANTORA_MODULE.get(antoraImagesDir);
       } else {
@@ -438,7 +437,7 @@ public class PasteImageAction extends AsciiDocAction {
       // ... although this would never render in AsciiDoc - when the user sees the complete path, she/he can then decide what to do next.
       relativePath = imageFile.getCanonicalPath();
     }
-    String antoraImagesDir = AsciiDocUtil.findAntoraImagesDirRelative(ProjectUtil.guessProjectDir(project), file.getParent());
+    String antoraImagesDir = AsciiDocUtil.findAntoraImagesDirRelative(project, file.getParent());
     if (antoraImagesDir != null && relativePath != null) {
       antoraImagesDir = antoraImagesDir + "/";
       if (relativePath.startsWith(antoraImagesDir)) {

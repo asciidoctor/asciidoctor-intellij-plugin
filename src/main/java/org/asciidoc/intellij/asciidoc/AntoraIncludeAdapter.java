@@ -1,7 +1,6 @@
 package org.asciidoc.intellij.asciidoc;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.apache.commons.lang.StringUtils;
@@ -58,7 +57,7 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
       if (StringUtils.isNotBlank(readFile)) {
         VirtualFile resolved = LocalFileSystem.getInstance().findFileByPath(reader.getFile());
         if (resolved != null) {
-          localModule = AsciiDocUtil.findAntoraModuleDir(ProjectUtil.guessProjectDir(project), resolved);
+          localModule = AsciiDocUtil.findAntoraModuleDir(project, resolved);
         } else {
           localModule = null;
         }

@@ -174,7 +174,7 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
                       vf = file.getOriginalFile().getVirtualFile();
                     }
                     if (vf != null) {
-                      if (!cache.computeIfAbsent(vf, s -> AsciiDocUtil.findAntoraModuleDir(element.getProject().getBaseDir(), s) != null)) {
+                      if (!cache.computeIfAbsent(vf, s -> AsciiDocUtil.findAntoraModuleDir(element.getProject(), s) != null)) {
                         continue;
                       }
                     }

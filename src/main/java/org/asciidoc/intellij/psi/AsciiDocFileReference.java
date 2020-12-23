@@ -3,7 +3,6 @@ package org.asciidoc.intellij.psi;
 import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
@@ -621,12 +620,11 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             if (!"image".equals(macroName)) {
               List<VirtualFile> vfs = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, base);
               for (VirtualFile vf : vfs) {
-                final VirtualFile projectDir = ProjectUtil.guessProjectDir(myElement.getProject());
-                toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(projectDir, vf), '$');
-                toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(projectDir, vf), '$');
-                toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(projectDir, vf), '$');
-                toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(projectDir, vf), '$');
-                toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(projectDir, vf), '$');
+                toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(myElement.getProject(), vf), '$');
+                toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement.getProject(), vf), '$');
+                toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(myElement.getProject(), vf), '$');
+                toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement.getProject(), vf), '$');
+                toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(myElement.getProject(), vf), '$');
               }
               return items.toArray();
             }
