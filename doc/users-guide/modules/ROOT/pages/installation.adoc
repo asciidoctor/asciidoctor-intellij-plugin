@@ -68,7 +68,7 @@ Read more about choosing the JDK version of the IDE in the JetBrains knowledge b
 To activate the support for AsciiDoc in the IDE the plugin you must install the plugin.
 There are several possibilities to install the plugin:
 
-Installing from JetBrains marketplace with an Internet Ccnnection:
+Installing from JetBrains marketplace with an Internet Connection:
 
 . Via the xref:marketplace-via-settings[IDE's settings from JetBrains marketplace].
 

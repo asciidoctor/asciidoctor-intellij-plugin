@@ -1,6 +1,6 @@
 = Releasing a new version of the plugin
 :navtitle: Releasing the plugin
-:description: Publish a new version of the pulgin (as a pre-release of as final release)
+:description: Publish a new version of the plugin (as a pre-release of as final release)
 
 == Publishing a preview version
 

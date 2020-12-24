@@ -933,7 +933,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ITALIC_END ('_')");
   }
 
-  public void testNonItalicAsPreceededByNewline() {
+  public void testNonItalicAsPrecededByNewline() {
     doTest("_test\n_",
       "AsciiDoc:TEXT ('_test')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +

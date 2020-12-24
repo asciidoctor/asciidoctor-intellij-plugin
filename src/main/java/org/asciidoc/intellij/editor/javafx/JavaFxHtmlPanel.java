@@ -753,7 +753,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     html = html.replaceAll("(?i)<script [a-z ]*src=\"https://platform\\.twitter\\.com/widgets\\.js\" [^>]*></script>", "");
     html = AsciiDoc.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes);
 
-    /* Add JavaScript for auto-scolling and clickable links */
+    /* Add JavaScript for auto-scrolling and clickable links */
     return html
       .replace("</body>", getScriptingLines() + "</body>");
   }

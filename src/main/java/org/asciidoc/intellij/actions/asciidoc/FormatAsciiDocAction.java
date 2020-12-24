@@ -53,9 +53,9 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
    */
   public static boolean isWord(Document document, int start, int end) {
     if (start > 0) {
-      String preceededBy = document.getText(new TextRangeInterval(start - 1, start));
-      // not a word if selection is preceeded by a semicolon, colon, an alphabetic characters, a digit or an underscore
-      if (preceededBy.matches("(?U)[;:\\w_]")) {
+      String precededBy = document.getText(new TextRangeInterval(start - 1, start));
+      // not a word if selection is preceded by a semicolon, colon, an alphabetic characters, a digit or an underscore
+      if (precededBy.matches("(?U)[;:\\w_]")) {
         return false;
       }
     }
@@ -94,18 +94,18 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
     }
 
     char c = doc.getCharsSequence().charAt(offset);
-    if (isWhitepace(c)) {
+    if (isWhitespace(c)) {
       if (offset > 0) {
         // retrieve character left of cursor
         c = doc.getCharsSequence().charAt(offset - 1);
-        return isWhitepace(c);
+        return isWhitespace(c);
       }
       return true;
     }
     return false;
   }
 
-  private static boolean isWhitepace(char c) {
+  private static boolean isWhitespace(char c) {
     return c == ' ' || c == '\t' || c == '\n';
   }
 

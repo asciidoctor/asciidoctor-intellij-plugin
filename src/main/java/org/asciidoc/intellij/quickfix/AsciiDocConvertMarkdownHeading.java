@@ -41,7 +41,7 @@ public class AsciiDocConvertMarkdownHeading extends LocalQuickFixBase {
   private static PsiElement createHeading(@NotNull Project project, @NotNull String text) {
     AsciiDocFile file = AsciiDocUtil.createFileFromText(project, text);
     AsciiDocSection section = PsiTreeUtil.findChildOfType(file, AsciiDocSection.class);
-    Objects.requireNonNull(section, "text passed as paramter should have lead to a section");
+    Objects.requireNonNull(section, "text passed as parameter should have led to a section");
     AsciiDocHeading heading = PsiTreeUtil.findChildOfType(section, AsciiDocHeading.class);
     Objects.requireNonNull(heading, "there should be a heading from the text passed as argument");
     return heading;

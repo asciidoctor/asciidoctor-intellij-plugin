@@ -69,7 +69,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
     Editor editor = collectedInfo.getEditor();
     File fileBaseDir = new File("");
     VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(editor.getDocument());
-    String name = "unkown";
+    String name = "unknown";
     if (virtualFile != null) {
       name = file.getName();
       VirtualFile parent = virtualFile.getParent();

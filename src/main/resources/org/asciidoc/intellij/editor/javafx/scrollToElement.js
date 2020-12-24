@@ -76,7 +76,7 @@ window.__IntelliJTools.scrollToLine = (function () {
     else if (oldLineToScroll > newLineToScroll) {
       relativeWindowPosition = 0.1
     }
-    // if we catch the cursor (i.e. due to edit after scrolling), we'll place it at x% of the window hight
+    // if we catch the cursor (i.e. due to edit after scrolling), we'll place it at x% of the window height
     else if (resultY < oldValue || resultY > oldValue + window.height) {
       relativeWindowPosition = 0.3
     }

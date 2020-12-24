@@ -31,4 +31,4 @@ Once the IDE uses this version, go to the plugin settings and ensure that it use
 
 === Background
 
-This was first reported with a useful stack trace in issue https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/299[#299]. Thank you for https://github.com/ZainlessBrombie[@ZainlessBrombie] for providing detailed information and reporting back on a pre-release that helped to fix this isssue.
+This was first reported with a useful stack trace in issue https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/299[#299]. Thank you for https://github.com/ZainlessBrombie[@ZainlessBrombie] for providing detailed information and reporting back on a pre-release that helped to fix this issue.
