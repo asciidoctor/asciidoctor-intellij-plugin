@@ -267,7 +267,7 @@ CONTINUATION = "+"
 HEADING_START = "="{1,6} {SPACE}+
 HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 // starting at the start of the line, but not with a dot
-// next line follwoing with only header marks
+// next line following with only header marks
 HEADING_OLDSTYLE = [^ .\n\t].* "\n" [-=~\^+]+ {SPACE}* "\n"
 IFDEF_IFNDEF = ("ifdef"|"ifndef"|"endif") "::"
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
@@ -772,7 +772,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <DELIMITER, PREBLOCK, LIST> {
   ^ ("toc") "::" / [^ \n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
-  // if it starts like a block attribute, but has characters afer the closing bracket, it's not
+  // if it starts like a block attribute, but has characters after the closing bracket, it's not
   {BLOCK_ATTRS_START} / [^\[\#] ([^\]\"\']* | (\" [^\"\n]* \") | (\' [^\"\n]* \') )* "]" [ \t]* [^\n] { yypushback(yylength()); yybegin(STARTBLOCK); }
   {BLOCK_ATTRS_START} / [^\[] { yybegin(MULTILINE); yypushstate(); clearStyle(); yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.ATTRS_START; }
   {ANCHORSTART} / [^\]\n]+ {ANCHOREND} { resetFormatting(); yybegin(ANCHORID); return AsciiDocTokenTypes.BLOCKIDSTART; }
@@ -1340,7 +1340,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          }
                        }
   // when typing a reference, it will not be complete due to the missing matching closing ref
-  // therefore second variante for incomplete REF that will only be active during autocomplete
+  // therefore second variant for incomplete REF that will only be active during autocomplete
   {REFSTART} / ([\w/.:{#] [^>\n]* | "") {AUTOCOMPLETE} {
                          if (!isEscaped()) {
                            yybegin(REFAUTO); return AsciiDocTokenTypes.REFSTART;

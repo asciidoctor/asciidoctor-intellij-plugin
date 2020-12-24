@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-// these methods and attributes are necessary for this form as it is agumented at compile and run time
+// these methods and attributes are necessary for this form as it is augmented at compile and run time
 @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
 public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Holder {
   private Object myLastItem;

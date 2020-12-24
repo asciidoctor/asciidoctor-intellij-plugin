@@ -157,7 +157,7 @@ public class AsciiDoc {
     try {
       if (INSTANCES.size() > 0) {
         // as beforePluginUnload() is incomplete, vote against reloading
-        // as an incomplete unload would leave the user with disabled AsciiDoc funtionality until the next restart.
+        // as an incomplete unload would leave the user with disabled AsciiDoc functionality until the next restart.
         throw new CannotUnloadPluginException("expecting JRuby classloader issues, don't allow unloading");
       }
     } finally {
@@ -284,7 +284,7 @@ public class AsciiDoc {
           entry = EncodingDB.getAliases().get(bytes.getUnsafeBytes(), bytes.getBegin(), bytes.getBegin() + bytes.getRealSize());
         }
         if (entry == null) {
-          // this happes for example with -Dfile.encoding=MS949 (Korean?)
+          // this happens for example with -Dfile.encoding=MS949 (Korean?)
           oldEncoding = encoding;
           LOG.warn("unsupported encoding " + encoding + " in JRuby, defaulting to UTF-8");
           System.setProperty("file.encoding", "UTF-8");
@@ -628,7 +628,7 @@ public class AsciiDoc {
               ApplicationManager.getApplication().runReadAction(() -> {
                 Document config = FileDocumentManager.getInstance().getDocument(configFile);
                 if (config != null) {
-                  // TODO: for tracibility add current file name as a comment
+                  // TODO: for traceability add current file name as a comment
                   // prepend the new config, followed by two newlines to avoid sticking-together content
                   tempContent.insert(0, "\n\n");
                   tempContent.insert(0, config.getText());
@@ -727,7 +727,7 @@ public class AsciiDoc {
             response.append("<p>Either your local encoding is not supported by JRuby, or you passed an unrecognized value to the Java property 'file.encoding' either in the IntelliJ options file or via the JAVA_TOOL_OPTION environment variable.");
             String property = SafePropertyAccessor.getProperty("file.encoding", null);
             response.append("<p>encoding passed by system property 'file.encoding': ").append(property);
-            response.append("<p>available encodings (excuding aliases): ");
+            response.append("<p>available encodings (excluding aliases): ");
             EncodingDB.getEncodings().forEach(entry -> response.append(entry.getEncoding().getCharsetName()).append(" "));
           }
           t = t.getCause();

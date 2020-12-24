@@ -813,7 +813,7 @@ public class AsciiDocParserImpl {
       } else {
         newLines = 0;
         next();
-        // eof() triggers skipWhitepace that increments newLines
+        // eof() triggers skipWhitespace that increments newLines
         if (!myBuilder.eof() && newLines > 1) {
           break;
         }

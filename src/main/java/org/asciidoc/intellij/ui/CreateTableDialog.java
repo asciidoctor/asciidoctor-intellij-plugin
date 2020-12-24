@@ -37,7 +37,7 @@ public class CreateTableDialog extends DialogWrapper {
     panel.add(columns);
 
     JPanel rowPane = new JPanel(new BorderLayout());
-    rowPane.add(new JLabel("No of colums"), BorderLayout.CENTER);
+    rowPane.add(new JLabel("No of columns"), BorderLayout.CENTER);
     JSpinner cols = new JSpinner(this.columnCount);
     rowPane.add(cols, BorderLayout.LINE_END);
     panel.add(rowPane);

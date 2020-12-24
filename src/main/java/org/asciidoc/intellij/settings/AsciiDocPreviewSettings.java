@@ -73,7 +73,7 @@ public final class AsciiDocPreviewSettings {
   private boolean myInplacePreviewRefresh = true;
 
   @Attribute("DisabledInjectionsByLanguage")
-  @Nullable // nullable when read from an old plugin versionn
+  @Nullable // nullable when read from an old plugin version
   private String myDisabledInjectionsByLanguage = "";
 
   @Attribute("DefaultLanguageForPassthrough")

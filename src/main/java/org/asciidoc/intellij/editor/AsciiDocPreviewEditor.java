@@ -126,7 +126,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     public AsciiDoc call() {
       File fileBaseDir = new File("");
       VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-      String name = "unkown";
+      String name = "unknown";
       if (file != null) {
         name = file.getName();
         VirtualFile parent = file.getParent();
@@ -221,7 +221,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         settings.getAsciiDocPreviewSettings().getHideErrorsByLanguage()));
 
       /* the following will not work, IntellIJ will show the error "parent must be showing" when this is
-         tiggered during startup. */
+         triggered during startup. */
       /*
       Messages.showMessageDialog(
           myHtmlPanelWrapper,

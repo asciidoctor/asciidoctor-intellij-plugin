@@ -86,7 +86,7 @@ public class SystemOutputHijacker
   }
 
   /**
-   * Install the hijacker and register combinded streams for the current thread.
+   * Install the hijacker and register combined streams for the current thread.
    */
   public static synchronized void install(final PrintStream out) {
     install();

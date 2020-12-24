@@ -66,7 +66,7 @@ public class AntoraVersionDescriptorTest {
   }
 
   @Test
-  public void shouldSortPrereleaseAlphabeticaly() {
+  public void shouldSortPrereleaseAlphabetically() {
     AntoraVersionDescriptor alpha = new AntoraVersionDescriptor("1.1", "alpha");
     AntoraVersionDescriptor beta = new AntoraVersionDescriptor("1.1", "beta");
     assertOrder(alpha, beta);

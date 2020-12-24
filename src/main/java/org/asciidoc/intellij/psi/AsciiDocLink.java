@@ -46,7 +46,7 @@ public class AsciiDocLink extends ASTWrapperPsiElement implements HasFileReferen
         child = child.getNextSibling();
       }
       if (child instanceof LeafPsiElement) {
-        // if the old file name didn't have a .adoc suffic, the new shouldn't have one as well
+        // if the old file name didn't have a .adoc suffix, the new shouldn't have one as well
         if (((LeafPsiElement) child).getElementType().equals(AsciiDocTokenTypes.LINKFILE)
           && !AsciiDocFileType.hasAsciiDocExtension(child.getText())
           && AsciiDocFileType.hasAsciiDocExtension(newContent)) {

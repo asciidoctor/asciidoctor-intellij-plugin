@@ -12,13 +12,13 @@ public class MakeBoldTest {
   private MakeBold sut = new MakeBold();
 
   @Test
-  public void shouldAddAsteriks() throws Exception {
+  public void shouldAddAsterisks() throws Exception {
     String actual = sut.updateSelection("about", false);
     assertEquals("**about**", actual);
   }
 
   @Test
-  public void shouldRemoveSingleAsteriks() throws Exception {
+  public void shouldRemoveSingleAsterisks() throws Exception {
     String actual = sut.updateSelection("*about*", false);
     assertEquals("about", actual);
   }
