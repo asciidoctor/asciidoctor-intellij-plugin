@@ -21,7 +21,7 @@
 - [ ] I have added tests to cover the changes in the code.
 - [ ] I need help writing a test (Maintainers are willing to help).
 
-After creating the pull request, CI will run some automated tests.
+Creating the pull request triggers some automated tests.
 See the [chapter building in the contributor's guide](https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/building-and-running.html) to find out how to run them on your local machine.
 
 <!-- Please add any additional remarks below -->
