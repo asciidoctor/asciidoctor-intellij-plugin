@@ -209,7 +209,7 @@ The plugin is pre-installed in the sandbox IDE you start using the `runIde` Grad
 
 You can also install it in the IDE you develop in, but this is optional.
 
-Right-click on the AsciiDoc editor and choose "PsiViewer | View PSI for entire file" to browse the tree.
+Right-click on the AsciiDoc editor and choose menu:PsiViewer[View PSI for entire file] to browse the tree.
 There is also a keyboard shortcut for this.
 
 === Testing

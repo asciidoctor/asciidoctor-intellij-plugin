@@ -7,7 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.5 (work in progress)
+=== 0.32.6 (work in progress)
+
+- don't treat menu items as links
+
+=== 0.32.5 (preview, available from GitHub releases)
 
 - if content in the preview is from an included file, click on the content in the preview opens included file (#557)
 - stop implementing an EditorActionHandler as pasting of images seems to work without it to avoid the plugin to appear in EDT freezes when delegating calls (#605, #584)

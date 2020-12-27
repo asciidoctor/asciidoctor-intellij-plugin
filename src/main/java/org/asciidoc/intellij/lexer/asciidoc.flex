@@ -1476,10 +1476,13 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\[\n\"`:]* | "") "[" ({WORDNOBRACKET}*|"[" [^\]\n]* "]")*  "]" {
           if (!isEscaped()) {
             yypushstate();
-            if (yytext().toString().equals("xref:") || yytext().toString().equals("menu:")) {
+            if (yytext().toString().equals("xref:")) {
               // this might be an xref with a blank as this pattern is less strict than the xref pattern
               yybegin(LINKFILEWITHBLANK);
               return AsciiDocTokenTypes.LINKSTART;
+            } else if (yytext().toString().equals("menu:")) {
+              yybegin(INLINE_MACRO);
+              return AsciiDocTokenTypes.INLINE_MACRO_ID;
             } else if (AsciiDocInlineMacro.HAS_FILE_AS_BODY.contains(zzBuffer.subSequence(zzStartRead, zzMarkedPos - 1).toString())) {
               yybegin(INLINE_MACRO);
               return AsciiDocTokenTypes.INLINE_MACRO_ID;
