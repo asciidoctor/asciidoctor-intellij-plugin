@@ -2,7 +2,6 @@ package org.asciidoc.intellij.editor.notification;
 
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
-import com.intellij.openapi.editor.impl.SettingsImpl;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
