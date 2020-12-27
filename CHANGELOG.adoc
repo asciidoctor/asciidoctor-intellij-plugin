@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.6 (work in progress)
 
 - don't treat menu items as links
+- show soft-wrap notification to all users that don't use it yet
 
 === 0.32.5 (preview, available from GitHub releases)
 

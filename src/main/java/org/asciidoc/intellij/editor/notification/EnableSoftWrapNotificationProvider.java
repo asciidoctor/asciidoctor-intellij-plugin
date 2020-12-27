@@ -1,6 +1,8 @@
 package org.asciidoc.intellij.editor.notification;
 
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
+import com.intellij.openapi.editor.impl.SettingsImpl;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -8,11 +10,10 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
+import com.intellij.util.PatternUtil;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.intellij.ide.actions.ShowSettingsUtilImpl.showSettingsDialog;
 
@@ -21,27 +22,13 @@ import static com.intellij.ide.actions.ShowSettingsUtilImpl.showSettingsDialog;
  */
 public class EnableSoftWrapNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> implements DumbAware {
   private static final Key<EditorNotificationPanel> KEY = Key.create("Enable Softwrap for Asciidoctor");
-  public static final int LEVEL_TO_TRIGGER_NOTIFICATION = 2;
 
   private static final String SOFTWRAP_AVAILABLE = "asciidoc.softwrap.enable";
-  private static AtomicInteger netActivations = new AtomicInteger();
 
   @NotNull
   @Override
   public Key<EditorNotificationPanel> getKey() {
     return KEY;
-  }
-
-  public static void toggle(boolean state) {
-    // count number of net activations so we can show a notification later.
-    if (state) {
-      netActivations.incrementAndGet();
-    } else {
-      netActivations.decrementAndGet();
-    }
-    if (netActivations.get() > EnableSoftWrapNotificationProvider.LEVEL_TO_TRIGGER_NOTIFICATION) {
-      EditorNotifications.updateAll();
-    }
   }
 
   @Nullable
@@ -57,17 +44,15 @@ public class EnableSoftWrapNotificationProvider extends EditorNotifications.Prov
       return null;
     }
 
-    // find out if toggle has been activated multiple times
-    if (netActivations.get() <= LEVEL_TO_TRIGGER_NOTIFICATION) {
+    // don't show if soft wrap is already enabled by default for this file
+    if (isSoftWrapEnabledByDefaultForFile(file)) {
       return null;
     }
 
     final EditorNotificationPanel panel = new EditorNotificationPanel();
-    panel.setText("You enabled Soft Wrap multiple times. Do you want to enable it permanently?");
+    panel.setText("Writing AsciiDoc works best with soft-wrap enabled. Do you want to enable it by default?");
     panel.createActionLabel("Yes, take me to the Soft Wrap settings!", ()
       -> {
-      netActivations.set(0);
-      EditorNotifications.updateAll();
       showSettingsDialog(project, "preferences.editor", "soft wraps");
     });
     panel.createActionLabel("Do not show again", () -> {
@@ -76,4 +61,33 @@ public class EnableSoftWrapNotificationProvider extends EditorNotifications.Prov
     });
     return panel;
   }
+
+  /**
+   * Check if the file given as parameter would open as soft-wrapped by default.
+   * Logic is inspired by {@link SettingsImpl#isUseSoftWraps()}.
+   */
+  private boolean isSoftWrapEnabledByDefaultForFile(VirtualFile file) {
+    boolean softWrapsEnabled = EditorSettingsExternalizable.getInstance().isUseSoftWraps();
+    if (!softWrapsEnabled) {
+      return softWrapsEnabled;
+    }
+
+    String masks = EditorSettingsExternalizable.getInstance().getSoftWrapFileMasks();
+    if (masks.trim().equals("*")) {
+      return true;
+    }
+
+    return file != null && fileNameMatches(file.getName(), masks);
+  }
+
+  private static boolean fileNameMatches(@NotNull String fileName, @NotNull String globPatterns) {
+    for (String p : globPatterns.split(";", -1)) {
+      String pTrimmed = p.trim();
+      if (!pTrimmed.isEmpty() && PatternUtil.fromMask(pTrimmed).matcher(fileName).matches()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 }

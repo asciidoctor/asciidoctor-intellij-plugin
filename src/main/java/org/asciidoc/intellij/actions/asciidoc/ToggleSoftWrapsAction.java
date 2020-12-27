@@ -9,7 +9,6 @@ import com.intellij.openapi.editor.actions.AbstractToggleUseSoftWrapsAction;
 import com.intellij.openapi.editor.impl.softwrap.SoftWrapAppliancePlaces;
 import com.intellij.psi.PsiFile;
 import org.asciidoc.intellij.actions.AsciiDocActionUtil;
-import org.asciidoc.intellij.editor.notification.EnableSoftWrapNotificationProvider;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +22,6 @@ public class ToggleSoftWrapsAction extends AbstractToggleUseSoftWrapsAction {
 
   @Override
   public void setSelected(@NotNull AnActionEvent e, boolean state) {
-    EnableSoftWrapNotificationProvider.toggle(state);
     super.setSelected(e, state);
   }
 
