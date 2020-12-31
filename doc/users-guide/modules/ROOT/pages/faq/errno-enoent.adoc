@@ -25,7 +25,25 @@ Running Microsoft Windows there seems to be a problem that JRuby can't read a fo
 
 This has been documented first in https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/210[Issue 210]
 
-== Remedy: Add file encoding VM option to IDE
+== Remedies
+
+<<upgrading,Upgrading to the latest version of IntelliJ and the plugin>> resolves this issue.
+For earlier versions <<fileencoding,changing the file encoding for IntelliJ>> solved the issue.
+
+[#upgrading]
+=== Upgrade to the latest IntelliJ and plugin version
+
+This issue seems can be resolved by upgrading to the latest version of IntelliJ and the AsciiDoc plugin.
+
+This was tested successfully for the following environment:
+
+* IntelliJ version 2020.3.1,
+* AsciiDoc Plugin version 0.32.5,
+* Windows 10 with charset Windows-1252 and
+* Plugin folder containing umlauts.
+
+[#fileencoding]
+=== Add file encoding VM option to IDE
 
 Please put the following as a new line at the end of IDE's VM options file:
 
