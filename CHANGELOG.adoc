@@ -28,7 +28,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - initial support for light edit mode (#606)
 
-=== 0.32.2 (preview, available from GitHub releases)
+=== 0.32.2
 
 - rework JavaFX handling with JDK 11 to avoid inaccessible exception
 - rework parsing of `kbd` macro to prevent runaway escapes
