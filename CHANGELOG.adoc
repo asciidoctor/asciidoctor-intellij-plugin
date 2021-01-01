@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.6 (work in progress)
+=== 0.32.6
 
 - don't treat menu items as links
 - show soft-wrap notification to all users that don't use it yet
