@@ -30,7 +30,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.ui.mac.MacFileSaverDialog;
-import com.intellij.util.Producer;
 import com.intellij.util.ui.ImageUtil;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.file.AsciiDocFileType;
@@ -46,13 +45,12 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -114,34 +112,6 @@ public class PasteImageAction extends AsciiDocAction {
 
   public PasteImageAction() {
     this.attributeService = ServiceManager.getService(ImageMacroAttributeService.class);
-  }
-
-  public static boolean imageAvailable(Producer<Transferable> producer) {
-    if (producer != null) {
-      // if drag-and-drop, stop here and do standard processing
-      return false;
-    }
-    CopyPasteManager manager = CopyPasteManager.getInstance();
-    if (manager.areDataFlavorsAvailable(DataFlavor.javaFileListFlavor)) {
-      java.util.List<File> fileList = manager.getContents(DataFlavor.javaFileListFlavor);
-      if (fileList != null) {
-        for (File f : fileList) {
-          String name = f.getName().toLowerCase();
-          if (name.endsWith(".png") || name.endsWith(".svg") || name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".gif")) {
-            return true;
-          }
-        }
-      }
-    } else if (manager.areDataFlavorsAvailable(DataFlavor.imageFlavor)) {
-      String string = manager.getContents(DataFlavor.stringFlavor);
-      if (string != null && string.length() > 0) {
-        // if the user copies contents from a word processor, prefer the text instead of a rendered image
-        // user can still select "paste image" from editor action panel to page the contents as an image
-        return false;
-      }
-      return true;
-    }
-    return false;
   }
 
   @Override
@@ -215,7 +185,7 @@ public class PasteImageAction extends AsciiDocAction {
         final FileSaverDescriptor descriptor = new FileSaverDescriptor("Save Image to", "Choose the destination file");
         FileSaverDialog saveFileDialog = createSaveFileDialog(descriptor, project);
         String ext = ACTION_SAVE_PNG.equals(dialog.getSelectedActionCommand()) ? "png" : "jpg";
-        String date = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss-SSS").format(LocalDate.now(ZoneId.systemDefault()));
+        String date = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss-SSS").format(LocalDateTime.now(ZoneId.systemDefault()));
         VirtualFileWrapper destination = saveFileDialog.save(initialTargetDirectory, "image-" + date + "." + ext);
         if (destination != null) {
           memorizeTargetFolder(destination);
@@ -322,10 +292,12 @@ public class PasteImageAction extends AsciiDocAction {
         options.add(new BoundAction("Copy file to current directory, then insert a reference.", ACTION_COPY_FILE));
         BoundAction onlyReference = new BoundAction("Only insert a reference.", ACTION_INSERT_REFERENCE);
         VirtualFile imageVirtualFile = LocalFileSystem.getInstance().findFileByIoFile(imageFile);
-        // if project-local file, make reference the default
-        ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-        if (imageVirtualFile != null && projectFileIndex.isInContent(imageVirtualFile)) {
-          onlyReference.setSelected(true);
+        if (project != null) {
+          // if project-local file, make reference the default
+          ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+          if (imageVirtualFile != null && projectFileIndex.isInContent(imageVirtualFile)) {
+            onlyReference.setSelected(true);
+          }
         }
         options.add(onlyReference);
 
@@ -368,9 +340,7 @@ public class PasteImageAction extends AsciiDocAction {
               break;
             case ACTION_INSERT_REFERENCE:
               CommandProcessor.getInstance().executeCommand(project,
-                () -> ApplicationManager.getApplication().runWriteAction(() -> {
-                  insertImageReference(LocalFileSystem.getInstance().findFileByIoFile(imageFile), offset, attributeService.toAttributeString(dialog));
-                  }
+                () -> ApplicationManager.getApplication().runWriteAction(() -> insertImageReference(LocalFileSystem.getInstance().findFileByIoFile(imageFile), offset, attributeService.toAttributeString(dialog))
                 ), null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
               );
               break;

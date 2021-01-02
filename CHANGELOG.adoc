@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.7
+
+- fix timestamp when pasting a screen shot from the clipboard (#631)
+
 === 0.32.6
 
 - don't treat menu items as links
