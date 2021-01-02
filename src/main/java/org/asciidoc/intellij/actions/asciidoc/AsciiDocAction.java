@@ -1,8 +1,10 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
+import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiFile;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.file.AsciiDocFileType;
@@ -14,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Erik Pragt
  */
-public abstract class AsciiDocAction extends AnAction {
+public abstract class AsciiDocAction extends AnAction implements DumbAware, LightEditCompatible {
 
   @Override
   public void update(@NotNull AnActionEvent event) {

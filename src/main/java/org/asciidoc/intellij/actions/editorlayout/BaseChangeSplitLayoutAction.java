@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.actions.editorlayout;
 
+import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Toggleable;
@@ -9,7 +10,7 @@ import org.asciidoc.intellij.ui.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-abstract class BaseChangeSplitLayoutAction extends AnAction implements DumbAware, Toggleable {
+abstract class BaseChangeSplitLayoutAction extends AnAction implements DumbAware, Toggleable, LightEditCompatible {
   @Nullable
   private final SplitFileEditor.SplitEditorLayout myLayoutToSet;
 

@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
 import com.intellij.ide.BrowserUtil;
+import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -107,9 +108,11 @@ public class CreateHtmlAction extends AsciiDocAction {
   }
 
   private void updateProjectView(VirtualFile virtualFile) {
-    //update project view
-    ProjectView projectView = ProjectView.getInstance(project);
-    projectView.changeView(ProjectViewPane.ID);
-    projectView.select(null, virtualFile, true);
+    if (!LightEdit.owns(project)) {
+      //update project view
+      ProjectView projectView = ProjectView.getInstance(project);
+      projectView.changeView(ProjectViewPane.ID);
+      projectView.select(null, virtualFile, true);
+    }
   }
 }

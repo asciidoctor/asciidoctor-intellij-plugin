@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
+import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.notification.Notification;
@@ -429,9 +430,11 @@ public class PasteImageAction extends AsciiDocAction {
 
   private void updateProjectView(VirtualFile virtualFile) {
     //update project view
-    ProjectView projectView = ProjectView.getInstance(project);
-    projectView.changeView(ProjectViewPane.ID);
-    projectView.select(null, virtualFile, true);
+    if (!LightEdit.owns(project)) {
+      ProjectView projectView = ProjectView.getInstance(project);
+      projectView.changeView(ProjectViewPane.ID);
+      projectView.select(null, virtualFile, true);
+    }
   }
 
   private BufferedImage toBufferedImage(@NotNull Image image) {
