@@ -70,6 +70,8 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 | Comment/uncomment with block comment | kbd:[Ctrl+Shift+/]
 | Select till code block end | kbd:[Ctrl+Shift++]+]
 | Select till code block start | kbd:[Ctrl+Shift++[+]
+| Surround with... +
+(use it with `ad-tag-include` template in any language to add tags for includes) | kbd:[Ctrl+Alt+T]
 |===
 
 [caption=]
@@ -161,8 +163,10 @@ Works also for file and class names in italics or monospace | kbd:[Ctrl+B], kbd:
 | Expand/collapse all | kbd:[⌘ + ⇧ + ++ + ++] / kbd:[⌘ + ⇧+-]
 | Comment/uncomment with line comment | kbd:[⌘+/]
 | Comment/uncomment with block comment | kbd:[⌘+⌥+/]
-| Select till code block end | kbd:[⌘] + kbd:[⇧] + kbd:[+]+]
-| Select till code block start | kbd:[⌘] + kbd:[⇧] + kbd:[+[+]
+| Select till code block end | kbd:[⌘ + ⇧ + +]+]
+| Select till code block start | kbd:[⌘ + ⇧ + +[+]
+| Surround with... +
+(use it with `ad-tag-include` template in any language to add tags for includes) | kbd:[⌘+⌥+T]
 |===
 
 [caption=]
