@@ -297,10 +297,11 @@
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
-  <template name="ad-tag-include" value="$cmt$ tag::$tagname$[]&#10;$SELECTION$&#10;$cmt$ end::$tagname$[]" description="Surround with Tag for include marco" toReformat="true" toShortenFQNames="true">
+  <template name="ad-tag-include" value="$cmt$ tag::$tagname$[]&#10;$SELECTION$&#10;$cmt$ end::$tagname$[]" description="AsciiDoc Tags to be used with include macro" toReformat="true" toShortenFQNames="true">
     <variable name="cmt" expression="lineCommentStart()" defaultValue="" alwaysStopAt="false" />
     <variable name="tagname" expression="" defaultValue="&quot;tagname&quot;" alwaysStopAt="true" />
     <context>
+      <!-- this will work for all languages, as an AsciiDoc include can pull snippets from all languages -->
       <option name="OTHER" value="true" />
     </context>
   </template>
