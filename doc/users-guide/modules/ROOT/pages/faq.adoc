@@ -11,6 +11,10 @@ Please open an issue in the https://github.com/asciidoctor/asciidoctor-intellij-
 
 See xref:faq/troubleshooting-mps.adoc[] for more information.
 
+=== There is an _ad-tag-include_ template in all my files. Why?
+
+See xref:features/advanced/livetemplates.adoc#ad-tag-include[] how this works and how to disable it if you don't need it.
+
 == Editor Troubles
 
 === Pasting from clipboard removes leading spaces (aka indent). Why?

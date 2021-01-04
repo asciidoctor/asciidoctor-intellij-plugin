@@ -152,10 +152,7 @@ When auto-completing folder and file names in macros, the plugin tries to resolv
 For image macros it tries to find a declaration of the _imagesDir_ attribute either in any of the AsciiDoc files of the project.
 
 There are several live templates included.
-Once the user starts typing kbd:[a]kbd:[d], a list of templates appears.
-Continued typing of any character of the template name restricts the list.
-A kbd:[Tab] selects and entry.
-Users can add their own live templates to avoid repetitive typing and to ensure consistency.
+See xref:features/advanced/livetemplates.adoc[] for more information.
 
 The user can copy images from the clipboard into the document.
 To do that user selects "`Paste image from clipboard`" from the editor's icon menu or from the context menu.
