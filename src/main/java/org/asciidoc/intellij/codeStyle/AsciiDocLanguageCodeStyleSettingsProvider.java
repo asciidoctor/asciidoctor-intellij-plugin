@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static com.intellij.openapi.util.io.StreamUtil.readText;
+import static com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS;
 import static com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider.SettingsType.SPACING_SETTINGS;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -30,12 +31,15 @@ public class AsciiDocLanguageCodeStyleSettingsProvider extends LanguageCodeStyle
     if (settingsType == SPACING_SETTINGS) {
       consumer.showCustomOption(AsciiDocCodeStyleSettings.class, "FORMATTING_ENABLED", "Enable Formatting (disabling this will override all options)", CodeStyleSettingsCustomizable.SPACES_OTHER);
       consumer.showCustomOption(AsciiDocCodeStyleSettings.class, "ONE_SENTENCE_PER_LINE", "One sentence per line", CodeStyleSettingsCustomizable.SPACES_OTHER);
+    } else if (settingsType == BLANK_LINES_SETTINGS) {
+      consumer.showCustomOption(AsciiDocCodeStyleSettings.class, "BLANK_LINES_AFTER_HEADER", "After header", CodeStyleSettingsCustomizable.BLANK_LINES);
+      consumer.showCustomOption(AsciiDocCodeStyleSettings.class, "BLANK_LINES_KEEP_AFTER_HEADER", "After header", CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
     }
   }
 
   @Override
   public String getCodeSample(@NotNull SettingsType settingsType) {
-    if (settingsType == SPACING_SETTINGS) {
+    if (settingsType == SPACING_SETTINGS || settingsType == BLANK_LINES_SETTINGS) {
       return loadSample(settingsType);
     }
     return null;

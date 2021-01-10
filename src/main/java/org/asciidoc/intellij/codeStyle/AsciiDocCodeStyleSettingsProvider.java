@@ -43,6 +43,7 @@ public class AsciiDocCodeStyleSettingsProvider extends CodeStyleSettingsProvider
 
     @Override
     protected void initTabs(CodeStyleSettings settings) {
+      addBlankLinesTab(settings);
       addSpacesTab(settings);
     }
   }

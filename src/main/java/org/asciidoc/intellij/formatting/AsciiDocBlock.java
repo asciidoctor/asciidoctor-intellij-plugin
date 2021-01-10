@@ -59,7 +59,7 @@ class AsciiDocBlock extends AbstractBlock {
       if (block.getType() == org.asciidoc.intellij.psi.AsciiDocBlock.Type.VERSE) {
         verse = true;
       }
-      if (block.getType() ==  org.asciidoc.intellij.psi.AsciiDocBlock.Type.VERSE) {
+      if (block.getType() == org.asciidoc.intellij.psi.AsciiDocBlock.Type.VERSE) {
         table = true;
       }
       if ("%hardbreaks".equals(block.getStyle())) {
@@ -122,9 +122,11 @@ class AsciiDocBlock extends AbstractBlock {
       return Spacing.createSpacing(0, 0, 1, true, 0);
     }
 
-    // have one blank line before and after a heading
+    // blank line(s) before and after a heading
     if (!verse && !table && (isSection(child1) && !isPartOfSameHeading(child1, child2) && !isAttributeDeclaration(child2) && !isHeader(child2))) {
-      return Spacing.createSpacing(0, 0, 2, false, 0);
+      int minBlankLinesAfterHeader = settings.getCustomSettings(AsciiDocCodeStyleSettings.class).BLANK_LINES_AFTER_HEADER;
+      int maxBlankLinesAfterHeader = settings.getCustomSettings(AsciiDocCodeStyleSettings.class).BLANK_LINES_KEEP_AFTER_HEADER;
+      return Spacing.createSpacing(0, 0, minBlankLinesAfterHeader + 1, true, maxBlankLinesAfterHeader);
     }
 
     if (settings.getCustomSettings(AsciiDocCodeStyleSettings.class).ONE_SENTENCE_PER_LINE) {
