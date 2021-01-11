@@ -367,5 +367,6 @@
     <highlightErrorFilter implementation="org.asciidoc.intellij.injection.AsciiDocCodeFenceErrorHighlightingIntention$CodeFenceHighlightErrorFilter"/>
     <postStartupActivity implementation="org.asciidoc.intellij.activities.AsciiDocHandleUnloadActivity"/>
     <postStartupActivity implementation="org.asciidoc.intellij.activities.AsciiDocPluginUpdateActivity"/>
+    <errorHandler implementation="org.asciidoc.intellij.errorHandler.AsciiDocErrorHandler"/>
   </extensions>
 </idea-plugin>

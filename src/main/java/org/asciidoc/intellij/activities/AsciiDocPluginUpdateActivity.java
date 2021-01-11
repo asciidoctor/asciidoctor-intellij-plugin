@@ -13,6 +13,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import org.asciidoc.intellij.AsciiDocBundle;
+import org.asciidoc.intellij.AsciiDocPlugin;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +28,7 @@ public class AsciiDocPluginUpdateActivity implements StartupActivity, DumbAware 
   @Override
   public void runActivity(@NotNull Project project) {
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
-    IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(PluginId.getId("org.asciidoctor.intellij.asciidoc"));
+    IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(PluginId.getId(AsciiDocPlugin.PLUGIN_ID));
     if (plugin == null) {
       return;
     }

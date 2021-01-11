@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.util.messages.MessageBusConnection;
 import org.asciidoc.intellij.AsciiDoc;
+import org.asciidoc.intellij.AsciiDocPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -31,7 +32,7 @@ public class AsciiDocHandleUnloadActivity implements StartupActivity, DumbAware 
       @Override
       public void checkUnloadPlugin(@NotNull IdeaPluginDescriptor pluginDescriptor) throws CannotUnloadPluginException {
         if (pluginDescriptor.getPluginId() != null
-          && Objects.equals(pluginDescriptor.getPluginId().getIdString(), "org.asciidoctor.intellij.asciidoc")) {
+          && Objects.equals(pluginDescriptor.getPluginId().getIdString(), AsciiDocPlugin.PLUGIN_ID)) {
           LOG.info("checkUnloadPlugin");
           // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/512
           // another reason: on windows even after unloading JAR file of the plugin still be locked and can't be deleted, making uninstall impossible
@@ -44,7 +45,7 @@ public class AsciiDocHandleUnloadActivity implements StartupActivity, DumbAware 
       @Override
       public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
         if (pluginDescriptor.getPluginId() != null
-          && Objects.equals(pluginDescriptor.getPluginId().getIdString(), "org.asciidoctor.intellij.asciidoc")) {
+          && Objects.equals(pluginDescriptor.getPluginId().getIdString(), AsciiDocPlugin.PLUGIN_ID)) {
           LOG.info("beforePluginUnload");
           AsciiDoc.beforePluginUnload();
           busConnection.dispose();
