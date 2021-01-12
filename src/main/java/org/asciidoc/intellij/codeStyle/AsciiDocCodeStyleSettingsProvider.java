@@ -43,8 +43,9 @@ public class AsciiDocCodeStyleSettingsProvider extends CodeStyleSettingsProvider
 
     @Override
     protected void initTabs(CodeStyleSettings settings) {
-      addBlankLinesTab(settings);
+      // when adding new tabs, please see other JetBrains language plugins for the order of tabs
       addSpacesTab(settings);
+      addBlankLinesTab(settings);
     }
   }
 
