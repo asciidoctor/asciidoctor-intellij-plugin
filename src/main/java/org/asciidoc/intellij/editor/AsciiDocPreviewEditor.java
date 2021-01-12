@@ -40,6 +40,7 @@ import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
@@ -308,6 +309,21 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         renderIfVisible();
       }
     });
+
+    // some references (for example Antora references) might not have been resolved in dumb mode
+    // therefore re-render the preview when the project is no longer in dumb mode.
+    class RenderPreviewOnDumbModeChangeListener implements DumbService.DumbModeListener {
+      @Override
+      public void enteredDumbMode() {
+        renderIfVisible();
+      }
+      @Override
+      public void exitDumbMode() {
+        renderIfVisible();
+      }
+    }
+
+    connection.subscribe(DumbService.DUMB_MODE, new RenderPreviewOnDumbModeChangeListener());
 
   }
 

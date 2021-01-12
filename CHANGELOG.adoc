@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.8 (work in progress)
+
+- update preview when project leaves or enters dumb mode so that pending references can be resolved
+
 === 0.32.7
 
 - show action tool bar in light edit mode (#630)
