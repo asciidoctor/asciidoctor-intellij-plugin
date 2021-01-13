@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.8 (work in progress)
 
 - update preview when project leaves or enters dumb mode so that pending references can be resolved
+- prevent NPE when block attributes are not provided
 
 === 0.32.7
 

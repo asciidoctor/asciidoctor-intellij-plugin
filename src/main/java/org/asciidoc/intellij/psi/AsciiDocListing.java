@@ -79,7 +79,9 @@ public class AsciiDocListing extends AbstractAsciiDocCodeBlock {
     if (blockAttributes != null) {
       String[] attr = blockAttributes.getAttributes();
       String firstAttr = null;
-      if (attr.length >= 1) {
+      if (attr == null) {
+        return null;
+      } else if (attr.length >= 1) {
         firstAttr = attr[0];
         int locationOfPercent = firstAttr.indexOf("%"); // this handles for example "plantuml%interactive"
         if (locationOfPercent != -1) {

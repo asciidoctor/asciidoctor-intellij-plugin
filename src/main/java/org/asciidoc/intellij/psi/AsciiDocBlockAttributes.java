@@ -5,6 +5,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,6 +28,7 @@ public class AsciiDocBlockAttributes extends ASTWrapperPsiElement {
     return null;
   }
 
+  @Nullable
   public String[] getAttributes() {
     PsiElement firstChild = this.getFirstChild().getNextSibling();
     if (firstChild instanceof AsciiDocAttributeReference) {
