@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - update preview when project leaves or enters dumb mode so that pending references can be resolved
 - prevent NPE when block attributes are not provided
 - users can submit error reports anonymously to the plugin's project at Sentry when exceptions occur (#628)
+- upgrade to AsciidoctorJ PDF 1.5.4
 
 === 0.32.7
 
