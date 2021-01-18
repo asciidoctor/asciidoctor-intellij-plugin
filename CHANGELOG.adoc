@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - prevent NPE when block attributes are not provided
 - users can submit error reports anonymously to the plugin's project at Sentry when exceptions occur (#628)
 - upgrade to AsciidoctorJ PDF 1.5.4
+- Additional reformat option for blank lines after headings (thanks to @c7haki) (#633)
 
 === 0.32.7
 
