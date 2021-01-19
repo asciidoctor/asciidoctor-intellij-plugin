@@ -2,6 +2,8 @@
 :description: Per default the preview is on the right side of a vertical split screen and shows the rendered contents of the editor.
 :navtitle: Preview
 
+== Overview
+
 Per default the preview is on the right side of a vertical split screen.
 Using the configuration, the user can change the split to horizontal, and change the position of the preview.
 
@@ -32,3 +34,7 @@ MacOS users need to type the extension for the target file name (`.svg` or `.png
 The user can zoom in and out of the preview by holding kbd:[Ctrl] and scrolling the mouse wheel up or down.
 Clicking the middle mouse button whilst holding kbd:[Ctrl] resets the zoom to 100%.
 
+== Advanced
+
+The preview can use custom stylesheets.
+See _xref:features/advanced/stylesheets.adoc[]_ for details.

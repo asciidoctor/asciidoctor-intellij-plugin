@@ -39,7 +39,10 @@ Press kbd:[Ctrl+Q] for quick help on each attribute.
 
 The preview renders images, includes and links.
 It also resolves https://docs.antora.org/antora/2.3/page/reftext-and-navtitle/[reftext and navtitle in the preview^] (new in Antora 2.3).
-The user can click on links in the preview and they will open in the editor if they link to a local Antora page.
+The user can click on links in the preview that will then open in the editor if they link to a local Antora page.
+
+Users can customize the styling of the preview by referencing a stylesheet.
+See section _xref:features/advanced/stylesheets.adoc#remote-stylesheet[Using a remote stylesheet]_ for details.
 
 === Antora attributes support
 
