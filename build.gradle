@@ -48,7 +48,7 @@ intellij {
   updateSinceUntilBuild false
   plugins = [
     'PsiViewer:203-SNAPSHOT', // used for debugging
-    'PlantUML integration:2.25.2', // used to test highlighting of plantuml diagrams
+    'PlantUML integration:3.4.0', // used to test highlighting of plantuml diagrams
     'tanvd.grazi', // used for spell and grammar checking checking
     'com.intellij.javafx:1.0.3',
     'org.intellij.intelliLang', //
@@ -133,7 +133,7 @@ dependencies {
   implementation 'io.sentry:sentry:4.0.0-alpha.3'
 
   // when updating the versions here, also update them in AsciiDocDownloaderUtil for dynamic download
-  testImplementation 'org.asciidoctor:asciidoctorj-diagram:2.0.5'
+  testImplementation 'org.asciidoctor:asciidoctorj-diagram:2.1.0'
   testImplementation 'org.asciidoctor:asciidoctorj-pdf:1.5.4'
 
   testImplementation 'junit:junit:4.13.1'

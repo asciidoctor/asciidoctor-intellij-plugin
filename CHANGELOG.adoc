@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - users can submit error reports anonymously to the plugin's project at Sentry when exceptions occur (#628)
 - upgrade to AsciidoctorJ PDF 1.5.4
 - Additional reformat option for blank lines after headings (thanks to @c7haki) (#633)
+- upgrade to AsciidoctorJ Diagram 2.1.0 and PlantUML v1.2021.0
 
 === 0.32.7
 

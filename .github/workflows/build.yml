@@ -16,6 +16,10 @@
 name: Build
 on:
   push:
+    # dependabot will create both branches and pull request
+    # only run on pull requests to avoid running twice and creating a release draft
+    branches-ignore:
+      - 'dependabot/**'
     paths-ignore:
       - 'doc/**'
       - 'README.adoc'
