@@ -9,7 +9,7 @@
 This chapter walks you through the steps to prepare an _.asciidoctorconfig_ file to either replace the stylesheet or to add additional styles to the HTML header.
 
 The _.asciidoctorconfig_ file will configure the preview of all AsciiDoc files in the folder where it is located and this folder's subfolders.
-See "`xref:features/advanced/asciidoctorconfig-file.adoc[]`" for more details.
+See _xref:features/advanced/asciidoctorconfig-file.adoc[]_ for more details.
 
 WARNING: If the configuration references remote content like fonts or stylesheets, these will require an online connection for the preview to load them.
 Therefore, the user will not be able to work off-line anymore.
@@ -46,6 +46,7 @@ body {
 }
 ----
 
+[#remote-stylesheet]
 ==== Using a remote stylesheet
 
 NOTE: This is available from plugin version 0.31.31+.
@@ -79,6 +80,7 @@ The https://github.com/darshandsoni/asciidoctor-skins[asciidoctor-skins] project
 The following example uses a dark skin.
 
 .Dark theme based on the asciidoctor-skins project
+[source,asciidoc]
 ----
 :linkcss:
 :stylesdir: https://darshandsoni.com/asciidoctor-skins/css

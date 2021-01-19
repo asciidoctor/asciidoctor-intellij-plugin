@@ -12,5 +12,5 @@ Read more on how you can help:
 * xref:user/installing-a-preview-release.adoc[]
 * xref:user/add-eap-repository-to-ide.adoc[]
 
-If you want to give a financial contribution, continue to "`xref:contribute-as-a-sponsor.adoc[]`".
+If you want to give a financial contribution, continue to section _xref:contribute-as-a-sponsor.adoc[]_.
 

@@ -9,7 +9,8 @@
 GitHub actions create https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases[a draft release].
 The plugin is attached as `asciidoctor-intellij-plugin-xx.xx.xx.zip`.
 . Publish the draft release in the GitHub Web UI. +
-The plugin will be available from the https://plugins.jetbrains.com/plugin/7391-asciidoc/versions[EAP (early access program) repository]. See "`xref::user/add-eap-repository-to-ide.adoc[]`" for more information.
+The plugin will be available from the https://plugins.jetbrains.com/plugin/7391-asciidoc/versions[EAP (early access program) repository].
+See _xref::user/add-eap-repository-to-ide.adoc[]_ for more information.
 
 == Publishing a stable version
 

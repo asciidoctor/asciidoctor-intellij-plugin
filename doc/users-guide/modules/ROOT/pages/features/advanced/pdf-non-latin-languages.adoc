@@ -88,7 +88,7 @@ A typical file would look like this:
 :pdf-theme: zh_CN
 ----
 
-Read more about this feature in the chapter "`xref:features/advanced/asciidoctorconfig-file.adoc[]`".
+Read more about this feature in the chapter _xref:features/advanced/asciidoctorconfig-file.adoc[]_.
 
 == Further reading
 
