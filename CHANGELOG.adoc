@@ -7,7 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.8 (work in progress)
+=== 0.32.9 (work in progress)
+
+- update Kroki support with latest diagrams and attributes, fixing `kroki-plantuml-include` support (#639)
+
+=== 0.32.8 (preview, available from GitHub releases)
 
 - update preview when project leaves or enters dumb mode so that pending references can be resolved
 - prevent NPE when block attributes are not provided

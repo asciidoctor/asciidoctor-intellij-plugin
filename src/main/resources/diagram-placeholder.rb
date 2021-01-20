@@ -37,7 +37,29 @@ class DummyDiagramProcessor
 end
 
 Extensions.register do
-  names = %w(plantuml ditaa graphviz blockdiag seqdiag actdiag nwdiag packetdiag rackdiag c4plantuml erd mermaid nomnoml svgbob umlet vega vegalite wavedrom)
+  names = %w[
+      actdiag
+      blockdiag
+      bpmn
+      bytefield
+      c4plantuml
+      ditaa
+      erd
+      excalidraw
+      graphviz
+      mermaid
+      nomnoml
+      nwdiag
+      packetdiag
+      plantuml
+      rackdiag
+      seqdiag
+      svgbob
+      umlet
+      vega
+      vegalite
+      wavedrom
+    ].freeze
   names.each { |name|
     block_macro DummyDiagramBlockMacro, name
     block DummyDiagramBlock, name
