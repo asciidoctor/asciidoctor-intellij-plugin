@@ -584,6 +584,10 @@ public class AsciiDocUtil {
   @NotNull
   public static List<VirtualFile> getRoots(@NotNull Project project) {
     List<VirtualFile> roots = new ArrayList<>();
+    if (project.isDisposed()) {
+      // module manager will not work on already disposed projects, threfore return empty list
+      return roots;
+    }
     for (Module module : ModuleManager.getInstance(project).getModules()) {
       for (VirtualFile contentRoot : ModuleRootManager.getInstance(module).getContentRoots()) {
         roots.removeAll(roots.stream().filter(v -> v.getPath().startsWith(contentRoot.getPath())).collect(Collectors.toList()));

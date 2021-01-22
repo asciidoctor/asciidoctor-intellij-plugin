@@ -147,6 +147,10 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
     lazyExecutor.execute(() -> {
       try {
+        if (project.isDisposed()) {
+          // due to lazy execution, this project have been already closed, do nothing then to avoid exceptions
+          return;
+        }
         if (!(config + content).equals(currentContent)) {
           currentContent = config + content;
           AsciiDoc instance = asciidoc.get();

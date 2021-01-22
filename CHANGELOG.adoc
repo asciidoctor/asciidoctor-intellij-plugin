@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.9 (work in progress)
 
 - update Kroki support with latest diagrams and attributes, fixing `kroki-plantuml-include` support (#639)
+- prevent error messages in log when projects have already been disposed
 
 === 0.32.8 (preview, available from GitHub releases)
 
