@@ -98,7 +98,7 @@ module AsciidoctorExtensions
         attrs['role'] = get_role(format, role)
         attrs['format'] = format
         kroki_diagram = KrokiDiagram.new(diagram_type, format, diagram_text)
-        kroki_client = KrokiClient.new(server_url(doc), http_method(doc), KrokiHttpClient)
+        kroki_client = KrokiClient.new(server_url(doc), http_method(doc), KrokiHttpClient, doc.reader.cursor_at_mark)
         if TEXT_FORMATS.include?(format)
           text_content = kroki_client.text_content(kroki_diagram)
           block = processor.create_block(parent, 'literal', text_content, attrs)
@@ -148,7 +148,7 @@ module AsciidoctorExtensions
 
       def get_format(doc, attrs, diagram_type)
         format = attrs['format'] || 'svg'
-        # The JavaFX preview doesn't support SVG well, therefore we'll use PNG format...
+        # If the media we're preparing for doesn't support SVG well, use PNG instead...
         if doc.attr?('kroki-force-png') && format == 'svg'
           # ... unless the diagram library does not support PNG as output format!
           # Currently, mermaid, nomnoml, svgbob, wavedrom only support SVG as output format.
@@ -259,12 +259,13 @@ module AsciidoctorExtensions
   # Kroki client
   #
   class KrokiClient
+    include Asciidoctor::Logging
     attr_reader :server_url
     attr_reader :method
 
     SUPPORTED_HTTP_METHODS = %w[get post adaptive].freeze
 
-    def initialize(server_url, http_method, http_client)
+    def initialize(server_url, http_method, http_client, location = nil)
       @server_url = server_url
       @max_uri_length = 4096
       @http_client = http_client
@@ -272,7 +273,8 @@ module AsciidoctorExtensions
       if SUPPORTED_HTTP_METHODS.include?(method)
         @method = method
       else
-        puts "Invalid value '#{method}' for kroki-http-method attribute. The value must be either: 'get', 'post' or 'adaptive'. Proceeding using: 'adaptive'."
+        logger.warn message_with_context "Invalid value '#{method}' for kroki-http-method attribute. The value must be either: " \
+          "'get', 'post' or 'adaptive'. Proceeding using: 'adaptive'.", source_location: location
         @method = 'adaptive'
       end
     end
