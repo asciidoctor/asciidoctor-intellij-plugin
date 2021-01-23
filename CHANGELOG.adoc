@@ -7,7 +7,12 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.9 (work in progress)
+=== 0.32.10 (preview, available from GitHub releases)
+
+- cache project roots to speed up preview and read actions, and to prevent blocking the write thread (#641)
+- use read actions with write action priority on all background tasks (#641)
+
+=== 0.32.9 (preview, available from GitHub releases)
 
 - update Kroki support with latest diagrams and attributes, fixing `kroki-plantuml-include` support (#639)
 - prevent error messages in log when projects have already been disposed

@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.asciidoc;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
@@ -12,6 +11,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
+import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.asciidoctor.jruby.ast.impl.PhraseNodeImpl;
 import org.jruby.RubyObject;
 
@@ -127,7 +127,7 @@ public class AntoraReferenceAdapter {
       VirtualFile sourceDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
       VirtualFile targetFile = LocalFileSystem.getInstance().findFileByPath(target);
       if (type.equals("inline_anchor") && phraseNode.getText() == null && targetFile != null && sourceDir != null) {
-        ApplicationManager.getApplication().runReadAction(() -> {
+        AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
           PsiFile file = PsiManager.getInstance(project).findFile(targetFile);
           if (file != null) {
             String refText = null;

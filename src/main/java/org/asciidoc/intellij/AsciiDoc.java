@@ -46,6 +46,7 @@ import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
+import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Attributes;
 import org.asciidoctor.AttributesBuilder;
@@ -625,7 +626,7 @@ public class AsciiDoc {
             if (configFile != null &&
               !currentFile.equals(configFile)) {
               final VirtualFile folderFinal = folder;
-              ApplicationManager.getApplication().runReadAction(() -> {
+              AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
                 Document config = FileDocumentManager.getInstance().getDocument(configFile);
                 if (config != null) {
                   // TODO: for traceability add current file name as a comment
@@ -922,7 +923,7 @@ public class AsciiDoc {
     if (antoraModuleDir.getParent() != null && antoraModuleDir.getParent().getParent() != null) {
       VirtualFile antoraFile = antoraModuleDir.getParent().getParent().findChild(ANTORA_YML);
       if (antoraFile != null) {
-        ApplicationManager.getApplication().runReadAction(() -> {
+        AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
           Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
           if (document != null) {
             try {

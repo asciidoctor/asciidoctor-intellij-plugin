@@ -50,6 +50,7 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.serviceContainer.AlreadyDisposedException;
 import com.intellij.util.Alarm;
 import com.intellij.util.FileContentUtilCore;
 import com.intellij.util.messages.MessageBusConnection;
@@ -141,18 +142,16 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   });
 
   private void render() {
-    final String config = AsciiDoc.config(document, project);
-    final @Language("asciidoc") String content = document.getText();
-    List<String> extensions = extensionService.getExtensions(project);
-
     lazyExecutor.execute(() -> {
       try {
         if (project.isDisposed()) {
           // due to lazy execution, this project have been already closed, do nothing then to avoid exceptions
           return;
         }
+        final @Language("asciidoc") String content = document.getText();
+        final String config = AsciiDoc.config(document, project);
+        List<String> extensions = extensionService.getExtensions(project);
         if (!(config + content).equals(currentContent)) {
-          currentContent = config + content;
           AsciiDoc instance = asciidoc.get();
           VirtualFile file = FileDocumentManager.getInstance().getFile(document);
           if (file != null) {
@@ -174,6 +173,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           if (markup != null) {
             myPanel.setHtml(markup, instance.getAttributes());
           }
+          currentContent = config + content;
         }
         if (currentLineNo != targetLineNo) {
           currentLineNo = targetLineNo;
@@ -183,7 +183,9 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
       } catch (ProcessCanceledException e) {
-        currentContent = "";
+        renderIfVisible();
+      } catch (AlreadyDisposedException e) {
+        // noop - content hasn't rendered, project has been closed already
       } catch (Exception ex) {
         String message = "Error rendering preview: " + ex.getMessage();
         log.error(message, ex);

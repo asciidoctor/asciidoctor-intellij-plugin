@@ -2,7 +2,6 @@ package org.asciidoc.intellij.psi;
 
 import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ComponentManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -37,6 +36,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.text.CharArrayUtil;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocLanguage;
+import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1024,7 +1024,7 @@ public class AsciiDocUtil {
       return Collections.singletonList(originalKey);
     }
     if (moduleDir != null) {
-      return ApplicationManager.getApplication().runReadAction((Computable<List<String>>) () -> {
+      return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority((Computable<List<String>>) () -> {
         String key = originalKey;
         String myModuleName = moduleDir.getName();
         VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
@@ -1274,7 +1274,7 @@ public class AsciiDocUtil {
     if (DumbService.isDumb(project)) {
       return Collections.emptyList();
     }
-    return ApplicationManager.getApplication().runReadAction((Computable<List<AntoraModule>>) () -> {
+    return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
       PsiFile[] files =
         FilenameIndex.getFilesByName(project, ANTORA_YML, GlobalSearchScope.projectScope(project));
       List<AntoraModule> result = new ArrayList<>();
@@ -1352,7 +1352,7 @@ public class AsciiDocUtil {
   }
 
   public static List<VirtualFile> resolvePrefix(Project project, VirtualFile moduleDir, String otherKey) {
-    return ApplicationManager.getApplication().runReadAction((Computable<List<VirtualFile>>) () -> {
+    return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
       String myModuleName = moduleDir.getName();
       VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
       if (antoraFile == null) {
