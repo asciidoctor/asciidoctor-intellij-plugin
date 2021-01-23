@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.injection;
 
 import com.intellij.lang.Language;
+import com.intellij.lang.LanguageUtil;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
@@ -24,6 +25,9 @@ public class LanguageGuesser {
     final HashMap<String, Language> result = new HashMap<>();
     for (Language language : Language.getRegisteredLanguages()) {
       if (language.getID().isEmpty()) {
+        continue;
+      }
+      if (!LanguageUtil.isInjectableLanguage(language)) {
         continue;
       }
 
