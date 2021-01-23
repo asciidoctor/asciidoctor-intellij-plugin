@@ -3,11 +3,13 @@ package org.asciidoc.intellij.psi;
 import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ComponentManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -17,6 +19,9 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -27,6 +32,8 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileInfoMan
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.serviceContainer.AlreadyDisposedException;
+import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.text.CharArrayUtil;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocLanguage;
@@ -52,6 +59,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -581,14 +589,59 @@ public class AsciiDocUtil {
     return null;
   }
 
+  private static final Map<Project, List<VirtualFile>> PROJECT_ROOTS = new WeakHashMap<>();
+
+  private static void cache(Project project, List<VirtualFile> roots) {
+    synchronized (PROJECT_ROOTS) {
+      try {
+        if (PROJECT_ROOTS.get(project) == null) {
+          // Listen to any file modification in the project, so that we can clear the cache
+          MessageBusConnection connection = project.getMessageBus().connect();
+          connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
+            @Override
+            public void after(@NotNull List<? extends VFileEvent> events) {
+              // any modification of a file will clear the cache
+              clear(project);
+              connection.disconnect();
+            }
+          });
+        }
+        // lazy cache cleanup
+        PROJECT_ROOTS.keySet().removeIf(ComponentManager::isDisposed);
+        PROJECT_ROOTS.put(project, roots);
+      } catch (AlreadyDisposedException ex) {
+        // noop - project already disposed
+      }
+    }
+  }
+
+  @Nullable
+  private static List<VirtualFile> retrieve(Project project) {
+    synchronized (PROJECT_ROOTS) {
+      return PROJECT_ROOTS.get(project);
+    }
+  }
+
+  private static void clear(Project project) {
+    synchronized (PROJECT_ROOTS) {
+      PROJECT_ROOTS.remove(project);
+    }
+  }
+
   @NotNull
   public static List<VirtualFile> getRoots(@NotNull Project project) {
-    List<VirtualFile> roots = new ArrayList<>();
-    if (project.isDisposed()) {
-      // module manager will not work on already disposed projects, threfore return empty list
+    List<VirtualFile> roots = retrieve(project);
+    if (roots != null) {
       return roots;
     }
+    roots = new ArrayList<>();
+    if (project.isDisposed()) {
+      // module manager will not work on already disposed projects, therefore return empty list
+      return roots;
+    }
+    ProgressManager.checkCanceled();
     for (Module module : ModuleManager.getInstance(project).getModules()) {
+      ProgressManager.checkCanceled();
       for (VirtualFile contentRoot : ModuleRootManager.getInstance(module).getContentRoots()) {
         roots.removeAll(roots.stream().filter(v -> v.getPath().startsWith(contentRoot.getPath())).collect(Collectors.toList()));
         if (roots.stream().noneMatch(v -> contentRoot.getPath().startsWith(v.getPath()))) {
@@ -596,6 +649,7 @@ public class AsciiDocUtil {
         }
       }
     }
+    cache(project, roots);
     return roots;
   }
 
