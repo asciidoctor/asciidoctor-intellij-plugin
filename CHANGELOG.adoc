@@ -7,11 +7,12 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.11 (work in progress)
+=== 0.32.11 (preview, available from GitHub releases)
 
 - validate that language for source block is marked injectable by JetBrains (#642)
 - performance optimizations on background tasks
 - only changes to file in current project's modules will refresh the preview (#641)
+- update cached project roots from changed files (#641)
 
 === 0.32.10 (preview, available from GitHub releases)
 

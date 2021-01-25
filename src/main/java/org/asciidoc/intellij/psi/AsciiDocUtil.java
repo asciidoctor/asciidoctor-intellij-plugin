@@ -62,7 +62,6 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static org.asciidoc.intellij.psi.AsciiDocBlockIdStubElementType.BLOCK_ID_WITH_VAR;
 
@@ -600,9 +599,23 @@ public class AsciiDocUtil {
           connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
             @Override
             public void after(@NotNull List<? extends VFileEvent> events) {
-              // any modification of a file will clear the cache
-              clear(project);
-              connection.disconnect();
+              if (project.isDisposed()) {
+                clear(project);
+                connection.disconnect();
+                return;
+              }
+              Set<VirtualFile> roots = new HashSet<>();
+              for (VFileEvent event : events) {
+                if (event.getFile() != null) {
+                  VirtualFile contentRootForFile = ProjectFileIndex.getInstance(project).getContentRootForFile(event.getFile());
+                  if (contentRootForFile != null) {
+                    roots.add(contentRootForFile);
+                  }
+                }
+              }
+              if (roots.size() > 0) {
+                addRoots(project, roots);
+              }
             }
           });
         }
@@ -628,6 +641,21 @@ public class AsciiDocUtil {
     }
   }
 
+  private static void addRoots(Project project, Set<VirtualFile> contentRoots) {
+    synchronized (PROJECT_ROOTS) {
+      List<VirtualFile> roots = PROJECT_ROOTS.get(project);
+      if (roots != null) {
+        for (VirtualFile contentRoot : contentRoots) {
+          String contentRootPath = contentRoot.getPath();
+          roots.removeIf(v -> v.getPath().startsWith(contentRootPath));
+          if (roots.stream().noneMatch(v -> contentRootPath.startsWith(v.getPath()))) {
+            roots.add(contentRoot);
+          }
+        }
+      }
+    }
+  }
+
   @NotNull
   public static List<VirtualFile> getRoots(@NotNull Project project) {
     List<VirtualFile> roots = retrieve(project);
@@ -643,8 +671,9 @@ public class AsciiDocUtil {
     for (Module module : ModuleManager.getInstance(project).getModules()) {
       ProgressManager.checkCanceled();
       for (VirtualFile contentRoot : ModuleRootManager.getInstance(module).getContentRoots()) {
-        roots.removeAll(roots.stream().filter(v -> v.getPath().startsWith(contentRoot.getPath())).collect(Collectors.toList()));
-        if (roots.stream().noneMatch(v -> contentRoot.getPath().startsWith(v.getPath()))) {
+        String contentRootPath = contentRoot.getPath();
+        roots.removeIf(v -> v.getPath().startsWith(contentRootPath));
+        if (roots.stream().noneMatch(v -> contentRootPath.startsWith(v.getPath()))) {
           roots.add(contentRoot);
         }
       }
