@@ -130,7 +130,7 @@ dependencies {
   implementation 'commons-io:commons-io:2.8.0'
   implementation 'nl.jworks.markdown_to_asciidoc:markdown_to_asciidoc:1.1'
   implementation 'org.apache.commons:commons-text:1.9'
-  implementation 'io.sentry:sentry:4.0.0-alpha.3'
+  implementation 'io.sentry:sentry:4.0.0-beta.1'
 
   // when updating the versions here, also update them in AsciiDocDownloaderUtil for dynamic download
   testImplementation 'org.asciidoctor:asciidoctorj-diagram:2.1.0'
