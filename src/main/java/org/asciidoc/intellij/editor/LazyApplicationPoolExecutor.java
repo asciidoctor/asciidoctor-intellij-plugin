@@ -15,10 +15,11 @@
  */
 package org.asciidoc.intellij.editor;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
 /**
@@ -28,7 +29,7 @@ import java.util.concurrent.Future;
  *
  * @author Eugene Steinberg - plantuml4idea plugin
  */
-public class LazyApplicationPoolExecutor implements Executor {
+public class LazyApplicationPoolExecutor {
 
   public static final int DEFAULT_DELAY = 100;
 
@@ -36,14 +37,10 @@ public class LazyApplicationPoolExecutor implements Executor {
 
   private Future<?> future;
 
-  private int delay = DEFAULT_DELAY; // delay between command executions
+  private final Alarm myPooledAlarm;
 
-  public LazyApplicationPoolExecutor(int delay) {
-    this.delay = delay;
-  }
-
-  public LazyApplicationPoolExecutor() {
-    this(DEFAULT_DELAY);
+  public LazyApplicationPoolExecutor(Disposable disposable) {
+    myPooledAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, disposable);
   }
 
   /**
@@ -52,21 +49,12 @@ public class LazyApplicationPoolExecutor implements Executor {
    *
    * @param command command to be executed.
    */
-  @Override
   @SuppressWarnings("FutureReturnValueIgnored")
   public synchronized void execute(@NotNull final Runnable command) {
     next = () -> {
-      try {
-        command.run();
-        Thread.sleep(delay);
-      } catch (InterruptedException e) {
-        System.out.println(System.currentTimeMillis() + ": was interrupted");
-        e.printStackTrace();
-        Thread.currentThread().interrupt();
-      } finally {
-        if (!Thread.currentThread().isInterrupted()) {
-          scheduleNext(); //needed to execute the very last command
-        }
+      command.run();
+      if (!myPooledAlarm.isDisposed()) {
+        myPooledAlarm.addRequest(this::scheduleNext, DEFAULT_DELAY);
       }
     };
     if (future == null || future.isDone()) {
@@ -74,13 +62,11 @@ public class LazyApplicationPoolExecutor implements Executor {
     }
   }
 
-  private synchronized Future<?> scheduleNext() {
+  private synchronized void scheduleNext() {
     final Runnable toSchedule = next;
     next = null;
     if (toSchedule != null) {
       future = ApplicationManager.getApplication().executeOnPooledThread(toSchedule);
-      return future;
     }
-    return null;
   }
 }

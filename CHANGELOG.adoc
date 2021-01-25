@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.11 (work in progress)
 
 - validate that language for source block is marked injectable by JetBrains (#642)
+- performance optimizations on background tasks
 
 === 0.32.10 (preview, available from GitHub releases)
 

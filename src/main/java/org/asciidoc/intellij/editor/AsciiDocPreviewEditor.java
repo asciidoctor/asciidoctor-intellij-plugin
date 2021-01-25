@@ -93,7 +93,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   /**
    * single threaded with one task queue (one for each editor window).
    */
-  private final LazyApplicationPoolExecutor lazyExecutor = new LazyApplicationPoolExecutor();
+  private final LazyApplicationPoolExecutor lazyExecutor = new LazyApplicationPoolExecutor(this);
 
   /**
    * Indicates whether the HTML preview is obsolete and should regenerated from the AsciiDoc {@link #document}.
