@@ -31,7 +31,7 @@ public class AsciiDocSectionKeyIndex extends StringStubIndexExtension<AsciiDocSe
       return StubIndex.getElements(getKey(), key, project, scope, AsciiDocSection.class);
     } else {
       String normalizedKey = AsciiDocSectionImpl.INVALID_SECTION_ID_CHARS.matcher(key.toLowerCase(Locale.US)).replaceAll("");
-      normalizedKey = normalizedKey.replaceAll(AsciiDocSectionStubElementType.NORMALIZED_CHARS_IN_INDEX, "");
+      normalizedKey = AsciiDocSectionStubElementType.NORMALIZED_CHARS_IN_INDEX.matcher(normalizedKey).replaceAll("");
       return StubIndex.getElements(getKey(), normalizedKey, project, scope, AsciiDocSection.class);
     }
   }

@@ -27,13 +27,14 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class AsciiDocSectionStubElementType extends IStubElementType<AsciiDocSectionStub, AsciiDocSection> implements IReparseableElementTypeBase, ICustomParsingType {
 
   public static final String SECTION_WITH_VAR = "#VAR#";
 
   // this contains "_" as this is a character often prefixed to IDs, sometimes not
-  public static final String NORMALIZED_CHARS_IN_INDEX = "[ ._-]";
+  public static final Pattern NORMALIZED_CHARS_IN_INDEX = Pattern.compile("[ ._-]");
 
   public AsciiDocSectionStubElementType() {
     super("ASCIIDOC_SECTION", AsciiDocLanguage.INSTANCE);
@@ -75,7 +76,7 @@ public class AsciiDocSectionStubElementType extends IStubElementType<AsciiDocSec
   public void indexStub(@NotNull AsciiDocSectionStub stub, @NotNull IndexSink sink) {
     if (stub.getTitleNoSubstitution() != null) {
       String normalizedKey = AsciiDocSectionImpl.INVALID_SECTION_ID_CHARS.matcher(stub.getTitleNoSubstitution().toLowerCase(Locale.US)).replaceAll("");
-      normalizedKey = normalizedKey.replaceAll(NORMALIZED_CHARS_IN_INDEX, "");
+      normalizedKey = AsciiDocSectionStubElementType.NORMALIZED_CHARS_IN_INDEX.matcher(normalizedKey).replaceAll("");
       if (AsciiDocUtil.ATTRIBUTES.matcher(stub.getTitleNoSubstitution()).find()) {
         // add an additional entry to find all block IDs with an attribute more easily
         sink.occurrence(AsciiDocSectionKeyIndex.KEY, SECTION_WITH_VAR);
