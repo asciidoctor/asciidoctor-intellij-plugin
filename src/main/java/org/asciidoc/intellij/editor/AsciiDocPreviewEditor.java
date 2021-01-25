@@ -42,6 +42,7 @@ import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -310,9 +311,17 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
       @Override
       public void after(@NotNull List<? extends VFileEvent> events) {
-        // As an include might have been modified, force the refresh of the preview
-        currentContent = null;
-        renderIfVisible();
+        // any modification of a file within the project refreshes the preview
+        for (VFileEvent event : events) {
+          if (event.getFile() != null) {
+            if (ProjectFileIndex.getInstance(project).getModuleForFile(event.getFile()) != null) {
+              // As an include might have been modified, force the refresh of the preview
+              currentContent = null;
+              renderIfVisible();
+              break;
+            }
+          }
+        }
       }
     });
 
