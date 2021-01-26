@@ -40,6 +40,7 @@ import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import javax.swing.*;
@@ -59,6 +60,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.WeakHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -501,7 +503,7 @@ public class AsciiDocUtil {
   @Nullable
   public static VirtualFile findAntoraPartials(@NotNull Project project, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
-    List<VirtualFile> roots = getRoots(project);
+    Collection<String> roots = getRoots(project);
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
         dir.getParent().getParent().findChild(ANTORA_YML) != null) {
@@ -517,7 +519,7 @@ public class AsciiDocUtil {
           }
         }
       }
-      if (roots.contains(dir)) {
+      if (roots.contains(dir.getName())) {
         break;
       }
       dir = dir.getParent();
@@ -527,7 +529,7 @@ public class AsciiDocUtil {
 
   public static VirtualFile findAntoraAttachmentsDir(@NotNull Project project, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
-    List<VirtualFile> roots = getRoots(project);
+    Collection<String> roots = getRoots(project);
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
         dir.getParent().getParent().findChild(ANTORA_YML) != null) {
@@ -543,7 +545,7 @@ public class AsciiDocUtil {
           return attachments;
         }
       }
-      if (roots.contains(dir)) {
+      if (roots.contains(dir.getName())) {
         break;
       }
       dir = dir.getParent();
@@ -553,7 +555,7 @@ public class AsciiDocUtil {
 
   public static @Nullable VirtualFile findAntoraPagesDir(@NotNull Project project, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
-    List<VirtualFile> roots = getRoots(project);
+    Collection<String> roots = getRoots(project);
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
         dir.getParent().getParent().findChild(ANTORA_YML) != null) {
@@ -562,7 +564,7 @@ public class AsciiDocUtil {
           return pages;
         }
       }
-      if (roots.contains(dir)) {
+      if (roots.contains(dir.getName())) {
         break;
       }
       dir = dir.getParent();
@@ -573,14 +575,14 @@ public class AsciiDocUtil {
   public static VirtualFile findAntoraModuleDir(@NotNull Project project, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
 
-    List<VirtualFile> roots = getRoots(project);
+    Collection<String> roots = getRoots(project);
 
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
         dir.getParent().getParent().findChild(ANTORA_YML) != null) {
         return dir;
       }
-      if (roots.contains(dir)) {
+      if (roots.contains(dir.getName())) {
         break;
       }
       dir = dir.getParent();
@@ -588,20 +590,21 @@ public class AsciiDocUtil {
     return null;
   }
 
-  private static final Map<Project, List<VirtualFile>> PROJECT_ROOTS = new WeakHashMap<>();
+  private static final Map<Project, TreeSet<String>> PROJECT_ROOTS = new WeakHashMap<>();
+  private static final Map<Project, MessageBusConnection> PROJECT_CONNECTIONS = new HashMap<>();
 
-  private static void cache(Project project, List<VirtualFile> roots) {
+  private static void cache(Project project, TreeSet<String> roots) {
     synchronized (PROJECT_ROOTS) {
       try {
         if (PROJECT_ROOTS.get(project) == null) {
           // Listen to any file modification in the project, so that we can clear the cache
           MessageBusConnection connection = project.getMessageBus().connect();
+          PROJECT_CONNECTIONS.put(project, connection);
           connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
             @Override
             public void after(@NotNull List<? extends VFileEvent> events) {
               if (project.isDisposed()) {
                 clear(project);
-                connection.disconnect();
                 return;
               }
               Set<VirtualFile> roots = new HashSet<>();
@@ -621,6 +624,13 @@ public class AsciiDocUtil {
         }
         // lazy cache cleanup
         PROJECT_ROOTS.keySet().removeIf(ComponentManager::isDisposed);
+        PROJECT_CONNECTIONS.entrySet().removeIf(entry -> {
+          if (entry.getKey().isDisposed()) {
+            entry.getValue().disconnect();
+            return true;
+          }
+          return false;
+        });
         PROJECT_ROOTS.put(project, roots);
       } catch (AlreadyDisposedException ex) {
         // noop - project already disposed
@@ -629,7 +639,7 @@ public class AsciiDocUtil {
   }
 
   @Nullable
-  private static List<VirtualFile> retrieve(Project project) {
+  private static TreeSet<String> retrieve(Project project) {
     synchronized (PROJECT_ROOTS) {
       return PROJECT_ROOTS.get(project);
     }
@@ -638,53 +648,67 @@ public class AsciiDocUtil {
   private static void clear(Project project) {
     synchronized (PROJECT_ROOTS) {
       PROJECT_ROOTS.remove(project);
+      MessageBusConnection messageBusConnection = PROJECT_CONNECTIONS.get(project);
+      if (messageBusConnection != null) {
+        messageBusConnection.disconnect();
+        PROJECT_CONNECTIONS.remove(project);
+      }
     }
   }
 
   private static void addRoots(Project project, Set<VirtualFile> contentRoots) {
     synchronized (PROJECT_ROOTS) {
-      List<VirtualFile> roots = PROJECT_ROOTS.get(project);
+      TreeSet<String> roots = PROJECT_ROOTS.get(project);
       if (roots != null) {
         for (VirtualFile contentRoot : contentRoots) {
-          String contentRootPath = contentRoot.getPath();
-          roots.removeIf(v -> v.getPath().startsWith(contentRootPath));
-          if (roots.stream().noneMatch(v -> contentRootPath.startsWith(v.getPath()))) {
-            roots.add(contentRoot);
-          }
+          addRoot(roots, contentRoot);
         }
       }
     }
   }
 
   @NotNull
-  public static List<VirtualFile> getRoots(@NotNull Project project) {
-    List<VirtualFile> roots = retrieve(project);
+  public static Collection<String> getRoots(@NotNull Project project) {
+    TreeSet<String> roots = retrieve(project);
     if (roots != null) {
-      return roots;
+      return Collections.unmodifiableCollection(roots);
     }
-    roots = new ArrayList<>();
+    roots = new TreeSet<>();
     if (project.isDisposed()) {
       // module manager will not work on already disposed projects, therefore return empty list
-      return roots;
+      return Collections.unmodifiableCollection(roots);
     }
     ProgressManager.checkCanceled();
     for (Module module : ModuleManager.getInstance(project).getModules()) {
       ProgressManager.checkCanceled();
       for (VirtualFile contentRoot : ModuleRootManager.getInstance(module).getContentRoots()) {
-        String contentRootPath = contentRoot.getPath();
-        roots.removeIf(v -> v.getPath().startsWith(contentRootPath));
-        if (roots.stream().noneMatch(v -> contentRootPath.startsWith(v.getPath()))) {
-          roots.add(contentRoot);
-        }
+        addRoot(roots, contentRoot);
       }
     }
     cache(project, roots);
-    return roots;
+    return Collections.unmodifiableCollection(roots);
+  }
+
+  @TestOnly
+  protected static void addRoot(TreeSet<String> roots, VirtualFile root) {
+    String rootPath = root.getPath();
+    if (roots.contains(rootPath)) {
+      return;
+    }
+    String lowerEntry = roots.lower(rootPath);
+    if (lowerEntry != null && rootPath.startsWith(lowerEntry + "/")) {
+      return;
+    }
+    String higherEntry = roots.higher(rootPath);
+    if (higherEntry != null && higherEntry.startsWith(rootPath + "/")) {
+      roots.remove(higherEntry);
+    }
+    roots.add(rootPath);
   }
 
   public static String findAntoraImagesDirRelative(@NotNull Project project, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
-    List<VirtualFile> roots = getRoots(project);
+    Collection<String> roots = getRoots(project);
     StringBuilder imagesDir = new StringBuilder();
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
@@ -701,7 +725,7 @@ public class AsciiDocUtil {
           return imagesDir + FAMILY_IMAGE + "s";
         }
       }
-      if (roots.contains(dir)) {
+      if (roots.contains(dir.getName())) {
         break;
       }
       dir = dir.getParent();
@@ -712,7 +736,7 @@ public class AsciiDocUtil {
 
   public static String findAntoraAttachmentsDirRelative(@NotNull Project project, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
-    List<VirtualFile> roots = getRoots(project);
+    Collection<String> roots = getRoots(project);
     StringBuilder attachmentsDir = new StringBuilder();
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
@@ -729,7 +753,7 @@ public class AsciiDocUtil {
           return attachmentsDir + FAMILY_ATTACHMENT + "s";
         }
       }
-      if (roots.contains(dir)) {
+      if (roots.contains(dir.getName())) {
         break;
       }
       dir = dir.getParent();
@@ -739,7 +763,7 @@ public class AsciiDocUtil {
   }
 
   public static VirtualFile findAntoraImagesDir(@NotNull Project project, VirtualFile fileBaseDir) {
-    List<VirtualFile> roots = getRoots(project);
+    Collection<String> roots = getRoots(project);
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
@@ -756,7 +780,7 @@ public class AsciiDocUtil {
           return images;
         }
       }
-      if (roots.contains(dir)) {
+      if (roots.contains(dir.getName())) {
         break;
       }
       dir = dir.getParent();
@@ -765,7 +789,7 @@ public class AsciiDocUtil {
   }
 
   public static VirtualFile findAntoraExamplesDir(@NotNull Project project, VirtualFile fileBaseDir) {
-    List<VirtualFile> roots = getRoots(project);
+    Collection<String> roots = getRoots(project);
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
@@ -775,7 +799,7 @@ public class AsciiDocUtil {
           return examples;
         }
       }
-      if (roots.contains(dir)) {
+      if (roots.contains(dir.getName())) {
         break;
       }
       dir = dir.getParent();
@@ -839,7 +863,7 @@ public class AsciiDocUtil {
   }
 
   public static VirtualFile findSpringRestDocSnippets(@NotNull Project project, VirtualFile fileBaseDir) {
-    List<VirtualFile> roots = getRoots(project);
+    Collection<String> roots = getRoots(project);
     VirtualFile dir = fileBaseDir;
     while (dir != null) {
       VirtualFile pom = dir.findChild("pom.xml");
@@ -872,7 +896,7 @@ public class AsciiDocUtil {
           }
         }
       }
-      if (roots.contains(dir)) {
+      if (roots.contains(dir.getName())) {
         break;
       }
       dir = dir.getParent();
@@ -1245,6 +1269,18 @@ public class AsciiDocUtil {
           || index.isInLibrarySource(file.getVirtualFile())) {
           continue;
         }
+        PsiDirectory parent = file.getParent();
+        if (parent == null) {
+          continue;
+        }
+        PsiDirectory antoraModulesDir = parent.findSubdirectory("modules");
+        if (antoraModulesDir == null) {
+          continue;
+        }
+        PsiDirectory antoraModule = antoraModulesDir.findSubdirectory(otherModuleName);
+        if (antoraModule == null) {
+          continue;
+        }
         Map<String, Object> antora;
         try {
           antora = AsciiDoc.readAntoraYaml(file);
@@ -1271,18 +1307,6 @@ public class AsciiDocUtil {
               continue;
             }
           }
-        }
-        PsiDirectory parent = file.getParent();
-        if (parent == null) {
-          continue;
-        }
-        PsiDirectory antoraModulesDir = parent.findSubdirectory("modules");
-        if (antoraModulesDir == null) {
-          continue;
-        }
-        PsiDirectory antoraModule = antoraModulesDir.findSubdirectory(otherModuleName);
-        if (antoraModule == null) {
-          continue;
         }
         result.add(antoraModule.getVirtualFile());
       }

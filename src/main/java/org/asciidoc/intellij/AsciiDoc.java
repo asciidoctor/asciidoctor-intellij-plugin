@@ -85,6 +85,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -616,7 +617,7 @@ public class AsciiDoc {
   public static @Language("asciidoc")
   String config(VirtualFile currentFile, Project project) {
     StringBuilder tempContent = new StringBuilder();
-    List<VirtualFile> roots = AsciiDocUtil.getRoots(project);
+    Collection<String> roots = AsciiDocUtil.getRoots(project);
     if (currentFile != null) {
       VirtualFile folder = currentFile.getParent();
       if (folder != null) {
@@ -639,7 +640,7 @@ public class AsciiDoc {
               });
             }
           }
-          if (roots.contains(folder)) {
+          if (roots.contains(folder.getName())) {
             break;
           }
           folder = folder.getParent();
