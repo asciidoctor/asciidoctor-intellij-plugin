@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.12 (preview, available from GitHub releases)
+
+- performance improvement when parsing long lines and words by limiting the length of inline macro names and email addresses (#641)
+
 === 0.32.11 (preview, available from GitHub releases)
 
 - validate that language for source block is marked injectable by JetBrains (#642)

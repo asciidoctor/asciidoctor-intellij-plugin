@@ -271,7 +271,7 @@ HEADING_START_MARKDOWN = "#"{1,6} {SPACE}+
 HEADING_OLDSTYLE = [^ .\n\t].* "\n" [-=~\^+]+ {SPACE}* "\n"
 IFDEF_IFNDEF = ("ifdef"|"ifndef"|"endif") "::"
 BLOCK_MACRO_START = [a-zA-Z0-9_]+"::"
-INLINE_MACRO_START = [a-zA-Z0-9_]+":"
+INLINE_MACRO_START = [a-zA-Z0-9_]{1,25}":"
 TITLE_START = "."
 AUTOCOMPLETE = "IntellijIdeaRulezzz" " "? // CompletionUtilCore.DUMMY_IDENTIFIER - blank might get missing at end of line, therefore keep it optional
 BLOCK_ATTRS_START = "["
@@ -326,7 +326,7 @@ XREFSTART = "xref:"
 LINKTEXT_START = "["
 INLINE_URL_NO_DELIMITER = (https?|file|ftp|irc): "//" [^\n\s\[\]<]*([^\n\s.,;\[\]<\)\'\"])
 INLINE_URL_WITH_DELIMITER = (https?|file|ftp|irc): "//" [^\n\s\[\]<]*([^\n\s\[\]\'\"])
-INLINE_EMAIL_NO_DELIMITER = [[:letter:][:digit:]_](&amp;|[[:letter:][:digit:]_\-.%+])*@[[:letter:][:digit:]][[:letter:][:digit:]_\-.]*\.[a-zA-Z]{2,5}
+INLINE_EMAIL_NO_DELIMITER = [[:letter:][:digit:]_](&amp;|[[:letter:][:digit:]_\-.%+]){0,63}@[[:letter:][:digit:]][[:letter:][:digit:]_\-.]*\.[a-zA-Z]{2,5}
 LINKEND = "]"
 ATTRIBUTE_NAME_START = ":"
 ATTRIBUTE_NAME_DECL = [a-zA-Z0-9_]+ [a-zA-Z0-9_ \t-]*
@@ -1523,7 +1523,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            return AsciiDocTokenTypes.LBRACKET;
                          }
                        }
-
+  [a-zA-Z0-9]*            { return textFormat(); }
   [^]                  { return textFormat(); }
 }
 
