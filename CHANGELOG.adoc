@@ -7,7 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.12 (preview, available from GitHub releases)
+=== 0.32.13 (preview, available from GitHub releases)
+
+- fixed support for 'tags' key for sources in Antora playbook (#646)
+
+=== 0.32.12
 
 - performance improvement when parsing long lines and words by limiting the length of inline macro names and email addresses (#641)
 - improvement data structure for handling a large number of modules (#641)

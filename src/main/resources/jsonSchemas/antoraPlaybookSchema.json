@@ -63,7 +63,10 @@
           }
         },
         "tags": {
-          "type": "array",
+          "type": [
+            "string",
+            "array"
+          ],
           "documentation": "The default tag pattern to use when no specific pattern is provided."
         }
       },
@@ -263,6 +266,13 @@
             "array"
           ],
           "description": "Branches as comma-separated list, an array or a list. Negate entries by prepending with a '!', use '*' as a wildcard."
+        },
+        "tags": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "description": "Tags as comma-separated list, an array or a list. Negate entries by prepending with a '!', use '*' as a wildcard."
         }
       }
     }
