@@ -566,24 +566,26 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     String html = htmlParam;
     boolean result = false;
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
-    if (!forceRefresh && settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")) {
+    if (!forceRefresh && settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")
+      // don't try an in-place refresh if there are iframes as they might indicate embedded videos that don't handle an embedded refresh well
+      && !html.contains("<iframe ")) {
       final String htmlToReplace = StringEscapeUtils.escapeEcmaScript(prepareHtml(html, attributes));
       // try to replace the HTML contents using JavaScript to avoid flickering MathML
       try {
-        boolean ml = false; // set to "true" to test for memory leaks in HTML/JavaScript
         replaceResult = false;
         getCefBrowser().executeJavaScript(
-          (ml ? "var x = 0; " : "") +
             "function finish() {" +
             "if ('__IntelliJTools' in window) {" +
             "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
             "__IntelliJTools.processImages && __IntelliJTools.processImages();" +
             "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ");" +
-            (ml ? "window.setTimeout(function(){ updateContent(); }, 10); " : "") +
             "}" +
             "window.JavaPanelBridge && window.JavaPanelBridge.rendered(" + iterationStamp + ");" +
             "}" +
-            "function updateContent() { var elem = document.getElementById('content'); if (elem && elem.parentNode) { " +
+            "function updateContent() { " +
+            // don't try an in-place refresh if there are iframes as they might indicate embedded videos that don't handle an embedded refresh well
+            "if (document.getElementsByName('iframe').length > 0) { return false; } " +
+            "var elem = document.getElementById('content'); if (elem && elem.parentNode) { " +
             "var div = document.createElement('div');" +
             "div.innerHTML = '" + htmlToReplace + "'; " +
             "var errortext = document.getElementById('mathjaxerrortext'); " +
@@ -592,8 +594,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "  errortext.textContent = ''; " +
             "  errorformula.textContent = ''; " +
             "} " +
-            (ml ? "x = x + 1; " : "") +
-            (ml ? "errortext.textContent = 'count:' + x; " : "") +
             "div.style.cssText = 'display: none'; " +
             // need to add the element to the DOM as MathJAX will use document.getElementById in some places
             "elem.appendChild(div); " +
