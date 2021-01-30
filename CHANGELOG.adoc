@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - prevent issuing a repaint on EDT thread, preventing refresh requests to queue up (#641)
 - when embedding iframes in the preview, don't try an in-place update of the contents as this could break the JavaScript for example of YouTube videos (#640)
+- prevent lagging UI when refreshing the preview with JCEF and not using in-place refresh (#640)
 
 === 0.32.13 (preview, available from GitHub releases)
 

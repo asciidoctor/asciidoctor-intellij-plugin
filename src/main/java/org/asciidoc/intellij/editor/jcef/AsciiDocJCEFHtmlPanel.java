@@ -26,6 +26,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -50,6 +51,7 @@ import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.cef.browser.CefBrowser;
+import org.cef.handler.CefFocusHandlerAdapter;
 import org.cef.handler.CefLoadHandler;
 import org.cef.handler.CefLoadHandlerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -383,6 +385,33 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       openLink(r);
       return null;
     });
+
+    if (SystemInfoRt.isWindows) {
+      /* this replaces the standard focus handler on Windows that
+         would otherwise call setFocus(false) on the EDT that would take about 500ms and would make the UI slow.
+       */
+      getCefBrowser().getClient().removeFocusHandler();
+      getCefBrowser().getClient().addFocusHandler(new CefFocusHandlerAdapter() {
+        @Override
+        public boolean onSetFocus(CefBrowser browser, FocusSource source) {
+          if (source == FocusSource.FOCUS_SOURCE_NAVIGATION) {
+            if (SystemInfoRt.isWindows) {
+              ApplicationManager.getApplication().executeOnPooledThread(() -> {
+                getCefBrowser().setFocus(false);
+              });
+            }
+            return true; // suppress focusing the browser on navigation events
+          }
+          if (SystemInfoRt.isLinux) {
+            browser.getUIComponent().requestFocus();
+          } else {
+            browser.getUIComponent().requestFocusInWindow();
+          }
+          return false;
+        }
+      });
+    }
+
   }
 
   @Nullable
