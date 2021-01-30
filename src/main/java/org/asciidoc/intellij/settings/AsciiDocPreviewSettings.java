@@ -35,13 +35,13 @@ public final class AsciiDocPreviewSettings {
   private AsciiDocHtmlPanelProvider.ProviderInfo myHtmlPanelProviderInfo = JeditorHtmlPanelProvider.INFO;
 
   {
-    AsciiDocHtmlPanelProvider.AvailabilityInfo availabilityInfo = new JavaFxHtmlPanelProvider().isAvailable();
+    AsciiDocHtmlPanelProvider.AvailabilityInfo availabilityInfo = new AsciiDocJCEFHtmlPanelProvider().isAvailable();
     if (availabilityInfo == AsciiDocHtmlPanelProvider.AvailabilityInfo.AVAILABLE) {
-      myHtmlPanelProviderInfo = JavaFxHtmlPanelProvider.INFO;
+      myHtmlPanelProviderInfo = AsciiDocJCEFHtmlPanelProvider.INFO;
     } else {
-      availabilityInfo = new AsciiDocJCEFHtmlPanelProvider().isAvailable();
+      availabilityInfo = new JavaFxHtmlPanelProvider().isAvailable();
       if (availabilityInfo == AsciiDocHtmlPanelProvider.AvailabilityInfo.AVAILABLE) {
-        myHtmlPanelProviderInfo = AsciiDocJCEFHtmlPanelProvider.INFO;
+        myHtmlPanelProviderInfo = JavaFxHtmlPanelProvider.INFO;
       }
     }
   }
