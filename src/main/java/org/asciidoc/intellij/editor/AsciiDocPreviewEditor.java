@@ -180,7 +180,6 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           currentLineNo = targetLineNo;
           myPanel.scrollToLine(targetLineNo, document.getLineCount());
         }
-        ApplicationManager.getApplication().invokeLater(myHtmlPanelWrapper::repaint);
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
       } catch (ProcessCanceledException e) {
@@ -452,7 +451,6 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    */
   @Override
   public void selectNotify() {
-    myHtmlPanelWrapper.repaint();
     if (FileDocumentManager.getInstance().getUnsavedDocuments().length > 0) {
       ApplicationManager.getApplication().invokeLater(() -> {
         // don't try to run save-all in parallel, therefore synchronize

@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.14
+
+- prevent issuing a repaint on EDT thread, preventing refresh requests to queue up (#641)
+
 === 0.32.13 (preview, available from GitHub releases)
 
 - fixed support for 'tags' key for sources in Antora playbook (#646)

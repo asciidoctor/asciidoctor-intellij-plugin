@@ -57,7 +57,7 @@ public class LazyApplicationPoolExecutor {
         myPooledAlarm.addRequest(this::scheduleNext, DEFAULT_DELAY);
       }
     };
-    if (future == null || future.isDone()) {
+    if (myPooledAlarm.getActiveRequestCount() == 0 && (future == null || future.isDone())) {
       scheduleNext();
     }
   }
