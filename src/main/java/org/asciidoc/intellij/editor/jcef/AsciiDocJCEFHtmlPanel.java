@@ -616,8 +616,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "} " +
             "return true; } else { return false; }}; " + myRenderedResult.inject("updateContent()"),
           getCefBrowser().getURL(), 0);
-        replaceResultLatch.await(1, TimeUnit.SECONDS);
-        result = replaceResult;
+        if (replaceResultLatch.await(1, TimeUnit.SECONDS)) {
+          result = replaceResult;
+        }
       } catch (RuntimeException | InterruptedException e) {
         // might happen when rendered output is not valid HTML due to passtrough content
         LOG.warn("unable to use JavaScript for update", e);
