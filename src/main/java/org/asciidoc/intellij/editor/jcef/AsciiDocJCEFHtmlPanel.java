@@ -386,6 +386,11 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       return null;
     });
 
+    fixFocusHandlerOnWindowsFromInterferingWithEventDispatchThread();
+
+  }
+
+  private void fixFocusHandlerOnWindowsFromInterferingWithEventDispatchThread() {
     if (SystemInfoRt.isWindows) {
       /* this replaces the standard focus handler on Windows that
          would otherwise call setFocus(false) on the EDT that would take about 500ms and would make the UI slow.
@@ -411,7 +416,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         }
       });
     }
-
   }
 
   @Nullable
