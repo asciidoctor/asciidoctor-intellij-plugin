@@ -1523,7 +1523,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            return AsciiDocTokenTypes.LBRACKET;
                          }
                        }
-  [a-zA-Z0-9]*            { return textFormat(); }
+  [a-zA-Z0-9]+         { return textFormat(); }
   [^]                  { return textFormat(); }
 }
 
