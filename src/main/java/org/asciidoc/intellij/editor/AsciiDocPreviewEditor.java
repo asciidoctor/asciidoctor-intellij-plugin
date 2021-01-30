@@ -609,9 +609,11 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
       // reset contents in preview with latest CSS headers
       if (settings.getAsciiDocPreviewSettings().getPreviewTheme() == AsciiDocHtmlPanel.PreviewTheme.INTELLIJ) {
-        currentContent = null;
-        myPanel.setHtml("", Collections.emptyMap());
-        renderIfVisible();
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+          currentContent = null;
+          myPanel.setHtml("", Collections.emptyMap());
+          renderIfVisible();
+        });
       }
     }
   }
