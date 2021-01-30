@@ -12,8 +12,8 @@
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->
-  <idea-version since-build="202.6109.22"/> <!-- 2020.2 EAP -->
-  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html -->
+  <idea-version since-build="202.6397.94"/> <!-- 2020.2 final -->
+  <!-- please see https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html -->
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-javafx.xml">com.intellij.javafx</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-intellilang.xml">org.intellij.intelliLang</depends>
