@@ -64,15 +64,10 @@ public class AsciiDocProcessUtil {
     while (true) {
       try {
         runnable.run();
-        /*
-        if (retries != 2) {
-          System.out.println("retry succeeded");
-        }
-        */
         return;
       } catch (ProcessCanceledException e) {
         if (ApplicationManager.getApplication().isReadAccessAllowed()) {
-          // this is nested, don't retry
+          // this is nested within another read action, don't retry
           throw e;
         }
         if (retries > 0) {
@@ -81,7 +76,6 @@ public class AsciiDocProcessUtil {
           ApplicationManager.getApplication().runReadAction(() -> {
           });
         } else {
-          // System.out.println("retry failed");
           throw e;
         }
       }
