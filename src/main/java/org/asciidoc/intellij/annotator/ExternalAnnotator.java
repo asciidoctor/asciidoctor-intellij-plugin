@@ -136,6 +136,10 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
         } else if (logRecord.getMessage().startsWith(INCLUDE_FILE_NOT_FOUND)) {
           Set<PsiFile> files = new HashSet<>();
           lineNumberForAnnotation = AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> findLineByInclude(file, files, logRecord, 0));
+          if (lineNumberForAnnotation == -1) {
+            // unable to derive line number
+            lineNumberForAnnotation = 0;
+          }
         }
         processedLogRecords.add(new AsciiDocAnnotationResultType.AsciiDocAnnotationLogRecord(lineNumberForAnnotation, lineNumber, logRecord));
       }
