@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.15
+
+- Prevent looping/blocking external annotator when post-processing of include error messages (#649)
+
 === 0.32.14
 
 - prevent issuing a repaint on EDT thread, preventing refresh requests to queue up (#641)

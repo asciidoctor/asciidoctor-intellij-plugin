@@ -8,6 +8,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.problems.Problem;
@@ -28,6 +29,7 @@ import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFileIntentionAction;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
+import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.asciidoctor.log.LogRecord;
 import org.asciidoctor.log.Severity;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +42,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Run Asciidoc and use the warnings and errors as annotations in the file.
@@ -79,20 +83,63 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
       }
     }
 
-    AsciiDocAnnotationResultType asciidocAnnotationResultType = new AsciiDocAnnotationResultType(editor.getDocument());
+    AsciiDocAnnotationResultType annotationResult = new AsciiDocAnnotationResultType(editor.getDocument());
 
     if (!AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isShowAsciiDocWarningsAndErrorsInEditor()) {
-      asciidocAnnotationResultType.setLogRecords(Collections.emptyList());
-      return asciidocAnnotationResultType;
+      annotationResult.setLogRecords(Collections.emptyList());
+      return annotationResult;
     }
 
     Path tempImagesPath = AsciiDoc.tempImagesPath();
     try {
       AsciiDoc asciiDoc = new AsciiDoc(file.getProject(), fileBaseDir,
         tempImagesPath, name);
-      asciidocAnnotationResultType.setDocname(new File(fileBaseDir, name).getAbsolutePath());
-      asciiDoc.render(collectedInfo.getContent(), collectedInfo.getConfig(), collectedInfo.getExtensions(), (boasOut, boasErr, logRecords)
-        -> asciidocAnnotationResultType.setLogRecords(logRecords));
+      annotationResult.setDocname(new File(fileBaseDir, name).getAbsolutePath());
+
+      List<LogRecord> logRecords = new ArrayList<>();
+      asciiDoc.render(collectedInfo.getContent(), collectedInfo.getConfig(), collectedInfo.getExtensions(), (boasOut, boasErr, lr)
+        -> logRecords.addAll(lr));
+
+      // do all expensive post-processing of log messages in the doAnnotate() phase,
+      // this is necessary to process nested includes
+      List<AsciiDocAnnotationResultType.AsciiDocAnnotationLogRecord> processedLogRecords = new ArrayList<>();
+      for (LogRecord logRecord : logRecords) {
+        if (logRecord.getSeverity() == Severity.DEBUG) {
+          continue;
+        }
+        if (logRecord.getMessage() == null) {
+          continue;
+        }
+        if (logRecord.getMessage().startsWith("possible invalid reference:")) {
+        /* TODO: these messages are not helpful in IntelliJ as they have no line number
+            and provide too many false positives for split documents  */
+          continue;
+        }
+        // the line number as shown in the IDE (starting with 1)
+        Integer lineNumber = null;
+        // the line number used for creating the annotation (starting with 0)
+        int lineNumberForAnnotation = 0;
+        if (logRecord.getCursor() != null
+          && (logRecord.getCursor().getFile() == null || logRecord.getCursor().getFile().equals(annotationResult.getDocname()))
+          && logRecord.getCursor().getLineNumber() >= 0) {
+          lineNumber = logRecord.getCursor().getLineNumber();
+          lineNumberForAnnotation = lineNumber - 1;
+          if (lineNumberForAnnotation < 0) {
+            // logRecords created in the prepended .asciidoctorconfig elements - will be shown on line zero
+            lineNumberForAnnotation = 0;
+          }
+          if (lineNumberForAnnotation >= annotationResult.getDocument().getLineCount()) {
+          /* an extension (like spring-boot-rest-docs) might run sub-instances of Asciidoctor to parse document snippets.
+          the error messages might have line numbers greater than the current document */
+            lineNumberForAnnotation = 0;
+          }
+        } else if (logRecord.getMessage().startsWith(INCLUDE_FILE_NOT_FOUND)) {
+          Set<PsiFile> files = new HashSet<>();
+          lineNumberForAnnotation = AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> findLineByInclude(file, files, logRecord, 0));
+        }
+        processedLogRecords.add(new AsciiDocAnnotationResultType.AsciiDocAnnotationLogRecord(lineNumberForAnnotation, lineNumber, logRecord));
+      }
+      annotationResult.setLogRecords(processedLogRecords);
     } finally {
       if (tempImagesPath != null) {
         try {
@@ -103,47 +150,18 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
       }
     }
 
-    return asciidocAnnotationResultType;
+    return annotationResult;
   }
 
   @Override
   public void apply(@NotNull PsiFile file, AsciiDocAnnotationResultType annotationResult, @NotNull AnnotationHolder holder) {
     WolfTheProblemSolver theProblemSolver = WolfTheProblemSolver.getInstance(file.getProject());
     Collection<Problem> problems = new ArrayList<>();
-    for (LogRecord logRecord : annotationResult.getLogRecords()) {
-      if (logRecord.getSeverity() == Severity.DEBUG) {
-        continue;
-      }
-      if (logRecord.getMessage() == null) {
-        continue;
-      }
-      if (logRecord.getMessage().startsWith("possible invalid reference:")) {
-        /* TODO: these messages are not helpful in IntelliJ as they have no line number
-            and provide too many false positives for split documents  */
-        continue;
-      }
+    for (AsciiDocAnnotationResultType.AsciiDocAnnotationLogRecord lr : annotationResult.getLogRecords()) {
+      int lineNumberForAnnotation = lr.getLineNumberForAnnotation();
+      Integer lineNumber = lr.getLineNumber();
+      LogRecord logRecord = lr.getLogRecord();
       HighlightSeverity severity = toSeverity(logRecord.getSeverity());
-      // the line number as shown in the IDE (starting with 1)
-      Integer lineNumber = null;
-      // the line number used for creating the annotation (starting with 0)
-      int lineNumberForAnnotation = 0;
-      if (logRecord.getCursor() != null
-        && (logRecord.getCursor().getFile() == null || logRecord.getCursor().getFile().equals(annotationResult.getDocname()))
-        && logRecord.getCursor().getLineNumber() >= 0) {
-        lineNumber = logRecord.getCursor().getLineNumber();
-        lineNumberForAnnotation = lineNumber - 1;
-        if (lineNumberForAnnotation < 0) {
-          // logRecords created in the prepended .asciidoctorconfig elements - will be shown on line zero
-          lineNumberForAnnotation = 0;
-        }
-        if (lineNumberForAnnotation >= annotationResult.getDocument().getLineCount()) {
-          /* an extension (like spring-boot-rest-docs) might run sub-instances of Asciidoctor to parse document snippets.
-          the error messages might have line numbers greater than the current document */
-          lineNumberForAnnotation = 0;
-        }
-      } else if (logRecord.getMessage().startsWith(INCLUDE_FILE_NOT_FOUND)) {
-        lineNumberForAnnotation = findLineByInclude(file, logRecord, 0);
-      }
       AnnotationBuilder ab = holder.newAnnotation(severity,
         logRecord.getMessage()).range(
         TextRange.from(
@@ -197,11 +215,17 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
   /**
    * For a given log record, find the source in the include tree, then traverse upwards to propagate the line number.
    */
-  private int findLineByInclude(PsiFile psiFile, LogRecord log, int level) {
+  private int findLineByInclude(PsiFile psiFile, Set<PsiFile> files, LogRecord log, int level) {
     // prevent too many recursions
     if (level > 64) {
       return -1;
     }
+    if (files.contains(psiFile)) {
+      return -1;
+    }
+    files.add(psiFile);
+    ProgressManager.checkCanceled();
+
     String file = log.getCursor().getFile();
     int line = log.getCursor().getLineNumber();
     if (psiFile.getVirtualFile().getCanonicalPath() != null && psiFile.getVirtualFile().getCanonicalPath().equals(file)) {
@@ -220,7 +244,7 @@ public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnno
           if (!fileReference.isFolder()) {
             PsiElement resolved = fileReference.resolve();
             if (resolved instanceof AsciiDocFile) {
-              int targetLine = findLineByInclude((PsiFile) resolved, log, level + 1);
+              int targetLine = findLineByInclude((PsiFile) resolved, files, log, level + 1);
               if (targetLine != -1) {
                 Document document = PsiDocumentManager.getInstance(psiFile.getProject()).getDocument(psiFile);
                 if (document != null) {

@@ -1,16 +1,38 @@
 package org.asciidoc.intellij.annotator;
 
-import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.Document;
 import org.asciidoctor.log.LogRecord;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class AsciiDocAnnotationResultType {
 
+  public static class AsciiDocAnnotationLogRecord {
+    private final LogRecord logRecord;
+    private final Integer lineNumber;
+    private final int lineNumberForAnnotation;
+
+    public AsciiDocAnnotationLogRecord(int lineNumberForAnnotation, Integer lineNumber, LogRecord logRecord) {
+      this.lineNumberForAnnotation = lineNumberForAnnotation;
+      this.lineNumber = lineNumber;
+      this.logRecord = logRecord;
+    }
+
+    public LogRecord getLogRecord() {
+      return logRecord;
+    }
+
+    public Integer getLineNumber() {
+      return lineNumber;
+    }
+
+    public int getLineNumberForAnnotation() {
+      return lineNumberForAnnotation;
+    }
+  }
+
   private final Document document;
-  private List<LogRecord> logRecords;
+  private List<AsciiDocAnnotationLogRecord> logRecords;
   private String docname;
 
   public AsciiDocAnnotationResultType(Document document) {
@@ -21,7 +43,7 @@ public class AsciiDocAnnotationResultType {
     return document;
   }
 
-  public List<LogRecord> getLogRecords() {
+  public List<AsciiDocAnnotationLogRecord> getLogRecords() {
     return logRecords;
   }
 
@@ -33,32 +55,7 @@ public class AsciiDocAnnotationResultType {
     return docname;
   }
 
-  public static class Message {
-    private final HighlightSeverity severity;
-    private final Integer line;
-    private final String message;
-
-    public Message(HighlightSeverity severity, Integer line, String message) {
-      this.severity = severity;
-      this.line = line;
-      this.message = message;
-    }
-
-    public HighlightSeverity getSeverity() {
-      return severity;
-    }
-
-    @Nullable
-    public Integer getLine() {
-      return line;
-    }
-
-    public String getMessage() {
-      return message;
-    }
-  }
-
-  public void setLogRecords(List<LogRecord> logRecords) {
+  public void setLogRecords(List<AsciiDocAnnotationLogRecord> logRecords) {
     this.logRecords = logRecords;
   }
 

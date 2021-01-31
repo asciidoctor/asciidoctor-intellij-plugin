@@ -276,6 +276,7 @@ public class AsciiDocUtil {
     if (DumbService.isDumb(project)) {
       return Collections.emptyList();
     }
+    ProgressManager.checkCanceled();
     List<AsciiDocAttributeDeclaration> result = null;
     final GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
     Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(key, project, scope);
