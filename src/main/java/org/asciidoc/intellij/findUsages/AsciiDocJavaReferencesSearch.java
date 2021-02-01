@@ -44,7 +44,7 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
       }
     } else if (element instanceof PsiPackage) {
       String name = ((PsiPackage) element).getName();
-      if (name != null) {
+      if (name != null && !name.isEmpty()) {
         search(consumer, element, name, scope);
       }
     }
