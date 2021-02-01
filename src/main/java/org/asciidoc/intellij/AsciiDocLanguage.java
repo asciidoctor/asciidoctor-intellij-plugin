@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiManager;
+import org.asciidoc.intellij.activities.AsciiDocHandleUnloadActivity;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,6 +37,13 @@ public class AsciiDocLanguage extends Language {
 
   private AsciiDocLanguage() {
     super(LANGUAGE_NAME);
+  }
+
+  static {
+    // loading this as a startup activity is too late as a user can manage plugins before they open a project and the listener will only fire within a project
+    // reloading a plugin before opening a project has problems when loading resources from JAR files (like properties or images)
+    // see: https://youtrack.jetbrains.com/issue/IDEA-244471
+    AsciiDocHandleUnloadActivity.setupListener();
   }
 
   public static boolean isAsciiDocFile(@NotNull Project project, @NotNull VirtualFile file) {

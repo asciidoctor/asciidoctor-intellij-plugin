@@ -9,7 +9,8 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.32.15
 
-- Prevent looping/blocking external annotator when post-processing of include error messages (#649)
+- prevent looping/blocking external annotator when post-processing of include error messages (#649)
+- prevent unloading of plugin even when no project has been opened yet to avoid loading errors afterwards for icons, resources and schemas (#652)
 
 === 0.32.14
 
