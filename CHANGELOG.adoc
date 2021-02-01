@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - prevent looping/blocking external annotator when post-processing of include error messages (#649)
 - prevent unloading of plugin even when no project has been opened yet to avoid loading errors afterwards for icons, resources and schemas (#652)
+- forcing re-indexing of AsciiDoc content as previous updates changed parsing/lexing, and the resulting IntelliJ indexes are out of date (#653)
 
 === 0.32.14
 
