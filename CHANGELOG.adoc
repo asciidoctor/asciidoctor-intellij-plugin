@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.16 (work in progress)
+
+- when un-quoting a selected text to be no longer bold italic or monospaced, the inner text must be at least one char long (#656)
+
 === 0.32.15
 
 - prevent looping/blocking external annotator when post-processing of include error messages (#649)

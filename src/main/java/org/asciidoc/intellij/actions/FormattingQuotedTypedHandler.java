@@ -48,7 +48,7 @@ public class FormattingQuotedTypedHandler extends TypedHandlerDelegate {
         char firstChar = selectedText.charAt(0);
         char lastChar = selectedText.charAt(selectedText.length() - 1);
         String newText = null;
-        while (selectedText.length() > 1 && firstChar == lastChar && firstChar == c
+        while (selectedText.length() > 2 && firstChar == lastChar && firstChar == c
           && isDelimiter(firstChar) && !SelectionQuotingTypedHandler.shouldSkipReplacementOfQuotesOrBraces(file, editor, selectedText, c)) {
           selectedText = selectedText.substring(1, selectedText.length() - 1);
           firstChar = selectedText.charAt(0);
@@ -60,10 +60,10 @@ public class FormattingQuotedTypedHandler extends TypedHandlerDelegate {
         if (newText == null) {
           boolean word = FormatAsciiDocAction.isWord(editor.getDocument(), selectionStart, selectionEnd);
           if (word) {
-            newText = String.valueOf(c) + selectedText + String.valueOf(c);
+            newText = c + selectedText + c;
             border = 1;
           } else {
-            newText = String.valueOf(c) + String.valueOf(c) + selectedText + String.valueOf(c) + String.valueOf(c);
+            newText = c + c + selectedText + c + c;
             border = 2;
           }
         }
