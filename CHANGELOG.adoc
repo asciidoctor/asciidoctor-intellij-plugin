@@ -7,10 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.16 (work in progress)
+=== 0.32.16
 
 - when un-quoting a selected text to be no longer bold italic or monospaced, the inner text must be at least one char long (#656)
-- prevent message "`Cannot Open the Page/ERR_ABORTED`" error in IntelliJ 2020.3.x versions (#658)
+- prevent JCEF preview error "`Cannot Open the Page/ERR_ABORTED`" error in IntelliJ 2020.3.x versions (#658)
+- prevent exception when extending word selection for example near a double quote (#661)
 
 === 0.32.15
 
