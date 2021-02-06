@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.16 (work in progress)
 
 - when un-quoting a selected text to be no longer bold italic or monospaced, the inner text must be at least one char long (#656)
+- prevent message "`Cannot Open the Page/ERR_ABORTED`" error in IntelliJ 2020.3.x versions (#658)
 
 === 0.32.15
 

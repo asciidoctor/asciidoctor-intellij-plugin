@@ -222,7 +222,11 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         myBridgeSettingListener.onLoadingStateChange(browser, isLoading, canGoBack, canGoForward);
       }
     };
-    getJBCefClient().addLoadHandler(myCefLoadHandler, getCefBrowser());
+    // in Intellij 2020.3.x the load handler is broken as it will trigger ERR_ABORTED if loading in an iframe is aborted,
+    // maybe even trigger an error when the preview is force-refreshed and a currently loading page is aborted
+    // therefore: remove JetBrains load handler and replace with out own load handler.
+    getJBCefClient().getCefClient().removeLoadHandler();
+    getJBCefClient().getCefClient().addLoadHandler(myCefLoadHandler);
 
     try {
       Properties p = new Properties();
@@ -599,9 +603,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     String html = htmlParam;
     boolean result = false;
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
-    if (!forceRefresh && settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")
-      // don't try an in-place refresh if there are iframes as they might indicate embedded videos that don't handle an embedded refresh well
-      && !html.contains("<iframe ")) {
+    if (!forceRefresh && settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")) {
       final String htmlToReplace = StringEscapeUtils.escapeEcmaScript(prepareHtml(html, attributes));
       // try to replace the HTML contents using JavaScript to avoid flickering MathML
       try {
@@ -616,8 +618,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "window.JavaPanelBridge && window.JavaPanelBridge.rendered(" + iterationStamp + ");" +
             "}" +
             "function updateContent() { " +
-            // don't try an in-place refresh if there are iframes as they might indicate embedded videos that don't handle an embedded refresh well
-            "if (document.getElementsByName('iframe').length > 0) { return false; } " +
             "var elem = document.getElementById('content'); if (elem && elem.parentNode) { " +
             "var div = document.createElement('div');" +
             "div.innerHTML = '" + htmlToReplace + "'; " +
