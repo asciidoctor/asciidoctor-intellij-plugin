@@ -18,4 +18,7 @@
     <!-- Suppress all checks in geronimo -->
     <suppress checks=".*" files="org[\\/]apache[\\/]geronimo"/>
 
+    <!-- Suppress all checks in jruby -->
+    <suppress checks=".*" files="org[\\/]jruby"/>
+
 </suppressions>

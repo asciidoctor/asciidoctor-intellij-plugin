@@ -43,11 +43,11 @@ allprojects {
 // enforce target classfile version of 8
 
 intellij {
-  version 'IC-2020.3.2' // 'IC-203.5981.41-EAP-SNAPSHOT'
+  version 'IC-211.5538.20-EAP-SNAPSHOT' // 'IC-2020.3.2'
   pluginName 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild false
   plugins = [
-    'PsiViewer:203-SNAPSHOT', // used for debugging
+    'PsiViewer:211-SNAPSHOT', // used for debugging
     'PlantUML integration:3.4.0', // used to test highlighting of plantuml diagrams
     'tanvd.grazi', // used for spell and grammar checking checking
     'com.intellij.javafx:1.0.3',
@@ -175,7 +175,7 @@ task generateAsciidocLexer(type: GenerateLexer) {
 }
 
 compileJava {
-  options.errorprone.excludedPaths = '.*_AsciiDocLexer.*'
+  options.errorprone.excludedPaths = '.*(_AsciiDocLexer|RbConfigLibrary).*'
   options.errorprone.error('StreamResourceLeak') // enforce errors where there would be warning in the standard only
   options.errorprone.disable('MissingSummary')
   // as long as the plugin supports 2020.2 as well, keep source and target compatibility for JDK 8
