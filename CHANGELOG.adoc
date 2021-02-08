@@ -7,9 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.17 (work in progress)
+=== 0.32.17 (preview, available from GitHub releases)
 
 - fix classloader problem for JRuby on IntelliJ 2021.x EAP (#664)
+- rework issue #658 to restore functionality for zoom and open-links-in-external-browser (#665)
 
 === 0.32.16
 
