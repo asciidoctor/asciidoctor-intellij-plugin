@@ -7,7 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.17 (preview, available from GitHub releases)
+=== 0.32.18
+
+- avoid exception in log when opening AsciiDoc file (#667)
+
+=== 0.32.17
 
 - fix classloader problem for JRuby on IntelliJ 2021.x EAP (#664)
 - rework issue #658 to restore functionality for zoom and open-links-in-external-browser (#665)

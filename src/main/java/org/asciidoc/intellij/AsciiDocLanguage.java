@@ -15,12 +15,14 @@
  */
 package org.asciidoc.intellij;
 
+import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.lang.Language;
+import com.intellij.lang.LanguageUtil;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiManager;
 import org.asciidoc.intellij.activities.AsciiDocHandleUnloadActivity;
+import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -54,7 +56,8 @@ public class AsciiDocLanguage extends Language {
     if (project.isDisposed()) {
       return false;
     }
-    final FileViewProvider provider = PsiManager.getInstance(project).findViewProvider(file);
-    return provider != null && provider.getBaseLanguage().isKindOf(INSTANCE);
+    FileType fileType = file.getFileType();
+    return fileType == AsciiDocFileType.INSTANCE ||
+      ScratchUtil.isScratch(file) && LanguageUtil.getLanguageForPsi(project, file) == AsciiDocLanguage.INSTANCE;
   }
 }
