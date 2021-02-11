@@ -58,6 +58,6 @@ public class AsciiDocLanguage extends Language {
     }
     FileType fileType = file.getFileType();
     return fileType == AsciiDocFileType.INSTANCE ||
-      ScratchUtil.isScratch(file) && LanguageUtil.getLanguageForPsi(project, file) == AsciiDocLanguage.INSTANCE;
+      (ScratchUtil.isScratch(file) && LanguageUtil.getLanguageForPsi(project, file) == AsciiDocLanguage.INSTANCE);
   }
 }
