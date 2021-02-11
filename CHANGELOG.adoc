@@ -7,9 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.18
+=== 0.32.18 (work in progress)
 
 - avoid exception in log when opening AsciiDoc file (#667)
+- report build number for IntelliJ EAP releases when submitting information to Sentry (#670)
 
 === 0.32.17
 

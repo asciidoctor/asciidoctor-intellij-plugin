@@ -97,13 +97,22 @@ class SentryErrorReporter {
           final ApplicationInfoImpl applicationInfo = (ApplicationInfoImpl) ApplicationInfo.getInstance();
           final SentryRuntime runtime = new SentryRuntime();
           runtime.setName(applicationInfo.getBuild().getProductCode());
-          runtime.setVersion(applicationInfo.getFullVersion());
+
+          if (!applicationInfo.getFullVersion().contains("EAP")) {
+            runtime.setVersion(applicationInfo.getFullVersion());
+          } else {
+            runtime.setVersion(applicationInfo.getBuild().toString()
+              .replaceAll("^" + applicationInfo.getBuild().getProductCode() + "-", ""));
+          }
 
           event.getContexts().setOperatingSystem(os);
           event.getContexts().setRuntime(runtime);
 
           event.setTag("java_vendor", SystemInfo.JAVA_VENDOR);
           event.setTag("java_version", SystemInfo.JAVA_VERSION);
+
+          // clear the server name, as it is of no use to analyze the error
+          event.setServerName(null);
 
           SentryErrorReporter.fillActivePlugins(event.getContexts());
 
