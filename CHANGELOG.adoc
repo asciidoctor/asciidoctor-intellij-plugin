@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - report build number for IntelliJ EAP releases when submitting information to Sentry (#670)
 - update to AsciidoctorJ 2.4.3
 - handle auto-completion for MacOS X volume icons (#671)
+- use new NIO file API when converting to HTML or PDF file to avoid file name manipulation issues (#666)
 
 === 0.32.17
 

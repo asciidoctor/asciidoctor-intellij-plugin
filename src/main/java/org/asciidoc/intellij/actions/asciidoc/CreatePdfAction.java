@@ -26,6 +26,7 @@ import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -112,15 +113,25 @@ public class CreatePdfAction extends AsciiDocAction {
       }
     }, "Creating PDF", true, project);
     ApplicationManager.getApplication().runWriteAction(() -> {
-      VirtualFile virtualFile = VirtualFileManager.getInstance()
-        .refreshAndFindFileByUrl(file.getUrl().replaceAll("\\.(adoc|asciidoc|ad)$", ".pdf"));
-      updateProjectView(virtualFile != null ? virtualFile : parent);
-      if (virtualFile != null) {
+      VirtualFile virtualFilePdf = changeFileExtension(file);
+      updateProjectView(virtualFilePdf != null ? virtualFilePdf : parent);
+      if (virtualFilePdf != null) {
         if (successful) {
-          new OpenFileDescriptor(project, virtualFile).navigate(true);
+          new OpenFileDescriptor(project, virtualFilePdf).navigate(true);
         }
       }
     });
+  }
+
+  @Nullable
+  private VirtualFile changeFileExtension(VirtualFile file) {
+    Path path = file.getFileSystem().getNioPath(file);
+    if (path == null) {
+      return null;
+    }
+    return VirtualFileManager.getInstance().refreshAndFindFileByNioPath(
+      path.getParent().resolve(file.getName().replaceAll("\\.(adoc|asciidoc|ad)$", ".pdf"))
+    );
   }
 
   private void updateProjectView(VirtualFile virtualFile) {

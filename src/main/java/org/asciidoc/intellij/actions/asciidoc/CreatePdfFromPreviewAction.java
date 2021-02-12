@@ -18,6 +18,9 @@ import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.AsciiDocSplitEditor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.nio.file.Path;
 
 public class CreatePdfFromPreviewAction extends AsciiDocAction implements DumbAware {
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.CreatePdfFromPreviewAction";
@@ -68,8 +71,7 @@ public class CreatePdfFromPreviewAction extends AsciiDocAction implements DumbAw
           ApplicationManager.getApplication().invokeLater(() -> {
             if (success) {
               ApplicationManager.getApplication().runWriteAction(() -> {
-                VirtualFile target = VirtualFileManager.getInstance()
-                  .refreshAndFindFileByUrl(file.getUrl().replaceAll("\\.(adoc|asciidoc|ad)$", ".pdf"));
+                VirtualFile target = changeFileExtension(file);
                 VirtualFile parent = file.getParent();
                 updateProjectView(target != null ? target : parent, project);
                 if (target != null) {
@@ -87,6 +89,17 @@ public class CreatePdfFromPreviewAction extends AsciiDocAction implements DumbAw
       }
     }
 
+  }
+
+  @Nullable
+  private VirtualFile changeFileExtension(VirtualFile file) {
+    Path path = file.getFileSystem().getNioPath(file);
+    if (path == null) {
+      return null;
+    }
+    return VirtualFileManager.getInstance().refreshAndFindFileByNioPath(
+      path.getParent().resolve(file.getName().replaceAll("\\.(adoc|asciidoc|ad)$", ".pdf"))
+    );
   }
 
   private void updateProjectView(VirtualFile virtualFile, Project project) {

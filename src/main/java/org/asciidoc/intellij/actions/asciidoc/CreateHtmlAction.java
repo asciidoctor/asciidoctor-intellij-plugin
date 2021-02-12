@@ -20,6 +20,7 @@ import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,19 +93,25 @@ public class CreateHtmlAction extends AsciiDocAction {
       }
     }, "Creating HTML", true, project);
     ApplicationManager.getApplication().runWriteAction(() -> {
-      VirtualFile virtualFile = VirtualFileManager.getInstance()
-        .refreshAndFindFileByUrl(changeFileExtensionToHtml(file.getUrl()));
-      updateProjectView(virtualFile != null ? virtualFile : parent);
-      if (virtualFile != null) {
+      VirtualFile virtualFileHtml =  changeFileExtension(file);
+      updateProjectView(virtualFileHtml != null ? virtualFileHtml : parent);
+      if (virtualFileHtml != null) {
         if (successful) {
-          BrowserUtil.browse(virtualFile);
+          BrowserUtil.browse(virtualFileHtml);
         }
       }
     });
   }
 
-  private String changeFileExtensionToHtml(String filePath) {
-    return filePath.replaceAll("\\.(adoc|asciidoc|ad)$", ".html");
+  @Nullable
+  private VirtualFile changeFileExtension(VirtualFile file) {
+    Path path = file.getFileSystem().getNioPath(file);
+    if (path == null) {
+      return null;
+    }
+    return VirtualFileManager.getInstance().refreshAndFindFileByNioPath(
+      path.getParent().resolve(file.getName().replaceAll("\\.(adoc|asciidoc|ad)$", ".html"))
+    );
   }
 
   private void updateProjectView(VirtualFile virtualFile) {
