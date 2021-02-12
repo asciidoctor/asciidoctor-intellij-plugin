@@ -740,7 +740,14 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         lb = handleTrailing(lb, '/');
         variants[i] = lb;
       } else {
-        Object item = FileInfoManager.getFileLookupItem(candidate);
+        // handle special volume information on MacOS X
+        // see for example: https://youtrack.jetbrains.com/issue/R-1028
+        Object item;
+        if (SystemInfo.isMac && candidate instanceof PsiFile && ((PsiFile) candidate).getName().equals(".VolumeIcon.icns")) {
+          item = candidate;
+        } else {
+          item = FileInfoManager.getFileLookupItem(candidate);
+        }
         variants[i] = item;
       }
     }
