@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - avoid exception in log when opening AsciiDoc file (#667)
 - report build number for IntelliJ EAP releases when submitting information to Sentry (#670)
+- update to AsciidoctorJ 2.4.3
 
 === 0.32.17
 
