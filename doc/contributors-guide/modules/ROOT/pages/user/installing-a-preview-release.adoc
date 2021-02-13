@@ -5,15 +5,15 @@
 
 == Installing a preview-release
 
-All preview releases are available on the https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases[GitHub releases page of the plugin].
+All preview releases are available on the https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases[GitHub releases page of the plugin^].
 Each release has a title and a short description linking to the GitHub issues that are part of the release.
 
 To try out a preview release:
 
-. Download the new release file `asciidoctor-intellij-plugin-xx.xx.xx.zip`
-. Go to menu:File[Settings... > Plugins > Gear Icon] (icon:gear[])
-. Choose menu:Install plugin from disk...[]
-. Choose the downloaded file in the file selection dialogue
-. Restart the IDE to activate the new plugin version
+. Download the new release file `asciidoctor-intellij-plugin-xx.xx.xx.zip` from the _Assets_ section of the release.
+. Go to menu:File[Settings... > Plugins > Gear Icon] (icon:gear[]).
+. Choose menu:Install plugin from disk...[].
+. Choose the downloaded file in the file selection dialogue.
+. Restart the IDE to activate the new plugin version.
 
 Use the GitHub issue numbers given in the release notes to join the discussion on the respective GitHub issues.
