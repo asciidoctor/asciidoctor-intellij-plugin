@@ -7,7 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.18 (work in progress)
+=== 0.32.19 (work in progress)
+
+- auto-complete for images will no longer auto-suggest anchor names (#672)
+
+=== 0.32.18
 
 - avoid exception in log when opening AsciiDoc file (#667)
 - report build number for IntelliJ EAP releases when submitting information to Sentry (#670)

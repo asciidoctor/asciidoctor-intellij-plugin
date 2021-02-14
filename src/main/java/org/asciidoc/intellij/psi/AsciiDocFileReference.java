@@ -756,7 +756,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       variants[i + candidates.length] = items.get(i);
     }
 
-    if (base.length() == 0) {
+    if (base.length() == 0 && (macroName.equals("xref") || macroName.equals("<<") || macroName.equals("xref-attr"))) {
       variants = ArrayUtils.addAll(variants, getVariantsForAnchor());
     }
 
