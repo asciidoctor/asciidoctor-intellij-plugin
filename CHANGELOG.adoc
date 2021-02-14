@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.19 (work in progress)
 
 - auto-complete for images will no longer auto-suggest anchor names (#672)
+- transfer long exception messages to Sentry to avoid cut-offs (#672)
 
 === 0.32.18
 

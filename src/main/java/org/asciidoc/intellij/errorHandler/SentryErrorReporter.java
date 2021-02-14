@@ -29,6 +29,7 @@ import org.asciidoc.intellij.AsciiDocPlugin;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
@@ -167,6 +168,13 @@ class SentryErrorReporter {
             io.sentry.Attachment fileAttachment = new io.sentry.Attachment(attachment.getBytes(), attachment.getPath());
             scope.addAttachment(fileAttachment);
           }
+        }
+
+        if (error.getMessage().length() > 2000) {
+          // seen a very long message for TraceableDisposable, therefore add message as attachment
+          String errorMessage = error.getMessage();
+          io.sentry.Attachment fileAttachment = new io.sentry.Attachment(errorMessage.getBytes(StandardCharsets.UTF_8), "errorMessage.txt");
+          scope.addAttachment(fileAttachment);
         }
 
         SentryId sentryId = Sentry.captureEvent(event);
