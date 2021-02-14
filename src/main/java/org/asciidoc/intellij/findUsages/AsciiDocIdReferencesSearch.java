@@ -144,7 +144,7 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
           }
         }
         final CharSequence text = ReadAction.compute(() -> psiFile.getViewProvider().getContents());
-        LowLevelSearchUtil.processTexts(text, 0, text.length(), searcher, index -> {
+        LowLevelSearchUtil.processTextOccurrences(text, 0, text.length(), searcher, index -> {
           myDumbService.runReadActionInSmartMode(() -> {
             PsiReference referenceAt = psiFile.findReferenceAt(index);
             if (referenceAt instanceof PsiMultiReference) {
