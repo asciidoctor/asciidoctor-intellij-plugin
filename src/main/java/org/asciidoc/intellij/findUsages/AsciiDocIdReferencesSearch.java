@@ -32,6 +32,7 @@ import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationKeyIndex;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
 import org.asciidoc.intellij.psi.AsciiDocBlockId;
 import org.asciidoc.intellij.psi.AsciiDocNamedElement;
+import org.asciidoc.intellij.psi.AsciiDocSearchScope;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -98,7 +99,7 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
       if (element instanceof AsciiDocAttributeDeclarationName) {
         Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(name, element.getProject(),
           // searching also the libraries is generally not useful; therefore restrict to project scope
-          ((GlobalSearchScope) scope).intersectWith(GlobalSearchScope.projectScope(element.getProject()))
+          ((GlobalSearchScope) scope).intersectWith(new AsciiDocSearchScope(element.getProject()))
         );
         for (AsciiDocAttributeDeclaration attribute : asciiDocAttributeDeclarations) {
           AsciiDocAttributeDeclarationName child = attribute.getAttributeDeclarationName();
@@ -143,7 +144,7 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
           }
         }
         final CharSequence text = ReadAction.compute(() -> psiFile.getViewProvider().getContents());
-        LowLevelSearchUtil.processTextOccurrences(text, 0, text.length(), searcher, index -> {
+        LowLevelSearchUtil.processTexts(text, 0, text.length(), searcher, index -> {
           myDumbService.runReadActionInSmartMode(() -> {
             PsiReference referenceAt = psiFile.findReferenceAt(index);
             if (referenceAt instanceof PsiMultiReference) {

@@ -90,7 +90,7 @@ public class AsciiDocUtil {
       return Collections.emptyList();
     }
     List<AsciiDocBlockId> result = null;
-    final GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+    final GlobalSearchScope scope = new AsciiDocSearchScope(project);
     ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
     Collection<AsciiDocBlockId> asciiDocBlockIds = AsciiDocBlockIdKeyIndex.getInstance().get(key, project, scope);
     for (AsciiDocBlockId asciiDocBlockId : asciiDocBlockIds) {
@@ -249,19 +249,11 @@ public class AsciiDocUtil {
 
   static List<AsciiDocBlockId> findIds(Project project) {
     List<AsciiDocBlockId> result = new ArrayList<>();
-    ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
     Collection<String> keys = AsciiDocBlockIdKeyIndex.getInstance().getAllKeys(project);
-    final GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+    final GlobalSearchScope scope = new AsciiDocSearchScope(project);
     for (String key : keys) {
       Collection<AsciiDocBlockId> asciiDocBlockIds = AsciiDocBlockIdKeyIndex.getInstance().get(key, project, scope);
       for (AsciiDocBlockId asciiDocBlockId : asciiDocBlockIds) {
-        VirtualFile virtualFile = asciiDocBlockId.getContainingFile().getVirtualFile();
-        if (index.isInLibrary(virtualFile)
-          || index.isExcluded(virtualFile)
-          || index.isInLibraryClasses(virtualFile)
-          || index.isInLibrarySource(virtualFile)) {
-          continue;
-        }
         result.add(asciiDocBlockId);
       }
     }
@@ -278,18 +270,11 @@ public class AsciiDocUtil {
     }
     ProgressManager.checkCanceled();
     List<AsciiDocAttributeDeclaration> result = null;
-    final GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+    final GlobalSearchScope scope = new AsciiDocSearchScope(project);
     Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(key, project, scope);
-    ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
     Map<VirtualFile, Boolean> cache = new HashMap<>();
     for (AsciiDocAttributeDeclaration asciiDocAttributeDeclaration : asciiDocAttributeDeclarations) {
       VirtualFile virtualFile = asciiDocAttributeDeclaration.getContainingFile().getVirtualFile();
-      if (index.isInLibrary(virtualFile)
-        || index.isExcluded(virtualFile)
-        || index.isInLibraryClasses(virtualFile)
-        || index.isInLibrarySource(virtualFile)) {
-        continue;
-      }
       if (onlyAntora) {
         if (!cache.computeIfAbsent(virtualFile.getParent(), s -> findAntoraModuleDir(project, s) != null)) {
           continue;
@@ -309,20 +294,13 @@ public class AsciiDocUtil {
 
   static List<AsciiDocAttributeDeclaration> findAttributes(Project project, boolean onlyAntora) {
     List<AsciiDocAttributeDeclaration> result = new ArrayList<>();
-    ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
     Collection<String> keys = AsciiDocAttributeDeclarationKeyIndex.getInstance().getAllKeys(project);
-    final GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+    final GlobalSearchScope scope = new AsciiDocSearchScope(project);
     Map<VirtualFile, Boolean> cache = new HashMap<>();
     for (String key : keys) {
       Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(key, project, scope);
       for (AsciiDocAttributeDeclaration asciiDocAttributeDeclaration : asciiDocAttributeDeclarations) {
         VirtualFile virtualFile = asciiDocAttributeDeclaration.getContainingFile().getVirtualFile();
-        if (index.isInLibrary(virtualFile)
-          || index.isExcluded(virtualFile)
-          || index.isInLibraryClasses(virtualFile)
-          || index.isInLibrarySource(virtualFile)) {
-          continue;
-        }
         if (onlyAntora) {
           if (!cache.computeIfAbsent(virtualFile.getParent(), s -> findAntoraModuleDir(project, s) != null)) {
             continue;
@@ -827,7 +805,7 @@ public class AsciiDocUtil {
     }
 
     PsiFile[] files =
-      FilenameIndex.getFilesByName(project, ANTORA_YML, GlobalSearchScope.projectScope(project));
+      FilenameIndex.getFilesByName(project, ANTORA_YML, new AsciiDocSearchScope(project));
     ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
     Collection<VirtualFile> result = new HashSet<>();
     for (PsiFile file : files) {
@@ -1258,7 +1236,7 @@ public class AsciiDocUtil {
         otherModuleName = "ROOT";
       }
       PsiFile[] files =
-        FilenameIndex.getFilesByName(project, ANTORA_YML, GlobalSearchScope.projectScope(project));
+        FilenameIndex.getFilesByName(project, ANTORA_YML, new AsciiDocSearchScope(project));
       // sort by path proximity
       Arrays.sort(files,
         Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
@@ -1330,7 +1308,7 @@ public class AsciiDocUtil {
     }
     return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
       PsiFile[] files =
-        FilenameIndex.getFilesByName(project, ANTORA_YML, GlobalSearchScope.projectScope(project));
+        FilenameIndex.getFilesByName(project, ANTORA_YML, new AsciiDocSearchScope(project));
       List<AntoraModule> result = new ArrayList<>();
       // sort by path proximity
       Arrays.sort(files,

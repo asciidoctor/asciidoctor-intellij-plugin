@@ -9,7 +9,6 @@ import com.intellij.psi.PsiPackage;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.psi.util.ClassUtil;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +69,7 @@ public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implemen
     }
     PsiClass[] fullQualifiedClasses = JavaPsiFacade.getInstance(myElement.getProject()).findClasses(
       name,
-      GlobalSearchScope.projectScope(myElement.getProject())
+      new AsciiDocSearchScope(myElement.getProject())
     );
     for (PsiClass aClass : fullQualifiedClasses) {
       if (annotation && !aClass.isAnnotationType()) {
@@ -84,7 +83,7 @@ public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implemen
     }
     PsiClass[] shortNamedClasses = PsiShortNamesCache.getInstance(myElement.getProject()).getClassesByName(
       name,
-      GlobalSearchScope.projectScope(myElement.getProject())
+      new AsciiDocSearchScope(myElement.getProject())
     );
     for (PsiClass aClass : shortNamedClasses) {
       if (annotation && !aClass.isAnnotationType()) {

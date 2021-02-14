@@ -8,7 +8,6 @@ import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.search.FilenameIndex;
-import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +27,7 @@ public class AsciiDocSimpleFileReference extends PsiReferenceBase<PsiElement> im
   public ResolveResult[] multiResolve(boolean incompleteCode) {
     List<ResolveResult> results = new ArrayList<>();
     String name = myRangeInElement.substring(myElement.getText());
-    PsiFile[] filesByName = FilenameIndex.getFilesByName(myElement.getProject(), name, GlobalSearchScope.projectScope(myElement.getProject()));
+    PsiFile[] filesByName = FilenameIndex.getFilesByName(myElement.getProject(), name, new AsciiDocSearchScope(myElement.getProject()));
     for (PsiFile file : filesByName) {
       results.add(new PsiElementResolveResult(file));
     }
