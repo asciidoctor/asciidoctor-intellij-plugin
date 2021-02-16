@@ -29,6 +29,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.serviceContainer.AlreadyDisposedException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -715,7 +716,9 @@ public class AsciiDoc {
           ANTORA_INCLUDE_ADAPTER.setAntoraDetails(null, null);
           asciidoctor.unregisterLogHandler(logHandler);
         }
-      } catch (ProcessCanceledException ex) {
+      } catch (AlreadyDisposedException | ProcessCanceledException ex) {
+        // AlreadyDisposedException: IDE is shutting down
+        // ProcessCanceledException: reading interrupted by event dispatch thread
         throw ex;
       } catch (Exception | ServiceConfigurationError ex) {
         LOG.warn("unable to render AsciiDoc document", ex);
