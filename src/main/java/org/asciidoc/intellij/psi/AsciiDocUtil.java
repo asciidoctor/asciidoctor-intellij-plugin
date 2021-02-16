@@ -588,7 +588,7 @@ public class AsciiDocUtil {
               }
               Set<VirtualFile> roots = new HashSet<>();
               for (VFileEvent event : events) {
-                if (event.getFile() != null) {
+                if (event.getFile() != null && event.getFile().isValid()) {
                   VirtualFile contentRootForFile = ProjectFileIndex.getInstance(project).getContentRootForFile(event.getFile());
                   if (contentRootForFile != null) {
                     roots.add(contentRootForFile);
