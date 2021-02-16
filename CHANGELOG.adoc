@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - auto-complete for images will no longer auto-suggest anchor names (#672)
 - transfer long exception messages to Sentry to avoid cut-offs (#672)
 - speed up lookup of references by declaring a specific search scope that excludes libraries (#672)
+- adopt workaround to prevent JCEF preview error "`Cannot Open the Page/ERR_ABORTED`" to IntelliJ 2021.x. (#658)
 
 === 0.32.18
 

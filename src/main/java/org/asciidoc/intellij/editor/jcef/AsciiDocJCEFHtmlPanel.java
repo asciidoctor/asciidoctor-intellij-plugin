@@ -229,12 +229,19 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     // maybe even trigger an error when the preview is force-refreshed and a currently loading page is aborted
     // therefore: remove JetBrains load handler
     try {
-      Field privateLoadHandler = JBCefBrowser.class.getDeclaredField("myLoadHandler");
+      Field privateLoadHandler;
+      try {
+        // this is 2020.3
+        privateLoadHandler = JBCefBrowser.class.getDeclaredField("myLoadHandler");
+      } catch (NoSuchFieldException ex) {
+        // this is 2021.1
+        privateLoadHandler = this.getClass().getClassLoader().loadClass("com.intellij.ui.jcef.JBCefBrowserBase").getDeclaredField("myLoadHandler");
+      }
       privateLoadHandler.setAccessible(true);
       CefLoadHandler loadHandler = (CefLoadHandler) privateLoadHandler.get(this);
       getJBCefClient().removeLoadHandler(loadHandler, getCefBrowser());
-    } catch (NoSuchFieldException | IllegalAccessException e) {
-      LOG.info("unable to clean up JCEF load handler");
+    } catch (NoSuchFieldException | IllegalAccessException | ClassNotFoundException e) {
+      LOG.info("unable to clean up JCEF load handler", e);
     }
 
     try {
