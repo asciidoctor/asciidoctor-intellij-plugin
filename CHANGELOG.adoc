@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.20
+
+- avoid exception when looking up items by name and item is in a library (#677)
+
 === 0.32.19
 
 - auto-complete for images will no longer auto-suggest anchor names (#672)

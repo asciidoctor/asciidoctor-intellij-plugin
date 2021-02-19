@@ -110,8 +110,8 @@ public class AsciiDocUtil {
     return result != null ? result : Collections.emptyList();
   }
 
-  @NotNull
-  private static List<AsciiDocBlockId> collectBlockId(List<AsciiDocBlockId> result, ProjectFileIndex index, AsciiDocBlockId asciiDocBlockId) {
+  @Nullable
+  private static List<AsciiDocBlockId> collectBlockId(@Nullable List<AsciiDocBlockId> result, ProjectFileIndex index, AsciiDocBlockId asciiDocBlockId) {
     VirtualFile virtualFile = asciiDocBlockId.getContainingFile().getVirtualFile();
     if (index.isInLibrary(virtualFile)
       || index.isExcluded(virtualFile)
