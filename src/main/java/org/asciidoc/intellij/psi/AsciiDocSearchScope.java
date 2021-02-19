@@ -27,7 +27,10 @@ public class AsciiDocSearchScope extends GlobalSearchScope {
 
   @Override
   public boolean contains(@NotNull VirtualFile file) {
-    return !myFileIndexFacade.isExcludedFile(file);
+    // even if isSearchInLibraries returns false, the check for isInLibraryXXX is still needed
+    return !myFileIndexFacade.isExcludedFile(file) &&
+      !myFileIndexFacade.isInLibraryClasses(file) &&
+      !myFileIndexFacade.isInLibrarySource(file);
   }
 
   @Override

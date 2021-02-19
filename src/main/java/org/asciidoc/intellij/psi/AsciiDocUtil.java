@@ -14,7 +14,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -91,10 +90,9 @@ public class AsciiDocUtil {
     }
     List<AsciiDocBlockId> result = null;
     final GlobalSearchScope scope = new AsciiDocSearchScope(project);
-    ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
     Collection<AsciiDocBlockId> asciiDocBlockIds = AsciiDocBlockIdKeyIndex.getInstance().get(key, project, scope);
     for (AsciiDocBlockId asciiDocBlockId : asciiDocBlockIds) {
-      result = collectBlockId(result, index, asciiDocBlockId);
+      result = collectBlockId(result, asciiDocBlockId);
     }
     if (result == null) {
       // if no block IDs have been found, search for block IDs that have attribute that need to resolve
@@ -104,21 +102,14 @@ public class AsciiDocUtil {
         if (!matchKeyWithName(name, key, project, new ArrayDeque<>())) {
           continue;
         }
-        result = collectBlockId(result, index, asciiDocBlockId);
+        result = collectBlockId(result, asciiDocBlockId);
       }
     }
     return result != null ? result : Collections.emptyList();
   }
 
-  @Nullable
-  private static List<AsciiDocBlockId> collectBlockId(@Nullable List<AsciiDocBlockId> result, ProjectFileIndex index, AsciiDocBlockId asciiDocBlockId) {
-    VirtualFile virtualFile = asciiDocBlockId.getContainingFile().getVirtualFile();
-    if (index.isInLibrary(virtualFile)
-      || index.isExcluded(virtualFile)
-      || index.isInLibraryClasses(virtualFile)
-      || index.isInLibrarySource(virtualFile)) {
-      return result;
-    }
+  @NotNull
+  private static List<AsciiDocBlockId> collectBlockId(@Nullable List<AsciiDocBlockId> result, AsciiDocBlockId asciiDocBlockId) {
     if (result == null) {
       result = new ArrayList<>();
     }
@@ -252,10 +243,7 @@ public class AsciiDocUtil {
     Collection<String> keys = AsciiDocBlockIdKeyIndex.getInstance().getAllKeys(project);
     final GlobalSearchScope scope = new AsciiDocSearchScope(project);
     for (String key : keys) {
-      Collection<AsciiDocBlockId> asciiDocBlockIds = AsciiDocBlockIdKeyIndex.getInstance().get(key, project, scope);
-      for (AsciiDocBlockId asciiDocBlockId : asciiDocBlockIds) {
-        result.add(asciiDocBlockId);
-      }
+      result.addAll(AsciiDocBlockIdKeyIndex.getInstance().get(key, project, scope));
     }
     return result;
   }
@@ -1056,7 +1044,7 @@ public class AsciiDocUtil {
       return Collections.singletonList(originalKey);
     }
     if (moduleDir != null) {
-      return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority((Computable<List<String>>) () -> {
+      return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
         String key = originalKey;
         String myModuleName = moduleDir.getName();
         VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
