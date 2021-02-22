@@ -10,7 +10,7 @@ buildscript {
   }
 }
 plugins {
-  id "org.jetbrains.intellij" version "0.6.5"
+  id "org.jetbrains.intellij" version "0.7.1"
   id "org.jetbrains.grammarkit" version "2020.2.1"
   id "checkstyle"
   id 'org.asciidoctor.jvm.convert' version '3.3.2'
@@ -44,7 +44,7 @@ allprojects {
 // enforce target classfile version of 8
 
 intellij {
-  version 'IC-211.5538.20-EAP-SNAPSHOT' // 'IC-2020.3.2'
+  version 'IC-211.6085.26-EAP-SNAPSHOT' // 'IC-2020.3.2'
   pluginName 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild false
   plugins = [
