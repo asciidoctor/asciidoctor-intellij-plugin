@@ -7,10 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.21 (work in progress)
+=== 0.32.21
 
 - avoid exception when processing file events for already disposed module (#683)
-- additional logging for lexer issues to handle 'Whitespace element contains non-whitespace-characters' (#685)
+- fixing exception "`Whitespace element contains non-whitespace-characters`" in lexer (#685)
 
 === 0.32.20
 

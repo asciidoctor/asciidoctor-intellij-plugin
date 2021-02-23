@@ -516,7 +516,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          if (!isEscaped()) {
                            yypushstate(); yybegin(ATTRIBUTE_REF); return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
                          } else {
-                           textFormat();
+                           return textFormat();
                          }
                        }
   // parse the start of a REF to allow brace-matcher to autocomplete this
@@ -524,7 +524,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          if (!isEscaped()) {
                            return AsciiDocTokenTypes.ATTRIBUTE_REF_START;
                          } else {
-                           textFormat();
+                           return textFormat();
                          }
                        }
 }

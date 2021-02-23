@@ -83,6 +83,7 @@ class AsciiDocBlock extends AbstractBlock {
         CharSequence text = child.getChars();
         int end = text.length();
         if (myWhiteSpaceStrategy.check(text, 0, end) != end) {
+          // reason for this to happen: a missing "return" in lexer for the first non-whitespace character
           StringBuilder tree = new StringBuilder(childToString(child));
           ASTNode node = child.getTreeParent();
           while (node != null) {
