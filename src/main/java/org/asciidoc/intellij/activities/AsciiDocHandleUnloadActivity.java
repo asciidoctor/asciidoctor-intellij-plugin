@@ -3,6 +3,7 @@ package org.asciidoc.intellij.activities;
 import com.intellij.ide.plugins.CannotUnloadPluginException;
 import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -35,31 +36,35 @@ public class AsciiDocHandleUnloadActivity implements StartupActivity, DumbAware 
     if (!setupComplete) {
       setupComplete = true;
       LOG.info("setup of subscription");
-      MessageBusConnection busConnection = ApplicationManager.getApplication().getMessageBus().connect();
-      busConnection.subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
-        @Override
-        public void checkUnloadPlugin(@NotNull IdeaPluginDescriptor pluginDescriptor) throws CannotUnloadPluginException {
-          if (pluginDescriptor.getPluginId() != null
-            && Objects.equals(pluginDescriptor.getPluginId().getIdString(), AsciiDocPlugin.PLUGIN_ID)) {
-            LOG.info("checkUnloadPlugin");
-            // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/512
-            // another reason: on windows even after unloading JAR file of the plugin still be locked and can't be deleted, making uninstall impossible
-            // https://youtrack.jetbrains.com/issue/IDEA-244471
-            throw new CannotUnloadPluginException("unloading mechanism is not safe, incomplete unloading might lead to strange exceptions");
-            // AsciiDoc.checkUnloadPlugin();
+      Application application = ApplicationManager.getApplication();
+      if (application != null) {
+        // check application first to don't interfere with unit tests, as this is not initialized for Unit tests
+        MessageBusConnection busConnection = application.getMessageBus().connect();
+        busConnection.subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
+          @Override
+          public void checkUnloadPlugin(@NotNull IdeaPluginDescriptor pluginDescriptor) throws CannotUnloadPluginException {
+            if (pluginDescriptor.getPluginId() != null
+              && Objects.equals(pluginDescriptor.getPluginId().getIdString(), AsciiDocPlugin.PLUGIN_ID)) {
+              LOG.info("checkUnloadPlugin");
+              // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/512
+              // another reason: on windows even after unloading JAR file of the plugin still be locked and can't be deleted, making uninstall impossible
+              // https://youtrack.jetbrains.com/issue/IDEA-244471
+              throw new CannotUnloadPluginException("unloading mechanism is not safe, incomplete unloading might lead to strange exceptions");
+              // AsciiDoc.checkUnloadPlugin();
+            }
           }
-        }
 
-        @Override
-        public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
-          if (pluginDescriptor.getPluginId() != null
-            && Objects.equals(pluginDescriptor.getPluginId().getIdString(), AsciiDocPlugin.PLUGIN_ID)) {
-            LOG.info("beforePluginUnload");
-            AsciiDoc.beforePluginUnload();
-            busConnection.dispose();
+          @Override
+          public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
+            if (pluginDescriptor.getPluginId() != null
+              && Objects.equals(pluginDescriptor.getPluginId().getIdString(), AsciiDocPlugin.PLUGIN_ID)) {
+              LOG.info("beforePluginUnload");
+              AsciiDoc.beforePluginUnload();
+              busConnection.dispose();
+            }
           }
-        }
-      });
+        });
+      }
     }
   }
 
