@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.21 (work in progress)
+
+- avoid exception when processing file events for already disposed module (#683)
+
 === 0.32.20
 
 - avoid exception when looking up items by name and item is in a library (#677)

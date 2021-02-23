@@ -576,11 +576,15 @@ public class AsciiDocUtil {
               }
               Set<VirtualFile> roots = new HashSet<>();
               for (VFileEvent event : events) {
-                if (event.getFile() != null && event.getFile().isValid()) {
-                  VirtualFile contentRootForFile = ProjectFileIndex.getInstance(project).getContentRootForFile(event.getFile());
-                  if (contentRootForFile != null) {
-                    roots.add(contentRootForFile);
+                try {
+                  if (event.getFile() != null && event.getFile().isValid()) {
+                    VirtualFile contentRootForFile = ProjectFileIndex.getInstance(project).getContentRootForFile(event.getFile());
+                    if (contentRootForFile != null) {
+                      roots.add(contentRootForFile);
+                    }
                   }
+                } catch (AlreadyDisposedException ignored) {
+                  // might happen if file is in a module that has already been disposed
                 }
               }
               if (roots.size() > 0) {
