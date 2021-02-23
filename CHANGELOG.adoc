@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.21 (work in progress)
 
 - avoid exception when processing file events for already disposed module (#683)
+- additional logging for lexer issues to handle 'Whitespace element contains non-whitespace-characters' (#685)
 
 === 0.32.20
 

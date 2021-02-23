@@ -82,12 +82,28 @@ class AsciiDocBlock extends AbstractBlock {
         CharSequence text = child.getChars();
         int end = text.length();
         if (myWhiteSpaceStrategy.check(text, 0, end) != end) {
-          throw new IllegalStateException("Whitespace element contains non-whitespace-characters: '" + child.getText() + "' at offset + " + child.getStartOffset());
+          StringBuilder tree = new StringBuilder(childToString(child));
+          ASTNode node = child.getTreeParent();
+          while (node != null) {
+            tree.insert(0, childToString(node) + " > ");
+            node = node.getTreeParent();
+          }
+          throw new IllegalStateException("Whitespace element contains non-whitespace-characters: '" +
+            replaceNewlinesForPrinting(child.getText()) + "' at offset + " + child.getStartOffset() + ", tree: " + tree);
         }
       }
       child = child.getTreeNext();
     }
     return result;
+  }
+
+  private String replaceNewlinesForPrinting(String text) {
+    return text.replaceAll("\\\\", "\\\\\\\\").replaceAll("\n", "\\\\n");
+  }
+
+  @NotNull
+  private String childToString(ASTNode child) {
+    return child.getElementType() + ":" + child.getPsi().getLanguage().getDisplayName();
   }
 
   @Nullable
