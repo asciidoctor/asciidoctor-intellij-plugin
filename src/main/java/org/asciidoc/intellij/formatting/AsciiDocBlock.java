@@ -29,7 +29,7 @@ class AsciiDocBlock extends AbstractBlock {
   private boolean table = false;
   private boolean hardbreaks = false;
   private final CodeStyleSettings settings;
-  private final Map<Language, WhiteSpaceFormattingStrategy> wssCache;
+  private final Map<String, WhiteSpaceFormattingStrategy> wssCache;
 
   AsciiDocBlock(@NotNull ASTNode node, CodeStyleSettings settings) {
     super(node, null, Alignment.createAlignment());
@@ -37,7 +37,7 @@ class AsciiDocBlock extends AbstractBlock {
     this.wssCache = new HashMap<>();
   }
 
-  private AsciiDocBlock(@NotNull ASTNode node, CodeStyleSettings settings, boolean verse, boolean table, boolean hardbreaks, Map<Language, WhiteSpaceFormattingStrategy> wss, Alignment alignment) {
+  private AsciiDocBlock(@NotNull ASTNode node, CodeStyleSettings settings, boolean verse, boolean table, boolean hardbreaks, Map<String, WhiteSpaceFormattingStrategy> wss, Alignment alignment) {
     super(node, null, alignment);
     this.settings = settings;
     this.verse = verse;
@@ -75,8 +75,9 @@ class AsciiDocBlock extends AbstractBlock {
         // verse blocks with have their own alignment so that they can add spaces as needed to the beginning of the line
         result.add(new AsciiDocBlock(child, settings, verse, table, hardbreaks, wssCache, verse ? Alignment.createAlignment() : getAlignment()));
       } else {
-        WhiteSpaceFormattingStrategy myWhiteSpaceStrategy = wssCache.computeIfAbsent(((PsiWhiteSpace) child).getLanguage(),
-          WhiteSpaceFormattingStrategyFactory::getStrategy);
+        Language language = ((PsiWhiteSpace) child).getLanguage();
+        WhiteSpaceFormattingStrategy myWhiteSpaceStrategy = wssCache.computeIfAbsent(language.getID(),
+          s -> WhiteSpaceFormattingStrategyFactory.getStrategy(language));
         // double-check for a whitespace problem in lexer before re-formatting,
         // otherwise non-whitespace characters might get lost!
         CharSequence text = child.getChars();
@@ -89,7 +90,7 @@ class AsciiDocBlock extends AbstractBlock {
             node = node.getTreeParent();
           }
           throw new IllegalStateException("Whitespace element contains non-whitespace-characters: '" +
-            replaceNewlinesForPrinting(child.getText()) + "' at offset + " + child.getStartOffset() + ", tree: " + tree);
+            replaceNewlinesForPrinting(child.getText()) + "' at offset " + child.getStartOffset() + ", tree: " + tree);
         }
       }
       child = child.getTreeNext();
