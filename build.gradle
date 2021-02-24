@@ -10,7 +10,7 @@ buildscript {
   }
 }
 plugins {
-  id "org.jetbrains.intellij" version "0.7.1"
+  id "org.jetbrains.intellij" version "0.7.2"
   id "org.jetbrains.grammarkit" version "2020.2.1"
   id "checkstyle"
   id 'org.asciidoctor.jvm.convert' version '3.3.2'
