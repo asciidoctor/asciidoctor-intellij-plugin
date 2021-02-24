@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.editor.notification;
 
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
@@ -51,9 +52,8 @@ public class EnableSoftWrapNotificationProvider extends EditorNotifications.Prov
     final EditorNotificationPanel panel = new EditorNotificationPanel();
     panel.setText("Writing AsciiDoc works best with soft-wrap enabled. Do you want to enable it by default?");
     panel.createActionLabel("Yes, take me to the Soft Wrap settings!", ()
-      -> {
-      showSettingsDialog(project, "preferences.editor", "soft wraps");
-    });
+      -> ApplicationManager.getApplication().invokeLater(() -> showSettingsDialog(project, "preferences.editor", "soft wraps"))
+    );
     panel.createActionLabel("Do not show again", () -> {
       PropertiesComponent.getInstance().setValue(SOFTWRAP_AVAILABLE, true);
       EditorNotifications.updateAll();
