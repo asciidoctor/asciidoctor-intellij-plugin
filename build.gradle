@@ -49,7 +49,7 @@ intellij {
   updateSinceUntilBuild false
   plugins = [
     'PsiViewer:211-SNAPSHOT', // used for debugging
-    'PlantUML integration:4.3.1', // used to test highlighting of plantuml diagrams
+    'PlantUML integration:4.4.0', // used to test highlighting of plantuml diagrams
     'tanvd.grazi', // used for spell and grammar checking checking
     'com.intellij.javafx:1.0.3',
     'org.intellij.intelliLang', //
