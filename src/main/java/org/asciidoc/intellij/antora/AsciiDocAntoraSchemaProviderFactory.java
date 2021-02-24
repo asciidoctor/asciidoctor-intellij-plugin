@@ -1,7 +1,6 @@
 package org.asciidoc.intellij.antora;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NullableLazyValue;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.jsonSchema.extension.JsonSchemaFileProvider;
 import com.jetbrains.jsonSchema.extension.JsonSchemaProviderFactory;
@@ -21,12 +20,6 @@ public class AsciiDocAntoraSchemaProviderFactory implements JsonSchemaProviderFa
 
   public static class AntoraComponentSchemaFileProvider implements JsonSchemaFileProvider {
 
-    private final NullableLazyValue<VirtualFile> mySchemaFile;
-
-    public AntoraComponentSchemaFileProvider() {
-      mySchemaFile = NullableLazyValue.createValue(() -> JsonSchemaProviderFactory.getResourceFile(AsciiDocAntoraSchemaProviderFactory.class, "/jsonSchemas/antoraComponentSchema.json"));
-    }
-
     @Override
     public boolean isAvailable(@NotNull VirtualFile file) {
       return file.getName().equals("antora.yml");
@@ -41,7 +34,7 @@ public class AsciiDocAntoraSchemaProviderFactory implements JsonSchemaProviderFa
     @Nullable
     @Override
     public VirtualFile getSchemaFile() {
-      return mySchemaFile.getValue();
+      return JsonSchemaProviderFactory.getResourceFile(AsciiDocAntoraSchemaProviderFactory.class, "/jsonSchemas/antoraComponentSchema.json");
     }
 
     @NotNull
@@ -52,12 +45,6 @@ public class AsciiDocAntoraSchemaProviderFactory implements JsonSchemaProviderFa
   }
 
   public static class AntoraPlaybookSchemaFileProvider implements JsonSchemaFileProvider {
-
-    private final NullableLazyValue<VirtualFile> mySchemaFile;
-
-    public AntoraPlaybookSchemaFileProvider() {
-      mySchemaFile = NullableLazyValue.createValue(() -> JsonSchemaProviderFactory.getResourceFile(AsciiDocAntoraSchemaProviderFactory.class, "/jsonSchemas/antoraPlaybookSchema.json"));
-    }
 
     @Override
     public boolean isAvailable(@NotNull VirtualFile file) {
@@ -73,7 +60,7 @@ public class AsciiDocAntoraSchemaProviderFactory implements JsonSchemaProviderFa
     @Nullable
     @Override
     public VirtualFile getSchemaFile() {
-      return mySchemaFile.getValue();
+      return JsonSchemaProviderFactory.getResourceFile(AsciiDocAntoraSchemaProviderFactory.class, "/jsonSchemas/antoraPlaybookSchema.json");
     }
 
     @NotNull
