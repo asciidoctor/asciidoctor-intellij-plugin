@@ -247,12 +247,12 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     myKrokiUrl.setTextToTriggerEmptyTextStatus("https://kroki.io");
 
-    NumberFormat rateFormat = NumberFormat.getPercentInstance();
+    NumberFormat rateFormat = NumberFormat.getNumberInstance();
     rateFormat.setMinimumFractionDigits(0);
     ((DecimalFormat) rateFormat).setParseBigDecimal(true);
     rateFormat.setGroupingUsed(false);
     myZoom.setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(rateFormat)));
-    myZoom.setValue(BigDecimal.valueOf(settings.getZoom(), 2));
+    myZoom.setValue(BigDecimal.valueOf(settings.getZoom(), 0));
     myHideErrorsInSourceBlocks.setSelected(settings.isHideErrorsInSourceBlocks());
     myHideErrorsInSourceBlocks.addItemListener(e -> {
       myHideErrorsByLanguage.setVisible(!myHideErrorsInSourceBlocks.isSelected());
@@ -319,7 +319,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myLanguageForPassthrough.getText(), myDisabledInjectionsByLanguage.getText(),
       myShowAsciiDocWarningsAndErrorsInEditor.isSelected(), myInplacePreviewRefresh.isSelected(),
       myEnableKroki.isSelected(), krokiUrl, myEnabledAttributeFolding.isSelected(),
-      ((BigDecimal) myZoom.getValue()).setScale(2, RoundingMode.UP).unscaledValue().intValue(),
+      ((BigDecimal) myZoom.getValue()).setScale(0, RoundingMode.UP).unscaledValue().intValue(),
       myHideErrorsInSourceBlocks.isSelected(), myHideErrorsByLanguage.getText());
   }
 }

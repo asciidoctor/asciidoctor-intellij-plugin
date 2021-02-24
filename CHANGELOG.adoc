@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.22
 
 - simplified code to handle Antora JSON Schemas to avoid exception in log (#687)
+- zoom level in plugin's setting now entered without the percent sign in input fiel to avoid parsing problems when percent sign is missing (#674)
 
 === 0.32.21
 
