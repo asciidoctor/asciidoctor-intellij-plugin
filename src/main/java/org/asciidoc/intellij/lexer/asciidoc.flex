@@ -167,10 +167,22 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
     isTags = false;
   }
   private IElementType textFormat() {
+    if(yystate() == INLINE_URL_NO_DELIMITER || yystate() == LINKURL) {
+      return AsciiDocTokenTypes.URL_LINK;
+    }
+    if(yystate() == BLOCK_ATTRS || yystate() == BLOCK_MACRO_ATTRS) {
+      return AsciiDocTokenTypes.ATTR_NAME;
+    }
+    if(yystate() == ANCHORID) {
+      return AsciiDocTokenTypes.BLOCKID;
+    }
+    if(yystate() == LINKANCHOR) {
+      return AsciiDocTokenTypes.LINKANCHOR;
+    }
     if(yystate() == DESCRIPTION) {
       return AsciiDocTokenTypes.DESCRIPTION;
     }
-    if(yystate() == ATTRIBUTE_VAL) {
+    if(yystate() == ATTRIBUTE_VAL || yystate() == ATTRS_SINGLE_QUOTE || yystate() == ATTRS_DOUBLE_QUOTE || yystate() == ATTRS_NO_QUOTE) {
       return AsciiDocTokenTypes.ATTRIBUTE_VAL;
     }
     if(yystate() == LINKFILE || yystate() == LINKFILEWITHBLANK) {
@@ -182,14 +194,20 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
     if(yystate() == LINKTEXT) {
       return AsciiDocTokenTypes.LINKTEXT;
     }
+    if(yystate() == REF) {
+      return AsciiDocTokenTypes.REF;
+    }
     if(yystate() == REFTEXT) {
       return AsciiDocTokenTypes.REFTEXT;
     }
-    if(yystate() == BLOCKREFTEXT) {
+    if(yystate() == BLOCKREFTEXT || yystate() == INLINEREFTEXT || yystate() == BIBNAME) {
       return AsciiDocTokenTypes.BLOCKREFTEXT;
     }
-    if(yystate() == KBD_MACRO_ATTRS) {
+    if(yystate() == KBD_MACRO_ATTRS || yystate() == INLINE_MACRO) {
       return AsciiDocTokenTypes.INLINE_MACRO_BODY;
+    }
+    if(yystate() == HEADING || yystate() == DOCTITLE) {
+      return AsciiDocTokenTypes.HEADING_TOKEN;
     }
     if((doublemono || singlemono) && (singlebold || doublebold) && (doubleitalic || singleitalic)) {
       return AsciiDocTokenTypes.MONOBOLDITALIC;

@@ -629,6 +629,11 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:WHITE_SPACE (' ')");
   }
 
+  public void testEscapedInHeading() {
+    doTest("== Heading \\{esc} word",
+      "AsciiDoc:HEADING_TOKEN ('== Heading \\{esc} word')");
+  }
+
   public void testAttributeWithoutValue() {
     doTest(":attribute:",
       "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +

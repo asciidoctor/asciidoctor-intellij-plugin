@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.23
+
+- handle escaped attribute references in headlines (#689)
+
 === 0.32.22
 
 - simplified code to handle Antora JSON Schemas to avoid exception in log (#687)
