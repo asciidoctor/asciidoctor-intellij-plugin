@@ -26,7 +26,7 @@ public class AsciiDocAntoraSchemaProviderFactory implements JsonSchemaProviderFa
   }
 
   public abstract static class BaseJsonSchemaFileProvider implements JsonSchemaFileProvider {
-    private VirtualFile resourceFile;
+    private volatile VirtualFile resourceFile;
 
     @Override
     public final @Nullable VirtualFile getSchemaFile() {
