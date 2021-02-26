@@ -95,6 +95,12 @@ public class AsciiDocAntoraSchemaProviderFactory implements JsonSchemaProviderFa
     }
   }
 
+  /**
+   * Load JSON Schema from class path directly.
+   * Using JsonSchemaProviderFactory.getResourceFile() didn't work here, as with a dynamically loaded plugin
+   * the asynchronous VFS might still be missing the JAR file, and would return NULL.
+   * This is a workaround for a bug reported in YouTrack: https://youtrack.jetbrains.com/issue/IDEA-262981
+   */
   public static VirtualFile getResourceFile(String resourcePath) {
     InputStream resourceAsStream = null;
     try {
