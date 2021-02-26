@@ -35,6 +35,7 @@ import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.ui.JreHiDpiUtil;
 import com.intellij.ui.jcef.JBCefBrowser;
 import com.intellij.ui.jcef.JBCefJSQuery;
 import com.intellij.ui.jcef.JBCefPsiNavigationUtils;
@@ -949,6 +950,21 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     @Override
     public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
       if (isLoading) {
+        if (JreHiDpiUtil.isJreHiDPIEnabled() && !hasLoadedOnce) {
+          ApplicationManager.getApplication().executeOnPooledThread(() -> {
+            // change the height back and forth for one pixel to force re-sizing of the JCEF in the preview
+            // to fix situations where two screens are of different HiDPI mode - once per new JCEF preview
+            float scale = JBUIScale.sysScale(AsciiDocJCEFHtmlPanel.this.getCefBrowser().getUIComponent());
+            AsciiDocJCEFHtmlPanel.this.getCefBrowser().wasResized(
+              Math.round(AsciiDocJCEFHtmlPanel.this.getCefBrowser().getUIComponent().getWidth() * scale),
+              Math.round(AsciiDocJCEFHtmlPanel.this.getCefBrowser().getUIComponent().getHeight() * scale - 1.0f)
+            );
+            AsciiDocJCEFHtmlPanel.this.getCefBrowser().wasResized(
+              Math.round(AsciiDocJCEFHtmlPanel.this.getCefBrowser().getUIComponent().getWidth() * scale),
+              Math.round(AsciiDocJCEFHtmlPanel.this.getCefBrowser().getUIComponent().getHeight() * scale)
+            );
+          });
+        }
         getCefBrowser().executeJavaScript(
           "var value = document.documentElement.scrollTop || document.body.scrollTop;" +
             myJSQuerySetScrollY.inject("value"),

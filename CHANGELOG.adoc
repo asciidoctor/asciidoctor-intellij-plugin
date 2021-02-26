@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.24
+
+- render preview in designated area in cases where primary and secondary screen have different zoom levels (#690)
+
 === 0.32.23
 
 - handle escaped attribute references in headlines (#689)
