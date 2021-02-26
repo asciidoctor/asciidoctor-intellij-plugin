@@ -954,6 +954,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
           ApplicationManager.getApplication().executeOnPooledThread(() -> {
             // change the height back and forth for one pixel to force re-sizing of the JCEF in the preview
             // to fix situations where two screens are of different HiDPI mode - once per new JCEF preview
+            // workaround for: https://youtrack.jetbrains.com/issue/IDEA-246551
             float scale = JBUIScale.sysScale(AsciiDocJCEFHtmlPanel.this.getCefBrowser().getUIComponent());
             AsciiDocJCEFHtmlPanel.this.getCefBrowser().wasResized(
               Math.round(AsciiDocJCEFHtmlPanel.this.getCefBrowser().getUIComponent().getWidth() * scale),
