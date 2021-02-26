@@ -61,11 +61,11 @@ PsiViewer:: Helps analyzing the PSI (abstract syntax tree) created from the plug
 CheckStyle:: This project contains a ready-to-go CheckStyle configuration that will work both in the IDE and in gradle.
 --
 
-. Go to menu:Project Structure...[Platform Settings > SDK]:
+. Go to menu:Project Structure...[Project Setting > Project]:
 
-.. add "JetBrains JDK 8" (see <<JDK>> above where to download)
+.. choose "`Amazon Corretto 11`" as _Project JDK_ +
+(use menu:Add JDK[] and menu:Download JDK...[] if not already present)
 
-.. choose "JetBrains JDK 8" as the JDK for this project
 
 === Validation Tasks
 
