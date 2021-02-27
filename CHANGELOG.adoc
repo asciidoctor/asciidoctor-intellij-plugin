@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.25
 
 - focus on preview when no editor is available, therefore allowing keyboard navigation in preview (#691)
+- backporting support for different zoom levels on different screens to 2020.3.2 (#690)
 
 === 0.32.24
 
