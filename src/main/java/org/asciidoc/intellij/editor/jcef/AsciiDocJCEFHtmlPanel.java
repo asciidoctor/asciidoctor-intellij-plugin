@@ -59,6 +59,9 @@ import org.cef.handler.CefLoadHandlerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -109,6 +112,11 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   @Override
   public boolean isPrintingSupported() {
     return true;
+  }
+
+  @Override
+  public JComponent getPreferredFocusedComponent() {
+    return getComponent();
   }
 
   private JBCefJSQuery myZoomDelta;
@@ -279,6 +287,22 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     uiZoom = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getZoom() / 100.0;
 
     ApplicationManager.getApplication().executeOnPooledThread(() -> setHtml(prepareHtml(wrapHtmlForPage("Initializing..."), Collections.emptyMap())));
+
+    getComponent().addFocusListener(
+      new FocusListener() {
+        @Override
+        public void focusGained(FocusEvent e) {
+          updateFocusOfCefBrowserDependingOnComponentFocus();
+        }
+
+        @Override
+        public void focusLost(FocusEvent e) {
+          // as we will transfer the focus to the CEF browser on focus gained, ignore this here
+          // no need to propagate this event as someone else already got the focus
+        }
+      }
+    );
+
   }
 
   private void reregisterHandlers() {
@@ -415,6 +439,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     if (SystemInfoRt.isWindows) {
       /* this replaces the standard focus handler on Windows that
          would otherwise call setFocus(false) on the EDT that would take about 500ms and would make the UI slow.
+         See: https://youtrack.jetbrains.com/issue/IDEA-260841
        */
       getCefBrowser().getClient().removeFocusHandler();
       getCefBrowser().getClient().addFocusHandler(new CefFocusHandlerAdapter() {
@@ -422,9 +447,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         public boolean onSetFocus(CefBrowser browser, FocusSource source) {
           if (source == FocusSource.FOCUS_SOURCE_NAVIGATION) {
             if (SystemInfoRt.isWindows) {
-              ApplicationManager.getApplication().executeOnPooledThread(() -> {
-                getCefBrowser().setFocus(false);
-              });
+              updateFocusOfCefBrowserDependingOnComponentFocus();
             }
             return true; // suppress focusing the browser on navigation events
           }
@@ -437,6 +460,17 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         }
       });
     }
+  }
+
+  /**
+   * Will set the focus on the CEF browser if the component has the focus.
+   * Putting the focus on the CEF browser allows users to use PgUp/PgDown and cursor up/down to navigate the document.
+   * Un-setting the focus for the CEF component is important to have the focus on the editor on Windows.
+   */
+  private void updateFocusOfCefBrowserDependingOnComponentFocus() {
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      getCefBrowser().setFocus(getComponent().hasFocus());
+    });
   }
 
   @Nullable
@@ -950,6 +984,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     @Override
     public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
       if (isLoading) {
+        if (!hasLoadedOnce) {
+          updateFocusOfCefBrowserDependingOnComponentFocus();
+        }
         if (JreHiDpiUtil.isJreHiDPIEnabled() && !hasLoadedOnce) {
           ApplicationManager.getApplication().executeOnPooledThread(() -> {
             // change the height back and forth for one pixel to force re-sizing of the JCEF in the preview

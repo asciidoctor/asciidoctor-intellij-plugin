@@ -42,6 +42,10 @@ public interface AsciiDocHtmlPanel extends Disposable {
     return false;
   }
 
+  default JComponent getPreferredFocusedComponent() {
+    return null;
+  }
+
   enum PreviewTheme {
     INTELLIJ(AsciiDocBundle.message("asciidoc.preview.intellij")),
     ASCIIDOC(AsciiDocBundle.message("asciidoc.preview.asciidoc")),

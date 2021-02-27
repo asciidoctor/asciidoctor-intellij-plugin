@@ -382,7 +382,11 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   @Override
   @Nullable
   public JComponent getPreferredFocusedComponent() {
-    return myHtmlPanelWrapper;
+    JComponent preferredFocusedComponent = myPanel.getPreferredFocusedComponent();
+    if (preferredFocusedComponent == null) {
+      preferredFocusedComponent = myHtmlPanelWrapper;
+    }
+    return preferredFocusedComponent;
   }
 
   /**
