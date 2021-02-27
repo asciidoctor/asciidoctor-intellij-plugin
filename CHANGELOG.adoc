@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.26
+
+- minimize logic of focus handling after testing on Linux (#691)
+
 === 0.32.25
 
 - focus on preview when no editor is available, therefore allowing keyboard navigation in preview (#691)
