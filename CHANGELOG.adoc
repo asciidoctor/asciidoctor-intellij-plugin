@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.27 (work in progress)
+
+- avoid exception that editor has already been disposed (#693)
+
 === 0.32.26
 
 - minimize logic of focus handling after testing on Linux (#691)

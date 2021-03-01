@@ -1116,10 +1116,12 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     }
     ApplicationManager.getApplication().invokeLater(
       () -> {
-        getEditor().getCaretModel().setCaretsAndSelections(
-          Collections.singletonList(new CaretState(new LogicalPosition(sourceLine - 1, 0), null, null))
-        );
-        getEditor().getScrollingModel().scrollToCaret(ScrollType.CENTER_UP);
+        if (!getEditor().isDisposed()) {
+          getEditor().getCaretModel().setCaretsAndSelections(
+            Collections.singletonList(new CaretState(new LogicalPosition(sourceLine - 1, 0), null, null))
+          );
+          getEditor().getScrollingModel().scrollToCaret(ScrollType.CENTER_UP);
+        }
       }
     );
   }
