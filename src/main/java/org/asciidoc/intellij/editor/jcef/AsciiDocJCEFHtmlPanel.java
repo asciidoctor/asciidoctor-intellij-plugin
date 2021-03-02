@@ -683,7 +683,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "} " +
             "return true; } else { return false; }}; " + myRenderedResult.inject("updateContent()"),
           getCefBrowser().getURL(), 0);
-        if (replaceResultLatch.await(1, TimeUnit.SECONDS)) {
+        if (replaceResultLatch.await(2, TimeUnit.SECONDS)) {
           result = replaceResult;
         }
       } catch (RuntimeException | InterruptedException e) {
