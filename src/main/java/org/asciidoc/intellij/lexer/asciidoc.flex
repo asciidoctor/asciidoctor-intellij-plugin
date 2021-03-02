@@ -1483,7 +1483,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
             yybegin(INLINE_MACRO_TEXT);
             return AsciiDocTokenTypes.INLINE_MACRO_ID;
           } else if (yytext().toString().endsWith("footnote:")) {
-            yypushback(yylength() - "footnote:".length());
+            yypushback("footnote:".length());
             yypopstate();
             return textFormat();
           } else if (yytext().toString().equals("kbd:")) {
@@ -1496,7 +1496,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           }
         } else {
           if (yytext().toString().endsWith("footnote:") && yylength() > "footnote:".length()) {
-            yypushback(yylength() - "footnote:".length());
+            yypushback("footnote:".length());
           }
           return textFormat();
         }
@@ -1628,6 +1628,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          }
                        }
   [.,] {SPACE}+ $      { yypushback(yylength()); yypopstate(); }
+  {MACROTEXT_START} / [^\n\]]* "=" [^\n\]]* {MACROTEXT_END} { yybegin(INLINE_MACRO); yypushback(yylength()); }
   {MACROTEXT_START}    { yybegin(INLINE_MACRO_TEXT); yypushback(yylength()); }
   [\s\[\]]             { yypushback(yylength()); yypopstate(); }
   [^]                  { return AsciiDocTokenTypes.URL_LINK; }
@@ -1642,7 +1643,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <INLINE_EMAIL_WITH_PREFIX> {
-  "["                  { yybegin(INLINE_MACRO_TEXT); yypushback(yylength()); }
+  "["                  { yybegin(INLINE_MACRO); yypushback(yylength()); }
   [\s\[\]]             { yypushback(yylength()); yypopstate(); }
   [^]                  { return AsciiDocTokenTypes.URL_EMAIL; }
 }
@@ -1670,6 +1671,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <LINKFILE, LINKFILEWITHBLANK, LINKANCHOR, LINKURL> {
+  {MACROTEXT_START} / [^\n\]]* "=" [^\n\]]* {MACROTEXT_END} { yybegin(INLINE_MACRO); yypushback(yylength()); }
   {MACROTEXT_START}     { yybegin(INLINE_MACRO_TEXT); yypushback(yylength()); }
   [ \t]                { yypushback(1); yypopstate(); }
 }

@@ -384,12 +384,18 @@ public class AsciiDocParserImpl {
 
   private void parseLink() {
     PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
+    String macroId = null;
+    if (at(LINKSTART)) {
+      macroId = myBuilder.getTokenText();
+    }
     next();
-    while (at(LINKFILE) || at(URL_LINK) || at(LINKANCHOR) || at(INLINE_ATTRS_START) || at(SEPARATOR) || at(MACROTEXT)
+    while (at(LINKFILE) || at(URL_LINK) || at(LINKANCHOR) || at(INLINE_ATTRS_START) || at(SEPARATOR) || at(MACROTEXT) || at(ATTR_NAME)
       || at(ATTRIBUTE_REF_START) || at(CONTINUATION) || at(INLINE_ATTRS_END)) {
       if (at(INLINE_ATTRS_END)) {
         next();
         break;
+      } else if (at(ATTR_NAME)) {
+        parseAttributeInBrackets(macroId);
       } else if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();
       } else {
@@ -641,8 +647,13 @@ public class AsciiDocParserImpl {
     PsiBuilder.Marker inlineMacroMarker = myBuilder.mark();
     // avoid combining two links or two emails
     boolean seenLinkOrEmail = false;
-    while ((at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX) || at(INLINE_ATTRS_START) || at(MACROTEXT) || at(URL_END) || at(INLINE_ATTRS_END) || at(ATTRIBUTE_REF_START))
+    while ((at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX) || at(ATTR_NAME) || at(SEPARATOR) || at(INLINE_ATTRS_START) || at(MACROTEXT)
+      || at(URL_END) || at(INLINE_ATTRS_END) || at(ATTRIBUTE_REF_START))
       && newLines == 0) {
+      if (at(ATTR_NAME)) {
+        parseAttributeInBrackets(null);
+        continue;
+      }
       if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();
         continue;

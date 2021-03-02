@@ -2453,6 +2453,28 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('text')");
   }
 
+  public void testFootnoteAdjacentToText() {
+    doTest("prefootnote:[xx] xx",
+      "AsciiDoc:TEXT ('pre')\n" +
+        "AsciiDoc:INLINE_MACRO_ID ('footnote:')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:MACROTEXT ('xx')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('xx')");
+  }
+
+  public void testFootnoteAfterEscape() {
+    doTest("\\escapedfootnote:[xx] xx",
+      "AsciiDoc:TEXT ('\\escaped')\n" +
+        "AsciiDoc:INLINE_MACRO_ID ('footnote:')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:MACROTEXT ('xx')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('xx')");
+  }
+
   public void testInlineMacroThatIsIncompleteAndHasAnInlineMacroOnTheSameLine() {
     doTest("weight:120kg label:procedure[]",
       "AsciiDoc:TEXT ('weight:120kg')\n" +
@@ -2468,6 +2490,21 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:LINKSTART ('xref:')\n" +
         "AsciiDoc:LINKFILE ('This has Blanks')\n" +
         "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
+  }
+
+  public void testInlineMacroThatHasAttributeWhenThereIsAnEqualSign() {
+    doTest("xref:file.adoc[attr1=a,attr2=b]",
+      "AsciiDoc:LINKSTART ('xref:')\n" +
+        "AsciiDoc:LINKFILE ('file.adoc')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('attr1')\n" +
+        "AsciiDoc:ASSIGNMENT ('=')\n" +
+        "AsciiDoc:ATTR_VALUE ('a')\n" +
+        "AsciiDoc:SEPARATOR (',')\n" +
+        "AsciiDoc:ATTR_NAME ('attr2')\n" +
+        "AsciiDoc:ASSIGNMENT ('=')\n" +
+        "AsciiDoc:ATTR_VALUE ('b')\n" +
         "AsciiDoc:INLINE_ATTRS_END (']')");
   }
 
@@ -2633,6 +2670,24 @@ public class AsciiDocLexerTest extends LexerTestCase {
   public void testSimpleUrl() {
     doTest("http://www.gmx.net",
       "AsciiDoc:URL_LINK ('http://www.gmx.net')");
+  }
+
+  public void testSimpleUrlWithAttributesInBrackets() {
+    doTest("http://www.gmx.net[attr=val]",
+      "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('attr')\n" +
+        "AsciiDoc:ASSIGNMENT ('=')\n" +
+        "AsciiDoc:ATTR_VALUE ('val')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
+  }
+
+  public void testSimpleUrlWithTextInBrackets() {
+    doTest("http://www.gmx.net[text]",
+      "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:MACROTEXT ('text')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
   }
 
   public void testSimpleUrlAtEndOfSentence() {
