@@ -58,14 +58,12 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_BREAK;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKANCHOR;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKEND;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKFILE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKSTART;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKTEXT;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKTEXT_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LISTING_TEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MACROTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONOBOLD;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONOITALIC;
@@ -387,9 +385,9 @@ public class AsciiDocParserImpl {
   private void parseLink() {
     PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
     next();
-    while (at(LINKFILE) || at(URL_LINK) || at(LINKANCHOR) || at(LINKTEXT_START) || at(SEPARATOR) || at(LINKTEXT)
-      || at(ATTRIBUTE_REF_START) || at(CONTINUATION) || at(LINKEND)) {
-      if (at(LINKEND)) {
+    while (at(LINKFILE) || at(URL_LINK) || at(LINKANCHOR) || at(INLINE_ATTRS_START) || at(SEPARATOR) || at(MACROTEXT)
+      || at(ATTRIBUTE_REF_START) || at(CONTINUATION) || at(INLINE_ATTRS_END)) {
+      if (at(INLINE_ATTRS_END)) {
         next();
         break;
       } else if (at(ATTRIBUTE_REF_START)) {
@@ -643,7 +641,7 @@ public class AsciiDocParserImpl {
     PsiBuilder.Marker inlineMacroMarker = myBuilder.mark();
     // avoid combining two links or two emails
     boolean seenLinkOrEmail = false;
-    while ((at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX) || at(LINKTEXT_START) || at(LINKTEXT) || at(URL_END) || at(LINKEND) || at(ATTRIBUTE_REF_START))
+    while ((at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX) || at(INLINE_ATTRS_START) || at(MACROTEXT) || at(URL_END) || at(INLINE_ATTRS_END) || at(ATTRIBUTE_REF_START))
       && newLines == 0) {
       if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();
@@ -658,7 +656,7 @@ public class AsciiDocParserImpl {
           break;
         }
       }
-      if (at(URL_END) || at(LINKEND)) {
+      if (at(URL_END) || at(INLINE_ATTRS_END)) {
         next();
         break;
       }

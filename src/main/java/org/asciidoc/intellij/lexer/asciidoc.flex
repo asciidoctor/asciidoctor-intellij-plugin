@@ -191,8 +191,8 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
     if(yystate() == BLOCK_MACRO) {
       return AsciiDocTokenTypes.BLOCK_MACRO_BODY;
     }
-    if(yystate() == LINKTEXT) {
-      return AsciiDocTokenTypes.LINKTEXT;
+    if(yystate() == MACROTEXT) {
+      return AsciiDocTokenTypes.MACROTEXT;
     }
     if(yystate() == REF) {
       return AsciiDocTokenTypes.REF;
@@ -341,11 +341,11 @@ BIBSTART = "[[["
 BIBEND = "]]]"
 LINKSTART = "link:"
 XREFSTART = "xref:"
-LINKTEXT_START = "["
+MACROTEXT_START = "["
 INLINE_URL_NO_DELIMITER = (https?|file|ftp|irc): "//" [^\n\s\[\]<]*([^\n\s.,;\[\]<\)\'\"])
 INLINE_URL_WITH_DELIMITER = (https?|file|ftp|irc): "//" [^\n\s\[\]<]*([^\n\s\[\]\'\"])
 INLINE_EMAIL_NO_DELIMITER = [[:letter:][:digit:]_](&amp;|[[:letter:][:digit:]_\-.%+]){0,63}@[[:letter:][:digit:]][[:letter:][:digit:]_\-.]*\.[a-zA-Z]{2,5}
-LINKEND = "]"
+MACROTEXT_END = "]"
 ATTRIBUTE_NAME_START = ":"
 ATTRIBUTE_NAME_DECL = [a-zA-Z0-9_]+ [a-zA-Z0-9_ \t-]*
 ATTRIBUTE_NAME = [a-zA-Z0-9_]+ [a-zA-Z0-9_-]*
@@ -420,6 +420,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state BLOCK_ATTRS
 
 %state INLINE_MACRO
+%state INLINE_MACRO_TEXT
 %state INLINE_MACRO_URL
 %state KBD_MACRO
 %state INLINE_MACRO_ATTRS
@@ -437,7 +438,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state LINKFILEWITHBLANK
 %state LINKURL
 %state LINKANCHOR
-%state LINKTEXT
+%state MACROTEXT
 
 %%
 
@@ -528,7 +529,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                { yypushback(yylength());  yybegin(ATTRIBUTE_VAL); }
 }
 
-<ATTRIBUTE_VAL, INLINE_MACRO, INLINE_URL_NO_DELIMITER, INSIDE_LINE, DOCTITLE, HEADING, DESCRIPTION, LINKFILE, LINKFILEWITHBLANK, LINKANCHOR, LINKURL, BLOCK_MACRO, LINKTEXT, REFTEXT, INLINEREFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE, REF, ANCHORID, BIBNAME, BLOCK_ATTRS> {
+<ATTRIBUTE_VAL, INLINE_MACRO, INLINE_URL_NO_DELIMITER, INSIDE_LINE, DOCTITLE, HEADING, DESCRIPTION, LINKFILE, LINKFILEWITHBLANK, LINKANCHOR, LINKURL, BLOCK_MACRO, MACROTEXT, REFTEXT, INLINEREFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE, REF, ANCHORID, BIBNAME, BLOCK_ATTRS> {
   {ATTRIBUTE_REF_START} ( {ATTRIBUTE_NAME}? {ATTRIBUTE_REF_END} | [^}\n ]* {AUTOCOMPLETE} ) {
                          yypushback(yylength() - 1);
                          if (!isEscaped()) {
@@ -1455,7 +1456,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         return AsciiDocTokenTypes.URL_PREFIX;
   }
   // allow autocomplete even if brackets have not been entered yet
-  ({LINKSTART} | {XREFSTART}) / ([^\[\n \t] | {AUTOCOMPLETE})* ("+++" [^+] {WORD}* "+++")* ("++" {WORD}* "++")* ( {AUTOCOMPLETE} | {AUTOCOMPLETE}? {LINKTEXT_START} {WORDNOBRACKET}* {LINKEND}) {
+  ({LINKSTART} | {XREFSTART}) / ([^\[\n \t] | {AUTOCOMPLETE})* ("+++" [^+] {WORD}* "+++")* ("++" {WORD}* "++")* ( {AUTOCOMPLETE} | {AUTOCOMPLETE}? {MACROTEXT_START} {WORDNOBRACKET}* {MACROTEXT_END}) {
                          if (!isEscaped()) {
                            yypushstate(); yybegin(LINKFILE); return AsciiDocTokenTypes.LINKSTART;
                          } else {
@@ -1478,6 +1479,13 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
             // this might be an incomplete xref with autocomplete as this pattern is less strict than the xref pattern
             yybegin(LINKFILE);
             return AsciiDocTokenTypes.LINKSTART;
+          } else if (yytext().toString().equals("footnote:")) {
+            yybegin(INLINE_MACRO_TEXT);
+            return AsciiDocTokenTypes.INLINE_MACRO_ID;
+          } else if (yytext().toString().endsWith("footnote:")) {
+            yypushback(yylength() - "footnote:".length());
+            yypopstate();
+            return textFormat();
           } else if (yytext().toString().equals("kbd:")) {
             // kbd may have passthrough sequences
             yybegin(KBD_MACRO);
@@ -1487,6 +1495,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
             return AsciiDocTokenTypes.INLINE_MACRO_ID;
           }
         } else {
+          if (yytext().toString().endsWith("footnote:") && yylength() > "footnote:".length()) {
+            yypushback(yylength() - "footnote:".length());
+          }
           return textFormat();
         }
       }
@@ -1617,7 +1628,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          }
                        }
   [.,] {SPACE}+ $      { yypushback(yylength()); yypopstate(); }
-  "["                  { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
+  {MACROTEXT_START}    { yybegin(INLINE_MACRO_TEXT); yypushback(yylength()); }
   [\s\[\]]             { yypushback(yylength()); yypopstate(); }
   [^]                  { return AsciiDocTokenTypes.URL_LINK; }
 }
@@ -1631,7 +1642,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <INLINE_EMAIL_WITH_PREFIX> {
-  "["                  { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
+  "["                  { yybegin(INLINE_MACRO_TEXT); yypushback(yylength()); }
   [\s\[\]]             { yypushback(yylength()); yypopstate(); }
   [^]                  { return AsciiDocTokenTypes.URL_EMAIL; }
 }
@@ -1659,7 +1670,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <LINKFILE, LINKFILEWITHBLANK, LINKANCHOR, LINKURL> {
-  {LINKTEXT_START}     { yybegin(LINKTEXT); return AsciiDocTokenTypes.LINKTEXT_START; }
+  {MACROTEXT_START}     { yybegin(INLINE_MACRO_TEXT); yypushback(yylength()); }
   [ \t]                { yypushback(1); yypopstate(); }
 }
 
@@ -1682,13 +1693,15 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { return AsciiDocTokenTypes.LINKANCHOR; }
 }
 
-<LINKTEXT> {
-  {LINKEND}            { if (isEscaped()) {
-                           return AsciiDocTokenTypes.LINKTEXT;
+<MACROTEXT> {
+  {MACROTEXT_END}      { if (isEscaped()) {
+                           return AsciiDocTokenTypes.MACROTEXT;
                          } else {
-                           yypopstate(); return AsciiDocTokenTypes.LINKEND;
+                           yypopstate();
+                           yypushback(yylength());
                          }
                        }
+  "[" [^\]\n]* "]"     { return AsciiDocTokenTypes.MACROTEXT; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
   {CONTINUATION} / {SPACE}* "\n" {
                          if (isPrefixedBy(SPACES)) {
@@ -1696,10 +1709,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            yybegin(EOL_POP);
                            return AsciiDocTokenTypes.CONTINUATION;
                          } else {
-                           return AsciiDocTokenTypes.LINKTEXT;
+                           return AsciiDocTokenTypes.MACROTEXT;
                          }
                        }
-  [^]                  { return AsciiDocTokenTypes.LINKTEXT; }
+  [^]                  { return AsciiDocTokenTypes.MACROTEXT; }
 }
 
 <ATTRIBUTE_REF> {
@@ -1917,9 +1930,16 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { return AsciiDocTokenTypes.URL_LINK; }
 }
 
-<INLINE_MACRO, KBD_MACRO> {
+<INLINE_MACRO, KBD_MACRO, INLINE_MACRO_TEXT> {
   "\n"                 { yypopstate(); yypushback(yylength()); }
-  "["                  { yypushstate(); yybegin(yystate() == INLINE_MACRO ? INLINE_MACRO_ATTRS : KBD_MACRO_ATTRS); return AsciiDocTokenTypes.INLINE_ATTRS_START; }
+  "["                  { yypushstate();
+                         switch(yystate()) {
+                             case INLINE_MACRO: yybegin(INLINE_MACRO_ATTRS); break;
+                             case KBD_MACRO: yybegin(KBD_MACRO_ATTRS); break;
+                             case INLINE_MACRO_TEXT: yybegin(MACROTEXT); break;
+                         }
+                         return AsciiDocTokenTypes.INLINE_ATTRS_START;
+                       }
   "]"                  { yypopstate(); return AsciiDocTokenTypes.INLINE_ATTRS_END; }
   "IntellijIdeaRulezzz " / [^\t \n:]* "[" { return AsciiDocTokenTypes.INLINE_MACRO_BODY; }
   "IntellijIdeaRulezzz " { yypopstate(); return AsciiDocTokenTypes.INLINE_MACRO_BODY; }

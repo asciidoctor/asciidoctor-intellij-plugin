@@ -107,7 +107,7 @@ public class AsciiDocLink extends ASTWrapperPsiElement implements HasFileReferen
     }
     int start = child.getStartOffsetInParent();
     int end = start;
-    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.LINKTEXT_START) {
+    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.INLINE_ATTRS_START) {
       end = child.getStartOffsetInParent() + child.getTextLength();
       child = child.getNextSibling();
     }
@@ -124,7 +124,7 @@ public class AsciiDocLink extends ASTWrapperPsiElement implements HasFileReferen
     }
     int start = child.getStartOffsetInParent();
     int end = start;
-    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.LINKTEXT_START) {
+    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.INLINE_ATTRS_START) {
       end = child.getStartOffsetInParent() + child.getTextLength();
       child = child.getNextSibling();
     }

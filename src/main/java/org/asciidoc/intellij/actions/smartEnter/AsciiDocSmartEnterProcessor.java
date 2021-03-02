@@ -149,7 +149,7 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
           }
         }
 
-        if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.LINKTEXT_START) {
+        if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.INLINE_ATTRS_START) {
           if (atCaret.getNode().getTreeNext() != null
             && atCaret.getNode().getTreeNext().getText().matches("^[\n \t].*")) {
             doc.insertString(atCaret.getTextRange().getEndOffset(), "]");
@@ -163,8 +163,8 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
           }
         }
 
-        if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.LINKTEXT_START) {
-          if (atCaret.getNextSibling() != null && atCaret.getNextSibling().getNode().getElementType() == AsciiDocTokenTypes.LINKEND) {
+        if (atCaret.getNode().getElementType() == AsciiDocTokenTypes.INLINE_ATTRS_START) {
+          if (atCaret.getNextSibling() != null && atCaret.getNextSibling().getNode().getElementType() == AsciiDocTokenTypes.INLINE_ATTRS_END) {
             String textToInsert = null;
             textToInsert = prepareTitleForLink(atCaret, textToInsert);
 

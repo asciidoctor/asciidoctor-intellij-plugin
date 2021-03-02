@@ -1242,9 +1242,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("link:FILE[T\\]ext]",
       "AsciiDoc:LINKSTART ('link:')\n" +
         "AsciiDoc:LINKFILE ('FILE')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKTEXT ('T\\]ext')\n" +
-        "AsciiDoc:LINKEND (']')");
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:MACROTEXT ('T\\]ext')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
   }
 
   public void testAttrInUrl() {
@@ -1253,9 +1253,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRIBUTE_REF_START ('{')\n" +
         "AsciiDoc:ATTRIBUTE_REF ('path')\n" +
         "AsciiDoc:ATTRIBUTE_REF_END ('}')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKTEXT ('text')\n" +
-        "AsciiDoc:LINKEND (']')");
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:MACROTEXT ('text')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
   }
 
   public void testHtmlEntity() {
@@ -1301,17 +1301,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRIBUTE_REF_START ('{')\n" +
         "AsciiDoc:ATTRIBUTE_REF ('path')\n" +
         "AsciiDoc:ATTRIBUTE_REF_END ('}')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKTEXT ('text')\n" +
-        "AsciiDoc:LINKEND (']')");
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:MACROTEXT ('text')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
   }
 
   public void testLinkWithAttributeAutocomplete() {
     doTest("link:IntellijIdeaRulezzz test.adoc[]\n",
       "AsciiDoc:LINKSTART ('link:')\n" +
         "AsciiDoc:LINKFILE ('IntellijIdeaRulezzz test.adoc')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
@@ -1332,13 +1332,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("link:test.adoc[Title +\nContinuing]\n",
       "AsciiDoc:LINKSTART ('link:')\n" +
         "AsciiDoc:LINKFILE ('test.adoc')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKTEXT ('Title')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:MACROTEXT ('Title')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:CONTINUATION ('+')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:LINKTEXT ('Continuing')\n" +
-        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:MACROTEXT ('Continuing')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
@@ -1350,9 +1350,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINKFILE ('FILE')\n" +
         "AsciiDoc:SEPARATOR ('#')\n" +
         "AsciiDoc:LINKANCHOR ('ANCHOR')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKTEXT ('Text')\n" +
-        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:MACROTEXT ('Text')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('More')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
@@ -1365,15 +1365,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:LINKSTART ('link:')\n" +
         "AsciiDoc:URL_LINK ('++https://example.org/?q=[a b]++')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKTEXT ('URL')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:MACROTEXT ('URL')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:LINKTEXT ('with')\n" +
+        "AsciiDoc:MACROTEXT ('with')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:LINKTEXT ('special')\n" +
+        "AsciiDoc:MACROTEXT ('special')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:LINKTEXT ('characters')\n" +
-        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:MACROTEXT ('characters')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('Text')");
   }
@@ -1392,8 +1392,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("link:IntellijIdeaRulezzz []",
       "AsciiDoc:LINKSTART ('link:')\n" +
         "AsciiDoc:LINKFILE ('IntellijIdeaRulezzz ')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKEND (']')");
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
   }
 
   public void testBlockid() {
@@ -2077,9 +2077,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("link:http://www.example.com[Example]:: description",
       "AsciiDoc:LINKSTART ('link:')\n" +
         "AsciiDoc:URL_LINK ('http://www.example.com')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKTEXT ('Example')\n" +
-        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:MACROTEXT ('Example')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
         "AsciiDoc:DESCRIPTION ('::')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('description')");
@@ -2445,9 +2445,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:INLINE_MACRO_ID ('footnote:')\n" +
         "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
-        "AsciiDoc:ATTR_NAME ('some')\n" +
+        "AsciiDoc:MACROTEXT ('some')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:ATTR_NAME ('macro:text[About]')\n" +
+        "AsciiDoc:MACROTEXT ('macro:text[About]')\n" +
         "AsciiDoc:INLINE_ATTRS_END (']')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('text')");
@@ -2467,8 +2467,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("xref:This has Blanks[]",
       "AsciiDoc:LINKSTART ('xref:')\n" +
         "AsciiDoc:LINKFILE ('This has Blanks')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKEND (']')");
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
   }
 
   public void testInlineMacroThatDoesntSupportBlanks() {
@@ -2512,8 +2512,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:LINKSTART ('xref:')\n" +
         "AsciiDoc:LINKFILE ('complete')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('normal')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
@@ -2530,8 +2530,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("xref:" + CompletionUtilCore.DUMMY_IDENTIFIER + "complete[] and other xref:complete[] normal text",
       "AsciiDoc:LINKSTART ('xref:')\n" +
         "AsciiDoc:LINKFILE ('IntellijIdeaRulezzz complete')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('and')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
@@ -2539,8 +2539,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:LINKSTART ('xref:')\n" +
         "AsciiDoc:LINKFILE ('complete')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('normal')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
@@ -2722,9 +2722,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("<http://www.gmx.net[Hi]>",
       "AsciiDoc:LT ('<')\n" +
         "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKTEXT ('Hi')\n" +
-        "AsciiDoc:LINKEND (']')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:MACROTEXT ('Hi')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')\n" +
         "AsciiDoc:GT ('>')");
   }
 
@@ -2732,9 +2732,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("link:http://www.gmx.net[Hi]",
       "AsciiDoc:LINKSTART ('link:')\n" +
         "AsciiDoc:URL_LINK ('http://www.gmx.net')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKTEXT ('Hi')\n" +
-        "AsciiDoc:LINKEND (']')");
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:MACROTEXT ('Hi')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
   }
 
   public void testEmail() {
@@ -2746,8 +2746,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("mailto:doc.writer@example.com[]",
       "AsciiDoc:URL_PREFIX ('mailto:')\n" +
         "AsciiDoc:URL_EMAIL ('doc.writer@example.com')\n" +
-        "AsciiDoc:LINKTEXT_START ('[')\n" +
-        "AsciiDoc:LINKEND (']')");
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
   }
 
   public void testEmailWithPrefixButNoSquareBrackets() {

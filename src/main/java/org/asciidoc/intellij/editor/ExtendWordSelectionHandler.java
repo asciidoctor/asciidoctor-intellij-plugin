@@ -28,8 +28,6 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LBRACKET;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKEND;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKTEXT_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LPAREN;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO_START;
@@ -62,7 +60,6 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
     SYMMETRIC_FORMATTING.put(DOUBLE_QUOTE, DOUBLE_QUOTE);
     SYMMETRIC_FORMATTING.put(LBRACKET, RBRACKET);
     SYMMETRIC_FORMATTING.put(LPAREN, RPAREN);
-    SYMMETRIC_FORMATTING.put(LINKTEXT_START, LINKEND);
     SYMMETRIC_FORMATTING.put(ATTRS_START, ATTRS_END);
     SYMMETRIC_FORMATTING.put(INLINE_ATTRS_START, INLINE_ATTRS_END);
     SYMMETRIC_FORMATTING.put(TYPOGRAPHIC_DOUBLE_QUOTE_START, TYPOGRAPHIC_DOUBLE_QUOTE_END);

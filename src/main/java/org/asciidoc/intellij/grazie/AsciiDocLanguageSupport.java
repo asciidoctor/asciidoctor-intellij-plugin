@@ -96,7 +96,7 @@ public class AsciiDocLanguageSupport {
     AsciiDocTokenTypes.MONO,
     AsciiDocTokenTypes.MONOBOLD,
     AsciiDocTokenTypes.DESCRIPTION,
-    AsciiDocTokenTypes.LINKTEXT,
+    AsciiDocTokenTypes.MACROTEXT,
     AsciiDocTokenTypes.BLOCKREFTEXT,
     AsciiDocTokenTypes.REFTEXT,
     AsciiDocTokenTypes.MONOITALIC,

@@ -31,7 +31,7 @@ public class AsciiDocUrl extends ASTWrapperPsiElement {
   }
 
   public boolean hasText() {
-    ASTNode[] children = getNode().getChildren(TokenSet.create(AsciiDocTokenTypes.LINKTEXT_START));
+    ASTNode[] children = getNode().getChildren(TokenSet.create(AsciiDocTokenTypes.INLINE_ATTRS_START));
     return children.length == 1;
   }
 

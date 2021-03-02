@@ -379,7 +379,7 @@ class AsciiDocBlock extends AbstractBlock {
     AsciiDocTokenTypes.BOLD_END, AsciiDocTokenTypes.ITALIC_START, AsciiDocTokenTypes.ITALIC_END, AsciiDocTokenTypes.LT,
     AsciiDocTokenTypes.GT, AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END, AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START,
     AsciiDocTokenTypes.LPAREN, AsciiDocTokenTypes.RPAREN,
-    AsciiDocTokenTypes.LINKTEXT, AsciiDocTokenTypes.ATTR_NAME,
+    AsciiDocTokenTypes.MACROTEXT, AsciiDocTokenTypes.ATTR_NAME,
     AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END, AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START);
 
   private static boolean isPartOfSentence(Block block) {
