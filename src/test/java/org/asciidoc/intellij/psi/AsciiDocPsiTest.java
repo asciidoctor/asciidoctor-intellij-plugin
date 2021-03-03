@@ -1,6 +1,9 @@
 package org.asciidoc.intellij.psi;
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.grazie.grammar.ide.GraziePsiElementProcessor;
+import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy;
+import com.intellij.grazie.ide.language.LanguageGrammarChecking;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.TextRange;
@@ -26,8 +29,10 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Tests for {@link org.asciidoc.intellij.parser.AsciiDocParserImpl}.
@@ -443,6 +448,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "**E**quivalent\n\n" +
       "// within block, therefore split by word breaks\n" +
       "== Heading\n**E**quivalent **M**odulo\n" +
+      "TEXTfootnote:[This is a footnote]\n" +
       "A <<id,reftext>>.\n" +
       "|===\n" +
       "| Cell contents.\n" +
@@ -472,11 +478,62 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "// within block, therefore split by word breaks",
       "Equivalent",
       "Modulo",
+      "TEXT",
       "A",
       "reftext.",
       "== Heading",
+      "This",
+      "is",
+      "a",
+      "footnote",
       "Cell",
       "contents.");
+  }
+
+  public void testGrammarCheck() {
+    PsiFile psiFile = configureByAsciiDoc("// comment with some text\n" +
+      "== A heading\n" +
+      "Textfootnote:[A footnote.] with a footnote.\n" +
+      "A <<id,reftext>>.\n" +
+      "A xref:file.adoc[link].\n" +
+      "Something \"`quoted`\"\n" +
+      "|===\n" +
+      "| Cell Content.\n" +
+      "|===");
+
+    List<String> texts = new ArrayList<>();
+
+    PsiElementVisitor myVisitor = new PsiElementVisitor() {
+      @Override
+      public void visitElement(@NotNull PsiElement element) {
+        Set<GrammarCheckingStrategy> grammarCheckingStrategies = LanguageGrammarChecking.INSTANCE.getStrategiesForElement(element, Collections.emptySet(), Collections.emptySet());
+        grammarCheckingStrategies.forEach(grammarCheckingStrategy -> {
+          GraziePsiElementProcessor.Companion.Result result = GraziePsiElementProcessor.Companion.processElements(Collections.singletonList(element), grammarCheckingStrategy);
+          result.getRootsWithText().forEach(rootWithText -> {
+            String text = rootWithText.getText().toString().trim();
+            for (String line : text.split("\\n", -1)) {
+              if (line.length() > 0) {
+                texts.add(line);
+              }
+            }
+          });
+        });
+        for (PsiElement child : element.getChildren()) {
+          this.visitElement(child);
+        }
+      }
+    };
+    psiFile.accept(myVisitor);
+    Assertions.assertThat(texts).containsExactlyInAnyOrder(
+      "Cell Content.",
+      "Text with a footnote.",
+      "A reftext.",
+      "// comment with some text",
+      "A footnote.",
+      "A link.",
+      "Something quoted"
+    );
+
   }
 
   public void testNestedAttribute() {

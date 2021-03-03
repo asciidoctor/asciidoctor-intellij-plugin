@@ -44,7 +44,7 @@ allprojects {
 // enforce target classfile version of 8
 
 intellij {
-  version 'IC-211.6222.4-EAP-SNAPSHOT' // 'IC-2020.3.2'
+  version 'IC-211.6305.21-EAP-SNAPSHOT' // 'IC-2020.3.2'
   pluginName 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild false
   plugins = [

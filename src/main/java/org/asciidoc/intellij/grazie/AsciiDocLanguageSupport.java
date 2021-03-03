@@ -7,6 +7,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationImpl;
+import org.asciidoc.intellij.psi.AsciiDocInlineMacro;
 import org.jetbrains.annotations.NotNull;
 
 public class AsciiDocLanguageSupport {
@@ -114,7 +115,8 @@ public class AsciiDocLanguageSupport {
     TokenType.WHITE_SPACE,
     AsciiDocElementTypes.URL, // can nest LINKTEXT
     AsciiDocElementTypes.REF, // can nest REFTEXT
-    AsciiDocElementTypes.LINK, // can nest LINKTEXT
+    AsciiDocElementTypes.LINK, // can nest MACROTEXT
+    AsciiDocElementTypes.INLINE_MACRO, // can nest MACROTEXT
     AsciiDocElementTypes.MONO, // will nest MONO
     AsciiDocElementTypes.ITALIC // will nest ITALIC
   ), NODES_TO_CHECK);
@@ -130,6 +132,8 @@ public class AsciiDocLanguageSupport {
       }
     } else if (SEPARATOR_TOKENS.contains(child.getNode().getElementType())) {
       return Behavior.SEPARATE;
+    } else if (root != child && child instanceof AsciiDocInlineMacro && ((AsciiDocInlineMacro) child).getMacroName().equals("footnote")) {
+      return Behavior.ABSORB;
     } else if (TEXT_TOKENS.contains(child.getNode().getElementType())) {
       return Behavior.TEXT;
     } else {
@@ -140,6 +144,10 @@ public class AsciiDocLanguageSupport {
   public boolean isMyContextRoot(@NotNull PsiElement psiElement) {
     if (psiElement instanceof AsciiDocAttributeDeclarationImpl &&
       ((AsciiDocAttributeDeclarationImpl) psiElement).hasSpellCheckableContent()) {
+      return true;
+    }
+    if (psiElement instanceof AsciiDocInlineMacro &&
+      ((AsciiDocInlineMacro) psiElement).getMacroName().equals("footnote")) {
       return true;
     }
     return NODES_TO_CHECK.contains(psiElement.getNode().getElementType())
