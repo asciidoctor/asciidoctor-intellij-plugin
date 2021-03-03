@@ -476,7 +476,7 @@ public class AsciiDocParserImpl {
     PsiBuilder.Marker inlineMacroMarker = myBuilder.mark();
     String macroId = myBuilder.getTokenText();
     next();
-    while ((at(INLINE_MACRO_BODY) || at(ATTR_NAME) || at(ASSIGNMENT) || at(URL_LINK) || at(ATTR_VALUE) || at(SEPARATOR) || at(INLINE_ATTRS_START) || at(INLINE_ATTRS_END)
+    while ((at(INLINE_MACRO_BODY) || at(ATTR_NAME) || at(ASSIGNMENT) || at(URL_LINK) || at(ATTR_VALUE) || at(SEPARATOR) || at(INLINE_ATTRS_START) || at(INLINE_ATTRS_END) || at(MACROTEXT)
       || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP) || at(ATTR_LIST_OP) || at(PASSTRHOUGH_INLINE_START))
       && newLines == 0) {
       if (at(INLINE_ATTRS_END)) {
