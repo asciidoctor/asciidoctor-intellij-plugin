@@ -10,7 +10,7 @@ public class AsciiDocWordsScanner extends DefaultWordsScanner {
 
   @Override
   public int getVersion() {
-    return 8;
+    return 9;
   }
 
   public AsciiDocWordsScanner() {
@@ -21,7 +21,7 @@ public class AsciiDocWordsScanner extends DefaultWordsScanner {
       // comments
       TokenSet.create(AsciiDocTokenTypes.BLOCK_COMMENT, AsciiDocTokenTypes.LINE_COMMENT),
       // literals
-      TokenSet.create(AsciiDocTokenTypes.TEXT, AsciiDocTokenTypes.BOLD, AsciiDocTokenTypes.MONO,
+      TokenSet.create(AsciiDocTokenTypes.TEXT, AsciiDocTokenTypes.MACROTEXT, AsciiDocTokenTypes.BOLD, AsciiDocTokenTypes.MONO,
         AsciiDocTokenTypes.MONOBOLD, AsciiDocTokenTypes.MONOITALIC, AsciiDocTokenTypes.BOLDITALIC,
         AsciiDocTokenTypes.MONOBOLDITALIC));
   }
