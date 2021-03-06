@@ -21,8 +21,7 @@ The user is behind a proxy, and the content in the preview includes remote files
 
 The JCEF preview doesn't support the IDE's proxy settings.
 
-https://youtrack.jetbrains.com/issue/JBR-2605[This is a known issue with the JCEF preview.
-Please watch and vote for this issue in the JetBrains issue tracker].
+https://youtrack.jetbrains.com/issue/JBR-2605[The JetBrains issue tracker shows] that this will be fixed in release 2021.2.
 
 == Workaround: Use JavaFX preview
 
