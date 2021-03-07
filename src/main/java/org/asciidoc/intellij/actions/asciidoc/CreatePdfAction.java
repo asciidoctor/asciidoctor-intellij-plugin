@@ -1,5 +1,8 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
+import com.intellij.ide.lightEdit.LightEdit;
+import com.intellij.ide.projectView.ProjectView;
+import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -23,7 +26,6 @@ import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
-import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -112,8 +114,7 @@ public class CreatePdfAction extends AsciiDocAction {
     }, "Creating PDF", true, project);
     ApplicationManager.getApplication().runWriteAction(() -> {
       VirtualFile virtualFilePdf = changeFileExtension(file);
-      VirtualFile virtualFile = virtualFilePdf != null ? virtualFilePdf : parent;
-      AsciiDocUtil.selectFileInProjectView(project, virtualFile);
+      updateProjectView(virtualFilePdf != null ? virtualFilePdf : parent);
       if (virtualFilePdf != null) {
         if (successful) {
           new OpenFileDescriptor(project, virtualFilePdf).navigate(true);
@@ -131,6 +132,15 @@ public class CreatePdfAction extends AsciiDocAction {
     return VirtualFileManager.getInstance().refreshAndFindFileByNioPath(
       path.getParent().resolve(file.getName().replaceAll("\\.(adoc|asciidoc|ad)$", ".pdf"))
     );
+  }
+
+  private void updateProjectView(VirtualFile virtualFile) {
+    if (!LightEdit.owns(project)) {
+      //update project view
+      ProjectView projectView = ProjectView.getInstance(project);
+      projectView.changeView(ProjectViewPane.ID);
+      projectView.select(null, virtualFile, true);
+    }
   }
 
 }

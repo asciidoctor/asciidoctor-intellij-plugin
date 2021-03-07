@@ -1,5 +1,8 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
+import com.intellij.ide.lightEdit.LightEdit;
+import com.intellij.ide.projectView.ProjectView;
+import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -196,7 +199,7 @@ public class PasteImageAction extends AsciiDocAction {
                     boolean written = ImageIO.write(bufferedImage, ext, outputStream);
                     if (written) {
                       insertImageReference(destination.getVirtualFile(), offset, attributeService.toAttributeString(dialog));
-                      AsciiDocUtil.selectFileInProjectView(project, target);
+                      updateProjectView(target);
                     } else {
                       String message = "Can't save image, no appropriate writer found for selected format.";
                       Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
@@ -321,7 +324,7 @@ public class PasteImageAction extends AsciiDocAction {
                         try (OutputStream outputStream = target.getOutputStream(this)) {
                           Files.copy(imageFile.toPath(), outputStream);
                           insertImageReference(destination.getVirtualFile(), offset, attributeService.toAttributeString(dialog));
-                          AsciiDocUtil.selectFileInProjectView(project, target);
+                          updateProjectView(target);
                         }
                       } catch (IOException ex) {
                         String message = "Can't save file: " + ex.getMessage();
@@ -423,6 +426,15 @@ public class PasteImageAction extends AsciiDocAction {
     }
     editor.getDocument().insertString(offset, insert);
     editor.getCaretModel().moveToOffset(offset + cursorOffset);
+  }
+
+  private void updateProjectView(VirtualFile virtualFile) {
+    //update project view
+    if (!LightEdit.owns(project)) {
+      ProjectView projectView = ProjectView.getInstance(project);
+      projectView.changeView(ProjectViewPane.ID);
+      projectView.select(null, virtualFile, true);
+    }
   }
 
   private BufferedImage toBufferedImage(@NotNull Image image) {

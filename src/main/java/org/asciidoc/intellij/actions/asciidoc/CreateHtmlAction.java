@@ -1,6 +1,9 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
 import com.intellij.ide.BrowserUtil;
+import com.intellij.ide.lightEdit.LightEdit;
+import com.intellij.ide.projectView.ProjectView;
+import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
@@ -17,7 +20,6 @@ import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
-import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -92,8 +94,7 @@ public class CreateHtmlAction extends AsciiDocAction {
     }, "Creating HTML", true, project);
     ApplicationManager.getApplication().runWriteAction(() -> {
       VirtualFile virtualFileHtml =  changeFileExtension(file);
-      VirtualFile virtualFile = virtualFileHtml != null ? virtualFileHtml : parent;
-      AsciiDocUtil.selectFileInProjectView(project, virtualFile);
+      updateProjectView(virtualFileHtml != null ? virtualFileHtml : parent);
       if (virtualFileHtml != null) {
         if (successful) {
           BrowserUtil.browse(virtualFileHtml);
@@ -113,4 +114,12 @@ public class CreateHtmlAction extends AsciiDocAction {
     );
   }
 
+  private void updateProjectView(VirtualFile virtualFile) {
+    if (!LightEdit.owns(project)) {
+      //update project view
+      ProjectView projectView = ProjectView.getInstance(project);
+      projectView.changeView(ProjectViewPane.ID);
+      projectView.select(null, virtualFile, true);
+    }
+  }
 }

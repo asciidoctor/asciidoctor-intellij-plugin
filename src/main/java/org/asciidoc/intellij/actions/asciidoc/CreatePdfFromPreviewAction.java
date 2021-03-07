@@ -1,5 +1,7 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
+import com.intellij.ide.projectView.ProjectView;
+import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -15,7 +17,6 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.AsciiDocSplitEditor;
-import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,8 +73,7 @@ public class CreatePdfFromPreviewAction extends AsciiDocAction implements DumbAw
               ApplicationManager.getApplication().runWriteAction(() -> {
                 VirtualFile target = changeFileExtension(file);
                 VirtualFile parent = file.getParent();
-                VirtualFile virtualFile = target != null ? target : parent;
-                AsciiDocUtil.selectFileInProjectView(project, virtualFile);
+                updateProjectView(target != null ? target : parent, project);
                 if (target != null) {
                   new OpenFileDescriptor(project, target).navigate(true);
                 }
@@ -100,6 +100,13 @@ public class CreatePdfFromPreviewAction extends AsciiDocAction implements DumbAw
     return VirtualFileManager.getInstance().refreshAndFindFileByNioPath(
       path.getParent().resolve(file.getName().replaceAll("\\.(adoc|asciidoc|ad)$", ".pdf"))
     );
+  }
+
+  private void updateProjectView(VirtualFile virtualFile, Project project) {
+    //update project view
+    ProjectView projectView = ProjectView.getInstance(project);
+    projectView.changeView(ProjectViewPane.ID);
+    projectView.select(null, virtualFile, true);
   }
 
 }
