@@ -3,8 +3,6 @@ package org.asciidoc.intellij.editor.jcef;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.actions.OpenFileAction;
 import com.intellij.ide.lightEdit.LightEdit;
-import com.intellij.ide.projectView.ProjectView;
-import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -1086,9 +1084,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       }
 
       if (targetFile.isDirectory()) {
-        ProjectView projectView = ProjectView.getInstance(project);
-        projectView.changeView(ProjectViewPane.ID);
-        projectView.select(null, targetFile, true);
+        AsciiDocUtil.selectFileInProjectView(project, targetFile);
       } else {
         boolean anchorFound = false;
         if (anchor != null) {
