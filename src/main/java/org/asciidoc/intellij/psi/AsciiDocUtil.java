@@ -2,6 +2,10 @@ package org.asciidoc.intellij.psi;
 
 import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.ide.lightEdit.LightEdit;
+import com.intellij.ide.projectView.ProjectView;
+import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
+import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.openapi.components.ComponentManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -1438,6 +1442,22 @@ public class AsciiDocUtil {
       return true;
     }
     return PsiTreeUtil.processElements(file, new PageAttributeProcessor(result, depth + 1));
+  }
+
+  public static void selectFileInProjectView(Project project, VirtualFile file) {
+    if (!LightEdit.owns(project) && !project.isDisposed()) {
+      ProjectView projectView = ProjectView.getInstance(project);
+      // trying to select project view pane as this will most likely show the PDF
+      // (others might filter it, and user might not know where file was created)
+      AbstractProjectViewPane projectViewPaneById = projectView.getProjectViewPaneById(ProjectViewPane.ID);
+      if (projectViewPaneById != null) {
+        // seen in RD 2020.3.3: project view panel might not be available (or project had already been disposed?)
+        // ProjectViewImpl#changeViewCB() will log an exception when that happens
+        projectView.changeView(ProjectViewPane.ID);
+      }
+      // select file newly created/updated file in project view
+      projectView.select(null, file, true);
+    }
   }
 
 }
