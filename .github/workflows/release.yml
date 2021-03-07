@@ -57,3 +57,16 @@ jobs:
           PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
         run: ./gradlew publishPlugin
 
+      # add new release to Sentry's release tab
+      # if we wouldn't do this here, Sentry will know about a new release only after the first error being reported
+      # as a release might go without errors for some time, the "fixed in next release" might be updated only too late
+      # https://github.com/marketplace/actions/sentry-release
+      - name: Create Sentry release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        with:
+          environment: production
+          version: ${{ github.ref }}
