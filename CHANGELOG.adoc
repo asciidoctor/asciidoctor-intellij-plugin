@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.28 (work in progress)
+=== 0.32.28
 
 - adding spell checking for footnotes (#692)
 - preventing exception when project view is not available (#695)
