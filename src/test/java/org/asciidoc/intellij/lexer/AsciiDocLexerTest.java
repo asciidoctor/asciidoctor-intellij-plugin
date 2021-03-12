@@ -972,6 +972,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:TEXT ('11_11_11')");
   }
 
+  public void testSingleClosingQuoteInMonospace() {
+    doTest("`test`'s formatting`",
+      "AsciiDoc:MONO_START ('`')\n" +
+        "AsciiDoc:MONO ('test')\n" +
+        "AsciiDoc:TYPOGRAPHIC_SINGLE_QUOTE_END ('`'')\n" +
+        "AsciiDoc:MONO ('s')\n" +
+        "AsciiDoc:WHITE_SPACE_MONO (' ')\n" +
+        "AsciiDoc:MONO ('formatting')\n" +
+        "AsciiDoc:MONO_END ('`')");
+  }
+
   public void testItalicMultipleInSingleLine() {
     doTest("italic _constrained_ & __un__constrained",
       "AsciiDoc:TEXT ('italic')\n" +

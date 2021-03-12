@@ -1411,14 +1411,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            }
                          }
   {TYPOGRAPHIC_SINGLE_QUOTE_END} {
-                           if (typographicquote && isUnconstrainedEnd()) {
-                             typographicquote = false;
-                             return AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END;
-                           } else {
-                             yypushback(yylength());
-                             yypushstate();
-                             yybegin(MONO_SECOND_TRY);
-                           }
+                          // a typographic single quote end is not bound to unconstrained ends nor a previous typographic quote
+                          typographicquote = false;
+                          return AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END;
                          }
   {INLINE_URL_NO_DELIMITER} {
         if (isEscaped() || isPrefixedBy(COLONSLASH)) {
