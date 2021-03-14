@@ -21,6 +21,10 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
 
   public abstract String updateSelection(String selection, boolean word);
 
+  public String getFormatCharacter() {
+    return "";
+  }
+
   @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
 
@@ -37,7 +41,7 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
     selectText(editor);
 
     SelectionModel selectionModel = editor.getSelectionModel();
-    boolean word = isWord(document, selectionModel.getSelectionStart(), selectionModel.getSelectionEnd());
+    boolean word = isWord(document, selectionModel.getSelectionStart(), selectionModel.getSelectionEnd(), getFormatCharacter());
     String selectedText = selectionModel.getSelectedText();
     if (selectedText == null) {
       selectedText = "";
@@ -51,7 +55,7 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
    * Implementing the rules of Asciidoc's "When should I use unconstrained quotes?".
    * See http://asciidoctor.org/docs/user-manual/ for details.
    */
-  public static boolean isWord(Document document, int start, int end) {
+  public static boolean isWord(Document document, int start, int end, String formatChar) {
     if (start > 0) {
       String precededBy = document.getText(new TextRangeInterval(start - 1, start));
       // not a word if selection is preceded by a semicolon, colon, an alphabetic characters, a digit or an underscore
@@ -70,6 +74,10 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
       // not a word if followed by a alphabetic character, a digit or an underscore
       String succeededBy = document.getText(new TextRangeInterval(end, end + 1));
       if (succeededBy.matches("(?U)[\\w_]")) {
+        return false;
+      }
+      if (succeededBy.matches("'") && formatChar.equals("`")) {
+        // this would lead to a typographic quote, therefore use two quotes
         return false;
       }
     }

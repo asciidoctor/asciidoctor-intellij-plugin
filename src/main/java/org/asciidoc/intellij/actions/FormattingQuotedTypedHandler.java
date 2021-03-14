@@ -58,12 +58,13 @@ public class FormattingQuotedTypedHandler extends TypedHandlerDelegate {
         // ... or add it around the text
         int border = 0;
         if (newText == null) {
-          boolean word = FormatAsciiDocAction.isWord(editor.getDocument(), selectionStart, selectionEnd);
+          boolean word = FormatAsciiDocAction.isWord(editor.getDocument(), selectionStart, selectionEnd, "" + c);
           if (word) {
             newText = c + selectedText + c;
             border = 1;
           } else {
-            newText = c + c + selectedText + c + c;
+            // prefix a string to prevent that adding two chars results in an integer
+            newText = "" + c + c + selectedText + c + c;
             border = 2;
           }
         }

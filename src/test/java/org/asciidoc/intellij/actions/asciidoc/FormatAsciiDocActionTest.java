@@ -34,6 +34,7 @@ public class FormatAsciiDocActionTest {
       {"\u00E4", "123", " ", false, "numbers prefixed by umlaut"},
       {" ", "123", "\u00E4", false, "numbers postfixed by umlaut"},
       {" ", " test", " ", false, "word with surrounding space also selected"},
+      {" ", "test", "'s", false, "word with apostrophe should avoid typographic quote"},
       {"", "", "", true, "empty string with no prefix and suffix"},
     });
   }
@@ -55,6 +56,6 @@ public class FormatAsciiDocActionTest {
 
   @Test
   public void shouldMarkWord() {
-    Assert.assertEquals(explanation, isWord, FormatAsciiDocAction.isWord(document, start, end));
+    Assert.assertEquals(explanation, isWord, FormatAsciiDocAction.isWord(document, start, end, "`"));
   }
 }

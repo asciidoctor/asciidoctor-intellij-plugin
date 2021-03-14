@@ -10,8 +10,6 @@ import com.intellij.openapi.util.TextRange;
  */
 public abstract class SimpleFormatAsciiDocAction extends FormatAsciiDocAction implements DumbAware {
 
-  public abstract String getFormatCharacter();
-
   @Override
   protected void selectText(Editor editor) {
     super.selectText(editor);
