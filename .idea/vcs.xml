@@ -12,6 +12,10 @@
           <option name="issueRegexp" value="#(\d+)" />
           <option name="linkRegexp" value="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/$1" />
         </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="(IDEA)\-\d+" />
+          <option name="linkRegexp" value="https://youtrack.jetbrains.com/issue/$0" />
+        </IssueNavigationLink>
       </list>
     </option>
   </component>
