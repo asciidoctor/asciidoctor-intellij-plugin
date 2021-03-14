@@ -13,7 +13,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.tree.IElementType;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
+import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationReference;
@@ -67,6 +69,15 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
     COLLAPSABLE_ATTRIBUTES.put("cpp", "C++");
   }
 
+  private static final Map<IElementType, String> COLLAPSABLE_TYPES = new HashMap<>();
+  static {
+    COLLAPSABLE_TYPES.put(AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END, "\u2019");
+    COLLAPSABLE_TYPES.put(AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START, "\u2018");
+    COLLAPSABLE_TYPES.put(AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END, "\u201D");
+    COLLAPSABLE_TYPES.put(AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START, "\u201C");
+  }
+
+
   @Override
   protected void buildLanguageFoldRegions(@NotNull List<FoldingDescriptor> descriptors,
                                           @NotNull PsiElement root,
@@ -83,6 +94,8 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
             addDescriptors(element);
           }
         } else if (element instanceof AsciiDocHtmlEntity) {
+          addDescriptors(element);
+        } else if (COLLAPSABLE_TYPES.containsKey(element.getNode().getElementType())) {
           addDescriptors(element);
         }
         super.visitElement(element);
@@ -129,6 +142,8 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
       descriptors.add(new FoldingDescriptor(element, range));
     } else if (element instanceof AsciiDocHtmlEntity) {
       descriptors.add(new FoldingDescriptor(element, range));
+    } else if (COLLAPSABLE_TYPES.containsKey(element.getNode().getElementType())) {
+      descriptors.add(new FoldingDescriptor(element, range));
     }
   }
 
@@ -141,6 +156,8 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
       title += " ...";
     } else if (node.getPsi() instanceof AsciiDocHtmlEntity) {
       title = ((AsciiDocHtmlEntity) node.getPsi()).getDecodedText();
+    } else if (COLLAPSABLE_TYPES.containsKey(node.getElementType())) {
+      title = COLLAPSABLE_TYPES.get(node.getElementType());
     } else if (node.getPsi() instanceof AsciiDocAttributeReference) {
       String text = node.getText();
       if (text.startsWith("{") && text.endsWith("}")) {

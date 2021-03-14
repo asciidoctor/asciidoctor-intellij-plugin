@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.30
+
+- allow folding of typographic quotes in editor (#699)
+
 === 0.32.29
 
 - handling typographic quotes near monospaced inline content (#699)
