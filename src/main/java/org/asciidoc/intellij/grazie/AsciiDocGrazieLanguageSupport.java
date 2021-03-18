@@ -7,6 +7,7 @@ import com.intellij.grazie.grammar.strategy.impl.RuleGroup;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import kotlin.ranges.IntRange;
+import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -104,6 +105,36 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
       }
       ranges.add(new IntRange(0, i - 1));
     }
+    AsciiDocVisitor visitor = new AsciiDocVisitor() {
+      private int pos = 0;
+      @Override
+      public void visitElement(@NotNull PsiElement element) {
+        super.visitElement(element);
+        if (element.getNode().getElementType() == AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START
+          && element.getTextLength() == 2) {
+          // ` at the end of '`
+          ranges.add(new IntRange(pos + 1, pos + 1));
+        }
+        if (element.getNode().getElementType() == AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END
+          && element.getTextLength() == 2) {
+          // ` at the beginning of `'
+          ranges.add(new IntRange(pos, pos));
+        }
+        PsiElement child = element.getFirstChild();
+        if (child == null) {
+          AsciiDocLanguageSupport.Behavior elementBehavior = languageSupport.getElementBehavior(psiElement, element);
+          if (elementBehavior != AsciiDocLanguageSupport.Behavior.STEALTH &&
+            elementBehavior != AsciiDocLanguageSupport.Behavior.ABSORB) {
+            pos += element.getTextLength();
+          }
+        }
+        while (child != null) {
+          visitElement(child);
+          child = child.getNextSibling();
+        }
+      }
+    };
+    visitor.visitElement(psiElement);
     if (psiElement.getNode().getElementType() == AsciiDocTokenTypes.HEADING_OLDSTYLE && psiElement.getTextLength() >= 1) {
       // ignore second line of heading
       String heading = psiElement.getText();

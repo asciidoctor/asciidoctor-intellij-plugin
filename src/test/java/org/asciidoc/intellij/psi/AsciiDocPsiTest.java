@@ -494,6 +494,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiFile psiFile = configureByAsciiDoc("// comment with some text\n" +
       "== A heading\n" +
       "Textfootnote:[A footnote.] with a footnote.\n" +
+      "A '`test`' test`'s\n" +
       "A <<id,reftext>>.\n" +
       "A xref:file.adoc[link].\n" +
       "Something \"`quoted`\"\n" +
@@ -518,15 +519,19 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
             }
           });
         });
-        for (PsiElement child : element.getChildren()) {
-          this.visitElement(child);
+        PsiElement child = element.getFirstChild();
+        while (child != null) {
+          visitElement(child);
+          child = child.getNextSibling();
         }
       }
     };
     psiFile.accept(myVisitor);
     Assertions.assertThat(texts).containsExactlyInAnyOrder(
+      "== A heading",
       "Cell Content.",
       "Text with a footnote.",
+      "A '`test`' test`'s",
       "A reftext.",
       "// comment with some text",
       "A footnote.",

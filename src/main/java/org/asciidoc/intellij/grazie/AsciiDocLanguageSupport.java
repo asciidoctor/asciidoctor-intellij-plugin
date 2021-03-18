@@ -103,6 +103,8 @@ public class AsciiDocLanguageSupport {
     AsciiDocTokenTypes.MONOITALIC,
     AsciiDocTokenTypes.MONOBOLDITALIC,
     AsciiDocTokenTypes.END_OF_SENTENCE,
+    AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START,
+    AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END,
     AsciiDocTokenTypes.LPAREN,
     AsciiDocTokenTypes.RPAREN,
     AsciiDocTokenTypes.LBRACKET,
