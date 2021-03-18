@@ -87,8 +87,8 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
   @TestOnly
   protected String getAttribute(String attr, String defaultVal) {
     String val = defaultVal;
-    List<AsciiDocAttributeDeclaration> idPrefixDecl = AsciiDocUtil.findAttributes(this.getProject(), attr);
-    for (AsciiDocAttributeDeclaration asciiDocAttributeDeclaration : idPrefixDecl) {
+    List<AttributeDeclaration> idPrefixDecl = AsciiDocUtil.findAttributes(this.getProject(), attr, this);
+    for (AttributeDeclaration asciiDocAttributeDeclaration : idPrefixDecl) {
       if (asciiDocAttributeDeclaration.getAttributeValue() != null) {
         val = asciiDocAttributeDeclaration.getAttributeValue();
         break;
