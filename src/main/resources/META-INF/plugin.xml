@@ -290,7 +290,8 @@
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocInlineMacroShouldBeBlockOrPreprocessorMacroInspection"/>
     <lang.inspectionSuppressor language="AsciiDoc"
       implementationClass="org.asciidoc.intellij.inspections.AsciiDocInspectionSuppressor" />
-    <externalAnnotator language="AsciiDoc" implementationClass="org.asciidoc.intellij.annotator.ExternalAnnotator"/>
+    <externalAnnotator language="AsciiDoc" order="before asciidoc-processor" implementationClass="org.asciidoc.intellij.annotator.AsciiDocExternalAnnotatorHighlighting"/>
+    <externalAnnotator language="AsciiDoc" id="asciidoc-processor" implementationClass="org.asciidoc.intellij.annotator.AsciiDocExternalAnnotatorProcessor"/>
     <stubElementTypeHolder class="org.asciidoc.intellij.parser.AsciiDocElementTypes"/>
     <stubIndex implementation="org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationKeyIndex"/>
     <stubIndex implementation="org.asciidoc.intellij.psi.AsciiDocSectionKeyIndex"/>

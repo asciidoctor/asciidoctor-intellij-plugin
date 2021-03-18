@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - allow folding of typographic quotes in editor (#699)
 - when interpolating IDs for section headings, respect `idprefix` and `idseparator` in Antora component descriptor (#703)
+- adding monospace and italic syntax highlighting for nested elements (#699)
 
 === 0.32.29
 

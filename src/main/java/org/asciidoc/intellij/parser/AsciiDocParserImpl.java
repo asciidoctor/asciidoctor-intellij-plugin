@@ -80,6 +80,10 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SEPARATOR;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SINGLE_QUOTE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TITLE_TOKEN;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_EMAIL;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_LINK;
@@ -414,13 +418,17 @@ public class AsciiDocParserImpl {
   private void parseMono() {
     next();
     PsiBuilder.Marker monoMarker = myBuilder.mark();
-    while ((at(MONO) || at(MONOBOLD) || at(MONOITALIC) || at(MONO_END))
+    while ((at(MONO) || at(MONOBOLD) || at(MONOITALIC) || at(MONO_END) || at(ATTRIBUTE_REF_START) || at(INLINE_MACRO_ID) || atQuote())
       && emptyLines == 0) {
       if (at(MONO_END)) {
         monoMarker.done(AsciiDocElementTypes.MONO);
         monoMarker = null;
         next();
         break;
+      } else if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
+      } else if (at(INLINE_MACRO_ID)) {
+        parseInlineMacro();
       } else {
         next();
       }
@@ -430,16 +438,25 @@ public class AsciiDocParserImpl {
     }
   }
 
+  private boolean atQuote() {
+    return at(TYPOGRAPHIC_DOUBLE_QUOTE_START) || at(TYPOGRAPHIC_DOUBLE_QUOTE_END)
+      || at(TYPOGRAPHIC_SINGLE_QUOTE_START) || at(TYPOGRAPHIC_SINGLE_QUOTE_END);
+  }
+
   private void parseItalic() {
     next();
     PsiBuilder.Marker italicMarker = myBuilder.mark();
-    while ((at(ITALIC) || at(BOLDITALIC) || at(ITALIC_END))
+    while ((at(ITALIC) || at(BOLDITALIC) || at(ITALIC_END) || at(ATTRIBUTE_REF_START) || at(INLINE_MACRO_ID) || atQuote())
       && emptyLines == 0) {
       if (at(ITALIC_END)) {
         italicMarker.done(AsciiDocElementTypes.ITALIC);
         italicMarker = null;
         next();
         break;
+      } else if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
+      } else if (at(INLINE_MACRO_ID)) {
+        parseInlineMacro();
       } else {
         next();
       }
@@ -476,8 +493,7 @@ public class AsciiDocParserImpl {
     PsiBuilder.Marker inlineMacroMarker = myBuilder.mark();
     String macroId = myBuilder.getTokenText();
     next();
-    while ((at(INLINE_MACRO_BODY) || at(ATTR_NAME) || at(ASSIGNMENT) || at(URL_LINK) || at(ATTR_VALUE) || at(SEPARATOR) || at(INLINE_ATTRS_START) || at(INLINE_ATTRS_END) || at(MACROTEXT)
-      || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP) || at(ATTR_LIST_OP) || at(PASSTRHOUGH_INLINE_START))
+    while (atInlineMacro()
       && newLines == 0) {
       if (at(INLINE_ATTRS_END)) {
         next();
@@ -495,6 +511,11 @@ public class AsciiDocParserImpl {
       }
     }
     inlineMacroMarker.done(AsciiDocElementTypes.INLINE_MACRO);
+  }
+
+  private boolean atInlineMacro() {
+    return at(INLINE_MACRO_BODY) || at(ATTR_NAME) || at(ASSIGNMENT) || at(URL_LINK) || at(ATTR_VALUE) || at(SEPARATOR) || at(INLINE_ATTRS_START) || at(INLINE_ATTRS_END) || at(MACROTEXT)
+      || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP) || at(ATTR_LIST_OP) || at(PASSTRHOUGH_INLINE_START);
   }
 
   private void parsePassthrough() {

@@ -51,7 +51,7 @@ import java.util.Set;
  *
  * @author Alexander Schwartz 2019
  */
-public class ExternalAnnotator extends com.intellij.lang.annotation.ExternalAnnotator<
+public class AsciiDocExternalAnnotatorProcessor extends com.intellij.lang.annotation.ExternalAnnotator<
   AsciiDocInfoType, AsciiDocAnnotationResultType> {
 
   public static final String INCLUDE_FILE_NOT_FOUND = "include file not found";
