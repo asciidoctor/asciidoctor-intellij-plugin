@@ -7,6 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.31
+
+- updated plugin's description for better search results in JetBrains Marketplace
+- reduce instances where recursion can occur when resolving file references
+
 === 0.32.30
 
 - allow folding of typographic quotes in editor (#699)

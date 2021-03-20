@@ -162,6 +162,10 @@ public class AsciiDocUtil {
           if (searched.contains(value)) {
             continue;
           }
+          // avoid replacements where new value contains the old attribute as placeholder
+          if (value.contains("{" + decl.getAttributeName() + "}")) {
+            continue;
+          }
           searched.add(value);
           stack.push(new Trinity<>(attributeName, value, key));
           String newName = new StringBuilder(name).replace(matcherName.start(), matcherName.end(), value).toString();

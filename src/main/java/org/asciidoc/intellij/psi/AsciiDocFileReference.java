@@ -226,6 +226,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           if (searched.contains(value)) {
             continue;
           }
+          // avoid replacements where new value contains the old attribute as placeholder
+          if (value.contains("{" + decl.getAttributeName() + "}")) {
+            continue;
+          }
           searched.add(value);
           stack.add(new Trinity<>(attributeName, value, key));
           String newName = new StringBuilder(key).replace(matcher.start(), matcher.end(), value).toString();
@@ -489,6 +493,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         for (AttributeDeclaration decl : declarations) {
           String value = decl.getAttributeValue();
           if (value == null) {
+            continue;
+          }
+          // avoid replacements where new value contains the old attribute as placeholder
+          if (value.contains("{" + decl.getAttributeName() + "}")) {
             continue;
           }
           if (searched.contains(value)) {
