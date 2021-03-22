@@ -55,6 +55,7 @@ import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
+import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
@@ -874,13 +875,14 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
         String path = uri.getPath();
         final VirtualFile targetFile;
         VirtualFile tmpTargetFile = parentDirectory.findFileByRelativePath(path);
+        String extension = AsciiDocFileType.getExtensionOrDefault(FileDocumentManager.getInstance().getFile(editor.getDocument()));
         if (tmpTargetFile == null) {
           // extension might be skipped if it is an .adoc file
-          tmpTargetFile = parentDirectory.findFileByRelativePath(path + ".adoc");
+          tmpTargetFile = parentDirectory.findFileByRelativePath(path + "." + extension);
         }
         if (tmpTargetFile == null && path.endsWith(".html")) {
           // might link to a .html in the rendered output, but might actually be a .adoc file
-          tmpTargetFile = parentDirectory.findFileByRelativePath(path.replaceAll("\\.html$", ".adoc"));
+          tmpTargetFile = parentDirectory.findFileByRelativePath(path.replaceAll("\\.html$", "." + extension));
         }
         if (tmpTargetFile == null) {
           LOG.warn("unable to find file for " + uri);

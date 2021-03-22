@@ -27,6 +27,7 @@ import icons.AsciiDocIcons;
 import org.apache.commons.lang.ArrayUtils;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.completion.AsciiDocCompletionContributor;
+import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -516,11 +517,12 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       if (file != null) {
         results.add(new PsiElementResolveResult(file));
       } else if ("link".endsWith(macroName) || "xref".endsWith(macroName) || macroName.equals("xref-attr") || "<<".equals(macroName)) {
-        file = resolve(key + ".adoc");
+        String extension = AsciiDocFileType.getExtensionOrDefault(getElement());
+        file = resolve(key + "." + extension);
         if (file != null) {
           results.add(new PsiElementResolveResult(file));
         } else if (key.endsWith(".html")) {
-          file = resolve(key.replaceAll("\\.html$", ".adoc"));
+          file = resolve(key.replaceAll("\\.html$", "." + extension));
           if (file != null) {
             results.add(new PsiElementResolveResult(file));
           }
@@ -659,9 +661,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       }
     } else if ("link".equals(macroName) || "xref".equals(macroName) || "xref-attr".equals(macroName)) {
       getVariants(base, collector, 0);
-      getVariants(base + ".adoc", collector, 0);
+      String extension = AsciiDocFileType.getExtensionOrDefault(getElement());
+      getVariants(base + "." + extension, collector, 0);
       if (base.endsWith(".html")) {
-        getVariants(base.replaceAll("\\.html$", ".adoc"), collector, 0);
+        getVariants(base.replaceAll("\\.html$", "." + extension), collector, 0);
       }
     } else {
       getVariants(base, collector, 0);

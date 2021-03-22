@@ -16,6 +16,9 @@
 package org.asciidoc.intellij.file;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.jetbrains.annotations.NotNull;
@@ -76,6 +79,33 @@ public class AsciiDocFileType extends LanguageFileType {
       }
     }
     return false;
+  }
+
+  public static String getExtensionOrDefault(String filename) {
+    filename = filename.toLowerCase(Locale.US);
+    for (String extension : DEFAULT_ASSOCIATED_EXTENSIONS) {
+      if (filename.endsWith("." + extension)) {
+        return extension;
+      }
+    }
+    return DEFAULT_ASSOCIATED_EXTENSIONS.get(0);
+  }
+
+  public static String getExtensionOrDefault(VirtualFile file) {
+    if (file != null) {
+      return getExtensionOrDefault(file.getName());
+    }
+    return DEFAULT_ASSOCIATED_EXTENSIONS.get(0);
+  }
+
+  public static String getExtensionOrDefault(PsiElement element) {
+    if (element != null) {
+      PsiFile file = element.getContainingFile();
+      if (file != null) {
+        return getExtensionOrDefault(file.getName());
+      }
+    }
+    return DEFAULT_ASSOCIATED_EXTENSIONS.get(0);
   }
 
   /**

@@ -21,6 +21,7 @@ import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanel;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
+import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -312,21 +313,21 @@ public class BrowserPanel implements Closeable {
       // type 'image' will deliver a binary file
       String type = "image";
       String suffix = "";
-      if (file.endsWith(".adoc")) {
+      if (AsciiDocFileType.hasAsciiDocExtension(file)) {
         // type 'source' will be an AsciiDoc converted to HTML on the fly
         type = "source";
       } else if (file.endsWith(".html")) {
         if (!new File(base + "/" + file).exists()) {
-          String adocFile = file.replaceAll("\\.html$", ".adoc");
+          String adocFile = file.replaceAll("\\.html$", attributes.get("docfilesuffix"));
           if (new File(base + "/" + adocFile).exists()) {
             // if the file points to an HTML that doesn't exist, but an AsciiDoc file with the same name exists, use the AsciiDoc file and convert it on the fly
             file = adocFile;
             type = "source";
           }
         }
-      } else if (new File(base + "/" + file + ".adoc").exists()) {
+      } else if (new File(base + "/" + file + "." + attributes.get("docfilesuffix")).exists()) {
         // if the file points to a file without extension, but an AsciiDoc file with the same name exists, use the AsciiDoc file and convert it on the fly
-        file = file + ".adoc";
+        file = file + "." + attributes.get("docfilesuffix");
         type = "source";
       }
       if (type.equals("source")) {
