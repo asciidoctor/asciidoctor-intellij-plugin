@@ -126,7 +126,7 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
           elementBehavior != AsciiDocLanguageSupport.Behavior.ABSORB) {
           if (child == null) {
               pos += element.getTextLength();
-            }
+          }
           while (child != null) {
             visitElement(child);
             child = child.getNextSibling();
