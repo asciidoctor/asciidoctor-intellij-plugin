@@ -121,16 +121,16 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
           ranges.add(new IntRange(pos, pos));
         }
         PsiElement child = element.getFirstChild();
-        if (child == null) {
-          AsciiDocLanguageSupport.Behavior elementBehavior = languageSupport.getElementBehavior(psiElement, element);
-          if (elementBehavior != AsciiDocLanguageSupport.Behavior.STEALTH &&
-            elementBehavior != AsciiDocLanguageSupport.Behavior.ABSORB) {
-            pos += element.getTextLength();
+        AsciiDocLanguageSupport.Behavior elementBehavior = languageSupport.getElementBehavior(psiElement, element);
+        if (elementBehavior != AsciiDocLanguageSupport.Behavior.STEALTH &&
+          elementBehavior != AsciiDocLanguageSupport.Behavior.ABSORB) {
+          if (child == null) {
+              pos += element.getTextLength();
+            }
+          while (child != null) {
+            visitElement(child);
+            child = child.getNextSibling();
           }
-        }
-        while (child != null) {
-          visitElement(child);
-          child = child.getNextSibling();
         }
       }
     };
