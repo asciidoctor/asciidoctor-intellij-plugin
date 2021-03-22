@@ -17,11 +17,15 @@ The plugin's settings in menu:File[Settings... > Languages & Frameworks > AsciiD
 
 The user is behind a proxy, and the content in the preview includes remote files.
 
-== Cause: JCEF doesn't support proxies
+== Cause: Old versions of JCEF don't support proxies
 
-The JCEF preview doesn't support the IDE's proxy settings.
+The JCEF preview doesn't support the IDE's proxy settings in version 2020.3 and earlier.
 
-https://youtrack.jetbrains.com/issue/JBR-2605[The JetBrains issue tracker shows] that this will be fixed in release 2021.2.
+https://youtrack.jetbrains.com/issue/JBR-2605[The JetBrains issue tracker shows] that this is fixed in release 2021.1 Beta 3 (Build 211.6556.6).
+
+== Solution: Update to 2021.1
+
+If you're able to use an early-access-version now, please give 2021.1 Beta 3 or later a try.
 
 == Workaround: Use JavaFX preview
 
