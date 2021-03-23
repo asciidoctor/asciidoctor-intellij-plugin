@@ -12,7 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - updated plugin's description for better search results in JetBrains Marketplace
 - reduce instances where recursion can occur when resolving file references
 - rework typographic quotes grammar check to avoid index out of bounds exception (#699)
-- support all well-known AsciiDoc extensions when auto-completing and validating file names (#706)
+- support all well-known AsciiDoc file extensions when auto-completing and validating file names (#706)
 
 === 0.32.30
 
