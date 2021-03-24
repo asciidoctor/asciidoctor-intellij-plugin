@@ -370,6 +370,13 @@ public class AsciiDocUtil {
       result.addAll(findAttributes(project, key, antoraModuleDir != null));
     }
 
+    if (result.size() == 0) {
+      if (key.equals("outfilesuffix")) {
+        // if no-one defined it, it is most likely '.html'
+        result.add(new AsciiDocAttributeDeclarationDummy(key, ".html"));
+      }
+    }
+
     return result;
   }
 
@@ -414,6 +421,10 @@ public class AsciiDocUtil {
     if (vf != null) {
       vf = vf.getParent();
       augmentList(result, vf, "docdir");
+    }
+
+    if (result.stream().noneMatch(attributeDeclaration -> attributeDeclaration.getAttributeName().equals("outfilesuffix"))) {
+      result.add(new AsciiDocAttributeDeclarationDummy("outfilesuffix", ".html"));
     }
 
     return result;
