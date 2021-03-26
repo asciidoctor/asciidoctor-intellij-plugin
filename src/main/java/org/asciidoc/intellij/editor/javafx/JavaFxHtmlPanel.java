@@ -541,14 +541,11 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
         final String htmlToReplace = StringEscapeUtils.escapeEcmaScript(prepareHtml(html, attributes));
         // try to replace the HTML contents using JavaScript to avoid flickering MathML
         try {
-          boolean ml = false; // set to "true" to test for memory leaks in HTML/JavaScript
           result = (Boolean) JavaFxHtmlPanel.this.getWebViewGuaranteed().getEngine().executeScript(
-            (ml ? "var x = 0; " : "") +
               "function finish() {" +
               "if ('__IntelliJTools' in window) {" +
               "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
               "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ");" +
-              (ml ? "window.setTimeout(function(){ updateContent(); }, 10); " : "") +
               "}" +
               "window.JavaPanelBridge && window.JavaPanelBridge.rendered(" + iterationStamp + ");" +
               "}" +
@@ -561,8 +558,6 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
               "  errortext.textContent = ''; " +
               "  errorformula.textContent = ''; " +
               "} " +
-              (ml ? "x = x + 1; " : "") +
-              (ml ? "errortext.textContent = 'count:' + x; " : "") +
               "div.style.cssText = 'display: none'; " +
               // need to add the element to the DOM as MathJAX will use document.getElementById in some places
               "elem.appendChild(div); " +
@@ -752,6 +747,9 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     html = html.replaceAll("(?i)<script [a-z ]*src=\"https://platform\\.twitter\\.com/widgets\\.js\" [^>]*></script>", "");
     html = AsciiDoc.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes);
 
+    html = html.replaceAll("<head>", "<head>\n" +
+      "<meta http-equiv=\"Content-Security-Policy\" content=\"" + PreviewStaticServer.createCSP(attributes) + "\">");
+
     /* Add JavaScript for auto-scrolling and clickable links */
     return html
       .replace("</body>", getScriptingLines() + "</body>");
@@ -864,9 +862,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     }
 
     public void saveImage(@NotNull String path) {
-      ApplicationManager.getApplication().invokeLater(() -> {
-        JavaFxHtmlPanel.this.saveImage(path);
-      });
+      ApplicationManager.getApplication().invokeLater(() -> JavaFxHtmlPanel.this.saveImage(path));
     }
 
     private boolean openInEditor(@NotNull URI uri) {

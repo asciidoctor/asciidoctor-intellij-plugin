@@ -60,12 +60,29 @@ public class PreviewStaticServer extends HttpRequestHandler {
   }
 
   public static String createCSP(@NotNull Map<String, String> attributes) {
-    String result = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/scripts/").toExternalForm() + "; "
-      + "style-src 'unsafe-inline' https: http: " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/styles/").toExternalForm() + "; "
-      + "img-src file: data: localfile: *; connect-src 'none'; font-src *; " +
-      "object-src file: localfile: *;" + // used for interactive SVGs
-      "media-src 'none'; child-src 'none'; " +
-      "frame-src 'self' https://player.vimeo.com/ https://www.youtube.com/"; // used for vimeo/youtube iframes
+    int safeModeLevel = 0;
+    String sml = attributes.get("safe-mode-level");
+    if (sml != null) {
+      safeModeLevel = Integer.parseInt(sml);
+    }
+    String result;
+    if (safeModeLevel == 0) {
+      result = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/scripts/").toExternalForm() + "; "
+        + "style-src 'unsafe-inline' https: http: " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/styles/").toExternalForm() + "; "
+        + "img-src file: data: localfile: *; connect-src 'none'; font-src *; " +
+        "object-src file: localfile: *;" + // used for interactive SVGs
+        "media-src 'none'; child-src 'none'; " +
+        "frame-src 'self' https://player.vimeo.com/ https://www.youtube.com/"; // used for vimeo/youtube iframes
+    } else {
+      // this will restrict external content as much as possible
+      result = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/scripts/").toExternalForm() + "; "
+        + "style-src 'unsafe-inline' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/styles/").toExternalForm() + "; "
+        + "img-src file: data: localfile: ; connect-src 'none'; " +
+        "font-src " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/").toExternalForm() + "; " +
+        "object-src file: localfile: ;" + // used for interactive SVGs
+        "media-src 'none'; child-src 'none'; " +
+        "frame-src 'self'"; // used for vimeo/youtube iframes
+    }
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     if (settings.getAsciiDocPreviewSettings().isKrokiEnabled()) {
       // add Kroki URL for interactive (=embedded) diagrams
@@ -200,7 +217,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
       }
       if (project == null) {
         log.warn("unable to determine project for '" + projectNameParameter + "'/'" + projectUrlParameter
-          + "' out of projects " + nonMatchingProjects.toString()
+          + "' out of projects " + nonMatchingProjects
           + ", therefore unable to render it");
         return false;
       }

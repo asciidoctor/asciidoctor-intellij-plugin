@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.32
+
+- restrict preview using content security policy when user chooses SAVE mode (#707)
+
 === 0.32.31
 
 - updated plugin's description for better search results in JetBrains Marketplace

@@ -10,8 +10,10 @@ Using the configuration, the user can change the split to horizontal, and change
 The plugin uses https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] 2.x to render the preview.
 
 Per default the plugin runs Asciidoctor in safe mode _UNSAFE_ which is also the default when a user runs Asciidoctor from the command line.
-The user can change the behavior to other modes like _SERVER_ and _SECURE_ in the plugin's settings.
+The user can change the behavior to other modes like _SAVE_, _SERVER_ and _SECURE_ in the plugin's settings.
 See section https://asciidoctor.org/docs/user-manual/#running-asciidoctor-securely[Running Asciidoctor securely in the Asciidoctor User Manual] for more information about this feature.
+
+When using the JCEF of the JavaFX preview and _SAVE_, _SERVER_ and _SECURE_ remote content is no longer allowed in the preview by applying a Content Security Policy (new in plugin version 0.32.32).
 
 When the user enters formulas using AsciiDoctor's math support, the preview renders them using MathML.
 If the formula can't be parsed by MathML, the preview shows an error popup.
