@@ -1,0 +1,44 @@
+= Privacy when using this plugin
+:navtitle: Privacy
+:description: All content you edit locally is rendered locally. Some exceptions apply.
+
+{description}
+
+[NOTE]
+====
+This is a best effort approach and work in progress, not a legal document.
+To improve this document and the plugin's privacy functionality, some more work would be required.
+
+You can help by asking the right questions, engaging in a discussion or by sponsoring the plugin's development.
+Maybe you are able to pull in experts from your employer or company that could help in one way or another.
+
+Still, this is a spare time project that is happy to accept contributions of any kind.
+====
+
+== The good news
+
+* The plugin doesn't use tracking and will not collect statistical information about the users or content they edit.
+* The plugin has been designed in a way that the user can edit content on their local PC and the preview will be rendered locally as well using an embedded instance of Asciidoctor.
+
+== Things to consider
+
+The following list is probably incomplete, but should cover the major points:
+
+* If the content includes a remote image, the preview will pull that image from the internet and will reveal their IP address.
+The same applies if they choose to include a remote style sheet for the preview.
+I'm not a lawyer, but usually people consider IP addresses as personal information in the EU.
+
+* If the user chooses to use Kroki diagram preview instead of Asciidoctor Diagram, the contents of the diagrams will be transmitted to a Kroki server and rendered there.
+They can choose to host their own Kroki server.
+
+* In general, users should only edit trusted content in their IDE.
+If they choose to check out and open an untrusted project, the code of that project might contain malicious snippets as part the AsciiDoc content and other scripts.
+These can violate the user's privacy and can compromise their machine.
+
+* When the user accesses the plugin's user's guide on the web, the web hoster will receive the users' router's IP address and browser details and will store it for up to 30 days.
+
+* If an exception occurs in the user's IDE and IntelliJ attributes the exception to the AsciiDoc plugin, the user can choose to send information about the exception to the plugin's Sentry service.
+The user can (and should) review the information before submitting it.
+It may contain personal information if it is part of the exception's message, or if the user chooses to enter personal information in the error description.
+It also contains information about the IDE version, the OS version, a list of other plugins installed in the IDE and standard information Sentry adds.
+
