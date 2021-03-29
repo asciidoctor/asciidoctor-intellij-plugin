@@ -82,9 +82,7 @@ public class AsciiDocLanguageSupport {
     AsciiDocTokenTypes.BULLET,
     AsciiDocTokenTypes.ENUMERATION,
     AsciiDocTokenTypes.ADMONITION,
-    AsciiDocTokenTypes.CALLOUT,
-    AsciiDocTokenTypes.LT,
-    AsciiDocTokenTypes.GT
+    AsciiDocTokenTypes.CALLOUT
   );
 
 
@@ -103,6 +101,8 @@ public class AsciiDocLanguageSupport {
     AsciiDocTokenTypes.MONOITALIC,
     AsciiDocTokenTypes.MONOBOLDITALIC,
     AsciiDocTokenTypes.END_OF_SENTENCE,
+    AsciiDocTokenTypes.LT,
+    AsciiDocTokenTypes.GT,
     AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START,
     AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END,
     AsciiDocTokenTypes.LPAREN,
