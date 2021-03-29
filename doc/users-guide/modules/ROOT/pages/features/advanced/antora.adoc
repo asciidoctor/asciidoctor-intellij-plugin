@@ -113,5 +113,5 @@ Source code: https://github.com/debezium/debezium/tree/master/documentation
 
 IntelliJ plugin for AsciiDoc::
 Site: https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/index.html +
-Source code: https://github.com/asciidoctor/asciidoctor-intellij-plugin/tree/master/doc
+Source code: https://github.com/asciidoctor/asciidoctor-intellij-plugin/tree/main/doc
 

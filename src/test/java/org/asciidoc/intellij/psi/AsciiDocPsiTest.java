@@ -36,7 +36,7 @@ import java.util.Set;
 
 /**
  * Tests for {@link org.asciidoc.intellij.parser.AsciiDocParserImpl}.
- * HINT: instead of this test, consider a golden master test in {@link AsciiDocParserTest}
+ * HINT: instead of this test, consider a known good test in {@link AsciiDocParserTest}
  *
  * @author yole
  */

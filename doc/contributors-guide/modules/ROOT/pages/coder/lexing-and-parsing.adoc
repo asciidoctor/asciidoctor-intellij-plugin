@@ -22,7 +22,7 @@ Once you change `asciidoc.flex`, you should run `gradlew compileJava` to generat
 
 A test suite for the lexer is in `AsciiDocLexerTest`.
 I recommend running it from the IDE.
-Each test case contains a `+doTest(...)+` method that parses one snippet of AsciiDoc and compares it to an expected "`golden master`" result.
+Each test case contains a `+doTest(...)+` method that parses one snippet of AsciiDoc and compares it to an expected "`known good`" result.
 
 A typical developer workflow for enhancing the lexer looks like this:
 
@@ -231,27 +231,27 @@ As you test only specific elements in the created tree, your tests will not brea
 AsciiDocParserTest::
 +
 --
-This test acts on example files in `/testData/parser` together with a golden master file.
+This test acts on example files in `/testData/parser` together with a known good file.
 
 To write a new test, create a new method in the class (like `testSectionsWithPreBlock()`).
 Then put a matching AsciiDoc file to the example file directory (like `sectionsWithPreBlock.adoc`).
-When you run the test for the first time, it will create a golden master file (like `sectionsWithPreBlock.txt`).
-Check the contents of the golden master file if the result matches your expectations.
+When you run the test for the first time, it will create a known good file (like `sectionsWithPreBlock.txt`).
+Check the contents of the known good file if the result matches your expectations.
 
-On consecutive runs the test will compare the parser result with the contents of the golden master file.
+On consecutive runs the test will compare the parser result with the contents of the known good file.
 If the content matches, the test will pass.
 If there are differences, the test will fail.
-If you expected these differences for example because you changed the parser or lexer, copy the result shown in your IDE to the golden master file.
+If you expected these differences for example because you changed the parser or lexer, copy the result shown in your IDE to the known good file.
 
-NOTE: Please check in the golden master file to the Git repository!
+NOTE: Please check in the known good file to the Git repository!
 --
 
 So why are there two types of tests?
 Each has its own strengths!
 
-The golden master approach will trigger even on minor changes to the output and gives you the chance to approve or reject the changes.
+The known good approach will trigger even on minor changes to the output and gives you the chance to approve or reject the changes.
 The downside is that these tests will fail when there are unrelated changes because they check too many things.
-For a golden master test it is also hard to see the parts of the golden master that are relevant for the expected behavior and must not change.
+For a known good test it is also hard to see the parts of the known good that are relevant for the expected behavior and must not change.
 
 The test with single assertions will be most specific to the described functionality, and will leave out parts that are unrelated to the test.
 Therefore, it will not break for unrelated changes.
