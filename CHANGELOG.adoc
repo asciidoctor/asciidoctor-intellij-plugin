@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.32
 
 - restrict preview using content security policy when user chooses SAVE mode (#707)
+- update to AsciidoctorJ Diagram 2.1.1
 
 === 0.32.31
 
