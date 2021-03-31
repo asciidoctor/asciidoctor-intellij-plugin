@@ -493,6 +493,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
   public void testGrammarCheck() {
     PsiFile psiFile = configureByAsciiDoc("// comment with some text\n" +
       "== A heading\n" +
+      ":description: attribute \\\ncontinuation\n" +
       "Textfootnote:[A footnote.] with a footnote.\n" +
       "A '`test`' test`'s\n" +
       "A <<id,reftext>>.\n" +
@@ -529,6 +530,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     psiFile.accept(myVisitor);
     Assertions.assertThat(texts).containsExactlyInAnyOrder(
       "== A heading",
+      "attribute \\",
+      "continuation",
       "Cell Content.",
       "Text with a footnote.",
       "A '`test`' test`'s",

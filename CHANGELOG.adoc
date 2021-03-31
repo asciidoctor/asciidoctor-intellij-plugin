@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - restrict preview using content security policy when user chooses SAVE mode (#707)
 - update to AsciidoctorJ Diagram 2.1.1
+- fix spelling/grammar check for attributes with continuations (#712)
 
 === 0.32.31
 

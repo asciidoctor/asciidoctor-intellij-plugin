@@ -115,6 +115,12 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
           // ` at the end of '`
           ranges.add(new IntRange(pos + 1, pos + 1));
         }
+        if ((element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION
+          || element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION_LEGACY)
+          && element.getTextLength() == 3) {
+          // this will strip out the '+' or '\' from the continuation before forwarding it to the grammar check
+          ranges.add(new IntRange(pos + 1, pos + 1));
+        }
         if (element.getNode().getElementType() == AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END
           && element.getTextLength() == 2) {
           // ` at the beginning of `'

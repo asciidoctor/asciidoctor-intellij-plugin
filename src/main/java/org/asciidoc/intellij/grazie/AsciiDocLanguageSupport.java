@@ -111,6 +111,8 @@ public class AsciiDocLanguageSupport {
     AsciiDocTokenTypes.RBRACKET,
     AsciiDocTokenTypes.BULLET,
     AsciiDocTokenTypes.ATTRIBUTE_VAL, // will only get here if attribute is classified to contain spell checkable content
+    AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION,
+    AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION_LEGACY,
     // keep the white space in here as blanks are necessary to separate words
     AsciiDocTokenTypes.WHITE_SPACE,
     AsciiDocTokenTypes.WHITE_SPACE_MONO,
@@ -126,11 +128,11 @@ public class AsciiDocLanguageSupport {
   public Behavior getElementBehavior(@NotNull PsiElement root, @NotNull PsiElement child) {
     if (root != child && NODES_TO_CHECK.contains(child.getNode().getElementType())) {
       return Behavior.ABSORB;
-    } else if (root != child && child instanceof AsciiDocAttributeDeclarationImpl) {
+    } else if (root == child && child instanceof AsciiDocAttributeDeclarationImpl) {
       if (((AsciiDocAttributeDeclarationImpl) child).hasSpellCheckableContent()) {
-        return Behavior.ABSORB;
+        return Behavior.TEXT;
       } else {
-        return Behavior.STEALTH;
+        return Behavior.ABSORB;
       }
     } else if (SEPARATOR_TOKENS.contains(child.getNode().getElementType())) {
       return Behavior.SEPARATE;
