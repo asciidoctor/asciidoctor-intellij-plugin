@@ -114,14 +114,6 @@
                 description="Create HTML from current file">
         </action>
 
-        <!--
-              <action id="asciidoc.convert.document6" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
-                      text="Insert image" description="Convert this document to AsciiDoc" />
-              <action id="asciidoc.convert.document7" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
-                      text="Insert code" description="Convert this document to AsciiDoc" />
-              <action id="asciidoc.convert.document8" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
-                      text="Insert quote" description="Convert this document to AsciiDoc" />
--->
       </group>
 
       <separator/>
@@ -136,6 +128,11 @@
       <separator/>
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
       <add-to-group group-id="RefactoringMenu" anchor="last"/>
+    </group>
+
+    <group id="AsciiDocNew" text="AsciiDoc">
+      <action id="AsciiDocNewFile" class="org.asciidoc.intellij.actions.AsciiDocCreateFileFromAction"/>
+      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </group>
 
     <group id="AsciiDocInline" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
