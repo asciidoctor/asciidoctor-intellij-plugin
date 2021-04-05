@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.33
+
+- update to AsciidoctorJ Diagram 2.1.2
+
 === 0.32.32
 
 - restrict preview using content security policy when user chooses SAVE mode (#707)
