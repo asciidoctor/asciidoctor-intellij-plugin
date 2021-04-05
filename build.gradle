@@ -132,7 +132,7 @@ dependencies {
   implementation 'io.sentry:sentry:4.3.0'
 
   // when updating the versions here, also update them in AsciiDocDownloaderUtil for dynamic download
-  testImplementation 'org.asciidoctor:asciidoctorj-diagram:2.1.1'
+  testImplementation 'org.asciidoctor:asciidoctorj-diagram:2.1.2'
   testImplementation 'org.asciidoctor:asciidoctorj-pdf:1.5.4'
 
   testImplementation 'junit:junit:4.13.2'

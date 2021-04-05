@@ -53,8 +53,8 @@ public class AsciiDocDownloaderUtil {
 
   // when updating the version, also update the SHA1 hash!
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram
-  public static final String ASCIIDOCTORJ_DIAGRAM_VERSION = "2.1.1";
-  private static final String ASCIIDOCTORJ_DIAGRAM_HASH = "ea091e26683c575d978b80c9753eac5f751ee5fc";
+  public static final String ASCIIDOCTORJ_DIAGRAM_VERSION = "2.1.2";
+  private static final String ASCIIDOCTORJ_DIAGRAM_HASH = "596df6655e47679b60449f46509efdabc7d5986c";
 
   private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
   // this is similar to the path where for example the grazie plugin places its dictionaries
