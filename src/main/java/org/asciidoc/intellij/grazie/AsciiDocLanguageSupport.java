@@ -50,8 +50,6 @@ public class AsciiDocLanguageSupport {
 
   // all tokens that contain full sentences that can be checked for grammar and spelling.
   private static final TokenSet NODES_TO_CHECK = TokenSet.create(
-    AsciiDocTokenTypes.HEADING_TOKEN,
-    AsciiDocTokenTypes.HEADING_OLDSTYLE,
     AsciiDocTokenTypes.TITLE_TOKEN,
     AsciiDocTokenTypes.LINE_COMMENT,
     AsciiDocTokenTypes.BLOCK_COMMENT,
@@ -59,7 +57,8 @@ public class AsciiDocLanguageSupport {
     AsciiDocTokenTypes.BLOCKREFTEXT,
     AsciiDocElementTypes.SECTION,
     AsciiDocElementTypes.BLOCK,
-    AsciiDocElementTypes.CELL
+    AsciiDocElementTypes.CELL,
+    AsciiDocElementTypes.HEADING
   );
 
   /** All tokens that contain full sentences that can be checked for grammar and spelling.
@@ -116,6 +115,8 @@ public class AsciiDocLanguageSupport {
     // keep the white space in here as blanks are necessary to separate words
     AsciiDocTokenTypes.WHITE_SPACE,
     AsciiDocTokenTypes.WHITE_SPACE_MONO,
+    AsciiDocTokenTypes.HEADING_TOKEN,
+    AsciiDocTokenTypes.HEADING_OLDSTYLE,
     TokenType.WHITE_SPACE,
     AsciiDocElementTypes.URL, // can nest LINKTEXT
     AsciiDocElementTypes.REF, // can nest REFTEXT

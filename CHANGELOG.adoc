@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.34
 
 - improve error messages during PDF generation, adding option to add attribute _allow-uri-read_ (#717)
+- avoid StringIndexOutOfBoundsException in Grammar Check (#718)
 
 === 0.32.33
 

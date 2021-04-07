@@ -79,7 +79,9 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
     return languageSupport.isMyContextRoot(psiElement);
   }
 
-  @Override
+  @SuppressWarnings({"UnstableApiUsage", "MissingOverride"})
+  // to be removed in 2021.1, remove @Override to keep compatibility
+  // @Override
   public boolean isTypoAccepted(@NotNull PsiElement psiElement, @NotNull IntRange intRange, @NotNull IntRange intRange1) {
     return true;
   }
@@ -90,20 +92,7 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
     LinkedHashSet<IntRange> ranges = new LinkedHashSet<>();
     if (psiElement.getNode().getElementType() == AsciiDocTokenTypes.LINE_COMMENT && psiElement.getTextLength() >= 2) {
       // ignore "//" at start of line comment
-      ranges.add(new IntRange(0, 1));
-    }
-    if (psiElement.getNode().getElementType() == AsciiDocTokenTypes.HEADING_TOKEN && psiElement.getTextLength() >= 1) {
-      // ignore "##" or "==" at start of heading
-      String heading = psiElement.getText();
-      int i = 0;
-      char start = heading.charAt(0);
-      while (i < heading.length() && heading.charAt(i) == start) {
-        ++i;
-      }
-      while (i < heading.length() && heading.charAt(i) == ' ') {
-        ++i;
-      }
-      ranges.add(new IntRange(0, i - 1));
+      ranges.add(createRange(0, 1));
     }
     AsciiDocVisitor visitor = new AsciiDocVisitor() {
       private int pos = 0;
@@ -113,23 +102,47 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
         if (element.getNode().getElementType() == AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START
           && element.getTextLength() == 2) {
           // ` at the end of '`
-          ranges.add(new IntRange(pos + 1, pos + 1));
+          ranges.add(createRange(pos + 1, pos + 1));
         }
         if ((element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION
           || element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION_LEGACY)
           && element.getTextLength() == 3) {
           // this will strip out the '+' or '\' from the continuation before forwarding it to the grammar check
-          ranges.add(new IntRange(pos + 1, pos + 1));
+          ranges.add(createRange(pos + 1, pos + 1));
         }
         if (element.getNode().getElementType() == AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END
           && element.getTextLength() == 2) {
           // ` at the beginning of `'
-          ranges.add(new IntRange(pos, pos));
+          ranges.add(createRange(pos, pos));
         }
-        PsiElement child = element.getFirstChild();
+        if (element.getNode().getElementType() == AsciiDocTokenTypes.HEADING_OLDSTYLE && element.getTextLength() >= 1) {
+          // ignore second line of heading
+          String heading = element.getText();
+          int i = heading.indexOf('\n');
+          if (i != -1) {
+            ranges.add(createRange(i, heading.length()));
+          }
+        }
+        if (element.getNode().getElementType() == AsciiDocTokenTypes.HEADING_TOKEN && element.getTextLength() >= 1
+          && element.getPrevSibling() == null) {
+          // ignore "##" or "==" at start of heading
+          String heading = element.getText();
+          int i = 0;
+          char start = heading.charAt(0);
+          while (i < heading.length() && heading.charAt(i) == start) {
+            ++i;
+          }
+          while (i < heading.length() && heading.charAt(i) == ' ') {
+            ++i;
+          }
+          if (i > 0) {
+            ranges.add(createRange(0, i - 1));
+          }
+        }
         AsciiDocLanguageSupport.Behavior elementBehavior = languageSupport.getElementBehavior(psiElement, element);
         if (elementBehavior != AsciiDocLanguageSupport.Behavior.STEALTH &&
           elementBehavior != AsciiDocLanguageSupport.Behavior.ABSORB) {
+          PsiElement child = element.getFirstChild();
           if (child == null) {
               pos += element.getTextLength();
           }
@@ -141,15 +154,13 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
       }
     };
     visitor.visitElement(psiElement);
-    if (psiElement.getNode().getElementType() == AsciiDocTokenTypes.HEADING_OLDSTYLE && psiElement.getTextLength() >= 1) {
-      // ignore second line of heading
-      String heading = psiElement.getText();
-      int i = 0;
-      while (i < heading.length() && heading.charAt(i) != '\n') {
-        ++i;
-      }
-      ranges.add(new IntRange(i, heading.length()));
-    }
     return ranges;
+  }
+
+  private IntRange createRange(int start, int endInclusive) {
+    if (start > endInclusive) {
+      throw new IllegalArgumentException("start (" + start + ") is after end (" + endInclusive + "), shouldn't happen");
+    }
+    return new IntRange(start, endInclusive);
   }
 }

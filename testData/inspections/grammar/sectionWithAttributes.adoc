@@ -1,0 +1,6 @@
+= Section
+:title: title \
+continued
+:attr: value
+
+Some text.
