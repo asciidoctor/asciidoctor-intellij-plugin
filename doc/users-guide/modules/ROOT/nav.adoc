@@ -31,4 +31,5 @@
 ** xref:faq/blurry-preview.adoc[]
 ** xref:faq/errno-enoent.adoc[]
 ** xref:faq/troubleshooting-mps.adoc[]
+** xref:faq/diagrams-in-pdf-without-text.adoc[]
 ** xref:faq/could-not-find-dot-executable.adoc[]

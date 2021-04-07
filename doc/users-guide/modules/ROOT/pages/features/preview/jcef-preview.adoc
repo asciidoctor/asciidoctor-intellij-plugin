@@ -34,7 +34,7 @@ As a workaround, open the preview in the browser by clicking on your favorite br
 == Benefits of the JCEF preview
 
 JCEF preview is an embedded Chrome browser.
-After https://jetbrains.org/intellij/sdk/docs/reference_guide/internal_actions/enabling_internal.html[ enabling the internal mode^] users can right-click on the preview and use "`Open DevTools`".
+After https://plugins.jetbrains.com/docs/intellij/enabling-internal.html[enabling the internal mode^] users can right-click on the preview and use "`Open DevTools`".
 This opens a fully equipped Chrome developer tools window that allows users to inspect the HTML created in the preview and to view the JavaScript console of the preview.
 
 == When you can use JCEF preview

@@ -1,0 +1,57 @@
+= Diagrams embedded in PDFs don't show properly
+:navtitle: Problems with Diagrams in PDFs
+:description: When embedding SVG diagrams in PDFs, text and arrows might not show.
+
+== Symptom
+
+{description}
+Users reported this for example for diagrams created with Mermaid or Diagrams.net.
+
+While diagrams show nicely in the preview, they don't show up as expected in the PDF.
+
+== Cause
+
+Looking into the source of the SVG, Mermaid and Diagrams.net use the _foreignObject_ feature to embed HTML for text inside the SVG.
+The plugin's PDF action uses Asciidoctor PDF to create the PDF.
+Asciidoctor PDF render content in _foreignObject_ as the library https://github.com/mogest/prawn-svg[prawn-svg] doesn't support it.
+
+== How do I fix this?
+
+There are several alternatives to fix this:
+
+* <<change-diagram-to-png>>.
+* <<use-web-pdf>>.
+* <<use-asciidoctor-webpdf>>.
+
+[#change-diagram-to-png]
+=== Change diagram to PNG
+
+When using PNG, unsupported SVG attributes won't cause problems.
+The tradeoff is usually a larger PDF and a rastered image.
+Rastered images won't scale and print as good as SVGs.
+Some diagram types (like Mermaid) don't support PNG when used for example with the Kroki-integration.
+
+See xref:features/preview/diagrams.adoc#kroki[Diagrams with Kroki] for more information.
+
+[#use-web-pdf]
+=== Use plugin's Web-PDF rendering (experimental)
+
+There is an experimental feature to render the preview as PDF.
+This feature is work-in-progress, and lacks features like page numbers and a table of contents.
+See https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/592[issue #592] for the progress.
+
+The xref:features/preview/jcef-preview.adoc[] needs to be enabled to use this.
+As this is work-in-progress and experimental, it is behind a feature flag.
+After https://plugins.jetbrains.com/docs/intellij/enabling-internal.html[enabling the internal mode^], users see an action menu:Web PDF[] in the editor's toolbar.
+
+Clicking on this action creates a PDF from the preview.
+
+[#use-asciidoctor-webpdf]
+=== Use Asciidoctor Web PDF
+
+To create a PDF from SVGs that embed HTML, a browser rendering engine is the preferred way.
+When <<use-web-pdf,the plugin's Web-PDF rendering>> isn't enough, and installing software next to the IDE, consider the https://github.com/Mogztter/asciidoctor-web-pdf[Asciidoctor Web PDF] project.
+
+This requires a local Node installation plus working with package.json and NPM.
+The result will be command line interface to render AsciiDoc to PDF using an embedded web browser.
+While it is still in alpha, it supports already lots PDF features like page numbers and a table of contents.

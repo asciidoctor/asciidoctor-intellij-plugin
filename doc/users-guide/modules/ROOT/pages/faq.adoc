@@ -69,6 +69,20 @@ Another alternative is to use a cloud based renderer like Kroki.
 
 See xref:faq/could-not-find-dot-executable.adoc[] for more information.
 
+== PDF troubles
+
+=== Creating a PDF with Kroki enabled shows URLs instead of diagrams
+
+In order for Kroki to embed diagrams in the PDF, the attribute _allow-uri-read_ needs to be set in the plugin's configuration.
+This allows Asciidoctor to retrieve the diagram and embed it in the PDF.
+
+=== Diagrams embedded in PDFs don't show arrows or text properly
+
+Some SVG diagrams embed HTML to show text or arrows, for example Mermaid or Diagrams.net.
+This is not supported by Asciidoctor PDF.
+
+See xref:faq/diagrams-in-pdf-without-text.adoc[] for more details.
+
 == Other Troubles
 
 === Something is not working as I expect it to work, where can I get help?

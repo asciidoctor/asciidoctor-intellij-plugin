@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.34
+
+- improve error messages during PDF generation, adding option to add attribute _allow-uri-read_ (#717)
+
 === 0.32.33
 
 - update to AsciidoctorJ Diagram 2.1.2
