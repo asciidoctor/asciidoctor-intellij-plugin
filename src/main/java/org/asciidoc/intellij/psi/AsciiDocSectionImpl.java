@@ -2,9 +2,12 @@ package org.asciidoc.intellij.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.diagnostic.Attachment;
+import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.impl.DebugUtil;
 import com.intellij.psi.stubs.IStubElementType;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
@@ -157,7 +160,17 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
       return;
     }
 
-    super.accept(visitor);
+    try {
+      super.accept(visitor);
+    } catch (RuntimeException e) {
+      if (e instanceof RuntimeExceptionWithAttachments) {
+        throw e;
+      }
+      String psiTree = DebugUtil.psiToString(this, false, true);
+      // keep only structure in the attachment, clear out any text content to anonymize data
+      psiTree = psiTree.replaceAll("\\('.*'\\)", "");
+      throw new RuntimeExceptionWithAttachments("Problem occurred while running visitor " + visitor.getClass(), e, new Attachment("psi.txt", psiTree));
+    }
   }
 
   @Override

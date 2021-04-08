@@ -139,9 +139,9 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
             ranges.add(createRange(0, i - 1));
           }
         }
-        AsciiDocLanguageSupport.Behavior elementBehavior = languageSupport.getElementBehavior(psiElement, element);
-        if (elementBehavior != AsciiDocLanguageSupport.Behavior.STEALTH &&
-          elementBehavior != AsciiDocLanguageSupport.Behavior.ABSORB) {
+        @NotNull ElementBehavior elementBehavior = getElementBehavior(psiElement, element);
+        if (elementBehavior != ElementBehavior.STEALTH &&
+          elementBehavior != ElementBehavior.ABSORB) {
           PsiElement child = element.getFirstChild();
           if (child == null) {
               pos += element.getTextLength();
