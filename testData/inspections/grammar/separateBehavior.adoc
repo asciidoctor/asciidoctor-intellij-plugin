@@ -1,0 +1,5 @@
+= Section
+
+NOTE: A Note (Admonitions have behavior _SEPARATE_)
+
+something with a stealth range at the end to trigger a _StringOutOfBoundsException_:`'

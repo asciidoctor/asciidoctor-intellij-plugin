@@ -30,6 +30,10 @@ public class AsciiDocGrammarInspectionTest extends AsciiDocQuickFixTestBase {
     doTestNoFix(AsciiDocChangeCaseForAnchor.NAME, true);
   }
 
+  public void testSeparateBehavior() {
+    doTestNoFix(AsciiDocChangeCaseForAnchor.NAME, true);
+  }
+
   @Override
   protected String getBasePath() {
     return "inspections/grammar";
