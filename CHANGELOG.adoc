@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.36
 
 - reworking error logging to avoid logging ProcessCanceled events (#718)
+- listings in IntelliJ light theme will highlight with a light grey background (like inline monospace content)
 
 === 0.32.35
 
