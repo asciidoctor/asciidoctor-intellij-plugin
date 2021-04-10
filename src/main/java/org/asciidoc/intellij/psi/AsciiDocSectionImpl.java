@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -163,7 +164,7 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
     try {
       super.accept(visitor);
     } catch (RuntimeException e) {
-      if (e instanceof RuntimeExceptionWithAttachments) {
+      if (e instanceof RuntimeExceptionWithAttachments || e instanceof ProcessCanceledException) {
         throw e;
       }
       String psiTree = DebugUtil.psiToString(this, false, true);
@@ -223,7 +224,7 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + "(" + getNode().getElementType().toString() + ")";
+    return getClass().getSimpleName() + "(" + getNode().getElementType() + ")";
   }
 
 }
