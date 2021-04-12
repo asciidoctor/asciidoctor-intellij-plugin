@@ -49,7 +49,7 @@ Issues that can give you a good start are https://github.com/asciidoctor/asciido
 Feel free to choose these or any other ticket to contribute, or even create pull requests without a prior ticket.
 
 Please have a look at the {homepage-url}/docs/contributors-guide/index.html["`Contributor Guide`"].
-This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the link:CODE_OF_CONDUCT.adoc[Contributor Covenant code of conduct].
+This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the link:https://github.com/asciidoctor/.github/blob/main/CODE-OF-CONDUCT.md[Asciidoctor Community Code of Conduct].
 
 == Copyright and Licensing
 
