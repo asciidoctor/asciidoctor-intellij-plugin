@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
  * @author yole
  * @author Alexander Schwartz (alexander.schwartz@gmx.net)
  */
-@SuppressWarnings({"AsciiDocHeadingStyle", "AsciiDocLinkResolve", "AsciiDocAttributeContinuation", "AsciiDocReferenceResolve", "AsciiDocHorizontalRule"})
+@SuppressWarnings({"AsciiDocHeadingStyle", "AsciiDocLinkResolve", "AsciiDocAttributeContinuation", "AsciiDocReferenceResolve", "AsciiDocHorizontalRule", "AsciiDocXrefWithNaturalCrossReference"})
 public class AsciiDocLexerTest extends LexerTestCase {
   public void testSimple() {
     doTest("abc\ndef",
@@ -368,6 +368,19 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:LINE_COMMENT ('// c')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:PASSTRHOUGH_BLOCK_DELIMITER ('++++')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
+  public void testNoLineCommentWithThreeSlashes() {
+    doTest("/// notacomment",
+      "AsciiDoc:TEXT ('///')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('notacomment')");
+  }
+
+  public void testVerySimpleComment() {
+    doTest("//\n",
+      "AsciiDoc:LINE_COMMENT ('//')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 

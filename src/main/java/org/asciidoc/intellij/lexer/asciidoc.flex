@@ -267,7 +267,7 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
 
 SPACE = [\ \t]
 NON_SPACE = [^\n]
-LINE_COMMENT="//"[^\n]*
+LINE_COMMENT="//"
 COMMENT_BLOCK_DELIMITER = "////" "/"* {SPACE}*
 PASSTRHOUGH_BLOCK_DELIMITER = "++++" "+"* {SPACE}*
 LISTING_BLOCK_DELIMITER = "----" "-"* {SPACE}*
@@ -1031,7 +1031,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <PREBLOCK, SINGLELINE, PASSTHROUGH_NO_DELIMITER, HEADER, LIST> {
-  {LINE_COMMENT} {
+  {LINE_COMMENT} / [^/] {
     // the line comment might be stopped while reading a comment within a table up until the cell separator
     if (tableChar != 0) {
       zzEndReadL = limitLookahead(zzCurrentPosL);

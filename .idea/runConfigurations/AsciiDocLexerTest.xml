@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="AsciiDocLexerTest" type="JUnit" factoryName="JUnit">
+    <module name="asciidoctor-intellij-plugin.test" />
+    <shortenClasspath name="ARGS_FILE" />
+    <option name="PACKAGE_NAME" value="org.asciidoc.intellij.lexer" />
+    <option name="MAIN_CLASS_NAME" value="org.asciidoc.intellij.lexer.AsciiDocLexerTest" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="class" />
+    <method v="2">
+      <option name="Gradle.BeforeRunTask" enabled="true" tasks=":generateAsciidocLexer" externalProjectPath="$PROJECT_DIR$" vmOptions="" scriptParameters="" />
+      <option name="MakeProject" enabled="true" />
+    </method>
+  </configuration>
+</component>

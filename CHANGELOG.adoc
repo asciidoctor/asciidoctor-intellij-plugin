@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.37
 
 - when searching for references for AsciiDoc sections and IDs, limited search scope to AsciiDoc file type (#722)
+- tuning comment parsing (#696)
 
 === 0.32.36
 
