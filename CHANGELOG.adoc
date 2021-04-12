@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.37
+
+- when searching for references for AsciiDoc sections and IDs, limited search scope to AsciiDoc file type (#722)
+
 === 0.32.36
 
 - reworking error logging to avoid logging ProcessCanceled events (#718)

@@ -93,7 +93,7 @@ public class AsciiDocUtil {
       return Collections.emptyList();
     }
     List<AsciiDocBlockId> result = null;
-    final GlobalSearchScope scope = new AsciiDocSearchScope(project);
+    final GlobalSearchScope scope = new AsciiDocSearchScope(project).restrictedByAsciiDocFileType();
     Collection<AsciiDocBlockId> asciiDocBlockIds = AsciiDocBlockIdKeyIndex.getInstance().get(key, project, scope);
     for (AsciiDocBlockId asciiDocBlockId : asciiDocBlockIds) {
       result = collectBlockId(result, asciiDocBlockId);
@@ -249,7 +249,7 @@ public class AsciiDocUtil {
   static List<AsciiDocBlockId> findIds(Project project) {
     List<AsciiDocBlockId> result = new ArrayList<>();
     Collection<String> keys = AsciiDocBlockIdKeyIndex.getInstance().getAllKeys(project);
-    final GlobalSearchScope scope = new AsciiDocSearchScope(project);
+    final GlobalSearchScope scope = new AsciiDocSearchScope(project).restrictedByAsciiDocFileType();
     for (String key : keys) {
       result.addAll(AsciiDocBlockIdKeyIndex.getInstance().get(key, project, scope));
     }
@@ -266,7 +266,7 @@ public class AsciiDocUtil {
     }
     ProgressManager.checkCanceled();
     List<AsciiDocAttributeDeclaration> result = null;
-    final GlobalSearchScope scope = new AsciiDocSearchScope(project);
+    final GlobalSearchScope scope = new AsciiDocSearchScope(project).restrictedByAsciiDocFileType();
     Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(key, project, scope);
     Map<VirtualFile, Boolean> cache = new HashMap<>();
     for (AsciiDocAttributeDeclaration asciiDocAttributeDeclaration : asciiDocAttributeDeclarations) {
@@ -291,7 +291,7 @@ public class AsciiDocUtil {
   static List<AsciiDocAttributeDeclaration> findAttributes(Project project, boolean onlyAntora) {
     List<AsciiDocAttributeDeclaration> result = new ArrayList<>();
     Collection<String> keys = AsciiDocAttributeDeclarationKeyIndex.getInstance().getAllKeys(project);
-    final GlobalSearchScope scope = new AsciiDocSearchScope(project);
+    final GlobalSearchScope scope = new AsciiDocSearchScope(project).restrictedByAsciiDocFileType();
     Map<VirtualFile, Boolean> cache = new HashMap<>();
     for (String key : keys) {
       Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(key, project, scope);

@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.FileIndexFacade;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
+import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -23,6 +24,10 @@ public class AsciiDocSearchScope extends GlobalSearchScope {
   public AsciiDocSearchScope(Project project) {
     super(project);
     myFileIndexFacade = FileIndexFacade.getInstance(project);
+  }
+
+  public GlobalSearchScope restrictedByAsciiDocFileType() {
+    return GlobalSearchScope.getScopeRestrictedByFileTypes(this, AsciiDocFileType.INSTANCE);
   }
 
   @Override

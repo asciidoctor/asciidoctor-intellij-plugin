@@ -99,7 +99,7 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
       if (element instanceof AsciiDocAttributeDeclarationName) {
         Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(name, element.getProject(),
           // searching also the libraries is generally not useful; therefore restrict to project scope
-          ((GlobalSearchScope) scope).intersectWith(new AsciiDocSearchScope(element.getProject()))
+          ((GlobalSearchScope) scope).intersectWith(new AsciiDocSearchScope(element.getProject()).restrictedByAsciiDocFileType())
         );
         for (AsciiDocAttributeDeclaration attribute : asciiDocAttributeDeclarations) {
           AsciiDocAttributeDeclarationName child = attribute.getAttributeDeclarationName();

@@ -15,7 +15,7 @@ public class AsciiDocFileUtil {
       return Collections.emptyList();
     }
     List<AsciiDocSection> result = null;
-    final GlobalSearchScope scope = new AsciiDocSearchScope(project);
+    final GlobalSearchScope scope = new AsciiDocSearchScope(project).restrictedByAsciiDocFileType();
     Collection<AsciiDocSection> asciiDocSections = new ArrayList<>();
     asciiDocSections.addAll(AsciiDocSectionKeyIndex.getInstance().get(key, project, scope));
     asciiDocSections.addAll(AsciiDocSectionKeyIndex.getInstance().get(AsciiDocSectionStubElementType.SECTION_WITH_VAR, project, scope));
@@ -33,7 +33,7 @@ public class AsciiDocFileUtil {
   public static List<AsciiDocSection> findSections(Project project) {
     List<AsciiDocSection> result = new ArrayList<>();
     Collection<String> keys = AsciiDocSectionKeyIndex.getInstance().getAllKeys(project);
-    final GlobalSearchScope scope = new AsciiDocSearchScope(project);
+    final GlobalSearchScope scope = new AsciiDocSearchScope(project).restrictedByAsciiDocFileType();
     for (String key : keys) {
       Collection<AsciiDocSection> asciiDocSections = AsciiDocSectionKeyIndex.getInstance().get(key, project, scope);
       for (AsciiDocSection asciiDocSection : asciiDocSections) {
