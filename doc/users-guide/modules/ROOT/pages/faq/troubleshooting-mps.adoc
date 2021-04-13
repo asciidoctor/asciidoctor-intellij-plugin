@@ -7,39 +7,16 @@ If your issue is not listed here, please open a https://github.com/asciidoctor/a
 
 == Symptom: exception "`Wrong dependency type: class com.intellij.openapi.util.Key`" while editing a document
 
-[NOTE]
-====
-This problem doesn't appear in MPS 2020.3 anymore (at the time of writing it is available as EAP version).
+This problem doesn't appear in MPS 2020.3 anymore.
 Please upgrade your IDE.
-====
 
-This is a known problem with MPS: https://youtrack.jetbrains.com/issue/MPS-30801[MPS-30801].
-
-No workaround is available as of today.
 See https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/502[asciidoctor-intellij-plugin#502] for more details and a discussion.
+This has been tracked by JetBrains in issue https://youtrack.jetbrains.com/issue/MPS-30801[MPS-30801].
 
 == Symptom: PluginException at IDE startup mentioning "`RefactoringMenu`"
 
-[NOTE]
-====
 This problem doesn't appear in MPS 2020.2.2 anymore.
 It is no longer necessary to install the "`AsciiDoc MPS add-on`".
-====
-
-This problem was first observed on MPS 2019.3.4.
-The assumed cause for this is MPS removing menu items compared to IntelliJ core.
-This leads to the exception at startup time.
-The rest of the plugin's functionality is unaffected.
-
-To work around the exception install an AsciiDoc MPS add-on _in addition_ to the regular AsciiDoc plugin.
-
-Follow these steps:
-
-. Download the "`AsciiDoc MPS add-on`": link:{attachmentsdir}/asciidoctor-intellij-plugin-mps.jar[asciidoctor-intellij-plugin-mps.jar]
-. Go to menu:File[Settings... > Plugins > Gear Icon] (icon:gear[])
-. Choose menu:Install plugin from disk...[]
-. Choose the downloaded file in the file selection dialogue
-. Restart the IDE
 
 You can read more about this in the related GitHub issue https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/502[asciidoctor-intellij-plugin#502].
 
