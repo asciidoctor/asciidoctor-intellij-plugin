@@ -34,7 +34,8 @@ See xref:recommended-settings.adoc#configuring-editor[section "`Configuring edit
 
 === The preview doesn't show some remote images! Is this a proxy issue?
 
-The JCEF preview doesn't support the IDE's proxy settings.
+The JCEF preview doesn't support the IDE's proxy settings prior to IntelliJ 2021.1.
+Configuring a proxy for JCEF requires an IDE restart.
 See xref:faq/jcef-no-proxy-support.adoc[] for more information.
 
 === The preview doesn't show and in the notification I see "`Errno::ENOENT message`".

@@ -19,8 +19,9 @@ This includes rendering of fonts and SVGs.
 [[limitations]]
 == Limitations of the JCEF preview
 
-The JCEF preview doesn't support the IntelliJ proxy configuration yet.
-Therefore, remote images in the preview will not show if you are behind a proxy.
+The JCEF preview doesn't support the IntelliJ proxy configuration prior to 2021.1.
+Configuring a proxy for JCEF requires an IDE restart.
+Therefore, remote images in the preview might not show if you are behind a proxy.
 See '`xref:faq/jcef-no-proxy-support.adoc[]`' for more information.
 
 Once a JCEF preview is open in a project, it now and then brings the focus to the project when editing files in a different window in IntelliJ 2020.2.
