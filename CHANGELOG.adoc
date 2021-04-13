@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - when searching for references for AsciiDoc sections and IDs, limited search scope to AsciiDoc file type (#722)
 - tuning comment parsing (#696)
 - creating fewer references when analyzing include tags in a file (#723)
+- preventing plugin-unloading earlier in the plugin's loading cycle (#724)
 
 === 0.32.36
 

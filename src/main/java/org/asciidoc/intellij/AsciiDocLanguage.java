@@ -21,6 +21,7 @@ import com.intellij.lang.LanguageUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.asciidoc.intellij.activities.AsciiDocHandleUnloadActivity;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,6 +39,12 @@ public class AsciiDocLanguage extends Language {
 
   private AsciiDocLanguage() {
     super(LANGUAGE_NAME);
+  }
+
+  static {
+    // startup activities ar running late, and might fail due to unloading. Therefore prevent unloading as early as possible.
+    // see: https://youtrack.jetbrains.com/issue/IDEA-266736
+    AsciiDocHandleUnloadActivity.setupListener();
   }
 
   public static boolean isAsciiDocFile(@NotNull Project project, @NotNull VirtualFile file) {
