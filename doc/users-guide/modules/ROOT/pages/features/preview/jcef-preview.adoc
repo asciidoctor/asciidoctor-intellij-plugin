@@ -7,7 +7,7 @@
 ====
 This is available from IntelliJ 2020.2+ and plugin version 0.31.x.
 
-Please update to IntelliJ 2020.3+ for best experience, as this fixes some limitation of earlier versions.
+Please update to IntelliJ 2020.3+ for best experience, as this fixes some limitations of earlier versions.
 ====
 
 == Why to use the JCEF preview
