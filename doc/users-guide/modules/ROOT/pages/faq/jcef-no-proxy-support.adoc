@@ -25,7 +25,8 @@ https://youtrack.jetbrains.com/issue/JBR-2605[The JetBrains issue tracker shows]
 
 == Solution: Update to 2021.1
 
-If you're able to use an early-access-version now, please give 2021.1 Beta 3 or later a try.
+For IntelliJ 2021.1 or later, the JCEF preview uses the proxy.
+After configuring the proxy, the user needs to restart the IDE for the setting to become effective.
 
 == Workaround: Use JavaFX preview
 
