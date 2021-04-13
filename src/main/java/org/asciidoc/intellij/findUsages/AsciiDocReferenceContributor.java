@@ -20,8 +20,8 @@ import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagInDocument;
-import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInComment;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInDocument;
+import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInElement;
 import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocSimpleFileReference;
 import org.asciidoc.intellij.psi.AsciiDocTextItalic;
@@ -265,8 +265,8 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
     }
   }
 
-  public static final String TAG_PATTERN_STR = "\\b(tag|end)::([a-zA-Z0-9_-]*)\\[](?=$|[ \\r])";
-  private static final Pattern TAG_PATTERN = Pattern.compile(TAG_PATTERN_STR);
+  public static final String TAG_PATTERN_STR = "\\b(tag|end)::([a-zA-Z0-9_-]*)\\[](?=$|[ \\n])";
+  public static final Pattern TAG_PATTERN = Pattern.compile(TAG_PATTERN_STR);
 
   private List<PsiReference> findTagInElement(PsiElement element) {
     String text = element.getText();
@@ -276,7 +276,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
       if (result == null) {
         result = new ArrayList<>();
       }
-      result.add(new AsciiDocIncludeTagReferenceInComment(
+      result.add(new AsciiDocIncludeTagReferenceInElement(
         element,
         TextRange.create(matcher.start(2), matcher.end(2)),
         matcher.group(1))

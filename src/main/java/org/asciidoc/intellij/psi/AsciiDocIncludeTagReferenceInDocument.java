@@ -37,8 +37,8 @@ public class AsciiDocIncludeTagReferenceInDocument extends PsiReferenceBase<PsiE
             if (resolve != null) {
               PsiTreeUtil.processElements(resolve.getContainingFile(), element -> {
                 for (PsiReference reference : element.getReferences()) {
-                  if (reference instanceof AsciiDocIncludeTagReferenceInComment) {
-                    AsciiDocIncludeTagReferenceInComment tagReference = (AsciiDocIncludeTagReferenceInComment) reference;
+                  if (reference instanceof AsciiDocIncludeTagReferenceInElement) {
+                    AsciiDocIncludeTagReferenceInElement tagReference = (AsciiDocIncludeTagReferenceInElement) reference;
                     if (tagReference.getType().equals("tag") && tagReference.getKey().equals(key)) {
                       results.add(new PsiElementResolveResult(new AsciiDocTagDeclaration(tagReference)));
                       return false;

@@ -21,9 +21,9 @@ import java.util.Arrays;
  */
 public class AsciiDocTagDeclaration extends FakePsiElement implements PsiNameIdentifierOwner {
 
-  private final AsciiDocIncludeTagReferenceInComment ref;
+  private final AsciiDocIncludeTagReferenceInElement ref;
 
-  public AsciiDocTagDeclaration(AsciiDocIncludeTagReferenceInComment ref) {
+  public AsciiDocTagDeclaration(AsciiDocIncludeTagReferenceInElement ref) {
     this.ref = ref;
   }
 
@@ -55,8 +55,8 @@ public class AsciiDocTagDeclaration extends FakePsiElement implements PsiNameIde
       // reverse order, so we start at the end
       Arrays.sort(references, (o1, o2) -> o2.getRangeInElement().getStartOffset() - o1.getRangeInElement().getStartOffset());
       for (PsiReference reference : references) {
-        if (reference instanceof AsciiDocIncludeTagReferenceInComment
-          && ((AsciiDocIncludeTagReferenceInComment) reference).getKey().equals(getName())) {
+        if (reference instanceof AsciiDocIncludeTagReferenceInElement
+          && ((AsciiDocIncludeTagReferenceInElement) reference).getKey().equals(getName())) {
           sb.replace(reference.getRangeInElement().getStartOffset(), reference.getRangeInElement().getEndOffset(), name);
         }
       }

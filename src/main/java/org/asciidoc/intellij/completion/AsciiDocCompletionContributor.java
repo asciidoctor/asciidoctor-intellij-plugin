@@ -19,7 +19,7 @@ import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagInDocument;
-import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInComment;
+import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -114,8 +114,8 @@ public class AsciiDocCompletionContributor extends CompletionContributor {
                   if (resolve != null) {
                     PsiTreeUtil.processElements(resolve.getContainingFile(), element -> {
                       for (PsiReference reference : element.getReferences()) {
-                        if (reference instanceof AsciiDocIncludeTagReferenceInComment) {
-                          AsciiDocIncludeTagReferenceInComment tagReference = (AsciiDocIncludeTagReferenceInComment) reference;
+                        if (reference instanceof AsciiDocIncludeTagReferenceInElement) {
+                          AsciiDocIncludeTagReferenceInElement tagReference = (AsciiDocIncludeTagReferenceInElement) reference;
                           if (!ids.contains(tagReference.getValue())) {
                             resultSet.addElement(LookupElementBuilder.create(tagReference.getValue())
                               .withCaseSensitivity(false)
