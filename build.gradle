@@ -11,7 +11,7 @@ buildscript {
 }
 plugins {
   id "org.jetbrains.intellij" version "0.7.2"
-  id "org.jetbrains.grammarkit" version "2020.2.1"
+  id "org.jetbrains.grammarkit" version "2021.1.2"
   id "checkstyle"
   id 'org.asciidoctor.jvm.convert' version '3.3.2'
   // once windows classpaths get too long, use this dependency to make them shorter again
