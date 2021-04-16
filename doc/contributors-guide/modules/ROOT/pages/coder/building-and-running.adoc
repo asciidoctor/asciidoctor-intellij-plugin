@@ -27,12 +27,14 @@ This ensures that a temporarily locally build plugin will be overwritten by the 
 
 To run the plugin for development you'll need to start
 
+[source,bash]
 ----
 ./gradlew -Dfile.encoding=UTF-8 runIde
 ----
 
 To run all tests and the CheckStyle validations you'll need to start
 
+[source,bash]
 ----
 ./gradlew -Dfile.encoding=UTF-8 check
 ----

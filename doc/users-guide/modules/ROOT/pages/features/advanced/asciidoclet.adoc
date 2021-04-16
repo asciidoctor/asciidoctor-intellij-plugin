@@ -136,9 +136,9 @@ While Asciidoclet supports annotations within Javadoc code snippets, this plugin
 
 Instead of writing content like this:
 
-[subs="+quotes,+macros"]
+[source,java,subs="quotes"]
 ----
-pass:[/**]
+/\**
  * [source,java]
  * --
  *     ##@##SuppressWarnings("UnusedDeclaration")
@@ -149,9 +149,9 @@ pass:[/**]
 
 Please rewrite it like this:
 
-[subs="+quotes,+macros"]
+[source,java,subs="quotes"]
 ----
-pass:[/**]
+/\**
  * [source,java]
  * --
  *     ##{at}##SuppressWarnings("UnusedDeclaration")
