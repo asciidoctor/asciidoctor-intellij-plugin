@@ -19,7 +19,8 @@
     "version": {
       "type": [
         "string",
-        "number"
+        "number",
+        "null"
       ],
       "description": "The version key is the version coordinate in the resource ID, version segment in the page URL, and, when display_version isn’t set, the version name displayed in the UI. It’s also used to sort multiple versions of the same component. Examples: '1', 'v2.0-beta', 'rawhide'",
       "examples": [

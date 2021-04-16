@@ -458,7 +458,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     if (matcher.find()) {
       Matcher version = AsciiDocUtil.VERSION.matcher(element);
       if (version.find()) {
-        elementAttributes.put("page-component-version", version.group("version"));
+        String v = version.group("version");
+        if (v.equals("_")) {
+          // starting from Antora 3.0.0.alpha-3 a version can be empty. It will be treated internally as an empty string.
+          // in xrefs, this is represented by a single underscope ("_")
+          v = "";
+        }
+        elementAttributes.put("page-component-version", v);
         element = version.replaceFirst("");
       }
       Matcher componentModuleMatcher = AsciiDocUtil.COMPONENT_MODULE.matcher(element);

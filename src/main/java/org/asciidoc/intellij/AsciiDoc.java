@@ -968,7 +968,10 @@ public class AsciiDoc {
         throw new YAMLException("unable to read file");
       }
       Yaml yaml = new Yaml();
-      return yaml.load(document.getText());
+      Map<String, Object> result = yaml.load(document.getText());
+      // starting from Antora 3.0.0.alpha-3 a version can be empty. It will be treated internally as an empty string
+      result.putIfAbsent("version", "");
+      return result;
     } catch (YAMLException ex) {
       handleAntoraYamlException(ex, antoraFile.getCanonicalPath());
       throw ex;
@@ -978,7 +981,10 @@ public class AsciiDoc {
   public static Map<String, Object> readAntoraYaml(PsiFile antoraFile) {
     try {
       Yaml yaml = new Yaml();
-      return yaml.load(antoraFile.getText());
+      Map<String, Object> result = yaml.load(antoraFile.getText());
+      // starting from Antora 3.0.0.alpha-3 a version can be empty. It will be treated internally as an empty string
+      result.putIfAbsent("version", "");
+      return result;
     } catch (YAMLException ex) {
       String fileName = null;
       VirtualFile virtualFile = antoraFile.getVirtualFile();

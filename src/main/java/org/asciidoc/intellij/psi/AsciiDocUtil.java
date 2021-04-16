@@ -1091,6 +1091,11 @@ public class AsciiDocUtil {
         Matcher version = VERSION.matcher(key);
         if (version.find()) {
           otherComponentVersion = version.group("version");
+          if (otherComponentVersion.equals("_")) {
+            // starting from Antora 3.0.0.alpha-3 a version can be empty. It will be treated internally as an empty string.
+            // in xrefs, this is represented by a single underscope ("_")
+            otherComponentVersion = "";
+          }
           key = version.replaceFirst("");
         }
 
@@ -1359,6 +1364,9 @@ public class AsciiDocUtil {
         String versionPrefix = "";
         if (!Objects.equals(myComponentVersion, otherComponentVersion)) {
           versionPrefix = otherComponentVersion + "@";
+          if (versionPrefix.length() == 1) {
+            versionPrefix = "_" + versionPrefix;
+          }
         }
         VirtualFile md = file.getVirtualFile().getParent().findChild("modules");
         if (md != null) {
@@ -1418,6 +1426,11 @@ public class AsciiDocUtil {
       Matcher version = VERSION.matcher(key);
       if (version.find()) {
         otherComponentVersion = version.group("version");
+        if (otherComponentVersion.equals("_")) {
+          // starting from Antora 3.0.0.alpha-3 a version can be empty. It will be treated internally as an empty string.
+          // in xrefs, this is represented by a single underscope ("_")
+          otherComponentVersion = "";
+        }
         key = version.replaceFirst("");
       }
       Matcher componentModule = COMPONENT_MODULE.matcher(key);

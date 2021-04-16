@@ -45,6 +45,18 @@ public class AntoraVersionDescriptor implements Comparable<AntoraVersionDescript
     if (version == null) {
       return 0;
     }
+    if (version.equals("master") && !o.version.equals("master")) {
+      return 1;
+    }
+    if (!version.equals("master") && o.version.equals("master")) {
+      return -1;
+    }
+    if (version.equals("") && !o.version.equals("")) {
+      return 1;
+    }
+    if (!version.equals("") && o.version.equals("")) {
+      return -1;
+    }
     if (prerelease == null && o.prerelease != null) {
       return 1;
     } else if (prerelease != null && o.prerelease == null) {

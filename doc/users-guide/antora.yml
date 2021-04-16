@@ -1,6 +1,6 @@
 title: User’s Guide
 name: users-guide
-version: master
+version: ~
 nav:
   - modules/ROOT/nav.adoc
 asciidoc:

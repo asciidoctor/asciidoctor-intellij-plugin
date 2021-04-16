@@ -641,7 +641,9 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       getTestName(true) + "/componentV1/antora.yml",
       getTestName(true) + "/componentV2/modules/ROOT/pages/test.adoc",
       getTestName(true) + "/componentV2/modules/module/pages/test.adoc",
-      getTestName(true) + "/componentV2/antora.yml"
+      getTestName(true) + "/componentV2/antora.yml",
+      getTestName(true) + "/componentVnull/modules/ROOT/pages/test.adoc",
+      getTestName(true) + "/componentVnull/antora.yml"
     );
 
     List<AttributeDeclaration> attributes = AsciiDocUtil.findAttributes(psiFile[0].getProject(), psiFile[0].getFirstChild());
@@ -657,14 +659,16 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertSize(5, macros);
 
     assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "1.0@my-component:ROOT:test.adoc", "page"), "/src/antoraModule/componentV1/modules/ROOT/pages/test.adoc");
-    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component:ROOT:test.adoc", "page"), "/src/antoraModule/componentV2/modules/ROOT/pages/test.adoc");
-    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component::test.adoc", "page"), "/src/antoraModule/componentV2/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component:ROOT:test.adoc", "page"), "/src/antoraModule/componentVnull/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component::test.adoc", "page"), "/src/antoraModule/componentVnull/modules/ROOT/pages/test.adoc");
     assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "ROOT:test.adoc", "page"), "/src/antoraModule/componentV1/modules/ROOT/pages/test.adoc");
     assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "ROOT:page$test.adoc", null), "/src/antoraModule/componentV1/modules/ROOT/pages/test.adoc");
     assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "page$test.adoc", null), "/src/antoraModule/componentV1/modules/ROOT/pages/test.adoc");
     assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "test.adoc", "page"), "/src/antoraModule/componentV1/modules/ROOT/pages/test.adoc");
     assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "1.0@test.adoc", "page"), "/src/antoraModule/componentV1/modules/ROOT/pages/test.adoc");
-    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component:module:test.adoc", "page"), "/src/antoraModule/componentV2/modules/module/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "2.0@test.adoc", "page"), "/src/antoraModule/componentV2/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "_@test.adoc", "page"), "/src/antoraModule/componentVnull/modules/ROOT/pages/test.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "2.0@my-component:module:test.adoc", "page"), "/src/antoraModule/componentV2/modules/module/pages/test.adoc");
 
     // image
     assertReferencesResolve(macros[0], 1);
@@ -683,7 +687,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
     AsciiDocLink[] urls = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocLink.class);
     assertNotNull(urls);
-    assertSize(3, urls);
+    assertSize(6, urls);
 
     // link
     assertReferencesResolve(urls[0], 2);

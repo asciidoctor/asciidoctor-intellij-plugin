@@ -8,6 +8,12 @@ xref:module:page.adoc[]
 
 xref:oldpagename.adoc[]
 
+xref:2.0@my-component:ROOT:test.adoc[]
+
+xref:_@my-component:ROOT:test.adoc[]
+
+xref:my-component:ROOT:test.adoc[]
+
 include::{examplesdir}/example.txt[]
 
 include::{partialsdir}/part.adoc[]

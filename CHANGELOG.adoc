@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - tuning comment parsing (#696)
 - creating fewer references when analyzing include tags in a file (#723)
 - preventing plugin-unloading earlier in the plugin's loading cycle (#724)
+- support Antora's 3.x new keyword for versionless component version (#728)
 
 === 0.32.36
 

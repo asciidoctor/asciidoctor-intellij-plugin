@@ -1,6 +1,6 @@
 title: Contributor’s Guide
 name: contributors-guide
-version: master
+version: ~
 nav:
   - modules/ROOT/nav.adoc
 asciidoc:

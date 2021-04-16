@@ -45,6 +45,20 @@ public class AntoraVersionDescriptorTest {
   }
 
   @Test
+  public void shouldSortMasterAlwaysLatest() {
+    AntoraVersionDescriptor semantic = new AntoraVersionDescriptor("v1.0", null);
+    AntoraVersionDescriptor master = new AntoraVersionDescriptor("master", null);
+    assertOrder(semantic, master);
+  }
+
+  @Test
+  public void shouldSortEmptyAlwaysLatest() {
+    AntoraVersionDescriptor semantic = new AntoraVersionDescriptor("v1.0", null);
+    AntoraVersionDescriptor empty = new AntoraVersionDescriptor("", null);
+    assertOrder(semantic, empty);
+  }
+
+  @Test
   public void shouldSortSemantic() {
     AntoraVersionDescriptor first = new AntoraVersionDescriptor("1.0", null);
     AntoraVersionDescriptor second = new AntoraVersionDescriptor("1.1", null);
