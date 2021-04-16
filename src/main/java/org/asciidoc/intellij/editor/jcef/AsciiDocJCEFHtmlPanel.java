@@ -987,6 +987,14 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             myJSQuerySetScrollY.inject("value"),
           getCefBrowser().getURL(), 0);
       } else {
+        if (!hasLoadedOnce) {
+          if (SystemInfoRt.isWindows) {
+            // set focus once to ensure that focus is set correctly on startup for open editors
+            ApplicationManager.getApplication().executeOnPooledThread(() -> {
+              getCefBrowser().setFocus(getPreferredFocusedComponent().hasFocus());
+            });
+          }
+        }
         if (!hasLoadedOnce && myScrollPreservingListener.myScrollY == 0) {
           scrollToLine(line, lineCount);
         }
