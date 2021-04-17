@@ -45,24 +45,24 @@ public class AntoraVersionDescriptor implements Comparable<AntoraVersionDescript
     if (version == null) {
       return 0;
     }
-    if (version.equals("master") && !o.version.equals("master")) {
-      return 1;
-    }
-    if (!version.equals("master") && o.version.equals("master")) {
-      return -1;
-    }
-    if (version.equals("") && !o.version.equals("")) {
-      return 1;
-    }
-    if (!version.equals("") && o.version.equals("")) {
-      return -1;
-    }
     if (prerelease == null && o.prerelease != null) {
       return 1;
     } else if (prerelease != null && o.prerelease == null) {
       return -1;
-    } else if (prerelease != null) {
+    } else if (prerelease != null && Objects.equals(version, o.version)) {
       return prerelease.compareToIgnoreCase(o.prerelease);
+    }
+    if (Objects.equals(version, "master") && !Objects.equals(o.version, "master")) {
+      return 1;
+    }
+    if (!Objects.equals(version, "master") && Objects.equals(o.version, "master")) {
+      return -1;
+    }
+    if (Objects.equals(version, "") && !Objects.equals(o.version, "")) {
+      return 1;
+    }
+    if (!Objects.equals(version, "") && Objects.equals(o.version, "")) {
+      return -1;
     }
     int result = -scheme.compareTo(o.scheme);
     if (result != 0) {
