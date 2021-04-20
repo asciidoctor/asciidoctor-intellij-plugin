@@ -44,6 +44,7 @@ import org.asciidoc.intellij.asciidoc.PrependConfig;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
+import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -93,6 +94,7 @@ import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ServiceConfigurationError;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -1191,6 +1193,8 @@ public class AsciiDoc {
       }
     }
 
+    html = addHightlightJs(html, attributes);
+
     String docinfo = attributes.get("docinfo");
     if (docinfo != null && docinfo.length() != 0) {
       // custom stylesheet set
@@ -1248,6 +1252,24 @@ public class AsciiDoc {
           }
         }
       }
+    }
+    return html;
+  }
+
+  private static String addHightlightJs(@NotNull String html, @NotNull Map<String, String> attributes) {
+    /* Add HightlightJS line */
+    if (Objects.equals(attributes.get("source-highlighter"), "highlightjs")) {
+      String css = PreviewStaticServer.getScriptUrl("highlightjs/styles/github.min.css");
+      String js = PreviewStaticServer.getScriptUrl("highlightjs/highlight.min.js");
+      html = html
+        .replace("<head>", "<head>" + "<link rel='stylesheet' type='text/css' href='" + css + "' />");
+      html = html.replace("</body>", "<script src='" + js + "'></script></body>");
+      html = html.replace("</body>", "<script>\n" +
+        "if (!hljs.initHighlighting.called) {\n" +
+        "  hljs.initHighlighting.called = true;\n" +
+        "  [].slice.call(document.querySelectorAll('pre.highlight > code')).forEach(function (el) { hljs.highlightElement(el) })\n" +
+        "}\n" +
+        "</script></body>");
     }
     return html;
   }
