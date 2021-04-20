@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.38
 
 - avoid error message "`already disposed`" when handling problems with JCEF refresh/crashes (#729)
+- fix renaming of xrefs in attributes for example with images (#730)
 
 === 0.32.37
 

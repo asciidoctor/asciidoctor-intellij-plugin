@@ -136,7 +136,7 @@ public class AsciiDocAttributeInBrackets extends ASTWrapperPsiElement {
                                                            @NotNull TextRange range,
                                                            String newContent) throws IncorrectOperationException {
       PsiElement child = element.getFirstChild();
-      while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.INLINE_MACRO_BODY) {
+      while (child != null && range.getEndOffset() > child.getTextLength()) {
         range = range.shiftRight(-child.getTextLength());
         child = child.getNextSibling();
       }
