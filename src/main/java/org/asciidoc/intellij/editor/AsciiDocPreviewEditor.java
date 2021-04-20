@@ -255,17 +255,19 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   private class MyRefreshPreviewListener implements RefreshPreviewListener {
     @Override
     public void refreshPreview(@NotNull AsciiDocHtmlPanel panel) {
-      mySwingAlarm.addRequest(() -> {
-        synchronized (this) {
-          if (panel == myPanel) {
-            final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
-            myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, retrievePanelProvider(settings));
-            myPanel.scrollToLine(targetLineNo, document.getLineCount());
+      if (!mySwingAlarm.isDisposed()) {
+        mySwingAlarm.addRequest(() -> {
+          synchronized (this) {
+            if (panel == myPanel) {
+              final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+              myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, retrievePanelProvider(settings));
+              myPanel.scrollToLine(targetLineNo, document.getLineCount());
+            }
+            currentContent = null; // force a refresh of the preview by resetting the current memorized content
+            renderIfVisible();
           }
-          currentContent = null; // force a refresh of the preview by resetting the current memorized content
-          renderIfVisible();
-        }
-      }, 0, ModalityState.stateForComponent(getComponent()));
+        }, 0, ModalityState.stateForComponent(getComponent()));
+      }
     }
   }
 
@@ -438,14 +440,9 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     return false;
   }
 
-  /**
-   * Indicates whether the editor is valid.
-   *
-   * @return {@code true} if {@link #document} content is readable.
-   */
   @Override
   public boolean isValid() {
-    return document.getText() != null;
+    return true;
   }
 
   /**
@@ -588,14 +585,16 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       }
 
       final AsciiDocHtmlPanelProvider newPanelProvider = retrievePanelProvider(settings);
-      mySwingAlarm.addRequest(() -> {
-        synchronized (this) {
-          myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
-          myPanel.scrollToLine(targetLineNo, document.getLineCount());
-        }
-        currentContent = null; // force a refresh of the preview by resetting the current memorized content
-        renderIfVisible();
-      }, 0, ModalityState.stateForComponent(getComponent()));
+      if (!mySwingAlarm.isDisposed()) {
+        mySwingAlarm.addRequest(() -> {
+          synchronized (this) {
+            myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
+            myPanel.scrollToLine(targetLineNo, document.getLineCount());
+          }
+          currentContent = null; // force a refresh of the preview by resetting the current memorized content
+          renderIfVisible();
+        }, 0, ModalityState.stateForComponent(getComponent()));
+      }
     }
   }
 
