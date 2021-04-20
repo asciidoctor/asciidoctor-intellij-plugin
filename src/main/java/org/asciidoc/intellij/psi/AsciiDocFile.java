@@ -20,4 +20,9 @@ public class AsciiDocFile extends PsiFileBase {
   public FileType getFileType() {
     return AsciiDocFileType.INSTANCE;
   }
+
+  @Override
+  public String toString() {
+    return "AsciiDocFile:" + getName();
+  }
 }

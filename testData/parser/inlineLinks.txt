@@ -1,4 +1,4 @@
-FILE
+AsciiDocFile:inlineLinks.adoc
   PsiElement(AsciiDoc:TEXT)('Some')
   PsiWhiteSpace(' ')
   PsiElement(AsciiDoc:TEXT)('text')

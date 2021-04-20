@@ -1,4 +1,4 @@
-FILE
+AsciiDocFile:sectionsWithPreBlock.adoc
   AsciiDocSectionImpl(ASCIIDOC_SECTION)
     PsiElement(AsciiDoc:BLOCKIDSTART)('[#')
     AsciiDocBlockIdImpl(ASCIIDOC_BLOCKID)

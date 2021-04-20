@@ -33,6 +33,7 @@ import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
 import org.asciidoc.intellij.psi.AsciiDocBlockId;
 import org.asciidoc.intellij.psi.AsciiDocNamedElement;
 import org.asciidoc.intellij.psi.AsciiDocSearchScope;
+import org.asciidoc.intellij.psi.AsciiDocTagDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,9 +93,16 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
         }
       }
       String nameFinal = nameToSearch;
-      files = myDumbService.runReadActionInSmartMode(() ->
-        CacheManager.getInstance(element.getProject())
-          .getFilesWithWord(nameFinal, UsageSearchContext.IN_CODE, (GlobalSearchScope) scope, false));
+
+      files = myDumbService.runReadActionInSmartMode(() -> {
+        short context = UsageSearchContext.IN_CODE;
+        if (element instanceof AsciiDocTagDeclaration) {
+          context = UsageSearchContext.ANY;
+        }
+        return CacheManager.getInstance(element.getProject())
+          .getFilesWithWord(nameFinal, context, (GlobalSearchScope) scope, false);
+        }
+      );
 
       if (element instanceof AsciiDocAttributeDeclarationName) {
         Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(name, element.getProject(),
@@ -132,7 +140,7 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
     }
     final StringSearcher searcher = new StringSearcher(name, caseSensitive, true, false);
     for (PsiFile psiFile : files) {
-      if (psiFile.getLanguage() == AsciiDocLanguage.INSTANCE) {
+      if (psiFile.getLanguage() == AsciiDocLanguage.INSTANCE || element instanceof AsciiDocTagDeclaration) {
         if (localSearch) {
           for (AsciiDocAttributeDeclaration attribute : PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocAttributeDeclaration.class)) {
             if (name.toLowerCase(Locale.US).equals(attribute.getAttributeName().toLowerCase(Locale.US))) {

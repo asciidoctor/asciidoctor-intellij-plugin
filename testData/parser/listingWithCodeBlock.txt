@@ -1,4 +1,4 @@
-FILE
+AsciiDocFile:listingWithCodeBlock.adoc
   PsiElement(AsciiDoc:TEXT)('Some')
   PsiWhiteSpace(' ')
   PsiElement(AsciiDoc:TEXT)('Text')

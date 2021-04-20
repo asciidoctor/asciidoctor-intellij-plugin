@@ -19,7 +19,7 @@ import java.util.Arrays;
  * with the tag::name[] -- this is a PsiComment, and no real PSI element exists here.
  * The start and end tag and several include statements in AsciiDoc files might reference it.
  */
-public class AsciiDocTagDeclaration extends FakePsiElement implements PsiNameIdentifierOwner {
+public class AsciiDocTagDeclaration extends FakePsiElement implements PsiNameIdentifierOwner, AsciiDocNamedElement {
 
   private final AsciiDocIncludeTagReferenceInElement ref;
 
@@ -30,7 +30,7 @@ public class AsciiDocTagDeclaration extends FakePsiElement implements PsiNameIde
   @Override
   public boolean isEquivalentTo(PsiElement another) {
     return another instanceof AsciiDocTagDeclaration
-      && ref == ((AsciiDocTagDeclaration) another).ref
+      && ref.getElement().getContainingFile() == ((AsciiDocTagDeclaration) another).ref.getElement().getContainingFile()
       && ref.getKey().equals(((AsciiDocTagDeclaration) another).ref.getKey());
   }
 

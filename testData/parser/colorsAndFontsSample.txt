@@ -1,4 +1,4 @@
-FILE
+AsciiDocFile:a.adoc
   AsciiDocSectionImpl(ASCIIDOC_SECTION)
     AsciiDocHeading(AsciiDoc:HEADING)
       PsiElement(AsciiDoc:HEADING_TOKEN)('= Test AsciiDoc document')
