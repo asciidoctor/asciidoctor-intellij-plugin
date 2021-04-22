@@ -99,7 +99,8 @@ class SentryErrorReporter {
           final SentryRuntime runtime = new SentryRuntime();
           runtime.setName(applicationInfo.getBuild().getProductCode());
 
-          if (!applicationInfo.getFullVersion().contains("EAP") && !applicationInfo.getFullVersion().contains("Beta")) {
+          if (!applicationInfo.getFullVersion().contains("EAP") && !applicationInfo.getFullVersion().contains("Beta")
+             && !applicationInfo.getFullVersion().contains("Preview")) {
             runtime.setVersion(applicationInfo.getFullVersion());
           } else {
             runtime.setVersion(applicationInfo.getBuild().toString()

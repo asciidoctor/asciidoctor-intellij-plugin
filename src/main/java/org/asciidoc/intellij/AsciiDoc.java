@@ -561,6 +561,9 @@ public class AsciiDoc {
                       boolean logAll) {
     String out = boasOut.toString(StandardCharsets.UTF_8);
     String err = boasErr.toString(StandardCharsets.UTF_8);
+    // this is reported by com.intellij.util.lang.ZipResourceFile when loading JRuby libraries
+    // see: https://youtrack.jetbrains.com/issue/IDEA-264777
+    err = err.replaceAll("WARN: Do not use URL connection as JarURLConnection\r?\n", "");
     if (logAll) {
       // logRecords will not be handled in the org.asciidoc.intellij.annotator.ExternalAnnotator
       for (LogRecord logRecord : logRecords) {
