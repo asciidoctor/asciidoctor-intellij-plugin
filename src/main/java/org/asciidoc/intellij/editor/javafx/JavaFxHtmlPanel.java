@@ -561,7 +561,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
               "div.style.cssText = 'display: none'; " +
               // need to add the element to the DOM as MathJAX will use document.getElementById in some places
               "elem.appendChild(div); " +
-              "if(hljs) { [].slice.call(div.querySelectorAll('pre.highlight > code')).forEach(function (el) { hljs.highlightElement(el) }) } " +
+              "if(typeof hljs !== 'undefined') { [].slice.call(div.querySelectorAll('pre.highlight > code')).forEach(function (el) { hljs.highlightElement(el) }) } " +
               // use MathJax to set the formulas in advance if formulas are present - this takes ~100ms
               // re-evaluate the content element as it might have been replaced by a concurrent rendering
               "if ('MathJax' in window && MathJax.Hub.getAllJax().length > 0) { " +
