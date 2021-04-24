@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - initial support for source highlighter highlight.js in preview (#370)
 - add notification for users to update to 2021.1.1 (#725)
 - suppress warnings in 2021.1.1 EAP (#731)
+- avoid error during project initialization (#733)
 
 === 0.32.37
 
