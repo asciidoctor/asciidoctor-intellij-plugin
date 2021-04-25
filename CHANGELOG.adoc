@@ -16,6 +16,8 @@ This document provides a high-level view of the changes introduced by release.
 - add notification for users to update to 2021.1.1 (#725)
 - suppress warnings in 2021.1.1 EAP (#731)
 - avoid error during project initialization (#733)
+- avoid error when using fragment editor and inserting for example an include preprocessor macro (#732)
+- support language injection for Markdown style listings (#732)
 
 === 0.32.37
 

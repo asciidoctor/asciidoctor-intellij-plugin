@@ -28,9 +28,11 @@ public class CodeFenceInjector implements MultiHostInjector {
       return;
     }
 
-    registrar.startInjecting(language);
-    registrar.addPlace(null, null, ((AsciiDocElementWithLanguage) context), ((AsciiDocElementWithLanguage) context).getContentTextRange());
-    registrar.doneInjecting();
+    if (((AsciiDocElementWithLanguage) context).isInjectionEnabled()) {
+      registrar.startInjecting(language);
+      registrar.addPlace(null, null, ((AsciiDocElementWithLanguage) context), ((AsciiDocElementWithLanguage) context).getContentTextRange());
+      registrar.doneInjecting();
+    }
   }
 
   @NotNull

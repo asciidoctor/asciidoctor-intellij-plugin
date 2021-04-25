@@ -38,7 +38,7 @@ public class AsciiDocListing extends AbstractAsciiDocCodeBlock {
 
   @Override
   public TextRange getContentTextRange() {
-    return getContentTextRange(AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER);
+    return getContentTextRange(AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER, AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER);
   }
 
   @NotNull
@@ -71,29 +71,39 @@ public class AsciiDocListing extends AbstractAsciiDocCodeBlock {
 
   @Override
   public String getFenceLanguage() {
+    // check for AsciiDoc block attributes
     final PsiElement element = findPsiChildByType(AsciiDocElementTypes.BLOCK_ATTRIBUTES);
-    if (element == null) {
-      return null;
-    }
-    AsciiDocBlockAttributes blockAttributes = PsiTreeUtil.findChildOfType(this, AsciiDocBlockAttributes.class);
-    if (blockAttributes != null) {
-      String[] attr = blockAttributes.getAttributes();
-      String firstAttr = null;
-      if (attr == null) {
-        return null;
-      } else if (attr.length >= 1) {
-        firstAttr = attr[0];
-        int locationOfPercent = firstAttr.indexOf("%"); // this handles for example "plantuml%interactive"
-        if (locationOfPercent != -1) {
-          firstAttr = firstAttr.substring(0, locationOfPercent);
+    if (element != null) {
+      AsciiDocBlockAttributes blockAttributes = PsiTreeUtil.findChildOfType(this, AsciiDocBlockAttributes.class);
+      if (blockAttributes != null) {
+        String[] attr = blockAttributes.getAttributes();
+        String firstAttr = null;
+        if (attr == null) {
+          return null;
+        } else if (attr.length >= 1) {
+          firstAttr = attr[0];
+          int locationOfPercent = firstAttr.indexOf("%"); // this handles for example "plantuml%interactive"
+          if (locationOfPercent != -1) {
+            firstAttr = firstAttr.substring(0, locationOfPercent);
+          }
+        }
+        if (attr.length >= 2 && "source".equalsIgnoreCase(firstAttr)) {
+          return "source-" + attr[1];
+        } else if ("plantuml".equalsIgnoreCase(firstAttr)) {
+          return "diagram-plantuml";
+        } else if ("graphviz".equalsIgnoreCase(firstAttr)) {
+          return "diagram-graphviz";
         }
       }
-      if (attr.length >= 2 && "source".equalsIgnoreCase(firstAttr)) {
-        return "source-" + attr[1];
-      } else if ("plantuml".equalsIgnoreCase(firstAttr)) {
-        return "diagram-plantuml";
-      } else if ("graphviz".equalsIgnoreCase(firstAttr)) {
-        return "diagram-graphviz";
+    }
+
+    // check for markdown style listing
+    PsiElement child = this.getFirstChild();
+    if (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER &&
+        child.getText().startsWith("`")) {
+      child = child.getNextSibling();
+      if (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.LISTING_TEXT) {
+        return "source-" + child.getText();
       }
     }
     return null;

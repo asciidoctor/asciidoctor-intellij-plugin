@@ -15,10 +15,14 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
+import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class AbstractAsciiDocCodeBlock extends CompositePsiElement implements PsiLanguageInjectionHost, AsciiDocPsiElement, AsciiDocBlock, AsciiDocElementWithLanguage {
   AbstractAsciiDocCodeBlock(IElementType type) {
@@ -113,27 +117,41 @@ public abstract class AbstractAsciiDocCodeBlock extends CompositePsiElement impl
     return ElementManipulators.handleContentChange(this, text);
   }
 
-  public TextRange getContentTextRange(IElementType delimiter) {
+  @Override
+  public boolean isInjectionEnabled() {
     // must not use PsiTreeUtil.findChildOfType as it leads to exception
     for (PsiElement e : this.getChildren()) {
       // if there is a block macro (typically an include), disable highlighting for all of it
       if (e instanceof AsciiDocBlockMacro) {
-        return TextRange.EMPTY_RANGE;
+        return false;
       }
     }
+    // check if there are i.e. non-matching elements
+    return !getContentTextRange().equals(TextRange.EMPTY_RANGE);
+  }
 
+  public TextRange getContentTextRange(IElementType... delimiter) {
+    Set<IElementType> delimiters = new HashSet<>(Arrays.asList(delimiter));
     /*
      * The calculated text range needs to end with a newline. Otherwise the IDE will
      * give a strange behaviour when adding new lines at the end of fragment editing.
      */
     ASTNode node = this.getNode().getFirstChildNode();
     int offset = 0;
-    while (node != null && node.getElementType() != delimiter) {
+    while (node != null && !delimiters.contains(node.getElementType())) {
       offset += node.getTextLength();
       node = node.getTreeNext();
     }
     if (node == null) {
       return TextRange.EMPTY_RANGE;
+    }
+    IElementType myDelimiter = node.getElementType();
+    if (myDelimiter == AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER && node.getText().startsWith("`")) {
+      offset += node.getTextLength();
+      node = node.getTreeNext();
+      if (node == null) {
+        return TextRange.EMPTY_RANGE;
+      }
     }
     offset += node.getTextLength();
     node = node.getTreeNext();
@@ -143,7 +161,7 @@ public abstract class AbstractAsciiDocCodeBlock extends CompositePsiElement impl
     offset += node.getTextLength();
     node = node.getTreeNext();
     int start = offset; // start will be after the delimiter and its newline
-    while (node != null && node.getElementType() != delimiter) {
+    while (node != null && node.getElementType() != myDelimiter) {
       offset += node.getTextLength();
       node = node.getTreeNext();
     }
