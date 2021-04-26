@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - rework situation when no injection is active (#732)
 - rework handling of already disposed modules (#683)
+- avoid URLDecoder exception when an incompletely encoded URL is entered (#736)
 
 === 0.32.38
 

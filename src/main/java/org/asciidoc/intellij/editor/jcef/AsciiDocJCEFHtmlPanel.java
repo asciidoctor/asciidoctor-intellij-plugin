@@ -738,6 +738,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       String file = matchResult.group(1);
       try {
         file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
+      } catch (IllegalArgumentException e) {
+        // ignored, this must be a manually entered URL with a percentage sign
+        continue;
       } catch (UnsupportedEncodingException e) {
         throw new RuntimeException(e);
       }
@@ -767,6 +770,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       String file = matchResult.group(1);
       try {
         file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
+      } catch (IllegalArgumentException e) {
+        // ignored, this must be a manually entered URL with a percentage sign
+        continue;
       } catch (UnsupportedEncodingException e) {
         throw new RuntimeException(e);
       }
@@ -798,6 +804,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       String file = matchResult.group(2);
       try {
         file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
+      } catch (IllegalArgumentException e) {
+        // ignored, this must be a manually entered URL with a percentage sign
+        continue;
       } catch (UnsupportedEncodingException e) {
         throw new RuntimeException(e);
       }
