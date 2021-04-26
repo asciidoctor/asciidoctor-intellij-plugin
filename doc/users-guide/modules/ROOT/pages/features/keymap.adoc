@@ -20,7 +20,7 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 [width="75%",cols="4,3",grid="bot",options="header"]
 |===
 ^| Description ^| Shortcut
-| Search everywhere | kbd:[Double Shift]
+| Search everywhere | 2x kbd:[Shift]
 | Smart code completion | kbd:[Ctrl+Shift+Space]
 | Show intention actions and quick-fixes | kbd:[At+Enter]
 | Open corresponding tool window | kbd:[Alt+ ++#[0-9]++]
@@ -102,7 +102,7 @@ Works also for file and class names in italics or monospace | kbd:[Ctrl+B], kbd:
 | Show navigation bar | kbd:[Alt+Home]
 | Toggle bookmark | kbd:[F11]
 | Toggle bookmark with mnemonic | kbd:[Ctrl+F11]
-| Go to numbered bookmark | kbd:[Ctrl+ ++#[0-9]++]
+| Go to numbered bookmark | kbd:[Ctrl+0] ... kbd:[Ctrl+9]
 | Show bookmarks | kbd:[Shift+F11]
 
 |===
@@ -114,7 +114,7 @@ Works also for file and class names in italics or monospace | kbd:[Ctrl+B], kbd:
 [width="75%",cols="4,3",grid="bot",options="header"]
 |===
 ^| Description ^| Shortcut
-| Search everywhere | kbd:[Double ⇧]
+| Search everywhere | 2x kbd:[⇧]
 | Smart code completion | kbd:[⌃+⇧+Space]
 | Show intention actions and quick-fixes | kbd:[⌘+Enter]
 | Open corresponding tool window | kbd:[⌘0...⌘9]
@@ -197,7 +197,7 @@ Works also for file and class names in italics or monospace | kbd:[⌘+B], kbd:[
 | Show navigation bar | kbd:[⌥+Home]
 | Toggle bookmark | kbd:[F3]
 | Toggle bookmark with mnemonic | kbd:[⌥+F3]
-| Go to numbered bookmark | kbd:[^0 ...^9]
+| Go to numbered bookmark | kbd:[^0] ... kbd:[^9]
 | Show bookmarks | kbd:[⌘+F3]
 
 |===
