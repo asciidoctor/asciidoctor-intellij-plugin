@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.39
+
+- rework situation when no injection is active (#732)
+
 === 0.32.38
 
 - avoid error message "`already disposed`" when handling problems with JCEF refresh/crashes (#729)
