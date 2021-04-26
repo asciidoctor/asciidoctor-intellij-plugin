@@ -4,6 +4,7 @@ import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.asciidoc.intellij.psi.AsciiDocElementWithLanguage;
 import org.asciidoc.intellij.psi.AsciiDocFrontmatter;
@@ -28,9 +29,10 @@ public class CodeFenceInjector implements MultiHostInjector {
       return;
     }
 
-    if (((AsciiDocElementWithLanguage) context).isInjectionEnabled()) {
+    TextRange range = ((AsciiDocElementWithLanguage) context).getContentTextRange();
+    if (range != TextRange.EMPTY_RANGE) {
       registrar.startInjecting(language);
-      registrar.addPlace(null, null, ((AsciiDocElementWithLanguage) context), ((AsciiDocElementWithLanguage) context).getContentTextRange());
+      registrar.addPlace(null, null, ((AsciiDocElementWithLanguage) context), range);
       registrar.doneInjecting();
     }
   }

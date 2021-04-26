@@ -106,19 +106,6 @@ public abstract class AbstractAsciiDocCodeBlock extends CompositePsiElement impl
 
   @Override
   public boolean isValidHost() {
-    return true;
-  }
-
-  /**
-   * Replace complete text. Will be called when quick fixes in the fenced code occur.
-   */
-  @Override
-  public PsiLanguageInjectionHost updateText(@NotNull String text) {
-    return ElementManipulators.handleContentChange(this, text);
-  }
-
-  @Override
-  public boolean isInjectionEnabled() {
     // must not use PsiTreeUtil.findChildOfType as it leads to exception
     for (PsiElement e : this.getChildren()) {
       // if there is a block macro (typically an include), disable highlighting for all of it
@@ -128,6 +115,14 @@ public abstract class AbstractAsciiDocCodeBlock extends CompositePsiElement impl
     }
     // check if there are i.e. non-matching elements
     return !getContentTextRange().equals(TextRange.EMPTY_RANGE);
+  }
+
+  /**
+   * Replace complete text. Will be called when quick fixes in the fenced code occur.
+   */
+  @Override
+  public PsiLanguageInjectionHost updateText(@NotNull String text) {
+    return ElementManipulators.handleContentChange(this, text);
   }
 
   public TextRange getContentTextRange(IElementType... delimiter) {
