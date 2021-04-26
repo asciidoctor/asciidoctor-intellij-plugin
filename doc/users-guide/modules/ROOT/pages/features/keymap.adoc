@@ -23,7 +23,7 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 | Search everywhere | 2x kbd:[Shift]
 | Smart code completion | kbd:[Ctrl+Shift+Space]
 | Show intention actions and quick-fixes | kbd:[At+Enter]
-| Open corresponding tool window | kbd:[Alt+ ++#[0-9]++]
+| Open corresponding tool window | kbd:[Alt+0] ... kbd:[Alt+9]
 | Open Settings dialog | kbd:[Ctrl+Alt+S]
 | Find Action | kbd:[Ctrl+Shift+A]
 |===
@@ -117,7 +117,7 @@ Works also for file and class names in italics or monospace | kbd:[Ctrl+B], kbd:
 | Search everywhere | 2x kbd:[⇧]
 | Smart code completion | kbd:[⌃+⇧+Space]
 | Show intention actions and quick-fixes | kbd:[⌘+Enter]
-| Open corresponding tool window | kbd:[⌘0...⌘9]
+| Open corresponding tool window | kbd:[⌘+0] ... kbd:[⌘+9]
 | Save all | kbd:[⌘+S]
 | Open Settings dialog | kbd:[⌘+,]
 | Find Action | kbd:[⌘+⇧+A]
@@ -162,7 +162,7 @@ Works also for file and class names in italics or monospace | kbd:[Ctrl+B], kbd:
 | Expand/collapse block or attribute | kbd:[⌘ + ++ + ++] / kbd:[⌘+-]
 | Expand/collapse all | kbd:[⌘ + ⇧ + ++ + ++] / kbd:[⌘ + ⇧+-]
 | Comment/uncomment with line comment | kbd:[⌘+/]
-| Comment/uncomment with block comment | kbd:[⌘+⌥+/]
+| Comment/uncomment with block comment | kbd:[⌘ + ++⌥++ + /]
 | Select till code block end | kbd:[⌘ + ⇧ + +]+]
 | Select till code block start | kbd:[⌘ + ⇧ + +[+]
 | Surround with... +
