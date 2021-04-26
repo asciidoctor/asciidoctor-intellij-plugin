@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.39
 
 - rework situation when no injection is active (#732)
+- rework handling of already disposed modules (#683)
 
 === 0.32.38
 
