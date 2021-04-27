@@ -31,7 +31,7 @@ public class CodeFenceInjector implements MultiHostInjector {
 
     if (((AsciiDocElementWithLanguage) context).isValidHost()) {
       TextRange range = ((AsciiDocElementWithLanguage) context).getContentTextRange();
-      if (range != TextRange.EMPTY_RANGE) {
+      if (!range.equals(TextRange.EMPTY_RANGE)) {
         registrar.startInjecting(language);
         registrar.addPlace(null, null, ((AsciiDocElementWithLanguage) context), range);
         registrar.doneInjecting();
