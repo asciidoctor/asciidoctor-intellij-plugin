@@ -163,6 +163,20 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     key = element.getText().substring(textRange.getStartOffset(), textRange.getEndOffset() + suffix);
   }
 
+  private AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, String key,
+                               boolean isFolder, boolean isAntora) {
+    super(element);
+    this.macroName = macroName;
+    this.base = base;
+    this.isFolder = isFolder;
+    this.isAntora = isAntora;
+    this.key = key;
+  }
+
+  public AsciiDocFileReference includedInParent(PsiElement parent) {
+    return new AsciiDocFileReference(parent, macroName, base, key, isFolder, isAntora);
+  }
+
   public AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, TextRange textRange,
                                boolean isFolder) {
       this(element, macroName, base, textRange, isFolder, false, 0);
@@ -187,18 +201,18 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     } else {
       resolve(base.substring(0, base.length() - 1), fileResult, 0);
     }
-    List<LookupElementBuilder> items = new ArrayList<>();
+    Set<LookupElementBuilder> items = new HashSet<>();
     for (ResolveResult resolveResult : fileResult) {
       PsiElement element = resolveResult.getElement();
       if (element instanceof AsciiDocFile) {
-        AsciiDocUtil.findBlockIds(items, element, 0);
+        AsciiDocUtil.findBlockIds(items, element);
       }
     }
     multiResolveAnchor(items, key, results, ignoreCase, new ArrayDeque<>());
     return results.toArray(new ResolveResult[0]);
   }
 
-  private void multiResolveAnchor(List<LookupElementBuilder> items, String key, List<ResolveResult> results, boolean ignoreCase, ArrayDeque<Trinity<String, String, String>> stack) {
+  private void multiResolveAnchor(Set<LookupElementBuilder> items, String key, List<ResolveResult> results, boolean ignoreCase, ArrayDeque<Trinity<String, String, String>> stack) {
     if (stack.size() > 10) {
       return;
     }
@@ -244,7 +258,11 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       start = matcher.end();
       // if not found, try to match it with a block ID that has the attributes unreplaced
     }
+    PsiElement incomplete = null;
     for (LookupElementBuilder item : items) {
+      if (item.getAllLookupStrings().contains("???") && incomplete == null) {
+        incomplete = item.getPsiElement();
+      }
       PsiElement element = item.getPsiElement();
       if (ignoreCase) {
         String lowerCaseKey = key.toLowerCase(Locale.US);
@@ -312,6 +330,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           }
         }
       }
+    }
+    if (results.size() == 0 && incomplete != null) {
+      // there might have been an incompletely resolved include, that might point to the right starting point
+      results.add(new PsiElementResolveResult(incomplete, false));
     }
   }
 
@@ -782,7 +804,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   @NotNull
   private Object[] getVariantsForAnchor() {
-    List<LookupElementBuilder> items = new ArrayList<>();
+    Set<LookupElementBuilder> items = new HashSet<>();
     if (base.length() > 1) {
       // if a file has been specified, show anchors from that file
       List<ResolveResult> fileResult = new ArrayList<>();
@@ -790,7 +812,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       for (ResolveResult resolveResult : fileResult) {
         PsiElement element = resolveResult.getElement();
         if (element instanceof AsciiDocFile) {
-          AsciiDocUtil.findBlockIds(items, element, 0);
+          AsciiDocUtil.findBlockIds(items, element);
         }
       }
     } else {

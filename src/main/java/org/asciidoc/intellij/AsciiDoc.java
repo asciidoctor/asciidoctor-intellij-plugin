@@ -106,6 +106,8 @@ import java.util.stream.Collectors;
 
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_YML;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ATTRIBUTES;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.CAPTURE_FILE_EXTENSION;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.STRIP_FILE_EXTENSION;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraAttachmentsDirRelative;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraExamplesDir;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraImagesDirRelative;
@@ -746,9 +748,9 @@ public class AsciiDoc {
 
   private Map<String, String> populateDocumentAttributes(File fileBaseDir, String name) {
     Map<String, String> attributes = new HashMap<>();
-    attributes.put("docname", name.replaceAll("\\..*$", ""));
+    attributes.put("docname", name.replaceAll(STRIP_FILE_EXTENSION, ""));
     if (name.contains(".")) {
-      attributes.put("docfilesuffix", name.replaceAll("^(.*)(\\..*)$", "$2"));
+      attributes.put("docfilesuffix", name.replaceAll(CAPTURE_FILE_EXTENSION, "$2"));
     }
     attributes.put("docfile", new File(fileBaseDir, name).getAbsolutePath());
     attributes.put("docdir", fileBaseDir.getAbsolutePath());
