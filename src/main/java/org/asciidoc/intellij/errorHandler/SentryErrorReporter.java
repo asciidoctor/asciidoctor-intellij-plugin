@@ -100,7 +100,7 @@ class SentryErrorReporter {
           runtime.setName(applicationInfo.getBuild().getProductCode());
 
           if (!applicationInfo.getFullVersion().contains("EAP") && !applicationInfo.getFullVersion().contains("Beta")
-             && !applicationInfo.getFullVersion().contains("Preview")) {
+             && !applicationInfo.getFullVersion().contains("Preview") && !applicationInfo.getFullVersion().contains("RC")) {
             runtime.setVersion(applicationInfo.getFullVersion());
           } else {
             runtime.setVersion(applicationInfo.getBuild().toString()
@@ -171,7 +171,7 @@ class SentryErrorReporter {
           }
         }
 
-        if (error.getMessage().length() > 2000) {
+        if (error.getMessage() != null && error.getMessage().length() > 2000) {
           // seen a very long message for TraceableDisposable, therefore add message as attachment
           String errorMessage = error.getMessage();
           io.sentry.Attachment fileAttachment = new io.sentry.Attachment(errorMessage.getBytes(StandardCharsets.UTF_8), "errorMessage.txt");
