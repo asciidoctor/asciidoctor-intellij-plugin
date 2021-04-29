@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class MakeBoldTest {
 
-  private MakeBold sut = new MakeBold();
+  private final MakeBold sut = new MakeBold();
 
   @Test
   public void shouldAddAsterisks() throws Exception {
@@ -24,27 +24,33 @@ public class MakeBoldTest {
   }
 
   @Test
-  public void shouldRemoveTwoAsteriks() throws Exception {
+  public void shouldRemoveTwoAsterisks() throws Exception {
     String actual = sut.updateSelection("**about**", false);
     assertEquals("about", actual);
   }
 
   @Test
-  public void shouldAddAsteriksBecauseSelectionOnlyStartsWithAsteriks() throws Exception {
+  public void shouldAddAsterisksBecauseSelectionOnlyStartsWithAsterisks() throws Exception {
     String actual = sut.updateSelection("*about", false);
     assertEquals("***about**", actual);
   }
 
   @Test
-  public void shouldNotCrashWithTwoAsteriks() throws Exception {
-    String actual = sut.updateSelection("**", false);
-    assertEquals("", actual);
+  public void shouldNotCrashWithTwoAsterisks() throws Exception {
+    String actual = sut.updateSelection("****", false);
+    assertEquals("**", actual);
   }
 
   @Test
-  public void shouldNotCrashWithOneAsteriks() throws Exception {
+  public void shouldNotCrashWithOneAsterisks() throws Exception {
     String actual = sut.updateSelection("*", false);
-    assertEquals("", actual);
+    assertEquals("*****", actual);
+  }
+
+  @Test
+  public void shouldNotCrashWithThreeAsterisks() throws Exception {
+    String actual = sut.updateSelection("***", false);
+    assertEquals("*", actual);
   }
 
   @Test

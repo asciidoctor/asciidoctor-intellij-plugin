@@ -43,7 +43,7 @@ public abstract class SimpleFormatAsciiDocAction extends FormatAsciiDocAction im
   }
 
   private String removeSymbol(String selection, String symbol) {
-    if (selection.startsWith(symbol + symbol) && selection.endsWith(symbol + symbol)) {
+    if (selection.startsWith(symbol + symbol) && selection.endsWith(symbol + symbol) && selection.length() > 4) {
       return removeSymbol(selection, 2);
     }
     return removeSymbol(selection, 1);
@@ -58,7 +58,7 @@ public abstract class SimpleFormatAsciiDocAction extends FormatAsciiDocAction im
 
   private boolean containsSymbol(String selection, String symbol) {
     String doubleSymbol = symbol + symbol;
-    return (selection.startsWith(symbol) && selection.endsWith(symbol)) ||
-      (selection.startsWith(doubleSymbol) && selection.endsWith(doubleSymbol));
+    return (selection.startsWith(symbol) && selection.endsWith(symbol) && selection.length() > 2) ||
+      (selection.startsWith(doubleSymbol) && selection.endsWith(doubleSymbol) && selection.length() > 4);
   }
 }

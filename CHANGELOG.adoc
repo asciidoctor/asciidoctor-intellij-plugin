@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.40
 
 - resolve attributes like `docname` in nested includes to validate anchors (#737)
+- avoid exception when applying formatting to three formatting characters, like a bold asterisk (#739)
 
 === 0.32.39
 
