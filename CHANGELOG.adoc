@@ -9,6 +9,10 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.32.43
 
+- adding loop detection to lexer (#742)
+
+=== 0.32.43
+
 - avoid infinite loop/freezing UI when parsing comments (#742)
 
 === 0.32.42

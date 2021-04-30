@@ -58,6 +58,10 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
     return limitLookahead(zzCurrentPos);
   }
 
+  public CharSequence getBuffer() {
+    return zzBuffer;
+  }
+
   public int limitLookahead(int zzCurrentPosL) {
     if (zzEndReadFinal > zzCurrentPosL + 2000) {
       zzEndRead = zzCurrentPosL + 2000;
