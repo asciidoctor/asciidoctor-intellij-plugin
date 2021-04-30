@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.42
 
 - update to AsciidoctorJ 2.5.0 and Asciidoctor 2.0.14 (#738)
+- optimizing lexing of line comments (#742)
 
 === 0.32.41
 

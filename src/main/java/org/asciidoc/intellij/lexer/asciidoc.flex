@@ -1025,13 +1025,15 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
     yypopstate();
     return AsciiDocTokenTypes.LINE_BREAK;
   }
-  [^] {
+  [^\n]+ {
+    // fast-track comment parsing to avoid parsing single characters
     return AsciiDocTokenTypes.LINE_COMMENT;
   }
 }
 
 <PREBLOCK, SINGLELINE, PASSTHROUGH_NO_DELIMITER, HEADER, LIST> {
-  {LINE_COMMENT} / [^/] {
+  {LINE_COMMENT} [^/] {
+    yypushback(1); // ... as this might be a newline character
     // the line comment might be stopped while reading a comment within a table up until the cell separator
     if (tableChar != 0) {
       zzEndReadL = limitLookahead(zzCurrentPosL);
