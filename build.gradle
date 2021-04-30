@@ -6,7 +6,7 @@ buildscript {
     maven { url 'https://www.jetbrains.com/intellij-repository/snapshots' }
   }
   dependencies {
-    classpath 'com.github.ben-manes:gradle-versions-plugin:0.21.0'
+    classpath 'com.github.ben-manes:gradle-versions-plugin:0.36.0'
   }
 }
 plugins {
