@@ -1046,7 +1046,13 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <PREBLOCK, SINGLELINE, DELIMITER, HEADER> {
   {COMMENT_BLOCK_DELIMITER} $ { clearStyle(); resetFormatting(); yypushstate(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
-  {COMMENT_BLOCK_DELIMITER} / [^\/\n \t] { yypushback(yylength()); yybegin(STARTBLOCK);  }
+  {COMMENT_BLOCK_DELIMITER} / [^\/\n \t] { yypushback(yylength());
+          if (yystate() == SINGLELINE) {
+              yybegin(INSIDE_LINE); // avoid infinite loop, as STARTBLOCK would return to SINGLELINE
+          } else {
+              yybegin(STARTBLOCK);
+          }
+  }
   {COMMENT_BLOCK_DELIMITER} { clearStyle(); resetFormatting(); yypushstate(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
 }
 

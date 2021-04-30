@@ -488,6 +488,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('abc')");
   }
 
+  public void testNonCommentBlock() {
+    doTest("////\\nfoo bar\\n////\\nabc",
+      "AsciiDoc:TEXT ('////\\nfoo')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('bar\\n////\\nabc')");
+  }
+
   public void testBlockMacro() {
     doTest("image::foo.png[Caption]\nabc",
       "AsciiDoc:BLOCK_MACRO_ID ('image::')\n" +
