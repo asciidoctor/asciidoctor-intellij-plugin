@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.43
+=== 0.32.44
 
 - adding loop detection to lexer (#742)
 
