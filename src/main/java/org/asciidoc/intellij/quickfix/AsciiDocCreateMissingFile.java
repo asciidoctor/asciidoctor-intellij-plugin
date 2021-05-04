@@ -4,6 +4,7 @@ import com.intellij.ide.actions.OpenFileAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -35,7 +36,16 @@ public interface AsciiDocCreateMissingFile {
             if (e instanceof PsiDirectory) {
               parent = (PsiDirectory) e;
             } else {
-              ApplicationManager.getApplication().invokeLater(() -> OpenFileAction.openFile(((PsiFile) e).getVirtualFile(), project));
+              ApplicationManager.getApplication().invokeLater(() -> {
+                PsiFile file = ((PsiFile) e);
+                VirtualFile vf = file.getVirtualFile();
+                if (vf == null) {
+                  vf = file.getOriginalFile().getVirtualFile();
+                }
+                if (vf != null) {
+                  OpenFileAction.openFile(vf, project);
+                }
+              });
               break;
             }
           }
