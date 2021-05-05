@@ -12,6 +12,8 @@ This document provides a high-level view of the changes introduced by release.
 - adding loop detection to lexer (#742)
 - avoid NPE when creating a new file via a quick-fix (#745)
 - update to AsciidoctorJ 2.5.1 and Asciidoctor 2.0.15 (#738)
+- use attributes defined in plugin's settings for auto-complete and validation in editor (#746)
+- use build-in attributes for auto-complete when entering a reference to an attribute (#746)
 
 === 0.32.43
 

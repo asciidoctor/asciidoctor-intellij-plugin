@@ -66,20 +66,21 @@ public class AsciiDocDocumentationProvider extends AbstractDocumentationProvider
   public String generateDoc(final PsiElement element, @Nullable final PsiElement originalElement) {
     if (element instanceof DummyElement) {
       DummyElement el = (DummyElement) element;
-
-      String defaultValue = AsciiDocBundle.message(AsciiDocBundle.BUILTIN_ATTRIBUTE_PREFIX + el.getKey() + ".default-value");
-      defaultValue = StringEscapeUtils.escapeHtml4(defaultValue);
-      String values = AsciiDocBundle.message(AsciiDocBundle.BUILTIN_ATTRIBUTE_PREFIX + el.getKey() + ".values");
-      values = StringEscapeUtils.escapeHtml4(values);
-      String html = AsciiDocBundle.message(AsciiDocBundle.BUILTIN_ATTRIBUTE_PREFIX + el.getKey() + ".text");
-      html = StringEscapeUtils.escapeHtml4(html);
-      if (values != null) {
-        html += "<br/><b>" + AsciiDocBundle.message("asciidoc.attributes.values") + ":</b> " + values;
+      if (AsciiDocBundle.containsAttribute(el.getKey())) {
+        String defaultValue = AsciiDocBundle.message(AsciiDocBundle.BUILTIN_ATTRIBUTE_PREFIX + el.getKey() + ".default-value");
+        defaultValue = StringEscapeUtils.escapeHtml4(defaultValue);
+        String values = AsciiDocBundle.message(AsciiDocBundle.BUILTIN_ATTRIBUTE_PREFIX + el.getKey() + ".values");
+        values = StringEscapeUtils.escapeHtml4(values);
+        String html = AsciiDocBundle.message(AsciiDocBundle.BUILTIN_ATTRIBUTE_PREFIX + el.getKey() + ".text");
+        html = StringEscapeUtils.escapeHtml4(html);
+        if (values != null) {
+          html += "<br/><b>" + AsciiDocBundle.message("asciidoc.attributes.values") + ":</b> " + values;
+        }
+        if (defaultValue != null) {
+          html += "<br/><b>" + AsciiDocBundle.message("asciidoc.attributes.default-value") + ":</b> " + defaultValue;
+        }
+        return html;
       }
-      if (defaultValue != null) {
-        html += "<br/><b>" + AsciiDocBundle.message("asciidoc.attributes.default-value") + ":</b> " + defaultValue;
-      }
-      return html;
     }
     return null;
   }

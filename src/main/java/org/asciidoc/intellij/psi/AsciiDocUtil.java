@@ -39,6 +39,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.text.CharArrayUtil;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocLanguage;
+import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
@@ -399,6 +400,12 @@ public class AsciiDocUtil {
       }
     }
 
+    for (Map.Entry<String, String> entry : AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getAttributes().entrySet()) {
+      if (entry.getKey().replaceAll("@", "").equals(key)) {
+        result.add(new AsciiDocAttributeDeclarationDummy(key, entry.getValue()));
+      }
+    }
+
     return result;
   }
 
@@ -447,6 +454,10 @@ public class AsciiDocUtil {
 
     if (result.stream().noneMatch(attributeDeclaration -> attributeDeclaration.getAttributeName().equals("outfilesuffix"))) {
       result.add(new AsciiDocAttributeDeclarationDummy("outfilesuffix", ".html"));
+    }
+
+    for (Map.Entry<String, String> entry : AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getAttributes().entrySet()) {
+      result.add(new AsciiDocAttributeDeclarationDummy(entry.getKey().replaceAll("@", ""), entry.getValue()));
     }
 
     return result;
