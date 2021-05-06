@@ -57,12 +57,12 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
 
     if (element instanceof AsciiDocNamedElement) {
       String name = ((AsciiDocNamedElement) element).getName();
-      if (name != null) {
+      if (name != null && name.length() > 0) {
         search(consumer, element, name, scope);
       }
     } else if (element instanceof PsiDirectory) {
       String name = ((PsiDirectory) element).getName();
-      if (name.endsWith("s")) {
+      if (name.endsWith("s") && name.length() > 1) {
         // it might be a partials, attachments, etc. directory; search for the family and attribute
         VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(element);
         if (antoraModuleDir != null) {
