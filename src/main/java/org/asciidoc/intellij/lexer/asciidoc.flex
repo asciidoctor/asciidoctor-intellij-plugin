@@ -1896,6 +1896,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <ATTRS_SINGLE_QUOTE,ATTRS_DOUBLE_QUOTE> {
   [,;] { if (isTags) { return AsciiDocTokenTypes.ATTR_LIST_SEP; } else { return AsciiDocTokenTypes.ATTR_VALUE; } }
+  [!] { if (isTags) { return AsciiDocTokenTypes.ATTR_LIST_OP; } else { return AsciiDocTokenTypes.ATTR_VALUE; } }
 }
 
 <ATTR_VAL_START> {

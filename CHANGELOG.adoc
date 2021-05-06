@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - use attributes defined in plugin's settings for auto-complete and validation in editor (#746)
 - use build-in attributes for auto-complete when entering a reference to an attribute (#746)
 - remove spaces not rendered by AsciiDoc before invoking grammar check, avoiding undesired warnings (#747)
+- enable find-usages and renaming for negated include tags (#730)
 
 === 0.32.43
 
