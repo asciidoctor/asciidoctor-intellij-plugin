@@ -6,6 +6,7 @@ import com.intellij.grazie.grammar.strategy.impl.ReplaceCharRule;
 import com.intellij.grazie.grammar.strategy.impl.RuleGroup;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import kotlin.ranges.IntRange;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
@@ -103,6 +104,10 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
           && element.getTextLength() == 2) {
           // ` at the end of '`
           ranges.add(createRange(pos + 1, pos + 1));
+        }
+        if (element instanceof PsiWhiteSpace && element.getTextLength() > 1 && element.getText().matches(" *")) {
+          // AsciiDoc will eat extra spaces when rendering. Let's do the same here.
+          ranges.add(createRange(pos, pos + element.getTextLength() - 1));
         }
         if ((element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION
           || element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION_LEGACY)

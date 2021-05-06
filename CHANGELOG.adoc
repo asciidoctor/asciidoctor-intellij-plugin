@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - update to AsciidoctorJ 2.5.1 and Asciidoctor 2.0.15 (#738)
 - use attributes defined in plugin's settings for auto-complete and validation in editor (#746)
 - use build-in attributes for auto-complete when entering a reference to an attribute (#746)
+- remove spaces not rendered by AsciiDoc before invoking grammar check, avoiding undesired warnings (#747)
 
 === 0.32.43
 
