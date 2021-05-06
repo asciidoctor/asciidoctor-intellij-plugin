@@ -135,7 +135,12 @@ public class AsciiDocExternalAnnotatorProcessor extends com.intellij.lang.annota
           }
         } else if (logRecord.getMessage().startsWith(INCLUDE_FILE_NOT_FOUND)) {
           Set<PsiFile> files = new HashSet<>();
-          lineNumberForAnnotation = AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> findLineByInclude(file, files, logRecord, 0));
+          lineNumberForAnnotation = AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
+            if (file.getProject().isDisposed()) {
+              return -1;
+            }
+            return findLineByInclude(file, files, logRecord, 0);
+          });
           if (lineNumberForAnnotation == -1) {
             // unable to derive line number
             lineNumberForAnnotation = 0;
