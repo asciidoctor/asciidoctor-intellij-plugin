@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.45
 
 - additional logging when exceptions occur when checking grammar and spelling problems (#752)
+- prevent exception for quickfix when missing file can't be created (#745)
 
 === 0.32.44
 

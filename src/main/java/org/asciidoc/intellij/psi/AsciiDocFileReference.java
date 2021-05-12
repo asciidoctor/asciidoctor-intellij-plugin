@@ -108,9 +108,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     if (name != null) {
       try {
         if (isFolder) {
-          parent.checkCreateFile(name);
-        } else {
           parent.checkCreateSubdirectory(name);
+        } else {
+          parent.checkCreateFile(name);
         }
         // check if the name would be a valid path name
         String path = parent.getVirtualFile().getCanonicalPath();
@@ -182,9 +182,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       this(element, macroName, base, textRange, isFolder, false, 0);
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     List<ResolveResult> results = new ArrayList<>();
     if (isAnchor) {
       return multiResolveAnchor(false);
@@ -633,9 +632,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   @SuppressWarnings("checkstyle:MethodLength")
-  @NotNull
   @Override
-  public Object[] getVariants() {
+  public Object @NotNull [] getVariants() {
     List<LookupElementBuilder> items = new ArrayList<>();
     if ((isAntora || base.length() == 0)) {
       VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
