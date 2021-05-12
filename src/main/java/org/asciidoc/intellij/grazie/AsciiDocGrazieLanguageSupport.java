@@ -107,7 +107,7 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
         }
         if (element instanceof PsiWhiteSpace && element.getTextLength() > 1 && element.getText().matches(" *")) {
           // AsciiDoc will eat extra spaces when rendering. Let's do the same here.
-          ranges.add(createRange(pos, pos + element.getTextLength() - 1));
+          ranges.add(createRange(pos, pos + element.getTextLength() - 2));
         }
         if ((element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION
           || element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION_LEGACY)
