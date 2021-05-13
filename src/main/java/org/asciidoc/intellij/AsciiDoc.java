@@ -1012,17 +1012,17 @@ public class AsciiDoc {
     Notifications.Bus.notify(notification);
   }
 
-  public Map<String, Object> getExportOptions(Map<String, Object> options, FileType fileType) {
+  public Options getExportOptions(Options options, FileType fileType) {
     if (fileType == FileType.HTML || fileType == FileType.BROWSER) {
-      options.put(Options.HEADER_FOOTER, true);
+      options.setOption(Options.HEADER_FOOTER, true);
     }
     return options;
   }
 
   @SuppressWarnings("checkstyle:ParameterNumber")
-  private Map<String, Object> getDefaultOptions(FileType fileType, VirtualFile
+  private Options getDefaultOptions(FileType fileType, VirtualFile
     springRestDocsSnippets, Map<String, String> attributes) {
-    AttributesBuilder builder = AttributesBuilder.attributes()
+    AttributesBuilder builder = Attributes.builder()
       .showTitle(true)
       .backend(fileType.backend)
       .sourceHighlighter("coderay@")
@@ -1044,7 +1044,7 @@ public class AsciiDoc {
       builder.attribute("graphvizdot@", graphvizDot);
     }
 
-    Attributes attrs = builder.get();
+    Attributes attrs = builder.build();
 
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     if (imagesPath != null) {
@@ -1073,12 +1073,12 @@ public class AsciiDoc {
 
     settings.getAsciiDocPreviewSettings().getAttributes().forEach(attrs::setAttribute);
 
-    OptionsBuilder opts = OptionsBuilder.options().safe(settings.getSafe()).backend(fileType.backend).headerFooter(false)
+    OptionsBuilder opts = Options.builder().safe(settings.getSafe()).backend(fileType.backend).headerFooter(false)
       .attributes(attrs)
       .option("sourcemap", "true")
       .baseDir(fileBaseDir);
 
-    return opts.asMap();
+    return opts.build();
   }
 
   public Map<String, String> getAttributes() {
@@ -1263,7 +1263,8 @@ public class AsciiDoc {
 
   private static String addHightlightJs(@NotNull String html, @NotNull Map<String, String> attributes) {
     /* Add HightlightJS line */
-    if (Objects.equals(attributes.get("source-highlighter"), "highlightjs")) {
+    if (Objects.equals(attributes.get("source-highlighter"), "highlightjs") || // will work both with and without a dot
+      Objects.equals(attributes.get("source-highlighter"), "highlight.js")) {
       String css = PreviewStaticServer.getScriptUrl("highlightjs/styles/github.min.css");
       String js = PreviewStaticServer.getScriptUrl("highlightjs/highlight.min.js");
       html = html
