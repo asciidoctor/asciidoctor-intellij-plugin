@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.46
 
 - source highlighting with highlight.js now documented (#370)
+- when working in Antora modules, read attributes from _.asciidoctorconfig_ files (#703)
 
 === 0.32.45
 

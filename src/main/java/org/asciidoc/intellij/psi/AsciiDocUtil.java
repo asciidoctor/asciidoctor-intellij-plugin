@@ -283,8 +283,11 @@ public class AsciiDocUtil {
     for (AsciiDocAttributeDeclaration asciiDocAttributeDeclaration : asciiDocAttributeDeclarations) {
       VirtualFile virtualFile = asciiDocAttributeDeclaration.getContainingFile().getVirtualFile();
       if (onlyAntora) {
-        if (!cache.computeIfAbsent(virtualFile.getParent(), s -> findAntoraModuleDir(project, s) != null)) {
-          continue;
+        if (!virtualFile.getName().equals(".asciidoctorconfig") && !virtualFile.getName().equals(".asciidoctorconfig.adoc")) {
+          // the .asciidoctorconfig files will still work with Antora
+          if (!cache.computeIfAbsent(virtualFile.getParent(), s -> findAntoraModuleDir(project, s) != null)) {
+            continue;
+          }
         }
       }
       if (result == null) {
@@ -309,8 +312,11 @@ public class AsciiDocUtil {
       for (AsciiDocAttributeDeclaration asciiDocAttributeDeclaration : asciiDocAttributeDeclarations) {
         VirtualFile virtualFile = asciiDocAttributeDeclaration.getContainingFile().getVirtualFile();
         if (onlyAntora) {
-          if (!cache.computeIfAbsent(virtualFile.getParent(), s -> findAntoraModuleDir(project, s) != null)) {
-            continue;
+          if (!virtualFile.getName().equals(".asciidoctorconfig") && !virtualFile.getName().equals(".asciidoctorconfig.adoc")) {
+            // the .asciidoctorconfig files will still work with Antora
+            if (!cache.computeIfAbsent(virtualFile.getParent(), s -> findAntoraModuleDir(project, s) != null)) {
+              continue;
+            }
           }
         }
         result.add(asciiDocAttributeDeclaration);
@@ -1203,11 +1209,7 @@ public class AsciiDocUtil {
           resolvePageAliases(project, key, myModuleName, myComponentName, myComponentVersion, result);
         }
         if (result.size() == 0) {
-          if (backup != null) {
-            result.add(backup);
-          } else {
-            result.add(originalKey);
-          }
+          result.add(Objects.requireNonNullElse(backup, originalKey));
         }
         return result;
       });
