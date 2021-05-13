@@ -1,6 +1,6 @@
 = Proxy issues with the JCEF preview
 :navtitle: Proxy issues JCEF preview
-:description: JCEF preview doesn't support proxy settings. Please use the JavaFX preview.
+:description: JCEF preview supports proxy settings since 2021.1. Restart is required.
 
 {description}
 See below how to do that.

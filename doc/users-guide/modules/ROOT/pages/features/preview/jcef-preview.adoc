@@ -19,6 +19,12 @@ This includes rendering of fonts and SVGs.
 [[limitations]]
 == Limitations of the JCEF preview
 
+When using tool windows in undocked mode, the preview will overlap with the tool window.
+See issue https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/751[#751] for details.
+It seems to be rooted in the platform.
+All plugins that use the JCEF preview (including JetBrains's Markdown plugin) are affected.
+Please vote for the following issues to raise attention for this problem: https://youtrack.jetbrains.com/issue/IDEA-257702[IDEA-257702] and https://youtrack.jetbrains.com/issue/IDEA-252845[IDEA-252845].
+
 The JCEF preview doesn't support the IntelliJ proxy configuration prior to 2021.1.
 Configuring a proxy for JCEF requires an IDE restart.
 Therefore, remote images in the preview might not show if you are behind a proxy.
@@ -49,7 +55,8 @@ It requires that the user runs on the pre-packaged JetBrains OpenJDK 11.
 This is recommended for Android Studio 4.2 that doesn't ship with either JavaFX or JCEF support.
 You can watch https://issuetracker.google.com/issues/159933628[this issue] in Android Studio's issue tracker for the progress.
 
-JavaFX preview that used to work with Android Studio 4.0 will not work with Android Studio 4.2 as it doesn't package the necessary classes in the IDE. Therefore, follow these steps to enable JCEF preview for Android Studio.
+JavaFX preview that used to work with Android Studio 4.0 will not work with Android Studio 4.2 as it doesn't package the necessary classes in the IDE.
+Therefore, follow these steps to enable JCEF preview for Android Studio.
 
 * Install the plugin "`Choose Runtime`" as described in the JetBrains knowledge base "`https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Selecting the JDK version the IDE will run under^]`".
 * Choose a runtime "jbrsdk-11_0_...tar.gz" or later and install it.
