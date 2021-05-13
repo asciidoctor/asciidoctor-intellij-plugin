@@ -1209,7 +1209,12 @@ public class AsciiDocUtil {
           resolvePageAliases(project, key, myModuleName, myComponentName, myComponentVersion, result);
         }
         if (result.size() == 0) {
-          result.add(Objects.requireNonNullElse(backup, originalKey));
+          //noinspection ReplaceNullCheck as this still needs to work with JDK 8
+          if (backup != null) {
+            result.add(backup);
+          } else {
+            result.add(originalKey);
+          }
         }
         return result;
       });
