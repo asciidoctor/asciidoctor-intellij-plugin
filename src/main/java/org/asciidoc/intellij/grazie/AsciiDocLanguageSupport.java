@@ -51,12 +51,12 @@ public class AsciiDocLanguageSupport {
 
   // all tokens that contain full sentences that can be checked for grammar and spelling.
   private static final TokenSet NODES_TO_CHECK = TokenSet.create(
-    AsciiDocTokenTypes.TITLE_TOKEN,
     AsciiDocTokenTypes.LINE_COMMENT,
     AsciiDocTokenTypes.BLOCK_COMMENT,
     AsciiDocTokenTypes.LITERAL_BLOCK,
     AsciiDocTokenTypes.BLOCKREFTEXT,
     AsciiDocElementTypes.SECTION,
+    AsciiDocElementTypes.TITLE,
     AsciiDocElementTypes.BLOCK,
     AsciiDocElementTypes.CELL,
     AsciiDocElementTypes.HEADING

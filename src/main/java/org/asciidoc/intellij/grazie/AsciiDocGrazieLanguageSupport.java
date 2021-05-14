@@ -100,56 +100,56 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
       @Override
       public void visitElement(@NotNull PsiElement element) {
         super.visitElement(element);
-        if (element.getNode().getElementType() == AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START
-          && element.getTextLength() == 2) {
-          // ` at the end of '`
-          ranges.add(createRange(pos + 1, pos + 1));
-        }
-        if (element instanceof PsiWhiteSpace && element.getTextLength() > 1 && element.getText().matches(" *")) {
-          // AsciiDoc will eat extra spaces when rendering. Let's do the same here.
-          ranges.add(createRange(pos, pos + element.getTextLength() - 2));
-        }
-        if ((element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION
-          || element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION_LEGACY)
-          && element.getTextLength() == 3) {
-          // this will strip out the '+' or '\' from the continuation before forwarding it to the grammar check
-          ranges.add(createRange(pos + 1, pos + 1));
-        }
-        if (element.getNode().getElementType() == AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END
-          && element.getTextLength() == 2) {
-          // ` at the beginning of `'
-          ranges.add(createRange(pos, pos));
-        }
-        if (element.getNode().getElementType() == AsciiDocTokenTypes.HEADING_OLDSTYLE && element.getTextLength() >= 1) {
-          // ignore second line of heading
-          String heading = element.getText();
-          int i = heading.indexOf('\n');
-          if (i != -1) {
-            ranges.add(createRange(i, heading.length()));
-          }
-        }
-        if (element.getNode().getElementType() == AsciiDocTokenTypes.HEADING_TOKEN && element.getTextLength() >= 1
-          && element.getPrevSibling() == null) {
-          // ignore "##" or "==" at start of heading
-          String heading = element.getText();
-          int i = 0;
-          char start = heading.charAt(0);
-          while (i < heading.length() && heading.charAt(i) == start) {
-            ++i;
-          }
-          while (i < heading.length() && heading.charAt(i) == ' ') {
-            ++i;
-          }
-          if (i > 0) {
-            ranges.add(createRange(0, i - 1));
-          }
-        }
         @NotNull ElementBehavior elementBehavior = getElementBehavior(psiElement, element);
         if (elementBehavior != ElementBehavior.STEALTH &&
           elementBehavior != ElementBehavior.ABSORB) {
+          if (element.getNode().getElementType() == AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START
+            && element.getTextLength() == 2) {
+            // ` at the end of '`
+            ranges.add(createRange(pos + 1, pos + 1));
+          }
+          if (element instanceof PsiWhiteSpace && element.getTextLength() > 1 && element.getText().matches(" *")) {
+            // AsciiDoc will eat extra spaces when rendering. Let's do the same here.
+            ranges.add(createRange(pos, pos + element.getTextLength() - 2));
+          }
+          if ((element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION
+            || element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION_LEGACY)
+            && element.getTextLength() == 3) {
+            // this will strip out the '+' or '\' from the continuation before forwarding it to the grammar check
+            ranges.add(createRange(pos + 1, pos + 1));
+          }
+          if (element.getNode().getElementType() == AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END
+            && element.getTextLength() == 2) {
+            // ` at the beginning of `'
+            ranges.add(createRange(pos, pos));
+          }
+          if (element.getNode().getElementType() == AsciiDocTokenTypes.HEADING_OLDSTYLE && element.getTextLength() >= 1) {
+            // ignore second line of heading
+            String heading = element.getText();
+            int i = heading.indexOf('\n');
+            if (i != -1) {
+              ranges.add(createRange(pos + i, pos + heading.length()));
+            }
+          }
+          if (element.getNode().getElementType() == AsciiDocTokenTypes.HEADING_TOKEN && element.getTextLength() >= 1
+            && element.getPrevSibling() == null) {
+            // ignore "##" or "==" at start of heading
+            String heading = element.getText();
+            int i = 0;
+            char start = heading.charAt(0);
+            while (i < heading.length() && heading.charAt(i) == start) {
+              ++i;
+            }
+            while (i < heading.length() && heading.charAt(i) == ' ') {
+              ++i;
+            }
+            if (i > 0) {
+              ranges.add(createRange(pos, pos + i - 1));
+            }
+          }
           PsiElement child = element.getFirstChild();
           if (child == null) {
-              pos += element.getTextLength();
+            pos += element.getTextLength();
           }
           while (child != null) {
             visitElement(child);
