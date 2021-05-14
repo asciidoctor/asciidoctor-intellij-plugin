@@ -91,10 +91,7 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
   @Override
   public LinkedHashSet<IntRange> getStealthyRanges(@NotNull PsiElement psiElement, @NotNull CharSequence charSequence) {
     LinkedHashSet<IntRange> ranges = new LinkedHashSet<>();
-    if (psiElement.getNode().getElementType() == AsciiDocTokenTypes.LINE_COMMENT && psiElement.getTextLength() >= 2) {
-      // ignore "//" at start of line comment
-      ranges.add(createRange(0, 1));
-    }
+    StringBuilder parsedText = new StringBuilder();
     AsciiDocVisitor visitor = new AsciiDocVisitor() {
       private int pos = 0;
       @Override
@@ -159,7 +156,28 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
       }
     };
     visitor.visitElement(psiElement);
-    return ranges;
+    LinkedHashSet<IntRange> finalRanges = new LinkedHashSet<>();
+    if (!parsedText.toString().equals(charSequence.toString())) {
+      // some prefix might have been removed by Grazie, adjust detected ranges accordingly
+      ranges.clear();
+      int strippedHeader = parsedText.toString().indexOf(charSequence.toString());
+      if (strippedHeader > 0) {
+        for (IntRange range : ranges) {
+          if (range.getEndInclusive() > charSequence.length()) {
+            continue;
+          }
+          if (range.getStart() - strippedHeader < 0) {
+            continue;
+          }
+          finalRanges.add(createRange(range.getStart() - strippedHeader, range.getEndInclusive() - strippedHeader));
+        }
+      }
+      // sometimes Grazie also removes spaces "in the middle", logic above needs to reflect this
+      // else LOG.warn("unable to reconstruct grammar string", AsciiDocPsiImplUtil.getRuntimeException("didn't find string", psiElement, null));
+    } else {
+      finalRanges.addAll(ranges);
+    }
+    return finalRanges;
   }
 
   private IntRange createRange(int start, int endInclusive) {

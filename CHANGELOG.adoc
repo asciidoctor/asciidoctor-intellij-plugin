@@ -7,11 +7,15 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.47
+
+- robust parsing whitespace for grammar checker (#752)
+
 === 0.32.46
 
 - source highlighting with highlight.js now documented (#370)
 - when working in Antora modules, read attributes from _.asciidoctorconfig_ files (#703)
-- fix problem when parsing preparing whitespace for grammar checker (#752)
+- fix problem when parsing whitespace for grammar checker (#752)
 
 === 0.32.45
 

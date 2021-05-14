@@ -1,11 +1,17 @@
 package org.asciidoc.intellij.psi;
 
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.diagnostic.Attachment;
+import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.DebugUtil;
 import icons.AsciiDocIcons;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.regex.Pattern;
 
 public class AsciiDocPsiImplUtil {
 
@@ -35,4 +41,15 @@ public class AsciiDocPsiImplUtil {
       }
     };
   }
+
+  @NotNull
+  public static RuntimeException getRuntimeException(@NotNull String message, @NotNull PsiElement element, RuntimeException e) {
+    String psiTree = DebugUtil.psiToString(element, false, true);
+    // keep only structure in the attachment, clear out any text content to anonymize data
+    psiTree = psiTree.replaceAll("\\('.*'\\)", "");
+    Pattern removeContent = Pattern.compile("\\p{Alnum}", Pattern.UNICODE_CHARACTER_CLASS);
+    String content = removeContent.matcher(element.getText()).replaceAll("x");
+    return new RuntimeExceptionWithAttachments(message, e, new Attachment("psi.txt", psiTree), new Attachment("doc.adoc", content));
+  }
+
 }
