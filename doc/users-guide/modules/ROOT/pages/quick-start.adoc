@@ -14,6 +14,8 @@ Continue to section xref:installation.adoc[] for a more detailed guide.
 . An installed JetBrains IDE like IntelliJ IDEA, GoLand, WebStorm or PyCharm. +
 This plugin fully supports the free IntelliJ IDEA Community edition.
 
+To install the plugin on IntelliJ MPS or Google Android Studio, please refer to the chapter _xref:installation.adoc[]_.
+
 [WARNING]
 --
 Please use the pre-bundled JetBrains OpenJDK Runtime 11 to run your IDE. This provides the best live preview based on JavaFX or JCEF. You can check this in the menu menu:Help[About].
@@ -23,7 +25,7 @@ It should state:
 ====
 [%hardbreaks]
 Runtime version: 11.0...
-VM: OpenJDK 64-Bit Server VM by JetBrains s.r.o
+VM: ... 64-Bit Server VM by JetBrains s.r.o
 ====
 
 Please refer to xref:installation.adoc#prerequisites[Installation Prerequisites] if this is not the case.

@@ -39,7 +39,7 @@ Refer to the link:CHANGELOG.adoc[CHANGELOG] for a list of changes in previous re
 
 == Dependencies
 
-This project uses AsciiDoctorJ and JRuby for the rendering of the AsciiDoc content.
+This project uses AsciidoctorJ and JRuby for the rendering of the AsciiDoc content.
 
 For the conversion of Markdown to AsciiDoc, we use Pegdown and the https://github.com/bodiam/markdown-to-asciidoc[Markdown to AsciiDoc] converter.
 

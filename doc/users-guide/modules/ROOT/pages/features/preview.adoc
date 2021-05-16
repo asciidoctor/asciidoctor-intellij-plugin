@@ -15,7 +15,7 @@ See section https://asciidoctor.org/docs/user-manual/#running-asciidoctor-secure
 
 When using the JCEF of the JavaFX preview and _SAVE_, _SERVER_ and _SECURE_ remote content is no longer allowed in the preview by applying a Content Security Policy (new in plugin version 0.32.32).
 
-When the user enters formulas using AsciiDoctor's math support, the preview renders them using MathML.
+When the user enters formulas using Asciidoctor's math support, the preview renders them using MathML.
 If the formula can't be parsed by MathML, the preview shows an error popup.
 
 When the user moves the cursor in the editor, the preview scrolls the text into the preview.
