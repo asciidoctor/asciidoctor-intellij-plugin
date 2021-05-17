@@ -2,9 +2,11 @@ site:
   title: xref test
   url: http://example.com
 content:
+  edit_url: 'myediturl'
   sources:
-  - url: ./../../..
-    start_paths: testData/psi/antoraImageXref
+    - url: myazuresite
+      edit_url: 'myediturl'
+      start_path: homepage
 ui:
   bundle:
     url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable

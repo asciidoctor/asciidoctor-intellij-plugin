@@ -126,7 +126,8 @@
           "default": false
         },
         "pull": {
-          "description": "(Deprecated; to be removed in Antora 3) Download updates from remote resources. Use --fetch instead.",
+          "description": "Download updates from remote resources.",
+          "deprecationMessage": "To be removed in Antora 3, use `fetch` instead.",
           "type": "boolean"
         },
         "quiet": {
@@ -273,6 +274,14 @@
             "array"
           ],
           "description": "Tags as comma-separated list, an array or a list. Negate entries by prepending with a '!', use '*' as a wildcard."
+        },
+        "edit_url": {
+          "type": [
+            "boolean",
+            "string"
+          ],
+          "description": "The edit URL for the current source element.",
+          "default": true
         }
       }
     }

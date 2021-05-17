@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.48
+
+- update Antora playbook schema to include `edit_url` also in `source` element (#757)
+
 === 0.32.47
 
 - robust parsing whitespace for grammar checker (#752)
