@@ -131,7 +131,7 @@ dependencies {
 
   // when updating the versions here, also update them in AsciiDocDownloaderUtil for dynamic download
   testImplementation 'org.asciidoctor:asciidoctorj-diagram:2.1.2'
-  testImplementation 'org.asciidoctor:asciidoctorj-pdf:1.5.4'
+  testImplementation 'org.asciidoctor:asciidoctorj-pdf:1.6.0'
 
   testImplementation 'junit:junit:4.13.2'
   testImplementation 'com.tngtech.archunit:archunit-junit4:0.18.0'
