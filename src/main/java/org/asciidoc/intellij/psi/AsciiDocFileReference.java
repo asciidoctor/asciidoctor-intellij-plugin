@@ -120,12 +120,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       } catch (IncorrectOperationException | InvalidPathException e) {
         return false;
       }
+      return true;
     }
-    return true;
+    return false;
   }
 
 
-  public PsiElement createFileOrFolder(PsiDirectory parent) {
+  public @Nullable PsiElement createFileOrFolder(PsiDirectory parent) {
     if (canBeCreated(parent)) {
       String name = getRangeInElement().substring(myElement.getText());
       name = AsciiDocUtil.resolveAttributes(myElement, name);

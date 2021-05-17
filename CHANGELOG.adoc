@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.48
 
 - update Antora playbook schema to include `edit_url` also in `source` element (#757)
+- avoid NPE when creating a new file via a quick-fix (#745)
 
 === 0.32.47
 

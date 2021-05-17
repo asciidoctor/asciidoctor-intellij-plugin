@@ -35,7 +35,7 @@ public interface AsciiDocCreateMissingFile {
             PsiElement e = adr.createFileOrFolder(parent);
             if (e instanceof PsiDirectory) {
               parent = (PsiDirectory) e;
-            } else {
+            } else if (e != null) {
               ApplicationManager.getApplication().invokeLater(() -> {
                 PsiFile file = ((PsiFile) e);
                 VirtualFile vf = file.getVirtualFile();
