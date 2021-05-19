@@ -2,8 +2,8 @@ package org.asciidoc.intellij.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -162,7 +162,7 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
     try {
       super.accept(visitor);
     } catch (RuntimeException e) {
-      if (e instanceof RuntimeExceptionWithAttachments || e instanceof ProcessCanceledException) {
+      if (e instanceof RuntimeExceptionWithAttachments || e instanceof ControlFlowException) {
         throw e;
       }
       throw AsciiDocPsiImplUtil.getRuntimeException("Problem occurred while running visitor " + visitor.getClass(), this, e);

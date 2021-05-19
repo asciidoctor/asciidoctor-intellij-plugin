@@ -734,7 +734,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                              yypushstate(); yybegin(INLINEID); return AsciiDocTokenTypes.INLINEIDSTART;
                            } else {
                              yypushback(1);
-                             return AsciiDocTokenTypes.HEADER;
+                             return textFormat();
                            }
                          }
 }
