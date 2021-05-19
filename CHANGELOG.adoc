@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.49
 
 - fix parsing escape character for inline IDs in section headings (#758)
+- update to AsciidoctorJ PDF 1.6.0
 
 === 0.32.48
 
