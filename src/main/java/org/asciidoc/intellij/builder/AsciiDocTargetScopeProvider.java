@@ -7,6 +7,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.FileIndexFacade;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.psi.PsiFile;
@@ -38,9 +39,15 @@ public class AsciiDocTargetScopeProvider extends BuildTargetScopeProvider {
   }
 
   private static void clearProblemsForAsciidocFiles(Module module, Project project) {
+    if (project.isDisposed() || module.isDisposed()) {
+      return;
+    }
     WolfTheProblemSolver theProblemSolver = WolfTheProblemSolver.getInstance(project);
+    FileIndexFacade myFileIndexFacade = FileIndexFacade.getInstance(project);
     ModuleRootManager.getInstance(module).getFileIndex().iterateContent(file -> {
-      if (!file.isDirectory() && AsciiDocFileType.INSTANCE == file.getFileType()) {
+      if (!file.isDirectory() && AsciiDocFileType.INSTANCE == file.getFileType()
+          && !myFileIndexFacade.isInLibraryClasses(file)
+          && !myFileIndexFacade.isInLibrarySource(file)) {
         // this will clear the problems for all Asciidoc files in the modules
         // consider using clearProblemsFromExternalSource available from 2019.x?
         theProblemSolver.clearProblems(file);

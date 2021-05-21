@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - fix parsing escape character for inline IDs in section headings (#758)
 - update to AsciidoctorJ PDF 1.6.0
+- avoid exceptions when modules/libraries has already been removed (#760)
 
 === 0.32.48
 
