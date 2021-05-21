@@ -105,6 +105,9 @@ note right
 end note
 ----
 
+// TODO: Try out https://gitlab.com/djencks/asciidoctor-antora-kref
+// it might be able to use a "kref" inside Kroki diagrams
+
 [NOTE]
 ====
 In this documentation the image above is non-interactive, as the target link of the note would not resolve.
