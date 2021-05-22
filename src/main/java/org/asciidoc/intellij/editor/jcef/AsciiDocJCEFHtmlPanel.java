@@ -837,7 +837,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
   @Override
   public void dispose() {
-    super.dispose();
     getJBCefClient().removeLoadHandler(myCefLoadHandler, getCefBrowser());
     Disposer.dispose(myJSQuerySetScrollY);
     Disposer.dispose(myRenderedResult);
@@ -848,6 +847,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     Disposer.dispose(myZoomReset);
     Disposer.dispose(mySaveImage);
     Disposer.dispose(myOpenLink);
+    super.dispose();
   }
 
   private String findTempImageFile(String filename, String imagesdir) {

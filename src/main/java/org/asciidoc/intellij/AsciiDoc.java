@@ -35,6 +35,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableInt;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.geronimo.gshell.io.SystemOutputHijacker;
 import org.asciidoc.intellij.actions.asciidoc.AsciiDocAction;
 import org.asciidoc.intellij.asciidoc.AntoraIncludeAdapter;
@@ -725,7 +726,9 @@ public class AsciiDoc {
         response.append("unable to render AsciiDoc document");
         Throwable t = ex;
         do {
-          response.append("<p>").append(t.getClass().getCanonicalName()).append(": ").append(t.getMessage());
+          response.append("<p style='white-space: pre-wrap;'>").append(t.getClass().getCanonicalName()).append(": ").append(
+            StringEscapeUtils.escapeHtml4(t.getMessage())
+          );
           if (t instanceof MainExitException && t.getMessage().startsWith("unknown encoding name")) {
             response.append("<p>Either your local encoding is not supported by JRuby, or you passed an unrecognized value to the Java property 'file.encoding' either in the IntelliJ options file or via the JAVA_TOOL_OPTION environment variable.");
             String property = SafePropertyAccessor.getProperty("file.encoding", null);
