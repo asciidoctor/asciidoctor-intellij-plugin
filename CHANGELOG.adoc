@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - update to AsciidoctorJ PDF 1.6.0
 - avoid exceptions when modules/libraries has already been removed (#760)
 - escape HTML characters when rendering exception in preview (#761)
+- escape ampersand in documentation of attributes, as IntelliJ would replace it
 
 === 0.32.48
 
