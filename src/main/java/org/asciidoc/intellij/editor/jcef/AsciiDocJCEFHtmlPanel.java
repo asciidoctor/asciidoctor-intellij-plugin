@@ -609,7 +609,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
   @Override
   public synchronized void setHtml(@NotNull String htmlParam, @NotNull Map<String, String> attributes) {
-    if (tobeDisposed) {
+    if (tobeDisposed || isDisposed()) {
       return;
     }
     if (getCefBrowser().getFocusedFrame() == null && hasLoadedOnce) {
@@ -635,7 +635,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     String html = htmlParam;
     boolean result = false;
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
-    if (!forceRefresh && settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")) {
+    if (hasLoadedOnce && !forceRefresh && settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")) {
       final String htmlToReplace = StringEscapeUtils.escapeEcmaScript(prepareHtml(html, attributes));
       // try to replace the HTML contents using JavaScript to avoid flickering MathML
       try {
@@ -703,12 +703,17 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       // slow down the rendering of the next version of the preview until the rendering if the current version is complete
       // this prevents us building up a queue that would lead to a lagging preview
       if (htmlParam.length() > 0 && !rendered.await(3, TimeUnit.SECONDS)) {
-        LOG.warn("rendering didn't complete in time, might be slow or broken");
-        if (getCefBrowser().getFocusedFrame() == null || this.isDisposed()) {
-          disposeMyself();
-        } else {
-          forceRefresh = true;
-          reregisterHandlers();
+        // error handling only if:
+        // the preview has rendered once -- as we don't want to close a window that is opening
+        // this preview hasn't been disposed -- as this wouldn't make much sense
+        if (!this.isDisposed() && hasLoadedOnce) {
+          LOG.warn("rendering didn't complete in time, might be slow or broken");
+          if (getCefBrowser().getFocusedFrame() == null) {
+            disposeMyself();
+          } else {
+            forceRefresh = true;
+            reregisterHandlers();
+          }
         }
       }
     } catch (InterruptedException e) {
@@ -717,11 +722,15 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   }
 
   private void disposeMyself() {
-    LOG.warn("triggering disposal of preview");
-    ApplicationManager.getApplication().getMessageBus()
-      .syncPublisher(AsciiDocPreviewEditor.RefreshPreviewListener.TOPIC)
-      .refreshPreview(this);
-    tobeDisposed = true;
+    if (!tobeDisposed) {
+      LOG.warn("triggering disposal of preview");
+      ApplicationManager.getApplication().invokeLater(() -> {
+        ApplicationManager.getApplication().getMessageBus()
+          .syncPublisher(AsciiDocPreviewEditor.RefreshPreviewListener.TOPIC)
+          .refreshPreview(this);
+      });
+      tobeDisposed = true;
+    }
   }
 
   @NotNull
