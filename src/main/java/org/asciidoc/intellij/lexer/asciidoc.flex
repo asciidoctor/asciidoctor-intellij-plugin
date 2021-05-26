@@ -422,6 +422,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state ATTRS_DOUBLE_QUOTE_START_NO_CLOSE
 %state ATTR_VAL_START
 %state BLOCK_ATTRS
+%state BLOCK_ATTRS_REF
 
 %state INLINE_MACRO
 %state INLINE_MACRO_TEXT
@@ -533,7 +534,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                { yypushback(yylength());  yybegin(ATTRIBUTE_VAL); }
 }
 
-<ATTRIBUTE_VAL, INLINE_MACRO, INLINE_URL_NO_DELIMITER, INSIDE_LINE, DOCTITLE, HEADING, DESCRIPTION, LINKFILE, LINKFILEWITHBLANK, LINKANCHOR, LINKURL, BLOCK_MACRO, MACROTEXT, REFTEXT, INLINEREFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE, REF, ANCHORID, BIBNAME, BLOCK_ATTRS> {
+<ATTRIBUTE_VAL, INLINE_MACRO, INLINE_URL_NO_DELIMITER, INSIDE_LINE, DOCTITLE, HEADING, DESCRIPTION, LINKFILE, LINKFILEWITHBLANK, LINKANCHOR, LINKURL, BLOCK_MACRO, MACROTEXT, REFTEXT, INLINEREFTEXT, BLOCKREFTEXT, BLOCK_MACRO_ATTRS, ATTRS_SINGLE_QUOTE, ATTRS_DOUBLE_QUOTE, ATTRS_NO_QUOTE, TITLE, REF, ANCHORID, BIBNAME, BLOCK_ATTRS, BLOCK_ATTRS_REF> {
   {ATTRIBUTE_REF_START} ( {ATTRIBUTE_NAME}? {ATTRIBUTE_REF_END} | [^}\n ]* {AUTOCOMPLETE} ) {
                          yypushback(yylength() - 1);
                          if (!isEscaped()) {
@@ -1771,6 +1772,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <ANCHORID> {
   [,.]                 { yybegin(ANCHORREFTEXT); return AsciiDocTokenTypes.SEPARATOR; }
+  "%" [a-z]+           { return AsciiDocTokenTypes.SEPARATOR; }
   [^]                  { return AsciiDocTokenTypes.BLOCKID; }
 }
 
@@ -1808,7 +1810,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <BLOCK_ATTRS> {
-  [^\],=\n\t }]+ {
+  [^\],=\n\t }#]+ {
           if ((yycharat(0) != '.' && yycharat(0) != '%') && !yytext().toString().equals("role")) {
             String style = yytext().toString();
             if (style.indexOf(",") != -1) {
@@ -1818,6 +1820,16 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           }
           return AsciiDocTokenTypes.ATTR_NAME;
         }
+  [#] {
+          yypushstate();
+          yybegin(BLOCK_ATTRS_REF);
+          return AsciiDocTokenTypes.SEPARATOR;
+      }
+}
+
+<BLOCK_ATTRS_REF> {
+  [\],=\n\t%] { yypushback(yylength()); yypopstate(); }
+  [^] { return AsciiDocTokenTypes.BLOCKID; }
 }
 
 <BLOCK_MACRO,IFDEF_IFNDEF_ENDIF> {

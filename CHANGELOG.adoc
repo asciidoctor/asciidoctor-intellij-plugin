@@ -7,6 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.50
+
+- support ID references appended to blocks as used in AsciiDoc documentation like `[source#hello]`
+- support style in blocks used in AsciiDoc documentation like `[#id%autowidth]`
+
 === 0.32.49
 
 - fix parsing escape character for inline IDs in section headings (#758)

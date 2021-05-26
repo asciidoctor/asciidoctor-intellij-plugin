@@ -304,6 +304,23 @@ public class AsciiDocParserImpl {
     heading.done(AsciiDocElementTypes.HEADING);
   }
 
+  private void parseId() {
+    PsiBuilder.Marker blockIdMarker = null;
+    while (at(BLOCKID) || at(ATTRIBUTE_REF_START)) {
+      if (blockIdMarker == null) {
+        blockIdMarker = myBuilder.mark();
+      }
+      if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
+      } else {
+        next();
+      }
+    }
+    if (blockIdMarker != null) {
+      blockIdMarker.done(AsciiDocElementTypes.BLOCKID);
+    }
+  }
+
   private void parseBlockId() {
     markPreBlock();
     next();
@@ -471,7 +488,7 @@ public class AsciiDocParserImpl {
     PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
     next();
     while (at(ATTR_NAME) || at(ATTR_VALUE) || at(ATTRS_END) || at(SEPARATOR) || at(ATTRIBUTE_REF_START) || at(ATTR_LIST_SEP) || at(ATTR_LIST_OP)
-      || at(SINGLE_QUOTE) || at(DOUBLE_QUOTE) || at(ASSIGNMENT) || at(URL_LINK)) {
+      || at(SINGLE_QUOTE) || at(DOUBLE_QUOTE) || at(ASSIGNMENT) || at(URL_LINK) || at(BLOCKID)) {
       if (at(ATTRS_END)) {
         next();
         break;
@@ -481,6 +498,8 @@ public class AsciiDocParserImpl {
         parseAttributeReference();
       } else if (at(URL_LINK)) {
         parseUrl();
+      } else if (at(BLOCKID)) {
+        parseId();
       } else {
         next();
       }

@@ -875,6 +875,16 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Title')");
   }
 
+  public void testAnchorWithStyle() {
+    doTest("[#anchor%style]\nText",
+      "AsciiDoc:BLOCKIDSTART ('[#')\n" +
+        "AsciiDoc:BLOCKID ('anchor')\n" +
+        "AsciiDoc:SEPARATOR ('%style')\n" +
+        "AsciiDoc:BLOCKIDEND (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
   public void testBoldSimple() {
     doTest("Hello *bold* world",
       "AsciiDoc:TEXT ('Hello')\n" +
@@ -1448,6 +1458,14 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   public void testAnchorid() {
+    doTest("[#BLOCKID]Text",
+      "AsciiDoc:BLOCKIDSTART ('[#')\n" +
+        "AsciiDoc:BLOCKID ('BLOCKID')\n" +
+        "AsciiDoc:BLOCKIDEND (']')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testAnchoridWithStyle() {
     doTest("[#BLOCKID]Text",
       "AsciiDoc:BLOCKIDSTART ('[#')\n" +
         "AsciiDoc:BLOCKID ('BLOCKID')\n" +
@@ -2154,6 +2172,20 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTR_NAME ('source')\n" +
         "AsciiDoc:SEPARATOR (',')\n" +
         "AsciiDoc:ATTR_NAME ('php')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_TEXT ('Listing')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
+  public void testListingWithRef() {
+    doTest("[source#ref]\nListing\n\nText",
+      "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('source')\n" +
+        "AsciiDoc:SEPARATOR ('#')\n" +
+        "AsciiDoc:BLOCKID ('ref')\n" +
         "AsciiDoc:ATTRS_END (']')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LISTING_TEXT ('Listing')\n" +
