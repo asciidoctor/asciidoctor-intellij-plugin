@@ -47,6 +47,7 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 | Copy current line to clipboard | kbd:[Ctrl+C],kbd:[Ctrl+Insert]
 | Paste from clipboard +
 (text or images) | kbd:[Ctrl+V],kbd:[Shift+Insert]
+| Move current line up/down | kbd:[Ctrl+Shift+Up]/kbd:[Down]
 | Duplicate current line  | kbd:[Ctrl+D]
 | Delete line at caret | kbd:[Ctrl+Y]
 | Smart line join | kbd:[Ctrl+Shift+J]
@@ -142,6 +143,7 @@ Works also for file and class names in italics or monospace | kbd:[Ctrl+B], kbd:
 | Copy current line to clipboard | kbd:[⌘+C]
 | Paste from clipboard +
 (text or images) | kbd:[⌘+V]
+| Move current line up/down | kbd:[⇧+⌘+Up]/kbd:[Down]
 | Duplicate current line  | kbd:[⌘+D]
 | Delete line at caret | kbd:[⌘+Backspace]
 | Smart line join | kbd:[⌃+⇧+J]
