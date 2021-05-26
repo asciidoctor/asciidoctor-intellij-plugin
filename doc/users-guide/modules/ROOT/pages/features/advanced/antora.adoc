@@ -22,7 +22,7 @@ Once the plugin detects Antora, it activates its Antora features.
 === Antora references support
 
 When using the Antora xref macro like `+xref:version@component:module:page.adoc[]+`, the plugin will resolve links to the specific version, component and module with in the current projects.
-For this it searches all available `antora.yaml` files in the current project.
+For this it searches all available `antora.yml` files in the current project.
 
 For `include::[]` macros the plugin supports the Antora families like `partial$`, `example$` and `page$`.
 
