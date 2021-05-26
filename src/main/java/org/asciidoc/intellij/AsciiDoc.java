@@ -720,8 +720,11 @@ public class AsciiDoc {
         // ProcessCanceledException: reading interrupted by event dispatch thread
         throw ex;
       } catch (Exception | ServiceConfigurationError ex) {
+        boolean exceptionInLog = checkIfExceptionShouldAppearInLog(ex);
         LOG.warn("unable to render AsciiDoc document", ex);
-        logHandler.log(new LogRecord(Severity.FATAL, ex.getMessage()));
+        if (exceptionInLog) {
+          logHandler.log(new LogRecord(Severity.FATAL, ex.getMessage()));
+        }
         StringBuilder response = new StringBuilder();
         response.append("unable to render AsciiDoc document");
         Throwable t = ex;
@@ -738,7 +741,9 @@ public class AsciiDoc {
           }
           t = t.getCause();
         } while (t != null);
-        response.append("<p>(the full exception stack trace is available in the IDE's log file. Visit menu item 'Help | Show Log in Explorer' to see the log)");
+        if (exceptionInLog) {
+          response.append("<p>(the full exception stack trace is available in the IDE's log file. Visit menu item 'Help | Show Log in Explorer' to see the log)");
+        }
         return response.toString();
       } finally {
         // SystemOutputHijacker.deregister();
@@ -747,6 +752,13 @@ public class AsciiDoc {
     } finally {
       unlock();
     }
+  }
+
+  /**
+   * Don't log full exception and stack trace to IDE's log for well known exceptions that already include enough content.
+   */
+  private boolean checkIfExceptionShouldAppearInLog(Throwable ex) {
+    return !ex.getMessage().contains("PlantUML preprocessing failed");
   }
 
   private Map<String, String> populateDocumentAttributes(File fileBaseDir, String name) {
