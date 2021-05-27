@@ -57,7 +57,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       writer.flush();
       String html = asciidoc.render(":stylesheet: test.css", Collections.emptyList());
       html = "<head></head>" + html;
-      html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes());
+      html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes(), getProject());
       assertThat(html).withFailMessage("should contain testcss").contains("testcss");
       assertThat(html).withFailMessage("should not contain standardcss").doesNotContain("standardcss");
     }
@@ -71,7 +71,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       ":stylesdir: https://example.com\n" +
       ":stylesheet: dark.css", Collections.emptyList());
     html = "<head></head>" + html;
-    html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes());
+    html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes(), getProject());
     assertThat(html).withFailMessage("should contain testcss").containsPattern("<link[^>]*https://example.com/dark.css");
     assertThat(html).withFailMessage("should not contain standardcss").doesNotContain("standardcss");
   }
@@ -80,7 +80,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
     String html = asciidoc.render(":linkcss:\n" +
       ":stylesheet: https://example.com/dark.css", Collections.emptyList());
     html = "<head></head>" + html;
-    html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes());
+    html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes(), getProject());
     assertThat(html).withFailMessage("should contain testcss").containsPattern("<link[^>]*https://example.com/dark.css");
     assertThat(html).withFailMessage("should not contain standardcss").doesNotContain("standardcss");
   }
@@ -96,7 +96,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       writerFooter.flush();
       String html = asciidoc.render(":docinfo: shared", Collections.emptyList());
       html = "<head></head><body>" + html + "</body>";
-      html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes());
+      html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes(), getProject());
       assertThat(html).contains("myHeader");
       assertThat(html).contains("myFooter");
     }

@@ -755,7 +755,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     // filter out Twitter's JavaScript, as it is problematic for JDK8 JavaFX
     // see: https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/235
     html = html.replaceAll("(?i)<script [a-z ]*src=\"https://platform\\.twitter\\.com/widgets\\.js\" [^>]*></script>", "");
-    html = AsciiDoc.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes);
+    html = AsciiDoc.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes, editor.getProject());
 
     html = html.replaceAll("<head>", "<head>\n" +
       "<meta http-equiv=\"Content-Security-Policy\" content=\"" + PreviewStaticServer.createCSP(attributes) + "\">");

@@ -67,7 +67,16 @@ public class PreviewStaticServer extends HttpRequestHandler {
     }
     String result;
     if (safeModeLevel == 0) {
-      result = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/scripts/").toExternalForm() + "; "
+      String highlightjs = "";
+      String dir = attributes.get("highlightjsdir");
+      if (dir != null) {
+        if (dir.matches("^https?://.*")) {
+          highlightjs = " " + dir + "/";
+        } else {
+          highlightjs = " http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX;
+        }
+      }
+      result = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/scripts/").toExternalForm() + highlightjs + "; "
         + "style-src 'unsafe-inline' https: http: " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/styles/").toExternalForm() + "; "
         + "img-src file: data: localfile: *; connect-src 'none'; font-src *; " +
         "object-src file: localfile: *;" + // used for interactive SVGs
@@ -252,6 +261,10 @@ public class PreviewStaticServer extends HttpRequestHandler {
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, "image/jpeg");
       } else if (file.endsWith(".svg")) {
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, "image/svg+xml");
+      } else if (file.endsWith(".css")) {
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/css");
+      } else if (file.endsWith(".js")) {
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/javascript");
       } else {
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/octet-stream");
       }
@@ -272,6 +285,11 @@ public class PreviewStaticServer extends HttpRequestHandler {
       }
     }
     return browserPanel;
+  }
+
+  public static String signFile(String file) {
+    String md5 = BrowserPanel.calculateMd5(file, null);
+    return Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/image?file=" + getBrowserPanel().signFile(file) + "&amp;hash=" + md5).toExternalForm();
   }
 
   private void sendDocument(FullHttpRequest request, @NotNull VirtualFile file, @NotNull Project project, @NotNull Channel channel) {

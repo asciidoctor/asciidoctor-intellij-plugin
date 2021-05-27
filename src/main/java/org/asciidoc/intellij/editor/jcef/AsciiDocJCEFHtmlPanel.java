@@ -101,9 +101,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
   @Override
   public void printToPdf(String target, Consumer<Boolean> success) {
-    getCefBrowser().printToPDF(target, null, (s, b) -> {
-      success.accept(b);
-    });
+    getCefBrowser().printToPDF(target, null, (s, b) -> success.accept(b));
   }
 
   @Override
@@ -205,6 +203,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     OUR_CLASS_URL = url;
   }
 
+  @Nullable
   private Editor editor;
 
   public AsciiDocJCEFHtmlPanel(Document document, Path imagesPath) {
@@ -437,9 +436,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
                * Putting the focus on the CEF browser allows users to use PgUp/PgDown and cursor up/down to navigate the document.
                * Un-setting the focus for the CEF component is important to have the focus on the editor on Windows.
                */
-              ApplicationManager.getApplication().executeOnPooledThread(() -> {
-                getCefBrowser().setFocus(getPreferredFocusedComponent().hasFocus());
-              });
+              ApplicationManager.getApplication().executeOnPooledThread(() -> getCefBrowser().setFocus(getPreferredFocusedComponent().hasFocus()));
             }
             return true; // suppress focusing the browser on navigation events
           }
@@ -724,11 +721,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private void disposeMyself() {
     if (!tobeDisposed) {
       LOG.warn("triggering disposal of preview");
-      ApplicationManager.getApplication().invokeLater(() -> {
-        ApplicationManager.getApplication().getMessageBus()
-          .syncPublisher(AsciiDocPreviewEditor.RefreshPreviewListener.TOPIC)
-          .refreshPreview(this);
-      });
+      ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().getMessageBus()
+        .syncPublisher(AsciiDocPreviewEditor.RefreshPreviewListener.TOPIC)
+        .refreshPreview(this));
       tobeDisposed = true;
     }
   }
@@ -834,7 +829,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       matcher.reset(html);
     }
 
-    html = AsciiDoc.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes);
+    html = AsciiDoc.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes, editor != null ? editor.getProject() : null);
 
     html = html.replaceAll("<head>", "<head>\n" +
       "<meta http-equiv=\"Content-Security-Policy\" content=\"" + PreviewStaticServer.createCSP(attributes) + "\">");
@@ -968,12 +963,12 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   }
 
   @Override
-  public Editor getEditor() {
+  public @Nullable Editor getEditor() {
     return editor;
   }
 
   @Override
-  public void setEditor(Editor editor) {
+  public void setEditor(@NotNull Editor editor) {
     this.editor = editor;
   }
 
@@ -1009,9 +1004,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         if (!hasLoadedOnce) {
           if (SystemInfoRt.isWindows) {
             // set focus once to ensure that focus is set correctly on startup for open editors
-            ApplicationManager.getApplication().executeOnPooledThread(() -> {
-              getCefBrowser().setFocus(getPreferredFocusedComponent().hasFocus());
-            });
+            ApplicationManager.getApplication().executeOnPooledThread(() -> getCefBrowser().setFocus(getPreferredFocusedComponent().hasFocus()));
           }
         }
         if (!hasLoadedOnce && myScrollPreservingListener.myScrollY == 0) {
@@ -1140,11 +1133,12 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     }
     ApplicationManager.getApplication().invokeLater(
       () -> {
-        if (!getEditor().isDisposed()) {
-          getEditor().getCaretModel().setCaretsAndSelections(
+        Editor editor = getEditor();
+        if (editor != null && editor.isDisposed()) {
+          editor.getCaretModel().setCaretsAndSelections(
             Collections.singletonList(new CaretState(new LogicalPosition(sourceLine - 1, 0), null, null))
           );
-          getEditor().getScrollingModel().scrollToCaret(ScrollType.CENTER_UP);
+          editor.getScrollingModel().scrollToCaret(ScrollType.CENTER_UP);
         }
       }
     );

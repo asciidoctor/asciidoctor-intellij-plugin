@@ -385,7 +385,7 @@ public class BrowserPanel implements Closeable {
     }
 
     /* Add CSS line and JavaScript */
-    html = AsciiDoc.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDroidSansMonoCssLink + myDejavuCssLink, attributes);
+    html = AsciiDoc.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDroidSansMonoCssLink + myDejavuCssLink, attributes, project);
     html = html.replace("</body>", getScriptingLines() + "</body>");
     return html;
   }
@@ -400,7 +400,7 @@ public class BrowserPanel implements Closeable {
     return result.toString();
   }
 
-  private String calculateMd5(String file, String base) {
+  public static String calculateMd5(String file, String base) {
     String md5;
     try {
       MessageDigest md = MessageDigest.getInstance("MD5");

@@ -1131,7 +1131,7 @@ public class AsciiDoc {
 
   @NotNull
   public static String enrichPage(@NotNull String html, String
-    standardCss, @NotNull Map<String, String> attributes) {
+    standardCss, @NotNull Map<String, String> attributes, @Nullable Project project) {
 
     /* Add body classes */
     String doctype = attributes.get("doctype");
@@ -1213,7 +1213,7 @@ public class AsciiDoc {
       }
     }
 
-    html = addHightlightJs(html, attributes);
+    html = addHightlightJs(html, attributes, project);
 
     String docinfo = attributes.get("docinfo");
     if (docinfo != null && docinfo.length() != 0) {
@@ -1276,15 +1276,74 @@ public class AsciiDoc {
     return html;
   }
 
-  private static String addHightlightJs(@NotNull String html, @NotNull Map<String, String> attributes) {
+  private static String addHightlightJs(@NotNull String html, @NotNull Map<String, String> attributes, @Nullable Project project) {
     /* Add HightlightJS line */
     if (Objects.equals(attributes.get("source-highlighter"), "highlightjs") || // will work both with and without a dot
       Objects.equals(attributes.get("source-highlighter"), "highlight.js")) {
-      String css = PreviewStaticServer.getScriptUrl("highlightjs/styles/github.min.css");
-      String js = PreviewStaticServer.getScriptUrl("highlightjs/highlight.min.js");
+      String theme = attributes.get("highlightjs-theme");
+      if (theme == null) {
+        theme = "github";
+      }
+      String dir = attributes.get("highlightjsdir");
+      String css;
+      StringBuilder js;
+      if (dir == null) {
+        css = PreviewStaticServer.getScriptUrl("highlightjs/styles/" + theme + ".min.css");
+        js = new StringBuilder("<script src='" + PreviewStaticServer.getScriptUrl("highlightjs/highlight.min.js") + "'></script>");
+      } else {
+        if (dir.matches("^https?://.*")) {
+          css = dir + "/styles/" + theme + ".min.css";
+          js = new StringBuilder("<script src='" + dir + "/highlight.min.js" + "'></script>");
+          String langs = attributes.get("highlightjs-languages");
+          if (langs != null) {
+            for (String lang : langs.split(",", -1)) {
+              js.append("<script src='").append(dir).append("/languages/").append(lang.trim()).append(".min.js'></script>");
+            }
+          }
+        } else {
+          // if not an absolute path on linux or windows, prefix project root
+          if (!dir.startsWith("/") && dir.indexOf(':') != 1) {
+            String docfile = attributes.get("docfile");
+            if (Platform.IS_WINDOWS) {
+              docfile = docfile.replaceAll("\\\\", "/");
+            }
+            if (docfile != null && project != null) {
+              for (String root : AsciiDocUtil.getRoots(project)) {
+                if (docfile.startsWith(root)) {
+                  dir = root + "/" + dir;
+                  break;
+                }
+              }
+            } else {
+              dir = ""; // not allowed scenario
+            }
+          } else {
+            if (project != null) {
+              boolean found = false;
+              for (String root : AsciiDocUtil.getRoots(project)) {
+                if (dir.startsWith(root)) {
+                  found = true;
+                  break;
+                }
+              }
+              if (!found) {
+                dir = ""; // not allowed scenario
+              }
+            }
+          }
+          js = new StringBuilder("<script src='" + PreviewStaticServer.signFile(dir + "/highlight.min.js") + "'></script>");
+          String langs = attributes.get("highlightjs-languages");
+          if (langs != null) {
+            for (String lang : langs.split(",", -1)) {
+              js.append("<script src='").append(PreviewStaticServer.signFile(dir + "/languages/" + lang.trim() + ".min.js")).append("'></script>");
+            }
+          }
+          css = PreviewStaticServer.signFile(dir + "/styles/" + theme + ".min.css");
+        }
+      }
       html = html
         .replace("<head>", "<head>" + "<link rel='stylesheet' type='text/css' href='" + css + "' />");
-      html = html.replace("</body>", "<script src='" + js + "'></script></body>");
+      html = html.replace("</body>", "" + js + "</body>");
       html = html.replace("</body>", "<script>\n" +
         "if (!hljs.initHighlighting.called) {\n" +
         "  hljs.initHighlighting.called = true;\n" +

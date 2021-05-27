@@ -61,17 +61,44 @@ rouge::
 An alternative highlighter.
 See http://rouge.jneen.net/[Rouge source highlighter] for more information.
 
---
 highlight.js::
 A syntax highlighter based on JavaScript.
+The plugin supports also _highlightjs_ as an alias for the name of the source highlighter.
 See https://highlightjs.org/[highlight.js source highlighter] for more information.
-Support for this highlighter is available from plugin version 0.32.46.
++
+Support for this highlighter is available from plugin version 0.32.50, earlier versions include only partial support.
 The plugin pre-bundles the common languages as listed on https://highlightjs.org/download/[highlight.js' download page] plus AsciiDoc.
 +
-The plugin supports also _highlightjs_ as an alias (as of plugin version 0.32.39).
+The plugin supports the attributes _highlightjsdir_, _highlightjs-theme_ and _highlightjs-languages_.
+Attributes _highlightjs-theme_ and _highlightjs-languages_ are only supported when a _highlightjsdir_ has been specified, and the necessary files are available.
 +
-The plugin doesn't support the attributes _highlightjsdir_ and _highlightjs-theme_ yet.
+Valid values for the attribute _highlightjsdir_ are
++
 --
+* an URL starting with either _http://_ or _https://_,
+* a local directory with an absolute path within the current project, or
+* a relative directory from the project's root folder.
+--
++
+An example configuration for a local configuration could look like this: +
++
+.Configuration of highlight.js files in local project
+[source,asciidoc]
+-----
+:source-highlighter: highlight.js
+:highlightjsdir: hljs <.>
+:highlightjs-theme: default <.>
+:highlightjs-languages: basic <.>
+
+[source,basic]
+----
+10 PRINT "HELLO WORLD"
+20 GOTO 10
+----
+-----
+<.> requires JavaScript bundle in _hljs/highlight.min.js_ in current project.
+<.> requires file _hljs/styles/default.min.css_ in current project.
+<.> requires file _hljs/languages/basic.min.js_ in current project.
 
 Users can change the default code highlighter:
 
