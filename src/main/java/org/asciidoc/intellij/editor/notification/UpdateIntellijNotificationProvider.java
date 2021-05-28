@@ -7,6 +7,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
@@ -24,6 +25,8 @@ public class UpdateIntellijNotificationProvider extends EditorNotifications.Prov
 
   private static final String PLEASE_UPDATE_2021_1_1 = "asciidoc.intellij.pleaseupdate.2021.1.1";
 
+  private static final String PLEASE_UPDATE_2021_1_2 = "asciidoc.intellij.pleaseupdate.2021.1.2";
+
   @NotNull
   @Override
   public Key<EditorNotificationPanel> getKey() {
@@ -38,13 +41,24 @@ public class UpdateIntellijNotificationProvider extends EditorNotifications.Prov
       return null;
     }
 
-    // only if not previously disabled
-    if (PropertiesComponent.getInstance().getBoolean(PLEASE_UPDATE_2021_1_1)) {
-      return null;
+    final ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
+
+    if (SystemInfoRt.isMac
+      && (applicationInfo.getFullVersion().equals("2021.1") || applicationInfo.getFullVersion().equals("2021.1.1"))
+      && !PropertiesComponent.getInstance().getBoolean(PLEASE_UPDATE_2021_1_2)) {
+      final EditorNotificationPanel panel = new EditorNotificationPanel();
+      panel.setText("The IDE versions 2021.1 and 2021.1.1 on macOS can sometimes freeze. Please update to version 2021.1.2!");
+      panel.createActionLabel("Yes, tell me more!", ()
+        -> BrowserUtil.browse("https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/765"));
+      panel.createActionLabel("Do not show again", () -> {
+        PropertiesComponent.getInstance().setValue(PLEASE_UPDATE_2021_1_2, true);
+        EditorNotifications.updateAll();
+      });
+      return panel;
     }
 
-    final ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
-    if (applicationInfo.getFullVersion().equals("2021.1")) {
+    if (applicationInfo.getFullVersion().equals("2021.1")
+       && !PropertiesComponent.getInstance().getBoolean(PLEASE_UPDATE_2021_1_1)) {
       final EditorNotificationPanel panel = new EditorNotificationPanel();
       panel.setText("The IDE version 2021.1 has a known indexing bug. Please update to version 2021.1.1!");
       panel.createActionLabel("Yes, tell me more!", ()
