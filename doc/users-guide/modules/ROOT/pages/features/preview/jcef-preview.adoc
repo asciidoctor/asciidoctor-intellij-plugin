@@ -16,6 +16,12 @@ The JCEF preview provides better HTML preview and additional features like scrol
 As the preview is based on an up-to-date Google Chrome rendering engine, it offers in-par rendering compared to modern browsers.
 This includes rendering of fonts and SVGs.
 
+== Security options
+
+include::partial$content-security-policy.adoc[]
+
+<<devtools,Activate the dev tools for the JCEF preview>> to debug issues where the preview doesn't show content due to CSP.
+
 [[limitations]]
 == Limitations of the JCEF preview
 
@@ -40,6 +46,7 @@ As a workaround, open the preview in the browser by clicking on your favorite br
 
 == Benefits of the JCEF preview
 
+[[devtools]]
 JCEF preview is an embedded Chrome browser.
 After https://plugins.jetbrains.com/docs/intellij/enabling-internal.html[enabling the internal mode^] users can right-click on the preview and use "`Open DevTools`".
 This opens a fully equipped Chrome developer tools window that allows users to inspect the HTML created in the preview and to view the JavaScript console of the preview.

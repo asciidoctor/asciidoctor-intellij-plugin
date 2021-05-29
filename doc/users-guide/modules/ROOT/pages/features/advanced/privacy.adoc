@@ -18,7 +18,11 @@ Still, this is a spare time project that is happy to accept contributions of any
 == The good news
 
 * The plugin doesn't use tracking and will not collect statistical information about the users or content they edit.
+
 * The plugin has been designed in a way that the user can edit content on their local PC and the preview will be rendered locally as well using an embedded instance of Asciidoctor.
+
+* {empty}
+include::partial$content-security-policy.adoc[]
 
 == Things to consider
 

@@ -19,6 +19,10 @@ The JavaFX preview provides better HTML preview and additional features like scr
 The JavaFX preview has only limited support for SVGs in AsciiDoc documents.
 Use the JCEF preview for better SVG support and improved rendering on high-resolution displays.
 
+== Security options
+
+include::partial$content-security-policy.adoc[]
+
 == When you can use JavaFX preview
 
 The JavaFX preview works on a 64bit JDK and needs JavaFX installed.

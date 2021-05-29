@@ -1,0 +1,1 @@
+If the user changes the _Safe mode_ in the plugin's settings from _UNSAFE_ to any other mode, the preview in JCEF and JavaFX mode will restrict all content to the local project and will prohibit loading of external content using a content security policy (CSP).
