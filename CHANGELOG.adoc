@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - support ID references appended to blocks as used in AsciiDoc documentation like `[source#hello]`
 - support style in blocks used in AsciiDoc documentation like `[#id%autowidth]`
 - completed support for highlight.js in the preview (#370)
+- adding notification to upgrade to 2021.1.2 when using 2021.1 or 2021.1.1 on macOS to prevent UI freeze (#765)
 
 === 0.32.49
 
