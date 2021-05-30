@@ -85,7 +85,7 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
       data.append(entry.getKey()).append("='").append(entry.getValue()).append("'");
     }
     data.append("]");
-    reader.push_include(data.toString(), null, null, reader.getLineNumber() - 1, Collections.emptyMap());
+    reader.pushInclude(data.toString(), null, null, reader.getLineNumber() - 1, Collections.emptyMap());
   }
 
   public void setAntoraDetails(Project project, VirtualFile antoraModuleDir) {

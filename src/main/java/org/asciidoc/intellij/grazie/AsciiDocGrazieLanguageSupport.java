@@ -53,6 +53,7 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
     return TextDomain.PLAIN_TEXT;
   }
 
+  @SuppressWarnings("deprecation") // can't remove method using RuleGroup yet, as Java code will need to implement it
   @Nullable
   @Override
   public RuleGroup getIgnoredRuleGroup(@NotNull PsiElement root, @NotNull PsiElement child) {
