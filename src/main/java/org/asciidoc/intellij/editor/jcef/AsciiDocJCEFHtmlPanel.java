@@ -1134,7 +1134,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     ApplicationManager.getApplication().invokeLater(
       () -> {
         Editor editor = getEditor();
-        if (editor != null && editor.isDisposed()) {
+        if (editor != null && !editor.isDisposed()) {
           editor.getCaretModel().setCaretsAndSelections(
             Collections.singletonList(new CaretState(new LogicalPosition(sourceLine - 1, 0), null, null))
           );
