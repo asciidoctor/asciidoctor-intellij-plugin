@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - prevent NPE when renaming files in Antora projects (#770)
 - when rendering errors in the preview, allow preview to refresh without flicker (#772)
+- when diagram rendering generates an exception, catch and add listing block (#772)
 
 === 0.32.52
 
