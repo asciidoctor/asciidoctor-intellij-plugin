@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.32.53
 
 - prevent NPE when renaming files in Antora projects (#770)
+- when rendering errors in the preview, allow preview to refresh without flicker (#772)
 
 === 0.32.52
 

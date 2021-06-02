@@ -721,12 +721,12 @@ public class AsciiDoc {
         throw ex;
       } catch (Exception | ServiceConfigurationError ex) {
         boolean exceptionInLog = checkIfExceptionShouldAppearInLog(ex);
-        LOG.warn("unable to render AsciiDoc document", ex);
         if (exceptionInLog) {
           logHandler.log(new LogRecord(Severity.FATAL, ex.getMessage()));
+          LOG.warn("unable to render AsciiDoc document", ex);
         }
         StringBuilder response = new StringBuilder();
-        response.append("unable to render AsciiDoc document");
+        response.append("<div id=\"content\"><p>unable to render AsciiDoc document</p>");
         Throwable t = ex;
         do {
           response.append("<p style='white-space: pre-wrap;'>").append(t.getClass().getCanonicalName()).append(": ").append(
@@ -744,6 +744,7 @@ public class AsciiDoc {
         if (exceptionInLog) {
           response.append("<p>(the full exception stack trace is available in the IDE's log file. Visit menu item 'Help | Show Log in Explorer' to see the log)");
         }
+        response.append("</div>");
         return response.toString();
       } finally {
         // SystemOutputHijacker.deregister();

@@ -285,7 +285,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     }
     uiZoom = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getZoom() / 100.0;
 
-    ApplicationManager.getApplication().executeOnPooledThread(() -> setHtml(prepareHtml(wrapHtmlForPage("Initializing..."), Collections.emptyMap())));
+    ApplicationManager.getApplication().executeOnPooledThread(() -> setHtml(prepareHtml(wrapHtmlForPage("<div id=\"content\">Initializing...</div>"), Collections.emptyMap())));
 
   }
 
