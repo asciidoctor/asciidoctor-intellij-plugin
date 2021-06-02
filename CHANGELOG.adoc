@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.52
+
+- fixing opening wrong editor for antora.yml files (#768)
+
 === 0.32.51
 
 - fixing bug that prevented the editor to scroll to a line when clicking in preview (#768)
