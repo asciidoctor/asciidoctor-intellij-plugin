@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.53
+
+- prevent NPE when renaming files in Antora projects (#770)
+
 === 0.32.52
 
 - fixing opening wrong editor for antora.yml files (#768)

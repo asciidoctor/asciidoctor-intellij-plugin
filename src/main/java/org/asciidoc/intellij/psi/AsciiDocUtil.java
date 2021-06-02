@@ -1442,18 +1442,18 @@ public class AsciiDocUtil {
     });
   }
 
-  public static List<VirtualFile> resolvePrefix(Project project, VirtualFile moduleDir, String otherKey) {
+  public static @NotNull List<VirtualFile> resolvePrefix(Project project, VirtualFile moduleDir, String otherKey) {
     return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
       String myModuleName = moduleDir.getName();
       VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
       if (antoraFile == null) {
-        return null;
+        return Collections.emptyList();
       }
       Map<String, Object> antora;
       try {
         antora = AsciiDoc.readAntoraYaml(antoraFile);
       } catch (YAMLException ex) {
-        return null;
+        return Collections.emptyList();
       }
       String myComponentName = getAttributeAsString(antora, "name");
       String myComponentVersion = getAttributeAsString(antora, "version");
