@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.54
+
+- in Antora component descriptors, support auto-complete for keys _nav_ and _start_page_ (#769)
+
 === 0.32.53
 
 - prevent NPE when renaming files in Antora projects (#770)
@@ -15,7 +19,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.32.52
 
-- fixing opening wrong editor for antora.yml files (#768)
+- fixing opening wrong editor for antora.yml files (#769)
 
 === 0.32.51
 

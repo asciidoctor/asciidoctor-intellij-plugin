@@ -49,7 +49,8 @@ intellij {
     'tanvd.grazi', // used for spell and grammar checking checking
     'com.intellij.javafx:1.0.3',
     'org.intellij.intelliLang', //
-    'java' // used to integrate into the build via AsciiDocTargetScopeProvider
+    'java', // used to integrate into the build via AsciiDocTargetScopeProvider
+    'yaml' // used to inject file references to Antora YAML files
   ]
 }
 

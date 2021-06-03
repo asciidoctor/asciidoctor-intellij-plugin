@@ -81,7 +81,7 @@ public class AsciiDocUtil {
 
   public static final Set<String> ANTORA_SUPPORTED = new HashSet<>(Arrays.asList(
     // standard asciidoctor
-    "image", "include", "video", "audio", "xref", "xref-attr",
+    "image", "include", "video", "audio", "xref", "xref-attr", "antora-startpage",
     // extensions
     "plantuml"
   ));
@@ -1100,6 +1100,72 @@ public class AsciiDocUtil {
     }
   }
 
+  /**
+   * The start page should always be in the same component and should not have a family name.
+   */
+  public static List<String> replaceAntoraPrefixForStartPage(PsiElement myElement, String originalKey) {
+    Project project = myElement.getProject();
+    return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
+      String key = originalKey;
+      String myModuleName = null;
+      VirtualFile antoraFile = myElement.getContainingFile().getOriginalFile().getVirtualFile();
+      if (antoraFile == null) {
+        return Collections.singletonList(originalKey);
+      }
+      Map<String, Object> antora;
+      try {
+        antora = AsciiDoc.readAntoraYaml(antoraFile);
+      } catch (YAMLException ex) {
+        return Collections.singletonList(originalKey);
+      }
+      String myComponentName = getAttributeAsString(antora, "name");
+      String myComponentVersion = getAttributeAsString(antora, "version");
+
+      String otherModuleName = null;
+
+      Matcher module = MODULE.matcher(key);
+      if (module.find()) {
+        otherModuleName = module.group("module");
+        key = module.replaceFirst("");
+      }
+
+      String backup = null;
+      List<VirtualFile> otherDirs = getOtherAntoraModuleDir(project, antoraFile.getParent(), myModuleName, myComponentName, myComponentVersion, myComponentVersion, myComponentName, otherModuleName);
+      List<String> result = new ArrayList<>();
+      for (VirtualFile otherDir : otherDirs) {
+        VirtualFile target = AsciiDocUtil.findAntoraPagesDir(project, otherDir);
+        if (target == null) {
+          continue;
+        }
+        String newKey = key;
+        if (newKey.length() != 0) {
+          newKey = "/" + newKey;
+        }
+        String value = target.getPath();
+        value = value.replaceAll("\\\\", "/");
+        newKey = value + newKey;
+        if (new File(newKey).exists()) {
+          // if the file exists, add it in first place
+          result.add(0, newKey);
+        } else {
+          backup = newKey;
+        }
+      }
+      if (result.size() == 0) {
+        resolvePageAliases(project, key, myModuleName, myComponentName, myComponentVersion, result);
+      }
+      if (result.size() == 0) {
+        //noinspection ReplaceNullCheck as this still needs to work with JDK 8
+        if (backup != null) {
+          result.add(backup);
+        } else {
+          result.add(originalKey);
+        }
+      }
+      return result;
+    });
+  }
+
   public static List<String> replaceAntoraPrefix(Project project, VirtualFile moduleDir, String originalKey, String defaultFamily) {
     Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(originalKey);
     if (urlMatcher.find()) {
@@ -1358,7 +1424,7 @@ public class AsciiDocUtil {
     return value.toString();
   }
 
-  public static List<AntoraModule> collectPrefixes(Project project, VirtualFile moduleDir) {
+  public static List<AntoraModule> collectAntoraPrefixes(Project project, VirtualFile moduleDir, boolean onlyThisComponent) {
     if (DumbService.isDumb(project)) {
       return Collections.emptyList();
     }
@@ -1370,7 +1436,12 @@ public class AsciiDocUtil {
       Arrays.sort(files,
         Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
       ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
-      VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
+      VirtualFile antoraFile;
+      if (moduleDir.getName().equals("antora.yml")) {
+        antoraFile = moduleDir;
+      } else {
+        antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
+      }
       if (antoraFile == null) {
         return result;
       }
@@ -1419,7 +1490,9 @@ public class AsciiDocUtil {
               if (module.getName().equals("ROOT")) {
                 result.add(new AntoraModule(versionPrefix + otherComponentName + "::", otherComponentName, module.getName(), title, module));
               }
-              result.add(new AntoraModule(versionPrefix + otherComponentName + ":" + module.getName() + ":", otherComponentName, module.getName(), title, module));
+              if (!onlyThisComponent) {
+                result.add(new AntoraModule(versionPrefix + otherComponentName + ":" + module.getName() + ":", otherComponentName, module.getName(), title, module));
+              }
             }
           }
         }
