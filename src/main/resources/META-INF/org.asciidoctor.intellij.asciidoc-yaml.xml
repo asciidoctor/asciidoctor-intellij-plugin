@@ -1,6 +1,0 @@
-<idea-plugin>
-  <extensions defaultExtensionNs="com.intellij">
-    <psi.referenceContributor implementation="org.asciidoc.intellij.findUsages.AsciiDocAntoraYamlReferenceContributor"/>
-    <typedHandler implementation="org.asciidoc.intellij.actions.AsciiDocAntoraTriggerAutoCompleteTypedHandler" order="after asciidocformattingquoted"/>
-  </extensions>
-</idea-plugin>

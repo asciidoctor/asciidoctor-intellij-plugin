@@ -11,8 +11,6 @@ Each documentation component contains an `antora.yml` file https://docs.antora.o
 You need to upgrade to version 0.30.31 or later of the plugin.
 Initial support has been added in issue https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/373[#373].
 
-Auto-complete in `antora.yml` files was implemented starting with plugin version 0.32.54.
-
 == Detection of Antora
 
 The plugin will activate Antora support once it finds a file `antora.yml` and a sub-folder `modules`.
@@ -36,8 +34,6 @@ In the editor the user can autocomplete filenames and references using kbd:[Ctrl
 
 When editing an `antora.yml` or `antora-playbook.yml` file, the plugin provides JSON-Schema support for validation, auto-completion and documentation.
 Press kbd:[Ctrl+Q] for quick help on each attribute.
-
-For the keys _nav_ and _start_page_ in `antora.yml`, the plugin provides auto-completion.
 
 === Antora preview support
 

@@ -19,7 +19,6 @@
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-intellilang.xml">org.intellij.intelliLang</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-java.xml">com.intellij.modules.java</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-json.xml">com.intellij.modules.json</depends>
-  <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-yaml.xml">com.intellij.modules.json</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-grazie.xml">tanvd.grazi</depends>
 
   <extensionPoints>
