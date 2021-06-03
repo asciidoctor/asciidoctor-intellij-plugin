@@ -1487,10 +1487,10 @@ public class AsciiDocUtil {
               if (Objects.equals(myComponentName, otherComponentName)) {
                 result.add(new AntoraModule(versionPrefix + module.getName() + ":", otherComponentName, module.getName(), title, module));
               }
-              if (module.getName().equals("ROOT")) {
-                result.add(new AntoraModule(versionPrefix + otherComponentName + "::", otherComponentName, module.getName(), title, module));
-              }
               if (!onlyThisComponent) {
+                if (module.getName().equals("ROOT")) {
+                  result.add(new AntoraModule(versionPrefix + otherComponentName + "::", otherComponentName, module.getName(), title, module));
+                }
                 result.add(new AntoraModule(versionPrefix + otherComponentName + ":" + module.getName() + ":", otherComponentName, module.getName(), title, module));
               }
             }
