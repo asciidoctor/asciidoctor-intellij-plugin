@@ -373,6 +373,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           return AsciiDocUtil.replaceAntoraPrefix(myElement, resolvedKey, "page");
         }
       }
+    } else if (macroName.equals("antora-startpage")) {
+      return AsciiDocUtil.replaceAntoraPrefixForStartPage(myElement, key);
     }
     return Collections.singletonList(key);
   }
@@ -647,7 +649,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement), '$');
             toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(myElement), '$');
           }
-          List<AntoraModule> antoraModules = AsciiDocUtil.collectPrefixes(myElement.getProject(), antoraModuleDir);
+          List<AntoraModule> antoraModules = AsciiDocUtil.collectAntoraPrefixes(myElement.getProject(), antoraModuleDir, false);
           for (AntoraModule antoraModule : antoraModules) {
             toAntoraLookupItem(items, antoraModule);
           }
@@ -666,6 +668,11 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
               return items.toArray();
             }
           }
+        }
+      } else if (macroName.equals("antora-startpage") && base.length() == 0) {
+        List<AntoraModule> antoraModules = AsciiDocUtil.collectAntoraPrefixes(myElement.getProject(), myElement.getContainingFile().getOriginalFile().getVirtualFile(), true);
+        for (AntoraModule antoraModule : antoraModules) {
+          toAntoraLookupItem(items, antoraModule);
         }
       }
     }
@@ -693,7 +700,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       if (base.endsWith(".html")) {
         getVariants(base.replaceAll("\\.html$", "." + extension), collector, 0);
       }
-    } else {
+    } else if (!(macroName.equals("antora-startpage") && base.length() == 0)) {
       getVariants(base, collector, 0);
     }
 
@@ -705,10 +712,12 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     final PsiElement[] candidates = PsiUtilCore.toPsiElementArray(set);
 
     List<ResolveResult> results = new ArrayList<>();
-    if (base.endsWith("/") || base.length() == 0) {
-      resolve(base + "..", results, 0);
-    } else {
-      resolve(base + "/..", results, 0);
+    if (!macroName.equals("antora-nav") && !macroName.equals("antora-startpage")) {
+      if (base.endsWith("/") || base.length() == 0) {
+        resolve(base + "..", results, 0);
+      } else {
+        resolve(base + "/..", results, 0);
+      }
     }
     for (ResolveResult result : results) {
       if (result.getElement() == null) {
@@ -720,51 +729,53 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       items.add(item);
     }
 
-    List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), myElement);
-    Set<String> searched = new HashSet<>(declarations.size());
-    for (AttributeDeclaration decl : declarations) {
-      if (decl.getAttributeValue() == null || decl.getAttributeValue().trim().length() == 0) {
-        continue;
-      }
-      if ("imagesdir".equals(decl.getAttributeName())) {
-        // unlikely, won't have that as an attribute in an image path
-        continue;
-      }
-      List<ResolveResult> res = new ArrayList<>();
-      String val = base;
-      if (!val.endsWith("/") && val.length() > 0) {
-        val = val + "/";
-      }
-      if ("image".equals(macroName)) {
-        VirtualFile antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(myElement);
-        if (antoraImagesDir != null) {
-          val = antoraImagesDir.getCanonicalPath() + "/" + val;
-        }
-      }
-      // an attribute might be declared with the same value in multiple files, try only once for each combination
-      String key = decl.getAttributeName() + ":" + decl.getAttributeValue();
-      if (searched.contains(key)) {
-        continue;
-      }
-      searched.add(key);
-      resolve(val + decl.getAttributeValue(), res, 0);
-      for (ResolveResult result : res) {
-        if (result.getElement() == null) {
+    if (!macroName.equals("antora-nav") && !macroName.equals("antora-startpage")) {
+      List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), myElement);
+      Set<String> searched = new HashSet<>(declarations.size());
+      for (AttributeDeclaration decl : declarations) {
+        if (decl.getAttributeValue() == null || decl.getAttributeValue().trim().length() == 0) {
           continue;
         }
-        final Icon icon = result.getElement().getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
-        LookupElementBuilder lb;
-        lb = FileInfoManager.getFileLookupItem(result.getElement(), "{" + decl.getAttributeName() + "}", icon)
-          .withTailText(" (" + decl.getAttributeValue() + ")", true);
-        if (decl instanceof AsciiDocAttributeDeclaration) {
-          lb = lb.withTypeText(((AsciiDocAttributeDeclaration) decl).getContainingFile().getName());
+        if ("imagesdir".equals(decl.getAttributeName())) {
+          // unlikely, won't have that as an attribute in an image path
+          continue;
         }
-        if (result.getElement() instanceof PsiDirectory) {
-          lb = handleTrailing(lb, '/');
-        } else if (result.getElement() instanceof PsiFile) {
-          lb = handleTrailing(lb, '/');
+        List<ResolveResult> res = new ArrayList<>();
+        String val = base;
+        if (!val.endsWith("/") && val.length() > 0) {
+          val = val + "/";
         }
-        items.add(lb);
+        if ("image".equals(macroName)) {
+          VirtualFile antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(myElement);
+          if (antoraImagesDir != null) {
+            val = antoraImagesDir.getCanonicalPath() + "/" + val;
+          }
+        }
+        // an attribute might be declared with the same value in multiple files, try only once for each combination
+        String key = decl.getAttributeName() + ":" + decl.getAttributeValue();
+        if (searched.contains(key)) {
+          continue;
+        }
+        searched.add(key);
+        resolve(val + decl.getAttributeValue(), res, 0);
+        for (ResolveResult result : res) {
+          if (result.getElement() == null) {
+            continue;
+          }
+          final Icon icon = result.getElement().getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
+          LookupElementBuilder lb;
+          lb = FileInfoManager.getFileLookupItem(result.getElement(), "{" + decl.getAttributeName() + "}", icon)
+            .withTailText(" (" + decl.getAttributeValue() + ")", true);
+          if (decl instanceof AsciiDocAttributeDeclaration) {
+            lb = lb.withTypeText(((AsciiDocAttributeDeclaration) decl).getContainingFile().getName());
+          }
+          if (result.getElement() instanceof PsiDirectory) {
+            lb = handleTrailing(lb, '/');
+          } else if (result.getElement() instanceof PsiFile) {
+            lb = handleTrailing(lb, '/');
+          }
+          items.add(lb);
+        }
       }
     }
 
