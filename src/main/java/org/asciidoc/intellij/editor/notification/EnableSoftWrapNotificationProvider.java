@@ -51,9 +51,11 @@ public class EnableSoftWrapNotificationProvider extends EditorNotifications.Prov
 
     final EditorNotificationPanel panel = new EditorNotificationPanel();
     panel.setText("Writing AsciiDoc works best with soft-wrap enabled. Do you want to enable it by default?");
-    panel.createActionLabel("Yes, take me to the Soft Wrap settings!", ()
-      -> ApplicationManager.getApplication().invokeLater(() -> showSettingsDialog(project, "preferences.editor", "soft wraps"))
-    );
+    panel.createActionLabel("Yes, take me to the Soft Wrap settings!", () -> ApplicationManager.getApplication().invokeLater(() -> {
+      if (!project.isDisposed()) {
+        showSettingsDialog(project, "preferences.editor", "soft wraps");
+      }
+    }));
     panel.createActionLabel("Do not show again", () -> {
       PropertiesComponent.getInstance().setValue(SOFTWRAP_AVAILABLE, true);
       EditorNotifications.updateAll();
@@ -63,7 +65,7 @@ public class EnableSoftWrapNotificationProvider extends EditorNotifications.Prov
 
   /**
    * Check if the file given as parameter would open as soft-wrapped by default.
-   * Logic is inspired by {@link SettingsImpl#isUseSoftWraps()}.
+   * Logic is inspired by {@link com.intellij.openapi.editor.impl.SettingsImpl#isUseSoftWraps()}.
    */
   private boolean isSoftWrapEnabledByDefaultForFile(VirtualFile file) {
     boolean softWrapsEnabled = EditorSettingsExternalizable.getInstance().isUseSoftWraps();
