@@ -32,6 +32,8 @@ For `include::[]` macros the plugin supports the Antora families like `partial$`
 
 In the editor the user can autocomplete filenames and references using kbd:[Ctrl+Space] and can navigate to a folder or file using kbd:[Ctrl+B].
 
+To allow auto-completion for components that reside in different Git repositories, consider using a xref:features/advanced/multimodule.adoc[multi-module project].
+
 === Antora YAML schema support
 
 When editing an `antora.yml` or `antora-playbook.yml` file, the plugin provides JSON-Schema support for validation, auto-completion and documentation.

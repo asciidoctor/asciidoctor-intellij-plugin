@@ -1,0 +1,56 @@
+= Multi-module Projects
+:description: Have multiple Git repositories in one IDE project for better cross-references.
+
+{description}
+This is beneficial especially for Antora projects.
+
+== Situation
+
+The user is working with AsciiDoc or Antora content in several Git repositories.
+
+If the projects can contain standard AsciiDoc content, the user might want to benefit from auto-completion on attribute names.
+
+When the Git repositories contains xref:features/advanced/antora.adoc[] components, the user wants to use cross-references and auto-completion when referencing content in another component.
+
+== Solution
+
+Create a project with multiple modules in your IDE.
+Each module will be backed by its own Git repository.
+Despite multiple Git repositories the IDE will show it as one project with multiple modules.
+
+== Tradeoffs
+
+Once the setup is complete, the IDE's view for Git will show a combined history for all Git repositories added in the following steps.
+Depending on the user's needs, this might be helpful in the long term and confusing at the beginning.
+
+To help with multiple Git repositories,
+
+* the Git tool window allows to filter the view via the _Paths_ dropdown, and
+* color coding for the Git history indicates which repository a commit belongs to.
+
+== Setup
+
+Users find the extensive description in the https://www.jetbrains.com/help/idea/creating-and-managing-modules.html#multimodule-projects[IDE's docs].
+The following paragraph gives a quick start.
+
+=== Pre-requisites
+
+This assumes that the different Git repositories are already checked-out on the user's local file system.
+
+=== Creating a multi-module project
+
+. Start with the main Git repository and open it in your IDE as usual.
+This project will be the project the user will open to work with all Git repositories added in the following steps.
+
+. Select the existing top-level module in the project in the project view.
+
+. Choose menu:File[New,Module from Existing Sources...].
+
+. Select the folder with the other Git repository and press btn:[OK].
+
+. Choose option _Import module from external model_.
+
+. Depending on the external model, complete the following dialogs.
+
+. Repeat from step two for all Git repositories should be added.
+
