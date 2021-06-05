@@ -11,6 +11,7 @@ Read more on how you can help:
 * xref:user/subscribe-to-new-releases.adoc[]
 * xref:user/installing-a-preview-release.adoc[]
 * xref:user/add-eap-repository-to-ide.adoc[]
+* xref:user/upvote-intellij-issues.adoc[]
 
 If you want to give a financial contribution, continue to section _xref:contribute-as-a-sponsor.adoc[]_.
 

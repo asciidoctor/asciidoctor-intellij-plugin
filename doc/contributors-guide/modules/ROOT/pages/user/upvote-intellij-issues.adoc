@@ -1,0 +1,10 @@
+= Upvote an IDEA issue
+:navtitle: Upvote IDEA issues
+
+Now and then there is a bug in IntelliJ IDEA.
+Or something needs to be implemented in IntelliJ IDEA, so this plugin can build new functionality on top of it.
+
+Users can raise the visibility of these issues upvoting this issue by clicking on the thumbs-up icon (&#128077;) in the JetBrains YouTrack issue tracker.
+
+https://youtrack.jetbrains.com/tag/Star-74304[Follow this link for a list of all issues Alexander (the current maintainer of the plugin) marked as important to him].
+Have a look an up-vote those that are important to you as well to raise the visibility of these issues.
