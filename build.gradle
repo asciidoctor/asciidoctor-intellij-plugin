@@ -39,15 +39,15 @@ allprojects {
 }
 
 intellij {
-  version 'IC-212.3116.43-EAP-SNAPSHOT' // 'IC-2021.1.1'
+  version 'IC-202.8194.7'
   pluginName 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild false
   plugins = [
-    'PsiViewer:212-SNAPSHOT', // used for debugging
-    'PlantUML integration:5.4.0', // used to test highlighting of plantuml diagrams
+    'PsiViewer:202-SNAPSHOT.3', // used for debugging
+    'PlantUML integration:3.6.2', // used to test highlighting of plantuml diagrams
     'com.intellij.platform.images', // dependency for PlantUML plugin
     'tanvd.grazi', // used for spell and grammar checking checking
-    'com.intellij.javafx:1.0.3',
+    'com.intellij.javafx:1.0.2',
     'org.intellij.intelliLang', //
     'java', // used to integrate into the build via AsciiDocTargetScopeProvider
     'yaml' // used to inject file references to Antora YAML files

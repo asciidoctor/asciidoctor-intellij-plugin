@@ -27,7 +27,7 @@ public class AsciiDocErrorHandler extends ErrorReportSubmitter {
   }
 
   @Override
-  public boolean submit(IdeaLoggingEvent @NotNull [] events, @Nullable String additionalInfo, @NotNull Component parentComponent, @NotNull Consumer<? super SubmittedReportInfo> consumer) {
+  public boolean submit(IdeaLoggingEvent @NotNull [] events, @Nullable String additionalInfo, @NotNull Component parentComponent, @NotNull Consumer<SubmittedReportInfo> consumer) {
     for (IdeaLoggingEvent event : events) {
       Throwable throwable = event.getThrowable();
       List<Attachment> attachments = null;

@@ -3,7 +3,6 @@ package org.asciidoc.intellij.builder;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.compiler.impl.BuildTargetScopeProvider;
 import com.intellij.openapi.compiler.CompileScope;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -12,7 +11,6 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.workspaceModel.ide.WorkspaceModelTopics;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.api.CmdlineRemoteProto;
@@ -27,13 +25,8 @@ public class AsciiDocTargetScopeProvider extends BuildTargetScopeProvider {
   @NotNull
   @Override
   public List<CmdlineRemoteProto.Message.ControllerMessage.ParametersMessage.TargetTypeBuildScope> getBuildTargetScopes(@NotNull CompileScope baseScope, @NotNull Project project, boolean forceBuild) {
-    // avoid exception "Directory index can only be queried after project initialization" in RootIndex.java
-    //noinspection UnstableApiUsage
-    if (ServiceManager.getService(project, WorkspaceModelTopics.class) != null // call ServiceManager to make compatible with 2020.2
-      && WorkspaceModelTopics.Companion.getInstance(project).getModulesAreLoaded()) {
-      for (Module module : ModuleManager.getInstance(project).getModules()) {
-        clearProblemsForAsciidocFiles(module, project);
-      }
+    for (Module module : ModuleManager.getInstance(project).getModules()) {
+      clearProblemsForAsciidocFiles(module, project);
     }
     return super.getBuildTargetScopes(baseScope, project, forceBuild);
   }
