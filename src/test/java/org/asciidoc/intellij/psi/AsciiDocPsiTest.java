@@ -1,9 +1,6 @@
 package org.asciidoc.intellij.psi;
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.grazie.grammar.ide.GraziePsiElementProcessor;
-import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy;
-import com.intellij.grazie.ide.language.LanguageGrammarChecking;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.TextRange;
@@ -29,10 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Tests for {@link org.asciidoc.intellij.parser.AsciiDocParserImpl}.
@@ -488,60 +483,6 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "footnote",
       "Cell",
       "contents.");
-  }
-
-  public void testGrammarCheck() {
-    PsiFile psiFile = configureByAsciiDoc("// comment with some text\n" +
-      "== A heading\n" +
-      ":description: attribute \\\ncontinuation\n" +
-      "Textfootnote:[A footnote.] with a footnote.\n" +
-      "A '`test`' test`'s\n" +
-      "A <<id,reftext>>.\n" +
-      "A xref:file.adoc[link].\n" +
-      "Something \"`quoted`\"\n" +
-      "|===\n" +
-      "| Cell Content.\n" +
-      "|===");
-
-    List<String> texts = new ArrayList<>();
-
-    PsiElementVisitor myVisitor = new PsiElementVisitor() {
-      @Override
-      public void visitElement(@NotNull PsiElement element) {
-        Set<GrammarCheckingStrategy> grammarCheckingStrategies = LanguageGrammarChecking.INSTANCE.getStrategiesForElement(element, Collections.emptySet(), Collections.emptySet());
-        grammarCheckingStrategies.forEach(grammarCheckingStrategy -> {
-          GraziePsiElementProcessor.Companion.Result result = GraziePsiElementProcessor.Companion.processElements(Collections.singletonList(element), grammarCheckingStrategy);
-          result.getRootsWithText().forEach(rootWithText -> {
-            String text = rootWithText.getText().toString().trim();
-            for (String line : text.split("\\n", -1)) {
-              if (line.length() > 0) {
-                texts.add(line);
-              }
-            }
-          });
-        });
-        PsiElement child = element.getFirstChild();
-        while (child != null) {
-          visitElement(child);
-          child = child.getNextSibling();
-        }
-      }
-    };
-    psiFile.accept(myVisitor);
-    Assertions.assertThat(texts).containsExactlyInAnyOrder(
-      "== A heading",
-      "attribute \\",
-      "continuation",
-      "Cell Content.",
-      "Text with a footnote.",
-      "A '`test`' test`'s",
-      "A reftext.",
-      "// comment with some text",
-      "A footnote.",
-      "A link.",
-      "Something quoted"
-    );
-
   }
 
   public void testNestedAttribute() {
