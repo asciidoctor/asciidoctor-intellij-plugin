@@ -3,7 +3,6 @@ package org.asciidoc.intellij.builder;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.compiler.impl.BuildTargetScopeProvider;
 import com.intellij.openapi.compiler.CompileScope;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -29,8 +28,7 @@ public class AsciiDocTargetScopeProvider extends BuildTargetScopeProvider {
   public List<CmdlineRemoteProto.Message.ControllerMessage.ParametersMessage.TargetTypeBuildScope> getBuildTargetScopes(@NotNull CompileScope baseScope, @NotNull Project project, boolean forceBuild) {
     // avoid exception "Directory index can only be queried after project initialization" in RootIndex.java
     //noinspection UnstableApiUsage
-    if (ServiceManager.getService(project, WorkspaceModelTopics.class) != null // call ServiceManager to make compatible with 2020.2
-      && WorkspaceModelTopics.Companion.getInstance(project).getModulesAreLoaded()) {
+    if (WorkspaceModelTopics.Companion.getInstance(project).getModulesAreLoaded()) {
       for (Module module : ModuleManager.getInstance(project).getModules()) {
         clearProblemsForAsciidocFiles(module, project);
       }
@@ -46,8 +44,8 @@ public class AsciiDocTargetScopeProvider extends BuildTargetScopeProvider {
     FileIndexFacade myFileIndexFacade = FileIndexFacade.getInstance(project);
     ModuleRootManager.getInstance(module).getFileIndex().iterateContent(file -> {
       if (!file.isDirectory() && AsciiDocFileType.INSTANCE == file.getFileType()
-          && !myFileIndexFacade.isInLibraryClasses(file)
-          && !myFileIndexFacade.isInLibrarySource(file)) {
+        && !myFileIndexFacade.isInLibraryClasses(file)
+        && !myFileIndexFacade.isInLibrarySource(file)) {
         // this will clear the problems for all Asciidoc files in the modules
         // consider using clearProblemsFromExternalSource available from 2019.x?
         theProblemSolver.clearProblems(file);
