@@ -132,7 +132,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private final BridgeSettingListener myBridgeSettingListener = new BridgeSettingListener();
 
   @NotNull
-  private String base;
+  private final String base;
   private VirtualFile parentDirectory;
   private volatile int lineCount;
   private volatile int line;
@@ -146,7 +146,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
   private double uiZoom;
 
-  private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = new NotNullLazyValue<String>() {
+  private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = new NotNullLazyValue<>() {
     @NotNull
     @Override
     protected String compute() {
