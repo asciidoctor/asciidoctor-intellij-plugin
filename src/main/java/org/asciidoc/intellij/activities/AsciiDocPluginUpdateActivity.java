@@ -3,8 +3,8 @@ package org.asciidoc.intellij.activities;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -52,7 +52,7 @@ public class AsciiDocPluginUpdateActivity implements StartupActivity, DumbAware 
         }
         changes.append(matcher.group());
       }
-      NotificationGroup group = new NotificationGroup(plugin.getName(), NotificationDisplayType.STICKY_BALLOON, true);
+      NotificationGroup group = NotificationGroupManager.getInstance().getNotificationGroup("asciidoctor-update");
       Notification notification = group.createNotification(
         AsciiDocBundle.message("asciidocUpdateNotification.title", version),
         AsciiDocBundle.message("asciidocUpdateNotification.content") +

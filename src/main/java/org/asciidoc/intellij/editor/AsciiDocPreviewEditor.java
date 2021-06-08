@@ -19,8 +19,7 @@ import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
@@ -86,9 +85,6 @@ import java.util.function.Consumer;
  */
 public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEditor {
 
-  public static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup("asciidoctor",
-    NotificationDisplayType.NONE, true);
-
   private final Logger log = Logger.getInstance(AsciiDocPreviewEditor.class);
   private final AsciiDocExtensionService extensionService = ServiceManager.getService(AsciiDocExtensionService.class);
   /**
@@ -124,7 +120,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   @NotNull
   private final Alarm mySwingAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
 
-  private final FutureTask<AsciiDoc> asciidoc = new FutureTask<>(new Callable<AsciiDoc>() {
+  private final FutureTask<AsciiDoc> asciidoc = new FutureTask<>(new Callable<>() {
     @Override
     public AsciiDoc call() {
       File fileBaseDir = new File("");
@@ -189,8 +185,11 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       } catch (Exception ex) {
         String message = "Error rendering preview: " + ex.getMessage();
         log.error(message, ex);
-        Notification notification = NOTIFICATION_GROUP.createNotification("Error rendering asciidoctor", message,
-          NotificationType.ERROR, null);
+        Notification notification = NotificationGroupManager
+          .getInstance()
+          .getNotificationGroup("asciidoctor")
+          .createNotification("Error rendering asciidoctor", message,
+            NotificationType.ERROR, null);
         // increase event log counter
         notification.setImportant(true);
         Notifications.Bus.notify(notification);
@@ -333,6 +332,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       public void enteredDumbMode() {
         renderIfVisible();
       }
+
       @Override
       public void exitDumbMode() {
         renderIfVisible();

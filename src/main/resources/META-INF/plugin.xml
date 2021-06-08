@@ -169,6 +169,8 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <notificationGroup displayType="NONE" id="asciidoctor" isLogByDefault="true" />
+    <notificationGroup displayType="STICKY_BALLOON" id="asciidoctor-update" isLogByDefault="true" />
     <lang.syntaxHighlighter language="AsciiDoc"  implementationClass="org.asciidoc.intellij.highlighting.AsciiDocSyntaxHighlighter" />
     <typedHandler implementation="org.asciidoc.intellij.actions.FormattingQuotedTypedHandler" order="first" id="asciidocformattingquoted"/>
     <typedHandler implementation="org.asciidoc.intellij.actions.AsciiDocTriggerAutoCompleteTypedHandler" order="after asciidocformattingquoted"/>
