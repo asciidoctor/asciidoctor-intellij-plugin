@@ -86,12 +86,9 @@ public class AsciiDocSectionStubElementType extends IStubElementType<AsciiDocSec
   }
 
   @Override
-  public boolean isParsable(@Nullable ASTNode parent, @NotNull CharSequence buffer, @NotNull Language fileLanguage, @NotNull Project project) {
+  public boolean isReparseable(@Nullable ASTNode parent, @NotNull CharSequence buffer, @NotNull Language fileLanguage, @NotNull Project project) {
     char lastChar = buffer.charAt(buffer.length() - 1);
-    if (lastChar == ' ' || lastChar == '\n' || lastChar == '\t') {
-      return false;
-    }
-    return true;
+    return lastChar != ' ' && lastChar != '\n' && lastChar != '\t';
   }
 
   @Override
