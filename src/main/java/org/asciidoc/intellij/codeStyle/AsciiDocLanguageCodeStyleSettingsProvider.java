@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 import static com.intellij.openapi.util.io.StreamUtil.readText;
 import static com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS;
@@ -52,7 +54,9 @@ public class AsciiDocLanguageCodeStyleSettingsProvider extends LanguageCodeStyle
         LOG.warn("unable to load sample");
         return "";
       }
-      return readText(is, UTF_8).replaceAll("\r", "");
+      try (Reader r = new InputStreamReader(is, UTF_8)) {
+        return readText(r).replaceAll("\r", "");
+      }
     } catch (IOException e) {
       LOG.warn("unable to load sample", e);
     }

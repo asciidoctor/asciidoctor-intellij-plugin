@@ -7,15 +7,18 @@ import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,9 +72,13 @@ public class AsciiDocColorSettingsPage implements ColorSettingsPage {
   @NotNull
   public String getDemoText() {
     try (InputStream stream = getClass().getResourceAsStream("SampleDocument.adoc")) {
-      final String result = StreamUtil.readText(stream, CharsetToolkit.UTF8);
-      stream.close();
-      return StringUtil.convertLineSeparators(result);
+      if (stream == null) {
+        throw new FileNotFoundException("unable to find sample file");
+      }
+      try (Reader r = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+        final String result = StreamUtil.readText(r);
+        return StringUtil.convertLineSeparators(result);
+      }
     } catch (IOException ignored) {
       return "*error loading text*";
     }
