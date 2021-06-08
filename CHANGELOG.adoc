@@ -10,7 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.33.1
 
 - support new keys _network_ and _log_ in Antora playbooks
-- drop support for 2020.2.x
+- drop support for 2020.2.x in 0.33.x releases
 
 === 0.32.55
 
