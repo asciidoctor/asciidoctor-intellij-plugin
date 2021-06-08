@@ -176,8 +176,7 @@ compileJava {
   options.errorprone.excludedPaths = '.*(_AsciiDocLexer|RbConfigLibrary).*'
   options.errorprone.error('StreamResourceLeak') // enforce errors where there would be warning in the standard only
   options.errorprone.disable('MissingSummary')
-  // as long as the plugin supports 2020.2 as well, keep source and target compatibility for JDK 8
-  options.compilerArgs.addAll(['--release', '8'])
+  options.compilerArgs.addAll(['--release', '11'])
   // will print link to contributor guide at the start of each build
   dependsOn showLinkToContributorGuide
   // checking that we run on JDK 11, as this is required to compile against IC 2020.3
