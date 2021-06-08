@@ -13,6 +13,7 @@ import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewBundle;
 import com.intellij.usageView.UsageViewDescriptor;
+import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,7 +54,7 @@ public class InlineIncludeProcessor extends BaseRefactoringProcessor {
       @NotNull
       @Override
       public String getCodeReferencesText(int usagesCount, int filesCount) {
-        return RefactoringBundle.message("invocations.to.be.inlined", UsageViewBundle.getReferencesString(usagesCount, filesCount));
+        return AsciiDocBundle.message("invocations.to.be.inlined", UsageViewBundle.getReferencesString(usagesCount, filesCount));
       }
 
       @Nullable
