@@ -3,6 +3,7 @@ package org.asciidoc.intellij.codeStyle;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable;
+import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizableOptions;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.jetbrains.annotations.NotNull;
@@ -31,11 +32,11 @@ public class AsciiDocLanguageCodeStyleSettingsProvider extends LanguageCodeStyle
   @Override
   public void customizeSettings(@NotNull CodeStyleSettingsCustomizable consumer, @NotNull SettingsType settingsType) {
     if (settingsType == SPACING_SETTINGS) {
-      consumer.showCustomOption(AsciiDocCodeStyleSettings.class, "FORMATTING_ENABLED", "Enable Formatting (disabling this will override all options)", CodeStyleSettingsCustomizable.SPACES_OTHER);
-      consumer.showCustomOption(AsciiDocCodeStyleSettings.class, "ONE_SENTENCE_PER_LINE", "One sentence per line", CodeStyleSettingsCustomizable.SPACES_OTHER);
+      consumer.showCustomOption(AsciiDocCodeStyleSettings.class, "FORMATTING_ENABLED", "Enable Formatting (disabling this will override all options)", CodeStyleSettingsCustomizableOptions.getInstance().SPACES_OTHER);
+      consumer.showCustomOption(AsciiDocCodeStyleSettings.class, "ONE_SENTENCE_PER_LINE", "One sentence per line", CodeStyleSettingsCustomizableOptions.getInstance().SPACES_OTHER);
     } else if (settingsType == BLANK_LINES_SETTINGS) {
-      consumer.showCustomOption(AsciiDocCodeStyleSettings.class, "BLANK_LINES_AFTER_HEADER", "After header", CodeStyleSettingsCustomizable.BLANK_LINES);
-      consumer.showCustomOption(AsciiDocCodeStyleSettings.class, "BLANK_LINES_KEEP_AFTER_HEADER", "After header", CodeStyleSettingsCustomizable.BLANK_LINES_KEEP);
+      consumer.showCustomOption(AsciiDocCodeStyleSettings.class, "BLANK_LINES_AFTER_HEADER", "After header", CodeStyleSettingsCustomizableOptions.getInstance().BLANK_LINES);
+      consumer.showCustomOption(AsciiDocCodeStyleSettings.class, "BLANK_LINES_KEEP_AFTER_HEADER", "After header", CodeStyleSettingsCustomizableOptions.getInstance().BLANK_LINES_KEEP);
     }
   }
 
