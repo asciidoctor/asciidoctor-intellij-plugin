@@ -7,13 +7,14 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.32.56
+=== 0.33.1
 
 - support new keys _network_ and _log_ in Antora playbooks
+- drop support for 2020.2.x
 
 === 0.32.55
 
-- fix dependencies/class not found problems for IDEs like PHPStorm intruced in 0.32.54 (#769)
+- fix dependencies/class not found problems for IDEs like PHPStorm introduced in 0.32.54 (#769)
 
 === 0.32.54
 
