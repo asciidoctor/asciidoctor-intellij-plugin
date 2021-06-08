@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.Toggleable;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actions.AbstractToggleUseSoftWrapsAction;
 import com.intellij.openapi.editor.impl.softwrap.SoftWrapAppliancePlaces;
@@ -39,8 +40,7 @@ public class ToggleSoftWrapsAction extends AbstractToggleUseSoftWrapsAction {
     }
     Editor editor = getEditor(event);
     if (editor != null) {
-      // use Toggleable.setSelected(presentation, state); from 2019.3 onwards
-      event.getPresentation().putClientProperty("selected", editor.getSettings().isUseSoftWraps());
+      Toggleable.setSelected(event.getPresentation(), editor.getSettings().isUseSoftWraps());
     }
     event.getPresentation().setEnabledAndVisible(enabled);
   }
