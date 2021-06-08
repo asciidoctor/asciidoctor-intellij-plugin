@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.32.56
+
+- support new keys _network_ and _log_ in Antora playbooks
+
 === 0.32.55
 
 - fix dependencies/class not found problems for IDEs like PHPStorm intruced in 0.32.54 (#769)

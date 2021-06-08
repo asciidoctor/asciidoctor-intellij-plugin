@@ -139,6 +139,23 @@
           "description": "Suppress all messages.",
           "type": "boolean",
           "default": false
+        },
+        "log": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "level": {
+              "type": "string",
+              "description": "Set the minimum log level of messages that get logged.",
+              "pattern": "(all|debug|info|warn|error|fatal|silent)",
+              "default": "warn"
+            },
+            "failure_level": {
+              "type": "string",
+              "description": "Set the log level tolerance that, when exceeded, will cause the application to fail on exit.",
+              "pattern": "(all|debug|info|warn|error|fatal|silent)"
+            }
+          }
         }
       }
     },
@@ -217,6 +234,37 @@
           "description": "The facility for handling page alias and start page redirections.",
           "pattern": "(disabled|httpd|netlify|nginx|static)",
           "default": "static"
+        },
+        "latest_version_segment_strategy": {
+          "type": "string",
+          "description": "The strategy to use for cloaking the latest version or prerelease version segment in the URL.",
+          "pattern": "(replace|redirect:to|redirect:from)"
+        },
+        "latest_prerelease_version_segment": {
+          "type": "string",
+          "description": "The value to use instead of the latest prerelease version segment in the URL."
+        },
+        "latest_version_segment": {
+          "type": "string",
+          "description": "The value to use instead of the latest version segment in the URL."
+        }
+      }
+    },
+    "network": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "http_proxy": {
+          "type": "string",
+          "description": "The URL of the proxy to use for HTTP URLs."
+        },
+        "https_proxy": {
+          "type": "string",
+          "description": "The URL of the proxy to use for HTTPS URLs."
+        },
+        "no_proxy": {
+          "type": "string",
+          "description": "A comma-separated list of domains and IPs that should not be proxied."
         }
       }
     }
