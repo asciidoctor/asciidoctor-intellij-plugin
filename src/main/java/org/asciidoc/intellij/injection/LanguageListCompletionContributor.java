@@ -20,12 +20,6 @@ import java.util.Objects;
 public class LanguageListCompletionContributor extends CompletionContributor {
 
   @Override
-  public boolean invokeAutoPopup(@NotNull PsiElement position, char typeChar) {
-    return typeChar == ',' && position.getNode().getElementType() == AsciiDocTokenTypes.ATTR_NAME
-      && "source".equalsIgnoreCase(position.getNode().getText());
-  }
-
-  @Override
   public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
     final PsiElement completionElement = parameters.getPosition();
     if (PsiUtilCore.getElementType(completionElement) == AsciiDocTokenTypes.ATTR_NAME) {
@@ -63,9 +57,9 @@ public class LanguageListCompletionContributor extends CompletionContributor {
 
       final LookupElementBuilder lookupElementBuilder =
         LookupElementBuilder.create(entry.getKey()).withIcon(new DeferredIconImpl<>(null, language, true, language1 -> {
-          final LanguageFileType fileType = language1.getAssociatedFileType();
-          return fileType != null ? fileType.getIcon() : null;
-        }))
+            final LanguageFileType fileType = language1.getAssociatedFileType();
+            return fileType != null ? fileType.getIcon() : null;
+          }))
           .withTypeText(language.getDisplayName(), true);
 
       result.addElement(lookupElementBuilder);

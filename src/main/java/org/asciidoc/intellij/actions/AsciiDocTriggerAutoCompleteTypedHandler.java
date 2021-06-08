@@ -23,6 +23,7 @@ public class AsciiDocTriggerAutoCompleteTypedHandler extends TypedHandlerDelegat
         || charTyped == '<' // might be the start of an anchor reference: '<<anchor>>'
         || charTyped == '#' // might be the start of an anchor in an xref: 'xref:file.adoc#anchor[]'
         || charTyped == '=' // might be the start of a tag like 'include::file.adoc[tag=name]'
+        || charTyped == ',' // might be the start of a language like '[source,java]'
       ) {
         // for now, always try to show the lookup. The condition could try to be more specific in the future.
         AutoPopupController.getInstance(project).autoPopupMemberLookup(editor, null);
