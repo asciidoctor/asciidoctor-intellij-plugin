@@ -1,12 +1,14 @@
 package org.asciidoc.intellij.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFixBase;
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocLink;
@@ -16,11 +18,11 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Alexander Schwartz 2020
  */
-public class AsciiDocAddAdocExtensionToXref extends LocalQuickFixBase {
-  public static final String NAME = "Add .adoc Extension to xref";
+public class AsciiDocAddAdocExtensionToXref implements LocalQuickFix {
 
-  public AsciiDocAddAdocExtensionToXref() {
-    super(NAME);
+  @Override
+  public @IntentionFamilyName @NotNull String getFamilyName() {
+    return AsciiDocBundle.message("asciidoc.quickfix.addAdocExtentionToXref");
   }
 
   @Override

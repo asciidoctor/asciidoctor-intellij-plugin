@@ -1,10 +1,12 @@
 package org.asciidoc.intellij.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFixBase;
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
@@ -12,11 +14,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class AsciiDocConvertAttributeContinuationLegacy extends LocalQuickFixBase {
-  public static final String NAME = "Convert to modern AsciiDoc Attribute continuation";
+public class AsciiDocConvertAttributeContinuationLegacy implements LocalQuickFix {
 
-  public AsciiDocConvertAttributeContinuationLegacy() {
-    super(NAME);
+  @Override
+  public @IntentionFamilyName @NotNull String getFamilyName() {
+    return AsciiDocBundle.message("asciidoc.quickfix.convertAttributeContinuationLegacy");
   }
 
   @Override

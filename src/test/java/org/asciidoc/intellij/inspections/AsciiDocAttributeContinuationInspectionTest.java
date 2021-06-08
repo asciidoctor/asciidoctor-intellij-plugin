@@ -4,6 +4,8 @@ import org.asciidoc.intellij.quickfix.AsciiDocConvertAttributeContinuationLegacy
 
 public class AsciiDocAttributeContinuationInspectionTest extends AsciiDocQuickFixTestBase {
 
+  private static final String NAME = new AsciiDocConvertAttributeContinuationLegacy().getName();
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -12,7 +14,7 @@ public class AsciiDocAttributeContinuationInspectionTest extends AsciiDocQuickFi
   }
 
   public void testAttributeContinuation() {
-    doTest(AsciiDocConvertAttributeContinuationLegacy.NAME, true);
+    doTest(NAME, true);
   }
 
   @Override

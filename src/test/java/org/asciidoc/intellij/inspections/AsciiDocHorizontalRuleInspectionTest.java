@@ -4,6 +4,8 @@ import org.asciidoc.intellij.quickfix.AsciiDocConvertMarkdownHorizontalRule;
 
 public class AsciiDocHorizontalRuleInspectionTest extends AsciiDocQuickFixTestBase {
 
+  private static final String NAME = new AsciiDocConvertMarkdownHorizontalRule().getName();
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -12,15 +14,15 @@ public class AsciiDocHorizontalRuleInspectionTest extends AsciiDocQuickFixTestBa
   }
 
   public void testMarkdownHorizontalRuleDash() {
-    doTest(AsciiDocConvertMarkdownHorizontalRule.NAME, true);
+    doTest(NAME, true);
   }
 
   public void testMarkdownHorizontalRuleStar() {
-    doTest(AsciiDocConvertMarkdownHorizontalRule.NAME, true);
+    doTest(NAME, true);
   }
 
   public void testMarkdownHorizontalRuleUnderscore() {
-    doTest(AsciiDocConvertMarkdownHorizontalRule.NAME, true);
+    doTest(NAME, true);
   }
 
   @Override

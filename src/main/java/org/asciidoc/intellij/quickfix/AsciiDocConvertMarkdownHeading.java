@@ -1,10 +1,12 @@
 package org.asciidoc.intellij.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFixBase;
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocHeading;
 import org.asciidoc.intellij.psi.AsciiDocSection;
@@ -16,11 +18,11 @@ import java.util.Objects;
 /**
  * @author Alexander Schwartz 2016
  */
-public class AsciiDocConvertMarkdownHeading extends LocalQuickFixBase {
-  public static final String NAME = "Convert to AsciiDoc Heading";
+public class AsciiDocConvertMarkdownHeading implements LocalQuickFix {
 
-  public AsciiDocConvertMarkdownHeading() {
-    super(NAME);
+  @Override
+  public @IntentionFamilyName @NotNull String getFamilyName() {
+    return AsciiDocBundle.message("asciidoc.quickfix.convertMarkdownHeading");
   }
 
   @Override

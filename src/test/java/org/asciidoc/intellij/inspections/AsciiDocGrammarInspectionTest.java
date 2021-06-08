@@ -10,6 +10,8 @@ import org.asciidoc.intellij.quickfix.AsciiDocChangeCaseForAnchor;
  */
 public class AsciiDocGrammarInspectionTest extends AsciiDocQuickFixTestBase {
 
+  private static final String NAME = new AsciiDocChangeCaseForAnchor().getName();
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -19,19 +21,19 @@ public class AsciiDocGrammarInspectionTest extends AsciiDocQuickFixTestBase {
   }
 
   public void testAttributeParsing() {
-    doTestNoFix(AsciiDocChangeCaseForAnchor.NAME, true);
+    doTestNoFix(NAME, true);
   }
 
   public void testSomethingQuoted() {
-    doTestNoFix(AsciiDocChangeCaseForAnchor.NAME, true);
+    doTestNoFix(NAME, true);
   }
 
   public void testSectionWithAttributes() {
-    doTestNoFix(AsciiDocChangeCaseForAnchor.NAME, true);
+    doTestNoFix(NAME, true);
   }
 
   public void testSeparateBehavior() {
-    doTestNoFix(AsciiDocChangeCaseForAnchor.NAME, true);
+    doTestNoFix(NAME, true);
   }
 
   @Override

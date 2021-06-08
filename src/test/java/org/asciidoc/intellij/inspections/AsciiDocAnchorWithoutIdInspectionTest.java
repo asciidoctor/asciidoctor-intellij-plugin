@@ -7,6 +7,8 @@ import org.asciidoc.intellij.quickfix.AsciiDocAddBlockIdToSection;
  */
 public class AsciiDocAnchorWithoutIdInspectionTest extends AsciiDocQuickFixTestBase {
 
+  private static final String NAME = new AsciiDocAddBlockIdToSection().getName();
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -15,7 +17,7 @@ public class AsciiDocAnchorWithoutIdInspectionTest extends AsciiDocQuickFixTestB
   }
 
   public void testNoId() {
-    doTest(AsciiDocAddBlockIdToSection.NAME, true);
+    doTest(NAME, true);
   }
 
   @Override

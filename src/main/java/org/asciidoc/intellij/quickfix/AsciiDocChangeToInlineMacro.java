@@ -1,11 +1,13 @@
 package org.asciidoc.intellij.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFixBase;
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocFile;
@@ -15,11 +17,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Alexander Schwartz 2020
  */
-public class AsciiDocChangeToInlineMacro extends LocalQuickFixBase {
-  public static final String NAME = "Change to inline macro";
+public class AsciiDocChangeToInlineMacro implements LocalQuickFix {
 
-  public AsciiDocChangeToInlineMacro() {
-    super(NAME);
+  @Override
+  public @IntentionFamilyName @NotNull String getFamilyName() {
+    return AsciiDocBundle.message("asciidoc.quickfix.changeToInlineMacro");
   }
 
   @Override

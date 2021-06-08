@@ -4,6 +4,8 @@ import org.asciidoc.intellij.quickfix.AsciiDocChangeCaseForAnchor;
 
 public class AsciiDocDiagramInspectionTest extends AsciiDocQuickFixTestBase {
 
+  private static final String NAME = new AsciiDocChangeCaseForAnchor().getName();
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -12,7 +14,7 @@ public class AsciiDocDiagramInspectionTest extends AsciiDocQuickFixTestBase {
   }
 
   public void testDuplicateDiagramName() {
-    doTestNoFix(AsciiDocChangeCaseForAnchor.NAME, true);
+    doTestNoFix(NAME, true);
   }
 
   @Override

@@ -1,11 +1,13 @@
 package org.asciidoc.intellij.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFixBase;
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.ResolveResult;
+import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.psi.AsciiDocBlockId;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocLink;
@@ -15,11 +17,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Alexander Schwartz 2020
  */
-public class AsciiDocChangeCaseForAnchor extends LocalQuickFixBase {
-  public static final String NAME = "Change case for anchor";
+public class AsciiDocChangeCaseForAnchor implements LocalQuickFix {
 
-  public AsciiDocChangeCaseForAnchor() {
-    super(NAME);
+  @Override
+  public @IntentionFamilyName @NotNull String getFamilyName() {
+    return AsciiDocBundle.message("asciidoc.quickfix.changeCaseForAnchor");
   }
 
   @Override

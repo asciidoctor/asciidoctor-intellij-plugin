@@ -4,6 +4,8 @@ import org.asciidoc.intellij.quickfix.AsciiDocChangeToInlineMacro;
 
 public class AsciiDocBlockMacroShouldBeInlineMacroInspectionTest extends AsciiDocQuickFixTestBase {
 
+  private static final String NAME = new AsciiDocChangeToInlineMacro().getName();
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -12,7 +14,7 @@ public class AsciiDocBlockMacroShouldBeInlineMacroInspectionTest extends AsciiDo
   }
 
   public void testXrefBlockMacroFix() {
-    doTest(AsciiDocChangeToInlineMacro.NAME, true);
+    doTest(NAME, true);
   }
 
   @Override

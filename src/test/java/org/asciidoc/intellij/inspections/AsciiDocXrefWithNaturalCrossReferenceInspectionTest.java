@@ -4,6 +4,8 @@ import org.asciidoc.intellij.quickfix.AsciiDocChangeXrefWithNaturalCrossReferenc
 
 public class AsciiDocXrefWithNaturalCrossReferenceInspectionTest extends AsciiDocQuickFixTestBase {
 
+  private static final String NAME = new AsciiDocChangeXrefWithNaturalCrossReferenceToId().getName();
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -12,7 +14,7 @@ public class AsciiDocXrefWithNaturalCrossReferenceInspectionTest extends AsciiDo
   }
 
   public void testXrefNaturalCrossReference() {
-    doTest(AsciiDocChangeXrefWithNaturalCrossReferenceToId.NAME, true);
+    doTest(NAME, true);
   }
 
   @Override

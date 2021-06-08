@@ -7,6 +7,8 @@ import org.junit.Assert;
 
 public class AsciiDocLinkResolveInspectionTest extends AsciiDocQuickFixTestBase {
 
+  private static final String NAME = new AsciiDocChangeCaseForAnchor().getName();
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -15,19 +17,19 @@ public class AsciiDocLinkResolveInspectionTest extends AsciiDocQuickFixTestBase 
   }
 
   public void testWrongCaseForAnchor() {
-    doTest(AsciiDocChangeCaseForAnchor.NAME, true);
+    doTest(NAME, true);
   }
 
   public void testFileDoesntExist() {
-    doTestNoFix(AsciiDocChangeCaseForAnchor.NAME, true);
+    doTestNoFix(NAME, true);
   }
 
   public void testLocalAnchor() {
-    doTestNoFix(AsciiDocChangeCaseForAnchor.NAME, true);
+    doTestNoFix(NAME, true);
   }
 
   public void testCreateMissingXrefFile() {
-    doTest(AsciiDocCreateMissingFileQuickfix.NAME, true);
+    doTest(new AsciiDocCreateMissingFileQuickfix().getName(), true);
     PsiDirectory parent = myFixture.getFile().getParent();
     Assert.assertNotNull(parent);
     PsiDirectory subdir = parent.findSubdirectory("ab");

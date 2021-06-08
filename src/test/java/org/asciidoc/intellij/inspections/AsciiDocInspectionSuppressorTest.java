@@ -4,6 +4,8 @@ import org.asciidoc.intellij.quickfix.AsciiDocChangeCaseForAnchor;
 
 public class AsciiDocInspectionSuppressorTest extends AsciiDocQuickFixTestBase {
 
+  private static final String NAME = new AsciiDocChangeCaseForAnchor().getName();
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -12,7 +14,7 @@ public class AsciiDocInspectionSuppressorTest extends AsciiDocQuickFixTestBase {
   }
 
   public void testSuppressionsWork() {
-    doTestNoFix(AsciiDocChangeCaseForAnchor.NAME, true);
+    doTestNoFix(NAME, true);
   }
 
   @Override

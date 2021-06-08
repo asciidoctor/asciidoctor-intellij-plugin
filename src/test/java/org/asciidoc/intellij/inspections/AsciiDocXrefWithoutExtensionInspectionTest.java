@@ -8,6 +8,8 @@ import java.util.List;
 
 public class AsciiDocXrefWithoutExtensionInspectionTest extends AsciiDocQuickFixTestBase {
 
+  private static final String NAME = new AsciiDocAddAdocExtensionToXref().getName();
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -26,14 +28,14 @@ public class AsciiDocXrefWithoutExtensionInspectionTest extends AsciiDocQuickFix
   protected void doTestWithQuickfix() {
     String testName = getTestName(true);
     myFixture.testHighlighting("modules/ROOT/pages/" + testName + ".adoc", "antora.yml");
-    applySingleQuickFix(AsciiDocAddAdocExtensionToXref.NAME);
+    applySingleQuickFix(NAME);
     myFixture.checkResultByFile("modules/ROOT/pages/" + testName + "_after.adoc", true);
   }
 
   protected void doTestNoQuickfix() {
     String testName = getTestName(true);
     myFixture.testHighlighting("modules/ROOT/pages/" + testName + ".adoc", "antora.yml");
-    List<IntentionAction> availableIntentions = myFixture.filterAvailableIntentions(AsciiDocAddAdocExtensionToXref.NAME);
+    List<IntentionAction> availableIntentions = myFixture.filterAvailableIntentions(NAME);
     Assertions.assertThat(availableIntentions).isEmpty();
   }
 

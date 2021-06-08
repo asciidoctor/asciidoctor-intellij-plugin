@@ -1,25 +1,21 @@
 package org.asciidoc.intellij.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFixBase;
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import org.asciidoc.intellij.AsciiDocBundle;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexander Schwartz 2019
  */
-public class AsciiDocCreateMissingFileQuickfix extends LocalQuickFixBase implements AsciiDocCreateMissingFile {
-  public static final String NAME = "Create the missing file";
+public class AsciiDocCreateMissingFileQuickfix implements LocalQuickFix, AsciiDocCreateMissingFile {
 
-  public AsciiDocCreateMissingFileQuickfix() {
-    super(NAME);
-  }
-
-  @NotNull
   @Override
-  public String getFamilyName() {
-    return super.getFamilyName();
+  public @IntentionFamilyName @NotNull String getFamilyName() {
+    return AsciiDocBundle.message("asciidoc.quickfix.createMissingFile");
   }
 
   @Override

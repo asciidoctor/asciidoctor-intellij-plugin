@@ -1,9 +1,11 @@
 package org.asciidoc.intellij.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFixBase;
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
@@ -13,11 +15,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Alexander Schwartz 2020
  */
-public class AsciiDocAddBlockIdToSection extends LocalQuickFixBase {
-  public static final String NAME = "Add Block ID to Section";
+public class AsciiDocAddBlockIdToSection implements LocalQuickFix {
 
-  public AsciiDocAddBlockIdToSection() {
-    super(NAME);
+  @Override
+  public @IntentionFamilyName @NotNull String getFamilyName() {
+    return AsciiDocBundle.message("asciidoc.quickfix.addBlockIdToSection");
   }
 
   @Override

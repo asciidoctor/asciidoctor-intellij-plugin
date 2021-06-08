@@ -7,6 +7,8 @@ import org.asciidoc.intellij.quickfix.AsciiDocConvertMarkdownListing;
  */
 public class AsciiDocListingStyleInspectionTest extends AsciiDocQuickFixTestBase {
 
+  private static final String NAME = new AsciiDocConvertMarkdownListing().getName();
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -15,11 +17,11 @@ public class AsciiDocListingStyleInspectionTest extends AsciiDocQuickFixTestBase
   }
 
   public void testMarkdownListing() {
-    doTest(AsciiDocConvertMarkdownListing.NAME, true);
+    doTest(NAME, true);
   }
 
   public void testMarkdownListingWithTitle() {
-    doTest(AsciiDocConvertMarkdownListing.NAME, true);
+    doTest(NAME, true);
   }
 
   @Override

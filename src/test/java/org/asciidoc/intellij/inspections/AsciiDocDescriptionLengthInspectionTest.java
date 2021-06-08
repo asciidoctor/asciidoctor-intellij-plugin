@@ -4,6 +4,8 @@ import org.asciidoc.intellij.quickfix.AsciiDocChangeCaseForAnchor;
 
 public class AsciiDocDescriptionLengthInspectionTest extends AsciiDocQuickFixTestBase {
 
+  private static final String NAME = new AsciiDocChangeCaseForAnchor().getName();
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -12,7 +14,7 @@ public class AsciiDocDescriptionLengthInspectionTest extends AsciiDocQuickFixTes
   }
 
   public void testDescriptionIsTooLong() {
-    doTestNoFix(AsciiDocChangeCaseForAnchor.NAME, true);
+    doTestNoFix(NAME, true);
   }
 
   @Override

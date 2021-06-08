@@ -4,6 +4,8 @@ import org.asciidoc.intellij.quickfix.AsciiDocShortenPagebreak;
 
 public class AsciiDocPageBreakInspectionTest extends AsciiDocQuickFixTestBase {
 
+  private static final String NAME = new AsciiDocShortenPagebreak().getName();
+
   @Override
   public void setUp() throws Exception {
     super.setUp();
@@ -12,7 +14,7 @@ public class AsciiDocPageBreakInspectionTest extends AsciiDocQuickFixTestBase {
   }
 
   public void testTooLongPagebreak() {
-    doTest(AsciiDocShortenPagebreak.NAME, true);
+    doTest(NAME, true);
   }
 
   @Override

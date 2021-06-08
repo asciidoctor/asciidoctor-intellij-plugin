@@ -1,18 +1,20 @@
 package org.asciidoc.intellij.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFixBase;
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class AsciiDocConvertMarkdownHorizontalRule extends LocalQuickFixBase {
-  public static final String NAME = "Convert to AsciiDoc Horizontal Rule";
+public class AsciiDocConvertMarkdownHorizontalRule implements LocalQuickFix {
 
-  public AsciiDocConvertMarkdownHorizontalRule() {
-    super(NAME);
+  @Override
+  public @IntentionFamilyName @NotNull String getFamilyName() {
+    return AsciiDocBundle.message("asciidoc.quickfix.convertMarkdownHorizontalRule");
   }
 
   @Override

@@ -1,7 +1,8 @@
 package org.asciidoc.intellij.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFixBase;
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
@@ -16,9 +17,16 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Alexander Schwartz 2020
  */
-public class AsciiDocChangeToBlockOrPreprocessorMacro extends LocalQuickFixBase {
+public class AsciiDocChangeToBlockOrPreprocessorMacro implements LocalQuickFix {
+  private final String macroType;
+
   public AsciiDocChangeToBlockOrPreprocessorMacro(String macroType) {
-    super(AsciiDocBundle.message("asciidoc.inlineMacroShouldBeBlockOrPreprocessorMacro.fix", macroType));
+    this.macroType = macroType;
+  }
+
+  @Override
+  public @IntentionFamilyName @NotNull String getFamilyName() {
+    return AsciiDocBundle.message("asciidoc.inlineMacroShouldBeBlockOrPreprocessorMacro.fix", macroType);
   }
 
   @Override

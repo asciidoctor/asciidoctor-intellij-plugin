@@ -13,11 +13,11 @@ public class AsciiDocHeadingStyleInspectionTest extends AsciiDocQuickFixTestBase
   }
 
   public void testOldStyleHeading() {
-    doTest(AsciiDocConvertOldstyleHeading.NAME, true);
+    doTest(new AsciiDocConvertOldstyleHeading().getName(), true);
   }
 
   public void testMarkdownHeading() {
-    doTest(AsciiDocConvertMarkdownHeading.NAME, true);
+    doTest(new AsciiDocConvertMarkdownHeading().getName(), true);
   }
 
   @Override
