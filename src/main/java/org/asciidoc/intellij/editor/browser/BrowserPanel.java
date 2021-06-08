@@ -137,7 +137,7 @@ public class BrowserPanel implements Closeable {
     } catch (IOException e) {
       String message = "Unable to combine CSS resources: " + e.getMessage();
       log.error(message, e);
-      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+      Notification notification = AsciiDoc.getNotificationGroup()
         .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
       // increase event log counter
       notification.setImportant(true);

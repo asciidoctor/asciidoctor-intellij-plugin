@@ -4,7 +4,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
+import org.asciidoc.intellij.AsciiDoc;
 import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
@@ -38,7 +38,7 @@ public final class ImageService {
   }
 
   private static void pushErrorNotification(final IOException exception) {
-    Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification(
+    Notification notification = AsciiDoc.getNotificationGroup().createNotification(
       "Error in plugin",
       "Failed to load image file: " + exception.getMessage(),
       NotificationType.ERROR,

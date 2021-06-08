@@ -277,7 +277,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     } catch (IOException e) {
       String message = "Unable to combine CSS resources: " + e.getMessage();
       LOG.error(message, e);
-      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+      Notification notification = AsciiDoc.getNotificationGroup()
         .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
       // increase event log counter
       notification.setImportant(true);
@@ -555,7 +555,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
           LocalFileSystem.getInstance().refreshAndFindFileByIoFile(destination.getFile());
         } catch (IOException ex) {
           String message = "Can't save file: " + ex.getMessage();
-          Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+          Notification notification = AsciiDoc.getNotificationGroup()
             .createNotification("Error in plugin", message, NotificationType.ERROR, null);
           // increase event log counter
           notification.setImportant(true);
@@ -1126,7 +1126,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
   public void scrollEditorToLine(int sourceLine) {
     if (sourceLine <= 0) {
-      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Setting cursor position", "line number " + sourceLine + " requested for cursor position, ignoring",
+      Notification notification = AsciiDoc.getNotificationGroup().createNotification("Setting cursor position", "line number " + sourceLine + " requested for cursor position, ignoring",
         NotificationType.INFORMATION, null);
       notification.setImportant(false);
       return;

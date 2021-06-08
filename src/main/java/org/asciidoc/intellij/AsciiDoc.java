@@ -17,6 +17,8 @@ package org.asciidoc.intellij;
 
 import com.intellij.ide.plugins.CannotUnloadPluginException;
 import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
@@ -43,7 +45,6 @@ import org.asciidoc.intellij.asciidoc.AntoraReferenceAdapter;
 import org.asciidoc.intellij.asciidoc.AttributesRetriever;
 import org.asciidoc.intellij.asciidoc.PrependConfig;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
-import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
@@ -129,6 +130,12 @@ public class AsciiDoc {
   private String name;
 
   private static final ReentrantLock LOCK = new ReentrantLock();
+
+  public static NotificationGroup getNotificationGroup() {
+    return NotificationGroupManager
+      .getInstance()
+      .getNotificationGroup("asciidoctor");
+  }
 
   private static class MaxHashMap extends LinkedHashMap<String, Asciidoctor> {
     @Override
@@ -577,13 +584,13 @@ public class AsciiDoc {
       }
     }
     if (out.length() > 0) {
-      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Message during rendering " + name, out,
+      Notification notification = AsciiDoc.getNotificationGroup().createNotification("Message during rendering " + name, out,
         NotificationType.INFORMATION, null);
       notification.setImportant(false);
       Notifications.Bus.notify(notification);
     }
     if (err.length() > 0) {
-      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Error during rendering " + name, err,
+      Notification notification = AsciiDoc.getNotificationGroup().createNotification("Error during rendering " + name, err,
         NotificationType.INFORMATION, null);
       notification.setImportant(true);
       Notifications.Bus.notify(notification);
@@ -597,7 +604,7 @@ public class AsciiDoc {
       tempImagesPath = Files.createTempDirectory("asciidoctor-intellij");
     } catch (IOException _ex) {
       String message = "Can't create temp folder to render images: " + _ex.getMessage();
-      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+      Notification notification = AsciiDoc.getNotificationGroup()
         .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
       // increase event log counter
       notification.setImportant(true);
@@ -1022,7 +1029,7 @@ public class AsciiDoc {
   private static void handleAntoraYamlException(YAMLException ex, @Nullable String canonicalPath) {
     String message = canonicalPath + ": " + ex.getMessage();
     LOG.warn("Error reading Antora component information", ex);
-    Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Error reading Antora component information", message,
+    Notification notification = AsciiDoc.getNotificationGroup().createNotification("Error reading Antora component information", message,
       NotificationType.ERROR, null);
     notification.setImportant(true);
     Notifications.Bus.notify(notification);

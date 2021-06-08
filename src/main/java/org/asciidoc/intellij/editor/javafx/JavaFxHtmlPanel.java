@@ -54,7 +54,6 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
-import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -224,7 +223,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     } catch (IOException e) {
       String message = "Unable to combine CSS resources: " + e.getMessage();
       LOG.error(message, e);
-      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+      Notification notification = AsciiDoc.getNotificationGroup()
         .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
       // increase event log counter
       notification.setImportant(true);
@@ -311,7 +310,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
         } catch (Throwable ex) {
           String message = "Error initializing JavaFX: " + ex.getMessage();
           LOG.error(message, ex);
-          Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Error rendering asciidoctor", message,
+          Notification notification = AsciiDoc.getNotificationGroup().createNotification("Error rendering asciidoctor", message,
             NotificationType.ERROR, null);
           // increase event log counter
           notification.setImportant(true);
@@ -426,7 +425,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
           LocalFileSystem.getInstance().refreshAndFindFileByIoFile(destination.getFile());
         } catch (IOException ex) {
           String message = "Can't save file: " + ex.getMessage();
-          Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+          Notification notification = AsciiDoc.getNotificationGroup()
             .createNotification("Error in plugin", message, NotificationType.ERROR, null);
           // increase event log counter
           notification.setImportant(true);
@@ -931,7 +930,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       int line = (int) Math.round(Double.parseDouble(argument.substring(0, split)));
       String file = argument.substring(split + 1);
       if (line <= 0) {
-        Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP.createNotification("Setting cursor position", "line number " + line + " requested for cursor position, ignoring",
+        Notification notification = AsciiDoc.getNotificationGroup().createNotification("Setting cursor position", "line number " + line + " requested for cursor position, ignoring",
           NotificationType.INFORMATION, null);
         notification.setImportant(false);
         return;

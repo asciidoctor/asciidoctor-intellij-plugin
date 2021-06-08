@@ -19,7 +19,6 @@ import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
@@ -185,9 +184,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       } catch (Exception ex) {
         String message = "Error rendering preview: " + ex.getMessage();
         log.error(message, ex);
-        Notification notification = NotificationGroupManager
-          .getInstance()
-          .getNotificationGroup("asciidoctor")
+        Notification notification = AsciiDoc.getNotificationGroup()
           .createNotification("Error rendering asciidoctor", message,
             NotificationType.ERROR, null);
         // increase event log counter

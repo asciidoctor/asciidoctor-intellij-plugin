@@ -10,8 +10,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
+import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
-import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -102,7 +102,7 @@ final class JeditorHtmlPanel implements AsciiDocHtmlPanel {
     } catch (IOException ex) {
       String message = "Error setting HTML: " + ex.getMessage();
       log.error(message, ex);
-      Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+      Notification notification = AsciiDoc.getNotificationGroup()
         .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
       // increase event log counter
       notification.setImportant(true);

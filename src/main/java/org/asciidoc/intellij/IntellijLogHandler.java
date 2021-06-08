@@ -4,7 +4,6 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationAction;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
-import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 import org.asciidoctor.log.LogHandler;
@@ -49,7 +48,7 @@ public class IntellijLogHandler implements LogHandler {
       message.append(logRecord.getCursor().getFile()).append(":").append(logRecord.getCursor().getLineNumber());
     }
     message.append(" ").append(logRecord.getMessage());
-    Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+    Notification notification = AsciiDoc.getNotificationGroup()
       .createNotification("Message during rendering " + file, message.toString(), notificationType, null);
     notification.setImportant(notificationType != NotificationType.INFORMATION);
 
@@ -74,7 +73,7 @@ public class IntellijLogHandler implements LogHandler {
     asciiDocPreviewSettings.getAttributes().put("allow-uri-read", "");
     instance.setAsciiDocPreviewSettings(asciiDocPreviewSettings);
 
-    Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+    Notification notification = AsciiDoc.getNotificationGroup()
       .createNotification("Configuration changed", "The 'allow-uri-read' property is now set. Please retry.", NotificationType.INFORMATION, null);
     notification.setImportant(false);
     Notifications.Bus.notify(notification);

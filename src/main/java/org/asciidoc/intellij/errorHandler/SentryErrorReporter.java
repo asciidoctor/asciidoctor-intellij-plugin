@@ -25,8 +25,8 @@ import io.sentry.protocol.Message;
 import io.sentry.protocol.OperatingSystem;
 import io.sentry.protocol.SentryId;
 import io.sentry.protocol.SentryRuntime;
+import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocPlugin;
-import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
@@ -183,12 +183,12 @@ class SentryErrorReporter {
         if (!Objects.equals(sentryId, SentryId.EMPTY_ID)) {
           LOG.info("Sentry event reported: " + sentryId);
           consumer.consume(new SubmittedReportInfo(SubmittedReportInfo.SubmissionStatus.NEW_ISSUE));
-          Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+          Notification notification = AsciiDoc.getNotificationGroup()
             .createNotification("Error report submitted", "Error report with ID " + sentryId + " submitted.", NotificationType.INFORMATION, null);
           notification.setImportant(false);
           Notifications.Bus.notify(notification);
         } else {
-          Notification notification = AsciiDocPreviewEditor.NOTIFICATION_GROUP
+          Notification notification = AsciiDoc.getNotificationGroup()
             .createNotification("Unable to send error report", "Unable to send error report to Sentry server", NotificationType.WARNING, null);
           notification.setImportant(false);
           Notifications.Bus.notify(notification);
