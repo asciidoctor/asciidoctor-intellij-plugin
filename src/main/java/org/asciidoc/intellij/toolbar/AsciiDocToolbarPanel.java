@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.asciidoc.intellij.actions.asciidoc.TableMenuAction.SUB_ACTIONS_PREFIX;
 
@@ -55,7 +56,7 @@ public class AsciiDocToolbarPanel extends JPanel {
     AnAction[] children = group.getChildren(null);
 
     //Create new group of actions without actions starting by SUB_ACTIONS_PREFIX.
-    String[] actionIds = actionManager.getActionIds(SUB_ACTIONS_PREFIX);
+    List<String> actionIds = actionManager.getActionIdList(SUB_ACTIONS_PREFIX);
     ArrayList<AnAction> exclusions = new ArrayList<>();
     for (String actionId : actionIds) {
       exclusions.add(actionManager.getAction(actionId));

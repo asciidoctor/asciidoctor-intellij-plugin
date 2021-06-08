@@ -23,6 +23,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A kind of hacky class to display a custom component ({@link TableSizer}) in a menu like way. The rest of menu items
@@ -34,13 +35,13 @@ public class TableMenuAction extends AsciiDocAction {
 
   public static final String SUB_ACTIONS_PREFIX = "asciidoc.tables.";
 
-  private JPanel panel = new JPanel();
+  private final JPanel panel = new JPanel();
 
   private JPanel topPanel;
   private JLabel titleLabel;
   private JLabel sizeLabel;
 
-  private ArrayList<CustomLabel> items = new ArrayList<>();
+  private final ArrayList<CustomLabel> items = new ArrayList<>();
 
   private boolean initialized = false;
   private AnActionEvent event;
@@ -66,7 +67,7 @@ public class TableMenuAction extends AsciiDocAction {
 
   private void initialize(ActionManager actionManager) {
     //retrieve data from sub-actions (all actions with id that start with the prefix)
-    String[] ids = actionManager.getActionIds(SUB_ACTIONS_PREFIX);
+    List<String> ids = actionManager.getActionIdList(SUB_ACTIONS_PREFIX);
     for (String id : ids) {
       AnAction action = actionManager.getAction(id);
       CustomLabel item = new CustomLabel(action.getTemplatePresentation().getText(), action.getTemplatePresentation().getIcon(), SwingConstants.LEFT);
