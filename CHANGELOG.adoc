@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - prevent NPE in startup activity when dynamically loading AsciiDoc plugin (#779)
 - revisiting parsing whitespace for grammar checker (#752)
+- prevent NPE for zoom settings
 
 === 0.33.1
 

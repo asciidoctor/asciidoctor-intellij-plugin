@@ -319,7 +319,18 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myLanguageForPassthrough.getText(), myDisabledInjectionsByLanguage.getText(),
       myShowAsciiDocWarningsAndErrorsInEditor.isSelected(), myInplacePreviewRefresh.isSelected(),
       myEnableKroki.isSelected(), krokiUrl, myEnabledAttributeFolding.isSelected(),
-      ((BigDecimal) myZoom.getValue()).setScale(0, RoundingMode.UP).unscaledValue().intValue(),
+      getZoom(),
       myHideErrorsInSourceBlocks.isSelected(), myHideErrorsByLanguage.getText());
+  }
+
+  private int getZoom() {
+    Object value = myZoom.getValue();
+    // if a user enters infinity as a value, a Double is returned.
+    // a user also managed to have a null value returned.
+    // Therefore default to 100 in these cases.
+    if (!(value instanceof BigDecimal)) {
+      return 100;
+    }
+    return ((BigDecimal) value).setScale(0, RoundingMode.UP).unscaledValue().intValue();
   }
 }
