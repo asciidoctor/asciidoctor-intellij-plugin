@@ -1,9 +1,8 @@
 package org.asciidoc.intellij.psi;
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.grazie.grammar.ide.GraziePsiElementProcessor;
-import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy;
-import com.intellij.grazie.ide.language.LanguageGrammarChecking;
+import com.intellij.grazie.text.TextContent;
+import com.intellij.grazie.text.TextExtractor;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.TextRange;
@@ -29,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -503,23 +502,24 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "| Cell Content.\n" +
       "|===");
 
-    List<String> texts = new ArrayList<>();
+    Set<String> texts = new HashSet<>();
+    Set<TextContent.TextDomain> textContents = new HashSet<>();
+    textContents.add(TextContent.TextDomain.COMMENTS);
+    textContents.add(TextContent.TextDomain.DOCUMENTATION);
+    textContents.add(TextContent.TextDomain.PLAIN_TEXT);
 
     PsiElementVisitor myVisitor = new PsiElementVisitor() {
       @Override
       public void visitElement(@NotNull PsiElement element) {
-        Set<GrammarCheckingStrategy> grammarCheckingStrategies = LanguageGrammarChecking.INSTANCE.getStrategiesForElement(element, Collections.emptySet(), Collections.emptySet());
-        grammarCheckingStrategies.forEach(grammarCheckingStrategy -> {
-          GraziePsiElementProcessor.Companion.Result result = GraziePsiElementProcessor.Companion.processElements(Collections.singletonList(element), grammarCheckingStrategy);
-          result.getRootsWithText().forEach(rootWithText -> {
-            String text = rootWithText.getText().toString().trim();
-            for (String line : text.split("\\n", -1)) {
-              if (line.length() > 0) {
-                texts.add(line);
-              }
+        TextContent textAt = TextExtractor.findTextAt(element, textContents);
+        if (textAt != null) {
+          String text = textAt.toString().trim();
+          for (String line : text.split("\\n", -1)) {
+            if (line.length() > 0) {
+              texts.add(line);
             }
-          });
-        });
+          }
+        }
         PsiElement child = element.getFirstChild();
         while (child != null) {
           visitElement(child);
@@ -529,12 +529,12 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     };
     psiFile.accept(myVisitor);
     Assertions.assertThat(texts).containsExactlyInAnyOrder(
-      "== A heading",
-      "attribute \\",
+      "A heading",
+      "attribute ",
       "continuation",
       "Cell Content.",
       "Text with a footnote.",
-      "A '`test`' test`'s",
+      "A 'test' test's",
       "A reftext.",
       "// comment with some text",
       "A footnote.",
