@@ -148,6 +148,7 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
           PsiElement child = element.getFirstChild();
           if (child == null) {
             pos += element.getTextLength();
+            parsedText.append(element.getText());
           }
           while (child != null) {
             visitElement(child);
@@ -160,7 +161,6 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
     LinkedHashSet<IntRange> finalRanges = new LinkedHashSet<>();
     if (!parsedText.toString().equals(charSequence.toString())) {
       // some prefix might have been removed by Grazie, adjust detected ranges accordingly
-      ranges.clear();
       int strippedHeader = parsedText.toString().indexOf(charSequence.toString());
       if (strippedHeader > 0) {
         for (IntRange range : ranges) {

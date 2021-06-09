@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.33.2
 
 - prevent NPE in startup activity when dynamically loading AsciiDoc plugin (#779)
+- revisiting parsing whitespace for grammar checker (#752)
 
 === 0.33.1
 
