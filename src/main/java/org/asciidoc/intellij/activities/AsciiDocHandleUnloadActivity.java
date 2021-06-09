@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.activities;
 
+import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.ide.plugins.CannotUnloadPluginException;
 import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
@@ -20,7 +21,7 @@ import java.util.Objects;
  * WARNING: A dynamic unload will usually only succeed when the application is NOT in debug mode;
  * classes might be marked as "JNI Global" due to this, and not reclaimed, and then unloading fails.
  */
-public class AsciiDocHandleUnloadActivity implements StartupActivity, DumbAware {
+public class AsciiDocHandleUnloadActivity implements StartupActivity, DumbAware, LightEditCompatible {
 
   private static final com.intellij.openapi.diagnostic.Logger LOG =
     com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDocHandleUnloadActivity.class);

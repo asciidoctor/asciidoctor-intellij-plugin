@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.activities;
 
+import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.notification.Notification;
@@ -8,6 +9,7 @@ import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -23,7 +25,7 @@ import java.util.regex.Pattern;
 /**
  * Shows update notification.
  */
-public class AsciiDocPluginUpdateActivity implements StartupActivity, DumbAware {
+public class AsciiDocPluginUpdateActivity implements StartupActivity, DumbAware, LightEditCompatible {
 
   @Override
   public void runActivity(@NotNull Project project) {
@@ -52,23 +54,24 @@ public class AsciiDocPluginUpdateActivity implements StartupActivity, DumbAware 
         }
         changes.append(matcher.group());
       }
-      NotificationGroup group = NotificationGroupManager.getInstance().getNotificationGroup("asciidoctor-update");
-      Notification notification = group.createNotification(
-        AsciiDocBundle.message("asciidocUpdateNotification.title", version),
-        AsciiDocBundle.message("asciidocUpdateNotification.content") +
-          changes.toString()
-            // simplify HTML as not all tags are shown in event log
-            .replaceAll("<[/]?(div|h3|p)[^>]*>", "")
-            // avoid too many new lines as they will show as new lines in event log
-            .replaceAll("(?ms)<ul>\\s*", "<ul>")
-            // remove trailing blanks and empty lines
-            .replaceAll("(?ms)\\n[\\s]+", "\n"),
-        NotificationType.INFORMATION,
-        new NotificationListener.UrlOpeningListener(false)
-      );
-
-      Notifications.Bus.notify(notification, project);
+      // during hot-install, startup activity runs while notification groups are registered in write thread concurrently
+      // therefore trigger notification in a read action that waits until the registration is complete
+      ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runReadAction(() -> {
+        NotificationGroup group = NotificationGroupManager.getInstance().getNotificationGroup("asciidoctor-update");
+        Notification notification = group.createNotification(
+          AsciiDocBundle.message("asciidocUpdateNotification.title", version),
+          AsciiDocBundle.message("asciidocUpdateNotification.content") +
+            changes.toString()
+              // simplify HTML as not all tags are shown in event log
+              .replaceAll("<[/]?(div|h3|p)[^>]*>", "")
+              // avoid too many new lines as they will show as new lines in event log
+              .replaceAll("(?ms)<ul>\\s*", "<ul>")
+              // remove trailing blanks and empty lines
+              .replaceAll("(?ms)\\n[\\s]+", "\n"),
+          NotificationType.INFORMATION
+        ).setListener(new NotificationListener.UrlOpeningListener(false));
+        Notifications.Bus.notify(notification, project);
+      }));
     }
   }
-
 }

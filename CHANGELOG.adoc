@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.33.2
+
+- prevent NPE in startup activity when dynamically loading AsciiDoc plugin (#779)
+
 === 0.33.1
 
 - support new keys _network_ and _log_ in Antora playbooks
