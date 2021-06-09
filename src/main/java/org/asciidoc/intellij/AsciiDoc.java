@@ -28,6 +28,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -123,6 +124,7 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.findSpringRestDocSnippets;
  */
 public class AsciiDoc {
 
+  private static final String GROUP_ID = "asciidoctor";
   /**
    * Base directory to look up includes.
    */
@@ -132,9 +134,17 @@ public class AsciiDoc {
   private static final ReentrantLock LOCK = new ReentrantLock();
 
   public static NotificationGroup getNotificationGroup() {
-    return NotificationGroupManager
+    NotificationGroup notificationGroup = NotificationGroupManager
       .getInstance()
-      .getNotificationGroup("asciidoctor");
+      .getNotificationGroup(GROUP_ID);
+    if (notificationGroup == null) {
+      // plugin might still be dynamically registering
+      // see: https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/779
+      notificationGroup = ApplicationManager.getApplication().runReadAction((Computable<NotificationGroup>) () -> NotificationGroupManager
+        .getInstance()
+        .getNotificationGroup(GROUP_ID));
+    }
+    return notificationGroup;
   }
 
   private static class MaxHashMap extends LinkedHashMap<String, Asciidoctor> {
