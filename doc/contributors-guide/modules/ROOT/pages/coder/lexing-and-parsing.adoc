@@ -156,7 +156,7 @@ The structure is the foundation of the structure outline view and the folding ca
 
 === How
 
-The `AsciiDocParserDefinition` separates white space and comments from functional tokens.
+The `AsciiDocParserDefinition` separates spaces and comments from functional tokens.
 It also serves as a factory for all `PsiElement`s like `AsciiDocSection` for sections and `AsciiDocBlock` for blocks.
 
 `AsciiDocParserImpl` encodes the logic how to group the tokens to a tree.

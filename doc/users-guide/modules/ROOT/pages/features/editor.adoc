@@ -143,7 +143,7 @@ For example:
 . a snippet `xref:file.adoc#section` will add the section's title and the brackets.
 
 // see: AsciiDocBraceMatcher
-When the user opens a quote or a bracket, the plugin automatically adds a closing quote if it followed by whitespace or a closing bracket.
+When the user opens a quote or a bracket, the plugin automatically adds a closing quote if it followed by spaces or a closing bracket.
 
 For references, attributes and images, and several macros like include, image and diagrams it provides auto-completion using kbd:[Ctrl+Space].
 References and attributes support renaming within a project.
