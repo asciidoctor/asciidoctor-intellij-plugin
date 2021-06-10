@@ -68,8 +68,8 @@ public class AsciiDocPluginUpdateActivity implements StartupActivity, DumbAware,
               .replaceAll("(?ms)<ul>\\s*", "<ul>")
               // remove trailing blanks and empty lines
               .replaceAll("(?ms)\\n[\\s]+", "\n"),
-          NotificationType.INFORMATION
-        ).setListener(new NotificationListener.UrlOpeningListener(false));
+          NotificationType.INFORMATION,
+          new NotificationListener.UrlOpeningListener(false));
         Notifications.Bus.notify(notification, project);
       }));
     }
