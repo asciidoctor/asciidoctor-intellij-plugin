@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.33.4
+
+- prevent NPE when Antora component descriptor is an empty file (#782)
+
 === 0.33.3
 
 - restore compatibility for IntelliJ 2020.3.x (#779)

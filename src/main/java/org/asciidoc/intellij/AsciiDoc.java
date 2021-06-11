@@ -1001,7 +1001,7 @@ public class AsciiDoc {
     return result;
   }
 
-  public static Map<String, Object> readAntoraYaml(VirtualFile antoraFile) {
+  public static @NotNull Map<String, Object> readAntoraYaml(VirtualFile antoraFile) {
     try {
       Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
       if (document == null) {
@@ -1009,6 +1009,10 @@ public class AsciiDoc {
       }
       Yaml yaml = new Yaml();
       Map<String, Object> result = yaml.load(document.getText());
+      if (result == null) {
+        // result will be null if file is empty
+        result = new HashMap<>();
+      }
       // starting from Antora 3.0.0.alpha-3 a version can be empty. It will be treated internally as an empty string
       result.putIfAbsent("version", "");
       return result;
