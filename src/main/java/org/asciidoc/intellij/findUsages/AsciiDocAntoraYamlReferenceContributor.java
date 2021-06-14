@@ -26,11 +26,16 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.PlatformPatterns.psiFile;
 import static com.intellij.patterns.PlatformPatterns.virtualFile;
 
+/**
+ * Provide auto-complete popup for elements in an Antora component descriptor.
+ *
+ * @author Alexander Schwartz (alexander.schwartz@gmx.net)
+ */
 public class AsciiDocAntoraYamlReferenceContributor extends PsiReferenceContributor {
   @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
 
-    // support start_page with an Antora reference
+    // support nav elements with a file reference
 
     final PsiElementPattern.Capture<YAMLScalar> navCapture =
       psiElement(YAMLScalar.class)
@@ -39,26 +44,25 @@ public class AsciiDocAntoraYamlReferenceContributor extends PsiReferenceContribu
         .inVirtualFile(virtualFile().withName("antora.yml"));
     registrar.registerReferenceProvider(navCapture,
       new PsiReferenceProvider() {
-        @NotNull
         @Override
-        public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
-                                                     @NotNull ProcessingContext context) {
+        public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
+                                                               @NotNull ProcessingContext context) {
           List<PsiReference> references = findNavReferencesElement((YAMLScalar) element);
           return references.toArray(new PsiReference[0]);
         }
       });
 
+    // support start_page element with an Antora reference
+
     final PsiElementPattern.Capture<YAMLScalar> startPageCapture =
       psiElement(YAMLScalar.class)
-        // .inside(psiElement(YAMLKeyValueImpl.class))
         .inFile(psiFile(YAMLFile.class))
         .inVirtualFile(virtualFile().withName("antora.yml"));
     registrar.registerReferenceProvider(startPageCapture,
       new PsiReferenceProvider() {
-        @NotNull
         @Override
-        public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
-                                                     @NotNull ProcessingContext context) {
+        public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
+                                                               @NotNull ProcessingContext context) {
           List<PsiReference> references = findStartPageReferencesElement((YAMLScalar) element);
           return references.toArray(new PsiReference[0]);
         }

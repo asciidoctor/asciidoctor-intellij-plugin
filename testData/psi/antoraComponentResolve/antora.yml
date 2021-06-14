@@ -1,0 +1,5 @@
+name: my-imagexref-component
+version: '1.0'
+nav:
+  - modules/ROOT/nav.adoc
+start_page: "ROOT:index.adoc"

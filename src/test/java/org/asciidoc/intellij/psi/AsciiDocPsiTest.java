@@ -25,6 +25,9 @@ import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.assertj.core.api.Assertions;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.yaml.psi.YAMLSequence;
+import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl;
+import org.jetbrains.yaml.psi.impl.YAMLQuotedTextImpl;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -697,6 +700,25 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
     // xref to old page name
     assertReferencesResolve(urls[2], 1);
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  public void testAntoraComponentResolve() {
+    // given...
+    PsiFile[] psiFile = myFixture.configureByFiles(
+      getTestName(true) + "/antora.yml",
+      getTestName(true) + "/modules/ROOT/pages/index.adoc",
+      getTestName(true) + "/modules/ROOT/nav.adoc"
+    );
+
+
+    YAMLSequence nav = (YAMLSequence) ((YAMLBlockMappingImpl) psiFile[0].getChildren()[0].getChildren()[0]).getKeyValueByKey("nav").getValue();
+    assertReferencesResolve(nav.getItems().get(0).getValue(), 3);
+
+    YAMLQuotedTextImpl startPage = (YAMLQuotedTextImpl) ((YAMLBlockMappingImpl) psiFile[0].getChildren()[0].getChildren()[0]).getKeyValueByKey("start_page").getValue();
+
+    PsiReference startPageReference = startPage.getReferences()[1];
+    assertNotNull("reference didn't resolve: '" + startPageReference.getRangeInElement().substring(startPage.getText()) + "' in '" + startPage.getText() + "'", startPageReference.resolve());
   }
 
   private void assertReferencesResolve(PsiElement element, int numberOfReferences) {
