@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.33.4
 
 - prevent NPE when Antora component descriptor is an empty file (#782)
+- prevent IAE when expanding attributes
 
 === 0.33.3
 

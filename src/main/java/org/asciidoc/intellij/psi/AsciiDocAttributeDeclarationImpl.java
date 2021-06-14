@@ -14,6 +14,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AsciiDocAttributeDeclarationImpl
   extends AsciiDocAttributeDeclarationStubElementImpl<AsciiDocAttributeDeclarationStub>
@@ -30,9 +32,8 @@ public class AsciiDocAttributeDeclarationImpl
     super(node);
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     return ReferenceProvidersRegistry.getReferencesFromProviders(this);
   }
 
@@ -92,7 +93,10 @@ public class AsciiDocAttributeDeclarationImpl
         (this.getContainingFile().getName().equals(".asciidoctorconfig") || this.getContainingFile().getName().equals(".asciidoctorconfig.adoc"))
         && this.getContainingFile().getVirtualFile() != null && this.getContainingFile().getVirtualFile().getParent() != null
         && this.getContainingFile().getVirtualFile().getParent().getCanonicalPath() != null) {
-        val = val.replaceAll("\\{asciidoctorconfigdir}", this.getContainingFile().getVirtualFile().getParent().getCanonicalPath());
+        val = val.replaceAll(
+          Pattern.quote("{asciidoctorconfigdir}"),
+          Matcher.quoteReplacement(this.getContainingFile().getVirtualFile().getParent().getCanonicalPath())
+        );
       }
       return val;
     }
@@ -112,7 +116,7 @@ public class AsciiDocAttributeDeclarationImpl
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + "(" + getNode().getElementType().toString() + ")";
+    return getClass().getSimpleName() + "(" + getNode().getElementType() + ")";
   }
 
   @Override
