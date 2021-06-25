@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - prevent NPE when Antora component descriptor is an empty file (#782)
 - prevent IAE when expanding attributes
 - when NPE on paste occurs, log additional information (#790)
+- trying to avoid LinkageError in 2021.2 (#791)
 
 === 0.33.3
 

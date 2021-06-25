@@ -40,7 +40,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.geronimo.gshell.io.SystemOutputHijacker;
-import org.asciidoc.intellij.actions.asciidoc.AsciiDocAction;
 import org.asciidoc.intellij.asciidoc.AntoraIncludeAdapter;
 import org.asciidoc.intellij.asciidoc.AntoraReferenceAdapter;
 import org.asciidoc.intellij.asciidoc.AttributesRetriever;
@@ -459,7 +458,7 @@ public class AsciiDoc {
    * Create an instance of Asciidoctor.
    */
   private Asciidoctor createInstance(List<String> extensions) {
-    ClassLoader cl = AsciiDocAction.class.getClassLoader();
+    ClassLoader cl = this.getClass().getClassLoader();
     List<URL> urls = new ArrayList<>();
     try {
       File file1 = AsciiDocDownloaderUtil.getAsciidoctorJPdfFile();
