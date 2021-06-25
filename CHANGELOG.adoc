@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - prevent NPE when Antora component descriptor is an empty file (#782)
 - prevent IAE when expanding attributes
+- when NPE on paste occurs, log additional information (#790)
 
 === 0.33.3
 

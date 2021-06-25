@@ -66,11 +66,16 @@ public class AsciiDocPasteProvider implements PasteProvider {
       return true;
     }
     if (produce.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-      java.util.List<File> fileList = null;
+      java.util.List<File> fileList;
       try {
+        //noinspection unchecked
         fileList = (List<File>) produce.getTransferData(DataFlavor.javaFileListFlavor);
       } catch (UnsupportedFlavorException | IOException e) {
         return false;
+      }
+      //noinspection ConstantConditions -- as this
+      if (fileList == null) {
+        throw new IllegalStateException("The class implementation of " + produce.getClass().getName() + " did return null for getTransferData() when it shouldn't. Please report to authors!");
       }
       for (File f : fileList) {
         String name = f.getName().toLowerCase();
