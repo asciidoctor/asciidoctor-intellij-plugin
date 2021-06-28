@@ -30,7 +30,7 @@ Learn more about it in the xref:features/editor.adoc[] section.
 
 * Provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] with live preview.
 +
-Per default it has a vertical split and the preview is on the right.
+By default it has a vertical split and the preview is on the right.
 Use the settings to flip editor and preview and change to a horizontal split.
 
 Learn more about it in the xref:features/preview.adoc[] section.
