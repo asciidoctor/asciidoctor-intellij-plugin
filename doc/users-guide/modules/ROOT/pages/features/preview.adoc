@@ -4,16 +4,17 @@
 
 == Overview
 
-By default the preview is on the right side of a vertical split screen.
+By default, the preview is on the right side of a vertical split screen.
 Using the configuration, the user can change the split to horizontal, and change the position of the preview.
 
 The plugin uses https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] 2.x to render the preview.
 
-By default the plugin runs Asciidoctor in safe mode _UNSAFE_ which is also the default when a user runs Asciidoctor from the command line.
+By default, the plugin runs Asciidoctor in safe mode _UNSAFE_ which is also the default when a user runs Asciidoctor from the command line.
 The user can change the behavior to other modes like _SAVE_, _SERVER_ and _SECURE_ in the plugin's settings.
 See section https://asciidoctor.org/docs/user-manual/#running-asciidoctor-securely[Running Asciidoctor securely in the Asciidoctor User Manual] for more information about this feature.
 
-When using the JCEF of the JavaFX preview and _SAVE_, _SERVER_ and _SECURE_ remote content is no longer allowed in the preview by applying a Content Security Policy (new in plugin version 0.32.32).
+When using the JCEF of the JavaFX preview and the safe mode setting _SAVE_, _SERVER_ or _SECURE_, remote content is no longer allowed in the preview.
+With this setting the plugin applies a Content Security Policy to prevent this (new in plugin version 0.32.32).
 
 When the user enters formulas using Asciidoctor's math support, the preview renders them using MathML.
 If the formula can't be parsed by MathML, the preview shows an error popup.
