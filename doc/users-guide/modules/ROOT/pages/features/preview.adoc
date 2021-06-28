@@ -4,12 +4,12 @@
 
 == Overview
 
-Per default the preview is on the right side of a vertical split screen.
+By default the preview is on the right side of a vertical split screen.
 Using the configuration, the user can change the split to horizontal, and change the position of the preview.
 
 The plugin uses https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] 2.x to render the preview.
 
-Per default the plugin runs Asciidoctor in safe mode _UNSAFE_ which is also the default when a user runs Asciidoctor from the command line.
+By default the plugin runs Asciidoctor in safe mode _UNSAFE_ which is also the default when a user runs Asciidoctor from the command line.
 The user can change the behavior to other modes like _SAVE_, _SERVER_ and _SECURE_ in the plugin's settings.
 See section https://asciidoctor.org/docs/user-manual/#running-asciidoctor-securely[Running Asciidoctor securely in the Asciidoctor User Manual] for more information about this feature.
 
@@ -22,7 +22,7 @@ When the user moves the cursor in the editor, the preview scrolls the text into 
 
 When the user clicks on text in the preview, the editor moves the cursor to the clicked text.
 This is accurate at block level, unfortunately not yet on line or character level.
-If the content is the preview is part of an included file, the editor opens the included file (new in plugin version 0.32.5).
+If the content of the preview is part of an included file, the editor opens the included file (new in plugin version 0.32.5).
 
 When the user clicks on an external URL, the preview opens it in an external browser.
 
