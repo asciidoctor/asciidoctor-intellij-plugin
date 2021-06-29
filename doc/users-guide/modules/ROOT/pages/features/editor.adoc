@@ -12,17 +12,17 @@ Folded sections and blocks show their first line except when this is block id (l
 
 [#folding-attributes]
 As an experimental feature, predefined attributes for character replacements like `+++{plus}+++` or `+++{quot}+++` and attributes are foldable as well.
-Attributes need to resolve to single declared value to be folded.
+Attributes need to resolve to a single declared value to be folded.
 Folding is also available for HTML entities (like `\&amp;`) and unicode characters (like `\&#x2020;`).
 As an experimental feature, the user needs to enable it in the settings of the plugin.
 
-Clicking on a folded attribute to unfold it.
+Clicking on a folded attribute unfolds it.
 The hotkey to unfold one element is kbd:[Ctrl+NumPad+], the hotkey to fold one element is kbd:[Shift+NumPad-]
 The hotkey to unfold all elements is kbd:[Ctrl+Shift+NumPad+], the hotkey to fold all elements is kbd:[Ctrl+Shift+NumPad-].
 
 // see: AsciiDocStructureViewElement
 The structure of the file kbd:[Alt+7] shows the hierarchy of sections and blocks with titles.
-This contains (if available) the first block attribute element (like \[source], \[quote] or \[verse]) and the title of the block or section.
+This contains (if available) the first block attribute element (like `[source]`, `[quote]` or `[verse]`) and the title of the block or section.
 If an element like an `image::[]` references another file, it shows the icon and the name of the file.
 If an `include::[]` references an AsciiDoc file, it includes the file as a sub-tree in the structure view.
 Clicking on either a referenced file or an element of a sub-tree opens the referenced file.
@@ -37,7 +37,7 @@ AsciiDoc recommends the https://asciidoctor.org/docs/asciidoc-recommended-practi
 To avoid scrolling horizontally, the user should enable soft-wrap in the IDE. Go to menu:Settings[Editor > General], scroll to menu:Soft Wrap[], add the AsciiDoc file extension (if not already pre-populated) and activate the check box "`Soft-wrap files`".
 
 // EnableSoftWrapNotificationProvider
-There is also the option to enable soft-wrap for a single file in the editor toolbar.
+There is also an option to enable soft-wrap for a single file in the editor toolbar.
 If the user enables soft wrap per file multiple times, an editor notification appears and suggests enabling soft wrap in the IDE settings.
 
 For `include::[]` and `image::[]` block macros the keys kbd:[Ctrl+Click] and kbd:[Ctrl+B] navigate to the referenced file.
@@ -59,7 +59,7 @@ At the moments this works for attributes (`\{attrib}` and `:attrib:`) both in th
 // see: AsciiDocBraceMatcher
 The plugin highlights matching braces including symmetric formatting for bold, italic and monospace.
 // see: FormattingQuotedTypedHandler
-When the user selected some text and types a formatting character like `_` or `*`, the plugin formats selected text by adding the formatting at the beginning and end of the selected text.
+When the user selects some text and types a formatting character like `_` or `*`, the plugin formats selected text by adding the formatting at the beginning and end of the selected text.
 The plugin uses constrained/unconstrained formatting as necessary.
 If the selected text already has the chosen formatting, the plugin removes the formatting from the selected text.
 
@@ -84,16 +84,14 @@ The plugin expands the current selection when the user presses kbd:[Ctrl+W] and 
 IntelliJ's built-in spell checker verifies all text areas of the document.
 It underlines unknown words with a green wavy line.
 With the context menu the user can change the spelling or to add the word to the project's dictionary.
-To enable spell-checking support for other languages, the user can add a dictionary file via menu:File[Settings... > Editor > Spelling].
-Dictionaries are available online for example at http://www.winedt.org/dict.html.
-Word lists need to be in the UTF-8 format to work.
+To enable spell-checking support for other languages, the user can add a language via menu:File[Settings... > Editor > Proofreading].
+Dictionaries will be dwonloaded automatically.
 
 [[grazie]]
 // see: AsciiDocGrazieLanguageSupport
-Once the user installed the https://plugins.jetbrains.com/plugin/12175-grazie/[Grazie plugin] the editor highlights possible grammar and spelling mistakes.
-For now text must be included in a section or block to be checked.
+The bundled https://plugins.jetbrains.com/plugin/12175-grazie/[Grazie plugin] highlights possible grammar and spelling mistakes in the editor.
+Text must be included in a section or block to be checked.
 A minimal file would therefore contain at least a heading and some text.
-The user needs to enable spell checking in the Grazie settings.
 Grazie supports multiple languages: Once the user configured the languages in Grazie's plugin settings, the plugin detects the language of a section automatically.
 As it performs all checks locally with the help of libraries from https://languagetool.org/, it doesn't submit text written in the IDE to a third party cloud service.
 
@@ -151,7 +149,7 @@ References and attributes support renaming within a project.
 Typing characters like kbd:[{], kbd:[<], or kbd:[:] as part of a macro or attribute definition will open the auto-completion dialog as well.
 
 When auto-completing folder and file names in macros, the plugin tries to resolve attributes using their values specified in the current file or other files.
-For image macros it tries to find a declaration of the _imagesDir_ attribute either in any of the AsciiDoc files of the project.
+For image macros it also tries to find a declaration of the _imagesDir_ attribute in any of the AsciiDoc files of the project.
 
 There are several live templates included.
 See xref:features/advanced/livetemplates.adoc[] for more information.
@@ -167,8 +165,8 @@ This shortcut doesn't work yet for copying contents from outside the project.
 
 // AsciiDocHeadingStyleInspection, ...
 The editor runs inspections on the content.
-Once it finds for example Markdown-styled headings, Markdown-styled horizontal rules or Markdown-styled listings it highlights this as a warning.
-The user can use kbd:[Ctrl+Enter] to select a quick-fix to convert these to AsciiDoc syntax.
+It finds and highlights Markdown-styled headings, horizontal rules orlistings as a warning.
+The user can use kbd:[Ctrl+Enter] to quickly convert these to AsciiDoc syntax.
 
 // AsciiDocInspectionSuppressor
 To suppress an inspection for a given line, use the quick-fix to add a comment on the line before:
@@ -190,12 +188,12 @@ To suppress an inspection for a file, use the quick-fix to add a comment at the 
 
 Use multiple lines to suppress multiple inspections, or separate multiple inspections with commas.
 
-The user can extract and inline includes.
-This is available from the "`Refactor`" context menu and via context-sensitive intentions via kbd:[Alt+Enter] ("`Inline Include Directive`" and "`Extract Include Directive`").
+Extract and Inline include directives are available to the user.
+Include directives can be accessed from the "`Refactor`" context menu and via context-sensitive intentions via kbd:[Alt+Enter] ("`Inline Include Directive`" and "`Extract Include Directive`").
 // see: ExtractIncludeDialog.java
-_Extract_ extracts either the selected text, the current block or the current section including subsections.
+_Extract directive_ can take the selected text, current block or the current section including subsections and extract it as a separate document.
 // see: InlineIncludeDialog.java
-_Inline_ inlines the referenced file at the current include; optionally it can provide a preview, inline all occurrences of the file and delete the included file afterwards.
+_Inline directive_ can take the file referenced via the selected include and put its content in the current document; optionally it can provide a preview, inline all occurrences of the file and delete the included file afterwards.
 
 // see: AsciiDocAdmonitionToBlockIntention.java and AsciiDocAdmonitionToBlockAction.java
 .Available from release 0.31.35:
@@ -216,5 +214,5 @@ The user can disable formatting completely or configure parameters using  menu:S
 Currently, it adjusts empty lines around headings, lists and blocks.
 It also adjusts spaces around list items.
 
-By default, it re-format blocks to the one-sentence-per-line convention.
+By default, it re-formats blocks to the one-sentence-per-line convention.
 The user can disable this in the code style settings.
