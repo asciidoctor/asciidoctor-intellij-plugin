@@ -98,7 +98,7 @@ An example configuration for a local configuration could look like this: +
 -----
 <1> requires JavaScript bundle in _hljs/highlight.min.js_ in current project.
 <2> requires file _hljs/styles/default.min.css_ in current project.
-<3> specifies the highlightjs theme.
+<3> specifies the highlightjs theme in current project.
 <4> requires file _hljs/languages/basic.min.js_ in current project.
 
 Users can change the default code highlighter:
