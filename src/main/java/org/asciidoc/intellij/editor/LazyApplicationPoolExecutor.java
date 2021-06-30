@@ -17,6 +17,7 @@ package org.asciidoc.intellij.editor;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +30,7 @@ import java.util.concurrent.Future;
  *
  * @author Eugene Steinberg - plantuml4idea plugin
  */
-public class LazyApplicationPoolExecutor {
+public class LazyApplicationPoolExecutor implements Disposable {
 
   public static final int DEFAULT_DELAY = 100;
 
@@ -39,8 +40,18 @@ public class LazyApplicationPoolExecutor {
 
   private final Alarm myPooledAlarm;
 
-  public LazyApplicationPoolExecutor(Disposable disposable) {
-    myPooledAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, disposable);
+  private boolean disposed;
+
+  @Override
+  public synchronized void dispose() {
+    disposed = true;
+  }
+
+  public LazyApplicationPoolExecutor(Disposable parent) {
+    myPooledAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, parent);
+    // first dispose this component and ensure that no more myPooledAlarm.addRequest is called
+    // to avoid "Assertion failed: Already disposed"
+    Disposer.register(myPooledAlarm, this);
   }
 
   /**
@@ -53,8 +64,10 @@ public class LazyApplicationPoolExecutor {
   public synchronized void execute(@NotNull final Runnable command) {
     next = () -> {
       command.run();
-      if (!myPooledAlarm.isDisposed()) {
-        myPooledAlarm.addRequest(this::scheduleNext, DEFAULT_DELAY);
+      synchronized (this) {
+        if (!disposed) {
+          myPooledAlarm.addRequest(this::scheduleNext, DEFAULT_DELAY);
+        }
       }
     };
     if (myPooledAlarm.getActiveRequestCount() == 0 && (future == null || future.isDone())) {

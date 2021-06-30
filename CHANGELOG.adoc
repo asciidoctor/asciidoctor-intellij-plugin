@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - prevent IAE when expanding attributes
 - when NPE on paste occurs, log additional information (#790)
 - trying to avoid LinkageError in 2021.2 (#791)
+- prevent error "Already disposed" when closing an editor (#799)
 
 === 0.33.3
 
