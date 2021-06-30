@@ -85,10 +85,10 @@ An example configuration for a local configuration could look like this: +
 .Configuration of highlight.js files in local project
 [source,asciidoc]
 -----
-:source-highlighter: highlight.js
-:highlightjsdir: hljs <.>
-:highlightjs-theme: default <.>
-:highlightjs-languages: basic <.>
+:source-highlighter: highlight.js <1>
+:highlightjsdir: hljs <2>
+:highlightjs-theme: default <3>
+:highlightjs-languages: basic <4>
 
 [source,basic]
 ----
@@ -96,9 +96,10 @@ An example configuration for a local configuration could look like this: +
 20 GOTO 10
 ----
 -----
-<.> requires JavaScript bundle in _hljs/highlight.min.js_ in current project.
-<.> requires file _hljs/styles/default.min.css_ in current project.
-<.> requires file _hljs/languages/basic.min.js_ in current project.
+<1> requires JavaScript bundle in _hljs/highlight.min.js_ in current project.
+<2> requires file _hljs/styles/default.min.css_ in current project.
+<3> specifies the highlightjs theme.
+<4> requires file _hljs/languages/basic.min.js_ in current project.
 
 Users can change the default code highlighter:
 
