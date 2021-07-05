@@ -55,7 +55,8 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
   }
 
   public int limitLookahead() {
-    return limitLookahead(zzCurrentPos);
+    // as this is called before the "advance()" method, take into account last token's length
+    return limitLookahead(zzMarkedPos);
   }
 
   public CharSequence getBuffer() {

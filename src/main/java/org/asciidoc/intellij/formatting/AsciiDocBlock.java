@@ -16,6 +16,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.asciidoc.intellij.codeStyle.AsciiDocCodeStyleSettings;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
+import org.asciidoc.intellij.psi.AsciiDocPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,17 +91,13 @@ class AsciiDocBlock extends AbstractBlock {
             tree.insert(0, childToString(node) + " > ");
             node = node.getTreeParent();
           }
-          throw new IllegalStateException("Whitespace element contains non-whitespace-characters: '" +
-            replaceNewlinesForPrinting(child.getText()) + "' at offset " + child.getStartOffset() + ", tree: " + tree);
+          throw AsciiDocPsiImplUtil.getRuntimeException("Whitespace element contains non-whitespace-characters at offset " + child.getStartOffset() + ", tree: " + tree,
+            child.getText(), null);
         }
       }
       child = child.getTreeNext();
     }
     return result;
-  }
-
-  private String replaceNewlinesForPrinting(String text) {
-    return text.replaceAll("\\\\", "\\\\\\\\").replaceAll("\n", "\\\\n");
   }
 
   @NotNull
