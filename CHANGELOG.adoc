@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.33.5
 
 - plugin shouldn't interfere with HTML preview focus handling (#802)
+- when calculating the cut-off for the next token, take into account that this is called before the advance method (#803)
 
 === 0.33.4
 
