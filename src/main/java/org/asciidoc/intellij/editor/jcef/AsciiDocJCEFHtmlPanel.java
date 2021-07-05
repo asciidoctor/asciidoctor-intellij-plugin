@@ -52,7 +52,6 @@ import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.cef.browser.CefBrowser;
-import org.cef.handler.CefFocusHandlerAdapter;
 import org.cef.handler.CefLoadHandler;
 import org.cef.handler.CefLoadHandlerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -285,7 +284,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     }
     uiZoom = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getZoom() / 100.0;
 
-    ApplicationManager.getApplication().executeOnPooledThread(() -> setHtml(prepareHtml(wrapHtmlForPage("<div id=\"content\">Initializing...</div>"), Collections.emptyMap())));
+    ApplicationManager.getApplication().executeOnPooledThread(() -> setHtml(prepareHtml(wrapHtmlForPage("<div id=\"content\">Initializing...</div>"), Collections.emptyMap()), Collections.emptyMap()));
 
   }
 
@@ -415,40 +414,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       return null;
     });
 
-    fixFocusHandlerOnWindowsFromInterferingWithEventDispatchThread();
-
-  }
-
-  private void fixFocusHandlerOnWindowsFromInterferingWithEventDispatchThread() {
-    if (SystemInfoRt.isWindows) {
-      /* this replaces the standard focus handler on Windows that
-         would otherwise call setFocus(false) on the EDT that would take about 500ms and would make the UI slow.
-         See: https://youtrack.jetbrains.com/issue/IDEA-260841
-       */
-      getCefBrowser().getClient().removeFocusHandler();
-      getCefBrowser().getClient().addFocusHandler(new CefFocusHandlerAdapter() {
-        @Override
-        public boolean onSetFocus(CefBrowser browser, FocusSource source) {
-          if (source == FocusSource.FOCUS_SOURCE_NAVIGATION) {
-            if (SystemInfoRt.isWindows) {
-              /*
-               * Will set the focus on the CEF browser if the component has the focus.
-               * Putting the focus on the CEF browser allows users to use PgUp/PgDown and cursor up/down to navigate the document.
-               * Un-setting the focus for the CEF component is important to have the focus on the editor on Windows.
-               */
-              ApplicationManager.getApplication().executeOnPooledThread(() -> getCefBrowser().setFocus(getPreferredFocusedComponent().hasFocus()));
-            }
-            return true; // suppress focusing the browser on navigation events
-          }
-          if (SystemInfoRt.isLinux) {
-            browser.getUIComponent().requestFocus();
-          } else {
-            browser.getUIComponent().requestFocusInWindow();
-          }
-          return false;
-        }
-      });
-    }
   }
 
   @Nullable

@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.33.5
+
+- plugin shouldn't interfere with HTML preview focus handling (#802)
+
 === 0.33.4
 
 - prevent NPE when Antora component descriptor is an empty file (#782)
