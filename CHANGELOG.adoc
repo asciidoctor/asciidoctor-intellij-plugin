@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.33.6
+
+- restore compatibility with 2020.3/2021.1 and avoid NoSuchMethodError (#806)
+
 === 0.33.5
 
 - plugin shouldn't interfere with HTML preview focus handling (#802)
