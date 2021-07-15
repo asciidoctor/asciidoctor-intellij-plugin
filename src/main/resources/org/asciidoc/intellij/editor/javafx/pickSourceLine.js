@@ -42,6 +42,8 @@ window.__IntelliJTools.scrollEditorToLine = function (event) {
     var endY;
     var endLine = window.__IntelliJTools.lineCount;
     var endFile = 'stdin';
+    var parent;
+    var tempEndY;
     for (var i = 0; i < blocks.length; i++) {
       var block = blocks[i];
       var result = window.__IntelliJTools.getLine(block);
@@ -50,14 +52,33 @@ window.__IntelliJTools.scrollEditorToLine = function (event) {
       }
       var fileOfBlock = result[1];
       var lineOfBlock = Number(result[2]);
-      if (event.clientY + window.scrollY > window.__IntelliJTools.calculateOffset(block)) {
+      if (block.contains(event.currentTarget)) {
+        startY = window.__IntelliJTools.calculateOffset(block)
+        startLine = lineOfBlock;
+        startFile = fileOfBlock;
+        // there might be no further block, therefore assume that the end is at the end of this block
+        endY = startY + block.offsetHeight;
+        parent = block;
+      } else if (parent && !parent.contains(block)) {
+        // we just left the block we clicked in
+        tempEndY = window.__IntelliJTools.calculateOffset(block)
+        if (tempEndY > endY) {
+          endY = tempEndY;
+        }
+        endLine = lineOfBlock - 1;
+        endFile = fileOfBlock;
+        break;
+      } else if (event.clientY + window.scrollY > window.__IntelliJTools.calculateOffset(block)) {
         startY = window.__IntelliJTools.calculateOffset(block)
         startLine = lineOfBlock;
         startFile = fileOfBlock;
         // there might be no further block, therefore assume that the end is at the end of this block
         endY = startY + block.offsetHeight;
       } else if (event.clientY + window.scrollY < window.__IntelliJTools.calculateOffset(block)) {
-        endY = window.__IntelliJTools.calculateOffset(block)
+        tempEndY = window.__IntelliJTools.calculateOffset(block)
+        if (tempEndY > endY) {
+          endY = tempEndY;
+        }
         endLine = lineOfBlock - 1;
         endFile = fileOfBlock;
         break;
