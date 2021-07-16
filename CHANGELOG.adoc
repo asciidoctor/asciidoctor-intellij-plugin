@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.33.7
 
 - parse AsciiDoc table cells for source lines, improve navigation to source line (#810)
+- when converting a Markdown file to AsciiDoc, warn if target file already exists and allow overwriting it (thanks to @santik) (#763, #808)
 
 === 0.33.6
 
