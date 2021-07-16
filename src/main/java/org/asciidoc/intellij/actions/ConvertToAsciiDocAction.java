@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import org.asciidoc.intellij.file.AsciiDocFileType;
+import org.asciidoc.intellij.ui.OverwriteFileDialog;
 import org.asciidoc.intellij.util.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +28,7 @@ import static nl.jworks.markdown_to_asciidoc.Converter.convertMarkdownToAsciiDoc
  * Created by erikp on 05/12/14.
  */
 public class ConvertToAsciiDocAction extends AnAction {
-  private Logger log = Logger.getInstance(ConvertToAsciiDocAction.class);
+  private final Logger log = Logger.getInstance(ConvertToAsciiDocAction.class);
 
   private static final String[] MARKDOWN_EXTENSIONS = {"markdown", "mkd", "md"};
 
@@ -51,11 +52,23 @@ public class ConvertToAsciiDocAction extends AnAction {
           @Override
           public void run() {
             String newFileName = FilenameUtils.getBaseName(file.getName()) + "." + AsciiDocFileType.INSTANCE.getDefaultExtension();
-            PsiFile asciiDocFile = PsiFileFactory.getInstance(project).createFileFromText(newFileName, AsciiDocFileType.INSTANCE, convertMarkdownToAsciiDoc(file.getText()));
-
+            PsiFile asciiDocFile = file.getContainingDirectory().findFile(newFileName);
+            if (asciiDocFile != null) {
+              if (new OverwriteFileDialog(newFileName).showAndGet()) {
+                asciiDocFile.delete();
+              } else {
+                return;
+              }
+            }
+            asciiDocFile = PsiFileFactory.getInstance(project).createFileFromText(newFileName, AsciiDocFileType.INSTANCE, convertMarkdownToAsciiDoc(file.getText()));
             PsiFile newFile = (PsiFile) file.getContainingDirectory().add(asciiDocFile);
+
             newFile.navigate(true);
 
+            deleteVirtualFile();
+          }
+
+          private void deleteVirtualFile() {
             try {
               virtualFile.delete(this);
             } catch (IOException e) {
