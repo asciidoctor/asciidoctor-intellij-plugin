@@ -28,7 +28,7 @@ import static nl.jworks.markdown_to_asciidoc.Converter.convertMarkdownToAsciiDoc
  * Created by erikp on 05/12/14.
  */
 public class ConvertToAsciiDocAction extends AnAction {
-  private Logger log = Logger.getInstance(ConvertToAsciiDocAction.class);
+  private final Logger log = Logger.getInstance(ConvertToAsciiDocAction.class);
 
   private static final String[] MARKDOWN_EXTENSIONS = {"markdown", "mkd", "md"};
 
@@ -51,7 +51,6 @@ public class ConvertToAsciiDocAction extends AnAction {
         CommandProcessor.getInstance().executeCommand(project, new Runnable() {
           @Override
           public void run() {
-            log.info("File: " + file);
             String newFileName = FilenameUtils.getBaseName(file.getName()) + "." + AsciiDocFileType.INSTANCE.getDefaultExtension();
             PsiFile asciiDocFile = file.getContainingDirectory().findFile(newFileName);
             if (asciiDocFile != null) {

@@ -12,7 +12,7 @@ public class OverwriteFileDialog extends DialogWrapper {
 
   public OverwriteFileDialog(String filename) {
     super(true);
-    setTitle("File Overwrite");
+    setTitle("File Already Exists");
     this.filename = filename;
     init();
   }
@@ -22,7 +22,7 @@ public class OverwriteFileDialog extends DialogWrapper {
   protected JComponent createCenterPanel() {
     JPanel dialogPanel = new JPanel(new BorderLayout());
 
-    JLabel label = new JLabel("File \"" + filename + "\" already exists. Do you want to overwrite?");
+    JLabel label = new JLabel("File \"" + filename + "\" already exists. Do you want to overwrite this file?");
     label.setPreferredSize(new Dimension(100, 50));
     dialogPanel.add(label, BorderLayout.CENTER);
 
