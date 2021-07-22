@@ -37,6 +37,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.serviceContainer.AlreadyDisposedException;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.text.CharArrayUtil;
+import com.sun.glass.ui.Application;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -1329,10 +1330,14 @@ public class AsciiDocUtil {
     }
   }
 
-  @SuppressWarnings("checkstyle:ParameterNumber")
+  @SuppressWarnings({"checkstyle:ParameterNumber", "checkstyle:ParameterName"})
   private static List<VirtualFile> getOtherAntoraModuleDir(Project project, VirtualFile moduleDir,
                                                            String myModuleName, String myComponentName, String myComponentVersion,
-                                                           String otherComponentVersion, String otherComponentName, String otherModuleName) {
+                                                           String _otherComponentVersion, String _otherComponentName, String _otherModuleName) {
+    String otherComponentVersion = _otherComponentVersion;
+    String otherComponentName = _otherComponentName;
+    String otherModuleName = _otherModuleName;
+
     if (project.isDisposed()) {
       // FilenameIndex.getFilesByName will otherwise log an error later
       throw new ProcessCanceledException();
@@ -1357,28 +1362,27 @@ public class AsciiDocUtil {
       if (otherModuleName == null || otherModuleName.length() == 0) {
         otherModuleName = "ROOT";
       }
-      PsiFile[] files =
-        FilenameIndex.getFilesByName(project, ANTORA_YML, new AsciiDocSearchScope(project));
+      List<VirtualFile> files =
+        new ArrayList<>(FilenameIndex.getVirtualFilesByName(ANTORA_YML, new AsciiDocSearchScope(project)));
       // sort by path proximity
-      Arrays.sort(files,
-        Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
+      files.sort(Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
       ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
-      for (PsiFile file : files) {
-        if (index.isInLibrary(file.getVirtualFile())
-          || index.isExcluded(file.getVirtualFile())
-          || index.isInLibraryClasses(file.getVirtualFile())
-          || index.isInLibrarySource(file.getVirtualFile())) {
+      for (VirtualFile file : files) {
+        if (index.isInLibrary(file)
+          || index.isExcluded(file)
+          || index.isInLibraryClasses(file)
+          || index.isInLibrarySource(file)) {
           continue;
         }
-        PsiDirectory parent = file.getParent();
+        VirtualFile parent = file.getParent();
         if (parent == null) {
           continue;
         }
-        PsiDirectory antoraModulesDir = parent.findSubdirectory("modules");
+        VirtualFile antoraModulesDir = parent.findChild("modules");
         if (antoraModulesDir == null) {
           continue;
         }
-        PsiDirectory antoraModule = antoraModulesDir.findSubdirectory(otherModuleName);
+        VirtualFile antoraModule = antoraModulesDir.findChild(otherModuleName);
         if (antoraModule == null) {
           continue;
         }
@@ -1409,7 +1413,7 @@ public class AsciiDocUtil {
             }
           }
         }
-        result.add(antoraModule.getVirtualFile());
+        result.add(antoraModule);
       }
     }
     return result;
@@ -1429,12 +1433,11 @@ public class AsciiDocUtil {
       return Collections.emptyList();
     }
     return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
-      PsiFile[] files =
-        FilenameIndex.getFilesByName(project, ANTORA_YML, new AsciiDocSearchScope(project));
+      List<VirtualFile> files =
+        new ArrayList<>(FilenameIndex.getVirtualFilesByName(ANTORA_YML, new AsciiDocSearchScope(project)));
       List<AntoraModule> result = new ArrayList<>();
       // sort by path proximity
-      Arrays.sort(files,
-        Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
+      files.sort(Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
       ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
       VirtualFile antoraFile;
       if (moduleDir.getName().equals("antora.yml")) {
@@ -1454,11 +1457,11 @@ public class AsciiDocUtil {
       String myComponentName = getAttributeAsString(antora, "name");
       String myComponentVersion = getAttributeAsString(antora, "version");
       Map<String, String> componentTitles = new HashMap<>();
-      for (PsiFile file : files) {
-        if (index.isInLibrary(file.getVirtualFile())
-          || index.isExcluded(file.getVirtualFile())
-          || index.isInLibraryClasses(file.getVirtualFile())
-          || index.isInLibrarySource(file.getVirtualFile())) {
+      for (VirtualFile file : files) {
+        if (index.isInLibrary(file)
+          || index.isExcluded(file)
+          || index.isInLibraryClasses(file)
+          || index.isInLibrarySource(file)) {
           continue;
         }
         try {
@@ -1479,7 +1482,7 @@ public class AsciiDocUtil {
             versionPrefix = "_" + versionPrefix;
           }
         }
-        VirtualFile md = file.getVirtualFile().getParent().findChild("modules");
+        VirtualFile md = file.getParent().findChild("modules");
         if (md != null) {
           VirtualFile[] modules = md.getChildren();
           for (VirtualFile module : modules) {
@@ -1561,8 +1564,8 @@ public class AsciiDocUtil {
     });
   }
 
-  private static int countNumberOfSameStartingCharacters(PsiFile value, String origin) {
-    String path = value.getVirtualFile().getPath();
+  private static int countNumberOfSameStartingCharacters(VirtualFile value, String origin) {
+    String path = value.getPath();
     int i = 0;
     for (; i < origin.length() && i < path.length(); ++i) {
       if (path.charAt(i) != origin.charAt(i)) {
