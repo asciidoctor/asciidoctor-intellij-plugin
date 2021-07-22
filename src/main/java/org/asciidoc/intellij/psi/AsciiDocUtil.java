@@ -1359,6 +1359,13 @@ public class AsciiDocUtil {
     }
 
     if (otherComponentName != null && !DumbService.isDumb(project)) {
+
+      if (Application.isEventThread()) {
+        return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> getOtherAntoraModuleDir(project, moduleDir,
+          myModuleName,  myComponentName,  myComponentVersion, _otherComponentVersion,  _otherComponentName,  _otherModuleName),
+          "Resolving Antora reference", true, project);
+      }
+
       if (otherModuleName == null || otherModuleName.length() == 0) {
         otherModuleName = "ROOT";
       }
