@@ -114,7 +114,7 @@ test {
 }
 
 dependencies {
-  errorprone 'com.google.errorprone:error_prone_core:2.7.1'
+  errorprone 'com.google.errorprone:error_prone_core:2.8.0'
   /* snakeyaml is s used by asciidoctorj-pdf, but is actually provided within jruby-stdlib
    * a snakeyaml version in the classpath takes precedence, but IntelliJ includes a version that is too old
    * therefore this plugin includes the same version of snakeyaml that is already included in jruby-stdlib
