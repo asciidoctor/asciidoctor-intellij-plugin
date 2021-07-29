@@ -174,7 +174,9 @@ jobs:
   releaseDraft:
     name: Release Draft
     if: github.event_name != 'pull_request'
-    needs: [build, verify]
+    # re-add 'verify' as a needs step once verify works again
+    # https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/819
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
 
