@@ -37,6 +37,8 @@ This is a folder that holds temporary files that are created for example for dyn
 When running in Asciidoctor UNSAFE mode, the plugin creates a temporary folder outside the project.
 When running in any other mode, Asciidoctor needs to have this folder them relative to the document's folder.
 
+NOTE: Diagrams in the preview when running in any mode other than UNSAFE will only work starting with version 0.33.8.
+
 To avoid checking in these files, consider adding a file path to the ignore file of your version control system.
 
 See below for example _.gitignore_ file placed in the root of the project if the project uses Git as version control system.
