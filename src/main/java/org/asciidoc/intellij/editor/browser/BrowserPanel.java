@@ -23,6 +23,7 @@ import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanel;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
+import org.asciidoctor.SafeMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,7 +53,7 @@ import java.util.regex.Pattern;
 
 public class BrowserPanel implements Closeable {
 
-  private final Path imagesPath;
+  private final Path globalImagesPath;
   private final Logger log = Logger.getInstance(JavaFxHtmlPanel.class);
   private final AsciiDocExtensionService extensionService = ServiceManager.getService(AsciiDocExtensionService.class);
 
@@ -104,7 +105,7 @@ public class BrowserPanel implements Closeable {
   public BrowserPanel() {
     myPanelWrapper = new JPanel(new BorderLayout());
     myPanelWrapper.setBackground(JBColor.background());
-    imagesPath = AsciiDoc.tempImagesPath();
+    globalImagesPath = AsciiDoc.tempImagesPath(null);
 
     try {
       Properties p = new Properties();
@@ -167,6 +168,14 @@ public class BrowserPanel implements Closeable {
     final String config = AsciiDoc.config(document, project);
     List<String> extensions = extensionService.getExtensions(project);
     Objects.requireNonNull(file.getParent().getCanonicalPath(), "we will have files, these will always have a parent directory");
+    final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+    Path imagesPath = globalImagesPath;
+    VirtualFile parent = file.getParent();
+    if (settings.getAsciiDocPreviewSettings().getSafeMode() != SafeMode.UNSAFE) {
+      if (parent != null && parent.getCanonicalPath() != null) {
+        imagesPath = AsciiDoc.tempImagesPath(Path.of(parent.getCanonicalPath()));
+      }
+    }
     AsciiDoc asciiDoc = new AsciiDoc(project, new File(file.getParent().getCanonicalPath()),
       imagesPath, file.getName());
     String html = asciiDoc.render(document.getText(), config, extensions, asciiDoc::notifyAlways, AsciiDoc.FileType.BROWSER);
@@ -177,12 +186,12 @@ public class BrowserPanel implements Closeable {
       base = "";
     }
     html = "<html><head></head><body><div id=\"header\"></div>" + html + "<div id=\"footer\"></div></body></html>";
-    html = prepareHtml(html, project, asciiDoc.getAttributes());
+    html = prepareHtml(html, project, asciiDoc.getAttributes(), imagesPath);
     return html;
   }
 
 
-  private String findTempImageFile(String filename, String imagesdir) {
+  private String findTempImageFile(String filename, String imagesdir, Path imagesPath) {
     try {
       Path file = imagesPath.resolve(filename);
       if (Files.exists(file)) {
@@ -234,7 +243,7 @@ public class BrowserPanel implements Closeable {
   }
 
   @SuppressWarnings("checkstyle:MethodLength")
-  private String prepareHtml(@NotNull String html, Project project, Map<String, String> attributes) {
+  private String prepareHtml(@NotNull String html, Project project, Map<String, String> attributes, Path imagesPath) {
     // Antora plugin might resolve some absolute URLs, convert them to localfile so they get their MD5 that prevents caching
     Pattern pattern = Pattern.compile("<img src=\"file:///([^\"]*)\"");
     Matcher matcher = pattern.matcher(html);
@@ -246,7 +255,7 @@ public class BrowserPanel implements Closeable {
       } catch (UnsupportedEncodingException e) {
         throw new RuntimeException(e);
       }
-      String tmpFile = findTempImageFile(file, null);
+      String tmpFile = findTempImageFile(file, null, imagesPath);
       String md5;
       String replacement;
       if (tmpFile != null) {
@@ -280,7 +289,7 @@ public class BrowserPanel implements Closeable {
       } catch (UnsupportedEncodingException e) {
         throw new RuntimeException(e);
       }
-      String tmpFile = findTempImageFile(file, attributes.get("imagesdir"));
+      String tmpFile = findTempImageFile(file, attributes.get("imagesdir"), imagesPath);
       String md5;
       String replacement;
       if (tmpFile != null) {
@@ -430,13 +439,7 @@ public class BrowserPanel implements Closeable {
 
   @Override
   public void close() {
-    if (imagesPath != null) {
-      try {
-        FileUtils.deleteDirectory(imagesPath.toFile());
-      } catch (IOException _ex) {
-        Logger.getInstance(AsciiDocPreviewEditor.class).warn("could not remove temp folder", _ex);
-      }
-    }
+    AsciiDoc.cleanupImagesPath(globalImagesPath);
   }
 
   /**

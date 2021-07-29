@@ -29,6 +29,24 @@ When the preview includes a diagram, the plugin shows an editor notification ask
 
 include::partial$download-dependencies.adoc[]
 
+[[temp-folder-asciidoctor,Temporary folder _.asciidoctor_ appearing in several places]]
+=== Temporary folder _.asciidoctor_ appearing in several places
+
+This is a folder that holds temporary files that are created for example for dynamic diagrams.
+
+When running in Asciidoctor UNSAFE mode, the plugin creates a temporary folder outside the project.
+When running in any other mode, Asciidoctor needs to have this folder them relative to the document's folder.
+
+To avoid checking in these files, consider adding a file path to the ignore file of your version control system.
+
+See below for example _.gitignore_ file placed in the root of the project if the project uses Git as version control system.
+
+..gitignore
+----
+**/.asciidoctor/images/*
+**/.asciidoctor/diagram/*
+----
+
 [[kroki,Kroki]]
 == Using Kroki
 

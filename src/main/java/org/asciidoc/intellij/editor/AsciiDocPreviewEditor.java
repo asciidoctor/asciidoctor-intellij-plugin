@@ -54,7 +54,6 @@ import com.intellij.util.Alarm;
 import com.intellij.util.FileContentUtilCore;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
-import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
@@ -70,7 +69,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -272,7 +270,12 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     this.document = document;
     this.project = project;
 
-    this.tempImagesPath = AsciiDoc.tempImagesPath();
+    VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+    Path parent = null;
+    if (file != null) {
+      parent = Path.of(file.getParent().getPath());
+    }
+    this.tempImagesPath = AsciiDoc.tempImagesPath(parent);
 
     myHtmlPanelWrapper = new JPanel(new BorderLayout());
 
@@ -555,13 +558,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   @Override
   public void dispose() {
     Disposer.dispose(myPanel);
-    if (tempImagesPath != null) {
-      try {
-        FileUtils.deleteDirectory(tempImagesPath.toFile());
-      } catch (IOException _ex) {
-        Logger.getInstance(AsciiDocPreviewEditor.class).warn("could not remove temp folder", _ex);
-      }
-    }
+    AsciiDoc.cleanupImagesPath(tempImagesPath);
   }
 
   void scrollToLine(int line) {

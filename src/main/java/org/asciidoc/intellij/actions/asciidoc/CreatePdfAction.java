@@ -16,18 +16,15 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
-import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
@@ -86,12 +83,13 @@ public class CreatePdfAction extends AsciiDocAction {
     }
     VirtualFile parent = file.getParent();
     boolean successful = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-      Path tempImagesPath = AsciiDoc.tempImagesPath();
+      Path tempImagesPath = null;
       try {
         File fileBaseDir = new File("");
         if (parent != null && parent.getCanonicalPath() != null) {
           // parent will be null if we use Language Injection and Fragment Editor
           fileBaseDir = new File(parent.getCanonicalPath());
+          tempImagesPath = AsciiDoc.tempImagesPath(fileBaseDir.toPath());
         }
         AsciiDoc asciiDoc = new AsciiDoc(project, fileBaseDir, tempImagesPath, file.getName());
         List<String> extensions = extensionService.getExtensions(project);
@@ -101,13 +99,7 @@ public class CreatePdfAction extends AsciiDocAction {
           AsciiDocDownloadNotificationProvider.showNotification();
         }
       } finally {
-        if (tempImagesPath != null) {
-          try {
-            FileUtils.deleteDirectory(tempImagesPath.toFile());
-          } catch (IOException _ex) {
-            Logger.getInstance(AsciiDocPreviewEditor.class).warn("could not remove temp folder", _ex);
-          }
-        }
+        AsciiDoc.cleanupImagesPath(tempImagesPath);
       }
     }, "Creating PDF", true, project);
     ApplicationManager.getApplication().runWriteAction(() -> {

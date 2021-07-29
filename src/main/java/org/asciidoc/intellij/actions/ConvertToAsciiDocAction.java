@@ -3,6 +3,7 @@ package org.asciidoc.intellij.actions;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.UpdateInBackground;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
@@ -27,7 +28,7 @@ import static nl.jworks.markdown_to_asciidoc.Converter.convertMarkdownToAsciiDoc
  * <p/>
  * Created by erikp on 05/12/14.
  */
-public class ConvertToAsciiDocAction extends AnAction {
+public class ConvertToAsciiDocAction extends AnAction implements UpdateInBackground {
   private final Logger log = Logger.getInstance(ConvertToAsciiDocAction.class);
 
   private static final String[] MARKDOWN_EXTENSIONS = {"markdown", "mkd", "md"};

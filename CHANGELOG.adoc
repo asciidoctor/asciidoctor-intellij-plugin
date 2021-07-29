@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.33.8
+
+- enable rendering of diagrams in preview for modes other than UNSAFE (#789)
+
 === 0.33.7
 
 - parse AsciiDoc table cells for source lines, improve navigation to source line (#810)

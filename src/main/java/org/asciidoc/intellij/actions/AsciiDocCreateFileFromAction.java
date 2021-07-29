@@ -2,6 +2,7 @@ package org.asciidoc.intellij.actions;
 
 import com.intellij.ide.actions.CreateFileFromTemplateAction;
 import com.intellij.ide.actions.CreateFileFromTemplateDialog;
+import com.intellij.openapi.actionSystem.UpdateInBackground;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.NonEmptyInputValidator;
@@ -9,7 +10,7 @@ import com.intellij.psi.PsiDirectory;
 import icons.AsciiDocIcons;
 import org.jetbrains.annotations.NotNull;
 
-public class AsciiDocCreateFileFromAction extends CreateFileFromTemplateAction implements DumbAware {
+public class AsciiDocCreateFileFromAction extends CreateFileFromTemplateAction implements DumbAware, UpdateInBackground {
 
   public AsciiDocCreateFileFromAction() {
     super("AsciiDoc File", "Creates new AsciiDoc file", AsciiDocIcons.ASCIIDOC_ICON);

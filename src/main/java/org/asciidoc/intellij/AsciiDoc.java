@@ -45,6 +45,7 @@ import org.asciidoc.intellij.asciidoc.AntoraReferenceAdapter;
 import org.asciidoc.intellij.asciidoc.AttributesRetriever;
 import org.asciidoc.intellij.asciidoc.PrependConfig;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
+import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
@@ -56,6 +57,7 @@ import org.asciidoctor.Attributes;
 import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.Options;
 import org.asciidoctor.OptionsBuilder;
+import org.asciidoctor.SafeMode;
 import org.asciidoctor.jruby.AsciidoctorJRuby;
 import org.asciidoctor.log.LogHandler;
 import org.asciidoctor.log.LogRecord;
@@ -241,6 +243,7 @@ public class AsciiDoc {
   /**
    * Images directory.
    */
+  @Nullable
   private final Path imagesPath;
   private final String projectBasePath;
   private final Project project;
@@ -606,23 +609,44 @@ public class AsciiDoc {
     }
   }
 
+
+  /**
+   * Call this method to create in UNSAFE mode a fresh temporary folder that will be used for temporary files when running Asciidoctor, or a relative folder to the parent in any other mode.
+   * This handles the situation that a temporary folder that is not a sub-folder of the document's parent can't be read from or written to when
+   * the mode is not UNSAFE.
+   */
   @Nullable
-  public static Path tempImagesPath() {
+  public static Path tempImagesPath(Path parent) {
     Path tempImagesPath = null;
-    try {
-      tempImagesPath = Files.createTempDirectory("asciidoctor-intellij");
-    } catch (IOException _ex) {
-      String message = "Can't create temp folder to render images: " + _ex.getMessage();
-      Notification notification = AsciiDoc.getNotificationGroup()
-        .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
-      // increase event log counter
-      notification.setImportant(true);
-      Notifications.Bus.notify(notification);
+    final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+    if (settings.getAsciiDocPreviewSettings().getSafeMode() != SafeMode.UNSAFE && parent != null) {
+      tempImagesPath = parent.resolve(".asciidoctor/images");
+    } else {
+      try {
+        tempImagesPath = Files.createTempDirectory("asciidoctor-intellij");
+      } catch (IOException ex) {
+        String message = "Can't create temp folder to render images: " + ex.getMessage();
+        Notification notification = AsciiDoc.getNotificationGroup()
+          .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
+        // increase event log counter
+        notification.setImportant(true);
+        Notifications.Bus.notify(notification);
+      }
     }
     return tempImagesPath;
   }
 
-  @NotNull
+  public static void cleanupImagesPath(Path tempImagesPath) {
+    if (tempImagesPath != null && !tempImagesPath.endsWith(Path.of(".asciidoctor", "images"))) {
+      try {
+        FileUtils.deleteDirectory(tempImagesPath.toFile());
+      } catch (IOException ex) {
+        com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDocPreviewEditor.class).warn("could not remove temp folder", ex);
+      }
+    }
+  }
+
+    @NotNull
   public static @Language("asciidoc")
   String config(Document document, Project project) {
     VirtualFile currentFile = FileDocumentManager.getInstance().getFile(document);
@@ -1087,12 +1111,18 @@ public class AsciiDoc {
       if (fileType == FileType.JAVAFX || fileType == FileType.JCEF || fileType == FileType.BROWSER) {
         if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())
           || settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(AsciiDocJCEFHtmlPanelProvider.class.getName()) || fileType == FileType.BROWSER) {
-          attrs.setAttribute("outdir", imagesPath.toAbsolutePath().normalize().toString());
-          // this prevents asciidoctor diagram to render images to a folder {outdir}/{imagesdir} ...
-          // ... that might then be outside of the temporary folder as {imagesdir} might traverse to a parent folder
-          // beware that the HTML output will still prepends {imagesdir} that later needs to be removed from HTML output
-          // https://github.com/asciidoctor/asciidoctor-diagram/issues/110
-          attrs.setAttribute("imagesoutdir", imagesPath.toAbsolutePath().normalize().toString());
+          // will only work in UNSAFE mode as Asciidoctor will otherwise report path is outside of jail; recovering automatically
+          if (settings.getAsciiDocPreviewSettings().getSafeMode() == SafeMode.UNSAFE) {
+            attrs.setAttribute("outdir", imagesPath.toAbsolutePath().normalize().toString());
+            // this prevents asciidoctor diagram to render images to a folder {outdir}/{imagesdir} ...
+            // ... that might then be outside of the temporary folder as {imagesdir} might traverse to a parent folder
+            // beware that the HTML output will still prepends {imagesdir} that later needs to be removed from HTML output
+            // https://github.com/asciidoctor/asciidoctor-diagram/issues/110
+            attrs.setAttribute("imagesoutdir", imagesPath.toAbsolutePath().normalize().toString());
+          } else {
+            attrs.setAttribute("cachedir", new File(fileBaseDir, ".asciidoctor/diagram").getAbsolutePath());
+            attrs.setAttribute("imagesoutdir", new File(fileBaseDir, ".asciidoctor/images").getAbsolutePath());
+          }
         }
       }
     }

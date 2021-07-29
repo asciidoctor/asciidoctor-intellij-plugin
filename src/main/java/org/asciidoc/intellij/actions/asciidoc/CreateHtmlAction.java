@@ -4,7 +4,6 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -13,15 +12,12 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import org.apache.commons.io.FileUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocExtensionService;
-import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -69,7 +65,7 @@ public class CreateHtmlAction extends AsciiDocAction {
     }
     VirtualFile parent = file.getParent();
     boolean successful = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-      Path tempImagesPath = AsciiDoc.tempImagesPath();
+      Path tempImagesPath = AsciiDoc.tempImagesPath(parent != null ? parent.toNioPath() : null);
       try {
         File fileBaseDir = new File("");
         if (parent != null && parent.getCanonicalPath() != null) {
@@ -81,13 +77,7 @@ public class CreateHtmlAction extends AsciiDocAction {
         List<String> extensions = extensionService.getExtensions(project);
         asciiDoc.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDoc.FileType.HTML);
       } finally {
-        if (tempImagesPath != null) {
-          try {
-            FileUtils.deleteDirectory(tempImagesPath.toFile());
-          } catch (IOException _ex) {
-            Logger.getInstance(AsciiDocPreviewEditor.class).warn("could not remove temp folder", _ex);
-          }
-        }
+        AsciiDoc.cleanupImagesPath(tempImagesPath);
       }
     }, "Creating HTML", true, project);
     ApplicationManager.getApplication().runWriteAction(() -> {

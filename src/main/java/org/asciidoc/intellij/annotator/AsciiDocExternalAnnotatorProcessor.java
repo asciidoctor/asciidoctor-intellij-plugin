@@ -4,7 +4,6 @@ import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -18,12 +17,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocExtensionService;
-import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
@@ -36,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,7 +86,7 @@ public class AsciiDocExternalAnnotatorProcessor extends com.intellij.lang.annota
       return annotationResult;
     }
 
-    Path tempImagesPath = AsciiDoc.tempImagesPath();
+    Path tempImagesPath = AsciiDoc.tempImagesPath(fileBaseDir.toPath());
     try {
       AsciiDoc asciiDoc = new AsciiDoc(file.getProject(), fileBaseDir,
         tempImagesPath, name);
@@ -150,13 +146,7 @@ public class AsciiDocExternalAnnotatorProcessor extends com.intellij.lang.annota
       }
       annotationResult.setLogRecords(processedLogRecords);
     } finally {
-      if (tempImagesPath != null) {
-        try {
-          FileUtils.deleteDirectory(tempImagesPath.toFile());
-        } catch (IOException _ex) {
-          Logger.getInstance(AsciiDocPreviewEditor.class).warn("could not remove temp folder", _ex);
-        }
-      }
+      AsciiDoc.cleanupImagesPath(tempImagesPath);
     }
 
     return annotationResult;

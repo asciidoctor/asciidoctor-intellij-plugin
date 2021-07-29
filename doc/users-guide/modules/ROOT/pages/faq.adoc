@@ -13,7 +13,13 @@ See xref:faq/troubleshooting-mps.adoc[] for more information.
 
 === There is an _ad-tag-include_ template in all my files. Why?
 
-See xref:features/advanced/livetemplates.adoc#ad-tag-include[] how this works and how to disable it if you don't need it.
+See xref:features/advanced/livetemplates.adoc#ad-tag-include[Special template _ad-tag-include_] on how this works and how to disable it if you don't need it.
+
+=== There is an _.asciidoctor_ folder appearing all over my project. Why?
+
+This is a folder that holds temporary files that are created for example for dynamic diagrams when running in any other mode than UNSAFE.
+
+Read more in xref:features/preview/diagrams.adoc#temp-folder-asciidoctor[Temporary folder _.asciidoctor_ appearing in several places].
 
 == Editor Troubles
 
