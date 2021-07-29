@@ -4,12 +4,14 @@ import com.intellij.grazie.grammar.Typo;
 import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy;
 import com.intellij.grazie.grammar.strategy.impl.ReplaceCharRule;
 import com.intellij.grazie.grammar.strategy.impl.RuleGroup;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import kotlin.ranges.IntRange;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.psi.AsciiDocPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,6 +21,9 @@ import java.util.List;
 import java.util.Set;
 
 public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
+
+  private static final Logger LOG =
+    Logger.getInstance(AsciiDocGrazieLanguageSupport.class);
 
   private final AsciiDocLanguageSupport languageSupport = new AsciiDocLanguageSupport();
 
@@ -81,9 +86,7 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
     return languageSupport.isMyContextRoot(psiElement);
   }
 
-  @SuppressWarnings({"UnstableApiUsage", "MissingOverride"})
-  // to be removed in 2021.1, remove @Override to keep compatibility
-  // @Override
+  @Override
   public boolean isTypoAccepted(@NotNull PsiElement psiElement, @NotNull IntRange intRange, @NotNull IntRange intRange1) {
     return true;
   }
@@ -147,8 +150,11 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
           }
           PsiElement child = element.getFirstChild();
           if (child == null) {
-            pos += element.getTextLength();
-            parsedText.append(element.getText());
+            // strip leading whitespace
+            if (pos != 0 || !(element instanceof PsiWhiteSpace)) {
+              pos += element.getTextLength();
+              parsedText.append(element.getText());
+            }
           }
           while (child != null) {
             visitElement(child);
@@ -158,25 +164,22 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
       }
     };
     visitor.visitElement(psiElement);
+    while (parsedText.length() > 0 && Character.isWhitespace(parsedText.charAt(parsedText.length() - 1)) || Character.isSpaceChar(parsedText.charAt(parsedText.length() - 1))) {
+      parsedText.setLength(parsedText.length() - 1);
+    }
     LinkedHashSet<IntRange> finalRanges = new LinkedHashSet<>();
     if (!parsedText.toString().equals(charSequence.toString())) {
-      // some prefix might have been removed by Grazie, adjust detected ranges accordingly
-      int strippedHeader = parsedText.toString().indexOf(charSequence.toString());
-      if (strippedHeader > 0) {
-        for (IntRange range : ranges) {
-          if (range.getEndInclusive() > charSequence.length()) {
-            continue;
-          }
-          if (range.getStart() - strippedHeader < 0) {
-            continue;
-          }
-          finalRanges.add(createRange(range.getStart() - strippedHeader, range.getEndInclusive() - strippedHeader));
+      LOG.error("unable to reconstruct string for grammar check", AsciiDocPsiImplUtil.getRuntimeException("didn't reconstruct string", psiElement, null));
+    }
+    for (IntRange range : ranges) {
+      if (range.getEndInclusive() >= charSequence.length()) {
+        // strip off all ranges that fell into the whitespace removed from the end
+        if (range.getStart() < charSequence.length()) {
+          finalRanges.add(createRange(range.getStart(), charSequence.length() - 1));
         }
+      } else {
+        finalRanges.add(range);
       }
-      // sometimes Grazie also removes spaces "in the middle", logic above needs to reflect this
-      // else LOG.warn("unable to reconstruct grammar string", AsciiDocPsiImplUtil.getRuntimeException("didn't find string", psiElement, null));
-    } else {
-      finalRanges.addAll(ranges);
     }
     return finalRanges;
   }

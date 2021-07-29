@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.33.8
 
 - enable rendering of diagrams in preview for modes other than UNSAFE (#789)
+- rework handling of leading/trailing whitespace when preparing the input for the grammar check (#818)
 
 === 0.33.7
 
