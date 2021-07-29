@@ -1370,7 +1370,7 @@ public class AsciiDocUtil {
         otherModuleName = "ROOT";
       }
       List<VirtualFile> files =
-        new ArrayList<>(FilenameIndex.getVirtualFilesByName(ANTORA_YML, new AsciiDocSearchScope(project)));
+        new ArrayList<>(FilenameIndex.getVirtualFilesByName(project, ANTORA_YML, new AsciiDocSearchScope(project)));
       // sort by path proximity
       files.sort(Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
       ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
@@ -1441,7 +1441,7 @@ public class AsciiDocUtil {
     }
     return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
       List<VirtualFile> files =
-        new ArrayList<>(FilenameIndex.getVirtualFilesByName(ANTORA_YML, new AsciiDocSearchScope(project)));
+        new ArrayList<>(FilenameIndex.getVirtualFilesByName(project, ANTORA_YML, new AsciiDocSearchScope(project)));
       List<AntoraModule> result = new ArrayList<>();
       // sort by path proximity
       files.sort(Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
