@@ -117,6 +117,10 @@ jobs:
   verify:
     name: Verify
     needs: build
+    # verification fails due to:
+    # "value failed for JSON property pluginXmlId due to missing (therefore NULL) value for creator parameter pluginXmlId which is a non-nullable type"
+    # https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/819
+    if: 'false'
     runs-on: ubuntu-latest
     steps:
 
