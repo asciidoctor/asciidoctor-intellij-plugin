@@ -164,7 +164,7 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
       }
     };
     visitor.visitElement(psiElement);
-    while (parsedText.length() > 0 && Character.isWhitespace(parsedText.charAt(parsedText.length() - 1)) || Character.isSpaceChar(parsedText.charAt(parsedText.length() - 1))) {
+    while (parsedText.length() > 0 && (Character.isWhitespace(parsedText.charAt(parsedText.length() - 1)) || Character.isSpaceChar(parsedText.charAt(parsedText.length() - 1)))) {
       parsedText.setLength(parsedText.length() - 1);
     }
     LinkedHashSet<IntRange> finalRanges = new LinkedHashSet<>();
