@@ -2,7 +2,6 @@ buildscript {
   repositories {
     mavenCentral()
     jcenter()
-    maven { url 'https://dl.bintray.com/jetbrains/intellij-plugin-service' }
     maven { url 'https://www.jetbrains.com/intellij-repository/snapshots' }
   }
 }
@@ -16,8 +15,6 @@ plugins {
   // https://github.com/tbroyer/gradle-errorprone-plugin
   id 'net.ltgt.errorprone' version '2.0.2' apply false
 }
-
-version = System.getenv('VERSION')
 
 checkstyle {
   toolVersion '8.30'
@@ -39,9 +36,9 @@ allprojects {
 }
 
 intellij {
-  version 'IC-2021.2' // 'IC-212.4746.2-EAP-SNAPSHOT'
-  pluginName 'asciidoctor-intellij-plugin'
-  updateSinceUntilBuild false
+  version = 'IC-2021.2' // 'IC-212.4746.2-EAP-SNAPSHOT'
+  pluginName = 'asciidoctor-intellij-plugin'
+  updateSinceUntilBuild = false
   plugins = [
     'PsiViewer:212-SNAPSHOT', // used for debugging
     'PlantUML integration:5.4.0', // used to test highlighting of plantuml diagrams
@@ -63,10 +60,10 @@ asciidoctor {
 }
 
 patchPluginXml {
-  dependsOn asciidoctor
-  version version
-  changeNotes = {
-    Jsoup.parse(file('build/docs/CHANGELOG.html').getText('UTF-8'))
+  dependsOn = [ asciidoctor ]
+  version = System.getenv('VERSION')
+  changeNotes =
+    provider { Jsoup.parse(file('build/docs/CHANGELOG.html').getText('UTF-8'))
       .select("#releasenotes").get(0).nextElementSibling().children()
       .subList(0, 20)
       .stream().map { e ->
@@ -77,15 +74,8 @@ patchPluginXml {
         // regex for GitHub user names from https://github.com/shinnn/github-username-regex
         .replaceAll('(?i)@([a-z\\d](?:[a-z\\d]|-(?=[a-z\\d])){0,38})', '<a href="https://github.com/$1">@$1</a>')
     }
-      .collect().join("\n")
-  }
-  pluginDescription "${file('src/main/resources/META-INF/description.html').getText('UTF-8')}"
-}
-
-intellij {
-  // use the alternativeIdePath to specifiy for example a path to MPS
-  // at least on Windows it doesn't recognize the IDE's JBR, therefore run Gradle with the JBR runtime directly
-  // alternativeIdePath "..."
+      .collect().join("\n") }
+  pluginDescription = "${file('src/main/resources/META-INF/description.html').getText('UTF-8')}"
 }
 
 runIde {
@@ -97,13 +87,12 @@ runIde {
 }
 
 runPluginVerifier {
-  ideVersions(project.pluginVerifierIdeVersions)
+  ideVersions = Arrays.asList(project.properties['pluginVerifierIdeVersions'].toString().split(','))
 }
 
 publishPlugin {
-  username 'ahus1'
-  token System.getenv('PUBLISH_TOKEN')
-  channels 'eap'
+  token = System.getenv('PUBLISH_TOKEN')
+  channels = ['eap']
 }
 
 test {
@@ -137,7 +126,7 @@ dependencies {
   testImplementation 'junit:junit:4.13.2'
   testImplementation 'com.tngtech.archunit:archunit-junit4:0.20.1'
   testImplementation 'org.assertj:assertj-core:3.20.2'
-  testCompile 'org.mockito:mockito-core:3.11.2'
+  testImplementation 'org.mockito:mockito-core:3.11.2'
 }
 
 def genRoot = file('gen')
