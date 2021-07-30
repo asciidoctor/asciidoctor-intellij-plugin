@@ -59,9 +59,10 @@ asciidoctor {
   outputDir file('build/docs')
 }
 
+version = System.getenv('VERSION')
+
 patchPluginXml {
   dependsOn = [ asciidoctor ]
-  version = System.getenv('VERSION')
   changeNotes =
     provider { Jsoup.parse(file('build/docs/CHANGELOG.html').getText('UTF-8'))
       .select("#releasenotes").get(0).nextElementSibling().children()
