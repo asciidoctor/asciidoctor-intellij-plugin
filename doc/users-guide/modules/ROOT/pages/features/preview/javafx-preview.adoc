@@ -36,7 +36,7 @@ include::partial$javafx-preview-requires-plugin.adoc[]
 
 This is recommended for Android Studio 4.0 that includes JetBrains OpenJDK 8 as default without JavaFX support.
 
-NOTE: See xref:features/preview/jcef-preview.adoc[] for more information on Android Studio 4.2.
+NOTE: See xref:features/preview/jcef-preview.adoc[] for more information on Android Studio 4.2 or 2020.3+.
 
 * Install the plugin "`Choose Runtime`" as described in the JetBrains knowledge base "`https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Selecting the JDK version the IDE will run under^]`".
 * Choose a runtime "jbrsdk-11_0_7-...-x64-b956.14.tar.gz" or later and install it. The IDE will restart.
