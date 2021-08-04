@@ -24,13 +24,18 @@ public class ClassNameConventionsTest {
 
   @ArchTest
   public static final ArchRule CHECK_COMMONS_LANG_3 = noClasses()
-    .should().accessClassesThat().resideInAPackage("org.apache.commons.lang3")
+    .should().accessClassesThat().resideInAPackage("org.apache.commons.lang3..")
     .as("unless it is explicitly included in build.gradle, it is a IntelliJ community dependency that is not available in other IDE bundles like RubyMine");
+
+  @ArchTest
+  public static final ArchRule CHECK_SUN_COM_GLASS_CLASS = noClasses()
+    .should().accessClassesThat().resideInAPackage("com.sun.glass..")
+    .as("these classes are not publicly accessible; maybe you used the wrong class in auto-complete?");
 
   // groovy is a "deep" dependency in IntelliJ, but might not be present in other distributions
   // therefore avoid it for now
   @ArchTest
   public static final ArchRule CHECK_GROOVY_LANG = noClasses()
-    .should().accessClassesThat().resideInAPackage("groovy.lang")
+    .should().accessClassesThat().resideInAPackage("groovy.lang..")
     .as("unless it is explicitly included in build.gradle, it is a IntelliJ community dependency that is may not be available in other IDE bundles");
 }

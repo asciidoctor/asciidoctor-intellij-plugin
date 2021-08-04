@@ -6,6 +6,7 @@ import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ComponentManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -37,7 +38,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.serviceContainer.AlreadyDisposedException;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.text.CharArrayUtil;
-import com.sun.glass.ui.Application;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -1360,7 +1360,7 @@ public class AsciiDocUtil {
 
     if (otherComponentName != null && !DumbService.isDumb(project)) {
 
-      if (Application.isEventThread()) {
+      if (ApplicationManager.getApplication().isDispatchThread()) {
         return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> getOtherAntoraModuleDir(project, moduleDir,
           myModuleName,  myComponentName,  myComponentVersion, _otherComponentVersion,  _otherComponentName,  _otherModuleName),
           "Resolving Antora reference", true, project);

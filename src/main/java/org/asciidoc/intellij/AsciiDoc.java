@@ -615,6 +615,7 @@ public class AsciiDoc {
    * @deprecated use {@link #tempImagesPath(Path)} instead
    */
   @Deprecated
+  @SuppressWarnings("InlineMeSuggester")
   public static Path tempImagesPath() {
     return tempImagesPath(null);
   }
