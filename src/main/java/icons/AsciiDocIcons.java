@@ -23,14 +23,7 @@ import javax.swing.*;
 public class AsciiDocIcons {
 
   private static Icon load(String path) {
-    Icon icon;
-    try {
-      icon = IconLoader.getIcon(path, AsciiDocIcons.class);
-      icon.getIconHeight(); // NoClassDefFoundError
-    } catch (NoClassDefFoundError e) {
-      icon = null;
-    }
-    return icon;
+    return IconLoader.getIcon(path, AsciiDocIcons.class);
   }
 
   /** The AsciiDoc {@link Icon}. */
