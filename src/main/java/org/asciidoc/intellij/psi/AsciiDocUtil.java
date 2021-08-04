@@ -19,6 +19,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -1360,9 +1361,10 @@ public class AsciiDocUtil {
 
     if (otherComponentName != null && !DumbService.isDumb(project)) {
 
-      if (ApplicationManager.getApplication().isDispatchThread()) {
-        return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> getOtherAntoraModuleDir(project, moduleDir,
-          myModuleName,  myComponentName,  myComponentVersion, _otherComponentVersion,  _otherComponentName,  _otherModuleName),
+      if (ApplicationManager.getApplication().isDispatchThread() && !ApplicationManager.getApplication().isUnitTestMode()) {
+        return ProgressManager.getInstance().runProcessWithProgressSynchronously(() ->
+         ApplicationManager.getApplication().runReadAction((Computable<List<VirtualFile>>) () -> getOtherAntoraModuleDir(project, moduleDir,
+          myModuleName,  myComponentName,  myComponentVersion, _otherComponentVersion,  _otherComponentName,  _otherModuleName)),
           "Resolving Antora reference", true, project);
       }
 
