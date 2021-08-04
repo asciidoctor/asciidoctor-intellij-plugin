@@ -168,6 +168,11 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
     while (parsedText.length() > 0 && (Character.isWhitespace(parsedText.charAt(parsedText.length() - 1)) || Character.isSpaceChar(parsedText.charAt(parsedText.length() - 1)))) {
       parsedText.setLength(parsedText.length() - 1);
     }
+    int removedPrefix = 0;
+    while (parsedText.length() > 0 && (Character.isWhitespace(parsedText.charAt(0)) || Character.isSpaceChar(parsedText.charAt(0)))) {
+      removedPrefix++;
+      parsedText.deleteCharAt(0);
+    }
     LinkedHashSet<IntRange> finalRanges = new LinkedHashSet<>();
     if (!parsedText.toString().equals(charSequence.toString())) {
       LOG.error("unable to reconstruct string for grammar check", AsciiDocPsiImplUtil.getRuntimeException("didn't reconstruct string", psiElement, null,
@@ -175,13 +180,15 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
         new Attachment("actual.txt", parsedText.toString())));
     }
     for (IntRange range : ranges) {
-      if (range.getEndInclusive() >= charSequence.length()) {
+      int endInclusive = range.getEndInclusive() - removedPrefix;
+      int start = range.getStart() - removedPrefix;
+      if (endInclusive >= charSequence.length()) {
         // strip off all ranges that fell into the whitespace removed from the end
-        if (range.getStart() < charSequence.length()) {
-          finalRanges.add(createRange(range.getStart(), charSequence.length() - 1));
+        if (start < charSequence.length()) {
+          finalRanges.add(createRange(start, charSequence.length() - 1));
         }
       } else {
-        finalRanges.add(range);
+        finalRanges.add(createRange(start, endInclusive));
       }
     }
     return finalRanges;

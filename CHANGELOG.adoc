@@ -9,7 +9,8 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.33.9
 
-- avoid exceptions when initializing plugin' icons (#821)
+- avoid exceptions when initializing plugin's icons (#821)
+- additional logging to trace grammar checker problems, handling spaces at the beginning (#818)
 
 === 0.33.8
 
