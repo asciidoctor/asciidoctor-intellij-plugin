@@ -151,11 +151,8 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
           }
           PsiElement child = element.getFirstChild();
           if (child == null) {
-            // strip leading whitespace
-            if (pos != 0 || !(element instanceof PsiWhiteSpace)) {
-              pos += element.getTextLength();
-              parsedText.append(element.getText());
-            }
+            pos += element.getTextLength();
+            parsedText.append(element.getText());
           }
           while (child != null) {
             visitElement(child);
@@ -165,13 +162,21 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
       }
     };
     visitor.visitElement(psiElement);
-    while (parsedText.length() > 0 && (Character.isWhitespace(parsedText.charAt(parsedText.length() - 1)) || Character.isSpaceChar(parsedText.charAt(parsedText.length() - 1)))) {
-      parsedText.setLength(parsedText.length() - 1);
+    if (!isSpace(charSequence.charAt(charSequence.length() - 1))) {
+      // starting with 2021.2, Grazie will remove trailing spaces before calling this
+      // if we find trailing spaces in the charSequences passed here, don't strip the spaces from output content as well
+      while (parsedText.length() > 0 && isSpace(parsedText.charAt(parsedText.length() - 1))) {
+        parsedText.setLength(parsedText.length() - 1);
+      }
     }
     int removedPrefix = 0;
-    while (parsedText.length() > 0 && (Character.isWhitespace(parsedText.charAt(0)) || Character.isSpaceChar(parsedText.charAt(0)))) {
-      removedPrefix++;
-      parsedText.deleteCharAt(0);
+    if (!isSpace(charSequence.charAt(0))) {
+      // starting with 2021.2, Grazie will remove leading spaces before calling this
+      // if we find leading spaces in the charSequences passed here, don't strip the spaces from output content as well
+      while (parsedText.length() > 0 && isSpace(parsedText.charAt(0))) {
+        removedPrefix++;
+        parsedText.deleteCharAt(0);
+      }
     }
     LinkedHashSet<IntRange> finalRanges = new LinkedHashSet<>();
     if (!parsedText.toString().equals(charSequence.toString())) {
@@ -192,6 +197,10 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
       }
     }
     return finalRanges;
+  }
+
+  private boolean isSpace(char c) {
+    return Character.isWhitespace(c) || Character.isSpaceChar(c);
   }
 
   private IntRange createRange(int start, int endInclusive) {
