@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.33.10
+
+- restore API compatibility with Asciidoclet plugin (#789)
+
 === 0.33.9
 
 - avoid exceptions when initializing plugin's icons (#821)

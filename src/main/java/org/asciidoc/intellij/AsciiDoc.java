@@ -609,6 +609,15 @@ public class AsciiDoc {
     }
   }
 
+  /**
+   * Create a temporary image page. Use with folder of document parent.
+   * Keep this for a while to allow Asciidoclet plugin to update.
+   * @deprecated use {@link #tempImagesPath(Path)} instead
+   */
+  @Deprecated
+  public static Path tempImagesPath() {
+    return tempImagesPath(null);
+  }
 
   /**
    * Call this method to create in UNSAFE mode a fresh temporary folder that will be used for temporary files when running Asciidoctor, or a relative folder to the parent in any other mode.
