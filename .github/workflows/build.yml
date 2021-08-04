@@ -117,10 +117,6 @@ jobs:
   verify:
     name: Verify
     needs: build
-    # verification fails due to:
-    # "value failed for JSON property pluginXmlId due to missing (therefore NULL) value for creator parameter pluginXmlId which is a non-nullable type"
-    # https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/819
-    if: 'false'
     runs-on: ubuntu-latest
     steps:
 
@@ -174,9 +170,7 @@ jobs:
   releaseDraft:
     name: Release Draft
     if: github.event_name != 'pull_request'
-    # re-add 'verify' as a needs step once verify works again
-    # https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/819
-    needs: [build]
+    needs: [build, verify]
     runs-on: ubuntu-latest
     steps:
 
