@@ -4,6 +4,7 @@ import com.intellij.grazie.grammar.Typo;
 import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy;
 import com.intellij.grazie.grammar.strategy.impl.ReplaceCharRule;
 import com.intellij.grazie.grammar.strategy.impl.RuleGroup;
+import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -169,7 +170,9 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
     }
     LinkedHashSet<IntRange> finalRanges = new LinkedHashSet<>();
     if (!parsedText.toString().equals(charSequence.toString())) {
-      LOG.error("unable to reconstruct string for grammar check", AsciiDocPsiImplUtil.getRuntimeException("didn't reconstruct string", psiElement, null));
+      LOG.error("unable to reconstruct string for grammar check", AsciiDocPsiImplUtil.getRuntimeException("didn't reconstruct string", psiElement, null,
+        new Attachment("expected.txt", charSequence.toString()),
+        new Attachment("actual.txt", parsedText.toString())));
     }
     for (IntRange range : ranges) {
       if (range.getEndInclusive() >= charSequence.length()) {

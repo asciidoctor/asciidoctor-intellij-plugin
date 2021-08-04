@@ -11,6 +11,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class AsciiDocPsiImplUtil {
@@ -42,7 +45,7 @@ public class AsciiDocPsiImplUtil {
     };
   }
 
-  private static final  Pattern REMOVE_CONTENT = Pattern.compile("\\p{Alnum}", Pattern.UNICODE_CHARACTER_CLASS);
+  private static final Pattern REMOVE_CONTENT = Pattern.compile("\\p{Alnum}", Pattern.UNICODE_CHARACTER_CLASS);
 
   @NotNull
   public static RuntimeException getRuntimeException(@NotNull String message, @NotNull String content, RuntimeException e) {
@@ -51,12 +54,20 @@ public class AsciiDocPsiImplUtil {
   }
 
   @NotNull
-  public static RuntimeException getRuntimeException(@NotNull String message, @NotNull PsiElement element, RuntimeException e) {
+  public static RuntimeException getRuntimeException(@NotNull String message, @NotNull PsiElement element, RuntimeException e, Attachment... attachments) {
     String psiTree = DebugUtil.psiToString(element, false, true);
     // keep only structure in the attachment, clear out any text content to anonymize data
     psiTree = psiTree.replaceAll("\\('.*'\\)", "");
     String content = REMOVE_CONTENT.matcher(element.getText()).replaceAll("x");
-    return new RuntimeExceptionWithAttachments(message, e, new Attachment("psi.txt", psiTree), new Attachment("doc.adoc", content));
+    List<Attachment> list = new ArrayList<>();
+    list.add(new Attachment("psi.txt", psiTree));
+    list.add(new Attachment("doc.adoc", content));
+    for (Attachment attachment : attachments) {
+      String attachmentContent = new String(attachment.getBytes(), StandardCharsets.UTF_8);
+      attachmentContent = REMOVE_CONTENT.matcher(attachmentContent).replaceAll("x");
+      list.add(new Attachment(attachment.getName(), attachmentContent));
+    }
+    return new RuntimeExceptionWithAttachments(message, e, list.toArray(new Attachment[]{}));
   }
 
 }
