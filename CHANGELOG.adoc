@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.33.12
+
+- folding of list and callout items, plus grammar check per item instead of the whole list (#822)
+
 === 0.33.11
 
 - use IntelliJ API to determine event dispatch thread instead of using internal JDK API (#823)

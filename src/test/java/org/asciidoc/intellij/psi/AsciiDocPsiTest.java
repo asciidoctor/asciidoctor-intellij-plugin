@@ -160,7 +160,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
   public void testEnumerationFollowedByText() {
     PsiFile psiFile = configureByAsciiDoc("[square]\n* Hi\n\n* Ho\n* http://www.gmx.net\n\nText");
     PsiElement[] children = psiFile.getChildren();
-    assertEquals(4, children.length);
+    assertEquals(9, children.length);
 
     assertEquals(AsciiDocElementTypes.BLOCK, children[0].getNode().getElementType());
 
@@ -168,8 +168,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
     assertEquals("\n", children[2].getText());
 
-    assertEquals("Text", children[3].getText());
-    assertEquals(AsciiDocTokenTypes.TEXT, children[3].getNode().getElementType());
+    assertEquals("Text", children[8].getText());
+    assertEquals(AsciiDocTokenTypes.TEXT, children[8].getNode().getElementType());
   }
 
   public void testBlockAttributes() {
@@ -214,7 +214,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiFile psiFile = configureByAsciiDoc("[source]\n----\nfoo\n----\n<1> Bar\n\n.Title\n****\nFoo\n****\n");
     AsciiDocBlock[] blocks = PsiTreeUtil.getChildrenOfType(psiFile, AsciiDocBlock.class);
     assertNotNull(blocks);
-    assertEquals(2, blocks.length);
+    assertEquals(3, blocks.length);
   }
 
   public void testListingWithBlankAfterDelimiter() {
@@ -257,7 +257,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "====");
     AsciiDocBlock block = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlock.class);
     assertNotNull(block);
-    assertEquals("(Block)", block.getDescription());
+    assertEquals("Test::", block.getDescription());
     assertEquals("Test::", block.getFoldedSummary());
     block = PsiTreeUtil.getChildOfType(block, AsciiDocBlock.class);
     assertNotNull(block);
@@ -571,10 +571,12 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
   public void testXrefResolution() {
     // given...
+    @SuppressWarnings({"AsciiDocAnchorWithoutId", "AsciiDocXrefWithNaturalCrossReference"})
     PsiFile psiFile = configureByAsciiDoc("xref:A Section[]\n<<A Section>>\nxref:_a_section[]\n\n== A Section\n");
 
     // then...
     AsciiDocLink[] links = PsiTreeUtil.getChildrenOfType(psiFile, AsciiDocLink.class);
+    assertNotNull(links);
     for (AsciiDocLink link : links) {
       PsiReference[] references = link.getReferences();
       Assertions.assertThat(references).hasSize(1);

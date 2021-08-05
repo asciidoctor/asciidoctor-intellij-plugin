@@ -11,6 +11,7 @@ import icons.AsciiDocIcons;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -46,7 +47,41 @@ public class AsciiDocStandardBlock extends ASTWrapperPsiElement implements Ascii
     if (child instanceof AsciiDocBlockAttributes) {
       return "[" + getStyle() + "]";
     }
-    return child.getText();
+    if (child != null && (child.getNode().getElementType() == AsciiDocTokenTypes.ENUMERATION
+      || child.getNode().getElementType() == AsciiDocTokenTypes.BULLET
+      || child.getNode().getElementType() == AsciiDocTokenTypes.CALLOUT)) {
+      StringBuilder sb = new StringBuilder();
+      while (child != null && !child.getText().contains("\n")) {
+        sb.append(child.getText());
+        child = child.getNextSibling();
+      }
+      return sb.toString();
+    }
+    if (child != null) {
+      return child.getText();
+    } else {
+      return "???";
+    }
+  }
+
+  @Override
+  public @Nullable String getTitle() {
+    String title = AsciiDocBlock.super.getTitle();
+    if (title == null) {
+      PsiElement firstSignificantChild = getFirstSignificantChildForFolding();
+      if (firstSignificantChild == null) {
+        title = AsciiDocBlock.super.getDefaultTitle();
+      } else if (firstSignificantChild.getNode().getElementType() == AsciiDocTokenTypes.DESCRIPTION) {
+        title = getFoldedSummary();
+      } else if (firstSignificantChild.getNode().getElementType() == AsciiDocTokenTypes.ENUMERATION) {
+        title = getFoldedSummary();
+      } else if (firstSignificantChild.getNode().getElementType() == AsciiDocTokenTypes.BULLET) {
+        title = getFoldedSummary();
+      } else if (firstSignificantChild.getNode().getElementType() == AsciiDocTokenTypes.CALLOUT) {
+        title = getFoldedSummary();
+      }
+    }
+    return title;
   }
 
   @Override

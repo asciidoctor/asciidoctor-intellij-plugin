@@ -59,6 +59,7 @@ public interface AsciiDocBlock extends PsiElement, AsciiDocSelfDescribe {
     TokenType.WHITE_SPACE, LINE_COMMENT, BLOCK_COMMENT
   );
 
+  @Nullable
   default PsiElement getFirstSignificantChildForFolding() {
     PsiElement child = getFirstChild();
     while (child != null &&

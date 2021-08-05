@@ -36,6 +36,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_BODY;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ID;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BOLDITALIC;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BULLET;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.CALLOUT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.CELLSEPARATOR;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.CONTINUATION;
@@ -237,12 +238,12 @@ public class AsciiDocParserImpl {
       }
       continuation = false;
 
+      if (at(ENUMERATION) || at(BULLET) || at(DESCRIPTION) || at(CALLOUT)) {
+        startEnumerationDelimiter();
+      }
+
       if (myPreBlockMarker != null) {
-        if (at(ENUMERATION) || at(BULLET) || at(DESCRIPTION)) {
-          startEnumerationDelimiter();
-        } else {
-          startBlockNoDelimiter();
-        }
+        startBlockNoDelimiter();
       }
 
       dropPreBlock();
@@ -793,6 +794,22 @@ public class AsciiDocParserImpl {
   }
 
   private void startEnumerationDelimiter() {
+    String sign;
+    Objects.requireNonNull(myBuilder.getTokenText());
+    // retrieve the enumeration sign type, to allow closing enumerations of the same type
+    if (at(ENUMERATION)) {
+      sign = myBuilder.getTokenText().replaceAll("^([0-9]+|[a-zA-Z]?)", "");
+    } else if (at(DESCRIPTION)) {
+      sign = myBuilder.getTokenText().replaceAll(".*(:{2,4}|;;)", "\1");
+    } else if (at(CALLOUT)) {
+      sign = "callout";
+    } else {
+      sign = myBuilder.getTokenText();
+    }
+    while (myBlockMarker.stream().anyMatch(o -> o.delimiter.equals("enum_" + sign)) &&
+      myBlockMarker.peek().delimiter.startsWith("enum")) {
+      endEnumerationDelimiter();
+    }
     PsiBuilder.Marker myBlockStartMarker;
     if (myPreBlockMarker != null) {
       myBlockStartMarker = myPreBlockMarker;
@@ -800,11 +817,11 @@ public class AsciiDocParserImpl {
     } else {
       myBlockStartMarker = beginBlock();
     }
-    myBlockMarker.push(new BlockMarker("enum", myBlockStartMarker, AsciiDocElementTypes.BLOCK));
+    myBlockMarker.push(new BlockMarker("enum_" + sign, myBlockStartMarker, AsciiDocElementTypes.BLOCK));
   }
 
   private void endEnumerationDelimiter() {
-    if (myBlockMarker.size() > 0 && myBlockMarker.peek().delimiter.equals("enum")) {
+    if (myBlockMarker.size() > 0 && myBlockMarker.peek().delimiter.startsWith("enum")) {
       dropPreBlock();
       BlockMarker currentBlock = myBlockMarker.pop();
       currentBlock.marker.done(AsciiDocElementTypes.BLOCK);

@@ -182,7 +182,7 @@ class AsciiDocBlock extends AbstractBlock {
       return Spacing.createSpacing(0, 0, 1, false, 0);
     }
 
-    // before and after a block have one blank line, but not with if there is an continuation ("+")
+    // before and after a block have one blank line, but not with if there is a continuation ("+")
     if (!table && isBlock(child2) && !isContinuation(child1) && !isBlockStart(child1)) {
       return Spacing.createSpacing(0, 0, 2, false, 0);
     }
@@ -304,6 +304,14 @@ class AsciiDocBlock extends AbstractBlock {
   }
 
   private boolean isBlock(Block block) {
+    if (block.getSubBlocks().size() > 0) {
+      IElementType elementType = ((AsciiDocBlock) block.getSubBlocks().get(0)).getNode().getElementType();
+      if (elementType == AsciiDocTokenTypes.ENUMERATION || elementType == AsciiDocTokenTypes.BULLET || elementType == AsciiDocTokenTypes.DESCRIPTION || elementType == AsciiDocTokenTypes.CALLOUT) {
+        // these are all dummy blocks to help with folding and spell checking,
+        // therefore don't treat as regular block that get new lines before and after
+        return false;
+      }
+    }
     return block instanceof AsciiDocBlock &&
       (AsciiDocElementTypes.BLOCK.equals(((AsciiDocBlock) block).getNode().getElementType())
         || AsciiDocElementTypes.LISTING.equals(((AsciiDocBlock) block).getNode().getElementType()));
