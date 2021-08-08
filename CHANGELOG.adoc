@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.33.13
+
+- upgrade to AsciidoctorJ 2.5.2 (includes Asciidoctor 2.0.16)
+
 === 0.33.12
 
 - folding of list and callout items, plus grammar check per item instead of the whole list (#822)
