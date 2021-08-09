@@ -93,7 +93,7 @@ runPluginVerifier {
 
 publishPlugin {
   token = System.getenv('PUBLISH_TOKEN')
-  channels = ['eap']
+  channels = [("true" == System.getenv("PRE_RELEASE")) ? 'eap' : 'default']
 }
 
 test {
