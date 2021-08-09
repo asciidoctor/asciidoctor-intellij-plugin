@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.33.13
 
 - upgrade to AsciidoctorJ 2.5.2 (includes Asciidoctor 2.0.16)
+- handle empty string passed down for grammar check in 2021.1 (#818)
 
 === 0.33.12
 

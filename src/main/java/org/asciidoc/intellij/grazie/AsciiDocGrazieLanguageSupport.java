@@ -162,7 +162,7 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
       }
     };
     visitor.visitElement(psiElement);
-    if (!isSpace(charSequence.charAt(charSequence.length() - 1))) {
+    if (charSequence.length() > 0 && !isSpace(charSequence.charAt(charSequence.length() - 1))) {
       // starting with 2021.2, Grazie will remove trailing spaces before calling this
       // if we find trailing spaces in the charSequences passed here, don't strip the spaces from output content as well
       while (parsedText.length() > 0 && isSpace(parsedText.charAt(parsedText.length() - 1))) {
@@ -170,7 +170,7 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
       }
     }
     int removedPrefix = 0;
-    if (!isSpace(charSequence.charAt(0))) {
+    if (charSequence.length() > 0 && !isSpace(charSequence.charAt(0))) {
       // starting with 2021.2, Grazie will remove leading spaces before calling this
       // if we find leading spaces in the charSequences passed here, don't strip the spaces from output content as well
       while (parsedText.length() > 0 && isSpace(parsedText.charAt(0))) {
@@ -186,7 +186,13 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
     }
     for (IntRange range : ranges) {
       int endInclusive = range.getEndInclusive() - removedPrefix;
+      if (endInclusive < 0) {
+        continue;
+      }
       int start = range.getStart() - removedPrefix;
+      if (start < 0) {
+        start = 0;
+      }
       if (endInclusive >= charSequence.length()) {
         // strip off all ranges that fell into the whitespace removed from the end
         if (start < charSequence.length()) {
