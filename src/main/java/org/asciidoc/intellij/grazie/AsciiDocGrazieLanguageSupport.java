@@ -178,6 +178,30 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
         parsedText.deleteCharAt(0);
       }
     }
+    if (!charSequence.toString().contains("  ") && parsedText.toString().contains("  ")) {
+      // in 2021.1 IntelliJ will remove double blanks in the input string, it doesn't do that on in 2021.2 anymore
+      // therefore: remove double blanks in parsedText, and adjust the ranges after the removed char accordingly
+      while (parsedText.toString().contains("  ")) {
+        int startOfPattern = parsedText.toString().indexOf("  ");
+        parsedText.deleteCharAt(startOfPattern);
+        LinkedHashSet<IntRange> newRanges = new LinkedHashSet<>();
+        for (IntRange range : ranges) {
+          int endInclusive = range.getEndInclusive() - removedPrefix;
+          int start = range.getStart() - removedPrefix;
+          if (endInclusive >= startOfPattern) {
+            --endInclusive;
+          }
+          if (start > startOfPattern) {
+            --start;
+          }
+          if (endInclusive >= start) {
+            newRanges.add(createRange(start, endInclusive));
+          }
+        }
+        ranges.clear();
+        ranges.addAll(newRanges);
+      }
+    }
     LinkedHashSet<IntRange> finalRanges = new LinkedHashSet<>();
     if (!parsedText.toString().equals(charSequence.toString())) {
       LOG.error("unable to reconstruct string for grammar check", AsciiDocPsiImplUtil.getRuntimeException("didn't reconstruct string", psiElement, null,
