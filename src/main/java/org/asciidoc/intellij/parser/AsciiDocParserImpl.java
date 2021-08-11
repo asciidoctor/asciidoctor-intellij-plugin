@@ -182,7 +182,7 @@ public class AsciiDocParserImpl {
         }
       }
 
-      if ((at(HEADING_TOKEN) || at(HEADING_OLDSTYLE)) && myBlockMarker.size() == 0) {
+      if (at(HEADING_TOKEN) || at(HEADING_OLDSTYLE)) {
         parseHeading();
         continue;
       } else if (at(BLOCK_MACRO_ID)) {
@@ -219,7 +219,16 @@ public class AsciiDocParserImpl {
         parseBlockAttributes();
         continue;
       } else if (at(BLOCKIDSTART)) {
+        PsiBuilder.Marker myPreBlockId = myBuilder.mark();
         parseBlockId();
+        // if we're at a heading, ensure to close all previous blocks before the blockid
+        if (at(HEADING_TOKEN) || at(HEADING_OLDSTYLE)) {
+          while (!myBlockMarker.isEmpty()) {
+            PsiBuilder.Marker marker = myBlockMarker.pop().marker;
+            marker.doneBefore(AsciiDocElementTypes.BLOCK, myPreBlockId);
+          }
+        }
+        myPreBlockId.drop();
         continue;
       } else if (at(CELLSEPARATOR)) {
         parseBlock();
@@ -278,6 +287,7 @@ public class AsciiDocParserImpl {
   }
 
   private void parseHeading() {
+    closeBlocks();
     int level = headingLevel(myBuilder.getTokenText());
     closeSections(level);
     PsiBuilder.Marker marker;

@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - fix parser/lexer for section headings with inline references
 - avoid run-off lexer for attribute references in autocomplete
 - handle consecutive blanks passed down for grammar check in 2021.1 (#818)
+- close open block markers before heading starts (#825)
 
 === 0.33.13
 
