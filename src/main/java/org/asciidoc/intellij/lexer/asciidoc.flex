@@ -1728,6 +1728,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <ATTRIBUTE_REF> {
   {ATTRIBUTE_REF_END}  { yypopstate(); return AsciiDocTokenTypes.ATTRIBUTE_REF_END; }
+  "\n"                 { yypopstate(); yypushback(yylength()); }
   [^]                  { return AsciiDocTokenTypes.ATTRIBUTE_REF; }
 }
 
@@ -1754,7 +1755,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <INLINEID> {
-  ","                  { yybegin(BLOCKREFTEXT); return AsciiDocTokenTypes.SEPARATOR; }
+  ","                  { yybegin(INLINEREFTEXT); return AsciiDocTokenTypes.SEPARATOR; }
   [^]                  { return AsciiDocTokenTypes.BLOCKID; }
 }
 

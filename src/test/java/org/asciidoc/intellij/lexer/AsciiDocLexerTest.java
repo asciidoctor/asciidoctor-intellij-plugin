@@ -243,6 +243,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:HEADING_TOKEN (' Section')");
   }
 
+  public void testSectionWithBlockIdAndText() {
+    doTest("== A [[id,text]] Section",
+      "AsciiDoc:HEADING_TOKEN ('== A ')\n" +
+        "AsciiDoc:INLINEIDSTART ('[[')\n" +
+        "AsciiDoc:BLOCKID ('id')\n" +
+        "AsciiDoc:SEPARATOR (',')\n" +
+        "AsciiDoc:BLOCKREFTEXT ('text')\n" +
+        "AsciiDoc:INLINEIDEND (']]')\n" +
+        "AsciiDoc:HEADING_TOKEN (' Section')");
+  }
+
   public void testHeaderIfDef() {
     doTest("= Abc\nifdef::hi[]\nxx\nendif::[]",
       "AsciiDoc:HEADING_TOKEN ('= Abc')\n" +
