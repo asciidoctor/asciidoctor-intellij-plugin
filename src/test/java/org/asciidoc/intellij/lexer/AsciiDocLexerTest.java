@@ -2050,6 +2050,11 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('description')");
   }
 
+  public void testCommentForDescription() {
+    doTest("// a property:: description",
+      "AsciiDoc:LINE_COMMENT ('// a property:: description')");
+  }
+
   public void testDescriptionLong() {
     doTest("A:: B\nC::: D",
       "AsciiDoc:DESCRIPTION ('A::')\n" +

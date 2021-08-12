@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.33.15
+
+- line comment with two colons will no longer be highlighted as a definition list in the editor (#822)
+
 === 0.33.14
 
 - fix parser/lexer for section headings with inline references

@@ -600,6 +600,17 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         resetFormatting(); yybegin(INSIDE_LINE); return AsciiDocTokenTypes.ENUMERATION;
       }
   {DESCRIPTION} / {SPACE}+ {STRING} {
+        // this pattern is more gready than the line comment pattern. Double-check if this is a line comment.
+        if (yytext().toString().startsWith("//") && (yylength() <= 2 || yytext().charAt(2) != '/')) {
+          yypushback(yylength() - 2);
+          // the line comment might be stopped while reading a comment within a table up until the cell separator
+          if (tableChar != 0) {
+            zzEndReadL = limitLookahead(zzCurrentPosL);
+          }
+          yypushstate();
+          yybegin(LINECOMMENT);
+          return AsciiDocTokenTypes.LINE_COMMENT;
+        }
         String delimiter = "nodel-list-desc-";
         int end = getTokenEnd();
         char c = zzBuffer.charAt(end-1);
@@ -615,6 +626,17 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         resetFormatting(); yybegin(INSIDE_LINE); yypushstate(); yybegin(DESCRIPTION); yypushback(yylength());
       }
   {DESCRIPTION} / {SPACE}* "\n" {
+        // this pattern is more gready than the line comment pattern. Double-check if this is a line comment.
+        if (yytext().toString().startsWith("//") && (yylength() <= 2 || yytext().charAt(2) != '/')) {
+          yypushback(yylength() - 2);
+          // the line comment might be stopped while reading a comment within a table up until the cell separator
+          if (tableChar != 0) {
+            zzEndReadL = limitLookahead(zzCurrentPosL);
+          }
+          yypushstate();
+          yybegin(LINECOMMENT);
+          return AsciiDocTokenTypes.LINE_COMMENT;
+        }
         String delimiter = "nodel-list-desc-";
         int end = getTokenEnd();
         char c = zzBuffer.charAt(end-1);
