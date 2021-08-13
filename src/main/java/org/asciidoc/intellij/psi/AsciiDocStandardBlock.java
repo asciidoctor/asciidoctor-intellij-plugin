@@ -46,21 +46,21 @@ public class AsciiDocStandardBlock extends ASTWrapperPsiElement implements Ascii
     PsiElement child = getFirstSignificantChildForFolding();
     if (child instanceof AsciiDocBlockAttributes) {
       return "[" + getStyle() + "]";
-    }
-    if (child != null && (child.getNode().getElementType() == AsciiDocTokenTypes.ENUMERATION
+    } else if (child == null) {
+      return "???";
+    } else if (child.getNode().getElementType() == AsciiDocTokenTypes.ENUMERATION
       || child.getNode().getElementType() == AsciiDocTokenTypes.BULLET
-      || child.getNode().getElementType() == AsciiDocTokenTypes.CALLOUT)) {
+      || child.getNode().getElementType() == AsciiDocTokenTypes.CALLOUT) {
       StringBuilder sb = new StringBuilder();
       while (child != null && !child.getText().contains("\n")) {
         sb.append(child.getText());
         child = child.getNextSibling();
       }
       return sb.toString();
-    }
-    if (child != null) {
-      return child.getText();
+    } else if (child instanceof AsciiDocBlock) {
+      return ((AsciiDocBlock) child).getFoldedSummary();
     } else {
-      return "???";
+      return child.getText();
     }
   }
 

@@ -306,7 +306,7 @@ class AsciiDocBlock extends AbstractBlock {
   private boolean isBlock(Block block) {
     if (block.getSubBlocks().size() > 0) {
       IElementType elementType = ((AsciiDocBlock) block.getSubBlocks().get(0)).getNode().getElementType();
-      if (elementType == AsciiDocTokenTypes.ENUMERATION || elementType == AsciiDocTokenTypes.BULLET || elementType == AsciiDocTokenTypes.DESCRIPTION || elementType == AsciiDocTokenTypes.CALLOUT) {
+      if (elementType == AsciiDocTokenTypes.ENUMERATION || elementType == AsciiDocTokenTypes.BULLET || elementType == AsciiDocTokenTypes.DESCRIPTION || elementType == AsciiDocTokenTypes.DESCRIPTION_END || elementType == AsciiDocTokenTypes.CALLOUT) {
         // these are all dummy blocks to help with folding and spell checking,
         // therefore don't treat as regular block that get new lines before and after
         return false;
@@ -399,6 +399,7 @@ class AsciiDocBlock extends AbstractBlock {
     if (myNode.getElementType() == AsciiDocTokenTypes.ENUMERATION
       || myNode.getElementType() == AsciiDocTokenTypes.BULLET
       || myNode.getElementType() == AsciiDocTokenTypes.DESCRIPTION
+      || myNode.getElementType() == AsciiDocTokenTypes.DESCRIPTION_END
       || myNode.getElementType() == AsciiDocElementTypes.LINK
       || myNode.getElementType() == AsciiDocElementTypes.ATTRIBUTE_REF) {
       return Indent.getAbsoluteNoneIndent();

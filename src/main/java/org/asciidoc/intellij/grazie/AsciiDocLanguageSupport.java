@@ -58,6 +58,7 @@ public class AsciiDocLanguageSupport {
     AsciiDocElementTypes.SECTION,
     AsciiDocElementTypes.TITLE,
     AsciiDocElementTypes.BLOCK,
+    AsciiDocElementTypes.DESCRIPTION_ITEM,
     AsciiDocElementTypes.CELL,
     AsciiDocElementTypes.HEADING
   );
@@ -95,6 +96,7 @@ public class AsciiDocLanguageSupport {
     AsciiDocTokenTypes.MONO,
     AsciiDocTokenTypes.MONOBOLD,
     AsciiDocTokenTypes.DESCRIPTION,
+    AsciiDocTokenTypes.DESCRIPTION_END, // for now, keep this as text until it is split into its own root element
     AsciiDocTokenTypes.MACROTEXT,
     AsciiDocTokenTypes.BLOCKREFTEXT,
     AsciiDocTokenTypes.REFTEXT,

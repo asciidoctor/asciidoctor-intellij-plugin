@@ -604,7 +604,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:LBRACKET ('[')\n" +
         "AsciiDoc:DESCRIPTION ('nolink')\n" +
         "AsciiDoc:RBRACKET (']')\n" +
-        "AsciiDoc:DESCRIPTION ('::')\n" +
+        "AsciiDoc:DESCRIPTION_END ('::')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('Term')");
   }
@@ -2045,7 +2045,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("a property:: description",
       "AsciiDoc:DESCRIPTION ('a')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:DESCRIPTION ('property::')\n" +
+        "AsciiDoc:DESCRIPTION ('property')\n" +
+        "AsciiDoc:DESCRIPTION_END ('::')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('description')");
   }
@@ -2057,11 +2058,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testDescriptionLong() {
     doTest("A:: B\nC::: D",
-      "AsciiDoc:DESCRIPTION ('A::')\n" +
+      "AsciiDoc:DESCRIPTION ('A')\n" +
+        "AsciiDoc:DESCRIPTION_END ('::')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('B')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:DESCRIPTION ('C:::')\n" +
+        "AsciiDoc:DESCRIPTION ('C')\n" +
+        "AsciiDoc:DESCRIPTION_END (':::')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('D')");
   }
@@ -2072,7 +2075,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "----\n" +
         "----\n" +
         "== Hi",
-      "AsciiDoc:DESCRIPTION ('X::')\n" +
+      "AsciiDoc:DESCRIPTION ('X')\n" +
+        "AsciiDoc:DESCRIPTION_END ('::')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('Y')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -2093,7 +2097,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "====\n" +
         "====\n" +
         "== Hi",
-      "AsciiDoc:DESCRIPTION ('X::')\n" +
+      "AsciiDoc:DESCRIPTION ('X')\n" +
+        "AsciiDoc:DESCRIPTION_END ('::')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('Y')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -2123,7 +2128,8 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("a property::ext:: description",
       "AsciiDoc:DESCRIPTION ('a')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:DESCRIPTION ('property::ext::')\n" +
+        "AsciiDoc:DESCRIPTION ('property::ext')\n" +
+        "AsciiDoc:DESCRIPTION_END ('::')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('description')");
   }
@@ -2133,7 +2139,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:MONO_START ('`')\n" +
         "AsciiDoc:DESCRIPTION ('property')\n" +
         "AsciiDoc:MONO_END ('`')\n" +
-        "AsciiDoc:DESCRIPTION ('::')\n" +
+        "AsciiDoc:DESCRIPTION_END ('::')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('description')");
   }
@@ -2145,7 +2151,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
         "AsciiDoc:MACROTEXT ('Example')\n" +
         "AsciiDoc:INLINE_ATTRS_END (']')\n" +
-        "AsciiDoc:DESCRIPTION ('::')\n" +
+        "AsciiDoc:DESCRIPTION_END ('::')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('description')");
   }
@@ -2155,7 +2161,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:ATTRIBUTE_REF_START ('{')\n" +
         "AsciiDoc:ATTRIBUTE_REF ('attr')\n" +
         "AsciiDoc:ATTRIBUTE_REF_END ('}')\n" +
-        "AsciiDoc:DESCRIPTION ('::')\n" +
+        "AsciiDoc:DESCRIPTION_END ('::')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('description')");
   }

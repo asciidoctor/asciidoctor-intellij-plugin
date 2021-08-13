@@ -12,6 +12,7 @@ public interface AsciiDocTokenTypes {
   IElementType BULLET = new AsciiDocElementType("BULLET");
   IElementType ENUMERATION = new AsciiDocElementType("ENUMERATION");
   IElementType DESCRIPTION = new AsciiDocElementType("DESCRIPTION");
+  IElementType DESCRIPTION_END = new AsciiDocElementType("DESCRIPTION_END");
   IElementType ADMONITION = new AsciiDocElementType("ADMONITION");
   IElementType CALLOUT = new AsciiDocElementType("CALLOUT");
   IElementType LINE_BREAK = new AsciiDocElementType("LINE_BREAK");

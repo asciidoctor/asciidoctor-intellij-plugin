@@ -21,6 +21,7 @@ public interface AsciiDocElementTypes {
   IElementType BLOCK_MACRO = new AsciiDocElementType("BLOCK_MACRO");
   IElementType INLINE_MACRO = new AsciiDocElementType("INLINE_MACRO");
   IElementType BLOCK = new AsciiDocElementType("BLOCK");
+  IElementType DESCRIPTION_ITEM = new AsciiDocElementType("DESCRIPTION_ITEM");
   IElementType CELL = new AsciiDocCellType("CELL");
   IElementType BLOCK_ATTRIBUTES = new AsciiDocElementType("BLOCK_ATTRIBUTES");
   IElementType ATTRIBUTE_IN_BRACKETS = new AsciiDocElementType("ATTRIBUTE_IN_BRACKETS");

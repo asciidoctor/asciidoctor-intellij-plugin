@@ -254,11 +254,15 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "[NOTE]\n" +
       "====\n" +
       "Note\n" +
-      "====");
+      "====\n");
     AsciiDocBlock block = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlock.class);
     assertNotNull(block);
-    assertEquals("Test::", block.getDescription());
-    assertEquals("Test::", block.getFoldedSummary());
+    assertEquals("(Block)", block.getDescription());
+    assertEquals("Test", block.getFoldedSummary());
+    block = PsiTreeUtil.getChildOfType(block, AsciiDocBlock.class);
+    assertNotNull(block);
+    assertEquals("Test", block.getDescription());
+    assertEquals("Test", block.getFoldedSummary());
     block = PsiTreeUtil.getChildOfType(block, AsciiDocBlock.class);
     assertNotNull(block);
     assertEquals("[NOTE]", block.getDescription());

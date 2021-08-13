@@ -25,6 +25,7 @@ public class AsciiDocFilterLexer extends BaseFilterLexer {
     AsciiDocTokenTypes.RPAREN,
     AsciiDocTokenTypes.LBRACKET,
     AsciiDocTokenTypes.RBRACKET,
+    AsciiDocTokenTypes.DESCRIPTION_END,
     AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER,
     AsciiDocTokenTypes.BLOCK_DELIMITER,
     AsciiDocTokenTypes.EMPTY_LINE,
