@@ -286,6 +286,15 @@ public class AsciiDocParserImpl {
 
   private void parseHeading() {
     int level = headingLevel(myBuilder.getTokenText());
+    // if we're at a heading, ensure to close all previous blocks before closing sections
+    while (!myBlockMarker.isEmpty()) {
+      if (myPreBlockMarker != null) {
+        closeBlockMarker(myPreBlockMarker);
+      } else {
+        closeBlockMarker();
+      }
+    }
+    // the following needs myPreBlockMarker to be set, therfore execute it before resetting myPreBlockMarker
     closeSections(level);
     PsiBuilder.Marker marker;
     if (myPreBlockMarker != null) {
@@ -293,10 +302,6 @@ public class AsciiDocParserImpl {
       myPreBlockMarker = null;
     } else {
       marker = myBuilder.mark();
-    }
-    // if we're at a heading, ensure to close all previous blocks before
-    while (!myBlockMarker.isEmpty()) {
-      closeBlockMarker(marker);
     }
     SectionMarker newMarker = new SectionMarker(level, marker);
     mySectionStack.push(newMarker);

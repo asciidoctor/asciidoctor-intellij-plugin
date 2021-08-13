@@ -29,7 +29,7 @@ public class AsciiDocHeadingStyleInspection extends AsciiDocInspectionBase {
     return new AsciiDocVisitor() {
       @Override
       public void visitElement(PsiElement o) {
-        if (o instanceof AsciiDocHeading) {
+        if (o instanceof AsciiDocHeading && o.getNode().getFirstChildNode() != null) {
           if (o.getNode().getFirstChildNode().getElementType() == HEADING_TOKEN) {
             if (o.getNode().getText().startsWith("#")) {
               LocalQuickFix[] fixes = new LocalQuickFix[]{MARKDOWN_HEADING_QUICKFIX};
