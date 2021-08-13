@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.33.15
 
 - line comment with two colons will no longer be highlighted as a definition list in the editor (#822)
+- log additional information and prevent parsing from failing completely when a heading doesn't contain any test (#826)
 
 === 0.33.14
 

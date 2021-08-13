@@ -9,21 +9,24 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.tree.TokenSet;
+import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.parser.AsciiDocParserImpl;
 import org.jetbrains.annotations.NotNull;
 
 public class AsciiDocHeading extends ASTWrapperPsiElement {
+  private static final com.intellij.openapi.diagnostic.Logger LOG =
+    com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDoc.class);
+
   private static final TokenSet HEADINGS = TokenSet.create(AsciiDocTokenTypes.HEADING_TOKEN, AsciiDocTokenTypes.HEADING_OLDSTYLE);
 
   public AsciiDocHeading(@NotNull ASTNode node) {
     super(node);
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     return ReferenceProvidersRegistry.getReferencesFromProviders(this);
   }
 
@@ -61,12 +64,16 @@ public class AsciiDocHeading extends ASTWrapperPsiElement {
     if (hasAttribute && substitution) {
       try {
         String resolved = AsciiDocUtil.resolveAttributes(this, sb.toString());
-        if (resolved != null) {
+        if (resolved != null && resolved.length() > 0) {
           sb.replace(0, sb.length(), resolved);
         }
       } catch (IndexNotReadyException ex) {
         // noop
       }
+    }
+    if (sb.length() == 0) {
+      LOG.error("unable to extract heading text", AsciiDocPsiImplUtil.getRuntimeException("unable to extract heading text", this.getParent(), null));
+      return "???";
     }
     return trimHeading(sb.toString());
   }
