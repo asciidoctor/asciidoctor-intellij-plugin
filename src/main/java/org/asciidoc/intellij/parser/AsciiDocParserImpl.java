@@ -168,9 +168,6 @@ public class AsciiDocParserImpl {
       if (emptyLines > 0) {
         endBlockNoDelimiter();
       }
-      if ((at(HEADING_TOKEN) || at(HEADING_OLDSTYLE))) {
-        endEnumerationDelimiter();
-      }
       if (emptyLines > 0 && !at(ENUMERATION) && !at(BULLET) && !at(DESCRIPTION) && !at(CONTINUATION)) {
         endEnumerationDelimiter();
       }
@@ -223,15 +220,7 @@ public class AsciiDocParserImpl {
         parseBlockAttributes();
         continue;
       } else if (at(BLOCKIDSTART)) {
-        PsiBuilder.Marker myPreBlockId = myBuilder.mark();
         parseBlockId();
-        // if we're at a heading, ensure to close all previous blocks before the blockid
-        if (at(HEADING_TOKEN) || at(HEADING_OLDSTYLE)) {
-          while (!myBlockMarker.isEmpty()) {
-            closeBlockMarker(myPreBlockId);
-          }
-        }
-        myPreBlockId.drop();
         continue;
       } else if (at(CELLSEPARATOR)) {
         parseBlock();
@@ -259,8 +248,6 @@ public class AsciiDocParserImpl {
       } else if (myPreBlockMarker != null && myBuilder.rawLookup(((PsiBuilderImpl.ProductionMarker) myPreBlockMarker).getStartIndex() - myBuilder.rawTokenIndex()) != DESCRIPTION) {
         startBlockNoDelimiter();
       }
-
-      dropPreBlock();
 
       if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
         parseUrl();
@@ -298,7 +285,6 @@ public class AsciiDocParserImpl {
 
 
   private void parseHeading() {
-    closeBlocks();
     int level = headingLevel(myBuilder.getTokenText());
     closeSections(level);
     PsiBuilder.Marker marker;
@@ -307,6 +293,10 @@ public class AsciiDocParserImpl {
       myPreBlockMarker = null;
     } else {
       marker = myBuilder.mark();
+    }
+    // if we're at a heading, ensure to close all previous blocks before
+    while (!myBlockMarker.isEmpty()) {
+      closeBlockMarker(marker);
     }
     SectionMarker newMarker = new SectionMarker(level, marker);
     mySectionStack.push(newMarker);
@@ -849,8 +839,11 @@ public class AsciiDocParserImpl {
 
   private void endEnumerationDelimiter() {
     if (myBlockMarker.size() > 0 && myBlockMarker.peek().delimiter.startsWith("enum")) {
-      dropPreBlock();
-      closeBlockMarker();
+      if (myPreBlockMarker != null) {
+        closeBlockMarker(myPreBlockMarker);
+      } else {
+        closeBlockMarker();
+      }
     }
   }
 

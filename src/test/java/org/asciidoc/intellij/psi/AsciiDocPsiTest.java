@@ -19,6 +19,7 @@ import com.intellij.spellchecker.tokenizer.Tokenizer;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.asciidoc.intellij.AsciiDocSpellcheckingStrategy;
 import org.asciidoc.intellij.file.AsciiDocFileType;
+import org.asciidoc.intellij.grazie.AsciiDocGrazieLanguageSupport;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.assertj.core.api.Assertions;
@@ -256,10 +257,6 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "Note\n" +
       "====\n");
     AsciiDocBlock block = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlock.class);
-    assertNotNull(block);
-    assertEquals("(Block)", block.getDescription());
-    assertEquals("Test", block.getFoldedSummary());
-    block = PsiTreeUtil.getChildOfType(block, AsciiDocBlock.class);
     assertNotNull(block);
     assertEquals("Test", block.getDescription());
     assertEquals("Test", block.getFoldedSummary());
@@ -549,6 +546,15 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "Something quoted"
     );
 
+  }
+
+  public void testGrammarStringWithStrippedBlanks() {
+    // given...
+    PsiFile psiFile = configureByAsciiDoc("* this  test\n");
+
+    // then...
+    // ... IntelliJ 2021.1 will have removed the double blanks before and our code needs to reconstruct the same content.
+    new AsciiDocGrazieLanguageSupport().getStealthyRanges(psiFile.getFirstChild(), "this test");
   }
 
   public void testNestedAttribute() {

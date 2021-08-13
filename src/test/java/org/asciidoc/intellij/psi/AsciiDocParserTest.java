@@ -44,6 +44,10 @@ public class AsciiDocParserTest extends ParsingTestCase {
     doTest(true);
   }
 
+  public void testAutoClosingBlocksAtSections() {
+    doTest(true);
+  }
+
   public void testListingWithCodeBlock() {
     doTest(true);
   }

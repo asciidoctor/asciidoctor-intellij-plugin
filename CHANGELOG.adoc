@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - line comment with two colons will no longer be highlighted as a definition list in the editor (#822)
 - log additional information and prevent parsing from failing completely when a heading doesn't contain any test (#826)
 - improved parsing for definition lists resulting in better folding and structure view when definition contains multiple words (#822)
+- rework to prevent unbalanced markers at beginning of a heading (#822)
 
 === 0.33.14
 
