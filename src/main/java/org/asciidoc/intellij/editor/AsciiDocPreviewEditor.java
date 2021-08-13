@@ -482,7 +482,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     PsiDocumentManager pm = PsiDocumentManager.getInstance(project);
     if (pm != null) {
       PsiFile psiFile = pm.getPsiFile(document);
-      if (psiFile != null) {
+      if (psiFile != null && psiFile.isValid()) {
         DaemonCodeAnalyzer.getInstance(project).restart(psiFile);
       }
     }

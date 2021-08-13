@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - log additional information and prevent parsing from failing completely when a heading doesn't contain any test (#826)
 - improved parsing for definition lists resulting in better folding and structure view when definition contains multiple words (#822)
 - rework to prevent unbalanced markers at beginning of a heading (#822)
+- prevent PsiInvalidElementAccessException when switching document (#827)
 
 === 0.33.14
 
