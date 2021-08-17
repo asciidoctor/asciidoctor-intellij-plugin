@@ -17,6 +17,7 @@ import com.intellij.spellchecker.inspections.Splitter;
 import com.intellij.spellchecker.tokenizer.TokenConsumer;
 import com.intellij.spellchecker.tokenizer.Tokenizer;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import kotlin.ranges.IntRange;
 import org.asciidoc.intellij.AsciiDocSpellcheckingStrategy;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.grazie.AsciiDocGrazieLanguageSupport;
@@ -33,6 +34,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -554,7 +556,32 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
     // then...
     // ... IntelliJ 2021.1 will have removed the double blanks before and our code needs to reconstruct the same content.
-    new AsciiDocGrazieLanguageSupport().getStealthyRanges(psiFile.getFirstChild(), "this test");
+    LinkedHashSet<IntRange> ranges = new AsciiDocGrazieLanguageSupport().getStealthyRanges(psiFile.getFirstChild(), "this test");
+    Assertions.assertThat(ranges).isEmpty();
+  }
+
+  public void testGrammarStringWithOnlySomeStrippedBlanks() {
+    // given...
+    PsiFile psiFile = configureByAsciiDoc("* this link:https://www.gmx.net[]  test\n");
+
+    // then...
+    // ... IntelliJ 2022.1 will have removed the double blanks, but after absorbing some elements there might still be two blanks here
+    String result = "this  test";
+    LinkedHashSet<IntRange> ranges = new AsciiDocGrazieLanguageSupport().getStealthyRanges(psiFile.getFirstChild(), result);
+    Assertions.assertThat(ranges).isEmpty();
+  }
+
+  public void testGrammarStringStripBlanks() {
+    // given...
+    PsiFile psiFile = configureByAsciiDoc("== Heading\n\nthis  test\n\n");
+
+    // then...
+    // ... IntelliJ 2021.2 will trim beginning and end blanks, and the grammar part should trim the spaces
+    String result = "this  test";
+    LinkedHashSet<IntRange> ranges = new AsciiDocGrazieLanguageSupport().getStealthyRanges(psiFile.getFirstChild(), result);
+    Assertions.assertThat(ranges).hasSize(1);
+    IntRange firstRange = ranges.stream().findFirst().orElseThrow();
+    Assertions.assertThat(result.substring(firstRange.getStart(), firstRange.getEndInclusive() + 1)).isEqualTo(" ");
   }
 
   public void testNestedAttribute() {

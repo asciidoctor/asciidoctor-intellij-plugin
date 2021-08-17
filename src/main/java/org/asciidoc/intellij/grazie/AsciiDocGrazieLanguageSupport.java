@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
 
@@ -94,7 +95,7 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
 
   @NotNull
   @Override
-  public LinkedHashSet<IntRange> getStealthyRanges(@NotNull PsiElement psiElement, @NotNull CharSequence charSequence) {
+  public LinkedHashSet<IntRange> getStealthyRanges(@NotNull PsiElement psiElement, @NotNull CharSequence parentText) {
     LinkedHashSet<IntRange> ranges = new LinkedHashSet<>();
     StringBuilder parsedText = new StringBuilder();
     AsciiDocVisitor visitor = new AsciiDocVisitor() {
@@ -112,7 +113,7 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
           }
           if (element instanceof PsiWhiteSpace && element.getTextLength() > 1 && element.getText().matches(" *")) {
             // AsciiDoc will eat extra spaces when rendering. Let's do the same here.
-            ranges.add(createRange(pos, pos + element.getTextLength() - 2));
+            ranges.add(createRange(pos + 1, pos + element.getTextLength() - 1));
           }
           if ((element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION
             || element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION_LEGACY)
@@ -162,7 +163,7 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
       }
     };
     visitor.visitElement(psiElement);
-    if (charSequence.length() > 0 && !isSpace(charSequence.charAt(charSequence.length() - 1))) {
+    if (parentText.length() > 0 && !isSpace(parentText.charAt(parentText.length() - 1))) {
       // starting with 2021.2, Grazie will remove trailing spaces before calling this
       // if we find trailing spaces in the charSequences passed here, don't strip the spaces from output content as well
       while (parsedText.length() > 0 && isSpace(parsedText.charAt(parsedText.length() - 1))) {
@@ -170,7 +171,7 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
       }
     }
     int removedPrefix = 0;
-    if (charSequence.length() > 0 && !isSpace(charSequence.charAt(0))) {
+    if (parentText.length() > 0 && !isSpace(parentText.charAt(0))) {
       // starting with 2021.2, Grazie will remove leading spaces before calling this
       // if we find leading spaces in the charSequences passed here, don't strip the spaces from output content as well
       while (parsedText.length() > 0 && isSpace(parsedText.charAt(0))) {
@@ -178,34 +179,11 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
         parsedText.deleteCharAt(0);
       }
     }
-    if (!charSequence.toString().contains("  ") && parsedText.toString().contains("  ")) {
-      // in 2021.1 IntelliJ will remove double blanks in the input string, it doesn't do that on in 2021.2 anymore
-      // therefore: remove double blanks in parsedText, and adjust the ranges after the removed char accordingly
-      while (parsedText.toString().contains("  ")) {
-        int startOfPattern = parsedText.toString().indexOf("  ");
-        parsedText.deleteCharAt(startOfPattern);
-        LinkedHashSet<IntRange> newRanges = new LinkedHashSet<>();
-        for (IntRange range : ranges) {
-          int endInclusive = range.getEndInclusive() - removedPrefix;
-          int start = range.getStart() - removedPrefix;
-          if (endInclusive >= startOfPattern) {
-            --endInclusive;
-          }
-          if (start > startOfPattern) {
-            --start;
-          }
-          if (endInclusive >= start) {
-            newRanges.add(createRange(start, endInclusive));
-          }
-        }
-        ranges.clear();
-        ranges.addAll(newRanges);
-      }
-    }
+    adjustPasedTextForOldIntelliJ(parentText, ranges, parsedText, removedPrefix);
     LinkedHashSet<IntRange> finalRanges = new LinkedHashSet<>();
-    if (!parsedText.toString().equals(charSequence.toString())) {
+    if (!parsedText.toString().equals(parentText.toString())) {
       LOG.error("unable to reconstruct string for grammar check", AsciiDocPsiImplUtil.getRuntimeException("didn't reconstruct string", psiElement, null,
-        new Attachment("expected.txt", charSequence.toString()),
+        new Attachment("expected.txt", parentText.toString()),
         new Attachment("actual.txt", parsedText.toString())));
     }
     for (IntRange range : ranges) {
@@ -217,16 +195,65 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
       if (start < 0) {
         start = 0;
       }
-      if (endInclusive >= charSequence.length()) {
+      if (endInclusive >= parentText.length()) {
         // strip off all ranges that fell into the whitespace removed from the end
-        if (start < charSequence.length()) {
-          finalRanges.add(createRange(start, charSequence.length() - 1));
+        if (start < parentText.length()) {
+          finalRanges.add(createRange(start, parentText.length() - 1));
         }
       } else {
         finalRanges.add(createRange(start, endInclusive));
       }
     }
     return finalRanges;
+  }
+
+  private void adjustPasedTextForOldIntelliJ(@NotNull CharSequence parentText, LinkedHashSet<IntRange> ranges, StringBuilder parsedText, int removedPrefix) {
+    if (parentText.length() < parsedText.length() && parsedText.toString().contains("  ")) {
+      // in 2021.1 IntelliJ will remove some double blanks in the input string, it doesn't do that on in 2021.2 anymore.
+      // around absorbed elements, there might still be two blanks, this algorithm will keep these.
+      // therefore: remove double surplus in parsedText, and adjust the ranges after the removed char accordingly.
+      StringTokenizer parentTextTokenizer = new StringTokenizer(parentText.toString(), " ", true);
+      StringTokenizer parsedTextTokenizer = new StringTokenizer(parsedText.toString(), " ", true);
+      StringBuilder newParsedText = new StringBuilder();
+      int myOldPos = 0;
+      while (parsedTextTokenizer.hasMoreTokens()) {
+        String parentTextToken;
+        if (parentTextTokenizer.hasMoreTokens()) {
+          parentTextToken = parentTextTokenizer.nextToken();
+        } else {
+          parentTextToken = "";
+        }
+
+        String parsedTextToken = parsedTextTokenizer.nextToken();
+        while (" ".equals(parsedTextToken) && !" ".equals(parentTextToken) && parsedTextTokenizer.hasMoreTokens()) {
+          // we found a blank that was removed in the parentTextTokenizer string, and is still present in my string.
+          // adjust the ranges after this accordingly, and then skip this blank.
+          LinkedHashSet<IntRange> newRanges = new LinkedHashSet<>();
+          for (IntRange range : ranges) {
+            int endInclusive = range.getEndInclusive() - removedPrefix;
+            int start = range.getStart() - removedPrefix;
+            if (endInclusive >= myOldPos) {
+              --endInclusive;
+            }
+            if (start > myOldPos) {
+              --start;
+            }
+            if (endInclusive >= start) {
+              newRanges.add(createRange(start + removedPrefix, endInclusive + removedPrefix));
+            }
+          }
+          ranges.clear();
+          ranges.addAll(newRanges);
+
+          myOldPos += parsedTextToken.length();
+          parsedTextToken = parsedTextTokenizer.nextToken();
+        }
+        myOldPos += parsedTextToken.length();
+        newParsedText.append(parsedTextToken);
+      }
+      parsedText.setLength(0);
+      parsedText.append(newParsedText);
+    }
   }
 
   private boolean isSpace(char c) {
