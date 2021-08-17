@@ -4,17 +4,31 @@
 
 == Publishing a preview version
 
-. Update _CHANGELOG.adoc_ with the latest changes for the release
+. Update _CHANGELOG.adoc_ with the latest changes for the release.
+The first section heading after the heading "`Release Notes`" will be the version number of the release.
 . Push all changes to GitHub and wait for the build to complete. +
-GitHub actions create https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases[a draft release].
+GitHub actions creates https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases[a draft release].
 The plugin is attached as `asciidoctor-intellij-plugin-xx.xx.xx.zip`.
-. Publish the draft release in the GitHub Web UI. +
-The plugin will be available from the https://plugins.jetbrains.com/plugin/7391-asciidoc/versions[EAP (early access program) repository].
+You can download this file and install manually in your local IDE as described in xref:user/installing-a-preview-release.adoc[].
+. Edit the draft release.
+. You must not change the tag version, as it is already baked into the change log.
+. Add a meaningful headline for the release.
+. If you find typos in the long description for the release, fix them in the changelog and wait for the build to update the draft release.
+. The long description supports Markdown, while the changelog is written in AsciiDoc.
+You might need to convert the syntax to make the content appear correctly in Markdown.
+. Check the box "`This is a pre-release`".
+. Publish the draft release in the GitHub Web UI+ The plugin will be available from the https://plugins.jetbrains.com/plugin/7391-asciidoc/versions[EAP (early access program) repository].
 See _xref::user/add-eap-repository-to-ide.adoc[]_ for more information.
 
 == Publishing a stable version
 
-. Edit the _CHANGELOG.adoc_ and remove the "`(preview ...)`" additions here
-. Copy the link of the `asciidoctor-intellij-plugin-xx.xx.xx.zip` on GitHub releases to the clipboard
-. Go to the https://plugins.jetbrains.com/plugin/edit?pluginId=7391[JetBrains plugin repository] and upload the plugin to the stable repository using '`Get file from URL`'
+. Go to https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases[GitHub releases for this plugin]
+. Edit the pre-release and un-check the checkbox "`This is a pre-release`". +
+A GitHub action will then publish the release.
+You don't need to wait for the publish process of the preview version to complete to be able to trigger publishing a stable version.
+. Due to caching in the JetBrains marketplace and the IDE it might take some time (minutes to hours) for the IDE to pick up the new version.
 
+[NOTE]
+====
+Every release must be published as a pre-release first, as users subscribed to the EAP channel will otherwise not receive this update.
+====
