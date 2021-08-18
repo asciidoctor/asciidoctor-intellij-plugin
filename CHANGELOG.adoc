@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.33.18
+
+- improved handling of blanks for IntelliJ 2021.1.x grammar check further (#818)
+
 === 0.33.17
 
 - improved handling of blanks for IntelliJ 2021.1.x grammar check (#818)

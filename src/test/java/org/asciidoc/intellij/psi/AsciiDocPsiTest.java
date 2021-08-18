@@ -571,6 +571,17 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     Assertions.assertThat(ranges).isEmpty();
   }
 
+  public void testGrammarStringWithStrippedBlanksBeforeInterpunctationMarks() {
+    // given...
+    PsiFile psiFile = configureByAsciiDoc("* this : test\n");
+
+    // then...
+    // ... IntelliJ 2022.1 might remove blanks before interpunctation marks
+    String result = "this: test";
+    LinkedHashSet<IntRange> ranges = new AsciiDocGrazieLanguageSupport().getStealthyRanges(psiFile.getFirstChild(), result);
+    Assertions.assertThat(ranges).isEmpty();
+  }
+
   public void testGrammarStringStripBlanks() {
     // given...
     PsiFile psiFile = configureByAsciiDoc("== Heading\n\nthis  test\n\n");

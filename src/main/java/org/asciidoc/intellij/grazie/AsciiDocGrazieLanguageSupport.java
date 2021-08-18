@@ -208,7 +208,7 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
   }
 
   private void adjustPasedTextForOldIntelliJ(@NotNull CharSequence parentText, LinkedHashSet<IntRange> ranges, StringBuilder parsedText, int removedPrefix) {
-    if (parentText.length() < parsedText.length() && parsedText.toString().contains("  ")) {
+    if (parentText.length() < parsedText.length() && parsedText.toString().contains(" ")) {
       // in 2021.1 IntelliJ will remove some double blanks in the input string, it doesn't do that on in 2021.2 anymore.
       // around absorbed elements, there might still be two blanks, this algorithm will keep these.
       // therefore: remove double surplus in parsedText, and adjust the ranges after the removed char accordingly.
@@ -216,15 +216,27 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
       StringTokenizer parsedTextTokenizer = new StringTokenizer(parsedText.toString(), " ", true);
       StringBuilder newParsedText = new StringBuilder();
       int myOldPos = 0;
-      while (parsedTextTokenizer.hasMoreTokens()) {
+      String parentTextTokenRest = null;
+      while (parsedTextTokenizer.hasMoreTokens() || parentTextTokenRest != null) {
         String parentTextToken;
-        if (parentTextTokenizer.hasMoreTokens()) {
+        if (parentTextTokenRest != null) {
+          parentTextToken = parentTextTokenRest;
+          parentTextTokenRest = null;
+        } else if (parentTextTokenizer.hasMoreTokens()) {
           parentTextToken = parentTextTokenizer.nextToken();
         } else {
           parentTextToken = "";
         }
-
         String parsedTextToken = parsedTextTokenizer.nextToken();
+        // a single blank got missing in the parent, usually before an interpunctation.
+        // this will result in parsedTokenText to contain a smaller text than the parent, and the parsedTextToken not being a blank delimiter.
+        // to be double safe, check that the parent token starts with the contents of the parsed token.
+        if (!" ".equals(parsedTextToken)
+          && parentTextToken.startsWith(parsedTextToken)
+          && parentTextToken.length() > parsedTextToken.length()) {
+          parentTextTokenRest = parentTextToken.substring(parsedTextToken.length());
+          parentTextToken = parentTextToken.substring(0, parsedTextToken.length());
+        }
         while (" ".equals(parsedTextToken) && !" ".equals(parentTextToken) && parsedTextTokenizer.hasMoreTokens()) {
           // we found a blank that was removed in the parentTextTokenizer string, and is still present in my string.
           // adjust the ranges after this accordingly, and then skip this blank.
