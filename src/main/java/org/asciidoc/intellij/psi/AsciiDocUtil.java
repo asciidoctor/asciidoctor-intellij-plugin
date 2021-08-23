@@ -6,7 +6,6 @@ import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ComponentManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -19,7 +18,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -1360,13 +1358,6 @@ public class AsciiDocUtil {
     }
 
     if (otherComponentName != null && !DumbService.isDumb(project)) {
-
-      if (ApplicationManager.getApplication().isDispatchThread() && !ApplicationManager.getApplication().isUnitTestMode()) {
-        return ProgressManager.getInstance().runProcessWithProgressSynchronously(() ->
-         ApplicationManager.getApplication().runReadAction((Computable<List<VirtualFile>>) () -> getOtherAntoraModuleDir(project, moduleDir,
-          myModuleName,  myComponentName,  myComponentVersion, _otherComponentVersion,  _otherComponentName,  _otherModuleName)),
-          "Resolving Antora reference", true, project);
-      }
 
       if (otherModuleName == null || otherModuleName.length() == 0) {
         otherModuleName = "ROOT";

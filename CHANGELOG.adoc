@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.33.19
 
 - avoid logged error when converting Markdown to AsciiDoc and target file exists (#839)
+- revert changes about progress indicator on slow index operations (#815)
 
 === 0.33.18
 
