@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static nl.jworks.markdown_to_asciidoc.Converter.convertMarkdownToAsciiDoc;
 
@@ -46,20 +47,30 @@ public class ConvertToAsciiDocAction extends AnAction implements UpdateInBackgro
     final VirtualFile virtualFile = file.getVirtualFile();
     ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(Collections.singleton(virtualFile));
 
+    String newFileName = FilenameUtils.getBaseName(file.getName()) + "." + AsciiDocFileType.INSTANCE.getDefaultExtension();
+    PsiFile existingFile = file.getContainingDirectory().findFile(newFileName);
+
+    AtomicBoolean deleteFile = new AtomicBoolean(false);
+    if (existingFile != null) {
+      if (new OverwriteFileDialog(newFileName).showAndGet()) {
+        deleteFile.set(true);
+      } else {
+        return;
+      }
+    }
+
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
         CommandProcessor.getInstance().executeCommand(project, new Runnable() {
           @Override
           public void run() {
-            String newFileName = FilenameUtils.getBaseName(file.getName()) + "." + AsciiDocFileType.INSTANCE.getDefaultExtension();
             PsiFile asciiDocFile = file.getContainingDirectory().findFile(newFileName);
-            if (asciiDocFile != null) {
-              if (new OverwriteFileDialog(newFileName).showAndGet()) {
-                asciiDocFile.delete();
-              } else {
-                return;
-              }
+            if (deleteFile.get() && asciiDocFile != null) {
+              asciiDocFile.delete();
+            } else if (asciiDocFile != null) {
+              // file might have appeared "in between", stop here
+              return;
             }
             asciiDocFile = PsiFileFactory.getInstance(project).createFileFromText(newFileName, AsciiDocFileType.INSTANCE, convertMarkdownToAsciiDoc(file.getText()));
             PsiFile newFile = (PsiFile) file.getContainingDirectory().add(asciiDocFile);
