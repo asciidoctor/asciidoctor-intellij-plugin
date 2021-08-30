@@ -272,7 +272,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
     VirtualFile file = FileDocumentManager.getInstance().getFile(document);
     Path parent = null;
-    if (file != null) {
+    if (file != null && file.getParent() != null) {
       parent = Path.of(file.getParent().getPath());
     }
     this.tempImagesPath = AsciiDoc.tempImagesPath(parent);
