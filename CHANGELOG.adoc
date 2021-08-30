@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.33.20
+
+- prevent NPE when accessing parent folder of a file (#847)
+
 === 0.33.19
 
 - avoid logged error when converting Markdown to AsciiDoc and target file exists (#839)
