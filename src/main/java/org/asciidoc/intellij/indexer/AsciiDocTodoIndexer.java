@@ -12,7 +12,7 @@ public class AsciiDocTodoIndexer extends LexerBasedTodoIndexer {
 
   @Override
   public int getVersion() {
-    return 11;
+    return 12;
   }
 
   @NotNull

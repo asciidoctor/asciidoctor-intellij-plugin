@@ -503,6 +503,11 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "A '`test`' test`'s\n" +
       "A <<id,reftext>>.\n" +
       "A xref:file.adoc[link].\n" +
+      "An email@example.com.\n" +
+      "An mailto:email@address.com[email with text].\n" +
+      "A http://example.com URL.\n" +
+      "A http://example.com[URL with text].\n" +
+      "A link:http://example.com[URL with text as link].\n" +
       "Something \"`quoted`\"\n" +
       "|===\n" +
       "| Cell Content.\n" +
@@ -545,6 +550,11 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "// comment with some text",
       "A footnote.",
       "A link.",
+      "A URL with text as link.",
+      "A URL with text.",
+      "An email@example.com.",
+      "An email with text.",
+      "A http://example.com URL.",
       "Something quoted"
     );
 
@@ -562,7 +572,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
   public void testGrammarStringWithOnlySomeStrippedBlanks() {
     // given...
-    PsiFile psiFile = configureByAsciiDoc("* this link:https://www.gmx.net[]  test\n");
+    PsiFile psiFile = configureByAsciiDoc("* this {nbsp}  test\n");
 
     // then...
     // ... IntelliJ 2022.1 will have removed the double blanks, but after absorbing some elements there might still be two blanks here

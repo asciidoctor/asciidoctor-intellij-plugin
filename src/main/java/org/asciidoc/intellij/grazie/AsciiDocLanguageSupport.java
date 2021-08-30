@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.grazie;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
@@ -9,6 +10,8 @@ import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationImpl;
 import org.asciidoc.intellij.psi.AsciiDocInlineMacro;
+import org.asciidoc.intellij.psi.AsciiDocLink;
+import org.asciidoc.intellij.psi.AsciiDocUrl;
 import org.jetbrains.annotations.NotNull;
 
 public class AsciiDocLanguageSupport {
@@ -121,7 +124,7 @@ public class AsciiDocLanguageSupport {
     AsciiDocTokenTypes.HEADING_TOKEN,
     AsciiDocTokenTypes.HEADING_OLDSTYLE,
     TokenType.WHITE_SPACE,
-    AsciiDocElementTypes.URL, // can nest LINKTEXT
+    AsciiDocElementTypes.URL, // can nest MACROTEXT, or will show the URL_LINK or URL_EMAIL as default
     AsciiDocElementTypes.REF, // can nest REFTEXT
     AsciiDocElementTypes.LINK, // can nest MACROTEXT
     AsciiDocElementTypes.INLINE_MACRO, // can nest MACROTEXT
@@ -150,6 +153,25 @@ public class AsciiDocLanguageSupport {
       return Behavior.ABSORB;
     } else if (spacesIgnoredByAsciiDoc(child)) {
       return Behavior.SEPARATE;
+    } else if ((child.getParent() instanceof AsciiDocLink || child.getParent() instanceof AsciiDocUrl)
+      // A link or URL can contain either a macro text or no text.
+      // AsciiDoc will display the macro text, or the link/email address if no such text is provided.
+      // Pass on the content that would be displayed by AsciiDoc to the grammar check.
+      && (child.getNode().getElementType() == AsciiDocTokenTypes.URL_LINK || child.getNode().getElementType() == AsciiDocTokenTypes.URL_EMAIL)) {
+      boolean macroTextPresent = false;
+      ASTNode node = child.getNode();
+      while (node != null) {
+        if (node.getElementType() == AsciiDocTokenTypes.MACROTEXT) {
+          macroTextPresent = true;
+          break;
+        }
+        node = node.getTreeNext();
+      }
+      if (macroTextPresent) {
+        return Behavior.STEALTH;
+      } else {
+        return Behavior.TEXT;
+      }
     } else if (TEXT_TOKENS.contains(child.getNode().getElementType())) {
       return Behavior.TEXT;
     } else {

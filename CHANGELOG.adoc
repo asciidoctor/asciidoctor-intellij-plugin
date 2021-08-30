@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - lighter color for caption titles in dark mode in the preview (#841)
 - extend Antora playbook schema for 3.0.0-alpha.8 and 3.0.0-alpha.9
 - prevent NPE when accessing parent folder of a file (#847)
+- improve parsing of links and email addresses for grammar check (#846)
 
 === 0.33.19
 

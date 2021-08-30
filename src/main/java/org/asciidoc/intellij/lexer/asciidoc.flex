@@ -1674,7 +1674,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <INLINE_EMAIL_WITH_PREFIX> {
-  "["                  { yybegin(INLINE_MACRO); yypushback(yylength()); }
+  {MACROTEXT_START} / [^\n\]]* "=" [^\n\]]* {MACROTEXT_END} { yybegin(INLINE_MACRO); yypushback(yylength()); }
+  {MACROTEXT_START}    { yybegin(INLINE_MACRO_TEXT); yypushback(yylength()); }
   [\s\[\]]             { yypushback(yylength()); yypopstate(); }
   [^]                  { return AsciiDocTokenTypes.URL_EMAIL; }
 }
