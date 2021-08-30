@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.33.20
 
 - prevent NPE when accessing parent folder of a file (#847)
+- lighter color for caption titles in dark mode in the preview (#841)
 
 === 0.33.19
 

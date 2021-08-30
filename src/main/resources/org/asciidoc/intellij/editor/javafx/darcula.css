@@ -42,7 +42,15 @@ table:not(.linenotable):not(.CodeRay) thead,table tfoot{background:#626262}
 tbody tr th{background:#626262}
 
 /* was: 7a2518 */
-.sidebarblock>.content>.title,#toctitle,.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{color: #ba3925}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title,
+#toctitle,
+.sidebarblock>.content>.title,
+.quoteblock blockquote::before,
+/* was: several */
+td.icon
+{
+    filter: invert(90%) hue-rotate(180deg);
+}
 
 /* was: f8f8f7 */
 .sidebarblock, .exampleblock, .exampleblock>.content {background:#626262; border-color: #626262; box-shadow: 0 1px 4px #626262}
