@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.34.1
 
 - lighter color for caption titles in dark mode in the preview (#841)
+- extend Antora playbook schema for 3.0.0-alpha.8 and 3.0.0-alpha.9
 
 === 0.33.19
 

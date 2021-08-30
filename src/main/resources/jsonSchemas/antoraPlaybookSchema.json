@@ -147,13 +147,18 @@
             "level": {
               "type": "string",
               "description": "Set the minimum log level of messages that get logged.",
-              "pattern": "(all|debug|info|warn|error|fatal|silent)",
+              "pattern": "^(all|debug|info|warn|error|fatal|silent)$",
               "default": "warn"
             },
             "failure_level": {
               "type": "string",
               "description": "Set the log level tolerance that, when exceeded, will cause the application to fail on exit.",
-              "pattern": "(all|debug|info|warn|error|fatal|silent)"
+              "pattern": "^(all|debug|info|warn|error|fatal|silent)$"
+            },
+            "format": {
+              "type": "string",
+              "description": "Specifies the format of the log messages.",
+              "pattern": "^(json|pretty)$"
             }
           }
         }
@@ -216,6 +221,24 @@
         "ensureGitSuffix": {
           "type": "boolean",
           "description": "(Deprecated; to be removed in Antora 3) Instructs the git client to automatically append .git to the repository URL if absent."
+        },
+        "fetch_concurrency": {
+          "type": "number",
+          "description": "Maximum number of fetch or clone operations that are permitted to run at once."
+        },
+        "plugins": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "credential_manager": {
+              "type": "string",
+              "description": "Custom credential manager for the git client to use."
+            },
+            "http": {
+              "type": "string",
+              "description": "Custom HTTP request handler for the git client to use."
+            }
+          }
         }
       }
     },
@@ -226,19 +249,19 @@
         "html_extension_style": {
           "type": "string",
           "description": "The user-facing URL extension to use for HTML pages.",
-          "pattern": "(default|drop|indexify)",
+          "pattern": "^(default|drop|indexify)$",
           "default": "default"
         },
         "redirect_facility": {
           "type": "string",
           "description": "The facility for handling page alias and start page redirections.",
-          "pattern": "(disabled|httpd|netlify|nginx|static)",
+          "pattern": "^(disabled|httpd|netlify|nginx|static)$",
           "default": "static"
         },
         "latest_version_segment_strategy": {
           "type": "string",
           "description": "The strategy to use for cloaking the latest version or prerelease version segment in the URL.",
-          "pattern": "(replace|redirect:to|redirect:from)"
+          "pattern": "^(replace|redirect:to|redirect:from)$"
         },
         "latest_prerelease_version_segment": {
           "type": "string",
@@ -246,7 +269,8 @@
         },
         "latest_version_segment": {
           "type": "string",
-          "description": "The value to use instead of the latest version segment in the URL."
+          "description": "The value to use instead of the latest version segment in the URL.",
+          "default": "current"
         }
       }
     },
@@ -329,6 +353,14 @@
             "string"
           ],
           "description": "The edit URL for the current source element.",
+          "default": true
+        },
+        "worktrees": {
+          "type": [
+            "boolean",
+            "array"
+          ],
+          "description": "The worktrees key is optional. If not specified, Antora will use the worktree if the repository is local and the current branch of that repository is among the branches matched by the branches key. If a match is made, Antora uses the files from the worktree instead of the files from the git tree for that branch. By default, Antora only uses the main worktree (not to be confused with the main branch), not linked worktrees.",
           "default": true
         }
       }
