@@ -51,6 +51,14 @@ JCEF preview is an embedded Chrome browser.
 After https://plugins.jetbrains.com/docs/intellij/enabling-internal.html[enabling the internal mode^] users can right-click on the preview and use "`Open DevTools`".
 This opens a fully equipped Chrome developer tools window that allows users to inspect the HTML created in the preview and to view the JavaScript console of the preview.
 
+[NOTE]
+====
+// https://youtrack.jetbrains.com/issue/IDEA-276906
+Starting from IntelliJ 2021.3, set the property `ide.browser.jcef.contextMenu.devTools.enabled=true` to enable this feature.
+
+This property is then specific to enable the DevTools, and won't change any other IDE configuration.
+====
+
 == When you can use JCEF preview
 
 JCEF preview is only available from IntelliJ 2020.2+ and plugin version 0.31.x.
