@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - extend Antora playbook schema for 3.0.0-alpha.8 and 3.0.0-alpha.9
 - prevent NPE when accessing parent folder of a file (#847)
 - improve parsing of links and email addresses for grammar check (#846)
+- upgrade to AsciidoctorJ Diagram 2.2.0 and PlantUML 1.2021.8 (#832)
 
 === 0.33.19
 
@@ -125,7 +126,6 @@ This document provides a high-level view of the changes introduced by release.
 
 - prevent NPE when renaming files in Antora projects (#770)
 - when rendering errors in the preview, allow preview to refresh without flicker (#772)
-- when diagram rendering generates an exception, catch and add listing block (#772)
 
 === 0.32.52
 

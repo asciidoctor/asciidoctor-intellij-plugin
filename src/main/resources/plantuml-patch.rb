@@ -18,19 +18,6 @@ def check_duplicate_target(attributes, location, parent)
   end
 end
 
-def handle_error(attributes, e, location, parent)
-  # workaround for https://github.com/asciidoctor/asciidoctor-diagram/issues/355
-  text = "Failed to generate image: #{e.message}"
-  warn_msg = text.dup
-  if $VERBOSE
-    warn_msg << "\n" << e.backtrace.join("\n")
-  end
-
-  logger.error message_with_context warn_msg, source_location: location
-
-  Asciidoctor::Block.new parent, :listing, :source => text, :attributes => attributes
-end
-
 module DuplicateNameBlockHack
   # see https://github.com/asciidoctor/asciidoctor-diagram/blob/master/lib/asciidoctor-diagram/extensions.rb for the source
   def process(parent, reader_or_target, attributes)
@@ -38,13 +25,8 @@ module DuplicateNameBlockHack
     # move back one line to place warning on macro
     location = Reader::Cursor.new(location.file, location.dir, location.path, location.lineno - 1)
     check_duplicate_target(attributes, location, parent)
-    begin
-      super(parent, reader_or_target, attributes)
-    rescue RuntimeError => e
-      handle_error(attributes, e, location, parent)
-    end
+    super(parent, reader_or_target, attributes)
   end
-
 end
 
 module DuplicateNameBlockMacroHack
@@ -52,11 +34,7 @@ module DuplicateNameBlockMacroHack
   def process(parent, reader_or_target, attributes)
     location = parent.document.reader.cursor_at_mark
     check_duplicate_target(attributes, location, parent)
-    begin
-      super(parent, reader_or_target, attributes)
-    rescue RuntimeError => e
-      handle_error(attributes, e, location, parent)
-    end
+    super(parent, reader_or_target, attributes)
   end
 
 end

@@ -53,8 +53,14 @@ public class AsciiDocDownloaderUtil {
 
   // when updating the version, also update the SHA1 hash!
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram
-  public static final String ASCIIDOCTORJ_DIAGRAM_VERSION = "2.1.2";
-  private static final String ASCIIDOCTORJ_DIAGRAM_HASH = "596df6655e47679b60449f46509efdabc7d5986c";
+  public static final String ASCIIDOCTORJ_DIAGRAM_VERSION = "2.2.0";
+  private static final String ASCIIDOCTORJ_DIAGRAM_HASH = "07bc96fd12e50d19539f4e526c9e3f9d52b16c0a";
+
+  public static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION = "1.2021.8";
+  private static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH = "a35167165e126eb90cd22d4842393da695f05790";
+
+  public static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION = "1.0.0";
+  private static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_HASH = "58c30912fb11f7933419072f6a75fb8f9d8bf51d";
 
   private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
   // this is similar to the path where for example the grazie plugin places its dictionaries
@@ -66,8 +72,7 @@ public class AsciiDocDownloaderUtil {
   }
 
   public static boolean downloadCompleteAsciidoctorJDiagram() {
-    File file = getAsciidoctorJDiagramFile();
-    return file.exists();
+    return getAsciidoctorJDiagramFile().exists() && getAsciidoctorJDiagramPlantumlFile().exists() && getAsciidoctorJDiagramDitaaminiFile().exists();
   }
 
   public static boolean downloadCompleteAsciidoctorJPdf() {
@@ -85,6 +90,16 @@ public class AsciiDocDownloaderUtil {
     return new File(fileName);
   }
 
+  public static File getAsciidoctorJDiagramPlantumlFile() {
+    String fileName = DOWNLOAD_PATH + File.separator + "asciidoctorj-diagram-plantuml-" + ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION + ".jar";
+    return new File(fileName);
+  }
+
+  public static File getAsciidoctorJDiagramDitaaminiFile() {
+    String fileName = DOWNLOAD_PATH + File.separator + "asciidoctorj-diagram-ditaamini-" + ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION + ".jar";
+    return new File(fileName);
+  }
+
   public static void download(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
     downloadAsciidoctorJPdf(project, () -> downloadAsciidoctorJDiagram(project, onSuccess, onFailure), onFailure);
   }
@@ -92,7 +107,19 @@ public class AsciiDocDownloaderUtil {
   public static void downloadAsciidoctorJDiagram(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
     String downloadName = "asciidoctorj-diagram-" + ASCIIDOCTORJ_DIAGRAM_VERSION + ".jar";
     String url = getAsciidoctorJDiagramUrl();
-    download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_HASH, project, onSuccess, onFailure);
+    download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_HASH, project, () -> downloadAsciidoctorJDiagramPlantuml(project, onSuccess, onFailure), onFailure);
+  }
+
+  public static void downloadAsciidoctorJDiagramPlantuml(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
+    String downloadName = "asciidoctorj-diagram-plantuml-" + ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION + ".jar";
+    String url = getAsciidoctorJDiagramPlantumlUrl();
+    download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH, project, () -> downloadAsciidoctorJDiagramDitaamini(project, onSuccess, onFailure), onFailure);
+  }
+
+  public static void downloadAsciidoctorJDiagramDitaamini(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
+    String downloadName = "asciidoctorj-diagram-ditaamini-" + ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION + ".jar";
+    String url = getAsciidoctorJDiagramDitaaminiUrl();
+    download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_DITAAMINI_HASH, project, onSuccess, onFailure);
   }
 
   public static void pickAsciidoctorJDiagram(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
@@ -120,6 +147,22 @@ public class AsciiDocDownloaderUtil {
       ASCIIDOCTORJ_DIAGRAM_VERSION +
       "/asciidoctorj-diagram-" +
       ASCIIDOCTORJ_DIAGRAM_VERSION +
+      ".jar";
+  }
+
+  public static String getAsciidoctorJDiagramPlantumlUrl() {
+    return "https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-plantuml/" +
+      ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION +
+      "/asciidoctorj-diagram-plantuml-" +
+      ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION +
+      ".jar";
+  }
+
+  public static String getAsciidoctorJDiagramDitaaminiUrl() {
+    return "https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-ditaamini/" +
+      ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION +
+      "/asciidoctorj-diagram-ditaamini-" +
+      ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION +
       ".jar";
   }
 

@@ -168,7 +168,7 @@ public class AsciiDocExternalAnnotatorProcessor extends com.intellij.lang.annota
           annotationResult.getDocument().getLineEndOffset(lineNumberForAnnotation) - annotationResult.getDocument().getLineStartOffset(lineNumberForAnnotation))
       );
       StringBuilder sb = new StringBuilder();
-      sb.append(StringEscapeUtils.escapeHtml4(logRecord.getMessage()).replace("\n", "<br>"));
+      sb.append(StringEscapeUtils.escapeHtml4(logRecord.getMessage()));
       if (logRecord.getCursor() != null) {
         if (logRecord.getCursor().getFile() == null || logRecord.getCursor().getFile().equals(annotationResult.getDocname())) {
           sb.append("<br>(")

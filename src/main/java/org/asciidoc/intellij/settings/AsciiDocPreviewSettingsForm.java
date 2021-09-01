@@ -133,7 +133,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     myDownloadDependenciesHelp = ContextHelpLabel.create(
       AsciiDocBundle.message(
         "asciidoc.download.folderandcontents",
-        (AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().getName() + " and " + AsciiDocDownloaderUtil.getAsciidoctorJPdfFile().getName()),
+        (AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().getName() + ", " + AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().getName() + " and " + AsciiDocDownloaderUtil.getAsciidoctorJPdfFile().getName()),
         AsciiDocDownloaderUtil.DOWNLOAD_PATH)
     );
   }
@@ -167,10 +167,10 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myDownloadDependenciesLink.setVisible(true);
       myDownloadDependenciesHelp.setVisible(true);
       myDownloadDependenciesComplete.setVisible(false);
-      if (AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().exists()) {
+      if (AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJDiagram()) {
         myDownloadDependenciesFailedDiagram.setVisible(false);
       }
-      if (AsciiDocDownloaderUtil.getAsciidoctorJPdfFile().exists()) {
+      if (AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJPdf()) {
         myDownloadDependenciesFailedPdf.setVisible(false);
       }
     }
@@ -265,10 +265,10 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     myDownloadDependenciesLink.setListener((source, data) -> {
       AsciiDocDownloaderUtil.download(null, this::adjustDownloadDependenciesOptions, throwable -> {
-        if (!AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().exists()) {
+        if (!AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJDiagram()) {
           myDownloadDependenciesFailedDiagram.setVisible(true);
         }
-        if (!AsciiDocDownloaderUtil.getAsciidoctorJPdfFile().exists()) {
+        if (!AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJPdf()) {
           myDownloadDependenciesFailedPdf.setVisible(true);
         }
       });

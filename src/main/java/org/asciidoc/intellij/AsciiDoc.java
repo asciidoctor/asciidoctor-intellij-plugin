@@ -426,7 +426,7 @@ public class AsciiDoc {
   }
 
   private boolean isDiagramPresent() {
-    boolean diagramPresent = AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().exists();
+    boolean diagramPresent = AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJDiagram();
     if (!diagramPresent) {
       // try to find it in the class path for tests
       try (InputStream is = this.getClass().getResourceAsStream("/gems/asciidoctor-diagram-" +
@@ -468,9 +468,19 @@ public class AsciiDoc {
       if (file1.exists()) {
         urls.add(file1.toURI().toURL());
       }
-      File file2 = AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile();
-      if (file2.exists()) {
-        urls.add(file2.toURI().toURL());
+      if (AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJDiagram()) {
+        File file2 = AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile();
+        if (file2.exists()) {
+          urls.add(file2.toURI().toURL());
+        }
+        File file3 = AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile();
+        if (file3.exists()) {
+          urls.add(file3.toURI().toURL());
+        }
+        File file4 = AsciiDocDownloaderUtil.getAsciidoctorJDiagramDitaaminiFile();
+        if (file4.exists()) {
+          urls.add(file4.toURI().toURL());
+        }
       }
     } catch (MalformedURLException e) {
       throw new RuntimeException("unable to add JAR AsciidoctorJ to class path", e);
