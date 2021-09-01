@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - prevent NPE when accessing parent folder of a file (#847)
 - improve parsing of links and email addresses for grammar check (#846)
 - upgrade to AsciidoctorJ Diagram 2.2.0 and PlantUML 1.2021.8 (#832)
+- adding live templates for curved quotes (#837)
 
 === 0.33.19
 

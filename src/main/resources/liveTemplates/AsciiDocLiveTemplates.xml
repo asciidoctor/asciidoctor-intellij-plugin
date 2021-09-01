@@ -305,16 +305,28 @@
       <option name="OTHER" value="true" />
     </context>
   </template>
-  <template name="ad-admonition-block" value="[$TYPE$]&#10;====&#10;$TEXT$&#10;====" description="inserts an admonition block" toReformat="false" toShortenFQNames="false">
+  <template name="ad-admonition-block" value="[$TYPE$]&#10;====&#10;$TEXT$&#10;====" description="admonition block" toReformat="false" toShortenFQNames="false">
     <variable name="TYPE" expression="enum(&quot;NOTE&quot;,&quot;TIP&quot;,&quot;IMPORTANT&quot;,&quot;CAUTION&quot;,&quot;WARNING&quot;)" defaultValue="NOTE" alwaysStopAt="true" />
     <variable name="TEXT" expression="" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
-  <template name="ad-admonition-para" value="$TYPE$: $TEXT$&#10;" description="inserts an admonition paragraph" toReformat="false" toShortenFQNames="false">
+  <template name="ad-admonition-para" value="$TYPE$: $TEXT$&#10;" description="admonition paragraph" toReformat="false" toShortenFQNames="false">
     <variable name="TYPE" expression="enum(&quot;NOTE&quot;,&quot;TIP&quot;,&quot;IMPORTANT&quot;,&quot;CAUTION&quot;,&quot;WARNING&quot;)" defaultValue="" alwaysStopAt="true" />
     <variable name="TEXT" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-smart-double-quotes" value="&quot;`$SELECTION$`&quot;" description="pair of curved double quotation marks" toReformat="false" toShortenFQNames="tr
+ue">
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
+  <template name="ad-smart-single-quotes" value="'`$SELECTION$`'" description="pair of curved single quotation marks" toReformat="false" toShortenFQNames="tr
+ue">
     <context>
       <option name="AsciiDoc" value="true" />
     </context>
