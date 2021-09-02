@@ -165,9 +165,15 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
             }
           }
           if (markup != null) {
-            myPanel.setHtml(markup, instance.getAttributes());
+            AsciiDocHtmlPanel localPanel = myPanel;
+            localPanel.setHtml(markup, instance.getAttributes());
+            synchronized (this) {
+              if (myPanel == localPanel) {
+                // only set the content if the panel hasn't been updated (due to settings changed)
+                currentContent = config + content;
+              }
+            }
           }
-          currentContent = config + content;
         }
         if (currentLineNo != targetLineNo) {
           currentLineNo = targetLineNo;
@@ -256,8 +262,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
               final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
               myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, retrievePanelProvider(settings));
               myPanel.scrollToLine(targetLineNo, document.getLineCount());
+              currentContent = null; // force a refresh of the preview by resetting the current memorized content
             }
-            currentContent = null; // force a refresh of the preview by resetting the current memorized content
             renderIfVisible();
           }
         }, 0, ModalityState.stateForComponent(getComponent()));
@@ -584,8 +590,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           synchronized (this) {
             myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
             myPanel.scrollToLine(targetLineNo, document.getLineCount());
+            currentContent = null; // force a refresh of the preview by resetting the current memorized content
           }
-          currentContent = null; // force a refresh of the preview by resetting the current memorized content
           renderIfVisible();
         }, 0, ModalityState.stateForComponent(getComponent()));
       }

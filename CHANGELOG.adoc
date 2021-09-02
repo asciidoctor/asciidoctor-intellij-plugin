@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - improve parsing of links and email addresses for grammar check (#846)
 - upgrade to AsciidoctorJ Diagram 2.2.0 and PlantUML 1.2021.8 (#832)
 - adding live templates for curved quotes (#837)
+- avoid situation where panel is re-created and contents show "Initializing..."
 
 === 0.33.19
 
