@@ -294,33 +294,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   }
 
   private void reregisterHandlers() {
-    if (myJSQuerySetScrollY != null) {
-      Disposer.dispose(myJSQuerySetScrollY);
-    }
-    if (myRenderedIteration != null) {
-      Disposer.dispose(myRenderedIteration);
-    }
-    if (myRenderedResult != null) {
-      Disposer.dispose(myRenderedResult);
-    }
-    if (myBrowserLog != null) {
-      Disposer.dispose(myBrowserLog);
-    }
-    if (myScrollEditorToLine != null) {
-      Disposer.dispose(myScrollEditorToLine);
-    }
-    if (myZoomDelta != null) {
-      Disposer.dispose(myZoomDelta);
-    }
-    if (myZoomReset != null) {
-      Disposer.dispose(myZoomReset);
-    }
-    if (mySaveImage != null) {
-      Disposer.dispose(mySaveImage);
-    }
-    if (myOpenLink != null) {
-      Disposer.dispose(myOpenLink);
-    }
+    disposeHandlers();
 
     myJSQuerySetScrollY = JBCefJSQuery.create(this);
     myRenderedIteration = JBCefJSQuery.create(this);
@@ -419,6 +393,45 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       return null;
     });
 
+  }
+
+  private void disposeHandlers() {
+    if (myJSQuerySetScrollY != null) {
+      Disposer.dispose(myJSQuerySetScrollY);
+      myJSQuerySetScrollY = null;
+    }
+    if (myRenderedIteration != null) {
+      Disposer.dispose(myRenderedIteration);
+      myRenderedIteration = null;
+    }
+    if (myRenderedResult != null) {
+      Disposer.dispose(myRenderedResult);
+      myRenderedResult = null;
+    }
+    if (myBrowserLog != null) {
+      Disposer.dispose(myBrowserLog);
+      myBrowserLog = null;
+    }
+    if (myScrollEditorToLine != null) {
+      Disposer.dispose(myScrollEditorToLine);
+      myScrollEditorToLine = null;
+    }
+    if (myZoomDelta != null) {
+      Disposer.dispose(myZoomDelta);
+      myZoomDelta = null;
+    }
+    if (myZoomReset != null) {
+      Disposer.dispose(myZoomReset);
+      myZoomReset = null;
+    }
+    if (mySaveImage != null) {
+      Disposer.dispose(mySaveImage);
+      mySaveImage = null;
+    }
+    if (myOpenLink != null) {
+      Disposer.dispose(myOpenLink);
+      myOpenLink = null;
+    }
   }
 
   @Nullable
@@ -812,15 +825,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   @Override
   public void dispose() {
     getJBCefClient().removeLoadHandler(myCefLoadHandler, getCefBrowser());
-    Disposer.dispose(myJSQuerySetScrollY);
-    Disposer.dispose(myRenderedResult);
-    Disposer.dispose(myRenderedIteration);
-    Disposer.dispose(myBrowserLog);
-    Disposer.dispose(myScrollEditorToLine);
-    Disposer.dispose(myZoomDelta);
-    Disposer.dispose(myZoomReset);
-    Disposer.dispose(mySaveImage);
-    Disposer.dispose(myOpenLink);
+    disposeHandlers();
     super.dispose();
   }
 
