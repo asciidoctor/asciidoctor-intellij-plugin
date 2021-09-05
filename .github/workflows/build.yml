@@ -112,6 +112,7 @@ jobs:
         with:
           name: plugin-artifact
           path: ./build/distributions/${{ needs.build.outputs.artifact }}
+          if-no-files-found: error
 
   # Verify built plugin using IntelliJ Plugin Verifier tool
   # Requires build job to be passed
