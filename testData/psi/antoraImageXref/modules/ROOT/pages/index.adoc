@@ -6,5 +6,7 @@ image::image.txt[xref=ROOT:index.adoc]
 image:image.txt[xref=_header]
 image:image.txt[xref=ROOT:index.adoc]
 
+video::image.txt[]
+
 [#_header]
 == Header

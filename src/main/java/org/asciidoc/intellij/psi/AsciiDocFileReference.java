@@ -341,6 +341,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return key.contains(" ") || !key.toLowerCase(Locale.US).equals(key);
   }
 
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   public boolean isPossibleRefText() {
     return isPossibleRefText(key);
   }
@@ -350,14 +351,14 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       String resolvedKey = AsciiDocUtil.resolveAttributes(myElement, key);
       if (resolvedKey != null) {
         String defaultFamily = null;
-        if (macroName.equals("image")) {
+        if (macroName.equals("image") || macroName.equals("video")) {
           defaultFamily = "image";
         } else if (macroName.equals("xref") || macroName.equals("xref-attr")) {
           defaultFamily = "page";
         }
         return AsciiDocUtil.replaceAntoraPrefix(myElement, resolvedKey, defaultFamily);
       }
-    } else if (macroName.equals("image")) {
+    } else if (macroName.equals("image") || macroName.equals("video")) {
       VirtualFile antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(myElement);
       if (antoraImagesDir != null) {
         return Collections.singletonList(antoraImagesDir.getCanonicalPath() + "/" + key);
@@ -414,7 +415,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     for (String k : keys) {
       int c = results.size();
       resolveAttributes(k, results, depth);
-      if (results.size() == c && "image".equals(macroName) && k.equals(key) && depth == 0) {
+      if (results.size() == c && ("image".equals(macroName) || "video".equals(macroName)) && k.equals(key) && depth == 0) {
         resolveAttributes("{imagesdir}/" + k, results, depth);
       }
     }
@@ -607,6 +608,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       return false;
     }
     // natural reference: needs a space an capitalization
+    //noinspection RedundantIfStatement
     if (!key.contains(" ") || key.toLowerCase().equals(key)) {
       return false;
     }
@@ -1091,6 +1093,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   public boolean matches(PsiElement element) {
     if (element instanceof AsciiDocBlockId) {
       AsciiDocBlockId blockId = (AsciiDocBlockId) element;
+      //noinspection RedundantIfStatement
       if (isAnchor && key.equals(blockId.getName())) {
         return true;
       }

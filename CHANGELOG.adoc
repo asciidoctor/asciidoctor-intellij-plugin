@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.34.2
 
 - upgrade to AsciidoctorJ Diagram 2.2.1 (#855)
+- support videos in Antora images folder (#828)
 
 === 0.34.1
 

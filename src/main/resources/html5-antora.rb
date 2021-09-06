@@ -19,6 +19,10 @@ module ResolveAntoraHtml
     org.asciidoc.intellij.asciidoc.AntoraReferenceAdapter.convertImage(node)
     super(node)
   end
+  def convert_video(node)
+    org.asciidoc.intellij.asciidoc.AntoraReferenceAdapter.convertVideo(node)
+    super(node)
+  end
 end
 
 class Converter::Html5Converter < Converter::Base

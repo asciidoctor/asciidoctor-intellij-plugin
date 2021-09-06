@@ -38,7 +38,7 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
   protected AsciiDocVisitor buildAsciiDocVisitor(@NotNull ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
     return new AsciiDocVisitor() {
       @Override
-      public void visitElement(PsiElement o) {
+      public void visitElement(@NotNull PsiElement o) {
         boolean continueResolving = true;
         if (o instanceof AsciiDocBlockMacro) {
           AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) o;
@@ -56,7 +56,7 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
               }
             }
           }
-          if (blockMacro.getMacroName().equals("image")) {
+          if (blockMacro.getMacroName().equals("image") || blockMacro.getMacroName().equals("video")) {
             continueResolving = hasImagesDirAsUrl(o);
           }
         }
@@ -86,7 +86,7 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
           } else if (o instanceof AsciiDocLink && ((AsciiDocLink) o).getMacroName().equals("link") && resolvedBody.startsWith("about:")) {
             // this is a special about: URL, don't report this as an error
             return;
-          } else if (AsciiDocFileReference.URL.matcher(resolvedBody).find() && macroName.equals("image")) {
+          } else if (AsciiDocFileReference.URL.matcher(resolvedBody).find() && (macroName.equals("image") || macroName.equals("video"))) {
             // this is a data URI for an image, don't
             return;
           } else if (resolvedBody.startsWith("/") || resolvedBody.startsWith("../")) {

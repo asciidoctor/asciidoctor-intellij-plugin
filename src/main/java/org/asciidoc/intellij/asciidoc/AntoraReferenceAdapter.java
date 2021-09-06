@@ -54,6 +54,10 @@ public class AntoraReferenceAdapter {
     convertAntora(node, "image");
   }
 
+  public static void convertVideo(RubyObject node) {
+    convertAntora(node, "video");
+   }
+
   @SuppressWarnings("checkstyle:MethodLength")
   public static void convertAntora(RubyObject node, String type) {
     if (antoraModuleDir != null) {
@@ -64,9 +68,16 @@ public class AntoraReferenceAdapter {
           return;
         }
       }
+      if (type.equals("video")) {
+        String poster = (String) phraseNode.getAttribute("poster");
+        if ("youtube".equals(poster) || "vimeo".equals(poster)) {
+          // don't try to resolve links if the post is set (for example youtube or vimeo)
+          return;
+        }
+      }
       String outfileSuffix = (String) phraseNode.getDocument().getAttribute("outfilesuffix");
       String target;
-      if (type.equals("image")) {
+      if (type.equals("image") || type.equals("video")) {
         target = (String) phraseNode.getAttribute("target");
       } else {
         target = phraseNode.getTarget(); // example$page.html - the link, with .adoc already replaced to .html
@@ -113,6 +124,7 @@ public class AntoraReferenceAdapter {
           break;
         case "inline_image":
         case "image":
+        case "video":
           defaultFamily = "image";
           break;
         default:
@@ -166,7 +178,7 @@ public class AntoraReferenceAdapter {
       }
       String relativePath = null;
       if (sourceDir != null && targetFile != null) {
-        if (type.equals("image") || type.equals("inline_image")) {
+        if (type.equals("image") || type.equals("inline_image") || type.equals("video")) {
           // compute relative path from imagesdir for images as Asciidoctor will prepend this
           String imagesdir = (String) phraseNode.getDocument().getAttribute("imagesdir");
           File source;
@@ -203,7 +215,7 @@ public class AntoraReferenceAdapter {
       if (anchor != null) {
         target = target + "#" + anchor;
       }
-      if (type.equals("image")) {
+      if (type.equals("image") || type.equals("video")) {
         phraseNode.setAttribute("target", target, true);
       } else {
         phraseNode.setString("target", target);

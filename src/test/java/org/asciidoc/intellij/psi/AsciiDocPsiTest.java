@@ -799,7 +799,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
     AsciiDocBlockMacro[] macros = PsiTreeUtil.getChildrenOfType(psiFile[0].getChildren()[0], AsciiDocBlockMacro.class);
     assertNotNull(macros);
-    assertSize(2, macros);
+    assertSize(3, macros);
 
     {
       AsciiDocAttributeInBrackets[] attributes = PsiTreeUtil.getChildrenOfType(macros[0], AsciiDocAttributeInBrackets.class);
@@ -817,7 +817,12 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
       assertSize(2, attributes[0].getReferences());
       assertInstanceOf(attributes[0].getReferences()[0].resolve(), PsiDirectory.class);
-      // second reference to file doesn't resolve in tests
+      assertInstanceOf(attributes[0].getReferences()[1].resolve(), PsiFile.class);
+    }
+
+    {
+      assertSize(1, macros[2].getReferences());
+      assertInstanceOf(macros[2].getReferences()[0].resolve(), PsiFile.class);
     }
 
   }
