@@ -36,7 +36,7 @@ allprojects {
 }
 
 intellij {
-  version = 'IC-2021.2' // 'IC-212.4746.2-EAP-SNAPSHOT'
+  version = 'IC-2021.2.1' // 'IC-212.4746.2-EAP-SNAPSHOT'
   pluginName = 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild = false
   plugins = [
