@@ -769,7 +769,7 @@ public class AsciiDocUtil {
     //noinspection UnstableApiUsage
     FilenameIndex.processAllFileNames(file -> {
       if (file.endsWith(".yml") && file.contains("antora") && file.contains("playbook")) {
-        FilenameIndex.getVirtualFilesByName(file, new AsciiDocSearchScope(project)).forEach(virtualFile -> addPlaybook(additionalPlaybooks, virtualFile));
+        FilenameIndex.getVirtualFilesByName(project, file, new AsciiDocSearchScope(project)).forEach(virtualFile -> addPlaybook(additionalPlaybooks, virtualFile));
       }
       return true;
     }, GlobalSearchScope.projectScope(project), null);
