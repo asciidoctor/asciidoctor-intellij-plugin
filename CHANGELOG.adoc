@@ -11,6 +11,8 @@ This document provides a high-level view of the changes introduced by release.
 
 - upgrade to AsciidoctorJ Diagram 2.2.1 (#855)
 - support videos in Antora images folder (#828)
+- add inspection for attributes that haven't been defined (#858)
+- infer attributes from Antora playbook for auto-complete of attributes (#776)
 
 === 0.34.1
 

@@ -6,7 +6,6 @@ import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
-import com.intellij.openapi.components.ComponentManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
@@ -22,7 +21,6 @@ import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -35,7 +33,6 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.serviceContainer.AlreadyDisposedException;
-import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.text.CharArrayUtil;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocLanguage;
@@ -49,6 +46,7 @@ import org.yaml.snakeyaml.error.YAMLException;
 
 import javax.swing.*;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,7 +63,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.WeakHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -155,7 +152,7 @@ public class AsciiDocUtil {
         }
         stack.pop();
       } else {
-        List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(project, attributeName);
+        List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(project, attributeName);
         Set<String> searched = new HashSet<>(declarations.size());
         for (AttributeDeclaration decl : declarations) {
           String value = decl.getAttributeValue();
@@ -267,16 +264,16 @@ public class AsciiDocUtil {
     return result;
   }
 
-  public static List<AsciiDocAttributeDeclaration> findAttributes(Project project, String key) {
+  public static List<AttributeDeclaration> findAttributes(Project project, String key) {
     return findAttributes(project, key, false);
   }
 
-  public static List<AsciiDocAttributeDeclaration> findAttributes(Project project, String key, boolean onlyAntora) {
+  public static List<AttributeDeclaration> findAttributes(Project project, String key, boolean onlyAntora) {
     if (DumbService.isDumb(project)) {
       return Collections.emptyList();
     }
     ProgressManager.checkCanceled();
-    List<AsciiDocAttributeDeclaration> result = null;
+    List<AttributeDeclaration> result = null;
     final GlobalSearchScope scope = new AsciiDocSearchScope(project).restrictedByAsciiDocFileType();
     Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(key, project, scope);
     Map<VirtualFile, Boolean> cache = new HashMap<>();
@@ -295,6 +292,55 @@ public class AsciiDocUtil {
       }
       result.add(asciiDocAttributeDeclaration);
     }
+
+    if (onlyAntora) {
+      Collection<AttributeDeclaration> antoraAttributes = new ArrayList<>();
+      for (String entry : getPlaybooks(project)) {
+        VirtualFile playbook = VirtualFileManager.getInstance().findFileByNioPath(Path.of(entry));
+        if (playbook == null) {
+          continue;
+        }
+        Map<String, Object> antora;
+        try {
+          antora = AsciiDoc.readAntoraYaml(playbook);
+        } catch (YAMLException ex) {
+          continue;
+        }
+        Object asciidoc = antora.get("asciidoc");
+        if (asciidoc instanceof Map) {
+          @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
+          if (attributes instanceof Map) {
+            @SuppressWarnings("unchecked") Map<Object, Object> map = (Map<Object, Object>) attributes;
+            map.forEach((k, v) -> {
+              if (!key.toLowerCase(Locale.US).equals(k.toString().toLowerCase(Locale.US))) {
+                return;
+              }
+              String vs;
+              if (v == null) {
+                vs = null;
+              } else if (v instanceof Boolean && !(Boolean) v) {
+                // false -> soft unset
+                vs = null;
+              } else {
+                vs = v.toString();
+                if (vs.endsWith("@")) {
+                  // "...@" -> soft set
+                  vs = vs.substring(0, vs.length() - 1);
+                }
+              }
+              antoraAttributes.add(new AsciiDocAttributeDeclarationDummy(k.toString(), vs));
+            });
+          }
+        }
+      }
+      if (antoraAttributes.size() > 0) {
+        if (result == null) {
+          result = new ArrayList<>();
+        }
+        result.addAll(antoraAttributes);
+      }
+    }
+
     return result != null ? result : Collections.emptyList();
   }
 
@@ -325,7 +371,7 @@ public class AsciiDocUtil {
     return result;
   }
 
-  static List<AttributeDeclaration> findAttributes(Project project, String key, PsiElement current) {
+  public static List<AttributeDeclaration> findAttributes(Project project, String key, PsiElement current) {
     List<AttributeDeclaration> result = new ArrayList<>();
 
     key = key.toLowerCase(Locale.US);
@@ -407,7 +453,7 @@ public class AsciiDocUtil {
     }
 
     for (Map.Entry<String, String> entry : AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getAttributes().entrySet()) {
-      if (entry.getKey().replaceAll("@", "").equals(key)) {
+      if (entry.getKey().replaceAll("@", "").toLowerCase(Locale.US).equals(key)) {
         result.add(new AsciiDocAttributeDeclarationDummy(key, entry.getValue()));
       }
     }
@@ -615,90 +661,79 @@ public class AsciiDocUtil {
     return null;
   }
 
-  private static final Map<Project, TreeSet<String>> PROJECT_ROOTS = new WeakHashMap<>();
-  private static final Map<Project, MessageBusConnection> PROJECT_CONNECTIONS = new HashMap<>();
+  private static final ProjectCache<TreeSet<String>> PROJECT_ROOTS = new ProjectCache<>() {
 
-  private static void cache(Project project, TreeSet<String> roots) {
-    synchronized (PROJECT_ROOTS) {
-      try {
-        if (PROJECT_ROOTS.get(project) == null) {
-          // Listen to any file modification in the project, so that we can clear the cache
-          MessageBusConnection connection = project.getMessageBus().connect();
-          PROJECT_CONNECTIONS.put(project, connection);
-          connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
-            @Override
-            public void after(@NotNull List<? extends VFileEvent> events) {
-              if (project.isDisposed()) {
-                clear(project);
-                return;
-              }
-              Set<VirtualFile> roots = new HashSet<>();
-              for (VFileEvent event : events) {
-                try {
-                  if (event.getFile() != null && event.getFile().isValid()) {
-                    VirtualFile contentRootForFile = ProjectFileIndex.getInstance(project).getContentRootForFile(event.getFile());
-                    if (contentRootForFile != null) {
-                      roots.add(contentRootForFile);
-                    }
-                  }
-                } catch (AlreadyDisposedException ignored) {
-                  // might happen if file is in a module that has already been disposed
-                }
-              }
-              if (roots.size() > 0) {
-                addRoots(project, roots);
-              }
+    @Override
+    protected void processEvent(@NotNull List<? extends VFileEvent> events, Project project) {
+      Set<VirtualFile> roots = new HashSet<>();
+      for (VFileEvent event : events) {
+        try {
+          if (event.getFile() != null && event.getFile().isValid()) {
+            VirtualFile contentRootForFile = ProjectFileIndex.getInstance(project).getContentRootForFile(event.getFile());
+            if (contentRootForFile != null) {
+              roots.add(contentRootForFile);
             }
-          });
-        }
-        // lazy cache cleanup
-        PROJECT_ROOTS.keySet().removeIf(ComponentManager::isDisposed);
-        PROJECT_CONNECTIONS.entrySet().removeIf(entry -> {
-          if (entry.getKey().isDisposed()) {
-            entry.getValue().disconnect();
-            return true;
           }
-          return false;
-        });
-        PROJECT_ROOTS.put(project, roots);
-      } catch (AlreadyDisposedException ex) {
-        // noop - project already disposed
+        } catch (AlreadyDisposedException ignored) {
+          // might happen if file is in a module that has already been disposed
+        }
+      }
+      if (roots.size() > 0) {
+        addRoots(project, roots);
       }
     }
-  }
 
-  @Nullable
-  private static TreeSet<String> retrieve(Project project) {
-    synchronized (PROJECT_ROOTS) {
-      return PROJECT_ROOTS.get(project);
-    }
-  }
-
-  private static void clear(Project project) {
-    synchronized (PROJECT_ROOTS) {
-      PROJECT_ROOTS.remove(project);
-      MessageBusConnection messageBusConnection = PROJECT_CONNECTIONS.get(project);
-      if (messageBusConnection != null) {
-        messageBusConnection.disconnect();
-        PROJECT_CONNECTIONS.remove(project);
-      }
-    }
-  }
-
-  private static void addRoots(Project project, Set<VirtualFile> contentRoots) {
-    synchronized (PROJECT_ROOTS) {
-      TreeSet<String> roots = PROJECT_ROOTS.get(project);
-      if (roots != null) {
-        for (VirtualFile contentRoot : contentRoots) {
-          addRoot(roots, contentRoot);
+    private void addRoots(Project project, Set<VirtualFile> contentRoots) {
+      synchronized (projectItems) {
+        TreeSet<String> roots = projectItems.get(project);
+        if (roots != null) {
+          for (VirtualFile contentRoot : contentRoots) {
+            addRoot(roots, contentRoot);
+          }
         }
       }
     }
-  }
+
+  };
+
+  private static final ProjectCache<TreeSet<String>> PROJECT_PLAYBOOKS = new ProjectCache<>() {
+
+    @Override
+    protected void processEvent(@NotNull List<? extends VFileEvent> events, Project project) {
+      Set<VirtualFile> playbooks = new HashSet<>();
+      for (VFileEvent event : events) {
+        try {
+          if (event.getFile() != null && event.getFile().isValid()) {
+            String file = event.getFile().getName();
+            if (file.endsWith(".yml") && file.contains("antora") && file.contains("playbook")) {
+              playbooks.add(event.getFile());
+            }
+          }
+        } catch (AlreadyDisposedException ignored) {
+          // might happen if file is in a module that has already been disposed
+        }
+      }
+      if (playbooks.size() > 0) {
+        addPlaybooks(project, playbooks);
+      }
+    }
+
+    private void addPlaybooks(Project project, Set<VirtualFile> contentRoots) {
+      synchronized (projectItems) {
+        TreeSet<String> playbooks = projectItems.get(project);
+        if (playbooks != null) {
+          for (VirtualFile contentRoot : contentRoots) {
+            addPlaybook(playbooks, contentRoot);
+          }
+        }
+      }
+    }
+
+  };
 
   @NotNull
   public static Collection<String> getRoots(@NotNull Project project) {
-    TreeSet<String> roots = retrieve(project);
+    TreeSet<String> roots = PROJECT_ROOTS.retrieve(project);
     if (roots != null) {
       return Collections.unmodifiableCollection(roots);
     }
@@ -714,8 +749,33 @@ public class AsciiDocUtil {
         addRoot(roots, contentRoot);
       }
     }
-    cache(project, roots);
+    PROJECT_ROOTS.cache(project, roots);
     return Collections.unmodifiableCollection(roots);
+  }
+
+  @NotNull
+  public static Collection<String> getPlaybooks(@NotNull Project project) {
+    TreeSet<String> playbooks = PROJECT_PLAYBOOKS.retrieve(project);
+    if (playbooks != null) {
+      return Collections.unmodifiableCollection(playbooks);
+    }
+    playbooks = new TreeSet<>();
+    if (project.isDisposed()) {
+      // module manager will not work on already disposed projects, therefore return empty list
+      return Collections.unmodifiableCollection(playbooks);
+    }
+    ProgressManager.checkCanceled();
+    TreeSet<String> additionalPlaybooks = new TreeSet<>();
+    //noinspection UnstableApiUsage
+    FilenameIndex.processAllFileNames(file -> {
+      if (file.endsWith(".yml") && file.contains("antora") && file.contains("playbook")) {
+        FilenameIndex.getVirtualFilesByName(file, new AsciiDocSearchScope(project)).forEach(virtualFile -> addPlaybook(additionalPlaybooks, virtualFile));
+      }
+      return true;
+    }, GlobalSearchScope.projectScope(project), null);
+    playbooks.addAll(additionalPlaybooks);
+    PROJECT_PLAYBOOKS.cache(project, playbooks);
+    return Collections.unmodifiableCollection(playbooks);
   }
 
   @TestOnly
@@ -733,6 +793,11 @@ public class AsciiDocUtil {
       roots.remove(higherEntry);
     }
     roots.add(rootPath);
+  }
+
+  @TestOnly
+  protected static void addPlaybook(TreeSet<String> playbooks, VirtualFile root) {
+    playbooks.add(root.getPath());
   }
 
   public static String findAntoraImagesDirRelative(@NotNull Project project, VirtualFile fileBaseDir) {
@@ -1290,7 +1355,7 @@ public class AsciiDocUtil {
 
   @SuppressWarnings("StringSplitter")
   private static void resolvePageAliases(Project project, String key, String myModuleName, String myComponentName, String myComponentVersion, List<String> result) {
-    List<AsciiDocAttributeDeclaration> declarations = AsciiDocUtil.findAttributes(project, "page-aliases", true);
+    List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(project, "page-aliases", true);
     for (AttributeDeclaration decl : declarations) {
       String shortKey = AsciiDocFileReference.normalizeKeyForSearch(key);
       String value = decl.getAttributeValue();

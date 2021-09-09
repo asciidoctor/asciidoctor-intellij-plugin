@@ -290,6 +290,11 @@
                      groupName="General" enabledByDefault="true" level="WARNING"
                      shortName="AsciiDocInlineMacroShouldBeBlockOrPreprocessorMacro"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocInlineMacroShouldBeBlockOrPreprocessorMacroInspection"/>
+    <localInspection language="AsciiDoc" displayName="Attribute not defined within project" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="WARNING"
+                     shortName="AsciiDocAttributeShouldBeDefined"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocAttributeUndefinedInspection"/>
+
     <lang.inspectionSuppressor language="AsciiDoc"
       implementationClass="org.asciidoc.intellij.inspections.AsciiDocInspectionSuppressor" />
     <externalAnnotator language="AsciiDoc" order="before asciidoc-processor" implementationClass="org.asciidoc.intellij.annotator.AsciiDocExternalAnnotatorHighlighting"/>

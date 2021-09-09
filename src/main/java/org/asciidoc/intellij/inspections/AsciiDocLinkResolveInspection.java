@@ -13,6 +13,7 @@ import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocInlineMacro;
 import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
+import org.asciidoc.intellij.psi.AttributeDeclaration;
 import org.asciidoc.intellij.psi.HasAnchorReference;
 import org.asciidoc.intellij.psi.HasAntoraReference;
 import org.asciidoc.intellij.psi.HasFileReference;
@@ -144,9 +145,13 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
 
   private boolean hasImagesDirAsUrl(PsiElement o) {
     boolean continueResolving = true;
-    List<AsciiDocAttributeDeclaration> imagesdirs = AsciiDocUtil.findAttributes(o.getProject(), "imagesdir");
+    List<AttributeDeclaration> imagesdirs = AsciiDocUtil.findAttributes(o.getProject(), "imagesdir");
     // if there is an imagesdir declaration in the same file before the image, and it contain an URL, don't continue
-    for (AsciiDocAttributeDeclaration decl : imagesdirs) {
+    for (AttributeDeclaration d : imagesdirs) {
+      if (!(d instanceof AsciiDocAttributeDeclaration)) {
+        continue;
+      }
+      AsciiDocAttributeDeclaration decl = (AsciiDocAttributeDeclaration) d;
       String val = decl.getAttributeValue();
       if (decl.getContainingFile().equals(o.getContainingFile()) &&
         decl.getTextOffset() < o.getTextOffset() &&

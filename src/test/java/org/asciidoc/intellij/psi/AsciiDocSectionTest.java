@@ -28,6 +28,11 @@ public class AsciiDocSectionTest {
     public String getTitle() {
       return title;
     }
+
+    @Override
+    public @NotNull String getTitleNoSubstitution() {
+      return title;
+    }
   }
 
   @Test

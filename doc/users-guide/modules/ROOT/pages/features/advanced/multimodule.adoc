@@ -12,6 +12,8 @@ If the projects can contain standard AsciiDoc content, the user might want to be
 
 When the Git repositories contains xref:features/advanced/antora.adoc[] components, the user wants to use cross-references and auto-completion when referencing content in another component.
 
+Supported as of 0.34.2 of the plugin: In another situation a playbook might be in one repository, while the components reside in a different repository, and the user wants auto-completion for attributes defined in the playbook when editing components.
+
 == Solution
 
 Create a project with multiple modules in your IDE.

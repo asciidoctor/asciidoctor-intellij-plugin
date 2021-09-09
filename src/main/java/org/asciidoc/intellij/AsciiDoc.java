@@ -1147,8 +1147,8 @@ public class AsciiDoc {
       }
     }
 
-    if (AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isKrokiEnabled()) {
-      String krokiUrl = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getKrokiUrl();
+    if (settings.getAsciiDocPreviewSettings().isKrokiEnabled()) {
+      String krokiUrl = settings.getAsciiDocPreviewSettings().getKrokiUrl();
       if (!StringUtils.isEmpty(krokiUrl)) {
         attrs.setAttribute("kroki-server-url", krokiUrl);
       }

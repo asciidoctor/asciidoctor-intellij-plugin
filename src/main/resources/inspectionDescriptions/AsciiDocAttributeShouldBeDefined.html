@@ -1,0 +1,18 @@
+<html>
+<body>
+An attribute like <code>{attribute}</code> should be defined.
+<!-- tooltip end -->
+<p>If it is not defined, AsciiDoc will usually print it as is in the output.
+Having an undefined attribute in the source might indicate a mis-spelled attribute.
+<p>To print a text in curly brackets as is, mark it as pass through content like <code>+{attribute}+</code>
+<p>An attribute will treated as defined if it is declared in at least one of the following places:
+<ul>
+    <li>Any AsciiDoc document within the project for non-Antora setups, or within the Antora module for Antora setups.</li>
+    <li>The Antora module descriptor of the current module.</li>
+    <li>Any Antora playbook within the current project.</li>
+    <li>IDE's AsciiDoc settings.</li>
+    <li>A well-known AsciiDoc attribute.</li>
+</ul>
+</p>
+</body>
+</html>

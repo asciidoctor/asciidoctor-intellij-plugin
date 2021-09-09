@@ -11,9 +11,8 @@ import java.util.List;
 import java.util.Set;
 
 public class AsciiDocChooseByNameContributor implements ChooseByNameContributor {
-  @NotNull
   @Override
-  public String[] getNames(Project project, boolean includeNonProjectItems) {
+  public String @NotNull [] getNames(Project project, boolean includeNonProjectItems) {
     List<AsciiDocSection> sections = AsciiDocFileUtil.findSections(project);
     List<AsciiDocBlockId> ids = AsciiDocUtil.findIds(project);
     List<AsciiDocAttributeDeclaration> attributes = AsciiDocUtil.findAttributes(project);
@@ -39,17 +38,22 @@ public class AsciiDocChooseByNameContributor implements ChooseByNameContributor 
     return names.toArray(new String[0]);
   }
 
-  @NotNull
   @Override
-  public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
+  public NavigationItem @NotNull [] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
     // todo include non project items
     List<AsciiDocSection> sections = AsciiDocFileUtil.findSections(project, name);
     List<AsciiDocBlockId> ids = AsciiDocUtil.findIds(project, name);
-    List<AsciiDocAttributeDeclaration> attributes = AsciiDocUtil.findAttributes(project, name);
+    List<AttributeDeclaration> attributes = AsciiDocUtil.findAttributes(project, name);
     List<? super NavigationItem> list = new ArrayList<>();
     list.addAll(sections);
     list.addAll(ids);
-    attributes.forEach(asciiDocAttributeDeclaration -> list.add(asciiDocAttributeDeclaration.getAttributeDeclarationName()));
+    attributes.forEach(d -> {
+      if (!(d instanceof AsciiDocAttributeDeclaration)) {
+        return;
+      }
+      AsciiDocAttributeDeclaration declaration = (AsciiDocAttributeDeclaration) d;
+      list.add(declaration.getAttributeDeclarationName());
+    });
     return list.toArray(new NavigationItem[0]);
   }
 

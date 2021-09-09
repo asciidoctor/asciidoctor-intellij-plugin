@@ -57,9 +57,8 @@ public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implemen
     return false;
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     List<ResolveResult> results = new ArrayList<>();
     String name = myRangeInElement.substring(myElement.getText());
     boolean annotation = false;
