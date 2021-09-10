@@ -165,11 +165,11 @@ public class AsciiDoc {
 
   private static boolean shutdown = false;
 
-  private static final PrependConfig PREPEND_CONFIG = new PrependConfig();
+  private static PrependConfig prependConfig;
 
-  private static final AntoraIncludeAdapter ANTORA_INCLUDE_ADAPTER = new AntoraIncludeAdapter();
+  private static AntoraIncludeAdapter antoraIncludeAdapter;
 
-  private static final AttributesRetriever ATTRIBUTES_RETRIEVER = new AttributesRetriever();
+  private static AttributesRetriever attributesRetriever;
 
   private static final com.intellij.openapi.diagnostic.Logger LOG =
     com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDoc.class);
@@ -248,7 +248,7 @@ public class AsciiDoc {
   private final String projectBasePath;
   private final Project project;
 
-  public AsciiDoc(Project project, File fileBaseDir, Path imagesPath, String name) {
+  public AsciiDoc(Project project, File fileBaseDir, @Nullable Path imagesPath, String name) {
     this.projectBasePath = project.getBasePath();
     this.fileBaseDir = fileBaseDir;
     this.imagesPath = imagesPath;
@@ -323,10 +323,10 @@ public class AsciiDoc {
         // require openssl library here to enable download content via https
         // requiring it later after other libraries have been loaded results in "undefined method `set_params' for #<OpenSSL::SSL::SSLContext"
         asciidoctor.requireLibrary("openssl");
-        asciidoctor.javaExtensionRegistry().preprocessor(PREPEND_CONFIG);
-        asciidoctor.javaExtensionRegistry().includeProcessor(ANTORA_INCLUDE_ADAPTER);
+        asciidoctor.javaExtensionRegistry().preprocessor(prependConfig);
+        asciidoctor.javaExtensionRegistry().includeProcessor(antoraIncludeAdapter);
         if (format == FileType.JAVAFX || format == FileType.HTML || format == FileType.JCEF || format == FileType.BROWSER) {
-          asciidoctor.javaExtensionRegistry().postprocessor(ATTRIBUTES_RETRIEVER);
+          asciidoctor.javaExtensionRegistry().postprocessor(attributesRetriever);
         }
         // disable JUL logging of captured messages
         // https://github.com/asciidoctor/asciidoctorj/issues/669
@@ -518,7 +518,20 @@ public class AsciiDoc {
     try {
       // set classloader for current thread as otherwise JRubyAsciidoctor#processRegistrations() will not register extensions
       Thread.currentThread().setContextClassLoader(cl);
-      return AsciidoctorJRuby.Factory.create(cl);
+      AsciidoctorJRuby asciidoctorJRuby = AsciidoctorJRuby.Factory.create(cl);
+
+      /* initialize these lazily, as they call service loader things */
+      if (prependConfig == null) {
+        prependConfig = new PrependConfig();
+      }
+      if (antoraIncludeAdapter == null) {
+         antoraIncludeAdapter = new AntoraIncludeAdapter();
+      }
+      if (attributesRetriever == null) {
+        attributesRetriever = new AttributesRetriever();
+      }
+
+      return asciidoctorJRuby;
     } finally {
       Thread.currentThread().setContextClassLoader(oldCl);
     }
@@ -764,15 +777,15 @@ public class AsciiDoc {
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         asciidoctor.registerLogHandler(logHandler);
-        PREPEND_CONFIG.setConfig(config);
-        ANTORA_INCLUDE_ADAPTER.setAntoraDetails(project, antoraModuleDir);
+        prependConfig.setConfig(config);
+        antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir);
         AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
         try {
           return "<div id=\"content\"" + (antoraModuleDir != null ? " class=\"doc\"" : "") + ">\n" + asciidoctor.convert(text,
             getDefaultOptions(format, springRestDocsSnippets, attributes)) + "\n</div>";
         } finally {
-          PREPEND_CONFIG.setConfig("");
-          ANTORA_INCLUDE_ADAPTER.setAntoraDetails(null, null);
+          prependConfig.setConfig("");
+          antoraIncludeAdapter.setAntoraDetails(null, null);
           asciidoctor.unregisterLogHandler(logHandler);
         }
       } catch (AlreadyDisposedException | ProcessCanceledException ex) {
@@ -885,8 +898,8 @@ public class AsciiDoc {
       // SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
-        PREPEND_CONFIG.setConfig(config);
-        ANTORA_INCLUDE_ADAPTER.setAntoraDetails(project, antoraModuleDir);
+        prependConfig.setConfig(config);
+        antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir);
         AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
         asciidoctor.registerLogHandler(logHandler);
         try {
@@ -896,8 +909,8 @@ public class AsciiDoc {
               getDefaultOptions(format, springRestDocsSnippets, attributes), format));
           }
         } finally {
-          PREPEND_CONFIG.setConfig("");
-          ANTORA_INCLUDE_ADAPTER.setAntoraDetails(null, null);
+          prependConfig.setConfig("");
+          antoraIncludeAdapter.setAntoraDetails(null, null);
           asciidoctor.unregisterLogHandler(logHandler);
         }
       } catch (ProcessCanceledException ex) {
@@ -1168,7 +1181,7 @@ public class AsciiDoc {
   }
 
   public Map<String, String> getAttributes() {
-    return ATTRIBUTES_RETRIEVER.getAttributes();
+    return attributesRetriever.getAttributes();
   }
 
   public enum FileType {
