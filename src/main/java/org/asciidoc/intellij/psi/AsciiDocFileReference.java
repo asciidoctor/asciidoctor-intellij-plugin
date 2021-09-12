@@ -162,7 +162,6 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     this.isFolder = isFolder;
     this.isAntora = isAntora;
     this.key = element.getText().substring(textRange.getStartOffset(), textRange.getEndOffset() + suffix);
-    System.out.println(key);
   }
 
   private AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, String key,
