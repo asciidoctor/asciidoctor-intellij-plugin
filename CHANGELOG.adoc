@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - add inspection for attributes that haven't been defined (#858)
 - infer attributes from Antora playbook for auto-complete of attributes (#776)
 - lazy initialization for attributes to avoid exceptions in initializer (#861)
+- avoid building/clearing errors on project startup (#862)
 
 === 0.34.1
 
