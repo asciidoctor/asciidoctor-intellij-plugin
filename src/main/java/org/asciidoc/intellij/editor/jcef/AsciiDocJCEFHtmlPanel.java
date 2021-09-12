@@ -222,7 +222,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       base = "";
     }
 
-    reregisterHandlers();
+    registerHandlers();
 
     myCefLoadHandler = new CefLoadHandlerAdapter() {
       @Override
@@ -293,9 +293,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
   }
 
-  private void reregisterHandlers() {
-    disposeHandlers();
-
+  private void registerHandlers() {
     myJSQuerySetScrollY = JBCefJSQuery.create(this);
     myRenderedIteration = JBCefJSQuery.create(this);
     myRenderedResult = JBCefJSQuery.create(this);
@@ -398,39 +396,30 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private void disposeHandlers() {
     if (myJSQuerySetScrollY != null) {
       Disposer.dispose(myJSQuerySetScrollY);
-      myJSQuerySetScrollY = null;
     }
     if (myRenderedIteration != null) {
       Disposer.dispose(myRenderedIteration);
-      myRenderedIteration = null;
     }
     if (myRenderedResult != null) {
       Disposer.dispose(myRenderedResult);
-      myRenderedResult = null;
     }
     if (myBrowserLog != null) {
       Disposer.dispose(myBrowserLog);
-      myBrowserLog = null;
     }
     if (myScrollEditorToLine != null) {
       Disposer.dispose(myScrollEditorToLine);
-      myScrollEditorToLine = null;
     }
     if (myZoomDelta != null) {
       Disposer.dispose(myZoomDelta);
-      myZoomDelta = null;
     }
     if (myZoomReset != null) {
       Disposer.dispose(myZoomReset);
-      myZoomReset = null;
     }
     if (mySaveImage != null) {
       Disposer.dispose(mySaveImage);
-      mySaveImage = null;
     }
     if (myOpenLink != null) {
       Disposer.dispose(myOpenLink);
-      myOpenLink = null;
     }
   }
 
@@ -692,7 +681,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             disposeMyself();
           } else {
             forceRefresh = true;
-            reregisterHandlers();
           }
         }
       }
