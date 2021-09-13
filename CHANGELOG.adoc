@@ -7,6 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.35.1
+
+- avoid JCEF preview to overlap with other windows (#751)
+- starting with this release, 2021.2.1 is required due to API changes in IntelliJ
+
 === 0.34.2
 
 - upgrade to AsciidoctorJ Diagram 2.2.1 (#855)

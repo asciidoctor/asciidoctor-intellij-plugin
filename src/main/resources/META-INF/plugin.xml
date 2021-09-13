@@ -12,7 +12,7 @@
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->
-  <idea-version since-build="203.5981.155"/> <!-- 2020.3 final -->
+  <idea-version since-build="212.5080.0"/> <!-- 2021.2.1 -->
   <!-- please see https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html -->
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-javafx.xml">com.intellij.javafx</depends>
@@ -378,5 +378,6 @@
     <postStartupActivity implementation="org.asciidoc.intellij.activities.AsciiDocHandleUnloadActivity"/>
     <postStartupActivity implementation="org.asciidoc.intellij.activities.AsciiDocPluginUpdateActivity"/>
     <errorHandler implementation="org.asciidoc.intellij.errorHandler.AsciiDocErrorHandler"/>
+    <registryKey defaultValue="true" description="Whether the AsciiDoc view should be displayed in the off-screen mode." key="ide.browser.jcef.asciidocView.osr.enabled" />
   </extensions>
 </idea-plugin>

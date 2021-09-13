@@ -25,6 +25,7 @@ import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -206,7 +207,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private Editor editor;
 
   public AsciiDocJCEFHtmlPanel(Document document, Path imagesPath) {
-    super(OUR_CLASS_URL + "@" + new Random().nextInt(Integer.MAX_VALUE));
+    super(isOffScreenRenderingEnabled(), null, OUR_CLASS_URL + "@" + new Random().nextInt(Integer.MAX_VALUE));
 
     this.imagesPath = imagesPath;
 
@@ -1105,6 +1106,10 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         }
       }
     );
+  }
+
+  private static boolean isOffScreenRenderingEnabled() {
+    return Registry.is("ide.browser.jcef.asciidocView.osr.enabled", true);
   }
 
 }
