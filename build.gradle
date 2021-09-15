@@ -91,7 +91,7 @@ import org.jetbrains.intellij.tasks.RunPluginVerifierTask.FailureLevel
 
 runPluginVerifier {
   // https://github.com/JetBrains/gradle-intellij-plugin/blob/master/src/main/kotlin/org/jetbrains/intellij/tasks/RunPluginVerifierTask.kt#L485
-  failureLevel = [FailureLevel.COMPATIBILITY_PROBLEMS, FailureLevel.NOT_DYNAMIC]
+  failureLevel = [FailureLevel.INVALID_PLUGIN, FailureLevel.COMPATIBILITY_PROBLEMS, FailureLevel.NOT_DYNAMIC]
   ideVersions = Arrays.asList(project.properties['pluginVerifierIdeVersions'].toString().split(','))
 }
 
