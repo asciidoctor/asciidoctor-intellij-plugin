@@ -94,7 +94,7 @@ See https://asciidoctor.org/docs/user-manual/#taming-svgs[section "`Taming SVGs`
 
 [WARNING]
 ====
-* When using existing SVGs images in Asciidoctor, use `**opts=**inline` to inline exsting SVGs
+* When using existing SVGs images in Asciidoctor, use `**opts=**inline` to inline existing SVGs
 * When using Kroki, use `**opts=**inline` and set `allow-uri-read` in the plugin's settings
 * When using Asciidoctor Diagram, use `**svg-type=**inline` to inline generated SVG
 * As this requires SVG support in the preview, this only works with the JCEF preview.
