@@ -1,0 +1,21 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0" is_locked="true">
+    <!-- GrazieInspection normally has TYPO preference -->
+    <inspection_tool class="GrazieInspection" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AsciiDocAnchorWithoutId" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AsciiDocAttributeContinuation" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AsciiDocBlockMacroShouldBeInlineMacro" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AsciiDocDescriptionExists" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AsciiDocDescriptionLength" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AsciiDocHeadingStyle" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AsciiDocHorizontalRule" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AsciiDocInlineMacroShouldBeBlockOrPreprocessorMacro" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AsciiDocLinkResolve" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="AsciiDocListingStyle" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AsciiDocPageBreak" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AsciiDocReferencePattern" enabled="true" level="ERROR" enabled_by_default="true" />
+    <inspection_tool class="AsciiDocXrefWithFileExtension" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AsciiDocXrefWithNaturalCrossReference" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AsciiDocAttributeShouldBeDefined" enabled="true" level="WARNING" enabled_by_default="true" />
+  </profile>
+</component>
