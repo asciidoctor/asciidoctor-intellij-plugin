@@ -1,4 +1,5 @@
 = Debugging and Logging
+:description: Tips and tricks to debug an IntelliJ plugin.
 
 IntelliJ will interrupt threads for better interactivity.
 The disadvantage is that this is also triggered when the developer debugs the plugin.

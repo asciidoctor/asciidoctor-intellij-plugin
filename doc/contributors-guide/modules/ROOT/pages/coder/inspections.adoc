@@ -1,4 +1,5 @@
 = Inspections
+:description: Inspections allow highlighting of issues in the editor. They also allow for quick fixes that the user can select using Ctrl+Enter.
 
 Inspections allow highlighting of issues in the editor.
 They also allow for quick fixes that the user can select using kbd:[Ctrl+Enter].

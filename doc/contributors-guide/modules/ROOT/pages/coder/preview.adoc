@@ -1,5 +1,8 @@
 = Rendering the preview
 :navtitle: Rendering preview
+:description: How the preview of the plugin (usually on the right side of the editor) is rendered.
+
+{description}
 
 == Rendering AsciiDoc to HTML
 

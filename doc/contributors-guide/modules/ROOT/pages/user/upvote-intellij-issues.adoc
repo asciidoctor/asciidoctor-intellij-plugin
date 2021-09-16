@@ -1,7 +1,8 @@
 = Upvote an IDEA issue
 :navtitle: Upvote IDEA issues
+:description: Now and then there is a bug in IntelliJ IDEA.
 
-Now and then there is a bug in IntelliJ IDEA.
+{description}
 Or something needs to be implemented in IntelliJ IDEA, so this plugin can build new functionality on top of it.
 
 Users can raise the visibility of these issues upvoting this issue by clicking on the thumbs-up icon (&#128077;) in the JetBrains YouTrack issue tracker.

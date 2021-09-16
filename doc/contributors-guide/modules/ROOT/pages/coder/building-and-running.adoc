@@ -1,5 +1,8 @@
 = Building and Running the plugin
 :navtitle: Building and running
+:description: Use this to get started with developing the plugin.
+
+{description}
 
 == Local Build
 

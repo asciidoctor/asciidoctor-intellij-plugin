@@ -1,4 +1,7 @@
 = Edit documentation content
+:description: Learn how to contribute documentation changes for the plugin.
+
+{description}
 
 == Prerequisites
 

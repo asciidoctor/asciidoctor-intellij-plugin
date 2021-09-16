@@ -78,6 +78,8 @@ While `imagesdir` and `attachmentsdir` use a relative path so that they work bes
 
 === Examples of supported Antora syntax
 
+// suppress inspection "AsciiDocLinkResolve" for whole file
+// as links in example should not be validated
 [source,asciidoc]
 ------
 // images from the assets/images folder - no prefix necessary as imagesdir attribute is set

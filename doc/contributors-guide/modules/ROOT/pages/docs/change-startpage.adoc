@@ -1,7 +1,8 @@
 = Changing content and layout of the start page
 :navtitle: Changing the start page
+:description: Follow these steps to change content and layout of the start page.
 
-Follow these steps to change content and layout of the start page.
+{description}
 
 == Prerequisites
 

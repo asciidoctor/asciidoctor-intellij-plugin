@@ -1,7 +1,7 @@
 = Subscribe to new preview releases
+:description: A preview release contains new functionality or fixed bugs. While automated tests catch some bugs, others might pass unnoticed.
 
-A preview release contains new functionality or fixed bugs.
-While automated tests catch some bugs, others might pass unnoticed.
+{description}
 Or the implementation misses a corner case that no-one has thought of before.
 
 _You can help by testing preview releases!_

@@ -1,5 +1,8 @@
 = Intro to plugin development
 :navtitle: Plugin development
+:description: Introduction to developing plugins for JetBrains' IntelliJ platform.
+
+{description}
 
 == Getting into development
 

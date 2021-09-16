@@ -1,7 +1,8 @@
 = Using the Early Access repository of the AsciiDoc plugin
 :navtitle: Using the Early Access repository
+:description: Add the repository to receive notifications of new preview releases and download them directly to your IDE.
 
-Add the repository to receive notifications of new preview releases and download them directly to your IDE.
+{description}
 Use this to avoid manual downloads of pre-releases.
 
 == Add our early-access-repository (EAP) to your IDE

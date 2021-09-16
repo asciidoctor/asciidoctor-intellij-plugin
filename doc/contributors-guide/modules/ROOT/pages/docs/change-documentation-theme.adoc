@@ -1,6 +1,7 @@
 = Changing the documentation theme
+:description: Follow these steps to change the layout and functionality of the Antora documentation theme.
 
-Follow these steps to change the layout and functionality of the Antora documentation theme.
+{description}
 
 == Prerequisites
 
