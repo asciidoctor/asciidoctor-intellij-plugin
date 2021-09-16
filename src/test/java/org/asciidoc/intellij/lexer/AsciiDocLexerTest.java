@@ -2449,7 +2449,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("kbd:[X + ++ + ++]",
       "AsciiDoc:INLINE_MACRO_ID ('kbd:')\n" +
         "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
-        "AsciiDoc:INLINE_MACRO_BODY ('X')\n" +
+        "AsciiDoc:MACROTEXT ('X')\n" +
         "AsciiDoc:SEPARATOR (' + ')\n" +
         "AsciiDoc:PASSTRHOUGH_INLINE_START ('++')\n" +
         "AsciiDoc:PASSTRHOUGH_CONTENT (' + ')\n" +
@@ -2461,11 +2461,11 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("kbd:[⌃+X+X]+",
       "AsciiDoc:INLINE_MACRO_ID ('kbd:')\n" +
         "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
-        "AsciiDoc:INLINE_MACRO_BODY ('⌃')\n" +
+        "AsciiDoc:MACROTEXT ('⌃')\n" +
         "AsciiDoc:SEPARATOR ('+')\n" +
-        "AsciiDoc:INLINE_MACRO_BODY ('X')\n" +
+        "AsciiDoc:MACROTEXT ('X')\n" +
         "AsciiDoc:SEPARATOR ('+')\n" +
-        "AsciiDoc:INLINE_MACRO_BODY ('X')\n" +
+        "AsciiDoc:MACROTEXT ('X')\n" +
         "AsciiDoc:INLINE_ATTRS_END (']')\n" +
         "AsciiDoc:TEXT ('+')");
   }
@@ -2474,7 +2474,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("kbd:[text++]++]",
       "AsciiDoc:INLINE_MACRO_ID ('kbd:')\n" +
         "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
-        "AsciiDoc:INLINE_MACRO_BODY ('text')\n" +
+        "AsciiDoc:MACROTEXT ('text')\n" +
         "AsciiDoc:PASSTRHOUGH_INLINE_START ('++')\n" +
         "AsciiDoc:PASSTRHOUGH_CONTENT (']')\n" +
         "AsciiDoc:PASSTRHOUGH_INLINE_END ('++')\n" +

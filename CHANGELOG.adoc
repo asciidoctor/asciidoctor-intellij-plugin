@@ -7,6 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.35.3
+
+- added spell-checking for characters in keyboard macros
+- added spell-checking for pass-through content
+
 === 0.35.2
 
 - handle already disposed component in workaround for HiDPI preview (#864)

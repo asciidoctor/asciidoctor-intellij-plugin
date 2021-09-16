@@ -13,7 +13,7 @@ public class AsciiDocIdIndexer extends LexerBasedIdIndexer {
 
   @Override
   public int getVersion() {
-    return 23;
+    return 24;
   }
 
   public static Lexer createIndexingLexer(OccurrenceConsumer consumer) {

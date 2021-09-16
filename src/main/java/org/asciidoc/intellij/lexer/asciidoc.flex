@@ -1155,7 +1155,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^] {
           yypushstate();
           yybegin(KBD_MACRO_ATTRS_KEY);
-          return AsciiDocTokenTypes.INLINE_MACRO_BODY;
+          return AsciiDocTokenTypes.MACROTEXT;
       }
 }
 
@@ -1178,7 +1178,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
       return AsciiDocTokenTypes.SEPARATOR;
   }
   [^] {
-      return AsciiDocTokenTypes.INLINE_MACRO_BODY;
+      return AsciiDocTokenTypes.MACROTEXT;
   }
 }
 
