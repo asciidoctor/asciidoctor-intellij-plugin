@@ -10,7 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.35.2
 
 - handle already disposed component in workaround for HiDPI preview (#864)
-- make attributes in Antora playbook in available for preview and autocomplete (#776)
+- make attributes in Antora playbook available for preview and autocomplete (#776)
 
 === 0.35.1
 
