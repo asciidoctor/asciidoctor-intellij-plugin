@@ -1,7 +1,7 @@
 = Antora
 :description: This plugin support Antora attributes like 'imagesdir' and 'examplesdir'. It also resolves xrefs and includes in the preview.
 
-https://antora.org/[Antora] helps to write and publish documentation web sites.
+https://antora.org/[Antora] helps to write and publish documentation websites.
 It allows combining documentation from multiple repositories into a single website.
 
 Each documentation component contains an `antora.yml` file https://docs.antora.org/antora/2.3/standard-directories/[with a common directory structure] with meta information about that component.
@@ -18,6 +18,10 @@ Auto-complete in `antora.yml` files was implemented starting with plugin version
 The plugin will activate Antora support once it finds a file `antora.yml` and a sub-folder `modules`.
 Antora will be active for all AsciiDoc files located in folders below such a file.
 Once the plugin detects Antora, it activates its Antora features.
+
+The plugin detects Antora playbooks by their name.
+The filename `antora-playbook.yml` would be detected as an Antora playbook, as well as any other file that ends with `.yml` and contains both words `antora` and `playbook`.
+For example, `antora-playbook-author.yml` would be treated as an Antora playbook as well, while `antora-localpreview.yml` would not be treated as an Antora playbook.
 
 == Support provided by the plugin
 
@@ -36,7 +40,7 @@ To allow auto-completion for components that reside in different Git repositorie
 
 === Antora YAML schema support
 
-When editing an `antora.yml` or `antora-playbook.yml` file, the plugin provides JSON-Schema support for validation, auto-completion and documentation.
+When editing a component descriptor (`antora.yml`) or playbook (`antora-playbook.yml`), the plugin provides JSON-Schema support for validation, auto-completion and documentation.
 Press kbd:[Ctrl+Q] for quick help on each attribute.
 
 For the keys _nav_ and _start_page_ in `antora.yml`, the plugin provides auto-completion.
@@ -53,6 +57,9 @@ See section _xref:features/advanced/stylesheets.adoc#remote-stylesheet[Using a r
 === Antora attributes support
 
 The plugin reads all attributes defined in the module's `antora.yml` file's _asciidoc.attributes_ section and uses this for the preview and auto-completion.
+
+Starting with release 0.35.2 of the plugin, it also picks up attributes from an Antora playbook if this is within the same project.
+If the playbook and the components are in different Git repositories, this requires a xref:features/advanced/multimodule.adoc[multi-module project].
 
 The plugin sets multiple attributes to allow referencing files with the current Antora module:
 
