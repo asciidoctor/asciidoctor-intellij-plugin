@@ -951,7 +951,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             // in 2020.3.2 this uses the Swing API. From 2021.1 the CefBrowser can be triggered for a resize outside the EDT
             // using getCefBrowser().wasResized().
             // Starting from IC-211.6222.4 (EAP) this might no longer be necessary?
-            if (getComponent().getComponents().length > 0) {
+            if (!isDisposed() && getComponent().getComponents().length > 0) {
               Component c = getComponent().getComponents()[0];
               int width = c.getWidth();
               int height = c.getHeight();

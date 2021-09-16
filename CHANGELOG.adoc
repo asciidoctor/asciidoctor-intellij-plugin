@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.35.2
+
+- handle already disposed component in workaround for HiDPI preview (#864)
+
 === 0.35.1
 
 - avoid JCEF preview to overlap with other windows (#751)
