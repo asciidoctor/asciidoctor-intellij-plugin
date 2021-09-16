@@ -13,7 +13,6 @@ build/
 /.project
 /.settings/
 /out/
-/lib/
 /release.properties
 .DS_Store/
 *.releaseBackup

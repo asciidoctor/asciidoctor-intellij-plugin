@@ -1,7 +1,6 @@
 buildscript {
   repositories {
     mavenCentral()
-    jcenter()
     maven { url 'https://www.jetbrains.com/intellij-repository/snapshots' }
   }
 }
@@ -30,8 +29,8 @@ import org.jsoup.Jsoup
 
 allprojects {
   repositories {
+    mavenCentral()
     mavenLocal()
-    jcenter()
   }
 }
 
@@ -120,7 +119,13 @@ dependencies {
   implementation 'org.yaml:snakeyaml:1.26'
   implementation 'org.asciidoctor:asciidoctorj:2.5.2' // WARNING: when upgrading asciidoctorj, see comment above about snakeyaml!
   implementation 'commons-io:commons-io:2.11.0'
-  implementation 'nl.jworks.markdown_to_asciidoc:markdown_to_asciidoc:1.1'
+  // used to be 'nl.jworks.markdown_to_asciidoc:markdown_to_asciidoc:1.1' that is only available on jcenter/bintray
+  implementation files('libs/markdown_to_asciidoc-1.1.jar')
+  // explicit dependencies of markdown_to_asciidoc
+  implementation 'org.pegdown:pegdown:1.6.0'
+  implementation 'org.jsoup:jsoup:1.8.1'
+  // end of markdown_to_asciidoc
+
   implementation 'org.apache.commons:commons-text:1.9'
   implementation 'io.sentry:sentry:5.1.2'
 
