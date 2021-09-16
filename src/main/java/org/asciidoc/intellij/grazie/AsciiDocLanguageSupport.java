@@ -106,6 +106,7 @@ public class AsciiDocLanguageSupport {
     AsciiDocTokenTypes.MONOITALIC,
     AsciiDocTokenTypes.MONOBOLDITALIC,
     AsciiDocTokenTypes.END_OF_SENTENCE,
+    AsciiDocTokenTypes.PASSTRHOUGH_CONTENT,
     AsciiDocTokenTypes.LT,
     AsciiDocTokenTypes.GT,
     AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START,
