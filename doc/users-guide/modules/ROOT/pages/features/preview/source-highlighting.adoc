@@ -75,7 +75,7 @@ Attributes _highlightjs-theme_ and _highlightjs-languages_ are only supported wh
 Valid values for the attribute _highlightjsdir_ are
 +
 --
-* an URL starting with either _http://_ or _https://_,
+* a URL starting with either _http://_ or _https://_,
 * a local directory with an absolute path within the current project, or
 * a relative directory from the project's root folder.
 --

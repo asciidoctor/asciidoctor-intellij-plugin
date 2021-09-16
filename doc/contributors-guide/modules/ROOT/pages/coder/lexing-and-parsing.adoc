@@ -98,7 +98,7 @@ Qualifying matches, push back and state change::
 After a match the Java code checks additional conditions like if this is an unconstrained position in the stream.
 If the code decides to discard the match, two possible strategies out of several are:
 
-. Push back all but the first character, and return the token type for the single character (for example when an double-asterisk occurs, but no bold text is to end here, see `\{DOUBLEMONO}` in the lexer).
+. Push back all but the first character, and return the token type for the single character (for example when a double-asterisk occurs, but no bold text is to end here, see `\{DOUBLEMONO}` in the lexer).
 
 . Push back the complete text and continue with a different state using `yybegin()` (for example when matching a `\{HEADING_OLDSTYLE}` in the `MULTILINE` state).
 
@@ -112,7 +112,7 @@ To work around this issue blocks are parsed first in state `MULTILINE`, then in 
 Auto-completion::
 +
 --
-Expressions described above match expressions once they have their closing syntax completed and it is essential for the correct highlighting.
+Expressions described above match expressions once they have their closing syntax completed, and it is essential for the correct highlighting.
 To support autocomplete the matching must handle an expression where only the left part of the expression exists.
 
 A special case is in the parser to support autocompletion, as IntelliJ inserts a special string when parsing the content for autocompletion (named `auto-complete` in our parser).

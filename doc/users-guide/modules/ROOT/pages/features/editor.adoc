@@ -34,7 +34,7 @@ The breadcrumbs view (bottom of the editor) shows the hierarchy leading to the c
 It contains the same elements as in the structure view for the cursor position.
 
 AsciiDoc recommends the https://asciidoctor.org/docs/asciidoc-recommended-practices/#one-sentence-per-line[one-sentence-per-line] style.
-To avoid scrolling horizontally, the user should enable soft-wrap in the IDE. Go to menu:Settings[Editor > General], scroll to menu:Soft Wrap[], add the AsciiDoc file extension (if not already pre-populated) and activate the check box "`Soft-wrap files`".
+To avoid scrolling horizontally, the user should enable soft-wrap in the IDE. Go to menu:Settings[Editor > General], scroll to menu:Soft Wrap[], add the AsciiDoc file extension (if not already pre-populated) and activate the checkbox "`Soft-wrap files`".
 
 // EnableSoftWrapNotificationProvider
 There is also an option to enable soft-wrap for a single file in the editor toolbar.
@@ -49,7 +49,7 @@ This works similarly for attributes (`\{attrib}` and `:attrib:`).
 // see: AsciiDocTextMono and AsciiDocTextItalic in the PSI Tree
 // see: AsciiDocReferenceContributor and AsciiDocJavaReferenceContributor for the creation of references
 // see: AsciiDocJavaReference for the resolution of Java classes
-The user can navigate using kbd:[Ctrl+Click] and kbd:[Ctrl+B] from a file name or Java class name in backticks (as mono spaced text like +++`filename.txt`+++ or +++`JavaClassName`+++) or in underscores (as italic text like +++_filename.txt_+++ or +++_JavaClassName_+++).
+The user can navigate using kbd:[Ctrl+Click] and kbd:[Ctrl+B] from a file name or Java class name in backticks (as monospaced text like +++`filename.txt`+++ or +++`JavaClassName`+++) or in underscores (as italic text like +++_filename.txt_+++ or +++_JavaClassName_+++).
 The plugin tries to rename occurrences of files and Java classes in the AsciiDoc file when the user renames the file or the class.
 
 // see: AsciiDocDocumentationProvider

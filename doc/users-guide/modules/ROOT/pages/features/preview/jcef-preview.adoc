@@ -40,7 +40,7 @@ Once a JCEF preview is open in a project, it now and then brings the focus to th
 This is fixed in the https://blog.jetbrains.com/idea/2020/11/intellij-idea-2020-2-4/[2020.2.4] and 2020.3 release.
 See JetBrains issue https://youtrack.jetbrains.com/issue/IDEA-247541["`JCEF: steals focus from a different frame`"] for more information.
 
-On MacOS there is no copy-and-paste from the JCEF preview in IntelliJ 2020.2.
+On macOS there is no copy-and-paste from the JCEF preview in IntelliJ 2020.2.
 This is fixed in IntelliJ 2020.3 (see issues https://youtrack.jetbrains.com/issue/IDEA-241604/[IDEA-241604] and https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/533[asciidoctor-intellij-plugin/#322]).
 As a workaround, open the preview in the browser by clicking on your favorite browser symbol when hovering in the upper right corner of the editor and copy the contents from the browser window.
 

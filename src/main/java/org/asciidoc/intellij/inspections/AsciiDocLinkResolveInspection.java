@@ -146,7 +146,7 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
   private boolean hasImagesDirAsUrl(PsiElement o) {
     boolean continueResolving = true;
     List<AttributeDeclaration> imagesdirs = AsciiDocUtil.findAttributes(o.getProject(), "imagesdir");
-    // if there is an imagesdir declaration in the same file before the image, and it contain an URL, don't continue
+    // if there is an imagesdir declaration in the same file before the image, and it contains a URL, don't continue
     for (AttributeDeclaration d : imagesdirs) {
       if (!(d instanceof AsciiDocAttributeDeclaration)) {
         continue;

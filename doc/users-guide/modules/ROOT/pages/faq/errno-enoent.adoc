@@ -21,7 +21,7 @@ Linux systems usually default to UTF-8 and are not affected.
 
 == Cause: Folder names with non-US-ASCII characters
 
-Running Microsoft Windows there seems to be a problem that JRuby can't read a folder name when contains non-US-ASCII characters that would require an UTF-8 encoding.
+Running Microsoft Windows there seems to be a problem that JRuby can't read a folder name when contains non-US-ASCII characters that would require a UTF-8 encoding.
 
 This has been documented first in https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/210[Issue 210]
 

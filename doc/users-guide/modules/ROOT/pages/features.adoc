@@ -37,7 +37,7 @@ Learn more about it in the xref:features/preview.adoc[] section.
 
 == Integrations to the AsciiDoc ecosystem
 
-* Refactor Markdown to AsciiDoc: Right click on a file, or use the Refactor menu, and the Markdown document will be replaced by the AsciiDoc equivalent.
+* Refactor Markdown to AsciiDoc: Right-click on a file, or use the Refactor menu, and the Markdown document will be replaced by the AsciiDoc equivalent.
 +
-This supports Undo when you're not happy with the result.
+These supports undo when you're not happy with the result.
 

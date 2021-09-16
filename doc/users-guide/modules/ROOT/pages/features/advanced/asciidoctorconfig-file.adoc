@@ -29,7 +29,7 @@ Sample content:
 The handling will be a mixture of behaviors like https://editorconfig.org/[_.editorconfig_] and _.gitconfig._
 
 Please note that _ifndef_/_ifdef_ macros won't work in a file called _.asciidoctorconfig_ (they work only in files that have the extension _.adoc_) To work around this, rename the file to _.asciidoctorconfig.adoc_.
-This will work the same way like _.asciidoctorconfig_.
+This will work the same way as _.asciidoctorconfig_.
 
 == Behavior
 

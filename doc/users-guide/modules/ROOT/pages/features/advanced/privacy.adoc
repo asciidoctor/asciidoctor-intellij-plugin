@@ -6,7 +6,7 @@
 
 [NOTE]
 ====
-This is a best effort approach and work in progress, not a legal document.
+This is the best effort approach and work in progress, not a legal document.
 To improve this document and the plugin's privacy functionality, some more work would be required.
 
 You can help by asking the right questions, engaging in a discussion or by sponsoring the plugin's development.
@@ -39,7 +39,7 @@ They can choose to host their own Kroki server.
 If they choose to check out and open an untrusted project, the code of that project might contain malicious snippets as part the AsciiDoc content and other scripts.
 These can violate the user's privacy and can compromise their machine.
 
-* When the user accesses the plugin's user's guide on the web, the web hoster will receive the users' router's IP address and browser details and will store it for up to 30 days.
+* When the user accesses the plugin's user's guide on the web, the web hoster will receive the user's router's IP address and browser details and will store it for up to 30 days.
 
 * If an exception occurs in the user's IDE and IntelliJ attributes the exception to the AsciiDoc plugin, the user can choose to send information about the exception to the plugin's Sentry service.
 The user can (and should) review the information before submitting it.

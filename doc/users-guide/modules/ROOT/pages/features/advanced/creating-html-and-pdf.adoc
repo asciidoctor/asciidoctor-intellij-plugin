@@ -4,7 +4,7 @@
 
 {description}
 
-== Creating a HTML file
+== Creating an HTML file
 
 The user can choose _Create HTML from current file_ from the editor's action toolbar to convert the file to HTML format.
 If creating HTML succeeds, the exported file is opened in the system's default browser.

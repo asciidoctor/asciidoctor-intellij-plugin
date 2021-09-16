@@ -61,7 +61,7 @@ The `build.gradle` file specifies the minimum version for all users of the plugi
 --
 GrammarKit:: Helps with highlighting and code completion in Grammar files (*.flex).
 
-PsiViewer:: Helps analyzing the PSI (abstract syntax tree) created from the plugin in the IDE.
+PsiViewer:: Helps to analyze the PSI (abstract syntax tree) created from the plugin in the IDE.
 
 CheckStyle:: This project contains a ready-to-go CheckStyle configuration that will work both in the IDE and in gradle.
 --

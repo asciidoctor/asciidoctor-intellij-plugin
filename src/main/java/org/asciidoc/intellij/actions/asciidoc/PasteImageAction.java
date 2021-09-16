@@ -154,7 +154,7 @@ public class PasteImageAction extends AsciiDocAction {
 
   private void pasteImageFlavour(VirtualFile initialTargetDirectory, CopyPasteManager manager) {
     List<Action> options = new ArrayList<>();
-    BoundAction png = new BoundAction("PNG (good for screen shots, diagrams and line art)", ACTION_SAVE_PNG);
+    BoundAction png = new BoundAction("PNG (good for screenshots, diagrams and line art)", ACTION_SAVE_PNG);
     options.add(png);
     BoundAction jpeg = new BoundAction("JPEG (good for photo images)", ACTION_SAVE_JPEG);
     options.add(jpeg);

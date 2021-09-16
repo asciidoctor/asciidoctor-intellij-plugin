@@ -1,5 +1,5 @@
 = Diagrams in the preview
-:description: The preview of the AsciiDoc plugin supports rendering the diagrams in the preview. It support Asciidoctor Diagram and Kroki.
+:description: The preview of the AsciiDoc plugin supports rendering the diagrams in the preview. It supports Asciidoctor Diagram and Kroki.
 :uri-asciidoctor-diagrams-gh: https://github.com/asciidoctor/asciidoctor-diagram
 :uri-asciidoctor-diagrams-execs: {uri-asciidoctor-diagrams-gh}#specifying-diagram-generator-paths
 :uri-kroki: https://kroki.io
@@ -16,7 +16,7 @@ Two different types of diagram renderer are supported: <<asciidoctor-diagram>> a
 == Using Asciidoctor Diagram
 
 By default, the plugin uses {uri-asciidoctor-diagrams-gh}[Asciidoctor Diagram]
-that depends on locally installed tools to generate images (ie. {uri-asciidoctor-diagrams-execs}[executables] available in the `PATH` environment variable).
+that depends on locally installed tools to generate images (i.e. {uri-asciidoctor-diagrams-execs}[executables] available in the `PATH` environment variable).
 
 Asciidoctor Diagram renders the content of the editor including all referenced includes, images and diagrams like PlantUML on the fly.
 
@@ -80,7 +80,7 @@ See <<interative-vs-inlined>> and <<avoid-flicker>> for a discussion of tradeoff
 
 // see: plantuml-png-patch.rb and kroki-extension.rb
 As JavaFX has a problem displaying SVG files correctly.
-Therefore the plugin displays all diagrams in the JavaFX preview as PNGs, even when the user specifies SVG as the diagram format.
+Therefore, the plugin displays all diagrams in the JavaFX preview as PNGs, even when the user specifies SVG as the diagram format.
 
 When using IntelliJ 2020.2+ and plugin version 0.31.25+, the JCEF preview will show diagrams as SVGs when the user specifies SVG as the diagram format.
 
