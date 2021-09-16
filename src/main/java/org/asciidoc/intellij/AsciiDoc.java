@@ -31,6 +31,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.serviceContainer.AlreadyDisposedException;
 import org.apache.commons.io.FileUtils;
@@ -972,7 +973,7 @@ public class AsciiDoc {
     antoraModuleDir) {
     Map<String, String> result = new HashMap<>();
     if (antoraModuleDir != null) {
-      result.putAll(collectAntoraAttributes(antoraModuleDir));
+      result.putAll(collectAntoraAttributes(antoraModuleDir, project));
 
       VirtualFile baseDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
       if (baseDir == null) {
@@ -1003,7 +1004,7 @@ public class AsciiDoc {
     return result;
   }
 
-  public static Map<String, String> collectAntoraAttributes(VirtualFile antoraModuleDir) {
+  public static Map<String, String> collectAntoraAttributes(VirtualFile antoraModuleDir, Project project) {
     Map<String, String> result = new HashMap<>();
     result.put("icons", "font");
     result.put("env-site", "");
@@ -1049,6 +1050,41 @@ public class AsciiDoc {
               }
             } catch (YAMLException ignored) {
               // continue without detailed Antora information
+            }
+          }
+          for (String entry : AsciiDocUtil.getPlaybooks(project)) {
+            VirtualFile playbook = VirtualFileManager.getInstance().findFileByNioPath(Path.of(entry));
+            if (playbook == null) {
+              continue;
+            }
+            Map<String, Object> antora;
+            try {
+              antora = AsciiDoc.readAntoraYaml(playbook);
+            } catch (YAMLException ex) {
+              continue;
+            }
+            Object asciidoc = antora.get("asciidoc");
+            if (asciidoc instanceof Map) {
+              @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
+              if (attributes instanceof Map) {
+                @SuppressWarnings("unchecked") Map<Object, Object> map = (Map<Object, Object>) attributes;
+                map.forEach((k, v) -> {
+                  String vs;
+                  if (v == null) {
+                    vs = null;
+                  } else if (v instanceof Boolean && !(Boolean) v) {
+                    // false -> soft unset
+                    vs = null;
+                  } else {
+                    vs = v.toString();
+                    if (vs.endsWith("@")) {
+                      // "...@" -> soft set
+                      vs = vs.substring(0, vs.length() - 1);
+                    }
+                  }
+                  result.put(k.toString(), vs);
+                });
+              }
             }
           }
         });

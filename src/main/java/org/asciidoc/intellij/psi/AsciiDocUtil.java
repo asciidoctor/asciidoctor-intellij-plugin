@@ -464,7 +464,7 @@ public class AsciiDocUtil {
   public static Map<String, String> collectAntoraAttributes(PsiElement element) {
     VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(element);
     if (antoraModuleDir != null) {
-      return AsciiDoc.collectAntoraAttributes(antoraModuleDir);
+      return AsciiDoc.collectAntoraAttributes(antoraModuleDir, element.getProject());
     } else {
       return Collections.emptyMap();
     }
