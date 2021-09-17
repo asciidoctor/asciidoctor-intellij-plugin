@@ -39,6 +39,10 @@ public class AsciiDocAttributeUndefinedInspection extends AsciiDocInspectionBase
             if (AsciiDocBundle.getBuiltInAttributesList().contains(key)) {
               continue;
             }
+            // each environment has it own suffix like env-github, treat them as defined
+            if (key.startsWith("env-")) {
+              continue;
+            }
             // check for attributes defined in settings or in Antora component descriptor
             List<AttributeDeclaration> attributes = AsciiDocUtil.findAttributes(o.getProject(), key, o);
             if (attributes.size() > 0) {

@@ -1,0 +1,5 @@
+:definedattribute: defined
+
+{definedattribute}
+
+{<warning descr="Attribute should be defined">undefinedattribute</warning>}
