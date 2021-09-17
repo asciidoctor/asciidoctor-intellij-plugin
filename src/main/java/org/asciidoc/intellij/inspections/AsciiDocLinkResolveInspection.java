@@ -4,8 +4,13 @@ import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFileSystemItem;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocAttributeInBrackets;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
@@ -23,14 +28,18 @@ import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFileQuickfix;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 /**
  * @author Alexander Schwartz 2020
  */
 public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
-  private static final String TEXT_HINT_FILE_DOESNT_RESOLVE = "File doesn't resolve";
-  private static final String TEXT_HINT_ANCHOR_DOESNT_RESOLVE = "Anchor doesn't resolve";
+  private static final @InspectionMessage String TEXT_HINT_FILE_DOESNT_RESOLVE = "File doesn't resolve";
+  private static final @InspectionMessage String TEXT_HINT_ANCHOR_DOESNT_RESOLVE = "Anchor doesn't resolve";
+  private static final @InspectionMessage String TEXT_HINT_FILE_USES_DIFFERENT_CAPITALIZATION = "File name has different capitalization in document and on file system.";
+  private static final @InspectionMessage String TEXT_HINT_DIRECTORY_USES_DIFFERENT_CAPITALIZATION = "Directory name has different capitalization in document and on file system.";
   private static final AsciiDocChangeCaseForAnchor CHANGE_CASE_FOR_ANCHOR = new AsciiDocChangeCaseForAnchor();
   private static final AsciiDocCreateMissingFileQuickfix CREATE_FILE = new AsciiDocCreateMissingFileQuickfix();
 
@@ -100,12 +109,13 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
           if (file != null) {
             ResolveResult[] resolveResults = file.multiResolve(false);
             if (resolveResults.length == 0) {
-              // if the antora reference doesn't resolve, don't continue
+              // if the Antora reference doesn't resolve, don't continue
               // as it might be a reference to an Antora component in another project
               continueResolving = false;
             }
           }
         }
+        // check for file to resolve
         if (continueResolving && o instanceof HasFileReference) {
           AsciiDocFileReference file = ((HasFileReference) o).getFileReference();
           if (file != null) {
@@ -122,6 +132,9 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
               continueResolving = false;
             }
           }
+        }
+        if (continueResolving) {
+          continueResolving = checkCapitalizationOfFiles(o, holder);
         }
         if (continueResolving && o instanceof HasAnchorReference) {
           AsciiDocFileReference anchor = ((HasAnchorReference) o).getAnchorReference();
@@ -141,6 +154,56 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
         super.visitElement(o);
       }
     };
+  }
+
+  /**
+   * Check for capitalization of file or directory names.
+   * This check will only work on an OS that doesn't treat file names as case-sensitive (that is: MS Windows).
+   * Therefore there is no automated test for this.
+   */
+  private boolean checkCapitalizationOfFiles(@NotNull PsiElement o, @NotNull ProblemsHolder holder) {
+    boolean continueResolving = true;
+    for (PsiReference reference : o.getReferences()) {
+      if (reference instanceof AsciiDocFileReference) {
+        AsciiDocFileReference fileReference = (AsciiDocFileReference) reference;
+        if (fileReference.isAnchor() || fileReference.isAntora()) {
+          continue;
+        }
+        ResolveResult[] resolveResults = fileReference.multiResolve(false);
+        if (resolveResults.length == 1) {
+          if (resolveResults[0].getElement() instanceof PsiFileSystemItem) {
+            PsiFileSystemItem resolvedFile = (PsiFileSystemItem) resolveResults[0].getElement();
+            if (resolvedFile.getVirtualFile().getFileSystem().isCaseSensitive()) {
+              // this will only happen if the user is on a case-insensitive file system, no need to continue
+              continue;
+            }
+            String refText = fileReference.getRangeInElement().substring(o.getText());
+            String refTextResolved = AsciiDocUtil.resolveAttributes(o, refText);
+            if (refTextResolved != null) {
+              refText = refTextResolved;
+            }
+            if (!Objects.equals(refText, resolvedFile.getName()) && Objects.equals(refText.toLowerCase(Locale.US), resolvedFile.getName().toLowerCase(Locale.US))) {
+              String diff1 = StringUtils.difference(refText, resolvedFile.getName());
+              diff1 = StringEscapeUtils.escapeHtml4(diff1);
+              String diff2 = StringUtils.difference(resolvedFile.getName(), refText);
+              diff2 = StringEscapeUtils.escapeHtml4(diff2);
+              boolean isAntora = AsciiDocUtil.findAntoraModuleDir(o) != null;
+              holder.registerProblem(o,
+                "<html>" +
+                (resolvedFile.isDirectory() ? TEXT_HINT_DIRECTORY_USES_DIFFERENT_CAPITALIZATION : TEXT_HINT_FILE_USES_DIFFERENT_CAPITALIZATION)
+                + "<br>" + (isAntora ? "Resolving will fail when rendered with Antora." : "Resolving will fail when rendered on a case-sensitive file system (for example Linux).")
+                + "<br>Difference is: <code>" + diff2 + "<code> vs. <code>" + diff1 + "</code>" +
+                (diff1.length() != refText.length() ? " in <code>" + StringEscapeUtils.escapeHtml4(refText) + "</code>" : "") +
+                "</html>",
+                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                fileReference.getRangeInElement());
+              continueResolving = false;
+            }
+          }
+        }
+      }
+    }
+    return continueResolving;
   }
 
   private boolean hasImagesDirAsUrl(PsiElement o) {

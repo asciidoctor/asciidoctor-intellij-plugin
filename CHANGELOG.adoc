@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - added spell-checking for characters in keyboard macros
 - added spell-checking for pass-through content
+- plugin will show an error in the editor if case of file name in document differs from the case of the file in file system (#863)
 
 === 0.35.2
 
