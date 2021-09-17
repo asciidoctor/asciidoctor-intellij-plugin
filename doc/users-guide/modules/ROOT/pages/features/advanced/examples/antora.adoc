@@ -1,0 +1,28 @@
+// suppress inspection "AsciiDocLinkResolve" for whole file
+
+// tag::example[]
+// images from the assets/images folder - no prefix necessary as imagesdir attribute is set
+image::animage.png[some image]
+
+// offer downloads
+link:{attachmentsdir}/file.zip[Download]
+
+// include content into a page
+\include::partial$some-recurring-content.adoc[]
+\include::{partialsdir}/some-recurring-content.adoc[]
+\include::component:module:partial$some-recurring-content.adoc[]
+
+// include snippets from examples
+[source]
+----
+\include::example$test.java[tags=e1]
+\include::{examplesdir}/test.java[tags=e1]
+\include::component:module:example$test.java[tags=e1]
+----
+
+// reference documents in the same module
+xref:mail-component.adoc[SMTP]
+
+// reference documents in a different component and module
+xref:component:module:mail-component.adoc[SMTP]
+// end::example[]

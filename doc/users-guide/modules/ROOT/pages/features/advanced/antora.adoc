@@ -78,34 +78,9 @@ While `imagesdir` and `attachmentsdir` use a relative path so that they work bes
 
 === Examples of supported Antora syntax
 
-// suppress inspection "AsciiDocLinkResolve" for whole file
-// as links in example should not be validated
 [source,asciidoc]
 ------
-// images from the assets/images folder - no prefix necessary as imagesdir attribute is set
-image::animage.png[some image]
-
-// offer downloads
-link:{attachmentsdir}/file.zip[Download]
-
-// include content into a page
-\include::partial$some-recurring-content.adoc[]
-\include::{partialsdir}/some-recurring-content.adoc[]
-\include::component:module:partial$some-recurring-content.adoc[]
-
-// include snippets from examples
-[source,java]
-----
-\include::example$test.java[tags=e1]
-\include::{examplesdir}/test.java[tags=e1]
-\include::component:module:example$test.java[tags=e1]
-----
-
-// reference documents in the same module
-xref:mail-component.adoc[SMTP]
-
-// reference documents in a different component and module
-xref:component:module:mail-component.adoc[SMTP]
+include::examples/antora.adoc[tags=example]
 ------
 
 == Example projects
