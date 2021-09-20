@@ -80,7 +80,7 @@ While `imagesdir` and `attachmentsdir` use a relative path so that they work bes
 
 [source,asciidoc]
 ------
-include::examples/antora.adoc[tags=example]
+include::{examplesdir}/antora.adoc[tags=example]
 ------
 
 == Example projects
