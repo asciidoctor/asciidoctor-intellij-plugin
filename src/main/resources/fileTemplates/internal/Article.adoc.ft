@@ -1,3 +1,5 @@
+// suppress inspection "AsciiDocLinkResolve" for whole file
+// suppress inspection "AsciiDocAnchorWithoutId" for whole file
 = AsciiDoc Article Title
 Firstname Lastname <author@asciidoctor.org>
 3.0, July 29, 2022: AsciiDoc article template
@@ -21,8 +23,8 @@ This is another paragraph.footnote:[I am footnote text and will be displayed at 
 .Unordered list title
 * list item 1
 ** nested list item
-*** nested nested list item 1
-*** nested nested list item 2
+*** nested list item 1
+*** nested list item 2
 * list item 2
 
 This is a paragraph.
@@ -83,7 +85,7 @@ TIP: There are five admonition labels: Tip, Note, Important, Caution and Warning
 .. nested ordered list item
 . ordered list item
 
-The text at the end of this sentence is cross referenced to <<_third_level_heading,the third level heading>>
+The text at the end of this sentence is cross-referenced to <<_third_level_heading,the third level heading>>
 
 == First level heading
 
