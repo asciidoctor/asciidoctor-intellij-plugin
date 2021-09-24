@@ -1,5 +1,3 @@
-// suppress inspection "AsciiDocLinkResolve" for whole file
-// suppress inspection "AsciiDocAnchorWithoutId" for whole file
 = AsciiDoc Article Title
 Firstname Lastname <author@asciidoctor.org>
 3.0, July 29, 2022: AsciiDoc article template
@@ -13,6 +11,8 @@ Content entered directly below the header but before the first section heading i
 
 This is a paragraph with a *bold* word and an _italicized_ word.
 
+
+// suppress inspection "AsciiDocLinkResolve"
 .Image caption
 image::image-file-name.png[I am the image alt text.]
 
@@ -39,6 +39,7 @@ Content in an example block is subject to normal substitutions.
 Sidebars contain aside text and are subject to normal substitutions.
 ****
 
+[#_third_level_heading]
 ==== Third level heading
 
 [#id-for-listing-block]
@@ -85,7 +86,7 @@ TIP: There are five admonition labels: Tip, Note, Important, Caution and Warning
 .. nested ordered list item
 . ordered list item
 
-The text at the end of this sentence is cross-referenced to <<_third_level_heading,the third level heading>>
+The text at the end of this sentence is cross-referenced to <<#_third_level_heading,the third level heading>>
 
 == First level heading
 
