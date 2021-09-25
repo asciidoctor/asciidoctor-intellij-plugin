@@ -34,7 +34,6 @@ import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.ui.JreHiDpiUtil;
 import com.intellij.ui.jcef.JBCefBrowser;
 import com.intellij.ui.jcef.JBCefJSQuery;
 import com.intellij.ui.jcef.JBCefPsiNavigationUtils;
@@ -942,26 +941,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     @Override
     public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
       if (isLoading) {
-        if (JreHiDpiUtil.isJreHiDPIEnabled() && !hasLoadedOnce) {
-          ApplicationManager.getApplication().invokeLater(() -> {
-            // change the height back and forth for one pixel to force re-sizing of the JCEF in the preview
-            // to fix situations where two screens are of different HiDPI mode - once per new JCEF preview
-            // workaround for: https://youtrack.jetbrains.com/issue/IDEA-246551
-            // in 2020.3.2 this uses the Swing API. From 2021.1 the CefBrowser can be triggered for a resize outside the EDT
-            // using getCefBrowser().wasResized().
-            // Starting from IC-211.6222.4 (EAP) this might no longer be necessary?
-            /*
-            // on 2021.2 with off-screen-rendering might create an exception "Already disposed"
-            if (!isDisposed() && getComponent().getComponents().length > 0) {
-              Component c = getComponent().getComponents()[0];
-              int width = c.getWidth();
-              int height = c.getHeight();
-              c.setSize(width, height - 1);
-              c.setSize(width, height);
-            }
-            */
-          });
-        }
         getCefBrowser().executeJavaScript(
           "var value = document.documentElement.scrollTop || document.body.scrollTop;" +
             myJSQuerySetScrollY.inject("value"),
