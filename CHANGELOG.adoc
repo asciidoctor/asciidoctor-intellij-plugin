@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.35.4
+
+- starting with this release, 2021.2 is required due to API changes in IntelliJ
+
 === 0.35.3
 
 - added spell-checking for characters in keyboard macros
