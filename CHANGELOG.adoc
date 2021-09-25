@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - prevent NPE when accessing parent folder of a file (#847)
 - lighter color for caption titles in dark mode in the preview (#841)
+- limit 0.33.x version branch to versions IntelliJ versions 2020.3 to 2021.1
 
 === 0.33.19
 
