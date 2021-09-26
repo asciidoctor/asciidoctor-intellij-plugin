@@ -41,7 +41,7 @@ intellij {
   pluginName = 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild = false
   plugins = [
-    'PsiViewer:212-SNAPSHOT', // used for debugging
+    'PsiViewer:213-SNAPSHOT', // used for debugging
     'PlantUML integration:5.5.1', // used to test highlighting of plantuml diagrams
     'com.intellij.platform.images', // dependency for PlantUML plugin
     'tanvd.grazi', // used for spell and grammar checking checking
