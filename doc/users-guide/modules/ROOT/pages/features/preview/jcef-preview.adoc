@@ -54,9 +54,17 @@ This opens a fully equipped Chrome developer tools window that allows users to i
 [NOTE]
 ====
 // https://youtrack.jetbrains.com/issue/IDEA-276906
-Starting from IntelliJ 2021.3, set the property `ide.browser.jcef.contextMenu.devTools.enabled=true` to enable this feature.
+Starting from IntelliJ 2021.3, set the property `ide.browser.jcef.contextMenu.devTools.enabled` to `true` to enable this feature.
 
-This property is then specific to enable the DevTools, and won't change any other IDE configuration.
+The registry is avaialble via menu menu:Help[Find action...], then enter "`Registry`" to search the action, then choose "`Registry...`".
+In the dialog that opens, start typing the property key given above to restrict the list.
+Check the checkbox on the right to enable this property.
+Press btn:[Close] to close the dialog.
+The DevTools are available for all newly opened editors.
+For editors already open, users will need to close and re-open them to see the DevTools.
+No IDE restart is required.
+
+This property is then specific to enable the DevTools, and won't change any other IDE behavior.
 ====
 
 == When you can use JCEF preview
