@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.35.5
+
+- removing workaround for "`Cannot Open the Page/ERR_ABORTED`" to IntelliJ 2021.1 (#658)
+
 === 0.35.4
 
 - starting with this release, 2021.2 is required due to API changes in IntelliJ

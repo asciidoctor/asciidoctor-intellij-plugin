@@ -34,7 +34,6 @@ import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.ui.jcef.JBCefBrowser;
 import com.intellij.ui.jcef.JBCefJSQuery;
 import com.intellij.ui.jcef.JBCefPsiNavigationUtils;
 import com.intellij.ui.jcef.JCEFHtmlPanel;
@@ -63,7 +62,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
@@ -231,24 +229,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       }
     };
     getJBCefClient().addLoadHandler(myCefLoadHandler, getCefBrowser());
-    // in Intellij 2020.3.x the load handler is broken as it will trigger ERR_ABORTED if loading in an iframe is aborted,
-    // maybe even trigger an error when the preview is force-refreshed and a currently loading page is aborted
-    // therefore: remove JetBrains load handler
-    try {
-      Field privateLoadHandler;
-      try {
-        // this is 2020.3
-        privateLoadHandler = JBCefBrowser.class.getDeclaredField("myLoadHandler");
-      } catch (NoSuchFieldException ex) {
-        // this is 2021.1
-        privateLoadHandler = this.getClass().getClassLoader().loadClass("com.intellij.ui.jcef.JBCefBrowserBase").getDeclaredField("myLoadHandler");
-      }
-      privateLoadHandler.setAccessible(true);
-      CefLoadHandler loadHandler = (CefLoadHandler) privateLoadHandler.get(this);
-      getJBCefClient().removeLoadHandler(loadHandler, getCefBrowser());
-    } catch (NoSuchFieldException | IllegalAccessException | ClassNotFoundException e) {
-      LOG.info("unable to clean up JCEF load handler", e);
-    }
 
     try {
       java.util.Properties p = new java.util.Properties();
