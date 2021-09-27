@@ -1,7 +1,7 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.Service;
-import com.intellij.openapi.components.ServiceManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
@@ -16,7 +16,7 @@ public final class ImageMacroAttributeService {
   // is created by ServiceManager
   @SuppressWarnings("unused")
   public ImageMacroAttributeService() {
-    macroAttributeService = ServiceManager.getService(MacroAttributeService.class);
+    macroAttributeService = ApplicationManager.getApplication().getService(MacroAttributeService.class);
   }
 
   @TestOnly

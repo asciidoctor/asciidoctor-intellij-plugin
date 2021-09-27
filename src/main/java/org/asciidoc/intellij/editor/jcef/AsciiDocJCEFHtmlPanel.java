@@ -34,6 +34,7 @@ import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.ui.jcef.JBCefBrowserBase;
 import com.intellij.ui.jcef.JBCefJSQuery;
 import com.intellij.ui.jcef.JBCefPsiNavigationUtils;
 import com.intellij.ui.jcef.JCEFHtmlPanel;
@@ -142,50 +143,46 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
   private double uiZoom;
 
-  private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = new NotNullLazyValue<>() {
-    @NotNull
-    @Override
-    protected String compute() {
-      //noinspection StringBufferReplaceableByString
-      return new StringBuilder()
-        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("scrollToElement.js")).append("\"></script>\n")
-        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processLinks.js")).append("\"></script>\n")
-        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processImages.js")).append("\"></script>\n")
-        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("pickSourceLine.js")).append("\"></script>\n")
-        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("mouseEvents.js")).append("\"></script>\n")
-        .append("<script type=\"text/x-mathjax-config\">\n" +
-          "MathJax.Hub.Config({\n" +
-          "  messageStyle: \"none\",\n" +
-          "  EqnChunkDelay: 1," +
-          "  imageFont: null," +
-          "  tex2jax: {\n" +
-          "    inlineMath: [[\"\\\\(\", \"\\\\)\"]],\n" +
-          "    displayMath: [[\"\\\\[\", \"\\\\]\"]],\n" +
-          "    ignoreClass: \"nostem|nolatexmath\"\n" +
-          "  },\n" +
-          "  asciimath2jax: {\n" +
-          "    delimiters: [[\"\\\\$\", \"\\\\$\"]],\n" +
-          "    ignoreClass: \"nostem|noasciimath\"\n" +
-          "  },\n" +
-          "  TeX: { equationNumbers: { autoNumber: \"none\" } }\n" +
-          "});\n" +
-          "MathJax.Hub.Register.MessageHook(\"Math Processing Error\",function (message) {\n" +
-          " window.JavaPanelBridge && window.JavaPanelBridge.log(JSON.stringify(message)); \n" +
-          "});" +
-          "MathJax.Hub.Register.MessageHook(\"TeX Jax - parse error\",function (message) {\n" +
-          " var errortext = document.getElementById('mathjaxerrortext'); " +
-          " var errorformula = document.getElementById('mathjaxerrorformula'); " +
-          " if (errorformula && errortext) { " +
-          "   errortext.textContent = 'Math Formula problem: ' + message[1]; " +
-          "   errorformula.textContent = '\\n' + message[2]; " +
-          " } " +
-          " window.JavaPanelBridge && window.JavaPanelBridge.log(JSON.stringify(message)); \n" +
-          "});" +
-          "</script>\n")
-        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("MathJax/MathJax.js")).append("&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n")
-        .toString();
-    }
-  };
+  private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = NotNullLazyValue.lazy(() -> {
+    //noinspection StringBufferReplaceableByString
+    return new StringBuilder()
+      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("scrollToElement.js")).append("\"></script>\n")
+      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processLinks.js")).append("\"></script>\n")
+      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processImages.js")).append("\"></script>\n")
+      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("pickSourceLine.js")).append("\"></script>\n")
+      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("mouseEvents.js")).append("\"></script>\n")
+      .append("<script type=\"text/x-mathjax-config\">\n" +
+        "MathJax.Hub.Config({\n" +
+        "  messageStyle: \"none\",\n" +
+        "  EqnChunkDelay: 1," +
+        "  imageFont: null," +
+        "  tex2jax: {\n" +
+        "    inlineMath: [[\"\\\\(\", \"\\\\)\"]],\n" +
+        "    displayMath: [[\"\\\\[\", \"\\\\]\"]],\n" +
+        "    ignoreClass: \"nostem|nolatexmath\"\n" +
+        "  },\n" +
+        "  asciimath2jax: {\n" +
+        "    delimiters: [[\"\\\\$\", \"\\\\$\"]],\n" +
+        "    ignoreClass: \"nostem|noasciimath\"\n" +
+        "  },\n" +
+        "  TeX: { equationNumbers: { autoNumber: \"none\" } }\n" +
+        "});\n" +
+        "MathJax.Hub.Register.MessageHook(\"Math Processing Error\",function (message) {\n" +
+        " window.JavaPanelBridge && window.JavaPanelBridge.log(JSON.stringify(message)); \n" +
+        "});" +
+        "MathJax.Hub.Register.MessageHook(\"TeX Jax - parse error\",function (message) {\n" +
+        " var errortext = document.getElementById('mathjaxerrortext'); " +
+        " var errorformula = document.getElementById('mathjaxerrorformula'); " +
+        " if (errorformula && errortext) { " +
+        "   errortext.textContent = 'Math Formula problem: ' + message[1]; " +
+        "   errorformula.textContent = '\\n' + message[2]; " +
+        " } " +
+        " window.JavaPanelBridge && window.JavaPanelBridge.log(JSON.stringify(message)); \n" +
+        "});" +
+        "</script>\n")
+      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("MathJax/MathJax.js")).append("&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n")
+      .toString();
+  });
 
   static {
     String url = "about:blank";
@@ -238,16 +235,16 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       String asciidoctorVersion = p.getProperty("version.asciidoctor");
       myInlineCss = extractAndPatchAsciidoctorCss(asciidoctorVersion);
 
-      try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
+      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
         + asciidoctorVersion
         + "/data/stylesheets/coderay-asciidoctor.css")) {
-        myInlineCss += IOUtils.toString(stream, StandardCharsets.UTF_8);
+        myInlineCss += IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("rouge-github.css")) {
         myInlineCss += IOUtils.toString(is, StandardCharsets.UTF_8);
       }
-      try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
-        myInlineCssDarcula = myInlineCss + IOUtils.toString(stream, StandardCharsets.UTF_8);
+      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
+        myInlineCssDarcula = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
@@ -256,7 +253,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       String message = "Unable to combine CSS resources: " + e.getMessage();
       LOG.error(message, e);
       Notification notification = AsciiDoc.getNotificationGroup()
-        .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
+        .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR);
       // increase event log counter
       notification.setImportant(true);
       Notifications.Bus.notify(notification);
@@ -273,15 +270,15 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   }
 
   private void registerHandlers() {
-    myJSQuerySetScrollY = JBCefJSQuery.create(this);
-    myRenderedIteration = JBCefJSQuery.create(this);
-    myRenderedResult = JBCefJSQuery.create(this);
-    myBrowserLog = JBCefJSQuery.create(this);
-    myScrollEditorToLine = JBCefJSQuery.create(this);
-    myZoomDelta = JBCefJSQuery.create(this);
-    myZoomReset = JBCefJSQuery.create(this);
-    mySaveImage = JBCefJSQuery.create(this);
-    myOpenLink = JBCefJSQuery.create(this);
+    myJSQuerySetScrollY = JBCefJSQuery.create((JBCefBrowserBase) this);
+    myRenderedIteration = JBCefJSQuery.create((JBCefBrowserBase) this);
+    myRenderedResult = JBCefJSQuery.create((JBCefBrowserBase) this);
+    myBrowserLog = JBCefJSQuery.create((JBCefBrowserBase) this);
+    myScrollEditorToLine = JBCefJSQuery.create((JBCefBrowserBase) this);
+    myZoomDelta = JBCefJSQuery.create((JBCefBrowserBase) this);
+    myZoomReset = JBCefJSQuery.create((JBCefBrowserBase) this);
+    mySaveImage = JBCefJSQuery.create((JBCefBrowserBase) this);
+    myOpenLink = JBCefJSQuery.create((JBCefBrowserBase) this);
 
     myJSQuerySetScrollY.addHandler((scrollY) -> {
       try {
@@ -507,7 +504,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         } catch (IOException ex) {
           String message = "Can't save file: " + ex.getMessage();
           Notification notification = AsciiDoc.getNotificationGroup()
-            .createNotification("Error in plugin", message, NotificationType.ERROR, null);
+            .createNotification("Error in plugin", message, NotificationType.ERROR);
           // increase event log counter
           notification.setImportant(true);
           Notifications.Bus.notify(notification);
@@ -1052,7 +1049,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   public void scrollEditorToLine(int sourceLine) {
     if (sourceLine <= 0) {
       Notification notification = AsciiDoc.getNotificationGroup().createNotification("Setting cursor position", "line number " + sourceLine + " requested for cursor position, ignoring",
-        NotificationType.INFORMATION, null);
+        NotificationType.INFORMATION);
       notification.setImportant(false);
       return;
     }

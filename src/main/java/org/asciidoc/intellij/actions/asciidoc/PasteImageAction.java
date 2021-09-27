@@ -7,7 +7,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileChooser.FileSaverDescriptor;
 import com.intellij.openapi.fileChooser.FileSaverDialog;
@@ -84,7 +83,7 @@ public class PasteImageAction extends AsciiDocAction {
    * remember previously selected target folder per file.
    * Limited to last 100 files.
    */
-  private static final Map<String, String> PREVIOUS_TARGET_DIRECTORY_BY_FILE = Collections.synchronizedMap(new LinkedHashMap<String, String>(100, (float) 0.7, true) {
+  private static final Map<String, String> PREVIOUS_TARGET_DIRECTORY_BY_FILE = Collections.synchronizedMap(new LinkedHashMap<>(100, (float) 0.7, true) {
     @Override
     protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
       return size() > 100;
@@ -94,7 +93,7 @@ public class PasteImageAction extends AsciiDocAction {
    * remember previously selected target folder per Antora module.
    * Limited to last 100 modules.
    */
-  private static final Map<String, String> PREVIOUS_TARGET_DIRECTORY_BY_ANTORA_MODULE = Collections.synchronizedMap(new LinkedHashMap<String, String>(100, (float) 0.7, true) {
+  private static final Map<String, String> PREVIOUS_TARGET_DIRECTORY_BY_ANTORA_MODULE = Collections.synchronizedMap(new LinkedHashMap<>(100, (float) 0.7, true) {
     @Override
     protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
       return size() > 100;
@@ -109,7 +108,7 @@ public class PasteImageAction extends AsciiDocAction {
   private final ImageMacroAttributeService attributeService;
 
   public PasteImageAction() {
-    this.attributeService = ServiceManager.getService(ImageMacroAttributeService.class);
+    this.attributeService = ApplicationManager.getApplication().getService(ImageMacroAttributeService.class);
   }
 
   @Override
@@ -200,7 +199,7 @@ public class PasteImageAction extends AsciiDocAction {
                     } else {
                       String message = "Can't save image, no appropriate writer found for selected format.";
                       Notification notification = AsciiDoc.getNotificationGroup()
-                        .createNotification("Error in plugin", message, NotificationType.ERROR, null);
+                        .createNotification("Error in plugin", message, NotificationType.ERROR);
                       // increase event log counter
                       notification.setImportant(true);
                       Notifications.Bus.notify(notification);
@@ -209,7 +208,7 @@ public class PasteImageAction extends AsciiDocAction {
                 } catch (IOException e) {
                   String message = "Can't paste image, " + e.getMessage();
                   Notification notification = AsciiDoc.getNotificationGroup()
-                    .createNotification("Error in plugin", message, NotificationType.ERROR, null);
+                    .createNotification("Error in plugin", message, NotificationType.ERROR);
                   // increase event log counter
                   notification.setImportant(true);
                   Notifications.Bus.notify(notification);
@@ -221,7 +220,7 @@ public class PasteImageAction extends AsciiDocAction {
     } catch (IOException e) {
       String message = "Can't paste image, " + e.getMessage();
       Notification notification = AsciiDoc.getNotificationGroup()
-        .createNotification("Error in plugin", message, NotificationType.ERROR, null);
+        .createNotification("Error in plugin", message, NotificationType.ERROR);
       // increase event log counter
       notification.setImportant(true);
       Notifications.Bus.notify(notification);
@@ -326,7 +325,7 @@ public class PasteImageAction extends AsciiDocAction {
                       } catch (IOException ex) {
                         String message = "Can't save file: " + ex.getMessage();
                         Notification notification = AsciiDoc.getNotificationGroup()
-                          .createNotification("Error in plugin", message, NotificationType.ERROR, null);
+                          .createNotification("Error in plugin", message, NotificationType.ERROR);
                         // increase event log counter
                         notification.setImportant(true);
                         Notifications.Bus.notify(notification);

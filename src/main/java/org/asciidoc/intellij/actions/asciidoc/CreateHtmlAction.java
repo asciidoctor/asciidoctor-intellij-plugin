@@ -3,7 +3,6 @@ package org.asciidoc.intellij.actions.asciidoc;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -28,7 +27,7 @@ public class CreateHtmlAction extends AsciiDocAction {
 
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.CreateHtmlAction";
 
-  private final AsciiDocExtensionService extensionService = ServiceManager.getService(AsciiDocExtensionService.class);
+  private final AsciiDocExtensionService extensionService = ApplicationManager.getApplication().getService(AsciiDocExtensionService.class);
   private Project project;
 
   @Override

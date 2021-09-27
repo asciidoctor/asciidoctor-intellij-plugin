@@ -94,47 +94,43 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
 
   private static final Logger LOG = Logger.getInstance(JavaFxHtmlPanel.class);
 
-  private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = new NotNullLazyValue<String>() {
-    @NotNull
-    @Override
-    protected String compute() {
-      //noinspection StringBufferReplaceableByString
-      return new StringBuilder()
-        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("scrollToElement.js")).append("\"></script>\n")
-        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processLinks.js")).append("\"></script>\n")
-        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("pickSourceLine.js")).append("\"></script>\n")
-        .append("<script type=\"text/x-mathjax-config\">\n" +
-          "MathJax.Hub.Config({\n" +
-          "  messageStyle: \"none\",\n" +
-          "  EqnChunkDelay: 1," +
-          "  tex2jax: {\n" +
-          "    inlineMath: [[\"\\\\(\", \"\\\\)\"]],\n" +
-          "    displayMath: [[\"\\\\[\", \"\\\\]\"]],\n" +
-          "    ignoreClass: \"nostem|nolatexmath\"\n" +
-          "  },\n" +
-          "  asciimath2jax: {\n" +
-          "    delimiters: [[\"\\\\$\", \"\\\\$\"]],\n" +
-          "    ignoreClass: \"nostem|noasciimath\"\n" +
-          "  },\n" +
-          "  TeX: { equationNumbers: { autoNumber: \"none\" } }\n" +
-          "});\n" +
-          "MathJax.Hub.Register.MessageHook(\"Math Processing Error\",function (message) {\n" +
-          " window.JavaPanelBridge && window.JavaPanelBridge.log(JSON.stringify(message)); \n" +
-          "});" +
-          "MathJax.Hub.Register.MessageHook(\"TeX Jax - parse error\",function (message) {\n" +
-          " var errortext = document.getElementById('mathjaxerrortext'); " +
-          " var errorformula = document.getElementById('mathjaxerrorformula'); " +
-          " if (errorformula && errortext) { " +
-          "   errortext.textContent = 'Math Formula problem: ' + message[1]; " +
-          "   errorformula.textContent = '\\n' + message[2]; " +
-          " } " +
-          " window.JavaPanelBridge && window.JavaPanelBridge.log(JSON.stringify(message)); \n" +
-          "});" +
-          "</script>\n")
-        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("MathJax/MathJax.js")).append("&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n")
-        .toString();
-    }
-  };
+  private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = NotNullLazyValue.lazy(() -> {
+    //noinspection StringBufferReplaceableByString
+    return new StringBuilder()
+      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("scrollToElement.js")).append("\"></script>\n")
+      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processLinks.js")).append("\"></script>\n")
+      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("pickSourceLine.js")).append("\"></script>\n")
+      .append("<script type=\"text/x-mathjax-config\">\n" +
+        "MathJax.Hub.Config({\n" +
+        "  messageStyle: \"none\",\n" +
+        "  EqnChunkDelay: 1," +
+        "  tex2jax: {\n" +
+        "    inlineMath: [[\"\\\\(\", \"\\\\)\"]],\n" +
+        "    displayMath: [[\"\\\\[\", \"\\\\]\"]],\n" +
+        "    ignoreClass: \"nostem|nolatexmath\"\n" +
+        "  },\n" +
+        "  asciimath2jax: {\n" +
+        "    delimiters: [[\"\\\\$\", \"\\\\$\"]],\n" +
+        "    ignoreClass: \"nostem|noasciimath\"\n" +
+        "  },\n" +
+        "  TeX: { equationNumbers: { autoNumber: \"none\" } }\n" +
+        "});\n" +
+        "MathJax.Hub.Register.MessageHook(\"Math Processing Error\",function (message) {\n" +
+        " window.JavaPanelBridge && window.JavaPanelBridge.log(JSON.stringify(message)); \n" +
+        "});" +
+        "MathJax.Hub.Register.MessageHook(\"TeX Jax - parse error\",function (message) {\n" +
+        " var errortext = document.getElementById('mathjaxerrortext'); " +
+        " var errorformula = document.getElementById('mathjaxerrorformula'); " +
+        " if (errorformula && errortext) { " +
+        "   errortext.textContent = 'Math Formula problem: ' + message[1]; " +
+        "   errorformula.textContent = '\\n' + message[2]; " +
+        " } " +
+        " window.JavaPanelBridge && window.JavaPanelBridge.log(JSON.stringify(message)); \n" +
+        "});" +
+        "</script>\n")
+      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("MathJax/MathJax.js")).append("&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n")
+      .toString();
+  });
 
   @NotNull
   private final JPanel myPanelWrapper;
@@ -160,7 +156,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
   private final BridgeSettingListener myBridgeSettingListener = new BridgeSettingListener();
 
   @NotNull
-  private String base;
+  private final String base;
 
   private int lineCount;
 
@@ -214,8 +210,8 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("rouge-github.css")) {
         myInlineCss += IOUtils.toString(is, StandardCharsets.UTF_8);
       }
-      try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
-        myInlineCssDarcula = myInlineCss + IOUtils.toString(stream, StandardCharsets.UTF_8);
+      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
+        myInlineCssDarcula = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
@@ -224,7 +220,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       String message = "Unable to combine CSS resources: " + e.getMessage();
       LOG.error(message, e);
       Notification notification = AsciiDoc.getNotificationGroup()
-        .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
+        .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR);
       // increase event log counter
       notification.setImportant(true);
       Notifications.Bus.notify(notification);
@@ -280,9 +276,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
               }
             });
 
-            WebConsoleListener.setDefaultListener((webView, message, lineNumber, sourceId) -> {
-              LOG.warn("Console message: " + message + "[at " + lineNumber + "]");
-            });
+            WebConsoleListener.setDefaultListener((webView, message, lineNumber, sourceId) -> LOG.warn("Console message: " + message + "[at " + lineNumber + "]"));
 
             final WebEngine engine = myWebView.getEngine();
             engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
@@ -311,7 +305,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
           String message = "Error initializing JavaFX: " + ex.getMessage();
           LOG.error(message, ex);
           Notification notification = AsciiDoc.getNotificationGroup().createNotification("Error rendering asciidoctor", message,
-            NotificationType.ERROR, null);
+            NotificationType.ERROR);
           // increase event log counter
           notification.setImportant(true);
           Notifications.Bus.notify(notification);
@@ -426,7 +420,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
         } catch (IOException ex) {
           String message = "Can't save file: " + ex.getMessage();
           Notification notification = AsciiDoc.getNotificationGroup()
-            .createNotification("Error in plugin", message, NotificationType.ERROR, null);
+            .createNotification("Error in plugin", message, NotificationType.ERROR);
           // increase event log counter
           notification.setImportant(true);
           Notifications.Bus.notify(notification);
@@ -931,7 +925,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       String file = argument.substring(split + 1);
       if (line <= 0) {
         Notification notification = AsciiDoc.getNotificationGroup().createNotification("Setting cursor position", "line number " + line + " requested for cursor position, ignoring",
-          NotificationType.INFORMATION, null);
+          NotificationType.INFORMATION);
         notification.setImportant(false);
         return;
       }
@@ -977,7 +971,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     JavaScript mappings starting from JDK 8 111
     see: https://bugs.openjdk.java.net/browse/JDK-8170515
    */
-  private JavaPanelBridge bridge = new JavaPanelBridge();
+  private final JavaPanelBridge bridge = new JavaPanelBridge();
 
   private class BridgeSettingListener implements ChangeListener<State> {
     @Override

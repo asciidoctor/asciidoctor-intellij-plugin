@@ -152,7 +152,7 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
           }
         }
         final CharSequence text = ReadAction.compute(() -> psiFile.getViewProvider().getContents());
-        LowLevelSearchUtil.processTextOccurrences(text, 0, text.length(), searcher, index -> {
+        LowLevelSearchUtil.processTexts(text, 0, text.length(), searcher, index -> {
           myDumbService.runReadActionInSmartMode(() -> {
             PsiReference referenceAt = psiFile.findReferenceAt(index);
             if (referenceAt instanceof PsiMultiReference) {
@@ -170,7 +170,7 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
   }
 
   private void consumePsiElementForRename(@NotNull Processor<? super PsiReference> consumer, PsiNamedElement element) {
-    consumer.process(new PsiReferenceBase<PsiNamedElement>(element) {
+    consumer.process(new PsiReferenceBase<>(element) {
       @Override
       public PsiElement resolve() {
         return getElement();

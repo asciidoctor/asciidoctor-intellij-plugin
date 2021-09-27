@@ -49,7 +49,7 @@ public class IntellijLogHandler implements LogHandler {
     }
     message.append(" ").append(logRecord.getMessage());
     Notification notification = AsciiDoc.getNotificationGroup()
-      .createNotification("Message during rendering " + file, message.toString(), notificationType, null);
+      .createNotification("Message during rendering " + file, message.toString(), notificationType);
     notification.setImportant(notificationType != NotificationType.INFORMATION);
 
     if (logRecord.getMessage().startsWith("allow-uri-read is not enabled; cannot embed remote image")) {
@@ -74,7 +74,7 @@ public class IntellijLogHandler implements LogHandler {
     instance.setAsciiDocPreviewSettings(asciiDocPreviewSettings);
 
     Notification notification = AsciiDoc.getNotificationGroup()
-      .createNotification("Configuration changed", "The 'allow-uri-read' property is now set. Please retry.", NotificationType.INFORMATION, null);
+      .createNotification("Configuration changed", "The 'allow-uri-read' property is now set. Please retry.", NotificationType.INFORMATION);
     notification.setImportant(false);
     Notifications.Bus.notify(notification);
   }

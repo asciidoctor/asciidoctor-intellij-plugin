@@ -5,7 +5,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -33,7 +32,7 @@ public class CreatePdfAction extends AsciiDocAction {
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.CreatePdfAction";
 
   private static final Logger LOG = Logger.getInstance(CreatePdfAction.class);
-  private final AsciiDocExtensionService extensionService = ServiceManager.getService(AsciiDocExtensionService.class);
+  private final AsciiDocExtensionService extensionService = ApplicationManager.getApplication().getService(AsciiDocExtensionService.class);
 
   private Project project;
 

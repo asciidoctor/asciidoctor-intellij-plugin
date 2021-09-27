@@ -2,7 +2,6 @@ package org.asciidoc.intellij.settings;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.ui.EditorNotifications;
@@ -24,17 +23,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AsciiDocApplicationSettings implements PersistentStateComponent<AsciiDocApplicationSettings.State>,
   AsciiDocPreviewSettings.Holder {
 
-  private State myState = new State();
+  private final State myState = new State();
 
   /* this is a transient state, will be discarded on every restart
     as the setting is changed for each project, we keep a state for each project.
    */
-  private Map<String, Boolean> extensionsEnabled = new ConcurrentHashMap<>();
-  private Map<String, Boolean> extensionsPresent = new ConcurrentHashMap<>();
+  private final Map<String, Boolean> extensionsEnabled = new ConcurrentHashMap<>();
+  private final Map<String, Boolean> extensionsPresent = new ConcurrentHashMap<>();
 
   @NotNull
   public static AsciiDocApplicationSettings getInstance() {
-    return ServiceManager.getService(AsciiDocApplicationSettings.class);
+    return ApplicationManager.getApplication().getService(AsciiDocApplicationSettings.class);
   }
 
   @Nullable
@@ -44,7 +43,7 @@ public class AsciiDocApplicationSettings implements PersistentStateComponent<Asc
   }
 
   @Override
-  public void loadState(State state) {
+  public void loadState(@NotNull State state) {
     XmlSerializerUtil.copyBean(state, myState);
   }
 

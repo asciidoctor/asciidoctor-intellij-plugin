@@ -621,13 +621,13 @@ public class AsciiDoc {
     }
     if (out.length() > 0) {
       Notification notification = AsciiDoc.getNotificationGroup().createNotification("Message during rendering " + name, out,
-        NotificationType.INFORMATION, null);
+        NotificationType.INFORMATION);
       notification.setImportant(false);
       Notifications.Bus.notify(notification);
     }
     if (err.length() > 0) {
       Notification notification = AsciiDoc.getNotificationGroup().createNotification("Error during rendering " + name, err,
-        NotificationType.INFORMATION, null);
+        NotificationType.INFORMATION);
       notification.setImportant(true);
       Notifications.Bus.notify(notification);
     }
@@ -661,7 +661,7 @@ public class AsciiDoc {
       } catch (IOException ex) {
         String message = "Can't create temp folder to render images: " + ex.getMessage();
         Notification notification = AsciiDoc.getNotificationGroup()
-          .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
+          .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR);
         // increase event log counter
         notification.setImportant(true);
         Notifications.Bus.notify(notification);
@@ -1136,7 +1136,7 @@ public class AsciiDoc {
     String message = canonicalPath + ": " + ex.getMessage();
     LOG.warn("Error reading Antora component information", ex);
     Notification notification = AsciiDoc.getNotificationGroup().createNotification("Error reading Antora component information", message,
-      NotificationType.ERROR, null);
+      NotificationType.ERROR);
     notification.setImportant(true);
     Notifications.Bus.notify(notification);
   }

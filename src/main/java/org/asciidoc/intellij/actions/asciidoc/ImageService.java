@@ -41,9 +41,7 @@ public final class ImageService {
     Notification notification = AsciiDoc.getNotificationGroup().createNotification(
       "Error in plugin",
       "Failed to load image file: " + exception.getMessage(),
-      NotificationType.ERROR,
-      null
-    );
+      NotificationType.ERROR);
     notification.setImportant(true);
     Notifications.Bus.notify(notification);
   }

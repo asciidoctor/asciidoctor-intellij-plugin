@@ -4,7 +4,6 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -55,38 +54,32 @@ public class BrowserPanel implements Closeable {
 
   private final Path globalImagesPath;
   private final Logger log = Logger.getInstance(JavaFxHtmlPanel.class);
-  private final AsciiDocExtensionService extensionService = ServiceManager.getService(AsciiDocExtensionService.class);
+  private final AsciiDocExtensionService extensionService = ApplicationManager.getApplication().getService(AsciiDocExtensionService.class);
 
   private String base;
 
-  private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = new NotNullLazyValue<String>() {
-    @NotNull
-    @Override
-    protected String compute() {
-      //noinspection StringBufferReplaceableByString
-      return new StringBuilder()
-        .append("<script type=\"text/x-mathjax-config\">\n" +
-          "MathJax.Hub.Config({\n" +
-          "  messageStyle: \"none\",\n" +
-          "  tex2jax: {\n" +
-          "    inlineMath: [[\"\\\\(\", \"\\\\)\"]],\n" +
-          "    displayMath: [[\"\\\\[\", \"\\\\]\"]],\n" +
-          "    ignoreClass: \"nostem|nolatexmath\"\n" +
-          "  },\n" +
-          "  asciimath2jax: {\n" +
-          "    delimiters: [[\"\\\\$\", \"\\\\$\"]],\n" +
-          "    ignoreClass: \"nostem|noasciimath\"\n" +
-          "  },\n" +
-          "  TeX: { equationNumbers: { autoNumber: \"none\" } }\n" +
-          "});\n" +
-          "</script>\n")
-        .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("MathJax/MathJax.js")).append("&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n")
-        .toString();
-    }
-  };
+  private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = NotNullLazyValue.lazy(() -> {
+    //noinspection StringBufferReplaceableByString
+    return new StringBuilder()
+      .append("<script type=\"text/x-mathjax-config\">\n" +
+        "MathJax.Hub.Config({\n" +
+        "  messageStyle: \"none\",\n" +
+        "  tex2jax: {\n" +
+        "    inlineMath: [[\"\\\\(\", \"\\\\)\"]],\n" +
+        "    displayMath: [[\"\\\\[\", \"\\\\]\"]],\n" +
+        "    ignoreClass: \"nostem|nolatexmath\"\n" +
+        "  },\n" +
+        "  asciimath2jax: {\n" +
+        "    delimiters: [[\"\\\\$\", \"\\\\$\"]],\n" +
+        "    ignoreClass: \"nostem|noasciimath\"\n" +
+        "  },\n" +
+        "  TeX: { equationNumbers: { autoNumber: \"none\" } }\n" +
+        "});\n" +
+        "</script>\n")
+      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("MathJax/MathJax.js")).append("&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n")
+      .toString();
+  });
 
-  @NotNull
-  private final JPanel myPanelWrapper;
   @Nullable
   private String myInlineCss;
   @Nullable
@@ -100,10 +93,10 @@ public class BrowserPanel implements Closeable {
   @Nullable
   private String myDroidSansMonoCssLink;
 
-  private SignWithMac signWithMac = new SignWithMac();
+  private final SignWithMac signWithMac = new SignWithMac();
 
   public BrowserPanel() {
-    myPanelWrapper = new JPanel(new BorderLayout());
+    @NotNull JPanel myPanelWrapper = new JPanel(new BorderLayout());
     myPanelWrapper.setBackground(JBColor.background());
     globalImagesPath = AsciiDoc.tempImagesPath(null);
 
@@ -139,7 +132,7 @@ public class BrowserPanel implements Closeable {
       String message = "Unable to combine CSS resources: " + e.getMessage();
       log.error(message, e);
       Notification notification = AsciiDoc.getNotificationGroup()
-        .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
+        .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR);
       // increase event log counter
       notification.setImportant(true);
       Notifications.Bus.notify(notification);
@@ -449,7 +442,6 @@ public class BrowserPanel implements Closeable {
    * @param mac  signature created when rendering the surrounding document
    * @return byte array for the image, or null if file not exists or signature is wrong
    */
-  @Nullable
   public byte[] getImage(String file, String mac) {
     if (!checkMac(file, mac)) {
       Logger.getInstance(AsciiDocPreviewEditor.class).warn("wrong signature when retrieving file '" + file + "'");

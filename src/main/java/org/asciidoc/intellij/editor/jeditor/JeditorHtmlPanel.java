@@ -103,7 +103,7 @@ final class JeditorHtmlPanel implements AsciiDocHtmlPanel {
       String message = "Error setting HTML: " + ex.getMessage();
       log.error(message, ex);
       Notification notification = AsciiDoc.getNotificationGroup()
-        .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR, null);
+        .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR);
       // increase event log counter
       notification.setImportant(true);
       Notifications.Bus.notify(notification);

@@ -23,7 +23,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -83,7 +82,7 @@ import java.util.function.Consumer;
 public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEditor {
 
   private final Logger log = Logger.getInstance(AsciiDocPreviewEditor.class);
-  private final AsciiDocExtensionService extensionService = ServiceManager.getService(AsciiDocExtensionService.class);
+  private final AsciiDocExtensionService extensionService = ApplicationManager.getApplication().getService(AsciiDocExtensionService.class);
   /**
    * single threaded with one task queue (one for each editor window).
    */
@@ -190,7 +189,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         log.error(message, ex);
         Notification notification = AsciiDoc.getNotificationGroup()
           .createNotification("Error rendering asciidoctor", message,
-            NotificationType.ERROR, null);
+            NotificationType.ERROR);
         // increase event log counter
         notification.setImportant(true);
         Notifications.Bus.notify(notification);

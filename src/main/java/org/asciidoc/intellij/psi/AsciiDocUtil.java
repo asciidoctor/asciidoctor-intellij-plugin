@@ -769,7 +769,7 @@ public class AsciiDocUtil {
     //noinspection UnstableApiUsage
     FilenameIndex.processAllFileNames(file -> {
       if (file.endsWith(".yml") && file.contains("antora") && file.contains("playbook")) {
-        FilenameIndex.getVirtualFilesByName(project, file, new AsciiDocSearchScope(project)).forEach(virtualFile -> addPlaybook(additionalPlaybooks, virtualFile));
+        FilenameIndex.getVirtualFilesByName(file, new AsciiDocSearchScope(project)).forEach(virtualFile -> addPlaybook(additionalPlaybooks, virtualFile));
       }
       return true;
     }, GlobalSearchScope.projectScope(project), null);
@@ -1428,7 +1428,7 @@ public class AsciiDocUtil {
         otherModuleName = "ROOT";
       }
       List<VirtualFile> files =
-        new ArrayList<>(FilenameIndex.getVirtualFilesByName(project, ANTORA_YML, new AsciiDocSearchScope(project)));
+        new ArrayList<>(FilenameIndex.getVirtualFilesByName(ANTORA_YML, new AsciiDocSearchScope(project)));
       // sort by path proximity
       files.sort(Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
       ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
@@ -1499,7 +1499,7 @@ public class AsciiDocUtil {
     }
     return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
       List<VirtualFile> files =
-        new ArrayList<>(FilenameIndex.getVirtualFilesByName(project, ANTORA_YML, new AsciiDocSearchScope(project)));
+        new ArrayList<>(FilenameIndex.getVirtualFilesByName(ANTORA_YML, new AsciiDocSearchScope(project)));
       List<AntoraModule> result = new ArrayList<>();
       // sort by path proximity
       files.sort(Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));

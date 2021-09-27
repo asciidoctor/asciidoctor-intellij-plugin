@@ -27,6 +27,7 @@ import io.sentry.protocol.SentryId;
 import io.sentry.protocol.SentryRuntime;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocPlugin;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
@@ -55,7 +56,7 @@ class SentryErrorReporter {
         );
         options.setLogger(new ILogger() {
           @Override
-          public void log(SentryLevel level, String message, Object... args) {
+          public void log(@NotNull SentryLevel level, @NotNull String message, Object... args) {
             if (!isEnabled(level)) {
               return;
             }
@@ -64,7 +65,7 @@ class SentryErrorReporter {
           }
 
           @Override
-          public void log(SentryLevel level, String message, Throwable throwable) {
+          public void log(@NotNull SentryLevel level, @NotNull String message, Throwable throwable) {
             if (!isEnabled(level)) {
               return;
             }
@@ -72,7 +73,7 @@ class SentryErrorReporter {
           }
 
           @Override
-          public void log(SentryLevel level, Throwable throwable, String message, Object... args) {
+          public void log(@NotNull SentryLevel level, Throwable throwable, @NotNull String message, Object... args) {
             if (!isEnabled(level)) {
               return;
             }
@@ -184,12 +185,12 @@ class SentryErrorReporter {
           LOG.info("Sentry event reported: " + sentryId);
           consumer.consume(new SubmittedReportInfo(SubmittedReportInfo.SubmissionStatus.NEW_ISSUE));
           Notification notification = AsciiDoc.getNotificationGroup()
-            .createNotification("Error report submitted", "Error report with ID " + sentryId + " submitted.", NotificationType.INFORMATION, null);
+            .createNotification("Error report submitted", "Error report with ID " + sentryId + " submitted.", NotificationType.INFORMATION);
           notification.setImportant(false);
           Notifications.Bus.notify(notification);
         } else {
           Notification notification = AsciiDoc.getNotificationGroup()
-            .createNotification("Unable to send error report", "Unable to send error report to Sentry server", NotificationType.WARNING, null);
+            .createNotification("Unable to send error report", "Unable to send error report to Sentry server", NotificationType.WARNING);
           notification.setImportant(false);
           Notifications.Bus.notify(notification);
           LOG.warn("Unable to submit Sentry error information");

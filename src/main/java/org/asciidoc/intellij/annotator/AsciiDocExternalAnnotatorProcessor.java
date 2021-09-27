@@ -3,7 +3,7 @@ package org.asciidoc.intellij.annotator;
 import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -52,7 +52,7 @@ public class AsciiDocExternalAnnotatorProcessor extends com.intellij.lang.annota
 
   public static final String INCLUDE_FILE_NOT_FOUND = "include file not found";
 
-  private final AsciiDocExtensionService extensionService = ServiceManager.getService(AsciiDocExtensionService.class);
+  private final AsciiDocExtensionService extensionService = ApplicationManager.getApplication().getService(AsciiDocExtensionService.class);
 
   @Nullable
   @Override
