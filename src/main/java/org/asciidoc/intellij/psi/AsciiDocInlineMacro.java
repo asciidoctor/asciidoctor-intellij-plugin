@@ -39,9 +39,8 @@ public class AsciiDocInlineMacro extends ASTWrapperPsiElement implements HasFile
     super(node);
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     if (HAS_FILE_AS_BODY.contains(getMacroName())) {
       TextRange range = getRangeOfBody(this);
       if (!range.equals(TextRange.EMPTY_RANGE)) {
@@ -145,6 +144,10 @@ public class AsciiDocInlineMacro extends ASTWrapperPsiElement implements HasFile
     @NotNull
     @Override
     public TextRange getRangeInElement(@NotNull AsciiDocInlineMacro element) {
+      if (element.getMacroName().equals("footnote")) {
+        // ensure to return the text, as only that will be checked by the grammar/spell checker for root elements
+        return TextRange.from(0, element.getTextLength());
+      }
       return getRangeOfBody(element);
     }
 

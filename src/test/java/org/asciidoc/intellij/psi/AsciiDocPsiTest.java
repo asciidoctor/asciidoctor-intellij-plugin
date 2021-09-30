@@ -20,7 +20,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import kotlin.ranges.IntRange;
 import org.asciidoc.intellij.AsciiDocSpellcheckingStrategy;
 import org.asciidoc.intellij.file.AsciiDocFileType;
-import org.asciidoc.intellij.grazie.AsciiDocGrazieLanguageSupport;
+import org.asciidoc.intellij.grazie.AsciiDocGrazieTextExtractor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.assertj.core.api.Assertions;
@@ -34,7 +34,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -45,7 +44,7 @@ import java.util.Set;
  *
  * @author yole
  */
-@SuppressWarnings({"AsciiDocLinkResolve", "AsciiDocHeadingStyle"})
+@SuppressWarnings({"AsciiDocLinkResolve", "AsciiDocHeadingStyle", "AsciiDocAttributeShouldBeDefined"})
 public class AsciiDocPsiTest extends BasePlatformTestCase {
   public void testImageBlockMacro() {
     PsiFile psiFile = configureByAsciiDoc("image::foo.png[Foo]");
@@ -547,7 +546,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "Text with a footnote.",
       "A 'test' test's",
       "A reftext.",
-      "// comment with some text",
+      "comment with some text",
       "A footnote.",
       "A link.",
       "A URL with text as link.",
@@ -560,38 +559,6 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
   }
 
-  public void testGrammarStringWithStrippedBlanks() {
-    // given...
-    PsiFile psiFile = configureByAsciiDoc("* this  test\n");
-
-    // then...
-    // ... IntelliJ 2021.1 will have removed the double blanks before and our code needs to reconstruct the same content.
-    LinkedHashSet<IntRange> ranges = new AsciiDocGrazieLanguageSupport().getStealthyRanges(psiFile.getFirstChild(), "this test");
-    Assertions.assertThat(ranges).isEmpty();
-  }
-
-  public void testGrammarStringWithOnlySomeStrippedBlanks() {
-    // given...
-    PsiFile psiFile = configureByAsciiDoc("* this {nbsp}  test\n");
-
-    // then...
-    // ... IntelliJ 2022.1 will have removed the double blanks, but after absorbing some elements there might still be two blanks here
-    String result = "this  test";
-    LinkedHashSet<IntRange> ranges = new AsciiDocGrazieLanguageSupport().getStealthyRanges(psiFile.getFirstChild(), result);
-    Assertions.assertThat(ranges).isEmpty();
-  }
-
-  public void testGrammarStringWithStrippedBlanksBeforeInterpunctationMarks() {
-    // given...
-    PsiFile psiFile = configureByAsciiDoc("* this : test\n");
-
-    // then...
-    // ... IntelliJ 2022.1 might remove blanks before interpunctation marks
-    String result = "this: test";
-    LinkedHashSet<IntRange> ranges = new AsciiDocGrazieLanguageSupport().getStealthyRanges(psiFile.getFirstChild(), result);
-    Assertions.assertThat(ranges).isEmpty();
-  }
-
   public void testGrammarStringStripBlanks() {
     // given...
     PsiFile psiFile = configureByAsciiDoc("== Heading\n\nthis  test\n\n");
@@ -599,7 +566,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     // then...
     // ... IntelliJ 2021.2 will trim beginning and end blanks, and the grammar part should trim the spaces
     String result = "this  test";
-    LinkedHashSet<IntRange> ranges = new AsciiDocGrazieLanguageSupport().getStealthyRanges(psiFile.getFirstChild(), result);
+    List<IntRange> ranges = new AsciiDocGrazieTextExtractor().getStealthyRanges(psiFile.getFirstChild(), result);
     Assertions.assertThat(ranges).hasSize(1);
     IntRange firstRange = ranges.stream().findFirst().orElseThrow();
     Assertions.assertThat(result.substring(firstRange.getStart(), firstRange.getEndInclusive() + 1)).isEqualTo(" ");
