@@ -17,7 +17,6 @@ import com.intellij.spellchecker.inspections.Splitter;
 import com.intellij.spellchecker.tokenizer.TokenConsumer;
 import com.intellij.spellchecker.tokenizer.Tokenizer;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
-import kotlin.ranges.IntRange;
 import org.asciidoc.intellij.AsciiDocSpellcheckingStrategy;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.grazie.AsciiDocGrazieTextExtractor;
@@ -500,6 +499,9 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       ":description: attribute \\\ncontinuation\n" +
       "Textfootnote:[A footnote.] with a footnote.\n" +
       "A '`test`' test`'s\n" +
+      "\n" +
+      "An old heading\n" +
+      "+++++++++++++\n" +
       "A <<id,reftext>>.\n" +
       "A xref:file.adoc[link].\n" +
       "An email@example.com.\n" +
@@ -546,6 +548,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "Text with a footnote.",
       "A 'test' test's",
       "A reftext.",
+      "An old heading",
       "comment with some text",
       "A footnote.",
       "A link.",
@@ -563,13 +566,13 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     // given...
     PsiFile psiFile = configureByAsciiDoc("== Heading\n\nthis  test\n\n");
 
+    // when...
+    TextContent result = new AsciiDocGrazieTextExtractor().buildTextContent(psiFile.getFirstChild(), Set.of(TextContent.TextDomain.PLAIN_TEXT));
+
     // then...
     // ... IntelliJ 2021.2 will trim beginning and end blanks, and the grammar part should trim the spaces
-    String result = "this  test";
-    List<IntRange> ranges = new AsciiDocGrazieTextExtractor().getStealthyRanges(psiFile.getFirstChild(), result);
-    Assertions.assertThat(ranges).hasSize(1);
-    IntRange firstRange = ranges.stream().findFirst().orElseThrow();
-    Assertions.assertThat(result.substring(firstRange.getStart(), firstRange.getEndInclusive() + 1)).isEqualTo(" ");
+    Assertions.assertThat(result).isNotNull();
+    Assertions.assertThat(result.toString()).isEqualTo("this test");
   }
 
   public void testNestedAttribute() {
