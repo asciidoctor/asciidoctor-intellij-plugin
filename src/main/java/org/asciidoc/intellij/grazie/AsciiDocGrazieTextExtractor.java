@@ -3,7 +3,6 @@ package org.asciidoc.intellij.grazie;
 import com.intellij.grazie.text.TextContent;
 import com.intellij.grazie.text.TextContentBuilder;
 import com.intellij.grazie.text.TextExtractor;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -19,9 +18,6 @@ import java.util.Collections;
 import java.util.Set;
 
 public class AsciiDocGrazieTextExtractor extends TextExtractor {
-
-  private static final Logger LOG =
-    Logger.getInstance(AsciiDocGrazieTextExtractor.class);
 
   private final AsciiDocLanguageSupport languageSupport = new AsciiDocLanguageSupport();
 
