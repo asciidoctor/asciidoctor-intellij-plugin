@@ -509,6 +509,9 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "A http://example.com URL.\n" +
       "A http://example.com[URL with text].\n" +
       "A link:http://example.com[URL with text as link].\n" +
+      "\n" +
+      "* List item" +
+      "\n" +
       "Something \"`quoted`\"\n" +
       "|===\n" +
       "| Cell Content.\n" +
@@ -552,6 +555,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "comment with some text",
       "A footnote.",
       "A link.",
+      "List item",
       "A URL with text as link.",
       "A URL with text.",
       "An email@example.com.",

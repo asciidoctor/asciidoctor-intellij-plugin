@@ -62,6 +62,7 @@ public class AsciiDocLanguageSupport {
     AsciiDocElementTypes.TITLE,
     AsciiDocElementTypes.BLOCK,
     AsciiDocElementTypes.DESCRIPTION_ITEM,
+    AsciiDocElementTypes.LIST_ITEM,
     AsciiDocElementTypes.CELL,
     AsciiDocElementTypes.HEADING
   );
