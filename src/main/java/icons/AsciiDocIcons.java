@@ -46,6 +46,8 @@ public class AsciiDocIcons {
     public static final Icon LISTING = load("/icons/structure/listing.svg"); // 16x16
     public static final Icon MACRO = load("/icons/structure/macro.svg"); // 16x16
     public static final Icon ATTRIBUTE = load("/icons/structure/attribute.svg"); // 16x16
+    public static final Icon LIST = load("/icons/structure/list.svg"); // 16x16
+    public static final Icon ITEM = load("/icons/structure/item.svg"); // 16x16
   }
 
 }

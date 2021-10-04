@@ -15,8 +15,8 @@ import javax.swing.*;
 /**
  * @author Alexander Schwartz (alexander.schwartz@gmx.net)
  */
-public class AsciiDocDescriptionItem extends ASTWrapperPsiElement implements AsciiDocBlock {
-  public AsciiDocDescriptionItem(@NotNull ASTNode node) {
+public class AsciiDocListItem extends ASTWrapperPsiElement implements AsciiDocBlock {
+  public AsciiDocListItem(@NotNull ASTNode node) {
     super(node);
   }
 
@@ -39,7 +39,13 @@ public class AsciiDocDescriptionItem extends ASTWrapperPsiElement implements Asc
     }
     if (child != null) {
       StringBuilder sb = new StringBuilder();
-      while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.DESCRIPTION_END) {
+      while (child != null && !child.getText().contains("\n")) {
+        if (child.getNode().getElementType() == AsciiDocTokenTypes.BULLET ||
+            child.getNode().getElementType() == AsciiDocTokenTypes.ENUMERATION ||
+            child.getNode().getElementType() == AsciiDocTokenTypes.CALLOUT) {
+          child = child.getNextSibling();
+          continue;
+        }
         sb.append(child.getText());
         child = child.getNextSibling();
       }

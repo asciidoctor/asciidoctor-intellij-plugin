@@ -161,16 +161,16 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
   public void testEnumerationFollowedByText() {
     PsiFile psiFile = configureByAsciiDoc("[square]\n* Hi\n\n* Ho\n* http://www.gmx.net\n\nText");
     PsiElement[] children = psiFile.getChildren();
-    assertEquals(9, children.length);
+    assertEquals(4, children.length);
 
-    assertEquals(AsciiDocElementTypes.BLOCK, children[0].getNode().getElementType());
+    assertEquals(AsciiDocElementTypes.LIST, children[0].getNode().getElementType());
 
     assertEquals("\n", children[1].getText());
 
     assertEquals("\n", children[2].getText());
 
-    assertEquals("Text", children[8].getText());
-    assertEquals(AsciiDocTokenTypes.TEXT, children[8].getNode().getElementType());
+    assertEquals("Text", children[3].getText());
+    assertEquals(AsciiDocTokenTypes.TEXT, children[3].getNode().getElementType());
   }
 
   public void testBlockAttributes() {
@@ -256,11 +256,11 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "====\n" +
       "Note\n" +
       "====\n");
-    AsciiDocBlock block = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlock.class);
-    assertNotNull(block);
-    assertEquals("Test", block.getDescription());
-    assertEquals("Test", block.getFoldedSummary());
-    block = PsiTreeUtil.getChildOfType(block, AsciiDocBlock.class);
+    AsciiDocDescriptionItem descriptionItem = PsiTreeUtil.getChildOfType(PsiTreeUtil.getChildOfType(psiFile, AsciiDocList.class), AsciiDocDescriptionItem.class);
+    assertNotNull(descriptionItem);
+    assertEquals("Test", descriptionItem.getDescription());
+    assertEquals("Test", descriptionItem.getFoldedSummary());
+    AsciiDocBlock block = PsiTreeUtil.getChildOfType(descriptionItem, AsciiDocBlock.class);
     assertNotNull(block);
     assertEquals("[NOTE]", block.getDescription());
     assertEquals("[NOTE]", block.getFoldedSummary());

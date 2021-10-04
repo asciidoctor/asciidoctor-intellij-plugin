@@ -6,7 +6,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
-import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,8 +14,8 @@ import javax.swing.*;
 /**
  * @author Alexander Schwartz (alexander.schwartz@gmx.net)
  */
-public class AsciiDocDescriptionItem extends ASTWrapperPsiElement implements AsciiDocBlock {
-  public AsciiDocDescriptionItem(@NotNull ASTNode node) {
+public class AsciiDocList extends ASTWrapperPsiElement implements AsciiDocBlock {
+  public AsciiDocList(@NotNull ASTNode node) {
     super(node);
   }
 
@@ -36,16 +35,10 @@ public class AsciiDocDescriptionItem extends ASTWrapperPsiElement implements Asc
     PsiElement child = getFirstSignificantChildForFolding();
     if (child instanceof AsciiDocBlockAttributes) {
       return "[" + getStyle() + "]";
-    }
-    if (child != null) {
-      StringBuilder sb = new StringBuilder();
-      while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.DESCRIPTION_END) {
-        sb.append(child.getText());
-        child = child.getNextSibling();
-      }
-      return sb.toString();
-    } else {
+    } else if (child == null) {
       return "???";
+    } else {
+      return "(list)";
     }
   }
 
@@ -60,7 +53,7 @@ public class AsciiDocDescriptionItem extends ASTWrapperPsiElement implements Asc
 
   @Override
   public Icon getIcon(int flags) {
-    return AsciiDocIcons.Structure.ITEM;
+    return AsciiDocIcons.Structure.LIST;
   }
 
 }

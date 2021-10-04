@@ -27,6 +27,8 @@ import org.asciidoc.intellij.psi.AsciiDocHtmlEntity;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagInDocument;
 import org.asciidoc.intellij.psi.AsciiDocInlineMacro;
 import org.asciidoc.intellij.psi.AsciiDocLink;
+import org.asciidoc.intellij.psi.AsciiDocList;
+import org.asciidoc.intellij.psi.AsciiDocListItem;
 import org.asciidoc.intellij.psi.AsciiDocRef;
 import org.asciidoc.intellij.psi.AsciiDocSectionImpl;
 import org.asciidoc.intellij.psi.AsciiDocStandardBlock;
@@ -50,12 +52,12 @@ public class AsciiDocParserDefinition implements ParserDefinition {
   }
 
   @Override
-  public PsiParser createParser(Project project) {
+  public @NotNull PsiParser createParser(Project project) {
     return new AsciiDocParser();
   }
 
   @Override
-  public IFileElementType getFileNodeType() {
+  public @NotNull IFileElementType getFileNodeType() {
     return AsciiDocElementTypes.FILE;
   }
 
@@ -94,6 +96,12 @@ public class AsciiDocParserDefinition implements ParserDefinition {
     }
     if (node.getElementType() == AsciiDocElementTypes.DESCRIPTION_ITEM) {
       return new AsciiDocDescriptionItem(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.LIST_ITEM) {
+      return new AsciiDocListItem(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.LIST) {
+      return new AsciiDocList(node);
     }
     if (node.getElementType() == AsciiDocElementTypes.CELL) {
       return new AsciiDocCell(node);
@@ -147,12 +155,12 @@ public class AsciiDocParserDefinition implements ParserDefinition {
   }
 
   @Override
-  public PsiFile createFile(FileViewProvider fileViewProvider) {
+  public @NotNull PsiFile createFile(@NotNull FileViewProvider fileViewProvider) {
     return new AsciiDocFile(fileViewProvider);
   }
 
   @Override
-  public SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
+  public @NotNull SpaceRequirements spaceExistenceTypeBetweenTokens(ASTNode astNode, ASTNode astNode1) {
     return SpaceRequirements.MAY;
   }
 }
