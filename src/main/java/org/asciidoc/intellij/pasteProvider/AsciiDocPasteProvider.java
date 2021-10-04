@@ -68,7 +68,7 @@ public class AsciiDocPasteProvider implements PasteProvider {
     if (produce.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
       java.util.List<File> fileList;
       try {
-        //noinspection unchecked
+        // noinspection unchecked
         fileList = (List<File>) produce.getTransferData(DataFlavor.javaFileListFlavor);
       } catch (UnsupportedFlavorException | IOException e) {
         return false;

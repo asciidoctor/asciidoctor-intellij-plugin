@@ -9,7 +9,7 @@ public class AsciiDocReferencePatternInspectionTest extends AsciiDocQuickFixTest
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    //noinspection unchecked
+    // noinspection unchecked
     myFixture.enableInspections(AsciiDocReferencePatternInspection.class);
   }
 

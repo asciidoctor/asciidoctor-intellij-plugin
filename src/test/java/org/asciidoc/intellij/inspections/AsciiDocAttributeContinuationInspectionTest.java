@@ -9,7 +9,7 @@ public class AsciiDocAttributeContinuationInspectionTest extends AsciiDocQuickFi
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    //noinspection unchecked
+    // noinspection unchecked
     myFixture.enableInspections(AsciiDocAttributeContinuationInspection.class);
   }
 

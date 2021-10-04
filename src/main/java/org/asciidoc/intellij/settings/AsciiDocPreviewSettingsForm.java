@@ -86,7 +86,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   }
 
   private void createUIComponents() {
-    //noinspection unchecked
+    // noinspection unchecked
     final List<AsciiDocHtmlPanelProvider.ProviderInfo> providerInfos =
       ContainerUtil.mapNotNull(AsciiDocHtmlPanelProvider.getProviders(),
         provider -> {

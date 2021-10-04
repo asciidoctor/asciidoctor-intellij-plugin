@@ -9,7 +9,7 @@ public class AsciiDocCreateMissingFileInspectionTest extends AsciiDocQuickFixTes
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    //noinspection unchecked
+    // noinspection unchecked
     myFixture.enableInspections(AsciiDocPageBreakInspection.class);
   }
 

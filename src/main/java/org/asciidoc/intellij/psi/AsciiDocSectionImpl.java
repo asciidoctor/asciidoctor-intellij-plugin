@@ -150,7 +150,7 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
     if (keyToCompare.length() == ownKey.length()) {
       return true;
     }
-    //noinspection RedundantIfStatement
+    // noinspection RedundantIfStatement
     if (keyToCompare.substring(ownKey.length()).matches("^_[0-9]*$")) {
       return true;
     }

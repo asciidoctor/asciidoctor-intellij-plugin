@@ -5,7 +5,7 @@ public class AsciiDocDescriptionExistsInspectionTest extends AsciiDocQuickFixTes
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    //noinspection unchecked
+    // noinspection unchecked
     myFixture.enableInspections(AsciiDocDescriptionExistsInspection.class);
   }
 

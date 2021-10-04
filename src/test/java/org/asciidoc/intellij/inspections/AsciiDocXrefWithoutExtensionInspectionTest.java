@@ -13,7 +13,7 @@ public class AsciiDocXrefWithoutExtensionInspectionTest extends AsciiDocQuickFix
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    //noinspection unchecked
+    // noinspection unchecked
     myFixture.enableInspections(AsciiDocXrefWithoutExtensionInspection.class);
   }
 
