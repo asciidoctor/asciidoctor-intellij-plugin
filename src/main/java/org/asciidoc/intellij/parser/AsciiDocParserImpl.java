@@ -60,6 +60,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_BREAK;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_COMMENT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKANCHOR;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKFILE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKSTART;
@@ -93,6 +94,8 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_LINK;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_PREFIX;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_START;
 import static org.asciidoc.intellij.parser.AsciiDocElementTypes.DESCRIPTION_ITEM;
+import static org.asciidoc.intellij.parser.AsciiDocElementTypes.LIST;
+import static org.asciidoc.intellij.parser.AsciiDocElementTypes.LIST_ITEM;
 
 /**
  * @author yole
@@ -169,14 +172,14 @@ public class AsciiDocParserImpl {
         endBlockNoDelimiter();
       }
       if (emptyLines > 0 && !at(ENUMERATION) && !at(BULLET) && !at(DESCRIPTION) && !at(CONTINUATION)) {
-        endEnumerationDelimiter();
+        endListDelimiter();
       }
       emptyLines = 0;
 
       if (at(BLOCK_MACRO_ID) || at(BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER) || at(LISTING_BLOCK_DELIMITER)
         || at(PASSTRHOUGH_BLOCK_DELIMITER) || at(FRONTMATTER_DELIMITER) || at(CELLSEPARATOR)) {
         if (!continuation) {
-          endEnumerationDelimiter();
+          endListDelimiter();
           endBlockNoDelimiter();
         } else {
           continuation = false;
@@ -188,6 +191,10 @@ public class AsciiDocParserImpl {
         continue;
       } else if (at(BLOCK_MACRO_ID)) {
         parseBlockMacro();
+        continue;
+      } else if (at(COMMENT_BLOCK_DELIMITER)) {
+        endListDelimiter();
+        parseBlock();
         continue;
       } else if (at(BLOCK_DELIMITER) || at(COMMENT_BLOCK_DELIMITER)) {
         parseBlock();
@@ -230,7 +237,7 @@ public class AsciiDocParserImpl {
         next();
         if (!myBuilder.eof() && newLines > 2) {
           // a continuation might have one blank line, but not two blank lines
-          endEnumerationDelimiter();
+          endListDelimiter();
           continuation = false;
         } else {
           continuation = true;
@@ -238,6 +245,10 @@ public class AsciiDocParserImpl {
         continue;
       }
       continuation = false;
+
+      if (at(LINE_COMMENT)) {
+        endListDelimiter();
+      }
 
       if (at(ENUMERATION) || at(BULLET) || at(DESCRIPTION_END) || at(CALLOUT)) {
         startEnumerationDelimiter();
@@ -813,7 +824,7 @@ public class AsciiDocParserImpl {
   private void startEnumerationDelimiter() {
     String sign;
     Objects.requireNonNull(myBuilder.getTokenText());
-    IElementType type = AsciiDocElementTypes.BLOCK;
+    IElementType type = LIST_ITEM;
     // retrieve the enumeration sign type, to allow closing enumerations of the same type
     if (at(ENUMERATION)) {
       sign = myBuilder.getTokenText().replaceAll("^([0-9]+|[a-zA-Z]?)", "");
@@ -828,8 +839,12 @@ public class AsciiDocParserImpl {
     } else {
       sign = myBuilder.getTokenText();
     }
+    boolean otherItemExisted = false;
     while (myBlockMarker.stream().anyMatch(o -> o.delimiter.equals("enum_" + sign)) &&
       myBlockMarker.peek().delimiter.startsWith("enum")) {
+      if (myBlockMarker.peek().delimiter.equals("enum_" + sign)) {
+        otherItemExisted = true;
+      }
       endEnumerationDelimiter();
     }
     PsiBuilder.Marker myBlockStartMarker;
@@ -839,11 +854,29 @@ public class AsciiDocParserImpl {
     } else {
       myBlockStartMarker = beginBlock();
     }
+    if (!otherItemExisted) {
+      myBlockMarker.push(new BlockMarker("list_" + sign, myBlockStartMarker.precede(), LIST));
+      if (type == LIST_ITEM) {
+        myBlockStartMarker.drop();
+        myBlockStartMarker = beginBlock();
+      }
+    }
     myBlockMarker.push(new BlockMarker("enum_" + sign, myBlockStartMarker, type));
   }
 
   private void endEnumerationDelimiter() {
     if (myBlockMarker.size() > 0 && myBlockMarker.peek().delimiter.startsWith("enum")) {
+      if (myPreBlockMarker != null) {
+        closeBlockMarker(myPreBlockMarker);
+      } else {
+        closeBlockMarker();
+      }
+    }
+  }
+
+  private void endListDelimiter() {
+    endEnumerationDelimiter();
+    if (myBlockMarker.size() > 0 && myBlockMarker.peek().delimiter.startsWith("list")) {
       if (myPreBlockMarker != null) {
         closeBlockMarker(myPreBlockMarker);
       } else {

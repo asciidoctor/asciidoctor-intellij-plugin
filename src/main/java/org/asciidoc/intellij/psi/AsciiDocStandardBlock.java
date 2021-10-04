@@ -48,15 +48,6 @@ public class AsciiDocStandardBlock extends ASTWrapperPsiElement implements Ascii
       return "[" + getStyle() + "]";
     } else if (child == null) {
       return "???";
-    } else if (child.getNode().getElementType() == AsciiDocTokenTypes.ENUMERATION
-      || child.getNode().getElementType() == AsciiDocTokenTypes.BULLET
-      || child.getNode().getElementType() == AsciiDocTokenTypes.CALLOUT) {
-      StringBuilder sb = new StringBuilder();
-      while (child != null && !child.getText().contains("\n")) {
-        sb.append(child.getText());
-        child = child.getNextSibling();
-      }
-      return sb.toString();
     } else if (child instanceof AsciiDocBlock) {
       return ((AsciiDocBlock) child).getFoldedSummary();
     } else {
