@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.35.6
 
 - optimized dark theme for verse blocks
+- improved folded summary for lists as well as description in structure view (#860)
 
 === 0.35.5
 

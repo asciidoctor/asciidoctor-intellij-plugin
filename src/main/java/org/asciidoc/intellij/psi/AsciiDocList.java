@@ -29,26 +29,27 @@ public class AsciiDocList extends ASTWrapperPsiElement implements AsciiDocBlock 
     super.accept(visitor);
   }
 
+  @Override
+  public String getDefaultTitle() {
+    return "List";
+  }
+
   @NotNull
   @Override
   public String getFoldedSummary() {
     PsiElement child = getFirstSignificantChildForFolding();
-    if (child instanceof AsciiDocBlockAttributes) {
+    if (child instanceof AsciiDocBlockAttributes && getStyle() != null) {
       return "[" + getStyle() + "]";
-    } else if (child == null) {
-      return "???";
+    } else if (child != null) {
+      return child.getText();
     } else {
-      return "(list)";
+      return "(List)";
     }
   }
 
   @Override
   public @Nullable String getTitle() {
-    String title = AsciiDocBlock.super.getTitle();
-    if (title == null) {
-      title = getFoldedSummary();
-    }
-    return title;
+    return AsciiDocBlock.super.getTitle();
   }
 
   @Override
