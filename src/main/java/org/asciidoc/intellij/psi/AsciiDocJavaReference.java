@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.psi;
 
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
-  private TextRange myRangeInElement;
+  private final TextRange myRangeInElement;
 
   public AsciiDocJavaReference(@NotNull PsiElement element, TextRange textRange) {
     super(element, textRange);
@@ -66,10 +67,13 @@ public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implemen
       annotation = true;
       name = name.substring(1);
     }
-    PsiClass[] fullQualifiedClasses = JavaPsiFacade.getInstance(myElement.getProject()).findClasses(
-      name,
+    PsiClass[] fullQualifiedClasses;
+    DumbService myDumbService = DumbService.getInstance(myElement.getProject());
+    String finalName = name;
+    fullQualifiedClasses = myDumbService.runReadActionInSmartMode(() -> JavaPsiFacade.getInstance(myElement.getProject()).findClasses(
+      finalName,
       new AsciiDocSearchScope(myElement.getProject())
-    );
+    ));
     for (PsiClass aClass : fullQualifiedClasses) {
       if (annotation && !aClass.isAnnotationType()) {
         continue;

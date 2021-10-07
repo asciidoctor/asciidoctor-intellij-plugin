@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.psi;
 
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
@@ -15,19 +16,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AsciiDocSimpleFileReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
-  private TextRange myRangeInElement;
+  private final TextRange myRangeInElement;
 
   public AsciiDocSimpleFileReference(@NotNull PsiElement element, TextRange textRange) {
     super(element, textRange);
     myRangeInElement = textRange;
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     List<ResolveResult> results = new ArrayList<>();
     String name = myRangeInElement.substring(myElement.getText());
-    PsiFile[] filesByName = FilenameIndex.getFilesByName(myElement.getProject(), name, new AsciiDocSearchScope(myElement.getProject()));
+    DumbService myDumbService = DumbService.getInstance(myElement.getProject());
+    PsiFile[] filesByName = myDumbService.runReadActionInSmartMode(() -> FilenameIndex.getFilesByName(myElement.getProject(), name, new AsciiDocSearchScope(myElement.getProject())));
     for (PsiFile file : filesByName) {
       results.add(new PsiElementResolveResult(file));
     }
