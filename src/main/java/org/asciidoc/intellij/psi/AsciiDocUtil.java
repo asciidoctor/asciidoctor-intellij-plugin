@@ -458,6 +458,26 @@ public class AsciiDocUtil {
       }
     }
 
+    /* if current file has not been indexed (for example if it is outside of current folder), at least use attributes declared in this file */
+    PsiFile currentFile = current.getContainingFile();
+    if (currentFile != null) {
+      // first, check if attributes are already included from this file to avoid duplicates
+      boolean attributesFromCurrentFile = false;
+      for (AttributeDeclaration attributeDeclaration : result) {
+        if (attributeDeclaration instanceof AsciiDocAttributeDeclaration && ((AsciiDocAttributeDeclaration) attributeDeclaration).getContainingFile() == currentFile) {
+          attributesFromCurrentFile = true;
+          break;
+        }
+      }
+      if (!attributesFromCurrentFile) {
+        for (AsciiDocAttributeDeclaration attribute : PsiTreeUtil.findChildrenOfType(currentFile, AsciiDocAttributeDeclaration.class)) {
+          if (attribute.getAttributeName().equals(key)) {
+            result.add(attribute);
+          }
+        }
+      }
+    }
+
     return result;
   }
 
@@ -510,6 +530,22 @@ public class AsciiDocUtil {
 
     for (Map.Entry<String, String> entry : AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getAttributes().entrySet()) {
       result.add(new AsciiDocAttributeDeclarationDummy(entry.getKey().replaceAll("@", ""), entry.getValue()));
+    }
+
+    /* if current file has not been indexed (for example if it is outside of current folder), at least use attributes declared in this file */
+    PsiFile currentFile = current.getContainingFile();
+    if (currentFile != null) {
+      // first, check if attributes are already included from this file to avoid duplicates
+      boolean attributesFromCurrentFile = false;
+      for (AttributeDeclaration attributeDeclaration : result) {
+        if (attributeDeclaration instanceof AsciiDocAttributeDeclaration && ((AsciiDocAttributeDeclaration) attributeDeclaration).getContainingFile() == currentFile) {
+          attributesFromCurrentFile = true;
+          break;
+        }
+      }
+      if (!attributesFromCurrentFile) {
+        result.addAll(PsiTreeUtil.findChildrenOfType(currentFile, AsciiDocAttributeDeclaration.class));
+      }
     }
 
     return result;

@@ -232,6 +232,8 @@
       implementation="org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider"/>
     <editorNotificationProvider
       implementation="org.asciidoc.intellij.editor.notification.UpdateIntellijNotificationProvider"/>
+    <editorNotificationProvider
+      implementation="org.asciidoc.intellij.editor.notification.FileOutsideCurrentProjectNotificationProvider"/>
     <gotoSymbolContributor implementation="org.asciidoc.intellij.psi.AsciiDocChooseByNameContributor"/>
     <searchEverywhereClassifier implementation="org.asciidoc.intellij.psi.AsciiDocSearchEverywhereClassifier"/>
     <localInspection language="AsciiDoc" displayName="Heading inspection" groupPath="AsciiDoc"

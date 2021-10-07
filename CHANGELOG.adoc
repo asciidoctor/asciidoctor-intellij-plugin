@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.35.7
+
+- resolve attributes of current file even if it is opened outside the project. Show notification with warning and link (#880)
+
 === 0.35.6
 
 - optimized dark theme for verse blocks
