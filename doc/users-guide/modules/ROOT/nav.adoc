@@ -30,6 +30,7 @@
 ** xref:faq/indent-missing-on-pasting.adoc[]
 ** xref:faq/jcef-no-proxy-support.adoc[]
 ** xref:faq/javafx-initialization-stuck.adoc[]
+** xref:faq/validation-for-asciidoc-files.adoc[]
 ** xref:faq/blurry-preview.adoc[]
 ** xref:faq/errno-enoent.adoc[]
 ** xref:faq/troubleshooting-mps.adoc[]

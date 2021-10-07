@@ -36,6 +36,13 @@ An AsciiDoc recommended practice is to have link:https://asciidoctor.org/docs/as
 
 See xref:recommended-settings.adoc#configuring-editor[section "`Configuring editor`" in chapter "`Recommended settings`"] on how to enable soft-wrap.
 
+=== I'm editing a file that shows validation errors
+
+The editor shows several validation warnings and errors, for example for cross-references.
+This works the best if the IDE opens all files that belong together as a project.
+
+See xref:faq/validation-for-asciidoc-files.adoc[] for details.
+
 == Preview Troubles
 
 === The preview doesn't show some remote images! Is this a proxy issue?

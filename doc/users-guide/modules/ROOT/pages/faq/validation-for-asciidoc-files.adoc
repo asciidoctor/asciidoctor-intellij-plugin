@@ -1,0 +1,24 @@
+= Validation of AsciiDoc files
+:description: The AsciiDoc plugin for IntelliJ validates cross-references and attributes.
+:navtitle: Validation of files
+
+{description}
+
+== How the plugin can help with validation
+
+The IDE can validate for example cross-references and attribute names for a set of AsciiDoc files.
+To resolve cross-references, all files need to be in one project.
+
+It will also provide auto-completion for attribute names and references.
+
+If the IDE opens a single file and not a project with all related file, it might show validation errors where it shouldn't.
+
+== How to edit files as a project
+
+Use menu:File[Open...] to select a folder and open it.
+The IDE will open files in the folder and its sub-folder as one project.
+
+== Further reading
+
+If files are in separate distinct folders and still belong together, they can still be in one project.
+See chapter xref:features/advanced/multimodule.adoc[] for more information.
