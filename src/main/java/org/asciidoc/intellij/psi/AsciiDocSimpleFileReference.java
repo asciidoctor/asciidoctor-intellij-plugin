@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.psi;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -28,7 +29,17 @@ public class AsciiDocSimpleFileReference extends PsiReferenceBase<PsiElement> im
     List<ResolveResult> results = new ArrayList<>();
     String name = myRangeInElement.substring(myElement.getText());
     DumbService myDumbService = DumbService.getInstance(myElement.getProject());
-    PsiFile[] filesByName = myDumbService.runReadActionInSmartMode(() -> FilenameIndex.getFilesByName(myElement.getProject(), name, new AsciiDocSearchScope(myElement.getProject())));
+
+    // this is a regression in IC-213.4293.20 (EAP)
+    // previously it is safe to throw an IndexNotReadyException here and the GUI will show a notification
+    // https://youtrack.jetbrains.com/issue/IDEA-279460
+    if (myDumbService.isDumb() && ApplicationManager.getApplication().isReadAccessAllowed()) {
+      myDumbService.showDumbModeNotification("Unable to find references while indexes are rebuilding, please try again later.");
+      return new ResolveResult[0];
+    }
+    // end of workaround
+
+    PsiFile[] filesByName = FilenameIndex.getFilesByName(myElement.getProject(), name, new AsciiDocSearchScope(myElement.getProject()));
     for (PsiFile file : filesByName) {
       results.add(new PsiElementResolveResult(file));
     }

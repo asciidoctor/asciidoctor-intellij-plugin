@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.psi;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.JavaPsiFacade;
@@ -67,13 +68,20 @@ public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implemen
       annotation = true;
       name = name.substring(1);
     }
-    PsiClass[] fullQualifiedClasses;
+    // this is a regression in IC-213.4293.20 (EAP)
+    // previously it is safe to throw an IndexNotReadyException here and the GUI will show a notification
+    // https://youtrack.jetbrains.com/issue/IDEA-279460
     DumbService myDumbService = DumbService.getInstance(myElement.getProject());
-    String finalName = name;
-    fullQualifiedClasses = myDumbService.runReadActionInSmartMode(() -> JavaPsiFacade.getInstance(myElement.getProject()).findClasses(
-      finalName,
+    if (myDumbService.isDumb() && ApplicationManager.getApplication().isReadAccessAllowed()) {
+      myDumbService.showDumbModeNotification("Unable to find references while indexes are rebuilding, please try again later.");
+      return new ResolveResult[0];
+    }
+    // end of workaround
+
+    PsiClass[] fullQualifiedClasses = JavaPsiFacade.getInstance(myElement.getProject()).findClasses(
+      name,
       new AsciiDocSearchScope(myElement.getProject())
-    ));
+    );
     for (PsiClass aClass : fullQualifiedClasses) {
       if (annotation && !aClass.isAnnotationType()) {
         continue;

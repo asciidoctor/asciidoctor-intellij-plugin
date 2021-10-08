@@ -24,7 +24,9 @@ apply plugin: 'org.jetbrains.grammarkit'
 apply plugin: 'java'
 apply plugin: 'net.ltgt.errorprone'
 
+
 import org.jetbrains.grammarkit.tasks.GenerateLexer
+import org.jetbrains.intellij.tasks.RunPluginVerifierTask.FailureLevel
 import org.jsoup.Jsoup
 
 allprojects {
@@ -35,11 +37,11 @@ allprojects {
 }
 
 intellij {
-  version = 'IC-2021.2.2' // 'IC-212.4746.2-EAP-SNAPSHOT'
+  version = 'IC-213.4293.20-EAP-SNAPSHOT' // 'IC-2021.2.2'
   pluginName = 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild = false
   plugins = [
-    'PsiViewer:212-SNAPSHOT', // used for debugging
+    'PsiViewer:213-SNAPSHOT', // used for debugging
     'PlantUML integration:5.5.1', // used to test highlighting of plantuml diagrams
     'com.intellij.platform.images', // dependency for PlantUML plugin
     'tanvd.grazi', // used for spell and grammar checking checking
@@ -85,8 +87,6 @@ runIde {
 
   systemProperty('ide.plugins.snapshot.on.unload.fail', 'true')
 }
-
-import org.jetbrains.intellij.tasks.RunPluginVerifierTask.FailureLevel
 
 runPluginVerifier {
   // https://github.com/JetBrains/gradle-intellij-plugin/blob/master/src/main/kotlin/org/jetbrains/intellij/tasks/RunPluginVerifierTask.kt#L485
