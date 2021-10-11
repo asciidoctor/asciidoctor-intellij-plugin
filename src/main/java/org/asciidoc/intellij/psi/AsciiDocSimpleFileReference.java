@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
@@ -27,7 +26,6 @@ public class AsciiDocSimpleFileReference extends PsiReferenceBase<PsiElement> im
   public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     List<ResolveResult> results = new ArrayList<>();
     String name = myRangeInElement.substring(myElement.getText());
-    DumbService myDumbService = DumbService.getInstance(myElement.getProject());
 
     PsiFile[] filesByName = FilenameIndex.getFilesByName(myElement.getProject(), name, new AsciiDocSearchScope(myElement.getProject()));
     for (PsiFile file : filesByName) {
