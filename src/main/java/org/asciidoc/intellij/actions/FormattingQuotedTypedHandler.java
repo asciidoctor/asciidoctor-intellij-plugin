@@ -59,7 +59,7 @@ public class FormattingQuotedTypedHandler extends TypedHandlerDelegate {
         int border = 0;
         if (newText == null) {
           boolean word = FormatAsciiDocAction.isWord(editor.getDocument(), selectionStart, selectionEnd, "" + c);
-          if (word) {
+          if (word || c == '"' || c == '\'') {
             newText = c + selectedText + c;
             border = 1;
           } else {
@@ -98,7 +98,7 @@ public class FormattingQuotedTypedHandler extends TypedHandlerDelegate {
   }
 
   private static boolean isDelimiter(final char c) {
-    return c == '*' || c == '_' || c == '#' || c == '`';
+    return c == '*' || c == '_' || c == '#' || c == '`' || c == '"' || c == '\'';
   }
 
 }
