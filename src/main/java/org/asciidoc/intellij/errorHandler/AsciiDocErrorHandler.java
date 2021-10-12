@@ -1,7 +1,6 @@
 package org.asciidoc.intellij.errorHandler;
 
 import com.intellij.diagnostic.AbstractMessage;
-import com.intellij.diagnostic.PluginException;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.ErrorReportSubmitter;
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
@@ -34,10 +33,6 @@ public class AsciiDocErrorHandler extends ErrorReportSubmitter {
       if (event.getData() instanceof AbstractMessage) {
         throwable = ((AbstractMessage) event.getData()).getThrowable();
         attachments = ((AbstractMessage) event.getData()).getIncludedAttachments();
-      }
-      if (throwable instanceof PluginException && throwable.getCause() != null) {
-        // unwrap PluginManagerCore.createPluginException
-        throwable = throwable.getCause();
       }
       SentryErrorReporter.submitErrorReport(throwable, attachments, additionalInfo, consumer);
     }
