@@ -6,6 +6,7 @@ import com.intellij.lang.folding.FoldingDescriptor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,6 +15,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.SlowOperations;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
@@ -87,7 +89,7 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
     root.accept(new AsciiDocVisitor() {
 
       @Override
-      public void visitElement(PsiElement element) {
+      public void visitElement(@NotNull PsiElement element) {
         if (attributeFoldingEnabled && element instanceof AsciiDocAttributeReference) {
           if (!element.getText().toLowerCase().endsWith("dir}")) {
             // avoid replacing imagesdir, partialsdir, attachmentdir, etc. as this would be too verbose
@@ -163,61 +165,65 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
       if (text.startsWith("{") && text.endsWith("}")) {
         String key = text.substring(1, text.length() - 1).toLowerCase(Locale.US);
         title = COLLAPSABLE_ATTRIBUTES.get(key);
-        if (title == null && !DumbService.isDumb(node.getPsi().getProject())) {
-          // checking dumb mode to avoid IndexNotReadyException
+        if (title == null) {
           Set<String> values = new HashSet<>();
+          if (!DumbService.isDumb(node.getPsi().getProject())) {
+            // this might be called from the EDIT thread. Index access might be slow, allow it for now.
+            SlowOperations.allowSlowOperations(() -> {
+              // search attributes contributed by Antora
+              Map<String, String> attributes = AsciiDocUtil.collectAntoraAttributes(node.getPsi());
+              boolean onlyAntora = attributes.size() > 0;
+              attributes.forEach((k, v) -> {
+                if (k.toLowerCase(Locale.US).equals(key)) {
+                  values.add(v);
+                }
+              });
 
-          // search attributes contributed by Antora
-          Map<String, String> attributes = AsciiDocUtil.collectAntoraAttributes(node.getPsi());
-          boolean onlyAntora = attributes.size() > 0;
-          attributes.forEach((k, v) -> {
-            if (k.toLowerCase(Locale.US).equals(key)) {
-              values.add(v);
-            }
-          });
-
-          Map<VirtualFile, Boolean> cache = new HashMap<>();
-          // search regular attributes
-          iterateReferences:
-          for (PsiReference reference : node.getPsi().getReferences()) {
-            if (reference instanceof AsciiDocAttributeDeclarationReference) {
-              for (ResolveResult resolveResult : ((AsciiDocAttributeDeclarationReference) reference).multiResolve(false)) {
-                PsiElement element = resolveResult.getElement();
-                if (onlyAntora) {
-                  PsiFile file = element.getContainingFile();
-                  if (file != null) {
-                    VirtualFile vf = file.getVirtualFile();
-                    if (vf == null) {
-                      vf = file.getOriginalFile().getVirtualFile();
-                    }
-                    if (vf != null) {
-                      if (!cache.computeIfAbsent(vf, s -> AsciiDocUtil.findAntoraModuleDir(element.getProject(), s) != null)) {
-                        continue;
+              Map<VirtualFile, Boolean> cache = new HashMap<>();
+              // search regular attributes
+              try {
+                iterateReferences:
+                for (PsiReference reference : node.getPsi().getReferences()) {
+                  if (reference instanceof AsciiDocAttributeDeclarationReference) {
+                    for (ResolveResult resolveResult : ((AsciiDocAttributeDeclarationReference) reference).multiResolve(false)) {
+                      PsiElement element = resolveResult.getElement();
+                      if (element != null && onlyAntora) {
+                        PsiFile file = element.getContainingFile();
+                        if (file != null) {
+                          VirtualFile vf = file.getVirtualFile();
+                          if (vf == null) {
+                            vf = file.getOriginalFile().getVirtualFile();
+                          }
+                          if (vf != null) {
+                            if (!cache.computeIfAbsent(vf, s -> AsciiDocUtil.findAntoraModuleDir(element.getProject(), s) != null)) {
+                              continue;
+                            }
+                          }
+                        }
+                      }
+                      if (element instanceof AsciiDocAttributeDeclarationName) {
+                        PsiElement parent = element.getParent();
+                        if (parent instanceof AsciiDocAttributeDeclaration) {
+                          values.add(((AsciiDocAttributeDeclaration) parent).getAttributeValue());
+                          if (values.size() > 1) {
+                            break iterateReferences;
+                          }
+                        }
                       }
                     }
                   }
                 }
-                if (element instanceof AsciiDocAttributeDeclarationName) {
-                  PsiElement parent = element.getParent();
-                  if (parent instanceof AsciiDocAttributeDeclaration) {
-                    values.add(((AsciiDocAttributeDeclaration) parent).getAttributeValue());
-                    if (values.size() > 1) {
-                      break iterateReferences;
-                    }
-                  }
-                }
+              } catch (IndexNotReadyException ignored) {
+                // if indexes are not ready, statement below will default to standard text
+                // even when checking for dumb mode in advance above, project might re-index while in this block.
               }
-            }
+            });
           }
           if (values.size() == 1) {
             title = values.iterator().next();
           } else {
             title = text;
           }
-        }
-        if (title == null) {
-          // dumb mode
-          title = text;
         }
       } else {
         title = text;
