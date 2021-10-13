@@ -1051,7 +1051,16 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <LINECOMMENT> {
   "\n" {
     yypopstate();
-    return AsciiDocTokenTypes.LINE_BREAK;
+    if (yystate() == HEADER) {
+      // inside the header, handle linebreak ourselves to prevent line counting logic to count this line
+      return AsciiDocTokenTypes.LINE_BREAK;
+    } else {
+      // for all other, delegate calculation of next state to previous new line handler
+      yypushback(yylength());
+      if (tableChar != 0) {
+        zzEndReadL = limitLookahead(zzCurrentPosL);
+      }
+    }
   }
   [^\n]+ {
     // fast-track comment parsing to avoid parsing single characters

@@ -51,6 +51,24 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testLineCommentAndFormattingInCell() {
+    doTest("|===\n" +
+        "| _x_x_x\n" +
+        "// comment\n" +
+        "|===\n",
+      "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:ITALIC_START ('_')\n" +
+        "AsciiDoc:ITALIC ('x_x_x')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LINE_COMMENT ('// comment')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
   public void testPassthroughStartButThatIsText() {
     doTest("+ ",
       "AsciiDoc:TEXT ('+')\n" +
