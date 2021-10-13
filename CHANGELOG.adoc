@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.33.21
+
+- disable error reporting for grammar handling in 2021.1 as it is re-written for 2021.2 (#818)
+
 === 0.33.20
 
 - prevent NPE when accessing parent folder of a file (#847)

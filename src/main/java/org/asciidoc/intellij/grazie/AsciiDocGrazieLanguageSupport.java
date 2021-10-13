@@ -4,7 +4,6 @@ import com.intellij.grazie.grammar.Typo;
 import com.intellij.grazie.grammar.strategy.GrammarCheckingStrategy;
 import com.intellij.grazie.grammar.strategy.impl.ReplaceCharRule;
 import com.intellij.grazie.grammar.strategy.impl.RuleGroup;
-import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -12,7 +11,6 @@ import com.intellij.psi.PsiWhiteSpace;
 import kotlin.ranges.IntRange;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
-import org.asciidoc.intellij.psi.AsciiDocPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -182,9 +180,14 @@ public class AsciiDocGrazieLanguageSupport implements GrammarCheckingStrategy {
     adjustPasedTextForOldIntelliJ(parentText, ranges, parsedText, removedPrefix);
     LinkedHashSet<IntRange> finalRanges = new LinkedHashSet<>();
     if (!parsedText.toString().equals(parentText.toString())) {
+      // logic is rewritten in 2021.2, don't complain about this any more in an old release as it is beyond repair
+      /*
       LOG.error("unable to reconstruct string for grammar check", AsciiDocPsiImplUtil.getRuntimeException("didn't reconstruct string", psiElement, null,
         new Attachment("expected.txt", parentText.toString()),
         new Attachment("actual.txt", parsedText.toString())));
+      */
+      // return an empty range to prevent out-of-bound index problems
+      return finalRanges;
     }
     for (IntRange range : ranges) {
       int endInclusive = range.getEndInclusive() - removedPrefix;
