@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.35.8
 
 - avoid slow operation warning when folding attributes (#887)
+- avoid slow operation warning when fetching documentation (#815)
 
 === 0.35.7
 

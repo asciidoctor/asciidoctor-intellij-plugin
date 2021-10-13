@@ -33,6 +33,7 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.serviceContainer.AlreadyDisposedException;
+import com.intellij.util.SlowOperations;
 import com.intellij.util.text.CharArrayUtil;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocLanguage;
@@ -1273,7 +1274,10 @@ public class AsciiDocUtil {
       return Collections.singletonList(originalKey);
     }
     if (moduleDir != null) {
-      return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
+      // this might be called from DocumentationManager.doShowJavaDocInfo
+      // allow slow operations for now, as no alternative is possible here to resolve the reference.
+      // https://youtrack.jetbrains.com/issue/IDEA-273415
+      return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> SlowOperations.allowSlowOperations(() -> {
         String key = originalKey;
         String myModuleName = moduleDir.getName();
         VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
@@ -1384,7 +1388,7 @@ public class AsciiDocUtil {
           }
         }
         return result;
-      });
+      }));
     }
     return Collections.singletonList(originalKey);
   }
