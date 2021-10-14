@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.35.9
+
+- resolve attributes in Antora's reftext/navtext attributes for the preview (#889)
+
 === 0.35.8
 
 - avoid slow operation warning when folding attributes (#887)

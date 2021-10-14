@@ -171,6 +171,10 @@ public class AntoraReferenceAdapter {
               }
             }
             if (refText != null) {
+              String refTextResolved = AsciiDocUtil.resolveAttributes(file, refText);
+              if (refTextResolved != null) {
+                refText = refTextResolved;
+              }
               phraseNode.setString("text", refText);
             }
           }
