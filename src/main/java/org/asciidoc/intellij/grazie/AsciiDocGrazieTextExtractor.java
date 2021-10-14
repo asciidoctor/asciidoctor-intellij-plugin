@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
-import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +26,9 @@ public class AsciiDocGrazieTextExtractor extends TextExtractor {
       languageSupport.isMyContextRoot(root)) {
       TextContent textContent = TextContentBuilder.FromPsi
         // use this for text that is unknown and can't contain any root text
-        .withUnknown(child -> child instanceof AsciiDocAttributeReference)
+        .withUnknown(child ->
+          languageSupport.getElementBehavior(root, child) ==  AsciiDocLanguageSupport.Behavior.UNKNOWN
+        )
         // use excluding here, otherwise the contents will not be recognized as another root element
         .excluding(child ->
           languageSupport.getElementBehavior(root, child) != AsciiDocLanguageSupport.Behavior.TEXT

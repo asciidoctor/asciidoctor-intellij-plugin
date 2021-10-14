@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.35.9
 
 - resolve attributes in Antora's reftext/navtext attributes for the preview (#889)
+- update grammar and spell checking for btn and other macros (#889)
 
 === 0.35.8
 

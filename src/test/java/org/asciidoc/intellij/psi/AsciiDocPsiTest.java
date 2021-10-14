@@ -452,6 +452,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "// within block, therefore split by word breaks\n" +
       "== Heading\n**E**quivalent **M**odulo\n" +
       "TEXTfootnote:[This is a footnote]\n" +
+      "kbd:[Keyboard]\n" +
+      "btn:[Button]\n" +
       "A <<id,reftext>>.\n" +
       "|===\n" +
       "| Cell contents.\n" +
@@ -483,6 +485,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "Modulo",
       "TEXT",
       "A",
+      "Keyboard",
+      "Button",
       "reftext.",
       "== Heading",
       "This",

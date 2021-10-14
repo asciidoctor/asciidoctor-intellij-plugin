@@ -33,7 +33,7 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
   public Tokenizer getTokenizer(PsiElement element) {
     // run tokenizing on all top level elements in the file and those marked as root elements in the language support.
     if (languageSupport.isMyContextRoot(element) || element.getParent() instanceof PsiFile) {
-      return new Tokenizer<PsiElement>() {
+      return new Tokenizer<>() {
         @Override
         public void tokenize(@NotNull PsiElement root, TokenConsumer consumer) {
           TokenizingElementVisitor visitor = new TokenizingElementVisitor(root, consumer);
@@ -69,6 +69,7 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
       AsciiDocLanguageSupport.Behavior elementBehavior = languageSupport.getElementBehavior(root, child);
       switch (elementBehavior) {
         case STEALTH:
+        case UNKNOWN:
         case ABSORB:
           length += child.getTextLength();
           if (sb.length() == 0) {

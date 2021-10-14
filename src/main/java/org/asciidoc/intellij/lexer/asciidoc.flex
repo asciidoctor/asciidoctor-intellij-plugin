@@ -1522,6 +1522,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           } else if (yytext().toString().equals("footnote:")) {
             yybegin(INLINE_MACRO_TEXT);
             return AsciiDocTokenTypes.INLINE_MACRO_ID;
+          } else if (yytext().toString().equals("btn:")) {
+            yybegin(INLINE_MACRO_TEXT);
+            return AsciiDocTokenTypes.INLINE_MACRO_ID;
           } else if (yytext().toString().endsWith("footnote:")) {
             yypushback("footnote:".length());
             yypopstate();

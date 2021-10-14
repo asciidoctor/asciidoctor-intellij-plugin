@@ -3,12 +3,14 @@ package org.asciidoc.intellij.grazie;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.TokenSet;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationImpl;
+import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.asciidoc.intellij.psi.AsciiDocInlineMacro;
 import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocUrl;
@@ -49,7 +51,14 @@ public class AsciiDocLanguageSupport {
      * Example: the {@code ->} would be "SEPARATE"<br>
      * {@code one->two} is two words "one" and "two"
      */
-    SEPARATE
+    SEPARATE,
+    /**
+     * A PSI that that <b>WILL</b> be printed, but with unknown text.
+     * <p>
+     * Example: an attribute {@code a {attr}} would print some text <br>
+     * but the contents are unknown.
+     */
+    UNKNOWN
   }
 
   // all tokens that contain full sentences that can be checked for grammar and spelling.
@@ -149,6 +158,8 @@ public class AsciiDocLanguageSupport {
       } else {
         return Behavior.ABSORB;
       }
+    } else if (child instanceof AsciiDocAttributeReference) {
+      return Behavior.UNKNOWN;
     } else if (SEPARATOR_TOKENS.contains(child.getNode().getElementType())) {
       return Behavior.SEPARATE;
     } else if (root != child && child instanceof AsciiDocInlineMacro && ((AsciiDocInlineMacro) child).getMacroName().equals("footnote")) {
@@ -174,10 +185,40 @@ public class AsciiDocLanguageSupport {
       } else {
         return Behavior.TEXT;
       }
+    } else if (child instanceof AsciiDocInlineMacro) {
+      LookingForMacroTextVisitor visitor = new LookingForMacroTextVisitor();
+      child.accept(visitor);
+      if (visitor.hasFound()) {
+        return Behavior.TEXT;
+      } else {
+        return Behavior.UNKNOWN;
+      }
     } else if (TEXT_TOKENS.contains(child.getNode().getElementType())) {
       return Behavior.TEXT;
     } else {
       return Behavior.STEALTH;
+    }
+  }
+
+  private static class LookingForMacroTextVisitor extends PsiElementVisitor {
+    private boolean found = false;
+
+    public boolean hasFound() {
+      return found;
+    }
+
+    @Override
+    public void visitElement(@NotNull PsiElement element) {
+      super.visitElement(element);
+      if (element.getNode().getElementType() == AsciiDocTokenTypes.MACROTEXT) {
+        found = true;
+        return;
+      }
+      PsiElement child = element.getFirstChild();
+      while (child != null && !found) {
+        visitElement(child);
+        child = child.getNextSibling();
+      }
     }
   }
 

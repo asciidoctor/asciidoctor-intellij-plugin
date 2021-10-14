@@ -149,7 +149,6 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
       .put(AsciiDocTokenTypes.URL_PREFIX, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.LINKSTART, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.LINKANCHOR, ASCIIDOC_MARKER)
-      .put(AsciiDocTokenTypes.MACROTEXT, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.BLOCKIDSTART, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.BLOCKIDEND, ASCIIDOC_MARKER)
       .put(AsciiDocTokenTypes.INLINEIDSTART, ASCIIDOC_MARKER)
@@ -185,9 +184,8 @@ public class AsciiDocSyntaxHighlighter extends SyntaxHighlighterBase {
     return new AsciiDocLexer();
   }
 
-  @NotNull
   @Override
-  public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+  public TextAttributesKey @NotNull [] getTokenHighlights(IElementType tokenType) {
     return pack(ATTRIBUTES.get(tokenType));
   }
 }
