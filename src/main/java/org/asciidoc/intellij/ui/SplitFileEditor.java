@@ -2,6 +2,8 @@ package org.asciidoc.intellij.ui;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
+import com.intellij.ide.ui.UISettings;
+import com.intellij.ide.ui.UISettingsListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
@@ -90,6 +92,9 @@ public abstract class SplitFileEditor<E1 extends TextEditor, E2 extends FileEdit
     mySplitter.setSecondComponent(myEditorFirst ? mySecondEditor.getComponent() : myMainEditor.getComponent());
 
     AsciiDocToolbarPanel myToolbarWrapper = new AsciiDocToolbarPanel(myMainEditor.getEditor(), mySplitter);
+    adjustToolbarVisibility(myToolbarWrapper, UISettings.getInstance());
+    ApplicationManager.getApplication().getMessageBus().connect(this)
+      .subscribe(UISettingsListener.TOPIC, uiSettings -> adjustToolbarVisibility(myToolbarWrapper, uiSettings));
 
     final JPanel result = new JPanel(new BorderLayout());
     result.add(myToolbarWrapper, BorderLayout.NORTH);
@@ -97,6 +102,10 @@ public abstract class SplitFileEditor<E1 extends TextEditor, E2 extends FileEdit
     adjustEditorsVisibility();
 
     return result;
+  }
+
+  private void adjustToolbarVisibility(AsciiDocToolbarPanel myToolbarWrapper, UISettings uiSettings) {
+    myToolbarWrapper.setVisible(!uiSettings.getPresentationMode());
   }
 
   public void triggerLayoutChange(boolean requestFocus) {
