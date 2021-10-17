@@ -422,6 +422,20 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertNotNull("frontmatter should exist", frontmatter);
   }
 
+  public void testListSeparatedByComment() {
+    // given...
+    PsiFile psiFile = configureByAsciiDoc("* list 1\n" +
+      "* another item\n" +
+      "\n" +
+      "// break\n" +
+      "\n" +
+      ". not a nested item\n");
+
+    // then...
+    AsciiDocList[] lists = PsiTreeUtil.getChildrenOfType(psiFile, AsciiDocList.class);
+    Assertions.assertThat(lists).describedAs("two separated lists").hasSize(2);
+  }
+
   public void testIncludeWithTag() {
     // given...
     PsiFile psiFile = configureByAsciiDoc("include::aaa.adoc[tags=hi]");
@@ -484,9 +498,9 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "Equivalent",
       "Modulo",
       "TEXT",
-      "A",
       "Keyboard",
       "Button",
+      "A",
       "reftext.",
       "== Heading",
       "This",

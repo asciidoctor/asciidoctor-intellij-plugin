@@ -32,6 +32,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKID;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDEND;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKIDSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKREFTEXT;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_COMMENT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_BODY;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ID;
@@ -147,6 +148,7 @@ public class AsciiDocParserImpl {
 
   private int newLines;
   private int emptyLines;
+  private int commentAfterEmptyLine;
 
   @SuppressWarnings("checkstyle:MethodLength")
   public void parse() {
@@ -162,7 +164,13 @@ public class AsciiDocParserImpl {
         emptyLines++;
       }
       if (type == LINE_BREAK || type == EMPTY_LINE) {
-        ++newLines;
+        newLines++;
+      }
+      if (type == EMPTY_LINE) {
+        IElementType nextToken = myBuilder.rawLookup(1);
+        if (nextToken == LINE_COMMENT || nextToken == BLOCK_COMMENT) {
+          commentAfterEmptyLine++;
+        }
       }
     });
     boolean continuation = false;
@@ -173,8 +181,11 @@ public class AsciiDocParserImpl {
       }
       if (emptyLines > 0 && !at(ENUMERATION) && !at(BULLET) && !at(DESCRIPTION) && !at(CONTINUATION)) {
         endListDelimiter();
+      } else if (commentAfterEmptyLine > 0) {
+        endListDelimiter();
       }
       emptyLines = 0;
+      commentAfterEmptyLine = 0;
 
       if (at(BLOCK_MACRO_ID) || at(BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER) || at(LISTING_BLOCK_DELIMITER)
         || at(PASSTRHOUGH_BLOCK_DELIMITER) || at(FRONTMATTER_DELIMITER) || at(CELLSEPARATOR)) {

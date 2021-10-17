@@ -71,6 +71,20 @@ CheckStyle:: This project contains a ready-to-go CheckStyle configuration that w
 .. choose "`Amazon Corretto 11`" as _Project JDK_ +
 (use menu:Add JDK[] and menu:Download JDK...[] if not already present)
 
+=== Running Tests from the IDE
+
+Running tests from the IDE might produce the error message "`jarFiles is not set for PluginDescriptor`".
+To avoid this error message, set the following system properties when running tests from the IDE.
+When running tests from Gradle, this is added automatically:
+
+[source]
+----
+-Didea.force.use.core.classloader=true
+-Didea.use.core.classloader.for.plugin.path=true
+----
+
+Still, when running via the IDE, the tests in _AsciiDocGrammarInspectionTest_ fail with an _ExceptionInInitializerError_ when loading language tool classes.
+Please run these tests using the CLI command _gradlew check_ as described above.
 
 === Validation Tasks
 
