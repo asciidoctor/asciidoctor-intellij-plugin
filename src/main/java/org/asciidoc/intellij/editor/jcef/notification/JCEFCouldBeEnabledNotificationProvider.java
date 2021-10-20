@@ -10,7 +10,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
-import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -40,8 +39,7 @@ public class JCEFCouldBeEnabledNotificationProvider extends EditorNotifications.
     }
     final AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
     final AsciiDocPreviewSettings oldPreviewSettings = asciiDocApplicationSettings.getAsciiDocPreviewSettings();
-    if (oldPreviewSettings.getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())
-      || oldPreviewSettings.getHtmlPanelProviderInfo().getClassName().equals(AsciiDocJCEFHtmlPanelProvider.class.getName())) {
+    if (oldPreviewSettings.getHtmlPanelProviderInfo().getClassName().equals(AsciiDocJCEFHtmlPanelProvider.class.getName())) {
       return null;
     }
 
