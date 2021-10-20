@@ -373,6 +373,10 @@ public class AsciiDocUtil {
   }
 
   public static List<AttributeDeclaration> findAttributes(Project project, String key, PsiElement current) {
+    return findAttributes(project, key, current, Scope.MODULE);
+  }
+
+   public static List<AttributeDeclaration> findAttributes(Project project, String key, PsiElement current, Scope scope) {
     List<AttributeDeclaration> result = new ArrayList<>();
 
     key = key.toLowerCase(Locale.US);
@@ -441,9 +445,21 @@ public class AsciiDocUtil {
       }
     }
 
-    // ignore other declarations when we found a specific value
-    if (result.size() == 0) {
-      result.addAll(findAttributes(project, key, antoraModuleDir != null));
+    if (scope == Scope.MODULE) {
+      // ignore other declarations when we found a specific value
+      if (result.size() == 0) {
+        result.addAll(findAttributes(project, key, antoraModuleDir != null));
+      }
+    } else if (scope == Scope.PAGEATTRIBUTES) {
+      // add page attributes even if there has been a match to find overrides
+      PsiFile file = current.getContainingFile();
+      if (file != null) {
+        for (AsciiDocAttributeDeclaration attribute : findPageAttributes(file)) {
+          if (Objects.equals(key, attribute.getAttributeName())) {
+            result.add(attribute);
+          }
+        }
+      }
     }
 
     if (result.size() == 0) {
@@ -803,7 +819,6 @@ public class AsciiDocUtil {
     }
     ProgressManager.checkCanceled();
     TreeSet<String> additionalPlaybooks = new TreeSet<>();
-    //noinspection UnstableApiUsage
     FilenameIndex.processAllFileNames(file -> {
       if (file.endsWith(".yml") && file.contains("antora") && file.contains("playbook")) {
         FilenameIndex.getVirtualFilesByName(file, new AsciiDocSearchScope(project)).forEach(virtualFile -> addPlaybook(additionalPlaybooks, virtualFile));
@@ -1165,12 +1180,23 @@ public class AsciiDocUtil {
   // family$
   public static final Pattern FAMILY = Pattern.compile("^(?<family>" + FAMILIES + ")\\$");
 
+  public enum Scope {
+    MODULE,
+    /** resolve attributes within page attributes and truely global attributes. */
+    PAGEATTRIBUTES
+  }
+
   @Nullable
   public static String resolveAttributes(PsiElement element, String val) {
+    return resolveAttributes(element, val, Scope.MODULE);
+
+  }
+  @Nullable
+  public static String resolveAttributes(PsiElement element, String val, Scope scope) {
     Matcher matcher = ATTRIBUTES.matcher(val);
     while (matcher.find()) {
       String attributeName = matcher.group(1);
-      List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(element.getProject(), attributeName, element);
+      List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(element.getProject(), attributeName, element, scope);
       Set<String> values = new HashSet<>();
       for (AttributeDeclaration declaration : declarations) {
         String value = declaration.getAttributeValue();
@@ -1680,7 +1706,7 @@ public class AsciiDocUtil {
     return i;
   }
 
-  public static Collection<AsciiDocAttributeDeclaration> findPageAttributes(PsiFile file) {
+  public static Collection<AsciiDocAttributeDeclaration> findPageAttributes(@NotNull PsiFile file) {
     Collection<AsciiDocAttributeDeclaration> result = new ArrayList<>();
     findPageAttributes(file, 0, result);
     return result;

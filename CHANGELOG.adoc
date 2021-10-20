@@ -11,11 +11,12 @@ This document provides a high-level view of the changes introduced by release.
 
 - suggest to users to switch from JavaFX preview to JCEF preview
 - update to latest Asciidoctor Kroki version with improved logging and pikchr diagram support
+- adjust scope to page attribute scope when resolving Antora's reftext/navtext attributes for the preview (#889)
 
 === 0.35.9
 
 - resolve attributes in Antora's reftext/navtext attributes for the preview (#889)
-- update grammar and spell checking for btn and other macros (#889)
+- update grammar and spell checking for btn and other macros (#890)
 - two lists can be separated by a blank line and a comment (#860)
 - hide editor toolbar when in presentation mode (#824)
 

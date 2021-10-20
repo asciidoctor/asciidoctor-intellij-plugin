@@ -171,7 +171,7 @@ public class AntoraReferenceAdapter {
               }
             }
             if (refText != null) {
-              String refTextResolved = AsciiDocUtil.resolveAttributes(file, refText);
+              String refTextResolved = AsciiDocUtil.resolveAttributes(file, refText, AsciiDocUtil.Scope.PAGEATTRIBUTES);
               if (refTextResolved != null) {
                 refText = refTextResolved;
               }
