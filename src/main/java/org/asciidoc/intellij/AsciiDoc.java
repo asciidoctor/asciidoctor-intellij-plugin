@@ -1201,8 +1201,8 @@ public class AsciiDoc {
       if (!StringUtils.isEmpty(krokiUrl)) {
         attrs.setAttribute("kroki-server-url", krokiUrl);
       }
-      if (fileType == FileType.JAVAFX) {
-        attrs.setAttribute("kroki-force-png", "true");
+      if (fileType == FileType.JAVAFX || fileType == FileType.JEDITOR) {
+        attrs.setAttribute("kroki-default-format", "png");
       }
     }
 

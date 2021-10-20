@@ -51,9 +51,11 @@ Extensions.register do
       nomnoml
       nwdiag
       packetdiag
+      pikchr
       plantuml
       rackdiag
       seqdiag
+      structurizr
       svgbob
       umlet
       vega
