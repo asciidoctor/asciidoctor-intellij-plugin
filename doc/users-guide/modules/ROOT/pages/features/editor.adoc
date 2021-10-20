@@ -37,8 +37,8 @@ AsciiDoc recommends the https://asciidoctor.org/docs/asciidoc-recommended-practi
 To avoid scrolling horizontally, the user should enable soft-wrap in the IDE. Go to menu:Settings[Editor > General], scroll to menu:Soft Wrap[], add the AsciiDoc file extension (if not already pre-populated) and activate the checkbox "`Soft-wrap files`".
 
 // EnableSoftWrapNotificationProvider
-There is also an option to enable soft-wrap for a single file in the editor toolbar.
-If the user enables soft wrap per file multiple times, an editor notification appears and suggests enabling soft wrap in the IDE settings.
+The user can toggle soft-wrap for a single file via the editor toolbar.
+If the user hasn't enabled soft wrap per default, an editor notification appears and suggests enabling soft wrap per default in the IDE settings.
 
 For `include::[]` and `image::[]` block macros the keys kbd:[Ctrl+Click] and kbd:[Ctrl+B] navigate to the referenced file.
 
@@ -129,6 +129,10 @@ Provide `$FilePath$` as the argument so that Chrome knows where to find the file
 The user can assign a shortcut to the external tool using menu:Help[Find action... > (type the name of external tool) > kbd:[Alt+Enter] > (type the shortcut of choice) > OK].
 
 == Writing
+
+// see: SplitFileEditor
+The editor has a toolbar with most common action like make bold, adding a link, etc.
+The toolbar hides when entering presentation mode to remove distractions for the audience.
 
 // see: AsciiDocSmartEnterProcessor
 When adding block attributes, the plugin supports statement completion (also known as "`Smart Enter`") using the shortcut kbd:[Shift+Ctrl+Enter].
