@@ -11,8 +11,6 @@ import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocPsiElementFactory;
 import org.jetbrains.annotations.NotNull;
 
-import static org.asciidoc.intellij.inspections.AsciiDocListingStyleInspection.MARKDOWN_LISTING_BLOCK_DELIMITER;
-
 /**
  * @author Fatih Bozik
  */
@@ -46,7 +44,7 @@ public class AsciiDocConvertMarkdownListing implements LocalQuickFix {
       node = node.getTreeNext();
     }
     changeInitialDelimiter(text, element);
-    changeTrailingDelimiter(text);
+    changeTrailingDelimiter(text, element);
     prefix.append(text);
     return prefix.toString();
   }
@@ -54,8 +52,26 @@ public class AsciiDocConvertMarkdownListing implements LocalQuickFix {
   private void changeInitialDelimiter(StringBuilder text, PsiElement element) {
     final String language = getLanguage(element);
     final String sourceBlockName = getSourceBlockName(language);
-    final int endOffset = MARKDOWN_LISTING_BLOCK_DELIMITER.length() + language.length();
+    final int endOffset = getEndOffset(element);
     text.replace(0, endOffset, sourceBlockName);
+  }
+
+  private int getEndOffset(PsiElement element) {
+    int offset = 0;
+    ASTNode node  = element.getNode().getFirstChildNode();
+    while (node != null && node.getElementType() != AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER) {
+      node = node.getTreeNext();
+    }
+    if (node == null) {
+      return offset;
+    }
+    offset += node.getTextLength();
+    node = node.getTreeNext();
+    if (node == null || node.getElementType() != AsciiDocTokenTypes.LISTING_TEXT) {
+      return offset;
+    }
+    offset += node.getTextLength();
+    return offset;
   }
 
   private String getLanguage(PsiElement element) {
@@ -77,8 +93,8 @@ public class AsciiDocConvertMarkdownListing implements LocalQuickFix {
     return language.isEmpty() ? SOURCE : String.format(SOURCE_WITH_LANG, language);
   }
 
-  private void changeTrailingDelimiter(StringBuilder text) {
-    final int startOffset = text.length() - MARKDOWN_LISTING_BLOCK_DELIMITER.length();
+  private void changeTrailingDelimiter(StringBuilder text, PsiElement element) {
+    final int startOffset = text.length() - element.getLastChild().getTextLength();
     text.replace(startOffset, text.length(), LISTING_BLOCK_DELIMITER);
   }
 

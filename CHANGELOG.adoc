@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - update to latest Asciidoctor Kroki version with improved logging and pikchr diagram support
 - adjust scope to page attribute scope when resolving Antora's reftext/navtext attributes for the preview (#889)
 - preventing error when updating actions for create-pdf-from-preview (#894)
+- handle markdown-style listing conversions where backticks are followed by spaces (#895)
 
 === 0.35.9
 
