@@ -4,9 +4,9 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -36,7 +36,7 @@ public class CreatePdfFromPreviewAction extends AsciiDocAction implements DumbAw
     if (ApplicationManager.getApplication().isInternal()) {
       Project project = event.getProject();
       if (project != null) {
-        FileEditor editor = FileEditorManager.getInstance(project).getSelectedEditor();
+        FileEditor editor = event.getData(LangDataKeys.FILE_EDITOR);
         if (editor instanceof AsciiDocSplitEditor) {
           AsciiDocPreviewEditor previewEditor = ((AsciiDocSplitEditor) editor).getSecondEditor();
           enabled = previewEditor.isPrintingSupported();
@@ -52,7 +52,7 @@ public class CreatePdfFromPreviewAction extends AsciiDocAction implements DumbAw
     if (project == null) {
       return;
     }
-    FileEditor editor = FileEditorManager.getInstance(project).getSelectedEditor();
+    FileEditor editor = event.getData(LangDataKeys.FILE_EDITOR);
     if (editor == null) {
       return;
     }

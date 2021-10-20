@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - suggest to users to switch from JavaFX preview to JCEF preview
 - update to latest Asciidoctor Kroki version with improved logging and pikchr diagram support
 - adjust scope to page attribute scope when resolving Antora's reftext/navtext attributes for the preview (#889)
+- preventing error when updating actions for create-pdf-from-preview (#894)
 
 === 0.35.9
 
