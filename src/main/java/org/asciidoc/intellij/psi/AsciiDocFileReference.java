@@ -36,12 +36,11 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -428,8 +427,11 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
       if (antoraModuleDir != null) {
         List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), "page-aliases", myElement);
-        Map<String, String> myAttributes = AsciiDocUtil.collectAntoraAttributes(myElement);
+        Collection<AttributeDeclaration> myAttributes = AsciiDocUtil.collectAntoraAttributes(myElement);
         parseAntoraPrefix(key, myAttributes);
+        String pageComponentName = AsciiDocUtil.findAttribute("page-component-name", myAttributes);
+        String pageComponentVersion = AsciiDocUtil.findAttribute("page-component-version", myAttributes);
+        String pageModule = AsciiDocUtil.findAttribute("page-module", myAttributes);
         for (AttributeDeclaration decl : declarations) {
           String shortKey = normalizeKeyForSearch(key);
           String value = decl.getAttributeValue();
@@ -443,21 +445,21 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             continue;
           }
           AsciiDocAttributeDeclarationImpl declImpl = (AsciiDocAttributeDeclarationImpl) decl;
-          Map<String, String> otherAttributes = AsciiDocUtil.collectAntoraAttributes(declImpl);
+          Collection<AttributeDeclaration> otherAttributes = AsciiDocUtil.collectAntoraAttributes(declImpl);
           for (String element : value.split(",")) {
-            Map<String, String> elementAttributes = new HashMap<>(otherAttributes);
+            Collection<AttributeDeclaration> elementAttributes = new ArrayList<>(otherAttributes);
             String shortElement = normalizeKeyForSearch(element.trim());
             if (!shortElement.contains(shortKey)) {
               continue;
             }
             parseAntoraPrefix(element.trim(), elementAttributes);
-            if (!Objects.equals(myAttributes.get("page-component-name"), elementAttributes.get("page-component-name"))) {
+            if (!Objects.equals(pageComponentName, AsciiDocUtil.findAttribute("page-component-name", elementAttributes))) {
               continue;
             }
-            if (!Objects.equals(myAttributes.get("page-component-version"), elementAttributes.get("page-component-version"))) {
+            if (!Objects.equals(pageComponentVersion, AsciiDocUtil.findAttribute("page-component-version", elementAttributes))) {
               continue;
             }
-            if (!Objects.equals(myAttributes.get("page-module"), elementAttributes.get("page-module"))) {
+            if (!Objects.equals(pageModule, AsciiDocUtil.findAttribute("page-module", elementAttributes))) {
               continue;
             }
             if (!shortElement.equals(shortKey)) {
@@ -478,7 +480,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return shortKey;
   }
 
-  public static void parseAntoraPrefix(String element, Map<String, String> elementAttributes) {
+  public static void parseAntoraPrefix(String element, Collection<AttributeDeclaration> elementAttributes) {
     Matcher matcher = AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(element);
     if (matcher.find()) {
       Matcher version = AsciiDocUtil.VERSION.matcher(element);
@@ -489,25 +491,25 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           // in xrefs, this is represented by a single underscope ("_")
           v = "";
         }
-        elementAttributes.put("page-component-version", v);
+        elementAttributes.add(new AsciiDocAttributeDeclarationDummy("page-component-version", v));
         element = version.replaceFirst("");
       }
       Matcher componentModuleMatcher = AsciiDocUtil.COMPONENT_MODULE.matcher(element);
       if (componentModuleMatcher.find()) {
         String component = componentModuleMatcher.group("component");
         if (component.length() > 0 && !component.equals(".")) {
-          elementAttributes.put("page-component", component);
+          elementAttributes.add(new AsciiDocAttributeDeclarationDummy("page-component", component));
         }
         String module = componentModuleMatcher.group("module");
         if (module.length() > 0 && !module.equals(".")) {
-          elementAttributes.put("page-module", module);
+          elementAttributes.add(new AsciiDocAttributeDeclarationDummy("page-module", module));
         }
       } else {
         Matcher moduleMatcher = AsciiDocUtil.MODULE.matcher(element);
         if (moduleMatcher.find()) {
           String module = moduleMatcher.group("module");
           if (module.length() > 0 && !module.equals(".")) {
-            elementAttributes.put("page-module", module);
+            elementAttributes.add(new AsciiDocAttributeDeclarationDummy("page-module", module));
           }
         }
       }

@@ -34,7 +34,7 @@ public class AsciiDocAttributeUndefinedInspection extends AsciiDocInspectionBase
               continue;
             }
             AsciiDocAttributeDeclarationReference attributeDeclarationReference = (AsciiDocAttributeDeclarationReference) reference;
-            String key = attributeDeclarationReference.getValue().toLowerCase(Locale.ENGLISH);
+            String key = attributeDeclarationReference.getValue().toLowerCase(Locale.US);
             // check for built-in attributes
             if (AsciiDocBundle.getBuiltInAttributesList().contains(key)) {
               continue;

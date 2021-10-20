@@ -698,7 +698,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       getTestName(true) + "/componentV2/modules/module/pages/test.adoc",
       getTestName(true) + "/componentV2/antora.yml",
       getTestName(true) + "/componentVnull/modules/ROOT/pages/test.adoc",
-      getTestName(true) + "/componentVnull/antora.yml"
+      getTestName(true) + "/componentVnull/antora.yml",
+      getTestName(true) + "/antora-playbook.yml"
     );
 
     List<AttributeDeclaration> attributes = AsciiDocUtil.findAttributes(psiFile[0].getProject(), psiFile[0].getFirstChild());
@@ -708,6 +709,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("attachmentsdir", "/src/antoraModule/componentV1/modules/ROOT/attachments")));
     assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("examplesdir", "/src/antoraModule/componentV1/modules/ROOT/examples")));
     assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("myattr", "myval")));
+    assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("pbkey", "pbval")));
+    assertTrue(attributes.contains(new AsciiDocAttributeDeclarationDummy("pbsoftkey", "pbsoftval@")));
 
     AsciiDocBlockMacro[] macros = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocBlockMacro.class);
     assertNotNull(macros);

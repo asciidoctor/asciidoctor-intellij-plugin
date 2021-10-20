@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - adjust scope to page attribute scope when resolving Antora's reftext/navtext attributes for the preview (#889)
 - preventing error when updating actions for create-pdf-from-preview (#894)
 - handle markdown-style listing conversions where backticks are followed by spaces (#895)
+- support soft-set attributes in Antora component descriptors and playbooks (#893)
 
 === 0.35.9
 

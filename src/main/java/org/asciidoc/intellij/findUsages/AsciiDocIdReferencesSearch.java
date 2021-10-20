@@ -38,7 +38,6 @@ import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.Locale;
 
 public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
   protected AsciiDocIdReferencesSearch() {
@@ -143,7 +142,7 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
       if (psiFile.getLanguage() == AsciiDocLanguage.INSTANCE || element instanceof AsciiDocTagDeclaration) {
         if (localSearch) {
           for (AsciiDocAttributeDeclaration attribute : PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocAttributeDeclaration.class)) {
-            if (name.toLowerCase(Locale.US).equals(attribute.getAttributeName().toLowerCase(Locale.US))) {
+            if (attribute.matchesKey(name)) {
               AsciiDocAttributeDeclarationName child = attribute.getAttributeDeclarationName();
               if (child != null) {
                 consumePsiElementForRename(consumer, child);

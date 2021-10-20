@@ -27,9 +27,11 @@ import org.asciidoc.intellij.psi.AsciiDocHtmlEntity;
 import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.asciidoc.intellij.psi.AsciiDocSelfDescribe;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
+import org.asciidoc.intellij.psi.AttributeDeclaration;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -171,11 +173,11 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
             // this might be called from the EDIT thread. Index access might be slow, allow it for now.
             SlowOperations.allowSlowOperations(() -> {
               // search attributes contributed by Antora
-              Map<String, String> attributes = AsciiDocUtil.collectAntoraAttributes(node.getPsi());
+              Collection<AttributeDeclaration> attributes = AsciiDocUtil.collectAntoraAttributes(node.getPsi());
               boolean onlyAntora = attributes.size() > 0;
-              attributes.forEach((k, v) -> {
-                if (k.toLowerCase(Locale.US).equals(key)) {
-                  values.add(v);
+              attributes.forEach(attribute -> {
+                if (attribute.matchesKey(key)) {
+                  values.add(attribute.getAttributeValue());
                 }
               });
 

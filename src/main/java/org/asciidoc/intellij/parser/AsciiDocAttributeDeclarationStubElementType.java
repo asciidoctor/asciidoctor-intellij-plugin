@@ -15,6 +15,7 @@ import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationStubImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Objects;
 
 public class AsciiDocAttributeDeclarationStubElementType extends IStubElementType<AsciiDocAttributeDeclarationStub, AsciiDocAttributeDeclaration> {
@@ -59,7 +60,7 @@ public class AsciiDocAttributeDeclarationStubElementType extends IStubElementTyp
   @Override
   public void indexStub(@NotNull AsciiDocAttributeDeclarationStub stub, @NotNull IndexSink sink) {
     if (stub.getAttributeName() != null) {
-      sink.occurrence(AsciiDocAttributeDeclarationKeyIndex.KEY, stub.getAttributeName().toLowerCase());
+      sink.occurrence(AsciiDocAttributeDeclarationKeyIndex.KEY, stub.getAttributeName().toLowerCase(Locale.US));
     }
   }
 }

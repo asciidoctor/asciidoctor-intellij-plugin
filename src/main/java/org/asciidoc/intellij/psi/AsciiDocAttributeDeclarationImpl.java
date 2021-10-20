@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,6 +49,14 @@ public class AsciiDocAttributeDeclarationImpl
       return attributeName.getName();
     }
     return null;
+  }
+
+  /**
+   * All attribute declarations within a document are soft by default.
+   */
+  @Override
+  public boolean isSoft() {
+    return true;
   }
 
   /**
@@ -126,6 +135,6 @@ public class AsciiDocAttributeDeclarationImpl
 
   public boolean hasSpellCheckableContent() {
     String name = getAttributeName();
-    return ATTRIBUTES_WITH_TEXT_CONTENT.contains(name.toLowerCase());
+    return ATTRIBUTES_WITH_TEXT_CONTENT.contains(name.toLowerCase(Locale.US));
   }
 }

@@ -32,6 +32,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.ex.temp.TempFileSystem;
 import com.intellij.psi.PsiFile;
 import com.intellij.serviceContainer.AlreadyDisposedException;
 import org.apache.commons.io.FileUtils;
@@ -50,7 +51,9 @@ import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
+import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationDummy;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
+import org.asciidoc.intellij.psi.AttributeDeclaration;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.asciidoctor.Asciidoctor;
@@ -764,8 +767,8 @@ public class AsciiDoc {
       project,
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
     );
-    Map<String, String> attributes = populateAntoraAttributes(project, fileBaseDir, antoraModuleDir);
-    attributes.putAll(populateDocumentAttributes(fileBaseDir, name));
+    Collection<AttributeDeclaration> attributes = populateAntoraAttributes(project, fileBaseDir, antoraModuleDir);
+    attributes.addAll(populateDocumentAttributes(fileBaseDir, name));
     lock();
     try {
       if (shutdown) {
@@ -836,14 +839,14 @@ public class AsciiDoc {
     return !ex.getMessage().contains("PlantUML preprocessing failed");
   }
 
-  private Map<String, String> populateDocumentAttributes(File fileBaseDir, String name) {
-    Map<String, String> attributes = new HashMap<>();
-    attributes.put("docname", name.replaceAll(STRIP_FILE_EXTENSION, ""));
+  private Collection<AttributeDeclaration> populateDocumentAttributes(File fileBaseDir, String name) {
+    Collection<AttributeDeclaration> attributes = new ArrayList<>();
+    attributes.add(new AsciiDocAttributeDeclarationDummy("docname", name.replaceAll(STRIP_FILE_EXTENSION, "")));
     if (name.contains(".")) {
-      attributes.put("docfilesuffix", name.replaceAll(CAPTURE_FILE_EXTENSION, "$2"));
+      attributes.add(new AsciiDocAttributeDeclarationDummy("docfilesuffix", name.replaceAll(CAPTURE_FILE_EXTENSION, "$2")));
     }
-    attributes.put("docfile", new File(fileBaseDir, name).getAbsolutePath());
-    attributes.put("docdir", fileBaseDir.getAbsolutePath());
+    attributes.add(new AsciiDocAttributeDeclarationDummy("docfile", new File(fileBaseDir, name).getAbsolutePath()));
+    attributes.add(new AsciiDocAttributeDeclarationDummy("docdir", fileBaseDir.getAbsolutePath()));
     return attributes;
   }
 
@@ -886,7 +889,7 @@ public class AsciiDoc {
       project,
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
     );
-    Map<String, String> attributes = populateAntoraAttributes(project, fileBaseDir, antoraModuleDir);
+    Collection<AttributeDeclaration> attributes = populateAntoraAttributes(project, fileBaseDir, antoraModuleDir);
 
     lock();
     try {
@@ -969,11 +972,11 @@ public class AsciiDoc {
     LOCK.unlock();
   }
 
-  public static Map<String, String> populateAntoraAttributes(@NotNull Project project, File fileBaseDir, VirtualFile
+  public static Collection<AttributeDeclaration> populateAntoraAttributes(@NotNull Project project, File fileBaseDir, VirtualFile
     antoraModuleDir) {
-    Map<String, String> result = new HashMap<>();
+    Collection<AttributeDeclaration> result = new ArrayList<>();
     if (antoraModuleDir != null) {
-      result.putAll(collectAntoraAttributes(antoraModuleDir, project));
+      result.addAll(collectAntoraAttributes(antoraModuleDir, project));
 
       VirtualFile baseDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
       if (baseDir == null) {
@@ -986,74 +989,42 @@ public class AsciiDoc {
       VirtualFile antoraExamplesDir = findAntoraExamplesDir(project, baseDir);
 
       if (antoraPages != null) {
-        result.put("pagesdir", antoraPages.getCanonicalPath());
+        result.add(new AsciiDocAttributeDeclarationDummy("pagesdir", antoraPages.getCanonicalPath()));
       }
       if (antoraPartials != null) {
-        result.put("partialsdir", antoraPartials.getCanonicalPath());
+        result.add(new AsciiDocAttributeDeclarationDummy("partialsdir", antoraPartials.getCanonicalPath()));
       }
       if (antoraImagesDir != null) {
-        result.put("imagesdir", antoraImagesDir);
+        result.add(new AsciiDocAttributeDeclarationDummy("imagesdir", antoraImagesDir));
       }
       if (antoraAttachmentsDir != null) {
-        result.put("attachmentsdir", antoraAttachmentsDir);
+        result.add(new AsciiDocAttributeDeclarationDummy("attachmentsdir", antoraAttachmentsDir));
       }
       if (antoraExamplesDir != null) {
-        result.put("examplesdir", antoraExamplesDir.getCanonicalPath());
+        result.add(new AsciiDocAttributeDeclarationDummy("examplesdir", antoraExamplesDir.getCanonicalPath()));
       }
     }
     return result;
   }
 
-  public static Map<String, String> collectAntoraAttributes(VirtualFile antoraModuleDir, Project project) {
-    Map<String, String> result = new HashMap<>();
-    result.put("icons", "font");
-    result.put("env-site", "");
-    result.put("site-gen", "antora");
-    result.put("site-gen-antora", "");
-    result.put("page-module", antoraModuleDir.getName());
+  public static Collection<AttributeDeclaration> collectAntoraAttributes(VirtualFile antoraModuleDir, Project project) {
+    List<AttributeDeclaration> result = new ArrayList<>();
+    result.add(new AsciiDocAttributeDeclarationDummy("icons", "font"));
+    result.add(new AsciiDocAttributeDeclarationDummy("env-site", ""));
+    result.add(new AsciiDocAttributeDeclarationDummy("site-gen", "antora"));
+    result.add(new AsciiDocAttributeDeclarationDummy("site-gen-antora", ""));
+    result.add(new AsciiDocAttributeDeclarationDummy("page-module", antoraModuleDir.getName()));
 
     if (antoraModuleDir.getParent() != null && antoraModuleDir.getParent().getParent() != null) {
       VirtualFile antoraFile = antoraModuleDir.getParent().getParent().findChild(ANTORA_YML);
       if (antoraFile != null) {
         AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
-          Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
-          if (document != null) {
-            try {
-              Map<String, Object> antora = readAntoraYaml(antoraFile);
-              mapAttribute(result, antora, "name", "page-component-name");
-              mapAttribute(result, antora, "version", "page-component-version");
-              mapAttribute(result, antora, "title", "page-component-title");
-              mapAttribute(result, antora, "version", "page-version");
-              mapAttribute(result, antora, "display-version", "page-display-version");
-              Object asciidoc = antora.get("asciidoc");
-              if (asciidoc instanceof Map) {
-                @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
-                if (attributes instanceof Map) {
-                  @SuppressWarnings("unchecked") Map<Object, Object> map = (Map<Object, Object>) attributes;
-                  map.forEach((k, v) -> {
-                    String vs;
-                    if (v == null) {
-                      vs = null;
-                    } else if (v instanceof Boolean && !(Boolean) v) {
-                      // false -> soft unset
-                      vs = null;
-                    } else {
-                      vs = v.toString();
-                      if (vs.endsWith("@")) {
-                        // "...@" -> soft set
-                        vs = vs.substring(0, vs.length() - 1);
-                      }
-                    }
-                    result.put(k.toString(), vs);
-                  });
-                }
-              }
-            } catch (YAMLException ignored) {
-              // continue without detailed Antora information
-            }
-          }
           for (String entry : AsciiDocUtil.getPlaybooks(project)) {
             VirtualFile playbook = VirtualFileManager.getInstance().findFileByNioPath(Path.of(entry));
+            if (playbook == null && antoraFile.getFileSystem() instanceof TempFileSystem) {
+              // necessary to run successfully during tests
+              playbook = antoraFile.getFileSystem().findFileByPath(entry);
+            }
             if (playbook == null) {
               continue;
             }
@@ -1077,14 +1048,43 @@ public class AsciiDoc {
                     vs = null;
                   } else {
                     vs = v.toString();
-                    if (vs.endsWith("@")) {
-                      // "...@" -> soft set
-                      vs = vs.substring(0, vs.length() - 1);
-                    }
                   }
-                  result.put(k.toString(), vs);
+                  result.add(new AsciiDocAttributeDeclarationDummy(k.toString(), vs));
                 });
               }
+            }
+          }
+
+          Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
+          if (document != null) {
+            try {
+              Map<String, Object> antora = readAntoraYaml(antoraFile);
+              mapAttribute(result, antora, "name", "page-component-name");
+              mapAttribute(result, antora, "version", "page-component-version");
+              mapAttribute(result, antora, "title", "page-component-title");
+              mapAttribute(result, antora, "version", "page-version");
+              mapAttribute(result, antora, "display-version", "page-display-version");
+              Object asciidoc = antora.get("asciidoc");
+              if (asciidoc instanceof Map) {
+                @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
+                if (attributes instanceof Map) {
+                  @SuppressWarnings("unchecked") Map<Object, Object> map = (Map<Object, Object>) attributes;
+                  map.forEach((k, v) -> {
+                    String vs;
+                    if (v == null) {
+                      vs = null;
+                    } else if (v instanceof Boolean && !(Boolean) v) {
+                      // false -> soft unset
+                      vs = null;
+                    } else {
+                      vs = v.toString();
+                    }
+                    result.add(new AsciiDocAttributeDeclarationDummy(k.toString(), vs));
+                  });
+                }
+              }
+            } catch (YAMLException ignored) {
+              // continue without detailed Antora information
             }
           }
         });
@@ -1150,7 +1150,7 @@ public class AsciiDoc {
 
   @SuppressWarnings("checkstyle:ParameterNumber")
   private Options getDefaultOptions(FileType fileType, VirtualFile
-    springRestDocsSnippets, Map<String, String> attributes) {
+    springRestDocsSnippets, Collection<AttributeDeclaration> attributes) {
     AttributesBuilder builder = Attributes.builder()
       .showTitle(true)
       .backend(fileType.backend)
@@ -1164,8 +1164,8 @@ public class AsciiDoc {
       builder.attribute("snippets", springRestDocsSnippets.getCanonicalPath());
     }
 
-    for (Map.Entry<String, String> entry : attributes.entrySet()) {
-      builder.attribute(entry.getKey(), entry.getValue());
+    for (AttributeDeclaration entry : attributes) {
+      builder.attribute(entry.getAttributeName(), entry.getAttributeValue() + (entry.isSoft() ? "@" : ""));
     }
 
     String graphvizDot = System.getenv("GRAPHVIZ_DOT");
@@ -1241,11 +1241,11 @@ public class AsciiDoc {
 
   }
 
-  private static void mapAttribute(Map<String, String> result, Map<String, Object> antora, String
+  private static void mapAttribute(Collection<AttributeDeclaration> result, Map<String, Object> antora, String
     nameSource, String nameTarget) {
     Object value = antora.get(nameSource);
     if (value != null) {
-      result.put(nameTarget, value.toString());
+      result.add(new AsciiDocAttributeDeclarationDummy(nameTarget, value.toString()));
     }
   }
 

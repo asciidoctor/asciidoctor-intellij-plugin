@@ -313,9 +313,6 @@ public class AsciiDocUtil {
           if (attributes instanceof Map) {
             @SuppressWarnings("unchecked") Map<Object, Object> map = (Map<Object, Object>) attributes;
             map.forEach((k, v) -> {
-              if (!key.toLowerCase(Locale.US).equals(k.toString().toLowerCase(Locale.US))) {
-                return;
-              }
               String vs;
               if (v == null) {
                 vs = null;
@@ -324,12 +321,12 @@ public class AsciiDocUtil {
                 vs = null;
               } else {
                 vs = v.toString();
-                if (vs.endsWith("@")) {
-                  // "...@" -> soft set
-                  vs = vs.substring(0, vs.length() - 1);
-                }
               }
-              antoraAttributes.add(new AsciiDocAttributeDeclarationDummy(k.toString(), vs));
+              AsciiDocAttributeDeclarationDummy attribute = new AsciiDocAttributeDeclarationDummy(k.toString(), vs);
+              if (!attribute.matchesKey(key)) {
+                return;
+              }
+              antoraAttributes.add(attribute);
             });
           }
         }
@@ -425,10 +422,11 @@ public class AsciiDocUtil {
         vf = current.getContainingFile().getOriginalFile().getVirtualFile();
       }
       if (vf != null && vf.getParent() != null && vf.getParent().getCanonicalPath() != null) {
-        Map<String, String> antoraAttributes = AsciiDoc.populateAntoraAttributes(project, new File(vf.getParent().getCanonicalPath()), antoraModuleDir);
-        String value = antoraAttributes.get(key);
-        if (value != null) {
-          result.add(new AsciiDocAttributeDeclarationDummy(key, value));
+        Collection<AttributeDeclaration> antoraAttributes = AsciiDoc.populateAntoraAttributes(project, new File(vf.getParent().getCanonicalPath()), antoraModuleDir);
+        for (AttributeDeclaration attribute : antoraAttributes) {
+          if (attribute.getAttributeName().equalsIgnoreCase(key)) {
+            result.add(attribute);
+          }
         }
       }
       VirtualFile family = vf;
@@ -498,12 +496,12 @@ public class AsciiDocUtil {
     return result;
   }
 
-  public static Map<String, String> collectAntoraAttributes(PsiElement element) {
+  public static Collection<AttributeDeclaration> collectAntoraAttributes(PsiElement element) {
     VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(element);
     if (antoraModuleDir != null) {
       return AsciiDoc.collectAntoraAttributes(antoraModuleDir, element.getProject());
     } else {
-      return Collections.emptyMap();
+      return Collections.emptyList();
     }
   }
 
@@ -520,7 +518,7 @@ public class AsciiDocUtil {
       augmentList(result, AsciiDocUtil.findAntoraImagesDir(current), FAMILY_IMAGE + "sdir");
       augmentList(result, AsciiDocUtil.findAntoraAttachmentsDir(current), FAMILY_ATTACHMENT + "sdir");
       augmentList(result, AsciiDocUtil.findAntoraExamplesDir(current), FAMILY_EXAMPLE + "sdir");
-      collectAntoraAttributes(current).forEach((k, v) -> result.add(new AsciiDocAttributeDeclarationDummy(k, v)));
+      result.addAll(collectAntoraAttributes(current));
     }
 
     augmentAsciidoctorconfigDir(result, project, current);
@@ -546,7 +544,7 @@ public class AsciiDocUtil {
     }
 
     for (Map.Entry<String, String> entry : AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getAttributes().entrySet()) {
-      result.add(new AsciiDocAttributeDeclarationDummy(entry.getKey().replaceAll("@", ""), entry.getValue()));
+      result.add(new AsciiDocAttributeDeclarationDummy(entry.getKey(), entry.getValue()));
     }
 
     /* if current file has not been indexed (for example if it is outside of current folder), at least use attributes declared in this file */
@@ -1419,6 +1417,20 @@ public class AsciiDocUtil {
     return Collections.singletonList(originalKey);
   }
 
+  public static String findAttribute(String key, Collection<AttributeDeclaration> declaration) {
+    String result = null;
+    key = key.toLowerCase(Locale.US);
+    for (AttributeDeclaration attributeDeclaration : declaration) {
+      if (key.equals(attributeDeclaration.getAttributeValue().toLowerCase(Locale.US))) {
+        result = attributeDeclaration.getAttributeValue();
+        if (!attributeDeclaration.isSoft()) {
+          break;
+        }
+      }
+    }
+    return result;
+  }
+
   @SuppressWarnings("StringSplitter")
   private static void resolvePageAliases(Project project, String key, String myModuleName, String myComponentName, String myComponentVersion, List<String> result) {
     List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(project, "page-aliases", true);
@@ -1435,21 +1447,21 @@ public class AsciiDocUtil {
         continue;
       }
       AsciiDocAttributeDeclarationImpl declImpl = (AsciiDocAttributeDeclarationImpl) decl;
-      Map<String, String> otherAttributes = AsciiDocUtil.collectAntoraAttributes(declImpl);
+      Collection<AttributeDeclaration> otherAttributes = AsciiDocUtil.collectAntoraAttributes(declImpl);
       for (String element : value.split(",")) {
-        Map<String, String> elementAttributes = new HashMap<>(otherAttributes);
+        Collection<AttributeDeclaration> elementAttributes = new ArrayList<>(otherAttributes);
         String shortElement = AsciiDocFileReference.normalizeKeyForSearch(element.trim());
         if (!shortElement.contains(shortKey)) {
           continue;
         }
         AsciiDocFileReference.parseAntoraPrefix(element.trim(), elementAttributes);
-        if (!Objects.equals(myComponentName, elementAttributes.get("page-component-name"))) {
+        if (!Objects.equals(myComponentName, findAttribute("page-component-name", elementAttributes))) {
           continue;
         }
-        if (!Objects.equals(myComponentVersion, elementAttributes.get("page-component-version"))) {
+        if (!Objects.equals(myComponentVersion, findAttribute("page-component-version", elementAttributes))) {
           continue;
         }
-        if (!Objects.equals(myModuleName, elementAttributes.get("page-module"))) {
+        if (!Objects.equals(myModuleName, findAttribute("page-module", elementAttributes))) {
           continue;
         }
         if (!shortElement.equals(shortKey)) {
