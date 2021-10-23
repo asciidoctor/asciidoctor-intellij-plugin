@@ -1421,7 +1421,7 @@ public class AsciiDocUtil {
     String result = null;
     key = key.toLowerCase(Locale.US);
     for (AttributeDeclaration attributeDeclaration : declaration) {
-      if (key.equals(attributeDeclaration.getAttributeValue().toLowerCase(Locale.US))) {
+      if (attributeDeclaration.matchesKey(key)) {
         result = attributeDeclaration.getAttributeValue();
         if (!attributeDeclaration.isSoft()) {
           break;

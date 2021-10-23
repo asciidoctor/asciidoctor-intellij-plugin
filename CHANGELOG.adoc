@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.35.11
+
+- fix resolving attribute names (#893)
+
 === 0.35.10
 
 - suggest to users to switch from JavaFX preview to JCEF preview
