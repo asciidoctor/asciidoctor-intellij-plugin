@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.35.11
 
 - fix resolving attribute names (#893)
+- updating Antora playbook schema to 3.0.0-alpha.10
 
 === 0.35.10
 

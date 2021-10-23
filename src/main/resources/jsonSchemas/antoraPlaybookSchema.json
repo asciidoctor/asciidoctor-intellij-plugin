@@ -255,7 +255,7 @@
         "redirect_facility": {
           "type": "string",
           "description": "The facility for handling page alias and start page redirections.",
-          "pattern": "^(disabled|httpd|netlify|nginx|static)$",
+          "pattern": "^(disabled|httpd|netlify|nginx|static|gitlab)$",
           "default": "static"
         },
         "latest_version_segment_strategy": {
@@ -289,6 +289,14 @@
         "no_proxy": {
           "type": "string",
           "description": "A comma-separated list of domains and IPs that should not be proxied."
+        }
+      }
+    },
+    "pipeline": {
+      "properties": {
+        "extensions": {
+          "type": "array",
+          "description": "Extensions of the pipeline"
         }
       }
     }
