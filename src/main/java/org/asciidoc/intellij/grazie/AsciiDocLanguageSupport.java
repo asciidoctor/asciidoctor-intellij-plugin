@@ -13,6 +13,7 @@ import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationImpl;
 import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.asciidoc.intellij.psi.AsciiDocInlineMacro;
 import org.asciidoc.intellij.psi.AsciiDocLink;
+import org.asciidoc.intellij.psi.AsciiDocRef;
 import org.asciidoc.intellij.psi.AsciiDocUrl;
 import org.jetbrains.annotations.NotNull;
 
@@ -185,7 +186,10 @@ public class AsciiDocLanguageSupport {
       } else {
         return Behavior.TEXT;
       }
-    } else if (child instanceof AsciiDocInlineMacro) {
+    } else if (child instanceof AsciiDocInlineMacro
+      || (child instanceof AsciiDocLink && ((AsciiDocLink) child).getMacroName().equals("xref"))
+      || (child instanceof AsciiDocRef)) {
+      // an inline macro or an xref will be treated as unknown if they don't contain text
       LookingForMacroTextVisitor visitor = new LookingForMacroTextVisitor();
       child.accept(visitor);
       if (visitor.hasFound()) {
@@ -210,7 +214,7 @@ public class AsciiDocLanguageSupport {
     @Override
     public void visitElement(@NotNull PsiElement element) {
       super.visitElement(element);
-      if (element.getNode().getElementType() == AsciiDocTokenTypes.MACROTEXT) {
+      if (element.getNode().getElementType() == AsciiDocTokenTypes.MACROTEXT || element.getNode().getElementType() == AsciiDocTokenTypes.REFTEXT) {
         found = true;
         return;
       }
