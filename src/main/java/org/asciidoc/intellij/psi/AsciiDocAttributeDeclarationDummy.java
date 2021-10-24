@@ -48,7 +48,7 @@ public class AsciiDocAttributeDeclarationDummy implements AttributeDeclaration {
     AsciiDocAttributeDeclarationDummy that = (AsciiDocAttributeDeclarationDummy) o;
     return Objects.equals(attributeValue, that.attributeValue) &&
       Objects.equals(attributeName, that.attributeName) &&
-      Objects.equals(isSoft(), that.isSoft());
+      isSoft() == that.isSoft();
   }
 
   @Override
