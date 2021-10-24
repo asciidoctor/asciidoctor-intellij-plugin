@@ -215,6 +215,14 @@ jobs:
       - name: Qodana - Code Inspection (docs only)
         run: docker run -v ${{ github.workspace }}/doc:/data/project -v ${{ github.workspace }}/qodana:/data/results -v /home/runner/work/_temp/_github_home/qodana-cache:/data/cache -v ${{ github.workspace }}/asciidoctor-intellij-plugin:/opt/idea/plugins/asciidoctor-intellij-plugin -v ${{ github.workspace }}/grazie:/opt/idea/plugins/grazie jetbrains/qodana-jvm-community:2021.2 --save-report
 
+      - name: copy content to folder with write permissions
+        # as qodana ran as root
+        run: "cp ${{ github.workspace }}/qodana/report/results/qodana.sarif.json ${{ github.workspace }}/qodana.sarif.json"
+
+      - name: fix paths
+        # necessary as qodana runs only on sub-folder doc
+        run: "sed -i 's|\"uri\": \"|\"uri\": \"doc/|g' ${{ github.workspace }}/qodana.sarif.json"
+
       - name: Upload Qodana report
         uses: actions/upload-artifact@v2
         with:
@@ -225,7 +233,7 @@ jobs:
       - uses: github/codeql-action/upload-sarif@v1
         with:
           # Path to SARIF file relative to the root of the repository
-          sarif_file: ${{ github.workspace }}/qodana/report/results/qodana.sarif.json
+          sarif_file: ${{ github.workspace }}/qodana.sarif.json
 
   # Prepare a draft release for GitHub Releases page for the manual verification
   # If accepted and published, release workflow would be triggered
