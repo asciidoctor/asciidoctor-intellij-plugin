@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - fix resolving attribute names (#893)
 - updating Antora playbook schema to 3.0.0-alpha.10
+- advise users of 2021.2.x to use at least 2021.2.3 to due to platform bugfixes
 
 === 0.35.10
 

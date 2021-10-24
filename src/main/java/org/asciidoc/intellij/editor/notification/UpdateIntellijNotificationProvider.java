@@ -7,7 +7,6 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
@@ -23,9 +22,7 @@ import org.jetbrains.annotations.Nullable;
 public class UpdateIntellijNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> implements DumbAware {
   private static final Key<EditorNotificationPanel> KEY = Key.create("Please update IntelliJ");
 
-  private static final String PLEASE_UPDATE_2021_1_1 = "asciidoc.intellij.pleaseupdate.2021.1.1";
-
-  private static final String PLEASE_UPDATE_2021_1_2 = "asciidoc.intellij.pleaseupdate.2021.1.2";
+  private static final String PLEASE_UPDATE_2021_2_3 = "asciidoc.intellij.pleaseupdate.2021.2.3";
 
   @NotNull
   @Override
@@ -43,28 +40,14 @@ public class UpdateIntellijNotificationProvider extends EditorNotifications.Prov
 
     final ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
 
-    if (SystemInfoRt.isMac
-      && (applicationInfo.getFullVersion().equals("2021.1") || applicationInfo.getFullVersion().equals("2021.1.1"))
-      && !PropertiesComponent.getInstance().getBoolean(PLEASE_UPDATE_2021_1_2)) {
+    if ((applicationInfo.getStrictVersion().equals("2021.2") || applicationInfo.getFullVersion().equals("2021.2.1") || applicationInfo.getFullVersion().equals("2021.2.2"))
+      && !PropertiesComponent.getInstance().getBoolean(PLEASE_UPDATE_2021_2_3)) {
       final EditorNotificationPanel panel = new EditorNotificationPanel();
-      panel.setText("The IDE versions 2021.1 and 2021.1.1 on macOS can sometimes freeze. Please update to version 2021.1.2!");
+      panel.setText("The IDE versions 2021.2.x might have classloader problems with 3rd-party plugins. Please update to version 2021.2.3 or later!");
       panel.createActionLabel("Yes, tell me more!", ()
-        -> BrowserUtil.browse("https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/765"));
+        -> BrowserUtil.browse("https://youtrack.jetbrains.com/issue/IDEA-277738"));
       panel.createActionLabel("Do not show again", () -> {
-        PropertiesComponent.getInstance().setValue(PLEASE_UPDATE_2021_1_2, true);
-        EditorNotifications.updateAll();
-      });
-      return panel;
-    }
-
-    if (applicationInfo.getFullVersion().equals("2021.1")
-       && !PropertiesComponent.getInstance().getBoolean(PLEASE_UPDATE_2021_1_1)) {
-      final EditorNotificationPanel panel = new EditorNotificationPanel();
-      panel.setText("The IDE version 2021.1 has a known indexing bug. Please update to version 2021.1.1!");
-      panel.createActionLabel("Yes, tell me more!", ()
-        -> BrowserUtil.browse("https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/725"));
-      panel.createActionLabel("Do not show again", () -> {
-        PropertiesComponent.getInstance().setValue(PLEASE_UPDATE_2021_1_1, true);
+        PropertiesComponent.getInstance().setValue(PLEASE_UPDATE_2021_2_3, true);
         EditorNotifications.updateAll();
       });
       return panel;
