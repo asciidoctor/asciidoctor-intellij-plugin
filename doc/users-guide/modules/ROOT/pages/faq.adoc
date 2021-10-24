@@ -72,7 +72,7 @@ See xref:faq/blurry-preview.adoc[] for more information.
 === The preview is ugly!
 
 This sometimes happens when using Swing preview.
-This activates when neither JavaFX or JCEF preview are available.
+This activates when neither JavaFX nor JCEF preview are available.
 
 See chapters '`xref:features/preview/jcef-preview.adoc[]`' and '`xref:features/preview/javafx-preview.adoc[]`' for more information.
 

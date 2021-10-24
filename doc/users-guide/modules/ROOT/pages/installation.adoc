@@ -124,7 +124,7 @@ This opens a web page similar to the following screenshot:
 image::web-page-marketplace.png[JetBrains Marketplace showing AsciiDoc plugin]
 . Choose the version tab
 . Download version matching your IDE's version (usually the latest version if your IDE is up-to-date)
-. Open the IDE's setting via menu:File[Settings...] +
+. Open the IDE's setting via menu:File[Settings...]. +
 This opens the following menu:
 +
 .Settings menu when installing from disk

@@ -63,7 +63,7 @@ Use one of the following options:
 
 * Download IntelliJ (or PyCharm, WebStorm, etc.) with JetBrains Runtime 11 (JBR11).
 This is available from release 2019.1, and will be the default starting from 2019.2. +
-When downloading click on the format (pre-populated with .EXE for windows users) to select the JBR11 bundle https://www.jetbrains.com/idea/download/#section=windows[from the download page].
+When downloading click on the format (pre-populated with .EXE for Windows users) to select the JBR11 bundle https://www.jetbrains.com/idea/download/#section=windows[from the download page].
 
 * Use the https://www.jetbrains.com/toolbox/[JetBrains Toolbox application^] to download the JBR11 version
 
