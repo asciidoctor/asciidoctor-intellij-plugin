@@ -293,14 +293,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Cleanup old runs
-        uses: actions/github-script@v4
+        uses: actions/github-script@v5
         # language=js
         with:
           script: |
             const days_to_expiration = 30;
             const ms_in_day = 86400000;
             const now = Date.now();
-            let response = await github.actions.listWorkflowRuns({
+            let response = await github.rest.actions.listWorkflowRuns({
               owner: context.repo.owner,
               repo: context.repo.repo,
               per_page: 30,
@@ -311,7 +311,7 @@ jobs:
             let page = Math.ceil(response.data.total_count / 30)
 
             while (page > 1) {
-              response = await github.actions.listWorkflowRuns({
+              response = await github.rest.actions.listWorkflowRuns({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 page: page,
@@ -322,7 +322,7 @@ jobs:
                 const days_old = Math.ceil((now - Date.parse(run.created_at)) / ms_in_day)
                 if (days_old > days_to_expiration) {
                   console.log(`Run id ${run.id} is ${days_old} day old. Deleting...`);
-                  await github.actions.deleteWorkflowRun({
+                  await github.rest.actions.deleteWorkflowRun({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
                     run_id: run.id
