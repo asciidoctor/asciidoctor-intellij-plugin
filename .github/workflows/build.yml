@@ -290,6 +290,8 @@ jobs:
           asset_content_type: application/zip
   cleanup:
     name: Cleanup old builds
+    # avoid 403 error with message "Resource not accessible by integration" (seen with dependabot)
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Cleanup old runs
