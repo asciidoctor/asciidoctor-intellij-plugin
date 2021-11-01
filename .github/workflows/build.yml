@@ -197,15 +197,13 @@ jobs:
             ${{ runner.os }}-qodana-${{ github.ref }}
             ${{ runner.os }}-qodana-
 
-#      # Run Qodana inspections
+      # Run Qodana inspections
 #      - name: download
-#        run: curl -L -o asciidoctor-intellij-plugin.zip https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases/download/0.35.11/asciidoctor-intellij-plugin-0.35.11.zip
+#        run: curl -L -o asciidoctor-intellij-plugin.zip https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases/download/0.35.12/asciidoctor-intellij-plugin-0.35.12.zip
 #      - name: unzip
 #        run: unzip asciidoctor-intellij-plugin.zip
       -  name: unzip
          run: unzip ${{ needs.build.outputs.artifact }}
-      -  name: list
-         run: ls -R ${{ github.workspace }}
 
       - name: download
         run: curl -L -o grazie.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=135090'
@@ -232,6 +230,7 @@ jobs:
       # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/uploading-a-sarif-file-to-github#example-workflow-that-runs-the-eslint-analysis-tool
       - uses: github/codeql-action/upload-sarif@v1
         with:
+          category: qodana
           # Path to SARIF file relative to the root of the repository
           sarif_file: ${{ github.workspace }}/qodana.sarif.json
 
