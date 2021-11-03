@@ -7,5 +7,13 @@ Or something needs to be implemented in IntelliJ IDEA, so this plugin can build 
 
 Users can raise the visibility of these issues upvoting this issue by clicking on the thumbs-up icon (&#128077;) in the JetBrains YouTrack issue tracker.
 
-https://youtrack.jetbrains.com/tag/Star-74304[Follow this link for a list of all issues Alexander (the current maintainer of the plugin) marked as important to him].
+This lists some issues Alexander (the current maintainer of the plugin) marked as important to him.
 Have a look an up-vote those that are important to you as well to raise the visibility of these issues.
+
+* https://youtrack.jetbrains.com/issue/CWM-1199[CWM-1199] - Support for file editors other than text ones (e.g. .md, .ipynb, .mysql, designers, etc.)
+* https://youtrack.jetbrains.com/issue/CWM-790[CWM-790] - IntelliJ client doesn't show toolbar and split/preview window of custom editor
+* https://youtrack.jetbrains.com/issue/CWM-1550[CWM-1550] - No markdown preview is shown
+* https://youtrack.jetbrains.com/issue/IDEA-265869[IDEA-265869] - SOE/isValid leads to endless recursion in class com.intellij.freemarker.psi.files.FtlFileViewProvider
+* https://youtrack.jetbrains.com/issue/IDEA-276954[IDEA-276954] - Assertion failed after changing settings
+* https://youtrack.jetbrains.com/issue/QD-1291[QD-1291] - Qodana easy plugin installation
+
