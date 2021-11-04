@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.35.13
+
+- performance optimization for grammar check (#908)
+
 === 0.35.12
 
 - updating Antora playbook schema to 3.0.0-alpha.10

@@ -167,11 +167,12 @@ public class AsciiDocLanguageSupport {
       return Behavior.ABSORB;
     } else if (spacesIgnoredByAsciiDoc(child)) {
       return Behavior.SEPARATE;
-    } else if ((child.getParent() instanceof AsciiDocLink || child.getParent() instanceof AsciiDocUrl)
+    } else if (
       // A link or URL can contain either a macro text or no text.
       // AsciiDoc will display the macro text, or the link/email address if no such text is provided.
       // Pass on the content that would be displayed by AsciiDoc to the grammar check.
-      && (child.getNode().getElementType() == AsciiDocTokenTypes.URL_LINK || child.getNode().getElementType() == AsciiDocTokenTypes.URL_EMAIL)) {
+      (child.getNode().getElementType() == AsciiDocTokenTypes.URL_LINK || child.getNode().getElementType() == AsciiDocTokenTypes.URL_EMAIL) &&
+        isChildOfLinkOrUrl(child)) {
       boolean macroTextPresent = false;
       ASTNode node = child.getNode();
       while (node != null) {
@@ -204,6 +205,11 @@ public class AsciiDocLanguageSupport {
     }
   }
 
+  private boolean isChildOfLinkOrUrl(@NotNull PsiElement child) {
+    PsiElement parent = child.getParent();
+    return parent instanceof AsciiDocLink || parent instanceof AsciiDocUrl;
+  }
+
   private static class LookingForMacroTextVisitor extends PsiElementVisitor {
     private boolean found = false;
 
@@ -226,11 +232,14 @@ public class AsciiDocLanguageSupport {
     }
   }
 
-  private boolean spacesIgnoredByAsciiDoc(@NotNull PsiElement child) {
-    return child instanceof PsiWhiteSpace && child.getText().matches(" *")
-      &&
+  private static boolean spacesIgnoredByAsciiDoc(@NotNull PsiElement child) {
+    return child instanceof PsiWhiteSpace && containsOnlySpaces(child) &&
       ((child.getPrevSibling() != null && SPACE_EATING_TOKENS.contains(child.getPrevSibling().getNode().getElementType()))
         || (child.getNextSibling() != null && SPACE_EATING_TOKENS.contains(child.getNextSibling().getNode().getElementType())));
+  }
+
+  public static boolean containsOnlySpaces(PsiElement child) {
+    return child.getNode().getChars().chars().noneMatch(c -> c != ' ');
   }
 
   public boolean isMyContextRoot(@NotNull PsiElement psiElement) {

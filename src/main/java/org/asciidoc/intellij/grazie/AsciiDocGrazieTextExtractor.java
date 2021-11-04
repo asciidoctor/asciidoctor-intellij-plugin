@@ -60,14 +60,14 @@ public class AsciiDocGrazieTextExtractor extends TextExtractor {
       @Override
       public void visitElement(@NotNull PsiElement element) {
         super.visitElement(element);
-        int pos = element.getTextOffset();
         if (languageSupport.getElementBehavior(root, element) == AsciiDocLanguageSupport.Behavior.TEXT) {
+          int pos = element.getTextOffset();
           if (element.getNode().getElementType() == AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START
             && element.getTextLength() == 2) {
             // ` at the end of '`
             ranges.add(new TextRange(pos + 1, pos + 2));
           }
-          if (element instanceof PsiWhiteSpace && element.getTextLength() > 1 && element.getText().matches(" *")) {
+          if (element instanceof PsiWhiteSpace && element.getTextLength() > 1 && AsciiDocLanguageSupport.containsOnlySpaces(element)) {
             // AsciiDoc will eat extra spaces when rendering. Let's do the same here.
             ranges.add(new TextRange(pos + 1, pos + element.getTextLength()));
           }
