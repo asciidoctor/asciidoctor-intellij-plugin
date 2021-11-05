@@ -4,7 +4,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.TokenSet;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
@@ -144,12 +143,6 @@ public class AsciiDocLanguageSupport {
     AsciiDocElementTypes.ITALIC // will nest ITALIC
   ), NODES_TO_CHECK);
 
-  // all tokens are surrounded by spaces, but these spaces are not printed by AsciiDoc
-  // and should therefore not be passed to the grammar checker
-  private static final TokenSet SPACE_EATING_TOKENS = TokenSet.create(
-    AsciiDocTokenTypes.BULLET,
-    AsciiDocTokenTypes.ENUMERATION);
-
   public Behavior getElementBehavior(@NotNull PsiElement root, @NotNull PsiElement child) {
     if (root != child && NODES_TO_CHECK.contains(child.getNode().getElementType())) {
       return Behavior.ABSORB;
@@ -165,8 +158,6 @@ public class AsciiDocLanguageSupport {
       return Behavior.SEPARATE;
     } else if (root != child && child instanceof AsciiDocInlineMacro && ((AsciiDocInlineMacro) child).getMacroName().equals("footnote")) {
       return Behavior.ABSORB;
-    } else if (spacesIgnoredByAsciiDoc(child)) {
-      return Behavior.SEPARATE;
     } else if (
       // A link or URL can contain either a macro text or no text.
       // AsciiDoc will display the macro text, or the link/email address if no such text is provided.
@@ -230,12 +221,6 @@ public class AsciiDocLanguageSupport {
         child = child.getNextSibling();
       }
     }
-  }
-
-  private static boolean spacesIgnoredByAsciiDoc(@NotNull PsiElement child) {
-    return child instanceof PsiWhiteSpace && containsOnlySpaces(child) &&
-      ((child.getPrevSibling() != null && SPACE_EATING_TOKENS.contains(child.getPrevSibling().getNode().getElementType()))
-        || (child.getNextSibling() != null && SPACE_EATING_TOKENS.contains(child.getNextSibling().getNode().getElementType())));
   }
 
   public static boolean containsOnlySpaces(PsiElement child) {
