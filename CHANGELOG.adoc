@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.35.14
+
+- performance optimization JCEF preview (#908)
+
 === 0.35.13
 
 - performance optimization for grammar check (#908)

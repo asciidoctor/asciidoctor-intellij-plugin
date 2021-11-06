@@ -63,6 +63,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
@@ -74,6 +75,7 @@ import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -551,6 +553,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
   private boolean tobeDisposed = false;
   private volatile boolean hasLoadedOnce = false;
+  private byte[] previousDigest;
 
   @Override
   public synchronized void setHtml(@NotNull String htmlParam, @NotNull Map<String, String> attributes) {
@@ -581,7 +584,20 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     boolean result = false;
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     if (hasLoadedOnce && !forceRefresh && settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")) {
-      final String htmlToReplace = StringEscapeUtils.escapeEcmaScript(prepareHtml(html, attributes));
+      String preparedHtml = prepareHtml(html, attributes);
+      // If the HTML is identical, don't replace the preview
+      try {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(preparedHtml.getBytes(StandardCharsets.UTF_8));
+        byte[] digest = md.digest();
+        if (Arrays.equals(digest, previousDigest)) {
+          return;
+        }
+        previousDigest = digest;
+      } catch (NoSuchAlgorithmException e) {
+        // ignored
+      }
+      final String htmlToReplace = StringEscapeUtils.escapeEcmaScript(preparedHtml);
       // try to replace the HTML contents using JavaScript to avoid flickering MathML
       try {
         replaceResult = false;
@@ -637,6 +653,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     }
     // if not successful using JavaScript (like on first rendering attempt), set full content
     if (!result) {
+      previousDigest = null;
       forceRefresh = false;
       html = html + "<script>window.iterationStamp=" + iterationStamp + ";</script>";
       html = wrapHtmlForPage(html);
@@ -680,10 +697,15 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     return MY_SCRIPTING_LINES.getValue();
   }
 
+  private static final Pattern ESCAPED_COLON = Pattern.compile("%3A");
+  private static final Pattern IMAGE_FROM_ANTORA = Pattern.compile("<img src=\"file:///([^\"?]*)\"");
+  private static final Pattern IMAGE_RELATIVE = Pattern.compile("<img src=\"([^:\"]*)\"");
+  private static final Pattern IMAGE_AS_OBJECT = Pattern.compile("<object ([^>])*data=\"([^:\"]*)\"");
+
   private String prepareHtml(@NotNull String html, @NotNull Map<String, String> attributes) {
-    // Antora plugin might resolve some absolute URLs, convert them to localfile so they get their MD5 that prevents caching
-    Pattern pattern = Pattern.compile("<img src=\"file:///([^\"?]*)\"");
-    Matcher matcher = pattern.matcher(html);
+    // Antora plugin might resolve some absolute URLs, convert them to local file, so they get their MD5 that prevents caching
+    String baseForHtml = ESCAPED_COLON.matcher(base).replaceAll(":");
+    Matcher matcher = IMAGE_FROM_ANTORA.matcher(html);
     while (matcher.find()) {
       final MatchResult matchResult = matcher.toMatchResult();
       String file = matchResult.group(1);
@@ -703,8 +725,8 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         tmpFile = tmpFile.replaceAll("\\\\", "/");
         replacement = "<img src=\"file://" + tmpFile + "?" + md5 + "\"";
       } else {
-        md5 = calculateMd5(file, base);
-        replacement = "<img src=\"file://" + base.replaceAll("%3A", ":") + "/" + file + "?" + md5 + "\"";
+        md5 = calculateMd5(file, baseForHtml);
+        replacement = "<img src=\"file://" + baseForHtml + "/" + file + "?" + md5 + "\"";
       }
       html = html.substring(0, matchResult.start()) +
         replacement + html.substring(matchResult.end());
@@ -714,8 +736,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     /* for each image we'll calculate a MD5 sum of its content. Once the content changes, MD5 and therefore the URL
      * will change. The changed URL is necessary for the JavaFX web view to display the new content, as each URL
      * will be loaded only once by the JavaFX web view. */
-    pattern = Pattern.compile("<img src=\"([^:\"]*)\"");
-    matcher = pattern.matcher(html);
+    matcher = IMAGE_RELATIVE.matcher(html);
     while (matcher.find()) {
       final MatchResult matchResult = matcher.toMatchResult();
       String file = matchResult.group(1);
@@ -735,8 +756,8 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         tmpFile = tmpFile.replaceAll("\\\\", "/");
         replacement = "<img src=\"file://" + tmpFile + "?" + md5 + "\"";
       } else {
-        md5 = calculateMd5(file, base);
-        replacement = "<img src=\"file://" + base.replaceAll("%3A", ":") + "/" + file + "?" + md5 + "\"";
+        md5 = calculateMd5(file, baseForHtml);
+        replacement = "<img src=\"file://" + baseForHtml + "/" + file + "?" + md5 + "\"";
       }
       html = html.substring(0, matchResult.start()) +
         replacement + html.substring(matchResult.end());
@@ -744,8 +765,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     }
 
     /* the same as above for interactive SVGs */
-    pattern = Pattern.compile("<object ([^>])*data=\"([^:\"]*)\"");
-    matcher = pattern.matcher(html);
+    matcher = IMAGE_AS_OBJECT.matcher(html);
     while (matcher.find()) {
       final MatchResult matchResult = matcher.toMatchResult();
       String other = matchResult.group(1);
@@ -768,8 +788,8 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         md5 = calculateMd5(tmpFile, null);
         replacement = "<object " + other + "data=\"file://" + tmpFile + "?" + md5 + "\"";
       } else {
-        md5 = calculateMd5(file, base);
-        replacement = "<object " + other + "data=\"file://" + base.replaceAll("%3A", ":") + "/" + file + "?" + md5 + "\"";
+        md5 = calculateMd5(file, baseForHtml);
+        replacement = "<object " + other + "data=\"file://" + baseForHtml + "/" + file + "?" + md5 + "\"";
       }
       html = html.substring(0, matchResult.start()) +
         replacement + html.substring(matchResult.end());
@@ -835,23 +855,19 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     return null;
   }
 
-  private String calculateMd5(String file, String base) {
+  // use pattern for %3A, and move that to the caller
+  private String calculateMd5(String file, String baseForHtml) {
     String md5;
     try {
       MessageDigest md = MessageDigest.getInstance("MD5");
-      try (FileInputStream fis = new FileInputStream((base != null ? base.replaceAll("%3A", ":") + "/" : "") + file)) {
+      try (FileInputStream fis = new FileInputStream((baseForHtml != null ? baseForHtml + "/" : "") + file)) {
         int nread;
-        byte[] dataBytes = new byte[1024];
+        byte[] dataBytes = new byte[10240];
         while ((nread = fis.read(dataBytes)) != -1) {
           md.update(dataBytes, 0, nread);
         }
       }
-      byte[] mdbytes = md.digest();
-      StringBuilder sb = new StringBuilder();
-      for (byte mdbyte : mdbytes) {
-        sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16).substring(1));
-      }
-      md5 = sb.toString();
+      md5 = new BigInteger(1, md.digest()).toString(16);
     } catch (NoSuchAlgorithmException | IOException e) {
       md5 = "none";
     }
