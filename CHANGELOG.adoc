@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.35.14
 
 - performance optimization JCEF preview (#908)
+- support unset attributes in Antora component descriptors and playbooks (#893)
 
 === 0.35.13
 

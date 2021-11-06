@@ -1165,7 +1165,11 @@ public class AsciiDoc {
     }
 
     for (AttributeDeclaration entry : attributes) {
-      builder.attribute(entry.getAttributeName(), entry.getAttributeValue() + (entry.isSoft() ? "@" : ""));
+      if (entry.getAttributeValue() != null) {
+        builder.attribute(entry.getAttributeName(), entry.getAttributeValue() + (entry.isSoft() ? "@" : ""));
+      } else {
+        builder.attribute("!" + entry.getAttributeName(), entry.isSoft() ? "@" : "");
+      }
     }
 
     String graphvizDot = System.getenv("GRAPHVIZ_DOT");
