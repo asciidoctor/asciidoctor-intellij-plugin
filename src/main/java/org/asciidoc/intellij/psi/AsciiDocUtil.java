@@ -18,6 +18,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Iconable;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -31,6 +32,9 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileInfoManager;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.serviceContainer.AlreadyDisposedException;
 import com.intellij.util.SlowOperations;
@@ -88,6 +92,7 @@ public class AsciiDocUtil {
   public static final int MAX_DEPTH = 10;
   public static final String STRIP_FILE_EXTENSION = "\\.[^.]*$";
   public static final String CAPTURE_FILE_EXTENSION = "^(.*)(\\.[^.]*)$";
+  private static final Key<CachedValue<Collection<AsciiDocAttributeDeclaration>>> KEY_ASCIIDOC_ATTRIBUTES = new Key<>("asciidoc-attributes-in-adoc");
 
   static List<AsciiDocBlockId> findIds(Project project, String key) {
     if (key.length() == 0) {
@@ -485,7 +490,8 @@ public class AsciiDocUtil {
         }
       }
       if (!attributesFromCurrentFile) {
-        for (AsciiDocAttributeDeclaration attribute : PsiTreeUtil.findChildrenOfType(currentFile, AsciiDocAttributeDeclaration.class)) {
+        Collection<AsciiDocAttributeDeclaration> attributes = getAsciiDocAttributeDeclarationsInFile(currentFile);
+        for (AsciiDocAttributeDeclaration attribute : attributes) {
           if (attribute.getAttributeName().equals(key)) {
             result.add(attribute);
           }
@@ -494,6 +500,12 @@ public class AsciiDocUtil {
     }
 
     return result;
+  }
+
+  private static Collection<AsciiDocAttributeDeclaration> getAsciiDocAttributeDeclarationsInFile(PsiFile currentFile) {
+    return CachedValuesManager.getCachedValue(currentFile, KEY_ASCIIDOC_ATTRIBUTES,
+      () -> CachedValueProvider.Result.create(PsiTreeUtil.findChildrenOfType(currentFile, AsciiDocAttributeDeclaration.class), currentFile)
+    );
   }
 
   public static Collection<AttributeDeclaration> collectAntoraAttributes(PsiElement element) {
@@ -559,7 +571,7 @@ public class AsciiDocUtil {
         }
       }
       if (!attributesFromCurrentFile) {
-        result.addAll(PsiTreeUtil.findChildrenOfType(currentFile, AsciiDocAttributeDeclaration.class));
+        result.addAll(getAsciiDocAttributeDeclarationsInFile(currentFile));
       }
     }
 

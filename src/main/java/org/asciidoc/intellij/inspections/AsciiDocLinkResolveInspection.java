@@ -76,7 +76,7 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
           }
         }
         if (continueResolving &&
-          (o instanceof AsciiDocLink || o instanceof AsciiDocBlockMacro || o instanceof AsciiDocInlineMacro)) {
+          (o instanceof AsciiDocLink || o instanceof AsciiDocBlockMacro || o instanceof AsciiDocInlineMacro || o instanceof AsciiDocAttributeInBrackets)) {
           String resolvedBody;
           String macroName = "";
           if (o instanceof AsciiDocLink) {
@@ -84,9 +84,17 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
           } else if (o instanceof AsciiDocBlockMacro) {
             resolvedBody = ((AsciiDocBlockMacro) o).getResolvedBody();
             macroName = ((AsciiDocBlockMacro) o).getMacroName();
-          } else {
+          } else if (o instanceof AsciiDocInlineMacro) {
             resolvedBody = ((AsciiDocInlineMacro) o).getResolvedBody();
             macroName = ((AsciiDocInlineMacro) o).getMacroName();
+          } else {
+            AsciiDocAttributeInBrackets attr = (AsciiDocAttributeInBrackets) o;
+            String attrName = attr.getAttrName();
+            if (!"link".equals(attrName) && !"xref".equals(attrName)) {
+              return;
+            }
+            resolvedBody = attr.getAttrValue();
+            macroName = attrName;
           }
           if (resolvedBody == null) {
             return;
@@ -101,7 +109,10 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
             return;
           } else if (resolvedBody.startsWith("/") || resolvedBody.startsWith("../")) {
             // probably a link to some other part of the site
-            return;
+            if (AsciiDocUtil.findAntoraModuleDir(o) != null && !resolvedBody.matches("^(\\.\\./)+(attachments|images)/.*$")) {
+              // only relative links resolved from Antora attributes are allowed
+              return;
+            }
           }
         }
         if (o instanceof HasAntoraReference) {

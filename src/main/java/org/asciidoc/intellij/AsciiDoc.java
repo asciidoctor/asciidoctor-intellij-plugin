@@ -29,11 +29,16 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.ex.temp.TempFileSystem;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.serviceContainer.AlreadyDisposedException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -1028,69 +1033,96 @@ public class AsciiDoc {
             if (playbook == null) {
               continue;
             }
-            Map<String, Object> antora;
-            try {
-              antora = AsciiDoc.readAntoraYaml(playbook);
-            } catch (YAMLException ex) {
-              continue;
-            }
-            Object asciidoc = antora.get("asciidoc");
-            if (asciidoc instanceof Map) {
-              @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
-              if (attributes instanceof Map) {
-                @SuppressWarnings("unchecked") Map<Object, Object> map = (Map<Object, Object>) attributes;
-                map.forEach((k, v) -> {
-                  String vs;
-                  if (v == null) {
-                    vs = null;
-                  } else if (v instanceof Boolean && !(Boolean) v) {
-                    // false -> soft unset
-                    vs = null;
-                  } else {
-                    vs = v.toString();
-                  }
-                  result.add(new AsciiDocAttributeDeclarationDummy(k.toString(), vs));
-                });
-              }
-            }
+            result.addAll(getAntoraPlaybookAsciiDocAttributes(project, antoraFile));
           }
 
-          Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
-          if (document != null) {
-            try {
-              Map<String, Object> antora = readAntoraYaml(antoraFile);
-              mapAttribute(result, antora, "name", "page-component-name");
-              mapAttribute(result, antora, "version", "page-component-version");
-              mapAttribute(result, antora, "title", "page-component-title");
-              mapAttribute(result, antora, "version", "page-version");
-              mapAttribute(result, antora, "display-version", "page-display-version");
-              Object asciidoc = antora.get("asciidoc");
-              if (asciidoc instanceof Map) {
-                @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
-                if (attributes instanceof Map) {
-                  @SuppressWarnings("unchecked") Map<Object, Object> map = (Map<Object, Object>) attributes;
-                  map.forEach((k, v) -> {
-                    String vs;
-                    if (v == null) {
-                      vs = null;
-                    } else if (v instanceof Boolean && !(Boolean) v) {
-                      // false -> soft unset
-                      vs = null;
-                    } else {
-                      vs = v.toString();
-                    }
-                    result.add(new AsciiDocAttributeDeclarationDummy(k.toString(), vs));
-                  });
-                }
-              }
-            } catch (YAMLException ignored) {
-              // continue without detailed Antora information
-            }
-          }
+          result.addAll(getAntoraComponentDescriptorAsciiDocAttributes(project, antoraFile));
         });
       }
     }
     return result;
+  }
+
+  private static final Key<CachedValue<List<AttributeDeclaration>>> KEY_ASCIIDOC_ATTRIBUTES = new Key<>("asciidoc-attributes-in-yaml");
+
+  private static List<AttributeDeclaration> getAntoraPlaybookAsciiDocAttributes(Project project, VirtualFile antoraFile) {
+    PsiFile currentFile = PsiManager.getInstance(project).findFile(antoraFile);
+    if (currentFile == null) {
+      return Collections.emptyList();
+    }
+    return CachedValuesManager.getCachedValue(currentFile, KEY_ASCIIDOC_ATTRIBUTES,
+      () -> {
+        List<AttributeDeclaration> result = new ArrayList<>();
+        try {
+          Map<String, Object> antora;
+          antora = AsciiDoc.readAntoraYaml(currentFile);
+          Object asciidoc = antora.get("asciidoc");
+          if (asciidoc instanceof Map) {
+            @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
+            if (attributes instanceof Map) {
+              @SuppressWarnings("unchecked") Map<Object, Object> map = (Map<Object, Object>) attributes;
+              map.forEach((k, v) -> {
+                String vs;
+                if (v == null) {
+                  vs = null;
+                } else if (v instanceof Boolean && !(Boolean) v) {
+                  // false -> soft unset
+                  vs = null;
+                } else {
+                  vs = v.toString();
+                }
+                result.add(new AsciiDocAttributeDeclarationDummy(k.toString(), vs));
+              });
+            }
+          }
+        } catch (YAMLException ignored) {
+          // continue without detailed Antora information
+        }
+        return CachedValueProvider.Result.create(result, currentFile);
+      }
+    );
+  }
+
+  private static List<AttributeDeclaration> getAntoraComponentDescriptorAsciiDocAttributes(Project project, VirtualFile antoraFile) {
+    PsiFile currentFile = PsiManager.getInstance(project).findFile(antoraFile);
+    if (currentFile == null) {
+      return Collections.emptyList();
+    }
+    return CachedValuesManager.getCachedValue(currentFile, KEY_ASCIIDOC_ATTRIBUTES,
+      () -> {
+        List<AttributeDeclaration> result = new ArrayList<>();
+        try {
+          Map<String, Object> antora = readAntoraYaml(currentFile);
+          mapAttribute(result, antora, "name", "page-component-name");
+          mapAttribute(result, antora, "version", "page-component-version");
+          mapAttribute(result, antora, "title", "page-component-title");
+          mapAttribute(result, antora, "version", "page-version");
+          mapAttribute(result, antora, "display-version", "page-display-version");
+          Object asciidoc = antora.get("asciidoc");
+          if (asciidoc instanceof Map) {
+            @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
+            if (attributes instanceof Map) {
+              @SuppressWarnings("unchecked") Map<Object, Object> map = (Map<Object, Object>) attributes;
+              map.forEach((k, v) -> {
+                String vs;
+                if (v == null) {
+                  vs = null;
+                } else if (v instanceof Boolean && !(Boolean) v) {
+                  // false -> soft unset
+                  vs = null;
+                } else {
+                  vs = v.toString();
+                }
+                result.add(new AsciiDocAttributeDeclarationDummy(k.toString(), vs));
+              });
+            }
+          }
+        } catch (YAMLException ignored) {
+          // continue without detailed Antora information
+        }
+        return CachedValueProvider.Result.create(result, currentFile);
+      }
+    );
   }
 
   public static @NotNull Map<String, Object> readAntoraYaml(VirtualFile antoraFile) {

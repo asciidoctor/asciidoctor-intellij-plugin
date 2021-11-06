@@ -11,6 +11,9 @@ This document provides a high-level view of the changes introduced by release.
 
 - performance optimization JCEF preview (#908)
 - support unset attributes in Antora component descriptors and playbooks (#893)
+- support Antora 3 value _self_ for _link_ attribute (#897)
+- performance optimization for Antora environments by caching playbook and component descriptor attributes (#897)
+- validation for link attribute (#897)
 
 === 0.35.13
 

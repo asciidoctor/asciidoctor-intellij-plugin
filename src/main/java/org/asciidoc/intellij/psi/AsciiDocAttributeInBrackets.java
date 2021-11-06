@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AsciiDocAttributeInBrackets extends ASTWrapperPsiElement {
+public class AsciiDocAttributeInBrackets extends ASTWrapperPsiElement implements HasFileReference {
 
   public AsciiDocAttributeInBrackets(@NotNull ASTNode node) {
     super(node);
@@ -24,9 +24,8 @@ public class AsciiDocAttributeInBrackets extends ASTWrapperPsiElement {
 
   private static final Pattern LINK = Pattern.compile("^(https?|file|ftp|irc)://");
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     if ("link".equals(getAttrName())) {
       TextRange rangeOfBody = getRangeOfBody(this);
       if (!TextRange.EMPTY_RANGE.equals(rangeOfBody)) {

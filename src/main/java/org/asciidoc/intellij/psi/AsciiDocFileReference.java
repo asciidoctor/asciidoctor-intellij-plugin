@@ -3,6 +3,7 @@ package org.asciidoc.intellij.psi;
 import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
@@ -19,10 +20,13 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
+import com.intellij.psi.SyntheticElement;
+import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileInfoManager;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.PlatformIcons;
 import icons.AsciiDocIcons;
 import org.apache.commons.lang.ArrayUtils;
 import org.asciidoc.intellij.AsciiDocLanguage;
@@ -150,7 +154,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
    */
   public AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, TextRange textRange,
                                boolean isFolder, boolean isAntora) {
-      this(element, macroName, base, textRange, isFolder, isAntora, 0);
+    this(element, macroName, base, textRange, isFolder, isAntora, 0);
   }
 
   public AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, TextRange textRange,
@@ -164,7 +168,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   private AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, String key,
-                               boolean isFolder, boolean isAntora) {
+                                boolean isFolder, boolean isAntora) {
     super(element);
     this.macroName = macroName;
     this.base = base;
@@ -179,7 +183,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   public AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, TextRange textRange,
                                boolean isFolder) {
-      this(element, macroName, base, textRange, isFolder, false, 0);
+    this(element, macroName, base, textRange, isFolder, false, 0);
   }
 
   @Override
@@ -187,6 +191,21 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     List<ResolveResult> results = new ArrayList<>();
     if (isAnchor) {
       return multiResolveAnchor(false);
+    }
+    if ("link-attr".equals(macroName) && "self".equals(base + key)) {
+      VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
+      if (antoraModuleDir != null) {
+        PsiElement parent = myElement.getParent();
+        while (parent != null && !(parent instanceof HasFileReference)) {
+          parent = parent.getParent();
+        }
+        if (parent != null) {
+          AsciiDocFileReference fileReference = ((HasFileReference) parent).getFileReference();
+          if (fileReference != null) {
+            return fileReference.multiResolve(incompleteCode);
+          }
+        }
+      }
     }
     resolve(base + key, results, 0);
     return results.toArray(new ResolveResult[0]);
@@ -546,6 +565,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         start = matcher.end();
       }
     } else {
+      if (URL_PREFIX_PATTERN.matcher(key).find()) {
+        PsiElementResolveResult result = new PsiElementResolveResult(new BrowsableUrl(key));
+        if (!results.contains(result)) {
+          results.add(result);
+        }
+        return;
+      }
       PsiElement file = resolve(key);
       if (file != null) {
         results.add(new PsiElementResolveResult(file));
@@ -780,6 +806,16 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           }
           items.add(lb);
         }
+      }
+    }
+
+    if ("link-attr".equals(macroName)) {
+      VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
+      if (antoraModuleDir != null) {
+        LookupElementBuilder lb = LookupElementBuilder.create("self")
+          .withTailText(" (self link of this element)", true)
+          .withIcon(PlatformIcons.FILE_ICON);
+        items.add(lb);
       }
     }
 
@@ -1102,4 +1138,55 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     }
     return false;
   }
+
+  private class BrowsableUrl extends FakePsiElement implements SyntheticElement {
+    private final String url;
+
+    @Override
+    public boolean isEquivalentTo(PsiElement another) {
+      return this.equals(another);
+    }
+
+    @Override
+    public int hashCode() {
+      return -1;
+    }
+
+    @Override
+    public boolean equals(Object another) {
+      return another instanceof BrowsableUrl && url.equals(((BrowsableUrl) another).url);
+    }
+
+    private BrowsableUrl(String url) {
+      this.url = url;
+    }
+
+    @Override
+    public PsiElement getParent() {
+      return myElement;
+    }
+
+    @Override
+    public void navigate(boolean requestFocus) {
+      BrowserUtil.browse(url);
+    }
+
+    @Override
+    public String getPresentableText() {
+      return url;
+    }
+
+    @Override
+    public String getName() {
+      return url;
+    }
+
+    @Override
+    public TextRange getTextRange() {
+      final TextRange rangeInElement = getRangeInElement();
+      final TextRange elementRange = myElement.getTextRange();
+      return elementRange != null ? rangeInElement.shiftRight(elementRange.getStartOffset()) : rangeInElement;
+    }
+  }
+
 }
