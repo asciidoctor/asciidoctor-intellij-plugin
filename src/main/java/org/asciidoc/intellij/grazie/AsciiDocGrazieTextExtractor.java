@@ -3,10 +3,14 @@ package org.asciidoc.intellij.grazie;
 import com.intellij.grazie.text.TextContent;
 import com.intellij.grazie.text.TextContentBuilder;
 import com.intellij.grazie.text.TextExtractor;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
@@ -20,28 +24,35 @@ public class AsciiDocGrazieTextExtractor extends TextExtractor {
 
   private final AsciiDocLanguageSupport languageSupport = new AsciiDocLanguageSupport();
 
+  public static final Key<CachedValue<TextContent>> KEY_ASCIIDOC_TEXTCONTENT = new Key<>("asciidoc-textcontent");
+
   @Override
   public @Nullable TextContent buildTextContent(@NotNull PsiElement root, @NotNull Set<TextContent.TextDomain> allowedDomains) {
     if (allowedDomains.contains(getContextRootTextDomain(root)) &&
       languageSupport.isMyContextRoot(root)) {
-      TextContent textContent = TextContentBuilder.FromPsi
-        // use this for text that is unknown and can't contain any root text
-        .withUnknown(child ->
-          languageSupport.getElementBehavior(root, child) ==  AsciiDocLanguageSupport.Behavior.UNKNOWN
-        )
-        // use excluding here, otherwise the contents will not be recognized as another root element
-        .excluding(child ->
-          languageSupport.getElementBehavior(root, child) != AsciiDocLanguageSupport.Behavior.TEXT
-        )
-        .build(root, getContextRootTextDomain(root));
-      if (textContent != null && TextContent.TextDomain.PLAIN_TEXT.equals(textContent.getDomain())) {
-        ArrayList<TextRange> stealthyRanges = getStealthyRanges(root, textContent);
-        Collections.reverse(stealthyRanges);
-        for (TextRange range : stealthyRanges) {
-          textContent = textContent.excludeRange(range);
+      return CachedValuesManager.getCachedValue(root, KEY_ASCIIDOC_TEXTCONTENT,
+        () -> {
+          TextContent textContent = TextContentBuilder.FromPsi
+            // use this for text that is unknown and can't contain any root text
+            .withUnknown(child ->
+              languageSupport.getElementBehavior(root, child) ==  AsciiDocLanguageSupport.Behavior.UNKNOWN
+            )
+            // use excluding here, otherwise the contents will not be recognized as another root element
+            .excluding(child ->
+              languageSupport.getElementBehavior(root, child) != AsciiDocLanguageSupport.Behavior.TEXT
+            )
+            .build(root, getContextRootTextDomain(root));
+          if (textContent != null && TextContent.TextDomain.PLAIN_TEXT.equals(textContent.getDomain())) {
+            ArrayList<TextRange> stealthyRanges = getStealthyRanges(root, textContent);
+            Collections.reverse(stealthyRanges);
+            for (TextRange range : stealthyRanges) {
+              // use excludeRanges here from 2021.3 onwards
+              textContent = textContent.excludeRange(range);
+            }
+          }
+          return CachedValueProvider.Result.create(textContent, root);
         }
-      }
-      return textContent;
+      );
     }
     return null;
   }

@@ -20,6 +20,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Trinity;
+import com.intellij.openapi.util.UserDataHolderEx;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
@@ -35,6 +36,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.serviceContainer.AlreadyDisposedException;
 import com.intellij.util.SlowOperations;
@@ -92,7 +94,7 @@ public class AsciiDocUtil {
   public static final int MAX_DEPTH = 10;
   public static final String STRIP_FILE_EXTENSION = "\\.[^.]*$";
   public static final String CAPTURE_FILE_EXTENSION = "^(.*)(\\.[^.]*)$";
-  private static final Key<CachedValue<Collection<AsciiDocAttributeDeclaration>>> KEY_ASCIIDOC_ATTRIBUTES = new Key<>("asciidoc-attributes-in-adoc");
+  public static final Key<CachedValue<AttributeCache>> KEY_ASCIIDOC_ATTRIBUTES = new Key<>("asciidoc-attributes");
 
   static List<AsciiDocBlockId> findIds(Project project, String key) {
     if (key.length() == 0) {
@@ -378,54 +380,58 @@ public class AsciiDocUtil {
     return findAttributes(project, key, current, Scope.MODULE);
   }
 
-   public static List<AttributeDeclaration> findAttributes(Project project, String key, PsiElement current, Scope scope) {
+  public static List<AttributeDeclaration> findAttributes(Project project, String key, PsiElement current, Scope scope) {
+
+    PsiFile containingFile = current.getContainingFile();
+    AttributeCache cache = getCache(project, containingFile);
+    List<AttributeDeclaration> cachedResult = cache.get(key, scope);
+    if (cachedResult != null) {
+      return cachedResult;
+    }
+
     List<AttributeDeclaration> result = new ArrayList<>();
 
     key = key.toLowerCase(Locale.US);
+
+    VirtualFile vf = null;
+    if (containingFile != null) {
+      vf = containingFile.getVirtualFile();
+      // when running autocomplete, there is only an original file
+      if (vf == null) {
+        vf = containingFile.getOriginalFile().getVirtualFile();
+      }
+    }
 
     if (key.equals("snippets")) {
       augmentList(result, AsciiDocUtil.findSpringRestDocSnippets(current), key);
     }
 
-    if (key.equals("docname")) {
-      String name = current.getContainingFile().getName();
+    if (key.equals("docname") && containingFile != null) {
+      String name = containingFile.getName();
       result.add(new AsciiDocAttributeDeclarationDummy(key, name.replaceAll(STRIP_FILE_EXTENSION, "")));
     }
 
-    if (key.equals("docfilesuffix")) {
-      String name = current.getContainingFile().getName();
+    if (key.equals("docfilesuffix") && containingFile != null) {
+      String name = containingFile.getName();
       if (name.contains(".")) {
         result.add(new AsciiDocAttributeDeclarationDummy(key, name.replaceAll(CAPTURE_FILE_EXTENSION, "$2")));
       }
     }
 
     if (key.equals("docfile")) {
-      VirtualFile vf = current.getContainingFile().getVirtualFile();
-      if (vf == null) {
-        vf = current.getContainingFile().getOriginalFile().getVirtualFile();
-      }
       augmentList(result, vf, key);
     }
 
     if (key.equals("docdir")) {
-      VirtualFile vf = current.getContainingFile().getVirtualFile();
-      if (vf == null) {
-        vf = current.getContainingFile().getOriginalFile().getVirtualFile();
-      }
+      VirtualFile vfp = null;
       if (vf != null) {
-        vf = vf.getParent();
+        vfp = vf.getParent();
       }
-      augmentList(result, vf, key);
+      augmentList(result, vfp, key);
     }
 
     VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(current);
     if (antoraModuleDir != null) {
-      VirtualFile vf;
-      vf = current.getContainingFile().getVirtualFile();
-      if (vf == null) {
-        // when running autocomplete, there is only an original file
-        vf = current.getContainingFile().getOriginalFile().getVirtualFile();
-      }
       if (vf != null && vf.getParent() != null && vf.getParent().getCanonicalPath() != null) {
         Collection<AttributeDeclaration> antoraAttributes = AsciiDoc.populateAntoraAttributes(project, new File(vf.getParent().getCanonicalPath()), antoraModuleDir);
         for (AttributeDeclaration attribute : antoraAttributes) {
@@ -455,9 +461,8 @@ public class AsciiDocUtil {
       }
     } else if (scope == Scope.PAGEATTRIBUTES) {
       // add page attributes even if there has been a match to find overrides
-      PsiFile file = current.getContainingFile();
-      if (file != null) {
-        for (AsciiDocAttributeDeclaration attribute : findPageAttributes(file)) {
+      if (containingFile != null) {
+        for (AttributeDeclaration attribute : findPageAttributes(containingFile)) {
           if (Objects.equals(key, attribute.getAttributeName())) {
             result.add(attribute);
           }
@@ -479,33 +484,41 @@ public class AsciiDocUtil {
     }
 
     /* if current file has not been indexed (for example if it is outside of current folder), at least use attributes declared in this file */
-    PsiFile currentFile = current.getContainingFile();
-    if (currentFile != null) {
+    if (vf != null && ProjectFileIndex.getInstance(project).getModuleForFile(vf, true) == null) {
       // first, check if attributes are already included from this file to avoid duplicates
       boolean attributesFromCurrentFile = false;
       for (AttributeDeclaration attributeDeclaration : result) {
-        if (attributeDeclaration instanceof AsciiDocAttributeDeclaration && ((AsciiDocAttributeDeclaration) attributeDeclaration).getContainingFile() == currentFile) {
+        if (attributeDeclaration instanceof AsciiDocAttributeDeclaration && ((AsciiDocAttributeDeclaration) attributeDeclaration).getContainingFile() == containingFile) {
           attributesFromCurrentFile = true;
           break;
         }
       }
       if (!attributesFromCurrentFile) {
-        Collection<AsciiDocAttributeDeclaration> attributes = getAsciiDocAttributeDeclarationsInFile(currentFile);
+        Collection<AsciiDocAttributeDeclaration> attributes = getAsciiDocAttributeDeclarationsInFile(containingFile);
         for (AsciiDocAttributeDeclaration attribute : attributes) {
           if (attribute.getAttributeName().equals(key)) {
             result.add(attribute);
           }
         }
       }
+    } else {
+      cache.put(key, scope, result);
     }
 
     return result;
   }
 
+  /**
+   * Get a cache for the current file. Will expire once any file within the project is changed.
+   */
+  private static AttributeCache getCache(Project project, PsiFile current) {
+    CachedValue<AttributeCache> cache = CachedValuesManager.getManager(project).createCachedValue(
+      () -> CachedValueProvider.Result.create(new AttributeCache(), PsiModificationTracker.MODIFICATION_COUNT));
+    return ((UserDataHolderEx) current).putUserDataIfAbsent(KEY_ASCIIDOC_ATTRIBUTES, cache).getValue();
+  }
+
   private static Collection<AsciiDocAttributeDeclaration> getAsciiDocAttributeDeclarationsInFile(PsiFile currentFile) {
-    return CachedValuesManager.getCachedValue(currentFile, KEY_ASCIIDOC_ATTRIBUTES,
-      () -> CachedValueProvider.Result.create(PsiTreeUtil.findChildrenOfType(currentFile, AsciiDocAttributeDeclaration.class), currentFile)
-    );
+    return PsiTreeUtil.findChildrenOfType(currentFile, AsciiDocAttributeDeclaration.class);
   }
 
   public static Collection<AttributeDeclaration> collectAntoraAttributes(PsiElement element) {
@@ -518,6 +531,8 @@ public class AsciiDocUtil {
   }
 
   static List<AttributeDeclaration> findAttributes(Project project, PsiElement current) {
+
+    PsiFile containingFile = current.getContainingFile();
 
     VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(current);
 
@@ -535,15 +550,15 @@ public class AsciiDocUtil {
 
     augmentAsciidoctorconfigDir(result, project, current);
 
-    String name = current.getContainingFile().getName();
+    String name = containingFile.getName();
     result.add(new AsciiDocAttributeDeclarationDummy("docname", name.replaceAll(STRIP_FILE_EXTENSION, "")));
     if (name.contains(".")) {
       result.add(new AsciiDocAttributeDeclarationDummy("docfilesuffix", name.replaceAll(CAPTURE_FILE_EXTENSION, "$2")));
     }
 
-    VirtualFile vf = current.getContainingFile().getVirtualFile();
+    VirtualFile vf = containingFile.getVirtualFile();
     if (vf == null) {
-      vf = current.getContainingFile().getOriginalFile().getVirtualFile();
+      vf = containingFile.getOriginalFile().getVirtualFile();
     }
     augmentList(result, vf, "docfile");
     if (vf != null) {
@@ -560,18 +575,17 @@ public class AsciiDocUtil {
     }
 
     /* if current file has not been indexed (for example if it is outside of current folder), at least use attributes declared in this file */
-    PsiFile currentFile = current.getContainingFile();
-    if (currentFile != null) {
+    if (vf != null && ProjectFileIndex.getInstance(project).getModuleForFile(vf, true) == null) {
       // first, check if attributes are already included from this file to avoid duplicates
       boolean attributesFromCurrentFile = false;
       for (AttributeDeclaration attributeDeclaration : result) {
-        if (attributeDeclaration instanceof AsciiDocAttributeDeclaration && ((AsciiDocAttributeDeclaration) attributeDeclaration).getContainingFile() == currentFile) {
+        if (attributeDeclaration instanceof AsciiDocAttributeDeclaration && ((AsciiDocAttributeDeclaration) attributeDeclaration).getContainingFile() == containingFile) {
           attributesFromCurrentFile = true;
           break;
         }
       }
       if (!attributesFromCurrentFile) {
-        result.addAll(getAsciiDocAttributeDeclarationsInFile(currentFile));
+        result.addAll(getAsciiDocAttributeDeclarationsInFile(containingFile));
       }
     }
 
@@ -1730,13 +1744,21 @@ public class AsciiDocUtil {
     return i;
   }
 
-  public static Collection<AsciiDocAttributeDeclaration> findPageAttributes(@NotNull PsiFile file) {
-    Collection<AsciiDocAttributeDeclaration> result = new ArrayList<>();
+  public static List<AttributeDeclaration> findPageAttributes(@NotNull PsiFile file) {
+    AttributeCache cache = getCache(file.getProject(), file);
+    List<AttributeDeclaration> cachedResult = cache.getPageAttributes();
+    if (cachedResult != null) {
+      return cachedResult;
+    }
+
+    List<AttributeDeclaration> result = new ArrayList<>();
     findPageAttributes(file, 0, result);
+
+    cache.putPageAttributes(result);
     return result;
   }
 
-  protected static boolean findPageAttributes(PsiFile file, int depth, Collection<AsciiDocAttributeDeclaration> result) {
+  protected static boolean findPageAttributes(PsiFile file, int depth, Collection<AttributeDeclaration> result) {
     if (depth > 64) {
       return true;
     }

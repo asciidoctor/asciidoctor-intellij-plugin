@@ -8,9 +8,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
+import org.asciidoc.intellij.psi.AttributeDeclaration;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.asciidoctor.jruby.ast.impl.PhraseNodeImpl;
 import org.jruby.RubyObject;
@@ -143,8 +143,8 @@ public class AntoraReferenceAdapter {
           PsiFile file = PsiManager.getInstance(project).findFile(targetFile);
           if (file != null) {
             String refText = null;
-            Collection<AsciiDocAttributeDeclaration> attributeDeclarations = AsciiDocUtil.findPageAttributes(file);
-            for (AsciiDocAttributeDeclaration attributeDeclaration : attributeDeclarations) {
+            Collection<AttributeDeclaration> attributeDeclarations = AsciiDocUtil.findPageAttributes(file);
+            for (AttributeDeclaration attributeDeclaration : attributeDeclarations) {
               if (attributeDeclaration.getAttributeName().equals("navtitle")) {
                 VirtualFile sourceFile = sourceDir.findChild(name);
                 if (sourceFile != null) {

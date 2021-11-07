@@ -1,11 +1,15 @@
 package org.asciidoc.intellij.grazie;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationImpl;
@@ -227,17 +231,27 @@ public class AsciiDocLanguageSupport {
     return child.getNode().getChars().chars().noneMatch(c -> c != ' ');
   }
 
+  private static final Key<CachedValue<Boolean>> KEY_ASCIIDOC_CONTEXT_ROOT = new Key<>("asciidoc-contextroot");
+
   public boolean isMyContextRoot(@NotNull PsiElement psiElement) {
-    if (psiElement instanceof AsciiDocAttributeDeclarationImpl &&
-      ((AsciiDocAttributeDeclarationImpl) psiElement).hasSpellCheckableContent()) {
-      return true;
-    }
-    if (psiElement instanceof AsciiDocInlineMacro &&
-      ((AsciiDocInlineMacro) psiElement).getMacroName().equals("footnote")) {
-      return true;
-    }
-    return NODES_TO_CHECK.contains(psiElement.getNode().getElementType())
-      || psiElement instanceof PsiComment;
+    return CachedValuesManager.getCachedValue(psiElement, KEY_ASCIIDOC_CONTEXT_ROOT,
+      () -> {
+        boolean result;
+        if (psiElement instanceof AsciiDocAttributeDeclarationImpl &&
+          ((AsciiDocAttributeDeclarationImpl) psiElement).hasSpellCheckableContent()) {
+          result = true;
+        } else if (psiElement instanceof AsciiDocInlineMacro &&
+          ((AsciiDocInlineMacro) psiElement).getMacroName().equals("footnote")) {
+          result = true;
+        } else {
+          result = NODES_TO_CHECK.contains(psiElement.getNode().getElementType())
+            || psiElement instanceof PsiComment;
+        }
+        return CachedValueProvider.Result.create(result, psiElement);
+      }
+    );
+
+
   }
 
 }

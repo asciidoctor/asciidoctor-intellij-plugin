@@ -12,11 +12,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class PageAttributeProcessor implements PsiElementProcessor<PsiElement> {
-  private final Collection<AsciiDocAttributeDeclaration> result;
+  private final Collection<AttributeDeclaration> result;
   private final int depth;
   private boolean titleSeen = false;
 
-  public PageAttributeProcessor(Collection<AsciiDocAttributeDeclaration> result, int depth) {
+  public PageAttributeProcessor(Collection<AttributeDeclaration> result, int depth) {
     this.result = result;
     this.depth = depth;
   }

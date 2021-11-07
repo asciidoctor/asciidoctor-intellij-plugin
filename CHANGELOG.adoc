@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - support Antora 3 value _self_ for _link_ attribute (#897)
 - performance optimization for Antora environments by caching playbook and component descriptor attributes (#897)
 - validation for link attribute (#897)
+- implement caching of attributes and text content to speed up interactions (#908)
 
 === 0.35.13
 

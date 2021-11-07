@@ -5,9 +5,9 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocSectionImpl;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
+import org.asciidoc.intellij.psi.AttributeDeclaration;
 import org.asciidoc.intellij.quickfix.AsciiDocAddDescriptionPageAttribute;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,9 +36,9 @@ public class AsciiDocDescriptionExistsInspection extends AsciiDocInspectionBase 
               String myPath = o.getContainingFile().getVirtualFile().getCanonicalPath();
               String pagesPath = antoraPagesDir.getCanonicalPath();
               if (myPath != null && pagesPath != null && myPath.startsWith(antoraPagesDir.getCanonicalPath())) {
-                Collection<AsciiDocAttributeDeclaration> pageAttributes = AsciiDocUtil.findPageAttributes(o.getContainingFile());
+                Collection<AttributeDeclaration> pageAttributes = AsciiDocUtil.findPageAttributes(o.getContainingFile());
                 boolean found = false;
-                for (AsciiDocAttributeDeclaration pageAttribute : pageAttributes) {
+                for (AttributeDeclaration pageAttribute : pageAttributes) {
                   if ("description".equalsIgnoreCase(pageAttribute.getAttributeName())) {
                     found = true;
                     break;
