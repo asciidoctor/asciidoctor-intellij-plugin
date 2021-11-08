@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -25,7 +24,7 @@ import java.util.regex.Matcher;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_SUPPORTED;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN;
 
-public class AsciiDocInlineMacro extends ASTWrapperPsiElement implements HasFileReference, HasAntoraReference {
+public class AsciiDocInlineMacro extends AsciiDocASTWrapperPsiElement implements HasFileReference, HasAntoraReference {
   public static final Set<String> HAS_FILE_AS_BODY = new HashSet<>(Arrays.asList(
       // standard asciidoctor
       "image", "video", "audio",

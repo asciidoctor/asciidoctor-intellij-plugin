@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.util.TextRange;
@@ -15,7 +14,7 @@ import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.parser.AsciiDocParserImpl;
 import org.jetbrains.annotations.NotNull;
 
-public class AsciiDocHeading extends ASTWrapperPsiElement {
+public class AsciiDocHeading extends AsciiDocASTWrapperPsiElement {
   private static final com.intellij.openapi.diagnostic.Logger LOG =
     com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDoc.class);
 
@@ -94,6 +93,17 @@ public class AsciiDocHeading extends ASTWrapperPsiElement {
     }
 
     return null;
+  }
+
+  private long myModificationStamp;
+  @Override
+  public void subtreeChanged() {
+    ++myModificationStamp;
+    super.subtreeChanged();
+  }
+  @Override
+  public long getModificationCount() {
+    return myModificationStamp;
   }
 
 }

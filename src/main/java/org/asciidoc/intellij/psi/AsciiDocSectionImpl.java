@@ -23,7 +23,9 @@ import java.util.regex.Pattern;
 /**
  * @author yole
  */
-public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDocSectionStub> implements AsciiDocSelfDescribe, AsciiDocSection {
+public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDocSectionStub>
+  implements AsciiDocSelfDescribe, AsciiDocSection, AsciiDocModificationTracker {
+
   public AsciiDocSectionImpl(AsciiDocSectionStub stub, IStubElementType nodeType) {
     super(stub, nodeType);
   }
@@ -262,4 +264,16 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
     return getClass().getSimpleName() + "(" + getNode().getElementType() + ")";
   }
 
+  private long myModificationStamp;
+
+  @Override
+  public void subtreeChanged() {
+    ++myModificationStamp;
+    super.subtreeChanged();
+  }
+
+  @Override
+  public long getModificationCount() {
+    return myModificationStamp;
+  }
 }

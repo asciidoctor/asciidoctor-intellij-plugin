@@ -1,13 +1,12 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jetbrains.annotations.NotNull;
 
-public class AsciiDocHtmlEntity extends ASTWrapperPsiElement {
+public class AsciiDocHtmlEntity extends AsciiDocASTWrapperPsiElement {
   public AsciiDocHtmlEntity(@NotNull ASTNode node) {
     super(node);
   }

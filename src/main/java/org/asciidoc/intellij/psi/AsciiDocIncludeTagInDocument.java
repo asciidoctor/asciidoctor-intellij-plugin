@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -18,7 +17,7 @@ import org.asciidoc.intellij.editor.AsciiDocSplitEditor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
-public class AsciiDocIncludeTagInDocument extends ASTWrapperPsiElement {
+public class AsciiDocIncludeTagInDocument extends AsciiDocASTWrapperPsiElement {
   public AsciiDocIncludeTagInDocument(@NotNull ASTNode node) {
     super(node);
   }

@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import icons.AsciiDocIcons;
@@ -11,7 +10,7 @@ import javax.swing.*;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class AsciiDocCompositePsiElementBase extends ASTWrapperPsiElement implements AsciiDocCompositePsiElement {
+public abstract class AsciiDocCompositePsiElementBase extends AsciiDocASTWrapperPsiElement implements AsciiDocCompositePsiElement {
   public static final int PRESENTABLE_TEXT_LENGTH = 50;
 
   protected AsciiDocCompositePsiElementBase(@NotNull ASTNode node) {

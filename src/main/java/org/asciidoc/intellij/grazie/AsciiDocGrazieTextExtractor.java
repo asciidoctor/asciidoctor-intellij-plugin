@@ -4,6 +4,7 @@ import com.intellij.grazie.text.TextContent;
 import com.intellij.grazie.text.TextContentBuilder;
 import com.intellij.grazie.text.TextExtractor;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
@@ -13,6 +14,7 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.psi.AsciiDocModificationTracker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,7 +52,13 @@ public class AsciiDocGrazieTextExtractor extends TextExtractor {
               textContent = textContent.excludeRange(range);
             }
           }
-          return CachedValueProvider.Result.create(textContent, root);
+          // as the calculated value depends only on the PSI node and its subtree, try to be more specific than the PsiElement
+          // as using the PsiElement would invalidate the cache on the file level.
+          Object dep = root;
+          if (root instanceof AsciiDocModificationTracker) {
+            dep = (ModificationTracker) () -> ((AsciiDocModificationTracker) root).getModificationCount();
+          }
+          return CachedValueProvider.Result.create(textContent, dep);
         }
       );
     }

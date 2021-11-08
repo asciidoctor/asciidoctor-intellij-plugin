@@ -2,6 +2,7 @@ package org.asciidoc.intellij.grazie;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -16,6 +17,7 @@ import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationImpl;
 import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.asciidoc.intellij.psi.AsciiDocInlineMacro;
 import org.asciidoc.intellij.psi.AsciiDocLink;
+import org.asciidoc.intellij.psi.AsciiDocModificationTracker;
 import org.asciidoc.intellij.psi.AsciiDocRef;
 import org.asciidoc.intellij.psi.AsciiDocUrl;
 import org.jetbrains.annotations.NotNull;
@@ -247,7 +249,13 @@ public class AsciiDocLanguageSupport {
           result = NODES_TO_CHECK.contains(psiElement.getNode().getElementType())
             || psiElement instanceof PsiComment;
         }
-        return CachedValueProvider.Result.create(result, psiElement);
+        // as the calculated value depends only on the PSI node and its subtree, try to be more specific than the PsiElement
+        // as using the PsiElement would invalidate the cache on the file level.
+        Object dep = psiElement;
+        if (psiElement instanceof AsciiDocModificationTracker) {
+          dep = (ModificationTracker) () -> ((AsciiDocModificationTracker) psiElement).getModificationCount();
+        }
+        return CachedValueProvider.Result.create(result, dep);
       }
     );
 

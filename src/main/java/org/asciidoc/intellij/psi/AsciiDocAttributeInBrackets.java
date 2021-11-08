@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.AbstractElementManipulator;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AsciiDocAttributeInBrackets extends ASTWrapperPsiElement implements HasFileReference {
+public class AsciiDocAttributeInBrackets extends AsciiDocASTWrapperPsiElement implements HasFileReference {
 
   public AsciiDocAttributeInBrackets(@NotNull ASTNode node) {
     super(node);

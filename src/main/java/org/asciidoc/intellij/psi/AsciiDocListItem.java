@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -15,7 +14,7 @@ import javax.swing.*;
 /**
  * @author Alexander Schwartz (alexander.schwartz@gmx.net)
  */
-public class AsciiDocListItem extends ASTWrapperPsiElement implements AsciiDocBlock {
+public class AsciiDocListItem extends AsciiDocASTWrapperPsiElement implements AsciiDocBlock {
   public AsciiDocListItem(@NotNull ASTNode node) {
     super(node);
   }

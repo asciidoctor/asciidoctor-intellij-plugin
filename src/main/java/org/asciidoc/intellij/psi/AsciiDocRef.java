@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.AbstractElementManipulator;
@@ -13,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-public class AsciiDocRef extends ASTWrapperPsiElement implements HasAnchorReference, HasFileReference {
+public class AsciiDocRef extends AsciiDocASTWrapperPsiElement implements HasAnchorReference, HasFileReference {
   public AsciiDocRef(@NotNull ASTNode node) {
     super(node);
   }

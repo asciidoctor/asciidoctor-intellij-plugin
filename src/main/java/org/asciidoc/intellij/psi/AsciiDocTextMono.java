@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.AbstractElementManipulator;
@@ -11,7 +10,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-public class AsciiDocTextMono extends ASTWrapperPsiElement {
+public class AsciiDocTextMono extends AsciiDocASTWrapperPsiElement {
   public AsciiDocTextMono(@NotNull ASTNode node) {
     super(node);
   }

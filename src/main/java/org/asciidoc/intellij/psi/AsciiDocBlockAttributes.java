@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * @author yole
  */
-public class AsciiDocBlockAttributes extends ASTWrapperPsiElement {
+public class AsciiDocBlockAttributes extends AsciiDocASTWrapperPsiElement {
   public AsciiDocBlockAttributes(@NotNull ASTNode node) {
     super(node);
   }

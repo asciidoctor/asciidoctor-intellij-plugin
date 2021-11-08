@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
@@ -14,7 +13,7 @@ import javax.swing.*;
 import java.util.Locale;
 import java.util.Objects;
 
-public class AsciiDocAttributeDeclarationName extends ASTWrapperPsiElement implements AsciiDocNamedElement {
+public class AsciiDocAttributeDeclarationName extends AsciiDocASTWrapperPsiElement implements AsciiDocNamedElement {
   public AsciiDocAttributeDeclarationName(@NotNull ASTNode node) {
     super(node);
   }

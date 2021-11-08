@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.paths.WebReference;
 import com.intellij.psi.PsiReference;
@@ -9,7 +8,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
-public class AsciiDocUrl extends ASTWrapperPsiElement {
+public class AsciiDocUrl extends AsciiDocASTWrapperPsiElement {
   public AsciiDocUrl(@NotNull ASTNode node) {
     super(node);
   }

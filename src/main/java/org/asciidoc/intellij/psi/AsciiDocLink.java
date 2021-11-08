@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -16,7 +15,7 @@ import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class AsciiDocLink extends ASTWrapperPsiElement implements HasFileReference, HasAnchorReference, HasAntoraReference {
+public class AsciiDocLink extends AsciiDocASTWrapperPsiElement implements HasFileReference, HasAnchorReference, HasAntoraReference {
   public AsciiDocLink(@NotNull ASTNode node) {
     super(node);
   }
