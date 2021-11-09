@@ -16,6 +16,7 @@ This document provides a high-level view of the changes introduced by release.
 - validation for link attribute (#897)
 - implement caching of attributes and text content to speed up interactions (#908)
 - implement caching texts for grammar checking on section level (#908)
+- update structure outline when editing the level of a section in the editor
 
 === 0.35.13
 

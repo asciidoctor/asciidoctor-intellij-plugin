@@ -78,7 +78,7 @@ public class AsciiDocHeading extends AsciiDocASTWrapperPsiElement {
   }
 
   public int getHeadingLevel() {
-    return AsciiDocParserImpl.headingLevel(getText());
+    return AsciiDocParserImpl.headingLevel(getNode().getChars());
   }
 
   public AsciiDocBlockId getBlockId() {

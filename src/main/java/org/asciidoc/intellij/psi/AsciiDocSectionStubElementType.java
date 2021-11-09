@@ -21,6 +21,7 @@ import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.lexer.AsciiDocLexer;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.parser.AsciiDocParser;
+import org.asciidoc.intellij.parser.AsciiDocParserImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -93,7 +94,14 @@ public class AsciiDocSectionStubElementType extends IStubElementType<AsciiDocSec
 
   @Override
   public boolean isValidReparse(@NotNull ASTNode oldNode, @NotNull ASTNode newNode) {
-    return newNode.getElementType() == AsciiDocElementTypes.SECTION && newNode.getTreeNext() == null;
+    if (newNode.getElementType() != AsciiDocElementTypes.SECTION || newNode.getTreeNext() != null) {
+      return false;
+    }
+    ASTNode oldToken = oldNode.findChildByType(AsciiDocElementTypes.HEADING);
+    ASTNode newToken = newNode.findChildByType(AsciiDocElementTypes.HEADING);
+    // ensure that the headings are on the same level, otherwise the hierarchy needs to change
+    return oldToken != null && newToken != null &&
+      AsciiDocParserImpl.headingLevel(oldToken.getChars()) == AsciiDocParserImpl.headingLevel(newToken.getChars());
   }
 
   @Override
