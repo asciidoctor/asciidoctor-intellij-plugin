@@ -18,8 +18,3 @@ link:{myurl}[]
 
 // no error, as attribute doesn't resolve
 link:{noattr}[]
-
-:imagesdir: http://localhost:8080/
-image::filedoesntexist.png[]
-
-image:filedoesntexist.png[]

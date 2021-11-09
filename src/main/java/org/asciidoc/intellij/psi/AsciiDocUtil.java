@@ -1475,7 +1475,8 @@ public class AsciiDocUtil {
       AsciiDocAttributeDeclarationImpl declImpl = (AsciiDocAttributeDeclarationImpl) decl;
       Collection<AttributeDeclaration> otherAttributes = AsciiDocUtil.collectAntoraAttributes(declImpl);
       for (String element : value.split(",")) {
-        Collection<AttributeDeclaration> elementAttributes = new ArrayList<>(otherAttributes);
+        // use a set here, so that #parseAntoraPrefix will overwrite existing attributes
+        Collection<AttributeDeclaration> elementAttributes = new HashSet<>(otherAttributes);
         String shortElement = AsciiDocFileReference.normalizeKeyForSearch(element.trim());
         if (!shortElement.contains(shortKey)) {
           continue;

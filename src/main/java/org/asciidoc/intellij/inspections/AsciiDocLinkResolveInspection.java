@@ -107,9 +107,12 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
           } else if (AsciiDocFileReference.URL.matcher(resolvedBody).find() && (macroName.equals("image") || macroName.equals("video"))) {
             // this is a data URI for an image, don't
             return;
-          } else if (resolvedBody.startsWith("/") || resolvedBody.startsWith("../")) {
+          } else if (resolvedBody.startsWith("/")) {
             // probably a link to some other part of the site
-            if (AsciiDocUtil.findAntoraModuleDir(o) != null && !resolvedBody.matches("^(\\.\\./)+(attachments|images)/.*$")) {
+            return;
+          } else if (resolvedBody.startsWith("../")) {
+            // probably a link to some other part of the site
+            if (AsciiDocUtil.findAntoraModuleDir(o) == null || !resolvedBody.matches("^(\\.\\./)+(attachments|images)/.*$")) {
               // only relative links resolved from Antora attributes are allowed
               return;
             }

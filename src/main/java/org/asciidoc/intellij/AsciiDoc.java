@@ -1033,7 +1033,7 @@ public class AsciiDoc {
             if (playbook == null) {
               continue;
             }
-            result.addAll(getAntoraPlaybookAsciiDocAttributes(project, antoraFile));
+            result.addAll(getAntoraPlaybookAsciiDocAttributes(project, playbook));
           }
 
           result.addAll(getAntoraComponentDescriptorAsciiDocAttributes(project, antoraFile));

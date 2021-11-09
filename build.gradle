@@ -133,10 +133,18 @@ dependencies {
   testImplementation 'org.asciidoctor:asciidoctorj-diagram:2.2.1'
   testImplementation 'org.asciidoctor:asciidoctorj-pdf:1.6.0'
 
+  testImplementation(gradleTestKit())
   testImplementation 'junit:junit:4.13.2'
   testImplementation 'com.tngtech.archunit:archunit-junit4:0.22.0'
   testImplementation 'org.assertj:assertj-core:3.21.0'
   testImplementation 'org.mockito:mockito-core:4.0.0'
+  testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+  testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.8.1")
+}
+
+tasks.withType(Test).configureEach {
+  useJUnitPlatform()
 }
 
 def genRoot = file('gen')

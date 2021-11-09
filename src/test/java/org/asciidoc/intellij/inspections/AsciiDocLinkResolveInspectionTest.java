@@ -24,6 +24,10 @@ public class AsciiDocLinkResolveInspectionTest extends AsciiDocQuickFixTestBase 
     doTestNoFix(NAME, true);
   }
 
+  public void testFileDoesntExistImagesDirUrl() {
+    doTestNoFix(NAME, true);
+  }
+
   public void testLocalAnchor() {
     doTestNoFix(NAME, true);
   }

@@ -108,7 +108,8 @@ public class AsciiDocTest extends BasePlatformTestCase {
     }
   }
 
-  public void testShouldRenderPdf() throws IOException {
+  // disabled due to classloader problems; plugin's Snake YAML is not used
+  public void disabledTestShouldRenderPdf() throws IOException {
     // given...
     File asciidoc = File.createTempFile("asciidocforapdf", ".adoc");
     File pdf = new File(asciidoc.getAbsoluteFile().getAbsolutePath().replaceAll("\\.adoc$", ".pdf"));

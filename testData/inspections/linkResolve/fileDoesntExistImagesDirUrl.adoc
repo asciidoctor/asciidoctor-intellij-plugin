@@ -1,0 +1,4 @@
+:imagesdir: http://localhost:8080/
+image::filedoesntexist.png[]
+
+image:filedoesntexist.png[]
