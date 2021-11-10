@@ -64,4 +64,15 @@ public class AsciiDocBlockAttributes extends AsciiDocASTWrapperPsiElement {
     }
     return null;
   }
+
+  public AsciiDocBlockId getBlockId() {
+    Collection<AsciiDocAttributeInBrackets> children = PsiTreeUtil.findChildrenOfType(this, AsciiDocAttributeInBrackets.class);
+    for (AsciiDocAttributeInBrackets child : children) {
+      AsciiDocBlockId blockId = PsiTreeUtil.findChildOfType(child, AsciiDocBlockId.class);
+      if (blockId != null) {
+        return blockId;
+      }
+    }
+    return null;
+  }
 }

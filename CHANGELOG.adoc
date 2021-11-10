@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.35.15
 
 - fix resolving Antora page aliases
+- improve resolving of anchors in Antora for partials and examples
 
 === 0.35.14
 

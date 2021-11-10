@@ -111,6 +111,12 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
       if (child instanceof AsciiDocBlockId) {
         return (AsciiDocBlockId) child;
       }
+      if (child instanceof AsciiDocBlockAttributes) {
+        AsciiDocBlockId blockId = ((AsciiDocBlockAttributes) child).getBlockId();
+        if (blockId != null) {
+          return blockId;
+        }
+      }
       if (child instanceof AsciiDocHeading) {
         return ((AsciiDocHeading) child).getBlockId();
       }

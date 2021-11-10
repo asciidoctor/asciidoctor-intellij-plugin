@@ -326,10 +326,15 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       } else if (base.endsWith("#") || base.length() == 0) {
         VirtualFile antoraPartials = AsciiDocUtil.findAntoraPartials(myElement);
         if (antoraPartials != null) {
-          String antoraPartialsCanonicalPath = antoraPartials.getCanonicalPath();
-          String myCanonicalPath = myElement.getContainingFile().getOriginalFile().getVirtualFile().getCanonicalPath();
-          if (myCanonicalPath != null && antoraPartialsCanonicalPath != null && myCanonicalPath.startsWith(antoraPartialsCanonicalPath)) {
-            findEverywhere = true;
+          String antoraCanonicalPath = antoraPartials.getCanonicalPath();
+          findEverywhere = checkIfElementIsInPath(antoraCanonicalPath);
+        }
+        if (!findEverywhere) {
+          // example can be used as includes, although this is a bad practice.
+          VirtualFile antoraExample = AsciiDocUtil.findAntoraExamplesDir(myElement);
+          if (antoraExample != null) {
+            String antoraCanonicalPath = antoraExample.getCanonicalPath();
+            findEverywhere = checkIfElementIsInPath(antoraCanonicalPath);
           }
         }
       }
@@ -353,6 +358,11 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       // there might have been an incompletely resolved include, that might point to the right starting point
       results.add(new PsiElementResolveResult(incomplete, false));
     }
+  }
+
+  private boolean checkIfElementIsInPath(String antoraCanonicalPath) {
+    String myCanonicalPath = myElement.getContainingFile().getOriginalFile().getVirtualFile().getCanonicalPath();
+    return myCanonicalPath != null && antoraCanonicalPath != null && myCanonicalPath.startsWith(antoraCanonicalPath);
   }
 
   private boolean isPossibleRefText(String key) {
