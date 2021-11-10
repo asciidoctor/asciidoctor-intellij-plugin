@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.35.15
+
+- fix resolving Antora page aliases
+
 === 0.35.14
 
 - performance optimization JCEF preview (#908)

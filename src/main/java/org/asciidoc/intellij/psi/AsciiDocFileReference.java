@@ -510,6 +510,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           // in xrefs, this is represented by a single underscope ("_")
           v = "";
         }
+        elementAttributes.removeIf(ad -> ad.getAttributeName().equals("page-component-version"));
         elementAttributes.add(new AsciiDocAttributeDeclarationDummy("page-component-version", v));
         element = version.replaceFirst("");
       }
@@ -517,10 +518,12 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       if (componentModuleMatcher.find()) {
         String component = componentModuleMatcher.group("component");
         if (component.length() > 0 && !component.equals(".")) {
+          elementAttributes.removeIf(ad -> ad.getAttributeName().equals("page-component"));
           elementAttributes.add(new AsciiDocAttributeDeclarationDummy("page-component", component));
         }
         String module = componentModuleMatcher.group("module");
         if (module.length() > 0 && !module.equals(".")) {
+          elementAttributes.removeIf(ad -> ad.getAttributeName().equals("page-module"));
           elementAttributes.add(new AsciiDocAttributeDeclarationDummy("page-module", module));
         }
       } else {
@@ -528,6 +531,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         if (moduleMatcher.find()) {
           String module = moduleMatcher.group("module");
           if (module.length() > 0 && !module.equals(".")) {
+            elementAttributes.removeIf(ad -> ad.getAttributeName().equals("page-module"));
             elementAttributes.add(new AsciiDocAttributeDeclarationDummy("page-module", module));
           }
         }
