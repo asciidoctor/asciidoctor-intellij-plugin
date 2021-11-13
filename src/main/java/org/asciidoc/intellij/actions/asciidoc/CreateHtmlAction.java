@@ -9,6 +9,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.asciidoc.intellij.AsciiDoc;
@@ -79,16 +80,19 @@ public class CreateHtmlAction extends AsciiDocAction {
         AsciiDoc.cleanupImagesPath(tempImagesPath);
       }
     }, "Creating HTML", true, project);
-    ApplicationManager.getApplication().runWriteAction(() -> {
+    VirtualFile vf = ApplicationManager.getApplication().runWriteAction((Computable<? extends VirtualFile>) () -> {
+      // write action is needed here to update the file system view via refreshAndFindFileByNioPath
       VirtualFile virtualFileHtml =  changeFileExtension(file);
       VirtualFile virtualFile = virtualFileHtml != null ? virtualFileHtml : parent;
       AsciiDocUtil.selectFileInProjectView(project, virtualFile);
-      if (virtualFileHtml != null) {
-        if (successful) {
-          BrowserUtil.browse(virtualFileHtml);
-        }
-      }
+      return virtualFileHtml;
     });
+    if (vf != null) {
+      if (successful) {
+        // this must not be a write action, as on macOS this interacts with AWT
+        ApplicationManager.getApplication().invokeLater(() -> BrowserUtil.browse(vf));
+      }
+    }
   }
 
   @Nullable

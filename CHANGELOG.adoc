@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - improve resolving of anchors in Antora for partials and examples
 - caching of Antora component descriptors and playbooks to speed up user interactions (#908)
 - allow file index access when resolving references to files in the editor (#912)
+- prevent AWT access when opening the browser after creating HTML for AsciiDoc on macOS (#913)
 
 === 0.35.14
 
