@@ -46,7 +46,9 @@ intellij {
     'com.intellij.platform.images', // dependency for PlantUML plugin
     'tanvd.grazi', // used for spell and grammar checking checking
     'com.intellij.javafx:1.0.3',
-    'org.intellij.intelliLang', //
+    'org.intellij.intelliLang',
+    'com.google.ide-perf:1.2.0', // performance tracing
+    // see https://github.com/google/ide-perf/blob/master/docs/user-guide.md
     'java', // used to integrate into the build via AsciiDocTargetScopeProvider
     'yaml' // used to inject file references to Antora YAML files
   ]
@@ -84,7 +86,7 @@ runIde {
   jvmArgs = ['-Xmx1024m','-XX:+UnlockDiagnosticVMOptions']
   // should not automatically reload plugin on change in IDE, as JRuby is not very good at this
   systemProperty('idea.auto.reload.plugins', 'false')
-
+  systemProperty('jdk.attach.allowAttachSelf', 'true') // necessary to run plugin com.google.ide-perf
   systemProperty('ide.plugins.snapshot.on.unload.fail', 'true')
 }
 
