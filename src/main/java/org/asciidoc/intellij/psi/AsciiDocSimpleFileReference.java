@@ -8,6 +8,7 @@ import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.search.FilenameIndex;
+import com.intellij.util.SlowOperations;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,10 +28,15 @@ public class AsciiDocSimpleFileReference extends PsiReferenceBase<PsiElement> im
     List<ResolveResult> results = new ArrayList<>();
     String name = myRangeInElement.substring(myElement.getText());
 
-    PsiFile[] filesByName = FilenameIndex.getFilesByName(myElement.getProject(), name, new AsciiDocSearchScope(myElement.getProject()));
-    for (PsiFile file : filesByName) {
-      results.add(new PsiElementResolveResult(file));
-    }
+    // Might be called from PsiViewerDialog in EDT thread.
+    // This needs access to the file index to get the information we need.
+    SlowOperations.allowSlowOperations(() -> {
+      PsiFile[] filesByName = FilenameIndex.getFilesByName(myElement.getProject(), name, new AsciiDocSearchScope(myElement.getProject()));
+      for (PsiFile file : filesByName) {
+        results.add(new PsiElementResolveResult(file));
+      }
+    });
+
     return results.toArray(new ResolveResult[0]);
   }
 
