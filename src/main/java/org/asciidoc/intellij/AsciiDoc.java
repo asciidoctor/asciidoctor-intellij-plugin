@@ -1044,6 +1044,7 @@ public class AsciiDoc {
   }
 
   private static final Key<CachedValue<List<AttributeDeclaration>>> KEY_ASCIIDOC_ATTRIBUTES = new Key<>("asciidoc-attributes-in-yaml");
+  private static final Key<CachedValue<Map<String, Object>>> KEY_ASCIIDOC_YAML_ATTRIBUTES = new Key<>("asciidoc-antora-yaml");
 
   private static List<AttributeDeclaration> getAntoraPlaybookAsciiDocAttributes(Project project, VirtualFile antoraFile) {
     PsiFile currentFile = PsiManager.getInstance(project).findFile(antoraFile);
@@ -1055,7 +1056,7 @@ public class AsciiDoc {
         List<AttributeDeclaration> result = new ArrayList<>();
         try {
           Map<String, Object> antora;
-          antora = AsciiDoc.readAntoraYaml(currentFile);
+          antora = AsciiDoc.readAntoraYaml(project, antoraFile);
           Object asciidoc = antora.get("asciidoc");
           if (asciidoc instanceof Map) {
             @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
@@ -1092,7 +1093,7 @@ public class AsciiDoc {
       () -> {
         List<AttributeDeclaration> result = new ArrayList<>();
         try {
-          Map<String, Object> antora = readAntoraYaml(currentFile);
+          Map<String, Object> antora = readAntoraYaml(project, antoraFile);
           mapAttribute(result, antora, "name", "page-component-name");
           mapAttribute(result, antora, "version", "page-component-version");
           mapAttribute(result, antora, "title", "page-component-title");
@@ -1125,43 +1126,37 @@ public class AsciiDoc {
     );
   }
 
-  public static @NotNull Map<String, Object> readAntoraYaml(VirtualFile antoraFile) {
-    try {
-      Document document = FileDocumentManager.getInstance().getDocument(antoraFile);
-      if (document == null) {
-        throw new YAMLException("unable to read file");
-      }
-      Yaml yaml = new Yaml();
-      Map<String, Object> result = yaml.load(document.getText());
-      if (result == null) {
-        // result will be null if file is empty
-        result = new HashMap<>();
-      }
-      // starting from Antora 3.0.0.alpha-3 a version can be empty. It will be treated internally as an empty string
-      result.putIfAbsent("version", "");
-      return result;
-    } catch (YAMLException ex) {
+  public static @NotNull Map<String, Object> readAntoraYaml(Project project, VirtualFile antoraFile) {
+    PsiFile currentFile = PsiManager.getInstance(project).findFile(antoraFile);
+    if (currentFile == null) {
+      YAMLException ex = new YAMLException("file not found");
       handleAntoraYamlException(ex, antoraFile.getCanonicalPath());
       throw ex;
     }
-  }
-
-  public static Map<String, Object> readAntoraYaml(PsiFile antoraFile) {
-    try {
-      Yaml yaml = new Yaml();
-      Map<String, Object> result = yaml.load(antoraFile.getText());
-      // starting from Antora 3.0.0.alpha-3 a version can be empty. It will be treated internally as an empty string
-      result.putIfAbsent("version", "");
-      return result;
-    } catch (YAMLException ex) {
-      String fileName = null;
-      VirtualFile virtualFile = antoraFile.getVirtualFile();
-      if (virtualFile != null) {
-        fileName = virtualFile.getCanonicalPath();
-      }
-      handleAntoraYamlException(ex, fileName);
-      throw new YAMLException("Error when reading file " + fileName);
-    }
+    return CachedValuesManager.getCachedValue(currentFile, KEY_ASCIIDOC_YAML_ATTRIBUTES,
+      () -> {
+        Map<String, Object> result;
+        try {
+          Yaml yaml = new Yaml();
+          try {
+            try (InputStream is = antoraFile.getInputStream()) {
+              result = yaml.load(is);
+            }
+          } catch (IOException ex) {
+            throw new YAMLException("unable to read file", ex);
+          }
+          if (result == null) {
+            // result will be null if file is empty
+            result = new HashMap<>();
+          }
+          // starting from Antora 3.0.0.alpha-3 a version can be empty. It will be treated internally as an empty string
+          result.putIfAbsent("version", "");
+          return CachedValueProvider.Result.create(result, currentFile);
+        } catch (YAMLException ex) {
+          handleAntoraYamlException(ex, antoraFile.getCanonicalPath());
+          throw ex;
+        }
+      });
   }
 
   private static void handleAntoraYamlException(YAMLException ex, @Nullable String canonicalPath) {

@@ -1,16 +1,16 @@
 package org.asciidoc.intellij.psi;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Cache a list of attributes for a given key and scope.
  */
-public class AttributeCache {
+public class PsiAttributeCache {
   private static final String PAGE_ATTRIBUTES = "!page_attributes";
-  private final Map<Key, List<AttributeDeclaration>> cache = new HashMap<>();
+  private final Map<Key, List<AttributeDeclaration>> cache = new ConcurrentHashMap<>();
 
   public static class Key {
     private final String key;
@@ -39,7 +39,7 @@ public class AttributeCache {
     }
   }
 
-  public synchronized List<AttributeDeclaration> get(String key, AsciiDocUtil.Scope scope) {
+  public List<AttributeDeclaration> get(String key, AsciiDocUtil.Scope scope) {
     return cache.get(new Key(key, scope));
   }
 
@@ -47,7 +47,7 @@ public class AttributeCache {
     return get(PAGE_ATTRIBUTES, null);
   }
 
-  public synchronized void put(String key, AsciiDocUtil.Scope scope, List<AttributeDeclaration> value) {
+  public void put(String key, AsciiDocUtil.Scope scope, List<AttributeDeclaration> value) {
     cache.put(new Key(key, scope), value);
   }
 

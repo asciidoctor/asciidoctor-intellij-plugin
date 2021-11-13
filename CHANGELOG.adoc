@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - fix resolving Antora page aliases
 - improve resolving of anchors in Antora for partials and examples
+- caching of Antora component descriptors and playbooks to speed up user interactions (#908)
 
 === 0.35.14
 

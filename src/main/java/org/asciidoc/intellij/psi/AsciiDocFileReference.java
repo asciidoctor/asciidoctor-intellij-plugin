@@ -419,7 +419,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             if (antoraModuleDir != null) {
               String resolvedKey = AsciiDocUtil.resolveAttributes(myElement, key);
               if (resolvedKey != null) {
-                List<VirtualFile> virtualFiles = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, resolvedKey);
+                List<VirtualFile> virtualFiles = AsciiDocUtil.resolvePrefix(myElement, antoraModuleDir, resolvedKey);
                 for (VirtualFile virtualFile : virtualFiles) {
                   PsiElement psiFile = PsiManager.getInstance(myElement.getProject()).findDirectory(virtualFile);
                   if (psiFile != null) {
@@ -701,7 +701,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(key);
           if (!urlMatcher.find()) {
             if (!"image".equals(macroName)) {
-              List<VirtualFile> vfs = AsciiDocUtil.resolvePrefix(myElement.getProject(), antoraModuleDir, base);
+              List<VirtualFile> vfs = AsciiDocUtil.resolvePrefix(myElement, antoraModuleDir, base);
               for (VirtualFile vf : vfs) {
                 toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(myElement.getProject(), vf), '$');
                 toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement.getProject(), vf), '$');

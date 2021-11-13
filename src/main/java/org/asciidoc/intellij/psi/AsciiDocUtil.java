@@ -94,7 +94,10 @@ public class AsciiDocUtil {
   public static final int MAX_DEPTH = 10;
   public static final String STRIP_FILE_EXTENSION = "\\.[^.]*$";
   public static final String CAPTURE_FILE_EXTENSION = "^(.*)(\\.[^.]*)$";
-  public static final Key<CachedValue<AttributeCache>> KEY_ASCIIDOC_ATTRIBUTES = new Key<>("asciidoc-attributes");
+  public static final Key<CachedValue<PsiAttributeCache>> KEY_ASCIIDOC_ATTRIBUTES = new Key<>("asciidoc-attributes");
+  public static final Key<CachedValue<ResolvedPrefixCache>> KEY_ASCIIDOC_RESOLVED_PREFIXES = new Key<>("asciidoc-resolved-prefixes");
+  public static final Key<CachedValue<Collection<AttributeDeclaration>>> KEY_ASCIIDOC_ANTORA_ATTRIBUTES = new Key<>("asciidoc-antora-attributes");
+  public static final Key<CachedValue<ProjectAttributeCache>> KEY_ASCIIDOC_PROJECT_ATTRIBUTES = new Key<>("asciidoc-project-attributes");
 
   static List<AsciiDocBlockId> findIds(Project project, String key) {
     if (key.length() == 0) {
@@ -276,12 +279,23 @@ public class AsciiDocUtil {
     return findAttributes(project, key, false);
   }
 
+  public static ProjectAttributeCache getProjectAttributesCache(Project project) {
+    CachedValue<ProjectAttributeCache> cache = CachedValuesManager.getManager(project).createCachedValue(
+      () -> CachedValueProvider.Result.create(new ProjectAttributeCache(), PsiModificationTracker.MODIFICATION_COUNT));
+    return ((UserDataHolderEx) project).putUserDataIfAbsent(KEY_ASCIIDOC_PROJECT_ATTRIBUTES, cache).getValue();
+  }
+
   public static List<AttributeDeclaration> findAttributes(Project project, String key, boolean onlyAntora) {
     if (DumbService.isDumb(project)) {
       return Collections.emptyList();
     }
+    ProjectAttributeCache projectAttributeCache = getProjectAttributesCache(project);
+    List<AttributeDeclaration> result = projectAttributeCache.get(key, onlyAntora);
+    if (result != null) {
+      return result;
+    }
+
     ProgressManager.checkCanceled();
-    List<AttributeDeclaration> result = null;
     final GlobalSearchScope scope = new AsciiDocSearchScope(project).restrictedByAsciiDocFileType();
     Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(key, project, scope);
     Map<VirtualFile, Boolean> cache = new HashMap<>();
@@ -310,7 +324,7 @@ public class AsciiDocUtil {
         }
         Map<String, Object> antora;
         try {
-          antora = AsciiDoc.readAntoraYaml(playbook);
+          antora = AsciiDoc.readAntoraYaml(project, playbook);
         } catch (YAMLException ex) {
           continue;
         }
@@ -345,8 +359,12 @@ public class AsciiDocUtil {
         result.addAll(antoraAttributes);
       }
     }
+    if (result == null) {
+      result = Collections.emptyList();
+    }
 
-    return result != null ? result : Collections.emptyList();
+    projectAttributeCache.put(key, onlyAntora, result);
+    return result;
   }
 
   static List<AsciiDocAttributeDeclaration> findAttributes(Project project) {
@@ -383,7 +401,7 @@ public class AsciiDocUtil {
   public static List<AttributeDeclaration> findAttributes(Project project, String key, PsiElement current, Scope scope) {
 
     PsiFile containingFile = current.getContainingFile();
-    AttributeCache cache = getCache(project, containingFile);
+    PsiAttributeCache cache = getPsiAttributeCache(project, containingFile);
     List<AttributeDeclaration> cachedResult = cache.get(key, scope);
     if (cachedResult != null) {
       return cachedResult;
@@ -511,9 +529,9 @@ public class AsciiDocUtil {
   /**
    * Get a cache for the current file. Will expire once any file within the project is changed.
    */
-  private static AttributeCache getCache(Project project, PsiFile current) {
-    CachedValue<AttributeCache> cache = CachedValuesManager.getManager(project).createCachedValue(
-      () -> CachedValueProvider.Result.create(new AttributeCache(), PsiModificationTracker.MODIFICATION_COUNT));
+  private static PsiAttributeCache getPsiAttributeCache(Project project, PsiFile current) {
+    CachedValue<PsiAttributeCache> cache = CachedValuesManager.getManager(project).createCachedValue(
+      () -> CachedValueProvider.Result.create(new PsiAttributeCache(), PsiModificationTracker.MODIFICATION_COUNT));
     return ((UserDataHolderEx) current).putUserDataIfAbsent(KEY_ASCIIDOC_ATTRIBUTES, cache).getValue();
   }
 
@@ -522,12 +540,18 @@ public class AsciiDocUtil {
   }
 
   public static Collection<AttributeDeclaration> collectAntoraAttributes(PsiElement element) {
-    VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(element);
-    if (antoraModuleDir != null) {
-      return AsciiDoc.collectAntoraAttributes(antoraModuleDir, element.getProject());
-    } else {
-      return Collections.emptyList();
-    }
+    return CachedValuesManager.getCachedValue(element, KEY_ASCIIDOC_ANTORA_ATTRIBUTES,
+      () -> {
+        Collection<AttributeDeclaration> result;
+        VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(element);
+        if (antoraModuleDir != null) {
+          result = AsciiDoc.collectAntoraAttributes(antoraModuleDir, element.getProject());
+        } else {
+          result = Collections.emptyList();
+        }
+        return CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT);
+      }
+    );
   }
 
   static List<AttributeDeclaration> findAttributes(Project project, PsiElement current) {
@@ -988,7 +1012,7 @@ public class AsciiDocUtil {
     String myComponentName;
     String myComponentVersion;
     try {
-      Map<String, Object> myAntora = AsciiDoc.readAntoraYaml(antoraFile);
+      Map<String, Object> myAntora = AsciiDoc.readAntoraYaml(project, antoraFile);
       myComponentName = getAttributeAsString(myAntora, "name");
       myComponentVersion = getAttributeAsString(myAntora, "version");
     } catch (YAMLException ex) {
@@ -1008,7 +1032,7 @@ public class AsciiDocUtil {
       }
       Map<String, Object> antora;
       try {
-        antora = AsciiDoc.readAntoraYaml(antoraFile);
+        antora = AsciiDoc.readAntoraYaml(project, antoraFile);
       } catch (YAMLException ex) {
         continue;
       }
@@ -1266,7 +1290,7 @@ public class AsciiDocUtil {
       }
       Map<String, Object> antora;
       try {
-        antora = AsciiDoc.readAntoraYaml(antoraFile);
+        antora = AsciiDoc.readAntoraYaml(project, antoraFile);
       } catch (YAMLException ex) {
         return Collections.singletonList(originalKey);
       }
@@ -1336,7 +1360,7 @@ public class AsciiDocUtil {
         }
         Map<String, Object> antora;
         try {
-          antora = AsciiDoc.readAntoraYaml(antoraFile);
+          antora = AsciiDoc.readAntoraYaml(project, antoraFile);
         } catch (YAMLException ex) {
           return Collections.singletonList(originalKey);
         }
@@ -1557,7 +1581,7 @@ public class AsciiDocUtil {
         }
         Map<String, Object> antora;
         try {
-          antora = AsciiDoc.readAntoraYaml(file);
+          antora = AsciiDoc.readAntoraYaml(project, file);
         } catch (YAMLException ex) {
           continue;
         }
@@ -1619,7 +1643,7 @@ public class AsciiDocUtil {
       }
       Map<String, Object> antora;
       try {
-        antora = AsciiDoc.readAntoraYaml(antoraFile);
+        antora = AsciiDoc.readAntoraYaml(project, antoraFile);
       } catch (YAMLException ex) {
         return result;
       }
@@ -1634,7 +1658,7 @@ public class AsciiDocUtil {
           continue;
         }
         try {
-          antora = AsciiDoc.readAntoraYaml(file);
+          antora = AsciiDoc.readAntoraYaml(project, file);
         } catch (YAMLException ex) {
           continue;
         }
@@ -1687,8 +1711,14 @@ public class AsciiDocUtil {
     });
   }
 
-  public static @NotNull List<VirtualFile> resolvePrefix(Project project, VirtualFile moduleDir, String otherKey) {
-    return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
+  public static @NotNull List<VirtualFile> resolvePrefix(PsiElement element, VirtualFile moduleDir, String otherKey) {
+    ResolvedPrefixCache cache = getResolvedPrefixCache(element);
+    List<VirtualFile> cachedResult = cache.get(moduleDir, otherKey);
+    if (cachedResult != null) {
+      return cachedResult;
+    }
+
+    List<VirtualFile> virtualFiles = AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
       String myModuleName = moduleDir.getName();
       VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
       if (antoraFile == null) {
@@ -1696,7 +1726,7 @@ public class AsciiDocUtil {
       }
       Map<String, Object> antora;
       try {
-        antora = AsciiDoc.readAntoraYaml(antoraFile);
+        antora = AsciiDoc.readAntoraYaml(element.getProject(), antoraFile);
       } catch (YAMLException ex) {
         return Collections.emptyList();
       }
@@ -1729,8 +1759,17 @@ public class AsciiDocUtil {
         }
       }
 
-      return getOtherAntoraModuleDir(project, moduleDir, myModuleName, myComponentName, myComponentVersion, otherComponentVersion, otherComponentName, otherModuleName);
+      return getOtherAntoraModuleDir(element.getProject(), moduleDir, myModuleName, myComponentName, myComponentVersion, otherComponentVersion, otherComponentName, otherModuleName);
     });
+
+    cache.put(moduleDir, otherKey, virtualFiles);
+    return virtualFiles;
+  }
+
+  private static ResolvedPrefixCache getResolvedPrefixCache(PsiElement element) {
+    CachedValue<ResolvedPrefixCache> cache = CachedValuesManager.getManager(element.getProject()).createCachedValue(
+      () -> CachedValueProvider.Result.create(new ResolvedPrefixCache(), PsiModificationTracker.MODIFICATION_COUNT));
+    return ((UserDataHolderEx) element).putUserDataIfAbsent(KEY_ASCIIDOC_RESOLVED_PREFIXES, cache).getValue();
   }
 
   private static int countNumberOfSameStartingCharacters(VirtualFile value, String origin) {
@@ -1745,7 +1784,7 @@ public class AsciiDocUtil {
   }
 
   public static List<AttributeDeclaration> findPageAttributes(@NotNull PsiFile file) {
-    AttributeCache cache = getCache(file.getProject(), file);
+    PsiAttributeCache cache = getPsiAttributeCache(file.getProject(), file);
     List<AttributeDeclaration> cachedResult = cache.getPageAttributes();
     if (cachedResult != null) {
       return cachedResult;
