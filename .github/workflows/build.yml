@@ -50,8 +50,6 @@ jobs:
     name: Build
     needs: gradleValidation
     runs-on: ubuntu-latest
-    permissions:
-      security-events: write
     outputs:
       name: ${{ steps.properties.outputs.name }}
       version: ${{ steps.properties.outputs.version }}

@@ -23,6 +23,22 @@ You can add plugins from the Marketplace like in your IDE to support the languag
 
 . Generate a report as HTML to be used in a browser, as well as a SARIF report that can be processed by GitHub Code Scanning or other subsequent steps in your CI/CD pipeline.
 
+== Example output
+
+=== HTML report
+
+See below for an HTML report that Qodana generates.
+With the GitHub Action setup below, it will be attached as a ZIP file to workflow run instance.
+
+.Qodana report with AsciiDoc inspection warnings
+image::qodana-html-report.png[]
+
+=== Pull request annotation
+
+See below for a screenshot of an annotated GitHub pull request.
+
+image::nonexistant.png[]
+
 == Example setup for GitHub Actions
 
 This describes the setup used for this plugin.
@@ -34,9 +50,29 @@ While being production ready, Qodana is still in an early stage.
 Today some workaround have been applied to make it work with GitHub Actions and GitHub Code Scanning, future versions of Qodana will provide them out-of-the box.
 ====
 
-. Add a workflow the GitHub repository by adding the following file (see :
+. Setup Qodana configuration file.
+It is placed in the root folder where it will run.
 +
-..github/workflows/documentation.yml
+.doc/qodana.yaml
+[source,yaml]
+----
+include::example$qodana.yaml[]
+----
+
+. Setup file with all inspections to run.
+It is placed in the root folder where it will run.
+For this setup all inspections are specified one-by-one.
+Alternative setups could configure only deviations from a standard configuration.
++
+.doc/asciidoc-inspection.yaml
+[source,xml]
+----
+include::example$qodana-asciidoc-inspection.xml[]
+----
+
+. Add a workflow the GitHub repository by adding the following file (see https://github.com/asciidoctor/asciidoctor-intellij-plugin/blob/main/.github/workflows/build.yml[_docs.yml_^] in the GitHub repo):
++
+..github/workflows/docs.yml
 [source,yaml]
 ----
 include::example$workflow-docs.yml[tags=!cleanup]

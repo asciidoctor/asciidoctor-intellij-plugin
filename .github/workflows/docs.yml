@@ -16,14 +16,19 @@ jobs:
   qodana-docs:
     name: Qodana Docs
     runs-on: ubuntu-latest
+    permissions:
+      # necessary for the runs of push to store security events in the repo
+      # GitHub code scanning will treat any grammar error like a any security event.
+      security-events: write
     steps:
 
-      # Check out current repository
       - name: Fetch Sources
+        # Check out current repository
         uses: actions/checkout@v2
 
-      # Cache downloaded information by Qodana to speed up
-      - uses: actions/cache@v2
+      - name: Setup Qodana cache
+        # to speed up future runs of Qodana
+        uses: actions/cache@v2
         with:
           path: /home/runner/work/_temp/_github_home/qodana-cache
           key: ${{ runner.os }}-qodana-${{ github.ref }}
@@ -31,30 +36,30 @@ jobs:
             ${{ runner.os }}-qodana-${{ github.ref }}
             ${{ runner.os }}-qodana-
 
-      - name: download AsciiDoc plugin for AsciiDoc checks
+      - name: Download AsciiDoc plugin for AsciiDoc checks
         run: |
           curl -L -o asciidoctor-intellij-plugin.zip https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases/download/0.35.14/asciidoctor-intellij-plugin-0.35.14.zip
           unzip asciidoctor-intellij-plugin.zip
 
-      - name: download Grazie plugin for grammar checks
+      - name: Download Grazie plugin for grammar checks
         run: |
           curl -L -o grazie.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=135090'
           unzip grazie.zip
 
-      - name: run Qodana code inspection (docs subfolder only)
+      - name: Run Qodana code inspection (docs subfolder only)
         run: docker run -v ${{ github.workspace }}/doc:/data/project -v ${{ github.workspace }}/qodana:/data/results -v /home/runner/work/_temp/_github_home/qodana-cache:/data/cache -v ${{ github.workspace }}/asciidoctor-intellij-plugin:/opt/idea/plugins/asciidoctor-intellij-plugin -v ${{ github.workspace }}/grazie:/opt/idea/plugins/grazie jetbrains/qodana-jvm-community:2021.2 --save-report
 
-      - name: copy content to folder with write permissions
+      - name: Copy content to folder with write permissions
         # as qodana ran as root
         run: |
           cp ${{ github.workspace }}/qodana/report/results/qodana.sarif.json ${{ github.workspace }}/qodana.sarif.json
 
-      - name: add "doc" to paths as qodana ran from "doc" folder
+      - name: Add "doc" to paths as qodana ran from "doc" folder
         # Otherwise, GitHub won't be able to match the reported problems to file in the repository
         run: |
           sed -i 's|"uri": "|"uri": "doc/|g' ${{ github.workspace }}/qodana.sarif.json
 
-      - name: fix automation ID in SARIF report
+      - name: Fix automation ID in SARIF report
         # necessary as qodana will insert a date with "/" - this is not hierarchical,
         # and won't have an ID that can be matched across dates and branches by GitHub Code Scanning
         # old: "project - 11/14/21, 10:04 AM"
@@ -78,7 +83,7 @@ jobs:
           # Path to SARIF file relative to the root of the repository
           sarif_file: ${{ github.workspace }}/qodana.sarif.json
 
-  # tag::cleanup[]
+# tag::cleanup[]
   cleanup:
     name: Cleanup old builds
     # avoid 403 error with message "Resource not accessible by integration" (seen with dependabot)
