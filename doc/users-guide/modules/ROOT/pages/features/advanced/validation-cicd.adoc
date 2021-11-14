@@ -11,7 +11,7 @@ JetBrains published https://www.jetbrains.com/qodana/[Qodana] that wraps the sma
 For AsciiDoc files, it will highlight all the problems that are highlighted in your IDE as well, including broken links as well as grammar errors.
 
 .Overview Qodana process
-image::qodana-concepts.dio.svg[]
+image::qodana/qodana-concepts.dio.svg[]
 
 The process is as follows:
 
@@ -31,13 +31,25 @@ See below for an HTML report that Qodana generates.
 With the GitHub Action setup below, it will be attached as a ZIP file to workflow run instance.
 
 .Qodana report with AsciiDoc inspection warnings
-image::qodana-html-report.png[]
+image::qodana/qodana-html-report.png[]
 
 === Pull request annotation
 
 See below for a screenshot of an annotated GitHub pull request.
+Using the SARIF integration, GitHub can compare the pull request with the base branch and will show only new problems introduced by the pull request.
 
-image::nonexistant.png[]
+.Status as shown in the pull request
+image::qodana/qodana-pullrequest-status.png[]
+
+Once the user clicks on the details of the code scanning, they see a list of all new violations.
+
+.Details of GitHub Code Scanning
+image::qodana/qodana-codescanning-results.png[]
+
+Once the user clicks on one of the annotations, GitHub shows the code.
+
+.Annotation in the source code
+image::qodana/qodana-pullrequest-annotation.png[]
 
 == Example setup for GitHub Actions
 
@@ -78,4 +90,28 @@ include::example$qodana-asciidoc-inspection.xml[]
 include::example$workflow-docs.yml[tags=!cleanup]
 ----
 
+== Further reading
+
+* GitHub Code Scanning
+** https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/uploading-a-sarif-file-to-github[Uploading a SARIF file]
+** https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning[SARIF support]
+* Qodana
+** https://www.jetbrains.com/qodana/[Product homepage]
+** https://www.jetbrains.com/help/qodana/welcome.html[Reference documentation]
+** https://www.jetbrains.com/help/qodana/qodana-jvm-community-docker-readme.html[Qodana community docker image]
+** https://www.jetbrains.com/help/qodana/qodana-github-action.html[Using GitHub Actions]
+
+== Open issues with Qodana
+
+The following issues in the Qodana issue tracker are open.
+Please consider voting for them to make this integration simpler.
+
+* https://youtrack.jetbrains.com/issue/QD-1289[QD-1289^]
+automationDetails ID not filled according to specs, leading to problems in GitHub Code Scanning
+* https://youtrack.jetbrains.com/issue/QD-1596[QD-1596^]
+Broken description when using qodana.sarif.json in CodeQL
+* https://youtrack.jetbrains.com/issue/QD-1291[QD-1291^]
+Qodana easy plugin installation
+* https://youtrack.jetbrains.com/issue/QD-1291[QD-1291^]
+Add soft wrap to code preview
 
