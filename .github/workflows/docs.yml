@@ -13,7 +13,6 @@ jobs:
   # Requires build job to be passed
   qodana-docs:
     name: Qodana Docs
-    needs: build
     runs-on: ubuntu-latest
     steps:
 
