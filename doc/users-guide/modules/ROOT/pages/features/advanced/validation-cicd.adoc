@@ -1,0 +1,45 @@
+= Validation during Continuous Integration and Delivery
+:navtitle: Validation CI/CD
+:description: Use the same validations as in the IDE in your CI/CD setup.
+
+{description}
+
+== Qodana to run the IntelliJ AsciiDoc plugin in CD/CD
+
+JetBrains published https://www.jetbrains.com/qodana/[Qodana] that wraps the smart features of IntelliJ into a container, so it can be used on the command line as a Docker container.
+
+For AsciiDoc files, it will highlight all the problems that are highlighted in your IDE as well, including broken links as well as grammar errors.
+
+.Overview Qodana process
+image::qodana-concepts.dio.svg[]
+
+The process is as follows:
+
+. Read all or parts of your project sources.
+This can be source code in any programming language or documentation like AsciiDoc.
+
+. Process the files like with all the inspections known from IntelliJ.
+You can add plugins from the Marketplace like in your IDE to support the languages you need.
+
+. Generate a report as HTML to be used in a browser, as well as a SARIF report that can be processed by GitHub Code Scanning or other subsequent steps in your CI/CD pipeline.
+
+== Example setup for GitHub Actions
+
+This describes the setup used for this plugin.
+With the benefit of being a real-world scenario, some steps might be more complicated than a simple setup.
+
+[NOTE]
+====
+While being production ready, Qodana is still in an early stage.
+Today some workaround have been applied to make it work with GitHub Actions and GitHub Code Scanning, future versions of Qodana will provide them out-of-the box.
+====
+
+. Add a workflow the GitHub repository by adding the following file (see :
++
+..github/workflows/documentation.yml
+[source,yaml]
+----
+include::example$workflow-docs.yml[tags=!cleanup]
+----
+
+
