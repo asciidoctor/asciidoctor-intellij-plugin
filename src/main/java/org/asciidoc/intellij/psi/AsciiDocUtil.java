@@ -777,6 +777,12 @@ public class AsciiDocUtil {
           }
         } catch (AlreadyDisposedException ignored) {
           // might happen if file is in a module that has already been disposed
+        } catch (RuntimeException ex) {
+          if (!ex.getClass().getSimpleName().equals("DisposalException")) {
+            // might happen if file is in a module that has already been disposed
+            // unfortunately this class is not public
+            throw ex;
+          }
         }
       }
       if (roots.size() > 0) {

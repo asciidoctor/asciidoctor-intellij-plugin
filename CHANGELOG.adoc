@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.35.16
+
+- exception handling when processing module roots in the background (#918)
+
 === 0.35.15
 
 - fix resolving Antora page aliases
