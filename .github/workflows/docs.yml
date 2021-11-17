@@ -6,10 +6,12 @@ on:
     paths:
       - 'doc/**'
       - '.github/workflows/docs.yml'
+      - 'qodana.yaml'
   pull_request:
     paths:
       - 'doc/**'
       - '.github/workflows/docs.yml'
+      - 'qodana.yaml'
 jobs:
   # Verify built plugin using IntelliJ Plugin Verifier tool
   # Requires build job to be passed
@@ -31,8 +33,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /home/runner/work/_temp/_github_home/qodana-cache
-          key: ${{ runner.os }}-qodana-${{ github.ref }}
+          key: ${{ runner.os }}-qodana-${{ github.ref }}-${{ hashFiles('.github/workflows/docs.yml', '**/*.gradle', '**/*.gradle.kts', 'gradle.properties') }}
           restore-keys: |
+            ${{ runner.os }}-qodana-${{ github.ref }}-${{ hashFiles('.github/workflows/docs.yml', '**/*.gradle', '**/*.gradle.kts', 'gradle.properties') }}
             ${{ runner.os }}-qodana-${{ github.ref }}
             ${{ runner.os }}-qodana-
 
@@ -47,7 +50,22 @@ jobs:
           unzip grazie.zip
 
       - name: Run Qodana code inspection (docs subfolder only)
-        run: docker run -v ${{ github.workspace }}/doc:/data/project -v ${{ github.workspace }}/qodana:/data/results -v /home/runner/work/_temp/_github_home/qodana-cache:/data/cache -v ${{ github.workspace }}/asciidoctor-intellij-plugin:/opt/idea/plugins/asciidoctor-intellij-plugin -v ${{ github.workspace }}/grazie:/opt/idea/plugins/grazie jetbrains/qodana-jvm-community:2021.2 --save-report
+        # alternative: use "-d doc", this would avoid patching the SARIF file afterward.
+        # downside of alternative: gradle will run and load all gradle and build dependencies
+        run: >
+          docker run
+          -v ${{ github.workspace }}/doc:/data/project
+          -v ${{ github.workspace }}/qodana:/data/results
+          -v ${{ github.workspace }}/asciidoctor-intellij-plugin:/opt/idea/plugins/asciidoctor-intellij-plugin
+          -v ${{ github.workspace }}/grazie:/opt/idea/plugins/grazie
+          -v /home/runner/work/_temp/_github_home/qodana-cache:/data/cache
+          jetbrains/qodana-jvm-community:2021.2
+          --save-report
+
+      - name: Clean gradle daemon folder
+        # as it ran as root in the container / only needed if running on project's root and project is a gradle project
+        run: |
+          sudo rm -rf /home/runner/work/_temp/_github_home/qodana-cache/gradle/daemon
 
       - name: Copy content to folder with write permissions
         # as qodana ran as root

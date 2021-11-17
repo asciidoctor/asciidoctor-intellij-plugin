@@ -20,11 +20,14 @@ on:
     branches-ignore:
       - 'dependabot/**'
     paths-ignore:
+      - 'qodana.yaml'
       - 'doc/**'
       - 'README.adoc'
       - '.github/**/*.md'
+      - '.github/workflows/docs.yml'
   pull_request:
     paths-ignore:
+      - 'qodana.yaml'
       - 'doc/**'
       - 'README.adoc'
       - '.github/**/*.md'
@@ -74,6 +77,9 @@ jobs:
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-caches-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', 'gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-caches-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', 'gradle.properties') }}
+            ${{ runner.os }}-gradle-caches
 
       # Cache Gradle Wrapper
       - name: Setup Gradle Wrapper Cache
@@ -138,6 +144,9 @@ jobs:
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-caches-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', 'gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-caches-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', 'gradle.properties') }}
+            ${{ runner.os }}-gradle-caches
 
       # Cache Gradle Wrapper
       - name: Setup Gradle Wrapper Cache

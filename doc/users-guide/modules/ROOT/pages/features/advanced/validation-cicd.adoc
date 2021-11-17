@@ -38,6 +38,9 @@ image::qodana/qodana-html-report.png[]
 See below for a screenshot of an annotated GitHub pull request.
 Using the SARIF integration, GitHub can compare the pull request with the base branch and will show only new problems introduced by the pull request.
 
+These examples show AsciiDoc syntax errors as examples.
+This setup shows Grammar in the same way.
+
 .Status as shown in the pull request
 image::qodana/qodana-pullrequest-status.png[]
 
