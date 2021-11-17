@@ -131,7 +131,7 @@ jobs:
                     owner: context.repo.owner,
                     repo: context.repo.repo,
                     page: page,
-                    workflow_id: 'build.yml'
+                    workflow_id: 'docs.yml'
                 });
 
                 for (const run of response.data.workflow_runs) {

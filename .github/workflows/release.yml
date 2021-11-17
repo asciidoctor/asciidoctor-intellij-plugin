@@ -72,3 +72,50 @@ jobs:
         with:
           environment: production
           version: ${{ github.ref }}
+  cleanup:
+    name: Cleanup old builds
+    # avoid 403 error with message "Resource not accessible by integration" (seen with dependabot)
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup old runs
+        uses: actions/github-script@v5
+        # language=js
+        with:
+          script: |
+            const days_to_expiration = 30;
+            const ms_in_day = 86400000;
+            const now = Date.now();
+            let response = await github.rest.actions.listWorkflowRuns({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                per_page: 30,
+                workflow_id: 'release.yml'
+            });
+
+            // traverse from the end to delete from the end to not get confused when deleting items
+            let page = Math.ceil(response.data.total_count / 30)
+
+            while (page > 1) {
+                response = await github.rest.actions.listWorkflowRuns({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    page: page,
+                    workflow_id: 'release.yml'
+                });
+
+                for (const run of response.data.workflow_runs) {
+                    const days_old = Math.ceil((now - Date.parse(run.created_at)) / ms_in_day)
+                    if (days_old > days_to_expiration) {
+                        console.log(`Run id ${run.id} is ${days_old} day old. Deleting...`);
+                        await github.rest.actions.deleteWorkflowRun({
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            run_id: run.id
+                        });
+                    } else {
+                        console.log(`Run id ${run.id} is ${days_old} day old. Keeping...`);
+                    }
+                }
+                -- page
+            }
