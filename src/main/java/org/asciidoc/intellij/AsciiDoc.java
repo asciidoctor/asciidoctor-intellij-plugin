@@ -1312,7 +1312,7 @@ public class AsciiDoc {
         .replace("<body>", "<body class='" + bodyClass + "' />");
     }
 
-    /* Add CSS line */
+    /* Add CSS line; if styles can't be loaded, use default styles. */
     String stylesheet = attributes.get("stylesheet");
     if (stylesheet != null && stylesheet.length() != 0) {
       String linkcss = attributes.get("linkcss");
@@ -1323,8 +1323,10 @@ public class AsciiDoc {
         if (stylesdir != null && !stylesdir.equals(".")) {
           css = stylesdir + "/" + stylesheet;
         }
+        // Load remote stylesheet. Only if that succeeds, remove the standard stylesheet with JavaScript
         html = html
-          .replace("<head>", "<head>" + "<link rel='stylesheet' type='text/css' href='" + css + "' />");
+          .replace("<head>", "<head>" + "<link rel='stylesheet' type='text/css' href='" + css + "' onload=\"document.head.getElementsByTagName('style')[0].remove()\" />" +
+            "<style>" + standardCss + " </style>");
       } else {
         // custom stylesheet set
         VirtualFile stylesdirVf = LocalFileSystem.getInstance().findFileByPath(attributes.get("docdir"));
@@ -1339,17 +1341,17 @@ public class AsciiDoc {
             }
           }
           if (stylesdirVf == null) {
-            css = "/* unable to find CSS at '" + stylesdir + "' */";
+            css = "/* unable to find CSS at '" + stylesdir + "' */ </style>" + standardCss;
           } else {
-            VirtualFile stylesheetVf = stylesdirVf.findChild(stylesheet);
+            VirtualFile stylesheetVf = stylesdirVf.findFileByRelativePath(stylesheet);
             if (stylesheetVf != null) {
               try (InputStream is = stylesheetVf.getInputStream()) {
                 css = IOUtils.toString(is, StandardCharsets.UTF_8);
               } catch (IOException ex) {
-                css = "/* unable to read CSS from " + stylesdirVf.getCanonicalPath() + ": " + ex.getMessage() + " */";
+                css = "/* unable to read CSS from " + stylesdirVf.getCanonicalPath() + ": " + ex.getMessage() + " */ </style>" + standardCss;
               }
             } else {
-              css = "/* unable to find stylesheet '" + stylesheet + "' */";
+              css = "/* unable to find stylesheet '" + stylesheet + "' */ </style>" + standardCss;
             }
           }
           html = html

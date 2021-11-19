@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.35.16
 
 - exception handling when processing module roots in the background (#918)
+- support relative local stylesheet and fallback to Asciidoctor styles if stylesheet is not available (#921)
 
 === 0.35.15
 

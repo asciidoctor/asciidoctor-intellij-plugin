@@ -22,8 +22,6 @@ You can use local content, or link to a remote stylesheet.
 
 ==== Using local project's content
 
-NOTE: The stylesheet will be embedded in the preview, therefore relative links to the local file system will not work.
-
 . Create a file _.asciidoctorconfig_ with the following contents:
 +
 ..asciidoctorconfig
