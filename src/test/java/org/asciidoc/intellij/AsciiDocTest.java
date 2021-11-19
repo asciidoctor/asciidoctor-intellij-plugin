@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Alexander Schwartz 2018
  */
 public class AsciiDocTest extends BasePlatformTestCase {
-  private Logger log = Logger.getInstance(AsciiDocTest.class);
+  private final Logger log = Logger.getInstance(AsciiDocTest.class);
 
   private AsciiDoc asciidoc;
 
@@ -73,7 +73,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
     html = "<head></head>" + html;
     html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes(), getProject());
     assertThat(html).withFailMessage("should contain testcss").containsPattern("<link[^>]*https://example.com/dark.css");
-    assertThat(html).withFailMessage("should not contain standardcss").doesNotContain("standardcss");
+    assertThat(html).withFailMessage("should contain standardcss as backup").contains("standardcss");
   }
 
   public void testShouldUseLinkedStylesheetWithoutDir() {
@@ -82,7 +82,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
     html = "<head></head>" + html;
     html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes(), getProject());
     assertThat(html).withFailMessage("should contain testcss").containsPattern("<link[^>]*https://example.com/dark.css");
-    assertThat(html).withFailMessage("should not contain standardcss").doesNotContain("standardcss");
+    assertThat(html).withFailMessage("should contain standardcss as backup").contains("standardcss");
   }
 
   public void testShouldUseDocInfoHeader() throws IOException {
