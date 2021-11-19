@@ -11,9 +11,13 @@ This chapter walks you through the steps to prepare an _.asciidoctorconfig_ file
 The _.asciidoctorconfig_ file will configure the preview of all AsciiDoc files in the folder where it is located and this folder's subfolders.
 See _xref:features/advanced/asciidoctorconfig-file.adoc[]_ for more details.
 
-WARNING: If the configuration references remote content like fonts or stylesheets, these will require an online connection for the preview to load them.
-Therefore, the user will not be able to work off-line anymore.
-Consider using a conditional like `ifdef` to provide an attribute for the user to switch off the custom stylesheets when they are offline.
+[WARNING]
+====
+* If the configuration references remote content like fonts or stylesheets, these will require an online connection for the preview to load them.
+* Only JCEF and JavaFX preview support proper stylesheets.
+Swing preview doesn't support modern CSS, and will therefore not support custom CSS.
+* **New with version 0.35.16:** If no online connection exists, or the local stylesheet is missing, the preview defaults to the standard stylesheet.
+====
 
 === Replace default stylesheet
 
