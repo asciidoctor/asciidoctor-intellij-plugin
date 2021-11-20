@@ -6,7 +6,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.Stack;
 
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ASSIGNMENT;
@@ -36,6 +38,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_COMMENT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_BODY;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCK_MACRO_ID;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BOLD;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BOLDITALIC;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BULLET;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.CALLOUT;
@@ -58,8 +61,6 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_MACRO_BODY;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_MACRO_ID;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC_END;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_BREAK;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_COMMENT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKANCHOR;
@@ -71,9 +72,8 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LITERAL_BLOCK_DELIM
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MACROTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONOBOLD;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONOBOLDITALIC;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONOITALIC;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO_END;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_CONTENT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END;
@@ -84,11 +84,8 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SEPARATOR;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SINGLE_QUOTE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TITLE_TOKEN;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END;
-import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_EMAIL;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_LINK;
@@ -97,6 +94,8 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_START;
 import static org.asciidoc.intellij.parser.AsciiDocElementTypes.DESCRIPTION_ITEM;
 import static org.asciidoc.intellij.parser.AsciiDocElementTypes.LIST;
 import static org.asciidoc.intellij.parser.AsciiDocElementTypes.LIST_ITEM;
+import static org.asciidoc.intellij.psi.AsciiDocTextQuoted.ALLQUOTES;
+import static org.asciidoc.intellij.psi.AsciiDocTextQuoted.QUOTEPAIRS;
 
 /**
  * @author yole
@@ -284,10 +283,8 @@ public class AsciiDocParserImpl {
         parseBib();
       } else if (at(LINKSTART)) {
         parseLink();
-      } else if (at(MONO_START)) {
-        parseMono();
-      } else if (at(ITALIC_START)) {
-        parseItalic();
+      } else if (QUOTEPAIRS.containsKey(myBuilder.getTokenType())) {
+        parseQuoted(new HashSet<>());
       } else if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();
       } else {
@@ -471,16 +468,41 @@ public class AsciiDocParserImpl {
     marker.done(AsciiDocElementTypes.HTML_ENTITY);
   }
 
-  private void parseMono() {
-    next();
-    PsiBuilder.Marker monoMarker = myBuilder.mark();
-    while ((at(MONO) || at(MONOBOLD) || at(MONOITALIC) || at(MONO_END) || at(ATTRIBUTE_REF_START) || at(INLINE_MACRO_ID) || atQuote())
-      && emptyLines == 0) {
-      if (at(MONO_END)) {
-        monoMarker.done(AsciiDocElementTypes.MONO);
-        monoMarker = null;
+  private void parseQuoted(Set<IElementType> tokensToStop) {
+    PsiBuilder.Marker quoteMarker = myBuilder.mark();
+    Set<IElementType> myEndQuotes = new HashSet<>();
+    for (IElementType quote = myBuilder.getTokenType(); emptyLines == 0; quote = myBuilder.getTokenType()) {
+      IElementType endQuote = QUOTEPAIRS.get(quote);
+      if (endQuote != null) {
+        myEndQuotes.add(endQuote);
         next();
+      } else {
         break;
+      }
+    }
+    if (myEndQuotes.size() == 0) {
+      quoteMarker.drop();
+      return;
+    }
+    while ((at(MONO) || at(BOLD) || at(TEXT) || at(MONOITALIC) || at(MONOBOLDITALIC) || at(MONOBOLD) ||
+      at(ITALIC) || at(BOLDITALIC) || ALLQUOTES.contains(myBuilder.getTokenType()) ||
+      at(ATTRIBUTE_REF_START) || at(INLINE_MACRO_ID))
+      && emptyLines == 0) {
+      if (tokensToStop.contains(myBuilder.getTokenType())) {
+        break;
+      }
+      if (myEndQuotes.contains(myBuilder.getTokenType())) {
+        myEndQuotes.remove(myBuilder.getTokenType());
+        next();
+        if (myEndQuotes.size() == 0) {
+          quoteMarker.done(AsciiDocElementTypes.QUOTED);
+          quoteMarker = null;
+          break;
+        }
+      } else if (QUOTEPAIRS.get(myBuilder.getTokenType()) != null) {
+        HashSet<IElementType> childSetToStop = new HashSet<>(tokensToStop);
+        childSetToStop.addAll(myEndQuotes);
+        parseQuoted(childSetToStop);
       } else if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();
       } else if (at(INLINE_MACRO_ID)) {
@@ -489,36 +511,8 @@ public class AsciiDocParserImpl {
         next();
       }
     }
-    if (monoMarker != null) {
-      monoMarker.drop();
-    }
-  }
-
-  private boolean atQuote() {
-    return at(TYPOGRAPHIC_DOUBLE_QUOTE_START) || at(TYPOGRAPHIC_DOUBLE_QUOTE_END)
-      || at(TYPOGRAPHIC_SINGLE_QUOTE_START) || at(TYPOGRAPHIC_SINGLE_QUOTE_END);
-  }
-
-  private void parseItalic() {
-    next();
-    PsiBuilder.Marker italicMarker = myBuilder.mark();
-    while ((at(ITALIC) || at(BOLDITALIC) || at(ITALIC_END) || at(ATTRIBUTE_REF_START) || at(INLINE_MACRO_ID) || atQuote())
-      && emptyLines == 0) {
-      if (at(ITALIC_END)) {
-        italicMarker.done(AsciiDocElementTypes.ITALIC);
-        italicMarker = null;
-        next();
-        break;
-      } else if (at(ATTRIBUTE_REF_START)) {
-        parseAttributeReference();
-      } else if (at(INLINE_MACRO_ID)) {
-        parseInlineMacro();
-      } else {
-        next();
-      }
-    }
-    if (italicMarker != null) {
-      italicMarker.drop();
+    if (quoteMarker != null) {
+      quoteMarker.drop();
     }
   }
 

@@ -32,8 +32,7 @@ import org.asciidoc.intellij.psi.AsciiDocListItem;
 import org.asciidoc.intellij.psi.AsciiDocRef;
 import org.asciidoc.intellij.psi.AsciiDocSectionImpl;
 import org.asciidoc.intellij.psi.AsciiDocStandardBlock;
-import org.asciidoc.intellij.psi.AsciiDocTextItalic;
-import org.asciidoc.intellij.psi.AsciiDocTextMono;
+import org.asciidoc.intellij.psi.AsciiDocTextQuoted;
 import org.asciidoc.intellij.psi.AsciiDocTitle;
 import org.asciidoc.intellij.psi.AsciiDocUrl;
 import org.jetbrains.annotations.NotNull;
@@ -136,11 +135,8 @@ public class AsciiDocParserDefinition implements ParserDefinition {
     if (node.getElementType() == AsciiDocElementTypes.TITLE) {
       return new AsciiDocTitle(node);
     }
-    if (node.getElementType() == AsciiDocElementTypes.MONO) {
-      return new AsciiDocTextMono(node);
-    }
-    if (node.getElementType() == AsciiDocElementTypes.ITALIC) {
-      return new AsciiDocTextItalic(node);
+    if (node.getElementType() == AsciiDocElementTypes.QUOTED) {
+      return new AsciiDocTextQuoted(node);
     }
     if (node.getElementType() == AsciiDocElementTypes.HTML_ENTITY) {
       return new AsciiDocHtmlEntity(node);

@@ -7,8 +7,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.asciidoc.intellij.highlighting.AsciiDocSyntaxHighlighter;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
-import org.asciidoc.intellij.psi.AsciiDocTextItalic;
-import org.asciidoc.intellij.psi.AsciiDocTextMono;
+import org.asciidoc.intellij.psi.AsciiDocTextQuoted;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,16 +37,41 @@ public class AsciiDocExternalAnnotatorHighlighting extends com.intellij.lang.ann
       @Override
       public void visitElement(@NotNull PsiElement element) {
         super.visitElement(element);
-        if (element instanceof AsciiDocTextMono) {
-          holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-            .enforcedTextAttributes(AsciiDocSyntaxHighlighter.ASCIIDOC_MONO.getDefaultAttributes())
-            .range(element)
-            .create();
-        } else if (element instanceof AsciiDocTextItalic) {
-          holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-            .enforcedTextAttributes(AsciiDocSyntaxHighlighter.ASCIIDOC_ITALIC.getDefaultAttributes())
-            .range(element)
-            .create();
+        if (element instanceof AsciiDocTextQuoted) {
+          boolean isMono = ((AsciiDocTextQuoted) element).isMono();
+          boolean isItalic = ((AsciiDocTextQuoted) element).isItalic();
+          boolean isBold = ((AsciiDocTextQuoted) element).isBold();
+          if (isMono && isBold && isItalic) {
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+              .enforcedTextAttributes(AsciiDocSyntaxHighlighter.ASCIIDOC_MONOBOLDITALIC.getDefaultAttributes())
+              .range(element)
+              .create();
+          } else if (isMono && isItalic) {
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+              .enforcedTextAttributes(AsciiDocSyntaxHighlighter.ASCIIDOC_MONOITALIC.getDefaultAttributes())
+              .range(element)
+              .create();
+          } else if (isBold && isItalic) {
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+              .enforcedTextAttributes(AsciiDocSyntaxHighlighter.ASCIIDOC_BOLDITALIC.getDefaultAttributes())
+              .range(element)
+              .create();
+          } else if (isMono) {
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+              .enforcedTextAttributes(AsciiDocSyntaxHighlighter.ASCIIDOC_MONO.getDefaultAttributes())
+              .range(element)
+              .create();
+          } else if (isItalic) {
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+              .enforcedTextAttributes(AsciiDocSyntaxHighlighter.ASCIIDOC_ITALIC.getDefaultAttributes())
+              .range(element)
+              .create();
+          } else if (isBold) {
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+              .enforcedTextAttributes(AsciiDocSyntaxHighlighter.ASCIIDOC_BOLD.getDefaultAttributes())
+              .range(element)
+              .create();
+          }
         }
         PsiElement child = element.getFirstChild();
         while (child != null) {

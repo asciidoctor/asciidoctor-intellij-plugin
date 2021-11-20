@@ -56,7 +56,7 @@ A slash (`/`) separates the matching pattern from the look ahead.
 
 .Example from parsing typographic quotes
 ----
-{TYPOGRAPHIC_QUOTE_START} / [^\*\n \t] {WORD}* {TYPOGRAPHIC_QUOTE_END}
+{TYPOGRAPHIC_QUOTE_START} / [^\n \t] {WORD}* {TYPOGRAPHIC_QUOTE_END}
 ----
 --
 

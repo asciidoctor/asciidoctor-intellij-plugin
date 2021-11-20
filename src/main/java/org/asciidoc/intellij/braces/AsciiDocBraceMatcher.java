@@ -17,9 +17,8 @@ public class AsciiDocBraceMatcher extends PairedBraceMatcherAdapter {
 
   private static class MyPairedBraceMatcher implements PairedBraceMatcher {
 
-    @NotNull
     @Override
-    public BracePair[] getPairs() {
+    public BracePair @NotNull [] getPairs() {
       return new BracePair[]{
         new BracePair(AsciiDocTokenTypes.ATTRS_START, AsciiDocTokenTypes.ATTRS_END, true),
         new BracePair(AsciiDocTokenTypes.LPAREN, AsciiDocTokenTypes.RPAREN, false),

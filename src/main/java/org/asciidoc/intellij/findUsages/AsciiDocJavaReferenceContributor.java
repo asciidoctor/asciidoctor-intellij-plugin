@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.findUsages;
 
-import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -10,8 +9,7 @@ import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.util.ProcessingContext;
 import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocJavaReference;
-import org.asciidoc.intellij.psi.AsciiDocTextItalic;
-import org.asciidoc.intellij.psi.AsciiDocTextMono;
+import org.asciidoc.intellij.psi.AsciiDocTextQuoted;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -24,38 +22,24 @@ public class AsciiDocJavaReferenceContributor extends PsiReferenceContributor {
   @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
 
-    final PsiElementPattern.Capture<AsciiDocTextMono> monoCapture =
-      psiElement(AsciiDocTextMono.class).inFile(psiFile(AsciiDocFile.class));
+    final PsiElementPattern.Capture<AsciiDocTextQuoted> monoCapture =
+      psiElement(AsciiDocTextQuoted.class).inFile(psiFile(AsciiDocFile.class));
 
     registrar.registerReferenceProvider(monoCapture,
       new PsiReferenceProvider() {
-        @NotNull
         @Override
-        public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
-                                                     @NotNull ProcessingContext context) {
-          List<PsiReference> references = findReferencesElement(element);
+        public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
+                                                               @NotNull ProcessingContext context) {
+          List<PsiReference> references = findReferencesElement((AsciiDocTextQuoted) element);
           return references.toArray(new PsiReference[0]);
         }
       });
 
-    final PsiElementPattern.Capture<AsciiDocTextItalic> italicCapture =
-      psiElement(AsciiDocTextItalic.class).inFile(psiFile(AsciiDocFile.class));
-
-    registrar.registerReferenceProvider(italicCapture,
-      new PsiReferenceProvider() {
-        @NotNull
-        @Override
-        public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
-                                                     @NotNull ProcessingContext context) {
-          List<PsiReference> references = findReferencesElement(element);
-          return references.toArray(new PsiReference[0]);
-        }
-      });
   }
 
-  private List<PsiReference> findReferencesElement(PsiElement element) {
+  private List<PsiReference> findReferencesElement(AsciiDocTextQuoted element) {
     ArrayList<PsiReference> references = new ArrayList<>();
-    references.add(new AsciiDocJavaReference(element, TextRange.create(0, element.getTextLength())));
+    references.add(new AsciiDocJavaReference(element, AsciiDocTextQuoted.getBodyRange(element).shiftLeft(element.getStartOffsetInParent())));
     return references;
   }
 

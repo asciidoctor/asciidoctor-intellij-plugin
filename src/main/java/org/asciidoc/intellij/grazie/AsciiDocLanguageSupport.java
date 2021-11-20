@@ -145,8 +145,7 @@ public class AsciiDocLanguageSupport {
     AsciiDocElementTypes.REF, // can nest REFTEXT
     AsciiDocElementTypes.LINK, // can nest MACROTEXT
     AsciiDocElementTypes.INLINE_MACRO, // can nest MACROTEXT
-    AsciiDocElementTypes.MONO, // will nest MONO
-    AsciiDocElementTypes.ITALIC // will nest ITALIC
+    AsciiDocElementTypes.QUOTED // will nest MONO, ITALIC and others
   ), NODES_TO_CHECK);
 
   public Behavior getElementBehavior(@NotNull PsiElement root, @NotNull PsiElement child) {

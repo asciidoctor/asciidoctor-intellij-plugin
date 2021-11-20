@@ -49,7 +49,7 @@ This works similarly for attributes (`\{attrib}` and `:attrib:`).
 // see: AsciiDocTextMono and AsciiDocTextItalic in the PSI Tree
 // see: AsciiDocReferenceContributor and AsciiDocJavaReferenceContributor for the creation of references
 // see: AsciiDocJavaReference for the resolution of Java classes
-The user can navigate using kbd:[Ctrl+Click] and kbd:[Ctrl+B] from a file name or Java class name in backticks (as monospaced text like +++`filename.txt`+++ or +++`JavaClassName`+++) or in underscores (as italic text like +++_filename.txt_+++ or +++_JavaClassName_+++).
+The user can navigate using kbd:[Ctrl+Click] and kbd:[Ctrl+B] from a file name or Java class name in backticks (as monospaced text like +++`filename.txt`+++ or +++`JavaClassName`+++) or in underscores (as italic text like +++_filename.txt_+++ or +++_JavaClassName_+++) or bold (as italic text like +++*filename.txt*+++ or +++*JavaClassName*+++).
 The plugin tries to rename occurrences of files and Java classes in the AsciiDoc file when the user renames the file or the class.
 
 // see: AsciiDocDocumentationProvider

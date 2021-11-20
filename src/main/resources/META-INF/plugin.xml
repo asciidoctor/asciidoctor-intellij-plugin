@@ -330,8 +330,8 @@
                              implementationClass="org.asciidoc.intellij.psi.AsciiDocIncludeTagInDocument$Manipulator"/>
     <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocTextItalic"
                              implementationClass="org.asciidoc.intellij.psi.AsciiDocTextItalic$Manipulator"/>
-    <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocTextMono"
-                             implementationClass="org.asciidoc.intellij.psi.AsciiDocTextMono$Manipulator"/>
+    <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocTextQuoted"
+                             implementationClass="org.asciidoc.intellij.psi.AsciiDocTextQuoted$Manipulator"/>
     <lang.elementManipulator forClass="org.asciidoc.intellij.psi.AsciiDocAttributeInBrackets"
                              implementationClass="org.asciidoc.intellij.psi.AsciiDocAttributeInBrackets$Manipulator"/>
     <lang.findUsagesProvider language="AsciiDoc"

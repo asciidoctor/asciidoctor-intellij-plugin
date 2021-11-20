@@ -24,8 +24,7 @@ import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInDocument;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInElement;
 import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocSimpleFileReference;
-import org.asciidoc.intellij.psi.AsciiDocTextItalic;
-import org.asciidoc.intellij.psi.AsciiDocTextMono;
+import org.asciidoc.intellij.psi.AsciiDocTextQuoted;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,10 +45,9 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
       psiElement(AsciiDocAttributeReference.class).inFile(psiFile(AsciiDocFile.class));
 
     registrar.registerReferenceProvider(attributeReferenceCapture, new PsiReferenceProvider() {
-      @NotNull
       @Override
-      public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
-                                                   @NotNull ProcessingContext
+      public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
+                                                             @NotNull ProcessingContext
                                                      context) {
         int start = 0;
         PsiElement child = element.getFirstChild();
@@ -72,10 +70,9 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
 
     registrar.registerReferenceProvider(linkCapture,
       new PsiReferenceProvider() {
-        @NotNull
         @Override
-        public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
-                                                     @NotNull ProcessingContext
+        public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
+                                                               @NotNull ProcessingContext
                                                        context) {
 
           List<PsiReference> fileReferences = findFileReferences(element);
@@ -93,10 +90,9 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
 
     registrar.registerReferenceProvider(attributeDeclaration,
       new PsiReferenceProvider() {
-        @NotNull
         @Override
-        public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
-                                                     @NotNull ProcessingContext context) {
+        public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
+                                                               @NotNull ProcessingContext context) {
           List<PsiReference> references = findUrlReferencesInAttributeDefinition(element);
           return references.toArray(new PsiReference[0]);
         }
@@ -107,10 +103,9 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
 
     registrar.registerReferenceProvider(tagInPlaintext,
       new PsiReferenceProvider() {
-        @NotNull
         @Override
-        public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
-                                                     @NotNull ProcessingContext context) {
+        public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
+                                                               @NotNull ProcessingContext context) {
           List<PsiReference> references = findTagInElement(element);
           return references.toArray(new PsiReference[0]);
         }
@@ -121,47 +116,32 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
 
     registrar.registerReferenceProvider(tagInInclude,
       new PsiReferenceProvider() {
-        @NotNull
         @Override
-        public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
-                                                     @NotNull ProcessingContext context) {
+        public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
+                                                               @NotNull ProcessingContext context) {
           List<PsiReference> references = findTagInDocument((AsciiDocIncludeTagInDocument) element);
           return references.toArray(new PsiReference[0]);
         }
       });
 
-    final PsiElementPattern.Capture<AsciiDocTextMono> monoCapture =
-      psiElement(AsciiDocTextMono.class).inFile(psiFile(AsciiDocFile.class));
+    final PsiElementPattern.Capture<AsciiDocTextQuoted> quotedCapture =
+      psiElement(AsciiDocTextQuoted.class).inFile(psiFile(AsciiDocFile.class));
 
-    registrar.registerReferenceProvider(monoCapture,
+    registrar.registerReferenceProvider(quotedCapture,
       new PsiReferenceProvider() {
-        @NotNull
         @Override
-        public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
-                                                     @NotNull ProcessingContext context) {
-          List<PsiReference> references = findFilesInProject(element);
+        public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
+                                                               @NotNull ProcessingContext context) {
+          List<PsiReference> references = findFilesInProject((AsciiDocTextQuoted) element);
           return references.toArray(new PsiReference[0]);
         }
       });
 
-    final PsiElementPattern.Capture<AsciiDocTextItalic> italicCapture =
-      psiElement(AsciiDocTextItalic.class).inFile(psiFile(AsciiDocFile.class));
-
-    registrar.registerReferenceProvider(italicCapture,
-      new PsiReferenceProvider() {
-        @NotNull
-        @Override
-        public PsiReference[] getReferencesByElement(@NotNull PsiElement element,
-                                                     @NotNull ProcessingContext context) {
-          List<PsiReference> references = findFilesInProject(element);
-          return references.toArray(new PsiReference[0]);
-        }
-      });
   }
 
-  private List<PsiReference> findFilesInProject(PsiElement element) {
+  private List<PsiReference> findFilesInProject(AsciiDocTextQuoted element) {
     ArrayList<PsiReference> references = new ArrayList<>();
-    references.add(new AsciiDocSimpleFileReference(element, TextRange.create(0, element.getTextLength())));
+    references.add(new AsciiDocSimpleFileReference(element, AsciiDocTextQuoted.getBodyRange(element).shiftLeft(element.getNode().getStartOffset())));
     return references;
   }
 

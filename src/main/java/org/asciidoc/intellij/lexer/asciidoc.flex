@@ -1423,7 +1423,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          }
                        }
   {DOUBLE_QUOTE}       { return AsciiDocTokenTypes.DOUBLE_QUOTE; }
-  {TYPOGRAPHIC_DOUBLE_QUOTE_START} [^\*\n \t] {WORD}* {TYPOGRAPHIC_DOUBLE_QUOTE_END} {
+  {TYPOGRAPHIC_DOUBLE_QUOTE_START} [^\n \t] {WORD}* {TYPOGRAPHIC_DOUBLE_QUOTE_END} {
                            yypushback(yylength() - 2);
                            if (isUnconstrainedStart()) {
                              typographicquote = true;

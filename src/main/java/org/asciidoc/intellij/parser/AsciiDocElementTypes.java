@@ -37,8 +37,7 @@ public interface AsciiDocElementTypes {
   IElementType ATTRIBUTE_DECLARATION_NAME = new AsciiDocElementType("ATTRIBUTE_DECLARATION_NAME");
   IElementType URL = new AsciiDocElementType("URL");
   IElementType TITLE = new AsciiDocElementType("TITLE");
-  IElementType MONO = new AsciiDocElementType("MONO");
-  IElementType ITALIC = new AsciiDocElementType("ITALIC");
+  IElementType QUOTED = new AsciiDocElementType("QUOTED");
   IElementType HTML_ENTITY = new AsciiDocElementType("HTML_ENTITY");
   IElementType HEADING = new AsciiDocElementType("HEADING");
   IStubElementType<AsciiDocAttributeDeclarationStub, AsciiDocAttributeDeclaration> ATTRIBUTE_DECLARATION = new AsciiDocAttributeDeclarationStubElementType();
