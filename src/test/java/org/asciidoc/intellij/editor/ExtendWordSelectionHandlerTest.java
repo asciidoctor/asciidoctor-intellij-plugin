@@ -65,6 +65,7 @@ public class ExtendWordSelectionHandlerTest extends BasePlatformTestCase {
       .map(textRange -> textRange.substring(contentWithoutCaret))
       .distinct()
       .sorted()
+      .filter(s -> !s.equals(contentWithoutCaret)) // remove full match for simplicity
       .collect(Collectors.toList());
   }
 

@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.36.2
+
+- support folding of regular paragraphs (#426)
+
 === 0.36.1
 
 - refactor PSI structure for text with quotes for better text selection (#920)

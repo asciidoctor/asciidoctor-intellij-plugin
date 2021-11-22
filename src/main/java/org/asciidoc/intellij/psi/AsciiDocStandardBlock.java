@@ -3,6 +3,7 @@ package org.asciidoc.intellij.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.TokenSet;
@@ -50,7 +51,12 @@ public class AsciiDocStandardBlock extends AsciiDocASTWrapperPsiElement implemen
     } else if (child instanceof AsciiDocBlock) {
       return ((AsciiDocBlock) child).getFoldedSummary();
     } else {
-      return child.getText();
+      StringBuilder sb = new StringBuilder();
+      while (child != null && !child.getText().contains("\n")) {
+        sb.append(child.getText());
+        child = child.getNextSibling();
+      }
+      return sb.toString();
     }
   }
 
@@ -94,7 +100,7 @@ public class AsciiDocStandardBlock extends AsciiDocASTWrapperPsiElement implemen
         title = AsciiDocBlock.super.getDefaultTitle();
       }
     } else {
-      title = AsciiDocBlock.super.getDefaultTitle();
+      title = StringUtil.shortenTextWithEllipsis(getFoldedSummary(), 50, 5);
     }
     return title;
   }

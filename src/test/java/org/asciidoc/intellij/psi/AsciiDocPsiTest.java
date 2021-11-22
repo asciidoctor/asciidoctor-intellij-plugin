@@ -20,7 +20,6 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.asciidoc.intellij.AsciiDocSpellcheckingStrategy;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.grazie.AsciiDocGrazieTextExtractor;
-import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.assertj.core.api.Assertions;
 import org.intellij.lang.annotations.Language;
@@ -31,6 +30,7 @@ import org.jetbrains.yaml.psi.impl.YAMLQuotedTextImpl;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -170,7 +170,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertEquals("\n", children[2].getText());
 
     assertEquals("Text", children[3].getText());
-    assertEquals(AsciiDocTokenTypes.TEXT, children[3].getNode().getElementType());
+    assertEquals(AsciiDocElementTypes.BLOCK, children[3].getNode().getElementType());
   }
 
   public void testBlockAttributes() {
@@ -223,7 +223,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
     assertNotNull(listing);
     assertTrue(psiFile.getChildren()[1] instanceof PsiWhiteSpace);
-    assertSame(psiFile.getChildren()[2].getNode().getElementType(), AsciiDocTokenTypes.TEXT);
+    assertSame(psiFile.getChildren()[2].getNode().getElementType(), AsciiDocElementTypes.BLOCK);
   }
 
   public void testListingLanguage() {
@@ -245,7 +245,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     AsciiDocBlockMacro macro = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlockMacro.class);
     assertNotNull(macro);
     assertEquals("(image)", macro.getDescription());
-    assertEquals("image::", macro.getFoldedSummary());
+    assertEquals("image::test.png[]", macro.getFoldedSummary());
   }
 
   public void testDescriptionNestedNote() {
@@ -334,13 +334,13 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
   public void testLinkInlineMacro() {
     PsiFile psiFile = configureByAsciiDoc("some text link:file#anchor[Text] another text");
-    AsciiDocLink link = PsiTreeUtil.getChildOfType(psiFile, AsciiDocLink.class);
+    AsciiDocLink link = PsiTreeUtil.getChildOfType(PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlock.class), AsciiDocLink.class);
     assertNotNull(link);
   }
 
   public void testUrlInline() {
     PsiFile psiFile = configureByAsciiDoc("some text http://www.gmx.net[Text] another text");
-    AsciiDocUrl link = PsiTreeUtil.getChildOfType(psiFile, AsciiDocUrl.class);
+    AsciiDocUrl link = PsiTreeUtil.getChildOfType(PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlock.class), AsciiDocUrl.class);
     assertNotNull(link);
     assertNotNull(link.getReference());
   }
@@ -357,7 +357,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
     // then...
     AsciiDocAttributeDeclaration declaration = PsiTreeUtil.getChildOfType(psiFile, AsciiDocAttributeDeclaration.class);
-    AsciiDocAttributeReference reference = PsiTreeUtil.getChildOfType(psiFile, AsciiDocAttributeReference.class);
+    AsciiDocAttributeReference reference = PsiTreeUtil.getChildOfType(PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlock.class), AsciiDocAttributeReference.class);
     assertNotNull("declaration should exist", declaration);
     assertEquals("declaration should have name 'myattr'", "myattr", declaration.getAttributeName());
     assertNotNull("reference should exist", reference);
@@ -462,7 +462,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
   public void testSpellCheck() {
     // given...
     PsiFile psiFile = configureByAsciiDoc("// not within block, therefore separate elements\n" +
-      "**E**quivalent\n\n" +
+      "**A**nother\n\n" +
       "// within block, therefore split by word breaks\n" +
       "== Heading\n**E**quivalent **M**odulo\n" +
       "TEXTfootnote:[This is a footnote]\n" +
@@ -491,9 +491,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       }
     });
     // for now headings prefix and comment prefix remain in the text, as the spell checker will ignore them anyway
-    Assertions.assertThat(tokens).containsExactly("// not within block, therefore separate elements",
-      "E",
-      "quivalent",
+    Assertions.assertThat(tokens).containsExactlyInAnyOrder("// not within block, therefore separate elements",
+      "Another",
       "// within block, therefore split by word breaks",
       "Equivalent",
       "Modulo",
@@ -587,14 +586,19 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
   public void testGrammarStringStripBlanks() {
     // given...
     PsiFile psiFile = configureByAsciiDoc("== Heading\n\nthis  test\n\n");
+    AsciiDocSection section = PsiTreeUtil.getChildOfType(psiFile, AsciiDocSection.class);
+    AsciiDocBlock block = PsiTreeUtil.getChildOfType(section, AsciiDocBlock.class);
+    Assertions.assertThat(block).isNotNull();
 
     // when...
-    TextContent result = new AsciiDocGrazieTextExtractor().buildTextContent(psiFile.getFirstChild(), Set.of(TextContent.TextDomain.PLAIN_TEXT));
+    TextContent sectionResult = new AsciiDocGrazieTextExtractor().buildTextContent(block, Set.of(TextContent.TextDomain.PLAIN_TEXT));
+    TextContent blockResult = new AsciiDocGrazieTextExtractor().buildTextContent(block, Set.of(TextContent.TextDomain.PLAIN_TEXT));
 
     // then...
     // ... IntelliJ 2021.2 will trim beginning and end blanks, and the grammar part should trim the spaces
-    Assertions.assertThat(result).isNotNull();
-    Assertions.assertThat(result.toString()).isEqualTo("this test");
+    Assertions.assertThat(sectionResult).isNotNull();
+    Assertions.assertThat(blockResult).isNotNull();
+    Assertions.assertThat(blockResult.toString()).isEqualTo("this test");
   }
 
   public void testNestedAttribute() {
@@ -625,7 +629,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiFile psiFile = configureByAsciiDoc("xref:A Section[]\n<<A Section>>\nxref:_a_section[]\n\n== A Section\n");
 
     // then...
-    AsciiDocLink[] links = PsiTreeUtil.getChildrenOfType(psiFile, AsciiDocLink.class);
+    AsciiDocLink[] links = PsiTreeUtil.getChildrenOfType(PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlock.class), AsciiDocLink.class);
     assertNotNull(links);
     for (AsciiDocLink link : links) {
       PsiReference[] references = link.getReferences();
@@ -743,18 +747,24 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertEquals("partial", macros[3].getReferences()[1].getCanonicalText());
     assertEquals("part.adoc", macros[3].getReferences()[2].getCanonicalText());
 
-    AsciiDocLink[] urls = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocLink.class);
-    assertNotNull(urls);
+    ArrayList<AsciiDocLink> urls = new ArrayList<>();
+    for (AsciiDocBlock block : Objects.requireNonNull(PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocBlock.class))) {
+      AsciiDocLink[] links = PsiTreeUtil.getChildrenOfType(block, AsciiDocLink.class);
+      if (links != null) {
+        urls.addAll(Arrays.asList(links));
+      }
+    }
+
     assertSize(6, urls);
 
     // link
-    assertReferencesResolve(urls[0], 2);
+    assertReferencesResolve(urls.get(0), 2);
 
     // xref to page in other module
-    assertReferencesResolve(urls[1], 2);
+    assertReferencesResolve(urls.get(1), 2);
 
     // xref to old page name
-    assertReferencesResolve(urls[2], 1);
+    assertReferencesResolve(urls.get(2), 1);
   }
 
   @SuppressWarnings("ConstantConditions")

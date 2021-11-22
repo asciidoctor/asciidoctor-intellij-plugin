@@ -51,8 +51,10 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DOUBLE_QUOTE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.EMPTY_LINE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ENUMERATION;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.FRONTMATTER_DELIMITER;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_OLDSTYLE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_TOKEN;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HORIZONTALRULE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HTML_ENTITY_OR_UNICODE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINEIDEND;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINEIDSTART;
@@ -74,6 +76,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONOBOLD;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONOBOLDITALIC;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONOITALIC;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PAGEBREAK;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_CONTENT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END;
@@ -264,9 +267,15 @@ public class AsciiDocParserImpl {
         startEnumerationDelimiter();
       }
 
+      // those tokens shouldn't end wrapped in a block
+      if (at(PAGEBREAK) || at(HEADER) || at(HORIZONTALRULE)) {
+        next();
+        continue;
+      }
+
       if (at(DESCRIPTION)) {
         markPreBlock();
-      } else if (myPreBlockMarker != null && myBuilder.rawLookup(((PsiBuilderImpl.ProductionMarker) myPreBlockMarker).getStartIndex() - myBuilder.rawTokenIndex()) != DESCRIPTION) {
+      } else if (myBlockMarker.size() == 0 || (myPreBlockMarker != null && myBuilder.rawLookup(((PsiBuilderImpl.ProductionMarker) myPreBlockMarker).getStartIndex() - myBuilder.rawTokenIndex()) != DESCRIPTION)) {
         startBlockNoDelimiter();
       }
 

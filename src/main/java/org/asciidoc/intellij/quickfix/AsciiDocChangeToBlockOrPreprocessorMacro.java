@@ -39,7 +39,7 @@ public class AsciiDocChangeToBlockOrPreprocessorMacro implements LocalQuickFix {
         String blockMacro = macroId.getText() + ":";
         String newText = blockMacro + TextRange.create(macroId.getTextLength(), element.getTextLength()).substring(element.getText());
         PsiElement newElement = createMacro(project, newText);
-        inlineMacro.replace(newElement);
+        inlineMacro.getParent().replace(newElement);
       }
     }
   }

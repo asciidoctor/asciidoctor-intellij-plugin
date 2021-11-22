@@ -39,4 +39,5 @@ AsciiDocFile:autoClosingBlocksAtSections.adoc
       PsiElement(AsciiDoc:HEADING_TOKEN)('== Heading')
     PsiWhiteSpace('\n')
     PsiWhiteSpace('\n')
-    PsiElement(AsciiDoc:TEXT)('XX')
+    AsciiDocStandardBlock(AsciiDoc:BLOCK)
+      PsiElement(AsciiDoc:TEXT)('XX')

@@ -5,7 +5,7 @@
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="directory" />
-    <option name="VM_PARAMETERS" value="-ea -Didea.force.use.core.classloader=true -Didea.use.core.classloader.for.plugin.path=true" />
+    <option name="VM_PARAMETERS" value="-ea -Didea.force.use.core.classloader=true -Didea.use.core.classloader.for.plugin.path=true --add-exports java.base/jdk.internal.vm=ALL-UNNAMED" />
     <dir value="$PROJECT_DIR$/src/test/java" />
     <method v="2">
       <option name="Make" enabled="true" />
