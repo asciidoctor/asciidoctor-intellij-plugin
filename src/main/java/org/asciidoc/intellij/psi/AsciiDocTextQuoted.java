@@ -9,10 +9,11 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.asciidoc.intellij.braces.AsciiDocBraceMatcher;
-import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +21,9 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BOLD_START;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DOUBLEBOLD_START;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DOUBLEITALIC_START;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DOUBLEMONO_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START;
@@ -33,8 +37,11 @@ public class AsciiDocTextQuoted extends AsciiDocASTWrapperPsiElement {
   static {
     for (BracePair pair : new AsciiDocBraceMatcher().getPairs()) {
       if (pair.getLeftBraceType() == BOLD_START ||
+      pair.getLeftBraceType() == DOUBLEBOLD_START ||
       pair.getLeftBraceType() == MONO_START  ||
+      pair.getLeftBraceType() == DOUBLEMONO_START  ||
       pair.getLeftBraceType() == ITALIC_START ||
+      pair.getLeftBraceType() == DOUBLEITALIC_START ||
       pair.getLeftBraceType() == TYPOGRAPHIC_SINGLE_QUOTE_START ||
       pair.getLeftBraceType() == TYPOGRAPHIC_DOUBLE_QUOTE_START) {
         QUOTEPAIRS.put(pair.getLeftBraceType(), pair.getRightBraceType());
@@ -89,45 +96,44 @@ public class AsciiDocTextQuoted extends AsciiDocASTWrapperPsiElement {
     if (first == null || last == null) {
       return element.getTextRange();
     }
-    while (QUOTEPAIRS.get(first.getNode().getElementType()) == last.getNode().getElementType()
-     && first.getNode().getStartOffset() < last.getNode().getStartOffset()) {
-      first = first.getNextSibling();
-      last = last.getPrevSibling();
-    }
+    first = first.getNextSibling();
+    last = last.getPrevSibling();
     return new TextRange(first.getNode().getStartOffset(), last.getNode().getStartOffset() + last.getNode().getTextLength());
   }
 
   public boolean isItalic() {
     ASTNode node = getFirstChild().getNode();
-    while (node != null && ALLQUOTES.contains(node.getElementType())) {
-      if (node.getElementType() == AsciiDocTokenTypes.ITALIC_START) {
-        return true;
-      }
-      node = node.getTreeNext();
+    boolean result = node.getElementType() == ITALIC_START || node.getElementType() == DOUBLEITALIC_START;
+    AsciiDocTextQuoted parent = PsiTreeUtil.getParentOfType(this, AsciiDocTextQuoted.class);
+    if (parent != null) {
+      result = result ^ parent.isItalic();
     }
-    return false;
+    return result;
   }
 
   public boolean isMono() {
     ASTNode node = getFirstChild().getNode();
-    while (node != null && ALLQUOTES.contains(node.getElementType())) {
-      if (node.getElementType() == AsciiDocTokenTypes.MONO_START) {
-        return true;
-      }
-      node = node.getTreeNext();
+    boolean result = node.getElementType() == MONO_START || node.getElementType() == DOUBLEMONO_START;
+    AsciiDocTextQuoted parent = PsiTreeUtil.getParentOfType(this, AsciiDocTextQuoted.class);
+    if (parent != null) {
+      result = result ^ parent.isMono();
     }
-    return false;
+    return result;
   }
 
   public boolean isBold() {
     ASTNode node = getFirstChild().getNode();
-    while (node != null && ALLQUOTES.contains(node.getElementType())) {
-      if (node.getElementType() == BOLD_START) {
-        return true;
-      }
-      node = node.getTreeNext();
+    boolean result = node.getElementType() == BOLD_START || node.getElementType() == DOUBLEBOLD_START;
+    AsciiDocTextQuoted parent = PsiTreeUtil.getParentOfType(this, AsciiDocTextQuoted.class);
+    if (parent != null) {
+      result = result ^ parent.isBold();
     }
-    return false;
+    return result;
+  }
+
+  public boolean hasNestedQuotedText() {
+    AsciiDocTextQuoted @Nullable [] childrenOfType = PsiTreeUtil.getChildrenOfType(this, AsciiDocTextQuoted.class);
+    return childrenOfType != null && childrenOfType.length > 0;
   }
 
 }

@@ -214,19 +214,19 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
     if(yystate() == HEADING || yystate() == DOCTITLE) {
       return AsciiDocTokenTypes.HEADING_TOKEN;
     }
-    if((doublemono || singlemono) && (singlebold || doublebold) && (doubleitalic || singleitalic)) {
+    if((doublemono ^ singlemono) && (singlebold ^ doublebold) && (doubleitalic ^ singleitalic)) {
       return AsciiDocTokenTypes.MONOBOLDITALIC;
-    } else if((doublemono || singlemono) && (singlebold || doublebold)) {
+    } else if((doublemono ^ singlemono) && (singlebold ^ doublebold)) {
       return AsciiDocTokenTypes.MONOBOLD;
-    } else if((doublemono || singlemono) && (singleitalic || doubleitalic)) {
+    } else if((doublemono ^ singlemono) && (singleitalic ^ doubleitalic)) {
       return AsciiDocTokenTypes.MONOITALIC;
-    } else if(doublemono || singlemono) {
+    } else if(doublemono ^ singlemono) {
       return AsciiDocTokenTypes.MONO;
-    } else if((singlebold || doublebold) && (singleitalic || doubleitalic)) {
+    } else if((singlebold ^ doublebold) && (singleitalic ^ doubleitalic)) {
       return AsciiDocTokenTypes.BOLDITALIC;
-    } else if(singleitalic || doubleitalic) {
+    } else if(singleitalic ^ doubleitalic) {
       return AsciiDocTokenTypes.ITALIC;
-    } else if(singlebold || doublebold) {
+    } else if(singlebold ^ doublebold) {
       return AsciiDocTokenTypes.BOLD;
     } else {
       return AsciiDocTokenTypes.TEXT;
@@ -1285,14 +1285,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   // start something with ** only if it closes within the same block
   {DOUBLEBOLD} [^\*] ({STRINGNOASTERISK} | [^\*][\*][^\*])* {DOUBLEBOLD} {
                          yypushback(yylength() -2 );
-                         if(!singlebold) {
-                            doublebold = !doublebold; return doublebold ? AsciiDocTokenTypes.BOLD_START : AsciiDocTokenTypes.BOLD_END;
-                         } else {
-                            return textFormat();
-                         }
+                         doublebold = !doublebold; return doublebold ? AsciiDocTokenTypes.DOUBLEBOLD_START : AsciiDocTokenTypes.DOUBLEBOLD_END;
                        }
-  {DOUBLEBOLD}         { if(doublebold && !singlebold) {
-                           doublebold = false; return AsciiDocTokenTypes.BOLD_END;
+  {DOUBLEBOLD}         { if(doublebold) {
+                           doublebold = false; return AsciiDocTokenTypes.DOUBLEBOLD_END;
                          } else {
                            yypushback(1);
                            return textFormat();
@@ -1301,7 +1297,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {BOLD} {BOLD}? [^\*\n \t] ({WORDNOASTERISK} | [ \t][\*][^\*] | [\*][\p{Letter}\p{Digit}_])* {BOLD} {
                          if (doublebold && yytext().toString().startsWith("**")) {
                            yypushback(yylength() - 2);
-                           doublebold = false; return AsciiDocTokenTypes.BOLD_END;
+                           doublebold = false; return AsciiDocTokenTypes.DOUBLEBOLD_END;
                          } else {
                            yypushback(yylength() - 1);
                            if(isUnconstrainedStart() && !singlebold && !doublebold) {
@@ -1325,14 +1321,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   // start something with __ only if it closes within the same block
   {DOUBLEITALIC} [^\_] ({STRINGNOUNDERSCORE} | [^\_][\_][^\_])* {DOUBLEITALIC} {
                          yypushback(yylength() - 2);
-                         if(!singleitalic) {
-                            doubleitalic = !doubleitalic; return doubleitalic ? AsciiDocTokenTypes.ITALIC_START : AsciiDocTokenTypes.ITALIC_END;
-                         } else {
-                            return textFormat();
-                         }
+                         doubleitalic = !doubleitalic; return doubleitalic ? AsciiDocTokenTypes.DOUBLEITALIC_START : AsciiDocTokenTypes.DOUBLEITALIC_END;
                        }
   {DOUBLEITALIC}         { if(doubleitalic && !singleitalic) {
-                           doubleitalic = false; return AsciiDocTokenTypes.ITALIC_END;
+                           doubleitalic = false; return AsciiDocTokenTypes.DOUBLEITALIC_END;
                          } else {
                            yypushback(1);
                            return textFormat();
@@ -1341,7 +1333,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {ITALIC} {ITALIC}? [^\_\n \t] ({WORDNOUNDERSCORE} | [ \t][\_][^\_] | [\_][\p{Letter}\p{Digit}_])* {ITALIC} {
                          if (doubleitalic && yytext().toString().startsWith("__")) {
                            yypushback(yylength() - 2);
-                           doubleitalic = false; return AsciiDocTokenTypes.ITALIC_END;
+                           doubleitalic = false; return AsciiDocTokenTypes.DOUBLEITALIC_END;
                          } else {
                            yypushback(yylength() - 1);
                            if(isUnconstrainedStart() && !singleitalic && !doubleitalic) {
@@ -1365,14 +1357,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   // start something with ** only if it closes within the same block
   {DOUBLEMONO} [^\`] ({STRINGNOBACKTICK} | [^\`][\`][^\`])* {DOUBLEMONO} {
                          yypushback(yylength() - 2);
-                         if(!singlemono) {
-                            doublemono = !doublemono; return doublemono ? AsciiDocTokenTypes.MONO_START : AsciiDocTokenTypes.MONO_END;
-                         } else {
-                            return textFormat();
-                         }
+                         doublemono = !doublemono; return doublemono ? AsciiDocTokenTypes.DOUBLEMONO_START : AsciiDocTokenTypes.DOUBLEMONO_END;
                        }
   {DOUBLEMONO}         { if(doublemono && !singlemono) {
-                           doublemono = false; return AsciiDocTokenTypes.MONO_END;
+                           doublemono = false; return AsciiDocTokenTypes.DOUBLEMONO_END;
                          } else {
                            yypushback(1);
                            return textFormat();

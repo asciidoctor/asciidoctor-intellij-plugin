@@ -470,38 +470,27 @@ public class AsciiDocParserImpl {
 
   private void parseQuoted(Set<IElementType> tokensToStop) {
     PsiBuilder.Marker quoteMarker = myBuilder.mark();
-    Set<IElementType> myEndQuotes = new HashSet<>();
-    for (IElementType quote = myBuilder.getTokenType(); emptyLines == 0; quote = myBuilder.getTokenType()) {
-      IElementType endQuote = QUOTEPAIRS.get(quote);
-      if (endQuote != null) {
-        myEndQuotes.add(endQuote);
-        next();
-      } else {
-        break;
-      }
-    }
-    if (myEndQuotes.size() == 0) {
+    IElementType quote = myBuilder.getTokenType();
+    IElementType endQuote = QUOTEPAIRS.get(quote);
+    if (endQuote == null) {
       quoteMarker.drop();
       return;
     }
+    next();
     while ((at(MONO) || at(BOLD) || at(TEXT) || at(MONOITALIC) || at(MONOBOLDITALIC) || at(MONOBOLD) ||
       at(ITALIC) || at(BOLDITALIC) || ALLQUOTES.contains(myBuilder.getTokenType()) ||
       at(ATTRIBUTE_REF_START) || at(INLINE_MACRO_ID))
       && emptyLines == 0) {
-      if (tokensToStop.contains(myBuilder.getTokenType())) {
-        break;
-      }
-      if (myEndQuotes.contains(myBuilder.getTokenType())) {
-        myEndQuotes.remove(myBuilder.getTokenType());
+      if (at(endQuote)) {
         next();
-        if (myEndQuotes.size() == 0) {
-          quoteMarker.done(AsciiDocElementTypes.QUOTED);
-          quoteMarker = null;
-          break;
-        }
+        quoteMarker.done(AsciiDocElementTypes.QUOTED);
+        quoteMarker = null;
+        break;
+      } else if (tokensToStop.contains(myBuilder.getTokenType())) {
+        break;
       } else if (QUOTEPAIRS.get(myBuilder.getTokenType()) != null) {
         HashSet<IElementType> childSetToStop = new HashSet<>(tokensToStop);
-        childSetToStop.addAll(myEndQuotes);
+        childSetToStop.add(endQuote);
         parseQuoted(childSetToStop);
       } else if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();

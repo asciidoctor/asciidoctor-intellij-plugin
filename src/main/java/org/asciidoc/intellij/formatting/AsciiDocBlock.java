@@ -380,8 +380,14 @@ class AsciiDocBlock extends AbstractBlock {
   }
 
   private static final TokenSet TEXT_SET = TokenSet.create(AsciiDocTokenTypes.TEXT, AsciiDocTokenTypes.BOLD, AsciiDocTokenTypes.BOLDITALIC,
-    AsciiDocTokenTypes.ITALIC, AsciiDocTokenTypes.DOUBLE_QUOTE, AsciiDocTokenTypes.SINGLE_QUOTE, AsciiDocTokenTypes.BOLD_START,
-    AsciiDocTokenTypes.BOLD_END, AsciiDocTokenTypes.ITALIC_START, AsciiDocTokenTypes.ITALIC_END, AsciiDocTokenTypes.LT,
+    AsciiDocTokenTypes.ITALIC, AsciiDocTokenTypes.DOUBLE_QUOTE, AsciiDocTokenTypes.SINGLE_QUOTE,
+    AsciiDocTokenTypes.BOLD_START, AsciiDocTokenTypes.BOLD_END,
+    AsciiDocTokenTypes.DOUBLEBOLD_START, AsciiDocTokenTypes.DOUBLEBOLD_END,
+    AsciiDocTokenTypes.ITALIC_START, AsciiDocTokenTypes.ITALIC_END,
+    AsciiDocTokenTypes.DOUBLEITALIC_START, AsciiDocTokenTypes.DOUBLEITALIC_END,
+    AsciiDocTokenTypes.MONO_START, AsciiDocTokenTypes.MONO_END,
+    AsciiDocTokenTypes.DOUBLEMONO_START, AsciiDocTokenTypes.DOUBLEMONO_END,
+    AsciiDocTokenTypes.LT,
     AsciiDocTokenTypes.GT, AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END, AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START,
     AsciiDocTokenTypes.LPAREN, AsciiDocTokenTypes.RPAREN,
     AsciiDocTokenTypes.MACROTEXT, AsciiDocTokenTypes.ATTR_NAME,

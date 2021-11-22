@@ -39,7 +39,9 @@ public class AsciiDocJavaReferenceContributor extends PsiReferenceContributor {
 
   private List<PsiReference> findReferencesElement(AsciiDocTextQuoted element) {
     ArrayList<PsiReference> references = new ArrayList<>();
-    references.add(new AsciiDocJavaReference(element, AsciiDocTextQuoted.getBodyRange(element).shiftLeft(element.getStartOffsetInParent())));
+    if (!element.hasNestedQuotedText()) {
+      references.add(new AsciiDocJavaReference(element, AsciiDocTextQuoted.getBodyRange(element).shiftLeft(element.getTextOffset())));
+    }
     return references;
   }
 

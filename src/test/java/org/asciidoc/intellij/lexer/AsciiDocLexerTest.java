@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
  * @author yole
  * @author Alexander Schwartz (alexander.schwartz@gmx.net)
  */
-@SuppressWarnings({"AsciiDocHeadingStyle", "AsciiDocLinkResolve", "AsciiDocAttributeContinuation", "AsciiDocReferenceResolve", "AsciiDocHorizontalRule", "AsciiDocXrefWithNaturalCrossReference"})
+@SuppressWarnings({"AsciiDocHeadingStyle", "AsciiDocLinkResolve", "AsciiDocAttributeContinuation", "AsciiDocReferenceResolve", "AsciiDocHorizontalRule", "AsciiDocXrefWithNaturalCrossReference", "AsciiDocAttributeShouldBeDefined"})
 public class AsciiDocLexerTest extends LexerTestCase {
   public void testSimple() {
     doTest("abc\ndef",
@@ -929,36 +929,36 @@ public class AsciiDocLexerTest extends LexerTestCase {
     doTest("Hello **bold** world",
       "AsciiDoc:TEXT ('Hello')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:BOLD_START ('**')\n" +
+        "AsciiDoc:DOUBLEBOLD_START ('**')\n" +
         "AsciiDoc:BOLD ('bold')\n" +
-        "AsciiDoc:BOLD_END ('**')\n" +
+        "AsciiDoc:DOUBLEBOLD_END ('**')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('world')");
   }
 
   public void testBoldDoubleMultiple() {
     doTest("**E**quivalent **M**odulo",
-      "AsciiDoc:BOLD_START ('**')\n" +
+      "AsciiDoc:DOUBLEBOLD_START ('**')\n" +
         "AsciiDoc:BOLD ('E')\n" +
-        "AsciiDoc:BOLD_END ('**')\n" +
+        "AsciiDoc:DOUBLEBOLD_END ('**')\n" +
         "AsciiDoc:TEXT ('quivalent')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:BOLD_START ('**')\n" +
+        "AsciiDoc:DOUBLEBOLD_START ('**')\n" +
         "AsciiDoc:BOLD ('M')\n" +
-        "AsciiDoc:BOLD_END ('**')\n" +
+        "AsciiDoc:DOUBLEBOLD_END ('**')\n" +
         "AsciiDoc:TEXT ('odulo')");
   }
 
   public void testItalicDoubleMultiple() {
     doTest("__E__quivalent __M__odulo",
-      "AsciiDoc:ITALIC_START ('__')\n" +
+      "AsciiDoc:DOUBLEITALIC_START ('__')\n" +
         "AsciiDoc:ITALIC ('E')\n" +
-        "AsciiDoc:ITALIC_END ('__')\n" +
+        "AsciiDoc:DOUBLEITALIC_END ('__')\n" +
         "AsciiDoc:TEXT ('quivalent')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:ITALIC_START ('__')\n" +
+        "AsciiDoc:DOUBLEITALIC_START ('__')\n" +
         "AsciiDoc:ITALIC ('M')\n" +
-        "AsciiDoc:ITALIC_END ('__')\n" +
+        "AsciiDoc:DOUBLEITALIC_END ('__')\n" +
         "AsciiDoc:TEXT ('odulo')");
   }
 
@@ -1020,9 +1020,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('&')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:BOLD_START ('**')\n" +
+        "AsciiDoc:DOUBLEBOLD_START ('**')\n" +
         "AsciiDoc:BOLD ('un')\n" +
-        "AsciiDoc:BOLD_END ('**')\n" +
+        "AsciiDoc:DOUBLEBOLD_END ('**')\n" +
         "AsciiDoc:TEXT ('constrained')");
   }
 
@@ -1052,9 +1052,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('&')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:ITALIC_START ('__')\n" +
+        "AsciiDoc:DOUBLEITALIC_START ('__')\n" +
         "AsciiDoc:ITALIC ('un')\n" +
-        "AsciiDoc:ITALIC_END ('__')\n" +
+        "AsciiDoc:DOUBLEITALIC_END ('__')\n" +
         "AsciiDoc:TEXT ('constrained')");
   }
 
@@ -1068,21 +1068,21 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('&')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:MONO_START ('``')\n" +
+        "AsciiDoc:DOUBLEMONO_START ('``')\n" +
         "AsciiDoc:MONO ('un')\n" +
-        "AsciiDoc:MONO_END ('``')\n" +
+        "AsciiDoc:DOUBLEMONO_END ('``')\n" +
         "AsciiDoc:TEXT ('constrained')");
   }
 
   public void testMonoItalicBold() {
     doTest("``**__un__**``constrained",
-      "AsciiDoc:MONO_START ('``')\n" +
-        "AsciiDoc:BOLD_START ('**')\n" +
-        "AsciiDoc:ITALIC_START ('__')\n" +
+      "AsciiDoc:DOUBLEMONO_START ('``')\n" +
+        "AsciiDoc:DOUBLEBOLD_START ('**')\n" +
+        "AsciiDoc:DOUBLEITALIC_START ('__')\n" +
         "AsciiDoc:MONOBOLDITALIC ('un')\n" +
-        "AsciiDoc:ITALIC_END ('__')\n" +
-        "AsciiDoc:BOLD_END ('**')\n" +
-        "AsciiDoc:MONO_END ('``')\n" +
+        "AsciiDoc:DOUBLEITALIC_END ('__')\n" +
+        "AsciiDoc:DOUBLEBOLD_END ('**')\n" +
+        "AsciiDoc:DOUBLEMONO_END ('``')\n" +
         "AsciiDoc:TEXT ('constrained')");
   }
 
@@ -1099,9 +1099,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
   public void testBoldAtBeginningAndEndOfLineDouble() {
     doTest("**bold**",
-      "AsciiDoc:BOLD_START ('**')\n" +
+      "AsciiDoc:DOUBLEBOLD_START ('**')\n" +
         "AsciiDoc:BOLD ('bold')\n" +
-        "AsciiDoc:BOLD_END ('**')");
+        "AsciiDoc:DOUBLEBOLD_END ('**')");
   }
 
   public void testNonMatchingBoldHead() {
@@ -1136,9 +1136,9 @@ public class AsciiDocLexerTest extends LexerTestCase {
   public void testSpecialUnderscore() {
     doTest("x__*italiconly*__x",
       "AsciiDoc:TEXT ('x')\n" +
-        "AsciiDoc:ITALIC_START ('__')\n" +
+        "AsciiDoc:DOUBLEITALIC_START ('__')\n" +
         "AsciiDoc:ITALIC ('*italiconly*')\n" +
-        "AsciiDoc:ITALIC_END ('__')\n" +
+        "AsciiDoc:DOUBLEITALIC_END ('__')\n" +
         "AsciiDoc:TEXT ('x')");
   }
 

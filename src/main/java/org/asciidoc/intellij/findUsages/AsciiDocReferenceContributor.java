@@ -141,7 +141,9 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
 
   private List<PsiReference> findFilesInProject(AsciiDocTextQuoted element) {
     ArrayList<PsiReference> references = new ArrayList<>();
-    references.add(new AsciiDocSimpleFileReference(element, AsciiDocTextQuoted.getBodyRange(element).shiftLeft(element.getNode().getStartOffset())));
+    if (!element.hasNestedQuotedText()) {
+      references.add(new AsciiDocSimpleFileReference(element, AsciiDocTextQuoted.getBodyRange(element).shiftLeft(element.getNode().getStartOffset())));
+    }
     return references;
   }
 

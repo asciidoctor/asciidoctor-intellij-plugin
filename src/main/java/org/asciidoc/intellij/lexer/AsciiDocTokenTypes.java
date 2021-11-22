@@ -54,11 +54,17 @@ public interface AsciiDocTokenTypes {
   IElementType INLINE_ATTRS_END = new AsciiDocElementType("INLINE_ATTRS_END");
   IElementType BOLD_START = new AsciiDocElementType("BOLD_START");
   IElementType BOLD_END = new AsciiDocElementType("BOLD_END");
+  IElementType DOUBLEBOLD_START = new AsciiDocElementType("DOUBLEBOLD_START");
+  IElementType DOUBLEBOLD_END = new AsciiDocElementType("DOUBLEBOLD_END");
   IElementType BOLD = new AsciiDocElementType("BOLD");
   IElementType ITALIC_START = new AsciiDocElementType("ITALIC_START");
   IElementType ITALIC_END = new AsciiDocElementType("ITALIC_END");
+  IElementType DOUBLEITALIC_START = new AsciiDocElementType("DOUBLEITALIC_START");
+  IElementType DOUBLEITALIC_END = new AsciiDocElementType("DOUBLEITALIC_END");
   IElementType MONO_START = new AsciiDocElementType("MONO_START");
   IElementType MONO_END = new AsciiDocElementType("MONO_END");
+  IElementType DOUBLEMONO_START = new AsciiDocElementType("DOUBLEMONO_START");
+  IElementType DOUBLEMONO_END = new AsciiDocElementType("DOUBLEMONO_END");
   IElementType ITALIC = new AsciiDocElementType("ITALIC");
   IElementType BOLDITALIC = new AsciiDocElementType("BOLDITALIC");
   IElementType MONO = new AsciiDocElementType("MONO");
@@ -119,7 +125,7 @@ public interface AsciiDocTokenTypes {
 
   TokenSet TOKENS_TO_MERGE = TokenSet.create(TEXT, LISTING_TEXT, HEADING_TOKEN, TITLE_TOKEN, BLOCK_COMMENT,
     ATTR_NAME, BLOCK_MACRO_BODY, BLOCK_MACRO_ATTRIBUTES, INLINE_MACRO_BODY, INLINE_MACRO_ATTRIBUTES, PASSTRHOUGH_CONTENT,
-      BOLD_START, BOLD_END, BOLD, ITALIC, ITALIC_END, ITALIC_START, BOLDITALIC, LINE_COMMENT,
+      BOLD, ITALIC, BOLDITALIC, LINE_COMMENT,
       MONO, MONOBOLD, MONOBOLDITALIC, REF, BLOCKID, BLOCKREFTEXT, REFTEXT, WHITE_SPACE, WHITE_SPACE_MONO, MACROTEXT,
       LINKFILE, LINKANCHOR, ATTRIBUTE_NAME, ATTRIBUTE_VAL, ATTRIBUTE_REF, LITERAL_BLOCK, URL_LINK, URL_EMAIL, HEADER, DESCRIPTION, ATTR_VALUE,
       FRONTMATTER);
