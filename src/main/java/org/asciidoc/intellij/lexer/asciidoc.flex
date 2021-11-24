@@ -1662,6 +1662,12 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {MACROTEXT_START} / [^\n\]]* "=" [^\n\]]* {MACROTEXT_END} { yybegin(INLINE_MACRO); yypushback(yylength()); }
   {MACROTEXT_START}    { yybegin(INLINE_MACRO_TEXT); yypushback(yylength()); }
   [\s\[\]]             { yypushback(yylength()); yypopstate(); }
+  {TYPOGRAPHIC_DOUBLE_QUOTE_END} { if (typographicquote) { yypushback(yylength()); yypopstate(); }
+                         else { yypushback(yylength()-1); return AsciiDocTokenTypes.URL_LINK; }
+                       }
+  {TYPOGRAPHIC_SINGLE_QUOTE_END} { if (typographicquote) { yypushback(yylength()); yypopstate(); }
+                         else { yypushback(yylength()-1); return AsciiDocTokenTypes.URL_LINK; }
+                       }
   [^]                  { return AsciiDocTokenTypes.URL_LINK; }
 }
 

@@ -488,7 +488,9 @@ public class AsciiDocParserImpl {
     next();
     while ((at(MONO) || at(BOLD) || at(TEXT) || at(MONOITALIC) || at(MONOBOLDITALIC) || at(MONOBOLD) ||
       at(ITALIC) || at(BOLDITALIC) || ALLQUOTES.contains(myBuilder.getTokenType()) ||
-      at(ATTRIBUTE_REF_START) || at(INLINE_MACRO_ID))
+      at(ATTRIBUTE_REF_START) || at(INLINE_MACRO_ID) ||
+      at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX) ||
+      at(INLINEIDSTART) || at(REFSTART) || at(BIBSTART) || at(LINKSTART))
       && emptyLines == 0) {
       if (at(endQuote)) {
         next();
@@ -505,6 +507,17 @@ public class AsciiDocParserImpl {
         parseAttributeReference();
       } else if (at(INLINE_MACRO_ID)) {
         parseInlineMacro();
+      } else if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
+        parseUrl();
+      } else if (at(INLINEIDSTART)) {
+        markPreBlock();
+        parseInlineId();
+      } else if (at(REFSTART)) {
+        parseRef();
+      } else if (at(BIBSTART)) {
+        parseBib();
+      } else if (at(LINKSTART)) {
+        parseLink();
       } else {
         next();
       }

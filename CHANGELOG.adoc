@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.36.2
 
 - support folding of regular paragraphs (#426)
+- allowing more contents to be quoted when creating PSI (#920)
 
 === 0.36.1
 
