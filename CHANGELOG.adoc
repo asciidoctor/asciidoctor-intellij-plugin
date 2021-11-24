@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - support folding of regular paragraphs (#426)
 - allowing more contents to be quoted when creating PSI (#920)
+- don't lose track when using source blocks inside table cells (#923)
 
 === 0.36.1
 

@@ -24,6 +24,8 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
   private static final char[] NUMBERS = "1234567890".toCharArray();
   private static final char[] SPACES = " \t".toCharArray();
   private static final char[] COLONSLASH = ":/".toCharArray();
+  private static final char[] PLUS = "+".toCharArray();
+  private static final char[] PIPE = "|".toCharArray();
   private int blockDelimiterLength;
   private boolean singlebold = false;
   private boolean doublebold = false;
@@ -262,7 +264,7 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
   }
 
   private void yyinitialIfNotInBlock() {
-    if (blockStack.size() == 0 && style == null) {
+    if (blockStack.size() == 0 && style == null && tableChar == 0) {
       yybegin(YYINITIAL);
     } else {
       yybegin(PREBLOCK);
@@ -451,8 +453,21 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 // IntelliJ might do partial parsing from any YYINITIAL inside a document
 // therefore only return here is no other state (i.e. bold) needs to be preserved
 <YYINITIAL> {
+  {SPACE}+ { // eat spaces after a cell has started
+        clearStyle(); resetFormatting(); blockStack.clear(); stateStack.clear();
+        yybegin(MULTILINE);
+        if (isPrefixedBy(PIPE)) {
+          tableChar = '|';
+          zzEndReadL = limitLookahead(zzCurrentPosL);
+          return AsciiDocTokenTypes.WHITE_SPACE;
+        } else {
+          tableChar = 0;
+          zzEndReadL = limitLookahead(zzCurrentPosL);
+          yypushback(yylength());
+        }
+      }
   [^]                  {
-        if (isPrefixedBy("|".toCharArray())) {
+        if (isPrefixedBy(PIPE)) {
           tableChar = '|';
           zzEndReadL = limitLookahead(zzCurrentPosL);
         } else {
@@ -698,7 +713,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         return AsciiDocTokenTypes.EMPTY_LINE;
       }
   {SPACE}* "\n"           { if (isNoDel()) { blockStack.pop(); } resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; } // blank lines within pre block don't have an effect
-  ^ {TITLE_START} {CELLPREFIX} "|"  {
+  {TITLE_START} {CELLPREFIX} "|"  {
                          if (yycharat(yylength() - 1) == tableChar && !isEscaped()) {
                            // we're inside a table, stop here and continue in SINGLELINE to do cell logic
                            yypushback(yylength());
@@ -709,7 +724,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE_TOKEN;
                          }
                        }
-  ^ {TITLE_START} / [^ \t] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE_TOKEN; }
+  {TITLE_START} / [^ \t] { resetFormatting(); yybegin(TITLE); return AsciiDocTokenTypes.TITLE_TOKEN; }
 }
 
 <HEADER, PREBLOCK> {
@@ -2151,7 +2166,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <PASSTRHOUGH_INLINE_UNCONSTRAINED> {
-  "+" { if (isUnconstrainedEnd() && !isPrefixedBy("+".toCharArray())) { yypopstate(); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END; }
+  "+" { if (isUnconstrainedEnd() && !isPrefixedBy(PLUS)) { yypopstate(); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END; }
         return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
   [^]  { return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
 }

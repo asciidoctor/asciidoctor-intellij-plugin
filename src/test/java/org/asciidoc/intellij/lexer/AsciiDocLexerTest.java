@@ -33,10 +33,10 @@ public class AsciiDocLexerTest extends LexerTestCase {
   public void testLineCommentAfterEnumeration() {
     doTest("* item\n// comment",
       "AsciiDoc:BULLET ('*')\n" +
-      "AsciiDoc:WHITE_SPACE (' ')\n" +
-      "AsciiDoc:TEXT ('item')\n" +
-      "AsciiDoc:LINE_BREAK ('\\n')\n" +
-      "AsciiDoc:LINE_COMMENT ('// comment')");
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('item')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LINE_COMMENT ('// comment')");
   }
 
   public void testLineCommentWithCellCharacterInTable() {
@@ -192,17 +192,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
   public void testIncludeWithTagsQuotedWithBlank() {
     doTest("include::file.adoc[tags=\"tag1; tag2\"]",
       "AsciiDoc:BLOCK_MACRO_ID ('include::')\n" +
-      "AsciiDoc:BLOCK_MACRO_BODY ('file.adoc')\n" +
-      "AsciiDoc:ATTRS_START ('[')\n" +
-      "AsciiDoc:ATTR_NAME ('tags')\n" +
-      "AsciiDoc:ASSIGNMENT ('=')\n" +
-      "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +
-      "AsciiDoc:ATTR_VALUE ('tag1')\n" +
-      "AsciiDoc:ATTR_LIST_SEP (';')\n" +
-      "AsciiDoc:WHITE_SPACE (' ')\n" +
-      "AsciiDoc:ATTR_VALUE ('tag2')\n" +
-      "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +
-      "AsciiDoc:ATTRS_END (']')");
+        "AsciiDoc:BLOCK_MACRO_BODY ('file.adoc')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('tags')\n" +
+        "AsciiDoc:ASSIGNMENT ('=')\n" +
+        "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +
+        "AsciiDoc:ATTR_VALUE ('tag1')\n" +
+        "AsciiDoc:ATTR_LIST_SEP (';')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:ATTR_VALUE ('tag2')\n" +
+        "AsciiDoc:DOUBLE_QUOTE ('\"')\n" +
+        "AsciiDoc:ATTRS_END (']')");
   }
 
   public void testIncludeWithNegatedTag() {
@@ -323,6 +323,40 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('1')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:BLOCK_DELIMITER ('|====')");
+  }
+
+  public void testCellWithTitle() {
+    doTest("|===\n" +
+        "a| .Title\n" +
+        "|===",
+      "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CELLSEPARATOR ('a|')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TITLE_TOKEN ('.')\n" +
+        "AsciiDoc:TEXT ('Title')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('|===')");
+  }
+
+  public void testCellWithBlock() {
+    doTest("|===\n" +
+        "a|\n" +
+        ".Title\n" +
+        "| Cell\n" +
+        "|===",
+      "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CELLSEPARATOR ('a|')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TITLE_TOKEN ('.')\n" +
+        "AsciiDoc:TEXT ('Title')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Cell')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('|===')");
   }
 
   public void testTableCellWithLeadingBlanks() {
