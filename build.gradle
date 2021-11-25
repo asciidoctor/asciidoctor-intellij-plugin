@@ -50,7 +50,9 @@ intellij {
     'com.google.ide-perf:1.2.0', // performance tracing
     // see https://github.com/google/ide-perf/blob/master/docs/user-guide.md
     'java', // used to integrate into the build via AsciiDocTargetScopeProvider
-    'yaml' // used to inject file references to Antora YAML files
+    'yaml', // used to inject file references to Antora YAML files
+    'com.jetbrains.performancePlugin:213.5744.122' // used run YourKit CPU profiling in test IDE
+    // see https://intellij-support.jetbrains.com/hc/en-us/articles/207241235
   ]
 }
 
