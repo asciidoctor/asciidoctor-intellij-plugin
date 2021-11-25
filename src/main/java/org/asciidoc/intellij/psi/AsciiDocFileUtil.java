@@ -1,7 +1,13 @@
 package org.asciidoc.intellij.psi;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.UserDataHolderEx;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,12 +15,23 @@ import java.util.Collections;
 import java.util.List;
 
 public class AsciiDocFileUtil {
+  public static final Key<CachedValue<ProjectSectionCache>> KEY_ASCIIDOC_SECTIONS_IN_PROJECT = new Key<>("asciidoc-sections-in-project");
+
+  public static ProjectSectionCache getProjectSectionCache(Project project) {
+    CachedValue<ProjectSectionCache> cache = CachedValuesManager.getManager(project).createCachedValue(
+      () -> CachedValueProvider.Result.create(new ProjectSectionCache(), PsiModificationTracker.MODIFICATION_COUNT));
+    return ((UserDataHolderEx) project).putUserDataIfAbsent(KEY_ASCIIDOC_SECTIONS_IN_PROJECT, cache).getValue();
+  }
 
   public static List<AsciiDocSection> findSections(Project project, String key) {
     if (key.length() == 0) {
       return Collections.emptyList();
     }
-    List<AsciiDocSection> result = null;
+    ProjectSectionCache cache = getProjectSectionCache(project);
+    List<AsciiDocSection> result = cache.get(key);
+    if (result != null) {
+      return result;
+    }
     final GlobalSearchScope scope = new AsciiDocSearchScope(project).restrictedByAsciiDocFileType();
     Collection<AsciiDocSection> asciiDocSections = new ArrayList<>();
     asciiDocSections.addAll(AsciiDocSectionKeyIndex.getInstance().get(key, project, scope));
@@ -27,7 +44,12 @@ public class AsciiDocFileUtil {
         result.add(asciiDocSection);
       }
     }
-    return result != null ? result : Collections.emptyList();
+    if (result == null) {
+      result = Collections.emptyList();
+    }
+    result = Collections.unmodifiableList(result);
+    cache.put(key, result);
+    return result;
   }
 
   public static List<AsciiDocSection> findSections(Project project) {

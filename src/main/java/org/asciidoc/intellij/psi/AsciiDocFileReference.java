@@ -35,6 +35,7 @@ import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.CheckReturnValue;
 import javax.swing.*;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
@@ -220,7 +221,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           }
         }
       }
-      resolve(base + key, results, 0);
+      resolve(base + key, results, 0, new HashSet<>());
     }
     return results.toArray(new ResolveResult[0]);
   }
@@ -231,7 +232,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     if (base.equals("#") || base.length() == 0) {
       fileResult.add(new PsiElementResolveResult(myElement.getContainingFile()));
     } else {
-      resolve(base.substring(0, base.length() - 1), fileResult, 0);
+      resolve(base.substring(0, base.length() - 1), fileResult, 0, new HashSet<>());
     }
     Set<LookupElementBuilder> items = new HashSet<>();
     for (ResolveResult resolveResult : fileResult) {
@@ -422,7 +423,11 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return Collections.singletonList(key);
   }
 
-  private void resolve(String key, List<ResolveResult> results, int depth) {
+  private void resolve(String key, List<ResolveResult> results, int depth, Collection<String> searchedKeys) {
+    if (searchedKeys.contains(key)) {
+      return;
+    }
+    searchedKeys.add(key);
     List<String> keys = Collections.singletonList(key);
     if (ANTORA_SUPPORTED.contains(macroName)) {
       if (depth == 0) {
@@ -456,9 +461,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     }
     for (String k : keys) {
       int c = results.size();
-      resolveAttributes(k, results, depth);
+      resolveAttributes(k, results, depth, searchedKeys);
       if (results.size() == c && ("image".equals(macroName) || "video".equals(macroName)) && k.equals(key) && depth == 0) {
-        resolveAttributes("{imagesdir}/" + k, results, depth);
+        resolveAttributes("{imagesdir}/" + k, results, depth, searchedKeys);
       }
     }
     resolveAntoraPageAlias(key, results, depth);
@@ -471,7 +476,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       if (antoraModuleDir != null) {
         List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), "page-aliases", myElement);
         Collection<AttributeDeclaration> myAttributes = AsciiDocUtil.collectAntoraAttributes(myElement);
-        parseAntoraPrefix(key, myAttributes);
+        myAttributes = parseAntoraPrefix(key, myAttributes);
         String pageComponentName = AsciiDocUtil.findAttribute("page-component-name", myAttributes);
         String pageComponentVersion = AsciiDocUtil.findAttribute("page-component-version", myAttributes);
         String pageModule = AsciiDocUtil.findAttribute("page-module", myAttributes);
@@ -495,7 +500,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             if (!shortElement.contains(shortKey)) {
               continue;
             }
-            parseAntoraPrefix(element.trim(), elementAttributes);
+            elementAttributes = parseAntoraPrefix(element.trim(), elementAttributes);
             if (!Objects.equals(pageComponentName, AsciiDocUtil.findAttribute("page-component-name", elementAttributes))) {
               continue;
             }
@@ -523,7 +528,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return shortKey;
   }
 
-  public static void parseAntoraPrefix(String element, Collection<AttributeDeclaration> elementAttributes) {
+  @CheckReturnValue
+  public static Collection<AttributeDeclaration> parseAntoraPrefix(String element, Collection<AttributeDeclaration> elementAttributes) {
+    // avoid modifying the collection
+    elementAttributes = new ArrayList<>(elementAttributes);
     Matcher matcher = AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(element);
     if (matcher.find()) {
       Matcher version = AsciiDocUtil.VERSION.matcher(element);
@@ -561,9 +569,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         }
       }
     }
+    return elementAttributes;
   }
 
-  private void resolveAttributes(String key, List<ResolveResult> results, int depth) {
+  private void resolveAttributes(String key, List<ResolveResult> results, int depth, Collection<String> searchedKeys) {
     Matcher matcher = ATTRIBUTES.matcher(key);
     if (matcher.find()) {
       int start = 0;
@@ -585,7 +594,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           }
           searched.add(value);
           String newKey = new StringBuilder(key).replace(matcher.start(), matcher.end(), value).toString();
-          resolve(newKey, results, depth + 1);
+          resolve(newKey, results, depth + 1, searchedKeys);
         }
         if (results.size() > 0) {
           return;
@@ -772,9 +781,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     List<ResolveResult> results = new ArrayList<>();
     if (!macroName.equals("antora-nav") && !macroName.equals("antora-startpage")) {
       if (base.endsWith("/") || base.length() == 0) {
-        resolve(base + "..", results, 0);
+        resolve(base + "..", results, 0, new HashSet<>());
       } else {
-        resolve(base + "/..", results, 0);
+        resolve(base + "/..", results, 0, new HashSet<>());
       }
     }
     for (ResolveResult result : results) {
@@ -815,7 +824,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           continue;
         }
         searched.add(key);
-        resolve(val + decl.getAttributeValue(), res, 0);
+        resolve(val + decl.getAttributeValue(), res, 0, new HashSet<>());
         for (ResolveResult result : res) {
           if (result.getElement() == null) {
             continue;
@@ -886,7 +895,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     if (base.length() > 1) {
       // if a file has been specified, show anchors from that file
       List<ResolveResult> fileResult = new ArrayList<>();
-      resolve(base.substring(0, base.length() - 1), fileResult, 0);
+      resolve(base.substring(0, base.length() - 1), fileResult, 0, new HashSet<>());
       for (ResolveResult resolveResult : fileResult) {
         PsiElement element = resolveResult.getElement();
         if (element instanceof AsciiDocFile) {
@@ -1124,6 +1133,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   private PsiElement resolveAbsolutePath(PsiElement element, String fileName) {
     // check if file name is absolute path
+    if (!fileName.contains("/") && !fileName.contains("\\")) {
+      return null;
+    }
     VirtualFile fileByPath;
     try {
       if (element.getContainingFile().getVirtualFile() != null &&

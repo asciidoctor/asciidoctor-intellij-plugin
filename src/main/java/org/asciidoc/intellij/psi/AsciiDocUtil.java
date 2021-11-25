@@ -101,12 +101,24 @@ public class AsciiDocUtil {
   public static final Key<CachedValue<Collection<AsciiDocSection>>> KEY_ASCIIDOC_SECTIONS_IN_FILE = new Key<>("asciidoc-blockids-in-file");
   public static final Key<CachedValue<Collection<AsciiDocBlockId>>> KEY_ASCIIDOC_BLOCKIDS_IN_FILE = new Key<>("asciidoc-sections-in-file");
   public static final Key<CachedValue<Collection<AsciiDocBlockMacro>>> KEY_ASCIIDOC_BLOCKMACROS_IN_FILE = new Key<>("asciidoc-blockmacros-in-file");
+  public static final Key<CachedValue<ProjectBlockidCache>> KEY_ASCIIDOC_BLOCKIDS_IN_PROJECT = new Key<>("asciidoc-blockids-in-project");
+
+  public static ProjectBlockidCache getProjectBlockidCache(Project project) {
+    CachedValue<ProjectBlockidCache> cache = CachedValuesManager.getManager(project).createCachedValue(
+      () -> CachedValueProvider.Result.create(new ProjectBlockidCache(), PsiModificationTracker.MODIFICATION_COUNT));
+    return ((UserDataHolderEx) project).putUserDataIfAbsent(KEY_ASCIIDOC_BLOCKIDS_IN_PROJECT, cache).getValue();
+  }
 
   static List<AsciiDocBlockId> findIds(Project project, String key) {
     if (key.length() == 0) {
       return Collections.emptyList();
     }
-    List<AsciiDocBlockId> result = null;
+    ProjectBlockidCache cache = getProjectBlockidCache(project);
+    List<AsciiDocBlockId> result = cache.get(key);
+    if (result != null) {
+      return result;
+    }
+
     final GlobalSearchScope scope = new AsciiDocSearchScope(project).restrictedByAsciiDocFileType();
     Collection<AsciiDocBlockId> asciiDocBlockIds = AsciiDocBlockIdKeyIndex.getInstance().get(key, project, scope);
     for (AsciiDocBlockId asciiDocBlockId : asciiDocBlockIds) {
@@ -123,7 +135,12 @@ public class AsciiDocUtil {
         result = collectBlockId(result, asciiDocBlockId);
       }
     }
-    return result != null ? result : Collections.emptyList();
+    if (result == null) {
+      result = Collections.emptyList();
+    }
+    result = Collections.unmodifiableList(result);
+    cache.put(key, result);
+    return result;
   }
 
   @NotNull
@@ -372,7 +389,7 @@ public class AsciiDocUtil {
     if (result == null) {
       result = Collections.emptyList();
     }
-
+    result = Collections.unmodifiableList(result);
     projectAttributeCache.put(key, onlyAntora, result);
     return result;
   }
@@ -527,6 +544,7 @@ public class AsciiDocUtil {
         }
       }
     } else {
+      result = Collections.unmodifiableList(result);
       cache.put(key, scope, result);
     }
 
@@ -1517,7 +1535,7 @@ public class AsciiDocUtil {
         if (!shortElement.contains(shortKey)) {
           continue;
         }
-        AsciiDocFileReference.parseAntoraPrefix(element.trim(), elementAttributes);
+        elementAttributes = AsciiDocFileReference.parseAntoraPrefix(element.trim(), elementAttributes);
         if (!Objects.equals(myComponentName, findAttribute("page-component-name", elementAttributes))) {
           continue;
         }
@@ -1775,6 +1793,7 @@ public class AsciiDocUtil {
       return getOtherAntoraModuleDir(element.getProject(), moduleDir, myModuleName, myComponentName, myComponentVersion, otherComponentVersion, otherComponentName, otherModuleName);
     });
 
+    virtualFiles = Collections.unmodifiableList(virtualFiles);
     cache.put(moduleDir, otherKey, virtualFiles);
     return virtualFiles;
   }
@@ -1806,6 +1825,7 @@ public class AsciiDocUtil {
     List<AttributeDeclaration> result = new ArrayList<>();
     findPageAttributes(file, 0, result);
 
+    result = Collections.unmodifiableList(result);
     cache.putPageAttributes(result);
     return result;
   }
