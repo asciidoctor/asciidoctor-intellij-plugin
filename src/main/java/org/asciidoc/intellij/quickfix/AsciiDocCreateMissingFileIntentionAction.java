@@ -35,7 +35,7 @@ public class AsciiDocCreateMissingFileIntentionAction implements IntentionAction
 
   @Override
   public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    return AsciiDocCreateMissingFile.isAvailable(element);
+    return true;
   }
 
   @Override
