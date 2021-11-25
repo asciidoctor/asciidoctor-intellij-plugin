@@ -86,6 +86,17 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   public boolean isAnchor() {
+    if (isAnchor && ATTRIBUTES.matcher(key).find()) {
+      List<ResolveResult> resolveResults = List.of(multiResolve(true));
+      for (ResolveResult resolveResult : resolveResults) {
+        if (resolveResult.getElement() instanceof PsiFile) {
+          return false;
+        } else if (resolveResult.getElement() instanceof AsciiDocSection ||
+           resolveResult.getElement() instanceof AsciiDocBlockId) {
+          return true;
+        }
+      }
+    }
     return isAnchor;
   }
 
@@ -190,28 +201,31 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     List<ResolveResult> results = new ArrayList<>();
     if (isAnchor) {
-      return multiResolveAnchor(false);
+      results.addAll(multiResolveAnchor(false));
     }
-    if ("link-attr".equals(macroName) && "self".equals(base + key)) {
-      VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
-      if (antoraModuleDir != null) {
-        PsiElement parent = myElement.getParent();
-        while (parent != null && !(parent instanceof HasFileReference)) {
-          parent = parent.getParent();
-        }
-        if (parent != null) {
-          AsciiDocFileReference fileReference = ((HasFileReference) parent).getFileReference();
-          if (fileReference != null) {
-            return fileReference.multiResolve(incompleteCode);
+    // an anchor might resolve to a file instead if it has attributes
+    if (!isAnchor || ATTRIBUTES.matcher(key).find()) {
+      if ("link-attr".equals(macroName) && "self".equals(base + key)) {
+        VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
+        if (antoraModuleDir != null) {
+          PsiElement parent = myElement.getParent();
+          while (parent != null && !(parent instanceof HasFileReference)) {
+            parent = parent.getParent();
+          }
+          if (parent != null) {
+            AsciiDocFileReference fileReference = ((HasFileReference) parent).getFileReference();
+            if (fileReference != null) {
+              return fileReference.multiResolve(incompleteCode);
+            }
           }
         }
       }
+      resolve(base + key, results, 0);
     }
-    resolve(base + key, results, 0);
     return results.toArray(new ResolveResult[0]);
   }
 
-  public ResolveResult[] multiResolveAnchor(boolean ignoreCase) {
+  public List<ResolveResult> multiResolveAnchor(boolean ignoreCase) {
     List<ResolveResult> results = new ArrayList<>();
     List<ResolveResult> fileResult = new ArrayList<>();
     if (base.equals("#") || base.length() == 0) {
@@ -227,7 +241,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       }
     }
     multiResolveAnchor(items, key, results, ignoreCase, new ArrayDeque<>());
-    return results.toArray(new ResolveResult[0]);
+    return results;
   }
 
   private void multiResolveAnchor(Set<LookupElementBuilder> items, String key, List<ResolveResult> results, boolean ignoreCase, ArrayDeque<Trinity<String, String, String>> stack) {
@@ -452,7 +466,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   @SuppressWarnings("StringSplitter")
   private void resolveAntoraPageAlias(String key, List<ResolveResult> results, int depth) {
-    if (ANTORA_SUPPORTED.contains(macroName) && !isAnchor() && !isFolder() && depth == 0 && results.size() == 0) {
+    if (ANTORA_SUPPORTED.contains(macroName) && !isAnchor && !isFolder() && depth == 0 && results.size() == 0) {
       VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
       if (antoraModuleDir != null) {
         List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), "page-aliases", myElement);
