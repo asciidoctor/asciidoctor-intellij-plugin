@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.36.3
 
 - xrefs with attributes will be resolved to determine if they link to an anchor or a file
+- speed up resolving block IDs for auto-completion and validation (#925)
 
 === 0.36.2
 

@@ -237,7 +237,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     for (ResolveResult resolveResult : fileResult) {
       PsiElement element = resolveResult.getElement();
       if (element instanceof AsciiDocFile) {
-        AsciiDocUtil.findBlockIds(items, element);
+        AsciiDocUtil.findBlockIds(items, (AsciiDocFile) element);
       }
     }
     multiResolveAnchor(items, key, results, ignoreCase, new ArrayDeque<>());
@@ -890,7 +890,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       for (ResolveResult resolveResult : fileResult) {
         PsiElement element = resolveResult.getElement();
         if (element instanceof AsciiDocFile) {
-          AsciiDocUtil.findBlockIds(items, element);
+          AsciiDocUtil.findBlockIds(items, (AsciiDocFile) element);
         }
       }
     } else {

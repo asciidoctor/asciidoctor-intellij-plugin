@@ -14,6 +14,8 @@ import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
  * @author Alexander Schwartz 2020
  */
@@ -33,9 +35,9 @@ public class AsciiDocChangeCaseForAnchor implements LocalQuickFix {
       if (anchor != null) {
         ResolveResult[] resolveResultsAnchor = anchor.multiResolve(false);
         if (resolveResultsAnchor.length == 0) {
-          ResolveResult[] resolveResultsAnchorCaseInsensitive = anchor.multiResolveAnchor(true);
-          if (resolveResultsAnchorCaseInsensitive.length == 1) {
-            PsiElement target = resolveResultsAnchorCaseInsensitive[0].getElement();
+          List<ResolveResult> resolveResultsAnchorCaseInsensitive = anchor.multiResolveAnchor(true);
+          if (resolveResultsAnchorCaseInsensitive.size() == 1) {
+            PsiElement target = resolveResultsAnchorCaseInsensitive.get(0).getElement();
             if (target instanceof PsiNamedElement) {
               link.setAnchor(((PsiNamedElement) target).getName());
             } else if (target instanceof AsciiDocSection) {

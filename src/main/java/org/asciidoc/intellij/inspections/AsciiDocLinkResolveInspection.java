@@ -156,9 +156,9 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
             ResolveResult[] resolveResultsAnchor = anchor.multiResolve(false);
             // only present an error if the anchor's attributes uniquely resolve
             if (resolveResultsAnchor.length == 0 && AsciiDocUtil.resolveAttributes(o, anchor.getRangeInElement().substring(o.getText())) != null) {
-              ResolveResult[] resolveResultsAnchorCaseInsensitive = anchor.multiResolveAnchor(true);
+              List<ResolveResult> resolveResultsAnchorCaseInsensitive = anchor.multiResolveAnchor(true);
               LocalQuickFix[] fixes = new LocalQuickFix[]{};
-              if (resolveResultsAnchorCaseInsensitive.length == 1) {
+              if (resolveResultsAnchorCaseInsensitive.size() == 1) {
                 fixes = new LocalQuickFix[]{CHANGE_CASE_FOR_ANCHOR};
               }
               holder.registerProblem(o, TEXT_HINT_ANCHOR_DOESNT_RESOLVE, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, anchor.getRangeInElement(), fixes);
