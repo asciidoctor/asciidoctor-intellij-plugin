@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - xrefs with attributes will be resolved to determine if they link to an anchor or a file
 - speed up resolving block IDs for auto-completion and validation (#925)
+- continue to resolve attributes in document even if they have been defined in component descriptors or playbooks
 
 === 0.36.2
 

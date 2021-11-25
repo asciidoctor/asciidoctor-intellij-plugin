@@ -483,10 +483,7 @@ public class AsciiDocUtil {
     }
 
     if (scope == Scope.MODULE) {
-      // ignore other declarations when we found a specific value
-      if (result.size() == 0) {
-        result.addAll(findAttributes(project, key, antoraModuleDir != null));
-      }
+      result.addAll(findAttributes(project, key, antoraModuleDir != null));
     } else if (scope == Scope.PAGEATTRIBUTES) {
       // add page attributes even if there has been a match to find overrides
       if (containingFile != null) {
