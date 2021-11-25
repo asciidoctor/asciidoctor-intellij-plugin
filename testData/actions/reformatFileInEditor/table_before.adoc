@@ -6,4 +6,11 @@
     "hello": "world"
 }
 ----
+| .title
+[source,json]
+----
+{
+"hello": "world"
+}
+----
 |===
