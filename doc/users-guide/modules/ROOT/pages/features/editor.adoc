@@ -162,7 +162,7 @@ If the clipboard contains a reference to an existing file, the user can choose t
 If the clipboard contains an image, the user can choose to create a JPEG or PNG file from the clipboard and add the reference to the document.
 In both cases, the user has the option to configure the image with additional attributes (`width` and `alt` text).
 
-As a shortcut the user can also use kbd:[Ctrl+C] and kbd:[Ctrl+V] to add references to images from within the project to a document.
+As a shortcut the user can also use kbd:[Ctrl+C] and kbd:[Ctrl+V] to add a reference to the image from within the project to the current document.
 This shortcut doesn't work yet for copying contents from outside the project.
 
 // AsciiDocHeadingStyleInspection, ...
