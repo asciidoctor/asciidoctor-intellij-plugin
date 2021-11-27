@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.36.4
+
+- avoid NoClassDefFoundError on plugin initialization (#928)
+
 === 0.36.3
 
 - xrefs with attributes will be resolved to determine if they link to an anchor or a file

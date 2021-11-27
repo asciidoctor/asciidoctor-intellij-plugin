@@ -41,8 +41,10 @@ import org.jetbrains.annotations.NotNull;
  * @author yole
  */
 public class AsciiDocParserDefinition implements ParserDefinition {
-  private static final TokenSet WHITESPACE = TokenSet.create(AsciiDocTokenTypes.LINE_BREAK, AsciiDocTokenTypes.EMPTY_LINE, AsciiDocTokenTypes.WHITE_SPACE, AsciiDocTokenTypes.WHITE_SPACE_MONO);
-  private static final TokenSet COMMENTS = TokenSet.create(AsciiDocTokenTypes.LINE_COMMENT, AsciiDocTokenTypes.BLOCK_COMMENT);
+  // don't make these fields static, as the parser definition is a factory and will be created only once.
+  // in the past, there have been NoClassDefFoundError - trying to avoid them by not having static attributes here.
+  private final TokenSet whitespace = TokenSet.create(AsciiDocTokenTypes.LINE_BREAK, AsciiDocTokenTypes.EMPTY_LINE, AsciiDocTokenTypes.WHITE_SPACE, AsciiDocTokenTypes.WHITE_SPACE_MONO);
+  private final TokenSet comments = TokenSet.create(AsciiDocTokenTypes.LINE_COMMENT, AsciiDocTokenTypes.BLOCK_COMMENT);
 
   @NotNull
   @Override
@@ -63,13 +65,13 @@ public class AsciiDocParserDefinition implements ParserDefinition {
   @NotNull
   @Override
   public TokenSet getWhitespaceTokens() {
-    return WHITESPACE;
+    return whitespace;
   }
 
   @NotNull
   @Override
   public TokenSet getCommentTokens() {
-    return COMMENTS;
+    return comments;
   }
 
   @NotNull
