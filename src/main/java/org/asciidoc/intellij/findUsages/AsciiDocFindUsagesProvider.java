@@ -40,9 +40,14 @@ public class AsciiDocFindUsagesProvider implements FindUsagesProvider {
   @Override
   @NotNull
   public String getDescriptiveName(@NotNull PsiElement element) {
-    String name = ((PsiNamedElement) element).getName();
-    if (name == null) {
-      name = "???";
+    String name;
+    if (element instanceof PsiNamedElement) {
+      name = ((PsiNamedElement) element).getName();
+      if (name == null) {
+        name = "???";
+      }
+    } else {
+      name = "??? " + element.getNode().getElementType();
     }
     return name;
   }

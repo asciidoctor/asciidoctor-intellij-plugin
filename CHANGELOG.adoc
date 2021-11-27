@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.36.4
 
 - avoid NoClassDefFoundError on plugin initialization (#928)
+- prevent class cast exception in if referenced element is not a PsiNamedElement
 
 === 0.36.3
 
