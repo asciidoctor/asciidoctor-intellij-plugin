@@ -15,9 +15,12 @@
  */
 package org.asciidoc.intellij;
 
+import com.intellij.diagnostic.ImplementationConflictException;
 import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageUtil;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -30,12 +33,30 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AsciiDocLanguage extends Language {
 
-  public static final Language INSTANCE = new AsciiDocLanguage();
-
-  /**
-   * .
-   */
   public static final String LANGUAGE_NAME = "AsciiDoc";
+  public static final Language INSTANCE = init();
+
+  // if registration of language fails, log additional information that can be used to analyze the problem
+  private static AsciiDocLanguage init() {
+    try {
+      return new AsciiDocLanguage();
+    } catch (ImplementationConflictException ex) {
+      StringBuilder sb = new StringBuilder();
+      sb.append("conflictingPluginIds[");
+      for (PluginId conflictingPluginId : ex.getConflictingPluginIds()) {
+        sb.append("id=").append(conflictingPluginId.getIdString());
+      }
+      sb.append("]");
+      sb.append(", mycl=").append(AsciiDocLanguage.class.getClassLoader().toString());
+      Language lang = Language.findLanguageByID(LANGUAGE_NAME);
+      if (lang != null) {
+        sb.append(", othercl=").append(lang.getClass().getClassLoader().toString());
+      }
+      Logger log = Logger.getInstance(AsciiDocLanguage.class);
+      log.error("Unable to register AsciiDoc Language, details about conflicting plugins and registrations: " + sb);
+      throw ex;
+    }
+  }
 
   private AsciiDocLanguage() {
     super(LANGUAGE_NAME);
@@ -44,7 +65,13 @@ public class AsciiDocLanguage extends Language {
   static {
     // startup activities ar running late, and might fail due to unloading. Therefore prevent unloading as early as possible.
     // see: https://youtrack.jetbrains.com/issue/IDEA-266736
-    AsciiDocHandleUnloadActivity.setupListener();
+    try {
+      AsciiDocHandleUnloadActivity.setupListener();
+    } catch (Throwable t) {
+      // catch all exceptions and errors here, to prevent the class initialization from failing
+      Logger log = Logger.getInstance(AsciiDocLanguage.class);
+      log.error("unable to setup unload activity listener", t);
+    }
   }
 
   public static boolean isAsciiDocFile(@NotNull Project project, @NotNull VirtualFile file) {
