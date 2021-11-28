@@ -45,6 +45,7 @@ public class AsciiDocCellType extends AsciiDocLazyElementType implements IRepars
     }
     char firstChar = buffer.charAt(0);
     // for now, only standard tables with "|" are supported
+    // cell modifiers as a prefix to the cell separator are not yet supported
     if (firstChar != '|') {
       return false;
     }

@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.36.5
+
+- prevent error about unbalanced markers for inline IDs (#920)
+
 === 0.36.4
 
 - avoid NoClassDefFoundError on plugin initialization (#928)

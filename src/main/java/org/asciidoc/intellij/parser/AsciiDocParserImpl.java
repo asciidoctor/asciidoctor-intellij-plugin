@@ -282,7 +282,6 @@ public class AsciiDocParserImpl {
       if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
         parseUrl();
       } else if (at(INLINEIDSTART)) {
-        markPreBlock();
         parseInlineId();
       } else if (at(INLINE_MACRO_ID)) {
         parseInlineMacro();
@@ -481,10 +480,6 @@ public class AsciiDocParserImpl {
     PsiBuilder.Marker quoteMarker = myBuilder.mark();
     IElementType quote = myBuilder.getTokenType();
     IElementType endQuote = QUOTEPAIRS.get(quote);
-    if (endQuote == null) {
-      quoteMarker.drop();
-      return;
-    }
     next();
     while ((at(MONO) || at(BOLD) || at(TEXT) || at(MONOITALIC) || at(MONOBOLDITALIC) || at(MONOBOLD) ||
       at(ITALIC) || at(BOLDITALIC) || ALLQUOTES.contains(myBuilder.getTokenType()) ||
@@ -510,7 +505,6 @@ public class AsciiDocParserImpl {
       } else if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
         parseUrl();
       } else if (at(INLINEIDSTART)) {
-        markPreBlock();
         parseInlineId();
       } else if (at(REFSTART)) {
         parseRef();
