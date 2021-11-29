@@ -54,12 +54,12 @@ public class AsciiDocFileUtil {
 
   public static List<AsciiDocSection> findSections(Project project) {
     List<AsciiDocSection> result = new ArrayList<>();
-    Collection<String> keys = AsciiDocSectionKeyIndex.getInstance().getAllKeys(project);
     final GlobalSearchScope scope = new AsciiDocSearchScope(project).restrictedByAsciiDocFileType();
-    for (String key : keys) {
-      Collection<AsciiDocSection> asciiDocSections = AsciiDocSectionKeyIndex.getInstance().get(key, project, scope);
-      result.addAll(asciiDocSections);
-    }
+    AsciiDocSectionKeyIndex.getInstance().processAllElements(project,
+      asciiDocSection -> {
+        result.add(asciiDocSection);
+        return true;
+      }, scope);
     return result;
   }
 }

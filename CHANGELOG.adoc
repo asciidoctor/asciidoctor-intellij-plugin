@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.36.6
 
 - prevent NPE case when showing documentation for current element (#929)
+- rework iteration over index keys when retrieving list of sections (#930)
 
 === 0.36.5
 

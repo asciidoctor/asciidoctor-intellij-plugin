@@ -21,7 +21,6 @@ package org.asciidoc.intellij.psi;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 import java.util.Locale;
 
-public class AsciiDocAttributeDeclarationKeyIndex extends StringStubIndexExtension<AsciiDocAttributeDeclaration> {
+public class AsciiDocAttributeDeclarationKeyIndex extends AsciiDocStringStubIndexExtension<AsciiDocAttributeDeclaration> {
   public static final StubIndexKey<String, AsciiDocAttributeDeclaration> KEY = StubIndexKey.createIndexKey("asciidocAttributeDeclaration.index");
 
   private static final AsciiDocAttributeDeclarationKeyIndex OUR_INSTANCE = new AsciiDocAttributeDeclarationKeyIndex();
@@ -45,7 +44,12 @@ public class AsciiDocAttributeDeclarationKeyIndex extends StringStubIndexExtensi
   }
 
   @Override
+  public Class<AsciiDocAttributeDeclaration> requiredClass() {
+    return AsciiDocAttributeDeclaration.class;
+  }
+
+  @Override
   public Collection<AsciiDocAttributeDeclaration> get(@NotNull String key, @NotNull Project project, @NotNull GlobalSearchScope scope) {
-    return StubIndex.getElements(getKey(), key.toLowerCase(Locale.US), project, scope, AsciiDocAttributeDeclaration.class);
+    return StubIndex.getElements(getKey(), key.toLowerCase(Locale.US), project, scope, requiredClass());
   }
 }

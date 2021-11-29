@@ -294,11 +294,12 @@ public class AsciiDocUtil {
 
   static List<AsciiDocBlockId> findIds(Project project) {
     List<AsciiDocBlockId> result = new ArrayList<>();
-    Collection<String> keys = AsciiDocBlockIdKeyIndex.getInstance().getAllKeys(project);
     final GlobalSearchScope scope = new AsciiDocSearchScope(project).restrictedByAsciiDocFileType();
-    for (String key : keys) {
-      result.addAll(AsciiDocBlockIdKeyIndex.getInstance().get(key, project, scope));
-    }
+    AsciiDocBlockIdKeyIndex.getInstance().processAllElements(project,
+      key -> {
+        result.add(key);
+        return true;
+      }, scope);
     return result;
   }
 
@@ -400,24 +401,22 @@ public class AsciiDocUtil {
 
   static List<AsciiDocAttributeDeclaration> findAttributes(Project project, boolean onlyAntora) {
     List<AsciiDocAttributeDeclaration> result = new ArrayList<>();
-    Collection<String> keys = AsciiDocAttributeDeclarationKeyIndex.getInstance().getAllKeys(project);
     final GlobalSearchScope scope = new AsciiDocSearchScope(project).restrictedByAsciiDocFileType();
     Map<VirtualFile, Boolean> cache = new HashMap<>();
-    for (String key : keys) {
-      Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(key, project, scope);
-      for (AsciiDocAttributeDeclaration asciiDocAttributeDeclaration : asciiDocAttributeDeclarations) {
+    AsciiDocAttributeDeclarationKeyIndex.getInstance().processAllElements(project,
+      asciiDocAttributeDeclaration -> {
         VirtualFile virtualFile = asciiDocAttributeDeclaration.getContainingFile().getVirtualFile();
         if (onlyAntora) {
           if (!virtualFile.getName().equals(".asciidoctorconfig") && !virtualFile.getName().equals(".asciidoctorconfig.adoc")) {
             // the .asciidoctorconfig files will still work with Antora
             if (!cache.computeIfAbsent(virtualFile.getParent(), s -> findAntoraModuleDir(project, s) != null)) {
-              continue;
+              return true;
             }
           }
         }
         result.add(asciiDocAttributeDeclaration);
-      }
-    }
+        return true;
+      }, scope);
     return result;
   }
 
