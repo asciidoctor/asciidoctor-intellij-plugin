@@ -34,8 +34,9 @@ public class AsciiDocDocumentationProvider extends AbstractDocumentationProvider
                                                   @NotNull final PsiFile file,
                                                   @Nullable final PsiElement contextElement,
                                                   final int targetOffset) {
-    if (contextElement != null && (contextElement.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_NAME ||
-      contextElement.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_REF)) {
+    if (contextElement != null && contextElement.getNode() != null &&
+      (contextElement.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_NAME ||
+        contextElement.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_REF)) {
       String key = contextElement.getNode().getText();
       if (AsciiDocBundle.getBuiltInAttributesList().contains(key)) {
         return new DummyElement(key, file.getManager());
