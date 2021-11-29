@@ -4,10 +4,15 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +39,8 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
     super(node);
   }
 
+  public static final Key<CachedValue<AsciiDocHeading>> KEY_ASCIIDOC_HEADING = new Key<>("asciidoc-heading");
+
   @Override
   @NotNull
   public String getTitle() {
@@ -41,7 +48,7 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
     if (stub != null && !AsciiDocUtil.ATTRIBUTES.matcher(stub.getTitleNoSubstitution()).find()) {
       return stub.getTitleNoSubstitution();
     }
-    AsciiDocHeading heading = findChildByClass(AsciiDocHeading.class);
+    AsciiDocHeading heading = getAsciiDocHeading();
     if (heading != null) {
       return heading.getHeadingText(true);
     }
@@ -58,11 +65,22 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
     if (stub != null) {
       return stub.getTitleNoSubstitution();
     }
-    AsciiDocHeading heading = findChildByClass(AsciiDocHeading.class);
+    AsciiDocHeading heading = getAsciiDocHeading();
     if (heading != null) {
       return heading.getHeadingText(false);
     }
     return "<untitled>";
+  }
+
+  private AsciiDocHeading getAsciiDocHeading() {
+    return CachedValuesManager.getCachedValue(this, KEY_ASCIIDOC_HEADING,
+      () -> {
+        // as the calculated value depends only on the PSI node and its subtree, try to be more specific than the PsiElement
+        // as using the PsiElement would invalidate the cache on the file level.
+        Object dep = (ModificationTracker) this::getModificationCount;
+        return CachedValueProvider.Result.create(findChildByClass(AsciiDocHeading.class), dep);
+      }
+    );
   }
 
   // taken from Asciidoctor (rx.rb#InvalidSectionIdCharsRx)
