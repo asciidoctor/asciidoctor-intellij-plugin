@@ -45,7 +45,7 @@ If you get the syntax wrong, the converts usually prints them "`as is`".
 Only a matching set of for example asterisks (`*`) produces bold text.
 --
 
-Here some JFlex rules for AsciiDoc together with an explanation of the why:
+Here some JFlex rules for AsciiDoc together with an explanation:
 
 Look ahead rules::
 +
