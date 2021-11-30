@@ -39,6 +39,21 @@ public class AsciiDocLanguage extends Language {
   // if registration of language fails, log additional information that can be used to analyze the problem
   private static AsciiDocLanguage init() {
     try {
+      Language prev = Language.findLanguageByID(LANGUAGE_NAME);
+      if (prev != null) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("mycl=").append(AsciiDocLanguage.class.getClassLoader().toString());
+        sb.append(", othercl=").append(prev.getClass().getClassLoader().toString());
+        sb.append(", lang=").append(prev);
+        sb.append(", langClass=").append(prev.getClass());
+        AsciiDocLanguage myInstance = Language.findInstance(AsciiDocLanguage.class);
+        sb.append(", foundmyself=").append(myInstance != null);
+        Logger log = Logger.getInstance(AsciiDocLanguage.class);
+        log.error("AsciiDoc Language already registered: " + sb);
+        if (myInstance != null) {
+          return myInstance;
+        }
+      }
       return new AsciiDocLanguage();
     } catch (ImplementationConflictException ex) {
       StringBuilder sb = new StringBuilder();
@@ -48,10 +63,6 @@ public class AsciiDocLanguage extends Language {
       }
       sb.append("]");
       sb.append(", mycl=").append(AsciiDocLanguage.class.getClassLoader().toString());
-      Language lang = Language.findLanguageByID(LANGUAGE_NAME);
-      if (lang != null) {
-        sb.append(", othercl=").append(lang.getClass().getClassLoader().toString());
-      }
       Logger log = Logger.getInstance(AsciiDocLanguage.class);
       log.error("Unable to register AsciiDoc Language, details about conflicting plugins and registrations: " + sb);
       throw ex;

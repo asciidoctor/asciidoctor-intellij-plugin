@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.util.messages.MessageBusConnection;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocPlugin;
@@ -42,6 +43,7 @@ public class AsciiDocHandleUnloadActivity implements StartupActivity, DumbAware,
         // check application first to don't interfere with unit tests, as this is not initialized for Unit tests
         application.invokeLater(() -> {
           MessageBusConnection busConnection = application.getMessageBus().connect();
+          Disposer.register(application, busConnection::disconnect);
           busConnection.subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
             @Override
             public void checkUnloadPlugin(@NotNull IdeaPluginDescriptor pluginDescriptor) throws CannotUnloadPluginException {
