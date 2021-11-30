@@ -32,6 +32,21 @@
         }
       }
     },
+    "antora": {
+      "type": "object",
+      "properties": {
+        "generator": {
+          "description": "A require request for the generator package name or script to use.",
+          "type": "string",
+          "default": "@antora/site-generator"
+        },
+        "extensions": {
+          "description": "A list of extensions that listen for lifecycle events. Each extension is specified as a require request string or an object with a require key.",
+          "type": "array",
+          "default": []
+        }
+      }
+    },
     "content": {
       "type": "object",
       "properties": {
@@ -289,14 +304,6 @@
         "no_proxy": {
           "type": "string",
           "description": "A comma-separated list of domains and IPs that should not be proxied."
-        }
-      }
-    },
-    "pipeline": {
-      "properties": {
-        "extensions": {
-          "type": "array",
-          "description": "Extensions of the pipeline"
         }
       }
     }
