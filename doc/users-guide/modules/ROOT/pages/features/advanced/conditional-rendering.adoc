@@ -17,11 +17,11 @@ The plugin sets the variable _env-idea_ to _defined_, therefore the following wo
 [source,asciidoc]
 ----
 \ifndef::env-idea[]
-render this text only WHEN NOT running IntelliJ Asciidoctor Plugin
+render this text WHEN NOT running IntelliJ Asciidoctor Plugin
 \endif::[]
 
 \ifdef::env-idea[]
-render this text only ONLY IF running IntelliJ Asciidoctor Plugin
+render this text IF running IntelliJ Asciidoctor Plugin
 \endif::[]
 ----
 
@@ -30,11 +30,11 @@ The plugin sets the variable _env_ to the value _idea_, therefore the following 
 [source,asciidoc]
 ----
 \ifeval::[{env}!=idea]
-render this text only WHEN NOT running IntelliJ Asciidoctor Plugin
+render this text WHEN NOT running IntelliJ Asciidoctor Plugin
 \endif::[]
 
 \ifeval::[{env}==idea]
-render this text only ONLY IF running IntelliJ Asciidoctor Plugin
+render this text IF running IntelliJ Asciidoctor Plugin
 \endif::[]
 ----
 
