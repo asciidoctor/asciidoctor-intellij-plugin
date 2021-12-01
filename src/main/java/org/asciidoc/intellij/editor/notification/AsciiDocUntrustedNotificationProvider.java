@@ -18,6 +18,11 @@ import org.asciidoctor.SafeMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Show a notification to the user that the project is not trusted, therefore some functionality is limited.
+ * Starting with 2021.3.1 this should no longer be necessary, as the notification will show on all editors once the project is not trusted,
+ * independent of the previously needed UntrustedProjectModeProvider that would show this only in Maven or Gradle projects.
+ */
 public class AsciiDocUntrustedNotificationProvider extends com.intellij.ui.EditorNotifications.Provider<EditorNotificationPanel> implements DumbAware {
 
   private static final Key<EditorNotificationPanel> KEY = Key.create("Untrusted AsciiDoc project");
