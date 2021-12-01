@@ -2240,6 +2240,15 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Text')");
   }
 
+  public void testListingNoStyle() {
+    doTest("  Listing\n+\nText",
+      "AsciiDoc:LISTING_TEXT ('  Listing')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CONTINUATION ('+')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
   public void testListingWithLanguage() {
     doTest("[source,php]\nListing\n\nText",
       "AsciiDoc:ATTRS_START ('[')\n" +

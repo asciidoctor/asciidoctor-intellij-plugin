@@ -7,7 +7,7 @@
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="class" />
     <method v="2">
-      <option name="Gradle.BeforeRunTask" enabled="true" tasks=":generateAsciidocLexer" externalProjectPath="$PROJECT_DIR$" vmOptions="" scriptParameters="" />
+      <option name="Gradle.BeforeRunTask" enabled="true" tasks=":generateLexer" externalProjectPath="$PROJECT_DIR$" vmOptions="" scriptParameters="" />
       <option name="MakeProject" enabled="true" />
     </method>
   </configuration>

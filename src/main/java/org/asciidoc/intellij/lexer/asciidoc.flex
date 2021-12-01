@@ -401,6 +401,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 %state LISTING_BLOCK
 %state LISTING_NO_DELIMITER
+%state LISTING_NO_STYLE
 
 %state COMMENT_BLOCK
 %state LITERAL_BLOCK
@@ -696,7 +697,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <PREBLOCK> {
   ^ [ \t]+ [^ \t\n] {
         if (style == null && !isPrefixedBy(new char[] {tableChar})) { // when running incremental lexing, this will be a false-positive for a beginning of the line for a cell
-          yybegin(LISTING_NO_DELIMITER); return AsciiDocTokenTypes.LISTING_TEXT;
+          yybegin(LISTING_NO_STYLE); return AsciiDocTokenTypes.LISTING_TEXT;
         } else {
           yypushback(yylength()); yybegin(STARTBLOCK);
         }
@@ -968,7 +969,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
       }
 }
 
-<SINGLELINE, LISTING_NO_DELIMITER> {
+<SINGLELINE, LISTING_NO_DELIMITER, LISTING_NO_STYLE> {
   // this will only terminate any open blocks when they appear even in no-delimiter blocks
   ^ ({EXAMPLE_BLOCK_DELIMITER} | {QUOTE_BLOCK_DELIMITER} | {SIDEBAR_BLOCK_DELIMITER} | {TABLE_BLOCK_DELIMITER} | {OPEN_BLOCK_DELIMITER}) $ {
                             String delimiter = yytext().toString().trim();
@@ -2067,7 +2068,17 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { return AsciiDocTokenTypes.ATTR_NAME; }
 }
 
-<LISTING_NO_DELIMITER> {
+<LISTING_NO_STYLE> {
+  ^ {CONTINUATION} {SPACE}* "\n" {
+                         yypushback(yylength() - 1);
+                         yybegin(MULTILINE);
+                         yypushstate();
+                         yybegin(EOL_POP);
+                         return AsciiDocTokenTypes.CONTINUATION;
+      }
+}
+
+<LISTING_NO_DELIMITER, LISTING_NO_STYLE> {
   ^ {SPACE}* "\n" {
         clearStyle();
         yybegin(MULTILINE);
@@ -2222,7 +2233,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 // include is the only allowed block macro in these types of block
-<LITERAL_BLOCK, LISTING_BLOCK, PASSTRHOUGH_BLOCK, LISTING_NO_DELIMITER, SINGLELINE, HEADER, LIST> {
+<LITERAL_BLOCK, LISTING_BLOCK, PASSTRHOUGH_BLOCK, LISTING_NO_DELIMITER, LISTING_NO_STYLE, SINGLELINE, HEADER, LIST> {
   ^ "include::" / [^\[\n]* "[" [^\]\n]* "]" {SPACE}* \n { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   ^ "include::" / [^\[\n]* {AUTOCOMPLETE} { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
 }
