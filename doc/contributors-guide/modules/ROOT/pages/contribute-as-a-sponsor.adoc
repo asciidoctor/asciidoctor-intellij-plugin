@@ -9,4 +9,4 @@ To deliver all the value it borrows a lot of functionality from the Asciidoctor 
 
 *To support the Asciidoctor ecosystem,* support the https://opencollective.com/asciidoctor[Asciidoctor Open Collective^].
 
-*To support the maintainer of the plugin,* consider https://github.com/sponsors/ahus1[becoming one of his GitHub sponsors^].
+*If you use diagrams via PlantUML,* consider https://www.patreon.com/plantuml[becoming one of their sponsors^]. All PlantUML sponsors receive access to an ad-free PlantUML website.
