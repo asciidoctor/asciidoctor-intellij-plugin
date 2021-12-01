@@ -234,6 +234,8 @@
       implementation="org.asciidoc.intellij.editor.notification.UpdateIntellijNotificationProvider"/>
     <editorNotificationProvider
       implementation="org.asciidoc.intellij.editor.notification.FileOutsideCurrentProjectNotificationProvider"/>
+    <editorNotificationProvider
+      implementation="org.asciidoc.intellij.editor.notification.AsciiDocUntrustedNotificationProvider"/>
     <gotoSymbolContributor implementation="org.asciidoc.intellij.psi.AsciiDocChooseByNameContributor"/>
     <searchEverywhereClassifier implementation="org.asciidoc.intellij.psi.AsciiDocSearchEverywhereClassifier"/>
     <localInspection language="AsciiDoc" displayName="Heading inspection" groupPath="AsciiDoc"
@@ -375,7 +377,6 @@
       <categoryKey>asciidoc.intention.category</categoryKey>
       <className>org.asciidoc.intellij.actions.intentions.AsciiDocAdmonitionToBlockIntention</className>
     </intentionAction>
-    <untrustedModeProvider implementation="org.asciidoc.intellij.project.AsciiDocUntrustedModeProvider" />
 
     <highlightErrorFilter implementation="org.asciidoc.intellij.injection.AsciiDocCodeFenceErrorHighlightingIntention$CodeFenceHighlightErrorFilter"/>
     <postStartupActivity implementation="org.asciidoc.intellij.activities.AsciiDocHandleUnloadActivity"/>
