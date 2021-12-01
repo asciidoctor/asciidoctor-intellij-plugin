@@ -88,7 +88,7 @@ public class CreatePdfAction extends AsciiDocAction {
         if (parent != null && parent.getCanonicalPath() != null) {
           // parent will be null if we use Language Injection and Fragment Editor
           fileBaseDir = new File(parent.getCanonicalPath());
-          tempImagesPath = AsciiDoc.tempImagesPath(fileBaseDir.toPath());
+          tempImagesPath = AsciiDoc.tempImagesPath(fileBaseDir.toPath(), project);
         }
         AsciiDoc asciiDoc = new AsciiDoc(project, fileBaseDir, tempImagesPath, file.getName());
         List<String> extensions = extensionService.getExtensions(project);

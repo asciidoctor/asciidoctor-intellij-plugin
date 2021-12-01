@@ -276,7 +276,7 @@ public class AsciiDoc {
       asciiDocApplicationSettings.setExtensionsPresent(projectBasePath, true);
     }
     String md;
-    if (Boolean.TRUE.equals(asciiDocApplicationSettings.getExtensionsEnabled(projectBasePath))) {
+    if (Boolean.TRUE.equals(asciiDocApplicationSettings.getExtensionsEnabled(project, projectBasePath))) {
       extensionsEnabled = true;
       md = calcMd(projectBasePath, extensions);
     } else {
@@ -644,12 +644,12 @@ public class AsciiDoc {
   /**
    * Create a temporary image page. Use with folder of document parent.
    * Keep this for a while to allow Asciidoclet plugin to update.
-   * @deprecated use {@link #tempImagesPath(Path)} instead
+   * @deprecated use {@link #tempImagesPath(Path, Project)} instead
    */
   @Deprecated
   @SuppressWarnings("InlineMeSuggester")
   public static Path tempImagesPath() {
-    return tempImagesPath(null);
+    return tempImagesPath(null, null);
   }
 
   /**
@@ -658,10 +658,10 @@ public class AsciiDoc {
    * the mode is not UNSAFE.
    */
   @Nullable
-  public static Path tempImagesPath(Path parent) {
+  public static Path tempImagesPath(Path parent, @Nullable Project project) {
     Path tempImagesPath = null;
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
-    if (settings.getAsciiDocPreviewSettings().getSafeMode() != SafeMode.UNSAFE && parent != null) {
+    if (settings.getAsciiDocPreviewSettings().getSafeMode(project) != SafeMode.UNSAFE && parent != null) {
       tempImagesPath = parent.resolve(".asciidoctor/images");
     } else {
       try {
@@ -1212,7 +1212,7 @@ public class AsciiDoc {
         if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())
           || settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(AsciiDocJCEFHtmlPanelProvider.class.getName()) || fileType == FileType.BROWSER) {
           // will only work in UNSAFE mode as Asciidoctor will otherwise report path is outside of jail; recovering automatically
-          if (settings.getAsciiDocPreviewSettings().getSafeMode() == SafeMode.UNSAFE) {
+          if (settings.getAsciiDocPreviewSettings().getSafeMode(project) == SafeMode.UNSAFE) {
             attrs.setAttribute("outdir", imagesPath.toAbsolutePath().normalize().toString());
             // this prevents asciidoctor diagram to render images to a folder {outdir}/{imagesdir} ...
             // ... that might then be outside of the temporary folder as {imagesdir} might traverse to a parent folder
@@ -1239,7 +1239,7 @@ public class AsciiDoc {
 
     settings.getAsciiDocPreviewSettings().getAttributes().forEach(attrs::setAttribute);
 
-    OptionsBuilder opts = Options.builder().safe(settings.getSafe()).backend(fileType.backend).headerFooter(false)
+    OptionsBuilder opts = Options.builder().safe(settings.getSafe(project)).backend(fileType.backend).headerFooter(false)
       .attributes(attrs)
       .option("sourcemap", "true")
       .baseDir(fileBaseDir);

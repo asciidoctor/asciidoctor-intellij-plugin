@@ -1,1 +1,3 @@
 If the user changes the _Safe mode_ in the plugin's settings from _UNSAFE_ to any other mode, the preview in JCEF and JavaFX mode will restrict all content to the local project and will prohibit loading of external content using a content security policy (CSP).
+Starting with plugin version 0.36.6, all untrusted projects will default to _SECURE_ mode.
+The IDE shows a https://www.jetbrains.com/help/idea/2021.3/project-security.html["`Safe mode, limited funtionality`"] notification once the user opens an AsciiDoc file.

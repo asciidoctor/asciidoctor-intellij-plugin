@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - cache evaluation of section headings
 - update to latest Antora 3.x playbook schema (#907)
 - updated log when language has already been registered (#928)
+- support IntelliJ "`trusted projects`" concept and show an unrestricted preview only in trusted projects (#935)
 
 === 0.36.5
 

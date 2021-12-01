@@ -17,6 +17,7 @@ package org.asciidoc.intellij.editor;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.ide.impl.TrustChangeNotifier;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -213,7 +214,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     if (provider.isAvailable() != AsciiDocHtmlPanelProvider.AvailabilityInfo.AVAILABLE) {
       settings.setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(settings.getAsciiDocPreviewSettings().getSplitEditorLayout(),
         AsciiDocPreviewSettings.DEFAULT.getHtmlPanelProviderInfo(), settings.getAsciiDocPreviewSettings().getPreviewTheme(),
-        settings.getSafe(), settings.getAsciiDocPreviewSettings().getAttributes(), settings.getAsciiDocPreviewSettings().isVerticalSplit(),
+        settings.getSafe(project), settings.getAsciiDocPreviewSettings().getAttributes(), settings.getAsciiDocPreviewSettings().isVerticalSplit(),
         settings.getAsciiDocPreviewSettings().isEditorFirst(), settings.getAsciiDocPreviewSettings().isEnabledInjections(),
         settings.getAsciiDocPreviewSettings().getLanguageForPassthrough(),
         settings.getAsciiDocPreviewSettings().getDisabledInjectionsByLanguage(),
@@ -280,7 +281,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     if (file != null && file.getParent() != null) {
       parent = Path.of(file.getParent().getPath());
     }
-    this.tempImagesPath = AsciiDoc.tempImagesPath(parent);
+    this.tempImagesPath = AsciiDoc.tempImagesPath(parent, project);
 
     myHtmlPanelWrapper = new JPanel(new BorderLayout());
 
@@ -291,14 +292,10 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
     MessageBusConnection settingsConnection = ApplicationManager.getApplication().getMessageBus().connect(this);
 
-    AsciiDocApplicationSettings.SettingsChangedListener settingsChangedListener = new MyUpdatePanelOnSettingsChangedListener();
-    settingsConnection.subscribe(AsciiDocApplicationSettings.SettingsChangedListener.TOPIC, settingsChangedListener);
-
-    MyEditorColorsListener editorColorsListener = new MyEditorColorsListener();
-    settingsConnection.subscribe(EditorColorsManager.TOPIC, editorColorsListener);
-
-    MyRefreshPreviewListener refreshPreviewListener = new MyRefreshPreviewListener();
-    settingsConnection.subscribe(RefreshPreviewListener.TOPIC, refreshPreviewListener);
+    settingsConnection.subscribe(AsciiDocApplicationSettings.SettingsChangedListener.TOPIC, new MyUpdatePanelOnSettingsChangedListener());
+    settingsConnection.subscribe(EditorColorsManager.TOPIC, new MyEditorColorsListener());
+    settingsConnection.subscribe(RefreshPreviewListener.TOPIC, new MyRefreshPreviewListener());
+    settingsConnection.subscribe(TrustChangeNotifier.TOPIC, new MyTrustChangedListener());
 
     // Get asciidoc asynchronously
     new Thread(asciidoc).start();
@@ -617,6 +614,19 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           renderIfVisible();
         });
       }
+    }
+  }
+
+  private class MyTrustChangedListener implements TrustChangeNotifier {
+    @Override
+    public void projectTrusted(@NotNull Project project) {
+      // opening a project in non-trusted mode forces the SECURE mode on preview rendering
+      // making the project trusted should therefore force re-rendering of the preview.
+      ApplicationManager.getApplication().executeOnPooledThread(() -> {
+        currentContent = null;
+        myPanel.setHtml("", Collections.emptyMap());
+        renderIfVisible();
+      });
     }
   }
 

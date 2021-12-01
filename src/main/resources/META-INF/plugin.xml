@@ -296,7 +296,6 @@
                      groupName="General" enabledByDefault="true" level="WARNING"
                      shortName="AsciiDocAttributeShouldBeDefined"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocAttributeUndefinedInspection"/>
-
     <lang.inspectionSuppressor language="AsciiDoc"
       implementationClass="org.asciidoc.intellij.inspections.AsciiDocInspectionSuppressor" />
     <externalAnnotator language="AsciiDoc" order="before asciidoc-processor" implementationClass="org.asciidoc.intellij.annotator.AsciiDocExternalAnnotatorHighlighting"/>
@@ -376,6 +375,8 @@
       <categoryKey>asciidoc.intention.category</categoryKey>
       <className>org.asciidoc.intellij.actions.intentions.AsciiDocAdmonitionToBlockIntention</className>
     </intentionAction>
+    <untrustedModeProvider implementation="org.asciidoc.intellij.project.AsciiDocUntrustedModeProvider" />
+
     <highlightErrorFilter implementation="org.asciidoc.intellij.injection.AsciiDocCodeFenceErrorHighlightingIntention$CodeFenceHighlightErrorFilter"/>
     <postStartupActivity implementation="org.asciidoc.intellij.activities.AsciiDocHandleUnloadActivity"/>
     <postStartupActivity implementation="org.asciidoc.intellij.activities.AsciiDocPluginUpdateActivity"/>

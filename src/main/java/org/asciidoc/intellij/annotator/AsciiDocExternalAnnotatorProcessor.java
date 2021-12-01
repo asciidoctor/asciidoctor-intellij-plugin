@@ -86,7 +86,7 @@ public class AsciiDocExternalAnnotatorProcessor extends com.intellij.lang.annota
       return annotationResult;
     }
 
-    Path tempImagesPath = AsciiDoc.tempImagesPath(fileBaseDir.toPath());
+    Path tempImagesPath = AsciiDoc.tempImagesPath(fileBaseDir.toPath(), file.getProject());
     try {
       AsciiDoc asciiDoc = new AsciiDoc(file.getProject(), fileBaseDir,
         tempImagesPath, name);

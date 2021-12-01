@@ -1,10 +1,13 @@
 package org.asciidoc.intellij.settings;
 
+import com.intellij.ide.impl.TrustedProjects;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.EditorNotifications;
+import com.intellij.util.ThreeState;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Property;
@@ -65,7 +68,10 @@ public class AsciiDocApplicationSettings implements PersistentStateComponent<Asc
     ApplicationManager.getApplication().getMessageBus().syncPublisher(SettingsChangedListener.TOPIC).onSettingsChange(this);
   }
 
-  public Boolean getExtensionsEnabled(String projectBasePath) {
+  public Boolean getExtensionsEnabled(Project project, String projectBasePath) {
+    if (TrustedProjects.getTrustedState(project) != ThreeState.YES) {
+      return false;
+    }
     return this.extensionsEnabled.get(projectBasePath);
   }
 
@@ -76,12 +82,15 @@ public class AsciiDocApplicationSettings implements PersistentStateComponent<Asc
     }
   }
 
-  public Boolean getExtensionsPresent(String projectBasePath) {
+  public Boolean getExtensionsPresent(Project project, String projectBasePath) {
+    if (TrustedProjects.getTrustedState(project) != ThreeState.YES) {
+      return false;
+    }
     return this.extensionsPresent.get(projectBasePath);
   }
 
-  public SafeMode getSafe() {
-    return myState.myPreviewSettings.getSafeMode();
+  public SafeMode getSafe(Project project) {
+    return myState.myPreviewSettings.getSafeMode(project);
   }
 
   public static class State {

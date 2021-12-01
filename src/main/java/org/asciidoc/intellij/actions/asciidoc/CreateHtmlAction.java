@@ -65,7 +65,7 @@ public class CreateHtmlAction extends AsciiDocAction {
     }
     VirtualFile parent = file.getParent();
     boolean successful = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-      Path tempImagesPath = AsciiDoc.tempImagesPath(parent != null ? parent.toNioPath() : null);
+      Path tempImagesPath = AsciiDoc.tempImagesPath(parent != null ? parent.toNioPath() : null, project);
       try {
         File fileBaseDir = new File("");
         if (parent != null && parent.getCanonicalPath() != null) {

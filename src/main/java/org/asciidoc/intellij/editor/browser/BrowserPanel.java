@@ -28,7 +28,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -50,9 +49,8 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BrowserPanel implements Closeable {
+public class BrowserPanel {
 
-  private final Path globalImagesPath;
   private final Logger log = Logger.getInstance(JavaFxHtmlPanel.class);
   private final AsciiDocExtensionService extensionService = ApplicationManager.getApplication().getService(AsciiDocExtensionService.class);
 
@@ -98,7 +96,6 @@ public class BrowserPanel implements Closeable {
   public BrowserPanel() {
     @NotNull JPanel myPanelWrapper = new JPanel(new BorderLayout());
     myPanelWrapper.setBackground(JBColor.background());
-    globalImagesPath = AsciiDoc.tempImagesPath(null);
 
     try {
       Properties p = new Properties();
@@ -162,11 +159,11 @@ public class BrowserPanel implements Closeable {
     List<String> extensions = extensionService.getExtensions(project);
     Objects.requireNonNull(file.getParent().getCanonicalPath(), "we will have files, these will always have a parent directory");
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
-    Path imagesPath = globalImagesPath;
+    Path imagesPath = null;
     VirtualFile parent = file.getParent();
-    if (settings.getAsciiDocPreviewSettings().getSafeMode() != SafeMode.UNSAFE) {
+    if (settings.getAsciiDocPreviewSettings().getSafeMode(project) != SafeMode.UNSAFE) {
       if (parent != null && parent.getCanonicalPath() != null) {
-        imagesPath = AsciiDoc.tempImagesPath(Path.of(parent.getCanonicalPath()));
+        imagesPath = AsciiDoc.tempImagesPath(Path.of(parent.getCanonicalPath()), project);
       }
     }
     AsciiDoc asciiDoc = new AsciiDoc(project, new File(file.getParent().getCanonicalPath()),
@@ -428,11 +425,6 @@ public class BrowserPanel implements Closeable {
   @NotNull
   private static String getScriptingLines() {
     return MY_SCRIPTING_LINES.getValue();
-  }
-
-  @Override
-  public void close() {
-    AsciiDoc.cleanupImagesPath(globalImagesPath);
   }
 
   /**

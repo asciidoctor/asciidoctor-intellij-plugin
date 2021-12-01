@@ -39,8 +39,8 @@ public class ExtensionsAvailableNotificationProvider extends EditorNotifications
     }
     final String projectBasePath = bp;
     final AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
-    if (asciiDocApplicationSettings.getExtensionsEnabled(projectBasePath) != null
-      || !Boolean.TRUE.equals(asciiDocApplicationSettings.getExtensionsPresent(projectBasePath))) {
+    if (asciiDocApplicationSettings.getExtensionsEnabled(project, projectBasePath) != null
+      || !Boolean.TRUE.equals(asciiDocApplicationSettings.getExtensionsPresent(project, projectBasePath))) {
       return null;
     }
     final EditorNotificationPanel panel = new EditorNotificationPanel();
