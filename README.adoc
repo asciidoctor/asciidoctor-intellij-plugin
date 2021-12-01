@@ -11,14 +11,14 @@ image:https://img.shields.io/jetbrains/plugin/d/7391-asciidoc.svg[Downloads,link
 A plugin for the IntelliJ platform (IntelliJ IDEA, RubyMine, etc.) that provides support for the http://www.asciidoc.org[AsciiDoc] markup language.
 It also supports https://antora.org/[Antora], the documentation CMS build with AsciiDoc.
 
+////
 image::https://hacktoberfest.digitalocean.com/_nuxt/img/logo-hacktoberfest-full.f42e3b1.svg[float=left,width=200]
 
 *This plugin joined https://hacktoberfest.digitalocean.com/[Hacktoberfest]!
 Issues that can give you a good start are https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3AHacktoberfest[have the label "Hacktoberfest"] and maintainers are willing to help.*
+////
 
-////
 *To contribute as a developer, some issues are labeled with link:https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22["good first issue"].* Maintainers are willing to help.
-////
 
 Feel free to choose these or any other ticket to participate, or create pull requests without a prior ticket.
 
