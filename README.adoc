@@ -18,9 +18,9 @@ image::https://hacktoberfest.digitalocean.com/_nuxt/img/logo-hacktoberfest-full.
 Issues that can give you a good start are https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3AHacktoberfest[have the label "Hacktoberfest"] and maintainers are willing to help.*
 ////
 
-*To contribute as a developer, some issues are labeled with link:https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22["good first issue"].* Maintainers are willing to help.
+*To contribute as a developer, some issues are labeled with "`link:https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22[good first issue]`".* Maintainers are willing to help.
 
-Feel free to choose these or any other ticket to participate, or create pull requests without a prior ticket.
+For more advanced topics, see tickets marked as "`link:https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22[help wanted]`". Feel free to choose these or any other ticket to participate, or create pull requests without a prior ticket.
 
 == Installation
 
