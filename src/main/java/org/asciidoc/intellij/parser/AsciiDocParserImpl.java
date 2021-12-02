@@ -51,6 +51,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DOUBLE_QUOTE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.EMPTY_LINE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ENUMERATION;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.FRONTMATTER_DELIMITER;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.GT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_OLDSTYLE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.HEADING_TOKEN;
@@ -63,6 +64,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_MACRO_BODY;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_MACRO_ID;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LBRACKET;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_BREAK;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINE_COMMENT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKANCHOR;
@@ -71,6 +73,8 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LINKSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LISTING_TEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LPAREN;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.LT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MACROTEXT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONOBOLD;
@@ -81,10 +85,12 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_D
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_CONTENT;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.RBRACKET;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REF;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFEND;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFSTART;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.REFTEXT;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.RPAREN;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SEPARATOR;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SINGLE_QUOTE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TEXT;
@@ -484,6 +490,7 @@ public class AsciiDocParserImpl {
     while ((at(MONO) || at(BOLD) || at(TEXT) || at(MONOITALIC) || at(MONOBOLDITALIC) || at(MONOBOLD) ||
       at(ITALIC) || at(BOLDITALIC) || ALLQUOTES.contains(myBuilder.getTokenType()) ||
       at(ATTRIBUTE_REF_START) || at(INLINE_MACRO_ID) ||
+      at(LBRACKET) || at(RBRACKET) || at(LT) || at(GT) || at(LPAREN) || at(RPAREN) ||
       at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX) ||
       at(INLINEIDSTART) || at(REFSTART) || at(BIBSTART) || at(LINKSTART))
       && emptyLines == 0) {
