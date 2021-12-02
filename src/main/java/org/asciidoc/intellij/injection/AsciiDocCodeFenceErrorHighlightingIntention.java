@@ -67,7 +67,7 @@ public class AsciiDocCodeFenceErrorHighlightingIntention implements IntentionAct
   public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
     setHideErrors(true);
 
-    Notification notification = new Notification("AsciiDoc", AsciiDocBundle.message("asciidoc.hide.errors.notification.title"),
+    Notification notification = new Notification("asciidoctor", AsciiDocBundle.message("asciidoc.hide.errors.notification.title"),
       AsciiDocBundle.message("asciidoc.hide.errors.notification.content"), NotificationType.INFORMATION);
     notification.addAction(new NotificationAction(AsciiDocBundle.message("asciidoc.hide.errors.notification.rollback.action.text")) {
       @Override

@@ -231,7 +231,7 @@ public class AsciiDocDownloaderUtil {
 
       private void createFailureNotification(IOException e, boolean download) {
         Notifications.Bus
-          .notify(new Notification("asciidoc", AsciiDocBundle.message("asciidoc.download.title"),
+          .notify(new Notification("asciidoctor", AsciiDocBundle.message("asciidoc.download.title"),
               (download ? AsciiDocBundle.message("asciidoc.download.failed") + ": " + "Can't download <a href=\"" + downloadUrl + "\">" + downloadUrl + "</a>" : "Copy failed. Can't copy " + downloadName) + " to folder " + directory.getAbsolutePath() + ": " + e.getMessage() + "."
                 + (download ? "" : " If you haven't downloaded the file yet, you can download it from <a href=\"" + downloadUrl + "\">" + downloadUrl + "</a>"),
               NotificationType.ERROR)

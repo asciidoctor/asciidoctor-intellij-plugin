@@ -66,26 +66,24 @@ public class CreatePdfFromPreviewAction extends AsciiDocAction implements DumbAw
       String canonicalPath = file.getCanonicalPath();
       if (canonicalPath != null) {
         String targetString = canonicalPath.replaceAll("\\.(adoc|asciidoc|ad)$", ".pdf");
-        previewEditor.printToPdf(targetString, success -> {
-          ApplicationManager.getApplication().invokeLater(() -> {
-            if (success) {
-              ApplicationManager.getApplication().runWriteAction(() -> {
-                VirtualFile target = changeFileExtension(file);
-                VirtualFile parent = file.getParent();
-                VirtualFile virtualFile = target != null ? target : parent;
-                AsciiDocUtil.selectFileInProjectView(project, virtualFile);
-                if (target != null) {
-                  new OpenFileDescriptor(project, target).navigate(true);
-                }
-              });
-            } else {
-              Notifications.Bus
-                .notify(new Notification("asciidoc", AsciiDocBundle.message("asciidoc.webpdf.failed.title"),
-                  AsciiDocBundle.message("asciidoc.webpdf.failed.message", targetString),
-                  NotificationType.ERROR));
-            }
-          });
-        });
+        previewEditor.printToPdf(targetString, success -> ApplicationManager.getApplication().invokeLater(() -> {
+          if (success) {
+            ApplicationManager.getApplication().runWriteAction(() -> {
+              VirtualFile target = changeFileExtension(file);
+              VirtualFile parent = file.getParent();
+              VirtualFile virtualFile = target != null ? target : parent;
+              AsciiDocUtil.selectFileInProjectView(project, virtualFile);
+              if (target != null) {
+                new OpenFileDescriptor(project, target).navigate(true);
+              }
+            });
+          } else {
+            Notifications.Bus
+              .notify(new Notification("asciidoctor", AsciiDocBundle.message("asciidoc.webpdf.failed.title"),
+                AsciiDocBundle.message("asciidoc.webpdf.failed.message", targetString),
+                NotificationType.ERROR));
+          }
+        }));
       }
     }
 

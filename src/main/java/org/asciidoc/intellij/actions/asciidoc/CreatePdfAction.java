@@ -65,7 +65,7 @@ public class CreatePdfAction extends AsciiDocAction {
       // download all element, as we can't detect if the PDF contains maybe diagrams
       AsciiDocDownloaderUtil.downloadAsciidoctorJPdf(project, () -> {
         Notifications.Bus
-          .notify(new Notification("asciidoc", AsciiDocBundle.message("asciidoc.download.title"),
+          .notify(new Notification("asciidoctor", AsciiDocBundle.message("asciidoc.download.title"),
             AsciiDocBundle.message("asciidoc.download.asciidoctorj-pdf.success"),
             NotificationType.INFORMATION));
         this.actionPerformed(event);
