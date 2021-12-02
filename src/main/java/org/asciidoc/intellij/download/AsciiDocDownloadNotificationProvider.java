@@ -25,8 +25,10 @@ public class AsciiDocDownloadNotificationProvider extends EditorNotifications.Pr
   private static volatile boolean notification = false;
 
   public static void showNotification() {
-    notification = true;
-    ApplicationManager.getApplication().invokeLater(EditorNotifications::updateAll);
+    if (!notification) {
+      notification = true;
+      ApplicationManager.getApplication().invokeLater(EditorNotifications::updateAll);
+    }
   }
 
   @NotNull
@@ -55,7 +57,7 @@ public class AsciiDocDownloadNotificationProvider extends EditorNotifications.Pr
       EditorNotifications.updateAll();
       AsciiDocDownloaderUtil.downloadAsciidoctorJDiagram(project, () -> {
         Notifications.Bus
-          .notify(new Notification("asciidoc", AsciiDocBundle.message("asciidoc.download.title"),
+          .notify(new Notification("asciidoctor", AsciiDocBundle.message("asciidoc.download.title"),
             AsciiDocBundle.message("asciidoc.download.asciidoctorj-diagram.success"),
             NotificationType.INFORMATION));
         notification = false;
