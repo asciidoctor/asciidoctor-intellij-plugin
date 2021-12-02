@@ -21,7 +21,7 @@ public class AsciiDocFormattingModelBuilder implements FormattingModelBuilder {
     final PsiElement element = context.getPsiElement();
     final ASTNode root = TreeUtil.getFileElement((TreeElement) element.getNode());
     final FormattingDocumentModelImpl documentModel = FormattingDocumentModelImpl.createOn(element.getContainingFile());
-    return new PsiBasedFormattingModel(element.getContainingFile(), new AsciiDocBlock(root, context.getCodeStyleSettings()), documentModel);
+    return new PsiBasedFormattingModel(element.getContainingFile(), new AsciiDocFormattingBlock(root, context.getCodeStyleSettings()), documentModel);
   }
 
   @Nullable
