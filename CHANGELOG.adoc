@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.36.8
+
+- refactoring discovery of Antora playbooks to align with IntelliJ APIs (#919)
+
 === 0.36.7
 
 - fix preview of images in browser preview (#935)

@@ -32,8 +32,6 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.ex.temp.TempFileSystem;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValue;
@@ -59,6 +57,7 @@ import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationDummy;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.psi.AttributeDeclaration;
+import org.asciidoc.intellij.psi.search.AsciiDocAntoraPlaybookIndex;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.asciidoctor.Asciidoctor;
@@ -1024,15 +1023,7 @@ public class AsciiDoc {
       VirtualFile antoraFile = antoraModuleDir.getParent().getParent().findChild(ANTORA_YML);
       if (antoraFile != null) {
         AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
-          for (String entry : AsciiDocUtil.getPlaybooks(project)) {
-            VirtualFile playbook = VirtualFileManager.getInstance().findFileByNioPath(Path.of(entry));
-            if (playbook == null && antoraFile.getFileSystem() instanceof TempFileSystem) {
-              // necessary to run successfully during tests
-              playbook = antoraFile.getFileSystem().findFileByPath(entry);
-            }
-            if (playbook == null) {
-              continue;
-            }
+          for (VirtualFile playbook : AsciiDocAntoraPlaybookIndex.getVirtualFiles(project)) {
             result.addAll(getAntoraPlaybookAsciiDocAttributes(project, playbook));
           }
 

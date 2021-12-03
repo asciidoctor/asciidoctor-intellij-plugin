@@ -22,7 +22,6 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.UserDataHolderEx;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -43,6 +42,7 @@ import com.intellij.util.SlowOperations;
 import com.intellij.util.text.CharArrayUtil;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocLanguage;
+import org.asciidoc.intellij.psi.search.AsciiDocAntoraPlaybookIndex;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.intellij.lang.annotations.Language;
@@ -53,7 +53,6 @@ import org.yaml.snakeyaml.error.YAMLException;
 
 import javax.swing.*;
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -345,11 +344,7 @@ public class AsciiDocUtil {
 
     if (onlyAntora) {
       Collection<AttributeDeclaration> antoraAttributes = new ArrayList<>();
-      for (String entry : getPlaybooks(project)) {
-        VirtualFile playbook = VirtualFileManager.getInstance().findFileByNioPath(Path.of(entry));
-        if (playbook == null) {
-          continue;
-        }
+      for (VirtualFile playbook : AsciiDocAntoraPlaybookIndex.getVirtualFiles(project)) {
         Map<String, Object> antora;
         try {
           antora = AsciiDoc.readAntoraYaml(project, playbook);
@@ -827,41 +822,6 @@ public class AsciiDocUtil {
 
   };
 
-  private static final ProjectCache<TreeSet<String>> PROJECT_PLAYBOOKS = new ProjectCache<>() {
-
-    @Override
-    protected void processEvent(@NotNull List<? extends VFileEvent> events, Project project) {
-      Set<VirtualFile> playbooks = new HashSet<>();
-      for (VFileEvent event : events) {
-        try {
-          if (event.getFile() != null && event.getFile().isValid()) {
-            String file = event.getFile().getName();
-            if (file.endsWith(".yml") && file.contains("antora") && file.contains("playbook")) {
-              playbooks.add(event.getFile());
-            }
-          }
-        } catch (AlreadyDisposedException ignored) {
-          // might happen if file is in a module that has already been disposed
-        }
-      }
-      if (playbooks.size() > 0) {
-        addPlaybooks(project, playbooks);
-      }
-    }
-
-    private void addPlaybooks(Project project, Set<VirtualFile> contentRoots) {
-      synchronized (projectItems) {
-        TreeSet<String> playbooks = projectItems.get(project);
-        if (playbooks != null) {
-          for (VirtualFile contentRoot : contentRoots) {
-            addPlaybook(playbooks, contentRoot);
-          }
-        }
-      }
-    }
-
-  };
-
   @NotNull
   public static Collection<String> getRoots(@NotNull Project project) {
     TreeSet<String> roots = PROJECT_ROOTS.retrieve(project);
@@ -882,30 +842,6 @@ public class AsciiDocUtil {
     }
     PROJECT_ROOTS.cache(project, roots);
     return Collections.unmodifiableCollection(roots);
-  }
-
-  @NotNull
-  public static Collection<String> getPlaybooks(@NotNull Project project) {
-    TreeSet<String> playbooks = PROJECT_PLAYBOOKS.retrieve(project);
-    if (playbooks != null) {
-      return Collections.unmodifiableCollection(playbooks);
-    }
-    playbooks = new TreeSet<>();
-    if (project.isDisposed()) {
-      // module manager will not work on already disposed projects, therefore return empty list
-      return Collections.unmodifiableCollection(playbooks);
-    }
-    ProgressManager.checkCanceled();
-    TreeSet<String> additionalPlaybooks = new TreeSet<>();
-    FilenameIndex.processAllFileNames(file -> {
-      if (file.endsWith(".yml") && file.contains("antora") && file.contains("playbook")) {
-        FilenameIndex.getVirtualFilesByName(file, new AsciiDocSearchScope(project)).forEach(virtualFile -> addPlaybook(additionalPlaybooks, virtualFile));
-      }
-      return true;
-    }, GlobalSearchScope.projectScope(project), null);
-    playbooks.addAll(additionalPlaybooks);
-    PROJECT_PLAYBOOKS.cache(project, playbooks);
-    return Collections.unmodifiableCollection(playbooks);
   }
 
   @TestOnly
