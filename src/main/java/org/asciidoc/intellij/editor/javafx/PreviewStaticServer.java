@@ -44,7 +44,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PreviewStaticServer extends HttpRequestHandler {
-  private final Logger log = Logger.getInstance(PreviewStaticServer.class);
+  private Logger log = Logger.getInstance(PreviewStaticServer.class);
 
   private static final Logger LOG = Logger.getInstance(PreviewStaticServer.class);
   private static final String PREFIX = "/ead61b63-b0a6-4ff2-a49a-86be75ccfd1a/";
@@ -332,4 +332,11 @@ public class PreviewStaticServer extends HttpRequestHandler {
     Responses.send(response, channel, request);
   }
 
+  @Override
+  protected void finalize() {
+    if (browserPanel != null) {
+      browserPanel.close();
+      browserPanel = null;
+    }
+  }
 }

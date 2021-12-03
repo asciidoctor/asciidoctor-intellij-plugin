@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.36.7
+
+- fix preview of images in browser preview (#935)
+
 === 0.36.6
 
 - prevent NPE case when showing documentation for current element (#929)
