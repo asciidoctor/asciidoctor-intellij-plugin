@@ -3,15 +3,16 @@ package org.asciidoc.intellij.editor.browser;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -26,9 +27,6 @@ import org.asciidoctor.SafeMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -50,7 +48,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BrowserPanel implements Closeable {
+public class BrowserPanel implements Disposable {
 
   private final Path globalImagesPath;
   private final Logger log = Logger.getInstance(JavaFxHtmlPanel.class);
@@ -96,9 +94,8 @@ public class BrowserPanel implements Closeable {
   private final SignWithMac signWithMac = new SignWithMac();
 
   public BrowserPanel() {
-    @NotNull JPanel myPanelWrapper = new JPanel(new BorderLayout());
-    myPanelWrapper.setBackground(JBColor.background());
     globalImagesPath = AsciiDoc.tempImagesPath(null, null);
+    Disposer.register(ApplicationManager.getApplication(), this);
 
     try {
       Properties p = new Properties();
@@ -431,7 +428,7 @@ public class BrowserPanel implements Closeable {
   }
 
   @Override
-  public void close() {
+  public void dispose() {
     AsciiDoc.cleanupImagesPath(globalImagesPath);
   }
 
@@ -453,4 +450,5 @@ public class BrowserPanel implements Closeable {
       return null;
     }
   }
+
 }

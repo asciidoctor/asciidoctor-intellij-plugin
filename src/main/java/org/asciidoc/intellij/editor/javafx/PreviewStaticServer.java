@@ -332,11 +332,4 @@ public class PreviewStaticServer extends HttpRequestHandler {
     Responses.send(response, channel, request);
   }
 
-  @Override
-  protected void finalize() {
-    if (browserPanel != null) {
-      browserPanel.close();
-      browserPanel = null;
-    }
-  }
 }
