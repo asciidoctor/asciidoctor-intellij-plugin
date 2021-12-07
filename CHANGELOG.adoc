@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - refactoring discovery of Antora playbooks to align with IntelliJ APIs (#919)
 - API changes in IntelliJ EAP 2021.3.1 TrustChangeNotifier (#937)
+- Resolve NPE when initialization of Asciidoctor failed (#938)
 
 === 0.36.7
 

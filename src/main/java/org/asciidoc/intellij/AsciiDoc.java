@@ -177,6 +177,7 @@ public class AsciiDoc {
 
   private static AntoraIncludeAdapter antoraIncludeAdapter;
 
+  @Nullable
   private static AttributesRetriever attributesRetriever;
 
   private static final com.intellij.openapi.diagnostic.Logger LOG =
@@ -529,6 +530,7 @@ public class AsciiDoc {
       AsciidoctorJRuby asciidoctorJRuby = AsciidoctorJRuby.Factory.create(cl);
 
       /* initialize these lazily, as they call service loader things */
+      // TODO: have one instance matching each Asciidoctor instance we're using?
       if (prependConfig == null) {
         prependConfig = new PrependConfig();
       }
@@ -1239,6 +1241,10 @@ public class AsciiDoc {
   }
 
   public Map<String, String> getAttributes() {
+    if (attributesRetriever == null) {
+      // might have failed if Asciidoctor initialization has failed
+      return Collections.emptyMap();
+    }
     return attributesRetriever.getAttributes();
   }
 
