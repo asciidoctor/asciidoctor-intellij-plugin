@@ -12,7 +12,9 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -1785,6 +1787,30 @@ public class AsciiDocUtil {
       }
       // select file newly created/updated file in project view
       projectView.select(null, file, true);
+    }
+  }
+
+  /**
+   * Will swallow an IndexNotReadyException when called inside a DumbAware action.
+   * Workaround for https://youtrack.jetbrains.com/issue/IDEA-282959.
+   * See also https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/939.
+   * Might need to be applied in other places as well depending on reported exceptions.
+   */
+  public static void swallowIndexNotReadyExceptionIfInsideDumbAware(Runnable runnable) {
+    try {
+      runnable.run();
+    } catch (IndexNotReadyException ex) {
+      // if this has been called from a dumb-aware class (especially ShowQuickDocInfoAction),
+      // swallow exception here and return an empty/shorter list as fallback.
+      if (Arrays.stream(Thread.currentThread().getStackTrace()).noneMatch(el -> {
+        try {
+          return DumbAware.class.isAssignableFrom(Class.forName(el.getClassName()));
+        } catch (ClassNotFoundException e) {
+          return false;
+        }
+      })) {
+        throw ex;
+      }
     }
   }
 

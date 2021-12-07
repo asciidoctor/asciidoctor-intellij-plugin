@@ -1,7 +1,5 @@
 package org.asciidoc.intellij.psi;
 
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
@@ -17,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
@@ -62,8 +59,8 @@ public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implemen
 
   @Override
   public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
-      List<ResolveResult> results = new ArrayList<>();
-    try {
+    List<ResolveResult> results = new ArrayList<>();
+    AsciiDocUtil.swallowIndexNotReadyExceptionIfInsideDumbAware(() -> {
       String name = myRangeInElement.substring(myElement.getText());
       boolean annotation = false;
       if (name.startsWith("@")) {
@@ -92,21 +89,14 @@ public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implemen
         if (annotation && !aClass.isAnnotationType()) {
           continue;
         }
-        results.add(new PsiElementResolveResult(aClass));
-      }
-    } catch (IndexNotReadyException ex) {
-      // if this has been called from a dumb-aware class (especially ShowQuickDocInfoAction),
-      // swallow exception here and return an empty/shorter list as fallback.
-      if (Arrays.stream(Thread.currentThread().getStackTrace()).noneMatch(el -> {
-        try {
-          return DumbAware.class.isAssignableFrom(Class.forName(el.getClassName()));
-        } catch (ClassNotFoundException e) {
-          return false;
+        ResolveResult resolveResult = new PsiElementResolveResult(aClass);
+        if (!results.contains(resolveResult)) {
+          // avoid having the same class in the list twice. Would happen if class doesn't have a package name,
+          // and short name and fully qualified name are the same.
+          results.add(resolveResult);
         }
-      })) {
-        throw ex;
       }
-    }
+    });
     return results.toArray(new ResolveResult[0]);
   }
 
