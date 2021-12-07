@@ -1,5 +1,7 @@
 package org.asciidoc.intellij.psi;
 
+import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
@@ -15,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
@@ -59,36 +62,50 @@ public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implemen
 
   @Override
   public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
-    List<ResolveResult> results = new ArrayList<>();
-    String name = myRangeInElement.substring(myElement.getText());
-    boolean annotation = false;
-    if (name.startsWith("@")) {
-      annotation = true;
-      name = name.substring(1);
-    }
-    PsiClass[] fullQualifiedClasses = JavaPsiFacade.getInstance(myElement.getProject()).findClasses(
-      name,
-      new AsciiDocSearchScope(myElement.getProject())
-    );
-    for (PsiClass aClass : fullQualifiedClasses) {
-      if (annotation && !aClass.isAnnotationType()) {
-        continue;
+      List<ResolveResult> results = new ArrayList<>();
+    try {
+      String name = myRangeInElement.substring(myElement.getText());
+      boolean annotation = false;
+      if (name.startsWith("@")) {
+        annotation = true;
+        name = name.substring(1);
       }
-      results.add(new PsiElementResolveResult(aClass));
-    }
-    PsiPackage thePackage = JavaPsiFacade.getInstance(myElement.getProject()).findPackage(name);
-    if (thePackage != null) {
-      results.add(new PsiElementResolveResult(thePackage));
-    }
-    PsiClass[] shortNamedClasses = PsiShortNamesCache.getInstance(myElement.getProject()).getClassesByName(
-      name,
-      new AsciiDocSearchScope(myElement.getProject())
-    );
-    for (PsiClass aClass : shortNamedClasses) {
-      if (annotation && !aClass.isAnnotationType()) {
-        continue;
+      PsiClass[] fullQualifiedClasses = JavaPsiFacade.getInstance(myElement.getProject()).findClasses(
+        name,
+        new AsciiDocSearchScope(myElement.getProject())
+      );
+      for (PsiClass aClass : fullQualifiedClasses) {
+        if (annotation && !aClass.isAnnotationType()) {
+          continue;
+        }
+        results.add(new PsiElementResolveResult(aClass));
       }
-      results.add(new PsiElementResolveResult(aClass));
+      PsiPackage thePackage = JavaPsiFacade.getInstance(myElement.getProject()).findPackage(name);
+      if (thePackage != null) {
+        results.add(new PsiElementResolveResult(thePackage));
+      }
+      PsiClass[] shortNamedClasses = PsiShortNamesCache.getInstance(myElement.getProject()).getClassesByName(
+        name,
+        new AsciiDocSearchScope(myElement.getProject())
+      );
+      for (PsiClass aClass : shortNamedClasses) {
+        if (annotation && !aClass.isAnnotationType()) {
+          continue;
+        }
+        results.add(new PsiElementResolveResult(aClass));
+      }
+    } catch (IndexNotReadyException ex) {
+      // if this has been called from a dumb-aware class (especially ShowQuickDocInfoAction),
+      // swallow exception here and return an empty/shorter list as fallback.
+      if (Arrays.stream(Thread.currentThread().getStackTrace()).noneMatch(el -> {
+        try {
+          return DumbAware.class.isAssignableFrom(Class.forName(el.getClassName()));
+        } catch (ClassNotFoundException e) {
+          return false;
+        }
+      })) {
+        throw ex;
+      }
     }
     return results.toArray(new ResolveResult[0]);
   }
