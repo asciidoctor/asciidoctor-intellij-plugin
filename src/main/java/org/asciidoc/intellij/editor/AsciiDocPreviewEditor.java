@@ -295,7 +295,12 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     settingsConnection.subscribe(AsciiDocApplicationSettings.SettingsChangedListener.TOPIC, new MyUpdatePanelOnSettingsChangedListener());
     settingsConnection.subscribe(EditorColorsManager.TOPIC, new MyEditorColorsListener());
     settingsConnection.subscribe(RefreshPreviewListener.TOPIC, new MyRefreshPreviewListener());
-    settingsConnection.subscribe(TrustChangeNotifier.TOPIC, new MyTrustChangedListener());
+    try {
+      settingsConnection.subscribe(TrustChangeNotifier.TOPIC, new MyTrustChangedListener());
+    } catch (Throwable e) {
+      // should catch a ClassNotFoundException
+      log.warn("Experimental class not found (issue in 2021.3.1 EAP). As a workaround, user needs to close and re-open the preview once trust has been approved", e);
+    }
 
     // Get asciidoc asynchronously
     new Thread(asciidoc).start();

@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.36.8
 
 - refactoring discovery of Antora playbooks to align with IntelliJ APIs (#919)
+- API changes in IntelliJ EAP 2021.3.1 TrustChangeNotifier (#937)
 
 === 0.36.7
 
