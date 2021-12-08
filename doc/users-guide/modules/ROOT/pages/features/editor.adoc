@@ -88,10 +88,9 @@ To enable spell-checking support for other languages, the user can add a languag
 The IDE downloads the dictionaries for the selected languages once the user adds the language in the settings.
 
 [[grazie]]
-// see: AsciiDocGrazieLanguageSupport
+// see: AsciiDocGrazieTextExtractor
 Starting with IntelliJ 2020.1, the bundled https://plugins.jetbrains.com/plugin/12175-grazie/[Grazie plugin] highlights possible grammar and spelling mistakes in the editor.
-Text must be included in a section or block to be grammar-checked.
-A minimal file would therefore contain at least a heading and some text.
+As of plugin version 0.36.2 every heading and paragraph of text will be checked.
 It supports multiple languages: Once the user configured the languages in IDE's proofreading settings, the plugin detects the language of a section automatically.
 As it performs all checks locally with the help of libraries from https://languagetool.org/, it doesn't submit text written in the IDE to a third party cloud service.
 
