@@ -19,7 +19,7 @@ Publish with confidence using automated builds.
 
 == Writing technical documentation
 
-When writing technical documentation, it needs at team effort where everyone contributes and collaborates.
+When writing technical documentation, it needs a team effort where everyone contributes and collaborates.
 For the content you write you want to be able to publish for different audiences in different target formats like static HTML pages, in-line help or PDFs.
 
 == Why to use AsciiDoc and IntelliJ
