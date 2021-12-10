@@ -814,7 +814,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 <PREBLOCK> {
   ^ {PAGEBREAK} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.PAGEBREAK; }
   ^ {HORIZONTALRULE} $ { resetFormatting(); yybegin(PREBLOCK); return AsciiDocTokenTypes.HORIZONTALRULE; }
-  {BLOCK_MACRO_START} / [^ \[\n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
+  {BLOCK_MACRO_START} / [^ \[\n] { yypushstate(); clearStyle(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   // toc allows the body to be empty, special case...
   ^ {HEADING_START} | {HEADING_START_MARKDOWN} / {NON_SPACE} { if (blockStack.size() == 0) {
                               int level = 0;
@@ -1853,7 +1853,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ","                  { return AsciiDocTokenTypes.SEPARATOR; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
-  "]"                  { yypopstate(); return AsciiDocTokenTypes.ATTRS_END; }
+  "]"                  { yybegin(EOL_POP); return AsciiDocTokenTypes.ATTRS_END; }
 }
 
 <BLOCK_ATTRS> {

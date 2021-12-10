@@ -569,6 +569,34 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('abc')");
   }
 
+  public void testBlockMacroWithBlockAttributesShouldClearStyle() {
+    doTest("[image]\n" +
+        "image::test.png[]\n" +
+        "\n" +
+        "Example Query\n" +
+        "[source]\n" +
+        "sql",
+      "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('image')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_MACRO_ID ('image::')\n" +
+        "AsciiDoc:BLOCK_MACRO_BODY ('test.png')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
+        "AsciiDoc:TEXT ('Example')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Query')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('source')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_TEXT ('sql')");
+  }
+
   public void testInlineMacroUrl() {
     doTest("image:http://image.com[Caption]\nabc",
       "AsciiDoc:INLINE_MACRO_ID ('image:')\n" +
