@@ -1319,6 +1319,7 @@ public class AsciiDocUtil {
       // this might be called from DocumentationManager.doShowJavaDocInfo
       // allow slow operations for now, as no alternative is possible here to resolve the reference.
       // https://youtrack.jetbrains.com/issue/IDEA-273415
+      // should no longer be necessary in 2021.3 onwards as that uses com.intellij.lang.documentation.ide.impl.DocumentationManager
       return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> SlowOperations.allowSlowOperations(() -> {
         String key = originalKey;
         String myModuleName = moduleDir.getName();
