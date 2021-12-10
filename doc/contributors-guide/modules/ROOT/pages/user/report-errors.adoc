@@ -1,0 +1,35 @@
+= Report Errors
+:description: Reporting errors provides essential information to resolve problems.
+
+{description}
+
+== Reporting IDE's fatal errors
+
+The IntelliJ AsciiDoc plugin implements an IntelliJ error handler.
+Whenever an exception occurs within the IDE, a small red indicator will flash in the lower right corner.
+Click on the indicator to open the IDE Fatal Errors dialog.
+If IntelliJ traces the exception to the AsciiDoc plugin, the user can report information about the exception to the AsciiDoc plugin team.
+
+.IDE Fatal errors dialog
+image::ide-fatal-errors.png[]
+<1> Adding a short summary is optional. If left blank, developers will still be able to derive a lot of information from the stacktrace.
+<2> Depending on the error that occurred, the user can tick the checkboxes for optional attachments.
+Sending these attachments is important for developers to reproduce the issue and to analyze the cause. +
+Users should review the information they report before sending it so that they don't reveal information about their local project that they don't want to share.
+All information can be edited by the user as needed before reporting.
+<3> Report the issue.
+
+Reporting of the errors doesn't require registration and is anonymous unless users provide an email address or similar identifying information in the form.
+
+After reporting the error, the IDE console shows the event ID of the reported error.
+Users can contact plugin developers via a GitHub issue and the event ID to provide more information or to interact with the plugin developers.
+
+== Reporting errors via GitHub
+
+User can submit issues for errors via the plugin's GitHub project.
+
+As a prerequisite, user's need to log in with a GitHub account.
+Registration for a GitHub account is free.
+The registration allows users to receive email updates on the issues they created.
+
+On the https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[issue's tab of the project], press btn:[New issue] and follow the workflow to create a new issue.

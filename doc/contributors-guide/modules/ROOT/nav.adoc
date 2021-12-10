@@ -2,6 +2,7 @@
 
 * xref:contribute-as-a-user.adoc[]
 ** xref:user/write-a-review.adoc[]
+** xref:user/report-errors.adoc[]
 ** xref:user/join-discussion-on-github.adoc[]
 ** xref:user/subscribe-to-new-releases.adoc[]
 ** xref:user/installing-a-preview-release.adoc[]
