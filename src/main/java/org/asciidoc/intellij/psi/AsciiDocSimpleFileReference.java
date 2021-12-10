@@ -30,6 +30,8 @@ public class AsciiDocSimpleFileReference extends PsiReferenceBase<PsiElement> im
 
     // Might be called from PsiViewerDialog in EDT thread.
     // This needs access to the file index to get the information we need.
+    // remove SlowOperations from 2021.3 onwards, as several changes have been made to the caller to avoid this
+    // https://github.com/JetBrains/intellij-community/commits/master/platform/lang-impl/src/com/intellij/internal/psiView/PsiViewerDialog.java
     SlowOperations.allowSlowOperations(() -> {
       PsiFile[] filesByName = FilenameIndex.getFilesByName(myElement.getProject(), name, new AsciiDocSearchScope(myElement.getProject()));
       for (PsiFile file : filesByName) {
