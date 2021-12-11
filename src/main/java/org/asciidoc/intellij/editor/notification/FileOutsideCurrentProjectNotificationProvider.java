@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.editor.notification;
 
 import com.intellij.ide.BrowserUtil;
+import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
@@ -33,6 +34,10 @@ public class FileOutsideCurrentProjectNotificationProvider extends EditorNotific
   public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull final FileEditor fileEditor, @NotNull Project project) {
     // only in AsciiDoc files
     if (file.getFileType() != AsciiDocFileType.INSTANCE) {
+      return null;
+    }
+
+    if (LightEdit.owns(project)) {
       return null;
     }
 

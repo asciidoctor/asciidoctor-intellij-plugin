@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.36.9
 
 - fixing lexing issue with block macro after block attributes (#941)
+- don't show notification about limited functionality in light mode
 
 === 0.36.8
 
