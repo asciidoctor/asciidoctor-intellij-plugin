@@ -2,7 +2,6 @@ package org.asciidoc.intellij.parser;
 
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.IFileElementType;
 import org.asciidoc.intellij.lexer.AsciiDocElementType;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationStub;
@@ -17,7 +16,7 @@ import org.asciidoc.intellij.psi.AsciiDocSectionStubElementType;
  * @author yole
  */
 public interface AsciiDocElementTypes {
-  IFileElementType FILE = new AsciiDocFileElementType();
+  AsciiDocFileElementType FILE = new AsciiDocFileElementType();
   IElementType BLOCK_MACRO = new AsciiDocElementType("BLOCK_MACRO");
   IElementType INLINE_MACRO = new AsciiDocElementType("INLINE_MACRO");
   IElementType BLOCK = new AsciiDocElementType("BLOCK");
