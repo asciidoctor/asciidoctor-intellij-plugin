@@ -18,6 +18,8 @@ import org.asciidoctor.SafeMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+
 /**
  * Show a notification to the user that the project is not trusted, therefore some functionality is limited.
  * Starting with 2021.3.1 this should no longer be necessary, as the notification will show on all editors once the project is not trusted,
@@ -61,7 +63,7 @@ public class AsciiDocUntrustedNotificationProvider extends com.intellij.ui.Edito
     }
 
     return new UntrustedProjectEditorNotificationPanel(project, fileEditor, () -> {
-      ExternalSystemUtil.confirmLoadingUntrustedProject(project, getSystemId());
+      ExternalSystemUtil.confirmLoadingUntrustedProject(project, Collections.singletonList(getSystemId()));
       return null;
     });
   }
