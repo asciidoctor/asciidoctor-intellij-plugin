@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - fixing lexing issue with block macro after block attributes (#941)
 - don't show notification about limited functionality in light mode
 - increment index version numbers on stub version id increase to avoid invalid indexes
+- API changes in IntelliJ EAP 2021.2.4 UntrustedProjectNotificationProvider (#937)
 
 === 0.36.8
 

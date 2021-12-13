@@ -17,7 +17,6 @@ package org.asciidoc.intellij.editor;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
-import com.intellij.ide.impl.TrustChangeNotifier;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -295,12 +294,14 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     settingsConnection.subscribe(AsciiDocApplicationSettings.SettingsChangedListener.TOPIC, new MyUpdatePanelOnSettingsChangedListener());
     settingsConnection.subscribe(EditorColorsManager.TOPIC, new MyEditorColorsListener());
     settingsConnection.subscribe(RefreshPreviewListener.TOPIC, new MyRefreshPreviewListener());
+    /* API changed, will be available again in 2021.3.1
     try {
       settingsConnection.subscribe(TrustChangeNotifier.TOPIC, new MyTrustChangedListener());
     } catch (Throwable e) {
       // should catch a ClassNotFoundException
       log.warn("Experimental class not found (issue in 2021.3.1 EAP). As a workaround, user needs to close and re-open the preview once trust has been approved", e);
     }
+     */
 
     // Get asciidoc asynchronously
     new Thread(asciidoc).start();
@@ -622,6 +623,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     }
   }
 
+  /* API changed, will be available again in 2021.3.1
   private class MyTrustChangedListener implements TrustChangeNotifier {
     @Override
     public void projectTrusted(@NotNull Project project) {
@@ -634,6 +636,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       });
     }
   }
+   */
 
   public interface RefreshPreviewListener {
     Topic<AsciiDocPreviewEditor.RefreshPreviewListener> TOPIC = Topic.create("AsciiDocRefreshPreview", AsciiDocPreviewEditor.RefreshPreviewListener.class);

@@ -2,8 +2,8 @@ package org.asciidoc.intellij.editor.notification;
 
 import com.intellij.ide.impl.TrustedProjects;
 import com.intellij.ide.impl.UntrustedProjectEditorNotificationPanel;
+import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
-import com.intellij.openapi.externalSystem.service.project.UntrustedProjectNotificationProvider;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
@@ -45,10 +45,21 @@ public class AsciiDocUntrustedNotificationProvider extends com.intellij.ui.Edito
       // as the IDE has been configured to be SECURE on AsciiDoc anyway, there is no need to show the notification.
       return null;
     }
+
+    /* API is being removed, with 2021.3.1 and 2021.2.4 this Notification provider might no longer be necessary
+       as it shows in every editor.
     if (new UntrustedProjectNotificationProvider().createNotificationPanel(file, fileEditor, project) != null) {
       // someone else is already showing that panel
       return null;
     }
+    */
+
+    // replacement for API that is no longer available
+    String fullVersion = ApplicationInfo.getInstance().getFullVersion();
+    if (fullVersion.startsWith("2021.3.1") || fullVersion.startsWith("2021.2.4")) {
+      return null;
+    }
+
     return new UntrustedProjectEditorNotificationPanel(project, fileEditor, () -> {
       ExternalSystemUtil.confirmLoadingUntrustedProject(project, getSystemId());
       return null;
