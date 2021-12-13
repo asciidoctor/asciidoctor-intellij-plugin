@@ -41,6 +41,9 @@ public class AsciiDocLanguage extends Language {
     try {
       Language prev = Language.findLanguageByID(LANGUAGE_NAME);
       if (prev != null) {
+        // starting from 2022.1 onwards, the information of the original plugin can be retrieved from Language,
+        // as the internal state is preseved.
+        // https://youtrack.jetbrains.com/issue/IDEA-283644
         StringBuilder sb = new StringBuilder();
         sb.append("mycl=").append(AsciiDocLanguage.class.getClassLoader().toString());
         sb.append(", othercl=").append(prev.getClass().getClassLoader().toString());
