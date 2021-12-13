@@ -53,8 +53,11 @@ public class AsciiDocHandleUnloadActivity implements StartupActivity, DumbAware,
                 // another reason: on windows even after unloading JAR file of the plugin still be locked and can't be deleted, making uninstall impossible
                 // https://youtrack.jetbrains.com/issue/IDEA-244471
                 // Update: IDEA-244471 might no be relevant here as the plugin will have the version number in the JAR file, therefore a change file will have a new name
-                throw new CannotUnloadPluginException("unloading mechanism is not safe, incomplete unloading might lead to strange exceptions");
-                // AsciiDoc.checkUnloadPlugin();
+                // as an intermediate solution, try in-place updates only when in internal mode (which is enabled by default for all EAP versions)
+                if (!ApplicationManager.getApplication().isInternal()) {
+                  throw new CannotUnloadPluginException("unloading mechanism is not safe, incomplete unloading might lead to strange exceptions");
+                }
+                AsciiDoc.checkUnloadPlugin();
               }
             }
 
