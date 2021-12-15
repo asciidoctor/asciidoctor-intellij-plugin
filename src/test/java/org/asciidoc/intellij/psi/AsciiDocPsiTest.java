@@ -543,9 +543,9 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiElementVisitor myVisitor = new PsiElementVisitor() {
       @Override
       public void visitElement(@NotNull PsiElement element) {
-        TextContent textAt = TextExtractor.findTextAt(element, textContents);
-        if (textAt != null) {
-          String text = textAt.toString().trim();
+        List<TextContent> textAt = TextExtractor.findTextsAt(element, textContents);
+        for (TextContent textContent : textAt) {
+          String text = textContent.toString().trim();
           for (String line : text.split("\\n", -1)) {
             if (line.length() > 0) {
               texts.add(line);
@@ -766,6 +766,28 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     // xref to old page name
     assertReferencesResolve(urls.get(2), 1);
   }
+
+  public void testAntoraRelativeResources() {
+    // given...
+    PsiFile[] psiFile = myFixture.configureByFiles(
+      getTestName(true) + "/modules/ROOT/pages/sub/test.adoc",
+      getTestName(true) + "/modules/ROOT/pages/sub/page.adoc",
+      getTestName(true) + "/modules/ROOT/attachments/sub/attachment.txt",
+      getTestName(true) + "/antora.yml"
+    );
+
+    AsciiDocLink[] links = PsiTreeUtil.getChildrenOfType(psiFile[0].getFirstChild(), AsciiDocLink.class);
+    assertNotNull(links);
+    assertSize(3, links);
+
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(links[0], "./page.adoc", "page"), "/src/antoraRelativeResources/modules/ROOT/pages/sub/page.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(links[0], "my-component::./page.adoc", "page"), "/src/antoraRelativeResources/modules/ROOT/pages/sub/page.adoc");
+
+    assertReferencesResolve(links[0], 3);
+    assertReferencesResolve(links[1], 2);
+    assertReferencesResolve(links[2], 3);
+  }
+
 
   @SuppressWarnings("ConstantConditions")
   public void testAntoraComponentResolve() {

@@ -23,6 +23,7 @@ import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.UserDataHolderEx;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.PsiDirectory;
@@ -1237,16 +1238,42 @@ public class AsciiDocUtil {
 
   public static List<String> replaceAntoraPrefix(PsiElement myElement, String key, String defaultFamily) {
     VirtualFile antoraModuleDir = findAntoraModuleDir(myElement);
+    VirtualFile sourceDir = myElement.getContainingFile().getVirtualFile();
+    if (sourceDir == null) {
+      sourceDir = myElement.getContainingFile().getOriginalFile().getVirtualFile();
+    }
+    if (sourceDir != null) {
+      sourceDir = sourceDir.getParent();
+    }
     if (antoraModuleDir != null) {
-      return replaceAntoraPrefix(myElement.getProject(), antoraModuleDir, key, defaultFamily);
+      return replaceAntoraPrefix(myElement.getProject(), antoraModuleDir, sourceDir, key, defaultFamily);
     } else {
       return Collections.singletonList(key);
     }
   }
 
-  /**
-   * The start page should always be in the same component and should not have a family name.
-   */
+  private static String replaceAntoraRelativePath(VirtualFile sourceDir, VirtualFile moduleDir, String key) {
+    if (key.startsWith("./") && sourceDir != null) {
+      String relativePath = FileUtil.getRelativePath(moduleDir.getPath(), sourceDir.getPath(), '/');
+      if (relativePath != null) {
+        int startInFamiliesDir = relativePath.indexOf('/');
+        if (startInFamiliesDir != -1) {
+          relativePath = relativePath.substring(startInFamiliesDir + 1);
+        } else {
+          relativePath = null;
+        }
+      }
+      if (relativePath != null) {
+        key = relativePath + key.substring(1);
+      }
+    }
+    return key;
+  }
+
+
+    /**
+     * The start page should always be in the same component and should not have a family name.
+     */
   public static List<String> replaceAntoraPrefixForStartPage(PsiElement myElement, String originalKey) {
     Project project = myElement.getProject();
     return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
@@ -1310,7 +1337,7 @@ public class AsciiDocUtil {
     });
   }
 
-  public static List<String> replaceAntoraPrefix(Project project, VirtualFile moduleDir, String originalKey, String defaultFamily) {
+  public static List<String> replaceAntoraPrefix(Project project, VirtualFile moduleDir, VirtualFile sourceDir, String originalKey, String defaultFamily) {
     Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(originalKey);
     if (urlMatcher.find()) {
       return Collections.singletonList(originalKey);
@@ -1373,6 +1400,8 @@ public class AsciiDocUtil {
             return Collections.singletonList(originalKey);
           }
         }
+
+        key = replaceAntoraRelativePath(sourceDir, moduleDir, key);
 
         if (otherFamily == null || otherFamily.length() == 0) {
           otherFamily = defaultFamily;

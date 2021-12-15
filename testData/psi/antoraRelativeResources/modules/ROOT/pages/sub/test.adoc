@@ -1,0 +1,4 @@
+xref:attachment$./attachment.txt[]
+xref:./page.adoc[]
+xref:my-component::./page.adoc[]
+

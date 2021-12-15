@@ -54,16 +54,18 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
       // if we read from an include-file, use that to determine originating module
       VirtualFile localModule = antoraModuleDir;
       String readFile = reader.getFile();
+      VirtualFile sourceDir = null;
       if (StringUtils.isNotBlank(readFile)) {
         VirtualFile resolved = LocalFileSystem.getInstance().findFileByPath(reader.getFile());
         if (resolved != null) {
           localModule = AsciiDocUtil.findAntoraModuleDir(project, resolved);
+          sourceDir = resolved.getParent();
         } else {
           localModule = null;
         }
       }
       if (localModule != null) {
-        target = AsciiDocUtil.replaceAntoraPrefix(project, localModule, target, null).get(0);
+        target = AsciiDocUtil.replaceAntoraPrefix(project, localModule, sourceDir, target, null).get(0);
       }
       if (oldTarget.equals(target)) {
         String file = reader.getFile();

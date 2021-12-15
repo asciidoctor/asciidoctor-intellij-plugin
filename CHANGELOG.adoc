@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.36.11
+
+- Support Antora 3 relative resource IDs with `./` for shorthand paths (#898)
+
 === 0.36.10
 
 - API changes in IntelliJ EAP 2021.2.4 ExternalSystemUtil (#937)

@@ -1,0 +1,4 @@
+asciidoc:
+  attributes:
+    pbkey: pbval
+    pbsoftkey: 'pbsoftval@'

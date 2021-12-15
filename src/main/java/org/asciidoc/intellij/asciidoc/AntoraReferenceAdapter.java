@@ -130,13 +130,13 @@ public class AntoraReferenceAdapter {
         default:
           throw new IllegalStateException("Unexpected value: " + type);
       }
-      List<String> replaced = AsciiDocUtil.replaceAntoraPrefix(project, antoraModuleDir, target, defaultFamily);
+      VirtualFile sourceDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
+      List<String> replaced = AsciiDocUtil.replaceAntoraPrefix(project, antoraModuleDir, sourceDir, target, defaultFamily);
       if (replaced.size() == 1 && replaced.get(0).equals(target)) {
         // unable to replace
         return;
       }
       target = replaced.get(0);
-      VirtualFile sourceDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
       VirtualFile targetFile = LocalFileSystem.getInstance().findFileByPath(target);
       if (type.equals("inline_anchor") && phraseNode.getText() == null && targetFile != null && sourceDir != null) {
         AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {

@@ -1,0 +1,6 @@
+name: my-component
+version: '1.0'
+asciidoc:
+  attributes:
+    myattr: 'myval'
+    mysoftattr: 'myval@'

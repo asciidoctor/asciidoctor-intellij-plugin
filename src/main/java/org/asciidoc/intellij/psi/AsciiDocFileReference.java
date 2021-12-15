@@ -390,7 +390,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   private List<String> handleAntora(String key) {
-    if (isAntora) {
+    if (macroName.equals("antora-startpage")) {
+      return AsciiDocUtil.replaceAntoraPrefixForStartPage(myElement, key);
+    } else if (isAntora || key.startsWith("./")) {
       String resolvedKey = AsciiDocUtil.resolveAttributes(myElement, key);
       if (resolvedKey != null) {
         String defaultFamily = null;
@@ -417,8 +419,6 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           return AsciiDocUtil.replaceAntoraPrefix(myElement, resolvedKey, "page");
         }
       }
-    } else if (macroName.equals("antora-startpage")) {
-      return AsciiDocUtil.replaceAntoraPrefixForStartPage(myElement, key);
     }
     return Collections.singletonList(key);
   }
@@ -794,6 +794,12 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       LookupElementBuilder item = FileInfoManager.getFileLookupItem(result.getElement(), ".." /* + '/' */, icon);
       item = handleTrailing(item, '/');
       items.add(item);
+      if (ANTORA_SUPPORTED.contains(macroName) && AsciiDocUtil.findAntoraModuleDir(myElement) != null) {
+        // Antora 3 support relative resource names starting with a dot
+        item = FileInfoManager.getFileLookupItem(result.getElement(), "." /* + '/' */, icon);
+        item = handleTrailing(item, '/');
+        items.add(item);
+      }
     }
 
     if (!macroName.equals("antora-nav") && !macroName.equals("antora-startpage")) {
