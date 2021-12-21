@@ -20,17 +20,18 @@ on:
     branches-ignore:
       - 'dependabot/**'
     paths-ignore:
-      - 'qodana.yaml'
       - 'doc/**'
       - 'README.adoc'
       - '.github/**/*.md'
       - '.github/workflows/docs.yml'
+      - '.github/workflows/qodana.yaml'
   pull_request:
     paths-ignore:
-      - 'qodana.yaml'
       - 'doc/**'
       - 'README.adoc'
       - '.github/**/*.md'
+      - '.github/workflows/docs.yml'
+      - '.github/workflows/qodana.yaml'
 jobs:
 
   # Run Gradle Wrapper Validation Action to verify the wrapper's checksum
