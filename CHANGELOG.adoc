@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.36.13
+
+- disable unloading of plugin at runtime, restart will be required
+
 === 0.36.12
 
 - workaround change in 2021.3.1 for preview with custom CSS (#954)
