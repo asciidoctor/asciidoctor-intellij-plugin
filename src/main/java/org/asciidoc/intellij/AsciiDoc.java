@@ -535,7 +535,7 @@ public class AsciiDoc {
         prependConfig = new PrependConfig();
       }
       if (antoraIncludeAdapter == null) {
-         antoraIncludeAdapter = new AntoraIncludeAdapter();
+        antoraIncludeAdapter = new AntoraIncludeAdapter();
       }
       if (attributesRetriever == null) {
         attributesRetriever = new AttributesRetriever();
@@ -645,6 +645,7 @@ public class AsciiDoc {
   /**
    * Create a temporary image page. Use with folder of document parent.
    * Keep this for a while to allow Asciidoclet plugin to update.
+   *
    * @deprecated use {@link #tempImagesPath(Path, Project)} instead
    */
   @Deprecated
@@ -689,7 +690,7 @@ public class AsciiDoc {
     }
   }
 
-    @NotNull
+  @NotNull
   public static @Language("asciidoc")
   String config(Document document, Project project) {
     VirtualFile currentFile = FileDocumentManager.getInstance().getFile(document);
@@ -877,6 +878,7 @@ public class AsciiDoc {
       // the AsciiDocJavaDocInfoGenerator will get here with an existing ReadLock, use a timeout here to avoid a deadlock.
       Set<StackTraceElement> nonblocking = Arrays.stream(Thread.currentThread().getStackTrace()).filter(stackTraceElement ->
         stackTraceElement.getClassName().endsWith("AsciiDocJavaDocInfoGenerator") ||
+          stackTraceElement.getClassName().contains("AsciiDocHandleUnloadActivity") ||
           stackTraceElement.getClassName().endsWith("AsciidocletJavaDocInfoGenerator")
       ).collect(Collectors.toSet());
       if (nonblocking.size() > 0) {
@@ -965,7 +967,7 @@ public class AsciiDoc {
     } else {
       try {
         if (!LOCK.tryLock(timeout, TimeUnit.SECONDS)) {
-          LOG.warn("unabel to acquire lock after timeout");
+          LOG.warn("unable to acquire lock after timeout");
           throw new ProcessCanceledException(new RuntimeException("unable to acquire lock after timeout"));
         }
       } catch (InterruptedException e) {
