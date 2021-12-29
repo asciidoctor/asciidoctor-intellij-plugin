@@ -58,6 +58,7 @@ public class AsciiDocHandleUnloadActivity implements StartupActivity, DumbAware,
                 // if (!ApplicationManager.getApplication().isInternal()) {
                 throw new CannotUnloadPluginException("unloading mechanism is not safe, incomplete unloading might lead to strange exceptions");
                 // }
+                // found that "IdeScriptEngineManagerImpl" will hold a reference to "org.jruby.embed.jsr223.JRubyEngineFactory"
                 // AsciiDoc.checkUnloadPlugin();
               }
             }
