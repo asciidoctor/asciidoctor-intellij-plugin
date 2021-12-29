@@ -164,6 +164,13 @@ sourceSets {
   }
 }
 
+// to allow better incremental updates, ensure file timestamps to be always the same, also the file order
+// https://docs.gradle.org/current/userguide/working_with_files.html#sec:reproducible_archives
+tasks.withType(AbstractArchiveTask).configureEach {
+  preserveFileTimestamps = false
+  reproducibleFileOrder = true
+}
+
 grammarKit {
 }
 
