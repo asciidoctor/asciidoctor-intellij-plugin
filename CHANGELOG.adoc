@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.36.12
+
+- workaround change in 2021.3.1 for preview with custom CSS (#954)
+
 === 0.36.11
 
 - Support Antora 3 relative resource IDs with `./` for shorthand paths (#898)

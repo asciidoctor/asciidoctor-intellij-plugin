@@ -1321,9 +1321,11 @@ public class AsciiDoc {
           css = stylesdir + "/" + stylesheet;
         }
         // Load remote stylesheet. Only if that succeeds, remove the standard stylesheet with JavaScript
+        // a background color as a background color is necessary for OSR JCEF preview
+        // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/954
         html = html
-          .replace("<head>", "<head>" + "<link rel='stylesheet' type='text/css' href='" + css + "' onload=\"document.head.getElementsByTagName('style')[0].remove()\" />" +
-            "<style>" + standardCss + " </style>");
+          .replace("<head>", "<head>" + "<link rel='stylesheet' type='text/css' href='" + css + "' onload=\"document.head.getElementsByTagName('style')[1].remove()\" />" +
+            "<style>body { background-color: rgb(255, 255, 255); }</style><style>" + standardCss + " </style>");
       } else {
         // custom stylesheet set
         VirtualFile stylesdirVf = LocalFileSystem.getInstance().findFileByPath(attributes.get("docdir"));
@@ -1351,8 +1353,10 @@ public class AsciiDoc {
               css = "/* unable to find stylesheet '" + stylesheet + "' */ </style>" + standardCss;
             }
           }
+          // add a background color as a background color is necessary for OSR JCEF preview
+          // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/954
           html = html
-            .replace("<head>", "<head>" + "<style>" + css + "</style>");
+            .replace("<head>", "<head>" + "<style>body { background-color: rgb(255, 255, 255); }</style><style>" + css + "</style>");
         }
       }
     } else {
