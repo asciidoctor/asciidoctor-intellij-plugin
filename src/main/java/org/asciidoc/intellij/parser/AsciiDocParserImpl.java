@@ -703,11 +703,15 @@ public class AsciiDocParserImpl {
     }
     while ((at(BLOCK_MACRO_BODY) || at(ATTRIBUTE_REF_START) || at(ATTR_NAME) || at(ATTR_VALUE) || at(SEPARATOR) || at(ATTRS_START) || at(ATTRS_END)
       || at(ASSIGNMENT) || at(SINGLE_QUOTE) || at(DOUBLE_QUOTE) || at(ATTRIBUTE_REF) || at(BLOCK_MACRO_ID) || at(ATTR_LIST_SEP) || at(ATTR_LIST_OP)
-      || at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX) || at(INLINE_MACRO_ID) || at(ATTRIBUTE_NAME_START))
+      || at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX) || at(INLINE_MACRO_ID) || at(ATTRIBUTE_NAME_START) || at(TEXT)
+      || at(LBRACKET) || at(RBRACKET) || at(LT) || at(GT) || at(LPAREN) || at(RPAREN)
+      || ALLQUOTES.contains(myBuilder.getTokenType()))
       && newLines == 0) {
       if (at(ATTRS_END)) {
         next();
         break;
+      } else if (QUOTEPAIRS.containsKey(myBuilder.getTokenType())) {
+        parseQuoted(new HashSet<>());
       } else if (at(ATTR_NAME)) {
         parseAttributeInBrackets(macroId);
       } else if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {

@@ -16,6 +16,8 @@ import com.intellij.psi.tree.TokenSet;
 import org.asciidoc.intellij.codeStyle.AsciiDocCodeStyleSettings;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
+import org.asciidoc.intellij.psi.AsciiDocBlock;
+import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocPsiImplUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,11 +58,11 @@ class AsciiDocFormattingBlock extends AbstractBlock {
 
     if (myNode.getPsi() instanceof org.asciidoc.intellij.psi.AsciiDocBlock) {
       // if this is inside a verse, pass this information down to all children
-      org.asciidoc.intellij.psi.AsciiDocBlock block = (org.asciidoc.intellij.psi.AsciiDocBlock) myNode.getPsi();
-      if (block.getType() == org.asciidoc.intellij.psi.AsciiDocBlock.Type.VERSE) {
+      AsciiDocBlock block = (AsciiDocBlock) myNode.getPsi();
+      if (block.getType() == AsciiDocBlock.Type.VERSE) {
         verse = true;
       }
-      if (block.getType() == org.asciidoc.intellij.psi.AsciiDocBlock.Type.VERSE) {
+      if (block.getType() == AsciiDocBlock.Type.TABLE) {
         table = true;
       }
       if ("%hardbreaks".equals(block.getStyle())) {
@@ -182,15 +184,26 @@ class AsciiDocFormattingBlock extends AbstractBlock {
       return Spacing.createSpacing(0, 0, 1, false, 0);
     }
 
-    // before and after a block have one blank line, but not with if there is a continuation ("+")
+    // before and after a block have one blank line, but not with if there is a continuation ("+"), or if it is a preprocessor macro
     if (!table && isBlock(child2) && !isContinuation(child1) && !isBlockStart(child1)) {
-      return Spacing.createSpacing(0, 0, 2, false, 0);
+      return getSpacingForBlocks(child1, child2);
     }
     if (!table && isBlock(child1) && !isContinuation(child2) && !isBlockEnd(child2) && !isCallOut(child2)) {
-      return Spacing.createSpacing(0, 0, 2, false, 0);
+      return getSpacingForBlocks(child1, child2);
     }
 
     return Spacing.createSpacing(0, 999, 0, true, 999);
+  }
+
+  private Spacing getSpacingForBlocks(@NotNull Block child1, @NotNull Block child2) {
+    if (isPreprocessorMacro(child1) || isPreprocessorMacro(child2)) {
+      // have zero or one line before and after a preprocessor macro;
+      // this shouldn't add a blank line when there is no blank line
+      return Spacing.createSpacing(0, 0, 1, true, 1);
+    } else {
+      // have one blank line between blocks
+      return Spacing.createSpacing(0, 0, 2, false, 0);
+    }
   }
 
   private boolean isPartOfSameHeading(Block child1, Block child2) {
@@ -301,6 +314,14 @@ class AsciiDocFormattingBlock extends AbstractBlock {
   private boolean isBlockIdEnd(Block block) {
     return block instanceof AsciiDocFormattingBlock &&
       AsciiDocTokenTypes.BLOCKIDEND.equals(((AsciiDocFormattingBlock) block).getNode().getElementType());
+  }
+
+  private boolean isPreprocessorMacro(Block block) {
+    if (((AsciiDocFormattingBlock) block).getNode().getPsi() instanceof AsciiDocBlockMacro) {
+      AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) ((AsciiDocFormattingBlock) block).getNode().getPsi();
+      return blockMacro.isPreprocessorMacro();
+    }
+    return false;
   }
 
   private boolean isBlock(Block block) {

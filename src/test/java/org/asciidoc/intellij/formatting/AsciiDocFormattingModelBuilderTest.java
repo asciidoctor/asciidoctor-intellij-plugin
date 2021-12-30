@@ -42,4 +42,8 @@ public class AsciiDocFormattingModelBuilderTest extends BasePlatformTestCase {
   public void testVerse() {
     doTest(new ReformatCodeRunOptions(WHOLE_FILE));
   }
+
+  public void testPreprocessor() {
+    doTest(new ReformatCodeRunOptions(WHOLE_FILE));
+  }
 }

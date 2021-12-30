@@ -42,13 +42,20 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock implements HasFile
      "liquibase" // https://github.com/uniqueck/asciidoctorj-liquibase-extension
   ));
 
+  private static final Set<String> IS_PREPROCESSOR_MACRO = new HashSet<>(Arrays.asList(
+    "ifdef", "ifndef", "ifeval", "endif"
+  ));
+
   public AsciiDocBlockMacro(@NotNull ASTNode node) {
     super(node);
   }
 
-  @NotNull
+  public boolean isPreprocessorMacro() {
+    return IS_PREPROCESSOR_MACRO.contains(getMacroName());
+  }
+
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     if (HAS_FILE_AS_BODY.contains(getMacroName())) {
       if (getMacroName().equals("video")) {
         if (getTypeOfVideo() != null) {

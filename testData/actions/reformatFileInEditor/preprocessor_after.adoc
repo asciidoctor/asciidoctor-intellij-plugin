@@ -1,0 +1,9 @@
+a
+ifdef::env-github[]
+a
+endif::[]
+a
+
+ifdef::env-github[some text *bold* (brackets) {attribute}]
+
+text
