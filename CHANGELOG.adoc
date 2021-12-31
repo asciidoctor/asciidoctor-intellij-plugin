@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - disable unloading of plugin at runtime, restart will be required
 - fix reformatting of preprocessor macros and block macros with text content (#955)
+- strip newline from attribute continuation for grammar checks, strip duplicate characters for description lists (#956)
 
 === 0.36.12
 

@@ -527,6 +527,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "A http://example.com[URL with text].\n" +
       "A link:http://example.com[URL with text as link].\n" +
       "\n" +
+      "Definition:: Text" +
+      "\n" +
       "* List item" +
       "\n" +
       "Something \"`quoted`\"\n" +
@@ -562,8 +564,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     psiFile.accept(myVisitor);
     Assertions.assertThat(texts).containsExactlyInAnyOrder(
       "A heading",
-      "attribute ",
-      "continuation",
+      "attribute continuation",
       "Cell Content.",
       "Text with a footnote.",
       "A 'test' test's",
@@ -572,6 +573,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "comment with some text",
       "A footnote.",
       "A link.",
+      "Definition: Text",
       "List item",
       "A URL with text as link.",
       "A URL with text.",

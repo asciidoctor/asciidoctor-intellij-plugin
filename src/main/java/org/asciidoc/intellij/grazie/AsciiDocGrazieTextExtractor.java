@@ -37,7 +37,7 @@ public class AsciiDocGrazieTextExtractor extends TextExtractor {
           TextContent textContent = TextContentBuilder.FromPsi
             // use this for text that is unknown and can't contain any root text
             .withUnknown(child ->
-              languageSupport.getElementBehavior(root, child) ==  AsciiDocLanguageSupport.Behavior.UNKNOWN
+              languageSupport.getElementBehavior(root, child) == AsciiDocLanguageSupport.Behavior.UNKNOWN
             )
             // use excluding here, otherwise the contents will not be recognized as another root element
             .excluding(child ->
@@ -93,8 +93,12 @@ public class AsciiDocGrazieTextExtractor extends TextExtractor {
           if ((element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION
             || element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION_LEGACY)
             && element.getTextLength() == 3) {
-            // this will strip out the '+' or '\' from the continuation before forwarding it to the grammar check
-            ranges.add(new TextRange(pos + 1, pos + 2));
+            // this will strip out the '+' or '\' and the newline from the continuation before forwarding it to the grammar check
+            ranges.add(new TextRange(pos + 1, pos + 3));
+          }
+          if ((element.getNode().getElementType() == AsciiDocTokenTypes.DESCRIPTION_END)) {
+            // this will strip the duplicated characters
+            ranges.add(new TextRange(pos, pos + element.getTextLength() - 1));
           }
           if (element.getNode().getElementType() == AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END
             && element.getTextLength() == 2) {
