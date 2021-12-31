@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - fix reformatting of preprocessor macros and block macros with text content (#955)
 - strip newline from attribute continuation for grammar checks, strip duplicate characters for description lists (#956)
 - don't report grammar errors for monospaced text and kbd macros (#956)
+- treat inline passthrough content like quotes (#956)
 
 === 0.36.12
 

@@ -26,6 +26,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DOUBLEITALIC_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DOUBLEMONO_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO_START;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START;
 
@@ -38,6 +39,7 @@ public class AsciiDocTextQuoted extends AsciiDocASTWrapperPsiElement {
     for (BracePair pair : new AsciiDocBraceMatcher().getPairs()) {
       if (pair.getLeftBraceType() == BOLD_START ||
       pair.getLeftBraceType() == DOUBLEBOLD_START ||
+      pair.getLeftBraceType() == PASSTRHOUGH_INLINE_START ||
       pair.getLeftBraceType() == MONO_START  ||
       pair.getLeftBraceType() == DOUBLEMONO_START  ||
       pair.getLeftBraceType() == ITALIC_START ||

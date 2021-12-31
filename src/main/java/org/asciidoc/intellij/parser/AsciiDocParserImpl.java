@@ -490,6 +490,7 @@ public class AsciiDocParserImpl {
     while ((at(MONO) || at(BOLD) || at(TEXT) || at(MONOITALIC) || at(MONOBOLDITALIC) || at(MONOBOLD) ||
       at(ITALIC) || at(BOLDITALIC) || ALLQUOTES.contains(myBuilder.getTokenType()) ||
       at(ATTRIBUTE_REF_START) || at(INLINE_MACRO_ID) ||
+      at(PASSTRHOUGH_CONTENT) ||
       at(LBRACKET) || at(RBRACKET) || at(LT) || at(GT) || at(LPAREN) || at(RPAREN) ||
       at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX) ||
       at(INLINEIDSTART) || at(REFSTART) || at(BIBSTART) || at(LINKSTART))
