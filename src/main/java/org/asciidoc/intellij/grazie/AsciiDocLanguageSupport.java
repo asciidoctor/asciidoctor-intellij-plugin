@@ -19,6 +19,7 @@ import org.asciidoc.intellij.psi.AsciiDocInlineMacro;
 import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocModificationTracker;
 import org.asciidoc.intellij.psi.AsciiDocRef;
+import org.asciidoc.intellij.psi.AsciiDocTextQuoted;
 import org.asciidoc.intellij.psi.AsciiDocUrl;
 import org.jetbrains.annotations.NotNull;
 
@@ -159,6 +160,8 @@ public class AsciiDocLanguageSupport {
       }
     } else if (child instanceof AsciiDocAttributeReference) {
       return Behavior.UNKNOWN;
+    } else if (child instanceof AsciiDocTextQuoted && ((AsciiDocTextQuoted) child).isMono()) {
+      return Behavior.UNKNOWN;
     } else if (SEPARATOR_TOKENS.contains(child.getNode().getElementType())) {
       return Behavior.SEPARATE;
     } else if (root != child && child instanceof AsciiDocInlineMacro && ((AsciiDocInlineMacro) child).getMacroName().equals("footnote")) {
@@ -186,6 +189,10 @@ public class AsciiDocLanguageSupport {
     } else if (child instanceof AsciiDocInlineMacro
       || (child instanceof AsciiDocLink && ((AsciiDocLink) child).getMacroName().equals("xref"))
       || (child instanceof AsciiDocRef)) {
+      if (child instanceof AsciiDocInlineMacro && ((AsciiDocInlineMacro) child).getMacroName().equals("kbd")) {
+        // mark keyboard macros as "unknown" to avoid showing spell checker or grammar errors for them
+        return Behavior.UNKNOWN;
+      }
       // an inline macro or an xref will be treated as unknown if they don't contain text
       LookingForMacroTextVisitor visitor = new LookingForMacroTextVisitor();
       child.accept(visitor);

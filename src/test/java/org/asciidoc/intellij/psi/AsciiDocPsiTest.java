@@ -497,7 +497,6 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "Equivalent",
       "Modulo",
       "TEXT",
-      "Keyboard",
       "Button",
       "A",
       "reftext.",
