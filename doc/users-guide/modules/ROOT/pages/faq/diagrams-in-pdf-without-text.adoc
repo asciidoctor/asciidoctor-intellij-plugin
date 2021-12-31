@@ -5,7 +5,8 @@
 == Symptom
 
 {description}
-Users reported this for example for diagrams created with Mermaid or Diagrams.net.
+Users reported this for diagrams created with Mermaid or Diagrams.net.
+Other diagram types may be affected as well.
 
 While diagrams show nicely in the preview, they don't show up as expected in the PDF.
 
@@ -13,7 +14,7 @@ While diagrams show nicely in the preview, they don't show up as expected in the
 
 Looking into the source of the SVG, Mermaid and Diagrams.net use the _foreignObject_ feature to embed HTML for text inside the SVG.
 The plugin's PDF action uses Asciidoctor PDF to create the PDF.
-Asciidoctor PDF render content in _foreignObject_ as the library https://github.com/mogest/prawn-svg[prawn-svg] doesn't support it.
+Asciidoctor PDF can't render content in _foreignObject_ as the library https://github.com/mogest/prawn-svg[prawn-svg] doesn't support it.
 
 == How do I fix this?
 
@@ -26,9 +27,9 @@ There are several alternatives to fix this:
 [#change-diagram-to-png]
 === Change diagram to PNG
 
-When using PNG, unsupported SVG attributes won't cause problems.
+When using PNG, unsupported SVG attributes will not cause problems.
 The tradeoff is usually a larger PDF and a rastered image.
-Rastered images won't scale and print as good as SVGs.
+Rastered images will not scale and print as good as SVGs.
 Some diagram types (like Mermaid) don't support PNG when used for example with the Kroki-integration.
 
 See xref:features/preview/diagrams.adoc#kroki[Diagrams with Kroki] for more information.

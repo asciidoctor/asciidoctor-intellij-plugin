@@ -5,21 +5,21 @@
 
 == Prerequisites
 
-For small changes you can use your web browser and the web based text editor of GitHub.
+For small changes, writers can use your web browser and the web-based text editor of GitHub.
 
 The preview of GitHub doesn't take into account the Antora macros, therefore consider using the IntelliJ AsciiDoc plugin for changes.
 
 == How-to edit content using just a web browser
 
-Follow these steps to change the documentation content on the plugin's homepage with just the browser:
+Follow these steps to change the documentation content on the plugin's homepage using the browser:
 
 . Click on the "`Edit this page`" link on the documentation website of the plugin
 . Edit the content
 . Follow the instructions on the end of the page to commit the changes, creating a fork of the repository and submitting a pull request
 
-Once a maintainer approves the pull request your changes will be visible on the plugin's homepage.
+Once a maintainer approves the pull request, the changes will be visible on the plugin's homepage.
 
-*Optional:* You can build the plugin's documentation website locally for a preview by following the steps in xref:docs/change-documentation-theme.adoc[].
+*Optional:* Writers can build the plugin's documentation website locally for a preview by following the steps in xref:docs/change-documentation-theme.adoc[].
 
 == How-to edit content using an IDE on your local PC
 
@@ -27,10 +27,10 @@ Follow these steps to change the documentation content on the plugin's homepage:
 
 . Fork and clone the plugin's repository: https://github.com/asciidoctor/asciidoctor-intellij-plugin
 . Change documentation in the sub-folder _doc_
-. Proof-read changes in your editor's live preview
+. Proofread changes in your editor's live preview
 . Update navigation contents in the _nav.adoc_ file as needed to re-ordered, added or removed content
-. Create a pull-request on GitHub
+. Create a pull request on GitHub
 
-Once a maintainer approves the pull request your changes will be visible on the plugin's homepage.
+Once a maintainer approves the pull request, the changes will be visible on the plugin's homepage.
 
-*Optional:* You can build the plugin's documentation website locally for a preview by following the steps in xref:docs/change-documentation-theme.adoc[].
+*Optional:* Writers can build the plugin's documentation website locally for a preview by following the steps in xref:docs/change-documentation-theme.adoc[].

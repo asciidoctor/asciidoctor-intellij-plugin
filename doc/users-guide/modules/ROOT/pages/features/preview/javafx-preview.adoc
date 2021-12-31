@@ -26,8 +26,8 @@ include::partial$content-security-policy.adoc[]
 == When you can use JavaFX preview
 
 The JavaFX preview works on a 64bit JDK and needs JavaFX installed.
-Please use the JDK provided by JetBrains for best results.
-Please use the JetBrains OpenJDK 11 runtime whenever possible.
+Use the JDK provided by JetBrains for the best results, as it contains relevant bug fixes.
+Use the JetBrains OpenJDK version 11 whenever possible, as this contains additional bug fixes.
 
 include::partial$javafx-preview-requires-plugin.adoc[]
 

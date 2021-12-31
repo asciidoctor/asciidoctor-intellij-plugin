@@ -18,7 +18,7 @@ Please use the pre-bundled JetBrains Runtime to run the IDE as it proves to be t
 Up to and including IntelliJ IDEA 2020.1 the pre-bundled OpenJDK includes JavaFX, which is required for a rich preview in 2020.1 and earlier.
 
 From IntelliJ 2020.2 onward the plugin supports the JCEF browser preview that is pre-bundled in the JetBrains runtime that pre-bundled with 2020.2 and later.
-It uses and embedded Chrome browser with up-to-date JavaScript and CSS handling.
+It uses an embedded Chrome browser with up-to-date JavaScript and CSS handling.
 
 include::partial$javafx-preview-requires-plugin.adoc[]
 

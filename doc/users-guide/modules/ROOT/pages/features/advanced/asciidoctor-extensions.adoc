@@ -1,12 +1,12 @@
 = Asciidoctor Extensions
 :description: Asciidoctor Extensions can provide additional macros using Ruby or Java code. These are executed when rendering the preview.
 
-Asciidoctor Extensions can provide for example additional custom macros or post-processing of the AsciiDoc AST.
+Asciidoctor Extensions can provide features like additional custom macros or post-processing of the AsciiDoc AST.
 To see the rendered result in the preview, the plugin can use extensions while rendering it.
 
 [WARNING]
 ====
-This is an experimental feature starting with version 0.23.0. While it is experimental names, conventions and functionality may change.
+This is an experimental feature starting with version 0.23.0. While it is experimental, names, conventions and functionality may change.
 Support for AsciidoctorJ extensions is available from 0.31.19.
 ====
 
@@ -28,7 +28,7 @@ Using a configuration file like `.gitignore` can ensure that the script is check
 == Behavior
 
 The user working with the IDE needs to trust the Ruby or Java code of the extensions, as the code will run with the privileges of the user inside the IDE.
-When a developer runs for example a build script in a repository, executing some else's code is expected behavior.
+When a developer runs a buildscript or other executable content in a repository, executing some else's code is expected behavior.
 Running someone else's code when viewing an Asciidoctor document is unexpected.
 Therefore, the user needs to confirm to enable Asciidoctor extensions once per project and IDE restart.
 
@@ -43,7 +43,7 @@ Changing extensions at runtime re-instantiates the Asciidoctor and JRuby runtime
 
 == Example
 
-Please see the Arquillian Smart Testing project for an example: https://github.com/arquillian/smart-testing/tree/master/.asciidoctor/lib
+The Arquillian Smart Testing project provides an example: https://github.com/arquillian/smart-testing/tree/master/.asciidoctor/lib
 
 == Ecosystem
 

@@ -3,7 +3,7 @@
 :navtitle: Troubleshooting MPS
 
 This chapter summarizes known problems and possible remedies for users working with MPS.
-If your issue is not listed here, please open a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[new issue on GitHub].
+If there issue is not listed here, open a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[new issue on GitHub].
 
 == Symptom: exception "`Wrong dependency type: class com.intellij.openapi.util.Key`" while editing a document
 

@@ -8,7 +8,7 @@
 
 When the preview of the AsciiDoc Plugin (usually on the right) is blurry: While the characters in the editor on the left look sharp, the characters in the preview on the right look blurry.
 
-You can see examples of this in the https://youtrack.jetbrains.com/issue/IDEA-213110[JetBrains Ticket IDEA-213110]
+The following JetBrains ticket contains examples: https://youtrack.jetbrains.com/issue/IDEA-213110[IDEA-213110]
 
 == Environment
 
@@ -24,7 +24,7 @@ or
 
 * Operating System Linux (for example Fedora 31 Wayland), +
 JavaFX preview +
-a high resolution display with scaling factor 200% or more, +
+a high resolution display with scaling-factor 200% or more, +
 IntelliJ running on OpenJDK or JetBrains Runtime (any version)
 
 == How do I fix this?
@@ -76,4 +76,4 @@ When downloading click on the format (pre-populated with .EXE for Windows users)
 
 == Help, preview is still blurry!
 
-Please open a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issue], so that the maintainers can investigate the issue further.
+that the maintainers can investigate the issue, open a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issue].

@@ -4,7 +4,7 @@
 User documentation is essential to make the plugin approachable for all types of users.
 {description}
 
-With this knowledge you can choose the matching how-to to change the content you need to change.
+With this knowledge, writers can choose the how-to to change the content they want to change.
 
 == What sources exist to build the plugin's website?
 
@@ -25,7 +25,8 @@ The user's guide and the contributor's guide a build with the https://antora.org
 
 Configuration files for hosting::
 The plugin's homepage is hosted on https://www.netlify.com/[Netlify].
-Configuration files for hosting are in https://github.com/ahus1/intellij-asciidoc-plugin.ahus1.de. Files like _netlify.toml_, _build.sh_ and _redirects_ instruct Netlify how to build and publish this site.
+Configuration files for hosting are in the GitHub repository https://github.com/ahus1/intellij-asciidoc-plugin.ahus1.de.
+Files like _netlify.toml_, _build.sh_ and _redirects_ instruct Netlify how to build and publish this site.
 A sub-folder _lambda_ contains scripts to notify the maintainers of successful and unsuccessful deploys.
 
 == Further reading

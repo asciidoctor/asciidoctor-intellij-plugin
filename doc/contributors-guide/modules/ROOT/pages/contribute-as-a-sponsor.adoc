@@ -5,7 +5,7 @@
 
 This plugin is maintained in someone's free time.
 Several users contributed ideas and code.
-To deliver all the value, it borrows a lot of functionality from the Asciidoctor ecosystem.
+To deliver all the value, it borrows a lot of functionalities from the Asciidoctor ecosystem.
 
 *To support the Asciidoctor ecosystem,* support the https://opencollective.com/asciidoctor[Asciidoctor Open Collective^].
 

@@ -1,0 +1,18 @@
+# "en" in the file name specifies the natural language to be checked, so users can use other ISO codes, e.g. "ru" or "de"
+
+# A subset of "vale" linter syntax is supported: "existence", "substitution" and "sequence" rule types.
+# See https://docs.errata.ai/vale/styles#extension-points for more details.
+
+extends: existence                # check for unwanted words or phrases
+message: Don't use '%s'           # a message to display in the inspection tooltip when a matching fragment is found
+ignorecase: true
+raw:
+  - you
+  - please
+  - just
+---
+extends: substitution             # check for unwanted fragments and suggest replacements
+message: Use '%s'
+ignorecase: true
+swap:
+  right-click menu: context menu

@@ -1,6 +1,6 @@
 = Asciidoclet
 // see: AsciiDocJavaDocInfoGenerator
-:description: This plugin show a preview of Asciidoclet content, when AsciiDoc is part of Javadoc API documentation.
+:description: This plugin shows a preview of Asciidoclet content, when AsciiDoc is part of Javadoc API documentation.
 
 The https://github.com/asciidoctor/asciidoclet[Asciidoclet^] project allows developers to write their code Javadoc API documentation using AsciiDoc.
 This plugin renders the AsciiDoc contents when previewing the documentation.
@@ -9,7 +9,7 @@ This plugin renders the AsciiDoc contents when previewing the documentation.
 ====
 Support for this is available from AsciiDoc Plugin release 0.30.83 for IntelliJ IDEA 2019.3+ and 0.31.9 for IntelliJ IDEA 2020.2+.
 
-Starting with AsciiDoc Plugin release 0.31.13 it moved to a separate _Asciidoclet_ Plugin as it prevented the AsciiDoc Plugin to be dynamically installable without a restart.
+Starting with AsciiDoc Plugin release 0.31.13, it moved to a separate _Asciidoclet_ Plugin as it prevented the AsciiDoc Plugin to be dynamically installable without a restart.
 
 This feature is in its early development and marked "`experimental`".
 Its functionality might change over time.
@@ -27,7 +27,7 @@ Steps::
 . Select _Plugins_ from the settings tree
 . Select _Marketplace_ tab if it is not selected yet
 . Search for 'asciidoclet'
-. Click on _Install_. +
+. Click on btn:[Install]. +
 As the Asciidoclet plugin depends on the AsciiDoc plugin, the IDE will ask to install the AsciiDoc plugin as well if it is not already installed.
 . Once the download is complete, restart the IDE
 
@@ -49,32 +49,32 @@ See chapter https://www.jetbrains.com/help/idea/working-with-code-documentation.
 Users need to enable this feature in the plugin's settings:
 
 Steps::
-. Open the menu menu:File[Settings... > Languages & Frameworks > AsciiDoc]
-. Check the checkbox "`Enable Asciidoclet support (AsciiDoc in Javadoc)`"
+. Open the menu menu:File[Settings... > Languages & Frameworks > AsciiDoc].
+. Check the checkbox "`Enable Asciidoclet support (AsciiDoc in JavaDoc)`".
 
 Once this check-box is enabled, the Quick-Help (kbd:[Ctrl+Q]) will render all Javadoc-comments as AsciiDoc.
 This is a global setting for all projects.
 
-Since IDEA release 2020.1 users can choose to show Javadoc comments rendered in the editor.
+Since IDEA release 2020.1 users can choose to show JavaDoc comments rendered in the editor.
 This is supported with the Asciidoclet plugin from IntelliJ 2020.2 onward only.
 
 == Detection of Asciidoclet vs. Javadoc
 
-When working in different projects there might AsciiDoc used in some files, but not in others.
+When working in different projects, there might be AsciiDoc used in some files, but not in others.
 Libraries might use JavaDoc, some not.
 
-As default the plugin will render all Javadoc contents as AsciiDoc with the following exception:
+As default, the plugin will render all Javadoc contents as AsciiDoc with the following exception:
 
 . If the Javadoc contents contain an HTML tag `<p>` the plugin assumes the contents should be rendered as standard Javadoc without the AsciiDoc conversion.
 
 == Preview while editing Asciidoclet
 
-When editing Javadoc content users can open a quick docs in a separate window that stays open permanently.
-It will always show the documentation related to the current cursor's position.
+When editing Javadoc content, users can open quick docs in a separate window that stays open permanently.
+It will always show the documentation related to the current at the cursor's position.
 
 When editing the Javadoc contents, the documentation window will show the update Asciidoc rendered version with a short delay.
 
-To show the documentation window choose the menu item menu:View[Tool Windows > Documentation] (sometimes hidden based on the current context at the cursor position) or by pressing kbd:[Ctrl+Q] twice.
+To show the documentation window, choose the menu item menu:View[Tool Windows > Documentation] (sometimes hidden based on the current context at the cursor position) or by pressing kbd:[Ctrl+Q] twice.
 
 == Reformatting Settings
 
@@ -106,7 +106,7 @@ All IntelliJ reformatting options are available in EditorConfig files and are pr
 Autocompletion shows all available options.
 The _.editorconfig_ file affects all project files in its folder and its sub-folders.
 A file with `root = true` is usually located in the root folder of the project and indicates the main configuration file.
-Additional _.editorconfig_ files in sub-folder can override settings in the file tree they are located in.
+Additional _.editorconfig_ files in a sub-folder can override settings in the file tree they are located in.
 
 After creating the file, re-opening the project might be necessary for the IntelliJ settings to take effect.
 
@@ -147,7 +147,7 @@ Instead of writing content like this:
 ...
 ----
 
-Please rewrite it like this:
+Rewrite it like this:
 
 [source,java,subs="quotes"]
 ----
@@ -162,7 +162,7 @@ Please rewrite it like this:
 
 === Start path of includes
 
-Includes will use path relative to the root of the project.
+Includes will use a path relative to the root of the project.
 While Asciidoclet allows users to override the path on the command line, the plugin doesn't allow for in the current version.
 
 === HTML styling of Asciidoclet
@@ -174,7 +174,7 @@ One example are section headlines: they all have the same size and font as regul
 
 The current version of the plugin doesn't provide AsciiDoc language injection for the Javadoc content.
 Therefore, writers miss autocompletion in the editor.
-Please vote for this in issue https://youtrack.jetbrains.com/issue/IDEA-231876[IDEA-231876] at JetBrains to raise attention for this or contribute to the IntelliJ community edition.
+Vote for this in issue https://youtrack.jetbrains.com/issue/IDEA-231876[IDEA-231876] at JetBrains to raise attention to this or contribute to the IntelliJ community edition.
 
 
 

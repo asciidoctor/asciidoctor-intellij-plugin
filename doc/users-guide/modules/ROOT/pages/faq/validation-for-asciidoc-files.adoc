@@ -6,16 +6,16 @@
 
 == How the plugin can help with validation
 
-The IDE can validate for example cross-references and attribute names for a set of AsciiDoc files.
+The IDE can validate, for example, cross-references and attribute names for a set of AsciiDoc files.
 It will also provide auto-completion for attribute names and references.
 
 To do this, all files need to be in one project.
 
-If the IDE opens a single file and not a project with all related file, it might show validation errors where it shouldn't.
+If the IDE opens a single file and not a project with all related files, it might show validation errors where it shouldn't.
 
 == How to edit files as a project
 
-The user select the menu item menu:File[Open...] and then to selects and folder and opens it.
+The user selects the menu item menu:File[Open...] and then to selects and folder and opens it.
 The IDE will open files in the folder and its sub-folder as one project.
 Validation and auto-completion then works as expected.
 

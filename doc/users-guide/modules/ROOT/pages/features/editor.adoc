@@ -1,5 +1,5 @@
 = Features of the Editor
-:description: Summary of the features of the editor for navigation, writing and reformatting.
+:description: Feature summary of the editor for navigation, writing and reformatting.
 :navtitle: Editor
 
 {description}
@@ -24,13 +24,13 @@ The hotkey to unfold all elements is kbd:[Ctrl+Shift+NumPad+], the hotkey to fol
 The structure of the file kbd:[Alt+7] shows the hierarchy of sections and blocks with titles.
 This contains (if available) the first block attribute element (like `[source]`, `[quote]` or `[verse]`) and the title of the block or section.
 If an element like an `image::[]` references another file, it shows the icon and the name of the file.
-If an `include::[]` references an AsciiDoc file, it includes the file as a sub-tree in the structure view.
-Clicking on either a referenced file or an element of a sub-tree opens the referenced file.
+If an `include::[]` references an AsciiDoc file, it includes the file as a subtree in the structure view.
+Clicking on either a referenced file or an element of a subtree opens the referenced file.
 
 // see: AsciiDocChooseByNameContributor and AsciiDocSearchEverywhereClassifier
 The search all view kbd:[Shift]kbd:[Shift] shows section titles and IDs of blocks.
 
-The breadcrumbs view (bottom of the editor) shows the hierarchy leading to the current sections and blocks.
+The breadcrumbs-view (bottom of the editor) shows the hierarchy leading to the current sections and blocks.
 It contains the same elements as in the structure view for the cursor position.
 
 AsciiDoc recommends the https://asciidoctor.org/docs/asciidoc-recommended-practices/#one-sentence-per-line[one-sentence-per-line] style.
@@ -49,7 +49,7 @@ This works similarly for attributes (`\{attrib}` and `:attrib:`).
 // see: AsciiDocTextMono and AsciiDocTextItalic in the PSI Tree
 // see: AsciiDocReferenceContributor and AsciiDocJavaReferenceContributor for the creation of references
 // see: AsciiDocJavaReference for the resolution of Java classes
-The user can navigate using kbd:[Ctrl+Click] and kbd:[Ctrl+B] from a file name or Java class name in backticks (as monospaced text like +++`filename.txt`+++ or +++`JavaClassName`+++) or in underscores (as italic text like +++_filename.txt_+++ or +++_JavaClassName_+++) or bold (as italic text like +++*filename.txt*+++ or +++*JavaClassName*+++).
+The user can navigate using kbd:[Ctrl+Click] and kbd:[Ctrl+B] from a file name or Java class name in backticks (as monospaced text like +++`filename.txt`+++ or +++`JavaClassName`+++) or in underscores (as italic text like +++_filename.txt_+++ or +++_JavaClassName_+++) or asterisks (as bold text like +++*filename.txt*+++ or +++*JavaClassName*+++).
 The plugin tries to rename occurrences of files and Java classes in the AsciiDoc file when the user renames the file or the class.
 
 // see: AsciiDocDocumentationProvider
@@ -90,12 +90,12 @@ The IDE downloads the dictionaries for the selected languages once the user adds
 [[grazie]]
 // see: AsciiDocGrazieTextExtractor
 Starting with IntelliJ 2020.1, the bundled https://plugins.jetbrains.com/plugin/12175-grazie/[Grazie plugin] highlights possible grammar and spelling mistakes in the editor.
-As of plugin version 0.36.2 every heading and paragraph of text will be checked.
+As of plugin version 0.36.2, every heading and paragraph of text will be checked.
 It supports multiple languages: Once the user configured the languages in IDE's proofreading settings, the plugin detects the language of a section automatically.
 As it performs all checks locally with the help of libraries from https://languagetool.org/, it doesn't submit text written in the IDE to a third party cloud service.
 
 // see: ExternalAnnotator
-During rendering Asciidoctor might indicate problems in the file including a line number.
+During rendering, Asciidoctor might indicate problems in the file including a line number.
 The editor shows them as red and yellow annotations.
 Hover over the annotations to see the full warning or error message.
 The user can disable this feature in the settings.
@@ -110,7 +110,7 @@ The user can change the colors of the theme in the IDE settings.
 When using listings with `[source,lang]`, the plugin triggers language injection to the following code block when the IDE supports the language (either by default, or by a language plugin).
 This allows syntax highlighting and code completion specific to the language of the code block.
 The user can disable this feature in the settings completely or for selected languages.
-For the user to re-format the code block, use "`Edit Fragment`" (kbd:[Alt+Enter]) and "`Reformat Code`" ( kbd:[Ctrl+Shift+L]).
+For the user to re-format the code block, use "`Edit Fragment`" (kbd:[Alt+Enter]) and "`Reformat Code`" (kbd:[Ctrl+Shift+L]).
 Language injection is disabled if the block contains an AsciiDoc pre-processor macro like `++include::[]++`, as in these cases the code block with pre-processor macros doesn't represent compilable code.
 
 All comments containing a `TODO` and `FIXME` and are indexed in the Todo-View (kbd:[Alt+6]).
@@ -118,9 +118,9 @@ The user can configure the keywords in the IDE settings.
 
 // see: BrowserPanel for creating the HTML
 // see: PreviewStaticServer for delivering the contents to the Browser
-In the editor the user can select from a list of browsers that are showing in the upper right corner of the editor to preview the document.
+In the editor, the user can select from a list of browsers that are shown in the upper right corner of the editor to preview the document.
 The user can also trigger this action from the context menu.
-To update the preview in the browser the user needs to refresh the contents by pressing kbd:[F5] in the browser.
+To update the preview in the browser, the user needs to refresh the contents by pressing kbd:[F5] in the browser.
 
 The user can open an AsciiDoc file in an external tool (like for example Google Chrome with the https://github.com/asciidoctor/asciidoctor-browser-extension[Asciidoctor Extension] installed).
 To do this, add Chrome as an https://www.jetbrains.com/help/idea/settings-tools-external-tools.html[external Tool in the settings].
@@ -130,8 +130,8 @@ The user can assign a shortcut to the external tool using menu:Help[Find action.
 == Writing
 
 // see: SplitFileEditor
-The editor has a toolbar with most common action like make bold, adding a link, etc.
-The toolbar hides when entering presentation mode to remove distractions for the audience.
+The editor has a toolbar with the most common actions like make bold, adding a link, etc.
+The toolbar hides when entering the presentation mode to remove distractions for the audience.
 
 // see: AsciiDocSmartEnterProcessor
 When adding block attributes, the plugin supports statement completion (also known as "`Smart Enter`") using the shortcut kbd:[Shift+Ctrl+Enter].
@@ -142,7 +142,7 @@ For example:
 . a snippet `xref:file.adoc#section` will add the section's title and the brackets.
 
 // see: AsciiDocBraceMatcher
-When the user opens a quote or a bracket, the plugin automatically adds a closing quote if it followed by spaces or a closing bracket.
+When the user opens a quote or a bracket, the plugin automatically adds a closing quote if it is followed by spaces or a closing bracket.
 
 For references, attributes and images, and several macros like include, image and diagrams it provides auto-completion using kbd:[Ctrl+Space].
 References and attributes support renaming within a project.
@@ -150,14 +150,14 @@ References and attributes support renaming within a project.
 Typing characters like kbd:[{], kbd:[<], or kbd:[:] as part of a macro or attribute definition will open the auto-completion dialog as well.
 
 When auto-completing folder and file names in macros, the plugin tries to resolve attributes using their values specified in the current file or other files.
-For image macros it also tries to find a declaration of the _imagesDir_ attribute in any of the AsciiDoc files of the project.
+For image macros it also tries to find a declaration of the _imagesDir_-attribute in any of the AsciiDoc files in the project.
 
 There are several live templates included.
 See xref:features/advanced/livetemplates.adoc[] for more information.
 
 The user can copy images from the clipboard into the document.
-To do that user selects "`Paste image from clipboard`" from the editor's icon menu or from the context menu.
-If the clipboard contains a reference to an existing file, the user can choose to copy the file to the project or to just create a reference to the image in the AsciiDoc document.
+To do that, the user selects "`Paste image from clipboard`" from the editor's icon menu or from the context menu.
+If the clipboard contains a reference to an existing file, the user can choose to copy the file to the project or to create a reference to the image in the AsciiDoc document.
 If the clipboard contains an image, the user can choose to create a JPEG or PNG file from the clipboard and add the reference to the document.
 In both cases, the user has the option to configure the image with additional attributes (`width` and `alt` text).
 
@@ -166,7 +166,7 @@ This shortcut doesn't work yet for copying contents from outside the project.
 
 // AsciiDocHeadingStyleInspection, ...
 The editor runs inspections on the content.
-It finds and highlights Markdown-styled headings, horizontal rules orlistings as a warning.
+It finds and highlights Markdown-styled headings, horizontal rules or listings as a warning.
 The user can use kbd:[Ctrl+Enter] to quickly convert these to AsciiDoc syntax.
 
 // AsciiDocInspectionSuppressor
@@ -211,7 +211,7 @@ The user can disable and enable intentions in menu:Settings...[Editor > Intentio
 
 The user can reformat the source in the editor using "`Reformat Code`" (kbd:[Ctrl+Alt+L]).
 
-The user can disable formatting completely or configure parameters using  menu:Settings...[Editor > Code Style > AsciiDoc].
+The user can disable formatting completely or configure parameters using menu:Settings...[Editor > Code Style > AsciiDoc].
 Currently, it adjusts empty lines around headings, lists and blocks.
 It also adjusts spaces around list items.
 

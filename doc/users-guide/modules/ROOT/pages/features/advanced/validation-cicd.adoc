@@ -62,7 +62,7 @@ With the benefit of being a real-world scenario, some steps might be more compli
 [NOTE]
 ====
 While being production ready, Qodana is still in an early stage.
-Today some workaround have been applied to make it work with GitHub Actions and GitHub Code Scanning, future versions of Qodana will provide them out-of-the box.
+At the moment some workarounds have been applied to make it work with GitHub Actions and GitHub Code Scanning, future versions of Qodana will provide them out-of-the box.
 ====
 
 . Setup Qodana configuration file.

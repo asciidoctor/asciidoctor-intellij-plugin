@@ -1,5 +1,5 @@
 The download requires a working internet connection.
-When the download fails the IDE prompts to check proxy settings or to retry the download.
+When the download fails, the IDE prompts to check proxy settings or to retry the download.
 The IDE's event log contains instructions for a manual download of the file.
 
 The dependencies will be cached locally.

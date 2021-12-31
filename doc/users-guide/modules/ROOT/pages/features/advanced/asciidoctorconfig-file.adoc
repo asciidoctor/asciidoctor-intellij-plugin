@@ -2,7 +2,7 @@
 :description: To provide a common set of variables when rendering the preview, the plugin reads an .asciidoctorconfig configuration file.
 
 To provide a common set of variables when rendering the preview, the plugin reads an _.asciidoctorconfig_ configuration file.
-Use this to optimize the preview the project contains a document that is split out to multiple include files.
+Use this to optimize the preview when the project contains a document that is split out to multiple include-files.
 
 == Situation
 
@@ -14,7 +14,7 @@ While documents have all the settings in your root document, files that it inclu
 
 A file called _.asciidoctorconfig_ will contain a snippet that will be pre-pended before rendering the AsciiDoc file.
 
-The IntelliJ IDE also provides a variable _asciidoctorconfigdir_ that you can use to set base directory variables.
+The IntelliJ IDE provides a variable _asciidoctorconfigdir_ that users can use to set base directory variables.
 
 Sample content:
 
@@ -28,8 +28,12 @@ Sample content:
 
 The handling will be a mixture of behaviors like https://editorconfig.org/[_.editorconfig_] and _.gitconfig._
 
-Please note that _ifndef_/_ifdef_ macros won't work in a file called _.asciidoctorconfig_ (they work only in files that have the extension _.adoc_) To work around this, rename the file to _.asciidoctorconfig.adoc_.
+[NOTE]
+====
+_ifndef_/_ifdef_ macros will not work in a file called _.asciidoctorconfig_ as they work only in files that have the extension _.adoc_.
+To work around this, rename the file to _.asciidoctorconfig.adoc_.
 This will work the same way as _.asciidoctorconfig_.
+====
 
 == Behavior
 
@@ -37,14 +41,14 @@ The internal order of processing is as follows:
 
 . load the _.asciidoctorconfig_ file from the root of the project tree (most general configuration)
 . load the _.asciidoctorconfig_ files from the different directories leading to the specific file to be rendered
-. load the _.asciidoctorconfig_ file from current folder where the file to be rendered resides (most specific to the file opened)
+. load the _.asciidoctorconfig_ file from the current folder where the file to be rendered resides (most specific to the file opened)
 . Prepend all the files found in the previous steps to the file to be rendered and render it in the preview.
 
 == Benefits
 
-* project specific configuration is possible
-* hierarchical configuration is possible
-* use the AsciiDoc syntax the user is familiar with (even includes work)
+* Project specific configuration is possible.
+* Hierarchical configuration is possible.
+* Use the AsciiDoc syntax the user is familiar with (even includes work).
 
 == Ecosystem
 

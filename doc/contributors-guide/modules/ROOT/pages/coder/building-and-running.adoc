@@ -7,12 +7,11 @@
 == Local Build
 
 This plugin is built using Gradle.
-If you build or run it the first time it will download the community edition of IntelliJ automatically.
-You don't need to install Gradle, you just need to install Java and make it available in the path.
+As this project includes the Gradle wrapper, developers don't need to install Gradle.
+They need to install Java and make it available in the path or set environment variable _JAVA_HOME_ the folder where they installed it.
+When building or running for the first time, the build script downloads the community edition of IntelliJ automatically.
 
-If you have developed the plugin before it changed to Gradle you might want to remove the contents of your `.idea` folder to trigger a re-import of the Gradle project.
-
-To build this plugin, you need to run:
+To build this plugin, run:
 
 ----
 ./gradlew -Dfile.encoding=UTF-8 buildPlugin
@@ -22,20 +21,20 @@ The ZIP file with plugin to distribute will be located in `build/distributions`.
 
 [NOTE]
 ====
-The `plugin.xml` inside the archive will state version `0.0.1` unless you specify an environment variable `VERSION` that holds a release number.
-This ensures that a temporarily locally build plugin will be overwritten by the JetBrains plugin update site.
+The `plugin.xml` inside the archive will state version `0.0.1` unless the developer specifies an environment variable `VERSION` that holds a release number.
+This ensures that a locally built plugin will be overwritten by the JetBrains plugin update site.
 ====
 
 == Running the development version locally
 
-To run the plugin for development you'll need to start
+To run the plugin for development, run
 
 [source,bash]
 ----
 ./gradlew -Dfile.encoding=UTF-8 runIde
 ----
 
-To run all tests and the CheckStyle validations you'll need to start
+To run all tests and the CheckStyle validations, run
 
 [source,bash]
 ----
@@ -98,6 +97,6 @@ Perform these tasks to ensure that your setup is ready for development.
 buildPlugin:: building the plugin as a ZIP-file that you can then install locally into your IDE
 
 runIde:: runs an IntelliJ community edition with the AsciiDoc plugin enabled.
-You can choose to run it in debug mode.
+You can choose to run it in the debug mode.
 --
 

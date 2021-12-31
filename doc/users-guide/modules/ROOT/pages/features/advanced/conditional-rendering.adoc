@@ -6,7 +6,7 @@
 
 == Situation
 
-A user wants show or hide paragraphs within a document when it is previewed in the IDE.
+A user wants to show or hide paragraphs within a document when it is previewed in the IDE.
 
 == Solution
 
@@ -40,5 +40,5 @@ render this text IF running IntelliJ Asciidoctor Plugin
 
 == Further reading
 
-You can read more about directives in the https://asciidoctor.org/docs/user-manual/#conditional-preprocessor-directives[Asciidoctor User's manual, chapter '`Conditional Preprocessor Directives`'].
+Read more about directives in the https://asciidoctor.org/docs/user-manual/#conditional-preprocessor-directives[Asciidoctor User's manual, chapter '`Conditional Preprocessor Directives`'].
 

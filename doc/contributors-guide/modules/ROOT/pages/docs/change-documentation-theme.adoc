@@ -9,7 +9,7 @@ If you want to preview your changes locally:
 
 . https://nodejs.org/en/[Node] environment
 . https://classic.yarnpkg.com/en/docs/install/[Yarn] installed
-. Basic knowledge on how to use https://antora.org/[Antora]
+. Basic knowledge of how to use https://antora.org/[Antora]
 
 == How-to steps
 

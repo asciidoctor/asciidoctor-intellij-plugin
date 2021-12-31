@@ -1,5 +1,5 @@
 = Antora
-:description: This plugin support Antora attributes like 'imagesdir' and 'examplesdir'. It also resolves xrefs and includes in the preview.
+:description: This plugin supports Antora attributes like 'imagesdir' and 'examplesdir'. It also resolves xrefs and includes in the preview.
 
 https://antora.org/[Antora] helps to write and publish documentation websites.
 It allows combining documentation from multiple repositories into a single website.
@@ -8,7 +8,7 @@ Each documentation component contains an `antora.yml` file https://docs.antora.o
 
 == Pre-Requisites
 
-You need to upgrade to version 0.30.31 or later of the plugin.
+Users need to upgrade to version 0.30.31 or later of the plugin.
 Initial support has been added in issue https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/373[#373].
 
 Auto-complete in `antora.yml` files was implemented starting with plugin version 0.32.54.
@@ -34,7 +34,7 @@ For `include::[]` macros the plugin supports the Antora families like `partial$`
 
 === Antora editor support
 
-In the editor the user can autocomplete filenames and references using kbd:[Ctrl+Space] and can navigate to a folder or file using kbd:[Ctrl+B].
+In the editor, the user can autocomplete filenames and references using kbd:[Ctrl+Space] and can navigate to a folder or file using kbd:[Ctrl+B].
 
 To allow auto-completion for components that reside in different Git repositories, consider using a xref:features/advanced/multimodule.adoc[multi-module project].
 

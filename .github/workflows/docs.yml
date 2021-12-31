@@ -13,14 +13,12 @@ on:
       - '.github/workflows/docs.yml'
       - 'qodana.yaml'
 jobs:
-  # Verify built plugin using IntelliJ Plugin Verifier tool
-  # Requires build job to be passed
   qodana-docs:
     name: Qodana Docs
     runs-on: ubuntu-latest
     permissions:
       # necessary for the runs of push to store security events in the repo
-      # GitHub code scanning will treat any grammar error like a any security event.
+      # GitHub code scanning will treat any grammar error like any security event.
       security-events: write
     steps:
 

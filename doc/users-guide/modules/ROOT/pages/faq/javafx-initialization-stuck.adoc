@@ -3,7 +3,7 @@
 
 == Symptoms
 
-The IDE is either stuck or (with newer versions of the plugin) will show a message "`JavaFX initialization is stuck`"
+The IDE is either stuck or (with newer versions of the plugin) will show a message "`JavaFX initialization is stuck`".
 
 == Environment
 
@@ -13,9 +13,10 @@ When you're running IntelliJ on Linux with a GTK3 based desktop (like Ubuntu 19.
 The AsciiDoc plugin will show a notification "`JavaFX initialization is stuck`"
 
 0.28.17 and earlier::
-The IDE will freeze once you open a AsciiDoc document with the plugin. Actually this will happen for any JavaFX based preview, including the IntelliJ Markdown plugin.
+The IDE will freeze once users open an AsciiDoc document with the plugin.
+Actually, this will happen for any JavaFX based preview, including the IntelliJ Markdown plugin.
 
-*If something like this happens to you in a different environment, please open a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issue^] to investigate it.*
+*If something like this happens in a different environment, open a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issue^] to have it investigated.*
 
 == Cause
 

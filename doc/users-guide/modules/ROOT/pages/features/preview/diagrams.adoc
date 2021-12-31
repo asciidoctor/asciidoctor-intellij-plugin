@@ -22,7 +22,7 @@ Asciidoctor Diagram renders the content of the editor including all referenced i
 
 === Downloading Asciidoctor Diagram
 
-As of AsciiDoc Plugin version 0.31.14+ Asciidoctor Diagram is no longer included in the plugin as default as it adds approximately 15 MB to the download of the installation and each update.
+As of the AsciiDoc Plugin version 0.31.14+, Asciidoctor Diagram is no longer included in the plugin as default as it adds approximately 15 MB to the download of the installation and each update.
 
 // see: diagram-placeholder.rb + AsciiDocDownloadNotificationProvider.java
 When the preview includes a diagram, the plugin shows an editor notification asking the user to download the necessary dependency.
@@ -41,7 +41,7 @@ NOTE: Diagrams in the preview when running in any mode other than UNSAFE will on
 
 To avoid checking in these files, consider adding a file path to the ignore file of your version control system.
 
-See below for example _.gitignore_ file placed in the root of the project if the project uses Git as version control system.
+See below for a _.gitignore_ file placed in the root of the project if the project uses Git as its version control system.
 
 ..gitignore
 ----
@@ -79,15 +79,15 @@ See <<interative-vs-inlined>> and <<avoid-flicker>> for a discussion of tradeoff
 === PNG-only JavaFX preview
 
 // see: plantuml-png-patch.rb and kroki-extension.rb
-As JavaFX has a problem displaying SVG files correctly.
-Therefore, the plugin displays all diagrams in the JavaFX preview as PNGs, even when the user specifies SVG as the diagram format.
+JavaFX has a problem displaying SVG files correctly.
+Therefore, the plugin displays all diagrams in the JavaFX preview as PNGs even when the user specifies SVG as the diagram format.
 
 When using IntelliJ 2020.2+ and plugin version 0.31.25+, the JCEF preview will show diagrams as SVGs when the user specifies SVG as the diagram format.
 
 [#interative-vs-inlined]
 === Interactive vs inlined SVGs
 
-SVGs support interactions with the user, for example hovering or links.
+SVGs support interactions with the user such as hovering or links.
 This is only available when the user adds the option `interactive` or `inline` to diagrams or SVG images.
 Only when an SVG or diagram is inlined, the plugin will redirect clicks on links in the preview to local AsciiDoc files.
 See https://asciidoctor.org/docs/user-manual/#taming-svgs[section "`Taming SVGs`" in the Asciidoctor manual].
