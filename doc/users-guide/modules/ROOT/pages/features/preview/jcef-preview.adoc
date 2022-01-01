@@ -52,14 +52,14 @@ This opens a fully equipped Chrome developer tools window that allows users to i
 For IntelliJ 2021.3 and later::
 +
 --
-Set the property `ide.browser.jcef.contextMenu.devTools.enabled` to `true` to enable this feature.
+Set the registry key `ide.browser.jcef.contextMenu.devTools.enabled` to `true` to enable this feature.
 
 The registry is available via menu menu:Help[Find action...], then enter "`Registry`" to search the action, then choose "`Registry...`".
-In the dialog that opens, start typing the property key given above to restrict the list.
+In the dialog that opens, start typing the registry key given above to restrict the list.
 Check the checkbox on the right to enable this property.
 Press btn:[Close] to close the dialog.
 The DevTools are available for all newly opened editors.
-For editors already open, users will need to close and re-open them to see the DevTools.
+For editors already open, close and re-open them to see the DevTools.
 No IDE restart is required.
 
 // https://youtrack.jetbrains.com/issue/IDEA-286008
@@ -86,7 +86,7 @@ For IntelliJ 2021.2 and earlier::
 +
 --
 https://plugins.jetbrains.com/docs/intellij/enabling-internal.html[Enabling the internal mode^] for the IDE.
-This will enable DevTools.
+This will enable DevTools after a restart.
 It will also enable additional internal menus of the IDE.
 
 It will also enable additional diagnostic error messages like "`Slow operations are prohibited on EDT`" for all installed plugins.
