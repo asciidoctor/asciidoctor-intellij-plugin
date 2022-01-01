@@ -1,4 +1,4 @@
-= Could not find executable to render diagrams
+= Could not render diagrams with external helpers
 :description: To render diagram previews, 'dot' or other helpers need to be in the path or specified as a document attribute. See this guide how to add or enable Kroki.
 :uri-kroki: https://kroki.io
 
@@ -16,27 +16,86 @@ Could not find the 'dot' executable in PATH; add it to the PATH or specify its l
 
 == Cause: Helper executable not found
 
-When using https://github.com/asciidoctor/asciidoctor-diagram[asciidoctor-diagram], some diagrams will need external helper applications for creating the diagram, like for example, https://www.graphviz.org/[Graphviz].
+When using https://github.com/asciidoctor/asciidoctor-diagram[asciidoctor-diagram], some diagrams will need external helper applications for creating the diagram, like for example, https://www.graphviz.org/[GraphViz].
 
 == Remedies
 
-=== Remedy 1: Adding executable to PATH or document attribute
+=== Remedy 1: Upgrade to the latest AsciiDoc plugin version on Windows
 
-Most of the time users can make diagrams work by adding the executable (like Graphviz' dot-executable) to the PATH environment variable.
+Starting with https://plantuml.com/en/graphviz-dot[PlantUML 1.2020.25], PlantUML includes a minimal dot executable for Windows.
+There is no need to install GraphViz manually anymore.
+Still, PlantUML will use a locally installed GraphViz version if it finds one.
+
+Users should use plugin version 0.32.8 or later for this.
+
+=== Remedy 2: Adding executable to PATH or document attribute
+
+Most of the time users can make diagrams work by adding the executable (like GraphViz' dot-executable) to the PATH environment variable.
 
 If this doesn't work for the user, there are other possibilities depending on the diagram type.
-PlantUML will search for Graphviz using multiple well-known folders and will look for the executable.
+PlantUML will search for GraphViz using multiple well-known folders and will look for the executable.
 If an environment variable `GRAPHVIZ_DOT` exists, it will use the executable stated there.
 
 If the error message persists, go to the settings of the AsciiDoc plugin, and add it as an attribute.
-For the error message above the attribute is `graphvizdot`. The value is the full path including the executable, for example `C:\Program Files (x86)\Graphviz2.38\bin\dot.exe`
+For the error message above the attribute is `graphvizdot`.
+The value is the full path including the executable, for example `C:\Program Files (x86)\Graphviz2.38\bin\dot.exe`
 
-=== Remedy 2: Use Kroki as a cloud-based renderer for diagrams
+=== Remedy 3: Use Kroki as a cloud-based renderer for diagrams
 
 This plugin supports {uri-kroki}[Kroki] to render diagrams.
 Kroki is available as a cloud-based service and as a self-hosted service.
 
 See xref:features/preview/diagrams.adoc[section about Kroki in the chapter "`Diagrams in the preview`"].
+
+== Symptom: Could not run dot executable for PlantUML
+
+When adding a diagram to the AsciiDoc file, the preview doesn't show diagram, but an error message like:
+
+====
+PlantUML cannot parse result from dot/GraphViz.
+====
+
+== Cause: dot not executable for PlantUML
+
+This might be due to a locally installed dot executable that is either not compatible with PlantUML, or the executable can't be started by PlantUML due to restrictions of the operating system (like a virus scanner or execution prevention program).
+
+== Remedy: Identify executable used by PlantUML
+
+To analyze this further, render the following test diagram in the preview by adding the following snippet to an AsciiDoc document:
+
+[source,asciidoc]
+-----
+[plantuml]
+----
+@startuml
+testdot
+@enduml
+----
+-----
+
+This should render a diagram like the following:
+
+image::faq/plantuml-ok-minimal.png[]
+
+Unfortunately, this doesn't show the dot-executable used for this.
+To show the executable as well, add a custom property to your IDE via menu:Help[Edit custom properties...]:
+
+----
+PLANTUML_SECURITY_PROFILE=UNSECURE
+----
+
+After adding this property, restart the IDE.
+
+The test diagram from above renders the path of the dot executable:
+
+image::faq/plantuml-ok-extended.png[]
+
+This image reports that PlantUML uses an executable from a temporary folder.
+This the case when PlantUML uses its bundled dot executable on Windows.
+
+With this information at hand, users can determine which executable is used, and which executable should be uninstalled or excluded from execution prevention.
+
+Running the executable from the command line can provide further information about why execution fails.
 
 == Background
 
