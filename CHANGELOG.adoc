@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.36.14
+
+- enforcing restart after plugin install for upgrades from version 0.36.11 when internal mode is enabled (#962)
+
 === 0.36.13
 
 - disable unloading of plugin at runtime, restart will be required
