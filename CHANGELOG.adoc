@@ -7,9 +7,13 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.36.15
+
+- enforcing restart can't be triggered by the marketplace, reverting change (#962)
+
 === 0.36.14
 
-- enforcing restart after plugin install for upgrades from version 0.36.11 when internal mode is enabled (#962)
+- enforcing restart after plugin install for upgrades from version 0.36.11/0.36.12 when internal mode is enabled (#962)
 
 === 0.36.13
 
