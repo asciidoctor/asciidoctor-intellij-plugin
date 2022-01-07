@@ -113,26 +113,26 @@ include::partial$installation-complete.adoc[]
 
 Prerequisite::
 This requires a working internet connection when downloading the file with a browser.
-You can then distribute the file internally to the IDE by regular file transfer.
+If the machine where the plugin should be installed doesn't have a direct internet access, download it on a different machine with Internet access and transfer the file internally via file transfer.
 
 Steps::
 +
-. Open the https://plugins.jetbrains.com/plugin/7391-asciidoc[AsciiDoc plugin in the JetBrains Marketplace^] +
+. Open the https://plugins.jetbrains.com/plugin/7391-asciidoc/versions[AsciiDoc plugin in the JetBrains Marketplace^] +
 This opens a web page similar to the following screenshot:
 +
 .JetBrains Marketplace
 image::web-page-marketplace.png[JetBrains Marketplace showing AsciiDoc plugin]
-. Choose the version tab
-. Download version matching your IDE's version (usually the latest version if your IDE is up-to-date)
+. Choose the version tab if it isn't pre-selected.
+. Download the version compatible with your IDE's version (usually the latest version if your IDE is up-to-date).
 . Open the IDE's setting via menu:File[Settings...]. +
 This opens the following menu:
 +
 .Settings menu when installing from disk
 image::install-from-disk.png[]
-. Select _Plugins_ from the settings tree
-. Click on small gear icon
-. Choose _Install Plugin from Disk..._
-. Pick this ZIP-file you downloaded in step 3 and
-. Restart the IDE
+. Select _Plugins_ from the settings tree.
+. Click on small gear icon.
+. Choose menu item _Install Plugin from Disk..._.
+. Pick this ZIP-file downloaded in step 3.
+. Restart the IDE.
 
 include::partial$installation-complete.adoc[]

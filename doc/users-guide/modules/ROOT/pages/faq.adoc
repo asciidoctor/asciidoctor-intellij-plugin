@@ -21,6 +21,14 @@ This is a folder that holds temporary files that are created for example for dyn
 
 Read more in xref:features/preview/diagrams.adoc#temp-folder-asciidoctor[Temporary folder _.asciidoctor_ appearing in several places].
 
+== Updating troubles
+
+=== Updating the plugin via JetBrains Marketplace not working
+
+Due to an error of the currently installed plugin version the upgrade and download from the Marketplace might fail.
+
+As a remedy, download the file from the Marketplace manually and install it xref::installation.adoc#download-install-from-disk[as described in the installation chapter].
+
 == Editor Troubles
 
 === Pasting from clipboard removes leading spaces (aka indent). Why?
