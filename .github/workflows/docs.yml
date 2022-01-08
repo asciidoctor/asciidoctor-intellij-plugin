@@ -39,17 +39,25 @@ jobs:
 
       - name: Download AsciiDoc plugin for AsciiDoc checks
         run: |
-          curl -L -o asciidoctor-intellij-plugin.zip https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases/download/0.36.10/asciidoctor-intellij-plugin-0.36.10.zip
+          curl -L -o asciidoctor-intellij-plugin.zip https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases/download/0.36.14/asciidoctor-intellij-plugin-0.36.14.zip
           unzip asciidoctor-intellij-plugin.zip
 
       - name: Download Grazie plugin for grammar checks
+        # https://plugins.jetbrains.com/plugin/12175-grazie/versions
         run: |
-          curl -L -o grazie.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=135090'
+          curl -L -o grazie.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=150459'
+          unzip grazie.zip
+
+      - name: Download Grazie Professional plugin for grammar checks
+        # https://plugins.jetbrains.com/plugin/16136-grazie-professional/versions
+        run: |
+          curl -L -o grazie.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=152587'
           unzip grazie.zip
 
       - name: Run Qodana code inspection (docs subfolder only)
         # alternative: use "-d doc", this would avoid patching the SARIF file afterward.
         # downside of alternative: gradle will run and load all gradle and build dependencies
+        # https://hub.docker.com/r/jetbrains/qodana-jvm-community/tags
         run: >
           docker run
           -v ${{ github.workspace }}/doc:/data/project
@@ -82,7 +90,7 @@ jobs:
         # new: "project/qodana/2021-11-14"
         # see: https://youtrack.jetbrains.com/issue/QD-1796
         run: |
-          sed -i 's|"id": "project - \(..\)/\(..\)/\(..\).*"|"id": "project/qodana/20\3-\1-\2"|g' ${{ github.workspace }}/qodana.sarif.json
+          sed -i 's|"id": "project - \(.\+\)/\(.\+\)/\(.\+\),.*"|"id": "project/qodana/20\3-\1-\2"|g' ${{ github.workspace }}/qodana.sarif.json
 
       - name: Upload Qodana report as an artifact of the pipeline
         # users with access can then download the report as a ZIP file

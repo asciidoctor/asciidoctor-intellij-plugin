@@ -94,6 +94,12 @@ As of plugin version 0.36.2, every heading and paragraph of text will be checked
 It supports multiple languages: Once the user configured the languages in IDE's proofreading settings, the plugin detects the language of a section automatically.
 As it performs all checks locally with the help of libraries from https://languagetool.org/, it doesn't submit text written in the IDE to a third party cloud service.
 
+Starting with IntelliJ 2021.3, there is the https://plugins.jetbrains.com/plugin/16136-grazie-professional[Grazie Professional plugin] that adds additional grammar checks and auto-completion when writing text using a neural network.
+All the processing is still running locally in the IDE.
+There is an optional invitation-only cloud service for additional checks.
+This additional plugin can add a significant CPU load when writing and committing texts.
+It allows https://plugins.jetbrains.com/plugin/16136-grazie-professional/docs/project-style-guides.html[integration for project specific rules using the Vale syntax] to warn about the usage of specific words or phrases.
+
 // see: ExternalAnnotator
 During rendering, Asciidoctor might indicate problems in the file including a line number.
 The editor shows them as red and yellow annotations.

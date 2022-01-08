@@ -29,7 +29,7 @@ It looks relative to the `pom.xml` for `target/generated-snippets` or relative t
 
 Once the plugin detects Spring REST Docs it
 
-* sets the `snippets` attribute to the generated snippets folder, therefore includes like this work:
+* sets the `snippets` attribute to the generated snippets-folder, therefore, includes like this work:
 +
 [source,asciidoc]
 ----
@@ -53,4 +53,4 @@ Press kbd:[Ctrl+B] to navigate to the folder.
 
 The Spring REST Docs projects provides an example project how to set up things: https://github.com/spring-projects/spring-restdocs/tree/master/samples/rest-notes-spring-hateoas
 
-As the editor support requires the generated-snippets folder to be present, users need to run their tests to create and populate it before the editor support activates.
+As the editor support requires the generated snippets-folder to be present, users need to run their tests to create and populate it before the editor support activates.
