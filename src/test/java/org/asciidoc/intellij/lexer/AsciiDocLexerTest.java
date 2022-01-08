@@ -60,8 +60,7 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:CELLSEPARATOR ('|')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
-        "AsciiDoc:ITALIC_START ('_')\n" +
-        "AsciiDoc:ITALIC ('x_x_x')\n" +
+        "AsciiDoc:TEXT ('_x_x_x')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:LINE_COMMENT ('// comment')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
@@ -1120,6 +1119,57 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('constrained')");
   }
 
+  public void testItalicWithTempltingUnderscore() {
+    doTest("text `_t` text `_t`",
+      "AsciiDoc:TEXT ('text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:MONO_START ('`')\n" +
+        "AsciiDoc:MONO ('_t')\n" +
+        "AsciiDoc:MONO_END ('`')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:MONO_START ('`')\n" +
+        "AsciiDoc:MONO ('_t')\n" +
+        "AsciiDoc:MONO_END ('`')");
+  }
+
+  public void testItalicWithTwoTableCells() {
+    doTest("|===\n|_text | text_\n|===",
+      "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:TEXT ('_text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('text_')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('|===')");
+  }
+
+  public void testDoubleItalicWithTwoTableCells() {
+    doTest("|===\n|__text | text__\n|===",
+      "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:TEXT ('__text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('text__')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('|===')");
+  }
+
+  public void testWithItalicInTwoParagraphs() {
+    doTest("_text_text\n\ntext_",
+      "AsciiDoc:TEXT ('_text_text')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
+        "AsciiDoc:TEXT ('text_')");
+  }
+
   public void testMonoMultipleInSingleLine() {
     doTest("mono `constrained` & ``un``constrained",
       "AsciiDoc:TEXT ('mono')\n" +
@@ -1713,14 +1763,6 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:PASSTRHOUGH_INLINE_END ('+')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('other')");
-  }
-
-  public void testPassThroughRunOff() {
-    doTest("+pt+test\n\nHi",
-      "AsciiDoc:PASSTRHOUGH_INLINE_START ('+')\n" +
-        "AsciiDoc:PASSTRHOUGH_CONTENT ('pt+test\\n')\n" +
-        "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:TEXT ('Hi')");
   }
 
   public void testLiteralBlock() {
@@ -2792,9 +2834,14 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   public void testResetFormatting() {
-    doTest("`Mono`Text\n\nText",
+    doTest("`Mono Text++`++\n\nText",
       "AsciiDoc:MONO_START ('`')\n" +
-        "AsciiDoc:MONO ('Mono`Text')\n" +
+        "AsciiDoc:MONO ('Mono')\n" +
+        "AsciiDoc:WHITE_SPACE_MONO (' ')\n" +
+        "AsciiDoc:MONO ('Text')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_START ('++')\n" +
+        "AsciiDoc:PASSTRHOUGH_CONTENT ('`')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_END ('++')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:EMPTY_LINE ('\\n')\n" +
         "AsciiDoc:TEXT ('Text')");

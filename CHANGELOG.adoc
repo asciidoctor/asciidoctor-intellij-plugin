@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - enforcing restart can't be triggered by the marketplace, reverting change (#962)
 - update to Asciidoctor PDF 1.6.2 (#961)
+- updated parsing for bold/italic/monospace handling for editor and highlighting (#963)
 
 === 0.36.14
 

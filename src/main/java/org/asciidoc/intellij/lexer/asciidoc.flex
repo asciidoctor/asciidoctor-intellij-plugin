@@ -101,14 +101,18 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
   }
 
   private boolean isUnconstrainedEnd() {
-    if(getTokenStart() > 0) {
-      char c = zzBuffer.charAt(getTokenStart() -1);
+    return isUnconstrainedEnd(getTokenStart(), getTokenEnd());
+  }
+
+  private boolean isUnconstrainedEnd(int start, int end) {
+    if (start > 0) {
+      char c = zzBuffer.charAt(start -1);
       if (c == ' ' || c == '\t' || c == '\n') {
         return false;
       }
     }
-    if(getTokenEnd() < zzBuffer.length()) {
-      char c = zzBuffer.charAt(getTokenEnd());
+    if (end < zzBuffer.length()) {
+      char c = zzBuffer.charAt(end);
       if (Character.isAlphabetic(c) || Character.isDigit(c) || c == '_') {
         return false;
       }
@@ -129,7 +133,47 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
         return false;
       }
     }
-    return true;
+    char q = zzBuffer.charAt(getTokenStart());
+    int linebreaks = 0;
+    // an unconstrainted start is only valid if there is an unconstrained end in the same paragraph
+    for (int i = getTokenStart() + 1; i < zzEndRead; ++i) {
+      int c = zzBuffer.charAt(i);
+      if (c == '\n') {
+        ++ linebreaks;
+        if (linebreaks == 2) {
+          break;
+        }
+      } else if (linebreaks > 0 && !Character.isSpaceChar(c)) {
+        linebreaks = 0;
+      }
+      if (q == zzBuffer.charAt(i)) {
+        if (isUnconstrainedEnd(i, i+1)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private boolean constraintQuoteEndsInCurrentParagraph() {
+    char q = zzBuffer.charAt(getTokenStart());
+    int linebreaks = 0;
+    // an unconstrainted start is only valid if there is an unconstrained end in the same paragraph
+    for (int i = getTokenStart() + 1; i + 1 < zzEndRead; ++i) {
+      int c = zzBuffer.charAt(i);
+      if (c == '\n') {
+        ++ linebreaks;
+        if (linebreaks == 2) {
+          break;
+        }
+      } else if (linebreaks > 0 && !Character.isSpaceChar(c)) {
+        linebreaks = 0;
+      }
+      if (q == zzBuffer.charAt(i) && q == zzBuffer.charAt(i + 1)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private boolean isEscaped() {
@@ -301,16 +345,10 @@ TITLE_START = "."
 AUTOCOMPLETE = "IntellijIdeaRulezzz" " "? // CompletionUtilCore.DUMMY_IDENTIFIER - blank might get missing at end of line, therefore keep it optional
 BLOCK_ATTRS_START = "["
 STRING = {NON_SPACE}+ \n? // something that doesn't have an empty line
-STRINGNOASTERISK   = [^\n\*]+ \n?
-STRINGNOUNDERSCORE = [^\n\_]+ \n?
-STRINGNOBACKTICK   = [^\n\`]+ \n?
 STRINGNOPLUS       = [^\n\+]+ \n?
 // something with a non-blank at the end, might contain a line break, but only if it doesn't separate the block
 WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n] | {SPACE}* [^\n]*[^\ \t\n]
 WORDNOBRACKET =  {SPACE}* [^\n\]]* {SPACE}* \n {SPACE}* [^\ \t\n\]] | {SPACE}* [^\n\]]*[^\ \t\n\]]
-WORDNOASTERISK = {SPACE}* [^\n\*]* {SPACE}* \n {SPACE}* [^\ \t\n\*] | {SPACE}* [^\n\*]*[^\ \t\n\*]
-WORDNOUNDERSCORE={SPACE}* [^\n\_]* {SPACE}* \n {SPACE}* [^\ \t\n\_] | {SPACE}* [^\n\_]*[^\ \t\n\_]
-WORDNOBACKTICK = {SPACE}* [^\n\`]* {SPACE}* \n {SPACE}* [^\ \t\n\`] | {SPACE}* [^\n\`]*[^\ \t\n\`]
 WORDNOPLUS =     {SPACE}* [^\n\+]* {SPACE}* \n {SPACE}* [^\ \t\n\+] | {SPACE}* [^\n\+]*[^\ \t\n\+]
 BOLD = "*"
 BULLET = ("*"+|"-")
@@ -1299,24 +1337,28 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                        }
   // BOLD START
   // start something with ** only if it closes within the same block
-  {DOUBLEBOLD} [^\*] ({STRINGNOASTERISK} | [^\*][\*][^\*])* {DOUBLEBOLD} {
-                         yypushback(yylength() -2 );
-                         doublebold = !doublebold; return doublebold ? AsciiDocTokenTypes.DOUBLEBOLD_START : AsciiDocTokenTypes.DOUBLEBOLD_END;
-                       }
-  {DOUBLEBOLD}         { if(doublebold) {
-                           doublebold = false; return AsciiDocTokenTypes.DOUBLEBOLD_END;
-                         } else {
-                           yypushback(1);
+  {DOUBLEBOLD}       {
+                         if (isEscaped() && !doublebold) {
                            return textFormat();
+                         } else {
+                           if (!doublebold && !constraintQuoteEndsInCurrentParagraph()) {
+                             yypushback(yylength() - 1);
+                             if(isUnconstrainedStart() && !singlebold) {
+                               singlebold = true; return AsciiDocTokenTypes.BOLD_START;
+                             } else {
+                               return textFormat();
+                             }
+                           } else {
+                             doublebold = !doublebold;
+                             return doublebold ? AsciiDocTokenTypes.DOUBLEBOLD_START : AsciiDocTokenTypes.DOUBLEBOLD_END;
+                           }
                          }
                        }
-  {BOLD} {BOLD}? [^\*\n \t] ({WORDNOASTERISK} | [ \t][\*][^\*] | [\*][\p{Letter}\p{Digit}_])* {BOLD} {
-                         if (doublebold && yytext().toString().startsWith("**")) {
-                           yypushback(yylength() - 2);
-                           doublebold = false; return AsciiDocTokenTypes.DOUBLEBOLD_END;
+  {BOLD}             {
+                         if (isEscaped() && !singlebold) {
+                           return textFormat();
                          } else {
-                           yypushback(yylength() - 1);
-                           if(isUnconstrainedStart() && !singlebold && !doublebold) {
+                           if(isUnconstrainedStart() && !singlebold) {
                              singlebold = true; return AsciiDocTokenTypes.BOLD_START;
                            } else if (singlebold && isUnconstrainedEnd()) {
                              singlebold = false; return AsciiDocTokenTypes.BOLD_END;
@@ -1325,71 +1367,72 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            }
                          }
                        }
-  {BOLD}               { if(singlebold && !doublebold && isUnconstrainedEnd()) {
-                           singlebold = false; return AsciiDocTokenTypes.BOLD_END;
-                         } else {
-                           return textFormat();
-                         }
-                       }
   // BOLD END
 
   // ITALIC START
-  // start something with __ only if it closes within the same block
-  {DOUBLEITALIC} [^\_] ({STRINGNOUNDERSCORE} | [^\_][\_][^\_])* {DOUBLEITALIC} {
-                         yypushback(yylength() - 2);
-                         doubleitalic = !doubleitalic; return doubleitalic ? AsciiDocTokenTypes.DOUBLEITALIC_START : AsciiDocTokenTypes.DOUBLEITALIC_END;
-                       }
-  {DOUBLEITALIC}         { if(doubleitalic && !singleitalic) {
-                           doubleitalic = false; return AsciiDocTokenTypes.DOUBLEITALIC_END;
-                         } else {
-                           yypushback(1);
-                           return textFormat();
-                         }
-                       }
-  {ITALIC} {ITALIC}? [^\_\n \t] ({WORDNOUNDERSCORE} | [ \t][\_][^\_] | [\_][\p{Letter}\p{Digit}_])* {ITALIC} {
-                         if (doubleitalic && yytext().toString().startsWith("__")) {
-                           yypushback(yylength() - 2);
-                           doubleitalic = false; return AsciiDocTokenTypes.DOUBLEITALIC_END;
-                         } else {
+  {DOUBLEITALIC}       {
+                         if (isEscaped() && !doubleitalic) {
                            yypushback(yylength() - 1);
-                           if(isUnconstrainedStart() && !singleitalic && !doubleitalic) {
-                              singleitalic = true; return AsciiDocTokenTypes.ITALIC_START;
-                           } else if (singleitalic && isUnconstrainedEnd()) {
-                              singleitalic = false; return AsciiDocTokenTypes.ITALIC_END;
+                           return textFormat();
+                         } else {
+                           if (!doubleitalic && !constraintQuoteEndsInCurrentParagraph()) {
+                             yypushback(yylength() - 1);
+                             if(isUnconstrainedStart() && !singleitalic) {
+                               singleitalic = true; return AsciiDocTokenTypes.ITALIC_START;
+                             } else {
+                               return textFormat();
+                             }
                            } else {
-                              return textFormat();
+                             doubleitalic = !doubleitalic;
+                             return doubleitalic ? AsciiDocTokenTypes.DOUBLEITALIC_START : AsciiDocTokenTypes.DOUBLEITALIC_END;
                            }
                          }
                        }
-  {ITALIC}               { if(singleitalic && !doubleitalic && isUnconstrainedEnd()) {
-                           singleitalic = false; return AsciiDocTokenTypes.ITALIC_END;
-                         } else {
+  {ITALIC}             {
+                         if (isEscaped() && !singleitalic) {
                            return textFormat();
+                         } else {
+                           if(isUnconstrainedStart() && !singleitalic) {
+                             singleitalic = true; return AsciiDocTokenTypes.ITALIC_START;
+                           } else if (singleitalic && isUnconstrainedEnd()) {
+                             singleitalic = false; return AsciiDocTokenTypes.ITALIC_END;
+                           } else {
+                             return textFormat();
+                           }
                          }
                        }
   // ITALIC END
 
   // MONO START
-  // start something with ** only if it closes within the same block
-  {DOUBLEMONO} [^\`] ({STRINGNOBACKTICK} | [^\`][\`][^\`])* {DOUBLEMONO} {
-                         yypushback(yylength() - 2);
-                         doublemono = !doublemono; return doublemono ? AsciiDocTokenTypes.DOUBLEMONO_START : AsciiDocTokenTypes.DOUBLEMONO_END;
-                       }
-  {DOUBLEMONO}         { if(doublemono && !singlemono) {
-                           doublemono = false; return AsciiDocTokenTypes.DOUBLEMONO_END;
-                         } else {
-                           yypushback(1);
+  {DOUBLEMONO}       {
+                         if (isEscaped() && !doublemono) {
                            return textFormat();
+                         } else {
+                           if (!doublemono && !constraintQuoteEndsInCurrentParagraph()) {
+                             yypushback(yylength() - 1);
+                             if(isUnconstrainedStart() && !singlemono) {
+                               singlemono = true; return AsciiDocTokenTypes.MONO_START;
+                             } else {
+                               return textFormat();
+                             }
+                           } else {
+                             doublemono = !doublemono;
+                             return doublemono ? AsciiDocTokenTypes.DOUBLEMONO_START : AsciiDocTokenTypes.DOUBLEMONO_END;
+                           }
                          }
                        }
-  {MONO}               { if(singlemono && !doublemono && isUnconstrainedEnd()) {
-                           singlemono = false; return AsciiDocTokenTypes.MONO_END;
+  {MONO}             {
+                         if (isEscaped() && !singlemono) {
+                           yypushback(yylength() - 1);
+                           return textFormat();
                          } else {
-                           // might be a starting MONO, give it a second try
-                           // didn't use look-ahead here to avoid problems with {TYPOGRAPHIC_DOUBLE_QUOTE_END}
-                           yypushback(yylength());
-                           yypushstate();
-                           yybegin(MONO_SECOND_TRY);
+                           if(isUnconstrainedStart() && !singlemono) {
+                             singlemono = true; return AsciiDocTokenTypes.MONO_START;
+                           } else if (singlemono && isUnconstrainedEnd()) {
+                             singlemono = false; return AsciiDocTokenTypes.MONO_END;
+                           } else {
+                             return textFormat();
+                           }
                          }
                        }
   // MONO END
@@ -1618,15 +1661,19 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <MONO_SECOND_TRY> {
-  {MONO} {MONO}? [^\`\n \t] ({WORDNOBACKTICK} | [ \t][\`] | [\`][\p{Letter}\p{Digit}_])* {MONO} {
-                         yypushback(yylength() - 1);
+  {MONO}             {
                          yypopstate();
-                         if(isUnconstrainedStart() && !singlemono && !doublemono) {
-                            singlemono = true; return AsciiDocTokenTypes.MONO_START;
-                         } else if (singlemono && isUnconstrainedEnd()) {
-                            singlemono = false; return AsciiDocTokenTypes.MONO_END;
+                         if (isEscaped() && !singlemono) {
+                           yypushback(yylength() - 1);
+                           return textFormat();
                          } else {
-                            return textFormat();
+                           if(isUnconstrainedStart() && !singlemono) {
+                             singlemono = true; return AsciiDocTokenTypes.MONO_START;
+                           } else if (singlemono && isUnconstrainedEnd()) {
+                             singlemono = false; return AsciiDocTokenTypes.MONO_END;
+                           } else {
+                             return textFormat();
+                           }
                          }
                        }
                        // needed advance in case of no second try possible
