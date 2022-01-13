@@ -5,6 +5,8 @@ if (window.__IntelliJTools === undefined) {
 window.__IntelliJTools.processClick = function (event) {
   // prevent opening the link in the preview
   event.preventDefault()
+  // prevent event bubbling up so it doesn't interfere with scroll to line
+  event.stopPropagation()
 
   if (!this.href) {
     return false;

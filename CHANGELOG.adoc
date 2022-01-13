@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.36.16
 
 - upgrade to Asciidoctor 2.0.17 and AsciidoctorJ 2.5.3 (#966)
+- fix navigation to anchors in current document's preview (#965)
 
 === 0.36.15
 
