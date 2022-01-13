@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.36.16
+
+- upgrade to Asciidoctor 2.0.17 and AsciidoctorJ 2.5.3 (#966)
+
 === 0.36.15
 
 - enforcing restart can't be triggered by the marketplace, reverting change (#962)
