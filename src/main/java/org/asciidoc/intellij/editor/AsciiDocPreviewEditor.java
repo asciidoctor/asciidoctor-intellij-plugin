@@ -316,6 +316,15 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
     // Listen to any file modification in the project.
     MessageBusConnection connection = project.getMessageBus().connect(this);
+    connection.subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
+      @Override
+      public void exitDumbMode() {
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+          currentContent = null;
+          renderIfVisible();
+        });
+      }
+    });
     connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
       @Override
       public void after(@NotNull List<? extends VFileEvent> events) {
