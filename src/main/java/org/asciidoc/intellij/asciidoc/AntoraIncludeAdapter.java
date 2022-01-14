@@ -1,8 +1,13 @@
 package org.asciidoc.intellij.asciidoc;
 
+import com.intellij.ide.lightEdit.LightEdit;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.PsiShortNamesCache;
 import org.apache.commons.lang.StringUtils;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoctor.ast.Document;
@@ -11,6 +16,7 @@ import org.asciidoctor.extension.PreprocessorReader;
 import org.asciidoctor.log.LogRecord;
 import org.asciidoctor.log.Severity;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -25,6 +31,8 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
 
   private Project project;
   private VirtualFile antoraModuleDir;
+  private File fileBaseDir;
+  private String name;
 
   @Override
   public boolean handles(String target) {
@@ -57,6 +65,19 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
       VirtualFile sourceDir = null;
       if (StringUtils.isNotBlank(readFile)) {
         VirtualFile resolved = LocalFileSystem.getInstance().findFileByPath(reader.getFile());
+        if (!readFile.contains("/") && resolved == null) {
+          // if the readFile doesn't contain a full path name, this indicates safe mode.
+          // Use alternative strategy to look up file relatively to the start folder.
+          resolved = LocalFileSystem.getInstance().findFileByPath(new File(fileBaseDir, name).toString());
+        }
+        if (!readFile.contains("/") && resolved == null) {
+          // if the readFile doesn't contain a full path name, this indicates safe mode.
+          // Use alternative strategy to look up file somewhere in the project.
+          PsiFile[] filesByName = PsiShortNamesCache.getInstance(project).getFilesByName(readFile);
+          if (filesByName.length == 1) {
+            resolved = filesByName[0].getVirtualFile();
+          }
+        }
         if (resolved != null) {
           localModule = AsciiDocUtil.findAntoraModuleDir(project, resolved);
           sourceDir = resolved.getParent();
@@ -67,15 +88,34 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
       if (localModule != null) {
         target = AsciiDocUtil.replaceAntoraPrefix(project, localModule, sourceDir, target, null).get(0);
       }
+      if (sourceDir != null && !readFile.contains("/") && !oldTarget.equals(target)) {
+        // if the readFile doesn't contain a full path name, this indicates safe mode. Use a relative path in that case.
+        VirtualFile targetVf = LocalFileSystem.getInstance().findFileByPath(target);
+        if (targetVf != null) {
+          target = VfsUtil.findRelativePath(sourceDir, targetVf, '/');
+        }
+      }
       if (oldTarget.equals(target)) {
         String file = reader.getFile();
         if (file != null && file.length() == 0) {
           file = null;
         }
-        log(new LogRecord(Severity.ERROR,
-          new AsciiDocCursor(file, reader.getDir(), reader.getDir(), reader.getLineNumber() - 1),
-          "Can't resolve Antora prefix '" + matcher.group() + "' for target '" + target + "'"));
-        reader.restoreLine("Unresolved Antora reference - include::" + target + "[]");
+        if (LightEdit.owns(project)) {
+          log(new LogRecord(Severity.WARN,
+            new AsciiDocCursor(file, reader.getDir(), reader.getDir(), reader.getLineNumber() - 1),
+            "Can't resolve Antora prefix while in lightedit mode"));
+          reader.restoreLine("Can't resolve Antora prefix while in lightedit mode - include::" + target + "[]");
+        } else if (DumbService.isDumb(project)) {
+          log(new LogRecord(Severity.WARN,
+            new AsciiDocCursor(file, reader.getDir(), reader.getDir(), reader.getLineNumber() - 1),
+            "Can't resolve Antora prefix while indexing is in progress"));
+          reader.restoreLine("Can't resolve Antora prefix while indexing is in progress - include::" + target + "[]");
+        } else {
+          log(new LogRecord(Severity.ERROR,
+            new AsciiDocCursor(file, reader.getDir(), reader.getDir(), reader.getLineNumber() - 1),
+            "Can't resolve Antora prefix '" + matcher.group() + "' for target '" + target + "'"));
+          reader.restoreLine("Unresolved Antora reference - include::" + target + "[]");
+        }
         return;
       }
     } else {
@@ -90,8 +130,10 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
     reader.pushInclude(data.toString(), null, null, reader.getLineNumber() - 1, Collections.emptyMap());
   }
 
-  public void setAntoraDetails(Project project, VirtualFile antoraModuleDir) {
+  public void setAntoraDetails(Project project, VirtualFile antoraModuleDir, File fileBaseDir, String name) {
     this.project = project;
     this.antoraModuleDir = antoraModuleDir;
+    this.fileBaseDir = fileBaseDir;
+    this.name = name;
   }
 }

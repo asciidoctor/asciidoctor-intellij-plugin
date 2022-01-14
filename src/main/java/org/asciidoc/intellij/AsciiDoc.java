@@ -789,14 +789,14 @@ public class AsciiDoc {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         asciidoctor.registerLogHandler(logHandler);
         prependConfig.setConfig(config);
-        antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir);
+        antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
         AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
         try {
           return "<div id=\"content\"" + (antoraModuleDir != null ? " class=\"doc\"" : "") + ">\n" + asciidoctor.convert(text,
             getDefaultOptions(format, springRestDocsSnippets, attributes)) + "\n</div>";
         } finally {
           prependConfig.setConfig("");
-          antoraIncludeAdapter.setAntoraDetails(null, null);
+          antoraIncludeAdapter.setAntoraDetails(null, null, null, null);
           asciidoctor.unregisterLogHandler(logHandler);
         }
       } catch (AlreadyDisposedException | ProcessCanceledException ex) {
@@ -911,7 +911,7 @@ public class AsciiDoc {
       try {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         prependConfig.setConfig(config);
-        antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir);
+        antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
         AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
         asciidoctor.registerLogHandler(logHandler);
         try {
@@ -922,7 +922,7 @@ public class AsciiDoc {
           }
         } finally {
           prependConfig.setConfig("");
-          antoraIncludeAdapter.setAntoraDetails(null, null);
+          antoraIncludeAdapter.setAntoraDetails(null, null, null, null);
           asciidoctor.unregisterLogHandler(logHandler);
         }
       } catch (ProcessCanceledException ex) {

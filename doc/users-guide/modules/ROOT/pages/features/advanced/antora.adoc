@@ -32,6 +32,12 @@ For this it searches all available `antora.yml` files in the current project.
 
 For `include::[]` macros the plugin supports the Antora families like `partial$`, `example$` and `page$`.
 
+[NOTE]
+====
+Using Antora page families and includes works in the preview only for trusted project and when IDE is running in the default UNSAFE mode.
+Otherwise, Asciidoctor will not be able to include files outside the document's root folder.
+====
+
 === Antora editor support
 
 In the editor, the user can autocomplete filenames and references using kbd:[Ctrl+Space] and can navigate to a folder or file using kbd:[Ctrl+B].
