@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.36.17
+
+- resolve Antora references without indexes in simple scenarios to improve user experience (#967)
+
 === 0.36.16
 
 - upgrade to Asciidoctor 2.0.17 and AsciidoctorJ 2.5.3 (#966)
