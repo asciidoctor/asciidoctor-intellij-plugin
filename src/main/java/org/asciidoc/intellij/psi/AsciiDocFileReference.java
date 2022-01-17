@@ -81,6 +81,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   private final String macroName;
   private final String base;
   private boolean isAnchor;
+  private final PsiElement root;
 
   public boolean isFolder() {
     return isFolder;
@@ -118,8 +119,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     if (resolve() != null) {
       return false;
     }
-    String name = getRangeInElement().substring(myElement.getText());
-    name = AsciiDocUtil.resolveAttributes(myElement, name);
+    String name = getRangeInElement().substring(getElement().getText());
+    name = AsciiDocUtil.resolveAttributes(root, name);
     if (name != null) {
       try {
         if (isFolder) {
@@ -143,8 +144,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   public @Nullable PsiElement createFileOrFolder(PsiDirectory parent) {
     if (canBeCreated(parent)) {
-      String name = getRangeInElement().substring(myElement.getText());
-      name = AsciiDocUtil.resolveAttributes(myElement, name);
+      String name = getRangeInElement().substring(getElement().getText());
+      name = AsciiDocUtil.resolveAttributes(root, name);
       if (name != null) {
         if (isFolder) {
           return parent.createSubdirectory(name);
@@ -172,6 +173,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   public AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, TextRange textRange,
                                boolean isFolder, boolean isAntora, int suffix) {
     super(element, textRange);
+    this.root = element;
     this.macroName = macroName;
     this.base = base;
     this.isFolder = isFolder;
@@ -182,11 +184,27 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   private AsciiDocFileReference(@NotNull PsiElement element, @NotNull String macroName, String base, String key,
                                 boolean isFolder, boolean isAntora) {
     super(element);
+    this.root = element;
     this.macroName = macroName;
     this.base = base;
     this.isFolder = isFolder;
     this.isAntora = isAntora;
     this.key = key;
+  }
+
+  /**
+   * Teleport the reference to a new file, thereby cloning the reference.
+   * Use this, for example, if a reference is included in another file, and should be resolved in the other
+   * file's context.
+   */
+  public AsciiDocFileReference(AsciiDocFileReference original, PsiElement root) {
+    super(original.getElement(), original.getRangeInElement());
+    this.root = root;
+    this.macroName = original.macroName;
+    this.base = original.base;
+    this.isFolder = original.isFolder;
+    this.isAntora = original.isAntora;
+    this.key = original.key;
   }
 
   public AsciiDocFileReference includedInParent(PsiElement parent) {
@@ -207,9 +225,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     // an anchor might resolve to a file instead if it has attributes
     if (!isAnchor || ATTRIBUTES.matcher(key).find()) {
       if ("link-attr".equals(macroName) && "self".equals(base + key)) {
-        VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
+        VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(root);
         if (antoraModuleDir != null) {
-          PsiElement parent = myElement.getParent();
+          PsiElement parent = root.getParent();
           while (parent != null && !(parent instanceof HasFileReference)) {
             parent = parent.getParent();
           }
@@ -230,7 +248,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     List<ResolveResult> results = new ArrayList<>();
     List<ResolveResult> fileResult = new ArrayList<>();
     if (base.equals("#") || base.length() == 0) {
-      fileResult.add(new PsiElementResolveResult(myElement.getContainingFile()));
+      fileResult.add(new PsiElementResolveResult(root.getContainingFile()));
     } else {
       resolve(base.substring(0, base.length() - 1), fileResult, 0, new HashSet<>());
     }
@@ -264,7 +282,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         multiResolveAnchor(items, newName, results, ignoreCase, stack);
         stack.pop();
       } else {
-        List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName, myElement);
+        List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(root.getProject(), attributeName, root);
         Set<String> searched = new HashSet<>(declarations.size());
         for (AttributeDeclaration decl : declarations) {
           String value = decl.getAttributeValue();
@@ -335,18 +353,18 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     }
     if (results.size() == 0) {
       boolean findEverywhere = false;
-      VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
+      VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(root);
       if (antoraModuleDir == null) {
         findEverywhere = true;
       } else if (base.endsWith("#") || base.length() == 0) {
-        VirtualFile antoraPartials = AsciiDocUtil.findAntoraPartials(myElement);
+        VirtualFile antoraPartials = AsciiDocUtil.findAntoraPartials(root);
         if (antoraPartials != null) {
           String antoraCanonicalPath = antoraPartials.getCanonicalPath();
           findEverywhere = checkIfElementIsInPath(antoraCanonicalPath);
         }
         if (!findEverywhere) {
           // example can be used as includes, although this is a bad practice.
-          VirtualFile antoraExample = AsciiDocUtil.findAntoraExamplesDir(myElement);
+          VirtualFile antoraExample = AsciiDocUtil.findAntoraExamplesDir(root);
           if (antoraExample != null) {
             String antoraCanonicalPath = antoraExample.getCanonicalPath();
             findEverywhere = checkIfElementIsInPath(antoraCanonicalPath);
@@ -355,11 +373,11 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       }
       if (findEverywhere) {
         // try to find section/anchor globally only if this is not Antora
-        final List<AsciiDocBlockId> ids = AsciiDocUtil.findIds(myElement.getProject(), key);
+        final List<AsciiDocBlockId> ids = AsciiDocUtil.findIds(root.getProject(), key);
         for (AsciiDocBlockId id : ids) {
           results.add(new PsiElementResolveResult(id));
         }
-        final List<AsciiDocSection> sections = AsciiDocFileUtil.findSections(myElement.getProject(), key);
+        final List<AsciiDocSection> sections = AsciiDocFileUtil.findSections(root.getProject(), key);
         boolean possibleRefText = (base.equals("#") || base.length() == 0) && isPossibleRefText(key);
         for (AsciiDocSection section : sections) {
           // anchors only match with autogenerated IDs, not with the section title
@@ -376,7 +394,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   private boolean checkIfElementIsInPath(String antoraCanonicalPath) {
-    String myCanonicalPath = myElement.getContainingFile().getOriginalFile().getVirtualFile().getCanonicalPath();
+    String myCanonicalPath = root.getContainingFile().getOriginalFile().getVirtualFile().getCanonicalPath();
     return myCanonicalPath != null && antoraCanonicalPath != null && myCanonicalPath.startsWith(antoraCanonicalPath);
   }
 
@@ -391,9 +409,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   private List<String> handleAntora(String key) {
     if (macroName.equals("antora-startpage")) {
-      return AsciiDocUtil.replaceAntoraPrefixForStartPage(myElement, key);
+      return AsciiDocUtil.replaceAntoraPrefixForStartPage(root, key);
     } else if (isAntora || key.startsWith("./")) {
-      String resolvedKey = AsciiDocUtil.resolveAttributes(myElement, key);
+      String resolvedKey = AsciiDocUtil.resolveAttributes(root, key);
       if (resolvedKey != null) {
         String defaultFamily = null;
         if (macroName.equals("image") || macroName.equals("video")) {
@@ -401,22 +419,22 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         } else if (macroName.equals("xref") || macroName.equals("xref-attr")) {
           defaultFamily = "page";
         }
-        return AsciiDocUtil.replaceAntoraPrefix(myElement, resolvedKey, defaultFamily);
+        return AsciiDocUtil.replaceAntoraPrefix(root, resolvedKey, defaultFamily);
       }
     } else if (macroName.equals("image") || macroName.equals("video")) {
-      VirtualFile antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(myElement);
+      VirtualFile antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(root);
       if (antoraImagesDir != null) {
         return Collections.singletonList(antoraImagesDir.getCanonicalPath() + "/" + key);
       }
-    } else if ((myElement instanceof AsciiDocLink && macroName.equals("xref")) ||
-      (myElement.getParent() instanceof AsciiDocBlockMacro && ((AsciiDocBlockMacro) myElement.getParent()).getMacroName().equals("image") && macroName.equals("xref-attr")) ||
-      (myElement.getParent() instanceof AsciiDocInlineMacro && ((AsciiDocInlineMacro) myElement.getParent()).getMacroName().equals("image") && macroName.equals("xref-attr"))
+    } else if ((getElement() instanceof AsciiDocLink && macroName.equals("xref")) ||
+      (getElement().getParent() instanceof AsciiDocBlockMacro && ((AsciiDocBlockMacro) getElement().getParent()).getMacroName().equals("image") && macroName.equals("xref-attr")) ||
+      (getElement().getParent() instanceof AsciiDocInlineMacro && ((AsciiDocInlineMacro) getElement().getParent()).getMacroName().equals("image") && macroName.equals("xref-attr"))
     ) {
-      if (AsciiDocUtil.findAntoraPagesDir(myElement) != null) {
+      if (AsciiDocUtil.findAntoraPagesDir(root) != null) {
         // if this is a link/xref, default to page family
-        String resolvedKey = AsciiDocUtil.resolveAttributes(myElement, key);
+        String resolvedKey = AsciiDocUtil.resolveAttributes(root, key);
         if (resolvedKey != null) {
-          return AsciiDocUtil.replaceAntoraPrefix(myElement, resolvedKey, "page");
+          return AsciiDocUtil.replaceAntoraPrefix(root, resolvedKey, "page");
         }
       }
     }
@@ -434,13 +452,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(key);
         if (!urlMatcher.find()) {
           if (AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(key).matches()) {
-            VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
+            VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(root);
             if (antoraModuleDir != null) {
-              String resolvedKey = AsciiDocUtil.resolveAttributes(myElement, key);
+              String resolvedKey = AsciiDocUtil.resolveAttributes(root, key);
               if (resolvedKey != null) {
-                List<VirtualFile> virtualFiles = AsciiDocUtil.resolvePrefix(myElement, antoraModuleDir, resolvedKey);
+                List<VirtualFile> virtualFiles = AsciiDocUtil.resolvePrefix(root, antoraModuleDir, resolvedKey);
                 for (VirtualFile virtualFile : virtualFiles) {
-                  PsiElement psiFile = PsiManager.getInstance(myElement.getProject()).findDirectory(virtualFile);
+                  PsiElement psiFile = PsiManager.getInstance(root.getProject()).findDirectory(virtualFile);
                   if (psiFile != null) {
                     results.add(new PsiElementResolveResult(psiFile));
                   }
@@ -472,10 +490,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   @SuppressWarnings("StringSplitter")
   private void resolveAntoraPageAlias(String key, List<ResolveResult> results, int depth) {
     if (ANTORA_SUPPORTED.contains(macroName) && !isAnchor && !isFolder() && depth == 0 && results.size() == 0) {
-      VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
+      VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(root);
       if (antoraModuleDir != null) {
-        List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), "page-aliases", myElement);
-        Collection<AttributeDeclaration> myAttributes = AsciiDocUtil.collectAntoraAttributes(myElement);
+        List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(root.getProject(), "page-aliases", root);
+        Collection<AttributeDeclaration> myAttributes = AsciiDocUtil.collectAntoraAttributes(root);
         myAttributes = parseAntoraPrefix(key, myAttributes);
         String pageComponentName = AsciiDocUtil.findAttribute("page-component-name", myAttributes);
         String pageComponentVersion = AsciiDocUtil.findAttribute("page-component-version", myAttributes);
@@ -578,7 +596,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       int start = 0;
       while (matcher.find(start)) {
         String attributeName = matcher.group(1);
-        List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName, myElement);
+        List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(root.getProject(), attributeName, root);
         Set<String> searched = new HashSet<>(declarations.size());
         for (AttributeDeclaration decl : declarations) {
           String value = decl.getAttributeValue();
@@ -613,7 +631,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       if (file != null) {
         results.add(new PsiElementResolveResult(file));
       } else if ("link".endsWith(macroName) || "xref".endsWith(macroName) || macroName.equals("xref-attr") || "<<".equals(macroName)) {
-        String extension = AsciiDocFileType.getExtensionOrDefault(getElement());
+        String extension = AsciiDocFileType.getExtensionOrDefault(root);
         file = resolve(key + "." + extension);
         if (file != null) {
           results.add(new PsiElementResolveResult(file));
@@ -638,10 +656,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       // just the part before a hash (#)
       return false;
     }
-    if (!isAntora && AsciiDocUtil.findAntoraModuleDir(myElement) == null) {
+    if (!isAntora && AsciiDocUtil.findAntoraModuleDir(root) == null) {
       return false;
     }
-    String resolvedKey = AsciiDocUtil.resolveAttributes(myElement, key);
+    String resolvedKey = AsciiDocUtil.resolveAttributes(root, key);
     if (resolvedKey == null) {
       resolvedKey = key;
     }
@@ -660,7 +678,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       // just the part before a hash (#)
       return false;
     }
-    String resolvedKey = AsciiDocUtil.resolveAttributes(myElement, key);
+    String resolvedKey = AsciiDocUtil.resolveAttributes(root, key);
     if (resolvedKey == null) {
       resolvedKey = key;
     }
@@ -706,17 +724,17 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   public Object @NotNull [] getVariants() {
     List<LookupElementBuilder> items = new ArrayList<>();
     if ((isAntora || base.length() == 0)) {
-      VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
+      VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(root);
       if (antoraModuleDir != null) {
         if (base.length() == 0) {
           if (!"image".equals(macroName)) {
-            toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(myElement), '$');
-            toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement), '$');
-            toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(myElement), '$');
-            toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement), '$');
-            toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(myElement), '$');
+            toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(root), '$');
+            toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(root), '$');
+            toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(root), '$');
+            toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(root), '$');
+            toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(root), '$');
           }
-          List<AntoraModule> antoraModules = AsciiDocUtil.collectAntoraPrefixes(myElement.getProject(), antoraModuleDir, false);
+          List<AntoraModule> antoraModules = AsciiDocUtil.collectAntoraPrefixes(root.getProject(), antoraModuleDir, false);
           for (AntoraModule antoraModule : antoraModules) {
             toAntoraLookupItem(items, antoraModule);
           }
@@ -724,20 +742,20 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(key);
           if (!urlMatcher.find()) {
             if (!"image".equals(macroName)) {
-              List<VirtualFile> vfs = AsciiDocUtil.resolvePrefix(myElement, antoraModuleDir, base);
+              List<VirtualFile> vfs = AsciiDocUtil.resolvePrefix(root, antoraModuleDir, base);
               for (VirtualFile vf : vfs) {
-                toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(myElement.getProject(), vf), '$');
-                toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(myElement.getProject(), vf), '$');
-                toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(myElement.getProject(), vf), '$');
-                toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(myElement.getProject(), vf), '$');
-                toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(myElement.getProject(), vf), '$');
+                toAntoraLookupItem(items, "example", AsciiDocUtil.findAntoraExamplesDir(root.getProject(), vf), '$');
+                toAntoraLookupItem(items, "partial", AsciiDocUtil.findAntoraPartials(root.getProject(), vf), '$');
+                toAntoraLookupItem(items, "attachment", AsciiDocUtil.findAntoraAttachmentsDir(root.getProject(), vf), '$');
+                toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(root.getProject(), vf), '$');
+                toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(root.getProject(), vf), '$');
               }
               return items.toArray();
             }
           }
         }
       } else if (macroName.equals("antora-startpage") && base.length() == 0) {
-        List<AntoraModule> antoraModules = AsciiDocUtil.collectAntoraPrefixes(myElement.getProject(), myElement.getContainingFile().getOriginalFile().getVirtualFile(), true);
+        List<AntoraModule> antoraModules = AsciiDocUtil.collectAntoraPrefixes(root.getProject(), root.getContainingFile().getOriginalFile().getVirtualFile(), true);
         for (AntoraModule antoraModule : antoraModules) {
           toAntoraLookupItem(items, antoraModule);
         }
@@ -752,7 +770,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       new CommonProcessors.CollectUniquesProcessor<>();
 
     if ("image".equals(macroName)) {
-      VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
+      VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(root);
       if (antoraModuleDir != null) {
         getVariants(base, collector, 0);
       } else {
@@ -762,7 +780,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       }
     } else if ("link".equals(macroName) || "xref".equals(macroName) || "xref-attr".equals(macroName)) {
       getVariants(base, collector, 0);
-      String extension = AsciiDocFileType.getExtensionOrDefault(getElement());
+      String extension = AsciiDocFileType.getExtensionOrDefault(root);
       getVariants(base + "." + extension, collector, 0);
       if (base.endsWith(".html")) {
         getVariants(base.replaceAll("\\.html$", "." + extension), collector, 0);
@@ -794,7 +812,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       LookupElementBuilder item = FileInfoManager.getFileLookupItem(result.getElement(), ".." /* + '/' */, icon);
       item = handleTrailing(item, '/');
       items.add(item);
-      if (ANTORA_SUPPORTED.contains(macroName) && AsciiDocUtil.findAntoraModuleDir(myElement) != null) {
+      if (ANTORA_SUPPORTED.contains(macroName) && AsciiDocUtil.findAntoraModuleDir(root) != null) {
         // Antora 3 support relative resource names starting with a dot
         item = FileInfoManager.getFileLookupItem(result.getElement(), "." /* + '/' */, icon);
         item = handleTrailing(item, '/');
@@ -803,7 +821,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     }
 
     if (!macroName.equals("antora-nav") && !macroName.equals("antora-startpage")) {
-      List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), myElement);
+      List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(root.getProject(), root);
       Set<String> searched = new HashSet<>(declarations.size());
       for (AttributeDeclaration decl : declarations) {
         if (decl.getAttributeValue() == null || decl.getAttributeValue().trim().length() == 0) {
@@ -819,7 +837,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           val = val + "/";
         }
         if ("image".equals(macroName)) {
-          VirtualFile antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(myElement);
+          VirtualFile antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(root);
           if (antoraImagesDir != null) {
             val = antoraImagesDir.getCanonicalPath() + "/" + val;
           }
@@ -853,7 +871,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     }
 
     if ("link-attr".equals(macroName)) {
-      VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(myElement);
+      VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(root);
       if (antoraModuleDir != null) {
         LookupElementBuilder lb = LookupElementBuilder.create("self")
           .withTailText(" (self link of this element)", true)
@@ -911,7 +929,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     } else {
       // if no file has been specified, show anchors from project
       // TODO: reduce the number of anchors if this is an Antora project if this is a nav page or a page
-      List<AsciiDocBlockId> ids = AsciiDocUtil.findIds(myElement.getProject());
+      List<AsciiDocBlockId> ids = AsciiDocUtil.findIds(root.getProject());
       for (final AsciiDocBlockId id : ids) {
         String name = id.getName();
         if (name != null && name.length() > 0) {
@@ -923,8 +941,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         }
       }
       // plus sections from current file with ID or full section name
-      List<AsciiDocSection> sections = AsciiDocFileUtil.findSections(myElement.getProject());
-      PsiFile myFile = getElement().getContainingFile().getOriginalFile();
+      List<AsciiDocSection> sections = AsciiDocFileUtil.findSections(root.getProject());
+      PsiFile myFile = root.getContainingFile().getOriginalFile();
       for (AsciiDocSection section : sections) {
         // advocate to only use automatic references in current file
         if (!section.getContainingFile().equals(myFile)) {
@@ -972,7 +990,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   private void toAntoraLookupItem(List<LookupElementBuilder> items, String placeholder, VirtualFile antoraDir, char trail) {
     if (antoraDir != null) {
-      PsiDirectory dir = PsiManager.getInstance(myElement.getProject()).findDirectory(antoraDir);
+      PsiDirectory dir = PsiManager.getInstance(root.getProject()).findDirectory(antoraDir);
       if (dir != null) {
         final Icon icon = dir.getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
         LookupElementBuilder lb;
@@ -991,7 +1009,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   private void toAntoraLookupItem(List<LookupElementBuilder> items, AntoraModule module) {
     String placeholder = module.getPrefix().substring(0, module.getPrefix().length() - 1);
-    PsiDirectory dir = PsiManager.getInstance(myElement.getProject()).findDirectory(module.getFile());
+    PsiDirectory dir = PsiManager.getInstance(root.getProject()).findDirectory(module.getFile());
     if (dir != null) {
       final Icon icon = dir.getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
       LookupElementBuilder lb;
@@ -1049,7 +1067,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       Matcher matcher = ATTRIBUTES.matcher(base);
       if (matcher.find()) {
         String attributeName = matcher.group(1);
-        List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(myElement.getProject(), attributeName, myElement);
+        List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(root.getProject(), attributeName, root);
         for (AttributeDeclaration decl : declarations) {
           if (decl.getAttributeValue() == null) {
             continue;
@@ -1080,7 +1098,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     if (URL.matcher(fileName).matches()) {
       return null;
     }
-    PsiElement element = getElement();
+    // resolving of files will take place relative to the original element, not the transposed one.
+    PsiElement element = myElement;
     PsiFile myFile = element.getContainingFile();
     if (myFile == null) {
       return null;
@@ -1230,7 +1249,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     @Override
     public TextRange getTextRange() {
       final TextRange rangeInElement = getRangeInElement();
-      final TextRange elementRange = myElement.getTextRange();
+      final TextRange elementRange = getElement().getTextRange();
       return elementRange != null ? rangeInElement.shiftRight(elementRange.getStartOffset()) : rangeInElement;
     }
   }

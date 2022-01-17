@@ -1802,18 +1802,18 @@ public class AsciiDocUtil {
     }
 
     List<AttributeDeclaration> result = new ArrayList<>();
-    findPageAttributes(file, 0, result);
+    findPageAttributes(file, file, 0, result);
 
     result = Collections.unmodifiableList(result);
     cache.putPageAttributes(result);
     return result;
   }
 
-  protected static boolean findPageAttributes(PsiFile file, int depth, Collection<AttributeDeclaration> result) {
+  protected static boolean findPageAttributes(PsiFile file, PsiFile root, int depth, Collection<AttributeDeclaration> result) {
     if (depth > 64) {
       return true;
     }
-    return PsiTreeUtil.processElements(file, new PageAttributeProcessor(result, depth + 1));
+    return PsiTreeUtil.processElements(file, new PageAttributeProcessor(root, result, depth + 1));
   }
 
   public static void selectFileInProjectView(Project project, VirtualFile file) {

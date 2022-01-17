@@ -7,8 +7,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.psi.AttributeDeclaration;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
@@ -161,13 +159,11 @@ public class AntoraReferenceAdapter {
               }
             }
             if (refText == null) {
-              Collection<AsciiDocSection> sections = PsiTreeUtil.findChildrenOfType(file, AsciiDocSection.class);
-              for (AsciiDocSection section : sections) {
-                if (section.getHeadingLevel() == 1) {
-                  refText = section.getTitle();
+              for (AttributeDeclaration attributeDeclaration : attributeDeclarations) {
+                if (attributeDeclaration.getAttributeName().equals("doctitle")) {
+                  refText = attributeDeclaration.getAttributeValue();
+                  break;
                 }
-                // only look at first section == title of document
-                break;
               }
             }
             if (refText != null) {

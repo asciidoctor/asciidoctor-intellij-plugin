@@ -14,9 +14,11 @@ import java.util.Collection;
 public class PageAttributeProcessor implements PsiElementProcessor<PsiElement> {
   private final Collection<AttributeDeclaration> result;
   private final int depth;
+  private final PsiFile root;
   private boolean titleSeen = false;
 
-  public PageAttributeProcessor(Collection<AttributeDeclaration> result, int depth) {
+  public PageAttributeProcessor(PsiFile root, Collection<AttributeDeclaration> result, int depth) {
+    this.root = root;
     this.result = result;
     this.depth = depth;
   }
@@ -27,7 +29,12 @@ public class PageAttributeProcessor implements PsiElementProcessor<PsiElement> {
       return true;
     }
     if (element instanceof AsciiDocAttributeDeclaration) {
-      result.add((AsciiDocAttributeDeclaration) element);
+      // last attribute definition should take precedence
+      AsciiDocAttributeDeclaration attributeDeclaration = (AsciiDocAttributeDeclaration) element;
+      if (attributeDeclaration.getAttributeName().equals("doctitle")) {
+        result.removeIf(ad -> ad.getAttributeName().equals("doctitle"));
+      }
+      result.add(attributeDeclaration);
       return true;
     }
     if (element instanceof AsciiDocFrontmatter || PsiTreeUtil.getParentOfType(element, AsciiDocFrontmatter.class) != null) {
@@ -42,24 +49,30 @@ public class PageAttributeProcessor implements PsiElementProcessor<PsiElement> {
     if (PsiTreeUtil.getParentOfType(element, AsciiDocBlockId.class, false) != null) {
       return true;
     }
-    if (PsiTreeUtil.getParentOfType(element, AsciiDocHeading.class, false) != null) {
-      return true;
-    }
     if (element instanceof AsciiDocBlockMacro) {
       AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) element;
       if (blockMacro.getMacroName().equals("include")) {
         AsciiDocFileReference fileReference = blockMacro.getFileReference();
         if (fileReference != null) {
+          // map file reference to included file to original file for resolving
+          fileReference = new AsciiDocFileReference(fileReference, root);
           PsiElement resolved = fileReference.resolve();
           if (resolved != null) {
-            return AsciiDocUtil.findPageAttributes((PsiFile) resolved, depth + 1, result);
+            return AsciiDocUtil.findPageAttributes((PsiFile) resolved, root, depth + 1, result);
           }
         }
         return true;
       }
     }
+    if (PsiTreeUtil.getParentOfType(element, AsciiDocHeading.class, false) != null) {
+      return true;
+    }
     if (element instanceof AsciiDocSection) {
       if (((AsciiDocSection) element).getHeadingLevel() == 1) {
+        // only allow doctitle to be taken from heading if not already set
+        if (result.stream().noneMatch(attributeDeclaration -> attributeDeclaration.getAttributeName().equals("doctitle"))) {
+          result.add(new AsciiDocAttributeDeclarationDummy("doctitle", ((AsciiDocSection) element).getTitle()));
+        }
         titleSeen = true;
         return true;
       }
