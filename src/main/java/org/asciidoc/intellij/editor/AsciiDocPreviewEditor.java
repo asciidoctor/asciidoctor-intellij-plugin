@@ -74,6 +74,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
@@ -92,6 +93,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    * Indicates whether the HTML preview is obsolete and should regenerated from the AsciiDoc {@link #document}.
    */
   private transient String currentContent = null;
+  private transient int lastRenderCycle = 0;
+  private final AtomicInteger forcedRenderCycle = new AtomicInteger(1);
 
   private transient int targetLineNo = 0;
   private transient int currentLineNo = 0;
@@ -144,7 +147,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         final @Language("asciidoc") String content = document.getText();
         final String config = AsciiDoc.config(document, project);
         List<String> extensions = extensionService.getExtensions(project);
-        if (!(config + content).equals(currentContent)) {
+        int currentRenderCycle = forcedRenderCycle.get();
+        if (!(config + content).equals(currentContent) || currentRenderCycle != lastRenderCycle) {
           AsciiDoc instance = asciidoc.get();
           VirtualFile file = FileDocumentManager.getInstance().getFile(document);
           if (file != null) {
@@ -170,6 +174,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
               if (myPanel == localPanel) {
                 // only set the content if the panel hasn't been updated (due to settings changed)
                 currentContent = config + content;
+                lastRenderCycle = currentRenderCycle;
               }
             }
           }
@@ -226,7 +231,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         settings.getAsciiDocPreviewSettings().isHideErrorsInSourceBlocks(),
         settings.getAsciiDocPreviewSettings().getHideErrorsByLanguage()));
 
-      /* the following will not work, IntellIJ will show the error "parent must be showing" when this is
+      /* the following will not work, IntelliJ will show the error "parent must be showing" when this is
          triggered during startup. */
       /*
       Messages.showMessageDialog(
@@ -261,13 +266,22 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
               final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
               myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, retrievePanelProvider(settings));
               myPanel.scrollToLine(targetLineNo, document.getLineCount());
-              currentContent = null; // force a refresh of the preview by resetting the current memorized content
+              forceRenderCycle(); // force a refresh of the preview by resetting the current memorized content
             }
             renderIfVisible();
           }
         }, 0, ModalityState.stateForComponent(getComponent()));
       }
     }
+  }
+
+  /**
+   * Force re-rendering of the preview independent of content changes.
+   * Using an integer that increments replace the previous logic where a currently rendering preview
+   * reset the flag to re-render the preview.
+   */
+  private void forceRenderCycle() {
+    forcedRenderCycle.incrementAndGet();
   }
 
   public AsciiDocPreviewEditor(final Document document, Project project) {
@@ -320,7 +334,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       @Override
       public void exitDumbMode() {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
-          currentContent = null;
+          forceRenderCycle();
           renderIfVisible();
         });
       }
@@ -333,7 +347,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           if (event.getFile() != null) {
             if (ProjectFileIndex.getInstance(project).getModuleForFile(event.getFile()) != null) {
               // As an include might have been modified, force the refresh of the preview
-              currentContent = null;
+              forceRenderCycle();
               renderIfVisible();
               break;
             }
@@ -481,7 +495,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
               FileDocumentManager.getInstance().saveDocument(unsavedDocument);
             }
             reprocessAnnotations();
-            currentContent = null; // force a refresh of the preview by resetting the current memorized content
+            forceRenderCycle(); // force a refresh of the preview by resetting the current memorized content
             renderIfVisible();
           }
         });
@@ -489,7 +503,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     } else {
       if (!project.isDisposed()) {
         reprocessAnnotations();
-        currentContent = null; // force a refresh of the preview by resetting the current memorized content
+        forceRenderCycle(); // force a refresh of the preview by resetting the current memorized content
         renderIfVisible();
       }
     }
@@ -601,7 +615,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           synchronized (this) {
             myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
             myPanel.scrollToLine(targetLineNo, document.getLineCount());
-            currentContent = null; // force a refresh of the preview by resetting the current memorized content
+            forceRenderCycle(); // force a refresh of the preview by resetting the current memorized content
           }
           renderIfVisible();
         }, 0, ModalityState.stateForComponent(getComponent()));
@@ -624,7 +638,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       // reset contents in preview with latest CSS headers
       if (settings.getAsciiDocPreviewSettings().getPreviewTheme() == AsciiDocHtmlPanel.PreviewTheme.INTELLIJ) {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
-          currentContent = null;
+          forceRenderCycle();
           myPanel.setHtml("", Collections.emptyMap());
           renderIfVisible();
         });
@@ -639,7 +653,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       // opening a project in non-trusted mode forces the SECURE mode on preview rendering
       // making the project trusted should therefore force re-rendering of the preview.
       ApplicationManager.getApplication().executeOnPooledThread(() -> {
-        currentContent = null;
+        forceRenderCycle();
         myPanel.setHtml("", Collections.emptyMap());
         renderIfVisible();
       });

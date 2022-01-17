@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.36.18
 
 - resolve document title from sub-includes when showing xrefs in preview (#967)
+- force refresh of the preview even if preview is currently rendering (#967)
 
 === 0.36.17
 
