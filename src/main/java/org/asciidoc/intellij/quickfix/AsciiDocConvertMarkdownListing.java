@@ -16,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AsciiDocConvertMarkdownListing implements LocalQuickFix {
   private static final String LISTING_BLOCK_DELIMITER = "----";
-  private static final String SOURCE = "[source]\n".concat(LISTING_BLOCK_DELIMITER);
-  private static final String SOURCE_WITH_LANG = "[source,%s]\n".concat(LISTING_BLOCK_DELIMITER);
 
   @Override
   public @IntentionFamilyName @NotNull String getFamilyName() {
@@ -43,15 +41,19 @@ public class AsciiDocConvertMarkdownListing implements LocalQuickFix {
       text.append(node.getText());
       node = node.getTreeNext();
     }
-    changeInitialDelimiter(text, element);
-    changeTrailingDelimiter(text, element);
+    StringBuilder delimiter = new StringBuilder(LISTING_BLOCK_DELIMITER);
+    while (text.indexOf("\n" + delimiter) != -1) {
+      delimiter.append("-");
+    }
+    changeInitialDelimiter(text, element, delimiter.toString());
+    changeTrailingDelimiter(text, element, delimiter.toString());
     prefix.append(text);
     return prefix.toString();
   }
 
-  private void changeInitialDelimiter(StringBuilder text, PsiElement element) {
+  private void changeInitialDelimiter(StringBuilder text, PsiElement element, String delimiter) {
     final String language = getLanguage(element);
-    final String sourceBlockName = getSourceBlockName(language);
+    final String sourceBlockName = getSourceBlockName(language, delimiter);
     final int endOffset = getEndOffset(element);
     text.replace(0, endOffset, sourceBlockName);
   }
@@ -89,13 +91,13 @@ public class AsciiDocConvertMarkdownListing implements LocalQuickFix {
     return node.getText().trim();
   }
 
-  private String getSourceBlockName(String language) {
-    return language.isEmpty() ? SOURCE : String.format(SOURCE_WITH_LANG, language);
+  private String getSourceBlockName(String language, String delimiter) {
+    return (language.isEmpty() ? "[source]\n" : String.format("[source,%s]\n", language)) + delimiter;
   }
 
-  private void changeTrailingDelimiter(StringBuilder text, PsiElement element) {
+  private void changeTrailingDelimiter(StringBuilder text, PsiElement element, String delimiter) {
     final int startOffset = text.length() - element.getLastChild().getTextLength();
-    text.replace(startOffset, text.length(), LISTING_BLOCK_DELIMITER);
+    text.replace(startOffset, text.length(), delimiter);
   }
 
   private PsiElement createListing(@NotNull Project project, @NotNull String text) {
