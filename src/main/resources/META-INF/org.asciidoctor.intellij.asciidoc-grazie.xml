@@ -1,5 +1,6 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij.grazie">
     <textExtractor language="AsciiDoc" implementationClass="org.asciidoc.intellij.grazie.AsciiDocGrazieTextExtractor"/>
+    <problemFilter language="AsciiDoc" implementationClass="org.asciidoc.intellij.grazie.AsciiDocGrazieProblemFilter"/>
   </extensions>
 </idea-plugin>
