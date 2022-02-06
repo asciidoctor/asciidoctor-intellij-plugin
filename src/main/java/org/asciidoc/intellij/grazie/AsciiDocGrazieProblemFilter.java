@@ -18,6 +18,7 @@ public class AsciiDocGrazieProblemFilter extends ProblemFilter {
       // If we're at a whitespace, and the previous element is UNKNOWN, ignore this problem message.
       // This handles problems when parsing a text like "Foo bar. <<id>> should be modelled."
       // would ask for "should" to be capitalized as it is at the start of a sentence.
+      // upstream issue: https://youtrack.jetbrains.com/issue/IDEA-288084
       PsiElement element = problem.getText().findPsiElementAt(start);
       if (element instanceof PsiWhiteSpace && element.getPrevSibling() != null) {
         if (languageSupport.getElementBehavior(element.getParent(), element) == AsciiDocLanguageSupport.Behavior.UNKNOWN) {
