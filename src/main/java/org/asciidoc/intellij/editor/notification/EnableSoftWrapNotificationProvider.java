@@ -70,7 +70,7 @@ public class EnableSoftWrapNotificationProvider extends EditorNotifications.Prov
   private boolean isSoftWrapEnabledByDefaultForFile(VirtualFile file) {
     boolean softWrapsEnabled = EditorSettingsExternalizable.getInstance().isUseSoftWraps();
     if (!softWrapsEnabled) {
-      return softWrapsEnabled;
+      return false;
     }
 
     String masks = EditorSettingsExternalizable.getInstance().getSoftWrapFileMasks();
