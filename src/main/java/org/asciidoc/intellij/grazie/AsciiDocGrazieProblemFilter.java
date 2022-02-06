@@ -12,22 +12,20 @@ public class AsciiDocGrazieProblemFilter extends ProblemFilter {
 
   @Override
   public boolean shouldIgnore(@NotNull TextProblem problem) {
-    if (problem.getHighlightRanges().size() == 1) {
-      // start with the character just before the problem
-      int start = problem.getHighlightRanges().get(0).getStartOffset() - 1;
-      while (start > 0 && problem.getText().charAt(start) == ' ') {
-        // If we're at a whitespace, and the previous element is UNKNOWN, ignore this problem message.
-        // This handles problems when parsing a text like "Foo bar. <<id>> should be modelled."
-        // would ask for "should" to be capitalized as it is at the start of a sentence.
-        PsiElement element = problem.getText().findPsiElementAt(start);
-        if (element instanceof PsiWhiteSpace && element.getPrevSibling() != null) {
-          if (languageSupport.getElementBehavior(element.getParent(), element) == AsciiDocLanguageSupport.Behavior.UNKNOWN) {
-            return true;
-          }
+    // start with the character just before the problem
+    int start = problem.getHighlightRange().getStartOffset() - 1;
+    while (start > 0 && problem.getText().charAt(start) == ' ') {
+      // If we're at a whitespace, and the previous element is UNKNOWN, ignore this problem message.
+      // This handles problems when parsing a text like "Foo bar. <<id>> should be modelled."
+      // would ask for "should" to be capitalized as it is at the start of a sentence.
+      PsiElement element = problem.getText().findPsiElementAt(start);
+      if (element instanceof PsiWhiteSpace && element.getPrevSibling() != null) {
+        if (languageSupport.getElementBehavior(element.getParent(), element) == AsciiDocLanguageSupport.Behavior.UNKNOWN) {
+          return true;
         }
-        // repeat while we're at a whitespace
-        start--;
       }
+      // repeat while we're at a whitespace
+      start--;
     }
     return false;
   }
