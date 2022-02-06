@@ -20,8 +20,9 @@ public class AsciiDocGrazieProblemFilter extends ProblemFilter {
       // would ask for "should" to be capitalized as it is at the start of a sentence.
       // upstream issue: https://youtrack.jetbrains.com/issue/IDEA-288084
       PsiElement element = problem.getText().findPsiElementAt(start);
-      if (element instanceof PsiWhiteSpace && element.getPrevSibling() != null) {
-        if (languageSupport.getElementBehavior(element.getParent(), element) == AsciiDocLanguageSupport.Behavior.UNKNOWN) {
+      PsiElement prevSibling = element.getPrevSibling();
+      if (element instanceof PsiWhiteSpace && prevSibling != null) {
+        if (languageSupport.getElementBehavior(prevSibling.getParent(), prevSibling) == AsciiDocLanguageSupport.Behavior.UNKNOWN) {
           return true;
         }
       }

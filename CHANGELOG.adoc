@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.2
+
+- prevent false positive grammar messages after unknown texts (reworked) (#980)
+
 === 0.37.1
 
 - minimum version of IntelliJ is now 2021.3.1
