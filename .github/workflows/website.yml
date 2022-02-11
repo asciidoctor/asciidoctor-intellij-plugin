@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Cleanup old runs
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         # language=js
         with:
           script: |
