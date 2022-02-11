@@ -40,7 +40,25 @@ If the error message persists, go to the settings of the AsciiDoc plugin, and ad
 For the error message above the attribute is `graphvizdot`.
 The value is the full path including the executable, for example `C:\Program Files (x86)\Graphviz2.38\bin\dot.exe`
 
-=== Remedy 3: Use Kroki as a cloud-based renderer for diagrams
+=== Remedy 3: Use Smetana as layout engine
+
+Users can change the layout engine to Smetana, a port of the dot executable to Java.
+This can be enabled in the diagram's source with a `pragma prefix`:
+
+-----
+
+[planutml]
+----
+@startuml
+!pragma layout smetana
+...
+@enduml
+----
+-----
+
+Users find more information about https://plantuml.com/smetana02[Smetana on the PlantUML homepage].
+
+=== Remedy 4: Use Kroki as a cloud-based renderer for diagrams
 
 This plugin supports {uri-kroki}[Kroki] to render diagrams.
 Kroki is available as a cloud-based service and as a self-hosted service.
