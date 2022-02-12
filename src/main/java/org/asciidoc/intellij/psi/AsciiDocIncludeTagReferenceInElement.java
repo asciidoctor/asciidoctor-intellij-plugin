@@ -39,8 +39,9 @@ import java.util.regex.Matcher;
  *
  */
 public class AsciiDocIncludeTagReferenceInElement extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
+
   private final String type;
-  private String key;
+  private final String key;
 
   public AsciiDocIncludeTagReferenceInElement(@NotNull PsiElement element, TextRange textRange, String type) {
     super(element, textRange);
@@ -78,9 +79,8 @@ public class AsciiDocIncludeTagReferenceInElement extends PsiReferenceBase<PsiEl
     return resolveResults.length == 1 ? resolveResults[0].getElement() : null;
   }
 
-  @NotNull
   @Override
-  public Object[] getVariants() {
+  public Object @NotNull [] getVariants() {
     List<LookupElement> variants = new ArrayList<>();
     PsiTreeUtil.processElements(myElement.getContainingFile(), element -> {
       for (PsiReference reference : element.getReferences()) {
@@ -103,4 +103,10 @@ public class AsciiDocIncludeTagReferenceInElement extends PsiReferenceBase<PsiEl
   public String getKey() {
     return key;
   }
+
+  @Override
+  public PsiElement bindToElement(@NotNull PsiElement element) {
+    return element;
+  }
+
 }

@@ -8,9 +8,12 @@ import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.Trinity;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.ElementManipulator;
+import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
@@ -29,11 +32,13 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
 import icons.AsciiDocIcons;
 import org.apache.commons.lang.ArrayUtils;
+import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.completion.AsciiDocCompletionContributor;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import javax.annotation.CheckReturnValue;
 import javax.swing.*;
@@ -46,6 +51,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -94,7 +100,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         if (resolveResult.getElement() instanceof PsiFile) {
           return false;
         } else if (resolveResult.getElement() instanceof AsciiDocSection ||
-           resolveResult.getElement() instanceof AsciiDocBlockId) {
+          resolveResult.getElement() instanceof AsciiDocBlockId) {
           return true;
         }
       }
@@ -261,6 +267,72 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     }
     multiResolveAnchor(items, key, results, ignoreCase, new ArrayDeque<>());
     return results;
+  }
+
+  @Override
+  public PsiElement bindToElement(@NotNull PsiElement element) {
+    VirtualFile otherAntoraModuleDir = AsciiDocUtil.findAntoraModuleDir(element);
+    if (otherAntoraModuleDir != null) {
+      ElementManipulator<PsiElement> manipulator = ElementManipulators.getManipulator(this.getElement());
+      if (manipulator != null) {
+        VirtualFile otherAntoraPagesDir = AsciiDocUtil.findAntoraPagesDir(element);
+        if (element.getContainingFile().getVirtualFile().getCanonicalPath() != null && otherAntoraPagesDir != null &&
+          otherAntoraPagesDir.getCanonicalPath() != null &&
+          element.getContainingFile().getVirtualFile().getCanonicalPath().startsWith(otherAntoraPagesDir.getCanonicalPath())) {
+          if (this.macroName.equals("antora-nav")) {
+            String relativePath = FileUtil.getRelativePath(this.getElement().getContainingFile().getVirtualFile().getParent().getPath(),
+              element.getContainingFile().getVirtualFile().getPath(), '/');
+            if (relativePath != null) {
+              manipulator.handleContentChange(this.getElement(), getRangeInElement().shiftLeft(base.length()).grown(base.length()), relativePath);
+            }
+          } else {
+            Map<String, Object> otherAntoraComponent;
+            try {
+              otherAntoraComponent = AsciiDoc.readAntoraYaml(element.getProject(), otherAntoraModuleDir.getParent().getParent().findChild("antora.yml"));
+            } catch (YAMLException | NullPointerException ex) {
+              return element;
+            }
+
+            Map<String, Object> myAntoraComponent;
+            try {
+              if (this.macroName.equals("antora-startpage")) {
+                myAntoraComponent = AsciiDoc.readAntoraYaml(element.getProject(), this.myElement.getContainingFile().getVirtualFile());
+              } else {
+                myAntoraComponent = AsciiDoc.readAntoraYaml(element.getProject(), AsciiDocUtil.findAntoraModuleDir(this.myElement).getParent().getParent().findChild("antora.yml"));
+              }
+            } catch (YAMLException | NullPointerException ex) {
+              return element;
+            }
+
+            StringBuilder sb = new StringBuilder();
+
+            boolean addModule = false;
+
+            if (!Objects.equals(AsciiDocUtil.getAttributeAsString(myAntoraComponent, "name"), AsciiDocUtil.getAttributeAsString(otherAntoraComponent, "name"))) {
+              sb.append(AsciiDocUtil.getAttributeAsString(otherAntoraComponent, "name"));
+              sb.append(":");
+              addModule = true;
+            }
+            if (this.macroName.equals("antora-startpage")) {
+              addModule = true;
+            }
+            if (!addModule && !otherAntoraModuleDir.getName().equals(AsciiDocUtil.findAntoraModuleDir(this.myElement).getName())) {
+              addModule = true;
+            }
+            if (addModule) {
+              sb.append(otherAntoraModuleDir.getName());
+              sb.append(":");
+            }
+            String relativePath = FileUtil.getRelativePath(otherAntoraPagesDir.getPath(), element.getContainingFile().getVirtualFile().getPath(), '/');
+            if (relativePath != null) {
+              sb.append(relativePath);
+              manipulator.handleContentChange(this.getElement(), getRangeInElement().shiftLeft(base.length()).grown(base.length()), sb.toString());
+            }
+          }
+        }
+      }
+    }
+    return element;
   }
 
   private void multiResolveAnchor(Set<LookupElementBuilder> items, String key, List<ResolveResult> results, boolean ignoreCase, ArrayDeque<Trinity<String, String, String>> stack) {

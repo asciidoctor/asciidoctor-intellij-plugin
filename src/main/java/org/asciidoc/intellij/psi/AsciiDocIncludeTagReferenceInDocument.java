@@ -15,16 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AsciiDocIncludeTagReferenceInDocument extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
-  private String key;
+
+  private final String key;
 
   public AsciiDocIncludeTagReferenceInDocument(@NotNull PsiElement element, TextRange textRange) {
     super(element, textRange);
     key = element.getText().substring(textRange.getStartOffset(), textRange.getEndOffset());
   }
 
-  @NotNull
   @Override
-  public ResolveResult[] multiResolve(boolean incompleteCode) {
+  public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     List<ResolveResult> results = new ArrayList<>();
     PsiElement parent = myElement.getParent();
     if (parent != null) {
@@ -64,6 +64,11 @@ public class AsciiDocIncludeTagReferenceInDocument extends PsiReferenceBase<PsiE
   public PsiElement resolve() {
     ResolveResult[] resolveResults = multiResolve(false);
     return resolveResults.length == 1 ? resolveResults[0].getElement() : null;
+  }
+
+  @Override
+  public PsiElement bindToElement(@NotNull PsiElement element) {
+    return element;
   }
 
 }

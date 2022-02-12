@@ -22,7 +22,8 @@ import java.util.List;
 import java.util.Set;
 
 public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
-  private String key;
+
+  private final String key;
 
   public AsciiDocAttributeDeclarationReference(@NotNull PsiElement element, TextRange textRange) {
     super(element, textRange);
@@ -99,6 +100,11 @@ public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiE
       );
     }
     return variants.toArray();
+  }
+
+  @Override
+  public PsiElement bindToElement(@NotNull PsiElement element) {
+    return element;
   }
 
   @NotNull

@@ -107,4 +107,9 @@ public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implemen
     return resolveResults.length == 1 ? resolveResults[0].getElement() : null;
   }
 
+  @Override
+  public PsiElement bindToElement(@NotNull PsiElement element) {
+    return element;
+  }
+
 }
