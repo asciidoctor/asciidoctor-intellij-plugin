@@ -324,6 +324,54 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:BLOCK_DELIMITER ('|====')");
   }
 
+  public void testTableWithColAndRowSpanAlignmentAndFormatting() {
+    doTest("|====\n" +
+        "2.2+^.^h|1\n" +
+        "|====",
+      "AsciiDoc:BLOCK_DELIMITER ('|====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CELLSEPARATOR ('2.2+^.^h|')\n" +
+        "AsciiDoc:TEXT ('1')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('|====')");
+  }
+
+  public void testTableWithColSpanningAlignmentAndFormatting() {
+    doTest("|====\n" +
+        "2+^.^h|1\n" +
+        "|====",
+      "AsciiDoc:BLOCK_DELIMITER ('|====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CELLSEPARATOR ('2+^.^h|')\n" +
+        "AsciiDoc:TEXT ('1')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('|====')");
+  }
+
+  public void testTableWithRowSpanningAlignmentAndFormatting() {
+    doTest("|====\n" +
+        ".2+^.^h|1\n" +
+        "|====",
+      "AsciiDoc:BLOCK_DELIMITER ('|====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CELLSEPARATOR ('.2+^.^h|')\n" +
+        "AsciiDoc:TEXT ('1')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('|====')");
+  }
+
+  public void testTableWithDuplicationAlignmentAndFormatting() {
+    doTest("|====\n" +
+        "2*^.^h|1\n" +
+        "|====",
+      "AsciiDoc:BLOCK_DELIMITER ('|====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CELLSEPARATOR ('2*^.^h|')\n" +
+        "AsciiDoc:TEXT ('1')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('|====')");
+  }
+
   public void testCellWithTitle() {
     doTest("|===\n" +
         "a| .Title\n" +
