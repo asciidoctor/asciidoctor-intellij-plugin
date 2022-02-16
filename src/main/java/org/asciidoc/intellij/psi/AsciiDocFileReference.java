@@ -121,42 +121,55 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return this;
   }
 
-  public boolean canBeCreated(PsiDirectory parent) {
+  public boolean canBeCreated() {
     if (resolve() != null) {
       return false;
     }
-    String name = getRangeInElement().substring(getElement().getText());
-    name = AsciiDocUtil.resolveAttributes(root, name);
-    if (name != null) {
-      try {
-        if (isFolder) {
-          parent.checkCreateSubdirectory(name);
-        } else {
-          parent.checkCreateFile(name);
+    List<ResolveResult> resolved = new ArrayList<>();
+    resolve(base, resolved, 0, new HashSet<>());
+    if (resolved.size() == 1) {
+      PsiElement baseElement = resolved.get(0).getElement();
+      if (baseElement instanceof PsiDirectory) {
+        PsiDirectory parent = (PsiDirectory) baseElement;
+        String name = AsciiDocUtil.resolveAttributes(root, key);
+        if (name != null) {
+          try {
+            if (isFolder) {
+              parent.checkCreateSubdirectory(name);
+            } else {
+              parent.checkCreateFile(name);
+            }
+            // check if the name would be a valid path name
+            String path = parent.getVirtualFile().getCanonicalPath();
+            if (path != null) {
+              Paths.get(path, name);
+            }
+          } catch (IncorrectOperationException | InvalidPathException e) {
+            return false;
+          }
+          return true;
         }
-        // check if the name would be a valid path name
-        String path = parent.getVirtualFile().getCanonicalPath();
-        if (path != null) {
-          Paths.get(path, name);
-        }
-      } catch (IncorrectOperationException | InvalidPathException e) {
-        return false;
       }
-      return true;
     }
     return false;
   }
 
-
-  public @Nullable PsiElement createFileOrFolder(PsiDirectory parent) {
-    if (canBeCreated(parent)) {
-      String name = getRangeInElement().substring(getElement().getText());
-      name = AsciiDocUtil.resolveAttributes(root, name);
-      if (name != null) {
-        if (isFolder) {
-          return parent.createSubdirectory(name);
-        } else {
-          return parent.createFile(name);
+  public @Nullable PsiElement createFileOrFolder() {
+    if (canBeCreated()) {
+      List<ResolveResult> resolved = new ArrayList<>();
+      resolve(base, resolved, 0, new HashSet<>());
+      if (resolved.size() == 1) {
+        PsiElement baseElement = resolved.get(0).getElement();
+        if (baseElement instanceof PsiDirectory) {
+          PsiDirectory parent = (PsiDirectory) baseElement;
+          String name = AsciiDocUtil.resolveAttributes(root, key);
+          if (name != null) {
+            if (isFolder) {
+              return parent.createSubdirectory(name);
+            } else {
+              return parent.createFile(name);
+            }
+          }
         }
       }
     }

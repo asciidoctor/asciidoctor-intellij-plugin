@@ -28,14 +28,10 @@ public interface AsciiDocCreateMissingFile {
       if (r instanceof AsciiDocFileReference) {
         AsciiDocFileReference adr = (AsciiDocFileReference) r;
         PsiElement resolved = r.resolve();
-        if (resolved instanceof PsiDirectory) {
-          parent = (PsiDirectory) resolved;
-        } else if (resolved == null) {
-          if (adr.canBeCreated(parent)) {
-            PsiElement e = adr.createFileOrFolder(parent);
-            if (e instanceof PsiDirectory) {
-              parent = (PsiDirectory) e;
-            } else if (e != null) {
+        if (resolved == null) {
+          if (adr.canBeCreated()) {
+            PsiElement e = adr.createFileOrFolder();
+            if (e instanceof PsiFile) {
               ApplicationManager.getApplication().invokeLater(() -> {
                 PsiFile file = ((PsiFile) e);
                 VirtualFile vf = file.getVirtualFile();
@@ -77,10 +73,8 @@ public interface AsciiDocCreateMissingFile {
           if (r instanceof AsciiDocFileReference) {
             AsciiDocFileReference adr = (AsciiDocFileReference) r;
             PsiElement resolved = r.resolve();
-            if (resolved instanceof PsiDirectory) {
-              parent = (PsiDirectory) resolved;
-            } else if (resolved == null) {
-              if (adr.canBeCreated(parent)) {
+            if (resolved == null) {
+              if (adr.canBeCreated()) {
                 isAvailable = true;
                 break;
               }
