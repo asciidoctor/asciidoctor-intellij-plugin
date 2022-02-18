@@ -34,10 +34,10 @@ import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.ui.jcef.JBCefBrowser;
 import com.intellij.ui.jcef.JBCefBrowserBase;
 import com.intellij.ui.jcef.JBCefJSQuery;
 import com.intellij.ui.jcef.JBCefPsiNavigationUtils;
-import com.intellij.ui.jcef.JCEFHtmlPanel;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.PsiNavigateUtil;
 import com.intellij.util.ui.UIUtil;
@@ -87,7 +87,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtmlPanel {
+public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlPanel {
 
   private static final Logger LOG = Logger.getInstance(AsciiDocJCEFHtmlPanel.class);
 
@@ -202,7 +202,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private Editor editor;
 
   public AsciiDocJCEFHtmlPanel(Document document, Path imagesPath) {
-    super(isOffScreenRenderingEnabled(), null, OUR_CLASS_URL + "@" + new Random().nextInt(Integer.MAX_VALUE));
+    super(JBCefBrowser.createBuilder().setOffScreenRendering(isOffScreenRenderingEnabled()).setClient(null).setUrl(OUR_CLASS_URL + "@" + new Random().nextInt(Integer.MAX_VALUE)));
 
     this.imagesPath = imagesPath;
 
@@ -658,7 +658,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       html = html + "<script>window.iterationStamp=" + iterationStamp + ";</script>";
       html = wrapHtmlForPage(html);
       final String htmlToRender = prepareHtml(html, attributes);
-      super.setHtml(htmlToRender);
+      loadHTML(htmlToRender, getCefBrowser().getURL());
       getCefBrowser().setZoomLevel(uiZoom - 1);
     }
     try {
