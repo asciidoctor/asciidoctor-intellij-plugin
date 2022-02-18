@@ -905,16 +905,23 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   public void scrollToLine(int line, int lineCount) {
     this.lineCount = lineCount;
     this.line = line;
-    getCefBrowser().executeJavaScript(
-      "if ('__IntelliJTools' in window) " +
-        "__IntelliJTools.scrollToLine(" + line + ", " + lineCount + ");",
-      getCefBrowser().getURL(), 0);
+    try {
+      getCefBrowser().executeJavaScript(
+        "if ('__IntelliJTools' in window) " +
+          "__IntelliJTools.scrollToLine(" + line + ", " + lineCount + ");",
+        getCefBrowser().getURL(), 0);
 
-    getCefBrowser().executeJavaScript(
-      "var value = document.documentElement.scrollTop || document.body.scrollTop;" +
-        myJSQuerySetScrollY.inject("value"),
-      getCefBrowser().getURL(), 0);
-
+      getCefBrowser().executeJavaScript(
+        "var value = document.documentElement.scrollTop || document.body.scrollTop;" +
+          myJSQuerySetScrollY.inject("value"),
+        getCefBrowser().getURL(), 0);
+    } catch (IllegalStateException ex) {
+      if (ex.getMessage().equals("the JS query has been disposed")) {
+        LOG.info("JS query has already been disposed, can't place cursor in preview");
+      } else {
+        throw ex;
+      }
+    }
   }
 
   @Override
