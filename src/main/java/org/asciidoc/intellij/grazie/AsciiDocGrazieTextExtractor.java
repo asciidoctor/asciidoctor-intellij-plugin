@@ -19,8 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AsciiDocGrazieTextExtractor extends TextExtractor {
 
@@ -45,12 +46,9 @@ public class AsciiDocGrazieTextExtractor extends TextExtractor {
             )
             .build(root, getContextRootTextDomain(root));
           if (textContent != null && TextContent.TextDomain.PLAIN_TEXT.equals(textContent.getDomain())) {
-            ArrayList<TextRange> stealthyRanges = getStealthyRanges(root, textContent);
-            Collections.reverse(stealthyRanges);
-            for (TextRange range : stealthyRanges) {
-              // use excludeRanges here from 2021.3 onwards
-              textContent = textContent.excludeRange(range);
-            }
+            List<TextContent.Exclusion> stealthyRanges = getStealthyRanges(root, textContent).stream()
+              .map(textRange -> new TextContent.Exclusion(textRange.getStartOffset(), textRange.getEndOffset(), false)).collect(Collectors.toList());
+            textContent = textContent.excludeRanges(stealthyRanges);
           }
           // as the calculated value depends only on the PSI node and its subtree, try to be more specific than the PsiElement
           // as using the PsiElement would invalidate the cache on the file level.
