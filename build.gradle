@@ -142,7 +142,7 @@ dependencies {
 
   testImplementation(gradleTestKit())
   testImplementation 'junit:junit:4.13.2'
-  testImplementation 'com.tngtech.archunit:archunit-junit4:0.22.0'
+  testImplementation 'com.tngtech.archunit:archunit-junit4:0.23.0'
   testImplementation 'org.assertj:assertj-core:3.22.0'
   testImplementation 'org.mockito:mockito-core:4.3.1'
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
