@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.5
+
+- fix range issue when preparing texts for the grammar checking plugin (#990)
+
 === 0.37.4
 
 - fix table column spec support for syntax highlighting (#984)
