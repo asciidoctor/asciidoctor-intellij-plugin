@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.37.6
 
 - prevent exception during startup activities on initial plugin installation (#992)
+- prevent message `"Unable to find providerId`" when opening a previously opened file after installing the plugin (#993)
 
 === 0.37.5
 
