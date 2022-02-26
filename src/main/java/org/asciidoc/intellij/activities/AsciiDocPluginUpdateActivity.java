@@ -58,19 +58,22 @@ public class AsciiDocPluginUpdateActivity implements StartupActivity, DumbAware,
       // therefore trigger notification in a read action that waits until the registration is complete
       ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runReadAction(() -> {
         NotificationGroup group = NotificationGroupManager.getInstance().getNotificationGroup("asciidoctor-update");
-        Notification notification = group.createNotification(
-          AsciiDocBundle.message("asciidocUpdateNotification.title", version),
-          AsciiDocBundle.message("asciidocUpdateNotification.content") +
-            changes.toString()
-              // simplify HTML as not all tags are shown in event log
-              .replaceAll("<[/]?(div|h3|p)[^>]*>", "")
-              // avoid too many new lines as they will show as new lines in event log
-              .replaceAll("(?ms)<ul>\\s*", "<ul>")
-              // remove trailing blanks and empty lines
-              .replaceAll("(?ms)\\n[\\s]+", "\n"),
-          NotificationType.INFORMATION)
-          .setListener(new NotificationListener.UrlOpeningListener(false));
-        Notifications.Bus.notify(notification, project);
+        if (group != null) {
+          // might happen on initial installation of the plugin at runtime
+          Notification notification = group.createNotification(
+              AsciiDocBundle.message("asciidocUpdateNotification.title", version),
+              AsciiDocBundle.message("asciidocUpdateNotification.content") +
+                changes.toString()
+                  // simplify HTML as not all tags are shown in event log
+                  .replaceAll("<[/]?(div|h3|p)[^>]*>", "")
+                  // avoid too many new lines as they will show as new lines in event log
+                  .replaceAll("(?ms)<ul>\\s*", "<ul>")
+                  // remove trailing blanks and empty lines
+                  .replaceAll("(?ms)\\n[\\s]+", "\n"),
+              NotificationType.INFORMATION)
+            .setListener(new NotificationListener.UrlOpeningListener(false));
+          Notifications.Bus.notify(notification, project);
+        }
       }));
     }
   }
