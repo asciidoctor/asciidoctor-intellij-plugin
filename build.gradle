@@ -36,21 +36,21 @@ allprojects {
 }
 
 intellij {
-  version = 'IC-2021.3.2' // 'IC-213.5744.202-EAP-SNAPSHOT'
+  version = 'IC-221.4501.155-EAP-SNAPSHOT' // 'IC-2021.3.2'
   pluginName = 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild = false
   plugins = [
-    'PsiViewer:213-SNAPSHOT', // used for debugging
-    'PlantUML integration:5.5.1', // used to test highlighting of plantuml diagrams
+    'PsiViewer:221-SNAPSHOT', // used for debugging
+    'PlantUML integration:5.11.1', // used to test highlighting of plantuml diagrams
     'com.intellij.platform.images', // dependency for PlantUML plugin
     'tanvd.grazi', // used for spell and grammar checking checking
-    'com.intellij.javafx:1.0.3',
+    'com.intellij.javafx:1.0.4',
     'org.intellij.intelliLang',
-    'com.google.ide-perf:1.2.0', // performance tracing
+    // 'com.google.ide-perf:1.2.0', // performance tracing
     // see https://github.com/google/ide-perf/blob/master/docs/user-guide.md
     'java', // used to integrate into the build via AsciiDocTargetScopeProvider
     'yaml', // used to inject file references to Antora YAML files
-    'com.jetbrains.performancePlugin:213.5744.122' // used run YourKit CPU profiling in test IDE
+    // 'com.jetbrains.performancePlugin:213.5744.122' // used run YourKit CPU profiling in test IDE
     // see https://intellij-support.jetbrains.com/hc/en-us/articles/207241235
     // 'com.intellij.grazie.pro:0.3.58'
   ]
