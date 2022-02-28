@@ -1460,6 +1460,19 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Text')");
   }
 
+  public void testRefWithRefTextWithClosingPointyBracket() {
+    doTest("Text <<REF,Text > More>> Text",
+      "AsciiDoc:TEXT ('Text')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:REFSTART ('<<')\n" +
+        "AsciiDoc:REF ('REF')\n" +
+        "AsciiDoc:SEPARATOR (',')\n" +
+        "AsciiDoc:REFTEXT ('Text > More')\n" +
+        "AsciiDoc:REFEND ('>>')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
   public void testEscapedLink() {
     doTest("\\link:FILE[Text]",
       "AsciiDoc:TEXT ('\\link:FILE')\n" +

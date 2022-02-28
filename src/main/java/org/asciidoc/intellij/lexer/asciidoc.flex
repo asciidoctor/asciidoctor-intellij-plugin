@@ -1442,7 +1442,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {LBRACKET}           { return AsciiDocTokenTypes.LBRACKET; }
   {RBRACKET}           { if (isInAttribute()) { yypushback(1); yypopstate(); } else { return AsciiDocTokenTypes.RBRACKET; } }
   // see: InlineXrefMacroRx
-  {REFSTART} / [\w/.:{#] [^>\n]* {REFEND} {
+  {REFSTART} / [\w/.:{#] [^\n]* {REFEND} {
                          if (!isEscaped()) {
                            yybegin(REF); return AsciiDocTokenTypes.REFSTART;
                          } else {
