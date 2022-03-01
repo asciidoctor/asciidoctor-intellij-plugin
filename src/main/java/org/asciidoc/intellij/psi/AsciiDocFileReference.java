@@ -283,38 +283,44 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   @Override
-  public PsiElement bindToElement(@NotNull PsiElement element) {
-    VirtualFile otherAntoraModuleDir = AsciiDocUtil.findAntoraModuleDir(element);
+  public PsiElement bindToElement(@NotNull PsiElement otherElement) {
+    VirtualFile otherAntoraModuleDir = AsciiDocUtil.findAntoraModuleDir(otherElement);
     if (otherAntoraModuleDir != null) {
       ElementManipulator<PsiElement> manipulator = ElementManipulators.getManipulator(this.getElement());
       if (manipulator != null) {
-        VirtualFile otherAntoraPagesDir = AsciiDocUtil.findAntoraPagesDir(element);
-        if (element.getContainingFile().getVirtualFile().getCanonicalPath() != null && otherAntoraPagesDir != null &&
+        VirtualFile otherAntoraPagesDir = AsciiDocUtil.findAntoraPagesDir(otherElement);
+        VirtualFile otherVf;
+        if (otherElement instanceof PsiDirectory) {
+          otherVf = ((PsiDirectory) otherElement).getVirtualFile();
+        } else {
+          otherVf = otherElement.getContainingFile().getVirtualFile();
+        }
+        if (otherVf.getCanonicalPath() != null && otherAntoraPagesDir != null &&
           otherAntoraPagesDir.getCanonicalPath() != null &&
-          element.getContainingFile().getVirtualFile().getCanonicalPath().startsWith(otherAntoraPagesDir.getCanonicalPath())) {
+          otherVf.getCanonicalPath().startsWith(otherAntoraPagesDir.getCanonicalPath())) {
           if (this.macroName.equals("antora-nav")) {
-            String relativePath = FileUtil.getRelativePath(this.getElement().getContainingFile().getVirtualFile().getParent().getPath(),
-              element.getContainingFile().getVirtualFile().getPath(), '/');
+            String relativePath = FileUtil.getRelativePath(otherVf.getParent().getPath(),
+              otherVf.getPath(), '/');
             if (relativePath != null) {
               manipulator.handleContentChange(this.getElement(), getRangeInElement().shiftLeft(base.length()).grown(base.length()), relativePath);
             }
           } else {
             Map<String, Object> otherAntoraComponent;
             try {
-              otherAntoraComponent = AsciiDoc.readAntoraYaml(element.getProject(), otherAntoraModuleDir.getParent().getParent().findChild("antora.yml"));
+              otherAntoraComponent = AsciiDoc.readAntoraYaml(otherElement.getProject(), otherAntoraModuleDir.getParent().getParent().findChild("antora.yml"));
             } catch (YAMLException | NullPointerException ex) {
-              return element;
+              return otherElement;
             }
 
             Map<String, Object> myAntoraComponent;
             try {
               if (this.macroName.equals("antora-startpage")) {
-                myAntoraComponent = AsciiDoc.readAntoraYaml(element.getProject(), this.myElement.getContainingFile().getVirtualFile());
+                myAntoraComponent = AsciiDoc.readAntoraYaml(otherElement.getProject(), this.myElement.getContainingFile().getVirtualFile());
               } else {
-                myAntoraComponent = AsciiDoc.readAntoraYaml(element.getProject(), AsciiDocUtil.findAntoraModuleDir(this.myElement).getParent().getParent().findChild("antora.yml"));
+                myAntoraComponent = AsciiDoc.readAntoraYaml(otherElement.getProject(), AsciiDocUtil.findAntoraModuleDir(this.myElement).getParent().getParent().findChild("antora.yml"));
               }
             } catch (YAMLException | NullPointerException ex) {
-              return element;
+              return otherElement;
             }
 
             StringBuilder sb = new StringBuilder();
@@ -336,7 +342,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
               sb.append(otherAntoraModuleDir.getName());
               sb.append(":");
             }
-            String relativePath = FileUtil.getRelativePath(otherAntoraPagesDir.getPath(), element.getContainingFile().getVirtualFile().getPath(), '/');
+            String relativePath = FileUtil.getRelativePath(otherAntoraPagesDir.getPath(), otherVf.getPath(), '/');
             if (relativePath != null) {
               sb.append(relativePath);
               manipulator.handleContentChange(this.getElement(), getRangeInElement().shiftLeft(base.length()).grown(base.length()), sb.toString());
@@ -345,7 +351,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         }
       }
     }
-    return element;
+    return otherElement;
   }
 
   private void multiResolveAnchor(Set<LookupElementBuilder> items, String key, List<ResolveResult> results, boolean ignoreCase, ArrayDeque<Trinity<String, String, String>> stack) {

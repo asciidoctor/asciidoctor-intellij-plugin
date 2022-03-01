@@ -1141,11 +1141,20 @@ public class AsciiDocUtil {
 
   public static @Nullable VirtualFile findAntoraPagesDir(PsiElement element) {
     VirtualFile antoraPagesDir = null;
-    VirtualFile vf;
-    vf = element.getContainingFile().getVirtualFile();
-    if (vf == null) {
-      // when running autocomplete, there is only an original file
-      vf = element.getContainingFile().getOriginalFile().getVirtualFile();
+    VirtualFile vf = null;
+    if (element instanceof PsiFile) {
+      vf = ((PsiFile) element).getVirtualFile();
+    } else if (element instanceof PsiDirectory) {
+      vf = ((PsiDirectory) element).getVirtualFile();
+    } else {
+      PsiFile file = element.getContainingFile();
+      if (file != null) {
+        vf = file.getVirtualFile();
+        if (vf == null) {
+          // when running autocomplete, there is only an original file
+          vf = file.getOriginalFile().getVirtualFile();
+        }
+      }
     }
     if (vf != null) {
       antoraPagesDir = findAntoraPagesDir(element.getProject(), vf);

@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - prevent exception during startup activities on initial plugin installation (#992)
 - prevent message "`Unable to find providerId`" when opening a previously opened file after installing the plugin (#993)
 - updated parsing for pointy brackets in reference texts (#995)
+- handle moving of folders in Antora pages directory and updating the references (#981)
 
 === 0.37.5
 
