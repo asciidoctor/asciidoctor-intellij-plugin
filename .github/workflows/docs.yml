@@ -24,7 +24,7 @@ jobs:
 
       - name: Fetch Sources
         # Check out current repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Qodana cache
         # to speed up future runs of Qodana
