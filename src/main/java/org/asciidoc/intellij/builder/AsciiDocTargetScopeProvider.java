@@ -54,7 +54,10 @@ public class AsciiDocTargetScopeProvider extends BuildTargetScopeProvider {
         // this will clear the problems for all Asciidoc files in the modules
         // consider using clearProblemsFromExternalSource available from 2019.x?
         theProblemSolver.clearProblems(file);
-        PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+        PsiFile psiFile = null;
+        if (file.isValid()) {
+          psiFile = PsiManager.getInstance(project).findFile(file);
+        }
         if (psiFile != null) {
           // the DaemonCodeAnalyzer will only trigger for any open file (independent of the file we pass here)
           DaemonCodeAnalyzer.getInstance(project).restart(psiFile);

@@ -138,7 +138,10 @@ public class AntoraReferenceAdapter {
       VirtualFile targetFile = LocalFileSystem.getInstance().findFileByPath(target);
       if (type.equals("inline_anchor") && phraseNode.getText() == null && targetFile != null && sourceDir != null) {
         AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
-          PsiFile file = PsiManager.getInstance(project).findFile(targetFile);
+          PsiFile file = null;
+          if (targetFile.isValid()) {
+            file = PsiManager.getInstance(project).findFile(targetFile);
+          }
           if (file != null) {
             String refText = null;
             Collection<AttributeDeclaration> attributeDeclarations = AsciiDocUtil.findPageAttributes(file);

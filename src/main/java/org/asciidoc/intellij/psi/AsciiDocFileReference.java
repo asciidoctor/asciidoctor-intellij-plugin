@@ -1260,7 +1260,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       if (element.getContainingFile().getVirtualFile() != null &&
         element.getContainingFile().getVirtualFile().getFileSystem().getProtocol().equals("temp")) {
         VirtualFile vf = element.getContainingFile().getVirtualFile().getFileSystem().findFileByPath(fileName);
-        if (vf != null) {
+        if (vf != null && vf.isValid()) {
           PsiElement result = PsiManager.getInstance(element.getProject()).findFile(vf);
           if (result == null) {
             result = PsiManager.getInstance(element.getProject()).findDirectory(vf);
@@ -1277,7 +1277,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       // can happen with exceptions like "path must be canonical" for "/.."
       fileByPath = null;
     }
-    if (fileByPath != null) {
+    if (fileByPath != null && fileByPath.isValid()) {
       PsiFile file = PsiManager.getInstance(element.getProject()).findFile(fileByPath);
       if (file != null) {
         return file;

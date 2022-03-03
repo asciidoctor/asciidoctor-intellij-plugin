@@ -59,11 +59,13 @@ public class AsciiDocSplitEditorProvider extends SplitTextEditorProvider {
         // clearing the history after the re-opening of files for all closed files in the history.
         if (shouldClearEditorHistory) {
           for (VirtualFile vFile : EditorHistoryManager.getInstance(project).getFileList()) {
-            PsiFile pFile = pm.findFile(vFile);
-            if (pFile != null) {
-              if (pFile.getLanguage() == AsciiDocLanguage.INSTANCE) {
-                if (EditorHistoryManager.getInstance(project).getState(vFile, this) == null) {
-                  EditorHistoryManager.getInstance(project).removeFile(vFile);
+            if (vFile.isValid()) {
+              PsiFile pFile = pm.findFile(vFile);
+              if (pFile != null) {
+                if (pFile.getLanguage() == AsciiDocLanguage.INSTANCE) {
+                  if (EditorHistoryManager.getInstance(project).getState(vFile, this) == null) {
+                    EditorHistoryManager.getInstance(project).removeFile(vFile);
+                  }
                 }
               }
             }
