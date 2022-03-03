@@ -2,6 +2,8 @@ package org.asciidoc.intellij.findUsages;
 
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -20,34 +22,37 @@ import com.intellij.util.Processor;
 import com.intellij.util.text.StringSearcher;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.psi.AsciiDocJavaReference;
+import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
   protected AsciiDocJavaReferencesSearch() {
-    super(true);
+    super(false);
   }
 
   @Override
   public void processQuery(@NotNull ReferencesSearch.SearchParameters p, @NotNull Processor<? super PsiReference> consumer) {
-    final PsiElement element = p.getElementToSearch();
-    if (!element.isValid()) {
-      return;
-    }
-
-    // use scope determined by user here, as effective search scope would return the module and its dependants
-    SearchScope scope = p.getScopeDeterminedByUser();
-
-    if (element instanceof PsiClass) {
-      String name = ((PsiClass) element).getName();
-      if (name != null && !name.isEmpty()) {
-        search(consumer, element, name, scope);
+    AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
+      final PsiElement element = p.getElementToSearch();
+      if (!element.isValid()) {
+        return;
       }
-    } else if (element instanceof PsiPackage) {
-      String name = ((PsiPackage) element).getName();
-      if (name != null && !name.isEmpty()) {
-        search(consumer, element, name, scope);
+
+      // use scope determined by user here, as effective search scope would return the module and its dependants
+      SearchScope scope = p.getScopeDeterminedByUser();
+
+      if (element instanceof PsiClass) {
+        String name = ((PsiClass) element).getName();
+        if (name != null && !name.isEmpty()) {
+          search(consumer, element, name, scope);
+        }
+      } else if (element instanceof PsiPackage) {
+        String name = ((PsiPackage) element).getName();
+        if (name != null && !name.isEmpty()) {
+          search(consumer, element, name, scope);
+        }
       }
-    }
+    });
   }
 
   private void search(@NotNull Processor<? super PsiReference> consumer, PsiElement element, String name, SearchScope scope) {
@@ -73,7 +78,14 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
       return;
     }
     final StringSearcher searcher = new StringSearcher(name, true, true, false);
-    for (PsiFile psiFile : files) {
+    ProgressIndicator pi = ProgressManager.getInstance().getProgressIndicator();
+    pi.setText("Searching text in " + files.length + " files");
+    pi.setIndeterminate(false);
+    for (int i = 0; i < files.length; i++) {
+      PsiFile psiFile = files[i];
+      pi.setFraction((double) i / files.length);
+      pi.setText2(psiFile.getVirtualFile().getPresentableName());
+      ProgressManager.checkCanceled();
       if (psiFile.getLanguage() == AsciiDocLanguage.INSTANCE) {
         final CharSequence text = ReadAction.compute(() -> psiFile.getViewProvider().getContents());
         LowLevelSearchUtil.processTexts(text, 0, text.length(), searcher, index -> {
@@ -90,6 +102,7 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
         });
       }
     }
+    pi.setText2(null);
   }
 
   private void checkReference(@NotNull Processor<? super PsiReference> consumer, PsiElement element, PsiReference reference) {

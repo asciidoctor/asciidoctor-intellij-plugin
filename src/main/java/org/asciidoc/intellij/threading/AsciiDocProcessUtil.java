@@ -2,6 +2,7 @@ package org.asciidoc.intellij.threading;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Ref;
@@ -26,7 +27,7 @@ public class AsciiDocProcessUtil {
       ApplicationManager.getApplication().runReadAction(runnable);
     } else {
       retryable(() -> {
-        if (!ProgressManager.getInstance().runInReadActionWithWriteActionPriority(runnable, null)) {
+        if (!ProgressManager.getInstance().runInReadActionWithWriteActionPriority(runnable, AsciiDocDelegatingProgressIndicator.build())) {
           throw new ProcessCanceledException();
         }
       });
@@ -47,7 +48,7 @@ public class AsciiDocProcessUtil {
       ref.set(ApplicationManager.getApplication().runReadAction(computable));
     } else {
       retryable(() -> {
-        if (!ProgressManager.getInstance().runInReadActionWithWriteActionPriority(() -> ref.set(computable.compute()), null)) {
+        if (!ProgressManager.getInstance().runInReadActionWithWriteActionPriority(() -> ref.set(computable.compute()), AsciiDocDelegatingProgressIndicator.build())) {
           throw new ProcessCanceledException();
         }
       });
@@ -68,6 +69,11 @@ public class AsciiDocProcessUtil {
       } catch (ProcessCanceledException e) {
         if (ApplicationManager.getApplication().isReadAccessAllowed()) {
           // this is nested within another read action, don't retry
+          throw e;
+        }
+        ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
+        if (progressIndicator != null && progressIndicator.isCanceled()) {
+          // we're nested into another progress indicator that has been cancelled, no need to retry
           throw e;
         }
         if (retries > 0) {

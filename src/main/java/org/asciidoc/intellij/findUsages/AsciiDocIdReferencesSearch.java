@@ -2,6 +2,8 @@ package org.asciidoc.intellij.findUsages;
 
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -27,6 +29,7 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.Processor;
 import com.intellij.util.text.StringSearcher;
 import org.asciidoc.intellij.AsciiDocLanguage;
+import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationKeyIndex;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationName;
@@ -35,43 +38,46 @@ import org.asciidoc.intellij.psi.AsciiDocNamedElement;
 import org.asciidoc.intellij.psi.AsciiDocSearchScope;
 import org.asciidoc.intellij.psi.AsciiDocTagDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
+import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
 public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
   protected AsciiDocIdReferencesSearch() {
-    super(true);
+    super(false);
   }
 
   @Override
   public void processQuery(@NotNull ReferencesSearch.SearchParameters p, @NotNull Processor<? super PsiReference> consumer) {
-    final PsiElement element = p.getElementToSearch();
-    if (!element.isValid()) {
-      return;
-    }
-
-    // use scope determined by user here, as effective search scope would return the module and its dependants
-    SearchScope scope = p.getScopeDeterminedByUser();
-
-    if (element instanceof AsciiDocNamedElement) {
-      String name = ((AsciiDocNamedElement) element).getName();
-      if (name != null && name.length() > 0) {
-        search(consumer, element, name, scope);
+    AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
+      final PsiElement element = p.getElementToSearch();
+      if (!element.isValid()) {
+        return;
       }
-    } else if (element instanceof PsiDirectory) {
-      String name = ((PsiDirectory) element).getName();
-      if (name.endsWith("s") && name.length() > 1) {
-        // it might be a partials, attachments, etc. directory; search for the family and attribute
-        VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(element);
-        if (antoraModuleDir != null) {
-          // partials -> partial$
-          search(consumer, element, name.substring(0, name.length() - 1), scope);
-          // partials -> partialsdir
-          search(consumer, element, name + "dir", scope);
+
+      // use scope determined by user here, as effective search scope would return the module and its dependants
+      SearchScope scope = p.getScopeDeterminedByUser();
+
+      if (element instanceof AsciiDocNamedElement) {
+        String name = ((AsciiDocNamedElement) element).getName();
+        if (name != null && name.length() > 0) {
+          search(consumer, element, name, scope);
+        }
+      } else if (element instanceof PsiDirectory) {
+        String name = ((PsiDirectory) element).getName();
+        if (name.endsWith("s") && name.length() > 1) {
+          // it might be a partials, attachments, etc. directory; search for the family and attribute
+          VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(element);
+          if (antoraModuleDir != null) {
+            // partials -> partial$
+            search(consumer, element, name.substring(0, name.length() - 1), scope);
+            // partials -> partialsdir
+            search(consumer, element, name + "dir", scope);
+          }
         }
       }
-    }
+    });
   }
 
   private void search(@NotNull Processor<? super PsiReference> consumer, PsiElement element, String name, SearchScope scope) {
@@ -79,6 +85,11 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
     PsiFile[] files;
     boolean localSearch = false;
     if (scope instanceof GlobalSearchScope) {
+      // always restrict to project files, never search libraries
+      scope = ((GlobalSearchScope) scope).intersectWith(GlobalSearchScope.projectScope(element.getProject()));
+      if (!(element instanceof AsciiDocTagDeclaration)) {
+        scope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope) scope, AsciiDocFileType.INSTANCE);
+      }
       // when the user searches all references
       String nameToSearch = name;
       if (element instanceof AsciiDocBlockId) {
@@ -93,13 +104,14 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
       }
       String nameFinal = nameToSearch;
 
+      GlobalSearchScope finalScope = (GlobalSearchScope) scope;
       files = myDumbService.runReadActionInSmartMode(() -> {
         short context = UsageSearchContext.IN_CODE;
         if (element instanceof AsciiDocTagDeclaration) {
           context = UsageSearchContext.ANY;
         }
         return CacheManager.getInstance(element.getProject())
-          .getFilesWithWord(nameFinal, context, (GlobalSearchScope) scope, false);
+          .getFilesWithWord(nameFinal, context, finalScope, false);
         }
       );
 
@@ -134,36 +146,44 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
 
     // default, like for: AsciiDocAttributeDeclarationName
     boolean caseSensitive = false;
-    if (element instanceof AsciiDocBlockId) {
+    if (element instanceof AsciiDocBlockId || element instanceof AsciiDocTagDeclaration) {
       caseSensitive = true;
     }
-    final StringSearcher searcher = new StringSearcher(name, caseSensitive, true, false);
-    for (PsiFile psiFile : files) {
-      if (psiFile.getLanguage() == AsciiDocLanguage.INSTANCE || element instanceof AsciiDocTagDeclaration) {
-        if (localSearch) {
-          for (AsciiDocAttributeDeclaration attribute : PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocAttributeDeclaration.class)) {
-            if (attribute.matchesKey(name)) {
-              AsciiDocAttributeDeclarationName child = attribute.getAttributeDeclarationName();
-              if (child != null) {
-                consumePsiElementForRename(consumer, child);
-              }
+    final StringSearcher asciidocSearcher = new StringSearcher(name, caseSensitive, true, false);
+    final StringSearcher tagdeclarationSearcher = new StringSearcher("::" + name + "[]", caseSensitive, true, false);
+    ProgressIndicator pi = ProgressManager.getInstance().getProgressIndicator();
+    pi.setText("Searching text in " + files.length + " files");
+    pi.setIndeterminate(false);
+    for (int i = 0; i < files.length; i++) {
+      PsiFile psiFile = files[i];
+      pi.setFraction((double) i / files.length);
+      pi.setText2(psiFile.getVirtualFile().getPresentableName());
+      ProgressManager.checkCanceled();
+      if (localSearch) {
+        for (AsciiDocAttributeDeclaration attribute : PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocAttributeDeclaration.class)) {
+          if (attribute.matchesKey(name)) {
+            AsciiDocAttributeDeclarationName child = attribute.getAttributeDeclarationName();
+            if (child != null) {
+              consumePsiElementForRename(consumer, child);
             }
           }
         }
-        final CharSequence text = ReadAction.compute(() -> psiFile.getViewProvider().getContents());
-        LowLevelSearchUtil.processTexts(text, 0, text.length(), searcher, index -> {
-          myDumbService.runReadActionInSmartMode(() -> {
-            PsiReference referenceAt = psiFile.findReferenceAt(index);
-            if (referenceAt instanceof PsiMultiReference) {
-              for (PsiReference reference : ((PsiMultiReference) referenceAt).getReferences()) {
-                checkReference(consumer, element, reference);
-              }
-            }
-            checkReference(consumer, element, referenceAt);
-          });
-          return true;
-        });
       }
+      final CharSequence text = ReadAction.compute(() -> psiFile.getViewProvider().getContents());
+      LowLevelSearchUtil.processTexts(text, 0, text.length(), psiFile.getLanguage() == AsciiDocLanguage.INSTANCE ? asciidocSearcher : tagdeclarationSearcher, index -> {
+        ProgressManager.checkCanceled();
+        myDumbService.runReadActionInSmartMode(() -> {
+          PsiReference referenceAt = psiFile.findReferenceAt(index + (psiFile.getLanguage() == AsciiDocLanguage.INSTANCE ? 0 : 2));
+          if (referenceAt instanceof PsiMultiReference) {
+            for (PsiReference reference : ((PsiMultiReference) referenceAt).getReferences()) {
+              checkReference(consumer, element, reference);
+            }
+          }
+          checkReference(consumer, element, referenceAt);
+        });
+        return true;
+      });
+      pi.setText2(null);
     }
 
   }
