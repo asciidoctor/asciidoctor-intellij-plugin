@@ -94,7 +94,7 @@ jobs:
 
       - name: Upload Qodana report as an artifact of the pipeline
         # users with access can then download the report as a ZIP file
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v3
         with:
           name: qodana-report
           path: ${{ github.workspace }}/qodana/report/
