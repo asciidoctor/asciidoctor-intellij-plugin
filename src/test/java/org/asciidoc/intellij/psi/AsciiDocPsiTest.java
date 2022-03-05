@@ -244,7 +244,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiFile psiFile = configureByAsciiDoc("image::test.png[]");
     AsciiDocBlockMacro macro = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlockMacro.class);
     assertNotNull(macro);
-    assertEquals("(image)", macro.getDescription());
+    assertEquals("image::test.png[]", macro.getDescription());
     assertEquals("image::test.png[]", macro.getFoldedSummary());
   }
 
@@ -258,12 +258,12 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "====\n");
     AsciiDocDescriptionItem descriptionItem = PsiTreeUtil.getChildOfType(PsiTreeUtil.getChildOfType(psiFile, AsciiDocList.class), AsciiDocDescriptionItem.class);
     assertNotNull(descriptionItem);
-    assertEquals("Test", descriptionItem.getDescription());
-    assertEquals("Test", descriptionItem.getFoldedSummary());
+    assertEquals("Test: Value", descriptionItem.getDescription());
+    assertEquals("Test: Value", descriptionItem.getFoldedSummary());
     AsciiDocBlock block = PsiTreeUtil.getChildOfType(descriptionItem, AsciiDocBlock.class);
     assertNotNull(block);
-    assertEquals("[NOTE]", block.getDescription());
-    assertEquals("[NOTE]", block.getFoldedSummary());
+    assertEquals("[NOTE] Note", block.getDescription());
+    assertEquals("[NOTE] Note", block.getFoldedSummary());
   }
 
   public void testDescriptionImageWithTitle() {
@@ -271,7 +271,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     AsciiDocBlockMacro macro = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlockMacro.class);
     assertNotNull(macro);
     assertEquals("Title", macro.getDescription());
-    assertEquals(".Title", macro.getFoldedSummary());
+    assertEquals("Title", macro.getFoldedSummary());
   }
 
   public void testDescriptionListingPlain() {

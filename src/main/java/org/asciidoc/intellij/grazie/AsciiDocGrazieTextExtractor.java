@@ -4,6 +4,7 @@ import com.intellij.grazie.text.TextContent;
 import com.intellij.grazie.text.TextContentBuilder;
 import com.intellij.grazie.text.TextExtractor;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
@@ -43,6 +44,30 @@ public class AsciiDocGrazieTextExtractor extends TextExtractor {
       return textContent;
     }
     return null;
+  }
+
+  public String summaryAsString(PsiElement root) {
+    TextContent textContent = TextContentBuilder.FromPsi
+      // use excluding here, otherwise the contents will not be recognized as another root element
+      .excluding(child -> {
+          AsciiDocLanguageSupport.Behavior elementBehavior = languageSupport.getElementBehavior(root, child);
+          return elementBehavior != AsciiDocLanguageSupport.Behavior.TEXT && elementBehavior != AsciiDocLanguageSupport.Behavior.UNKNOWN;
+        }
+      )
+      .build(root, getContextRootTextDomain(root));
+    if (textContent != null) {
+      List<TextContent.Exclusion> stealthyRanges = getStealthyRanges(root, textContent).stream()
+        .map(textRange -> new TextContent.Exclusion(textRange.getStartOffset(), textRange.getEndOffset(), false)).collect(Collectors.toList());
+      textContent = textContent.excludeRanges(stealthyRanges);
+    }
+    if (textContent != null) {
+      textContent = textContent.trimWhitespace();
+    }
+    if (textContent != null) {
+      return StringUtil.shortenTextWithEllipsis(textContent.toString().replaceAll("\n", " "), 50, 5);
+    } else {
+      return "???";
+    }
   }
 
   public TextContent.TextDomain getContextRootTextDomain(@NotNull PsiElement root) {

@@ -5,7 +5,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
-import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,19 +32,11 @@ public class AsciiDocDescriptionItem extends AsciiDocASTWrapperPsiElement implem
   @Override
   public String getFoldedSummary() {
     PsiElement child = getFirstSignificantChildForFolding();
+    StringBuilder sb = new StringBuilder();
     if (child instanceof AsciiDocBlockAttributes) {
-      return "[" + getStyle() + "]";
+      sb.append("[").append(getStyle()).append("] ");
     }
-    if (child != null) {
-      StringBuilder sb = new StringBuilder();
-      while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.DESCRIPTION_END) {
-        sb.append(child.getText());
-        child = child.getNextSibling();
-      }
-      return sb.toString();
-    } else {
-      return "???";
-    }
+    return sb.append(AsciiDocStandardBlock.EXTRACTOR.summaryAsString(this)).toString();
   }
 
   @Override

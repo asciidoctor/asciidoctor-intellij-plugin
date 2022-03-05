@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - update reference searches to give the write access priority to avoid blocking the EDT
 - avoid error messages for background processes when file has been concurrently deleted (#999)
+- better text summaries in structure view
 
 === 0.37.6
 

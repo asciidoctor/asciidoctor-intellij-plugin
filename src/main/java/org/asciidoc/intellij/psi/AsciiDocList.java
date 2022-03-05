@@ -39,8 +39,6 @@ public class AsciiDocList extends AsciiDocASTWrapperPsiElement implements AsciiD
     PsiElement child = getFirstSignificantChildForFolding();
     if (child instanceof AsciiDocBlockAttributes && getStyle() != null) {
       return "[" + getStyle() + "]";
-    } else if (child != null) {
-      return child.getText();
     } else {
       return "(List)";
     }

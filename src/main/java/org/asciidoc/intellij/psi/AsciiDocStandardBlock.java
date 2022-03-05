@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.TokenSet;
 import icons.AsciiDocIcons;
+import org.asciidoc.intellij.grazie.AsciiDocGrazieTextExtractor;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +20,8 @@ import javax.swing.*;
  * @author yole
  */
 public class AsciiDocStandardBlock extends AsciiDocASTWrapperPsiElement implements AsciiDocBlock {
+  protected static final AsciiDocGrazieTextExtractor EXTRACTOR = new AsciiDocGrazieTextExtractor();
+
   public AsciiDocStandardBlock(@NotNull ASTNode node) {
     super(node);
   }
@@ -43,21 +46,17 @@ public class AsciiDocStandardBlock extends AsciiDocASTWrapperPsiElement implemen
   @NotNull
   @Override
   public String getFoldedSummary() {
+    StringBuilder sb = new StringBuilder();
     PsiElement child = getFirstSignificantChildForFolding();
     if (child instanceof AsciiDocBlockAttributes) {
-      return "[" + getStyle() + "]";
-    } else if (child == null) {
-      return "???";
-    } else if (child instanceof AsciiDocBlock) {
-      return ((AsciiDocBlock) child).getFoldedSummary();
-    } else {
-      StringBuilder sb = new StringBuilder();
-      while (child != null && !child.getText().contains("\n")) {
-        sb.append(child.getText());
-        child = child.getNextSibling();
-      }
-      return sb.toString();
+      sb.append("[").append(getStyle()).append("] ");
     }
+    return sb.append(EXTRACTOR.summaryAsString(this)).toString();
+  }
+
+  @Override
+  public @NotNull String getDescription() {
+    return getFoldedSummary();
   }
 
   @Override

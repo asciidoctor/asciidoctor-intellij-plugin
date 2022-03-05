@@ -149,6 +149,12 @@ public class AsciiDocLanguageSupport {
     AsciiDocElementTypes.QUOTED // will nest MONO, ITALIC and others
   ), NODES_TO_CHECK);
 
+  // all tokens that contain text that is part of a sentence and can be a sub-node of the elements above
+  private static final TokenSet UNKNOWN_TOKENS = TokenSet.create(
+    AsciiDocTokenTypes.ATTRIBUTE_REF_START,
+    AsciiDocTokenTypes.ATTRIBUTE_REF,
+    AsciiDocTokenTypes.ATTRIBUTE_REF_END);
+
   public Behavior getElementBehavior(@NotNull PsiElement root, @NotNull PsiElement child) {
     if (root != child && NODES_TO_CHECK.contains(child.getNode().getElementType())) {
       return Behavior.ABSORB;
@@ -203,6 +209,8 @@ public class AsciiDocLanguageSupport {
       }
     } else if (TEXT_TOKENS.contains(child.getNode().getElementType())) {
       return Behavior.TEXT;
+    } else if (UNKNOWN_TOKENS.contains(child.getNode().getElementType())) {
+      return Behavior.UNKNOWN;
     } else {
       return Behavior.STEALTH;
     }
