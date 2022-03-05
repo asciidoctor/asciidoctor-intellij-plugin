@@ -726,6 +726,22 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testAdmonition() {
+    doTest("[NOTE]\n" +
+      "====\n" +
+      "TTT\n" +
+      "====",
+      "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('NOTE')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('====')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:TEXT ('TTT')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('====')");
+  }
+
   public void testNoBlockAttrs() {
     doTest("[nolink]:: Term",
       "AsciiDoc:LBRACKET ('[')\n" +
