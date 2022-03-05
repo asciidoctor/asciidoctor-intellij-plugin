@@ -1,0 +1,91 @@
+/* this is the CSS to be used when rendering a preview in the IDE */
+@import "preview.css";
+
+body {
+    background-color: #45494a;
+    /* was: #333 */
+    color: #bbbbbb
+}
+
+.doc {
+    /* was: #333 */
+    color: #bbbbbb
+}
+
+.doc a, .doc a:hover, .doc a:focus {
+    /* was: #1565c0 */
+    color: #589df6;
+}
+
+.doc h1, .doc h2, .doc h3, .doc h4, .doc h5, .doc h6 {
+    /* was: #191919 */
+    color: #cccccc;
+}
+
+.doc .exampleblock>.content, .doc details.result>.content {
+    /* was: #fff */
+    background: #404040;
+}
+
+.doc .sidebarblock {
+    /* was: #e1e1e1 */
+    background: #404040;
+}
+
+.doc .colist > table code, .doc p code, .doc thead code {
+    /* was: fafafa */
+    background: #404040;
+    /* was: #222; */
+    color: #bbbbbb;
+}
+
+.doc .admonitionblock td.icon {
+    filter: invert(90%) hue-rotate(180deg);
+}
+
+.doc .admonitionblock td.content {
+    background:#626262;
+}
+
+.doc .quoteblock, .doc .quoteblock .attribution, .doc .verseblock {
+    /* was: #5d5d5d */
+    color: #bbbbbb
+}
+
+.doc .admonitionblock .title, .doc .exampleblock .title, .doc .imageblock .title, .doc .listingblock .title, .doc .literalblock .title, .doc .openblock .title, .doc .tableblock caption, .doc .videoblock .title,
+.doc details.result > summary
+{
+    /* was: #5d5d5d */
+    color: #cccccc;
+}
+
+.doc kbd {
+    /* was: #fafafa */
+    background: #404040;
+    box-shadow: 0 1px 0 #999, inset 0 0 0 0.1em #505050;
+}
+
+.content > pre {
+    color: #333;
+    font-weight: 500;
+    filter: invert(90%) hue-rotate(180deg);
+}
+
+/* scroll bar color change to match the dark scheme */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+    background-color: inherit;
+}
+
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border: 2px solid #2c2c2c;
+    background-color: #404040;
+}
+
+::-webkit-scrollbar-track {
+    width: 12px;
+    height: 12px;
+    background-color: #2c2c2c;
+}

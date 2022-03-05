@@ -25,6 +25,13 @@ For example, `antora-playbook-author.yml` would be treated as an Antora playbook
 
 == Support provided by the plugin
 
+=== Antora stylesheet for the preview
+
+Once the plugin detects that a page is part of an Antora module, it uses the Antora CSS theme for the preview (starting with plugin version 0.37.7).
+The preview will be in light or dark mode as configured in the plugin's settings.
+
+To configure an individual stylesheet, see chapter xref::features/advanced/stylesheets.adoc[] for details.
+
 === Antora references support
 
 When using the Antora xref macro like `+xref:version@component:module:page.adoc[]+`, the plugin will resolve links to the specific version, component and module with in the current projects.

@@ -97,6 +97,7 @@ public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlP
   private JBCefJSQuery myRenderedIteration;
   private JBCefJSQuery myRenderedResult;
   private JBCefJSQuery myScrollEditorToLine;
+  private boolean isAntora;
 
   @Override
   public void printToPdf(String target, Consumer<Boolean> success) {
@@ -248,6 +249,8 @@ public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlP
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
         myInlineCssDarcula = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
       }
+      myAntoraCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("antora/preview.css") + "\">";
+      myAntoraDarculaCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("antora/preview-darcula.css") + "\">";
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
       myGoogleFontsCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/googlefonts.css") + "\">";
@@ -547,6 +550,10 @@ public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlP
   @Nullable
   private String myFontAwesomeCssLink;
   @Nullable
+  private String myAntoraCssLink;
+  @Nullable
+  private String myAntoraDarculaCssLink;
+  @Nullable
   private String myDejavuCssLink;
   @Nullable
   private String myGoogleFontsCssLink;
@@ -796,7 +803,11 @@ public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlP
       matcher.reset(html);
     }
 
-    html = AsciiDoc.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes, editor != null ? editor.getProject() : null);
+    if (isAntora) {
+      html = AsciiDoc.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, attributes, editor != null ? editor.getProject() : null);
+    } else {
+      html = AsciiDoc.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes, editor != null ? editor.getProject() : null);
+    }
 
     html = html.replaceAll("<head>", "<head>\n" +
       "<meta http-equiv=\"Content-Security-Policy\" content=\"" + PreviewStaticServer.createCSP(attributes) + "\">");
@@ -931,6 +942,12 @@ public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlP
 
   @Override
   public void setEditor(@NotNull Editor editor) {
+    if (editor.getProject() != null) {
+      if (AsciiDocUtil.findAntoraPagesDir(editor.getProject(), parentDirectory) != null) {
+        isAntora = true;
+      }
+    }
+
     this.editor = editor;
   }
 

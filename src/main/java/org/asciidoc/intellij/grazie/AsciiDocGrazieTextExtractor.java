@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,6 +67,9 @@ public class AsciiDocGrazieTextExtractor extends TextExtractor {
     if (textContent != null) {
       return StringUtil.shortenTextWithEllipsis(textContent.toString().replaceAll("\n", " "), 50, 5);
     } else {
+      if (root instanceof AsciiDocBlockMacro) {
+        return ((AsciiDocBlockMacro) root).getMacroName() + "::" + ((AsciiDocBlockMacro) root).getResolvedBody() + "[]";
+      }
       return "???";
     }
   }

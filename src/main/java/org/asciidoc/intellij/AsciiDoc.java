@@ -1326,8 +1326,8 @@ public class AsciiDoc {
         // a background color as a background color is necessary for OSR JCEF preview
         // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/954
         html = html
-          .replace("<head>", "<head>" + "<link rel='stylesheet' type='text/css' href='" + css + "' onload=\"document.head.getElementsByTagName('style')[1].remove()\" />" +
-            "<style>body { background-color: rgb(255, 255, 255); }</style><style>" + standardCss + " </style>");
+          .replace("<head>", "<head>" + "<link rel='stylesheet' type='text/css' href='" + css + "' onload=\"document.head.getElementsByTagName('link')[0].nextSibling.nextSibling.remove()\" />" +
+            "<style>body { background-color: rgb(255, 255, 255); }</style>" + standardCss);
       } else {
         // custom stylesheet set
         VirtualFile stylesdirVf = LocalFileSystem.getInstance().findFileByPath(attributes.get("docdir"));
@@ -1342,17 +1342,17 @@ public class AsciiDoc {
             }
           }
           if (stylesdirVf == null) {
-            css = "/* unable to find CSS at '" + stylesdir + "' */ </style>" + standardCss;
+            css = "/* unable to find CSS at '" + stylesdir + "' */" + standardCss;
           } else {
             VirtualFile stylesheetVf = stylesdirVf.findFileByRelativePath(stylesheet);
             if (stylesheetVf != null) {
               try (InputStream is = stylesheetVf.getInputStream()) {
                 css = IOUtils.toString(is, StandardCharsets.UTF_8);
               } catch (IOException ex) {
-                css = "/* unable to read CSS from " + stylesdirVf.getCanonicalPath() + ": " + ex.getMessage() + " */ </style>" + standardCss;
+                css = "/* unable to read CSS from " + stylesdirVf.getCanonicalPath() + ": " + ex.getMessage() + " */ " + standardCss;
               }
             } else {
-              css = "/* unable to find stylesheet '" + stylesheet + "' */ </style>" + standardCss;
+              css = "/* unable to find stylesheet '" + stylesheet + "' */ " + standardCss;
             }
           }
           // add a background color as a background color is necessary for OSR JCEF preview

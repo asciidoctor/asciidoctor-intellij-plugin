@@ -46,6 +46,10 @@ public class AsciiDocStandardBlock extends AsciiDocASTWrapperPsiElement implemen
   @NotNull
   @Override
   public String getFoldedSummary() {
+    String title = getTitle();
+    if (title != null) {
+      return title;
+    }
     StringBuilder sb = new StringBuilder();
     PsiElement child = getFirstSignificantChildForFolding();
     if (child instanceof AsciiDocBlockAttributes) {

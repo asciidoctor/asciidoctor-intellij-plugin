@@ -1,0 +1,13 @@
+/* this is the CSS to be used when rendering a preview in the IDE */
+@import "site.css";
+body {
+    padding-top: 0
+}
+
+/* reset some of the font-awesome-replacements that are part of the Antora standard CSS */
+.doc ul.checklist i.fa-check-square-o::before,
+.doc ul.checklist i.fa-square-o::before,
+.doc ul.checklist p > i.fa-check-square-o:first-child, .doc ul.checklist p > i.fa-square-o:first-child,
+.doc .menuseq i.caret::before {
+    font-family: inherit;
+}
