@@ -7,6 +7,12 @@ body {
     color: #bbbbbb
 }
 
+
+.doc .quoteblock, .doc .quoteblock .attribution, .doc .verseblock {
+    /* was: #333 */
+    color: #589df6;
+}
+
 .doc {
     /* was: #333 */
     color: #bbbbbb
@@ -48,6 +54,8 @@ body {
 }
 
 .doc .quoteblock, .doc .quoteblock .attribution, .doc .verseblock {
+    /* was: fafafa */
+    background: #404040;
     /* was: #5d5d5d */
     color: #bbbbbb
 }
