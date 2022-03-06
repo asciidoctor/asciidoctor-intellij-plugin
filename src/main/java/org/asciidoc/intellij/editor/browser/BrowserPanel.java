@@ -22,6 +22,7 @@ import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanel;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
 import org.asciidoc.intellij.file.AsciiDocFileType;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoctor.SafeMode;
 import org.jetbrains.annotations.NotNull;
@@ -85,6 +86,10 @@ public class BrowserPanel implements Disposable {
   @Nullable
   private String myFontAwesomeCssLink;
   @Nullable
+  private String myAntoraCssLink;
+  @Nullable
+  private String myAntoraDarculaCssLink;
+  @Nullable
   private String myDejavuCssLink;
   @Nullable
   private String myGoogleFontsCssLink;
@@ -121,6 +126,8 @@ public class BrowserPanel implements Disposable {
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
         myInlineCssDarcula = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
       }
+      myAntoraCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("antora/preview.css") + "\">";
+      myAntoraDarculaCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("antora/preview-darcula.css") + "\">";
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
       myGoogleFontsCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/googlefonts.css") + "\">";
@@ -176,7 +183,7 @@ public class BrowserPanel implements Disposable {
       base = "";
     }
     html = "<html><head></head><body><div id=\"header\"></div>" + html + "<div id=\"footer\"></div></body></html>";
-    html = prepareHtml(html, project, asciiDoc.getAttributes(), imagesPath);
+    html = prepareHtml(html, project, asciiDoc.getAttributes(), imagesPath, AsciiDocUtil.findAntoraModuleDir(project, file.getParent()) != null);
     return html;
   }
 
@@ -233,7 +240,7 @@ public class BrowserPanel implements Disposable {
   }
 
   @SuppressWarnings("checkstyle:MethodLength")
-  private String prepareHtml(@NotNull String html, Project project, Map<String, String> attributes, Path imagesPath) {
+  private String prepareHtml(@NotNull String html, Project project, Map<String, String> attributes, Path imagesPath, boolean isAntora) {
     // Antora plugin might resolve some absolute URLs, convert them to localfile so they get their MD5 that prevents caching
     Pattern pattern = Pattern.compile("<img src=\"file:///([^\"]*)\"");
     Matcher matcher = pattern.matcher(html);
@@ -384,7 +391,11 @@ public class BrowserPanel implements Disposable {
     }
 
     /* Add CSS line and JavaScript */
-    html = AsciiDoc.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDroidSansMonoCssLink + myDejavuCssLink, attributes, project);
+    if (isAntora) {
+      html = AsciiDoc.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, attributes, project);
+    } else {
+      html = AsciiDoc.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDroidSansMonoCssLink + myDejavuCssLink, attributes, project);
+    }
     html = html.replace("</body>", getScriptingLines() + "</body>");
     return html;
   }

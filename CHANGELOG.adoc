@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.8
+
+- include Antora default CSS for the browser preview (#997)
+
 === 0.37.7
 
 - update reference searches to give the write access priority to avoid blocking the EDT
