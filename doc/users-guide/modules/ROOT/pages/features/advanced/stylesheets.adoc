@@ -89,6 +89,8 @@ The following example uses a dark skin.
 :stylesheet: dark.css
 ----
 
+If the remote stylesheet is not available due to an unreachable server or a missing stylesheet, the preview will default to the standard stylesheet.
+
 === Add additional styles or HTML headers
 
 This adds additional styles and HTML headers in addition to the default stylesheet.

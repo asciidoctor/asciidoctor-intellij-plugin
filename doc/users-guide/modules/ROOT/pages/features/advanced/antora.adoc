@@ -30,7 +30,18 @@ For example, `antora-playbook-author.yml` would be treated as an Antora playbook
 Once the plugin detects that a page is part of an Antora module, it uses the Antora CSS theme for the preview (starting with plugin version 0.37.7).
 The preview will be in light or dark mode as configured in the plugin's settings.
 
-To configure an individual stylesheet, see chapter xref::features/advanced/stylesheets.adoc[] for details.
+To configure an individual stylesheet from a remote site, users should create an `.asciidoctorconfig` file like the following in the root or documentation folder of their project:
+
+[source,asciidoc]
+----
+:linkcss:
+:stylesdir: https://docs.mysite.com/_/css/
+:stylesheet: site.css
+----
+
+If the remote stylesheet is not available due to an unreachable server or a missing stylesheet, the preview will default to the standard stylesheet.
+
+For more information see chapter the xref::features/advanced/stylesheets.adoc[] for details.
 
 === Antora references support
 
