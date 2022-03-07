@@ -41,7 +41,7 @@ To configure an individual stylesheet from a remote site, users should create an
 
 If the remote stylesheet is not available due to an unreachable server or a missing stylesheet, the preview will default to the standard stylesheet.
 
-For more information see chapter the xref::features/advanced/stylesheets.adoc[] for details.
+For more information see the chapter xref::features/advanced/stylesheets.adoc[] for details.
 
 === Antora references support
 
