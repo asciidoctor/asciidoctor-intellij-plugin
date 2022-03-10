@@ -244,7 +244,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiFile psiFile = configureByAsciiDoc("image::test.png[]");
     AsciiDocBlockMacro macro = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlockMacro.class);
     assertNotNull(macro);
-    assertEquals("image::test.png[]", macro.getDescription());
+    assertNull(macro.getTitle());
     assertEquals("image::test.png[]", macro.getFoldedSummary());
   }
 
@@ -258,11 +258,9 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "====\n");
     AsciiDocDescriptionItem descriptionItem = PsiTreeUtil.getChildOfType(PsiTreeUtil.getChildOfType(psiFile, AsciiDocList.class), AsciiDocDescriptionItem.class);
     assertNotNull(descriptionItem);
-    assertEquals("Test: Value", descriptionItem.getDescription());
     assertEquals("Test: Value", descriptionItem.getFoldedSummary());
     AsciiDocBlock block = PsiTreeUtil.getChildOfType(descriptionItem, AsciiDocBlock.class);
     assertNotNull(block);
-    assertEquals("[NOTE] Note", block.getDescription());
     assertEquals("[NOTE] Note", block.getFoldedSummary());
   }
 
@@ -270,7 +268,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiFile psiFile = configureByAsciiDoc(".Title\nimage::test.adoc[]");
     AsciiDocBlockMacro macro = PsiTreeUtil.getChildOfType(psiFile, AsciiDocBlockMacro.class);
     assertNotNull(macro);
-    assertEquals("Title", macro.getDescription());
+    assertEquals("Title", macro.getTitle());
     assertEquals("Title", macro.getFoldedSummary());
   }
 
@@ -278,7 +276,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiFile psiFile = configureByAsciiDoc("----\nListing\n----\n");
     AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
     assertNotNull(listing);
-    assertEquals("(Listing)", listing.getDescription());
+    assertNull(listing.getTitle());
+    assertEquals("Listing", listing.getDefaultTitle());
     assertEquals("----", listing.getFoldedSummary());
   }
 
@@ -286,7 +285,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiFile psiFile = configureByAsciiDoc("[source]\n----\nListing\n----\n");
     AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
     assertNotNull(listing);
-    assertEquals("[source]", listing.getDescription());
+    assertNull(listing.getTitle());
+    assertEquals("Listing", listing.getDefaultTitle());
     assertEquals("[source]", listing.getFoldedSummary());
   }
 
@@ -294,7 +294,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiFile psiFile = configureByAsciiDoc(".Title\n[source]\n----\nListing\n----\n");
     AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
     assertNotNull(listing);
-    assertEquals("[source] Title", listing.getDescription());
+    assertEquals("Title", listing.getTitle());
     assertEquals(".Title", listing.getFoldedSummary());
   }
 
@@ -302,7 +302,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiFile psiFile = configureByAsciiDoc(".Title\n----\nListing\n----\n");
     AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
     assertNotNull(listing);
-    assertEquals("Title", listing.getDescription());
+    assertEquals("Title", listing.getTitle());
     assertEquals(".Title", listing.getFoldedSummary());
   }
 
@@ -310,7 +310,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiFile psiFile = configureByAsciiDoc("== Section Title");
     AsciiDocSectionImpl section = PsiTreeUtil.getChildOfType(psiFile, AsciiDocSectionImpl.class);
     assertNotNull(section);
-    assertEquals("Section Title", section.getDescription());
+    assertEquals("Section Title", section.getTitle());
     assertEquals("== Section Title", section.getFoldedSummary());
   }
 
@@ -318,7 +318,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiFile psiFile = configureByAsciiDoc("[[id]]\n== Section Title");
     AsciiDocSectionImpl section = PsiTreeUtil.getChildOfType(psiFile, AsciiDocSectionImpl.class);
     assertNotNull(section);
-    assertEquals("Section Title", section.getDescription());
+    assertEquals("Section Title", section.getTitle());
     assertEquals("== Section Title", section.getFoldedSummary());
     assertNotNull(section.getBlockId());
   }
@@ -327,7 +327,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiFile psiFile = configureByAsciiDoc("== Section Title [[id]]");
     AsciiDocSectionImpl section = PsiTreeUtil.getChildOfType(psiFile, AsciiDocSectionImpl.class);
     assertNotNull(section);
-    assertEquals("Section Title", section.getDescription());
+    assertEquals("Section Title", section.getTitle());
     assertEquals("== Section Title [[id]]", section.getFoldedSummary());
     assertNotNull(section.getBlockId());
   }

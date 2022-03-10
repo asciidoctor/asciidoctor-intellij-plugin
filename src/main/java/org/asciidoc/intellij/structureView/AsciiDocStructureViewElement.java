@@ -6,6 +6,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
+import org.asciidoc.intellij.psi.AbstractAsciiDocCodeBlock;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.asciidoc.intellij.psi.AsciiDocSelfDescribe;
@@ -104,8 +105,15 @@ public class AsciiDocStructureViewElement extends PsiTreeElementBase<PsiElement>
     if (element instanceof PsiFile) {
       return ((PsiFile) element).getName();
     }
+    if (element instanceof AbstractAsciiDocCodeBlock) {
+      String title = ((AbstractAsciiDocCodeBlock) element).getTitle();
+      if (title == null) {
+        title = "(" + ((AbstractAsciiDocCodeBlock) element).getDefaultTitle() + ")";
+      }
+      return title;
+    }
     if (element instanceof AsciiDocSelfDescribe) {
-      return ((AsciiDocSelfDescribe) element).getDescription();
+      return ((AsciiDocSelfDescribe) element).getFoldedSummary();
     }
     return "";
   }

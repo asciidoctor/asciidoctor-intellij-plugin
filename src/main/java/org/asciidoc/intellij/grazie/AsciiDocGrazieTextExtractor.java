@@ -47,6 +47,7 @@ public class AsciiDocGrazieTextExtractor extends TextExtractor {
     return null;
   }
 
+  @Nullable
   public String summaryAsString(PsiElement root) {
     TextContent textContent = TextContentBuilder.FromPsi
       // use excluding here, otherwise the contents will not be recognized as another root element
@@ -70,7 +71,7 @@ public class AsciiDocGrazieTextExtractor extends TextExtractor {
       if (root instanceof AsciiDocBlockMacro) {
         return ((AsciiDocBlockMacro) root).getMacroName() + "::" + ((AsciiDocBlockMacro) root).getResolvedBody() + "[]";
       }
-      return "???";
+      return null;
     }
   }
 

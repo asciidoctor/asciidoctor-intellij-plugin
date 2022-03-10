@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.37.8
 
 - include Antora default CSS for the browser preview (#997)
+- fix recursion problem with descriptions (#1003)
 
 === 0.37.7
 

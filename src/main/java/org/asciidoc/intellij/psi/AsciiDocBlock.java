@@ -2,13 +2,11 @@ package org.asciidoc.intellij.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.IndexNotReadyException;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.BLOCKID;
@@ -68,26 +66,6 @@ public interface AsciiDocBlock extends PsiElement, AsciiDocSelfDescribe {
       child = child.getNextSibling();
     }
     return child;
-  }
-
-  @NotNull
-  @Override
-  default String getDescription() {
-    String title = getTitle();
-    String style = getStyle();
-    if (title == null && style == null) {
-      title = getDefaultTitle();
-      if (StringUtil.isNotEmpty(title)) {
-        title = "(" + title + ")";
-      }
-    }
-    if (title == null) {
-      title = "";
-    }
-    if (style != null) {
-      return "[" + style + "]" + (title.isEmpty() ? "" : " ") + title;
-    }
-    return title;
   }
 
   default String getDefaultTitle() {

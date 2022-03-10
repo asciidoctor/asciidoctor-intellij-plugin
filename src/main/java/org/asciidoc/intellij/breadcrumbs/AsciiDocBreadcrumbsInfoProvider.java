@@ -5,6 +5,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.breadcrumbs.BreadcrumbsProvider;
 import org.asciidoc.intellij.AsciiDocLanguage;
+import org.asciidoc.intellij.psi.AbstractAsciiDocCodeBlock;
 import org.asciidoc.intellij.psi.AsciiDocBlock;
 import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.asciidoc.intellij.psi.AsciiDocSelfDescribe;
@@ -37,10 +38,17 @@ public class AsciiDocBreadcrumbsInfoProvider implements BreadcrumbsProvider {
   @Override
   public String getElementInfo(@NotNull PsiElement e) {
     String title = "";
-    if (e instanceof AsciiDocSelfDescribe) {
-      title = ((AsciiDocSelfDescribe) e).getDescription();
+    if (e instanceof AsciiDocSection) {
+      title = ((AsciiDocSection) e).getTitle();
+    } else if (e instanceof AbstractAsciiDocCodeBlock) {
+      title = ((AbstractAsciiDocCodeBlock) e).getTitle();
+      if (title == null) {
+        title = "(" + ((AbstractAsciiDocCodeBlock) e).getDefaultTitle() + ")";
+      }
+    } else if (e instanceof AsciiDocSelfDescribe) {
+      title = ((AsciiDocSelfDescribe) e).getFoldedSummary();
     }
-    return StringUtil.shortenTextWithEllipsis(title, 50, 5);
+    return StringUtil.shortenTextWithEllipsis(title, 30, 5);
   }
 
 }

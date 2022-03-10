@@ -52,41 +52,28 @@ public class AsciiDocStandardBlock extends AsciiDocASTWrapperPsiElement implemen
     }
     StringBuilder sb = new StringBuilder();
     PsiElement child = getFirstSignificantChildForFolding();
-    if (child instanceof AsciiDocBlockAttributes) {
+    if (child instanceof AsciiDocBlockAttributes && !StringUtil.isEmpty(getStyle())) {
       sb.append("[").append(getStyle()).append("] ");
     }
-    return sb.append(EXTRACTOR.summaryAsString(this)).toString();
-  }
-
-  @Override
-  public @NotNull String getDescription() {
-    return getFoldedSummary();
+    String summary = AsciiDocStandardBlock.EXTRACTOR.summaryAsString(this);
+    if (summary != null) {
+      sb.append(summary);
+    }
+    if (sb.length() == 0) {
+      sb.append("(").append(getDefaultTitle()).append(")");
+    }
+    return sb.toString();
   }
 
   @Override
   public @Nullable String getTitle() {
-    String title = AsciiDocBlock.super.getTitle();
-    if (title == null) {
-      PsiElement firstSignificantChild = getFirstSignificantChildForFolding();
-      if (firstSignificantChild == null) {
-        title = AsciiDocBlock.super.getDefaultTitle();
-      } else if (firstSignificantChild.getNode().getElementType() == AsciiDocTokenTypes.DESCRIPTION) {
-        title = getFoldedSummary();
-      } else if (firstSignificantChild.getNode().getElementType() == AsciiDocTokenTypes.ENUMERATION) {
-        title = getFoldedSummary();
-      } else if (firstSignificantChild.getNode().getElementType() == AsciiDocTokenTypes.BULLET) {
-        title = getFoldedSummary();
-      } else if (firstSignificantChild.getNode().getElementType() == AsciiDocTokenTypes.CALLOUT) {
-        title = getFoldedSummary();
-      }
-    }
-    return title;
+    return AsciiDocBlock.super.getTitle();
   }
 
   @Override
   public String getDefaultTitle() {
     ASTNode delimiter = getNode().findChildByType(TokenSet.create(AsciiDocTokenTypes.BLOCK_DELIMITER, AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER));
-    String title;
+    String title = null;
     if (delimiter != null) {
       String d = delimiter.getText();
       if (d.startsWith("|")) {
@@ -99,11 +86,10 @@ public class AsciiDocStandardBlock extends AsciiDocASTWrapperPsiElement implemen
         title = "Literal";
       } else if (d.startsWith("_")) {
         title = "Quote";
-      } else {
-        title = AsciiDocBlock.super.getDefaultTitle();
       }
-    } else {
-      title = StringUtil.shortenTextWithEllipsis(getFoldedSummary(), 50, 5);
+    }
+    if (title == null) {
+      title = AsciiDocBlock.super.getDefaultTitle();
     }
     return title;
   }

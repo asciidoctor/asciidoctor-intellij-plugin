@@ -28,6 +28,11 @@ public class AsciiDocListItem extends AsciiDocASTWrapperPsiElement implements As
     super.accept(visitor);
   }
 
+  @Override
+  public String getDefaultTitle() {
+    return "Item";
+  }
+
   @NotNull
   @Override
   public String getFoldedSummary() {
@@ -36,16 +41,19 @@ public class AsciiDocListItem extends AsciiDocASTWrapperPsiElement implements As
     if (child instanceof AsciiDocBlockAttributes) {
       sb.append("[").append(getStyle()).append("] ");
     }
-    return sb.append(AsciiDocStandardBlock.EXTRACTOR.summaryAsString(this)).toString();
+    String summary = AsciiDocStandardBlock.EXTRACTOR.summaryAsString(this);
+    if (summary != null) {
+      sb.append(summary);
+    }
+    if (sb.length() == 0) {
+      sb.append("(").append(getDefaultTitle()).append(")");
+    }
+    return sb.toString();
   }
 
   @Override
   public @Nullable String getTitle() {
-    String title = AsciiDocBlock.super.getTitle();
-    if (title == null) {
-      title = getFoldedSummary();
-    }
-    return title;
+    return AsciiDocBlock.super.getTitle();
   }
 
   @Override

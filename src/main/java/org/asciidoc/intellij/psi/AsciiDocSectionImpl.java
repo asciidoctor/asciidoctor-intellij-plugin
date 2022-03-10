@@ -252,12 +252,6 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
 
   @NotNull
   @Override
-  public String getDescription() {
-    return getTitle();
-  }
-
-  @NotNull
-  @Override
   public String getFoldedSummary() {
     AsciiDocHeading heading = findChildByClass(AsciiDocHeading.class);
     if (heading == null) {
