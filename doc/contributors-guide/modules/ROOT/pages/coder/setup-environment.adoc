@@ -10,8 +10,6 @@
 Starting with IntelliJ 2020.3 and plugin version 0.32.x, JDK 11 is required to build the plugin.
 https://blog.jetbrains.com/platform/2020/09/intellij-project-migrates-to-java-11/[See the JDK 11 announcement in the JetBrains blog for details].
 
-As the 0.32.x releases support also IntelliJ 2020.2.x, programming is restricted to use only Java 8 functionality, so that the plugin runs on both JDK 8 and JDK 11.
-
 JetBrains recommends https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html[Amazon Corretto JDK] for development, but other distributions based on OpenJDK should work as well.
 
 For the Gradle build tool to pick up the Java version, point the environment variable `JAVA_HOME` to the folder with the JDK:

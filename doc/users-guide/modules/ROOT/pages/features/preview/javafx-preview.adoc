@@ -27,7 +27,7 @@ include::partial$content-security-policy.adoc[]
 
 The JavaFX preview works on a 64bit JDK and needs JavaFX installed.
 Use the JDK provided by JetBrains for the best results, as it contains relevant bug fixes.
-Use the JetBrains OpenJDK version 11 whenever possible, as this contains additional bug fixes.
+Use JetBrains OpenJDK version 11 whenever possible, as this contains additional bug fixes.
 
 include::partial$javafx-preview-requires-plugin.adoc[]
 
@@ -46,7 +46,7 @@ include::partial$javafx-preview-requires-plugin.adoc[]
 
 == Known Problems with Non-JetBrains-JDKs
 
-* OpenJDK installations provided on Linux OS sometimes don't include JavaFX, therefore the JavaFX preview is not available.
+* OpenJDK provided on Linux OS sometimes don't include JavaFX, therefore, the JavaFX preview is not available.
 Please use the JetBrains JDK.
 
 * Oracle JDK JavaFX package on Windows is less stable compared to the OpenJDK provided by Jetbrains and might lead to a crashing IDE.

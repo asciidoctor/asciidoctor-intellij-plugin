@@ -1,10 +1,10 @@
 = Diagrams in the preview
-:description: The preview of the AsciiDoc plugin supports rendering the diagrams in the preview. It supports Asciidoctor Diagram and Kroki.
+:description: The preview of the AsciiDoc plugin supports rendering the diagrams in the preview. It supports both the Asciidoctor Diagram and the Kroki plugin.
 :uri-asciidoctor-diagrams-gh: https://github.com/asciidoctor/asciidoctor-diagram
 :uri-asciidoctor-diagrams-execs: {uri-asciidoctor-diagrams-gh}#specifying-diagram-generator-paths
 :uri-kroki: https://kroki.io
 
-// make preview work on non-Antora sites, for example GitHub
+// make preview work on non-Antora sites, for example, GitHub
 ifndef::env-site[]
 :imagesdir: ../../images
 endif::[]
@@ -18,7 +18,7 @@ Two different types of diagram renderer are supported: <<asciidoctor-diagram>> a
 By default, the plugin uses {uri-asciidoctor-diagrams-gh}[Asciidoctor Diagram]
 that depends on locally installed tools to generate images (i.e. {uri-asciidoctor-diagrams-execs}[executables] available in the `PATH` environment variable).
 
-Asciidoctor Diagram renders the content of the editor including all referenced includes, images and diagrams like PlantUML on the fly.
+Asciidoctor Diagram renders the content of the editor, including all referenced includes, images and diagrams like PlantUML on the fly.
 
 === Downloading Asciidoctor Diagram
 
@@ -32,7 +32,7 @@ include::partial$download-dependencies.adoc[]
 [[temp-folder-asciidoctor,Temporary folder _.asciidoctor_ appearing in several places]]
 === Temporary folder _.asciidoctor_ appearing in several places
 
-This is a folder that holds temporary files that are created for example for dynamic diagrams.
+This is a folder that holds temporary files that are created, for example, for dynamic diagrams.
 
 When running in Asciidoctor UNSAFE mode, the plugin creates a temporary folder outside the project.
 When running in any other mode, Asciidoctor needs to have this folder them relative to the document's folder.
@@ -68,7 +68,7 @@ When using the diagram option `inline`, users will need to set the attribute `al
 
 [WARNING]
 ====
-As Kroki will in inline-mode fetch the diagrams synchronously when preparing the preview, a slow or unavailable internet connection to the user's Kroki server can slow down or break the preview.
+As Kroki will in inline-mode fetch the diagrams synchronously while preparing the preview, a slow or unavailable internet connection to the user's Kroki server can slow down or break the preview.
 
 To avoid this, consider using `interactive` for Kroki diagrams as an alternative.
 See <<interative-vs-inlined>> and <<avoid-flicker>> for a discussion of tradeoffs.
@@ -106,7 +106,7 @@ When the user clicks on the note, the plugin resolves the link `class-demo.html`
 .Source code for diagram
 [source,asciidoc]
 -----
-// setting both opts and svg-type to make it work with both Kroki and Asciidoctor Diagram
+// setting both opts and svg-type to make it work with both the Kroki plugin and the Asciidoctor Diagram plugin
 [plantuml,demo,svg,opts="inline",svg-type="inline"]
 ----
 class Demo

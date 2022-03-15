@@ -82,14 +82,14 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 [width="75%",cols="4,3",grid="bot",options="header"]
 |===
 ^| Description ^| Shortcut
-| Go to declaration  +
+| Go to declaration +
 Works also for file and class names in italics or monospace | kbd:[Ctrl+B], kbd:[Ctrl+Click]
 | Go to class | kbd:[Ctrl+N]
 | Go to file | kbd:[Ctrl+Shift+N]
 | Go to symbol | kbd:[Ctrl+Alt+Shift+N]
 | Go to next/previous editor tab | kbd:[Alt+Right/Left]
-| Go back to previous tool window | kbd:[F12]
-| Go to editor (from tool window) | kbd:[Esc]
+| Go back to the previous tool window | kbd:[F12]
+| Go to editor (from the tool window) | kbd:[Esc]
 | Hide active or last active window | kbd:[Shift+Esc]
 | Go to line | kbd:[Ctrl+G]
 | Find in current file | kbd:[Ctrl+F]
@@ -186,8 +186,8 @@ Works also for file and class names in italics or monospace | kbd:[⌘+B], kbd:[
 | Go to file | kbd:[⌘+⇧+O]
 | Go to symbol | kbd:[⌘+⌥+O]
 | Go to next/previous editor tab | kbd:[^+Right/Left]
-| Go back to previous tool window | kbd:[F12]
-| Go to editor (from tool window) | kbd:[Esc]
+| Go back to the previous tool window | kbd:[F12]
+| Go to editor (from the tool window) | kbd:[Esc]
 | Hide active or last active window | kbd:[⇧+Esc]
 | Go to line | kbd:[⌘+L]
 | Find in current file | kbd:[⌘+F]

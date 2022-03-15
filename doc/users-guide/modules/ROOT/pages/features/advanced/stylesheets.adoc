@@ -51,7 +51,7 @@ body {
 [#remote-stylesheet]
 ==== Using a remote stylesheet
 
-NOTE: This is available from plugin version 0.31.31+.
+NOTE: This is available since plugin version 0.31.31+.
 
 Once the document or the configuration set the `linkcss` attribute, the preview will link to an external stylesheet and will no longer embed the stylesheet.
 

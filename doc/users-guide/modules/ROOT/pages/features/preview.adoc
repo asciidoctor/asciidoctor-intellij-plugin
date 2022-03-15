@@ -1,5 +1,5 @@
 = Features of the preview
-:description: Per default the preview is on the right side of a vertical split screen and shows the rendered contents of the editor.
+:description: Per default, the preview is on the right side of a vertical split screen and shows the rendered contents of the editor.
 :navtitle: Preview
 
 == Overview
@@ -9,7 +9,7 @@ Using the configuration, the user can change the split to horizontal, and change
 
 The plugin uses https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] 2.x to render the preview.
 
-By default, the plugin runs Asciidoctor in safe mode _UNSAFE_ which is also the default when a user runs Asciidoctor from the command line.
+By default, the plugin runs Asciidoctor in mode _UNSAFE_, which is also the default when a user runs Asciidoctor from the command line.
 The user can change the behavior to other modes like _SAVE_, _SERVER_ and _SECURE_ in the plugin's settings.
 See section https://asciidoctor.org/docs/user-manual/#running-asciidoctor-securely[Running Asciidoctor securely in the Asciidoctor User Manual] for more information about this feature.
 

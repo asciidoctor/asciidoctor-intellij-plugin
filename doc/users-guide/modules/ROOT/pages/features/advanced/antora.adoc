@@ -87,11 +87,11 @@ If the playbook and the components are in different Git repositories, this requi
 
 The plugin sets multiple attributes to allow referencing files with the current Antora module:
 
-imagesdir:: pointing to `images` of the current module (or `assets/images`, the Antora pre-2.1 style, if that folder exists)
+imagesdir:: pointing to `images` of the current module (or `assets/images`, the Antora pre-2.1 style if that folder exists)
 
-partialsdir:: pointing to `partials` of the current module (or `pages/_partials`, the Antora pre-1.1 style, if that folder exists)
+partialsdir:: pointing to `partials` of the current module (or `pages/_partials`, the Antora pre-1.1 style if that folder exists)
 
-attachmentsdir:: pointing to `attachments` of the current module (or `assets/attachments`, the Antora pre-2.1 style, if that folder exists)
+attachmentsdir:: pointing to `attachments` of the current module (or `assets/attachments`, the Antora pre-2.1 style if that folder exists)
 
 examplesdir:: pointing to `examples` of the current module
 

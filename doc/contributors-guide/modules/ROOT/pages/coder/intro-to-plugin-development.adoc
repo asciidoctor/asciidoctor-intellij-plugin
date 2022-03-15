@@ -6,7 +6,7 @@
 
 == Getting into development
 
-To get into development of IntelliJ plugins, there is a http://www.jetbrains.org/intellij/sdk/docs/[IntelliJ SDK guide].
+To get into the development of IntelliJ plugins, there is an http://www.jetbrains.org/intellij/sdk/docs/[IntelliJ SDK guide].
 It walks the developer through several stages of developing a custom language plugin.
 There is a chat on Slack that might give short answers to short questions to plugin developers: https://plugins.jetbrains.com/slack
 

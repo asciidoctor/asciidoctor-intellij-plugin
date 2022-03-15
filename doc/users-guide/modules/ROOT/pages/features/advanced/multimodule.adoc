@@ -18,7 +18,7 @@ Supported as of 0.34.2 of the plugin: In another situation a playbook might be i
 
 Create a project with multiple modules in your IDE.
 Each module will be backed by its own Git repository.
-Despite multiple Git repositories the IDE will show it as one project with multiple modules.
+Despite multiple Git repositories, the IDE will show it as one project with multiple modules.
 
 == Tradeoffs
 
@@ -27,7 +27,7 @@ Depending on the user's needs, this might be helpful in the long term and confus
 
 To help with multiple Git repositories,
 
-* the Git tool window allows to filter the view via the _Paths_ dropdown, and
+* the Git tool window allows filtering the view via the _Paths_ dropdown, and
 * color coding for the Git history indicates which repository a commit belongs to.
 
 == Setup

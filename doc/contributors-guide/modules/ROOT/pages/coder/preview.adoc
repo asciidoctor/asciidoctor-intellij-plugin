@@ -9,7 +9,7 @@
 The central class and method to create AsciiDoc from HTML is `AsciiDoc.render()`.
 It is implemented as a singleton.
 
-It registers custom Asciidoctor extensions that are needed for improve the preview.
+It registers custom Asciidoctor extensions that are needed to improve the preview.
 It also enables custom extensions in the `.asciidoctorconfig` folder.
 
 == Displaying the HTML as a preview
@@ -22,12 +22,13 @@ There are three different preview implementations:
 
 The Swing preview will run on all JDKs and environments.
 It has very limited functionality as it doesn't support JavaScript.
-Its capabilities to display HTML and CSS are limited, therefore the preview is no up-to-standards anymore.
+Its capabilities to display HTML and CSS are limited.
+Therefore, the preview is not up-to-standards anymore.
 
 The JavaFX preview is the current default preview.
 It is available when the user is running 64bit JDK with JavaFX (the default JDK for JetBrains IDE).
 Starting with release 2020.2 JetBrains doesn't ship JavaFX prebundled.
-User can install the https://plugins.jetbrains.com/plugin/14250-javafx-runtime-for-plugins[JavaFX for plugins^] on 64bit JREs to re-enable the JavaFX preview.
+Users can install the https://plugins.jetbrains.com/plugin/14250-javafx-runtime-for-plugins[JavaFX for plugins^] on 64bit JREs to re-enable the JavaFX preview.
 
 The JCEF preview is available from IntelliJ 2020.2 onwards when running the IDE with JetBrains Runtime.
 

@@ -66,16 +66,16 @@ A syntax highlighter based on JavaScript.
 The plugin supports also _highlightjs_ as an alias for the name of the source highlighter.
 See https://highlightjs.org/[highlight.js source highlighter] for more information.
 +
-Support for this highlighter is available from plugin version 0.32.50, earlier versions include only partial support.
+Support for this highlighter is available since plugin version 0.32.50, earlier versions include only partial support.
 The plugin pre-bundles the common languages as listed on https://highlightjs.org/download/[highlight.js' download page] plus AsciiDoc.
 +
 The plugin supports the attributes _highlightjsdir_, _highlightjs-theme_ and _highlightjs-languages_.
 Attributes _highlightjs-theme_ and _highlightjs-languages_ are only supported when a _highlightjsdir_ has been specified, and the necessary files are available.
 +
-Valid values for the attribute _highlightjsdir_ are
+Valid values for the attribute _highlightjsdir_ are:
 +
 --
-* a URL starting with either _http://_ or _https://_,
+* A URL starting with either _http://_ or _https://_,
 * a local directory with an absolute path within the current project, or
 * a relative directory from the project's root folder.
 --
@@ -96,16 +96,16 @@ An example configuration for a local configuration could look like this: +
 20 GOTO 10
 ----
 -----
-<.> If the user specifies the attribute _highlightjsdir_, they *must* place the JavaScript bundle and a theme in current project.
+<.> If the user specifies the attribute _highlightjsdir_, they *must* place the JavaScript bundle and a theme in the current project.
 For this example, the JavaScript bundle must be named _/hljs/highlight.min.js_.
-See next item for the theme.
+See the next item for the theme.
 <.> If the user specifies a _highlightjsdir_, they can override the highlighting theme using _highlightjs-theme_.
 A CSS file matching the selected theme must be placed in the current project.
-If a user does not specify _highlightjs-theme_ the default is _github_ and the user must place the CSS file for the _github_ theme in the styles folder.
+If a user does not specify _highlightjs-theme_, the default is _github_ and the user must place the CSS file for the _github_ theme in the _styles_ folder.
 For this example, it must be named _/hljs/styles/default.min.css_.
 <.> If the user specifies a _highlightjsdir_, the user can specify additional languages for highlighting using _highlightjs-languages_.
 This requires a file for each language defined here.
-For this example, the user must place _/hljs/languages/basic.min.js_ in current project.
+For this example, the user must place _/hljs/languages/basic.min.js_ in the current project.
 
 Users can change the default code highlighter:
 

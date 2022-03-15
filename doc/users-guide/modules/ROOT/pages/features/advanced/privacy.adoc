@@ -1,6 +1,6 @@
 = Privacy when using this plugin
 :navtitle: Privacy
-:description: All content you edit locally is rendered locally. Some exceptions apply.
+:description: All the content a user edits locally is rendered locally. Some exceptions apply.
 
 {description}
 
@@ -32,11 +32,11 @@ The following list is probably incomplete, but should cover the major points:
 The same applies if they choose to include a remote style sheet for the preview.
 I'm not a lawyer, but usually people consider IP addresses as personal information in the EU.
 
-* If the user chooses to use Kroki diagram preview instead of Asciidoctor Diagram, the contents of the diagrams will be transmitted to a Kroki server and rendered there.
+* If the user chooses to use the Kroki diagram preview instead of Asciidoctor Diagram, the contents of the diagrams will be transmitted to a Kroki server and rendered there.
 They can choose to host their own Kroki server.
 
 * In general, users should only edit trusted content in their IDE.
-If they choose to check out and open an untrusted project, the code of that project might contain malicious snippets as part the AsciiDoc content and other scripts.
+If they choose to check out and open an untrusted project, the code of that project might contain malicious snippets as part of the AsciiDoc content and other scripts.
 These can violate the user's privacy and can compromise their machine.
 
 * When the user accesses the plugin's user's guide on the web, the web hoster will receive the user's router's IP address and browser details and will store it for up to 30 days.

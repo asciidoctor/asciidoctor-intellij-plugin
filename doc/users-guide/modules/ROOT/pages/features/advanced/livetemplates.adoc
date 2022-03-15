@@ -6,7 +6,7 @@
 == Basic Functionality
 
 Once the user types kbd:[a]kbd:[d], a list of templates appears.
-Continued typing of any character of the template name restricts the list.
+Continue typing characters to restrict the list of the template names.
 A kbd:[Tab] expands the current entry.
 
 Users can add their own live templates to avoid repetitive typing and to ensure consistency.
@@ -15,16 +15,16 @@ Go to menu:File[Settings... > Editor > Live Templates > AsciiDoc] for this confi
 [#ad-tag-include]
 == Special template _ad-tag-include_
 
-=== How the snippet tag include template work
+=== How the snippet tag include template works
 
 All live templates of this plugin except one will only be available when editing AsciiDoc content. +
 One live template is special: **_ad-tag-include_**
 
 This template adds comments with the tag-syntax to your source file that mark snippets to be extracted by AsciiDoc include preprocessor macros later.
-Read more in the Asciidoctor user manual about it in the section https://asciidoctor.org/docs/user-manual/#include-partial[_Select Portions of a Document to Include_].
+Read more in the Asciidoctor user manual in section https://asciidoctor.org/docs/user-manual/#include-partial[_Select Portions of a Document to Include_].
 
 [%collapsible]
-.Example on how snippets work
+.Example showing how snippets work
 ====
 
 Given the following text file...
@@ -65,7 +65,7 @@ This live template works in two ways:
 
 Create an empty snippet:: Type _ad-tag-include_ when no text is selected.
 +
-This creates an empty snippets with tag boundaries.
+This creates empty snippets with tag boundaries.
 The plugin places the cursor at the tag name.
 Once the user has changed the tag name and pressed kbd:[Enter], the plugin places the cursor within the snippet, and the user can start typing the snippet's text.
 

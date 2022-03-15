@@ -9,7 +9,7 @@
 This plugin is built using Gradle.
 As this project includes the Gradle wrapper, developers don't need to install Gradle.
 They need to install Java and make it available in the path or set environment variable _JAVA_HOME_ the folder where they installed it.
-When building or running for the first time, the build script downloads the community edition of IntelliJ automatically.
+When building or running for the first time, the build-script downloads the community edition of IntelliJ automatically.
 
 To build this plugin, run:
 

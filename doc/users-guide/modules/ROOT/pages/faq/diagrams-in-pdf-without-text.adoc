@@ -30,7 +30,7 @@ There are several alternatives to fix this:
 When using PNG, unsupported SVG attributes will not cause problems.
 The tradeoff is usually a larger PDF and a rastered image.
 Rastered images will not scale and print as good as SVGs.
-Some diagram types (like Mermaid) don't support PNG when used for example with the Kroki-integration.
+Some diagram types (like Mermaid) don't support PNG when used, for example, with the Kroki-integration.
 
 See xref:features/preview/diagrams.adoc#kroki[Diagrams with Kroki] for more information.
 
@@ -39,7 +39,7 @@ See xref:features/preview/diagrams.adoc#kroki[Diagrams with Kroki] for more info
 
 There is an experimental feature to render the preview as PDF.
 This feature is work-in-progress, and lacks features like page numbers and a table of contents.
-See https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/592[issue #592] for the progress.
+See https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/592[issue #592] for progress.
 
 The xref:features/preview/jcef-preview.adoc[] needs to be enabled to use this.
 As this is work-in-progress and experimental, it is behind a feature flag.
@@ -55,4 +55,4 @@ When <<use-web-pdf,the plugin's Web-PDF rendering>> isn't enough, and installing
 
 This requires a local Node installation plus working with package.json and NPM.
 The result will be command line interface to render AsciiDoc to PDF using an embedded web browser.
-While it is still in alpha, it supports already lots PDF features like page numbers and a table of contents.
+While it is still in alpha, it supports lots PDF features like page numbers and a table of contents.

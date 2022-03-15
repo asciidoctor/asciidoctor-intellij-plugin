@@ -136,7 +136,7 @@ In the editor, the user can select from a list of browsers that are shown in the
 The user can also trigger this action from the context menu.
 To update the preview in the browser, the user needs to refresh the contents by pressing kbd:[F5] in the browser.
 
-The user can open an AsciiDoc file in an external tool (like for example Google Chrome with the https://github.com/asciidoctor/asciidoctor-browser-extension[Asciidoctor Extension] installed).
+The user can open an AsciiDoc file in an external tool (like for example, Google Chrome with the https://github.com/asciidoctor/asciidoctor-browser-extension[Asciidoctor Extension] installed).
 To do this, add Chrome as an https://www.jetbrains.com/help/idea/settings-tools-external-tools.html[external Tool in the settings].
 Provide `$FilePath$` as the argument so that Chrome knows where to find the file.
 The user can assign a shortcut to the external tool using menu:Help[Find action... > (type the name of external tool) > kbd:[Alt+Enter] > (type the shortcut of choice) > OK].

@@ -98,7 +98,7 @@ You find more documentation reading the chapter https://github.com/asciidoctor/a
 
 There is https://github.com/diguage/jdk-source-analysis[@diguage's "`JDK source code analysis`" document] available.
 It contains AsciiDoc in Chinese plus a working setup for an _.asciidoctorconfig_ file.
-As fonts the author chosen Source Han Serif and converted them to TTF.
+As fonts, the author has chosen Source Han Serif and converted them to TTF.
 You'll need to download the fonts in _cfg/fonts_ first to make it work.
 
 image::pdf-with-chinese-characters-preview.png[]

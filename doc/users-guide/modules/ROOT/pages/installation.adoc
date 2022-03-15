@@ -1,7 +1,7 @@
 = Plugin installation
 :description: List of prerequisites and a step-by-step guide to install the plugin.
 
-// make preview work on non-Antora sites, for example GitHub
+// make preview work on non-Antora sites, for example, GitHub
 ifndef::env-site[]
 :imagesdir: ../images
 endif::[]
@@ -47,14 +47,14 @@ If you use MPS, go ahead and <<installplugin,install the plugin>>.
 
 Support will be limited as MPS doesn't have all the APIs the plugin can hook into.
 Have a look at xref:faq/troubleshooting-mps.adoc[].
-Please open an issue on GitHub if you want to contribute to make MPS support better.
+Please open an issue on GitHub if you want to contribute to making MPS support better.
 
 === More information on JDKs
 
 To use the JavaFX preview instead of the Swing preview, you'll need to run IntelliJ with 64bit Java and JavaFX installed.
 Starting with IntelliJ 2020.3, the JetBrains platform requires JDK 11 to run.
 Oracle JDK installations include JavaFX, but can make the IDE unstable and crash.
-OpenJDK included with for example a Linux distribution usually don't include JavaFX.
+OpenJDK included in a Linux distribution usually doesn't include JavaFX.
 
 The event more advanced JCEF preview will only work with JetBrains OpenJDK runtime.
 
@@ -65,7 +65,7 @@ Read more about choosing the JDK version of the IDE in the JetBrains knowledge b
 [#installplugin]
 == Installing the plugin
 
-To activate the support for AsciiDoc in the IDE the plugin you must install the plugin.
+To activate the support for AsciiDoc in the IDE the plugin, you must install the plugin.
 There are several possibilities to install the plugin:
 
 Installing from JetBrains marketplace with an Internet Connection:
@@ -84,7 +84,7 @@ The IDE can prompt you to install the plugin:
 
 [start=3]
 . via an editor notification when opening an AsciiDoc file
-. via an event in the event log when opening a project that requires lists the AsciiDoc plugin as a dependency
+. via an event in the event-log when opening a project that requires lists the AsciiDoc plugin as a dependency
 ////
 
 [#marketplace-via-settings]
@@ -113,7 +113,7 @@ include::partial$installation-complete.adoc[]
 
 Prerequisite::
 This requires a working internet connection when downloading the file with a browser.
-If the machine where the plugin should be installed doesn't have a direct internet access, download it on a different machine with Internet access and transfer the file internally via file transfer.
+If the machine where the plugin should be installed doesn't have direct internet access, download it on a different machine with Internet access and transfer the file internally via file transfer.
 
 Steps::
 +

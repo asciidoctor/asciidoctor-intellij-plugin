@@ -22,7 +22,7 @@ The plugin will search the directory _.asciidoctor/lib_ in the root of the proje
 
 AsciidoctorJ extensions must use the https://docs.asciidoctor.org/asciidoctorj/latest/extensions/register-extensions-automatically/[service loader mechanism of AsciidoctorJ] to register themselves.
 
-If a user doesn't want to store ruby or JAR files in their code repository, a user may choose to add a download or build script that populates this folder.
+If a user doesn't want to store ruby or JAR files in their code repository, a user may choose to add a download or build-script that populates this folder.
 Using a configuration file like `.gitignore` can ensure that the script is checked in to the repository, while the downloaded files are not checked in.
 
 == Behavior

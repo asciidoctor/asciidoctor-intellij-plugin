@@ -1,7 +1,7 @@
 = Quick Start
 :description: A minimal installation guide for those already familiar with their JetBrains IntelliJ based IDE.
 
-// make preview work on non-Antora sites, for example GitHub
+// make preview work on non-Antora sites, for example, GitHub
 ifndef::env-site[]
 :imagesdir: ../images
 endif::[]

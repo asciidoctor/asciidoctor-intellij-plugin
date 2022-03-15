@@ -17,7 +17,7 @@ See xref:features/advanced/livetemplates.adoc#ad-tag-include[Special template _a
 
 === There is an _.asciidoctor_ folder appearing all over my project. Why?
 
-This is a folder that holds temporary files that are created for example for dynamic diagrams when running in any other mode than UNSAFE.
+This is a folder that holds temporary files that are created for dynamic diagrams when running in any other mode than UNSAFE.
 
 Read more in xref:features/preview/diagrams.adoc#temp-folder-asciidoctor[Temporary folder _.asciidoctor_ appearing in several places].
 
@@ -25,7 +25,7 @@ Read more in xref:features/preview/diagrams.adoc#temp-folder-asciidoctor[Tempora
 
 === Updating the plugin via JetBrains Marketplace not working
 
-Due to an error of the currently installed plugin version the upgrade and download from the Marketplace might fail.
+Due to an error of the currently installed plugin version, the upgrade and download from the Marketplace might fail.
 
 As a remedy, download the file from the Marketplace manually and install it xref::installation.adoc#download-install-from-disk[as described in the installation chapter].
 
@@ -46,7 +46,7 @@ See xref:recommended-settings.adoc#configuring-editor[section "`Configuring edit
 
 === I'm editing a file that shows validation errors
 
-The editor shows several validation warnings and errors, for example for cross-references.
+The editor shows several validation warnings and errors, for example, for cross-references.
 This works the best if the IDE opens all files that belong together as a project.
 
 See xref:faq/validation-for-asciidoc-files.adoc[] for details.
@@ -87,7 +87,7 @@ See chapters '`xref:features/preview/jcef-preview.adoc[]`' and '`xref:features/p
 === Could not find the 'dot' (or other) executable. How to fix it?
 
 Some diagram types need helper applications installed locally.
-Another alternative is to use a cloud based renderer like Kroki.
+Another alternative is to use a cloud-based renderer like Kroki.
 
 See xref:faq/could-not-find-dot-executable.adoc[] for more information.
 
@@ -95,12 +95,12 @@ See xref:faq/could-not-find-dot-executable.adoc[] for more information.
 
 === Creating a PDF with Kroki enabled shows URLs instead of diagrams
 
-In order for Kroki to embed diagrams in the PDF, the attribute _allow-uri-read_ needs to be set in the plugin's configuration.
+In order for Kroki to embed diagrams in the PDF, the attribute `allow-uri-read` needs to be set in the plugin's configuration.
 This allows Asciidoctor to retrieve the diagram and embed it in the PDF.
 
 === Diagrams embedded in PDFs don't show arrows or text properly
 
-Some SVG diagrams embed HTML to show text or arrows, for example Mermaid or Diagrams.net.
+Some SVG diagrams embed HTML to show text or arrows, for example, Mermaid or Diagrams.net.
 This is not supported by Asciidoctor PDF.
 
 See xref:faq/diagrams-in-pdf-without-text.adoc[] for more details.
@@ -118,4 +118,4 @@ Please open an issue in the https://github.com/asciidoctor/asciidoctor-intellij-
 Please consider adding a rating for the plugin in the https://plugins.jetbrains.com/plugin/7391-asciidoc[JetBrains Marketplace].
 
 This plugin is based on Asciidoctor and a lot of ideas from its community.
-To support Asciidoctor, please consider contribute funds via https://opencollective.com/asciidoctor[Open Collective].
+To support Asciidoctor, please consider contributing funds via https://opencollective.com/asciidoctor[Open Collective].

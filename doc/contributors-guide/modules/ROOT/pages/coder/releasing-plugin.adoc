@@ -6,8 +6,8 @@
 
 . Update _CHANGELOG.adoc_ with the latest changes for the release.
 The first section heading after the heading "`Release Notes`" will be the version number of the release.
-. Push all changes to GitHub and wait for the build to complete. +
-GitHub actions creates https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases[a draft release].
+. Push all changes to GitHub and wait for the build-process to complete. +
+GitHub actions create https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases[a draft release].
 The plugin is attached as `asciidoctor-intellij-plugin-xx.xx.xx.zip`.
 You can download this file and install manually in your local IDE as described in xref:user/installing-a-preview-release.adoc[].
 . Edit the draft release.
@@ -25,8 +25,8 @@ See _xref::user/add-eap-repository-to-ide.adoc[]_ for more information.
 . Go to https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases[GitHub releases for this plugin]
 . Edit the pre-release and un-check the checkbox "`This is a pre-release`". +
 A GitHub action will then publish the release.
-You don't need to wait for the publish process of the preview version to complete to be able to trigger publishing a stable version.
-. Due to caching in the JetBrains marketplace and the IDE it might take some time (minutes to hours) for the IDE to pick up the new version.
+You don't need to wait for the publishing process of the preview version to complete to be able to trigger publishing a stable version.
+. Due to caching in the JetBrains marketplace and the IDE, it might take some time (minutes to hours) for the IDE to pick up the new version.
 
 [NOTE]
 ====

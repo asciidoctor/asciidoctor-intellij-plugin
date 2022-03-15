@@ -7,7 +7,7 @@
 
 For small changes, writers can use your web browser and the web-based text editor of GitHub.
 
-The preview of GitHub doesn't take into account the Antora macros, therefore consider using the IntelliJ AsciiDoc plugin for changes.
+The preview of GitHub doesn't take into account the Antora macros, therefore, consider using the IntelliJ AsciiDoc plugin for changes.
 
 == How-to edit content using just a web browser
 

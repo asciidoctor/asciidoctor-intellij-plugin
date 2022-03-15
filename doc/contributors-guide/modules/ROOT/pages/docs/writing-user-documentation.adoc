@@ -40,15 +40,15 @@ These conventions help writers find their way when they browse the documentation
 Writers can use the reformat functionality of the plugin using the shortcut kbd:[Ctrl+Alt+L] to apply these conventions.
 
 Each sentence should be on its own line in the AsciiDoc source::
-This is a recommended best practice as it prevents reflows due to reformatting and enables writers to move sentences and re-arrange paragraphs with less effort.
+This is the recommended best practice as it prevents re-flows due to reformatting and enables writers to move sentences and re-arrange paragraphs with less effort.
 This practice works best when writers enable word-wrap in their editor.
-Read more https://asciidoctor.org/docs/asciidoc-recommended-practices/[this and other best practices on the Asciidoctor homepage].
+Read more about https://asciidoctor.org/docs/asciidoc-recommended-practices/[this and other recommended practices on the Asciidoctor homepage].
 
 Keep blank lines after section headings::
-This makes easier for writers navigate browse through the code of the page.
+This makes it easier for writers navigate through the code of the page.
 
 == Location of content
 
-All user documentation is published on the plugin's website at https://intellij-asciidoc-plugin.ahus1.de/
+The user documentation is published on the plugin's website at https://intellij-asciidoc-plugin.ahus1.de/
 
 The sources of the documentation reside in the Git repository https://github.com/asciidoctor/asciidoctor-intellij-plugin in the folder _doc/user-guide_.

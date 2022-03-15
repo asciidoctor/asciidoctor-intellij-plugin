@@ -23,7 +23,7 @@ Actually, this will happen for any JavaFX based preview, including the IntelliJ 
 The JetBrains Runtime based on OpenJDK 8 (aka JBR8) doesn't include jre64/lib/amd64/libglassgtk3.so that is needed to run JavaFX in GTK3 environments.
 
 Upon the first initialization of JavaFX it will become stuck.
-Newer versions oft the plugin identify this situation and instead of hanging up the IDE will present a warning message.
+Newer versions of the plugin identify this situation and instead of hanging up the IDE will present a warning message.
 
 === Remedy
 

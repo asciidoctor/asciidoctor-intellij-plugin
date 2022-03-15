@@ -66,7 +66,7 @@ End of line and end of file parsing::
 JFlex supports `$` to describe the end of a line as look-ahead.
 But this doesn't work at the end of a file.
 To match the end of a file, the lexer uses the fact that JFlex will match the longest rule first (including any look-ahead rules).
-So first match the end of a line, then when not at the end of a line (of the same length), and then the end of the file (the shortest rule).
+So first match the end of a line, then when not at the end of a line with the same length, and then the end of the file (the shortest rule).
 
 .Example: matching a delimiter at the end of the file
 [source]
@@ -86,7 +86,7 @@ Stateful parser::
 +
 --
 To parse bold, italic and monospace text (that can be nested) there is a set of boolean variables to memorize the current text style.
-They are reset at the end of a block (like in regular Asciidoctor).
+They are reset at the end of a block, like in a regular AsciiDoc file.
 The function `textFormat()` uses them to determine the current token type from a combination of these flags.
 
 Other states memorize the length of block separator line to find the matching closing separator.
@@ -98,7 +98,8 @@ Qualifying matches, push back and state change::
 After a match the Java code checks additional conditions like if this is an unconstrained position in the stream.
 If the code decides to discard the match, two possible strategies out of several are:
 
-. Push back all but the first character, and return the token type for the single character (for example when a double-asterisk occurs, but no bold text is to end here, see `\{DOUBLEMONO}` in the lexer).
+. Push back all but the first character, and return the token type for the single character.
+As an example, when a double-asterisk occurs, but no bold text is to end here, see `\{DOUBLEMONO}` in the lexer.
 
 . Push back the complete text and continue with a different state using `yybegin()` (for example when matching a `\{HEADING_OLDSTYLE}` in the `MULTILINE` state).
 
@@ -106,7 +107,7 @@ If the code decides to discard the match, two possible strategies out of several
 Use `isEscaped()` to check if it has been escaped.
 
 Unfortunately, the parser can't continue with other matches in the same state.
-To work around this issue blocks are parsed first in state `MULTILINE`, then in state `SINGLELINE`, and finally `INSIDE_LINE` to implement a hierarchy and some ordering of matches.
+To work around this issue, blocks are parsed first in state `MULTILINE`, then in state `SINGLELINE`, and finally `INSIDE_LINE` to implement a hierarchy and some ordering of matches.
 --
 
 Auto-completion::
@@ -141,7 +142,7 @@ Once you add a new `TextAttributesKey`, you should either:
 . reference an existing color (like `ASCIIDOC_COMMENT` references `DefaultLanguageHighlighterColors.LINE_COMMENT`) OR
 . add a color the AsciiDoc themes `AsciidocDefault.xml` and `AsciidocDarcula.xml`
 
-Once you add a new token you will need to add it to `AsciiDocColorSettingsPage` so users can customize the colors of their theme.
+Once you add a new token, you will need to add it to `AsciiDocColorSettingsPage` so users can customize the colors of their theme.
 This class references also `SampleDocument.adoc` and `AsciiDocBundle.properties`, therefore you'll probably need to change these two files as well.
 
 [[parsing]]
@@ -161,7 +162,7 @@ It also serves as a factory for all ``PsiElement``s like `AsciiDocSection` for s
 
 `AsciiDocParserImpl` encodes the logic how to group the tokens to a tree.
 To do this, it has several strategies.
-This outline summaries the most distinct strategies:
+This outline summarizes the most distinct strategies:
 
 References::
 +
@@ -174,10 +175,10 @@ Once there are no more valid tokens for a reference, it marks this block as a `A
 Blocks::
 +
 --
-A block starts for example with a LISTING_BLOCK_DELIMITER (usually four dashes in a line, like `----`).
+A block starts, for example, with a `LISTING_BLOCK_DELIMITER` (usually four dashes in a line, like `----`).
 Then the block continues up to the point where the same marker occurs again.
 
-But the block can be preceded for example by a title (it starts with a dot, following by the title itself, like `.Title`).
+But the block can be preceded, for example, by a title (it starts with a dot, following by the title itself, like `.Title`).
 This title is part of the block.
 To support this `TITLE` and several other elements call `markPreBlock()` to memorize the first token that is part of a following block.
 It is stored in a variable `myPreBlockMarker`.
@@ -193,18 +194,18 @@ Sections::
 Sections build on top of blocks.
 They can have pre-block elements as well.
 
-In addition to standard blocks they build a hierarchy:
+In addition to standard blocks, they build a hierarchy:
 Each section has a level determined by the number of equal signs at the start (or, if it is an old style heading by the character underlining the heading).
 
 Whenever a section with the same level as the one before starts, the previous section needs to be closed.
-Whenever a section of a higher order (let's say two equal signs at the start, like `==`) starts, all open sections with a lower order must be closed (in this case with three or more equal signs at the start).
+Whenever a section of a higher order starts (let's assume two equal signs at the start, like `==`), all open sections with a lower order must be closed (in this case with three or more equal signs at the start).
 This logic is encapsulated in `closeSections()`.
 It is also called at the end of the document to close all sections at the end of the document.
 --
 
 === Debugging
 
-To analyze the structure interactively install the PsiViewer plugin.
+To analyze the structure interactively, install the PsiViewer plugin.
 The plugin is pre-installed in the sandbox IDE you start using the `runIde` Gradle ask.
 
 You can also install it in the IDE you develop in, but this is optional.
@@ -241,7 +242,7 @@ Check the contents of the known good file if the result matches your expectation
 On consecutive runs the test will compare the parser result with the contents of the known good file.
 If the content matches, the test will pass.
 If there are differences, the test will fail.
-If you expected these differences for example because you changed the parser or lexer, copy the result shown in your IDE to the known good file.
+If you expected these differences, for example, because you changed the parser or lexer, copy the result shown in your IDE to the known good file.
 
 NOTE: Please check in the known good file to the Git repository!
 --
@@ -251,7 +252,7 @@ Each has its own strengths!
 
 The known good approach will trigger even on minor changes to the output and gives you the chance to approve or reject the changes.
 The downside is that these tests will fail when there are unrelated changes because they check too many things.
-For a known good test it is also hard to see the parts of the known good that are relevant for the expected behavior and must not change.
+For a known good test, it is also hard to see the parts of the known good that are relevant for the expected behavior and must not change.
 
 The test with single assertions will be most specific to the described functionality, and will leave out parts that are unrelated to the test.
 Therefore, it will not break for unrelated changes.

@@ -8,16 +8,16 @@
 
 When pasting content from a clipboard to an AsciiDoc file, the indent (spaces at the beginning of the line) might get lost.
 
-When pasting the contents from the clipboard to a source code block, the indent will be preserved.
+When pasting the contents of the clipboard to a source code block, the indent will be preserved.
 
 == Cause: "`Reformat on paste`" enabled by default
 
-This is due to the "`Reformat on paste`" option enabled by default.
+The "`Reformat on paste`" option is enabled in IntelliJ by default.
 
 Removing spaces from the beginning of a line should not lead to a different rendered output in AsciiDoc.
-The plugin knows about the exceptions to the rule (for example source code blocks and verses).
+The plugin knows about the exceptions to the rule like source code blocks and verses.
 
-It is an error in this plugin's formatter if the plugin removes spaces from the beginning of the line and this leads to a differently formatted output.
+If the plugin removes spaces from the beginning of the line and this leads to a differently formatted output, this is an error in this plugin's formatter.
 Open a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issue with a minimal example to reproduce the observed behavior] to get it fixed.
 
 == Remedy: Change IDE's configuration
@@ -28,5 +28,5 @@ This will affect all paste operations independent of the file type.
 image::indent-missing-when-pasting.png[]
 
 Alternatively the user can disable reformatting of AsciiDoc content via menu:File[Settings... > Editor > Code Style > AsciiDoc].
-This will only affect AsciiDoc files, but will disable also the explicit reformatting of an AsciiDoc file.
+This will only affect AsciiDoc files, but will disable the explicit reformatting of an AsciiDoc file.
 

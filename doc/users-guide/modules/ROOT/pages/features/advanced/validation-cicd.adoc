@@ -7,6 +7,7 @@
 == Qodana to run the IntelliJ AsciiDoc plugin in CD/CD
 
 JetBrains published https://www.jetbrains.com/qodana/[Qodana] that wraps the smart features of IntelliJ into a container, so it can be used on the command line as a Docker container.
+To make this simpler to use, it has been https://github.com/JetBrains/qodana-action[wrapped as a GitHub action].
 
 For AsciiDoc files, it will highlight all the problems that are highlighted in your IDE as well, including broken links as well as grammar errors.
 
@@ -62,7 +63,7 @@ With the benefit of being a real-world scenario, some steps might be more compli
 [NOTE]
 ====
 While being production ready, Qodana is still in an early stage.
-At the moment some workarounds have been applied to make it work with GitHub Actions and GitHub Code Scanning, future versions of Qodana will provide them out-of-the box.
+At the moment, some workarounds have been applied to make it work with GitHub Actions and GitHub Code Scanning, future versions of Qodana will provide them out-of-the box.
 ====
 
 . Setup Qodana configuration file.
@@ -109,10 +110,6 @@ include::example$workflow-docs.yml[tags=!cleanup]
 The following issues in the Qodana issue tracker are open.
 Please consider voting for them to make this integration simpler.
 
-* https://youtrack.jetbrains.com/issue/QD-1289[QD-1289^]
-automationDetails ID not filled according to specs, leading to problems in GitHub Code Scanning
-* https://youtrack.jetbrains.com/issue/QD-1596[QD-1596^]
-Broken description when using qodana.sarif.json in CodeQL
 * https://youtrack.jetbrains.com/issue/QD-1291[QD-1291^]
 Qodana easy plugin installation
 * https://youtrack.jetbrains.com/issue/QD-1291[QD-1291^]
