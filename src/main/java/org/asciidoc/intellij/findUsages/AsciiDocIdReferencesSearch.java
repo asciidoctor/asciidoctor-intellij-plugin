@@ -157,7 +157,12 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
     for (int i = 0; i < files.length; i++) {
       PsiFile psiFile = files[i];
       pi.setFraction((double) i / files.length);
-      pi.setText2(psiFile.getVirtualFile().getPresentableName());
+      VirtualFile vf = psiFile.getVirtualFile();
+      if (vf != null) {
+        pi.setText2(vf.getPresentableName());
+      } else {
+        pi.setText2(null);
+      }
       ProgressManager.checkCanceled();
       if (localSearch) {
         for (AsciiDocAttributeDeclaration attribute : PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocAttributeDeclaration.class)) {

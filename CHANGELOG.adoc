@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.9
+
+- avoid NPE when showing the search progress bar when a file doesn't have a file name (#1006)
+
 === 0.37.8
 
 - include Antora default CSS for the browser preview (#997)

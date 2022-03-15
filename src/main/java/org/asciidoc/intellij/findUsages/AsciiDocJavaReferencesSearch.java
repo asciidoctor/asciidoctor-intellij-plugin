@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -84,7 +85,12 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
     for (int i = 0; i < files.length; i++) {
       PsiFile psiFile = files[i];
       pi.setFraction((double) i / files.length);
-      pi.setText2(psiFile.getVirtualFile().getPresentableName());
+      VirtualFile vf = psiFile.getVirtualFile();
+      if (vf != null) {
+        pi.setText2(vf.getPresentableName());
+      } else {
+        pi.setText2(null);
+      }
       ProgressManager.checkCanceled();
       if (psiFile.getLanguage() == AsciiDocLanguage.INSTANCE) {
         final CharSequence text = ReadAction.compute(() -> psiFile.getViewProvider().getContents());
