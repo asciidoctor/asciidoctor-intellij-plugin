@@ -15,6 +15,7 @@ import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationImpl;
 import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
+import org.asciidoc.intellij.psi.AsciiDocHtmlEntity;
 import org.asciidoc.intellij.psi.AsciiDocInlineMacro;
 import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocModificationTracker;
@@ -165,6 +166,8 @@ public class AsciiDocLanguageSupport {
         return Behavior.ABSORB;
       }
     } else if (child instanceof AsciiDocAttributeReference) {
+      return Behavior.UNKNOWN;
+    } else if (child instanceof AsciiDocHtmlEntity) {
       return Behavior.UNKNOWN;
     } else if (child instanceof AsciiDocTextQuoted && ((AsciiDocTextQuoted) child).isMono()) {
       return Behavior.UNKNOWN;
