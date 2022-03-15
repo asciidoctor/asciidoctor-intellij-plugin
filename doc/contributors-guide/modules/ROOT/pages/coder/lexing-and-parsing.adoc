@@ -1,5 +1,5 @@
 = Lexing and parsing AsciiDoc files
-:description: How to enhance lexing and parsing for AsciiDoc content to improve for example syntax highlighting.
+:description: How to enhance lexing and parsing for AsciiDoc content to improve, for example, syntax highlighting.
 :navtitle: Lexing and parsing
 
 Lexing and parsing input files is the beginning of both highlighting the code in the editor and building auto-completion and refactoring functionality.
@@ -13,7 +13,7 @@ Each token has a type and a snippet of characters.
 The standard tool in IntelliJ is https://jflex.de[JFlex].
 
 The heart of lexing is `asciidoc.flex`.
-It defines multiple states, and uses a lot of functionality and tweaking to parse AsciiDoc.
+It defines multiple states, and uses a lot of functionalities and tweaking to parse AsciiDoc.
 You can add new token types as you go in `AsciiDocTokenTypes`.
 Ensure to update the list `TOKENS_TO_MERGE` if consecutive identical types of the tokens should be merged.
 If the content of the token types should be spell-checked, add the token types to the list of tokens in `AsciiDocSpellcheckingStrategy`.
@@ -29,7 +29,7 @@ A typical developer workflow for enhancing the lexer looks like this:
 . Change `asciidoc.flex` in the IDE, adding new entries to `AsciiDocTokenTypes` as needed.
 . Run `gradlew compileJava` on the command line.
 . Add a test case to `AsciiDocLexerTest` and run it from the IDE.
-. If lexing doesn't yet work as expected repeat from step 1.
+. If lexing does not yet work as expected repeat from step 1.
 . If lexing returns the expected result, update the `expected` parameter in the test.
 
 There is a ready-to-use run-configuration in Intellij called "`AsciiDocLexerTest`" that will re-generate the lexer and run the tests in one go.
@@ -41,7 +41,7 @@ Things to consider when parsing AsciiDoc with JFlex:
 * JFlex has originally been designed to parse Java code.
 AsciiDoc is different.
 * There are no wrong characters in AsciiDoc.
-If you get the syntax wrong, the converts usually prints them "`as is`".
+If you get the syntax wrong, the converter usually prints the wrong syntax "`as is`".
 Only a matching set of for example asterisks (`*`) produces bold text.
 --
 
@@ -54,7 +54,7 @@ Look ahead rules are considered slow in JFlex, but they give the power to recogn
 
 A slash (`/`) separates the matching pattern from the look ahead.
 
-.Example from parsing typographic quotes
+.Example of parsing typographic quotes
 ----
 {TYPOGRAPHIC_QUOTE_START} / [^\n \t] {WORD}* {TYPOGRAPHIC_QUOTE_END}
 ----
