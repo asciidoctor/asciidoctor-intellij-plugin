@@ -67,7 +67,11 @@ public class AsciiDocLanguage extends Language {
       sb.append("]");
       sb.append(", mycl=").append(AsciiDocLanguage.class.getClassLoader().toString());
       Logger log = Logger.getInstance(AsciiDocLanguage.class);
-      log.error("Unable to register AsciiDoc Language, details about conflicting plugins and registrations: " + sb);
+      log.error("Unable to register AsciiDoc Language, details about conflicting plugins and registrations: " + sb, ex);
+      throw ex;
+    } catch (RuntimeException ex) {
+      Logger log = Logger.getInstance(AsciiDocLanguage.class);
+      log.error("Unable to complete language initialization", ex);
       throw ex;
     }
   }

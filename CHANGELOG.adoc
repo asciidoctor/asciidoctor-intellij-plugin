@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.37.9
 
 - avoid NPE when showing the search progress bar when a file doesn't have a file name (#1006)
+- extended error logging when static initializer in AsciiDocLanguage fails (#1007)
 
 === 0.37.8
 
