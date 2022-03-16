@@ -15,10 +15,10 @@ Two different types of diagram renderer are supported: <<asciidoctor-diagram>> a
 [[asciidoctor-diagram,Asciidoctor Diagram]]
 == Using Asciidoctor Diagram
 
-By default, the plugin uses {uri-asciidoctor-diagrams-gh}[Asciidoctor Diagram]
+By default, the plugin uses the extension {uri-asciidoctor-diagrams-gh}[Asciidoctor Diagram]
 that depends on locally installed tools to generate images (i.e. {uri-asciidoctor-diagrams-execs}[executables] available in the `PATH` environment variable).
 
-Asciidoctor Diagram renders the content of the editor, including all referenced includes, images and diagrams like PlantUML on the fly.
+The extension Asciidoctor Diagram renders the content of the editor, including all referenced includes, images and diagrams like PlantUML on the fly.
 
 === Downloading Asciidoctor Diagram
 
@@ -34,7 +34,7 @@ include::partial$download-dependencies.adoc[]
 
 This is a folder that holds temporary files that are created, for example, for dynamic diagrams.
 
-When running in Asciidoctor UNSAFE mode, the plugin creates a temporary folder outside the project.
+When running in Asciidoctor's UNSAFE mode, the plugin creates a temporary folder outside the project.
 When running in any other mode, Asciidoctor needs to have this folder them relative to the document's folder.
 
 NOTE: Diagrams in the preview when running in any mode other than UNSAFE will only work starting with version 0.33.8.

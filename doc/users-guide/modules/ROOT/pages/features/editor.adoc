@@ -83,7 +83,7 @@ A source block like the following will receive JSON highlighting:
 ----
 -----
 
-In the settings the user can enable and disable this feature, including fine-tuning on a per-language level and if errors should be highlighted or not.
+In the settings the user can enable and disable this feature, including fine-tuning on a per-language level, and if errors should be highlighted or not.
 
 // see: ExtendWordSelectionHandler
 The plugin expands the current selection when the user presses kbd:[Ctrl+W] and contracts the current selection when the user presses kbd:[Ctrl+Shift+W].
@@ -98,7 +98,7 @@ The IDE downloads the dictionaries for the selected languages once the user adds
 [[grazie]]
 // see: AsciiDocGrazieTextExtractor
 Starting with IntelliJ 2020.1, the bundled https://plugins.jetbrains.com/plugin/12175-grazie/[Grazie plugin] highlights possible grammar and spelling mistakes in the editor.
-As of plugin version 0.36.2, every heading and paragraph of text will be checked.
+As of plugin version 0.36.2, every heading and paragraph of the text will be checked.
 It supports multiple languages: Once the user configured the languages in IDE's proofreading settings, the plugin detects the language of a section automatically.
 As it performs all checks locally with the help of libraries from https://languagetool.org/, it doesn't submit text written in the IDE to a third party cloud service.
 
@@ -151,15 +151,15 @@ The toolbar hides when entering the presentation mode to remove distractions for
 When adding block attributes, the plugin supports statement completion (also known as "`Smart Enter`") using the shortcut kbd:[Shift+Ctrl+Enter].
 For example:
 
-. a snippet `[source,java` receives a closing bracket and two listing separator lines.
-. a snippet `include::text.adoc` receives an opening bracket, a `leveloffset=` if it can be derived from the current file's context and the context of the included file, and a closing bracket.
-. a snippet `xref:file.adoc#section` will add the section's title and the brackets.
+. A snippet `[source,java` receives a closing bracket and two listing separator lines.
+. A snippet `include::text.adoc` receives an opening bracket, a `leveloffset=` if it can be derived from the current file's context and the context of the included file, and a closing bracket.
+. A snippet `xref:file.adoc#section` will add the section's title and the brackets.
 
 // see: AsciiDocBraceMatcher
 When the user opens a quote or a bracket, the plugin automatically adds a closing quote if it is followed by spaces or a closing bracket.
 
 For references, attributes and images, and several macros like include, image and diagrams it provides auto-completion using kbd:[Ctrl+Space].
-References and attributes support renaming within a project.
+Both references and attributes support renaming within a project.
 // see: AsciiDocTriggerAutoCompleteTypedHandler
 Typing characters like kbd:[{], kbd:[<], or kbd:[:] as part of a macro or attribute definition will open the auto-completion dialog as well.
 

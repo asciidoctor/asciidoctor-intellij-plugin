@@ -17,11 +17,11 @@ The plugin sets the variable _env-idea_ to _defined_, therefore the following wo
 [source,asciidoc]
 ----
 \ifndef::env-idea[]
-render this text WHEN NOT running IntelliJ Asciidoctor Plugin
+Render this text WHEN NOT running IntelliJ Asciidoctor Plugin.
 \endif::[]
 
 \ifdef::env-idea[]
-render this text IF running IntelliJ Asciidoctor Plugin
+Render this text IF running IntelliJ Asciidoctor Plugin.
 \endif::[]
 ----
 

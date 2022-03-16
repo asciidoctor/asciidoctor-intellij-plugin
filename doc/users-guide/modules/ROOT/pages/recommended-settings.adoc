@@ -16,14 +16,14 @@ This can lead to lines larger than the editor's width.
 +
 Using soft wraps will make the content readable in the editor, as each line wraps at the width of the editor.
 +
-Go to menu:File[Settings... > Editor > General > Soft Wraps] and enable soft wrap for the file extension you use for AsciiDoc files (usually *.adoc)
+Go to menu:File[Settings... > Editor > General > Soft Wraps] and enable soft wrap for the file extension you use for AsciiDoc files (usually *.adoc).
 +
 image::enable-softwrap.png[Editor settings showing soft wrap]
 
 == Configuring preview
 
 . To get the best preview experience, switch the preview browser to _JavaFX WebView_ or _JCEF Browser_.
-See below how to <<enable-javafx-jcef-for-android-studio,enable JavaFX or JCEF for Android studio>>.
+See below how to <<enable-javafx-jcef-for-android-studio,enable JavaFX or JCEF for Android Studio>>.
 +
 Go to menu menu:File[Settings... > Languages & Frameworks > AsciiDoc] to review or change this setting.
 If neither JavaFX of JCEF preview is not available, refer to xref:installation.adoc#prerequisites[Installation Prerequisites].

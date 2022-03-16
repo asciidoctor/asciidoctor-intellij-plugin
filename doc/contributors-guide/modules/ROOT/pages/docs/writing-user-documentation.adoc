@@ -45,7 +45,7 @@ This practice works best when writers enable word-wrap in their editor.
 Read more about https://asciidoctor.org/docs/asciidoc-recommended-practices/[this and other recommended practices on the Asciidoctor homepage].
 
 Keep blank lines after section headings::
-This makes it easier for writers navigate through the code of the page.
+This makes it easier for writers to navigate through the code of the page.
 
 == Location of content
 

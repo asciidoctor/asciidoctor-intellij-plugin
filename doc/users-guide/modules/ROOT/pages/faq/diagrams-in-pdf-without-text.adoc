@@ -12,7 +12,7 @@ While diagrams show nicely in the preview, they don't show up as expected in the
 
 == Cause
 
-Looking into the source of the SVG, Mermaid and Diagrams.net use the _foreignObject_ feature to embed HTML for text inside the SVG.
+Looking into the source of the SVG, Mermaid and Diagrams.net use the _foreignObject_ feature to embed HTML for the text inside the SVG.
 The plugin's PDF action uses Asciidoctor PDF to create the PDF.
 Asciidoctor PDF can't render content in _foreignObject_ as the library https://github.com/mogest/prawn-svg[prawn-svg] doesn't support it.
 

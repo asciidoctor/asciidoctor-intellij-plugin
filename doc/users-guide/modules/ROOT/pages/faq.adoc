@@ -7,7 +7,7 @@ Please open an issue in the https://github.com/asciidoctor/asciidoctor-intellij-
 
 == General Troubles
 
-=== I'm using MPS and see exceptions, how can I fix this?
+=== I'm using MPS and see exceptions. How can I fix this?
 
 See xref:faq/troubleshooting-mps.adoc[] for more information.
 

@@ -8,7 +8,7 @@
 
 This chapter walks you through the steps to prepare an _.asciidoctorconfig_ file to either replace the stylesheet or to add additional styles to the HTML header.
 
-The _.asciidoctorconfig_ file will configure the preview of all AsciiDoc files in the folder where it is located and this folder's subfolders.
+The _.asciidoctorconfig_ file will configure the preview of all AsciiDoc files in the folder where it is located and this folder's sub-folders.
 See _xref:features/advanced/asciidoctorconfig-file.adoc[]_ for more details.
 
 [WARNING]
@@ -34,9 +34,9 @@ You can use local content, or link to a remote stylesheet.
 :stylesdir: {asciidoctorconfigdir}/.asciidoctor <1>
 :stylesheet: preview-stylesheet.css <2>
 ----
-<.> point to a directory with the stylesheet.
+<.> Point to a directory with the stylesheet.
 As this uses \{asciidoctorconfigdir}, the folder is relative to the _.asciidoctorconfig_ file.
-<.> filename of the stylesheet to be used.
+<.> Filename of the stylesheet to be used.
 
 . Place your stylesheet in the _.asciidoctor_ folder:
 +
@@ -51,7 +51,7 @@ body {
 [#remote-stylesheet]
 ==== Using a remote stylesheet
 
-NOTE: This is available since plugin version 0.31.31+.
+NOTE: This has been available since plugin version 0.31.31+.
 
 Once the document or the configuration set the `linkcss` attribute, the preview will link to an external stylesheet and will no longer embed the stylesheet.
 
@@ -98,7 +98,7 @@ The chapter https://asciidoctor.org/docs/user-manual/#docinfo-file["`Docinfo Fil
 
 [NOTE]
 ====
-* The contents will be embedded in the preview, therefore relative links to the local file system will not work.
+* The contents will be embedded in the preview, therefore, relative links to the local file system will not work.
 * Attribute substitution is supported in plugin version 0.31.35+.
 To prevent an infinite recursion, substitution is limited to 100 attributes and 20 substitutions per attribute.
 ====
@@ -115,7 +115,7 @@ Follow these steps to enable Docinfo Files:
 ----
 <.> point to a directory with docinfo files.
 As this uses \{asciidoctorconfigdir}, the folder is relative to the _.asciidoctorconfig_ file.
-<.> tell the renderer to include the shared docinfo file _docinfo.html_
+<.> Tell the renderer to include the shared docinfo file _docinfo.html_.
 
 . Place your _docinfo.html_ in the _.asciidoctor_ folder
 +

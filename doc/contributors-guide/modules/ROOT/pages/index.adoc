@@ -12,11 +12,11 @@ With all the help it received from users and maintainers as ideas, feedback and 
 
 There are multiple ways where you can help:
 
-* join the discussions
-* give feedback on ideas
-* test new releases
-* contribute source code to fix issues or add new functionality
-* write documentation
+* Join the discussions.
+* Give feedback on ideas.
+* Test new releases.
+* Contribute source code to fix issues or add new functionality.
+* Write documentation.
 
 NOTE: Please ask questions to the maintainers for anything that is missing (either via link:mailto:alexander.schwartz@gmx.net[email] or via a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issue]), and we'll update it.
 

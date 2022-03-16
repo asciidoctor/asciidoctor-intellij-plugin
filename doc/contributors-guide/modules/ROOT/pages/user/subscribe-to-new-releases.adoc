@@ -6,7 +6,7 @@ Or the implementation misses a corner case that no-one has thought of before.
 
 _You can help by testing preview releases!_
 
-== Subscribe on GitHub
+== Subscribe to GitHub notifications
 
 The maintainers publish new releases of the plugin on GitHub a few days of weeks before they are published on the IntelliJ plugin repository.
 The release notes contain information about the newly included functionality or fixed bugs.

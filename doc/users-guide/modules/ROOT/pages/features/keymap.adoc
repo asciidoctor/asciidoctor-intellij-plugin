@@ -35,12 +35,12 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 ^| Description ^| Shortcut
 | Extend selection | kbd:[Ctrl+W]
 | Shrink selection | kbd:[Ctrl+Shift+W]
-| Toggle bold for selected text | kbd:[*]
-| Toggle emphasize for selected text | kbd:[_]
-| Toggle monospace font for selected text | kbd:[`]
-| Toggle custom styling for selected text | kbd:[#]
-| Toggle double quotes for selected text | kbd:["]
-| Toggle single quotes for selected text | kbd:[']
+| Toggle bold for the selected text | kbd:[*]
+| Toggle emphasize for the selected text | kbd:[_]
+| Toggle monospace font for the selected text | kbd:[`]
+| Toggle custom styling for the selected text | kbd:[#]
+| Toggle double quotes for the selected text | kbd:["]
+| Toggle single quotes for the selected text | kbd:[']
 | Show intention actions and quick-fixes | kbd:[Alt+Enter]
 | Reformat code | kbd:[Ctrl+Alt+L]
 | Auto-indent line(s) | kbd:[Ctrl+Alt+I]
@@ -63,7 +63,7 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 (for example file names) | kbd:[Ctrl+Space]
 | Smart code completion +
 (for example file names) | kbd:[Ctrl+Shift+Space]
-| Complete statement +
+| Complete the statement +
 (for example macros) | kbd:[Ctrl+Shift+Enter]
 | Quick documentation lookup | kbd:[Ctrl+Q]
 | Brief Info | kbd:[Ctrl+mouse]
@@ -71,10 +71,10 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 | Expand/collapse all | kbd:[Ctrl+Shift+NumPad+] / kbd:[NumPad-]
 | Comment/uncomment with line comment | kbd:[Ctrl+/]
 | Comment/uncomment with block comment | kbd:[Ctrl+Shift+/]
-| Select till code block end | kbd:[Ctrl+Shift++]+]
-| Select till code block start | kbd:[Ctrl+Shift++[+]
+| Select till the end of a code block | kbd:[Ctrl+Shift++]+]
+| Select till the start of a code block | kbd:[Ctrl+Shift++[+]
 | Surround with... +
-(use it with `ad-tag-include` template in any language to add tags for includes) | kbd:[Ctrl+Alt+T]
+(Use it with `ad-tag-include` template in any language to add tags for includes.) | kbd:[Ctrl+Alt+T]
 |===
 
 [caption=]
@@ -133,12 +133,12 @@ Works also for file and class names in italics or monospace | kbd:[Ctrl+B], kbd:
 ^| Description ^| Shortcut
 | Extend selection | kbd:[⌥+Up]
 | Shrink selection | kbd:[⌥+Down]
-| Toggle bold for selected text | kbd:[*]
-| Toggle emphasize for selected text | kbd:[_]
-| Toggle monospace font for selected text | kbd:[`]
-| Toggle custom styling for selected text | kbd:[#]
-| Toggle double quotes for selected text | kbd:["]
-| Toggle single quotes for selected text | kbd:[']
+| Toggle bold for the selected text | kbd:[*]
+| Toggle emphasize for the selected text | kbd:[_]
+| Toggle monospace font for the selected text | kbd:[`]
+| Toggle custom styling for the selected text | kbd:[#]
+| Toggle double quotes for the selected text | kbd:["]
+| Toggle single quotes for the selected text | kbd:[']
 | Show intention actions and quick-fixes | kbd:[⌥+Enter]
 | Reformat code | kbd:[⌘+⌥+L]
 | Auto-indent line(s) | kbd:[⌃+⌥+I]
@@ -161,7 +161,7 @@ Works also for file and class names in italics or monospace | kbd:[Ctrl+B], kbd:
 (for example file names) | kbd:[^+Space]
 | Smart code completion +
 (for example file names) | kbd:[^+⇧+Space]
-| Complete statement +
+| Complete the statement +
 (for example macros) | kbd:[⌘+⇧+Enter]
 | Quick documentation lookup | kbd:[^+J]
 | Brief Info | kbd:[⌘+mouse]
@@ -169,10 +169,10 @@ Works also for file and class names in italics or monospace | kbd:[Ctrl+B], kbd:
 | Expand/collapse all | kbd:[⌘ + ⇧ + ++ + ++] / kbd:[⌘ + ⇧+-]
 | Comment/uncomment with line comment | kbd:[⌘+/]
 | Comment/uncomment with block comment | kbd:[⌘ + ++⌥++ + /]
-| Select till code block end | kbd:[⌘ + ⇧ + +]+]
-| Select till code block start | kbd:[⌘ + ⇧ + +[+]
+| Select till the end of a code block | kbd:[⌘ + ⇧ + +]+]
+| Select till the start of a code block | kbd:[⌘ + ⇧ + +[+]
 | Surround with... +
-(use it with `ad-tag-include` template in any language to add tags for includes) | kbd:[⌘+⌥+T]
+(Use it with `ad-tag-include` template in any language to add tags for includes.) | kbd:[⌘+⌥+T]
 |===
 
 [caption=]

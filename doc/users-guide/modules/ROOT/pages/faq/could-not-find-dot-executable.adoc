@@ -8,7 +8,7 @@ https://github.com/asciidoctor/asciidoctor-diagram[Asciidoctor Diagram] adds cap
 
 == Symptom: Could not find the 'dot' (or other) executable
 
-When adding a diagram to the AsciiDoc file, the preview doesn't show diagram, but an error message like:
+When adding a diagram to the AsciiDoc file, the preview doesn't show the diagram, but an error message like:
 
 ====
 Could not find the 'dot' executable in PATH; add it to the PATH or specify its location using the 'graphvizdot' document attribute
@@ -63,11 +63,11 @@ Users find more information about https://plantuml.com/smetana02[Smetana on the 
 This plugin supports {uri-kroki}[Kroki] to render diagrams.
 Kroki is available as a cloud-based service and as a self-hosted service.
 
-See xref:features/preview/diagrams.adoc[section about Kroki in the chapter "`Diagrams in the preview`"].
+See xref:features/preview/diagrams.adoc[section covering Kroki in the chapter "`Diagrams in the preview`"].
 
 == Symptom: Could not run dot executable for PlantUML
 
-When adding a diagram to the AsciiDoc file, the preview doesn't show diagram, but an error message like:
+When adding a diagram to the AsciiDoc file, the preview doesn't show the diagram, but an error message like:
 
 ====
 PlantUML cannot parse result from dot/GraphViz.

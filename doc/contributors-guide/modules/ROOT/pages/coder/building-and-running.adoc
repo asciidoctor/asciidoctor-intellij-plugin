@@ -65,10 +65,10 @@ PsiViewer:: Helps to analyze the PSI (abstract syntax tree) created from the plu
 CheckStyle:: This project contains a ready-to-go CheckStyle configuration that will work both in the IDE and in gradle.
 --
 
-. Go to menu:Project Structure...[Project Setting > Project]:
+. Go to menu:Project Structure...[Project Setting > Project].
 
-.. choose "`Amazon Corretto 11`" as _Project JDK_ +
-(use menu:Add JDK[] and menu:Download JDK...[] if not already present)
+. Choose "`Amazon Corretto 11`" as _Project JDK_ +
+(use menu:Add JDK[] and menu:Download JDK...[] if not already present).
 
 === Running Tests from the IDE
 

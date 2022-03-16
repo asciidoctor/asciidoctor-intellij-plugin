@@ -29,7 +29,7 @@ It looks relative to the `pom.xml` for `target/generated-snippets` or relative t
 
 Once the plugin detects Spring REST Docs it
 
-* sets the `snippets` attribute to the generated snippets-folder, therefore, includes like this work:
+* Sets the `snippets` attribute to the generated snippets-folder, therefore, includes like this work.
 +
 [source,asciidoc]
 ----
@@ -39,7 +39,7 @@ Once the plugin detects Spring REST Docs it
 File names auto-complete when using kbd:[Ctrl+Space].
 Press kbd:[Ctrl+B] to navigate to the folder or file.
 
-* activates the operation:xxx[] macro, therefore the following works:
+* Activates the operation:xxx[] macro, therefore the following works:
 +
 [source,asciidoc]
 ----

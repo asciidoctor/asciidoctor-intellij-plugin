@@ -21,7 +21,7 @@ If the formula can't be parsed by MathML, the preview shows an error popup.
 
 When the user moves the cursor in the editor, the preview scrolls the text into the preview.
 
-When the user clicks on text in the preview, the editor moves the cursor to the clicked text.
+When the user clicks on the text in the preview, the editor moves the cursor to the clicked text.
 This is accurate at block level, unfortunately not yet on the line or the character level.
 If the content of the preview is part of an included file, the editor opens the included file (new in plugin version 0.32.5).
 
@@ -30,7 +30,7 @@ When the user clicks on an external URL, the preview opens it in an external bro
 When the user clicks on a relative link within the project (usually a `\link:[]` reference), the preview opens the referenced file in a new editor.
 
 When the user right-clicks on an image, the editor shows a dialog to save the file to the local file system.
-For diagrams like PlantUML it offers to save the files as PNG or SVG.
+For diagrams like PlantUML, it offers to save the files as PNG or SVG.
 Windows and Linux users have a dropdown menu for this.
 MacOS users need to type the extension for the target file name (`.svg` or `.png`)
 

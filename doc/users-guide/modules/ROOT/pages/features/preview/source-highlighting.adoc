@@ -82,7 +82,7 @@ Valid values for the attribute _highlightjsdir_ are:
 +
 An example configuration for a local configuration could look like this: +
 +
-.Configuration of highlight.js files in local project
+.Configuration of highlight.js files in the local project
 [source,asciidoc]
 -----
 :source-highlighter: highlight.js

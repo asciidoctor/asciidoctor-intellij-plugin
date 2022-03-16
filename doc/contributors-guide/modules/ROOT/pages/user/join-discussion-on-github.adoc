@@ -1,5 +1,5 @@
 = Join the discussion on GitHub
-:description: The developers of the plugin need feedback on how they should implement a new idea and if a new functionality is useful to users or not.
+:description: The developers of the plugin need feedback on how they should implement a new idea, and if a new functionality is useful to users or not.
 
 {description}
 

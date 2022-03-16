@@ -13,6 +13,6 @@ There is a chat on Slack that might give short answers to short questions to plu
 == Other plugins`' sources as inspiration
 
 This plugin pulled several ideas from the Markdown plugin for IntelliJ that is now part of the IntelliJ community edition.
-Clone the https://github.com/JetBrains/intellij-community[GitHub repository for IntelliJ Community] and check out the https://github.com/JetBrains/intellij-community/tree/master/plugins/markdown[Markdown plugin] in particular.
+Clone the https://github.com/JetBrains/intellij-community[GitHub repository for the IntelliJ Community edition] and check out the https://github.com/JetBrains/intellij-community/tree/master/plugins/markdown[Markdown plugin] in particular.
 There is no need to make the community edition compile, just use it as a reference and look up example implementations for IntelliJ's extension point base classes.
 

@@ -1,4 +1,4 @@
-# "en" in the file name specifies the natural language to be checked, so users can use other ISO codes, e.g. "ru" or "de"
+# The "en" in the file name specifies the natural language to be checked, so users can use other ISO codes, e.g. "ru" or "de"
 
 # A subset of "vale" linter syntax is supported: "existence", "substitution" and "sequence" rule types.
 # See https://docs.errata.ai/vale/styles#extension-points for more details.
