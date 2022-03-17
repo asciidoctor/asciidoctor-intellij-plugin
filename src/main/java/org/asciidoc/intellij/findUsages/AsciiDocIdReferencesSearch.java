@@ -40,6 +40,7 @@ import org.asciidoc.intellij.psi.AsciiDocTagDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -151,17 +152,21 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
     }
     final StringSearcher asciidocSearcher = new StringSearcher(name, caseSensitive, true, false);
     final StringSearcher tagdeclarationSearcher = new StringSearcher("::" + name + "[]", caseSensitive, true, false);
-    ProgressIndicator pi = ProgressManager.getInstance().getProgressIndicator();
-    pi.setText("Searching text in " + files.length + " files");
-    pi.setIndeterminate(false);
+    @Nullable ProgressIndicator pi = ProgressManager.getInstance().getProgressIndicator();
+    if (pi != null) {
+      pi.setText("Searching text in " + files.length + " files");
+      pi.setIndeterminate(false);
+    }
     for (int i = 0; i < files.length; i++) {
       PsiFile psiFile = files[i];
-      pi.setFraction((double) i / files.length);
-      VirtualFile vf = psiFile.getVirtualFile();
-      if (vf != null) {
-        pi.setText2(vf.getPresentableName());
-      } else {
-        pi.setText2(null);
+      if (pi != null) {
+        pi.setFraction((double) i / files.length);
+        VirtualFile vf = psiFile.getVirtualFile();
+        if (vf != null) {
+          pi.setText2(vf.getPresentableName());
+        } else {
+          pi.setText2(null);
+        }
       }
       ProgressManager.checkCanceled();
       if (localSearch) {
@@ -188,7 +193,9 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
         });
         return true;
       });
-      pi.setText2(null);
+      if (pi != null) {
+        pi.setText2(null);
+      }
     }
 
   }

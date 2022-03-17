@@ -25,6 +25,7 @@ import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.psi.AsciiDocJavaReference;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
   protected AsciiDocJavaReferencesSearch() {
@@ -79,17 +80,21 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
       return;
     }
     final StringSearcher searcher = new StringSearcher(name, true, true, false);
-    ProgressIndicator pi = ProgressManager.getInstance().getProgressIndicator();
-    pi.setText("Searching text in " + files.length + " files");
-    pi.setIndeterminate(false);
+    @Nullable ProgressIndicator pi = ProgressManager.getInstance().getProgressIndicator();
+    if (pi != null) {
+      pi.setText("Searching text in " + files.length + " files");
+      pi.setIndeterminate(false);
+    }
     for (int i = 0; i < files.length; i++) {
       PsiFile psiFile = files[i];
-      pi.setFraction((double) i / files.length);
-      VirtualFile vf = psiFile.getVirtualFile();
-      if (vf != null) {
-        pi.setText2(vf.getPresentableName());
-      } else {
-        pi.setText2(null);
+      if (pi != null) {
+        pi.setFraction((double) i / files.length);
+        VirtualFile vf = psiFile.getVirtualFile();
+        if (vf != null) {
+          pi.setText2(vf.getPresentableName());
+        } else {
+          pi.setText2(null);
+        }
       }
       ProgressManager.checkCanceled();
       if (psiFile.getLanguage() == AsciiDocLanguage.INSTANCE) {
@@ -108,7 +113,9 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
         });
       }
     }
-    pi.setText2(null);
+    if (pi != null) {
+      pi.setText2(null);
+    }
   }
 
   private void checkReference(@NotNull Processor<? super PsiReference> consumer, PsiElement element, PsiReference reference) {

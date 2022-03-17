@@ -4,6 +4,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.StandardProgressIndicator;
 import com.intellij.openapi.progress.util.AbstractProgressIndicatorExBase;
+import org.jetbrains.annotations.Nullable;
 
 public class AsciiDocDelegatingProgressIndicator extends AbstractProgressIndicatorExBase implements StandardProgressIndicator {
 
@@ -14,6 +15,7 @@ public class AsciiDocDelegatingProgressIndicator extends AbstractProgressIndicat
     initStateFrom(this.delegate);
   }
 
+  @Nullable
   public static ProgressIndicator build() {
     ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
     if (progressIndicator != null) {
