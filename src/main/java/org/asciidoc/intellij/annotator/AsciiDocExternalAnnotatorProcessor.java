@@ -161,6 +161,10 @@ public class AsciiDocExternalAnnotatorProcessor extends com.intellij.lang.annota
       Integer lineNumber = lr.getLineNumber();
       LogRecord logRecord = lr.getLogRecord();
       HighlightSeverity severity = toSeverity(logRecord.getSeverity());
+      // The document might have changed in the meantime, check the number of lines to avoid out-of-bounds exception
+      if (lineNumberForAnnotation >= annotationResult.getDocument().getLineCount()) {
+        continue;
+      }
       AnnotationBuilder ab = holder.newAnnotation(severity,
         logRecord.getMessage()).range(
         TextRange.from(
@@ -195,7 +199,8 @@ public class AsciiDocExternalAnnotatorProcessor extends com.intellij.lang.annota
       ab = ab.tooltip(sb.toString());
       if (logRecord.getMessage() != null && logRecord.getMessage().startsWith(INCLUDE_FILE_NOT_FOUND)) {
         Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
-        if (document != null) {
+        // document might have changed in the meantime, check number of lines to avoid out-of-bounds exception
+        if (document != null && lineNumberForAnnotation < annotationResult.getDocument().getLineCount()) {
           PsiElement element = file.findElementAt(document.getLineStartOffset(lineNumberForAnnotation));
           if (element != null && element.getParent() instanceof AsciiDocBlockMacro) {
             ab = ab.withFix(new AsciiDocCreateMissingFileIntentionAction(element.getParent()));

@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.37.10
 
 - avoid NPE when showing the search progress bar when there is no progress indicator (#1006)
+- avoid index-out-of-bounds situation when analyzing Asciidoctor logs and file is edied at the same time (#1010)
 
 === 0.37.9
 
