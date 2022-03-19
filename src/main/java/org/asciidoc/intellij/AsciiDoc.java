@@ -843,7 +843,7 @@ public class AsciiDoc {
    * Don't log full exception and stack trace to IDE's log for well known exceptions that already include enough content.
    */
   private boolean checkIfExceptionShouldAppearInLog(Throwable ex) {
-    return !ex.getMessage().contains("PlantUML preprocessing failed");
+    return ex.getMessage() == null || !ex.getMessage().contains("PlantUML preprocessing failed");
   }
 
   private Collection<AttributeDeclaration> populateDocumentAttributes(File fileBaseDir, String name) {

@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.11
+
+- avoid NPE when handling an exception during AsciiDoc processing (#1012)
+
 === 0.37.10
 
 - avoid NPE when showing the search progress bar when there is no progress indicator (#1006)
