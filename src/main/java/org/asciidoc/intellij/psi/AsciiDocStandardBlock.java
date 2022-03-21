@@ -20,7 +20,25 @@ import javax.swing.*;
  * @author yole
  */
 public class AsciiDocStandardBlock extends AsciiDocASTWrapperPsiElement implements AsciiDocBlock {
-  protected static final AsciiDocGrazieTextExtractor EXTRACTOR = new AsciiDocGrazieTextExtractor();
+  private static AsciiDocGrazieTextExtractor extractor = null;
+
+  static {
+    try {
+      // Grazie plugin might not be installed. Gracefully fallback if that is the case.
+      Class.forName("com.intellij.grazie.text.TextExtractor");
+      extractor = new AsciiDocGrazieTextExtractor();
+    } catch (ClassNotFoundException e) {
+      // NOOP
+    }
+  }
+
+  protected static String summary(PsiElement element) {
+    if (extractor != null) {
+      return extractor.summaryAsString(element);
+    } else {
+      return element.getText().trim();
+    }
+  }
 
   public AsciiDocStandardBlock(@NotNull ASTNode node) {
     super(node);
@@ -55,7 +73,7 @@ public class AsciiDocStandardBlock extends AsciiDocASTWrapperPsiElement implemen
     if (child instanceof AsciiDocBlockAttributes && !StringUtil.isEmpty(getStyle())) {
       sb.append("[").append(getStyle()).append("] ");
     }
-    String summary = AsciiDocStandardBlock.EXTRACTOR.summaryAsString(this);
+    String summary = AsciiDocStandardBlock.summary(this);
     if (summary != null) {
       sb.append(summary);
     }

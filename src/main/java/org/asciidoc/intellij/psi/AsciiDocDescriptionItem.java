@@ -41,7 +41,7 @@ public class AsciiDocDescriptionItem extends AsciiDocASTWrapperPsiElement implem
     if (child instanceof AsciiDocBlockAttributes) {
       sb.append("[").append(getStyle()).append("] ");
     }
-    String summary = AsciiDocStandardBlock.EXTRACTOR.summaryAsString(this);
+    String summary = AsciiDocStandardBlock.summary(this);
     if (summary != null) {
       sb.append(summary);
     }
