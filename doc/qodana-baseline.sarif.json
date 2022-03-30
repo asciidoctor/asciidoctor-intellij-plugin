@@ -1,0 +1,54 @@
+{
+  "$schema": "https://raw.githubusercontent.com/schemastore/schemastore/master/src/schemas/json/sarif-2.1.0-rtm.5.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "QDJVMC",
+          "fullName": "Qodana Community for JVM",
+          "version": "213.7162.129",
+          "rules": [],
+          "taxa": [],
+          "language": "en-US",
+          "contents": [
+            "localizedData",
+            "nonLocalizedData"
+          ],
+          "isComprehensive": false
+        },
+        "extensions": []
+      },
+      "invocations": [
+        {
+          "exitCode": 0,
+          "toolExecutionNotifications": [
+            {
+              "message": {
+                "text": "Reporting from [] 'sanity' inspections was suspended due to high problems count."
+              },
+              "level": "error"
+            }
+          ],
+          "executionSuccessful": true
+        }
+      ],
+      "language": "en-US",
+      "results": [],
+      "automationDetails": {
+        "id": "project/qodana/2022-03-30",
+        "guid": "df74e271-729e-40ca-b750-5496b87bb2db"
+      },
+      "newlineSequences": [
+        "\r\n",
+        "\n"
+      ],
+      "properties": {
+        "deviceId": "200820300000000-0000-0000-0000-000000000000",
+        "tags": [
+          "deviceId"
+        ]
+      }
+    }
+  ]
+}

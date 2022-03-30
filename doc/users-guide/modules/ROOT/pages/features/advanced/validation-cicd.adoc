@@ -34,6 +34,9 @@ With the GitHub Action setup below, it will be attached as a ZIP file to workflo
 .Qodana report with AsciiDoc inspection warnings
 image::qodana/qodana-html-report.png[]
 
+The CI/CD process can publish the HTML report to a webserver so users can access it.
+In the example below, the GitHub action pushes the latest report to the https://asciidoctor.github.io/asciidoctor-intellij-plugin/[GitHub pages of the AsciiDoc plugin project^].
+
 === Pull request annotation
 
 See below for a screenshot of an annotated GitHub pull request.
