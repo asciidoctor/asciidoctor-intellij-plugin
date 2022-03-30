@@ -5,6 +5,9 @@ on:
       - main
     paths:
       - 'doc/**'
+      # include this file as it is part of the examples
+      - '.github/workflows/docs.yml'
+      - '.github/workflows/website.yml'
 jobs:
   triggerNetlify:
     name: Trigger Netlify Website Update
