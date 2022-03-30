@@ -70,7 +70,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v1
         with:
           # Path to SARIF file relative to the root of the repository
-          sarif_file: ${{ runner.temp }}/qodana/results/qodana-baseline.sarif.json
+          sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
 
 # tag::cleanup[]
   cleanup:
