@@ -1,4 +1,7 @@
 name: Qodana Documentation validation
+permissions:
+  # allow to publish github pages
+  contents: write
 on:
   push:
     branches-ignore:
