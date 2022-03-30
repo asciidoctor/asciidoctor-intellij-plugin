@@ -1,7 +1,4 @@
 name: Qodana Documentation validation
-permissions:
-  # allow to publish github pages
-  contents: write
 on:
   push:
     branches-ignore:
@@ -23,6 +20,8 @@ jobs:
       # necessary for the runs of push to store security events in the repo
       # GitHub code scanning will treat any grammar error like any security event.
       security-events: write
+      # allow to publish github pages
+      contents: write
     steps:
 
       - name: Fetch Sources
