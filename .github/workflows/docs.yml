@@ -49,7 +49,7 @@ jobs:
         uses: JetBrains/qodana-action@v5.0.2
         with:
           # https://hub.docker.com/r/jetbrains/qodana-jvm-community/tags
-          args: --linter,jetbrains/qodana-jvm-community:2021.3,--project-dir,${{ github.workspace }}/doc,-v,${{ github.workspace }}/grazie:/opt/idea/plugins/grazie,-v,${{ github.workspace }}/grazie-pro:/opt/idea/plugins/grazie-pro,-v,${{ github.workspace }}/asciidoctor-intellij-plugin:/opt/idea/plugins/asciidoctor-intellij-plugin,--baseline,${{ github.workspace }}/doc/qodana-baseline.sarif.json
+          args: --linter,jetbrains/qodana-jvm-community:2021.3,--project-dir,${{ github.workspace }}/doc,-v,${{ github.workspace }}/grazie:/opt/idea/plugins/grazie,-v,${{ github.workspace }}/grazie-pro:/opt/idea/plugins/grazie-pro,-v,${{ github.workspace }}/asciidoctor-intellij-plugin:/opt/idea/plugins/asciidoctor-intellij-plugin,--baseline,qodana-baseline.sarif.json
           use-annotations: false
       - name: Add "doc" to paths as qodana ran from "doc" folder
         # Otherwise, GitHub won't be able to match the reported problems to file in the repository
@@ -70,7 +70,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v1
         with:
           # Path to SARIF file relative to the root of the repository
-          sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
+          sarif_file: ${{ runner.temp }}/qodana/results/qodana-baseline.sarif.json
 
 # tag::cleanup[]
   cleanup:

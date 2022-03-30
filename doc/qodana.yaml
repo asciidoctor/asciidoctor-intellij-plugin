@@ -1,3 +1,7 @@
 version: 1.0
 profile:
   path: asciidoc-inspection.xml
+exclude:
+  - name: All
+    paths:
+      - qodana-baseline.sarif.json
