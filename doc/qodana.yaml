@@ -5,3 +5,6 @@ exclude:
   - name: All
     paths:
       - qodana-baseline.sarif.json
+      - .grazie.en.yaml
+      - contributors-guide/modules/ROOT/images
+      - users-guide/modules/ROOT/images

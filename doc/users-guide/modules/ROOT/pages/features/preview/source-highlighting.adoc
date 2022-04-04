@@ -85,16 +85,7 @@ An example configuration for a local configuration could look like this: +
 .Configuration of highlight.js files in the local project
 [source,asciidoc]
 -----
-:source-highlighter: highlight.js
-:highlightjsdir: hljs <1>
-:highlightjs-theme: default <2>
-:highlightjs-languages: basic <3>
-
-[source,basic]
-----
-10 PRINT "HELLO WORLD"
-20 GOTO 10
-----
+include::example$highlightjs-highlighting.adoc[]
 -----
 <.> If the user specifies the attribute _highlightjsdir_, they *must* place the JavaScript bundle and a theme in the current project.
 For this example, the JavaScript bundle must be named _/hljs/highlight.min.js_.

@@ -1,0 +1,10 @@
+:source-highlighter: highlight.js
+:highlightjsdir: hljs <1>
+:highlightjs-theme: default <2>
+:highlightjs-languages: basic <3>
+
+[source,basic]
+----
+10 PRINT "HELLO WORLD"
+20 GOTO 10
+----
