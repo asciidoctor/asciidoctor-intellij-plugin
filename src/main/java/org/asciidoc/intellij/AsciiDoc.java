@@ -1369,7 +1369,7 @@ public class AsciiDoc {
       }
     }
 
-    html = addHightlightJs(html, attributes, project);
+    html = addHighlightJs(html, attributes, project);
 
     String docinfo = attributes.get("docinfo");
     if (docinfo != null && docinfo.length() != 0) {
@@ -1432,8 +1432,8 @@ public class AsciiDoc {
     return html;
   }
 
-  private static String addHightlightJs(@NotNull String html, @NotNull Map<String, String> attributes, @Nullable Project project) {
-    /* Add HightlightJS line */
+  private static String addHighlightJs(@NotNull String html, @NotNull Map<String, String> attributes, @Nullable Project project) {
+    /* Add HighlightJS line */
     if (Objects.equals(attributes.get("source-highlighter"), "highlightjs") || // will work both with and without a dot
       Objects.equals(attributes.get("source-highlighter"), "highlight.js")) {
       String theme = attributes.get("highlightjs-theme");
