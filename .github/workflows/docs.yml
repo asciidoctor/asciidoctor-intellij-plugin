@@ -20,8 +20,6 @@ jobs:
       # necessary for the runs of push to store security events in the repo
       # GitHub code scanning will treat any grammar error like any security event.
       security-events: write
-      # allow to publish github pages
-      contents: write
     steps:
 
       - name: Fetch Sources
@@ -56,23 +54,39 @@ jobs:
         run: |
           sed -i 's|"uri": "|"uri": "doc/|g' ${{ runner.temp }}/qodana/results/qodana.sarif.json
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        if: github.ref_name == 'main'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${{ runner.temp }}/qodana/results/report
-          destination_dir: ./
-
       # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/uploading-a-sarif-file-to-github#example-workflow-that-runs-the-eslint-analysis-tool
       - name: Upload SARIF report to GitHub
         # so that it is present on all pull requests and GitHub shows the comparison results
         uses: github/codeql-action/upload-sarif@v1
         with:
           # Path to SARIF file relative to the root of the repository
-          sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
+          sarif_file: ${{ runner.temp }}/qodana/results/qodana-baseline.sarif.json
 
-# tag::cleanup[]
+  github-pages:
+    name: GitHub Pages
+    runs-on: ubuntu-latest
+    needs:
+      - qodana-docs
+    if: github.ref_name == 'main'
+    permissions:
+      # allow to publish github pages
+      contents: write
+    steps:
+
+      # Download plugin artifact provided by the previous job
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: qodana-report
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./results/report
+          destination_dir: ./
+
+  # tag::cleanup[]
   cleanup:
     name: Cleanup old builds
     # avoid 403 error with message "Resource not accessible by integration" (seen with dependabot)
