@@ -1283,33 +1283,9 @@ public class AsciiDoc {
   public static String enrichPage(@NotNull String html, String
     standardCss, @NotNull Map<String, String> attributes, @Nullable Project project) {
 
-    /* Add body classes */
-    String doctype = attributes.get("doctype");
-    String bodyClass = "";
-    if (doctype != null && doctype.length() != 0) {
-      bodyClass += doctype + " ";
-    }
+    html = enrichPageMaxWidth(html, attributes);
 
-    String tocClass = attributes.get("toc-class");
-    String toc = attributes.get("toc");
-    if (tocClass != null && toc != null) {
-      bodyClass += tocClass + " ";
-      String tocPosition = attributes.get("toc-position");
-      if (tocPosition != null && tocPosition.length() != 0) {
-        bodyClass += "toc-" + tocPosition + " ";
-      }
-      if (tocClass.length() > 0) {
-        // in embedded mode, the class of the toc is always set to 'toc'
-        // this way it will not be placed left or right using the standard CSS
-        // this replacement fixes it by setting it to the real 'toc-class'
-        html = html.replaceAll("<div id=\"toc\" class=\"toc\">", "<div id=\"toc\" class=\"" + tocClass + "\">\n");
-      }
-    }
-
-    if (bodyClass.length() > 0) {
-      html = html
-        .replace("<body>", "<body class='" + bodyClass + "' />");
-    }
+    html = enrichPageDocTypeAndBodyClass(html, attributes);
 
     /* Add CSS line; if styles can't be loaded, use default styles. */
     String stylesheet = attributes.get("stylesheet");
@@ -1369,7 +1345,7 @@ public class AsciiDoc {
       }
     }
 
-    html = addHighlightJs(html, attributes, project);
+    html = enrichPageHighlightJs(html, attributes, project);
 
     String docinfo = attributes.get("docinfo");
     if (docinfo != null && docinfo.length() != 0) {
@@ -1432,7 +1408,47 @@ public class AsciiDoc {
     return html;
   }
 
-  private static String addHighlightJs(@NotNull String html, @NotNull Map<String, String> attributes, @Nullable Project project) {
+  private static String enrichPageDocTypeAndBodyClass(String html, @NotNull Map<String, String> attributes) {
+    /* Add body classes */
+    String doctype = attributes.get("doctype");
+    String bodyClass = "";
+    if (doctype != null && doctype.length() != 0) {
+      bodyClass += doctype + " ";
+    }
+
+    String tocClass = attributes.get("toc-class");
+    String toc = attributes.get("toc");
+    if (tocClass != null && toc != null) {
+      bodyClass += tocClass + " ";
+      String tocPosition = attributes.get("toc-position");
+      if (tocPosition != null && tocPosition.length() != 0) {
+        bodyClass += "toc-" + tocPosition + " ";
+      }
+      if (tocClass.length() > 0) {
+        // in embedded mode, the class of the toc is always set to 'toc'
+        // this way it will not be placed left or right using the standard CSS
+        // this replacement fixes it by setting it to the real 'toc-class'
+        html = html.replaceAll("<div id=\"toc\" class=\"toc\">", "<div id=\"toc\" class=\"" + tocClass + "\">\n");
+      }
+    }
+
+    if (bodyClass.length() > 0) {
+      html = html
+        .replace("<body>", "<body class='" + bodyClass + "' />");
+    }
+    return html;
+  }
+
+  private static String enrichPageMaxWidth(@NotNull String html, @NotNull Map<String, String> attributes) {
+    /* Add max-width classes */
+    String maxWidth = attributes.get("max-width");
+    if (maxWidth != null) {
+      html = html.replaceAll("(<div id=\"(content|footnotes)\")", "$1 " + Matcher.quoteReplacement("style=\"max-width: " + maxWidth + "\")"));
+    }
+    return html;
+  }
+
+  private static String enrichPageHighlightJs(@NotNull String html, @NotNull Map<String, String> attributes, @Nullable Project project) {
     /* Add HighlightJS line */
     if (Objects.equals(attributes.get("source-highlighter"), "highlightjs") || // will work both with and without a dot
       Objects.equals(attributes.get("source-highlighter"), "highlight.js")) {

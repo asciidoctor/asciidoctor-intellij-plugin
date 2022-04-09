@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.13
+
+- support `max-width` attribute for the preview (#1029)
+
 === 0.37.12
 
 - remove hard dependency on Grazie plugin that resulted in a ClassNotFoundException (#1014)
