@@ -132,6 +132,26 @@ public class AsciiDocDownloaderUtil {
     }
   }
 
+  public static void pickAsciidoctorJDiagramPlantuml(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
+    String downloadName = "asciidoctorj-diagram-plantuml-" + ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION + ".jar";
+    try {
+      pickFile(downloadName, project, ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH, onSuccess);
+    } catch (IOException ex) {
+      LOG.warn("Can't pick file '" + downloadName + "'", ex);
+      ApplicationManager.getApplication().invokeLater(() -> onFailure.consume(ex));
+    }
+  }
+
+  public static void pickAsciidoctorJDiagramDitaamini(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
+    String downloadName = "asciidoctorj-diagram-ditaamini-" + ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION + ".jar";
+    try {
+      pickFile(downloadName, project, ASCIIDOCTORJ_DIAGRAM_DITAAMINI_HASH, onSuccess);
+    } catch (IOException ex) {
+      LOG.warn("Can't pick file '" + downloadName + "'", ex);
+      ApplicationManager.getApplication().invokeLater(() -> onFailure.consume(ex));
+    }
+  }
+
   public static void pickAsciidoctorJPdf(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
     String downloadName = "asciidoctorj-pdf-" + ASCIIDOCTORJ_PDF_VERSION + ".jar";
     try {

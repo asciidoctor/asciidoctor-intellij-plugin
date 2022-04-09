@@ -80,6 +80,12 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private LinkLabel<?> myDownloadDependenciesFailedPdfBrowser;
   private LinkLabel<?> myDownloadDependenciesFailedPdfPickFile;
   private JPanel myDownloadDependenciesFailedPdf;
+  private JPanel myDownloadDependenciesFailedPlantuml;
+  private LinkLabel<?> myDownloadDependenciesFailedPlantumlBrowser;
+  private LinkLabel<?> myDownloadDependenciesFailedPlantumlPickFile;
+  private JPanel myDownloadDependenciesFailedDitaamini;
+  private LinkLabel<?> myDownloadDependenciesFailedDitaaminiPickFile;
+  private LinkLabel<?> myDownloadDependenciesFailedDitaaminiBrowser;
 
   public JComponent getComponent() {
     return myMainPanel;
@@ -133,7 +139,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     myDownloadDependenciesHelp = ContextHelpLabel.create(
       AsciiDocBundle.message(
         "asciidoc.download.folderandcontents",
-        (AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().getName() + ", " + AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().getName() + " and " + AsciiDocDownloaderUtil.getAsciidoctorJPdfFile().getName()),
+        (AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().getName() + ", " + AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().getName() + ", " + AsciiDocDownloaderUtil.getAsciidoctorJDiagramDitaaminiFile().getName() + " and " + AsciiDocDownloaderUtil.getAsciidoctorJPdfFile().getName()),
         AsciiDocDownloaderUtil.DOWNLOAD_PATH)
     );
   }
@@ -162,17 +168,17 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myDownloadDependenciesLink.setVisible(false);
       myDownloadDependenciesHelp.setVisible(false);
       myDownloadDependenciesFailedDiagram.setVisible(false);
+      myDownloadDependenciesFailedPlantuml.setVisible(false);
+      myDownloadDependenciesFailedDitaamini.setVisible(false);
       myDownloadDependenciesFailedPdf.setVisible(false);
     } else {
+      myDownloadDependenciesComplete.setVisible(false);
       myDownloadDependenciesLink.setVisible(true);
       myDownloadDependenciesHelp.setVisible(true);
-      myDownloadDependenciesComplete.setVisible(false);
-      if (AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJDiagram()) {
-        myDownloadDependenciesFailedDiagram.setVisible(false);
-      }
-      if (AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJPdf()) {
-        myDownloadDependenciesFailedPdf.setVisible(false);
-      }
+      myDownloadDependenciesFailedDiagram.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().exists());
+      myDownloadDependenciesFailedPlantuml.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().exists());
+      myDownloadDependenciesFailedDitaamini.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramDitaaminiFile().exists());
+      myDownloadDependenciesFailedPdf.setVisible(!AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJPdf());
     }
   }
 
@@ -265,8 +271,14 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     myDownloadDependenciesLink.setListener((source, data) -> {
       AsciiDocDownloaderUtil.download(null, this::adjustDownloadDependenciesOptions, throwable -> {
-        if (!AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJDiagram()) {
+        if (!AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().exists()) {
           myDownloadDependenciesFailedDiagram.setVisible(true);
+        }
+        if (!AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().exists()) {
+          myDownloadDependenciesFailedPlantuml.setVisible(true);
+        }
+        if (!AsciiDocDownloaderUtil.getAsciidoctorJDiagramDitaaminiFile().exists()) {
+          myDownloadDependenciesFailedDitaamini.setVisible(true);
         }
         if (!AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJPdf()) {
           myDownloadDependenciesFailedPdf.setVisible(true);
@@ -283,6 +295,24 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
         myDownloadDependenciesFailedDiagramPickFile.setText("Pick failed: " + throwable.getMessage()));
     }, null);
 
+    myDownloadDependenciesFailedPlantumlBrowser.setListener((source, data) -> {
+      BrowserUtil.browse(AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlUrl());
+    }, null);
+
+    myDownloadDependenciesFailedPlantumlPickFile.setListener((source, data) -> {
+      AsciiDocDownloaderUtil.pickAsciidoctorJDiagramPlantuml(null, this::adjustDownloadDependenciesOptions, throwable ->
+        myDownloadDependenciesFailedPlantumlPickFile.setText("Pick failed: " + throwable.getMessage()));
+    }, null);
+
+    myDownloadDependenciesFailedDitaaminiBrowser.setListener((source, data) -> {
+      BrowserUtil.browse(AsciiDocDownloaderUtil.getAsciidoctorJDiagramDitaaminiUrl());
+    }, null);
+
+    myDownloadDependenciesFailedDitaaminiPickFile.setListener((source, data) -> {
+      AsciiDocDownloaderUtil.pickAsciidoctorJDiagramDitaamini(null, this::adjustDownloadDependenciesOptions, throwable ->
+        myDownloadDependenciesFailedDitaaminiPickFile.setText("Pick failed: " + throwable.getMessage()));
+    }, null);
+
     myDownloadDependenciesFailedPdfBrowser.setListener((source, data) -> {
       BrowserUtil.browse(AsciiDocDownloaderUtil.getAsciidoctorJPdfUrl());
     }, null);
@@ -294,6 +324,8 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     adjustDownloadDependenciesOptions();
     myDownloadDependenciesFailedDiagram.setVisible(false);
+    myDownloadDependenciesFailedPlantuml.setVisible(false);
+    myDownloadDependenciesFailedDitaamini.setVisible(false);
     myDownloadDependenciesFailedPdf.setVisible(false);
   }
 

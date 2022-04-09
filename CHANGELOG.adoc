@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.37.13
 
 - support `max-width` attribute for the preview (#1029)
+- allow manual download and picking for PlantUML and Ditaa Mini (#1026)
 
 === 0.37.12
 
