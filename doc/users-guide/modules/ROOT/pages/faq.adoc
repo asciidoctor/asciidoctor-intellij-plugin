@@ -73,7 +73,7 @@ See xref:faq/could-not-find-dot-executable.adoc[] for more information.
 
 === The preview is blurry!
 
-This sometimes happens when using the JavaFX preview on high resolution displays.
+This sometimes happens when using the JavaFX preview on high-resolution displays.
 
 See xref:faq/blurry-preview.adoc[] for more information.
 

@@ -7,12 +7,12 @@
 == Creating an HTML file
 
 The user can choose _Create HTML from current file_ from the editor's action toolbar to convert the file to the HTML format.
-If creating HTML succeeds, the exported file is opened in the system's default browser.
+If creation of the HTML file succeeds, the exported file is opened in the system's default browser.
 
 == Creating a PDF file
 
 The user can choose _Create PDF from current file_ from the editor's action toolbar to convert the file shown in the current AsciiDoc editor to a PDF using Asciidoctor PDF version 1.6.x.
-If creating the PDF succeeds, the plugin opens the PDF in the system's PDF viewer.
+If creation of the PDF file succeeds, the plugin opens the PDF in the system's PDF viewer.
 To find out more how to configure the output and formatting, visit https://asciidoctor.org/docs/asciidoctor-pdf/.
 
 === Downloading Asciidoctor PDF support

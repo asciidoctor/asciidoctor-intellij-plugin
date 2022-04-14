@@ -23,7 +23,7 @@ See _xref::user/add-eap-repository-to-ide.adoc[]_ for more information.
 == Publishing a stable version
 
 . Go to https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases[GitHub releases for this plugin]
-. Edit the pre-release and un-check the checkbox "`This is a pre-release`". +
+. Edit the pre-release and uncheck the checkbox "`This is a pre-release`". +
 A GitHub action will then publish the release.
 You don't need to wait for the publishing process of the preview version to complete to be able to trigger publishing a stable version.
 . Due to caching in the JetBrains marketplace and the IDE, it might take some time (minutes to hours) for the IDE to pick up the new version.

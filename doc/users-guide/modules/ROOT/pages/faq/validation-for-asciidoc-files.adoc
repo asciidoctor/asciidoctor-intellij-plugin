@@ -15,7 +15,7 @@ If the IDE opens a single file and not a project with all related files, it migh
 
 == How to edit files as a project
 
-The user selects the menu item menu:File[Open...] and then to selects and folder and opens it.
+The user selects the menu item menu:File[Open...], then selects the folder and opens it.
 The IDE will open files in the folder and its sub-folder as one project.
 Validation and auto-completion then works as expected.
 

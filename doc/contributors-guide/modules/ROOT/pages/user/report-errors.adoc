@@ -16,7 +16,7 @@ image::ide-fatal-errors.png[]
 <2> Depending on the error that occurred, the user can tick the checkboxes for optional attachments.
 Sending these attachments is important for developers to reproduce the issue and to analyze the cause. +
 Users should review the information they report before sending it so that they don't reveal information about their local project that they don't want to share.
-All information can be edited by the user as needed before reporting.
+The user can edit all information before reporting the error.
 <3> Report the issue.
 
 Reporting of the errors doesn't require registration and is anonymous unless users provide an email address or similar identifying information in the form.

@@ -38,7 +38,7 @@ To change the settings, follow these steps:
 Steps::
 +
 . Open the menu menu:File[Settings... > Languages & Frameworks > Asciidoclet]
-. Check or un-check the checkbox "`Enable Asciidoclet support (AsciiDoc in Javadoc)`"
+. Check or uncheck the checkbox "`Enable Asciidoclet support (AsciiDoc in Javadoc)`"
 
 Since IDEA release 2020.1 users can choose to show Javadoc comments rendered by the editor.
 With IDEA release 2020.2 and the latest version of the Asciidoclet Plugin this is supported for Asciidoclet as well.

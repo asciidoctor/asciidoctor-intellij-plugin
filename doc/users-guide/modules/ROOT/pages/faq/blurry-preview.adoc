@@ -17,14 +17,14 @@ The current combinations seems to be:
 
 * Operating System Windows 10, +
 JavaFX preview +
-a high resolution display with a fractional scaling (for example 125% or 175%), +
+a high-resolution display with a fractional scaling (for example 125% or 175%), +
 IntelliJ running on OpenJDK 8 / JetBrains Runtime 8
 
 or
 
 * Operating System Linux (for example Fedora 31 Wayland), +
 JavaFX preview +
-a high resolution display with scaling-factor 200% or more, +
+a high-resolution display with scaling-factor 200% or more, +
 IntelliJ running on OpenJDK or JetBrains Runtime (any version)
 
 == How do I fix this?
@@ -40,7 +40,7 @@ There are four alternatives to fix this:
 === Change to JCEF preview
 
 This JCEF preview embeds a Chromium based browser in the IDE.
-As it supports high resolution displays and is the preview technology recommended by JetBrains, follow the instructions in the chapter '`xref:features/preview/jcef-preview.adoc[]`' to activate it.
+As it supports high-resolution displays and is the preview technology recommended by JetBrains, follow the instructions in the chapter '`xref:features/preview/jcef-preview.adoc[]`' to activate it.
 
 [#change_uiscale]
 === Configure option _sun.java2d.uiScale.enabled_

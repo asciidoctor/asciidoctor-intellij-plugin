@@ -42,7 +42,7 @@ If the user hasn't enabled soft wrap per default, an editor notification appears
 
 Soft wrapping adds an indent on each wrapped line.
 https://youtrack.jetbrains.com/issue/IDEA-93413#focus=Comments-27-2321897.0-0[To disable this, users can set a custom IDEA property] via menu:Help[Edit Custom Properties].
-Adding these two properties and restarting the IDE will change the soft wrap arrow to a zero width space.
+Adding these two properties and restarting the IDE will change the soft wrap arrow to a zero-width space.
 ----
 idea.editor.wrap.soft.before.code=200B
 idea.editor.wrap.soft.after.code=200B

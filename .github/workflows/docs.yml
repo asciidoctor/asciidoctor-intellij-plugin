@@ -28,19 +28,19 @@ jobs:
 
       - name: Download AsciiDoc plugin for AsciiDoc checks
         run: |
-          curl -L -o asciidoctor-intellij-plugin.zip https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases/download/0.37.8/asciidoctor-intellij-plugin-0.37.8.zip
+          curl -L -o asciidoctor-intellij-plugin.zip https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases/download/0.37.13/asciidoctor-intellij-plugin-0.37.13.zip
           unzip asciidoctor-intellij-plugin.zip
 
       - name: Download Grazie plugin for grammar checks
         # https://plugins.jetbrains.com/plugin/12175-grazie/versions
         run: |
-          curl -L -o grazie.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=153738'
+          curl -L -o grazie.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=160382'
           unzip grazie.zip
 
       - name: Download Grazie Professional plugin for grammar checks
         # https://plugins.jetbrains.com/plugin/16136-grazie-professional/versions
         run: |
-          curl -L -o grazie-pro.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=160044'
+          curl -L -o grazie-pro.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=168105'
           unzip grazie-pro.zip
 
       - name: 'Qodana for Docs'
