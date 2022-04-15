@@ -23,6 +23,7 @@
 *** xref:features/advanced/creating-html-and-pdf.adoc[]
 *** xref:features/advanced/livetemplates.adoc[]
 *** xref:features/advanced/multimodule.adoc[]
+*** xref:features/advanced/validation-in-ide.adoc[]
 *** xref:features/advanced/validation-cicd.adoc[]
 *** xref:features/advanced/pdf-non-latin-languages.adoc[]
 *** xref:features/advanced/privacy.adoc[]

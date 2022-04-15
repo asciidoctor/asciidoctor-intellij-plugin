@@ -1,5 +1,5 @@
 = Validation during Continuous Integration and Delivery
-:navtitle: Validation CI/CD
+:navtitle: Validation in CI/CD
 :description: Use the same validations as in the IDE in your CI/CD setup.
 
 {description}
@@ -9,7 +9,7 @@
 JetBrains published https://www.jetbrains.com/qodana/[Qodana] that wraps the smart features of IntelliJ into a container, so it can be used on the command line as a Docker container.
 To make this simpler to use, it has been https://github.com/JetBrains/qodana-action[wrapped as a GitHub action].
 
-For AsciiDoc files, it will highlight all the problems that are highlighted in your IDE as well, including broken links as well as grammar errors.
+For AsciiDoc files, it will highlight all the problems that are highlighted in your IDE as well, including broken links (with the help of the AsciiDoc plugin) as well as grammar errors (with the help of the Grazie and Grazie Professional plugins).
 
 .Overview Qodana process
 image::qodana/qodana-concepts.dio.svg[]

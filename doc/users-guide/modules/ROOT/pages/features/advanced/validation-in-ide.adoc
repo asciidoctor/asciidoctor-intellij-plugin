@@ -1,0 +1,65 @@
+= Validation in the IDE
+:navtitle: Validation in the IDE
+:description: Validate a project or a set of files in one go.
+
+{description}
+
+== Use _Inspect Code_ to validate AsciiDoc content
+
+When users write AsciiDoc content in the editor, the IDE will highlight problems in the editor.
+Different plugins will show different warnings:
+
+. AsciiDoc Plugin: shows, for example, broken images and deprecated syntax.
+
+. https://plugins.jetbrains.com/plugin/12175-grazie[Grazie] and https://plugins.jetbrains.com/plugin/16136-grazie-professional[Grazie Professional] plugins: show spelling, style and grammar problems.
+
+To review problems in all files or a subset of files in a project, the IDE offers the functionality _Inspect Code_.
+
+The following paragraph provides the step-by-step instructions for this.
+
+== Running the inspection for a project
+
+As a pre-requisite when running grammar inspections in large projects, increase the memory of the IDE as the IDE might otherwise be slow, or stall due to the lack of memory.
+Choose menu item menu:Help[Change Memory Settings] and change this, for example, to 4096 MB.
+
+Then follow these steps to validate files in a project.
+Use the icon icon:question[] to read the docs of the IDE to find out about additional functionality in each dialog.
+
+. Select a folder in the project view with documents to inspect, for example, _doc_.
+
+. Select the menu item menu:Code[Inspect Code...].
+
+. In the pop-up window, the directory is preselected.
+Keep this selection, or choose a different scope or the whole project depending on where files should be inspected.
+
+. When running this for the first time, select menu:Configure...[] to select which kind of checks to run.
++
+image::validation-ide/popup-validate-code-default.png[]
+
+. To create a custom profile, use the gear-icon ((icon:gear[])) to duplicate the default inspection.
+For this example, after duplicating the default inspection, enter the name _AsciiDoc_ and press kbd:[Enter].
++
+image::validation-ide/popup-inspection-profile-duplicate.png[]
+
+. Deselect all inspections except the AsciiDoc and Proofreading inspections to restrict the type of checks.
+Return here later to adjust the inspections to suit the project.
+After updates of IntelliJ or its plugins, revisit the profile to see if new inspections are available.
+Select btn:[OK] to return to the previous pop-up.
++
+image::validation-ide/popup-inspection-profile-customized.png[]
+
+. Select the _AsciiDoc_ inspection profile and press btn:[Analyze].
++
+image::validation-ide/popup-validate-code-with-profile.png[]
+
+. The IDE then shows a tool window with all problems found in the search.
+Depending on the size of the project and the inspections selected, the inspection might take some time.
+Use the icons on the left to re-run the analysis, expand or collapse all groups, navigate to the previous or next problem in the list, or change the inspection profile.
++
+image::validation-ide/problem-tool-window.png[]
+
+== Further reading
+
+* https://www.jetbrains.com/help/idea/running-inspections.html[IntelliJ documentation on running inspections]
+* xref:features/advanced/validation-cicd.adoc[Running validation as part of CI/CD]
+
