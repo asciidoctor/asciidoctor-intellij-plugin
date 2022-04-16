@@ -21,10 +21,14 @@
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-json.xml">com.intellij.modules.json</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-yaml.xml">org.jetbrains.plugins.yaml</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-grazie.xml">tanvd.grazi</depends>
+  <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-sh.xml">com.jetbrains.sh</depends>
 
   <extensionPoints>
     <extensionPoint qualifiedName="org.asciidoc.intellij.html.panel.provider" dynamic="true"
                     interface="org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider"/>
+    <extensionPoint qualifiedName="org.asciidoc.intellij.asciidocRunner"
+                    interface="org.asciidoc.intellij.commandRunner.AsciiDocRunner"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="org.asciidoc.intellij">
@@ -296,6 +300,7 @@
                      groupName="General" enabledByDefault="true" level="WARNING"
                      shortName="AsciiDocAttributeShouldBeDefined"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocAttributeUndefinedInspection"/>
+    <runLineMarkerContributor language="AsciiDoc" implementationClass="org.asciidoc.intellij.commandRunner.AsciiDocRunLineMarkersProvider"/>
     <lang.inspectionSuppressor language="AsciiDoc"
       implementationClass="org.asciidoc.intellij.inspections.AsciiDocInspectionSuppressor" />
     <externalAnnotator language="AsciiDoc" order="before asciidoc-processor" implementationClass="org.asciidoc.intellij.annotator.AsciiDocExternalAnnotatorHighlighting"/>

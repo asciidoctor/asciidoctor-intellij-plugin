@@ -40,9 +40,16 @@ public class LanguageGuesser {
     }
 
     if (!result.containsKey("bash")) {
-      final Language shellScriptLanguage = result.get("shell script");
-      if (shellScriptLanguage != null) {
-        result.put("bash", shellScriptLanguage);
+      final Language l = result.get("shell script");
+      if (l != null) {
+        result.put("bash", l);
+      }
+    }
+
+    if (!result.containsKey("jshell")) {
+      final Language l = result.get("jshelllanguage");
+      if (l != null) {
+        result.put("jshell", l);
       }
     }
 

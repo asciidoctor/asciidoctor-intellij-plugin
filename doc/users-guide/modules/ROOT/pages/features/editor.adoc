@@ -141,6 +141,32 @@ To do this, add Chrome as an https://www.jetbrains.com/help/idea/settings-tools-
 Provide `$FilePath$` as the argument so that Chrome knows where to find the file.
 The user can assign a shortcut to the external tool using menu:Help[Find action... > (type the name of external tool) > kbd:[Alt+Enter] > (type the shortcut of choice) > OK].
 
+== Interaction
+
+// see: AsciiDocRunLineMarkersProvider
+Sometimes a user wants to run the examples in a document.
+For source code blocks or inline monospace quoted text, the plugin tries to identify executable commands.
+If it does, it will show a line marker with a green play button at the left of the editor to execute the command in a local shell.
+
+Currently, the following snippets are available to run:
+
+Code Blocks::
+* Shell scripts (marked as `bash` language).
++
+Those will be executed in the terminal configured for IntelliJ instance of the user, for example, Bash or PowerShell.
++
+All commands run from documents in the same folder share the same terminal.
+
+* Java and JShell scripts (marked with `java` or `jshell`).
++
+Those will be executed in a JShell with the project's default configuration if Java-support is enabled in the IDE.
++
+All commands run from one document will share the same JShell instance.
+
+Inline Commands::
+All inline commands need to be in backticks and need to show as a monospaced text.
+The plugin will show the run icon only when it identifies it as a command that is available via the https://www.jetbrains.com/help/idea/running-anything.html[IDE's Run Anything] functionality.
+
 == Writing
 
 // see: SplitFileEditor

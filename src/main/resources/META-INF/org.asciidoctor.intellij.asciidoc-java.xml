@@ -5,5 +5,8 @@
     <lang.findUsagesProvider language="AsciiDoc" implementationClass="org.asciidoc.intellij.findUsages.AsciiDocFindJavaProvider"/>
     <referencesSearch implementation="org.asciidoc.intellij.findUsages.AsciiDocJavaReferencesSearch"/>
   </extensions>
+  <extensions defaultExtensionNs="org.asciidoc.intellij">
+    <asciidocRunner implementation="org.asciidoc.intellij.commandRunner.AsciiDocRunnerForJava" />
+  </extensions>
 </idea-plugin>
 

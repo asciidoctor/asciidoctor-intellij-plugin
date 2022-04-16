@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.14
+
+- support run command from editor for source code snippets and inline commands (#977)
+
 === 0.37.13
 
 - support `max-width` attribute for the preview (#1029)
