@@ -149,6 +149,7 @@ The user can assign a shortcut to the external tool using menu:Help[Find action.
 Sometimes a user wants to run the examples in a document.
 For source code blocks or inline monospace quoted text, the plugin tries to identify executable commands.
 If it does, it will show a line marker with a green play button at the left of the editor to execute the command in a local shell.
+The current project needs to be a trusted project.
 This is available from plugin version 0.37.14 onwards.
 
 Currently, the following snippets are available to run:
