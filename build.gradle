@@ -36,12 +36,12 @@ allprojects {
 }
 
 intellij {
-  version = 'IC-221.5080.169-EAP-SNAPSHOT' // 'IC-2021.3.2'
+  version = 'IC-221.5080.210' // 'IC-2021.3.2'
   pluginName = 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild = false
   plugins = [
     'PsiViewer:221-SNAPSHOT', // used for debugging
-    'PlantUML integration:5.11.1', // used to test highlighting of plantuml diagrams
+    'PlantUML integration:5.12.0', // used to test highlighting of plantuml diagrams
     'com.intellij.platform.images', // dependency for PlantUML plugin
     'tanvd.grazi', // used for spell and grammar checking checking
     'com.intellij.javafx:1.0.4',
