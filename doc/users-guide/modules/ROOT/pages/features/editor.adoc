@@ -34,7 +34,8 @@ The breadcrumbs-view (bottom of the editor) shows the hierarchy leading to the c
 It contains the same elements as in the structure view for the cursor position.
 
 AsciiDoc recommends the https://asciidoctor.org/docs/asciidoc-recommended-practices/#one-sentence-per-line[one-sentence-per-line] style.
-To avoid scrolling horizontally, the user should enable soft-wrap in the IDE. Go to menu:Settings[Editor > General], scroll to menu:Soft Wrap[], add the AsciiDoc file extension (if not already pre-populated) and activate the checkbox "`Soft-wrap files`".
+To avoid scrolling horizontally, the user should enable soft-wrap in the IDE.
+Go to menu:Settings[Editor > General], scroll to menu:Soft Wrap[], add the AsciiDoc file extension (if not already pre-populated) and activate the checkbox "`Soft-wrap files`".
 
 // EnableSoftWrapNotificationProvider
 The user can toggle soft-wrap for a single file via the editor toolbar.
@@ -43,6 +44,7 @@ If the user hasn't enabled soft wrap per default, an editor notification appears
 Soft wrapping adds an indent on each wrapped line.
 https://youtrack.jetbrains.com/issue/IDEA-93413#focus=Comments-27-2321897.0-0[To disable this, users can set a custom IDEA property] via menu:Help[Edit Custom Properties].
 Adding these two properties and restarting the IDE will change the soft wrap arrow to a zero-width space.
+
 ----
 idea.editor.wrap.soft.before.code=200B
 idea.editor.wrap.soft.after.code=200B
@@ -147,6 +149,7 @@ The user can assign a shortcut to the external tool using menu:Help[Find action.
 Sometimes a user wants to run the examples in a document.
 For source code blocks or inline monospace quoted text, the plugin tries to identify executable commands.
 If it does, it will show a line marker with a green play button at the left of the editor to execute the command in a local shell.
+This is available from plugin version 0.37.14 onwards.
 
 Currently, the following snippets are available to run:
 
@@ -239,10 +242,12 @@ _Inline directive_ can take the file referenced via the selected include and put
 // see: AsciiDocAdmonitionToBlockIntention.java and AsciiDocAdmonitionToBlockAction.java
 .Available from release 0.31.35:
 The user can change single-line admonition to a block-style admonition.
-This is available from the "`Refactor"` context menu and as a context-sensitive intention "`Refactor to block admonition`" via kbd:[Alt+Enter]. It is available when user places the cursor on the start of single-line admonition (like for example `NOTE:`).
+This is available from the "`Refactor"` context menu and as a context-sensitive intention "`Refactor to block admonition`" via kbd:[Alt+Enter].
+It is available when user places the cursor on the start of single-line admonition (like for example `NOTE:`).
 
 All of these changes can be undone (kbd:[Ctrl+Z]).
-Refactorings will re-format the refactored block. See the section about <<reformatting>> on how to configure this.
+Refactorings will re-format the refactored block.
+See the section about <<reformatting>> on how to configure this.
 
 The user can disable and enable intentions in menu:Settings...[Editor > Intentions > AsciiDoc].
 
