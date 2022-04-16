@@ -12,44 +12,58 @@ import com.intellij.ide.actions.runAnything.activity.RunAnythingProvider;
 import com.intellij.ide.actions.runAnything.activity.RunAnythingRecentProjectProvider;
 import com.intellij.ide.impl.TrustedProjects;
 import com.intellij.lang.Language;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.CachedValue;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.injection.LanguageGuesser;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.psi.AsciiDocBlock;
 import org.asciidoc.intellij.psi.AsciiDocListing;
+import org.asciidoc.intellij.psi.AsciiDocSection;
 import org.asciidoc.intellij.psi.AsciiDocTextQuoted;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor {
-  public static final Key<CachedValue<Boolean>> KEY_ASCIIDOC_RUNNABLE = new Key<>("asciidoc-runnable");
+public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor implements DumbAware {
 
   @Override
   public @Nullable Info getInfo(@NotNull PsiElement element) {
     if (!TrustedProjects.isTrusted(element.getProject())) {
       return null;
     }
-    if ((element instanceof AsciiDocListing)) {
-      return handleListing((AsciiDocListing) element);
+    // Line markers need to be placed at leaf elements only
+    // https://plugins.jetbrains.com/docs/intellij/line-marker-provider.html#register-the-line-marker-provider
+    if (!(element instanceof LeafPsiElement)) {
+      return null;
     }
-    if ((element.getNode().getElementType() == AsciiDocTokenTypes.LISTING_TEXT)) {
-      return handleListingLine(element);
-    }
-    if ((element instanceof AsciiDocTextQuoted)) {
-      return handleQuotedText((AsciiDocTextQuoted) element);
+    while (element != null) {
+      // for higher order elements, search the tree upwards from the leaf element
+      if ((element instanceof AsciiDocListing)) {
+        return handleListing((AsciiDocListing) element);
+      }
+      if ((element.getNode() != null && element.getNode().getElementType() == AsciiDocTokenTypes.LISTING_TEXT)) {
+        return handleListingLine(element);
+      }
+      if ((element instanceof AsciiDocTextQuoted)) {
+        return handleQuotedText((AsciiDocTextQuoted) element);
+      }
+      if (element.getPrevSibling() != null) {
+        break;
+      }
+      if (element instanceof AsciiDocBlock || element instanceof AsciiDocSection) {
+        break;
+      }
+      element = element.getParent();
     }
     return null;
   }
@@ -70,25 +84,18 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor {
   private Info handleCommand(PsiElement element, String text) {
     VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
 
-    boolean matches = CachedValuesManager.getCachedValue(element, KEY_ASCIIDOC_RUNNABLE,
-      () -> {
-        boolean result = matches(element.getProject(), virtualFile, text, true);
-        return CachedValueProvider.Result.create(result, element);
-      }
-    );
-
-    if (!matches) {
+    if (!matches(element.getProject(), virtualFile, text, true)) {
       return null;
     }
 
-    AnAction runAction = new AnAction(() -> AsciiDocBundle.message("asciidoc.runner.snippet"), AllIcons.RunConfigurations.TestState.Run) {
+    DumbAwareAction runAction = new DumbAwareAction(() -> AsciiDocBundle.message("asciidoc.runner.launch.command", text), AllIcons.RunConfigurations.TestState.Run) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent event) {
         execute(element.getProject(), virtualFile, text, DefaultRunExecutor.getRunExecutorInstance());
       }
     };
 
-    return new Info(AllIcons.RunConfigurations.TestState.Run, new AnAction[]{runAction}, (e) -> AsciiDocBundle.message("asciidoc.runner.launch.command", text));
+    return new Info(AllIcons.RunConfigurations.TestState.Run, new DumbAwareAction[]{runAction}, (e) -> AsciiDocBundle.message("asciidoc.runner.launch.command", text));
   }
 
   private void execute(Project project, VirtualFile virtualFile, String command, Executor executor) {
@@ -150,7 +157,7 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor {
       return null;
     }
     VirtualFile virtualFile = listing.getContainingFile().getVirtualFile();
-    AnAction runAction = new AnAction(runner::getTitle, AllIcons.RunConfigurations.TestState.Run_run) {
+    DumbAwareAction runAction = new DumbAwareAction(runner::getTitle, AllIcons.RunConfigurations.TestState.Run_run) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent event) {
         Project project = event.getRequiredData(CommonDataKeys.PROJECT);
@@ -158,6 +165,6 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor {
       }
     };
 
-    return new Info(AllIcons.RunConfigurations.TestState.Run_run, new AnAction[] {runAction}, e -> runner.getTitle());
+    return new Info(AllIcons.RunConfigurations.TestState.Run_run, new DumbAwareAction[] {runAction}, e -> runner.getTitle());
   }
 }
