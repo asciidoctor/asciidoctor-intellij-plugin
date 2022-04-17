@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - prevent error message "Directory index can only be queried after project initialization" (#1038)
 - prevent already disposed message during background update (#1039)
+- prevent blanks in suggested language names, adding 'shell' as an alias
 
 === 0.37.14
 

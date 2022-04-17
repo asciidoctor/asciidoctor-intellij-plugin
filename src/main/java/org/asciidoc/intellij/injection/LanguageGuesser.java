@@ -31,7 +31,7 @@ public class LanguageGuesser {
         continue;
       }
 
-      result.put(language.getID().toLowerCase(Locale.US), language);
+      result.put(language.getID().toLowerCase(Locale.US).replaceAll(" ", ""), language);
     }
 
     final Language javascriptLanguage = result.get("javascript");
@@ -40,9 +40,16 @@ public class LanguageGuesser {
     }
 
     if (!result.containsKey("bash")) {
-      final Language l = result.get("shell script");
+      final Language l = result.get("shellscript");
       if (l != null) {
         result.put("bash", l);
+      }
+    }
+
+    if (!result.containsKey("shell")) {
+      final Language l = result.get("shellscript");
+      if (l != null) {
+        result.put("shell", l);
       }
     }
 
