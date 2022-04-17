@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.serviceContainer.AlreadyDisposedException;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.ui.OverwriteFileDialog;
 import org.asciidoc.intellij.util.FilenameUtils;
@@ -102,18 +103,22 @@ public class ConvertToAsciiDocAction extends AnAction implements UpdateInBackgro
 
   @Override
   public void update(AnActionEvent event) {
-    PsiFile file = event.getData(LangDataKeys.PSI_FILE);
-    boolean enabled = false;
+    try {
+      VirtualFile file = event.getData(LangDataKeys.VIRTUAL_FILE);
+      boolean enabled = false;
 
-    if (file != null) {
-      for (String ext : MARKDOWN_EXTENSIONS) {
-        if (file.getName().endsWith("." + ext)) {
-          enabled = true;
-          break;
+      if (file != null) {
+        for (String ext : MARKDOWN_EXTENSIONS) {
+          if (file.getName().endsWith("." + ext)) {
+            enabled = true;
+            break;
+          }
         }
       }
+      event.getPresentation().setEnabledAndVisible(enabled);
+    } catch (AlreadyDisposedException ex) {
+      // noop
     }
-    event.getPresentation().setEnabledAndVisible(enabled);
   }
 
 }
