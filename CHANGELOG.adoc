@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.15
+
+- prevent error message "Directory index can only be queried after project initialization" (#1038)
+
 === 0.37.14
 
 - support run command from editor for source code snippets and inline commands (#977)

@@ -7,6 +7,9 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.impl.EditorHistoryManager;
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorProvider;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.impl.ModuleManagerEx;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.Disposer;
@@ -23,7 +26,10 @@ public class AsciiDocSplitEditorProvider extends SplitTextEditorProvider {
 
     // removing the entry from the history prevents an "Unable to find providerId=text-editor" assertion error
     // in EditorComposite
-    boolean shouldClearEditorHistory = ApplicationInfo.getInstance().getBuild().getBaselineVersion() == 221;
+    // https://youtrack.jetbrains.com/issue/IDEA-289732 - gone in 2022.1 final
+    boolean shouldClearEditorHistory = ApplicationInfo.getInstance().getBuild().getBaselineVersion() == 221
+       && ApplicationInfo.getInstance().getBuild().getComponents().length > 1
+       && ApplicationInfo.getInstance().getBuild().getComponents()[1] < 5080;
 
     // when this plugin is installed at runtime, check if the existing editors as split editors.
     // If not, close the editor and re-open the files
@@ -56,20 +62,30 @@ public class AsciiDocSplitEditorProvider extends SplitTextEditorProvider {
             }
           }
         }
-        // clearing the history after the re-opening of files for all closed files in the history.
         if (shouldClearEditorHistory) {
-          for (VirtualFile vFile : EditorHistoryManager.getInstance(project).getFileList()) {
-            if (vFile.isValid()) {
-              PsiFile pFile = pm.findFile(vFile);
-              if (pFile != null) {
-                if (pFile.getLanguage() == AsciiDocLanguage.INSTANCE) {
-                  if (EditorHistoryManager.getInstance(project).getState(vFile, this) == null) {
-                    EditorHistoryManager.getInstance(project).removeFile(vFile);
+          DumbService.getInstance(project).runWhenSmart(() -> ApplicationManager.getApplication().invokeLater(() -> {
+            ModuleManager manager = ModuleManager.getInstance(project);
+            if (manager instanceof ModuleManagerEx) {
+              // use this to avoid an exception in RootIndex.java:69
+              if (!((ModuleManagerEx) manager).areModulesLoaded()) {
+                return;
+              }
+            }
+
+            // clearing the history after the re-opening of files for all closed files in the history.
+            for (VirtualFile vFile : EditorHistoryManager.getInstance(project).getFileList()) {
+              if (vFile.isValid()) {
+                PsiFile pFile = pm.findFile(vFile);
+                if (pFile != null) {
+                  if (pFile.getLanguage() == AsciiDocLanguage.INSTANCE) {
+                    if (EditorHistoryManager.getInstance(project).getState(vFile, this) == null) {
+                      EditorHistoryManager.getInstance(project).removeFile(vFile);
+                    }
                   }
                 }
               }
             }
-          }
+          }));
         }
       }
     });
