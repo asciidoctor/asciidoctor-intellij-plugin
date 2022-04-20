@@ -82,7 +82,10 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor imp
   }
   @Nullable
   private Info handleCommand(PsiElement element, String text) {
-    VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
+    VirtualFile virtualFile = getVirtualFile(element);
+    if (virtualFile == null) {
+      return null;
+    }
 
     if (!matches(element.getProject(), virtualFile, text, true)) {
       return null;
@@ -96,6 +99,14 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor imp
     };
 
     return new Info(AllIcons.RunConfigurations.TestState.Run, new DumbAwareAction[]{runAction}, (e) -> AsciiDocBundle.message("asciidoc.runner.launch.command", text));
+  }
+
+  private VirtualFile getVirtualFile(PsiElement element) {
+    VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
+    if (virtualFile == null) {
+      virtualFile = element.getContainingFile().getOriginalFile().getVirtualFile();
+    }
+    return virtualFile;
   }
 
   private void execute(Project project, VirtualFile virtualFile, String command, Executor executor) {
