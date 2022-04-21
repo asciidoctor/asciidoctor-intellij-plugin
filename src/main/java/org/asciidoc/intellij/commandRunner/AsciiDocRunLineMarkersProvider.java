@@ -130,6 +130,9 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor imp
     if (trimmedCmd.isEmpty()) {
       return false;
     }
+    if (virtualFile.getParent() == null) {
+      return false;
+    }
     DataContext dataContext = createDataContext(project, virtualFile, null);
 
     return ApplicationManager.getApplication().runReadAction((Computable<Boolean>) () -> RunAnythingProvider.EP_NAME.extensions()
