@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.inspections;
 
 import com.intellij.codeInspection.LocalInspectionToolSession;
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
@@ -10,6 +11,7 @@ import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationReference;
 import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.psi.AttributeDeclaration;
+import org.asciidoc.intellij.quickfix.AsciiDocChangeToPassthrough;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -20,6 +22,8 @@ import java.util.Locale;
  */
 public class AsciiDocAttributeUndefinedInspection extends AsciiDocInspectionBase {
   private static final String TEXT_HINT_ATTRIBUTE_NOT_DEFINED = "Attribute should be defined";
+
+  private static final AsciiDocChangeToPassthrough CHANGE_TO_PASSTHROUGH = new AsciiDocChangeToPassthrough();
 
   @NotNull
   @Override
@@ -49,7 +53,8 @@ public class AsciiDocAttributeUndefinedInspection extends AsciiDocInspectionBase
               continue;
             }
             if (attributeDeclarationReference.multiResolve(false).length == 0) {
-              holder.registerProblem(o, TEXT_HINT_ATTRIBUTE_NOT_DEFINED, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, reference.getRangeInElement());
+              LocalQuickFix[] fixes = new LocalQuickFix[]{CHANGE_TO_PASSTHROUGH};
+              holder.registerProblem(o, TEXT_HINT_ATTRIBUTE_NOT_DEFINED, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, reference.getRangeInElement(), fixes);
             }
           }
         }

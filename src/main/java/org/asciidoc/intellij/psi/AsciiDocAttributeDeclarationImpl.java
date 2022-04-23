@@ -63,7 +63,20 @@ public class AsciiDocAttributeDeclarationImpl
    * Check if it is an unset attribute declaration (':attr!:').
    */
   public boolean isUnset() {
-    return this.getNode().getChildren(TokenSet.create(AsciiDocTokenTypes.ATTRIBUTE_UNSET)).length > 0;
+    boolean isUnset = false;
+    for (ASTNode child : this.getNode().getChildren(TokenSet.create(AsciiDocTokenTypes.ATTRIBUTE_UNSET))) {
+      ASTNode treePrev = child.getTreePrev();
+      if (treePrev != null && treePrev.getElementType() == AsciiDocTokenTypes.ATTRIBUTE_NAME_START) {
+        isUnset = true;
+        break;
+      }
+      ASTNode treeNext = child.getTreeNext();
+      if (treeNext != null && treeNext.getElementType() == AsciiDocTokenTypes.ATTRIBUTE_NAME_END) {
+        isUnset = true;
+        break;
+      }
+    }
+    return isUnset;
   }
 
   private static final TokenSet CONTINUATION_TYPES = TokenSet.create(AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION,

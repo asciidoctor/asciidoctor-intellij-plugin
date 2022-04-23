@@ -823,6 +823,14 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRIBUTE_NAME_END (':')");
   }
 
+  public void testAttributeWithSoftSet() {
+    doTest(":attribute@:",
+      "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME ('attribute')\n" +
+        "AsciiDoc:ATTRIBUTE_SOFTSET ('@')\n" +
+        "AsciiDoc:ATTRIBUTE_NAME_END (':')");
+  }
+
   public void testAttributeWithBlanks() {
     doTest(":attri b ute :",
       "AsciiDoc:ATTRIBUTE_NAME_START (':')\n" +

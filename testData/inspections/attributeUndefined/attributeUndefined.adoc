@@ -2,4 +2,4 @@
 
 {definedattribute}
 
-{<warning descr="Attribute should be defined">undefinedattribute</warning>}
+XX {<warning descr="Attribute should be defined">undefinedattribute</warning>} XX

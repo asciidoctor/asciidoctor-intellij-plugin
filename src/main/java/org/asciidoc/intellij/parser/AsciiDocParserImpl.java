@@ -20,6 +20,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_NAME_STAR
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_REF;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_REF_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_REF_START;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_SOFTSET;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_UNSET;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRIBUTE_VAL;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ATTRS_END;
@@ -673,7 +674,7 @@ public class AsciiDocParserImpl {
     PsiBuilder.Marker blockAttrsMarker = myBuilder.mark();
     next();
     while ((at(ATTRIBUTE_NAME) || at(ATTRIBUTE_NAME_END) || at(ATTRIBUTE_VAL) || at(ATTRIBUTE_REF_START)
-      || at(ATTRIBUTE_CONTINUATION) || at(ATTRIBUTE_CONTINUATION_LEGACY) || at(ATTRIBUTE_UNSET))
+      || at(ATTRIBUTE_CONTINUATION) || at(ATTRIBUTE_CONTINUATION_LEGACY) || at(ATTRIBUTE_UNSET) || at(ATTRIBUTE_SOFTSET))
       && newLines == 0) {
       if (at(ATTRIBUTE_NAME)) {
         PsiBuilder.Marker blockIdMarker = myBuilder.mark();

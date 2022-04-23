@@ -1,0 +1,5 @@
+:definedattribute: defined
+
+{definedattribute}
+
+XX +{undefinedattribute}+ XX

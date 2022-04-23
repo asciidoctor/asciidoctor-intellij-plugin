@@ -1,10 +1,10 @@
 package org.asciidoc.intellij.inspections;
 
-import org.asciidoc.intellij.quickfix.AsciiDocChangeCaseForAnchor;
+import org.asciidoc.intellij.quickfix.AsciiDocChangeToPassthrough;
 
 public class AsciiDocAttributeUndefinedInspectionTest extends AsciiDocQuickFixTestBase {
 
-  private static final String NAME = new AsciiDocChangeCaseForAnchor().getName();
+  private static final String NAME = new AsciiDocChangeToPassthrough().getName();
 
   @Override
   public void setUp() throws Exception {

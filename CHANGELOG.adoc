@@ -7,6 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.18
+
+- allow for attribute declarations in document ending with an `@`
+- provide quick-fix to change attribute references to a passthrough
+
 === 0.37.17
 
 - prevent NPE in when showing run markers (#1042)
