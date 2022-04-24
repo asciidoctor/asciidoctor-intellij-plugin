@@ -19,9 +19,8 @@ Supported as of 0.34.2 of the plugin: In another situation a playbook might be i
 Create a project with multiple modules in your IDE.
 Each module will be backed by its own Git repository.
 Despite multiple Git repositories, the IDE will show it as one project with multiple modules.
-This will only work if the project includes a build-file that the IDE recognizes, for example, pom.xml for Maven.
 
-If the different repositories don't contain such a build file, the user can still check out all repositories in separate folders below a master folder, and then open the master folder as the project folder in the IDE.
+The alternative: the user can check out all repositories in separate folders below a master folder, and then open the master folder as the project folder in the IDE.
 
 == Tradeoffs of a multi-module project
 
@@ -49,11 +48,12 @@ This project will be the project the user will open to work with all Git reposit
 
 . Select the existing top-level module in the project in the project view.
 
-. Choose menu:File[New,Module from Existing Sources...].
+. Choose menu:File[Project Structure...,Modules].
+Click on icon:plus[] and menu:Import Module[].
 
 . Select the folder with the other Git repository and press btn:[OK].
 
-. Choose option _Import module from external model_.
+. Choose option _Import module from external model_ if the repository contains sources from a build tool you recognize, or _Create module from existing sources_ if not.
 
 . Depending on the external model, complete the following dialogs.
 
