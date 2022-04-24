@@ -98,7 +98,7 @@ public class FormattingQuotedTypedHandler extends TypedHandlerDelegate {
   }
 
   private static boolean isDelimiter(final char c) {
-    return c == '*' || c == '_' || c == '#' || c == '`' || c == '"' || c == '\'';
+    return c == '*' || c == '_' || c == '#' || c == '`' || c == '"' || c == '\'' || c == '$' || c == '+';
   }
 
 }

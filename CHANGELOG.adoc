@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - provide quick-fix to change attribute references to a passthrough
 - fix navigation in preview for Antora cross-module xrefs with anchors (#1018)
 - support editor formatting for passthrough with `$$` (#1017)
+- support wrapping/unwrapping of selected text as passthrough by pressing `$` or `+` (#1017)
 
 === 0.37.17
 
