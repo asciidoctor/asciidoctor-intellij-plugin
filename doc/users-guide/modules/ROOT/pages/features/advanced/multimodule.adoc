@@ -19,8 +19,11 @@ Supported as of 0.34.2 of the plugin: In another situation a playbook might be i
 Create a project with multiple modules in your IDE.
 Each module will be backed by its own Git repository.
 Despite multiple Git repositories, the IDE will show it as one project with multiple modules.
+This will only work if the project includes a build-file that the IDE recognizes, for example, pom.xml for Maven.
 
-== Tradeoffs
+If the different repositories don't contain such a build file, the user can still check out all repositories in separate folders below a master folder, and then open the master folder as the project folder in the IDE.
+
+== Tradeoffs of a multi-module project
 
 Once the setup is complete, the IDE's view for Git will show a combined history for all Git repositories added in the following steps.
 Depending on the user's needs, this might be helpful in the long term and confusing at the beginning.
