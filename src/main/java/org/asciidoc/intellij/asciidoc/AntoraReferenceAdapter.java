@@ -107,7 +107,7 @@ public class AntoraReferenceAdapter {
       }
       if (anchorIndex != -1) {
         anchor = target.substring(anchorIndex + 1);
-        target = target.substring(0, anchorIndex - 1);
+        target = target.substring(0, anchorIndex);
       }
       if (type.equals("inline_anchor")) {
         if (!target.endsWith(outfileSuffix)) {
