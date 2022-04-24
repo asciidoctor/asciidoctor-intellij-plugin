@@ -346,6 +346,7 @@ AUTOCOMPLETE = "IntellijIdeaRulezzz" " "? // CompletionUtilCore.DUMMY_IDENTIFIER
 BLOCK_ATTRS_START = "["
 STRING = {NON_SPACE}+ \n? // something that doesn't have an empty line
 STRINGNOPLUS       = [^\n\+]+ \n?
+STRINGNODOLLAR       = [^\n\$]+ \n?
 // something with a non-blank at the end, might contain a line break, but only if it doesn't separate the block
 WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n] | {SPACE}* [^\n]*[^\ \t\n]
 WORDNOBRACKET =  {SPACE}* [^\n\]]* {SPACE}* \n {SPACE}* [^\ \t\n\]] | {SPACE}* [^\n\]]*[^\ \t\n\]]
@@ -449,6 +450,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state PASSTHROUGH_NO_DELIMITER
 %state PASSTHROUGH_NO_DELIMITER
 %state PASSTRHOUGH_INLINE_CONSTRAINED
+%state PASSTRHOUGH_INLINE_DOLLARS
 %state PASSTRHOUGH_INLINE_UNCONSTRAINED
 
 %state IFDEF_IFNDEF_ENDIF
@@ -1257,6 +1259,15 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          } else {
                            yypushback(yylength() - 2);
                            yypushstate(); yybegin(PASSTRHOUGH_INLINE_CONSTRAINED); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
+                         }
+                       }
+  "$$" [^+] ({STRINGNODOLLAR} | [^\$][\$][^\$])* "$$" {
+                         if (isEscaped()) {
+                           yypushback(yylength() - 1);
+                           return textFormat();
+                         } else {
+                           yypushback(yylength() - 2);
+                           yypushstate(); yybegin(PASSTRHOUGH_INLINE_DOLLARS); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
                          }
                        }
   "+" {
@@ -2211,7 +2222,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   [^]                  { return AsciiDocTokenTypes.BLOCK_COMMENT; }
 }
 
-<PASSTRHOUGH_INLINE_CONSTRAINED, PASSTRHOUGH_INLINE, PASSTRHOUGH_INLINE_UNCONSTRAINED> {
+<PASSTRHOUGH_INLINE_CONSTRAINED, PASSTRHOUGH_INLINE, PASSTRHOUGH_INLINE_UNCONSTRAINED, PASSTRHOUGH_INLINE_DOLLARS> {
   // blank lines within pre block don't have an effect
   ^ {SPACE}* "\n"           { yypushback(yylength()); yypopstate(); }
 }
@@ -2223,6 +2234,11 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <PASSTRHOUGH_INLINE_CONSTRAINED> {
   "++" { yypopstate(); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END; }
+  [^]                  { return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
+}
+
+<PASSTRHOUGH_INLINE_DOLLARS> {
+  "$$" { yypopstate(); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END; }
   [^]                  { return AsciiDocTokenTypes.PASSTRHOUGH_CONTENT; }
 }
 

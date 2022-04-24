@@ -1813,6 +1813,12 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:PASSTRHOUGH_INLINE_END ('+++')");
   }
 
+  public void testPassThroughInlineDollars() {
+    doTest("$$pt\npt2$$",
+      "AsciiDoc:PASSTRHOUGH_INLINE_START ('$$')\n" +
+        "AsciiDoc:PASSTRHOUGH_CONTENT ('pt\\npt2')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_END ('$$')");
+  }
   public void testPassThroughInlineOnePlus() {
     doTest("+pt\np+t2+",
       "AsciiDoc:PASSTRHOUGH_INLINE_START ('+')\n" +
