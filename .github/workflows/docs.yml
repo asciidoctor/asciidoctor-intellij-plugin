@@ -63,7 +63,7 @@ jobs:
       # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/uploading-a-sarif-file-to-github#example-workflow-that-runs-the-eslint-analysis-tool
       - name: Upload SARIF report to GitHub
         # so that it is present on all pull requests and GitHub shows the comparison results
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v2
         with:
           # Path to SARIF file relative to the root of the repository
           sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
