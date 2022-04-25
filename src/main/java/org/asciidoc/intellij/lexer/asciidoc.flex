@@ -1252,7 +1252,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <INSIDE_LINE, DESCRIPTION, TITLE> {
   // PASSTHROUGH START
-  "++" [^+] ({STRINGNOPLUS} | [^\+][\+][^\+])* "++" {
+  "++" ({STRINGNOPLUS} | [^\+][\+][^\+])* "++" {
                          if (isEscaped()) {
                            yypushback(yylength() - 1);
                            return textFormat();
@@ -1261,7 +1261,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            yypushstate(); yybegin(PASSTRHOUGH_INLINE_CONSTRAINED); return AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START;
                          }
                        }
-  "$$" [^+] ({STRINGNODOLLAR} | [^\$][\$][^\$])* "$$" {
+  "$$" ({STRINGNODOLLAR} | [^\$][\$][^\$])* "$$" {
                          if (isEscaped()) {
                            yypushback(yylength() - 1);
                            return textFormat();
@@ -1279,7 +1279,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          return textFormat();
                        }
   }
-  {PASSTRHOUGH_INLINE} ({STRINGNOPLUS} | [^\+][^\+]{1,2}[^+] )* {PASSTRHOUGH_INLINE} {
+  {PASSTRHOUGH_INLINE} ({STRINGNOPLUS} | [+]{1,2}[^+] )* {PASSTRHOUGH_INLINE} {
                            if (isEscaped()) {
                              yypushback(yylength() - 2);
                              return textFormat();
@@ -1564,7 +1564,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            return textFormat();
                          }
                        }
-  {INLINE_MACRO_START} / ({INLINE_URL_NO_DELIMITER} | {INLINE_URL_WITH_DELIMITER}) ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" {WORDNOBRACKET}* "]") {
+  {INLINE_MACRO_START} / ({INLINE_URL_NO_DELIMITER} | {INLINE_URL_WITH_DELIMITER}) ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" {WORDNOBRACKET}* {SPACE}* "]") {
         if (!isEscaped()) {
           yypushstate();
           yybegin(INLINE_MACRO_URL);
@@ -1573,14 +1573,14 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           return textFormat();
         }
       }
-  {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\s\[\n\"`]* | "") ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" ({WORDNOBRACKET}*|"[" [^\]\n]* "]")*  "]") {
+  {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\s\[\n\"`]* | "") ({AUTOCOMPLETE} | {AUTOCOMPLETE}? "[" ({WORDNOBRACKET}*|"[" [^\]\n]* "]")* {SPACE}* "]") {
         if (!isEscaped()) {
           yypushstate();
           if (yytext().toString().equals("xref:")) {
             // this might be an incomplete xref with autocomplete as this pattern is less strict than the xref pattern
             yybegin(LINKFILE);
             return AsciiDocTokenTypes.LINKSTART;
-          } else if (yytext().toString().equals("footnote:")) {
+          } else if (yytext().toString().equals("footnote:") || yytext().toString().equals("pass:")) {
             yybegin(INLINE_MACRO_TEXT);
             return AsciiDocTokenTypes.INLINE_MACRO_ID;
           } else if (yytext().toString().equals("btn:")) {
@@ -1606,7 +1606,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         }
       }
   // support for blanks in well-known macros as long as the target doesn't contain a colon (that could indicate a the next real macro)
-  {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\[\n\"`:]* | "") "[" ({WORDNOBRACKET}*|"[" [^\]\n]* "]")*  "]" {
+  {INLINE_MACRO_START} / ([^ \[\n\"`:/] [^\[\n\"`:]* | "") "[" ({WORDNOBRACKET}*|"[" [^\]\n]* "]")* {SPACE}* "]" {
           if (!isEscaped()) {
             yypushstate();
             if (yytext().toString().equals("xref:")) {

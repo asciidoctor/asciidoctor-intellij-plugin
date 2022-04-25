@@ -1813,6 +1813,13 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:PASSTRHOUGH_INLINE_END ('+++')");
   }
 
+  public void testPassThroughInlineThreePlusWithPlusInside() {
+    doTest("+++ ++ +++",
+      "AsciiDoc:PASSTRHOUGH_INLINE_START ('+++')\n" +
+        "AsciiDoc:PASSTRHOUGH_CONTENT (' ++ ')\n" +
+        "AsciiDoc:PASSTRHOUGH_INLINE_END ('+++')");
+  }
+
   public void testPassThroughInlineDollars() {
     doTest("$$pt\npt2$$",
       "AsciiDoc:PASSTRHOUGH_INLINE_START ('$$')\n" +
@@ -2644,6 +2651,16 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:INLINE_ATTRS_END (']')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('text')");
+  }
+
+  public void testInlineMacroWithBlank() {
+    doTest("pass:[ blank ]",
+      "AsciiDoc:INLINE_MACRO_ID ('pass:')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:MACROTEXT ('blank')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
   }
 
   public void testInlineMacroWithAttributeInBody() {
