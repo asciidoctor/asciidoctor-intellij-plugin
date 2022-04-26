@@ -9,7 +9,6 @@
         <entry key="location-0" value="BUNDLED:(bundled):Sun Checks;All" />
         <entry key="location-1" value="BUNDLED:(bundled):Google Checks;All" />
         <entry key="location-2" value="PROJECT_RELATIVE:$PROJECT_DIR$/config/checkstyle/checkstyle.xml:AsciiDoc check;All" />
-        <entry key="property-2.config_loc" value="" />
         <entry key="scan-before-checkin" value="false" />
         <entry key="scanscope" value="JavaOnlyWithTests" />
         <entry key="suppress-errors" value="false" />
