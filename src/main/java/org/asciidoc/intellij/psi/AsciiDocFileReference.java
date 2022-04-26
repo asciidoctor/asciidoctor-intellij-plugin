@@ -285,7 +285,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   @Override
   public PsiElement bindToElement(@NotNull PsiElement otherElement) {
     VirtualFile otherAntoraModuleDir = AsciiDocUtil.findAntoraModuleDir(otherElement);
-    if (otherAntoraModuleDir != null) {
+    VirtualFile myAntoraModuleDir = AsciiDocUtil.findAntoraModuleDir(this.getElement());
+    if (otherAntoraModuleDir != null && myAntoraModuleDir != null) {
       ElementManipulator<PsiElement> manipulator = ElementManipulators.getManipulator(this.getElement());
       if (manipulator != null) {
         VirtualFile otherAntoraPagesDir = AsciiDocUtil.findAntoraPagesDir(otherElement);
@@ -342,7 +343,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
               sb.append(otherAntoraModuleDir.getName());
               sb.append(":");
             }
-            String relativePath = FileUtil.getRelativePath(otherAntoraPagesDir.getPath(), otherVf.getPath(), '/');
+            String relativePath;
+            if (macroName.equals("include") && Objects.equals(myAntoraModuleDir, otherAntoraModuleDir)) {
+              // includes within the same module will always be relative to the file
+              relativePath = FileUtil.getRelativePath(myElement.getContainingFile().getVirtualFile().getParent().getPath(), otherVf.getPath(), '/');
+            } else {
+              relativePath = FileUtil.getRelativePath(otherAntoraPagesDir.getPath(), otherVf.getPath(), '/');
+            }
             if (relativePath != null) {
               sb.append(relativePath);
               manipulator.handleContentChange(this.getElement(), getRangeInElement().shiftLeft(base.length()).grown(base.length()), sb.toString());
@@ -841,7 +848,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
                 toAntoraLookupItem(items, "image", AsciiDocUtil.findAntoraImagesDir(root.getProject(), vf), '$');
                 toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(root.getProject(), vf), '$');
               }
-              return items.toArray();
+              if (!("include".equals(macroName) && AsciiDocUtil.isAntoraPage(myElement))) {
+                return items.toArray();
+              }
             }
           }
         }

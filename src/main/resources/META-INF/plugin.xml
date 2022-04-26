@@ -357,6 +357,7 @@
     <lang.formatter language="AsciiDoc" implementationClass="org.asciidoc.intellij.formatting.AsciiDocFormattingModelBuilder"/>
     <langCodeStyleSettingsProvider implementation="org.asciidoc.intellij.codeStyle.AsciiDocLanguageCodeStyleSettingsProvider"/>
     <codeStyleSettingsProvider implementation="org.asciidoc.intellij.codeStyle.AsciiDocCodeStyleSettingsProvider"/>
+    <moveFileHandler implementation="org.asciidoc.intellij.psi.AsciiDocMoveFileHandler"/>
     <intentionAction>
       <bundleName>AsciiDocBundle</bundleName>
       <categoryKey>asciidoc.intention.category</categoryKey>

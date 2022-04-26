@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - support editor formatting for passthrough with `$$` (#1017)
 - support wrapping/unwrapping of selected text as passthrough by pressing `$` or `+` (#1017)
 - new inspection for passthrough with `$$` and a quick-fix (#1017)
+- when moving pages to another folder in an Antora module, update references also for includes (#981)
 
 === 0.37.17
 
