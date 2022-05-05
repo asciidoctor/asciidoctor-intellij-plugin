@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.19
+
+- handle exception when JCEF can't be initialized (#1051)
+
 === 0.37.18
 
 - allow for attribute declarations in document ending with an `@`

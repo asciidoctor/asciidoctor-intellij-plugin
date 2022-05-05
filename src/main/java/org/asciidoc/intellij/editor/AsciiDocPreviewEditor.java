@@ -57,6 +57,7 @@ import com.intellij.util.messages.Topic;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
+import org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 import org.intellij.lang.annotations.Language;
@@ -83,7 +84,7 @@ import java.util.function.Consumer;
  */
 public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEditor {
 
-  private final Logger log = Logger.getInstance(AsciiDocPreviewEditor.class);
+  private static final Logger LOG = Logger.getInstance(AsciiDocPreviewEditor.class);
   private final AsciiDocExtensionService extensionService = ApplicationManager.getApplication().getService(AsciiDocExtensionService.class);
   /**
    * single threaded with one task queue (one for each editor window).
@@ -192,7 +193,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         // noop - content hasn't rendered, project has been closed already
       } catch (Exception ex) {
         String message = "Error rendering preview: " + ex.getMessage();
-        log.error(message, ex);
+        LOG.error(message, ex);
         Notification notification = AsciiDoc.getNotificationGroup()
           .createNotification("Error rendering asciidoctor", message,
             NotificationType.ERROR);
@@ -385,7 +386,22 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       Disposer.dispose(oldPanel);
     }
 
-    final AsciiDocHtmlPanel newPanel = newPanelProvider.createHtmlPanel(document, imagesDir);
+    AsciiDocHtmlPanel newPanel;
+    try {
+      newPanel = newPanelProvider.createHtmlPanel(document, imagesDir);
+    } catch (IllegalStateException ex) {
+      if (ex.getMessage() != null && ex.getMessage().startsWith("JCEF is not supported")) {
+        LOG.warn("JCEF panel couldn't be initialized", ex);
+        Notification notification = AsciiDoc.getNotificationGroup()
+          .createNotification("Error creating JCEF preview", ex.getMessage(), NotificationType.ERROR);
+        // increase event log counter
+        notification.setImportant(true);
+        Notifications.Bus.notify(notification);
+        newPanel = new JeditorHtmlPanelProvider().createHtmlPanel(document, imagesDir);
+      } else {
+        throw ex;
+      }
+    }
     if (oldPanel != null) {
       newPanel.setEditor(oldPanel.getEditor());
     }
