@@ -143,6 +143,7 @@ To do this, add Chrome as an https://www.jetbrains.com/help/idea/settings-tools-
 Provide `$FilePath$` as the argument so that Chrome knows where to find the file.
 The user can assign a shortcut to the external tool using menu:Help[Find action... > (type the name of external tool) > kbd:[Alt+Enter] > (type the shortcut of choice) > OK].
 
+[#interaction]
 == Interaction
 
 // see: AsciiDocRunLineMarkersProvider
@@ -170,6 +171,19 @@ All commands run from one document will share the same JShell instance.
 Inline Commands::
 All inline commands need to be in backticks and need to show as a monospaced text.
 The plugin will show the run icon only when it identifies it as a command that is available via the https://www.jetbrains.com/help/idea/running-anything.html[IDE's Run Anything] functionality.
+
+[#interaction-new-terminal]
+=== Running shell commands from the same terminal
+
+All shell commands started from AsciiDoc files in the same directory should open the same terminal tool window as long as the command prompt is currently empty, and no command is currently running in that shell.
+
+This functionality might break if a custom shell has been configured and the executable's folder contains a blank.
+
+Re-configure the custom shell via menu:File[Settings...,Tools,Terminal,Shell path] and add quotes (`"`) around the path and executable for the shell like this:
+
+----
+"D:\Program Files\Git\bin\bash.exe"
+----
 
 == Writing
 

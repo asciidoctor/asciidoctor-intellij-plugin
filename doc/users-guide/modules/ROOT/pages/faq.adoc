@@ -51,6 +51,16 @@ This works the best if the IDE opens all files that belong together as a project
 
 See xref:faq/validation-for-asciidoc-files.adoc[] for details.
 
+== Interaction troubles
+
+=== Whenever I run a code snippet from the editor, a new terminal tab opens
+
+This might happen when a custom shell has been configured and the folder contains a blank.
+
+Re-configure via menu:File[Settings...,Tools,Terminal,Shell path] and add quotes around the path and executable.
+
+See xref:features/editor.adoc#interaction-new-terminal[] for more details.
+
 == Preview Troubles
 
 === The preview doesn't show some remote images! Is this a proxy issue?
