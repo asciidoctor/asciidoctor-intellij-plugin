@@ -28,19 +28,19 @@ jobs:
 
       - name: Download AsciiDoc plugin for AsciiDoc checks
         run: |
-          curl -L -o asciidoctor-intellij-plugin.zip https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases/download/0.37.13/asciidoctor-intellij-plugin-0.37.13.zip
+          curl -L -o asciidoctor-intellij-plugin.zip https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases/download/0.37.18/asciidoctor-intellij-plugin-0.37.18.zip
           unzip asciidoctor-intellij-plugin.zip
 
       - name: Download Grazie plugin for grammar checks
         # https://plugins.jetbrains.com/plugin/12175-grazie/versions
         run: |
-          curl -L -o grazie.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=160382'
+          curl -L -o grazie.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=166128'
           unzip grazie.zip
 
       - name: Download Grazie Professional plugin for grammar checks
         # https://plugins.jetbrains.com/plugin/16136-grazie-professional/versions
         run: |
-          curl -L -o grazie-pro.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=168105'
+          curl -L -o grazie-pro.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=172750'
           unzip grazie-pro.zip
 
       - name: 'Qodana for Docs'
@@ -48,7 +48,7 @@ jobs:
         with:
           # https://hub.docker.com/r/jetbrains/qodana-jvm-community/tags
           args: >
-            --linter,jetbrains/qodana-jvm-community:2021.3,
+            --linter,jetbrains/qodana-jvm-community:2022.1,
             --project-dir,${{ github.workspace }}/doc,
             -v,${{ github.workspace }}/grazie:/opt/idea/plugins/grazie,
             -v,${{ github.workspace }}/grazie-pro:/opt/idea/plugins/grazie-pro,
