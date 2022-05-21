@@ -1,7 +1,6 @@
 package org.asciidoc.intellij.editor.javafx;
 
 import com.intellij.ide.BrowserUtil;
-import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.actions.OpenFileAction;
 import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.util.PsiNavigationSupport;
@@ -437,43 +436,8 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     }
   }
 
-  private static volatile boolean ioobMarker;
-
   private static void runFX(@NotNull Runnable r) {
-    boolean[] started = {false};
-    if (!ioobMarker) {
-      try {
-        IdeEventQueue.unsafeNonblockingExecute(() -> {
-          started[0] = true;
-          r.run();
-        });
-      } catch (IndexOutOfBoundsException e) {
-        if (e.getMessage() != null && e.getMessage().contains("Wrong line")) {
-          /* this was first observed on MacOS X: CAccessibleText accesses EditorComponentImpl and produces a IOOB with "Wrong Line".
-             Empirical evidence shows that retrying doesn't provide good results; try to execute runnable directly.
-
-             See https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/499 for more information.
-
-            java.lang.IndexOutOfBoundsException: Wrong line: 1. Available lines count: 0
-              at com.intellij.openapi.editor.impl.LineSet.checkLineIndex(LineSet.java:212)
-              at com.intellij.openapi.editor.impl.LineSet.getLineStart(LineSet.java:193)
-              at com.intellij.openapi.editor.impl.DocumentImpl.getLineStartOffset(DocumentImpl.java:995)
-              at com.intellij.openapi.editor.impl.EditorComponentImpl$EditorAccessibilityDocument$1.getStartOffset(EditorComponentImpl.java:663)
-              at java.desktop/sun.lwawt.macosx.CAccessibleText.getRangeForLine(CAccessibleText.java:342)
-           */
-          LOG.warn("IOOB Exception when trying to start JavaFX runnable, will not retry", e);
-          ioobMarker = true;
-        } else {
-          LOG.warn("exception when trying to start JavaFX runnable", e);
-        }
-      } catch (Exception e) {
-        LOG.warn("exception when trying to start JavaFX runnable", e);
-      }
-    }
-    if (!started[0]) {
-      // second try without IdeEventQueue wrapper
-      r.run();
-    }
+    r.run();
   }
 
   private void runInPlatformWhenAvailable(@NotNull final Runnable runnable) {

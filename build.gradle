@@ -5,7 +5,7 @@ buildscript {
   }
 }
 plugins {
-  id "org.jetbrains.intellij" version "1.5.3"
+  id "org.jetbrains.intellij" version "1.6.0-SNAPSHOT"
   id "org.jetbrains.grammarkit" version "2021.2.2"
   id "checkstyle"
   id 'org.asciidoctor.jvm.convert' version '3.3.2'
@@ -36,11 +36,11 @@ allprojects {
 }
 
 intellij {
-  version = 'IC-221.5591.41-EAP-SNAPSHOT' // 'IC-2021.3.2'
+  version = 'IC-222.2270.31-EAP-SNAPSHOT' // 'IC-2021.3.2'
   pluginName = 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild = false
   plugins = [
-    'PsiViewer:221-SNAPSHOT', // used for debugging
+    'PsiViewer:222-SNAPSHOT', // used for debugging
     'PlantUML integration:5.12.0', // used to test highlighting of plantuml diagrams
     'com.intellij.platform.images', // dependency for PlantUML plugin
     'tanvd.grazi', // used for spell and grammar checking checking
@@ -90,6 +90,7 @@ patchPluginXml {
 
 runIde {
   jvmArgs = ['-Xmx1024m','-XX:+UnlockDiagnosticVMOptions']
+  jbrVariant = 'jcef'
   // should not automatically reload plugin on change in IDE, as JRuby is not very good at this
   systemProperty('idea.auto.reload.plugins', 'false')
   systemProperty('jdk.attach.allowAttachSelf', 'true') // necessary to run plugin com.google.ide-perf
