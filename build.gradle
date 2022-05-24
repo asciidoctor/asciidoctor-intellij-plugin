@@ -115,7 +115,7 @@ test {
 }
 
 dependencies {
-  errorprone 'com.google.errorprone:error_prone_core:2.13.1'
+  errorprone 'com.google.errorprone:error_prone_core:2.14.0'
   /* snakeyaml is s used by asciidoctorj-pdf, but is actually provided within jruby-stdlib
    * a snakeyaml version in the classpath takes precedence, but IntelliJ includes a version that is too old
    * therefore this plugin includes the same version of snakeyaml that is already included in jruby-stdlib
@@ -197,7 +197,7 @@ generateLexer {
 compileJava {
   options.errorprone.excludedPaths = '.*(_AsciiDocLexer).*'
   options.errorprone.error('StreamResourceLeak') // enforce errors where there would be warning in the standard only
-  options.errorprone.disable('MissingSummary')
+  options.errorprone.disable('MissingSummary', 'NullableOnContainingClass')
   options.compilerArgs.addAll(['--release', '11'])
   // will print link to contributor guide at the start of each build
   dependsOn showLinkToContributorGuide
