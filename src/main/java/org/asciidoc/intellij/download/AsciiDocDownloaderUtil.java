@@ -46,21 +46,23 @@ public class AsciiDocDownloaderUtil {
 
   private static final Logger LOG = Logger.getInstance(AsciiDocDownloaderUtil.class);
 
-  // when updating the version, also update the SHA1 hash!
+  // when updating the version, also update the sha256 hash!
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-pdf
-  public static final String ASCIIDOCTORJ_PDF_VERSION = "1.6.2";
-  private static final String ASCIIDOCTORJ_PDF_HASH = "ee6d6a92e17e61749bb4d70c9a07cd1cbbf890b6";
+  public static final String ASCIIDOCTORJ_PDF_VERSION = "2.0.2";
+  private static final String ASCIIDOCTORJ_PDF_HASH = "a0d7beedc6efaca6805340099c38a0f786672d73fc9c3b22ab23672b64d24e14";
 
-  // when updating the version, also update the SHA1 hash!
+  // when updating the version, also update the sha256 hash!
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram
   public static final String ASCIIDOCTORJ_DIAGRAM_VERSION = "2.2.1";
-  private static final String ASCIIDOCTORJ_DIAGRAM_HASH = "2ba96ea2e4f9f3f1441d2c63c3847a840bd1dda6";
+  private static final String ASCIIDOCTORJ_DIAGRAM_HASH = "3ebd0536dd25245f4afd90acbe29553e63c9d646b57a2093f2b56db9e7730ce9";
 
+  // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-plantuml/
   public static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION = "1.2021.8";
-  private static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH = "a35167165e126eb90cd22d4842393da695f05790";
+  private static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH = "8ba1bb406527018040f66443a29cbf163d750c8843ef25540c227ed67a22776a";
 
+  // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-ditaamini/
   public static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION = "1.0.1";
-  private static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_HASH = "d0cc68e1b294a60cec629362f35cbafdf97633e3";
+  private static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_HASH = "aad0606d3608598c753390e6d053cf4ffe3b261410c7cf5c8f95854e8f0e8686";
 
   private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
   // this is similar to the path where for example the grazie plugin places its dictionaries
@@ -228,7 +230,7 @@ public class AsciiDocDownloaderUtil {
           }
           File file = files.get(0).toNioPath().toFile();
           try (BufferedInputStream is = new BufferedInputStream(new FileInputStream(file))) {
-            String hash = DigestUtils.sha1Hex(is);
+            String hash = DigestUtils.sha256Hex(is);
             if (!downloadHash.equals(hash)) {
               throw new IOException("Hash of downloaded file doesn't match (expected: " + downloadHash + ", got: " + hash + ")");
             }
@@ -296,7 +298,7 @@ public class AsciiDocDownloaderUtil {
         throw new IOException("Wrong file selected. Please select a file named '" + downloadName + "'!");
       }
       try (BufferedInputStream is = new BufferedInputStream(virtualFiles[0].getInputStream())) {
-        String hash = DigestUtils.sha1Hex(is);
+        String hash = DigestUtils.sha256Hex(is);
         if (!downloadHash.equals(hash)) {
           throw new IOException("Hash of selected file doesn't match (expected: " + ASCIIDOCTORJ_PDF_HASH + ", got: " + hash + ")");
         }
