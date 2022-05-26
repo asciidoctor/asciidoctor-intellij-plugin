@@ -2,6 +2,9 @@
 :description: Preview-releases can be installed manually from the GitHub releases page.
 
 {description}
+Find the description on how to do this below.
+
+If you want to install new pre-releases regularly, check out xref:user/add-eap-repository-to-ide.adoc[how to add the Early Access repository of the AsciiDoc plugin to your IDE].
 
 == Installing a preview-release
 
