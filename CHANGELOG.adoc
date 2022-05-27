@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.37.21
 
 - synchronize latest Kroki Ruby changes, now including a referrer indicating the IntelliJ plugin
+- Bump asciidoctorj-pdf from 2.0.2 to 2.0.4 (#1064)
 
 === 0.37.20
 

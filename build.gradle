@@ -139,7 +139,7 @@ dependencies {
 
   // when updating the versions here, also update them in AsciiDocDownloaderUtil for dynamic download
   testImplementation 'org.asciidoctor:asciidoctorj-diagram:2.2.1'
-  testImplementation 'org.asciidoctor:asciidoctorj-pdf:2.0.2'
+  testImplementation 'org.asciidoctor:asciidoctorj-pdf:2.0.4'
 
   testImplementation(gradleTestKit())
   testImplementation 'junit:junit:4.13.2'
