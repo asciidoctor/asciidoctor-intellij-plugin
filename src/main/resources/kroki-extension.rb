@@ -385,12 +385,28 @@ module AsciidoctorExtensions
     require 'json'
 
     class << self
+      REFERER = "asciidoctor/kroki.rb/0.5.0-intellij"
+
       def get(uri, _)
-        ::OpenURI.open_uri(uri, 'r', &:read)
+        uri = URI(uri)
+        request = ::Net::HTTP::Get.new(uri)
+        request['referer'] = REFERER
+        ::Net::HTTP.start(
+          uri.hostname,
+          uri.port,
+          use_ssl: (uri.scheme == 'https')
+        ) do |http|
+          http.request(request).body
+        end
       end
 
       def post(uri, data, _)
-        res = ::Net::HTTP.post(URI(uri), data, 'Content-Type' => 'text/plain')
+        res = ::Net::HTTP.post(
+          URI(uri),
+          data,
+          'Content-Type' => 'text/plain',
+          'Referer' => REFERER
+        )
         res.body
       end
     end

@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.21
+
+- synchronize latest Kroki Ruby changes, now including a referrer indicating the IntelliJ plugin
+
 === 0.37.20
 
 - update to AsciidoctorJ PDF 2.0.2 (#1061)
