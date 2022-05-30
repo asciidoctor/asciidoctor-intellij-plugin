@@ -138,7 +138,7 @@ dependencies {
   implementation 'io.sentry:sentry:5.7.4'
 
   // when updating the versions here, also update them in AsciiDocDownloaderUtil for dynamic download
-  testImplementation 'org.asciidoctor:asciidoctorj-diagram:2.2.1'
+  testImplementation 'org.asciidoctor:asciidoctorj-diagram:2.2.3'
   testImplementation 'org.asciidoctor:asciidoctorj-pdf:2.0.4'
 
   testImplementation(gradleTestKit())

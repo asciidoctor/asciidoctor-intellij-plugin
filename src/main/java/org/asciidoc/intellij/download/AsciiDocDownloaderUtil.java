@@ -53,16 +53,16 @@ public class AsciiDocDownloaderUtil {
 
   // when updating the version, also update the sha256 hash!
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram
-  public static final String ASCIIDOCTORJ_DIAGRAM_VERSION = "2.2.1";
-  private static final String ASCIIDOCTORJ_DIAGRAM_HASH = "3ebd0536dd25245f4afd90acbe29553e63c9d646b57a2093f2b56db9e7730ce9";
+  public static final String ASCIIDOCTORJ_DIAGRAM_VERSION = "2.2.3";
+  private static final String ASCIIDOCTORJ_DIAGRAM_HASH = "03ff2ee49bde1295633ff991bf8ad4bf0fec6d8929e742e01133ee8cc998ea6b";
 
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-plantuml/
-  public static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION = "1.2021.8";
-  private static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH = "8ba1bb406527018040f66443a29cbf163d750c8843ef25540c227ed67a22776a";
+  public static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION = "1.2022.5";
+  private static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH = "44789add4ba14795adc0e03d0721de1339a4a8663bb1904949933a7cba4cef68     ";
 
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-ditaamini/
-  public static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION = "1.0.1";
-  private static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_HASH = "aad0606d3608598c753390e6d053cf4ffe3b261410c7cf5c8f95854e8f0e8686";
+  public static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION = "1.0.3";
+  private static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_HASH = "5e1dde15a88bf4ca2be60663ae12fcf8c215321e8eeca4e7947fb22732556cc9";
 
   private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
   // this is similar to the path where for example the grazie plugin places its dictionaries
