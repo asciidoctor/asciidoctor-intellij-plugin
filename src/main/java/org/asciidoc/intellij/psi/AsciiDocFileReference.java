@@ -514,7 +514,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         String defaultFamily = null;
         if (macroName.equals("image") || macroName.equals("video")) {
           defaultFamily = "image";
-        } else if (macroName.equals("xref") || macroName.equals("xref-attr")) {
+        } else if (macroName.equals("xref") || macroName.equals("xref-attr") || macroName.equals("include")) {
           defaultFamily = "page";
         }
         return AsciiDocUtil.replaceAntoraPrefix(root, resolvedKey, defaultFamily);

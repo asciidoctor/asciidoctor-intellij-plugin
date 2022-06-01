@@ -86,7 +86,7 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
         }
       }
       if (localModule != null) {
-        target = AsciiDocUtil.replaceAntoraPrefix(project, localModule, sourceDir, target, null).get(0);
+        target = AsciiDocUtil.replaceAntoraPrefix(project, localModule, sourceDir, target, "page").get(0);
       }
       if (sourceDir != null && !readFile.contains("/") && !oldTarget.equals(target)) {
         // if the readFile doesn't contain a full path name, this indicates safe mode. Use a relative path in that case.

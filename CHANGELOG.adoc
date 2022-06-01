@@ -10,9 +10,10 @@ This document provides a high-level view of the changes introduced by release.
 === 0.37.21
 
 - synchronize latest Kroki Ruby changes, now including a referrer indicating the IntelliJ plugin
-- Bump asciidoctorj-pdf from 2.0.2 to 2.0.6 (#1064, #1068)
-- asciidoctorj-diagram from 2.2.1 to 2.2.3 (#1066)
-- Bump asciidoctorj from 2.5.3 to 2.5.4 (#1069)
+- bump asciidoctorj-pdf from 2.0.2 to 2.0.6 (#1064, #1068)
+- bump asciidoctorj-diagram from 2.2.1 to 2.2.3 (#1066)
+- bump asciidoctorj from 2.5.3 to 2.5.4 (#1069)
+- for Antora, assume default family directory `pages` for all includes (#1062)
 
 === 0.37.20
 
