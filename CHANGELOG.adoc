@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.22
+
+- fix wrong dependency for Asciidoctor Diagram (#1066)
+
 === 0.37.21
 
 - synchronize latest Kroki Ruby changes, now including a referrer indicating the IntelliJ plugin
