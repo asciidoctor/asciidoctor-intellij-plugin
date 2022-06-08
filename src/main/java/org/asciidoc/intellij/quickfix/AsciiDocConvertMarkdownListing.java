@@ -92,6 +92,17 @@ public class AsciiDocConvertMarkdownListing implements LocalQuickFix {
   }
 
   private String getSourceBlockName(String language, String delimiter) {
+    if (!language.isEmpty()) {
+      if (language.contains("]") || language.contains(",") || language.contains("=")) {
+        if (!language.contains("\"")) {
+          language = "language=\"" + language + "\"";
+        } else if (!language.contains("'")) {
+          language = "language='" + language + "'";
+        } else {
+          language = "language=\"" + language.replaceAll("\"", "") + "\"";
+        }
+      }
+    }
     return (language.isEmpty() ? "[source]\n" : String.format("[source,%s]\n", language)) + delimiter;
   }
 

@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.psi;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
@@ -32,10 +33,14 @@ public class AsciiDocPsiElementFactory {
   public static AsciiDocListing createListing(@NotNull Project project,
                                               @NotNull String text) {
     final AsciiDocFile file = createFile(project, text);
-    AsciiDocListing listing = (AsciiDocListing) file.getFirstChild();
+    PsiElement firstChild = file.getFirstChild();
+    if (!(firstChild instanceof AsciiDocListing)) {
+      throw AsciiDocPsiImplUtil.getRuntimeException("unable to covert to one listing", text, null);
+    }
+    AsciiDocListing listing = (AsciiDocListing) firstChild;
     Objects.requireNonNull(listing, "listing should have been found");
     if (listing.getNextSibling() != null) {
-      throw new RuntimeException("unable to covert to one listing: " + text);
+      throw AsciiDocPsiImplUtil.getRuntimeException("unable to covert to one listing", text, null);
     }
     return listing;
   }
