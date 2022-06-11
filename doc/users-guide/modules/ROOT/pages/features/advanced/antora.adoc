@@ -58,13 +58,28 @@ Otherwise, Asciidoctor will not be able to include files outside the document's 
 
 The plugin validates all references to files within the same component, and also across components.
 
-The plugin also validates the referenced component and module names.
+=== Antora component and module name validation
+
+[NOTE]
+====
+Validation of component and module names requires plugin version 0.37.22 or later.
+====
+
+The plugin validates the referenced component and module names.
 If they don't exist, it will highlight this as an error in the editor window.
-For this to work, all components of the Antora site need to be opened in one IntelliJ project.
-If a reference includes a version, the module is only validated if the version and the component exist within the current project.
+
+If a reference includes a version, the module name is only validated if the version and the component exist within the current project.
 If they don't exist, it skips this reference for validation, as the plugin assumes this component to exist in a different branch that isn't checked out in the current project.
 
-NOTE: Validation of component and module names requires plugin version 0.37.22 or later.
+For this to work, all components of the Antora site need to be opened in one IntelliJ project.
+If this isn't suitable in a given setup, suppress the inspection for a given reference, or disable the inspection in the IDE's setting for the given project.
+
+.Example how to disable the inspection for a single reference
+[source,asciidoc]
+----
+// suppress inspection "AsciiDocUnresolvedAntoraModule"
+xref:othercomponent:othermodule:index.adoc[]
+----
 
 To learn more about how to bundle multiple Git repositories as one IntelliJ project, see the chapter on xref:features/advanced/multimodule.adoc[multi-module projects] for details.
 
