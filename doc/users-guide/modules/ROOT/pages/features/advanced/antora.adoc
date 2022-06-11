@@ -62,7 +62,7 @@ The plugin validates all references to files within the same component, and also
 
 [NOTE]
 ====
-Validation of component and module names requires plugin version 0.37.22 or later.
+Validation of component and module names requires plugin version 0.37.23 or later.
 ====
 
 The plugin validates the referenced component and module names.
