@@ -77,8 +77,7 @@ If this isn't suitable in a given setup, suppress the inspection for a given ref
 .Example how to disable the inspection for a single reference
 [source,asciidoc]
 ----
-// suppress inspection "AsciiDocUnresolvedAntoraModule"
-xref:othercomponent:othermodule:index.adoc[]
+include::{examplesdir}/antora.adoc[tags=suppressmoduleinspection]
 ----
 
 To learn more about how to bundle multiple Git repositories as one IntelliJ project, see the chapter on xref:features/advanced/multimodule.adoc[multi-module projects] for details.

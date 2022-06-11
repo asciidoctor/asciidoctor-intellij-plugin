@@ -1,3 +1,4 @@
+// suppress inspection "AsciiDocUnresolvedAntoraModule" for whole file
 // suppress inspection "AsciiDocLinkResolve" for whole file
 
 // tag::example[]
@@ -26,3 +27,9 @@ xref:mail-component.adoc[SMTP]
 // reference documents in a different component and module
 xref:component:module:mail-component.adoc[SMTP]
 // end::example[]
+
+
+// tag::suppressmoduleinspection[]
+// suppress inspection "AsciiDocUnresolvedAntoraModule"
+xref:othercomponent:othermodule:index.adoc[]
+// end::suppressmoduleinspection[]
