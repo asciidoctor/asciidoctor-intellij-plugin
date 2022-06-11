@@ -28,7 +28,7 @@ jobs:
 
       - name: Download AsciiDoc plugin for AsciiDoc checks
         run: |
-          curl -L -o asciidoctor-intellij-plugin.zip https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases/download/0.37.18/asciidoctor-intellij-plugin-0.37.18.zip
+          curl -L -o asciidoctor-intellij-plugin.zip https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases/download/0.37.23/asciidoctor-intellij-plugin-0.37.23.zip
           unzip asciidoctor-intellij-plugin.zip
 
       - name: Download Grazie plugin for grammar checks

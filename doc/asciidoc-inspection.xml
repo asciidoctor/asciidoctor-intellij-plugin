@@ -18,6 +18,7 @@
     <inspection_tool class="AsciiDocXrefWithNaturalCrossReference" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AsciiDocAttributeShouldBeDefined" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="AsciiDocObsoletePassthrough" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="AsciiDocUnresolvedAntoraModule" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="SpellCheckingInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="processCode" value="true" />
       <option name="processLiterals" value="true" />
