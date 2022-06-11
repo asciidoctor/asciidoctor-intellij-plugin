@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.37.22
 
 - handle language name snippets with special characters by quoting them (#1072)
+- validate Antora module and component names (#1057)
 
 === 0.37.22
 

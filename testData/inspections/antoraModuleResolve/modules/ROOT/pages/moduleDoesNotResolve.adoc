@@ -1,0 +1,6 @@
+= Page with modules that don't resolve
+
+xref:<error descr="Antora Module doesn't resolve">nocomponent:nomodule</error>:page.adoc[]
+
+image::<error descr="Antora Module doesn't resolve">nocomponent:nomodule</error>:image.png[]
+

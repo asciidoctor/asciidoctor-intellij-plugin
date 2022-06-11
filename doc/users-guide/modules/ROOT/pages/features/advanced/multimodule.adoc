@@ -34,7 +34,7 @@ To help with multiple Git repositories,
 
 == Setup
 
-Users find the extensive description in the https://www.jetbrains.com/help/idea/creating-and-managing-modules.html#multimodule-projects[IDE's docs].
+Users find an extensive description of how to do this in the https://www.jetbrains.com/help/idea/creating-and-managing-modules.html#multimodule-projects[IDE's docs].
 The following paragraph gives a quick start.
 
 === Pre-requisites

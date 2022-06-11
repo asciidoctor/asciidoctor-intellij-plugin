@@ -1504,6 +1504,57 @@ public class AsciiDocUtil {
     return Collections.singletonList(originalKey);
   }
 
+  public static boolean antoraVersionAndComponentExist(PsiElement myElement, String originalKey) {
+    VirtualFile moduleDir = findAntoraModuleDir(myElement);
+    if (moduleDir == null) {
+      return false;
+    }
+
+    Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(originalKey);
+    if (urlMatcher.find()) {
+      return false;
+    }
+    // this might be called from DocumentationManager.doShowJavaDocInfo
+    // allow slow operations for now, as no alternative is possible here to resolve the reference.
+    // https://youtrack.jetbrains.com/issue/IDEA-273415
+    // should no longer be necessary in 2021.3 onwards as that uses com.intellij.lang.documentation.ide.impl.DocumentationManager
+    return (boolean) AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> SlowOperations.allowSlowOperations(() -> {
+      String key = originalKey;
+      VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
+      if (antoraFile == null) {
+        return Collections.singletonList(originalKey);
+      }
+      Map<String, Object> antora;
+      try {
+        antora = AsciiDoc.readAntoraYaml(myElement.getProject(), antoraFile);
+      } catch (YAMLException ex) {
+        return Collections.singletonList(originalKey);
+      }
+      String myComponentName = getAttributeAsString(antora, "name");
+      String myComponentVersion = getAttributeAsString(antora, "version");
+
+      String otherComponentVersion = null;
+      String otherComponentName = null;
+
+      Matcher version = VERSION.matcher(key);
+      if (version.find()) {
+        otherComponentVersion = version.group("version");
+        if (otherComponentVersion.equals("_")) {
+          // starting from Antora 3.0.0.alpha-3 a version can be empty. It will be treated internally as an empty string.
+          // in xrefs, this is represented by a single underscope ("_")
+          otherComponentVersion = "";
+        }
+        key = version.replaceFirst("");
+      }
+
+      Matcher componentModule = COMPONENT_MODULE.matcher(key);
+      if (componentModule.find()) {
+        otherComponentName = componentModule.group("component");
+      }
+      return getOtherAntoraComponents(myElement.getProject(), moduleDir, myComponentName, myComponentVersion, otherComponentVersion, otherComponentName).size() > 0;
+    }));
+  }
+
   public static String findAttribute(String key, Collection<AttributeDeclaration> declaration) {
     String result = null;
     key = key.toLowerCase(Locale.US);
@@ -1655,6 +1706,96 @@ public class AsciiDocUtil {
             }
           }
           result.add(antoraModule);
+        }
+      }
+    }
+    return result;
+  }
+
+  @SuppressWarnings({"checkstyle:ParameterNumber", "checkstyle:ParameterName"})
+  private static List<VirtualFile> getOtherAntoraComponents(Project project, VirtualFile moduleDir,
+                                                            String myComponentName, String myComponentVersion,
+                                                            String _otherComponentVersion, String _otherComponentName) {
+    String otherComponentVersion = _otherComponentVersion;
+    String otherComponentName = _otherComponentName;
+
+    if (project.isDisposed()) {
+      // FilenameIndex.getFilesByName will otherwise log an error later
+      throw new ProcessCanceledException();
+    }
+    boolean useLatest = false;
+    AntoraVersionDescriptor latestVersion = null;
+    if (otherComponentVersion == null && otherComponentName != null) {
+      useLatest = true;
+    } else if (otherComponentVersion == null) {
+      otherComponentVersion = myComponentVersion;
+    }
+    List<VirtualFile> result = new ArrayList<>();
+    if (otherComponentName == null) {
+      otherComponentName = myComponentName;
+    }
+
+    if (otherComponentName != null) {
+      List<VirtualFile> files = null;
+      try {
+        files = new ArrayList<>(FilenameIndex.getVirtualFilesByName(ANTORA_YML, new AsciiDocSearchScope(project)));
+      } catch (IndexNotReadyException ex) {
+        // if the index is not ready, try at least looking in the current module
+        if (otherComponentName.equals(myComponentName)) {
+          VirtualFile componentDescriptor = moduleDir.getParent().getParent().findChild("antora.yml");
+          if (componentDescriptor != null) {
+            files = new ArrayList<>();
+            files.add(componentDescriptor);
+          }
+        }
+      }
+      if (files != null) {
+        // sort by path proximity
+        files.sort(Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
+        ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
+        for (VirtualFile file : files) {
+          if (index.isInLibrary(file)
+            || index.isExcluded(file)
+            || index.isInLibraryClasses(file)
+            || index.isInLibrarySource(file)) {
+            continue;
+          }
+          VirtualFile parent = file.getParent();
+          if (parent == null) {
+            continue;
+          }
+          VirtualFile antoraModulesDir = parent.findChild("modules");
+          if (antoraModulesDir == null) {
+            continue;
+          }
+          Map<String, Object> antora;
+          try {
+            antora = AsciiDoc.readAntoraYaml(project, file);
+          } catch (YAMLException ex) {
+            continue;
+          }
+          if (!Objects.equals(otherComponentName, getAttributeAsString(antora, "name"))) {
+            continue;
+          }
+          if (!useLatest) {
+            if (!Objects.equals(otherComponentVersion, getAttributeAsString(antora, "version"))) {
+              continue;
+            }
+          } else {
+            AntoraVersionDescriptor otherVersion = new AntoraVersionDescriptor(getAttributeAsString(antora, "version"), getAttributeAsString(antora, "prerelease"));
+            if (latestVersion == null) {
+              latestVersion = otherVersion;
+            } else {
+              int compareResult = latestVersion.compareTo(otherVersion);
+              if (compareResult < 0) {
+                result.clear();
+                latestVersion = otherVersion;
+              } else if (compareResult > 0) {
+                continue;
+              }
+            }
+          }
+          result.add(file);
         }
       }
     }

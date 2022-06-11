@@ -56,6 +56,18 @@ Using Antora page families and includes works in the preview only for trusted pr
 Otherwise, Asciidoctor will not be able to include files outside the document's root folder.
 ====
 
+The plugin validates all references to files within the same component, and also across components.
+
+The plugin also validates the referenced component and module names.
+If they don't exist, it will highlight this as an error in the editor window.
+For this to work, all components of the Antora site need to be opened in one IntelliJ project.
+If a reference includes a version, the module is only validated if the version and the component exist within the current project.
+If they don't exist, it skips this reference for validation, as the plugin assumes this component to exist in a different branch that isn't checked out in the current project.
+
+NOTE: Validation of component and module names requires plugin version 0.37.22 or later.
+
+To learn more about how to bundle multiple Git repositories as one IntelliJ project, see the chapter on xref:features/advanced/multimodule.adoc[multi-module projects] for details.
+
 === Antora editor support
 
 In the editor, the user can autocomplete filenames and references using kbd:[Ctrl+Space] and can navigate to a folder or file using kbd:[Ctrl+B].

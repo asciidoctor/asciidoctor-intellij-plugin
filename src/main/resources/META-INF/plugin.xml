@@ -304,6 +304,10 @@
                      groupName="General" enabledByDefault="true" level="WARNING"
                      shortName="AsciiDocObsoletePassthrough"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocPassthroughInspection"/>
+    <localInspection language="AsciiDoc" displayName="Unresolved Antora module" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="ERROR"
+                     shortName="AsciiDocUnresolvedAntoraModule"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocAntoraModuleResolveInspection"/>
     <runLineMarkerContributor language="AsciiDoc" implementationClass="org.asciidoc.intellij.commandRunner.AsciiDocRunLineMarkersProvider"/>
     <lang.inspectionSuppressor language="AsciiDoc"
       implementationClass="org.asciidoc.intellij.inspections.AsciiDocInspectionSuppressor" />
