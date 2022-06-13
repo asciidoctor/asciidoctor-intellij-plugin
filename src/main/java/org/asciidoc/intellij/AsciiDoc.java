@@ -334,7 +334,7 @@ public class AsciiDoc {
         asciidoctor.requireLibrary("openssl");
         asciidoctor.javaExtensionRegistry().preprocessor(prependConfig);
         asciidoctor.javaExtensionRegistry().includeProcessor(antoraIncludeAdapter);
-        if (format == FileType.JAVAFX || format == FileType.HTML || format == FileType.JCEF || format == FileType.BROWSER) {
+        if (format == FileType.JAVAFX || format == FileType.HTML || format == FileType.JCEF || format == FileType.DOCX || format == FileType.BROWSER) {
           asciidoctor.javaExtensionRegistry().postprocessor(attributesRetriever);
         }
         // disable JUL logging of captured messages
@@ -387,6 +387,13 @@ public class AsciiDoc {
           try (InputStream is = this.getClass().getResourceAsStream("/pdf-antora.rb")) {
             if (is == null) {
               throw new RuntimeException("unable to load script pdf-antora.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
+          }
+        } else if (format.backend.equals("docbook5")) {
+          try (InputStream is = this.getClass().getResourceAsStream("/docbook5-antora.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script docbooc5-antora.rb");
             }
             asciidoctor.rubyExtensionRegistry().loadClass(is);
           }
@@ -1164,7 +1171,7 @@ public class AsciiDoc {
   }
 
   public Options getExportOptions(Options options, FileType fileType) {
-    if (fileType == FileType.HTML || fileType == FileType.BROWSER) {
+    if (fileType == FileType.HTML || fileType == FileType.BROWSER || fileType == FileType.DOCX) {
       options.setOption(Options.HEADER_FOOTER, true);
     }
     return options;
@@ -1256,6 +1263,7 @@ public class AsciiDoc {
     BROWSER("html5"),
     JAVAFX("html5"),
     JCEF("html5"),
+    DOCX("docbook5"),
     JEDITOR("html5");
 
     private final String backend;

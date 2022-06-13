@@ -1,6 +1,6 @@
 = Creating HTML and PDF
 :description: Create HTML and PDF from an AsciiDoc file directly from your IDE.
-:navtitle: HTML and PDF
+:navtitle: Convert to HTML and PDF
 
 {description}
 

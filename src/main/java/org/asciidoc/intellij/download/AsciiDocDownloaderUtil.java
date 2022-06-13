@@ -16,13 +16,19 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.download.DownloadableFileDescription;
 import com.intellij.util.download.DownloadableFileService;
 import com.intellij.util.download.FileDownloader;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.jetbrains.annotations.NotNull;
@@ -31,10 +37,18 @@ import org.jetbrains.annotations.Nullable;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Helps downloading additional resources from the Internet.
@@ -63,6 +77,13 @@ public class AsciiDocDownloaderUtil {
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-ditaamini/
   public static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION = "1.0.3";
   private static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_HASH = "5e1dde15a88bf4ca2be60663ae12fcf8c215321e8eeca4e7947fb22732556cc9";
+
+
+  // https://github.com/jgm/pandoc/releases/
+  public static final String PANDOC_VERSION = "2.18";
+  private static final String PANDOC_WINDOWS_HASH = "769a7b2544da87274d585de5f9e03f268d35a8121b44e45637e607d7aeb78ece";
+  private static final String PANDOC_MACOS_HASH = "55bd37ef2a3941a7af65f72e94dc8de4e9e4f179a93909d6ecc24c55a4ef4255";
+  private static final String PANDOC_LINUX_HASH = "103df36dc21081b7205d763ef7705e340eb0ea7e18694239b328a549892cc007";
 
   private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
   // this is similar to the path where for example the grazie plugin places its dictionaries
@@ -124,6 +145,48 @@ public class AsciiDocDownloaderUtil {
     download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_DITAAMINI_HASH, project, onSuccess, onFailure);
   }
 
+  public static void downloadPandoc(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
+    String downloadName = "pandoc-" + PANDOC_VERSION + "-" + archivePandoc();
+    String url = getPandocUrl();
+    download(downloadName, url, hashPandoc(), project, onSuccess, onFailure);
+  }
+
+  private static String hashPandoc() {
+    if (SystemInfoRt.isWindows) {
+      return PANDOC_WINDOWS_HASH;
+    } else if (SystemInfoRt.isMac) {
+      return PANDOC_MACOS_HASH;
+    } else if (SystemInfoRt.isLinux) {
+      return PANDOC_LINUX_HASH;
+    } else {
+      throw new IllegalStateException("unsupported operating system: " + System.getProperty("os.name"));
+    }
+  }
+
+  private static String archivePandoc() {
+    if (SystemInfoRt.isWindows) {
+      return "windows-x86_64.zip";
+    } else if (SystemInfoRt.isMac) {
+      return "macOS.zip";
+    } else if (SystemInfoRt.isLinux) {
+      return "linux-amd64.tar.gz";
+    } else {
+      throw new IllegalStateException("unsupported operating system: " + System.getProperty("os.name"));
+    }
+  }
+
+  private static String executablePandoc() {
+    if (SystemInfoRt.isWindows) {
+      return "pandoc.exe";
+    } else if (SystemInfoRt.isMac) {
+      return "bin/pandoc";
+    } else if (SystemInfoRt.isLinux) {
+      return "bin/pandoc";
+    } else {
+      throw new IllegalStateException("unsupported operating system: " + System.getProperty("os.name"));
+    }
+  }
+
   public static void pickAsciidoctorJDiagram(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
     String downloadName = "asciidoctorj-diagram-" + ASCIIDOCTORJ_DIAGRAM_VERSION + ".jar";
     try {
@@ -138,6 +201,16 @@ public class AsciiDocDownloaderUtil {
     String downloadName = "asciidoctorj-diagram-plantuml-" + ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION + ".jar";
     try {
       pickFile(downloadName, project, ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH, onSuccess);
+    } catch (IOException ex) {
+      LOG.warn("Can't pick file '" + downloadName + "'", ex);
+      ApplicationManager.getApplication().invokeLater(() -> onFailure.consume(ex));
+    }
+  }
+
+  public static void pickPandoc(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
+    String downloadName = "pandoc-" + PANDOC_VERSION + "-" + archivePandoc();
+    try {
+      pickFile(downloadName, project, hashPandoc(), onSuccess);
     } catch (IOException ex) {
       LOG.warn("Can't pick file '" + downloadName + "'", ex);
       ApplicationManager.getApplication().invokeLater(() -> onFailure.consume(ex));
@@ -186,6 +259,15 @@ public class AsciiDocDownloaderUtil {
       "/asciidoctorj-diagram-ditaamini-" +
       ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION +
       ".jar";
+  }
+
+  public static String getPandocUrl() {
+    return "https://github.com/jgm/pandoc/releases/download/" +
+      PANDOC_VERSION +
+      "/pandoc-" +
+      PANDOC_VERSION +
+      "-" +
+      archivePandoc();
   }
 
   public static void downloadAsciidoctorJPdf(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
@@ -319,4 +401,85 @@ public class AsciiDocDownloaderUtil {
     }
   }
 
+  public static boolean downloadCompletePandoc() {
+    return getPanddocFile().exists();
+  }
+  public static File getPanddocFile() {
+    String archiveName = DOWNLOAD_PATH + File.separator + "pandoc-" + PANDOC_VERSION + "-" + archivePandoc();
+    String fileName = DOWNLOAD_PATH + File.separator + "pandoc-" + PANDOC_VERSION + File.separator + executablePandoc();
+    String destDir = DOWNLOAD_PATH;
+
+    if (SystemInfoRt.isWindows || SystemInfoRt.isMac) {
+      if (new File(archiveName).exists() && !new File(fileName).exists()) {
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(archiveName))) {
+          byte[] buffer = new byte[10240];
+          ZipEntry zipEntry = zis.getNextEntry();
+          while (zipEntry != null) {
+            File newFile = new File(destDir, zipEntry.getName());
+            if (zipEntry.isDirectory()) {
+              if (!newFile.isDirectory() && !newFile.mkdirs()) {
+                throw new IOException("Failed to create directory " + newFile);
+              }
+            } else {
+              // fix for Windows-created archives
+              File parent = newFile.getParentFile();
+              if (!parent.isDirectory() && !parent.mkdirs()) {
+                throw new IOException("Failed to create directory " + parent);
+              }
+
+              // write file content
+              FileOutputStream fos = new FileOutputStream(newFile);
+              int len;
+              while ((len = zis.read(buffer)) > 0) {
+                fos.write(buffer, 0, len);
+              }
+              fos.close();
+            }
+            zipEntry = zis.getNextEntry();
+          }
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    } else if (SystemInfoRt.isLinux) {
+      if (new File(archiveName).exists() && !new File(fileName).exists()) {
+        try (InputStream fi = Files.newInputStream(Paths.get(archiveName));
+             InputStream bi = new BufferedInputStream(fi);
+             InputStream gzi = new GzipCompressorInputStream(bi)) {
+          File targetDir = new File(destDir);
+          try (ArchiveInputStream i = new TarArchiveInputStream(gzi)) {
+            ArchiveEntry entry;
+            while ((entry = i.getNextEntry()) != null) {
+              if (!i.canReadEntryData(entry)) {
+                // log something?
+                continue;
+              }
+              File f = new File(targetDir, entry.getName());
+              if (entry.isDirectory()) {
+                if (!f.isDirectory() && !f.mkdirs()) {
+                  throw new IOException("failed to create directory " + f);
+                }
+              } else {
+                File parent = f.getParentFile();
+                if (!parent.isDirectory() && !parent.mkdirs()) {
+                  throw new IOException("failed to create directory " + parent);
+                }
+                try (OutputStream o = Files.newOutputStream(f.toPath())) {
+                  IOUtils.copy(i, o);
+                }
+                if (Objects.equals(f, new File(fileName))) {
+                  if (!f.setExecutable(true, true)) {
+                    throw new IOException("can't make entry executable: " + f.getCanonicalPath());
+                  }
+                }
+              }
+            }
+          }
+        } catch (IOException ex) {
+          throw new RuntimeException(ex);
+        }
+      }
+    }
+    return new File(fileName);
+  }
 }

@@ -108,6 +108,11 @@
                 text="PDF"
                 description="Create PDF from current file">
         </action>
+        <action class="org.asciidoc.intellij.actions.asciidoc.CreateDocxAction"
+                id="org.asciidoc.intellij.actions.asciidoc.CreateDocxAction"
+                text="DOCX"
+                description="Create DOCX from current file">
+        </action>
         <action class="org.asciidoc.intellij.actions.asciidoc.CreatePdfFromPreviewAction"
                 id="org.asciidoc.intellij.actions.asciidoc.CreatePdfFromPreviewAction"
                 text="Web PDF"
