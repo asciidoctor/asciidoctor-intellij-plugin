@@ -80,6 +80,7 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor imp
     String text = AsciiDocTextQuoted.getBodyRange(quotedText).shiftLeft(quotedText.getTextOffset()).substring(quotedText.getText());
     return handleCommand(quotedText, text);
   }
+
   @Nullable
   private Info handleCommand(PsiElement element, String text) {
     VirtualFile virtualFile = getVirtualFile(element);
@@ -137,7 +138,7 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor imp
 
     return ApplicationManager.getApplication().runReadAction((Computable<Boolean>) () -> RunAnythingProvider.EP_NAME.extensions()
       .filter(it -> checkForCLI(it, allowRunConfigurations))
-        .anyMatch(provider -> provider.findMatchingValue(dataContext, trimmedCmd) != null));
+      .anyMatch(provider -> provider.findMatchingValue(dataContext, trimmedCmd) != null));
   }
 
   private DataContext createDataContext(Project project, VirtualFile virtualFile, Executor executor) {
@@ -166,7 +167,15 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor imp
     if (language == null) {
       return null;
     }
-    AsciiDocRunner runner = AsciiDocRunner.EP_NAME.extensions().filter(r -> r.isApplicable(language)).findFirst().orElse(null);
+    AsciiDocRunner runner = AsciiDocRunner.EP_NAME.extensions().filter(r -> {
+      try {
+        return r.isApplicable(language);
+      } catch (NoClassDefFoundError ex) {
+        // this might fail due to the optional dependency not being loaded, yet
+        // https://youtrack.jetbrains.com/issue/IDEA-287090/
+        return false;
+      }
+    }).findFirst().orElse(null);
     if (runner == null) {
       return null;
     }
@@ -179,6 +188,6 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor imp
       }
     };
 
-    return new Info(AllIcons.RunConfigurations.TestState.Run_run, new DumbAwareAction[] {runAction}, e -> runner.getTitle());
+    return new Info(AllIcons.RunConfigurations.TestState.Run_run, new DumbAwareAction[]{runAction}, e -> runner.getTitle());
   }
 }

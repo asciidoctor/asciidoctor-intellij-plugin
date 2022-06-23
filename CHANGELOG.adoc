@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - add support to convert AsciiDoc to the DOCX format (#1074)
 - bump asciidoctorj-pdf from 2.0.6 to 2.1.2
+- fix exception when Shell plugin in IntelliJ is installed after AsciiDoc plugin had already been installed (#1082)
 
 === 0.37.22
 
