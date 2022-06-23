@@ -6,7 +6,8 @@
 
 [NOTE]
 ====
-This feature is currently only supported on Windows and Linux as it is lacking a test on macOS.
+This feature is available since plugin version 0.37.24.
+It is currently only supported on Windows and Linux as it is lacking a test on macOS.
 
 To help with testing this on macOS, please https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/1074[comment on GitHub issue #1074] to contact the developers of this plugin.
 ====
