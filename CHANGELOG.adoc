@@ -7,11 +7,20 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.25
+
+- adding missing changelog for 0.37.23 that got scrambled in the 0.37.24 release.
+
 === 0.37.24
 
 - add support to convert AsciiDoc to the DOCX format (#1074)
 - bump asciidoctorj-pdf from 2.0.6 to 2.1.2
 - fix exception when Shell plugin in IntelliJ is installed after AsciiDoc plugin had already been installed (#1082)
+
+=== 0.37.23
+
+- handle language name snippets with special characters by quoting them (#1072)
+- validate Antora module and component names (#1057)
 
 === 0.37.22
 
