@@ -9,7 +9,8 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.37.25
 
-- adding missing changelog for 0.37.23 that got scrambled in the 0.37.24 release.
+- adding missing changelog for 0.37.23 that got scrambled in the 0.37.24 release
+- when creating DOCX files, fixing permissions on Pandoc execuable on macOS (#1074)
 
 === 0.37.24
 

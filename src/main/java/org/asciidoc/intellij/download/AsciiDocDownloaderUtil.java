@@ -428,12 +428,20 @@ public class AsciiDocDownloaderUtil {
               }
 
               // write file content
-              FileOutputStream fos = new FileOutputStream(newFile);
-              int len;
-              while ((len = zis.read(buffer)) > 0) {
-                fos.write(buffer, 0, len);
+              try (FileOutputStream fos = new FileOutputStream(newFile)) {
+                int len;
+                while ((len = zis.read(buffer)) > 0) {
+                  fos.write(buffer, 0, len);
+                }
               }
-              fos.close();
+
+              if (SystemInfoRt.isMac) {
+                if (Objects.equals(newFile, new File(fileName))) {
+                  if (!newFile.setExecutable(true, true)) {
+                    throw new IOException("can't make entry executable: " + newFile.getCanonicalPath());
+                  }
+                }
+              }
             }
             zipEntry = zis.getNextEntry();
           }
