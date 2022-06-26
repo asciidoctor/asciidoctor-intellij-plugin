@@ -1,38 +1,33 @@
-= Creating DOCX
-:description: Create DOCX files for Microsoft Word and LibreOffice from an AsciiDoc file directly from your IDE.
-:navtitle: Convert to DOCX
+= Create a DOCX file from an AsciiDoc file
+:description: Create a DOCX file for Microsoft Word and LibreOffice from an AsciiDoc file directly in your IDE.
+:navtitle: Create DOCX
 
 {description}
 
 [NOTE]
 ====
-This feature is available since plugin version 0.37.24.
-It is currently only supported on Windows and Linux as it is lacking a test on macOS.
-
-To help with testing this on macOS, please https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/1074[comment on GitHub issue #1074] to contact the developers of this plugin.
+This feature is available since plugin version 0.37.26.
 ====
-
-== Creating DOCX file
 
 The user can choose _Create DOCX from current file_ from the editor's action toolbar to convert the current file to the DOCX format.
 If creation of the DOCX file succeeds, the exported file is opened in the system's default application, for example Microsoft Word or LibreOffice.
 
-=== Downloading Pandoc
+== Downloading Pandoc
 
 The conversion is done using https://pandoc.org/[Pandoc].
-On first use the plugin downloads a version of Pandoc that matches the plugin.
+On first use the plugin downloads a version of Pandoc that is compatible with the plugin.
 
-=== Specifying a format template
+== Specifying a format template
 
 If the plugin finds a file named `reference.adoc` in the current project, it will use that as a template for formatting styles of the generated document.
 Users can download xref:attachment$reference.docx[this template] and modify it for their needs.
 See the https://pandoc.org/MANUAL.html#option--reference-doc[Pandoc manual section about the reference file] for more details.
 
-=== Automation on the command line
+== Automation on the command line
 
 The conversion the plugin performs has two steps:
 
 . Convert the AsciiDoc file to DocBook using the Asciidoctor DocBook backend.
-. Convert the DocBook output to DOX using Pandoc.
+. Convert the DocBook output to DOCX using Pandoc.
 
 How this can be automated shows the DocToolchain collection in the https://doctoolchain.org/docToolchain/v2.0.x/015_tasks/03_task_convertToDocx.html[convertToDocx Gradle snippet].

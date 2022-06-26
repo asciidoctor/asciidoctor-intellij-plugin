@@ -14,7 +14,6 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.search.FilenameIndex;
@@ -24,7 +23,6 @@ import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -43,16 +41,6 @@ public class CreateDocxAction extends AsciiDocAction {
   private final AsciiDocExtensionService extensionService = ApplicationManager.getApplication().getService(AsciiDocExtensionService.class);
 
   private Project project;
-
-  @Override
-  public void update(@NotNull AnActionEvent event) {
-    if (!SystemInfoRt.isWindows && !SystemInfoRt.isLinux && !ApplicationManager.getApplication().isInternal()) {
-      // For now, only tested and supported on Windows and Linux. Show the icon when the internal mode is enabled to make it simpler to try out.
-      event.getPresentation().setEnabledAndVisible(false);
-      return;
-    }
-    super.update(event);
-  }
 
   @Override
   public boolean displayTextInToolbar() {

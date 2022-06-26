@@ -17,7 +17,7 @@ The IntelliJ AsciiDoc Plugin adds to your IDE:
 * A context-sensitive editor with syntax highlighting, auto-completion and in-line validation messages.
 * A configurable preview to proofread and navigate the content.
 * Integrations to a Markdown-to-AsciiDoc converter, in-line diagrams like PlantUML, xref:features/advanced/antora.adoc[Antora, a static site generator], and xref:features/advanced/spring-rest-docs.adoc[Spring REST docs].
-* xref:features/advanced/creating-html-and-pdf.adoc[Convert AsciiDoc files to HTML and PDF files] from within the IDE.
+* Convert AsciiDoc files to xref:features/advanced/creating-html.adoc[HTML], xref:features/advanced/creating-pdf.adoc[PDF] and xref:features/advanced/creating-docx.adoc[DOCX] files from within the IDE.
 
 == Context-sensitive editor
 
