@@ -1,6 +1,5 @@
 = Create a HTML document from an AsciiDoc file
-:page-aliases: features/advanced/creating-html-and-pdf.adoc
-:description: Create HTML and PDF from an AsciiDoc file directly in your IDE.
+:description: Create HTML from an AsciiDoc file directly in your IDE.
 :navtitle: Create HTML
 
 {description}

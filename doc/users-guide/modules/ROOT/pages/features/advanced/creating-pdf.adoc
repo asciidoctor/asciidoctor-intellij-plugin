@@ -1,5 +1,6 @@
 = Create a PDF from an AsciiDoc file
 :description: Create PDF from an AsciiDoc file directly in your IDE.
+:page-aliases: features/advanced/creating-html-and-pdf.adoc
 :navtitle: Create PDF
 
 {description}
