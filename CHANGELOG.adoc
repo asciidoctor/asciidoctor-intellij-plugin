@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.27
+
+- Bump asciidoctorj-pdf from 2.1.2 to 2.1.4
+
 === 0.37.26
 
 - conversion to DOCX now generally available for macOS (#1074)
