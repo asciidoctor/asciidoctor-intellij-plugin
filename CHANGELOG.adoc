@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.37.27
 
 - Bump asciidoctorj-pdf from 2.1.2 to 2.1.4
+- delete left-over XML when creating DOCX file (#1074)
 
 === 0.37.26
 

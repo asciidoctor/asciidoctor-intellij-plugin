@@ -149,6 +149,15 @@ public class CreateDocxAction extends AsciiDocAction {
             Notifications.Bus.notify(notification);
             return false;
           }
+
+          File xml = new File(parent.getCanonicalPath() + File.separator + docbookFile);
+          if (!xml.delete()) {
+            Notification notification = AsciiDoc.getNotificationGroup()
+              .createNotification("Can't delete temporary XML file " + xml.getCanonicalPath(), NotificationType.ERROR);
+            notification.setImportant(true);
+            Notifications.Bus.notify(notification);
+          }
+
         } catch (IOException e) {
           if (process != null) {
             process.destroy();
