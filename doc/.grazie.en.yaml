@@ -6,8 +6,9 @@
 extends: existence                # check for unwanted words or phrases
 message: Don't use '%s'           # a message to display in the inspection tooltip when a matching fragment is found
 ignorecase: true
-raw:
+tokens:
   - you
+  - your
   - please
   - just
 ---
