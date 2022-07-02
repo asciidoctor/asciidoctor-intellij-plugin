@@ -1,0 +1,6 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij.grazie.pro">
+    <yamlScopeProvider language="AsciiDoc"
+                           implementationClass="org.asciidoc.intellij.graziepro.AsciiDocGrazieProScopeProvider"/>
+  </extensions>
+</idea-plugin>

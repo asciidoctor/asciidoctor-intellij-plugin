@@ -1,0 +1,65 @@
+= Grammar checking for AsciiDoc content
+:description: Validate the grammar for the written content.
+:navtitle: Grammar checking
+
+{description}
+This functionality is added via additional plugins.
+
+== How it works
+
+The https://plugins.jetbrains.com/plugin/12175-grazie[Grazie] and https://plugins.jetbrains.com/plugin/16136-grazie-professional[Grazie Professional] plugins add grammar checking for various languages.
+
+Once the plugin is installed, the IDE will highlight spelling and grammar problems in the editor.
+Users can also run xref:features/advanced/validation-in-ide.adoc[] or xref:features/advanced/validation-cicd.adoc[Validation during Continuous Integration and Delivery].
+
+== Grazie Plugin
+
+The https://plugins.jetbrains.com/plugin/12175-grazie[Grazie plugin] is pre-installed for most JetBrains IDEs and offers grammar and spell checking for several languages.
+While support for English is included, it will detect other languages and offer the download of additional files.
+Once it has downloaded these files, spell checking and grammar checking is available for those languages.
+
+This plugin is available for both paid and free versions of IntelliJ.
+
+== Grazie Professional Plugin
+
+The https://plugins.jetbrains.com/plugin/16136-grazie-professional[Grazie Professional] is an optional plugin that needs to be installed by a user to their IDE.
+
+The required-plugin feature of the IDE will display a popup to users when they open a project and a required plugin is not installed.
+To add the Grazie Professional plugin to the list of required plugins for a project, follow the instructions about https://www.jetbrains.com/help/idea/settings-required-plugins.html[Required Plugins] in the online help for the IDE.
+Then check in the file `.idea/externalDependencies.xml` to the code repository together with all other files.
+
+include::partial$memory-requirements-grazie.adoc[]
+
+This plugin is available for both paid and free versions of IntelliJ.
+
+=== Project style guides
+
+[NOTE]
+====
+Scopes for Vale rules are available with plugin version 0.37.28+.
+====
+
+The Grazie Professional plugin supports https://plugins.jetbrains.com/plugin/16136-grazie-professional/docs/project-style-guides.html[project style guides].
+
+Rules can be specific to a scope, for example, a heading or a table cell.
+When defining such rules, this plugin supports the following scopes:
+
+`markup`:: Any text in an AsciiDoc file.
+
+`heading`:: Any section heading.
+
+`table.cell`:: Any table cell.
+For now, table headings are also identified as cells.
+
+`table.caption`:: Caption of a table.
+
+`list`:: Any list item in an ordered, unordered or definition list.
+
+`link`:: Applied to all paragraphs that contain a link (not only to the link).
+
+`strong`:: Applied to all paragraphs that contain any bold/strong text.
+
+`emphasis`:: Applied to all paragraphs that contain any italic/emphasised text.
+
+The handling of `link`, `strong` and `emphasis` is experimental and might differ from a classic Vale implementation.
+Provide user feedback in the GitHub's issue tracker to revisit the current implementation.

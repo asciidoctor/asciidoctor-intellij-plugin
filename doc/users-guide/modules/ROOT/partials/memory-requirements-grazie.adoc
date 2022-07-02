@@ -1,0 +1,2 @@
+As a pre-requisite when running grammar inspections in large projects, increase the memory of the IDE as the IDE might otherwise be slow, or stall due to the lack of memory.
+Choose menu item menu:Help[Change Memory Settings] and change this, for example, to 4096 MB.

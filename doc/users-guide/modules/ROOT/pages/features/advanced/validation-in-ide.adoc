@@ -19,8 +19,7 @@ The following paragraph provides the step-by-step instructions for this.
 
 == Running the inspection for a project
 
-As a pre-requisite when running grammar inspections in large projects, increase the memory of the IDE as the IDE might otherwise be slow, or stall due to the lack of memory.
-Choose menu item menu:Help[Change Memory Settings] and change this, for example, to 4096 MB.
+include::partial$memory-requirements-grazie.adoc[]
 
 Then follow these steps to validate files in a project.
 Use the icon icon:question[] to read the docs of the IDE to find out about additional functionality in each dialog.

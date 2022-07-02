@@ -1,6 +1,6 @@
 = Validation during Continuous Integration and Delivery
 :navtitle: Validation in CI/CD
-:description: Use the same validations as in the IDE in your CI/CD setup.
+:description: Use the same validations as in the IDE in the CI/CD setup.
 
 {description}
 
@@ -9,20 +9,20 @@
 JetBrains published https://www.jetbrains.com/qodana/[Qodana] that wraps the smart features of IntelliJ into a container, so it can be used on the command line as a Docker container.
 To make this simpler to use, it has been https://github.com/JetBrains/qodana-action[wrapped as a GitHub action].
 
-For AsciiDoc files, it will highlight all the problems that are highlighted in your IDE as well, including broken links (with the help of the AsciiDoc plugin) as well as grammar errors (with the help of the Grazie and Grazie Professional plugins).
+For AsciiDoc files, it will highlight all the problems that are highlighted in the IDE as well, including broken links (with the help of the AsciiDoc plugin) as well as grammar errors (with the help of the https://plugins.jetbrains.com/plugin/12175-grazie[Grazie] and https://plugins.jetbrains.com/plugin/16136-grazie-professional[Grazie Professional] plugins).
 
 .Overview Qodana process
 image::qodana/qodana-concepts.dio.svg[]
 
 The process is as follows:
 
-. Read all or parts of your project sources.
+. Read all or parts of the project's sources.
 This can be source code in any programming language or documentation like AsciiDoc.
 
 . Process the files like with all the inspections known from IntelliJ.
-You can add plugins from the Marketplace like in your IDE to support the languages you need.
+Users can add plugins from the Marketplace like in their IDE to support the languages they need.
 
-. Generate a report as HTML to be used in a browser, as well as a SARIF report that can be processed by GitHub Code Scanning or other subsequent steps in your CI/CD pipeline.
+. Generate a report as HTML to be used in a browser, as well as a SARIF report that can be processed by GitHub Code Scanning or other subsequent steps in the CI/CD pipeline.
 
 == Example output
 
@@ -111,10 +111,10 @@ include::example$workflow-docs.yml[tags=!cleanup]
 == Open issues with Qodana
 
 The following issues in the Qodana issue tracker are open.
-Please consider voting for them to make this integration simpler.
+Voting for them will make this integration simpler.
 
 * https://youtrack.jetbrains.com/issue/QD-1291[QD-1291^]
 Qodana easy plugin installation
-* https://youtrack.jetbrains.com/issue/QD-1291[QD-1291^]
+* https://youtrack.jetbrains.com/issue/QD-1290[QD-1290^]
 Add soft wrap to code preview
 
