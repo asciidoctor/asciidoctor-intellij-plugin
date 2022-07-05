@@ -3,6 +3,7 @@ package org.asciidoc.intellij.psi;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.DebugUtil;
@@ -70,4 +71,7 @@ public class AsciiDocPsiImplUtil {
     return new RuntimeExceptionWithAttachments(message, e, list.toArray(new Attachment[]{}));
   }
 
+  public static void throwExceptionCantHandleContentChange(PsiElement element, TextRange range, String newContent) {
+    throw AsciiDocPsiImplUtil.getRuntimeException("Can't handle content change " + range, element, null, new Attachment("newcontent.txt", newContent));
+  }
 }

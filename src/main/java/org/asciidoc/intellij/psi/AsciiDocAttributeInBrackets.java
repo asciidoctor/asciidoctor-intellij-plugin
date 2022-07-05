@@ -138,10 +138,10 @@ public class AsciiDocAttributeInBrackets extends AsciiDocASTWrapperPsiElement im
         range = range.shiftRight(-child.getTextLength());
         child = child.getNextSibling();
       }
-      if (child instanceof LeafPsiElement) {
+      if (child instanceof LeafPsiElement && child.getTextLength() <= range.getEndOffset()) {
         ((LeafPsiElement) child).replaceWithText(range.replace(child.getText(), newContent));
       } else {
-        throw new IncorrectOperationException("Bad child");
+        AsciiDocPsiImplUtil.throwExceptionCantHandleContentChange(element, range, newContent);
       }
 
       return element;

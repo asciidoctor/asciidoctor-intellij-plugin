@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - support Vale scopes for Grazie professional's project rules (#1089)
 - improve the grouping in the settings by adding horizontal rules (#972)
+- preventing a StringIndexOutOfBoundsException when moving files inside an Antora module (#1092)
 
 === 0.37.27
 
