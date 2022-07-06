@@ -3,7 +3,9 @@ package org.asciidoc.intellij.psi;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.grazie.text.TextContent;
 import com.intellij.grazie.text.TextExtractor;
+import com.intellij.ide.plugins.PluginEnabler;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDirectory;
@@ -45,6 +47,25 @@ import java.util.Set;
  */
 @SuppressWarnings({"AsciiDocLinkResolve", "AsciiDocHeadingStyle", "AsciiDocAttributeShouldBeDefined"})
 public class AsciiDocPsiTest extends BasePlatformTestCase {
+
+  static {
+    Set<PluginId> disabled = new HashSet<>();
+    Set<PluginId> enabled = new HashSet<>();
+
+    // to avoid:  java.lang.NoClassDefFoundError: Could not initialize class ai.grazie.nlp.tokenizer.spacy.SpacyBaseLanguage
+    disabled.add(PluginId.getId("com.intellij.grazie.pro"));
+    enabled.add(PluginId.getId("tanvd.grazi"));
+
+    // to improve performance, remove plugins used for debugging in interactive mode
+    disabled.add(PluginId.getId("PsiViewer"));
+    disabled.add(PluginId.getId("PlantUML integration"));
+    disabled.add(PluginId.getId("com.intellij.platform.images"));
+    disabled.add(PluginId.getId("com.intellij.javafx"));
+
+    PluginEnabler.HEADLESS.disableById(disabled);
+    PluginEnabler.HEADLESS.enableById(enabled);
+  }
+
   public void testImageBlockMacro() {
     PsiFile psiFile = configureByAsciiDoc("image::foo.png[Foo]");
     AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) psiFile.getChildren()[0];
