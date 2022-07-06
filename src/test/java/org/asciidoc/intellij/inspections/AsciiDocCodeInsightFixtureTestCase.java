@@ -13,6 +13,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Base class for code inspection test cases.
+ * The Problem with <code>com.intellij.grazie.pro</code> is described here:
+ * <a href="https://youtrack.jetbrains.com/issue/IDEA-205964">IDEA-205964</a> and
+ * <a href="https://youtrack.jetbrains.com/issue/GRZ-504/">GRZ-504</a>.
+ */
 public abstract class AsciiDocCodeInsightFixtureTestCase extends BasePlatformTestCase {
 
   static {

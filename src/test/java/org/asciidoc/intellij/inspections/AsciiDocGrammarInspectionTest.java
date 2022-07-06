@@ -6,19 +6,17 @@ import com.intellij.openapi.extensions.PluginId;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.testFramework.PlatformTestUtil;
 import org.asciidoc.intellij.quickfix.AsciiDocChangeCaseForAnchor;
-import org.junit.Ignore;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * @author Alexander Schwartz
- * This started to fail after adding Grazie Professional in version 0.3.105, see
- * <a href="https://youtrack.jetbrains.com/issue/IDEA-205964">IDEA-205964</a> and
- * <a href="https://youtrack.jetbrains.com/issue/GRZ-504/">GRZ-504</a>.
- * Will keep disabled until the IDEA issue has been resolved.
+ * This started to fail after upgrading to IntelliJ Gradle plugin 1.7.0-SNAPSHOT.
+ * Will keep disabled until the issue.
+ * <a href="https://github.com/JetBrains/gradle-intellij-plugin/issues/1048">JetBrains/gradle-intellij-plugin#1048</a>
+ * has been resolved.
  */
-@Ignore
 public class AsciiDocGrammarInspectionTest extends AsciiDocQuickFixTestBase {
 
   static {
