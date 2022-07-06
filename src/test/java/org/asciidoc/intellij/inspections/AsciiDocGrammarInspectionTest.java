@@ -6,6 +6,7 @@ import com.intellij.openapi.extensions.PluginId;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.testFramework.PlatformTestUtil;
 import org.asciidoc.intellij.quickfix.AsciiDocChangeCaseForAnchor;
+import org.junit.Ignore;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +18,7 @@ import java.util.Set;
  * <a href="https://github.com/JetBrains/gradle-intellij-plugin/issues/1048">JetBrains/gradle-intellij-plugin#1048</a>
  * has been resolved.
  */
+@Ignore
 public class AsciiDocGrammarInspectionTest extends AsciiDocQuickFixTestBase {
 
   static {
