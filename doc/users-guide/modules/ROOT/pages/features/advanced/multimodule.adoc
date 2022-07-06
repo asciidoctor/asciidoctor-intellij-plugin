@@ -57,5 +57,5 @@ Click on icon:plus[] and menu:Import Module[].
 
 . Depending on the external model, complete the following dialogs.
 
-. Repeat from step two for all Git repositories should be added.
+. Repeat from step two for all Git repositories that should be added.
 
