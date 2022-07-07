@@ -1229,6 +1229,21 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     if (startDir == null) {
       return null;
     }
+    if (macroName.equals("xref") || macroName.equals("xref-attr")) {
+      VirtualFile antoraPagesDir = AsciiDocUtil.findAntoraPagesDir(myElement);
+      if (antoraPagesDir != null) {
+        VirtualFile vf = startDir.getVirtualFile();
+        String cp1 = vf.getCanonicalPath();
+        String cp2 = antoraPagesDir.getCanonicalPath();
+        if (cp1 != null && cp2 != null && !cp1.startsWith(cp2)) {
+          // we're not in the pages folder, therefore, use the pages folder as the startdir
+          PsiDirectory directory = PsiManager.getInstance(myElement.getProject()).findDirectory(antoraPagesDir);
+          if (directory != null) {
+            startDir = directory;
+          }
+        }
+      }
+    }
     if (fileName.length() == 0) {
       return startDir;
     }

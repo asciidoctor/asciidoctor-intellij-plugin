@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - improve the grouping in the settings by adding horizontal rules (#972)
 - preventing a StringIndexOutOfBoundsException when moving files inside an Antora module (#1092)
 - performance optimization for Antora when a lot of page aliases and attributes are used (#1091)
+- ++xref:[]++ macros even when used in the Antora partials folder will resolve relative to the pages directory
 
 === 0.37.27
 
