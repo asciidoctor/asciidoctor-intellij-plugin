@@ -1250,6 +1250,7 @@ public class AsciiDocUtil {
   @Nullable
   public static String resolveAttributes(PsiElement element, String val, Scope scope) {
     Matcher matcher = ATTRIBUTES.matcher(val);
+    Collection<String> recursionPrevention = new HashSet<>();
     while (matcher.find()) {
       String attributeName = matcher.group(1);
       List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(element.getProject(), attributeName, element, scope);
@@ -1263,6 +1264,10 @@ public class AsciiDocUtil {
         }
       }
       if (values.size() == 1) {
+        if (recursionPrevention.contains(attributeName)) {
+          return null;
+        }
+        recursionPrevention.add(attributeName);
         String attrVal = values.iterator().next();
         if (attrVal != null) {
           val = matcher.replaceFirst(Matcher.quoteReplacement(attrVal));
@@ -1572,8 +1577,8 @@ public class AsciiDocUtil {
   @SuppressWarnings("StringSplitter")
   private static void resolvePageAliases(Project project, String key, String myModuleName, String myComponentName, String myComponentVersion, List<String> result) {
     List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(project, "page-aliases", true);
+    String shortKey = AsciiDocFileReference.normalizeKeyForSearch(key);
     for (AttributeDeclaration decl : declarations) {
-      String shortKey = AsciiDocFileReference.normalizeKeyForSearch(key);
       String value = decl.getAttributeValue();
       if (value == null) {
         continue;

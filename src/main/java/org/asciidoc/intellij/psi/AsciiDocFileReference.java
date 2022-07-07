@@ -524,7 +524,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       if (antoraImagesDir != null) {
         return Collections.singletonList(antoraImagesDir.getCanonicalPath() + "/" + key);
       }
-    } else if ((getElement() instanceof AsciiDocLink && macroName.equals("xref")) ||
+    } else if ((getElement() instanceof AsciiDocLink && macroName.equals("xref")) || macroName.equals("include") ||
       (getElement().getParent() instanceof AsciiDocBlockMacro && ((AsciiDocBlockMacro) getElement().getParent()).getMacroName().equals("image") && macroName.equals("xref-attr")) ||
       (getElement().getParent() instanceof AsciiDocInlineMacro && ((AsciiDocInlineMacro) getElement().getParent()).getMacroName().equals("image") && macroName.equals("xref-attr"))
     ) {
@@ -539,36 +539,34 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return Collections.singletonList(key);
   }
 
+  private static final Pattern VALID_FILENAME = Pattern.compile("^[\\p{Alnum}_\\-{}./\\\\$:@]*$");
+
   private void resolve(String key, List<ResolveResult> results, int depth, Collection<String> searchedKeys) {
-    if (searchedKeys.contains(key)) {
+    if (searchedKeys.contains(key) || !VALID_FILENAME.matcher(key).matches() || URL_PREFIX_PATTERN.matcher(key).find()) {
+      // skip all non-valid filenames, also URLs
       return;
     }
     searchedKeys.add(key);
     List<String> keys = Collections.singletonList(key);
-    if (ANTORA_SUPPORTED.contains(macroName)) {
-      if (depth == 0) {
-        Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(key);
-        if (!urlMatcher.find()) {
-          if (AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(key).matches()) {
-            VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(root);
-            if (antoraModuleDir != null) {
-              String resolvedKey = AsciiDocUtil.resolveAttributes(root, key);
-              if (resolvedKey != null) {
-                List<VirtualFile> virtualFiles = AsciiDocUtil.resolvePrefix(root, antoraModuleDir, resolvedKey);
-                for (VirtualFile virtualFile : virtualFiles) {
-                  PsiElement psiFile = PsiManager.getInstance(root.getProject()).findDirectory(virtualFile);
-                  if (psiFile != null) {
-                    results.add(new PsiElementResolveResult(psiFile));
-                  }
-                }
-                if (virtualFiles.size() > 0) {
-                  return;
-                }
+    if (ANTORA_SUPPORTED.contains(macroName) && !ATTRIBUTES.matcher(key).find()) {
+      Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(key);
+      if (!urlMatcher.find()) {
+        if (AsciiDocUtil.ANTORA_PREFIX_AND_FAMILY_PATTERN.matcher(key).matches()) {
+          VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(root);
+          if (antoraModuleDir != null) {
+            List<VirtualFile> virtualFiles = AsciiDocUtil.resolvePrefix(root, antoraModuleDir, key);
+            for (VirtualFile virtualFile : virtualFiles) {
+              PsiElement psiFile = PsiManager.getInstance(root.getProject()).findDirectory(virtualFile);
+              if (psiFile != null) {
+                results.add(new PsiElementResolveResult(psiFile));
               }
             }
-          } else {
-            keys = handleAntora(key);
+            if (virtualFiles.size() > 0) {
+              return;
+            }
           }
+        } else if (AsciiDocUtil.ANTORA_PREFIX_AND_FAMILY_PATTERN.matcher(key).find()) {
+          keys = handleAntora(key);
         }
       }
     }
@@ -576,6 +574,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       return;
     }
     for (String k : keys) {
+      if (!VALID_FILENAME.matcher(k).matches() || URL_PREFIX_PATTERN.matcher(k).find()) {
+        // skip all non-valid filenames, also URLs
+        return;
+      }
       int c = results.size();
       resolveAttributes(k, results, depth, searchedKeys);
       if (results.size() == c && ("image".equals(macroName) || "video".equals(macroName)) && k.equals(key) && depth == 0) {
@@ -587,7 +589,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   @SuppressWarnings("StringSplitter")
   private void resolveAntoraPageAlias(String key, List<ResolveResult> results, int depth) {
-    if (ANTORA_SUPPORTED.contains(macroName) && !isAnchor && !isFolder() && depth == 0 && results.size() == 0) {
+    if (ANTORA_SUPPORTED.contains(macroName) && !isAnchor && !isFolder() && depth == 0 && results.size() == 0 && !macroName.equals("include")) {
       VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(root);
       if (antoraModuleDir != null) {
         List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(root.getProject(), "page-aliases", root);
@@ -596,8 +598,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         String pageComponentName = AsciiDocUtil.findAttribute("page-component-name", myAttributes);
         String pageComponentVersion = AsciiDocUtil.findAttribute("page-component-version", myAttributes);
         String pageModule = AsciiDocUtil.findAttribute("page-module", myAttributes);
+        String shortKey = normalizeKeyForSearch(key);
         for (AttributeDeclaration decl : declarations) {
-          String shortKey = normalizeKeyForSearch(key);
           String value = decl.getAttributeValue();
           if (value == null) {
             continue;
@@ -636,12 +638,16 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     }
   }
 
+  private static final Pattern STRIP_FILE_EXTENSION = Pattern.compile(".adoc$");
+  private static final Pattern STRIP_FAMILY = Pattern.compile("^.*\\$");
+  private static final Pattern STRIP_MODULE = Pattern.compile("^.*:");
+
   @NotNull
   public static String normalizeKeyForSearch(String key) {
-    String shortKey = key.replaceAll(".adoc$", "");
-    shortKey = shortKey.replaceAll("^.*\\$", "");
-    shortKey = shortKey.replaceAll("^.*:", "");
-    return shortKey;
+    key = STRIP_FILE_EXTENSION.matcher(key).replaceAll("");
+    key = STRIP_FAMILY.matcher(key).replaceAll("");
+    key = STRIP_MODULE.matcher(key).replaceAll("");
+    return key;
   }
 
   @CheckReturnValue
@@ -689,10 +695,14 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   private void resolveAttributes(String key, List<ResolveResult> results, int depth, Collection<String> searchedKeys) {
+    if (!VALID_FILENAME.matcher(key).matches() || URL_PREFIX_PATTERN.matcher(key).find()) {
+      // skip all non-valid filenames, also URLs
+      return;
+    }
     Matcher matcher = ATTRIBUTES.matcher(key);
     if (matcher.find()) {
       int start = 0;
-      while (matcher.find(start)) {
+      if (matcher.find(start)) {
         String attributeName = matcher.group(1);
         List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(root.getProject(), attributeName, root);
         Set<String> searched = new HashSet<>(declarations.size());
@@ -709,6 +719,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             continue;
           }
           searched.add(value);
+          if (URL_PREFIX_PATTERN.matcher(value).find()) {
+            continue;
+          }
           String newKey = new StringBuilder(key).replace(matcher.start(), matcher.end(), value).toString();
           resolve(newKey, results, depth + 1, searchedKeys);
         }
@@ -924,14 +937,15 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(root.getProject(), root);
       Set<String> searched = new HashSet<>(declarations.size());
       for (AttributeDeclaration decl : declarations) {
-        if (decl.getAttributeValue() == null || decl.getAttributeValue().trim().length() == 0) {
+        String attributeValue = decl.getAttributeValue();
+        if (attributeValue == null || attributeValue.trim().length() == 0 || ATTRIBUTES.matcher(attributeValue).matches()) {
           continue;
         }
-        if ("imagesdir".equals(decl.getAttributeName())) {
+        String attributeName = decl.getAttributeName();
+        if ("imagesdir".equals(attributeName) || "page-aliases".equals(attributeName) || "keywords".equals(attributeName) || "description".equals(attributeName) || attributeName.startsWith("page-") || attributeName.startsWith("url-")) {
           // unlikely, won't have that as an attribute in an image path
           continue;
         }
-        List<ResolveResult> res = new ArrayList<>();
         String val = base;
         if (!val.endsWith("/") && val.length() > 0) {
           val = val + "/";
@@ -943,20 +957,21 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           }
         }
         // an attribute might be declared with the same value in multiple files, try only once for each combination
-        String key = decl.getAttributeName() + ":" + decl.getAttributeValue();
+        String key = attributeName + ":" + attributeValue;
         if (searched.contains(key)) {
           continue;
         }
         searched.add(key);
-        resolve(val + decl.getAttributeValue(), res, 0, new HashSet<>());
+        List<ResolveResult> res = new ArrayList<>();
+        resolve(val + attributeValue, res, 0, new HashSet<>());
         for (ResolveResult result : res) {
           if (result.getElement() == null) {
             continue;
           }
           final Icon icon = result.getElement().getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
           LookupElementBuilder lb;
-          lb = FileInfoManager.getFileLookupItem(result.getElement(), "{" + decl.getAttributeName() + "}", icon)
-            .withTailText(" (" + decl.getAttributeValue() + ")", true);
+          lb = FileInfoManager.getFileLookupItem(result.getElement(), "{" + attributeName + "}", icon)
+            .withTailText(" (" + attributeValue + ")", true);
           if (decl instanceof AsciiDocAttributeDeclaration) {
             lb = lb.withTypeText(((AsciiDocAttributeDeclaration) decl).getContainingFile().getName());
           }

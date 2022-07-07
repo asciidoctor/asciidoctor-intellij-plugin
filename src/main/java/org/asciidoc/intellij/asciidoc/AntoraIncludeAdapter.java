@@ -7,9 +7,11 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.PsiShortNamesCache;
 import org.apache.commons.lang.StringUtils;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
+import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.extension.IncludeProcessor;
 import org.asciidoctor.extension.PreprocessorReader;
@@ -19,9 +21,11 @@ import org.asciidoctor.log.Severity;
 import java.io.File;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_PREFIX_AND_FAMILY_PATTERN;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.ATTRIBUTES;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN;
 
 /**
@@ -34,8 +38,14 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
   private File fileBaseDir;
   private String name;
 
+  private String recursionPrevention;
+
   @Override
   public boolean handles(String target) {
+    if (Objects.equals(recursionPrevention, target)) {
+      recursionPrevention = null;
+      return false;
+    }
     if (antoraModuleDir == null) {
       return false;
     }
@@ -51,39 +61,61 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
       }
       return true;
     }
+    if (ATTRIBUTES.matcher(target).find()) {
+      return true;
+    }
     return false;
   }
 
   @Override
   public void process(Document document, PreprocessorReader reader, String target, Map<String, Object> attributes) {
+    String readFile = reader.getFile();
+    VirtualFile sourceDir = null;
+    VirtualFile resolved = null;
+    PsiFile psiFile = null;
+    if (StringUtils.isNotBlank(readFile)) {
+      resolved = LocalFileSystem.getInstance().findFileByPath(reader.getFile());
+      if (!readFile.contains("/") && resolved == null) {
+        // if the readFile doesn't contain a full path name, this indicates safe mode.
+        // Use alternative strategy to look up file relatively to the start folder.
+        resolved = LocalFileSystem.getInstance().findFileByPath(new File(fileBaseDir, name).toString());
+      }
+      if (!readFile.contains("/") && resolved == null) {
+        // if the readFile doesn't contain a full path name, this indicates safe mode.
+        // Use alternative strategy to look up file somewhere in the project.
+        PsiFile[] filesByName = AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> PsiShortNamesCache.getInstance(project).getFilesByName(readFile));
+        if (filesByName.length == 1) {
+          psiFile = filesByName[0];
+          resolved = filesByName[0].getVirtualFile();
+        }
+      }
+    }
+
+    if (resolved != null && ATTRIBUTES.matcher(target).find()) {
+      if (psiFile == null) {
+        VirtualFile finalResolved = resolved;
+        psiFile = AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> PsiManager.getInstance(project).findFile(finalResolved));
+      }
+      if (psiFile != null) {
+        PsiFile finalPsiFile = psiFile;
+        String finalTarget = target;
+        String newTarget = AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> AsciiDocUtil.resolveAttributes(finalPsiFile, finalTarget));
+        if (newTarget != null) {
+          target = newTarget;
+        }
+      }
+    }
+
     Matcher matcher = ANTORA_PREFIX_AND_FAMILY_PATTERN.matcher(target);
     if (matcher.find()) {
       String oldTarget = target;
       // if we read from an include-file, use that to determine originating module
       VirtualFile localModule = antoraModuleDir;
-      String readFile = reader.getFile();
-      VirtualFile sourceDir = null;
-      if (StringUtils.isNotBlank(readFile)) {
-        VirtualFile resolved = LocalFileSystem.getInstance().findFileByPath(reader.getFile());
-        if (!readFile.contains("/") && resolved == null) {
-          // if the readFile doesn't contain a full path name, this indicates safe mode.
-          // Use alternative strategy to look up file relatively to the start folder.
-          resolved = LocalFileSystem.getInstance().findFileByPath(new File(fileBaseDir, name).toString());
-        }
-        if (!readFile.contains("/") && resolved == null) {
-          // if the readFile doesn't contain a full path name, this indicates safe mode.
-          // Use alternative strategy to look up file somewhere in the project.
-          PsiFile[] filesByName = PsiShortNamesCache.getInstance(project).getFilesByName(readFile);
-          if (filesByName.length == 1) {
-            resolved = filesByName[0].getVirtualFile();
-          }
-        }
-        if (resolved != null) {
-          localModule = AsciiDocUtil.findAntoraModuleDir(project, resolved);
-          sourceDir = resolved.getParent();
-        } else {
-          localModule = null;
-        }
+      if (resolved != null) {
+        localModule = AsciiDocUtil.findAntoraModuleDir(project, resolved);
+        sourceDir = resolved.getParent();
+      } else {
+        localModule = null;
       }
       if (localModule != null) {
         target = AsciiDocUtil.replaceAntoraPrefix(project, localModule, sourceDir, target, "page").get(0);
@@ -118,8 +150,6 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
         }
         return;
       }
-    } else {
-      throw new RuntimeException("matcher didn't find a match");
     }
     StringBuilder data = new StringBuilder("include::");
     data.append(target).append("[");
@@ -127,6 +157,7 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
       data.append(entry.getKey()).append("='").append(entry.getValue()).append("'");
     }
     data.append("]");
+    recursionPrevention = target;
     reader.pushInclude(data.toString(), null, null, reader.getLineNumber() - 1, Collections.emptyMap());
   }
 
