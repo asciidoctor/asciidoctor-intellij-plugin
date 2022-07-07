@@ -71,6 +71,7 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
     COLLAPSABLE_ATTRIBUTES.put("two-colons", "::");
     COLLAPSABLE_ATTRIBUTES.put("two-semicolons", ";;");
     COLLAPSABLE_ATTRIBUTES.put("cpp", "C++");
+    COLLAPSABLE_ATTRIBUTES.put("pp", "++");
   }
 
   private static final Map<IElementType, String> COLLAPSABLE_TYPES = new HashMap<>();
