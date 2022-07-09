@@ -9,8 +9,8 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.37.29
 
-- Don't highlight Antora module names in xref macros when they are distributed and link to multiple folders (#1092)
-
+- don't highlight Antora module names in xref macros when they are distributed and link to multiple folders (#1092)
+- xref macros will resolve relative to the Antora pages folder except when they start with a dot and are relative (#1092)
 
 === 0.37.28
 
@@ -18,7 +18,7 @@ This document provides a high-level view of the changes introduced by release.
 - improve the grouping in the settings by adding horizontal rules (#972)
 - preventing a StringIndexOutOfBoundsException when moving files inside an Antora module (#1092)
 - performance optimization for Antora when a lot of page aliases and attributes are used (#1091)
-- ++xref:[]++ macros even when used in the Antora partials folder will resolve relative to the pages directory
+- xref macros even when used in the Antora partials folder will resolve relative to the pages directory
 - documenting built-in attribute ++{pp}++ for `++`
 
 === 0.37.27
