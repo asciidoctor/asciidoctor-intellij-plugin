@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveResult;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.psi.HasAntoraReference;
@@ -34,8 +35,8 @@ public class AsciiDocAntoraModuleResolveInspection extends AsciiDocInspectionBas
                 return;
               }
             }
-            PsiElement resolved = file.resolve();
-            if (resolved == null) {
+            ResolveResult @NotNull [] resolved = file.multiResolve(false);
+            if (resolved.length == 0) {
               holder.registerProblem(o, TEXT_HINT_MODULE_DOESNT_RESOLVE, ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 file.getRangeInElement());
             }

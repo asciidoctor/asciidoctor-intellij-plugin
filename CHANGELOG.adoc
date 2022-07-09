@@ -7,6 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.29
+
+- Don't highlight Antora module names in xref macros when they are distributed and link to multiple folders (#1092)
+
+
 === 0.37.28
 
 - support Vale scopes for Grazie professional's project rules (#1089)
