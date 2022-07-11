@@ -1934,7 +1934,7 @@ public class AsciiDocUtil {
     });
   }
 
-  public static List<AntoraModule> collectAntoraPrefixes(Project project, String componentName, String moduleName) {
+  public static List<AntoraModule> collectAntoraPrefixes(Project project, String componentName, String version, String moduleName) {
     if (DumbService.isDumb(project)) {
       return Collections.emptyList();
     }
@@ -1967,11 +1967,17 @@ public class AsciiDocUtil {
         if (title != null && componentTitles.get(otherComponentName) == null) {
           componentTitles.put(otherComponentName, title);
         }
+        if (componentName != null && !Objects.equals(otherComponentName, componentName)) {
+          continue;
+        }
+        if (version != null && !Objects.equals(otherComponentVersion, version)) {
+          continue;
+        }
         VirtualFile md = file.getParent().findChild("modules");
         if (md != null) {
           VirtualFile[] modules = md.getChildren();
           for (VirtualFile module : modules) {
-            if ((componentName == null || module.getName().equals(componentName)) && (moduleName == null || module.getName().equals(moduleName) || module.getName().equals(moduleName))) {
+            if (moduleName == null || module.getName().equals(moduleName)) {
               result.add(new AntoraModule(versionPrefix + otherComponentName + ":" + module.getName() + ":", otherComponentName, module.getName(), title, module));
             }
           }

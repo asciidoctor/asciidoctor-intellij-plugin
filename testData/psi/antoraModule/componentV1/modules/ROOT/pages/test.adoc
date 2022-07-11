@@ -4,11 +4,16 @@ image::image.txt[]
 
 link:{attachmentsdir}/attachment.txt[]
 
+xref:attachment$attachment.txt[]
+
 xref:module:page.adoc[]
 
 xref:oldpagename.adoc[]
 
 xref:2.0@my-component:ROOT:test.adoc[]
+
+:xrefvar: 2.0@my-component:ROOT:
+xref:{xrefvar}test.adoc[]
 
 xref:_@my-component:ROOT:test.adoc[]
 

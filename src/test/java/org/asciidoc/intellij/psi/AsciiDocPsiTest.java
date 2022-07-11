@@ -12,6 +12,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -714,11 +715,15 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     // given...
     PsiFile[] psiFile = myFixture.configureByFiles(
       getTestName(true) + "/componentV1/modules/ROOT/pages/test.adoc",
+      getTestName(true) + "/componentV1/modules/ROOT/pages/page-in-root.adoc",
       getTestName(true) + "/componentV1/modules/ROOT/attachments/attachment.txt",
       getTestName(true) + "/componentV1/modules/ROOT/examples/example.txt",
       getTestName(true) + "/componentV1/modules/ROOT/images/image.txt",
+      getTestName(true) + "/componentV1/modules/ROOT/images/image-in-root.txt",
       getTestName(true) + "/componentV1/modules/ROOT/partials/part.adoc",
       getTestName(true) + "/componentV1/modules/module/pages/page.adoc",
+      getTestName(true) + "/componentV1/modules/module/partials/partial.adoc",
+      getTestName(true) + "/componentV1/modules/ROOT/nav.adoc",
       getTestName(true) + "/componentV1/antora.yml",
       getTestName(true) + "/componentV2/modules/ROOT/pages/test.adoc",
       getTestName(true) + "/componentV2/modules/module/pages/test.adoc",
@@ -777,16 +782,68 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       }
     }
 
-    assertSize(6, urls);
+    assertSize(8, urls);
 
     // link
     assertReferencesResolve(urls.get(0), 2);
 
-    // xref to page in other module
+    // xref to attachment
     assertReferencesResolve(urls.get(1), 2);
 
+    // xref to page in other module
+    assertReferencesResolve(urls.get(2), 2);
+
     // xref to old page name
-    assertReferencesResolve(urls.get(2), 1);
+    assertReferencesResolve(urls.get(3), 1);
+
+    // xref with attribute
+    assertReferencesResolve(urls.get(5), 1);
+
+    urls.clear();
+
+    for (AsciiDocBlock block : Objects.requireNonNull(PsiTreeUtil.getChildrenOfType(psiFile[8], AsciiDocBlock.class))) {
+      AsciiDocLink[] links = PsiTreeUtil.getChildrenOfType(block, AsciiDocLink.class);
+      if (links != null) {
+        urls.addAll(Arrays.asList(links));
+      }
+    }
+
+    assertSize(5, urls);
+
+    // xref to page
+    assertReferencesResolve(urls.get(0), 1);
+
+    // xref to module
+    assertReferencesResolve(urls.get(1), 2);
+
+    // xref to component and module
+    assertReferencesResolve(urls.get(2), 2);
+
+    // xref to attachment
+    assertReferencesResolve(urls.get(3), 2);
+
+    // xref to component module and family
+    assertReferencesResolve(urls.get(4), 3);
+
+    urls.clear();
+
+    for (AsciiDocList list : Objects.requireNonNull(PsiTreeUtil.getChildrenOfType(psiFile[9], AsciiDocList.class))) {
+      for (AsciiDocListItem listItem : Objects.requireNonNull(PsiTreeUtil.getChildrenOfType(list, AsciiDocListItem.class))) {
+        AsciiDocLink[] links = PsiTreeUtil.getChildrenOfType(listItem, AsciiDocLink.class);
+        if (links != null) {
+          urls.addAll(Arrays.asList(links));
+        }
+      }
+    }
+
+    assertSize(2, urls);
+
+    // xref to page
+    assertReferencesResolve(urls.get(0), 1);
+
+    // xref to module
+    assertReferencesResolve(urls.get(1), 2);
+
   }
 
   public void testAntoraRelativeResources() {
@@ -833,7 +890,11 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
   private void assertReferencesResolve(PsiElement element, int numberOfReferences) {
     assertSize(numberOfReferences, element.getReferences());
     for (PsiReference reference : element.getReferences()) {
-      assertNotNull("reference didn't resolve: '" + reference.getRangeInElement().substring(element.getText()) + "' in '" + element.getText() + "'", reference.resolve());
+      if (reference instanceof PsiPolyVariantReference) {
+        assertTrue("reference didn't resolve: '" + reference.getRangeInElement().substring(element.getText()) + "' in '" + element.getText() + "'", ((PsiPolyVariantReference) reference).multiResolve(false).length > 0);
+      } else {
+        assertNotNull("reference didn't resolve: '" + reference.getRangeInElement().substring(element.getText()) + "' in '" + element.getText() + "'", reference.resolve());
+      }
     }
   }
 

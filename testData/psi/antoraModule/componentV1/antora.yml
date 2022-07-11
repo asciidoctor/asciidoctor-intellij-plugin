@@ -4,3 +4,5 @@ asciidoc:
   attributes:
     myattr: 'myval'
     mysoftattr: 'myval@'
+nav:
+  - modules/ROOT/nav.adoc
