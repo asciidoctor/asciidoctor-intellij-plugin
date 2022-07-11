@@ -1160,8 +1160,36 @@ public class AsciiDocUtil {
     }
     if (vf != null) {
       antoraPagesDir = findAntoraPagesDir(element.getProject(), vf);
-      if (antoraPagesDir != null) {
+      if (antoraPagesDir != null && antoraPagesDir.getCanonicalPath() != null && vf.getCanonicalPath() != null) {
         if (vf.getCanonicalPath().startsWith(antoraPagesDir.getCanonicalPath())) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public static boolean isAntoraPartial(PsiElement element) {
+    VirtualFile antoraPartialsDir = null;
+    VirtualFile vf = null;
+    if (element instanceof PsiFile) {
+      vf = ((PsiFile) element).getVirtualFile();
+    } else if (element instanceof PsiDirectory) {
+      vf = ((PsiDirectory) element).getVirtualFile();
+    } else {
+      PsiFile file = element.getContainingFile();
+      if (file != null) {
+        vf = file.getVirtualFile();
+        if (vf == null) {
+          // when running autocomplete, there is only an original file
+          vf = file.getOriginalFile().getVirtualFile();
+        }
+      }
+    }
+    if (vf != null) {
+      antoraPartialsDir = findAntoraPartials(element.getProject(), vf);
+      if (antoraPartialsDir != null && antoraPartialsDir.getCanonicalPath() != null && vf.getCanonicalPath() != null) {
+        if (vf.getCanonicalPath().startsWith(antoraPartialsDir.getCanonicalPath())) {
           return true;
         }
       }
@@ -1897,6 +1925,61 @@ public class AsciiDocUtil {
           continue;
         }
         entries.add(antoraModule.getPrefix());
+        // title might not have been included on all modules, populate other if it has been set on some
+        if (antoraModule.getTitle() == null) {
+          antoraModule.setTitle(componentTitles.get(antoraModule.getComponent()));
+        }
+      }
+      return result;
+    });
+  }
+
+  public static List<AntoraModule> collectAntoraPrefixes(Project project, String componentName, String moduleName) {
+    if (DumbService.isDumb(project)) {
+      return Collections.emptyList();
+    }
+    return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
+      List<VirtualFile> files =
+        new ArrayList<>(FilenameIndex.getVirtualFilesByName(ANTORA_YML, new AsciiDocSearchScope(project)));
+      List<AntoraModule> result = new ArrayList<>();
+      ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
+      Map<String, String> componentTitles = new HashMap<>();
+      for (VirtualFile file : files) {
+        if (index.isInLibrary(file)
+          || index.isExcluded(file)
+          || index.isInLibraryClasses(file)
+          || index.isInLibrarySource(file)) {
+          continue;
+        }
+        Map<String, Object> antora;
+        try {
+          antora = AsciiDoc.readAntoraYaml(project, file);
+        } catch (YAMLException ex) {
+          continue;
+        }
+        String otherComponentName = getAttributeAsString(antora, "name");
+        String otherComponentVersion = getAttributeAsString(antora, "version");
+        String versionPrefix = otherComponentVersion + "@";
+        if (versionPrefix.length() == 1) {
+          versionPrefix = "_" + versionPrefix;
+        }
+        String title = getAttributeAsString(antora, "title");
+        if (title != null && componentTitles.get(otherComponentName) == null) {
+          componentTitles.put(otherComponentName, title);
+        }
+        VirtualFile md = file.getParent().findChild("modules");
+        if (md != null) {
+          VirtualFile[] modules = md.getChildren();
+          for (VirtualFile module : modules) {
+            if ((componentName == null || module.getName().equals(componentName)) && (moduleName == null || module.getName().equals(moduleName) || module.getName().equals(moduleName))) {
+              result.add(new AntoraModule(versionPrefix + otherComponentName + ":" + module.getName() + ":", otherComponentName, module.getName(), title, module));
+            }
+          }
+        }
+      }
+      Iterator<AntoraModule> iterator = result.iterator();
+      while (iterator.hasNext()) {
+        AntoraModule antoraModule = iterator.next();
         // title might not have been included on all modules, populate other if it has been set on some
         if (antoraModule.getTitle() == null) {
           antoraModule.setTitle(componentTitles.get(antoraModule.getComponent()));

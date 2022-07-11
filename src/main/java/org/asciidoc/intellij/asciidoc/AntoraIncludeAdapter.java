@@ -110,7 +110,7 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
     if (matcher.find()) {
       String oldTarget = target;
       // if we read from an include-file, use that to determine originating module
-      VirtualFile localModule = antoraModuleDir;
+      VirtualFile localModule;
       if (resolved != null) {
         localModule = AsciiDocUtil.findAntoraModuleDir(project, resolved);
         sourceDir = resolved.getParent();
@@ -154,7 +154,10 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
     StringBuilder data = new StringBuilder("include::");
     data.append(target).append("[");
     for (Map.Entry<String, Object> entry : attributes.entrySet()) {
-      data.append(entry.getKey()).append("='").append(entry.getValue()).append("'");
+      data.append(entry.getKey()).append("='").append(entry.getValue()).append("',");
+    }
+    if (attributes.size() > 0) {
+      data.setLength(data.length() - 1);
     }
     data.append("]");
     recursionPrevention = target;
