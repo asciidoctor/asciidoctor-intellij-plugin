@@ -51,7 +51,9 @@ public class AsciiDocPsiImplUtil {
   @NotNull
   public static RuntimeException getRuntimeException(@NotNull String message, @NotNull String content, RuntimeException e) {
     content = REMOVE_CONTENT.matcher(content).replaceAll("x");
-    return new RuntimeExceptionWithAttachments(message, e, new Attachment("doc.adoc", content));
+    Attachment attachment = new Attachment("doc.adoc", content);
+    attachment.setIncluded(true); // Include it by default as it has been anonymized. The user can still change it.
+    return new RuntimeExceptionWithAttachments(message, e, attachment);
   }
 
   @NotNull
@@ -68,6 +70,7 @@ public class AsciiDocPsiImplUtil {
       attachmentContent = REMOVE_CONTENT.matcher(attachmentContent).replaceAll("x");
       list.add(new Attachment(attachment.getName(), attachmentContent));
     }
+    list.forEach(a -> a.setIncluded(true)); // Include it by default as it has been anonymized. The user can still change it.
     return new RuntimeExceptionWithAttachments(message, e, list.toArray(new Attachment[]{}));
   }
 

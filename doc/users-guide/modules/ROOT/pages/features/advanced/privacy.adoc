@@ -42,6 +42,7 @@ These can violate the user's privacy and can compromise their machine.
 * When the user accesses the plugin's user's guide on the web, the web hoster will receive the user's router's IP address and browser details and will store it for up to 30 days.
 
 * If an exception occurs in the user's IDE and IntelliJ attributes the exception to the AsciiDoc plugin, the user can choose to send information about the exception to the plugin's Sentry service.
+All anonymized attachments will be sent unless the user unchecks the checkbox.
 The user can (and should) review the information before submitting it.
 It may contain personal information if it is part of the exception's message, or if the user chooses to enter personal information in the error description.
 It also contains information about the IDE version, the OS version, a list of other plugins installed in the IDE and standard information Sentry adds.
