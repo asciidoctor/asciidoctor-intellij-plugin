@@ -1,5 +1,9 @@
 package org.asciidoc.intellij.findUsages;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
@@ -8,6 +12,7 @@ import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.util.ProcessingContext;
+import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
@@ -32,41 +37,66 @@ import static com.intellij.patterns.PlatformPatterns.virtualFile;
  * @author Alexander Schwartz (alexander.schwartz@gmx.net)
  */
 public class AsciiDocAntoraYamlReferenceContributor extends PsiReferenceContributor {
+  private static final Logger LOG = Logger.getInstance(AsciiDocAntoraYamlReferenceContributor.class);
+
+  private static volatile boolean notificationShown;
+
   @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
+    if (notificationShown) {
+      return;
+    }
 
     // support nav elements with a file reference
 
-    final PsiElementPattern.Capture<YAMLScalar> navCapture =
-      psiElement(YAMLScalar.class)
-        .inside(psiElement(YAMLSequenceItem.class))
-        .inFile(psiFile(YAMLFile.class))
-        .inVirtualFile(virtualFile().withName("antora.yml"));
-    registrar.registerReferenceProvider(navCapture,
-      new PsiReferenceProvider() {
-        @Override
-        public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
-                                                               @NotNull ProcessingContext context) {
-          List<PsiReference> references = findNavReferencesElement((YAMLScalar) element);
-          return references.toArray(new PsiReference[0]);
-        }
-      });
+    try {
 
-    // support start_page element with an Antora reference
+      final PsiElementPattern.Capture<YAMLScalar> navCapture =
+        psiElement(YAMLScalar.class)
+          .inside(psiElement(YAMLSequenceItem.class))
+          .inFile(psiFile(YAMLFile.class))
+          .inVirtualFile(virtualFile().withName("antora.yml"));
+      registrar.registerReferenceProvider(navCapture,
+        new PsiReferenceProvider() {
+          @Override
+          public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
+                                                                 @NotNull ProcessingContext context) {
+            List<PsiReference> references = findNavReferencesElement((YAMLScalar) element);
+            return references.toArray(new PsiReference[0]);
+          }
+        });
 
-    final PsiElementPattern.Capture<YAMLScalar> startPageCapture =
-      psiElement(YAMLScalar.class)
-        .inFile(psiFile(YAMLFile.class))
-        .inVirtualFile(virtualFile().withName("antora.yml"));
-    registrar.registerReferenceProvider(startPageCapture,
-      new PsiReferenceProvider() {
-        @Override
-        public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
-                                                               @NotNull ProcessingContext context) {
-          List<PsiReference> references = findStartPageReferencesElement((YAMLScalar) element);
-          return references.toArray(new PsiReference[0]);
+      // support start_page element with an Antora reference
+
+      final PsiElementPattern.Capture<YAMLScalar> startPageCapture =
+        psiElement(YAMLScalar.class)
+          .inFile(psiFile(YAMLFile.class))
+          .inVirtualFile(virtualFile().withName("antora.yml"));
+      registrar.registerReferenceProvider(startPageCapture,
+        new PsiReferenceProvider() {
+          @Override
+          public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
+                                                                 @NotNull ProcessingContext context) {
+            List<PsiReference> references = findStartPageReferencesElement((YAMLScalar) element);
+            return references.toArray(new PsiReference[0]);
+          }
+        });
+    } catch (Throwable ex) {
+      // this might fail due to the optional dependency being loaded after the AsciiDoc plugin in the wrong classloader
+      // https://youtrack.jetbrains.com/issue/IDEA-287090/
+      LOG.warn("Unable to register AsciiDocAntoraYamlReferenceContributor", ex);
+      if (!notificationShown) {
+        synchronized (this) {
+          Notification notification = AsciiDoc.getNotificationGroup().createNotification("Error initializing YAML support for Antora",
+            "Please restart your IDE to finish the initialization of Antora YAML support in the AsciiDoc plugin.",
+            NotificationType.WARNING);
+          // increase event log counter
+          notification.setImportant(true);
+          Notifications.Bus.notify(notification);
+          notificationShown = true;
         }
-      });
+      }
+    }
 
   }
 

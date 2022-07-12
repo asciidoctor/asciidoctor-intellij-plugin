@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - don't highlight Antora module names in xref macros when they are distributed and link to multiple folders (#1092)
 - xref macros will resolve relative to the Antora pages folder except when they start with a dot and are relative (#1092)
+- avoid NoClassDefFoundError for YAMLScalar when activating the YAML plugin after the AsciiDoc plugin (#1097)
 
 === 0.37.28
 

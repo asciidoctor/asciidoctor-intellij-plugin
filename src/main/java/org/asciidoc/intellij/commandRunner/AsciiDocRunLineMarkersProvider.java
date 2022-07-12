@@ -171,7 +171,7 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor imp
       try {
         return r.isApplicable(language);
       } catch (NoClassDefFoundError ex) {
-        // this might fail due to the optional dependency not being loaded, yet
+        // this might fail due to the optional dependency being loaded after the AsciiDoc plugin in the wrong classloader
         // https://youtrack.jetbrains.com/issue/IDEA-287090/
         return false;
       }
