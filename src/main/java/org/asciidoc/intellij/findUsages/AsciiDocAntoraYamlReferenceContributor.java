@@ -86,7 +86,7 @@ public class AsciiDocAntoraYamlReferenceContributor extends PsiReferenceContribu
       // https://youtrack.jetbrains.com/issue/IDEA-287090/
       LOG.warn("Unable to register AsciiDocAntoraYamlReferenceContributor", ex);
       if (!notificationShown) {
-        synchronized (this) {
+        synchronized (AsciiDocAntoraYamlReferenceContributor.class) {
           Notification notification = AsciiDoc.getNotificationGroup().createNotification("Error initializing YAML support for Antora",
             "Please restart your IDE to finish the initialization of Antora YAML support in the AsciiDoc plugin.",
             NotificationType.WARNING);
