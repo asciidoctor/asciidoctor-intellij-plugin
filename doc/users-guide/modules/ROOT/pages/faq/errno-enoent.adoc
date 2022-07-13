@@ -51,6 +51,6 @@ Put the following as a new line at the end of IDE's VM options file:
 -Dfile.encoding=UTF-8
 ----
 
-Users can open the file from your IDE via menu:Help[Edit custom VM options...].
+Users can open the file from their IDE via menu:Help[Edit custom VM options...].
 
 The https://www.jetbrains.com/help/idea/tuning-the-ide.html[online documentation of IntelliJ] explains how to find this file in the local file system.

@@ -8,7 +8,7 @@ Use this to optimize the preview when the project contains a document that is sp
 
 There are usually specific settings for each project that apply to all AsciiDoc sources: these might be the image directory or activating experimental options.
 
-While documents have all the settings in your root document, files that it includes will not have these settings when they render in the IDE's preview.
+While documents have all the settings in the root document, files that it includes will not have these settings when they render in the IDE's preview.
 
 == Solution
 

@@ -5,7 +5,7 @@
 
 == Prerequisites
 
-If you want to preview your changes locally:
+To preview changes locally, the following prerequisites are necessary:
 
 . https://nodejs.org/en/[Node] environment
 . https://classic.yarnpkg.com/en/docs/install/[Yarn] installed

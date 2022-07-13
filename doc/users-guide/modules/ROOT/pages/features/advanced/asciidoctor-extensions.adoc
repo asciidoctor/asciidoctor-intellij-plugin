@@ -12,7 +12,7 @@ Support for AsciidoctorJ extensions is available from 0.31.19.
 
 == Situation
 
-When there are extensions for Asciidoctor used in a command line build, users want to see their effect on the preview rendered within your JetBrains IDE.
+When there are extensions for Asciidoctor used in a command line build, users want to see their effect on the preview rendered within their JetBrains IDE.
 
 To find out more about extensions, have a look at the https://github.com/asciidoctor/asciidoctor-extensions-lab[Asciidoctor Extensions Lab] or the https://asciidoctor.org/docs/extensions/[Asciidoctor Extensions List].
 

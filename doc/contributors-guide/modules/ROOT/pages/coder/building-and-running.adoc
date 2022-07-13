@@ -45,17 +45,17 @@ To run all tests and the CheckStyle validations, run
 
 === About
 
-You most likely want to do this for fast turnaround times when running single tests, and debugging both tests and the plugin itself.
-Please use IntelliJ IDEA as an IDE for developing on this plugin.
+Developers most likely want to do this for fast turnaround times when running single tests, and debugging both tests and the plugin itself.
+Use IntelliJ IDEA as an IDE for developing on this plugin.
 
-You can use the most recent version of the IDE.
-The `build.gradle` file specifies the minimum version for all users of the plugin, but when developing you are free to use a more recent version.
+Developers can use the most recent version of the IDE.
+The `build.gradle` file specifies the minimum version for all users of the plugin, but when developing they are free to use a more recent version.
 
 === Setup Tasks
 
 . Checkout the GitHub project and import it as a gradle project.
 
-. Ensure to install the following plugins (your IDE should recommend installing them once you open the project):
+. Ensure to install the following plugins (the IDE should recommend installing them once it opens the project):
 +
 --
 GrammarKit:: Helps with highlighting and code completion in Grammar files (*.flex).
@@ -83,20 +83,20 @@ When running tests from Gradle, this is added automatically:
 ----
 
 Still, when running via the IDE, the tests in _AsciiDocGrammarInspectionTest_ fail with an _ExceptionInInitializerError_ when loading language tool classes.
-Please run these tests using the CLI command _gradlew check_ as described above.
+Run these tests using the CLI command _gradlew check_ as described above.
 
 === Validation Tasks
 
-Perform these tasks to ensure that your setup is ready for development.
+Perform these tasks to ensure that the setup is ready for development:
 
-. Run the test cases from `AsciiDocLexerTest.java` to see that running tests works in your setup.
+. Run the test cases from `AsciiDocLexerTest.java` to see that running tests works in the setup.
 
-. There are two ready-to-go run configurations checked in to git that you can run:
+. There are two ready-to-go run configurations checked in to git that run from the IDE:
 +
 --
-buildPlugin:: building the plugin as a ZIP-file that you can then install locally into your IDE
+buildPlugin:: building the plugin as a ZIP-file that can then be installed locally into any JetBrains IDE
 
 runIde:: runs an IntelliJ community edition with the AsciiDoc plugin enabled.
-You can choose to run it in the debug mode.
+This allows for debugging IntelliJ and the plugin.
 --
 
