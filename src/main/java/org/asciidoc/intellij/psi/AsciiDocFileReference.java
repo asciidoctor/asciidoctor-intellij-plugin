@@ -33,6 +33,7 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
 import icons.AsciiDocIcons;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.completion.AsciiDocCompletionContributor;
@@ -61,6 +62,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_FAMILY_PATTERN;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_PREFIX_AND_FAMILY_PATTERN;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_PREFIX_PATTERN;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_SUPPORTED;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ATTRIBUTES;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.COMPONENT_MODULE;
@@ -738,7 +742,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       List<PsiElement> file = resolve(key);
       if (file != null && file.size() > 0) {
         results.addAll(file.stream().map(PsiElementResolveResult::new).collect(Collectors.toList()));
-      } else if ("link".endsWith(macroName) || "xref".endsWith(macroName) || macroName.equals("xref-attr") || "<<".equals(macroName)) {
+      } else if (("link".endsWith(macroName) || "xref".endsWith(macroName) || macroName.equals("xref-attr") || "<<".equals(macroName)) && !key.endsWith(".")) {
         String extension = AsciiDocFileType.getExtensionOrDefault(root);
         file = resolve(key + "." + extension);
         if (file != null && file.size() > 0) {
@@ -906,28 +910,21 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     }
     final PsiElement[] candidates = PsiUtilCore.toPsiElementArray(set);
 
-    List<ResolveResult> results = new ArrayList<>();
-    if (!macroName.equals("antora-nav") && !macroName.equals("antora-startpage")) {
-      if (base.endsWith("/") || base.length() == 0) {
-        resolve(base + "..", results, 0, new HashSet<>());
-      } else {
-        resolve(base + "/..", results, 0, new HashSet<>());
-      }
-    }
-    for (ResolveResult result : results) {
-      if (result.getElement() == null) {
-        continue;
-      }
-      final Icon icon = result.getElement().getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
-      LookupElementBuilder item = FileInfoManager.getFileLookupItem(result.getElement(), ".." /* + '/' */, icon);
+    if (!isAntora || (base.length() > 0 && !ANTORA_PREFIX_AND_FAMILY_PATTERN.matcher(base).matches() && !ANTORA_PREFIX_PATTERN.matcher(base).matches() && !ANTORA_FAMILY_PATTERN.matcher(base).matches())) {
+      LookupElementBuilder item = LookupElementBuilder.create("..")
+        .withTypeText(" (parent folder of current file)", true)
+        .withIcon(PlatformIcons.FOLDER_ICON);
       item = handleTrailing(item, '/');
       items.add(item);
-      if (ANTORA_SUPPORTED.contains(macroName) && AsciiDocUtil.findAntoraModuleDir(root) != null) {
-        // Antora 3 support relative resource names starting with a dot
-        item = FileInfoManager.getFileLookupItem(result.getElement(), "." /* + '/' */, icon);
-        item = handleTrailing(item, '/');
-        items.add(item);
-      }
+    }
+
+    if (ANTORA_SUPPORTED.contains(macroName) && AsciiDocUtil.findAntoraModuleDir(root) != null) {
+      // Antora 3 support relative resource names starting with a dot
+      LookupElementBuilder item = LookupElementBuilder.create(".")
+        .withTypeText(" (relative to current file)", true)
+        .withIcon(PlatformIcons.FOLDER_ICON);
+      item = handleTrailing(item, '/');
+      items.add(item);
     }
 
     if (!macroName.equals("antora-nav") && !macroName.equals("antora-startpage")) {
@@ -1172,7 +1169,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   private void getVariants(String myBase, CommonProcessors.CollectUniquesProcessor<PsiFileSystemItem> collector,
                            int depth) {
     List<String> bases = Collections.singletonList(myBase);
-    if (depth == 0 && ANTORA_SUPPORTED.contains(macroName)) {
+    if (depth == 0 && ANTORA_SUPPORTED.contains(macroName) && !AsciiDocUtil.isAntoraPartial(root)) {
       bases = handleAntora(myBase);
     }
     if (depth > MAX_DEPTH) {
@@ -1193,9 +1190,29 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         List<PsiElement> resolves = resolve(base);
         if (resolves != null) {
           for (PsiElement resolve : resolves) {
+            VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(resolve);
+            if (resolve instanceof PsiDirectory) {
+              if (((PsiDirectory) resolve).getVirtualFile().equals(antoraModuleDir)) {
+                if (macroName.equals("xref") || macroName.equals("xref-attr")) {
+                  VirtualFile antoraPagesDir = AsciiDocUtil.findAntoraPagesDir(resolve);
+                  if (antoraPagesDir == null) {
+                    continue;
+                  }
+                  resolve = PsiManager.getInstance(root.getProject()).findDirectory(antoraPagesDir);
+                  if (resolve == null) {
+                    continue;
+                  }
+                }
+              }
+            }
             for (final PsiElement child : resolve.getChildren()) {
               if (child instanceof PsiFileSystemItem) {
                 collector.process((PsiFileSystemItem) child);
+              }
+            }
+            if (resolve instanceof PsiDirectory) {
+              for (final PsiDirectory child : ((PsiDirectory) resolve).getSubdirectories()) {
+                collector.process(child);
               }
             }
           }
@@ -1287,6 +1304,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return resolveAbsolutePath(element, fileName);
   }
 
+  @SuppressWarnings("checkstyle:MethodLength")
   @NotNull
   private List<PsiElement> resolveReferenceInPartial(String fileName, PsiElement element, PsiDirectory startDir) {
     List<PsiElement> resolveAbsolutePath = resolveAbsolutePath(root, fileName);
@@ -1346,14 +1364,21 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         return result;
       }
     }
+    if (fileName.equals("/.") || fileName.equals("/..") || fileName.equals(".") || fileName.equals("..")) {
+      return result;
+    }
     String lastPart;
     try {
       lastPart = Path.of(fileName).getFileName().toString();
     } catch (InvalidPathException ex) {
       lastPart = "?";
     }
-    Collection<VirtualFile> virtualFiles = FilenameIndex.getVirtualFilesByName(lastPart, new AsciiDocSearchScope(element.getProject()));
-    if (virtualFiles.size() > 0) {
+    if (lastPart.equals(".")) {
+      return result;
+    }
+    if (fileName.length() > 0 && !fileName.contains("..")) {
+      Collection<VirtualFile> virtualFiles = FilenameIndex.getVirtualFilesByName(lastPart, new AsciiDocSearchScope(element.getProject()));
+      fileName = StringUtils.stripEnd(fileName, "/");
       for (VirtualFile vf2 : virtualFiles) {
         VirtualFile antoraFamilyDir;
         switch (antoraFamily) {
@@ -1375,14 +1400,23 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           default:
             antoraFamilyDir = null;
         }
-        if (antoraFamilyDir == null || antoraFamilyDir.getCanonicalPath() == null || vf2.getCanonicalPath() == null || !vf2.getCanonicalPath().startsWith(antoraFamilyDir.getCanonicalPath()) || !vf2.getCanonicalPath().substring(antoraFamilyDir.getCanonicalPath().length() + 1).equals(fileName)) {
+        if (antoraFamilyDir == null || antoraFamilyDir.getCanonicalPath() == null || vf2.getCanonicalPath() == null) {
           continue;
         }
-        PsiFile file = PsiManager.getInstance(element.getProject()).findFile(vf2);
-        if (file == null) {
+        String relativePath = FileUtil.getRelativePath(FileUtil.normalize(antoraFamilyDir.getCanonicalPath() + "/" + fileName), vf2.getCanonicalPath(), '/');
+        if (relativePath == null || !relativePath.equals(".")) {
           continue;
         }
-        Collection<AttributeDeclaration> attributes = AsciiDocUtil.collectAntoraAttributes(file);
+        PsiElement fileOrDirectory;
+        if (!vf2.isDirectory()) {
+          fileOrDirectory = PsiManager.getInstance(element.getProject()).findFile(vf2);
+        } else {
+          fileOrDirectory = PsiManager.getInstance(element.getProject()).findDirectory(vf2);
+        }
+        if (fileOrDirectory == null) {
+          continue;
+        }
+        Collection<AttributeDeclaration> attributes = AsciiDocUtil.collectAntoraAttributes(fileOrDirectory);
         if (antoraModule != null && !Objects.equals(findAttributeValue(attributes, "page-module"), antoraModule)) {
           continue;
         }
@@ -1392,13 +1426,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         if (antoraVersion != null && !Objects.equals(findAttributeValue(attributes, "page-component-version"), antoraVersion)) {
           continue;
         }
-        result.add(file);
+        result.add(fileOrDirectory);
       }
     } else {
       List<AntoraModule> antoraModules = AsciiDocUtil.collectAntoraPrefixes(root.getProject(), antoraComponent, antoraVersion, antoraModule);
-      for (AntoraModule module : antoraModules) {
+      modules: for (AntoraModule module : antoraModules) {
         VirtualFile antoraDir = module.getFile();
-        if (familySet) {
+        if (familySet || fileName.length() > 0) {
           switch (antoraFamily) {
             case "page":
               antoraDir = AsciiDocUtil.findAntoraPagesDir(element.getProject(), antoraDir);
@@ -1422,9 +1456,52 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         if (antoraDir == null) {
           continue;
         }
-        PsiDirectory directory = PsiManager.getInstance(element.getProject()).findDirectory(module.getFile());
-        if (directory != null) {
+        PsiDirectory directory = PsiManager.getInstance(element.getProject()).findDirectory(antoraDir);
+        if (directory == null) {
+          continue;
+        }
+        if (fileName.length() == 0) {
           result.add(directory);
+        } else {
+          String[] split = StringUtil.trimEnd(fileName, "/").split("/", -1);
+          PsiDirectory dir = directory;
+          for (int i = 0; i < split.length - 1; ++i) {
+            if (split[i].length() == 0) {
+              continue;
+            }
+            if (split[i].equals("..")) {
+              dir = dir.getParent();
+              if (dir == null) {
+                continue modules;
+              }
+              continue;
+            }
+            if (split[i].equals(".")) {
+              continue;
+            }
+            dir = dir.findSubdirectory(split[i]);
+            if (dir == null) {
+              continue modules;
+            }
+          }
+          if (split[split.length - 1].equals("..")) {
+            result.add(dir.getParent());
+            continue;
+          }
+          if (split[split.length - 1].equals(".")) {
+            result.add(dir);
+            continue;
+          }
+          PsiFile file = dir.findFile(split[split.length - 1]);
+          if (file != null) {
+            result.add(file);
+            continue;
+          }
+          dir = dir.findSubdirectory(split[split.length - 1]);
+          if (dir != null) {
+            result.add(dir);
+            continue;
+          }
         }
       }
     }

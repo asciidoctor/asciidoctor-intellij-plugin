@@ -716,7 +716,9 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiFile[] psiFile = myFixture.configureByFiles(
       getTestName(true) + "/componentV1/modules/ROOT/pages/test.adoc",
       getTestName(true) + "/componentV1/modules/ROOT/pages/page-in-root.adoc",
+      getTestName(true) + "/componentV1/modules/ROOT/pages/sub/page-in-sub.adoc",
       getTestName(true) + "/componentV1/modules/ROOT/attachments/attachment.txt",
+      getTestName(true) + "/componentV1/modules/ROOT/attachments/attachment-in-root.txt",
       getTestName(true) + "/componentV1/modules/ROOT/examples/example.txt",
       getTestName(true) + "/componentV1/modules/ROOT/images/image.txt",
       getTestName(true) + "/componentV1/modules/ROOT/images/image-in-root.txt",
@@ -782,7 +784,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       }
     }
 
-    assertSize(8, urls);
+    assertSize(10, urls);
 
     // link
     assertReferencesResolve(urls.get(0), 2);
@@ -799,16 +801,22 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     // xref with attribute
     assertReferencesResolve(urls.get(5), 1);
 
+    // xref page in sub
+    assertReferencesResolve(urls.get(8), 2);
+
+    // xref page relative
+    assertReferencesResolve(urls.get(9), 4);
+
     urls.clear();
 
-    for (AsciiDocBlock block : Objects.requireNonNull(PsiTreeUtil.getChildrenOfType(psiFile[8], AsciiDocBlock.class))) {
+    for (AsciiDocBlock block : Objects.requireNonNull(PsiTreeUtil.getChildrenOfType(psiFile[10], AsciiDocBlock.class))) {
       AsciiDocLink[] links = PsiTreeUtil.getChildrenOfType(block, AsciiDocLink.class);
       if (links != null) {
         urls.addAll(Arrays.asList(links));
       }
     }
 
-    assertSize(5, urls);
+    assertSize(6, urls);
 
     // xref to page
     assertReferencesResolve(urls.get(0), 1);
@@ -825,9 +833,12 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     // xref to component module and family
     assertReferencesResolve(urls.get(4), 3);
 
+    // xref to component module in sub folder
+    assertReferencesResolve(urls.get(5), 3);
+
     urls.clear();
 
-    for (AsciiDocList list : Objects.requireNonNull(PsiTreeUtil.getChildrenOfType(psiFile[9], AsciiDocList.class))) {
+    for (AsciiDocList list : Objects.requireNonNull(PsiTreeUtil.getChildrenOfType(psiFile[11], AsciiDocList.class))) {
       for (AsciiDocListItem listItem : Objects.requireNonNull(PsiTreeUtil.getChildrenOfType(list, AsciiDocListItem.class))) {
         AsciiDocLink[] links = PsiTreeUtil.getChildrenOfType(listItem, AsciiDocLink.class);
         if (links != null) {
@@ -836,12 +847,15 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       }
     }
 
-    assertSize(2, urls);
+    assertSize(3, urls);
 
     // xref to page
     assertReferencesResolve(urls.get(0), 1);
 
     // xref to module
+    assertReferencesResolve(urls.get(1), 2);
+
+    // xref in sub
     assertReferencesResolve(urls.get(1), 2);
 
   }

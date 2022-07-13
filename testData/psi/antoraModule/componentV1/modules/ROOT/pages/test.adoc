@@ -19,6 +19,10 @@ xref:_@my-component:ROOT:test.adoc[]
 
 xref:my-component:ROOT:test.adoc[]
 
+xref:sub/page-in-sub.adoc[]
+
+xref:sub/../sub/page-in-sub.adoc[]
+
 include::{examplesdir}/example.txt[]
 
 include::{partialsdir}/part.adoc[]

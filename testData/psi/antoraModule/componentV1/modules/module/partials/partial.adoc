@@ -11,3 +11,5 @@ xref:attachment$attachment-in-root.txt[]
 xref:my-component:ROOT:attachment$attachment-in-root.txt[]
 
 image::image-in-root.txt[]
+
+xref:my-component:ROOT:sub/page-in-sub.adoc[]

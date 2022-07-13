@@ -1,2 +1,3 @@
 * xref:test.adoc[]
 * xref:ROOT:test.adoc[]
+* xref:sub/page-in-sub.adoc[]
