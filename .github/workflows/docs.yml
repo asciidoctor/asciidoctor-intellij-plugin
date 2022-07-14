@@ -47,19 +47,12 @@ jobs:
         uses: JetBrains/qodana-action@v5.1.0
         with:
           # https://hub.docker.com/r/jetbrains/qodana-jvm-community/tags
-          pr-mode: false # disable PR mode as this runs in the project's subfolder
           args: >
             --linter,jetbrains/qodana-jvm-community:2022.1,
-            --project-dir,${{ github.workspace }}/doc,
             -v,${{ github.workspace }}/grazie:/opt/idea/plugins/grazie,
             -v,${{ github.workspace }}/grazie-pro:/opt/idea/plugins/grazie-pro,
             -v,${{ github.workspace }}/asciidoctor-intellij-plugin:/opt/idea/plugins/asciidoctor-intellij-plugin,
             --baseline,qodana-baseline.sarif.json
-          use-annotations: false
-      - name: Add "doc" to paths as qodana ran from "doc" folder
-        # Otherwise, GitHub won't be able to match the reported problems to file in the repository
-        run: |
-          sed -i 's|"uri": "|"uri": "doc/|g' ${{ runner.temp }}/qodana/results/qodana.sarif.json
 
       # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/uploading-a-sarif-file-to-github#example-workflow-that-runs-the-eslint-analysis-tool
       - name: Upload SARIF report to GitHub

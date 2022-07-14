@@ -1,10 +1,14 @@
 version: 1.0
 profile:
-  path: asciidoc-inspection.xml
+  path: doc/asciidoc-inspection.xml
 exclude:
   - name: All
     paths:
-      - qodana-baseline.sarif.json
-      - .grazie.en.yaml
-      - contributors-guide/modules/ROOT/images
-      - users-guide/modules/ROOT/images
+      - doc/qodana-baseline.sarif.json
+      - doc/.grazie.en.yaml
+      - doc/contributors-guide/modules/ROOT/images
+      - doc/users-guide/modules/ROOT/images
+      - '*.adoc'
+      - build.grade
+      - src
+      - testData
