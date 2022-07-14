@@ -44,7 +44,7 @@ jobs:
           unzip grazie-pro.zip
 
       - name: 'Qodana for Docs'
-        uses: JetBrains/qodana-action@v5.1.0
+        uses: JetBrains/qodana-action@v2022.1.1
         with:
           # https://hub.docker.com/r/jetbrains/qodana-jvm-community/tags
           args: >
@@ -53,6 +53,7 @@ jobs:
             -v,${{ github.workspace }}/grazie-pro:/opt/idea/plugins/grazie-pro,
             -v,${{ github.workspace }}/asciidoctor-intellij-plugin:/opt/idea/plugins/asciidoctor-intellij-plugin,
             --baseline,doc/qodana-baseline.sarif.json
+          pr-mode: false
 
       # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/uploading-a-sarif-file-to-github#example-workflow-that-runs-the-eslint-analysis-tool
       - name: Upload SARIF report to GitHub

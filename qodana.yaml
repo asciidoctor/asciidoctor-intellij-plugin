@@ -10,7 +10,9 @@ exclude:
       - doc/users-guide/modules/ROOT/images
       - CHANGELOG.adoc
       - README.adoc
-      - build.grade
+      - build.gradle
+      - buildLexer.xml
+      - settings.gradle
       - .github
       - config
       - gradle

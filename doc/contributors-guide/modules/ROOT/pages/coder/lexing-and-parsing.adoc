@@ -14,11 +14,11 @@ The standard tool in IntelliJ is https://jflex.de[JFlex].
 
 The heart of lexing is `asciidoc.flex`.
 It defines multiple states, and uses a lot of functionalities and tweaking to parse AsciiDoc.
-You can add new token types as you go in `AsciiDocTokenTypes`.
+Developers can add new token types in `AsciiDocTokenTypes`.
 Ensure to update the list `TOKENS_TO_MERGE` if consecutive identical types of the tokens should be merged.
 If the content of the token types should be spell-checked, add the token types to the list of tokens in `AsciiDocSpellcheckingStrategy`.
 
-Once you change `asciidoc.flex`, you should run `gradlew compileJava` to generate the parser code.
+Once the file changed `asciidoc.flex`, run `gradlew compileJava` to generate the parser code.
 
 A test suite for the lexer is in `AsciiDocLexerTest`.
 I recommend running it from the IDE.
