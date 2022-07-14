@@ -52,7 +52,7 @@ jobs:
             -v,${{ github.workspace }}/grazie:/opt/idea/plugins/grazie,
             -v,${{ github.workspace }}/grazie-pro:/opt/idea/plugins/grazie-pro,
             -v,${{ github.workspace }}/asciidoctor-intellij-plugin:/opt/idea/plugins/asciidoctor-intellij-plugin,
-            --baseline,qodana-baseline.sarif.json
+            --baseline,doc/qodana-baseline.sarif.json
 
       # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/uploading-a-sarif-file-to-github#example-workflow-that-runs-the-eslint-analysis-tool
       - name: Upload SARIF report to GitHub

@@ -8,7 +8,13 @@ exclude:
       - doc/.grazie.en.yaml
       - doc/contributors-guide/modules/ROOT/images
       - doc/users-guide/modules/ROOT/images
-      - '*.adoc'
+      - CHANGELOG.adoc
+      - README.adoc
       - build.grade
+      - .github
+      - config
+      - gradle
+      - gradlew
+      - gradlew.bat
       - src
       - testData
