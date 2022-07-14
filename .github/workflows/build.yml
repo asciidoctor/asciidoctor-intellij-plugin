@@ -27,6 +27,7 @@ on:
   pull_request:
     paths-ignore:
       - 'doc/**'
+      - 'qodana.yaml'
       - 'README.adoc'
       - '.github/**/*.md'
       - '.github/workflows/docs.yml'
