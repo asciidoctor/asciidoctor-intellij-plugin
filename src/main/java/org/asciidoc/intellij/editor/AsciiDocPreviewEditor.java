@@ -340,11 +340,17 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         // any modification of a file within the project refreshes the preview
         for (VFileEvent event : events) {
           if (event.getFile() != null) {
-            if (ProjectFileIndex.getInstance(project).getModuleForFile(event.getFile()) != null) {
-              // As an include might have been modified, force the refresh of the preview
-              forceRenderCycle();
-              renderIfVisible();
-              break;
+            if (!project.isDisposed()) {
+              try {
+                if (ProjectFileIndex.getInstance(project).getModuleForFile(event.getFile()) != null) {
+                  // As an include might have been modified, force the refresh of the preview
+                  forceRenderCycle();
+                  renderIfVisible();
+                  break;
+                }
+              } catch (AlreadyDisposedException ex) {
+                // nop
+              }
             }
           }
         }

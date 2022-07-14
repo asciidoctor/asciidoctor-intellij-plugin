@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.31
+
+- handle AlreadyDisposedException (#1100)
+
 === 0.37.30
 
 - additional tests for auto-completion for antora pages (#1091)
