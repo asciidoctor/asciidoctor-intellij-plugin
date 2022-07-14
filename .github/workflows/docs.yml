@@ -47,6 +47,7 @@ jobs:
         uses: JetBrains/qodana-action@v5.1.0
         with:
           # https://hub.docker.com/r/jetbrains/qodana-jvm-community/tags
+          pr-mode: false # disable PR mode as this runs in the project's subfolder
           args: >
             --linter,jetbrains/qodana-jvm-community:2022.1,
             --project-dir,${{ github.workspace }}/doc,
