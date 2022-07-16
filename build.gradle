@@ -132,6 +132,7 @@ dependencies {
   implementation files('libs/markdown_to_asciidoc-1.1.jar')
   // explicit dependencies of markdown_to_asciidoc
   implementation 'org.pegdown:pegdown:1.6.0'
+  implementation 'org.parboiled:parboiled-java:1.4.1'
   implementation 'org.jsoup:jsoup:1.8.1'
   // end of markdown_to_asciidoc
 

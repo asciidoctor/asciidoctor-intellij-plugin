@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.32
+
+- restore Markdown-to-AsciiDoc conversion on JDK 17 (#1101)
+
 === 0.37.31
 
 - handle AlreadyDisposedException (#1100)
