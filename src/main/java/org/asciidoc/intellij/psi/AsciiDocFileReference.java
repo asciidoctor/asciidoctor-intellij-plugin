@@ -992,6 +992,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     Object[] variants = new Object[candidates.length + items.size()];
     for (int i = 0; i < candidates.length; i++) {
       PsiElement candidate = candidates[i];
+      if (!candidate.isValid()) {
+        continue;
+      }
       if (candidate instanceof PsiDirectory) {
         final Icon icon = candidate.getIcon(Iconable.ICON_FLAG_READ_STATUS | Iconable.ICON_FLAG_VISIBILITY);
         String name = ((PsiDirectory) candidate).getName();
