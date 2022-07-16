@@ -11,7 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - restore Markdown-to-AsciiDoc conversion on JDK 17 (#1101)
 - avoid FileNotFoundException during autocomplete for images if they have been concurrently deleted (#1102)
-
+- don't offer conversion or preview in browser for AsciiDoc files contained in JARs (#1103)
 
 === 0.37.31
 

@@ -28,7 +28,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
-public class CreatePdfAction extends AsciiDocAction {
+public class CreatePdfAction extends AsciiDocFileAction {
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.CreatePdfAction";
 
   private static final Logger LOG = Logger.getInstance(CreatePdfAction.class);

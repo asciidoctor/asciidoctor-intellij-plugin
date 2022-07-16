@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class CreateDocxAction extends AsciiDocAction {
+public class CreateDocxAction extends AsciiDocFileAction {
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.CreateDocxAction";
 
   private static final Logger LOG = Logger.getInstance(CreateDocxAction.class);

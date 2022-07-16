@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author Balasubramanian Naagarajan(balabarath)
  */
-public class CreateHtmlAction extends AsciiDocAction {
+public class CreateHtmlAction extends AsciiDocFileAction {
 
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.CreateHtmlAction";
 
