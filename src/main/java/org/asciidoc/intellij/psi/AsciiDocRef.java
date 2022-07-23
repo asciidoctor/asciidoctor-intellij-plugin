@@ -81,7 +81,7 @@ public class AsciiDocRef extends AsciiDocASTWrapperPsiElement implements HasAnch
         range = range.shiftRight(-child.getTextLength());
         child = child.getNextSibling();
       }
-      if (child instanceof LeafPsiElement && range.getEndOffset() <= child.getTextLength() ) {
+      if (child instanceof LeafPsiElement && range.getEndOffset() <= child.getTextLength()) {
         ((LeafPsiElement) child).replaceWithText(range.replace(child.getText(), newContent));
       } else {
         AsciiDocPsiImplUtil.throwExceptionCantHandleContentChange(element, range, newContent);
