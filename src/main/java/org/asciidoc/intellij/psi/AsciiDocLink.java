@@ -44,7 +44,7 @@ public class AsciiDocLink extends AsciiDocASTWrapperPsiElement implements HasFil
         range = range.shiftRight(-child.getTextLength());
         child = child.getNextSibling();
       }
-      if (child instanceof LeafPsiElement && child.getTextLength() <= range.getEndOffset()) {
+      if (child instanceof LeafPsiElement && range.getEndOffset() <= child.getTextLength() ) {
         // if the old file name didn't have a .adoc suffix, the new shouldn't have one as well
         if (((LeafPsiElement) child).getElementType().equals(AsciiDocTokenTypes.LINKFILE)
           && !AsciiDocFileType.hasAsciiDocExtension(child.getText())

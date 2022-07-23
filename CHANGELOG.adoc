@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.37.33
 
 - Bump asciidoctorj-pdf from 2.1.4 to 2.1.6 (#1110)
+- rework the bounds checking when renaming files (#1092)
 
 === 0.37.32
 
@@ -27,8 +28,8 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.37.29
 
-- don't highlight Antora module names in xref macros when they are distributed and link to multiple folders (#1092)
-- xref macros will resolve relative to the Antora pages folder except when they start with a dot and are relative (#1092)
+- don't highlight Antora module names in xref macros when they are distributed and link to multiple folders (#1091)
+- xref macros will resolve relative to the Antora pages folder except when they start with a dot and are relative (#1091)
 - avoid NoClassDefFoundError for YAMLScalar when activating the YAML plugin after the AsciiDoc plugin (#1097)
 - when reporting errors with attachments, anonymized attchments will be checked by default
 

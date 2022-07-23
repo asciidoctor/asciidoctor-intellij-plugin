@@ -35,7 +35,7 @@ public class AsciiDocTextItalic extends AsciiDocASTWrapperPsiElement {
                                                   @NotNull TextRange range,
                                                   String newContent) throws IncorrectOperationException {
       PsiElement child = element.getFirstChild();
-      if (child instanceof LeafPsiElement && child.getTextLength() <= range.getEndOffset()) {
+      if (child instanceof LeafPsiElement && range.getEndOffset() <= child.getTextLength() ) {
         ((LeafPsiElement) child).replaceWithText(range.replace(child.getText(), newContent));
       } else {
         AsciiDocPsiImplUtil.throwExceptionCantHandleContentChange(element, range, newContent);
