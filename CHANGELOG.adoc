@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.34
+
+- Prevent NPE when iterating Antora nav keys (#1115)
+
 === 0.37.33
 
 - Bump asciidoctorj-pdf from 2.1.4 to 2.1.6 (#1110)

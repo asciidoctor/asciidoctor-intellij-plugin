@@ -1017,6 +1017,9 @@ public class AsciiDocUtil {
       Object nav = antora.get("nav");
       if (nav instanceof Collection) {
         for (Object item : (Collection<?>) nav) {
+          if (item == null) {
+            continue;
+          }
           VirtualFile fileByRelativePath = file.getVirtualFile().getParent().findFileByRelativePath(item.toString());
           if (fileByRelativePath != null) {
             result.add(fileByRelativePath);
@@ -1142,7 +1145,6 @@ public class AsciiDocUtil {
   }
 
   public static boolean isAntoraPage(PsiElement element) {
-    VirtualFile antoraPagesDir = null;
     VirtualFile vf = null;
     if (element instanceof PsiFile) {
       vf = ((PsiFile) element).getVirtualFile();
@@ -1159,7 +1161,7 @@ public class AsciiDocUtil {
       }
     }
     if (vf != null) {
-      antoraPagesDir = findAntoraPagesDir(element.getProject(), vf);
+      VirtualFile antoraPagesDir = findAntoraPagesDir(element.getProject(), vf);
       if (antoraPagesDir != null && antoraPagesDir.getCanonicalPath() != null && vf.getCanonicalPath() != null) {
         if (vf.getCanonicalPath().startsWith(antoraPagesDir.getCanonicalPath())) {
           return true;
@@ -1170,7 +1172,6 @@ public class AsciiDocUtil {
   }
 
   public static boolean isAntoraPartial(PsiElement element) {
-    VirtualFile antoraPartialsDir = null;
     VirtualFile vf = null;
     if (element instanceof PsiFile) {
       vf = ((PsiFile) element).getVirtualFile();
@@ -1187,7 +1188,7 @@ public class AsciiDocUtil {
       }
     }
     if (vf != null) {
-      antoraPartialsDir = findAntoraPartials(element.getProject(), vf);
+      VirtualFile antoraPartialsDir = findAntoraPartials(element.getProject(), vf);
       if (antoraPartialsDir != null && antoraPartialsDir.getCanonicalPath() != null && vf.getCanonicalPath() != null) {
         if (vf.getCanonicalPath().startsWith(antoraPartialsDir.getCanonicalPath())) {
           return true;
