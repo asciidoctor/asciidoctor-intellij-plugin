@@ -1230,7 +1230,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return super.getRangeInElement();
   }
 
-  private List<PsiElement> resolve(String fileName) {
+  private List<@NotNull PsiElement> resolve(String fileName) {
     fileName = removeFileProtocolPrefix(fileName);
     if (URL_PREFIX_PATTERN.matcher(fileName).matches()) {
       return null;
@@ -1289,7 +1289,11 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       }
       if (split[split.length - 1].equals("..")) {
         dir = dir.getParent();
-        return Collections.singletonList(dir);
+        if (dir != null) {
+          return Collections.singletonList(dir);
+        } else {
+          return Collections.emptyList();
+        }
       }
       if (split[split.length - 1].equals(".")) {
         return Collections.singletonList(dir);
@@ -1309,8 +1313,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   @SuppressWarnings("checkstyle:MethodLength")
   @NotNull
-  private List<PsiElement> resolveReferenceInPartial(String fileName, PsiElement element, PsiDirectory startDir) {
-    List<PsiElement> resolveAbsolutePath = resolveAbsolutePath(root, fileName);
+  private List<@NotNull PsiElement> resolveReferenceInPartial(String fileName, PsiElement element, PsiDirectory startDir) {
+    List<@NotNull PsiElement> resolveAbsolutePath = resolveAbsolutePath(root, fileName);
     if (resolveAbsolutePath != null && resolveAbsolutePath.size() > 0) {
       return resolveAbsolutePath;
     }
@@ -1320,7 +1324,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       antoraVersion = antoraVersionMatcher.group(1);
       fileName = antoraVersionMatcher.replaceFirst("");
     }
-    List<PsiElement> result = new ArrayList<>();
+    List<@NotNull PsiElement> result = new ArrayList<>();
     String antoraComponent = null;
     String antoraModule = null;
     Matcher antoraComponentModuleMatcher = COMPONENT_MODULE.matcher(fileName);
@@ -1488,7 +1492,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             }
           }
           if (split[split.length - 1].equals("..")) {
-            result.add(dir.getParent());
+            if (dir.getParent() != null) {
+              result.add(dir.getParent());
+            }
             continue;
           }
           if (split[split.length - 1].equals(".")) {
@@ -1520,7 +1526,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return null;
   }
 
-  private List<PsiElement> resolveAbsolutePath(PsiElement element, String fileName) {
+  private List<@NotNull PsiElement> resolveAbsolutePath(PsiElement element, String fileName) {
     // check if file name is absolute path
     if (!fileName.contains("/") && !fileName.contains("\\")) {
       return null;
