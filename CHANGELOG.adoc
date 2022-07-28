@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.37.35
 
 - Prevent null elements when resolving file references (#1118)
+- Fix changing the color of inline macros (thanks to @RayOffiah) (#1105)
 
 === 0.37.34
 
