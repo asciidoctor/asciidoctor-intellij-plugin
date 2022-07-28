@@ -13,8 +13,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class AsciiDocMoveFileHandler extends MoveFileHandler {
   @Override
@@ -76,9 +78,15 @@ public class AsciiDocMoveFileHandler extends MoveFileHandler {
 
   @Override
   public void retargetUsages(List<UsageInfo> usageInfos, Map<PsiElement, PsiElement> oldToNewMap) {
+    Set<PsiElement> movedElements = new HashSet<>(oldToNewMap.values());
     for (UsageInfo usageInfo : usageInfos) {
       if (usageInfo instanceof MyUsageInfo) {
-        ((MyUsageInfo) usageInfo).reference.bindToElement(((MyUsageInfo) usageInfo).element);
+        MyUsageInfo myUsageInfo = (MyUsageInfo) usageInfo;
+        if (!movedElements.contains(myUsageInfo.element)) {
+          // When moving multiple elements, the moved element will have been processed already.
+          // Therefore, skip them to avoid mangling filenames twice.
+          myUsageInfo.reference.bindToElement(myUsageInfo.element);
+        }
       }
     }
   }

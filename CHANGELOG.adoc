@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Prevent null elements when resolving file references (#1118)
 - Fix changing the color of inline macros (thanks to @RayOffiah) (#1105)
+- Handle internal references when moving multiple files (#1117)
 
 === 0.37.34
 
