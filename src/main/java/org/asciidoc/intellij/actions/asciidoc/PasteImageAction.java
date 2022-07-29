@@ -189,7 +189,7 @@ public class PasteImageAction extends AsciiDocAction {
                   try (OutputStream outputStream = target.getOutputStream(this)) {
                     boolean written = ImageIO.write(bufferedImage, ext, outputStream);
                     if (written) {
-                      insertImageReference(destination.getVirtualFile(), offset, attributeService.toAttributeString(dialog));
+                      insertImageReference(target, offset, attributeService.toAttributeString(dialog));
                       AsciiDocUtil.selectFileInProjectView(project, target);
                     } else {
                       String message = "Can't save image, no appropriate writer found for selected format.";
@@ -260,7 +260,7 @@ public class PasteImageAction extends AsciiDocAction {
                         VirtualFile target = createOrReplaceTarget(destination);
                         try (OutputStream outputStream = target.getOutputStream(this)) {
                           Files.copy(imageFile.toPath(), outputStream);
-                          insertImageReference(destination.getVirtualFile(), offset, attributeService.toAttributeString(dialog));
+                          insertImageReference(target, offset, attributeService.toAttributeString(dialog));
                           AsciiDocUtil.selectFileInProjectView(project, target);
                         }
                       } catch (IOException ex) {
@@ -278,7 +278,12 @@ public class PasteImageAction extends AsciiDocAction {
               break;
             case ACTION_INSERT_REFERENCE:
               CommandProcessor.getInstance().executeCommand(project,
-                () -> ApplicationManager.getApplication().runWriteAction(() -> insertImageReference(LocalFileSystem.getInstance().findFileByIoFile(imageFile), offset, attributeService.toAttributeString(dialog))
+                () -> ApplicationManager.getApplication().runWriteAction(() -> {
+                    VirtualFile vf = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(imageFile);
+                    if (vf != null) {
+                      insertImageReference(vf, offset, attributeService.toAttributeString(dialog));
+                    }
+                  }
                 ), null, null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
               );
               break;
@@ -337,7 +342,7 @@ public class PasteImageAction extends AsciiDocAction {
     return target;
   }
 
-  private void insertImageReference(final VirtualFile imageFile, final int offset, final String attributes) {
+  private void insertImageReference(@NotNull VirtualFile imageFile, final int offset, final String attributes) {
     String relativePath = VfsUtil.findRelativePath(file, imageFile, '/');
     if (relativePath == null) {
       // null case happens if parent file and image file are on different file systems
