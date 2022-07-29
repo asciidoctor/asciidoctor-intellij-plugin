@@ -15,8 +15,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.serviceContainer.AlreadyDisposedException;
 import org.asciidoc.intellij.file.AsciiDocFileType;
+import org.asciidoc.intellij.psi.AsciiDocPsiImplUtil;
 import org.asciidoc.intellij.ui.OverwriteFileDialog;
 import org.asciidoc.intellij.util.FilenameUtils;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -73,7 +75,13 @@ public class ConvertToAsciiDocAction extends AnAction implements UpdateInBackgro
               // file might have appeared "in between", stop here
               return;
             }
-            asciiDocFile = PsiFileFactory.getInstance(project).createFileFromText(newFileName, AsciiDocFileType.INSTANCE, convertMarkdownToAsciiDoc(file.getText()));
+            @NotNull @NonNls CharSequence asciiDocContent;
+            try {
+              asciiDocContent = convertMarkdownToAsciiDoc(file.getText());
+            } catch (RuntimeException ex) {
+              throw AsciiDocPsiImplUtil.getRuntimeException("Unable to convert Markdown content to AsciiDoc", file.getText(), ex);
+            }
+            asciiDocFile = PsiFileFactory.getInstance(project).createFileFromText(newFileName, AsciiDocFileType.INSTANCE, asciiDocContent);
             PsiFile newFile = (PsiFile) file.getContainingDirectory().add(asciiDocFile);
 
             newFile.navigate(true);
