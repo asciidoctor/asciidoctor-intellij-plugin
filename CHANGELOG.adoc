@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Fixing IndexOutOfBoundsException when converting Markdown to AsciiDoc (#1109)
 - Avoid IllegalArgumentException when pasting an image as a reference (#1119)
+- Avoid invalid file handles when rendering Antora references for the preview (#1120)
 
 === 0.37.35
 
