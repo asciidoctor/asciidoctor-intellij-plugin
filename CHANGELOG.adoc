@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.38
+
+- Improve Value scope support for _link_/_strong_/_emphasis_ (#1089)
+
 === 0.37.37
 
 - Optimize reference contributors to speed up editing experience (#1121)

@@ -37,6 +37,7 @@ This plugin is available for both paid and free versions of IntelliJ.
 [NOTE]
 ====
 Scopes for Vale rules are available with plugin version 0.37.28+.
+For best scope support for _strong_, _emphasis_ and _link_, use the AsciiDoc plugin version 0.37.38+ and the Grazie Professional version 0.3.107+.
 ====
 
 The Grazie Professional plugin supports https://plugins.jetbrains.com/plugin/16136-grazie-professional/docs/project-style-guides.html[project style guides].
@@ -55,11 +56,8 @@ For now, table headings are also identified as cells.
 
 `list`:: Any list item in an ordered, unordered or definition list.
 
-`link`:: Applied to all paragraphs that contain a link (not only to the link).
+`link`:: Applied to the text of a link.
 
-`strong`:: Applied to all paragraphs that contain any bold/strong text.
+`strong`:: Applied to bold/strong text.
 
-`emphasis`:: Applied to all paragraphs that contain any italic/emphasised text.
-
-The handling of `link`, `strong` and `emphasis` is experimental and might differ from a classic Vale implementation.
-Provide user feedback in the GitHub's issue tracker to revisit the current implementation.
+`emphasis`:: Applied to italic/emphasised text.

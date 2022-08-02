@@ -2,8 +2,7 @@ package org.asciidoc.intellij.graziepro;
 
 import com.intellij.grazie.pro.yaml.YamlScopeProvider;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import org.asciidoc.intellij.grazie.AsciiDocLanguageSupport;
+import com.intellij.psi.SyntaxTraverser;
 import org.asciidoc.intellij.psi.AsciiDocBlock;
 import org.asciidoc.intellij.psi.AsciiDocCell;
 import org.asciidoc.intellij.psi.AsciiDocHeading;
@@ -22,8 +21,6 @@ import java.util.List;
  * See <a href="https://vale.sh/docs/topics/scoping/">Vale Scoping</a> for more information.
  */
 public class AsciiDocGrazieProScopeProvider implements YamlScopeProvider {
-
-  private final AsciiDocLanguageSupport languageSupport = new AsciiDocLanguageSupport();
 
   @Override
   public @NotNull List<String> getApplicableScopes(@NotNull PsiElement element) {
@@ -48,51 +45,23 @@ public class AsciiDocGrazieProScopeProvider implements YamlScopeProvider {
       result.add("list");
     }
 
-    // Rules where we look at the children. Only one of the children will have that role, still the whole block
-    // will have that scope.
-    new ScopeExtractingVisitor(element, result).visitElement(element);
+    // For those elements inside a root element, Grazie will call again if it has found a match to check the scope.
+    // This way it will recognize the scope of, for example, bold within a paragraph.
+    PsiElement parent = SyntaxTraverser.psiApi().parents(element).find(
+      (e) -> e instanceof AsciiDocLink || e instanceof AsciiDocTextQuoted
+    );
+
+    if (parent instanceof AsciiDocLink) {
+      result.add("link");
+    } else if (parent instanceof AsciiDocTextQuoted) {
+      if (((AsciiDocTextQuoted) parent).isBold()) {
+        result.add("strong");
+      }
+      if (((AsciiDocTextQuoted) parent).isItalic()) {
+        result.add("emphasis");
+      }
+    }
 
     return result;
   }
-
-  private class ScopeExtractingVisitor extends PsiElementVisitor {
-    private final PsiElement root;
-    private final List<String> result;
-
-    ScopeExtractingVisitor(PsiElement root, List<String> result) {
-      this.root = root;
-      this.result = result;
-    }
-
-    @Override
-    public void visitElement(@NotNull PsiElement child) {
-      AsciiDocLanguageSupport.Behavior elementBehavior = languageSupport.getElementBehavior(root, child);
-      switch (elementBehavior) {
-        case STEALTH:
-        case UNKNOWN:
-        case ABSORB:
-          break;
-        case SEPARATE:
-        case TEXT:
-          if (child instanceof AsciiDocLink) {
-            result.add("link");
-          }
-          if (child instanceof AsciiDocTextQuoted
-            && ((AsciiDocTextQuoted) child).isBold()) {
-            result.add("strong");
-          }
-          if (child instanceof AsciiDocTextQuoted
-            && ((AsciiDocTextQuoted) child).isItalic()) {
-            result.add("emphasis");
-          }
-          if (child.getFirstChild() != null) {
-            child.acceptChildren(this);
-          }
-          break;
-        default:
-          throw new IllegalStateException("Unexpected value: " + elementBehavior);
-      }
-    }
-  }
-
 }
