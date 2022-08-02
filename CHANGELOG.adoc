@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.37
+
+- Optimize reference contributors to speed up editing experience (#1121)
+
 === 0.37.36
 
 - Fixing IndexOutOfBoundsException when converting Markdown to AsciiDoc (#1109)

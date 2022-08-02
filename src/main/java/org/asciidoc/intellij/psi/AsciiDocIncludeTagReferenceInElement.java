@@ -10,7 +10,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.asciidoc.intellij.findUsages.AsciiDocReferenceContributor;
+import org.asciidoc.intellij.findUsages.AsciiDocIncludeTagReferenceContributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,7 +53,7 @@ public class AsciiDocIncludeTagReferenceInElement extends PsiReferenceBase<PsiEl
   public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     List<ResolveResult> results = new ArrayList<>();
     PsiTreeUtil.processElements(myElement.getContainingFile(), element -> {
-      Matcher matcher = AsciiDocReferenceContributor.TAG_PATTERN.matcher(element.getText());
+      Matcher matcher = AsciiDocIncludeTagReferenceContributor.TAG_PATTERN.matcher(element.getText());
       // using a matcher on the element's text first avoids generating unnecessary references on other elements
       if (matcher.find()) {
         for (PsiReference reference : element.getReferences()) {

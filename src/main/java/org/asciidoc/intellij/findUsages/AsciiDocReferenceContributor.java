@@ -2,9 +2,7 @@ package org.asciidoc.intellij.findUsages;
 
 import com.intellij.openapi.paths.WebReference;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
-import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceContributor;
@@ -17,11 +15,9 @@ import org.asciidoc.intellij.namesValidator.AsciiDocRenameInputValidator;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationReference;
 import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
-import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagInDocument;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInDocument;
-import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInElement;
 import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocSimpleFileReference;
 import org.asciidoc.intellij.psi.AsciiDocTextQuoted;
@@ -35,14 +31,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
-import static com.intellij.patterns.PlatformPatterns.psiFile;
 
 public class AsciiDocReferenceContributor extends PsiReferenceContributor {
   @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
 
     final PsiElementPattern.Capture<AsciiDocAttributeReference> attributeReferenceCapture =
-      psiElement(AsciiDocAttributeReference.class).inFile(psiFile(AsciiDocFile.class));
+      psiElement(AsciiDocAttributeReference.class);
 
     registrar.registerReferenceProvider(attributeReferenceCapture, new PsiReferenceProvider() {
       @Override
@@ -66,7 +61,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
     });
 
     final PsiElementPattern.Capture<AsciiDocLink> linkCapture =
-      psiElement(AsciiDocLink.class).inFile(psiFile(AsciiDocFile.class));
+      psiElement(AsciiDocLink.class);
 
     registrar.registerReferenceProvider(linkCapture,
       new PsiReferenceProvider() {
@@ -86,7 +81,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
       });
 
     final PsiElementPattern.Capture<AsciiDocAttributeDeclaration> attributeDeclaration =
-      psiElement(AsciiDocAttributeDeclaration.class).inFile(psiFile(AsciiDocFile.class));
+      psiElement(AsciiDocAttributeDeclaration.class);
 
     registrar.registerReferenceProvider(attributeDeclaration,
       new PsiReferenceProvider() {
@@ -98,21 +93,8 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
         }
       });
 
-    final PsiElementPattern.Capture<PsiElement> tagInPlaintext =
-      PlatformPatterns.psiElement().withText(StandardPatterns.string().matches("(?s).*" + TAG_PATTERN_STR + ".*"));
-
-    registrar.registerReferenceProvider(tagInPlaintext,
-      new PsiReferenceProvider() {
-        @Override
-        public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
-                                                               @NotNull ProcessingContext context) {
-          List<PsiReference> references = findTagInElement(element);
-          return references.toArray(new PsiReference[0]);
-        }
-      });
-
     final PsiElementPattern.Capture<AsciiDocIncludeTagInDocument> tagInInclude =
-      psiElement(AsciiDocIncludeTagInDocument.class).inFile(psiFile(AsciiDocFile.class));
+      psiElement(AsciiDocIncludeTagInDocument.class);
 
     registrar.registerReferenceProvider(tagInInclude,
       new PsiReferenceProvider() {
@@ -125,7 +107,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
       });
 
     final PsiElementPattern.Capture<AsciiDocTextQuoted> quotedCapture =
-      psiElement(AsciiDocTextQuoted.class).inFile(psiFile(AsciiDocFile.class));
+      psiElement(AsciiDocTextQuoted.class);
 
     registrar.registerReferenceProvider(quotedCapture,
       new PsiReferenceProvider() {
@@ -244,30 +226,6 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
       );
     } else {
       return Collections.emptyList();
-    }
-  }
-
-  public static final String TAG_PATTERN_STR = "\\b(tag|end)::([a-zA-Z0-9_-]*)\\[](?=$|[ \\n])";
-  public static final Pattern TAG_PATTERN = Pattern.compile(TAG_PATTERN_STR);
-
-  private List<PsiReference> findTagInElement(PsiElement element) {
-    String text = element.getText();
-    Matcher matcher = TAG_PATTERN.matcher(text);
-    List<PsiReference> result = null;
-    while (matcher.find()) {
-      if (result == null) {
-        result = new ArrayList<>();
-      }
-      result.add(new AsciiDocIncludeTagReferenceInElement(
-        element,
-        TextRange.create(matcher.start(2), matcher.end(2)),
-        matcher.group(1))
-      );
-    }
-    if (result == null) {
-      return Collections.emptyList();
-    } else {
-      return result;
     }
   }
 
