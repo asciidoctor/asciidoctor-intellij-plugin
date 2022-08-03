@@ -24,6 +24,9 @@ public abstract class AsciiDocCodeInsightFixtureTestCase extends BasePlatformTes
   static {
     Set<PluginId> disabled = new HashSet<>();
 
+    // to avoid:  java.lang.NoClassDefFoundError: Could not initialize class ai.grazie.nlp.tokenizer.spacy.SpacyBaseLanguage
+    disabled.add(PluginId.getId("com.intellij.grazie.pro"));
+
     // to improve performance, remove plugins used for debugging in interactive mode
     disabled.add(PluginId.getId("PsiViewer"));
     disabled.add(PluginId.getId("PlantUML integration"));
