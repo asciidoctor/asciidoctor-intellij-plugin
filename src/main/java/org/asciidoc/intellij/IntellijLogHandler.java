@@ -48,7 +48,7 @@ public class IntellijLogHandler implements LogHandler {
       message.append(logRecord.getCursor().getFile()).append(":").append(logRecord.getCursor().getLineNumber());
     }
     message.append(" ").append(logRecord.getMessage());
-    Notification notification = AsciiDoc.getNotificationGroup()
+    Notification notification = AsciiDocWrapper.getNotificationGroup()
       .createNotification("Message during rendering " + file, message.toString(), notificationType);
     notification.setImportant(notificationType != NotificationType.INFORMATION);
 
@@ -73,7 +73,7 @@ public class IntellijLogHandler implements LogHandler {
     asciiDocPreviewSettings.getAttributes().put("allow-uri-read", "");
     instance.setAsciiDocPreviewSettings(asciiDocPreviewSettings);
 
-    Notification notification = AsciiDoc.getNotificationGroup()
+    Notification notification = AsciiDocWrapper.getNotificationGroup()
       .createNotification("Configuration changed", "The 'allow-uri-read' property is now set. Please retry.", NotificationType.INFORMATION);
     notification.setImportant(false);
     Notifications.Bus.notify(notification);

@@ -43,7 +43,7 @@ import com.intellij.util.PsiNavigateUtil;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
-import org.asciidoc.intellij.AsciiDoc;
+import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanel;
@@ -257,7 +257,7 @@ public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlP
     } catch (IOException e) {
       String message = "Unable to combine CSS resources: " + e.getMessage();
       LOG.error(message, e);
-      Notification notification = AsciiDoc.getNotificationGroup()
+      Notification notification = AsciiDocWrapper.getNotificationGroup()
         .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR);
       // increase event log counter
       notification.setImportant(true);
@@ -510,7 +510,7 @@ public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlP
           LocalFileSystem.getInstance().refreshAndFindFileByIoFile(destination.getFile());
         } catch (IOException ex) {
           String message = "Can't save file: " + ex.getMessage();
-          Notification notification = AsciiDoc.getNotificationGroup()
+          Notification notification = AsciiDocWrapper.getNotificationGroup()
             .createNotification("Error in plugin", message, NotificationType.ERROR);
           // increase event log counter
           notification.setImportant(true);
@@ -806,9 +806,9 @@ public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlP
     }
 
     if (isAntora) {
-      html = AsciiDoc.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, attributes, editor != null ? editor.getProject() : null);
+      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, attributes, editor != null ? editor.getProject() : null);
     } else {
-      html = AsciiDoc.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes, editor != null ? editor.getProject() : null);
+      html = AsciiDocWrapper.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes, editor != null ? editor.getProject() : null);
     }
 
     html = html.replaceAll("<head>", "<head>\n" +
@@ -1090,7 +1090,7 @@ public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlP
 
   public void scrollEditorToLine(int sourceLine) {
     if (sourceLine <= 0) {
-      Notification notification = AsciiDoc.getNotificationGroup().createNotification("Setting cursor position", "line number " + sourceLine + " requested for cursor position, ignoring",
+      Notification notification = AsciiDocWrapper.getNotificationGroup().createNotification("Setting cursor position", "line number " + sourceLine + " requested for cursor position, ignoring",
         NotificationType.INFORMATION);
       notification.setImportant(false);
       return;

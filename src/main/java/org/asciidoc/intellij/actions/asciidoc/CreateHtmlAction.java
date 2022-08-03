@@ -12,8 +12,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocExtensionService;
+import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,19 +65,19 @@ public class CreateHtmlAction extends AsciiDocFileAction {
     }
     VirtualFile parent = file.getParent();
     boolean successful = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-      Path tempImagesPath = AsciiDoc.tempImagesPath(parent != null ? parent.toNioPath() : null, project);
+      Path tempImagesPath = AsciiDocWrapper.tempImagesPath(parent != null ? parent.toNioPath() : null, project);
       try {
         File fileBaseDir = new File("");
         if (parent != null && parent.getCanonicalPath() != null) {
           // parent will be null if we use Language Injection and Fragment Editor
           fileBaseDir = new File(parent.getCanonicalPath());
         }
-        AsciiDoc asciiDoc = new AsciiDoc(project, fileBaseDir, tempImagesPath, file.getName());
-        String config = AsciiDoc.config(editor.getDocument(), project);
+        AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(project, fileBaseDir, tempImagesPath, file.getName());
+        String config = AsciiDocWrapper.config(editor.getDocument(), project);
         List<String> extensions = extensionService.getExtensions(project);
-        asciiDoc.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDoc.FileType.HTML);
+        asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.HTML);
       } finally {
-        AsciiDoc.cleanupImagesPath(tempImagesPath);
+        AsciiDocWrapper.cleanupImagesPath(tempImagesPath);
       }
     }, "Creating HTML", true, project);
     VirtualFile vf = ApplicationManager.getApplication().runWriteAction((Computable<? extends VirtualFile>) () -> {

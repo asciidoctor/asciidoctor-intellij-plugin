@@ -43,8 +43,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.serviceContainer.AlreadyDisposedException;
 import com.intellij.util.SlowOperations;
 import com.intellij.util.text.CharArrayUtil;
-import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocLanguage;
+import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.psi.search.AsciiDocAntoraPlaybookIndex;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
@@ -352,7 +352,7 @@ public class AsciiDocUtil {
       for (VirtualFile playbook : AsciiDocAntoraPlaybookIndex.getVirtualFiles(project)) {
         Map<String, Object> antora;
         try {
-          antora = AsciiDoc.readAntoraYaml(project, playbook);
+          antora = AsciiDocWrapper.readAntoraYaml(project, playbook);
         } catch (YAMLException ex) {
           continue;
         }
@@ -477,7 +477,7 @@ public class AsciiDocUtil {
     VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(current);
     if (antoraModuleDir != null) {
       if (vf != null && vf.getParent() != null && vf.getParent().getCanonicalPath() != null) {
-        Collection<AttributeDeclaration> antoraAttributes = AsciiDoc.populateAntoraAttributes(project, new File(vf.getParent().getCanonicalPath()), antoraModuleDir);
+        Collection<AttributeDeclaration> antoraAttributes = AsciiDocWrapper.populateAntoraAttributes(project, new File(vf.getParent().getCanonicalPath()), antoraModuleDir);
         for (AttributeDeclaration attribute : antoraAttributes) {
           if (attribute.getAttributeName().equalsIgnoreCase(key)) {
             result.add(attribute);
@@ -569,7 +569,7 @@ public class AsciiDocUtil {
         Collection<AttributeDeclaration> result;
         VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(element);
         if (antoraModuleDir != null) {
-          result = AsciiDoc.collectAntoraAttributes(antoraModuleDir, element.getProject());
+          result = AsciiDocWrapper.collectAntoraAttributes(antoraModuleDir, element.getProject());
         } else {
           result = Collections.emptyList();
         }
@@ -983,7 +983,7 @@ public class AsciiDocUtil {
     String myComponentName;
     String myComponentVersion;
     try {
-      Map<String, Object> myAntora = AsciiDoc.readAntoraYaml(project, antoraFile);
+      Map<String, Object> myAntora = AsciiDocWrapper.readAntoraYaml(project, antoraFile);
       myComponentName = getAttributeAsString(myAntora, "name");
       myComponentVersion = getAttributeAsString(myAntora, "version");
     } catch (YAMLException ex) {
@@ -1003,7 +1003,7 @@ public class AsciiDocUtil {
       }
       Map<String, Object> antora;
       try {
-        antora = AsciiDoc.readAntoraYaml(project, antoraFile);
+        antora = AsciiDocWrapper.readAntoraYaml(project, antoraFile);
       } catch (YAMLException ex) {
         continue;
       }
@@ -1358,7 +1358,7 @@ public class AsciiDocUtil {
       }
       Map<String, Object> antora;
       try {
-        antora = AsciiDoc.readAntoraYaml(project, antoraFile);
+        antora = AsciiDocWrapper.readAntoraYaml(project, antoraFile);
       } catch (YAMLException ex) {
         return Collections.singletonList(originalKey);
       }
@@ -1429,7 +1429,7 @@ public class AsciiDocUtil {
         }
         Map<String, Object> antora;
         try {
-          antora = AsciiDoc.readAntoraYaml(project, antoraFile);
+          antora = AsciiDocWrapper.readAntoraYaml(project, antoraFile);
         } catch (YAMLException ex) {
           return Collections.singletonList(originalKey);
         }
@@ -1560,7 +1560,7 @@ public class AsciiDocUtil {
       }
       Map<String, Object> antora;
       try {
-        antora = AsciiDoc.readAntoraYaml(myElement.getProject(), antoraFile);
+        antora = AsciiDocWrapper.readAntoraYaml(myElement.getProject(), antoraFile);
       } catch (YAMLException ex) {
         return Collections.singletonList(originalKey);
       }
@@ -1714,7 +1714,7 @@ public class AsciiDocUtil {
           }
           Map<String, Object> antora;
           try {
-            antora = AsciiDoc.readAntoraYaml(project, file);
+            antora = AsciiDocWrapper.readAntoraYaml(project, file);
           } catch (YAMLException ex) {
             continue;
           }
@@ -1804,7 +1804,7 @@ public class AsciiDocUtil {
           }
           Map<String, Object> antora;
           try {
-            antora = AsciiDoc.readAntoraYaml(project, file);
+            antora = AsciiDocWrapper.readAntoraYaml(project, file);
           } catch (YAMLException ex) {
             continue;
           }
@@ -1867,7 +1867,7 @@ public class AsciiDocUtil {
       }
       Map<String, Object> antora;
       try {
-        antora = AsciiDoc.readAntoraYaml(project, antoraFile);
+        antora = AsciiDocWrapper.readAntoraYaml(project, antoraFile);
       } catch (YAMLException ex) {
         return result;
       }
@@ -1882,7 +1882,7 @@ public class AsciiDocUtil {
           continue;
         }
         try {
-          antora = AsciiDoc.readAntoraYaml(project, file);
+          antora = AsciiDocWrapper.readAntoraYaml(project, file);
         } catch (YAMLException ex) {
           continue;
         }
@@ -1954,7 +1954,7 @@ public class AsciiDocUtil {
         }
         Map<String, Object> antora;
         try {
-          antora = AsciiDoc.readAntoraYaml(project, file);
+          antora = AsciiDocWrapper.readAntoraYaml(project, file);
         } catch (YAMLException ex) {
           continue;
         }
@@ -2011,7 +2011,7 @@ public class AsciiDocUtil {
       }
       Map<String, Object> antora;
       try {
-        antora = AsciiDoc.readAntoraYaml(element.getProject(), antoraFile);
+        antora = AsciiDocWrapper.readAntoraYaml(element.getProject(), antoraFile);
       } catch (YAMLException ex) {
         return Collections.emptyList();
       }

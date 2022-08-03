@@ -11,8 +11,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.messages.MessageBusConnection;
-import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocPlugin;
+import org.asciidoc.intellij.AsciiDocWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -68,7 +68,7 @@ public class AsciiDocHandleUnloadActivity implements StartupActivity, DumbAware,
             public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
               if (Objects.equals(pluginDescriptor.getPluginId().getIdString(), AsciiDocPlugin.PLUGIN_ID)) {
                 LOG.info("beforePluginUnload");
-                AsciiDoc.beforePluginUnload();
+                AsciiDocWrapper.beforePluginUnload();
                 busConnection.dispose();
               }
             }

@@ -15,9 +15,9 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.AsciiDocExtensionService;
+import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
@@ -88,17 +88,17 @@ public class CreatePdfAction extends AsciiDocFileAction {
         if (parent != null && parent.getCanonicalPath() != null) {
           // parent will be null if we use Language Injection and Fragment Editor
           fileBaseDir = new File(parent.getCanonicalPath());
-          tempImagesPath = AsciiDoc.tempImagesPath(fileBaseDir.toPath(), project);
+          tempImagesPath = AsciiDocWrapper.tempImagesPath(fileBaseDir.toPath(), project);
         }
-        AsciiDoc asciiDoc = new AsciiDoc(project, fileBaseDir, tempImagesPath, file.getName());
+        AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(project, fileBaseDir, tempImagesPath, file.getName());
         List<String> extensions = extensionService.getExtensions(project);
-        String config = AsciiDoc.config(editor.getDocument(), project);
-        asciiDoc.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDoc.FileType.PDF);
-        if (Objects.equals("true", asciiDoc.getAttributes().get("asciidoctor-diagram-missing-diagram-extension"))) {
+        String config = AsciiDocWrapper.config(editor.getDocument(), project);
+        asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.PDF);
+        if (Objects.equals("true", asciiDocWrapper.getAttributes().get("asciidoctor-diagram-missing-diagram-extension"))) {
           AsciiDocDownloadNotificationProvider.showNotification();
         }
       } finally {
-        AsciiDoc.cleanupImagesPath(tempImagesPath);
+        AsciiDocWrapper.cleanupImagesPath(tempImagesPath);
       }
     }, "Creating PDF", true, project);
     ApplicationManager.getApplication().runWriteAction(() -> {

@@ -16,8 +16,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocExtensionService;
+import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanel;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
@@ -99,7 +99,7 @@ public class BrowserPanel implements Disposable {
   private final SignWithMac signWithMac = new SignWithMac();
 
   public BrowserPanel() {
-    globalImagesPath = AsciiDoc.tempImagesPath(null, null);
+    globalImagesPath = AsciiDocWrapper.tempImagesPath(null, null);
     Disposer.register(ApplicationManager.getApplication(), this);
 
     try {
@@ -135,7 +135,7 @@ public class BrowserPanel implements Disposable {
     } catch (IOException e) {
       String message = "Unable to combine CSS resources: " + e.getMessage();
       log.error(message, e);
-      Notification notification = AsciiDoc.getNotificationGroup()
+      Notification notification = AsciiDocWrapper.getNotificationGroup()
         .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR);
       // increase event log counter
       notification.setImportant(true);
@@ -162,7 +162,7 @@ public class BrowserPanel implements Disposable {
   public String getHtml(@NotNull VirtualFile file, @NotNull Project project) {
     Document document = ApplicationManager.getApplication().runReadAction((Computable<Document>) () -> FileDocumentManager.getInstance().getDocument(file));
     Objects.requireNonNull(document);
-    final String config = AsciiDoc.config(document, project);
+    final String config = AsciiDocWrapper.config(document, project);
     List<String> extensions = extensionService.getExtensions(project);
     Objects.requireNonNull(file.getParent().getCanonicalPath(), "we will have files, these will always have a parent directory");
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
@@ -170,12 +170,12 @@ public class BrowserPanel implements Disposable {
     VirtualFile parent = file.getParent();
     if (settings.getAsciiDocPreviewSettings().getSafeMode() != SafeMode.UNSAFE) {
       if (parent != null && parent.getCanonicalPath() != null) {
-        imagesPath = AsciiDoc.tempImagesPath(Path.of(parent.getCanonicalPath()), project);
+        imagesPath = AsciiDocWrapper.tempImagesPath(Path.of(parent.getCanonicalPath()), project);
       }
     }
-    AsciiDoc asciiDoc = new AsciiDoc(project, new File(file.getParent().getCanonicalPath()),
+    AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(project, new File(file.getParent().getCanonicalPath()),
       imagesPath, file.getName());
-    String html = asciiDoc.render(document.getText(), config, extensions, asciiDoc::notifyAlways, AsciiDoc.FileType.BROWSER);
+    String html = asciiDocWrapper.render(document.getText(), config, extensions, asciiDocWrapper::notifyAlways, AsciiDocWrapper.FileType.BROWSER);
     if (file.getParent() != null) {
       // parent will be null if we use Language Injection and Fragment Editor
       base = file.getParent().getPath();
@@ -183,7 +183,7 @@ public class BrowserPanel implements Disposable {
       base = "";
     }
     html = "<html><head></head><body><div id=\"header\"></div>" + html + "<div id=\"footer\"></div></body></html>";
-    html = prepareHtml(html, project, asciiDoc.getAttributes(), imagesPath, AsciiDocUtil.findAntoraModuleDir(project, file.getParent()) != null);
+    html = prepareHtml(html, project, asciiDocWrapper.getAttributes(), imagesPath, AsciiDocUtil.findAntoraModuleDir(project, file.getParent()) != null);
     return html;
   }
 
@@ -392,9 +392,9 @@ public class BrowserPanel implements Disposable {
 
     /* Add CSS line and JavaScript */
     if (isAntora) {
-      html = AsciiDoc.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, attributes, project);
+      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, attributes, project);
     } else {
-      html = AsciiDoc.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDroidSansMonoCssLink + myDejavuCssLink, attributes, project);
+      html = AsciiDocWrapper.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDroidSansMonoCssLink + myDejavuCssLink, attributes, project);
     }
     html = html.replace("</body>", getScriptingLines() + "</body>");
     return html;
@@ -440,7 +440,7 @@ public class BrowserPanel implements Disposable {
 
   @Override
   public void dispose() {
-    AsciiDoc.cleanupImagesPath(globalImagesPath);
+    AsciiDocWrapper.cleanupImagesPath(globalImagesPath);
   }
 
   /**

@@ -25,19 +25,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author Alexander Schwartz 2018
  */
-public class AsciiDocTest extends BasePlatformTestCase {
-  private final Logger log = Logger.getInstance(AsciiDocTest.class);
+public class AsciiDocWrapperTest extends BasePlatformTestCase {
+  private final Logger log = Logger.getInstance(AsciiDocWrapperTest.class);
 
-  private AsciiDoc asciidoc;
+  private AsciiDocWrapper asciidocWrapper;
 
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    asciidoc = new AsciiDoc(getProject(), new File(System.getProperty("java.io.tmpdir")), null, "test");
+    asciidocWrapper = new AsciiDocWrapper(getProject(), new File(System.getProperty("java.io.tmpdir")), null, "test");
   }
 
   public void testShouldRenderPlantUmlAsPng() {
-    String html = asciidoc.render("[plantuml,test,format=svg]\n" +
+    String html = asciidocWrapper.render("[plantuml,test,format=svg]\n" +
       "----\n" +
       "List <|.. ArrayList\n" +
       "----\n", Collections.emptyList());
@@ -45,7 +45,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
   }
 
   public void testShouldRenderPlainAsciidoc() {
-    String html = asciidoc.render("this is *bold*.", Collections.emptyList());
+    String html = asciidocWrapper.render("this is *bold*.", Collections.emptyList());
     assertThat(html).withFailMessage("should contain formatted output").contains("<strong>bold</strong>");
     assertThat(html).withFailMessage("should contain data line to allow navigation to source line in preview").contains("data-line-stdin-1");
   }
@@ -55,9 +55,9 @@ public class AsciiDocTest extends BasePlatformTestCase {
     try (BufferedWriter writer = Files.newBufferedWriter(testCss.toPath(), UTF_8)) {
       writer.write("/* testcss */");
       writer.flush();
-      String html = asciidoc.render(":stylesheet: test.css", Collections.emptyList());
+      String html = asciidocWrapper.render(":stylesheet: test.css", Collections.emptyList());
       html = "<head></head>" + html;
-      html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes(), getProject());
+      html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", asciidocWrapper.getAttributes(), getProject());
       assertThat(html).withFailMessage("should contain testcss").contains("testcss");
       assertThat(html).withFailMessage("should not contain standardcss").doesNotContain("standardcss");
     }
@@ -67,20 +67,20 @@ public class AsciiDocTest extends BasePlatformTestCase {
   }
 
   public void testShouldUseLinkedStylesheetAndDir() {
-    String html = asciidoc.render(":linkcss:\n" +
+    String html = asciidocWrapper.render(":linkcss:\n" +
       ":stylesdir: https://example.com\n" +
       ":stylesheet: dark.css", Collections.emptyList());
     html = "<head></head>" + html;
-    html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes(), getProject());
+    html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", asciidocWrapper.getAttributes(), getProject());
     assertThat(html).withFailMessage("should contain testcss").containsPattern("<link[^>]*https://example.com/dark.css");
     assertThat(html).withFailMessage("should contain standardcss as backup").contains("standardcss");
   }
 
   public void testShouldUseLinkedStylesheetWithoutDir() {
-    String html = asciidoc.render(":linkcss:\n" +
+    String html = asciidocWrapper.render(":linkcss:\n" +
       ":stylesheet: https://example.com/dark.css", Collections.emptyList());
     html = "<head></head>" + html;
-    html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes(), getProject());
+    html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", asciidocWrapper.getAttributes(), getProject());
     assertThat(html).withFailMessage("should contain testcss").containsPattern("<link[^>]*https://example.com/dark.css");
     assertThat(html).withFailMessage("should contain standardcss as backup").contains("standardcss");
   }
@@ -94,9 +94,9 @@ public class AsciiDocTest extends BasePlatformTestCase {
       writerHeader.flush();
       writerFooter.write("<!-- myFooter -->");
       writerFooter.flush();
-      String html = asciidoc.render(":docinfo: shared", Collections.emptyList());
+      String html = asciidocWrapper.render(":docinfo: shared", Collections.emptyList());
       html = "<head></head><body>" + html + "</body>";
-      html = AsciiDoc.enrichPage(html, "/* standardcss */", asciidoc.getAttributes(), getProject());
+      html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", asciidocWrapper.getAttributes(), getProject());
       assertThat(html).contains("myHeader");
       assertThat(html).contains("myFooter");
     }
@@ -123,7 +123,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       fw.close();
 
       // when...
-      this.asciidoc.convertTo(asciidoc, "", new ArrayList<>(), AsciiDoc.FileType.PDF);
+      this.asciidocWrapper.convertTo(asciidoc, "", new ArrayList<>(), AsciiDocWrapper.FileType.PDF);
 
       // then...
       Assert.assertTrue(pdf.exists());
@@ -167,7 +167,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       fw.close();
 
       // when...
-      this.asciidoc.convertTo(asciidoc, "", new ArrayList<>(), AsciiDoc.FileType.HTML);
+      this.asciidocWrapper.convertTo(asciidoc, "", new ArrayList<>(), AsciiDocWrapper.FileType.HTML);
 
       // then...
       Assert.assertTrue(html.exists());
@@ -196,7 +196,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
   public void testShouldRenderAttributesAsciidoc() {
     String expectedContent = "should replace attribute placeholder with value";
     AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getAttributes().put("attr", expectedContent);
-    String html = asciidoc.render("{attr}", Collections.emptyList());
+    String html = asciidocWrapper.render("{attr}", Collections.emptyList());
     assertThat(html).contains(expectedContent);
   }
 
@@ -221,7 +221,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       false,
       ""));
     try {
-      String html = asciidoc.render(":action: generates\n" +
+      String html = asciidocWrapper.render(":action: generates\n" +
         "\n" +
         "[blockdiag,block-diag,svg,subs=+attributes]\n" +
         "----\n" +
@@ -257,7 +257,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       false,
       ""));
     try {
-      String html = asciidoc.render("[erd]\n" +
+      String html = asciidocWrapper.render("[erd]\n" +
         "----\n" +
         "[Person]\n" +
         "*name\n" +
@@ -300,7 +300,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       false,
       ""));
     try {
-      String html = asciidoc.render("[nomnoml]\n" +
+      String html = asciidocWrapper.render("[nomnoml]\n" +
         "----\n" +
         "[Pirate|eyeCount: Int|raid();pillage()|\n" +
         "  [beard]--[parrot]\n" +
@@ -334,7 +334,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       false,
       ""));
     try {
-      String html = asciidoc.render("[wavedrom]\n" +
+      String html = asciidocWrapper.render("[wavedrom]\n" +
         "....\n" +
         "{ signal: [\n" +
         "  { name: \"clk\",         wave: \"p.....|...\" },\n" +
@@ -371,7 +371,7 @@ public class AsciiDocTest extends BasePlatformTestCase {
       false,
       ""));
     try {
-      String html = asciidoc.render("[vega]\n" +
+      String html = asciidocWrapper.render("[vega]\n" +
         "....\n" +
         "{\n" +
         "  \"$schema\": \"https://vega.github.io/schema/vega/v5.json\",\n" +

@@ -25,7 +25,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.util.ui.ImageUtil;
-import org.asciidoc.intellij.AsciiDoc;
+import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.ui.PasteImageDialog;
@@ -193,7 +193,7 @@ public class PasteImageAction extends AsciiDocAction {
                       AsciiDocUtil.selectFileInProjectView(project, target);
                     } else {
                       String message = "Can't save image, no appropriate writer found for selected format.";
-                      Notification notification = AsciiDoc.getNotificationGroup()
+                      Notification notification = AsciiDocWrapper.getNotificationGroup()
                         .createNotification("Error in plugin", message, NotificationType.ERROR);
                       // increase event log counter
                       notification.setImportant(true);
@@ -202,7 +202,7 @@ public class PasteImageAction extends AsciiDocAction {
                   }
                 } catch (IOException e) {
                   String message = "Can't paste image, " + e.getMessage();
-                  Notification notification = AsciiDoc.getNotificationGroup()
+                  Notification notification = AsciiDocWrapper.getNotificationGroup()
                     .createNotification("Error in plugin", message, NotificationType.ERROR);
                   // increase event log counter
                   notification.setImportant(true);
@@ -214,7 +214,7 @@ public class PasteImageAction extends AsciiDocAction {
       }
     } catch (IOException e) {
       String message = "Can't paste image, " + e.getMessage();
-      Notification notification = AsciiDoc.getNotificationGroup()
+      Notification notification = AsciiDocWrapper.getNotificationGroup()
         .createNotification("Error in plugin", message, NotificationType.ERROR);
       // increase event log counter
       notification.setImportant(true);
@@ -265,7 +265,7 @@ public class PasteImageAction extends AsciiDocAction {
                         }
                       } catch (IOException ex) {
                         String message = "Can't save file: " + ex.getMessage();
-                        Notification notification = AsciiDoc.getNotificationGroup()
+                        Notification notification = AsciiDocWrapper.getNotificationGroup()
                           .createNotification("Error in plugin", message, NotificationType.ERROR);
                         // increase event log counter
                         notification.setImportant(true);

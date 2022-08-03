@@ -131,7 +131,7 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.findSpringRestDocSnippets;
 /**
  * @author Julien Viet
  */
-public class AsciiDoc {
+public class AsciiDocWrapper {
 
   private static final String GROUP_ID = "asciidoctor";
   /**
@@ -181,7 +181,7 @@ public class AsciiDoc {
   private static AttributesRetriever attributesRetriever;
 
   private static final com.intellij.openapi.diagnostic.Logger LOG =
-    com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDoc.class);
+    com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDocWrapper.class);
 
   static {
     SystemOutputHijacker.install();
@@ -257,7 +257,7 @@ public class AsciiDoc {
   private final String projectBasePath;
   private final Project project;
 
-  public AsciiDoc(Project project, File fileBaseDir, @Nullable Path imagesPath, String name) {
+  public AsciiDocWrapper(Project project, File fileBaseDir, @Nullable Path imagesPath, String name) {
     this.projectBasePath = project.getBasePath();
     this.fileBaseDir = fileBaseDir;
     this.imagesPath = imagesPath;
@@ -636,13 +636,13 @@ public class AsciiDoc {
       }
     }
     if (out.length() > 0) {
-      Notification notification = AsciiDoc.getNotificationGroup().createNotification("Message during rendering " + name, out,
+      Notification notification = AsciiDocWrapper.getNotificationGroup().createNotification("Message during rendering " + name, out,
         NotificationType.INFORMATION);
       notification.setImportant(false);
       Notifications.Bus.notify(notification);
     }
     if (err.length() > 0) {
-      Notification notification = AsciiDoc.getNotificationGroup().createNotification("Error during rendering " + name, err,
+      Notification notification = AsciiDocWrapper.getNotificationGroup().createNotification("Error during rendering " + name, err,
         NotificationType.INFORMATION);
       notification.setImportant(true);
       Notifications.Bus.notify(notification);
@@ -677,7 +677,7 @@ public class AsciiDoc {
         tempImagesPath = Files.createTempDirectory("asciidoctor-intellij");
       } catch (IOException ex) {
         String message = "Can't create temp folder to render images: " + ex.getMessage();
-        Notification notification = AsciiDoc.getNotificationGroup()
+        Notification notification = AsciiDocWrapper.getNotificationGroup()
           .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR);
         // increase event log counter
         notification.setImportant(true);
@@ -1058,7 +1058,7 @@ public class AsciiDoc {
         List<AttributeDeclaration> result = new ArrayList<>();
         try {
           Map<String, Object> antora;
-          antora = AsciiDoc.readAntoraYaml(project, antoraFile);
+          antora = AsciiDocWrapper.readAntoraYaml(project, antoraFile);
           Object asciidoc = antora.get("asciidoc");
           if (asciidoc instanceof Map) {
             @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
@@ -1164,7 +1164,7 @@ public class AsciiDoc {
   private static void handleAntoraYamlException(YAMLException ex, @Nullable String canonicalPath) {
     String message = canonicalPath + ": " + ex.getMessage();
     LOG.warn("Error reading Antora component information", ex);
-    Notification notification = AsciiDoc.getNotificationGroup().createNotification("Error reading Antora component information", message,
+    Notification notification = AsciiDocWrapper.getNotificationGroup().createNotification("Error reading Antora component information", message,
       NotificationType.ERROR);
     notification.setImportant(true);
     Notifications.Bus.notify(notification);

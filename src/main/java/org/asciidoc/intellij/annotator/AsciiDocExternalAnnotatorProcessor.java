@@ -19,8 +19,8 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
-import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocExtensionService;
+import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
@@ -57,7 +57,7 @@ public class AsciiDocExternalAnnotatorProcessor extends com.intellij.lang.annota
   @Nullable
   @Override
   public AsciiDocInfoType collectInformation(@NotNull PsiFile file, @NotNull Editor editor, boolean hasErrors) {
-    final String config = AsciiDoc.config(editor.getDocument(), file.getProject());
+    final String config = AsciiDocWrapper.config(editor.getDocument(), file.getProject());
     List<String> extensions = extensionService.getExtensions(file.getProject());
     return new AsciiDocInfoType(file, editor, editor.getDocument().getText(), config, extensions);
   }
@@ -86,14 +86,14 @@ public class AsciiDocExternalAnnotatorProcessor extends com.intellij.lang.annota
       return annotationResult;
     }
 
-    Path tempImagesPath = AsciiDoc.tempImagesPath(fileBaseDir.toPath(), file.getProject());
+    Path tempImagesPath = AsciiDocWrapper.tempImagesPath(fileBaseDir.toPath(), file.getProject());
     try {
-      AsciiDoc asciiDoc = new AsciiDoc(file.getProject(), fileBaseDir,
+      AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(file.getProject(), fileBaseDir,
         tempImagesPath, name);
       annotationResult.setDocname(new File(fileBaseDir, name).getAbsolutePath());
 
       List<LogRecord> logRecords = new ArrayList<>();
-      asciiDoc.render(collectedInfo.getContent(), collectedInfo.getConfig(), collectedInfo.getExtensions(), (boasOut, boasErr, lr)
+      asciiDocWrapper.render(collectedInfo.getContent(), collectedInfo.getConfig(), collectedInfo.getExtensions(), (boasOut, boasErr, lr)
         -> logRecords.addAll(lr));
 
       // do all expensive post-processing of log messages in the doAnnotate() phase,
@@ -146,7 +146,7 @@ public class AsciiDocExternalAnnotatorProcessor extends com.intellij.lang.annota
       }
       annotationResult.setLogRecords(processedLogRecords);
     } finally {
-      AsciiDoc.cleanupImagesPath(tempImagesPath);
+      AsciiDocWrapper.cleanupImagesPath(tempImagesPath);
     }
 
     return annotationResult;

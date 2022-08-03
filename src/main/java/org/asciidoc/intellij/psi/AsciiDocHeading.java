@@ -14,7 +14,7 @@ import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
-import org.asciidoc.intellij.AsciiDoc;
+import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.parser.AsciiDocParserImpl;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class AsciiDocHeading extends AsciiDocASTWrapperPsiElement {
   private static final com.intellij.openapi.diagnostic.Logger LOG =
-    com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDoc.class);
+    com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDocWrapper.class);
 
   private static final TokenSet HEADINGS = TokenSet.create(AsciiDocTokenTypes.HEADING_TOKEN, AsciiDocTokenTypes.HEADING_OLDSTYLE);
 

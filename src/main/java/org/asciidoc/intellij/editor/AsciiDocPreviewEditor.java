@@ -54,8 +54,8 @@ import com.intellij.util.Alarm;
 import com.intellij.util.FileContentUtilCore;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
-import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocExtensionService;
+import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
 import org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -121,9 +121,9 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   @NotNull
   private final Alarm mySwingAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
 
-  private final FutureTask<AsciiDoc> asciidoc = new FutureTask<>(new Callable<>() {
+  private final FutureTask<AsciiDocWrapper> asciidoc = new FutureTask<>(new Callable<>() {
     @Override
-    public AsciiDoc call() {
+    public AsciiDocWrapper call() {
       File fileBaseDir = new File("");
       VirtualFile file = FileDocumentManager.getInstance().getFile(document);
       String name = "unknown";
@@ -135,7 +135,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           fileBaseDir = new File(parent.getCanonicalPath());
         }
       }
-      return new AsciiDoc(project, fileBaseDir, tempImagesPath, name);
+      return new AsciiDocWrapper(project, fileBaseDir, tempImagesPath, name);
     }
   });
 
@@ -147,11 +147,11 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           return;
         }
         final @Language("asciidoc") String content = document.getText();
-        final String config = AsciiDoc.config(document, project);
+        final String config = AsciiDocWrapper.config(document, project);
         List<String> extensions = extensionService.getExtensions(project);
         int currentRenderCycle = forcedRenderCycle.get();
         if (!(config + content).equals(currentContent) || currentRenderCycle != lastRenderCycle) {
-          AsciiDoc instance = asciidoc.get();
+          AsciiDocWrapper instance = asciidoc.get();
           VirtualFile file = FileDocumentManager.getInstance().getFile(document);
           if (file != null) {
             String name = file.getName();
@@ -194,7 +194,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       } catch (Exception ex) {
         String message = "Error rendering preview: " + ex.getMessage();
         LOG.error(message, ex);
-        Notification notification = AsciiDoc.getNotificationGroup()
+        Notification notification = AsciiDocWrapper.getNotificationGroup()
           .createNotification("Error rendering asciidoctor", message,
             NotificationType.ERROR);
         // increase event log counter
@@ -296,7 +296,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     if (file != null && file.getParent() != null) {
       parent = Path.of(file.getParent().getPath());
     }
-    this.tempImagesPath = AsciiDoc.tempImagesPath(parent, project);
+    this.tempImagesPath = AsciiDocWrapper.tempImagesPath(parent, project);
 
     myHtmlPanelWrapper = new JPanel(new BorderLayout());
 
@@ -403,7 +403,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     } catch (IllegalStateException ex) {
       if (ex.getMessage() != null && ex.getMessage().startsWith("JCEF is not supported")) {
         LOG.warn("JCEF panel couldn't be initialized", ex);
-        Notification notification = AsciiDoc.getNotificationGroup()
+        Notification notification = AsciiDocWrapper.getNotificationGroup()
           .createNotification("Error creating JCEF preview", ex.getMessage(), NotificationType.ERROR);
         // increase event log counter
         notification.setImportant(true);
@@ -610,7 +610,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   @Override
   public void dispose() {
     Disposer.dispose(myPanel);
-    AsciiDoc.cleanupImagesPath(tempImagesPath);
+    AsciiDocWrapper.cleanupImagesPath(tempImagesPath);
   }
 
   void scrollToLine(int line) {

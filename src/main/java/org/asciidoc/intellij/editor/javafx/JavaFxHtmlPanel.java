@@ -50,7 +50,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
-import org.asciidoc.intellij.AsciiDoc;
+import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.file.AsciiDocFileType;
@@ -224,7 +224,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     } catch (IOException e) {
       String message = "Unable to combine CSS resources: " + e.getMessage();
       LOG.error(message, e);
-      Notification notification = AsciiDoc.getNotificationGroup()
+      Notification notification = AsciiDocWrapper.getNotificationGroup()
         .createNotification("Error rendering asciidoctor", message, NotificationType.ERROR);
       // increase event log counter
       notification.setImportant(true);
@@ -309,7 +309,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
         } catch (Throwable ex) {
           String message = "Error initializing JavaFX: " + ex.getMessage();
           LOG.error(message, ex);
-          Notification notification = AsciiDoc.getNotificationGroup().createNotification("Error rendering asciidoctor", message,
+          Notification notification = AsciiDocWrapper.getNotificationGroup().createNotification("Error rendering asciidoctor", message,
             NotificationType.ERROR);
           // increase event log counter
           notification.setImportant(true);
@@ -424,7 +424,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
           LocalFileSystem.getInstance().refreshAndFindFileByIoFile(destination.getFile());
         } catch (IOException ex) {
           String message = "Can't save file: " + ex.getMessage();
-          Notification notification = AsciiDoc.getNotificationGroup()
+          Notification notification = AsciiDocWrapper.getNotificationGroup()
             .createNotification("Error in plugin", message, NotificationType.ERROR);
           // increase event log counter
           notification.setImportant(true);
@@ -719,9 +719,9 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     // see: https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/235
     html = html.replaceAll("(?i)<script [a-z ]*src=\"https://platform\\.twitter\\.com/widgets\\.js\" [^>]*></script>", "");
     if (isAntora) {
-      html = AsciiDoc.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, attributes, editor != null ? editor.getProject() : null);
+      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, attributes, editor != null ? editor.getProject() : null);
     } else {
-      html = AsciiDoc.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes, editor.getProject());
+      html = AsciiDocWrapper.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes, editor.getProject());
     }
 
     html = html.replaceAll("<head>", "<head>\n" +
@@ -903,7 +903,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       int line = (int) Math.round(Double.parseDouble(argument.substring(0, split)));
       String file = argument.substring(split + 1);
       if (line <= 0) {
-        Notification notification = AsciiDoc.getNotificationGroup().createNotification("Setting cursor position", "line number " + line + " requested for cursor position, ignoring",
+        Notification notification = AsciiDocWrapper.getNotificationGroup().createNotification("Setting cursor position", "line number " + line + " requested for cursor position, ignoring",
           NotificationType.INFORMATION);
         notification.setImportant(false);
         return;

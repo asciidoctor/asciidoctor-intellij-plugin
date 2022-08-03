@@ -12,7 +12,7 @@ import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.util.ProcessingContext;
-import org.asciidoc.intellij.AsciiDoc;
+import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
@@ -87,7 +87,7 @@ public class AsciiDocAntoraYamlReferenceContributor extends PsiReferenceContribu
       LOG.warn("Unable to register AsciiDocAntoraYamlReferenceContributor", ex);
       if (!notificationShown) {
         synchronized (AsciiDocAntoraYamlReferenceContributor.class) {
-          Notification notification = AsciiDoc.getNotificationGroup().createNotification("Error initializing YAML support for Antora",
+          Notification notification = AsciiDocWrapper.getNotificationGroup().createNotification("Error initializing YAML support for Antora",
             "Please restart your IDE to finish the initialization of Antora YAML support in the AsciiDoc plugin.",
             NotificationType.WARNING);
           // increase event log counter

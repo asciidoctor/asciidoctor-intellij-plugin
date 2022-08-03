@@ -34,8 +34,8 @@ import com.intellij.util.PlatformIcons;
 import icons.AsciiDocIcons;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocLanguage;
+import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.completion.AsciiDocCompletionContributor;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
@@ -319,7 +319,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           } else {
             Map<String, Object> otherAntoraComponent;
             try {
-              otherAntoraComponent = AsciiDoc.readAntoraYaml(otherElement.getProject(), otherAntoraModuleDir.getParent().getParent().findChild("antora.yml"));
+              otherAntoraComponent = AsciiDocWrapper.readAntoraYaml(otherElement.getProject(), otherAntoraModuleDir.getParent().getParent().findChild("antora.yml"));
             } catch (YAMLException | NullPointerException ex) {
               return otherElement;
             }
@@ -327,9 +327,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             Map<String, Object> myAntoraComponent;
             try {
               if (this.macroName.equals("antora-startpage")) {
-                myAntoraComponent = AsciiDoc.readAntoraYaml(otherElement.getProject(), this.myElement.getContainingFile().getVirtualFile());
+                myAntoraComponent = AsciiDocWrapper.readAntoraYaml(otherElement.getProject(), this.myElement.getContainingFile().getVirtualFile());
               } else {
-                myAntoraComponent = AsciiDoc.readAntoraYaml(otherElement.getProject(), AsciiDocUtil.findAntoraModuleDir(this.myElement).getParent().getParent().findChild("antora.yml"));
+                myAntoraComponent = AsciiDocWrapper.readAntoraYaml(otherElement.getProject(), AsciiDocUtil.findAntoraModuleDir(this.myElement).getParent().getParent().findChild("antora.yml"));
               }
             } catch (YAMLException | NullPointerException ex) {
               return otherElement;

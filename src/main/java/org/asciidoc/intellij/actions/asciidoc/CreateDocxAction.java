@@ -18,9 +18,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import org.asciidoc.intellij.AsciiDoc;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.AsciiDocExtensionService;
+import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.Nullable;
@@ -95,18 +95,18 @@ public class CreateDocxAction extends AsciiDocFileAction {
       successful = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         String docbookFile = file.getName().replaceAll("\\.(adoc|asciidoc|ad)$", ".xml");
         String docxFile = file.getName().replaceAll("\\.(adoc|asciidoc|ad)$", ".docx");
-        Path tempImagesPath = AsciiDoc.tempImagesPath(parent.toNioPath(), project);
+        Path tempImagesPath = AsciiDocWrapper.tempImagesPath(parent.toNioPath(), project);
         Process process = null;
         try {
           File fileBaseDir = new File(parent.getCanonicalPath());
-          AsciiDoc asciiDoc = new AsciiDoc(project, fileBaseDir, tempImagesPath, file.getName());
-          String config = AsciiDoc.config(editor.getDocument(), project);
+          AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(project, fileBaseDir, tempImagesPath, file.getName());
+          String config = AsciiDocWrapper.config(editor.getDocument(), project);
           List<String> extensions = extensionService.getExtensions(project);
-          asciiDoc.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDoc.FileType.DOCX);
+          asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.DOCX);
           File finalFile = new File(parent.getCanonicalPath(), docxFile);
           if (finalFile.exists()) {
             if (!finalFile.delete()) {
-              Notification notification = AsciiDoc.getNotificationGroup()
+              Notification notification = AsciiDocWrapper.getNotificationGroup()
                 .createNotification("Error creating DOCX from AsciiDoc file", "unable to delete target file " + docxFile, NotificationType.ERROR);
               notification.setImportant(true);
               Notifications.Bus.notify(notification);
@@ -143,7 +143,7 @@ public class CreateDocxAction extends AsciiDocFileAction {
 
           int exitCode = process.waitFor();
           if (exitCode != 0) {
-            Notification notification = AsciiDoc.getNotificationGroup()
+            Notification notification = AsciiDocWrapper.getNotificationGroup()
               .createNotification("Error creating DOCX from AsciiDoc file", stdout + " / " + stderr, NotificationType.ERROR);
             notification.setImportant(true);
             Notifications.Bus.notify(notification);
@@ -152,7 +152,7 @@ public class CreateDocxAction extends AsciiDocFileAction {
 
           File xml = new File(parent.getCanonicalPath() + File.separator + docbookFile);
           if (!xml.delete()) {
-            Notification notification = AsciiDoc.getNotificationGroup()
+            Notification notification = AsciiDocWrapper.getNotificationGroup()
               .createNotification("Can't delete temporary XML file " + xml.getCanonicalPath(), NotificationType.ERROR);
             notification.setImportant(true);
             Notifications.Bus.notify(notification);
@@ -162,13 +162,13 @@ public class CreateDocxAction extends AsciiDocFileAction {
           if (process != null) {
             process.destroy();
           }
-          Notification notification = AsciiDoc.getNotificationGroup()
+          Notification notification = AsciiDocWrapper.getNotificationGroup()
             .createNotification("Error creating DOCX from AsciiDoc file", e.getMessage(), NotificationType.ERROR);
           notification.setImportant(true);
           Notifications.Bus.notify(notification);
           return false;
         } finally {
-          AsciiDoc.cleanupImagesPath(tempImagesPath);
+          AsciiDocWrapper.cleanupImagesPath(tempImagesPath);
         }
         return true;
       }, "Creating DOCX file", true, project);
