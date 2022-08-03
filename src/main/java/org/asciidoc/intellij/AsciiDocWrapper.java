@@ -200,6 +200,7 @@ public class AsciiDocWrapper {
     }
   }
 
+  @SuppressWarnings("DoNotCall")
   public static void beforePluginUnload() {
     LOG.info("shutting down Asciidoctor instances");
     lock();
