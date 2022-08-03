@@ -266,9 +266,11 @@ public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlP
     uiZoom = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getZoom() / 100.0;
 
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      if (stamp == 0) {
-        // ensure that this is still the first call; avoid to overwrite a different text
-        setHtml(prepareHtml(wrapHtmlForPage("<div id=\"content\">Initializing...</div>"), Collections.emptyMap()), Collections.emptyMap());
+      synchronized (this) {
+        if (stamp == 0) {
+          // ensure that this is still the first call; avoid to overwrite a different text
+          setHtml("<div id=\"content\">Initializing...</div>", Collections.emptyMap());
+        }
       }
     });
 

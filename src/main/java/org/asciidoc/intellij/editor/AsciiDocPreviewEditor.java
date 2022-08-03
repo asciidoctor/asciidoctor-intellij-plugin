@@ -373,6 +373,11 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
     connection.subscribe(DumbService.DUMB_MODE, new RenderPreviewOnDumbModeChangeListener());
 
+    // At this moment, the editor might not yet be visible.
+    // Start rendering the preview anyway for best user experience
+    if (getComponent().isVisible()) {
+      render();
+    }
   }
 
   @Contract("_, _, _, null, null -> fail")

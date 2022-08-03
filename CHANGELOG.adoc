@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Improve Value scope support for _link_/_strong_/_emphasis_ (#1089)
 - Rework conditions to avoid read lock problems (#1121)
 - Rework handling of internal references when moving multiple files (#1117)
+- Faster update of the preview on IDE restart and file opening (#1122)
 
 === 0.37.37
 
