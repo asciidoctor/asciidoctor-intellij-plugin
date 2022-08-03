@@ -13,10 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 
 public class AsciiDocMoveFileHandler extends MoveFileHandler {
   @Override
@@ -47,10 +46,13 @@ public class AsciiDocMoveFileHandler extends MoveFileHandler {
   public static class MyUsageInfo extends UsageInfo {
     private final PsiElement element;
     private final PsiReference reference;
-    public MyUsageInfo(@NotNull PsiReference reference, @NotNull PsiElement element) {
+    private String originalFile;
+
+    public MyUsageInfo(@NotNull PsiReference reference, @NotNull PsiElement element, @Nullable String originalFile) {
       super(reference);
       this.element = element;
       this.reference = reference;
+      this.originalFile = originalFile;
     }
   }
 
@@ -64,8 +66,9 @@ public class AsciiDocMoveFileHandler extends MoveFileHandler {
         for (PsiReference reference : element.getReferences()) {
           if (reference instanceof AsciiDocFileReference) {
             PsiElement resolved = reference.resolve();
-            if (resolved != null && resolved.getContainingFile() != file && !(resolved instanceof PsiDirectory)) {
-              result.add(new MyUsageInfo(reference, resolved));
+            if (resolved != null && resolved.getContainingFile() != file && !(resolved instanceof PsiDirectory)
+              && resolved.getContainingFile() != null && resolved.getContainingFile().getVirtualFile() != null) {
+              result.add(new MyUsageInfo(reference, resolved, resolved.getContainingFile().getVirtualFile().getCanonicalPath()));
             }
           }
         }
@@ -78,13 +81,13 @@ public class AsciiDocMoveFileHandler extends MoveFileHandler {
 
   @Override
   public void retargetUsages(List<UsageInfo> usageInfos, Map<PsiElement, PsiElement> oldToNewMap) {
-    Set<PsiElement> movedElements = new HashSet<>(oldToNewMap.values());
     for (UsageInfo usageInfo : usageInfos) {
       if (usageInfo instanceof MyUsageInfo) {
         MyUsageInfo myUsageInfo = (MyUsageInfo) usageInfo;
-        if (!movedElements.contains(myUsageInfo.element)) {
+        if (myUsageInfo.element.getContainingFile() != null && myUsageInfo.element.getContainingFile().getVirtualFile() != null
+          && Objects.equals(myUsageInfo.element.getContainingFile().getVirtualFile().getCanonicalPath(), myUsageInfo.originalFile)) {
           // When moving multiple elements, the moved element will have been processed already.
-          // Therefore, skip them to avoid mangling filenames twice.
+          // Therefore, only process those that haven't changes their name and path.
           myUsageInfo.reference.bindToElement(myUsageInfo.element);
         }
       }
