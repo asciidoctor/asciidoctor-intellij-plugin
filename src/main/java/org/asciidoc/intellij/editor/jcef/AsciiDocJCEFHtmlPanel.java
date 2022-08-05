@@ -45,7 +45,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
-import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanel;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
 import org.asciidoc.intellij.file.AsciiDocFileType;
@@ -560,19 +559,12 @@ public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlP
   @Nullable
   private String myGoogleFontsCssLink;
 
-  private boolean tobeDisposed = false;
   private volatile boolean hasLoadedOnce = false;
   private byte[] previousDigest;
 
   @Override
   public synchronized void setHtml(@NotNull String htmlParam, @NotNull Map<String, String> attributes) {
-    if (tobeDisposed || isDisposed()) {
-      return;
-    }
-    if (getCefBrowser().getFocusedFrame() == null && hasLoadedOnce) {
-      // the CEF browser might have terminated after an initial rendering (seen with 202.6109.22)
-      // dispose this component so that it will be reloaded.
-      disposeMyself();
+    if (isDisposed()) {
       return;
     }
     rendered = new CountDownLatch(1);
@@ -679,25 +671,11 @@ public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlP
         // this preview hasn't been disposed -- as this wouldn't make much sense
         if (!this.isDisposed() && hasLoadedOnce) {
           LOG.warn("rendering didn't complete in time, might be slow or broken");
-          if (getCefBrowser().getFocusedFrame() == null) {
-            disposeMyself();
-          } else {
-            forceRefresh = true;
-          }
+          forceRefresh = true;
         }
       }
     } catch (InterruptedException e) {
       LOG.warn("interrupted while waiting for refresh to complete");
-    }
-  }
-
-  private void disposeMyself() {
-    if (!tobeDisposed) {
-      LOG.warn("triggering disposal of preview");
-      ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().getMessageBus()
-        .syncPublisher(AsciiDocPreviewEditor.RefreshPreviewListener.TOPIC)
-        .refreshPreview(this));
-      tobeDisposed = true;
     }
   }
 
@@ -943,8 +921,8 @@ public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlP
   }
 
   @Override
-  public void setEditor(@NotNull Editor editor) {
-    if (editor.getProject() != null) {
+  public void setEditor(Editor editor) {
+    if (editor != null && editor.getProject() != null) {
       if (AsciiDocUtil.findAntoraPagesDir(editor.getProject(), parentDirectory) != null) {
         isAntora = true;
       }

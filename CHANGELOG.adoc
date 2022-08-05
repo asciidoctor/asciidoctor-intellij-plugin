@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.39
+
+- Cleanup workarounds for JCEF to stabilize rendering of the preview (#1122)
+
 === 0.37.38
 
 - Improve Value scope support for _link_/_strong_/_emphasis_ (#1089)

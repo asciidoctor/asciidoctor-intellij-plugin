@@ -53,7 +53,6 @@ import com.intellij.serviceContainer.AlreadyDisposedException;
 import com.intellij.util.Alarm;
 import com.intellij.util.FileContentUtilCore;
 import com.intellij.util.messages.MessageBusConnection;
-import com.intellij.util.messages.Topic;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
@@ -68,14 +67,14 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -106,6 +105,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    */
   private final Document document;
   private final Project project;
+  private Editor editor;
 
   /**
    * The directory which holds the temporary images.
@@ -115,29 +115,12 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   @NotNull
   private final JPanel myHtmlPanelWrapper;
 
-  @NotNull
   private volatile AsciiDocHtmlPanel myPanel;
 
   @NotNull
   private final Alarm mySwingAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
 
-  private final FutureTask<AsciiDocWrapper> asciidoc = new FutureTask<>(new Callable<>() {
-    @Override
-    public AsciiDocWrapper call() {
-      File fileBaseDir = new File("");
-      VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-      String name = "unknown";
-      if (file != null) {
-        name = file.getName();
-        VirtualFile parent = file.getParent();
-        if (parent != null && parent.getCanonicalPath() != null) {
-          // parent will be null if we use Language Injection and Fragment Editor
-          fileBaseDir = new File(parent.getCanonicalPath());
-        }
-      }
-      return new AsciiDocWrapper(project, fileBaseDir, tempImagesPath, name);
-    }
-  });
+  private AsciiDocWrapper asciidoc;
 
   private void render() {
     lazyExecutor.execute(() -> {
@@ -151,7 +134,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         List<String> extensions = extensionService.getExtensions(project);
         int currentRenderCycle = forcedRenderCycle.get();
         if (!(config + content).equals(currentContent) || currentRenderCycle != lastRenderCycle) {
-          AsciiDocWrapper instance = asciidoc.get();
+          AsciiDocWrapper instance = getAsciiDocInstance();
           VirtualFile file = FileDocumentManager.getInstance().getFile(document);
           if (file != null) {
             String name = file.getName();
@@ -171,22 +154,26 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           }
           if (markup != null) {
             AsciiDocHtmlPanel localPanel = myPanel;
-            localPanel.setHtml(markup, instance.getAttributes());
-            synchronized (this) {
-              if (myPanel == localPanel) {
-                // only set the content if the panel hasn't been updated (due to settings changed)
-                currentContent = config + content;
-                lastRenderCycle = currentRenderCycle;
+            if (localPanel != null) {
+              localPanel.setHtml(markup, instance.getAttributes());
+              synchronized (this) {
+                if (myPanel == localPanel) {
+                  // only set the content if the panel hasn't been updated (due to settings changed)
+                  currentContent = config + content;
+                  lastRenderCycle = currentRenderCycle;
+                }
               }
             }
           }
         }
         if (currentLineNo != targetLineNo) {
           currentLineNo = targetLineNo;
-          myPanel.scrollToLine(targetLineNo, document.getLineCount());
+          synchronized (this) {
+            if (myPanel != null) {
+              myPanel.scrollToLine(targetLineNo, document.getLineCount());
+            }
+          }
         }
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
       } catch (ProcessCanceledException e) {
         renderIfVisible();
       } catch (AlreadyDisposedException e) {
@@ -204,10 +191,28 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     });
   }
 
+  private AsciiDocWrapper getAsciiDocInstance() {
+    if (asciidoc == null) {
+      File fileBaseDir = new File("");
+      VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+      String name = "unknown";
+      if (file != null) {
+        name = file.getName();
+        VirtualFile parent = file.getParent();
+        if (parent != null && parent.getCanonicalPath() != null) {
+          // parent will be null if we use Language Injection and Fragment Editor
+          fileBaseDir = new File(parent.getCanonicalPath());
+        }
+      }
+      asciidoc = new AsciiDocWrapper(project, fileBaseDir, tempImagesPath, name);
+    }
+    return asciidoc;
+  }
+
   void renderIfVisible() {
     // visible = preview is enabled
     // displayable = editor window is visible as it is the active editor in a group
-    if (getComponent().isVisible() && getComponent().isDisplayable()) {
+    if (myPanel != null && getComponent().isVisible() && getComponent().isDisplayable()) {
       render();
     }
   }
@@ -251,30 +256,13 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   }
 
   public void printToPdf(String canonicalPath, Consumer<Boolean> success) {
-    myPanel.printToPdf(canonicalPath, success);
+    if (myPanel != null) {
+      myPanel.printToPdf(canonicalPath, success);
+    }
   }
 
   public boolean isPrintingSupported() {
-    return myPanel.isPrintingSupported();
-  }
-
-  private class MyRefreshPreviewListener implements RefreshPreviewListener {
-    @Override
-    public void refreshPreview(@NotNull AsciiDocHtmlPanel panel) {
-      if (!mySwingAlarm.isDisposed()) {
-        mySwingAlarm.addRequest(() -> {
-          synchronized (this) {
-            if (panel == myPanel) {
-              final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
-              myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, retrievePanelProvider(settings));
-              myPanel.scrollToLine(targetLineNo, document.getLineCount());
-              forceRenderCycle(); // force a refresh of the preview by resetting the current memorized content
-            }
-            renderIfVisible();
-          }
-        }, 0, ModalityState.stateForComponent(getComponent()));
-      }
-    }
+    return myPanel != null && myPanel.isPrintingSupported();
   }
 
   /**
@@ -300,20 +288,36 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
     myHtmlPanelWrapper = new JPanel(new BorderLayout());
 
-    final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+    myHtmlPanelWrapper.addComponentListener(new ComponentAdapter() {
+      @Override
+      public void componentShown(ComponentEvent e) {
+        setupPanel();
+      }
 
-    myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, null, retrievePanelProvider(settings));
-    myPanel.scrollToLine(targetLineNo, document.getLineCount());
+      @Override
+      public void componentHidden(ComponentEvent e) {
+        mySwingAlarm.addRequest(() -> {
+          try {
+            synchronized (this) {
+              if (myPanel != null) {
+                myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, null);
+              }
+            }
+          } catch (Exception ex) {
+            LOG.error("unhandled exception when preparing the preview", ex);
+          }
+        }, 0, ModalityState.stateForComponent(getComponent()));
+      }
+    });
+
+    // Set if to false by default, so that it will be enabled only when needed later.
+    myHtmlPanelWrapper.setVisible(false);
 
     MessageBusConnection settingsConnection = ApplicationManager.getApplication().getMessageBus().connect(this);
 
     settingsConnection.subscribe(AsciiDocApplicationSettings.SettingsChangedListener.TOPIC, new MyUpdatePanelOnSettingsChangedListener());
     settingsConnection.subscribe(EditorColorsManager.TOPIC, new MyEditorColorsListener());
-    settingsConnection.subscribe(RefreshPreviewListener.TOPIC, new MyRefreshPreviewListener());
     settingsConnection.subscribe(TrustStateListener.TOPIC, new MyTrustChangedListener());
-
-    // Get asciidoc asynchronously
-    new Thread(asciidoc).start();
 
     // Listen to the document modifications.
     this.document.addDocumentListener(new DocumentListener() {
@@ -373,15 +377,28 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
     connection.subscribe(DumbService.DUMB_MODE, new RenderPreviewOnDumbModeChangeListener());
 
-    // At this moment, the editor might not yet be visible.
-    // Start rendering the preview anyway for best user experience
-    if (getComponent().isVisible()) {
-      render();
-    }
+  }
+
+  private void setupPanel() {
+    mySwingAlarm.addRequest(() -> {
+      try {
+        synchronized (this) {
+          if (myPanel == null) {
+            final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+            myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, null, retrievePanelProvider(settings));
+            myPanel.setEditor(editor);
+            myPanel.scrollToLine(targetLineNo, document.getLineCount());
+            forceRenderCycle();
+            renderIfVisible();
+          }
+        }
+      } catch (Exception ex) {
+        LOG.error("unhandled exception when preparing the preview", ex);
+      }
+    }, 0, ModalityState.stateForComponent(getComponent()));
   }
 
   @Contract("_, _, _, null, null -> fail")
-  @NotNull
   private static AsciiDocHtmlPanel detachOldPanelAndCreateAndAttachNewOne(Document document, Path imagesDir, @NotNull JPanel panelWrapper,
                                                                           @Nullable AsciiDocHtmlPanel oldPanel,
                                                                           @Nullable AsciiDocHtmlPanelProvider newPanelProvider) {
@@ -389,12 +406,12 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     if (oldPanel == null && newPanelProvider == null) {
       throw new IllegalArgumentException("Either create new one or leave the old");
     }
-    if (newPanelProvider == null) {
-      return oldPanel;
-    }
     if (oldPanel != null) {
       panelWrapper.remove(oldPanel.getComponent());
       Disposer.dispose(oldPanel);
+    }
+    if (newPanelProvider == null) {
+      return null;
     }
 
     AsciiDocHtmlPanel newPanel;
@@ -436,7 +453,10 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   @Override
   @Nullable
   public JComponent getPreferredFocusedComponent() {
-    JComponent preferredFocusedComponent = myPanel.getPreferredFocusedComponent();
+    JComponent preferredFocusedComponent = null;
+    if (myPanel != null) {
+      preferredFocusedComponent = myPanel.getPreferredFocusedComponent();
+    }
     if (preferredFocusedComponent == null) {
       preferredFocusedComponent = myHtmlPanelWrapper;
     }
@@ -609,7 +629,9 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    */
   @Override
   public void dispose() {
-    Disposer.dispose(myPanel);
+    if (myPanel != null) {
+      Disposer.dispose(myPanel);
+    }
     AsciiDocWrapper.cleanupImagesPath(tempImagesPath);
   }
 
@@ -633,23 +655,27 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       final AsciiDocHtmlPanelProvider newPanelProvider = retrievePanelProvider(settings);
       if (!mySwingAlarm.isDisposed()) {
         mySwingAlarm.addRequest(() -> {
-          synchronized (this) {
-            myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
-            myPanel.scrollToLine(targetLineNo, document.getLineCount());
-            forceRenderCycle(); // force a refresh of the preview by resetting the current memorized content
+          try {
+            synchronized (this) {
+              myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
+              myPanel.scrollToLine(targetLineNo, document.getLineCount());
+              forceRenderCycle(); // force a refresh of the preview by resetting the current memorized content
+            }
+            renderIfVisible();
+          } catch (Exception ex) {
+            LOG.error("unhandled exception when preparing the preview", ex);
           }
-          renderIfVisible();
         }, 0, ModalityState.stateForComponent(getComponent()));
       }
     }
   }
 
   public Editor getEditor() {
-    return myPanel.getEditor();
+    return editor;
   }
 
   public void setEditor(Editor editor) {
-    myPanel.setEditor(editor);
+    this.editor = editor;
   }
 
   private class MyEditorColorsListener implements EditorColorsListener {
@@ -674,16 +700,13 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       // making the project trusted should therefore force re-rendering of the preview.
       ApplicationManager.getApplication().executeOnPooledThread(() -> {
         forceRenderCycle();
-        myPanel.setHtml("", Collections.emptyMap());
+        AsciiDocHtmlPanel localPanel = myPanel;
+        if (localPanel != null) {
+          localPanel.setHtml("", Collections.emptyMap());
+        }
         renderIfVisible();
       });
     }
-  }
-
-  public interface RefreshPreviewListener {
-    Topic<AsciiDocPreviewEditor.RefreshPreviewListener> TOPIC = Topic.create("AsciiDocRefreshPreview", AsciiDocPreviewEditor.RefreshPreviewListener.class);
-
-    void refreshPreview(@NotNull AsciiDocHtmlPanel panel);
   }
 
 }

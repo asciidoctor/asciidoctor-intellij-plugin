@@ -786,7 +786,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
 
   @Override
   public void setEditor(Editor editor) {
-    if (editor.getProject() != null) {
+    if (editor != null && editor.getProject() != null) {
       if (AsciiDocUtil.findAntoraPagesDir(editor.getProject(), parentDirectory) != null) {
         isAntora = true;
       }
