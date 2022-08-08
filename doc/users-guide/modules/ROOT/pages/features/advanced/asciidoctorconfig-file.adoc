@@ -52,9 +52,13 @@ The internal order of processing is as follows:
 
 == Ecosystem
 
+=== Support when using Eclipse as an IDE
+
+The _.asciidoctorconfig_ files are also supported by the Eclipse Asciidoctor Editor. See https://github.com/de-jcup/eclipse-asciidoctor-editor/wiki/Asciidoctor-configfiles[their wiki page] for more information.
+
 === Generating a .asciidoctorconfig file during project build
 
-For Gradle is an _asciidoctorEditorConfig_ task available to create a .asciidoctorconfig via a build task.
+For Gradle is an _asciidoctorEditorConfig_ task available to create a _.asciidoctorconfig_ via a build task.
 See https://github.com/asciidoctor/asciidoctor-gradle-plugin/blob/master/docs/src/docs/asciidoc/parts/asciidoctoreditorconfig-plugin.adoc[the docs for the 3.2+ release of the asciidoctor-gradle-plugin] for more details.
 
 === Using the .asciidoctorconfig file for rendering regular AsciiDoc documents
