@@ -32,7 +32,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -247,11 +246,7 @@ public class BrowserPanel implements Disposable {
     while (matcher.find()) {
       final MatchResult matchResult = matcher.toMatchResult();
       String file = matchResult.group(1);
-      try {
-        file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
-      } catch (UnsupportedEncodingException e) {
-        throw new RuntimeException(e);
-      }
+      file = URLDecoder.decode(file, StandardCharsets.UTF_8); // restore "%20" as " "
       String tmpFile = findTempImageFile(file, null, imagesPath);
       String md5;
       String replacement;
@@ -279,12 +274,10 @@ public class BrowserPanel implements Disposable {
         continue;
       }
       try {
-        file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
+        file = URLDecoder.decode(file, StandardCharsets.UTF_8); // restore "%20" as " "
       } catch (IllegalArgumentException e) {
         // ignored, this must be a manually entered URL with a percentage sign
         continue;
-      } catch (UnsupportedEncodingException e) {
-        throw new RuntimeException(e);
       }
       String tmpFile = findTempImageFile(file, attributes.get("imagesdir"), imagesPath);
       String md5;
@@ -294,7 +287,27 @@ public class BrowserPanel implements Disposable {
         replacement = "<img src=\"image?file=" + signFile(tmpFile) + "&amp;hash=" + md5 + "\"";
       } else {
         md5 = calculateMd5(file, base);
-        replacement = "<img src=\"image?file=" + signFile(base + "/" + file) + "&amp;hash=" + md5 + "\"";
+        if (!md5.equals("none")) {
+          replacement = "<img src=\"image?file=" + signFile(base + "/" + file) + "&amp;hash=" + md5 + "\"";
+        } else if (attributes.get("imagesdir") != null && attributes.get("imagesdir").length() > 0 && file.startsWith("/")) {
+          // For image file names starting with a slash, the imagesdir is not being added automatically.
+          // Try to use it to find the file - imagesdir might be relative to the base directory, or an absolute path.
+          md5 = calculateMd5(attributes.get("imagesdir") + file, base);
+          if (!md5.equals("none")) {
+            file = attributes.get("imagesdir") + file;
+            replacement = "<img src=\"image?file=" + signFile(base + "/" + file) + "&amp;hash=" + md5 + "\"";
+          } else {
+            md5 = calculateMd5(file, attributes.get("imagesdir"));
+            if (!md5.equals("none")) {
+              replacement = "<img src=\"image?file=" + signFile(attributes.get("imagesdir") + "/" + file) + "&amp;hash=" + md5 + "\"";
+            } else {
+              replacement = "<img src=\"image?file=" + signFile(base + "/" + file) + "&amp;hash=" + md5 + "\"";
+            }
+          }
+        } else {
+          // some fallback
+          replacement = "<img src=\"file://" + signFile(base + "/" + file) + "?" + md5 + "\"";
+        }
       }
       html = html.substring(0, matchResult.start()) +
         replacement + html.substring(matchResult.end());
@@ -315,12 +328,10 @@ public class BrowserPanel implements Disposable {
         continue;
       }
       try {
-        file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
+        file = URLDecoder.decode(file, StandardCharsets.UTF_8); // restore "%20" as " "
       } catch (IllegalArgumentException e) {
         // ignored, this must be a manually entered URL with a percentage sign
         continue;
-      } catch (UnsupportedEncodingException e) {
-        throw new RuntimeException(e);
       }
       // type 'image' will deliver a binary file
       String type = "image";
@@ -343,14 +354,10 @@ public class BrowserPanel implements Disposable {
         type = "source";
       }
       if (type.equals("source")) {
-        try {
-          if (project.getPresentableUrl() != null) {
-            suffix = "&amp;projectUrl=" + URLEncoder.encode(project.getPresentableUrl(), StandardCharsets.UTF_8.toString());
-          } else {
-            suffix = "&amp;projectName=" + URLEncoder.encode(project.getName(), StandardCharsets.UTF_8.toString());
-          }
-        } catch (UnsupportedEncodingException e) {
-          throw new RuntimeException("unable to encode URL", e);
+        if (project.getPresentableUrl() != null) {
+          suffix = "&amp;projectUrl=" + URLEncoder.encode(project.getPresentableUrl(), StandardCharsets.UTF_8);
+        } else {
+          suffix = "&amp;projectName=" + URLEncoder.encode(project.getName(), StandardCharsets.UTF_8);
         }
       }
       String replacement;
@@ -374,12 +381,10 @@ public class BrowserPanel implements Disposable {
         continue;
       }
       try {
-        file = URLDecoder.decode(file, StandardCharsets.UTF_8.name()); // restore "%20" as " "
+        file = URLDecoder.decode(file, StandardCharsets.UTF_8); // restore "%20" as " "
       } catch (IllegalArgumentException e) {
         // ignored, this must be a manually entered URL with a percentage sign
         continue;
-      } catch (UnsupportedEncodingException e) {
-        throw new RuntimeException(e);
       }
       // type 'image' will deliver a binary file
       String type = "image";

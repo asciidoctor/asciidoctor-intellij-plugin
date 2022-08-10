@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.40
+
+- Support imagesdir to indicate image location even if image starts with an absolute path (#1128)
+
 === 0.37.39
 
 - Cleanup workarounds for JCEF to stabilize rendering of the preview (#1122)
