@@ -11,8 +11,8 @@
 *** xref:features/preview/jcef-preview.adoc[]
 *** xref:features/preview/source-highlighting.adoc[]
 ** Advanced
-// the following list is sorted alphabetically.
-// Please keep it sorted when adding new content.
+// The following list is sorted alphabetically to help users find the contents.
+// Keep it sorted when adding new content.
 *** xref:features/advanced/antora.adoc[]
 *** xref:features/advanced/asciidoclet.adoc[]
 *** xref:features/advanced/asciidoctorconfig-file.adoc[]
@@ -30,6 +30,7 @@
 *** xref:features/advanced/validation-cicd.adoc[]
 *** xref:features/advanced/pdf-non-latin-languages.adoc[]
 *** xref:features/advanced/privacy.adoc[]
+*** xref:features/advanced/reformatting.adoc[]
 *** xref:features/advanced/spring-rest-docs.adoc[]
 * xref:faq.adoc[]
 ** xref:faq/indent-missing-on-pasting.adoc[]

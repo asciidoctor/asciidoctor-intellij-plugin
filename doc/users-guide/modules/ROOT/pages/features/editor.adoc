@@ -262,18 +262,7 @@ It is available when user places the cursor on the start of single-line admoniti
 
 All of these changes can be undone (kbd:[Ctrl+Z]).
 Refactorings will re-format the refactored block.
-See the section about <<reformatting>> on how to configure this.
+See the page about xref:features/advanced/reformatting.adoc[] on how to configure this.
 
 The user can disable and enable intentions in menu:Settings...[Editor > Intentions > AsciiDoc].
 
-[[reformatting,reformatting]]
-== Reformatting
-
-The user can reformat the source in the editor using "`Reformat Code`" (kbd:[Ctrl+Alt+L]).
-
-The user can disable formatting completely or configure parameters using menu:Settings...[Editor > Code Style > AsciiDoc].
-Currently, it adjusts empty lines around headings, lists and blocks.
-It also adjusts spaces around list items.
-
-By default, it re-formats blocks to the one-sentence-per-line convention.
-The user can disable this in the code style settings.

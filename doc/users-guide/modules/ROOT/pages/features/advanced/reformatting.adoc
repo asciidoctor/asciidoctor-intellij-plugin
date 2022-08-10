@@ -1,0 +1,70 @@
+= Reformatting
+:description: The user can reformat AsciiDoc in the editor using “Reformat Code” (Ctrl+Alt+L).
+
+The user can reformat AsciiDoc in the editor using "`Reformat Code`" (kbd:[Ctrl+Alt+L]).
+They can disable formatting completely or configure parameters using menu:Settings...[Editor > Code Style > AsciiDoc].
+
+Project specific settings can be checked-in together with the code as either XML or `.editorconfig` files to share the settings across all contributors to a project.
+
+[[reformatting,reformatting]]
+== Reformatting
+
+Currently, reformatting adjusts empty lines around headings, lists and blocks.
+It also adjusts spaces around list items.
+
+By default, it re-formats blocks to the https://asciidoctor.org/docs/asciidoc-recommended-practices/#one-sentence-per-line[one-sentence-per-line] style.
+The user can disable this in the code style settings.
+
+== IDE vs. Project specific settings
+
+Settings can be stored in the IDE instance or within the project.
+Users can switch change them in the menu menu:Settings...[Editor > Code Style > AsciiDoc].
+
+Project specific settings can be stored in two different ways: an XML file in the folder `.idea/codeStyles`, and in an `.editorconfig` file.
+
+=== Settings per IDE instance
+
+When storing settings in the IDE instance, they are active across projects opened with this IDE.
+If a user has multiple IDE instances installed on a single machine, each IDE instance will use its own configuration.
+
+=== Settings per project as an XML file
+
+The XML file is specific to IntelliJ.
+Depending on the project's version control system configuration, the folder `.idea/codeStyle` might be ignored.
+When using Git as a version control system, users should check their `.gitignore` file if the folder or its contents are ignored, and ammend the configuration to allow files to be committed there.
+Once the file has been committed, the formatting settings are available to other users as well.
+
+=== Settings per project as an `.editorconfig` file
+
+The `.editorconfig` file is an https://editorconfig.org/[open standard] that allows for several configuration options that will be applied across IDEs of different vendors.
+For some IDEs an additional plugin might be necessary to support the features.
+
+The JetBrains family of IDEs supports the `.editorconfig` https://www.jetbrains.com/help/idea/editorconfig.html[files out of the box]. It also allows custom properties starting with `ij_`.
+The AsciiDoc plugin for IntelliJ uses custom properties starting with `ij_`, therefore, those settings are only effective for IntelliJ.
+
+NOTE: The settings in an `.editorconfig` file become effective in IntelliJ once the user _saves and closes_ the editor of the file.
+
+An example AsciiDoc configuration for the AsciiDoc plugin for IntelliJ in an `.editorconfig` file looks as follows:
+
+.An example `.editorconfig` file with the default settings
+[source,editorconfig]
+----
+root = true
+
+[{*.ad,*.adoc,*.asciidoc,.asciidoctorconfig}]
+# Common AsciiDoc settings that work across IDEs
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# Custom settings for the IntelliJ AsciiDoc plugin
+ij_asciidoc_blank_lines_after_header = 1
+ij_asciidoc_blank_lines_keep_after_header = 1
+ij_asciidoc_formatting_enabled = true
+ij_asciidoc_one_sentence_per_line = true
+----
+
+The file with `root = true` should be placed in the root folder of the project.
+Files without this attribute in sub folders override the settings in that folder.
+
+When editing the `.editorconfig` files in the IDE, IntelliJ offers auto-completion and validation.
