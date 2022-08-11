@@ -136,7 +136,7 @@ public class AntoraReferenceAdapter {
       }
       target = replaced.get(0);
       VirtualFile targetFile = LocalFileSystem.getInstance().findFileByPath(target);
-      if (type.equals("inline_anchor") && phraseNode.getText() == null && targetFile != null && sourceDir != null) {
+      if (type.equals("inline_anchor") && phraseNode.getText() == null && targetFile != null && sourceDir != null && anchor == null) {
         AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
           if (!targetFile.isValid()) {
             return;
