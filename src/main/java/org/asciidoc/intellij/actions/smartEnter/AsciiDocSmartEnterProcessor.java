@@ -20,6 +20,7 @@ import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocLink;
 import org.asciidoc.intellij.psi.AsciiDocSection;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -220,6 +221,10 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
       if (references.length > 0 && references[references.length - 1] instanceof AsciiDocFileReference) {
         // resolve file reference
         AsciiDocFileReference fileReference = (AsciiDocFileReference) references[references.length - 1];
+        if (AsciiDocUtil.findAntoraModuleDir(atCaret) != null && !fileReference.isAnchor()) {
+          // for page links, Antora will retrieve the information automatically, therefore, leave it blank.
+          return "";
+        }
         PsiElement resolve = fileReference.resolve();
         if (resolve instanceof AsciiDocBlockId && resolve.getParent() instanceof AsciiDocSection) {
           resolve = resolve.getParent();

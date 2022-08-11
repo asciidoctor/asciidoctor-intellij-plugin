@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.41
+
+- Don't add page title when pressing smart enter for references without anchor when in the context of an Antora module
+
 === 0.37.40
 
 - Support imagesdir to indicate image location even if image starts with an absolute path (#1128)
