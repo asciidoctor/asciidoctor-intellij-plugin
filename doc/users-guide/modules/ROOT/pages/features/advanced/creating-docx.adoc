@@ -1,6 +1,6 @@
-= Create a DOCX file from an AsciiDoc file
+= Createing a DOCX file from an AsciiDoc file
 :description: Create a DOCX file for Microsoft Word and LibreOffice from an AsciiDoc file directly in your IDE.
-:navtitle: Create DOCX
+:navtitle: Creating DOCX
 
 {description}
 

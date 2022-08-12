@@ -1,6 +1,6 @@
-= Grammar checking for AsciiDoc content
+= Checking the Grammar for AsciiDoc content
 :description: Validate the grammar for the written content.
-:navtitle: Grammar checking
+:navtitle: Checking the Grammar
 
 {description}
 This functionality is added via additional plugins.

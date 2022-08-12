@@ -1,4 +1,4 @@
-= Recommended settings
+= Configuring the plugin
 :description: Take a minute for the essential configuration settings of the plugin.
 
 // make preview work on non-Antora sites, for example, GitHub

@@ -1,5 +1,4 @@
-= Keymap
-:navtitle: Keymap
+= Using Hotkeys
 :description: Keyboard shortcuts.
 
 This is a list of keyboard shortcuts.

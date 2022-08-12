@@ -42,7 +42,7 @@ See xref:faq/indent-missing-on-pasting.adoc[] for more information.
 
 An AsciiDoc recommended practice is to have link:https://asciidoctor.org/docs/asciidoc-recommended-practices/[_one sentence per line_].
 
-See xref:recommended-settings.adoc#configuring-editor[section "`Configuring editor`" in chapter "`Recommended settings`"] on how to enable soft-wrap.
+See xref:recommended-settings.adoc#configuring-editor[section "`Configuring editor`" in chapter "`Configuring the plugin`"] on how to enable soft-wrap.
 
 === I'm editing a file that shows validation errors
 
@@ -59,7 +59,7 @@ This might happen when a custom shell has been configured and the folder contain
 
 Re-configure via menu:File[Settings...,Tools,Terminal,Shell path] and add quotes around the path and executable.
 
-See xref:features/editor.adoc#interaction-new-terminal[] for more details.
+See xref:features/editor.adoc#interaction-new-terminal[Running shell commands from the same terminal] for more details.
 
 == Preview Troubles
 

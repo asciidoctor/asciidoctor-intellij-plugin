@@ -1,4 +1,4 @@
-= Source highlighting in the preview
+= Highlighting source code
 :description: The preview supports different highlighting for source code like Coderay, Rouge and highlight.js.
 
 Source highlighting shows source code listings in a document colored for better readability similar to an IDE.

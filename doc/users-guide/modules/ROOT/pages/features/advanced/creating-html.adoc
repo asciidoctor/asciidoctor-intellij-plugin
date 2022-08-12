@@ -1,6 +1,6 @@
-= Create a HTML document from an AsciiDoc file
+= Creating a HTML document from an AsciiDoc file
 :description: Create HTML from an AsciiDoc file directly in your IDE.
-:navtitle: Create HTML
+:navtitle: Creating HTML
 
 {description}
 

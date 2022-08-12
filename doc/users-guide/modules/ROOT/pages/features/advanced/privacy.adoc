@@ -1,5 +1,5 @@
 = Privacy when using this plugin
-:navtitle: Privacy
+:navtitle: Privacy for users
 :description: All the content a user edits locally is rendered locally. Some exceptions apply.
 
 {description}

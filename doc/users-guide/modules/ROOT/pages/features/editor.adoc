@@ -1,6 +1,6 @@
-= Features of the Editor
+= Editing AsciiDoc Content
 :description: Feature summary of the editor for navigation, writing and reformatting.
-:navtitle: Editor
+:navtitle: Editing Content
 
 {description}
 

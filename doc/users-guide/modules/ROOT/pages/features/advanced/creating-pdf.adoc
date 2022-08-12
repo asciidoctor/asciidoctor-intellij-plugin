@@ -1,7 +1,7 @@
-= Create a PDF from an AsciiDoc file
+= Creating a PDF from an AsciiDoc file
 :description: Create PDF from an AsciiDoc file directly in your IDE.
 :page-aliases: features/advanced/creating-html-and-pdf.adoc
-:navtitle: Create PDF
+:navtitle: Creating PDF
 
 {description}
 
@@ -30,3 +30,7 @@ As of the AsciiDoc Plugin version 0.31.14+, Asciidoctor PDF is no longer include
 When creating a PDF for the first time, the plugin will download the necessary dependency.
 
 include::partial$download-dependencies.adoc[]
+
+== Non-latin languages and extra fonts
+
+There is a separate chapter on how to enable xref:features/advanced/pdf-non-latin-languages.adoc[Non-latin languages and extra fonts] when creating PDFs with AsciiDoc and this plugin.

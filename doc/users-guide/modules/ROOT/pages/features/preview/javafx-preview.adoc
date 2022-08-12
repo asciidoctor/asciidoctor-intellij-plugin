@@ -1,18 +1,26 @@
 = JavaFX Preview
-:description: JavaFX preview allows a rich preview of AsciiDoc content.
+:description: JavaFX preview allows a rich preview of AsciiDoc content when the JCEF preview is not available.
 
 {description}
 
 [NOTE]
 ====
-Starting from IntelliJ 2020.2 and plugin version 0.31.x the most advanced preview mode is JCEF.
-JetBrains deprecated JavaFX usage in plugins.
+Starting from IntelliJ 2020.2 and plugin version 0.31.x the most advanced preview mode is xref:features/preview/jcef-preview.adoc[JCEF preview].
+JetBrains deprecated usage of JavaFX in plugins.
 Future versions of the IDE might not support the JavaFX preview at all.
 ====
 
 == Why to use the JavaFX preview
 
-The JavaFX preview provides better HTML preview and additional features like scroll-to-view and opening links in the browser.
+The JavaFX preview provides better HTML preview and additional features like scroll-to-view and opening links in the browser compared to the Swing preview.
+
+It can serve as a fall-back in situations where the more advanced xref:features/preview/jcef-preview.adoc[JCEF preview] is not available.
+
+== How to enable the JavaFX preview
+
+include::partial$javafx-preview-requires-plugin.adoc[]
+
+Once JavaFX is available, the user can change the preview to JavaFX in the plugin's settings via menu:File[Settings... > Languages & Frameworks > AsciiDoc > Preview Browser].
 
 == Limitations of the JavaFX preview
 
@@ -23,7 +31,7 @@ Use the JCEF preview for better SVG support and improved rendering on high-resol
 
 include::partial$content-security-policy.adoc[]
 
-== When you can use JavaFX preview
+== When the JavaFX preview is available
 
 The JavaFX preview works on a 64bit JDK and needs JavaFX installed.
 Use the JDK provided by JetBrains for the best results, as it contains relevant bug fixes.
@@ -34,7 +42,7 @@ include::partial$javafx-preview-requires-plugin.adoc[]
 [[choose-jdk]]
 === Selecting a different JetBrains JDK using the "`Choose Runtime`" plugin
 
-This is recommended for Android Studio 4.0 that includes JetBrains OpenJDK 8 as default without JavaFX support.
+This is recommended for Android Studio 4.0 that includes JetBrains OpenJDK 8 by default without JavaFX support.
 
 NOTE: See xref:features/preview/jcef-preview.adoc[] for more information on Android Studio 4.2 or 2020.3+.
 
@@ -46,8 +54,8 @@ include::partial$javafx-preview-requires-plugin.adoc[]
 
 == Known Problems with Non-JetBrains-JDKs
 
-* OpenJDK provided on Linux OS sometimes don't include JavaFX, therefore, the JavaFX preview is not available.
-Please use the JetBrains JDK.
+* OpenJDK provided on Linux OS sometimes don't include JavaFX, therefore, the JavaFX preview is not available. +
+Use the JetBrains JDK instead.
 
-* Oracle JDK JavaFX package on Windows is less stable compared to the OpenJDK provided by Jetbrains and might lead to a crashing IDE.
-Please use the JetBrains JDK.
+* Oracle JDK JavaFX package on Windows is less stable compared to the OpenJDK provided by Jetbrains and might lead to a crashing IDE. +
+Use the JetBrains JDK instead.

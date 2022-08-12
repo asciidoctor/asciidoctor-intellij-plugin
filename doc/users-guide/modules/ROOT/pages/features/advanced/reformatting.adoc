@@ -1,4 +1,4 @@
-= Reformatting
+= Reformatting Content
 :description: The user can reformat AsciiDoc in the editor using “Reformat Code” (Ctrl+Alt+L).
 
 The user can reformat AsciiDoc in the editor using "`Reformat Code`" (kbd:[Ctrl+Alt+L]).
@@ -14,6 +14,10 @@ It also adjusts spaces around list items.
 
 By default, it re-formats blocks to the https://asciidoctor.org/docs/asciidoc-recommended-practices/#one-sentence-per-line[one-sentence-per-line] style.
 The user can disable this in the code style settings.
+
+By default, the IDE will remove leading blanks when pasting content to an AsciiDoc document.
+This doesn't change the rendering of the content as those blanks are optional for AsciiDoc.
+See xref:faq/indent-missing-on-pasting.adoc[] for details on how to disable this.
 
 == IDE vs. Project specific settings
 

@@ -1,4 +1,4 @@
-= Plugin installation
+= Installing the plugin
 :description: List of prerequisites and a step-by-step guide to install the plugin.
 
 // make preview work on non-Antora sites, for example, GitHub

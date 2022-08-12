@@ -34,6 +34,4 @@ The plugin supports different kinds of previews: Swing, JavaFX and JCEF.
 
 As a workaround, consider using the JavaFX preview.
 
-include::partial$javafx-preview-requires-plugin.adoc[]
-
-Once JavaFX is available, the user can change the preview to JavaFX in the plugin's settings via menu:File[Settings... > Languages & Frameworks > AsciiDoc > Preview Browser].
+See section xref:features/preview/javafx-preview.adoc[] for more information on how to enable it.

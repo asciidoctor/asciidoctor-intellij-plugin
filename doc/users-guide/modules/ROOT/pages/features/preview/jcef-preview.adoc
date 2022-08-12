@@ -16,6 +16,10 @@ The JCEF preview provides better HTML preview and additional features like scrol
 As the preview is based on an up-to-date Google Chrome rendering engine, it offers in-par rendering compared to modern browsers.
 This includes rendering of fonts and SVGs.
 
+== How to enable the JavaFX preview
+
+Once JCEF is available, the user can change the preview to JCEF in the plugin's settings via menu:File[Settings... > Languages & Frameworks > AsciiDoc > Preview Browser].
+
 == Security options
 
 include::partial$content-security-policy.adoc[]
@@ -73,12 +77,12 @@ Possible Workarounds:
 * Enable "`Confirm before existing the IDE`" in the IDE's settings.
 Once the DevTools have been closed for an editor, the editor needs to be closed and re-opened before DevTools can be opened again.
 
-* Disable registry option "`ide.browser.jcef.asciidocView.osr.enabled`".
+* Turn off registry option "`ide.browser.jcef.asciidocView.osr.enabled`".
 +
-With OSR disabled, the IDE doesn't close any more on closing the DevTools; instead the preview goes blank once dev tools are closed (see https://youtrack.jetbrains.com/issue/IDEA-284130[IDEA-284130]).
+With OSR turned off, the IDE doesn't close any more on closing the DevTools; instead the preview goes blank once dev tools are closed (see https://youtrack.jetbrains.com/issue/IDEA-284130[IDEA-284130]).
 Closing and re-opening the editor restores the preview.
 +
-Once OSR is disabled, unpinned tool windows can no longer show above the preview (see https://youtrack.jetbrains.com/issue/IDEA-252845[IDEA-252845]).
+Once OSR is turned off, unpinned tool windows can no longer show above the preview (see https://youtrack.jetbrains.com/issue/IDEA-252845[IDEA-252845]).
 ====
 --
 
@@ -92,7 +96,7 @@ It will also enable additional internal menus of the IDE.
 It will also enable additional diagnostic error messages like "`Slow operations are prohibited on EDT`" for all installed plugins.
 --
 
-== When to use JCEF preview
+== When the JCEF preview is available
 
 JCEF preview is only available from IntelliJ 2020.2+ and plugin version 0.31.x.
 It requires that the user runs on the pre-packaged JetBrains OpenJDK 11.
@@ -125,4 +129,4 @@ Change it to "`JCEF Browser`" if this is not the case.
 
 === Troubleshooting JCEF
 
-Please follow the https://intellij-support.jetbrains.com/hc/en-us/articles/360016644459-Reporting-JCEF-problems[JetBrains Knowledge Base article on "`Reporting JCEF Problems`"].
+Follow the https://intellij-support.jetbrains.com/hc/en-us/articles/360016644459-Reporting-JCEF-problems[JetBrains Knowledge Base article on "`Reporting JCEF Problems`"].
