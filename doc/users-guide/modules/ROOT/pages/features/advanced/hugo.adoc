@@ -1,0 +1,70 @@
+= Working with Hugo
+:description: The AsciiDoc plugin for IntelliJ plugin supports Hugo sites.
+
+https://gohugo.io/[Hugo] is a static site generator.
+The AsciiDoc plugin for IntelliJ recognizes Hugo projects and will adjust accordingly.
+
+Images in the static resources can be referenced with an absolute target.
+xref:features/advanced/frontmatter.adoc[] on a content page will be hidden from the preview.
+
+NOTE: Support for static resources was added in plugin version 0.37.41.
+
+== Pre-Requisites
+
+A project needs to have the following features for the AsciiDoc plugin for IntelliJ to recognize it as a Hugo project:
+
+* A configuration file (`config.toml`, `config.json` or `config.yaml`) or configuration folder (`config`).
+* A folder `content` next to the configuration file or folder.
+* If a folder for static resources exists, it has to have the name `static` and needs to be next to the configuration file or folder.
+
+.Minimal example layout for a Hugo project
+----
+📒hugo_project
+├─📄 config.toml
+├─📂 static
+  └─📄 ...
+└─📂 content
+  └─📄 ...
+----
+
+
+While Hugo's configuration file allows changing the name of the content and the static resource folders, this is not supported by the AsciiDoc plugin for IntelliJ, yet.
+
+== Using images in content files
+
+Images in the content can be page resources or static resource files.
+
+Static resources are located in the folder `static`.
+
+https://gohugo.io/content-management/page-resources/[Page resources] exist in the folder with the name of the page, with the content itself being named `index.adoc`.
+
+.Example layout for a Hugo project
+----
+📒hugo_project
+├─📄 config.toml
+├─📂 static
+│ └─📂 images
+│   └─📄 image-in-static.png
+└─📂 content
+  ├─📂 post-1-with-page-resources
+  │ ├─📄 index.adoc
+  │ └─📄 image-for-post.png
+  └─📄 post-2-without-page-resources.adoc
+----
+
+To reference an image in the post's folder, use a relative target name for the image.
+To reference an image in the static resources, use a target name for the image starting with a slash (`/`).
+
+.Example post `content/post-1-with-page-resources/index.adoc`
+[source,asciidoc]
+----
+include::example$hugo.adoc[tags=example]
+----
+
+== Further reading
+
+The following pages might be interesting for users running Hugo:
+
+* xref:features/advanced/stylesheets.adoc[Custom stylesheets for the preview].
+
+If a feature is missing, https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[raise a question on GitHub].

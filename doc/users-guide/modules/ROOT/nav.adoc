@@ -13,7 +13,6 @@
 ** Advanced
 // The following list is sorted alphabetically to help users find the contents.
 // Keep it sorted when adding new content.
-*** xref:features/advanced/antora.adoc[]
 *** xref:features/advanced/asciidoclet.adoc[]
 *** xref:features/advanced/asciidoctorconfig-file.adoc[]
 *** xref:features/advanced/asciidoctor-extensions.adoc[]
@@ -32,6 +31,8 @@
 *** xref:features/advanced/privacy.adoc[]
 *** xref:features/advanced/reformatting.adoc[]
 *** xref:features/advanced/spring-rest-docs.adoc[]
+*** xref:features/advanced/antora.adoc[]
+*** xref:features/advanced/hugo.adoc[]
 * xref:faq.adoc[]
 ** xref:faq/indent-missing-on-pasting.adoc[]
 ** xref:faq/jcef-no-proxy-support.adoc[]

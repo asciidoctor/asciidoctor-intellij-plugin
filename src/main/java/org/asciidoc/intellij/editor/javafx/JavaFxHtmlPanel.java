@@ -656,37 +656,33 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
         // ignored, this must be a manually entered URL with a percentage sign
         continue;
       }
+      String replacement = null;
       String tmpFile = findTempImageFile(file, attributes.get("imagesdir"));
-      String md5;
-      String replacement;
       if (tmpFile != null) {
-        md5 = calculateMd5(tmpFile, null);
-        tmpFile = tmpFile.replaceAll("\\\\", "/");
-        replacement = "<img src=\"file://" + tmpFile + "?" + md5 + "\"";
-      } else {
-        md5 = calculateMd5(file, base);
-        if (!md5.equals("none")) {
-          replacement = "<img src=\"file://" + base.replaceAll("%3A", ":") + "/" + file + "?" + md5 + "\"";
-        } else if (attributes.get("imagesdir") != null && attributes.get("imagesdir").length() > 0 && file.startsWith("/")) {
-          // For image file names starting with a slash, the imagesdir is not being added automatically.
-          // Try to use it to find the file - imagesdir might be relative to the base directory, or an absolute path.
-          md5 = calculateMd5(attributes.get("imagesdir") + file, base);
-          if (!md5.equals("none")) {
-            file = attributes.get("imagesdir") + file;
-            replacement = "<img src=\"file://" + base.replaceAll("%3A", ":") + "/" + file + "?" + md5 + "\"";
-          } else {
-            md5 = calculateMd5(file, attributes.get("imagesdir"));
-            if (!md5.equals("none")) {
-              replacement = "<img src=\"file://" + attributes.get("imagesdir").replaceAll("%3A", ":") + "/" + file + "?" + md5 + "\"";
-            } else {
-              replacement = "<img src=\"file://" + base.replaceAll("%3A", ":") + "/" + file + "?" + md5 + "\"";
-            }
-          }
-        } else {
-          // some fallback
-          replacement = "<img src=\"file://" + base.replaceAll("%3A", ":") + "/" + file + "?" + md5 + "\"";
+        replacement = calculateFileAndMd5(tmpFile, null);
+      }
+      if (replacement == null) {
+        replacement = calculateFileAndMd5(file, base);
+      }
+      if (replacement == null && file.startsWith("/") && editor != null) {
+        VirtualFile hugoStaticFile = AsciiDocUtil.findHugoStaticFolder(editor.getProject(), this.parentDirectory);
+        if (hugoStaticFile != null) {
+          replacement = calculateFileAndMd5(file.substring(1), hugoStaticFile.getCanonicalPath());
         }
       }
+      if (replacement == null && attributes.get("imagesdir") != null && attributes.get("imagesdir").length() > 0 && file.startsWith("/")) {
+        // For image file names starting with a slash, the imagesdir is not being added automatically.
+        // Try to use it to find the file - imagesdir might be relative to the base directory, or an absolute path.
+        replacement = calculateFileAndMd5(attributes.get("imagesdir") + file, base);
+        if (replacement == null) {
+          replacement = calculateFileAndMd5(file, attributes.get("imagesdir"));
+        }
+      }
+      if (replacement == null) {
+        // some fallback
+        replacement = base.replaceAll("%3A", ":") + "/" + file + "?none";
+      }
+      replacement = "<img src=\"file://" + replacement + "\"";
       html = html.substring(0, matchResult.start()) +
         replacement + html.substring(matchResult.end());
       matcher.reset(html);
@@ -738,6 +734,16 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     /* Add JavaScript for auto-scrolling and clickable links */
     return html
       .replace("</body>", getScriptingLines() + "</body>");
+  }
+
+  private String calculateFileAndMd5(String file, String base) {
+    file = file.replaceAll("\\\\", "/");
+    String md5 = calculateMd5(file, base);
+    if (!md5.equals("none")) {
+      return (base != null ? base.replaceAll("%3A", ":") + "/" : "") + file + "?" + md5;
+    } else {
+      return null;
+    }
   }
 
   private String calculateMd5(String file, String base) {

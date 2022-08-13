@@ -1,4 +1,4 @@
-= Antora
+= Working with Antora
 :description: This plugin supports Antora attributes like 'imagesdir' and 'examplesdir'. It also resolves xrefs and includes in the preview.
 
 https://antora.org/[Antora] helps to write and publish documentation websites.

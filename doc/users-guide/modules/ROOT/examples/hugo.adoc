@@ -1,0 +1,12 @@
+// suppress inspection "AsciiDocLinkResolve" for whole file
+
+// tag::example[]
+= Page title
+
+// show a page resource with a relative target
+image::image-for-post.png[]
+
+// show a global resource with an absolute target
+image::/static/images/image-in-static.png[]
+
+// end::example[]

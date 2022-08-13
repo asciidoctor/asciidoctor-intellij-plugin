@@ -94,6 +94,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   public static final Pattern URL = Pattern.compile("^\\p{Alpha}[\\p{Alnum}.+-]+:/{0,2}", Pattern.UNICODE_CHARACTER_CLASS);
   public static final String FILE_PREFIX = "file:///";
 
+
+
   private final String key;
   private final String macroName;
   private final String base;
@@ -523,14 +525,14 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       String resolvedKey = AsciiDocUtil.resolveAttributes(root, key);
       if (resolvedKey != null) {
         String defaultFamily = null;
-        if (macroName.equals("image") || macroName.equals("video")) {
+        if (macroName.equals("image") || macroName.equals("video") || macroName.equals("audio")) {
           defaultFamily = "image";
         } else if (macroName.equals("xref") || macroName.equals("xref-attr") || macroName.equals("include")) {
           defaultFamily = "page";
         }
         return AsciiDocUtil.replaceAntoraPrefix(root, resolvedKey, defaultFamily);
       }
-    } else if (macroName.equals("image") || macroName.equals("video")) {
+    } else if (macroName.equals("image") || macroName.equals("video") || macroName.equals("audio")) {
       VirtualFile antoraImagesDir = AsciiDocUtil.findAntoraImagesDir(root);
       if (antoraImagesDir != null) {
         return Collections.singletonList(antoraImagesDir.getCanonicalPath() + "/" + key);
@@ -588,8 +590,14 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       }
       int c = results.size();
       resolveAttributes(k, results, depth, searchedKeys);
-      if (results.size() == c && ("image".equals(macroName) || "video".equals(macroName)) && k.equals(key) && depth == 0) {
+      if (results.size() == c && ("image".equals(macroName) || "video".equals(macroName) || "audio".equals(macroName)) && k.equals(key) && depth == 0) {
         resolveAttributes("{imagesdir}/" + k, results, depth, searchedKeys);
+        if (results.size() == c && k.startsWith("/")) {
+          VirtualFile hugoStaticFile = AsciiDocUtil.findHugoStaticFolder(myElement);
+          if (hugoStaticFile != null) {
+            resolveAttributes(hugoStaticFile.getCanonicalPath() + k, results, depth, searchedKeys);
+          }
+        }
       }
     }
     resolveAntoraPageAlias(key, results, depth);
@@ -883,7 +891,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     final CommonProcessors.CollectUniquesProcessor<PsiFileSystemItem> collector =
       new CommonProcessors.CollectUniquesProcessor<>();
 
-    if ("image".equals(macroName)) {
+    if ("image".equals(macroName) || "audio".equals(macroName) || "video".equals(macroName)) {
       VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(root);
       if (antoraModuleDir != null) {
         getVariants(base, collector, 0);
@@ -891,6 +899,12 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         // this is not antora, therefore try with and without imagesdir
         getVariants(base, collector, 0);
         getVariants("{imagesdir}/" + base, collector, 0);
+        if (base.startsWith("/")) {
+          VirtualFile hugoStaticFile = AsciiDocUtil.findHugoStaticFolder(myElement);
+          if (hugoStaticFile != null) {
+            getVariants(hugoStaticFile.getCanonicalPath() + base, collector, 0);
+          }
+        }
       }
     } else if ("link".equals(macroName) || "xref".equals(macroName) || "xref-attr".equals(macroName)) {
       getVariants(base, collector, 0);

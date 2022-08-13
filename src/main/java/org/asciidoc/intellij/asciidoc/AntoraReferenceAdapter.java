@@ -75,7 +75,7 @@ public class AntoraReferenceAdapter {
       }
       String outfileSuffix = (String) phraseNode.getDocument().getAttribute("outfilesuffix");
       String target;
-      if (type.equals("image") || type.equals("video")) {
+      if (type.equals("image") || type.equals("video") || type.equals("audio")) {
         target = (String) phraseNode.getAttribute("target");
       } else {
         target = phraseNode.getTarget(); // example$page.html - the link, with .adoc already replaced to .html
@@ -122,6 +122,7 @@ public class AntoraReferenceAdapter {
           break;
         case "inline_image":
         case "image":
+        case "audio":
         case "video":
           defaultFamily = "image";
           break;
@@ -184,7 +185,7 @@ public class AntoraReferenceAdapter {
       }
       String relativePath = null;
       if (sourceDir != null && targetFile != null) {
-        if (type.equals("image") || type.equals("inline_image") || type.equals("video")) {
+        if (type.equals("image") || type.equals("inline_image") || type.equals("video") || type.equals("audio")) {
           // compute relative path from imagesdir for images as Asciidoctor will prepend this
           String imagesdir = (String) phraseNode.getDocument().getAttribute("imagesdir");
           File source;
@@ -221,7 +222,7 @@ public class AntoraReferenceAdapter {
       if (anchor != null) {
         target = target + "#" + anchor;
       }
-      if (type.equals("image") || type.equals("video")) {
+      if (type.equals("image") || type.equals("video") || type.equals("audio")) {
         phraseNode.setAttribute("target", target, true);
       } else {
         phraseNode.setString("target", target);

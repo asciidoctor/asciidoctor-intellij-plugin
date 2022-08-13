@@ -66,7 +66,7 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
               }
             }
           }
-          if (blockMacro.getMacroName().equals("image") || blockMacro.getMacroName().equals("video")) {
+          if (blockMacro.getMacroName().equals("image") || blockMacro.getMacroName().equals("video") || blockMacro.getMacroName().equals("audio")) {
             continueResolving = hasImagesDirAsUrl(o);
           }
         }
@@ -109,7 +109,10 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
             return;
           } else if (resolvedBody.startsWith("/")) {
             // probably a link to some other part of the site
-            return;
+            if (!(macroName.equals("image") || macroName.equals("audio") || macroName.equals("video")) || AsciiDocUtil.findHugoStaticFolder(o) == null) {
+              // for hugo, images should resolve in the static folder
+              return;
+            }
           } else if (resolvedBody.startsWith("../")) {
             // probably a link to some other part of the site
             if (AsciiDocUtil.findAntoraModuleDir(o) == null || !resolvedBody.matches("^(\\.\\./)+(attachments|images)/.*$")) {

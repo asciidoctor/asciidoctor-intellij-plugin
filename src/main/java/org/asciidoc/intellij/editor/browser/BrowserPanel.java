@@ -182,7 +182,7 @@ public class BrowserPanel implements Disposable {
       base = "";
     }
     html = "<html><head></head><body><div id=\"header\"></div>" + html + "<div id=\"footer\"></div></body></html>";
-    html = prepareHtml(html, project, asciiDocWrapper.getAttributes(), imagesPath, AsciiDocUtil.findAntoraModuleDir(project, file.getParent()) != null);
+    html = prepareHtml(html, project, asciiDocWrapper.getAttributes(), imagesPath, AsciiDocUtil.findAntoraModuleDir(project, file.getParent()) != null, file);
     return html;
   }
 
@@ -239,7 +239,7 @@ public class BrowserPanel implements Disposable {
   }
 
   @SuppressWarnings("checkstyle:MethodLength")
-  private String prepareHtml(@NotNull String html, Project project, Map<String, String> attributes, Path imagesPath, boolean isAntora) {
+  private String prepareHtml(@NotNull String html, Project project, Map<String, String> attributes, Path imagesPath, boolean isAntora, @NotNull VirtualFile originalFile) {
     // Antora plugin might resolve some absolute URLs, convert them to localfile so they get their MD5 that prevents caching
     Pattern pattern = Pattern.compile("<img src=\"file:///([^\"]*)\"");
     Matcher matcher = pattern.matcher(html);
@@ -279,36 +279,33 @@ public class BrowserPanel implements Disposable {
         // ignored, this must be a manually entered URL with a percentage sign
         continue;
       }
+      String replacement = null;
       String tmpFile = findTempImageFile(file, attributes.get("imagesdir"), imagesPath);
-      String md5;
-      String replacement;
       if (tmpFile != null) {
-        md5 = calculateMd5(tmpFile, null);
-        replacement = "<img src=\"image?file=" + signFile(tmpFile) + "&amp;hash=" + md5 + "\"";
-      } else {
-        md5 = calculateMd5(file, base);
-        if (!md5.equals("none")) {
-          replacement = "<img src=\"image?file=" + signFile(base + "/" + file) + "&amp;hash=" + md5 + "\"";
-        } else if (attributes.get("imagesdir") != null && attributes.get("imagesdir").length() > 0 && file.startsWith("/")) {
-          // For image file names starting with a slash, the imagesdir is not being added automatically.
-          // Try to use it to find the file - imagesdir might be relative to the base directory, or an absolute path.
-          md5 = calculateMd5(attributes.get("imagesdir") + file, base);
-          if (!md5.equals("none")) {
-            file = attributes.get("imagesdir") + file;
-            replacement = "<img src=\"image?file=" + signFile(base + "/" + file) + "&amp;hash=" + md5 + "\"";
-          } else {
-            md5 = calculateMd5(file, attributes.get("imagesdir"));
-            if (!md5.equals("none")) {
-              replacement = "<img src=\"image?file=" + signFile(attributes.get("imagesdir") + "/" + file) + "&amp;hash=" + md5 + "\"";
-            } else {
-              replacement = "<img src=\"image?file=" + signFile(base + "/" + file) + "&amp;hash=" + md5 + "\"";
-            }
-          }
-        } else {
-          // some fallback
-          replacement = "<img src=\"file://" + signFile(base + "/" + file) + "?" + md5 + "\"";
+        replacement = calculateFileAndMd5(tmpFile, null);
+      }
+      if (replacement == null) {
+        replacement = calculateFileAndMd5(file, base);
+      }
+      if (replacement == null && file.startsWith("/")) {
+        VirtualFile hugoStaticFile = AsciiDocUtil.findHugoStaticFolder(project, originalFile);
+        if (hugoStaticFile != null) {
+          replacement = calculateFileAndMd5(file.substring(1), hugoStaticFile.getCanonicalPath());
         }
       }
+      if (replacement == null && attributes.get("imagesdir") != null && attributes.get("imagesdir").length() > 0 && file.startsWith("/")) {
+        // For image file names starting with a slash, the imagesdir is not being added automatically.
+        // Try to use it to find the file - imagesdir might be relative to the base directory, or an absolute path.
+        replacement = calculateFileAndMd5(attributes.get("imagesdir") + file, base);
+        if (replacement == null) {
+          replacement = calculateFileAndMd5(file, attributes.get("imagesdir"));
+        }
+      }
+      if (replacement == null) {
+        // some fallback
+        replacement = base + "/" + file + "&amp;hash=none";
+      }
+      replacement = "<img src=\"image?file=" + replacement + "\"";
       html = html.substring(0, matchResult.start()) +
         replacement + html.substring(matchResult.end());
       matcher.reset(html);
@@ -413,6 +410,16 @@ public class BrowserPanel implements Disposable {
       result.append("<style>\n").append(inlineCss).append("\n</style>\n");
     }
     return result.toString();
+  }
+
+  private String calculateFileAndMd5(String file, String base) {
+    file = file.replaceAll("\\\\", "/");
+    String md5 = calculateMd5(file, base);
+    if (!md5.equals("none")) {
+      return signFile((base != null ? base + "/" : "") + file) + "&amp;hash=" + md5;
+    } else {
+      return null;
+    }
   }
 
   public static String calculateMd5(String file, String base) {

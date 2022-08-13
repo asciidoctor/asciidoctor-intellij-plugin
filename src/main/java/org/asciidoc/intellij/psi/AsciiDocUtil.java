@@ -1087,6 +1087,53 @@ public class AsciiDocUtil {
     return springRestDocSnippets;
   }
 
+  public static VirtualFile findHugoStaticFolder(PsiElement element) {
+    VirtualFile vf = null;
+    if (element instanceof PsiFile) {
+      vf = ((PsiFile) element).getVirtualFile();
+    } else if (element instanceof PsiDirectory) {
+      vf = ((PsiDirectory) element).getVirtualFile();
+    } else {
+      PsiFile file = element.getContainingFile();
+      if (file != null) {
+        vf = file.getVirtualFile();
+        if (vf == null) {
+          // when running autocomplete, there is only an original file
+          vf = file.getOriginalFile().getVirtualFile();
+        }
+      }
+    }
+    if (vf != null) {
+      VirtualFile hugoStaticFolder = findHugoStaticFolder(element.getProject(), vf);
+      if (hugoStaticFolder != null && hugoStaticFolder.getCanonicalPath() != null && vf.getCanonicalPath() != null) {
+        return hugoStaticFolder;
+      }
+    }
+    return null;
+  }
+
+  public static VirtualFile findHugoStaticFolder(Project project, VirtualFile fileBaseDir) {
+    VirtualFile dir = fileBaseDir;
+    Collection<String> roots = getRoots(project);
+    while (dir != null) {
+      if (dir.getParent() != null && dir.getParent().getName().equals("content")) {
+        VirtualFile staticFolder = dir.getParent().getParent().findChild("static");
+        boolean configExists = dir.getParent().getParent().findChild("config") != null ||
+          dir.getParent().getParent().findChild("config.toml") != null ||
+          dir.getParent().getParent().findChild("config.yaml") != null ||
+          dir.getParent().getParent().findChild("config.json") != null;
+        if (staticFolder != null && configExists) {
+          return staticFolder;
+        }
+      }
+      if (roots.contains(dir.getName())) {
+        break;
+      }
+      dir = dir.getParent();
+    }
+    return null;
+  }
+
   @Nullable
   public static VirtualFile findAntoraPartials(PsiElement element) {
     VirtualFile antoraPartials = null;
