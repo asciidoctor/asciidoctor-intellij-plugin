@@ -1,8 +1,8 @@
 = Creating a HTML document from an AsciiDoc file
-:description: Create HTML from an AsciiDoc file directly in your IDE.
+:description: Create HTML from an AsciiDoc file directly in the IDE.
 :navtitle: Creating HTML
 
 {description}
 
-The user can choose _Create HTML from current file_ from the editor's action toolbar to convert the file to the HTML format.
+The user can choose menu:Create HTML from current file[] from the editor's action toolbar to convert the file to the HTML format.
 If creation of the HTML file succeeds, the exported file is opened in the system's default browser.

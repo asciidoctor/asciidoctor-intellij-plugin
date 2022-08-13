@@ -1,5 +1,5 @@
-= Createing a DOCX file from an AsciiDoc file
-:description: Create a DOCX file for Microsoft Word and LibreOffice from an AsciiDoc file directly in your IDE.
+= Creating a DOCX file from an AsciiDoc file
+:description: Create a DOCX file for Microsoft Word and LibreOffice from an AsciiDoc file directly in the IDE.
 :navtitle: Creating DOCX
 
 {description}
@@ -9,8 +9,8 @@
 This feature is available since plugin version 0.37.26.
 ====
 
-The user can choose _Create DOCX from current file_ from the editor's action toolbar to convert the current file to the DOCX format.
-If creation of the DOCX file succeeds, the exported file is opened in the system's default application, for example Microsoft Word or LibreOffice.
+The user can choose menu:Create DOCX from current file[] from the editor's action toolbar to convert the current file to the DOCX format.
+If creation of the DOCX file succeeds, the exported file is opened in the system's default application, for example, Microsoft Word or LibreOffice.
 
 == Downloading Pandoc
 
