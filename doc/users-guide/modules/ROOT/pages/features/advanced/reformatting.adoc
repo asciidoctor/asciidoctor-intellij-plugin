@@ -35,7 +35,7 @@ If a user has multiple IDE instances installed on a single machine, each IDE ins
 
 The XML file is specific to IntelliJ.
 Depending on the project's version control system configuration, the folder `.idea/codeStyle` might be ignored.
-When using Git as a version control system, users should check their `.gitignore` file if the folder or its contents are ignored, and ammend the configuration to allow files to be committed there.
+When using Git as a version control system, users should check their `.gitignore` file if the folder or its contents are ignored, and amend the configuration to allow files to be committed there.
 Once the file has been committed, the formatting settings are available to other users as well.
 
 === Settings per project as an `.editorconfig` file
