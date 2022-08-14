@@ -41,7 +41,6 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.serviceContainer.AlreadyDisposedException;
-import com.intellij.util.SlowOperations;
 import com.intellij.util.text.CharArrayUtil;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.AsciiDocWrapper;
@@ -1463,11 +1462,7 @@ public class AsciiDocUtil {
       return Collections.singletonList(originalKey);
     }
     if (moduleDir != null) {
-      // this might be called from DocumentationManager.doShowJavaDocInfo
-      // allow slow operations for now, as no alternative is possible here to resolve the reference.
-      // https://youtrack.jetbrains.com/issue/IDEA-273415
-      // should no longer be necessary in 2021.3 onwards as that uses com.intellij.lang.documentation.ide.impl.DocumentationManager
-      return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> SlowOperations.allowSlowOperations(() -> {
+      return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
         String key = originalKey;
         String myModuleName = moduleDir.getName();
         VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
@@ -1580,7 +1575,7 @@ public class AsciiDocUtil {
           }
         }
         return result;
-      }));
+      });
     }
     return Collections.singletonList(originalKey);
   }
@@ -1595,11 +1590,7 @@ public class AsciiDocUtil {
     if (urlMatcher.find()) {
       return false;
     }
-    // this might be called from DocumentationManager.doShowJavaDocInfo
-    // allow slow operations for now, as no alternative is possible here to resolve the reference.
-    // https://youtrack.jetbrains.com/issue/IDEA-273415
-    // should no longer be necessary in 2021.3 onwards as that uses com.intellij.lang.documentation.ide.impl.DocumentationManager
-    return (boolean) AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> SlowOperations.allowSlowOperations(() -> {
+    return (boolean) AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
       String key = originalKey;
       VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
       if (antoraFile == null) {
@@ -1633,7 +1624,7 @@ public class AsciiDocUtil {
         otherComponentName = componentModule.group("component");
       }
       return getOtherAntoraComponents(myElement.getProject(), moduleDir, myComponentName, myComponentVersion, otherComponentVersion, otherComponentName).size() > 0;
-    }));
+    });
   }
 
   public static String findAttribute(String key, Collection<AttributeDeclaration> declaration) {
