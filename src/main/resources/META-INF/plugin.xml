@@ -241,8 +241,6 @@
     <editorNotificationProvider
       implementation="org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider"/>
     <editorNotificationProvider
-      implementation="org.asciidoc.intellij.editor.notification.UpdateIntellijNotificationProvider"/>
-    <editorNotificationProvider
       implementation="org.asciidoc.intellij.editor.notification.HugoNotificationProvider"/>
     <editorNotificationProvider
       implementation="org.asciidoc.intellij.editor.notification.FileOutsideCurrentProjectNotificationProvider"/>
