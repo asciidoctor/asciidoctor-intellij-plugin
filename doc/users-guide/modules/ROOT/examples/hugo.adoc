@@ -7,6 +7,6 @@
 image::image-for-post.png[]
 
 // show a global resource with an absolute target
-image::/static/images/image-in-static.png[]
+image::/images/image-in-static.png[]
 
 // end::example[]
