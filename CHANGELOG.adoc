@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Fix error message "Project settings exist but not loaded yet" (#1131)
 - Avoid an already disposed element (#1132)
+- Fix NPE when resolving partials in Antora partials (#1133)
 
 === 0.37.41
 

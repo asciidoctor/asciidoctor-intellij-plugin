@@ -1390,7 +1390,12 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     }
     String lastPart;
     try {
-      lastPart = Path.of(fileName).getFileName().toString();
+      Path fn = Path.of(fileName).getFileName();
+      if (fn != null) {
+        lastPart = fn.toString();
+      } else {
+        lastPart = "?";
+      }
     } catch (InvalidPathException ex) {
       lastPart = "?";
     }
