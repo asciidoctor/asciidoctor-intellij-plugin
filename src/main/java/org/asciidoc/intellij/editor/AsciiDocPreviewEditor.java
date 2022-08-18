@@ -296,17 +296,21 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
       @Override
       public void componentHidden(ComponentEvent e) {
-        mySwingAlarm.addRequest(() -> {
-          try {
-            synchronized (this) {
-              if (myPanel != null) {
-                myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, null);
+        if (!mySwingAlarm.isDisposed()) {
+          mySwingAlarm.addRequest(() -> {
+            try {
+              if (!mySwingAlarm.isDisposed()) {
+                synchronized (this) {
+                  if (myPanel != null) {
+                    myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, null);
+                  }
+                }
               }
+            } catch (Exception ex) {
+              LOG.error("unhandled exception when preparing the preview", ex);
             }
-          } catch (Exception ex) {
-            LOG.error("unhandled exception when preparing the preview", ex);
-          }
-        }, 0, ModalityState.stateForComponent(getComponent()));
+          }, 0, ModalityState.stateForComponent(getComponent()));
+        }
       }
     });
 
@@ -380,22 +384,26 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   }
 
   private void setupPanel() {
-    mySwingAlarm.addRequest(() -> {
-      try {
-        synchronized (this) {
-          if (myPanel == null) {
-            final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
-            myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, null, retrievePanelProvider(settings));
-            myPanel.setEditor(editor);
-            myPanel.scrollToLine(targetLineNo, document.getLineCount());
-            forceRenderCycle();
-            renderIfVisible();
+    if (!mySwingAlarm.isDisposed()) {
+      mySwingAlarm.addRequest(() -> {
+        try {
+          if (!mySwingAlarm.isDisposed()) {
+            synchronized (this) {
+              if (myPanel == null) {
+                final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+                myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, null, retrievePanelProvider(settings));
+                myPanel.setEditor(editor);
+                myPanel.scrollToLine(targetLineNo, document.getLineCount());
+                forceRenderCycle();
+                renderIfVisible();
+              }
+            }
           }
+        } catch (Exception ex) {
+          LOG.error("unhandled exception when preparing the preview", ex);
         }
-      } catch (Exception ex) {
-        LOG.error("unhandled exception when preparing the preview", ex);
-      }
-    }, 0, ModalityState.stateForComponent(getComponent()));
+      }, 0, ModalityState.stateForComponent(getComponent()));
+    }
   }
 
   @Contract("_, _, _, null, null -> fail")
@@ -656,12 +664,14 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       if (!mySwingAlarm.isDisposed()) {
         mySwingAlarm.addRequest(() -> {
           try {
-            synchronized (this) {
-              myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
-              myPanel.scrollToLine(targetLineNo, document.getLineCount());
-              forceRenderCycle(); // force a refresh of the preview by resetting the current memorized content
+            if (!mySwingAlarm.isDisposed()) {
+              synchronized (this) {
+                myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
+                myPanel.scrollToLine(targetLineNo, document.getLineCount());
+                forceRenderCycle(); // force a refresh of the preview by resetting the current memorized content
+              }
+              renderIfVisible();
             }
-            renderIfVisible();
           } catch (Exception ex) {
             LOG.error("unhandled exception when preparing the preview", ex);
           }
