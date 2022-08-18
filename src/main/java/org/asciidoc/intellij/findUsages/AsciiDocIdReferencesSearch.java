@@ -183,7 +183,7 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
           }
         }
       }
-      final CharSequence text = ReadAction.compute(() -> psiFile.getViewProvider().getContents());
+      final CharSequence text = ReadAction.compute(psiFile::getText);
       LowLevelSearchUtil.processTexts(text, 0, text.length(), psiFile.getLanguage() == AsciiDocLanguage.INSTANCE ? asciidocSearcher : tagdeclarationSearcher, index -> {
         ProgressManager.checkCanceled();
         myDumbService.runReadActionInSmartMode(() -> {
