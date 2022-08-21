@@ -696,8 +696,10 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       if (settings.getAsciiDocPreviewSettings().getPreviewTheme() == AsciiDocHtmlPanel.PreviewTheme.INTELLIJ) {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
           forceRenderCycle();
-          myPanel.setHtml("", Collections.emptyMap());
-          renderIfVisible();
+          if (myPanel != null) {
+            myPanel.setHtml("", Collections.emptyMap());
+            renderIfVisible();
+          }
         });
       }
     }

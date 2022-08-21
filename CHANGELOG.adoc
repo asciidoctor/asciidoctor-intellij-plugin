@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.37.43
 
 - Fix NPE when showing images in a browser preview (#1137)
+- Fix NPE when changing the global scheme and no preview is showing (#1138)
 
 === 0.37.42
 
