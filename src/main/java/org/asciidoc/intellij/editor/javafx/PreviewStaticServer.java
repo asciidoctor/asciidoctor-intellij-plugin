@@ -231,7 +231,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
         return false;
       }
       sendDocument(request, virtualFile, project, context.channel());
-    } else if ("image".equals(action)) {
+    } else if ("image".equals(action) && urlDecoder.parameters().get("file") != null && urlDecoder.parameters().get("mac") != null) {
       String file = urlDecoder.parameters().get("file").get(0);
       String mac = urlDecoder.parameters().get("mac").get(0);
       return sendImage(request, file, mac, context.channel());

@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.43
+
+- Fix NPE when showing images in a browser preview (#1137)
+
 === 0.37.42
 
 - Fix error message "Project settings exist but not loaded yet" (#1131)
