@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.44
+
+- Bump asciidoctorj-pdf from 2.1.6 to 2.3.0 (#1139)
+
 === 0.37.43
 
 - Fix NPE when showing images in a browser preview (#1137)
