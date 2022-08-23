@@ -16,7 +16,7 @@ On Windows, users need to close the PDF viewer first to be able to create a new 
 
 == Version of Asciidoctor PDF
 
-Plugin version 0.37.24+ uses Asciidoctor PDF version 2.1.
+Plugin version 0.37.44+ uses Asciidoctor PDF version 2.3.
 To find out about the exact version of Asciidoctor PDF used in the plugin a user has installed, create a minimal PDF and look at the document properties as shown in the PDF viewer. The application property shows the exact version of Asciidoctor PDF used to create the document.
 
 image::features/advanced/pdf-document-properties.png[]
