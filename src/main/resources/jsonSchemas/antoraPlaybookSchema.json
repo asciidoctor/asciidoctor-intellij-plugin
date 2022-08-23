@@ -362,6 +362,15 @@
           ],
           "description": "Tags as comma-separated list, an array or a list. Negate entries by prepending with a '!', use '*' as a wildcard."
         },
+        "version": {
+          "type": [
+            "string",
+            "boolean",
+            "object"
+          ],
+          "description": "Fallback version. Either a fixed string value, true (no quotes) to use the refname, or an object of patterns (the keys) and replacements (the values).",
+          "x-intellij-html-description": "Fallback version. <p> Either a fixed string value, <code>true</code> (no quotes) to use the Git refname, or an object of patterns (the keys) and replacements (the values). <p> Find out more in the <a href='https://docs.antora.org/antora/latest/playbook/content-source-version/'>Antora documentation about the fallback version</a>."
+        },
         "edit_url": {
           "type": [
             "boolean",

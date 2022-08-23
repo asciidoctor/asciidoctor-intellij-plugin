@@ -2,8 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Antora component descriptor antora.yml",
   "required": [
-    "name",
-    "version"
+    "name"
   ],
   "type": "object",
   "additionalProperties": false,
@@ -11,6 +10,7 @@
     "name": {
       "type": "string",
       "description": "The name key is the component coordinate that’s used when the component is referenced in a page cross reference, image macro, included example, or included partial. The value can contain letters, numbers, underscores (_), hyphens (-), and periods (.). The value cannot contain blank spaces or forward slashes (/). Example: 'leaf'",
+      "x-intellij-html-description": "The name key is the component coordinate that’s used when the component is referenced in a page cross reference, image macro, included example, or included partial. <p> The value can contain letters, numbers, underscores (<code>_</code>), hyphens (<code>-</code>), and periods (<code>.</code>). The value cannot contain blank spaces or forward slashes (<code>/</code>). Example: <code>'leaf'</code>. <p> Find out more in the <a href='https://docs.antora.org/antora/latest/component-name-key/'>Antora documentation about the name key</a>.",
       "examples": [
         "leaf"
       ],
@@ -20,13 +20,23 @@
       "type": [
         "string",
         "number",
+        "boolean",
+        "object",
         "null"
       ],
-      "description": "The version key is the version coordinate in the resource ID, version segment in the page URL, and, when display_version isn’t set, the version name displayed in the UI. It’s also used to sort multiple versions of the same component. Use '~' (without quotes) for a versionless component. Examples: '1', 'v2.0-beta', 'rawhide'",
+      "description": "The version key is the version coordinate in the resource ID, version segment in the page URL, and, when display_version isn’t set, the version name displayed in the UI. It’s also used to sort multiple versions of the same component. Use a string for an explicit version like '1', 'v2.0-beta', 'rawhide'. Use ~ (no quotes) for a versionless component. Use true (no quotes) to use the Git refname as the version. Use a refname projection to map the refname to a version number.",
+      "x-intellij-html-description": "The version key is the version coordinate in the resource ID, version segment in the page URL. When <code>display_version</code> isn’t set, the version name displayed in the UI. It’s also used to sort multiple versions of the same component. <p> <ul> <li> Use for example <code>'1'</code>, <code>'v2.0-beta'</code>, <code>'rawhide'</code> for a version string. <li>Use <code>~</code> (no quotes) for a versionless component. <li> Use <code>true</code> (no quotes) to use the Git refname as the version. <li> Use a refname projection to map the refname to a version number.</ul> <p> Find out more in the <a href='https://docs.antora.org/antora/latest/component-version-key/'>Antora documentation about the version key</a>.",
       "examples": [
         "1",
         "v2.0-beta",
-        "rawhide"
+        "rawhide",
+        true,
+        {
+          "version": {
+            "v(?<version>+({0..9}).+({0..9})).x": "$<version>",
+            "feature/(*)/*": "$1"
+          }
+        }
       ]
     },
     "display_version": {
