@@ -198,6 +198,13 @@
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
+  <template name="ad-source:php" value="[source,php]&#10;.$FILENAME$.php&#10;----&#10;$SOURCE$&#10;----&#10;&#10;$END$" description="PHP source code" toReformat="false" toShortenFQNames="true">
+    <variable name="FILENAME" expression="" defaultValue="&quot;filename&quot;" alwaysStopAt="true" />
+    <variable name="SOURCE" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="AsciiDoc" value="true" />
+    </context>
+  </template>
   <template name="ad-source:bash" value="[source,bash]&#10;.$FILENAME$.sh&#10;----&#10;$SOURCE$&#10;----&#10;&#10;$END$" description="Bash source code" toReformat="false" toShortenFQNames="true">
     <variable name="FILENAME" expression="" defaultValue="&quot;filename&quot;" alwaysStopAt="true" />
     <variable name="SOURCE" expression="" defaultValue="" alwaysStopAt="true" />
