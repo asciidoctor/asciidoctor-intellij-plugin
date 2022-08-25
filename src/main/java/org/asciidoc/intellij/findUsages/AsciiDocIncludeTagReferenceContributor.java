@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.findUsages;
 
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
@@ -34,9 +35,20 @@ public class AsciiDocIncludeTagReferenceContributor extends PsiReferenceContribu
       PlatformPatterns.psiElement().with(new PatternCondition<>("onlyLeafs") {
         @Override
         public boolean accepts(@NotNull PsiElement psiElement, ProcessingContext context) {
+          // for plain text files, only the file appears here, not its element
+          if (psiElement instanceof PsiFile) {
+            PsiFile file = (PsiFile) psiElement;
+            VirtualFile virtualFile = ((PsiFile) psiElement).getVirtualFile();
+            if (virtualFile == null) {
+              virtualFile = file.getOriginalFile().getVirtualFile();
+            }
+            // offer refactoring of includes only for plain text files smaller than 200k to avoid performance problems when editing
+            if (virtualFile != null && virtualFile.getLength() > 200L * 1024L) {
+              return false;
+            }
+          }
           // restricting this to leaf elements only avoid parsing the same text multiple times
           // all comments where these texts usually occur are LeafElements
-          // for plain text files, only the file appears here, not its element
           return psiElement instanceof LeafElement || psiElement instanceof PsiFile;
         }
       }).withText(StandardPatterns.string().with(new ValuePatternCondition<>("find") {
