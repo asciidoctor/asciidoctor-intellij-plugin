@@ -549,7 +549,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return Collections.singletonList(key);
   }
 
-  private static final Pattern VALID_FILENAME = Pattern.compile("^[\\p{Alnum}_\\-{}./\\\\$:@]*$");
+  private static final Pattern VALID_FILENAME = Pattern.compile("^[\\p{Alnum}_\\-{}./\\\\$:@]*$", Pattern.UNICODE_CHARACTER_CLASS);
 
   private void resolve(String key, List<ResolveResult> results, int depth, Collection<String> searchedKeys) {
     if (searchedKeys.contains(key) || !VALID_FILENAME.matcher(key).matches() || URL_PREFIX_PATTERN.matcher(key).find()) {
