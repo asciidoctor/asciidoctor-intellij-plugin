@@ -12,7 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Bump asciidoctorj-pdf from 2.1.6 to 2.3.0 (#1139)
 - Parse text files for include tags on refactoring only up to 200 kB (#1121)
 - Add live template for php source to the standard templates (thanks to @dozer111) (#1142)
-- Extend Antora's schema to support fallback versions and no version in the component descriptor (thanks to @reitzig) (#1142)
+- Extend Antora's schema to support fallback versions and no version in the component descriptor (thanks to @reitzig) (#1140)
 - When validating references, allow Unicode characters in file names (#1146)
 
 === 0.37.43
