@@ -836,6 +836,9 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     public void openLink(@NotNull String link) {
       final URI uri;
       try {
+        if (link.contains(" ")) {
+          link = link.replaceAll(" ", "%20");
+        }
         uri = new URI(link);
       } catch (URISyntaxException ex) {
         throw new RuntimeException("unable to parse URL " + link);
