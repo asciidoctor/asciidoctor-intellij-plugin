@@ -32,6 +32,8 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
 import icons.AsciiDocIcons;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.net.PercentCodec;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.asciidoc.intellij.AsciiDocLanguage;
@@ -44,6 +46,7 @@ import org.yaml.snakeyaml.error.YAMLException;
 
 import javax.annotation.CheckReturnValue;
 import javax.swing.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -549,7 +552,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     return Collections.singletonList(key);
   }
 
-  private static final Pattern VALID_FILENAME = Pattern.compile("^[\\p{Alnum}_\\-{}./\\\\$:@]*$", Pattern.UNICODE_CHARACTER_CLASS);
+  private static final Pattern VALID_FILENAME = Pattern.compile("^([\\p{Alnum}_\\-{}./\\\\() ,$:@]|(%[a-zA-Z0-9]))*$", Pattern.UNICODE_CHARACTER_CLASS);
 
   private void resolve(String key, List<ResolveResult> results, int depth, Collection<String> searchedKeys) {
     if (searchedKeys.contains(key) || !VALID_FILENAME.matcher(key).matches() || URL_PREFIX_PATTERN.matcher(key).find()) {
@@ -1248,6 +1251,13 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     fileName = removeFileProtocolPrefix(fileName);
     if (URL_PREFIX_PATTERN.matcher(fileName).matches()) {
       return null;
+    }
+    if (fileName.contains("%")) {
+      try {
+        fileName = new String(new PercentCodec().decode(fileName.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+      } catch (DecoderException e) {
+        // noop
+      }
     }
     // resolving of files will take place relative to the original element, not the transposed one.
     PsiElement element = myElement;

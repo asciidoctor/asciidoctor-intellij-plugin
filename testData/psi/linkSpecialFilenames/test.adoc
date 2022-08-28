@@ -1,0 +1,17 @@
+xref:test.adoc[]
+
+link:test.adoc[]
+
+xref:filename with blanks.adoc[]
+
+xref:filename%20with%20blanks.adoc[]
+
+xref:special_filename_äß_(),.adoc[]
+
+xref:filename with blanks.adoc[]
+
+link:++filename with blanks.adoc++[]
+
+link:filename%20with%20blanks.adoc[]
+
+link:++special_filename_äß_(),.adoc++[]

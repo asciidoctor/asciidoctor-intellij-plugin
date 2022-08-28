@@ -152,10 +152,15 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
     }
     TextRange range = AsciiDocLink.getBodyRange((AsciiDocLink) element);
     if (!range.isEmpty()) {
-      String file = element.getText().substring(range.getStartOffset(), range.getEndOffset());
+      int offset = range.getStartOffset();
+      String file = element.getText().substring(offset, range.getEndOffset());
       String macroName = ((AsciiDocLink) element).getMacroName();
       int start = 0;
       int i = 0;
+      if (macroName.equals("link") && file.startsWith("++") && file.endsWith("++")) {
+        file = file.substring(2, file.length() - 2);
+        offset += 2;
+      }
       ArrayList<PsiReference> references = new ArrayList<>();
       if ("xref".equals(macroName)) {
         Matcher matcher = AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(file);
@@ -163,7 +168,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
           i += matcher.end();
           references.add(
             new AsciiDocFileReference(element, macroName, file.substring(0, start),
-              TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i - 1),
+              TextRange.create(offset + start, offset + i - 1),
               true, true, 1)
           );
           start = i;
@@ -173,7 +178,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
           i += matcher.end();
           references.add(
             new AsciiDocFileReference(element, macroName, file.substring(0, start),
-              TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i - 1),
+              TextRange.create(offset + start, offset + i - 1),
               true, true, 1)
           );
           start = i;
@@ -183,7 +188,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
         if (file.charAt(i) == '/' || file.charAt(i) == '#') {
           references.add(
             new AsciiDocFileReference(element, macroName, file.substring(0, start),
-              TextRange.create(range.getStartOffset() + start, range.getStartOffset() + i),
+              TextRange.create(offset + start, offset + i),
               file.charAt(i) == '/')
           );
           start = i + 1;
@@ -191,7 +196,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
       }
       references.add(
         new AsciiDocFileReference(element, macroName, file.substring(0, start),
-          TextRange.create(range.getStartOffset() + start, range.getStartOffset() + file.length()),
+          TextRange.create(offset + start, offset + file.length()),
           false)
           .withAnchor((start > 0 && file.charAt(start - 1) == '#')
               || ("xref".equals(macroName) && start == 0

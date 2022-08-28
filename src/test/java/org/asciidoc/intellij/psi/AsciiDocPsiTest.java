@@ -959,4 +959,21 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     return myFixture.configureByText(AsciiDocFileType.INSTANCE, text);
   }
 
+  public void testLinkSpecialFilenames() {
+    // given...
+    PsiFile[] psiFile = myFixture.configureByFiles(
+      getTestName(true) + "/test.adoc",
+      getTestName(true) + "/special_filename_\u00E4\u00DF_(),.adoc",
+      getTestName(true) + "/filename with blanks.adoc"
+    );
+
+    AsciiDocLink[] links = PsiTreeUtil.getChildrenOfType(psiFile[0].getFirstChild(), AsciiDocLink.class);
+
+    if (links != null) {
+      for (AsciiDocLink link : links) {
+        assertReferencesResolve(link, 1);
+      }
+    }
+  }
+
 }
