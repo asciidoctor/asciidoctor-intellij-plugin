@@ -6,8 +6,10 @@ exclude:
     paths:
       - doc/qodana-baseline.sarif.json
       - doc/.grazie.en.yaml
+      - doc/asciidoc-inspection.xml
       - doc/contributors-guide/modules/ROOT/images
       - doc/users-guide/modules/ROOT/images
+      - doc/users-guide/modules/ROOT/examples
       - CHANGELOG.adoc
       - README.adoc
       - build.gradle

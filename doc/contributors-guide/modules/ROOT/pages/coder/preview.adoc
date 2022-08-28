@@ -39,12 +39,12 @@ When the user interacts with the JavaFX or JCEF preview (for example clicks on a
 
 == Debugging the preview
 
-You can log information from the JavaFX or JCEF preview the preview using
+Developers can log information from the JavaFX or JCEF preview the preview using:
 
 [source,javascript]
 ----
 window.JavaPanelBridge.log("...")
 ----
 
-this will call the method `JavaPanelBridge#log`, an inner class of `JavaFxHtmlPanel` for the JavaFX preview and `myBrowserLog.addHandler` for the JCEF preview.
+This will call the method `JavaPanelBridge#log`, an inner class of `JavaFxHtmlPanel` for the JavaFX preview and `myBrowserLog.addHandler` for the JCEF preview.
 

@@ -1,10 +1,11 @@
 = Contribute as a coder
-:description: This document enables you to enhance the plugin when you are new to either the project, or developing in an area you haven't previously worked in before.
+:description: This document enables developers to enhance the plugin when they are new to the project, or developing in an area they haven't previously worked in before.
 
 {description}
 
-The following sections walk you through the initial setup of the development setup first, then through different areas of the plugin.
+The following sections walk developers through the initial setup of the development setup first, then through different areas of the plugin:
+
+include::partial$nav-coder.adoc[]
 
 This document is work in progress.
 Ask questions to the maintainers for anything that is missing (either via email or via a GitHub ticket), and we'll update it.
-

@@ -4,15 +4,9 @@ No programming skills required!
 
 {description}
 
-Read more on how you can help:
+Read more on how to can help:
 
-* xref:user/write-a-review.adoc[]
-* xref:user/report-errors.adoc[]
-* xref:user/join-discussion-on-github.adoc[]
-* xref:user/subscribe-to-new-releases.adoc[]
-* xref:user/installing-a-preview-release.adoc[]
-* xref:user/add-eap-repository-to-ide.adoc[]
-* xref:user/upvote-intellij-issues.adoc[]
+include::partial$nav-user.adoc[]
 
-If you want to give a financial contribution, continue to section _xref:contribute-as-a-sponsor.adoc[]_.
+To give a financial contribution, continue to section _xref:contribute-as-a-sponsor.adoc[]_.
 

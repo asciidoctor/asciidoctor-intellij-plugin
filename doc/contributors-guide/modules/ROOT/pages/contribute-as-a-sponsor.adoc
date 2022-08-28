@@ -9,4 +9,4 @@ To deliver all the value, it borrows a lot of functionalities from the Asciidoct
 
 *To support the Asciidoctor ecosystem,* support the https://opencollective.com/asciidoctor[Asciidoctor Open Collective^].
 
-*If you use diagrams via PlantUML,* consider https://www.patreon.com/plantuml[becoming one of their sponsors^]. All PlantUML sponsors receive access to an ad-free PlantUML website.
+*For users of diagrams via PlantUML,* consider https://www.patreon.com/plantuml[becoming one of their sponsors^]. All PlantUML sponsors receive access to an ad-free PlantUML website.

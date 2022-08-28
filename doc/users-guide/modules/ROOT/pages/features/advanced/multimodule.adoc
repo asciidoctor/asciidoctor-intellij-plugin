@@ -10,7 +10,7 @@ The user is working with AsciiDoc or Antora content in several Git repositories.
 
 If the projects can contain standard AsciiDoc content, the user might want to benefit from auto-completion on attribute names.
 
-When the Git repositories contains xref:features/advanced/antora.adoc[Antora] components, the user wants to use cross-references and auto-completion when referencing content in another component.
+When the Git repositories contain xref:features/advanced/antora.adoc[Antora] components, the user wants to use cross-references and auto-completion when referencing content in another component.
 
 Supported as of 0.34.2 of the plugin: In another situation a playbook might be in one repository, while the components reside in a different repository, and the user wants auto-completion for attributes defined in the playbook when editing components.
 
@@ -20,7 +20,7 @@ Create a project with multiple modules in your IDE.
 Each module will be backed by its own Git repository.
 Despite multiple Git repositories, the IDE will show it as one project with multiple modules.
 
-The alternative: the user can check out all repositories in separate folders below a master folder, and then open the master folder as the project folder in the IDE.
+The alternative: the user can check out all repositories in separate folders below a mail folder, and then open the main folder as the project folder in the IDE.
 
 == Tradeoffs of a multi-module project
 

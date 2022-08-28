@@ -58,6 +58,6 @@ For now, table headings are also identified as cells.
 
 `link`:: Applied to the text of a link.
 
-`strong`:: Applied to bold/strong text.
+`strong`:: Applied to any bold or strong text.
 
-`emphasis`:: Applied to italic/emphasised text.
+`emphasis`:: Applied to any italic or emphasised text.
