@@ -32,6 +32,9 @@ public class AsciiDocAttributeUndefinedInspection extends AsciiDocInspectionBase
       @Override
       public void visitElement(@NotNull PsiElement o) {
         if (o instanceof AsciiDocAttributeReference) {
+          if (isExcludedByIfdef(o, true)) {
+            return;
+          }
           @NotNull PsiReference[] references = ((AsciiDocAttributeReference) o).getReferences();
           for (PsiReference reference : references) {
             if (!(reference instanceof AsciiDocAttributeDeclarationReference)) {

@@ -18,3 +18,14 @@ link:{myurl}[]
 
 // no error, as attribute doesn't resolve
 link:{noattr}[]
+
+:anattribute!:
+
+ifdef::anattribute[]
+
+// broken link not reported as it is excluded from the block
+xref:nonexistent.adoc[]
+
+endif::[]
+
+xref:<error descr="File doesn't resolve">nonexistent.adoc</error>[]

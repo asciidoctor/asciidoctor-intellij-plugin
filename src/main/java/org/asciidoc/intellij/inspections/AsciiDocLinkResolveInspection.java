@@ -132,6 +132,9 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
             }
           }
         }
+        if (continueResolving && (o instanceof HasFileReference || o instanceof HasAnchorReference)) {
+          continueResolving = !isExcludedByIfdef(o, true);
+        }
         // check for file to resolve
         if (continueResolving && o instanceof HasFileReference) {
           AsciiDocFileReference file = ((HasFileReference) o).getFileReference();

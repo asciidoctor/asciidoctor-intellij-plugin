@@ -3,3 +3,14 @@
 {definedattribute}
 
 XX {<warning descr="Attribute should be defined">undefinedattribute</warning>} XX
+
+:anattribute!:
+
+ifdef::anattribute[]
+
+//not reported as it is excluded from the block
+{undefinedattribute}
+
+endif::[]
+
+{<warning descr="Attribute should be defined">undefinedattribute</warning>}
