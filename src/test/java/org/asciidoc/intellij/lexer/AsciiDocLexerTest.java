@@ -1806,6 +1806,14 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('`test')");
   }
 
+  public void testPassThroughWithSomethingLookingLikeAnAttribute() {
+    doTest("pass:[{attr}]",
+      "AsciiDoc:INLINE_MACRO_ID ('pass:')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:MACROTEXT ('{attr}')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
+  }
+
   public void testPassThroughInlineThreePlus() {
     doTest("+++pt\npt2+++",
       "AsciiDoc:PASSTRHOUGH_INLINE_START ('+++')\n" +

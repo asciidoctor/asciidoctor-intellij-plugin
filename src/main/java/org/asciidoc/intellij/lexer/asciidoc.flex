@@ -452,6 +452,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 %state PASSTRHOUGH_INLINE_CONSTRAINED
 %state PASSTRHOUGH_INLINE_DOLLARS
 %state PASSTRHOUGH_INLINE_UNCONSTRAINED
+%state PASS_MACRO
+%state PASS_MACRO_TEXT
 
 %state IFDEF_IFNDEF_ENDIF
 %state ATTR_PARSEABLE
@@ -1580,8 +1582,11 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
             // this might be an incomplete xref with autocomplete as this pattern is less strict than the xref pattern
             yybegin(LINKFILE);
             return AsciiDocTokenTypes.LINKSTART;
-          } else if (yytext().toString().equals("footnote:") || yytext().toString().equals("pass:")) {
+          } else if (yytext().toString().equals("footnote:")) {
             yybegin(INLINE_MACRO_TEXT);
+            return AsciiDocTokenTypes.INLINE_MACRO_ID;
+          } else if (yytext().toString().equals("pass:")) {
+            yybegin(PASS_MACRO);
             return AsciiDocTokenTypes.INLINE_MACRO_ID;
           } else if (yytext().toString().equals("btn:")) {
             yybegin(INLINE_MACRO_TEXT);
@@ -1613,6 +1618,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
               // this might be an xref with a blank as this pattern is less strict than the xref pattern
               yybegin(LINKFILEWITHBLANK);
               return AsciiDocTokenTypes.LINKSTART;
+            } else if (yytext().toString().equals("pass:")) {
+              yybegin(PASS_MACRO);
+              return AsciiDocTokenTypes.INLINE_MACRO_ID;
             } else if (yytext().toString().equals("menu:")) {
               yybegin(INLINE_MACRO);
               return AsciiDocTokenTypes.INLINE_MACRO_ID;
@@ -2075,6 +2083,37 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   "IntellijIdeaRulezzz " / [^\t \n:]* "[" { return AsciiDocTokenTypes.INLINE_MACRO_BODY; }
   "IntellijIdeaRulezzz " { yypopstate(); return AsciiDocTokenTypes.INLINE_MACRO_BODY; }
   [^]                  { return AsciiDocTokenTypes.INLINE_MACRO_BODY; }
+}
+
+<PASS_MACRO> {
+  "\n"                 { yypopstate(); yypushback(yylength()); }
+  "["                  { yypushstate();
+                         yybegin(PASS_MACRO_TEXT);
+                         return AsciiDocTokenTypes.INLINE_ATTRS_START;
+                       }
+  "]"                  { yypopstate(); return AsciiDocTokenTypes.INLINE_ATTRS_END; }
+  [^]                  { return AsciiDocTokenTypes.INLINE_MACRO_BODY; }
+}
+
+<PASS_MACRO_TEXT> {
+  {MACROTEXT_END}      { if (isEscaped()) {
+                           return AsciiDocTokenTypes.MACROTEXT;
+                         } else {
+                           yypopstate();
+                           yypushback(yylength());
+                         }
+                       }
+  {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
+  {CONTINUATION} / {SPACE}* "\n" {
+                         if (isPrefixedBy(SPACES)) {
+                           yypushstate();
+                           yybegin(EOL_POP);
+                           return AsciiDocTokenTypes.CONTINUATION;
+                         } else {
+                           return AsciiDocTokenTypes.MACROTEXT;
+                         }
+                       }
+  [^]                  { return AsciiDocTokenTypes.MACROTEXT; }
 }
 
 <ATTRS_DOUBLE_QUOTE_START_NO_CLOSE> {
