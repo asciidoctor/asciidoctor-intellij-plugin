@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Improve highlighting of the pass macro
 - Show fewer errors in blocks that are excluded via ifdef/ifndef (#1150)
+- Fix the option to hide validation errors in source blocks in 2022.2 (#1151)
 
 === 0.37.45
 

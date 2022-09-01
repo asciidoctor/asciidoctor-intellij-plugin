@@ -397,7 +397,7 @@
       <className>org.asciidoc.intellij.actions.intentions.AsciiDocAdmonitionToBlockIntention</className>
     </intentionAction>
 
-    <highlightErrorFilter implementation="org.asciidoc.intellij.injection.AsciiDocCodeFenceErrorHighlightingIntention$CodeFenceHighlightErrorFilter"/>
+    <daemon.highlightInfoFilter implementation="org.asciidoc.intellij.injection.CodeFenceHighlightInfoFilter"/>
     <postStartupActivity implementation="org.asciidoc.intellij.activities.AsciiDocHandleUnloadActivity"/>
     <postStartupActivity implementation="org.asciidoc.intellij.activities.AsciiDocPluginUpdateActivity"/>
     <errorHandler implementation="org.asciidoc.intellij.errorHandler.AsciiDocErrorHandler"/>

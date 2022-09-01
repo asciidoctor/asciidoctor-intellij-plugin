@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.injection;
 
-import com.intellij.codeInsight.highlighting.HighlightErrorFilter;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.notification.Notification;
@@ -13,9 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.asciidoc.intellij.AsciiDocBundle;
@@ -91,31 +88,6 @@ public class AsciiDocCodeFenceErrorHighlightingIntention implements IntentionAct
   @Override
   public boolean startInWriteAction() {
     return false;
-  }
-
-  public static class CodeFenceHighlightErrorFilter extends HighlightErrorFilter {
-
-    public static final String SOURCE_PREFIX = "source-";
-
-    @Override
-    public boolean shouldHighlightErrorElement(@NotNull PsiErrorElement element) {
-      InjectedLanguageManager injectedLanguageManager = InjectedLanguageManager.getInstance(element.getProject());
-      PsiLanguageInjectionHost injectionHost = injectedLanguageManager.getInjectionHost(element);
-      if (injectedLanguageManager.getTopLevelFile(element).getFileType() == AsciiDocFileType.INSTANCE
-        && injectionHost instanceof AsciiDocElementWithLanguage) {
-        if (AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isHideErrorsInSourceBlocks()) {
-          return false;
-        }
-        String language = ((AsciiDocElementWithLanguage) injectionHost).getFenceLanguage();
-        if (language != null && language.startsWith(SOURCE_PREFIX)) {
-          if (AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getHiddenErrorsByLanguageAsList().contains(language.substring(SOURCE_PREFIX.length()))) {
-            return false;
-          }
-        }
-        return true;
-      }
-      return true;
-    }
   }
 
 }
