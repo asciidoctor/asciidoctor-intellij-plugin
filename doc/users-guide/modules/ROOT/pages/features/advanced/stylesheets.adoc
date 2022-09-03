@@ -78,7 +78,34 @@ body {
 }
 ----
 
-The https://github.com/darshandsoni/asciidoctor-skins[asciidoctor-skins] project hosts multiple stylesheets you can link to.
+[WARNING]
+====
+Due to the current nature of the plugin and browser's security controls, a stylesheet can't load fonts with a relative path starting with two dots (`..`).
+
+As a workaround, use an absolute path with protocol and hostname instead.
+====
+
+A more complex example, that wraps multiple stylesheets of the original site, overwrites fonts with an absolute URL and then adds custom changes for the preview can look like the following:
+
+.Example CSS customizing the existing stylesheets for the IDE's preview
+[source,css]
+----
+@import "site1.css";
+@import "site2.css";
+
+/* workaround for browsers that don't allow relative URLs when the page is opened as a file:// */
+@font-face {
+    font-family: ...
+    src: url('https://example.com/');
+}
+
+/* skip the space at the top in the preview where the menu bar is on the production site */
+body {
+    padding-top: 0
+}
+----
+
+The https://github.com/darshandsoni/asciidoctor-skins[asciidoctor-skins] project hosts multiple stylesheets users can link to.
 The following example uses a dark skin.
 
 .Dark theme based on the asciidoctor-skins project
