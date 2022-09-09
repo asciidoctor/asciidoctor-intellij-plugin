@@ -4,7 +4,7 @@
 User documentation is essential to make the plugin approachable for all types of users.
 {description}
 
-With this knowledge, writers can choose the how-to to change the content they want to change.
+With this knowledge, writers can then proceed to one of the specific "How-To" sections adjacent to this page for guidance on how to contribute changes to the documentation, content and layout.
 
 == What sources exist to build the plugin's website?
 
@@ -21,7 +21,7 @@ Documentation::
 All documentation content on the website is next to the plugin's code at https://github.com/asciidoctor/asciidoctor-intellij-plugin in the sub-folder _doc_.
 Every time something in the docs changes, this triggers a build on Netlify https://github.com/asciidoctor/asciidoctor-intellij-plugin/blob/main/.github/workflows/website.yml[using this GitHub action].
 The theme for this site is in the Git repository https://github.com/ahus1/intellij-asciidoc-plugin.ahus1.de in the folder __antora_.
-The user's guide and the contributor's guide a build with the https://antora.org/[Antora] documentation site generator.
+The user's guide and the contributor's guide are built with the https://antora.org/[Antora] documentation site generator.
 
 Configuration files for hosting::
 The plugin's homepage is hosted on https://www.netlify.com/[Netlify].
