@@ -20,7 +20,7 @@ Create a project with multiple modules in your IDE.
 Each module will be backed by its own Git repository.
 Despite multiple Git repositories, the IDE will show it as one project with multiple modules.
 
-The alternative: the user can check out all repositories in separate folders below a mail folder, and then open the main folder as the project folder in the IDE.
+The alternative: the user can check out all repositories in separate folders below a main folder, and then open the main folder as the project folder in the IDE.
 
 == Tradeoffs of a multi-module project
 
