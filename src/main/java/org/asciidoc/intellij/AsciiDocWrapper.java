@@ -1522,8 +1522,9 @@ public class AsciiDocWrapper {
           css = PreviewStaticServer.signFile(dir + "/styles/" + theme + ".min.css");
         }
       }
+      // add styleheet at the end of the header to avoid interfering with the mechanism to unload the standard stylesheet once the custom stylesheet has been loaded
       html = html
-        .replace("<head>", "<head>" + "<link rel='stylesheet' type='text/css' href='" + css + "' />");
+          .replace("</head>", "<link rel='stylesheet' type='text/css' href='" + css + "' />" + "</head>");
       html = html.replace("</body>", "" + js + "</body>");
       html = html.replace("</body>", "<script>\n" +
         "if (!hljs.initHighlighting.called) {\n" +
