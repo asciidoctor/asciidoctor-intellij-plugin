@@ -10,7 +10,8 @@ This document provides a high-level view of the changes introduced by release.
 === 0.37.47
 
 - Resolve anchors with attributes in the target within Antora modules (#1159)
-- Prevent built-in HighlightJS from interfering with a custom stylesheet
+- Prevent built-in highlight.js from interfering with a custom stylesheet
+- Pre-bundle highlight.js dark theme in the plugin
 
 === 0.37.46
 
