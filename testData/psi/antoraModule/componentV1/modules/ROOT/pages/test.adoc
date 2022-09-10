@@ -23,6 +23,10 @@ xref:sub/page-in-sub.adoc[]
 
 xref:sub/../sub/page-in-sub.adoc[]
 
+:prefix: prefix
+[[{prefix}-value]] Text
+xref:#prefix-value[]
+
 include::{examplesdir}/example.txt[]
 
 include::{partialsdir}/part.adoc[]

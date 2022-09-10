@@ -710,6 +710,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertReferencesResolve(macros[1], 3);
   }
 
+  @SuppressWarnings("checkstyle:MethodLength")
   public void testAntoraModule() {
     // given...
     PsiFile[] psiFile = myFixture.configureByFiles(
@@ -783,7 +784,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       }
     }
 
-    assertSize(10, urls);
+    assertSize(11, urls);
 
     // link
     assertReferencesResolve(urls.get(0), 2);
@@ -805,6 +806,9 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
     // xref page relative
     assertReferencesResolve(urls.get(9), 4);
+
+    // xref page relative
+    assertReferencesResolve(urls.get(10), 2);
 
     urls.clear();
 

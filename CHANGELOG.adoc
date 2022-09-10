@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.47
+
+- Resolve anchors with attributes in the target within Antora modules (#1159)
+
 === 0.37.46
 
 - Improve highlighting of the pass macro
