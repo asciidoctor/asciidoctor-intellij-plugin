@@ -39,9 +39,10 @@ This will work the same way as _.asciidoctorconfig_.
 
 The internal order of processing is as follows:
 
-. load the _.asciidoctorconfig_ file from the root of the project tree (most general configuration)
-. load the _.asciidoctorconfig_ files from the different directories leading to the specific file to be rendered
-. load the _.asciidoctorconfig_ file from the current folder where the file to be rendered resides (most specific to the file opened)
+. load the _.asciidoctorconfig_ (or _.asciidoctorconfig.adoc_) file from the root of the project tree (most general configuration)
+. load the _.asciidoctorconfig_ (or _.asciidoctorconfig.adoc_) files from the different directories leading to the specific file to be rendered
+. load the _.asciidoctorconfig_ (or _.asciidoctorconfig.adoc_) file from the current folder where the file to be rendered resides (most specific to the file opened)
+. Prefix each file with `:asciidoctorconfigdir: <absolute filename of the file>`
 . Prepend all the files found in the previous steps to the file to be rendered and render it in the preview.
 
 == Benefits
