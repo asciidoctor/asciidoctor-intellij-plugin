@@ -566,7 +566,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
 
   @NotNull
   private String wrapHtmlForPage(String html) {
-    return "<html><head></head><body><div id=\"header\"></div><div style='position:fixed;top:0;left:0;background-color:#eeeeee;color:red;z-index:99;'><div id='mathjaxerrortext'></div><pre style='color:red' id='mathjaxerrorformula'></pre></div>"
+    return "<html><head></head><body><div id=\"header\"></div><div style='position:fixed;margin:0;padding:0;top:0;left:0;background-color:#eeeeee;color:red;z-index:99;'><div id='mathjaxerrortext'></div><pre style='color:red;margin:0;padding:0' id='mathjaxerrorformula'></pre></div>"
       + html
       + "</body></html>";
   }

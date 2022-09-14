@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.48
+
+- Ensure that the MathJax error message is not shown when it contains no error even for user stylesheets
+
 === 0.37.47
 
 - Resolve anchors with attributes in the target within Antora modules (#1159)
