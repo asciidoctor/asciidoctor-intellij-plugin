@@ -110,6 +110,14 @@ Watch https://issuetracker.google.com/issues/159933628[this issue] in Android St
 JavaFX preview that used to work with Android Studio 4.0 will not work with Android Studio 4.2 as it doesn't package the necessary classes in the IDE.
 Therefore, follow these steps to enable JCEF preview for Android Studio.
 
+*For Android Studio 2022.2+:*
+
+* Open menu item menu:Help[Find action...] and search for "`Choose Boot Java runtime for the IDE...`"
+* Choose a runtime "`17.0.x...`" labeled "`JetBrains Runtime with JCEF`" and install it.
+The IDE will restart.
+* Go to the settings of the AsciiDoc plugin and check if the preview is set to "`JCEF Browser`".
+Change it to "`JCEF Browser`" if this is not the case.
+
 *For Android Studio 2021.1+:*
 
 * Open menu item menu:Help[Find action...] and search for "`Choose Boot Java runtime for the IDE...`"
