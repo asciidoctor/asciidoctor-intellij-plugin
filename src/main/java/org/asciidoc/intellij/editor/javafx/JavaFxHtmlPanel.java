@@ -847,7 +847,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       String scheme = uri.getScheme();
       if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme) || "mailto".equalsIgnoreCase(scheme)) {
         BrowserUtil.browse(uri);
-      } else if ("file".equalsIgnoreCase(scheme) || scheme == null) {
+      } else if ("file".equalsIgnoreCase(scheme) || scheme == null || scheme.matches("[A-Z]")) { // A-Z as a Windows drive like C:/
         openInEditor(uri);
       } else {
         LOG.warn("won't open URI as it might be unsafe: " + uri);
