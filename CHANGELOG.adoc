@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.49
+
+- An external stylesheet removes all internal stylesheets on a successful load
+
 === 0.37.48
 
 - Ensure that the MathJax error message is not shown when it contains no error even for user stylesheets

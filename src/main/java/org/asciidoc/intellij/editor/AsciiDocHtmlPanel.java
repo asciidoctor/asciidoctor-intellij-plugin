@@ -23,7 +23,7 @@ public interface AsciiDocHtmlPanel extends Disposable {
     StringBuilder result = new StringBuilder();
 
     if (inlineCss != null) {
-      result.append("<style>\n").append(inlineCss).append("\n</style>\n");
+      result.append("<style data-default>\n").append(inlineCss).append("\n</style>\n");
     }
     return result.toString();
   }

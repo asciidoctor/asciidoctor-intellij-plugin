@@ -1311,7 +1311,7 @@ public class AsciiDocWrapper {
         // a background color as a background color is necessary for OSR JCEF preview
         // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/954
         html = html
-          .replace("<head>", "<head>" + "<link rel='stylesheet' type='text/css' href='" + css + "' onload=\"document.head.getElementsByTagName('link')[0].nextSibling.nextSibling.remove()\" />" +
+          .replace("<head>", "<head>" + "<link rel='stylesheet' type='text/css' href='" + css + "' onload=\"document.head.querySelectorAll('[data-default]').forEach(e => e.remove())\" />" +
             "<style>body { background-color: rgb(255, 255, 255); }</style>" + standardCss);
       } else {
         // custom stylesheet set
@@ -1524,7 +1524,7 @@ public class AsciiDocWrapper {
       }
       // add styleheet at the end of the header to avoid interfering with the mechanism to unload the standard stylesheet once the custom stylesheet has been loaded
       html = html
-          .replace("</head>", "<link rel='stylesheet' type='text/css' href='" + css + "' />" + "</head>");
+          .replace("</head>", "<link rel='stylesheet' data-default type='text/css' href='" + css + "' />" + "</head>");
       html = html.replace("</body>", "" + js + "</body>");
       html = html.replace("</body>", "<script>\n" +
         "if (!hljs.initHighlighting.called) {\n" +
