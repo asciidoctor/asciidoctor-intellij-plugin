@@ -54,6 +54,7 @@ import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
+import org.asciidoc.intellij.editor.notification.IncompatiblePluginNotificationProvider;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationDummy;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.psi.AttributeDeclaration;
@@ -830,6 +831,10 @@ public class AsciiDocWrapper {
             response.append("<p>encoding passed by system property 'file.encoding': ").append(property);
             response.append("<p>available encodings (excluding aliases): ");
             EncodingDB.getEncodings().forEach(entry -> response.append(entry.getEncoding().getCharsetName()).append(" "));
+          }
+          if (IncompatiblePluginNotificationProvider.isIncompatiblePluginIntelliJScriptingInstalled()) {
+            response.append("<p>The plugin <b>IntelliJ Scripting: Ruby</b> is installed which is incompatible with the AsciiDoc plugin.");
+            response.append("<p>Uninstall the plugin <b>IntelliJ Scripting: Ruby</b> and restart the IDE to fix this.");
           }
           t = t.getCause();
         } while (t != null);

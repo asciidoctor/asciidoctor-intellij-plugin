@@ -244,6 +244,8 @@
       implementation="org.asciidoc.intellij.editor.notification.HugoNotificationProvider"/>
     <editorNotificationProvider
       implementation="org.asciidoc.intellij.editor.notification.FileOutsideCurrentProjectNotificationProvider"/>
+    <editorNotificationProvider
+      implementation="org.asciidoc.intellij.editor.notification.IncompatiblePluginNotificationProvider"/>
     <gotoSymbolContributor implementation="org.asciidoc.intellij.psi.AsciiDocChooseByNameContributor"/>
     <searchEverywhereClassifier implementation="org.asciidoc.intellij.psi.AsciiDocSearchEverywhereClassifier"/>
     <localInspection language="AsciiDoc" displayName="Heading inspection" groupPath="AsciiDoc"
