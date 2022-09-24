@@ -5,7 +5,7 @@ buildscript {
   }
 }
 plugins {
-  id "org.jetbrains.intellij" version "1.8.1"
+  id "org.jetbrains.intellij" version "1.9.0"
   id "org.jetbrains.grammarkit" version "2021.2.2"
   id "checkstyle"
   id 'org.asciidoctor.jvm.convert' version '3.3.2'
@@ -61,7 +61,7 @@ intellij {
 asciidoctor {
   // this dependency is necessary as Gradle 7.x is confused that the source dir (?) leads to an implicit dependency
   // https://docs.gradle.org/7.3/userguide/validation_problems.html#implicit_dependency
-  dependsOn = [ compileJava, processTestResources ]
+  dependsOn = [ generateLexer ]
   sourceDir file('.')
   sources {
     include 'CHANGELOG.adoc'
@@ -194,6 +194,11 @@ generateLexer {
   source = "src/main/java/org/asciidoc/intellij/lexer/asciidoc.flex"
   targetDir = "gen/org/asciidoc/intellij/lexer"
   targetClass = "_AsciiDocLexer"
+}
+
+java {
+  targetCompatibility = "11"
+  sourceCompatibility = "11"
 }
 
 compileJava {
