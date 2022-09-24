@@ -9,7 +9,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.CaretState;
 import com.intellij.openapi.editor.Document;
@@ -31,7 +30,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.jcef.JBCefBrowser;
@@ -39,7 +37,6 @@ import com.intellij.ui.jcef.JBCefBrowserBase;
 import com.intellij.ui.jcef.JBCefJSQuery;
 import com.intellij.ui.jcef.JBCefPsiNavigationUtils;
 import com.intellij.ui.scale.JBUIScale;
-import com.intellij.util.PsiNavigateUtil;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -47,7 +44,7 @@ import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanel;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
-import org.asciidoc.intellij.file.AsciiDocFileType;
+import org.asciidoc.intellij.psi.AsciiDocFileUtil;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.cef.browser.CefBrowser;
@@ -75,7 +72,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
@@ -1018,6 +1014,9 @@ public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlP
   public void openLink(@NotNull String link) {
     final URI uri;
     try {
+      if (SystemInfoRt.isWindows && link.matches("[A-Z]:/[^/].*")) {
+        link = "file:///" + link;
+      }
       if (link.contains(" ")) {
         link = link.replaceAll(" ", "%20");
       }
@@ -1030,59 +1029,10 @@ public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlP
     if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme) || "mailto".equalsIgnoreCase(scheme)) {
       BrowserUtil.browse(uri);
     } else if ("file".equalsIgnoreCase(scheme) || scheme == null) {
-      openInEditor(uri);
+      AsciiDocFileUtil.openInEditor(uri, editor, parentDirectory);
     } else {
       LOG.warn("won't open URI as it might be unsafe: " + uri);
     }
-  }
-
-  private void openInEditor(@NotNull URI uri) {
-    ReadAction.run(() -> {
-      if (editor == null) {
-        return;
-      }
-      String anchor = uri.getFragment();
-      String path = uri.getPath();
-      final VirtualFile targetFile;
-      VirtualFile tmpTargetFile = parentDirectory.findFileByRelativePath(path);
-      String extension = AsciiDocFileType.getExtensionOrDefault(FileDocumentManager.getInstance().getFile(editor.getDocument()));
-      if (tmpTargetFile == null) {
-        // extension might be skipped if it is an .adoc file
-        tmpTargetFile = parentDirectory.findFileByRelativePath(path + "." + extension);
-      }
-      if (tmpTargetFile == null && path.endsWith(".html")) {
-        // might link to a .html in the rendered output, but might actually be a .adoc file
-        tmpTargetFile = parentDirectory.findFileByRelativePath(path.replaceAll("\\.html$", "." + extension));
-      }
-      if (tmpTargetFile == null) {
-        LOG.warn("unable to find file for " + uri);
-        return;
-      }
-      targetFile = tmpTargetFile;
-
-      Project project = ProjectUtil.guessProjectForContentFile(targetFile);
-      if (project == null) {
-        LOG.warn("unable to find project for " + uri);
-        return;
-      }
-
-      if (targetFile.isDirectory()) {
-        AsciiDocUtil.selectFileInProjectView(project, targetFile);
-      } else {
-        boolean anchorFound = false;
-        if (anchor != null) {
-          List<PsiElement> ids = AsciiDocUtil.findIds(project, targetFile, anchor);
-          if (!ids.isEmpty()) {
-            anchorFound = true;
-            ApplicationManager.getApplication().invokeLater(() -> PsiNavigateUtil.navigate(ids.get(0)));
-          }
-        }
-
-        if (!anchorFound) {
-          ApplicationManager.getApplication().invokeLater(() -> OpenFileAction.openFile(targetFile, project));
-        }
-      }
-    });
   }
 
   public void scrollEditorToLine(int sourceLine) {
