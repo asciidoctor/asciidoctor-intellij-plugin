@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - Add compatibility for IntelliJ 2022.3 EAP release
 - Bump asciidoctorj from 2.5.5 to 2.5.6 (#1165)
 - Avoid corner-cases with open blocks when incrementally parsing sections and cells (#1168)
+- Support absolute path names when picking a file in the preview (thanks to @ropelli) (#1162)
 
 === 0.37.49
 
