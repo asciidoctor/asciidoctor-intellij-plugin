@@ -7,7 +7,7 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
@@ -94,7 +94,7 @@ public class AsciiDocSectionStubElementType extends IStubElementType<AsciiDocSec
 
   @Override
   public boolean isValidReparse(@NotNull ASTNode oldNode, @NotNull ASTNode newNode) {
-    if (newNode.getElementType() != AsciiDocElementTypes.SECTION || newNode.getTreeNext() != null) {
+    if (newNode.getElementType() != AsciiDocElementTypes.SECTION) {
       return false;
     }
     ASTNode oldToken = oldNode.findChildByType(AsciiDocElementTypes.HEADING);
@@ -106,34 +106,35 @@ public class AsciiDocSectionStubElementType extends IStubElementType<AsciiDocSec
 
   @Override
   public ASTNode parseContents(@NotNull ASTNode chameleon) {
-    final PsiElement psi = chameleon.getTreeParent() != null ? chameleon.getTreeParent().getPsi() : chameleon.getPsi();
-    assert psi != null : chameleon;
-    final Project project = psi.getProject();
-
-    final PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
-    final Lexer lexer = new AsciiDocLexer();
-    final PsiBuilder builder = factory.createBuilder(project, chameleon, lexer, chameleon.getElementType().getLanguage(), chameleon.getChars());
-
-    final PsiBuilder.Marker root = builder.mark();
-    new AsciiDocParser().parse(AsciiDocElementTypes.SECTION, builder);
-    if (!builder.eof()) {
-      throw new AssertionError("Unexpected token: '" + builder.getTokenText() + "'");
-    }
-    root.done(chameleon.getElementType());
-
-    return builder.getTreeBuilt().getFirstChildNode();
+    throw new IllegalStateException("not implemented");
   }
 
-  @NotNull
   @Override
-  public ASTNode parse(@NotNull CharSequence text, @NotNull CharTable table) {
+  public @NotNull ASTNode parse(@NotNull CharSequence text, @NotNull CharTable table) {
     final PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
     final Lexer lexer = new AsciiDocLexer();
-    final PsiBuilder builder = factory.createBuilder(LanguageParserDefinitions.INSTANCE.forLanguage(AsciiDocLanguage.INSTANCE), lexer, text);
+    // By concatenating the same text twice and parsing it in one go, this will discover unclosed blocks.
+    // This is a trick to having a section heading of the same level after the current section without parsing content first.
+    final PsiBuilder builder = factory.createBuilder(LanguageParserDefinitions.INSTANCE.forLanguage(AsciiDocLanguage.INSTANCE), lexer,
+      text + "\n\n" + text);
     new AsciiDocParser().parse(AsciiDocElementTypes.SECTION, builder);
     if (!builder.eof()) {
       throw new AssertionError("Unexpected token: '" + builder.getTokenText() + "'");
     }
-    return builder.getTreeBuilt().getFirstChildNode();
+    ASTNode node = builder.getTreeBuilt().getFirstChildNode();
+    ASTNode next = node;
+    for (int i = 0; i < 3 && next != null; ++i) {
+      next = next.getTreeNext();
+    }
+    // If the two blocks are parsed with their heading as expected and are properly delimited, this results in two identical blocks.
+    // Each section should carry the contents of what has been passed to the method.
+    // If that doesn't work out, it is safer to return and have the full document parsed.
+    if (node == null || next == null
+      || !Objects.equals(node.getText(), text.toString())
+      || !Objects.equals(next.getText(), text.toString())) {
+      // this will fail the test of isValidReparse()
+      return new PsiWhiteSpaceImpl("");
+    }
+    return node;
   }
 }

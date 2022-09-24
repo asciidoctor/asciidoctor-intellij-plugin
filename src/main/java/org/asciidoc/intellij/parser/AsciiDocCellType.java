@@ -8,6 +8,7 @@ import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl;
 import com.intellij.psi.tree.ICustomParsingType;
 import com.intellij.psi.tree.IReparseableElementTypeBase;
 import com.intellij.util.CharTable;
@@ -17,6 +18,8 @@ import org.asciidoc.intellij.lexer.AsciiDocLexer;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class AsciiDocCellType extends AsciiDocLazyElementType implements IReparseableElementTypeBase, ICustomParsingType {
   public AsciiDocCellType(String cell) {
@@ -69,14 +72,20 @@ public class AsciiDocCellType extends AsciiDocLazyElementType implements IRepars
       throw new AssertionError("Unexpected token: '" + builder.getTokenText() + "'");
     }
     ASTNode node = builder.getTreeBuilt().getFirstChildNode();
-    if (node.getFirstChildNode() != null) {
+    if (node != null) {
       node = node.getFirstChildNode(); // block -> delimiter
     }
-    if (node.getTreeNext() != null) {
+    if (node != null) {
       node = node.getTreeNext(); // delimiter -> whitespace
     }
-    if (node.getTreeNext() != null) {
+    if (node != null) {
       node = node.getTreeNext(); // whitespace -> cell
+    }
+    if (node != null && !Objects.equals(node.getText(), text.toString())) {
+      node = null;
+    }
+    if (node == null) {
+      node = new PsiWhiteSpaceImpl("");
     }
     return node;
   }

@@ -26,6 +26,12 @@ public class AsciiDocSectionStubElementTypeTest extends BasePlatformTestCase {
     Assertions.assertThat(sut.isValidReparse(oldAst, newAst)).isFalse();
   }
 
+  public void testTreatOpeningBlockAsNotReparsable() {
+    ASTNode oldAst = sut.parse("== Heading\nText", new CharTableImpl());
+    ASTNode newAst = sut.parse("== Heading\nText\n\n====", new CharTableImpl());
+    Assertions.assertThat(sut.isValidReparse(oldAst, newAst)).isFalse();
+  }
+
   public void testTreatAddedHeadingAsDifferent() {
     ASTNode oldAst = sut.parse("== Heading\nText", new CharTableImpl());
     ASTNode newAst = sut.parse("== Heading\nText\n\n== Other Heading", new CharTableImpl());
