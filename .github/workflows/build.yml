@@ -65,7 +65,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3.5.0
         with:
-          java-version: 11
+          java-version: 17
           distribution: 'zulu'
 
       # Check out current repository
@@ -132,7 +132,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3.5.0
         with:
-          java-version: 11
+          java-version: 17
           distribution: 'zulu'
 
       # Check out current repository

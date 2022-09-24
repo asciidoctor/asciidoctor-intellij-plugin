@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.37.50
 
 - Detect incompatible plugin _IntelliJ Scripting: Ruby_ and show advice to the user (#1160)
+- Add compatibility for IntelliJ 2022.3 EAP release
 
 === 0.37.49
 

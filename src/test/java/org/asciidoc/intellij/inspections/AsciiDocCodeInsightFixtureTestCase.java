@@ -1,16 +1,12 @@
 package org.asciidoc.intellij.inspections;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.ide.plugins.PluginEnabler;
-import com.intellij.openapi.extensions.PluginId;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -20,21 +16,6 @@ import java.util.stream.Collectors;
  * <a href="https://youtrack.jetbrains.com/issue/GRZ-504/">GRZ-504</a>.
  */
 public abstract class AsciiDocCodeInsightFixtureTestCase extends BasePlatformTestCase {
-
-  static {
-    Set<PluginId> disabled = new HashSet<>();
-
-    // to avoid:  java.lang.NoClassDefFoundError: Could not initialize class ai.grazie.nlp.tokenizer.spacy.SpacyBaseLanguage
-    disabled.add(PluginId.getId("com.intellij.grazie.pro"));
-
-    // to improve performance, remove plugins used for debugging in interactive mode
-    disabled.add(PluginId.getId("PsiViewer"));
-    disabled.add(PluginId.getId("PlantUML integration"));
-    disabled.add(PluginId.getId("com.intellij.platform.images"));
-    disabled.add(PluginId.getId("com.intellij.javafx"));
-
-    PluginEnabler.HEADLESS.disableById(disabled);
-  }
 
   @Override
   protected boolean isWriteActionRequired() {

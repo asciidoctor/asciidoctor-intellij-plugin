@@ -36,11 +36,11 @@ allprojects {
 }
 
 intellij {
-  version = 'IC-222.3739.24-EAP-SNAPSHOT' // 'IC-2021.3.2'
+  version = 'IC-223.4884.69-EAP-SNAPSHOT' // 'IC-2021.3.2'
   pluginName = 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild = false
   plugins = [
-    'PsiViewer:222-SNAPSHOT', // used for debugging
+    'PsiViewer:223-SNAPSHOT', // used for debugging
     'PlantUML integration:5.12.0', // used to test highlighting of plantuml diagrams
     'com.intellij.platform.images', // dependency for PlantUML plugin
     'tanvd.grazi', // used for spell and grammar checking checking
@@ -54,7 +54,7 @@ intellij {
     // 'com.jetbrains.performancePlugin:213.5744.122' // used run YourKit CPU profiling in test IDE
     // see https://intellij-support.jetbrains.com/hc/en-us/articles/207241235
     // https://plugins.jetbrains.com/plugin/16136-grazie-professional/
-    'com.intellij.grazie.pro:0.3.107-221-222'
+    'com.intellij.grazie.pro:0.3.107-223'
   ]
 }
 
@@ -184,8 +184,8 @@ task showLinkToContributorGuide {
 }
 
 task checkJavaVersion {
-  if (JavaVersion.current() != JavaVersion.VERSION_11) {
-    throw new GradleException("As of plugin version 0.34.x, this build must be run with Java 11, see:\n" +
+  if (JavaVersion.current() != JavaVersion.VERSION_17) {
+    throw new GradleException("As of IntellIJ 2022.3, this build must be run with Java 17, see:\n" +
       "https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/setup-environment.html")
   }
 }

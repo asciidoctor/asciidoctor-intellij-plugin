@@ -7,10 +7,12 @@
 [[JDK]]
 == Choosing a Java Version and Distribution
 
-Starting with IntelliJ 2020.3 and plugin version 0.32.x, JDK 11 is required to build the plugin.
-https://blog.jetbrains.com/platform/2020/09/intellij-project-migrates-to-java-11/[See the JDK 11 announcement in the JetBrains blog for details].
+Starting with IntelliJ 2022.3, JDK 17 is required to build the plugin, as IntelliJ uses JDK 17.
+https://blog.jetbrains.com/platform/2022/08/intellij-project-migrates-to-java-17/[See the JDK 17 announcement in the JetBrains blog for details].
 
-JetBrains recommends https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html[Amazon Corretto JDK] for development, but other distributions based on OpenJDK should work as well.
+The AsciiDoc plugin uses only language features of Java 11 to allow the built plugin to run with earlier versions of IntelliJ as well.
+
+JetBrains recommends https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html[Amazon Corretto JDK] for development, but other distributions based on OpenJDK should work as well.
 
 For the Gradle build tool to pick up the Java version, point the environment variable `JAVA_HOME` to the folder with the JDK:
 
@@ -24,9 +26,9 @@ export JAVA_HOME=...
 JAVA_HOME=c:\workspace\...
 ----
 
-== Verify your environment
+== Verify the environment
 
-You can check your environment using the following command in the root folder of the project:
+Developers can check their environment using the following command in the root folder of the project:
 
 .Linux/MacOS command
 ----
@@ -52,7 +54,7 @@ Revision:     ...
 Kotlin:       ...
 Groovy:       ...
 Ant:          ...
-JVM:          11.0.x (Amazon.com Inc. 11.0....)
+JVM:          17.0.x (Amazon.com Inc. 17.0....)
 OS:           ...
 ----
 

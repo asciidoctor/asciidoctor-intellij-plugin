@@ -184,10 +184,6 @@ public class AsciiDocWrapper {
   private static final com.intellij.openapi.diagnostic.Logger LOG =
     com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDocWrapper.class);
 
-  static {
-    SystemOutputHijacker.install();
-  }
-
   public static void checkUnloadPlugin() {
     lock();
     try {
@@ -308,6 +304,7 @@ public class AsciiDocWrapper {
     if (asciidoctor == null) {
       ByteArrayOutputStream boasOut = new ByteArrayOutputStream();
       ByteArrayOutputStream boasErr = new ByteArrayOutputStream();
+      SystemOutputHijacker.install();
       SystemOutputHijacker.register(new PrintStream(boasOut), new PrintStream(boasErr));
       LogHandler logHandler = new IntellijLogHandler("initialize");
       String oldEncoding = null;
@@ -437,6 +434,7 @@ public class AsciiDocWrapper {
           asciidoctor.unregisterLogHandler(logHandler);
         }
         SystemOutputHijacker.deregister();
+        SystemOutputHijacker.uninstall();
         notify(boasOut, boasErr, Collections.emptyList());
       }
     }
@@ -627,7 +625,8 @@ public class AsciiDocWrapper {
     String err = boasErr.toString(StandardCharsets.UTF_8);
     // this is reported by com.intellij.util.lang.ZipResourceFile when loading JRuby libraries
     // see: https://youtrack.jetbrains.com/issue/IDEA-264777
-    err = err.replaceAll("WARN: Do not use URL connection as JarURLConnection\r?\n", "");
+    err = err.replaceAll("(WARN: )?Do not use URL connection as JarURLConnection\r?\n", "");
+    out = out.replaceAll("(WARN: )?Do not use URL connection as JarURLConnection\r?\n", "");
     if (logAll) {
       // logRecords will not be handled in the org.asciidoc.intellij.annotator.ExternalAnnotator
       for (LogRecord logRecord : logRecords) {

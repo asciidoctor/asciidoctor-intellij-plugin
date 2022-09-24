@@ -1,36 +1,14 @@
 package org.asciidoc.intellij.inspections;
 
 import com.intellij.grazie.ide.inspection.grammar.GrazieInspection;
-import com.intellij.ide.plugins.PluginEnabler;
-import com.intellij.openapi.extensions.PluginId;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.testFramework.PlatformTestUtil;
 import org.asciidoc.intellij.quickfix.AsciiDocChangeCaseForAnchor;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Alexander Schwartz
  */
 public class AsciiDocGrammarInspectionTest extends AsciiDocQuickFixTestBase {
-
-  static {
-    Set<PluginId> disabled = new HashSet<>();
-    Set<PluginId> enabled = new HashSet<>();
-
-    // to avoid:  java.lang.NoClassDefFoundError: Could not initialize class ai.grazie.nlp.tokenizer.spacy.SpacyBaseLanguage
-    disabled.add(PluginId.getId("com.intellij.grazie.pro"));
-
-    // to improve performance, remove plugins used for debugging in interactive mode
-    disabled.add(PluginId.getId("PsiViewer"));
-    disabled.add(PluginId.getId("PlantUML integration"));
-    disabled.add(PluginId.getId("com.intellij.platform.images"));
-    disabled.add(PluginId.getId("com.intellij.javafx"));
-
-    PluginEnabler.HEADLESS.disableById(disabled);
-    PluginEnabler.HEADLESS.enableById(enabled);
-  }
 
   private static final String NAME = new AsciiDocChangeCaseForAnchor().getName();
 
