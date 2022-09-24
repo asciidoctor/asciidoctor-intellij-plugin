@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-java@v3.5.0
         with:
           java-version: 17
-          distribution: 'zulu'
+          distribution: 'corretto'
 
       # Check out current repository
       - name: Fetch Sources

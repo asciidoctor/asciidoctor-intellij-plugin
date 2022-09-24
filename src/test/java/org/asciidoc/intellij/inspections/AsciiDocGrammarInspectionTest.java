@@ -1,14 +1,28 @@
 package org.asciidoc.intellij.inspections;
 
 import com.intellij.grazie.ide.inspection.grammar.GrazieInspection;
+import com.intellij.ide.plugins.DisabledPluginsState;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.testFramework.PlatformTestUtil;
 import org.asciidoc.intellij.quickfix.AsciiDocChangeCaseForAnchor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Alexander Schwartz
  */
 public class AsciiDocGrammarInspectionTest extends AsciiDocQuickFixTestBase {
+
+  static {
+    Set<PluginId> disabled = new HashSet<>();
+
+    // to avoid: com.intellij.openapi.progress.ProcessCanceledException: java.lang.IncompatibleClassChangeError
+    disabled.add(PluginId.getId("com.intellij.grazie.pro"));
+
+    DisabledPluginsState.saveDisabledPluginsAndInvalidate(disabled);
+  }
 
   private static final String NAME = new AsciiDocChangeCaseForAnchor().getName();
 
