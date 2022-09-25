@@ -651,32 +651,34 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   private class MyUpdatePanelOnSettingsChangedListener implements AsciiDocApplicationSettings.SettingsChangedListener {
     @Override
     public void onSettingsChange(@NotNull AsciiDocApplicationSettings settings) {
-      reprocessAnnotations();
+      ApplicationManager.getApplication().invokeLater(() -> {
+        reprocessAnnotations();
 
-      // trigger re-parsing of content as language injection might have changed
-      // TODO - doesn't work reliably yet when switching back-and-forth
-      VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-      if (file != null) {
-        FileContentUtilCore.reparseFiles(file);
-      }
+        // trigger re-parsing of content as language injection might have changed
+        // TODO - doesn't work reliably yet when switching back-and-forth
+        VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+        if (file != null) {
+          FileContentUtilCore.reparseFiles(file);
+        }
 
-      final AsciiDocHtmlPanelProvider newPanelProvider = retrievePanelProvider(settings);
-      if (!mySwingAlarm.isDisposed()) {
-        mySwingAlarm.addRequest(() -> {
-          try {
-            if (!mySwingAlarm.isDisposed()) {
-              synchronized (this) {
-                myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
-                myPanel.scrollToLine(targetLineNo, document.getLineCount());
-                forceRenderCycle(); // force a refresh of the preview by resetting the current memorized content
+        final AsciiDocHtmlPanelProvider newPanelProvider = retrievePanelProvider(settings);
+        if (!mySwingAlarm.isDisposed()) {
+          mySwingAlarm.addRequest(() -> {
+            try {
+              if (!mySwingAlarm.isDisposed()) {
+                synchronized (this) {
+                  myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
+                  myPanel.scrollToLine(targetLineNo, document.getLineCount());
+                  forceRenderCycle(); // force a refresh of the preview by resetting the current memorized content
+                }
+                renderIfVisible();
               }
-              renderIfVisible();
+            } catch (Exception ex) {
+              LOG.error("unhandled exception when preparing the preview", ex);
             }
-          } catch (Exception ex) {
-            LOG.error("unhandled exception when preparing the preview", ex);
-          }
-        }, 0, ModalityState.stateForComponent(getComponent()));
-      }
+          }, 0, ModalityState.stateForComponent(getComponent()));
+        }
+      });
     }
   }
 
