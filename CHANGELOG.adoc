@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - Avoid corner-cases with open blocks when incrementally parsing sections and cells (#1168)
 - Support absolute path names when picking a file in the preview (thanks to @ropelli) (#1162)
 - Defer handling of settings change to avoid an IllegalArgumentException (#1171)
+- Prevent IllegalAccessError when testing for JavaFX problems (#1172)
 
 === 0.37.49
 

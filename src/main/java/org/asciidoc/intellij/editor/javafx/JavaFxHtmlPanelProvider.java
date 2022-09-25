@@ -81,6 +81,8 @@ public class JavaFxHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
       LOG.debug("can't find class PlatformImpl", ex);
     } catch (NoSuchFieldException | IllegalAccessException ex) {
       LOG.error("can't read state of PlatformImpl", ex);
+    } catch (IllegalAccessError e) {
+      // ignore - might not work due to a module access problem (seen in JDK 17)
     }
     return false;
   }
