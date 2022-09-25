@@ -16,6 +16,7 @@ This document provides a high-level view of the changes introduced by release.
 - Support absolute path names when picking a file in the preview (thanks to @ropelli) (#1162)
 - Defer handling of settings change to avoid an IllegalArgumentException (#1171)
 - Prevent IllegalAccessError when testing for JavaFX problems (#1172)
+- Read Antora component descriptor contents from PSI instead of the file to avoid outdated content.
 
 === 0.37.49
 

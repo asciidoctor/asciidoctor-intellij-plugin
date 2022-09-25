@@ -1145,13 +1145,7 @@ public class AsciiDocWrapper {
         Map<String, Object> result;
         try {
           Yaml yaml = new Yaml();
-          try {
-            try (InputStream is = antoraFile.getInputStream()) {
-              result = yaml.load(is);
-            }
-          } catch (IOException ex) {
-            throw new YAMLException("unable to read file", ex);
-          }
+          result = yaml.load(currentFile.getText());
           if (result == null) {
             // result will be null if file is empty
             result = new HashMap<>();
