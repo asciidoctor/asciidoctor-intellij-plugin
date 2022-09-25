@@ -542,7 +542,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         // ensure that all occurrences in the replacement get the same value
         stack.push(alreadyInStack.get());
         String newName = new StringBuilder(lookupString).replace(matcher.start(), matcher.end(), alreadyInStack.get().getSecond()).toString();
-        boolean found = checkItemInKey(key, newName, element, new ArrayDeque<>());
+        boolean found = checkItemInKey(key, newName, element, stack);
         if (found) {
           return true;
         }
@@ -565,7 +565,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           searched.add(value);
           stack.add(new Trinity<>(attributeName, value, lookupString));
           String newName = new StringBuilder(lookupString).replace(matcher.start(), matcher.end(), value).toString();
-          boolean found = checkItemInKey(key, newName, element, new ArrayDeque<>());
+          boolean found = checkItemInKey(key, newName, element, stack);
           stack.pop();
           if (found) {
             return true;
