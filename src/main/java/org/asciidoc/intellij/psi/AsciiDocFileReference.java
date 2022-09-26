@@ -150,6 +150,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         PsiDirectory parent = (PsiDirectory) baseElement;
         String name = AsciiDocUtil.resolveAttributes(root, key);
         if (name != null) {
+          if (!VALID_FILENAME.matcher(name).matches() || name.contains("/") || name.contains("\\")) {
+            return false;
+          }
           try {
             if (isFolder) {
               parent.checkCreateSubdirectory(name);

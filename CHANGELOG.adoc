@@ -19,6 +19,7 @@ This document provides a high-level view of the changes introduced by release.
 - Read Antora component descriptor contents from PSI instead of the file to avoid outdated content.
 - Prevent StackOverflowError when evaluating file references (#1173)
 - Prevent exception when converting a Markdown listing without terminating block (#1174)
+- Before creating a missing folder, check if the name contains only valid characters (#1175)
 
 === 0.37.49
 
