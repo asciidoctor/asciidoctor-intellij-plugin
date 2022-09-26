@@ -107,8 +107,12 @@ public class AsciiDocConvertMarkdownListing implements LocalQuickFix {
   }
 
   private void changeTrailingDelimiter(StringBuilder text, PsiElement element, String delimiter) {
-    final int startOffset = text.length() - element.getLastChild().getTextLength();
-    text.replace(startOffset, text.length(), delimiter);
+    if (element.getLastChild().getNode().getElementType() == AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER) {
+      final int startOffset = text.length() - element.getLastChild().getTextLength();
+      text.replace(startOffset, text.length(), delimiter);
+    } else {
+      text.append("\n").append(delimiter);
+    }
   }
 
   private PsiElement createListing(@NotNull Project project, @NotNull String text) {
