@@ -63,7 +63,7 @@ jobs:
 
       # Setup Java 11 environment for the next steps
       - name: Setup Java
-        uses: actions/setup-java@v3.5.0
+        uses: actions/setup-java@v3.5.1
         with:
           java-version: 17
           distribution: 'corretto'
@@ -127,7 +127,7 @@ jobs:
 
       # Setup Java 11 environment for the next steps
       - name: Setup Java
-        uses: actions/setup-java@v3.5.0
+        uses: actions/setup-java@v3.5.1
         with:
           java-version: 17
           distribution: 'corretto'
