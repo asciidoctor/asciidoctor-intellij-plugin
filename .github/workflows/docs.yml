@@ -55,7 +55,7 @@ jobs:
         run: git fetch --deepen=1
 
       - name: 'Qodana for Docs'
-        uses: JetBrains/qodana-action@v2022.2.1
+        uses: JetBrains/qodana-action@v2022.2.2
         with:
           # https://hub.docker.com/r/jetbrains/qodana-jvm-community/tags
           args: >
