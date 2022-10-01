@@ -213,6 +213,7 @@ For image macros it also tries to find a declaration of the _imagesDir_-attribut
 There are several live templates included.
 See xref:features/advanced/livetemplates.adoc[] for more information.
 
+// see: PasteImageAction
 The user can copy images from the clipboard into the document.
 To do that, the user selects "`Paste image from clipboard`" from the editor's icon menu or from the context menu.
 If the clipboard contains a reference to an existing file, the user can choose to copy the file to the project or to create a reference to the image in the AsciiDoc document.
@@ -221,6 +222,13 @@ In both cases, the user has the option to configure the image with additional at
 
 As a shortcut the user can also use kbd:[Ctrl+C] and kbd:[Ctrl+V] to add a reference to the image from within the project to the current document.
 This shortcut doesn't work yet for copying contents from outside the project.
+
+// see: PasteHtmlAction
+The user can copy formatted text from the clipboard into the document.
+To do that, the user selects "`Paste formatted text`" from the editor's icon menu or from the context menu.
+The plugin downloads https://pandoc.org/[Pandoc] to convert the clipboard's contents from HTML to AsciiDoc.
+
+The user can enable in the plugin settings that converting contents on paste, then and kbd:[Ctrl+V] will do the conversion automatically.
 
 // AsciiDocHeadingStyleInspection, ...
 The editor runs inspections on the content.

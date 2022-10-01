@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.51
+
+- Convert formatted text from clipboard on paste (#75)
+
 === 0.37.50
 
 - Detect incompatible plugin _IntelliJ Scripting: Ruby_ and show advice to the user (#1160)

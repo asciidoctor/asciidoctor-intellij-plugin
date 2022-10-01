@@ -72,6 +72,12 @@
                 description="Paste image from clipboard"
                 icon="AsciiDocIcons.EditorActions.IMAGE">
         </action>
+        <action class="org.asciidoc.intellij.actions.asciidoc.PasteHtmlAction"
+                id="org.asciidoc.intellij.actions.asciidoc.PasteHtmlAction"
+                text="Paste Formatted Text"
+                description="Paste formatted text from clipboard"
+                icon="AsciiDocIcons.EditorActions.PASTE">
+        </action>
         <action id="asciidoc.tables.tabledialog" class="org.asciidoc.intellij.actions.asciidoc.CreateTableAction"
                 text="Create Table Dialog..." description="Insert a table at the caret"
                 icon="AsciiDocIcons.EditorActions.TABLE">
@@ -185,8 +191,9 @@
     <typedHandler implementation="org.asciidoc.intellij.actions.FormattingQuotedTypedHandler" order="first" id="asciidocformattingquoted"/>
     <typedHandler implementation="org.asciidoc.intellij.actions.AsciiDocTriggerAutoCompleteTypedHandler" order="after asciidocformattingquoted"/>
     <webBrowserUrlProvider implementation="org.asciidoc.intellij.web.AsciiDocBrowserUrlProvider"/>
-    <customPasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteProvider" />
-    <filePasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteProvider" />
+    <customPasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteImageProvider" order="before asciidoc-paste-html-provider"/>
+    <customPasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteHtmlProvider" id="asciidoc-paste-html-provider" />
+    <filePasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteImageProvider" />
     <fileType name="AsciiDoc" extensions="adoc;asciidoc;ad" fileNames=".asciidoctorconfig" language="AsciiDoc"
               implementationClass="org.asciidoc.intellij.file.AsciiDocFileType" fieldName="INSTANCE"/>
     <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocSplitEditorProvider"/>
