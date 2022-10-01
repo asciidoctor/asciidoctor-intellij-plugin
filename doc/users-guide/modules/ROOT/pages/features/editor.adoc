@@ -226,7 +226,7 @@ This shortcut doesn't work yet for copying contents from outside the project.
 // see: PasteHtmlAction
 The user can copy formatted text from the clipboard into the document.
 To do that, the user selects "`Paste formatted text`" from the editor's icon menu or from the context menu.
-The plugin downloads https://pandoc.org/[Pandoc] to convert the clipboard's contents from HTML to AsciiDoc.
+The plugin downloads https://pandoc.org/[Pandoc] to convert the clipboard's contents from HTML to AsciiDoc. (This is available from plugin version 0.37.51 onwards.)
 
 The user can enable in the plugin settings that converting contents on paste, then and kbd:[Ctrl+V] will do the conversion automatically.
 
