@@ -10,7 +10,7 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actions.PasteAction;
 import com.intellij.psi.PsiFile;
-import org.asciidoc.intellij.actions.asciidoc.PasteImageAction;
+import org.asciidoc.intellij.actions.asciidoc.PasteHtmlAction;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,18 +22,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
-public class AsciiDocPasteProvider implements PasteProvider {
+public class AsciiDocPasteImageProvider implements PasteProvider {
   @Override
   public void performPaste(@NotNull DataContext dataContext) {
-    executeAction(PasteImageAction.ID, dataContext);
-  }
-
-  private void executeAction(@NotNull String actionId, @NotNull DataContext dataContext) {
     final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
     if (editor == null) {
       return;
     }
-    AnAction action = ActionManager.getInstance().getAction(actionId);
+    AnAction action = ActionManager.getInstance().getAction(PasteHtmlAction.ID);
     if (action != null) {
       action.actionPerformed(AnActionEvent.createFromDataContext(ActionPlaces.UNKNOWN, null, dataContext));
     }

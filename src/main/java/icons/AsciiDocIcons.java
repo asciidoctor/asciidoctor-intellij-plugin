@@ -38,6 +38,7 @@ public class AsciiDocIcons {
     public static final Icon HIGHLIGHTED = load("/icons/editor_actions/Highlighted.svg"); // 16x16
     public static final Icon CODE_SPAN = load("/icons/editor_actions/Code_span.svg"); // 16x16
     public static final Icon IMAGE = load("/icons/editor_actions/image.svg"); // 16x16
+    public static final Icon PASTE = load("/icons/editor_actions/paste.svg"); // 16x16
   }
 
   public static class Structure {

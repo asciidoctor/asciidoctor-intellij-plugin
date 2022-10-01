@@ -86,8 +86,9 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JPanel myDownloadDependenciesFailedDitaamini;
   private LinkLabel<?> myDownloadDependenciesFailedDitaaminiPickFile;
   private LinkLabel<?> myDownloadDependenciesFailedDitaaminiBrowser;
+  private JBCheckBox myEnableConversionOfClipboardText;
 
-  public JComponent getComponent() {
+    public JComponent getComponent() {
     return myMainPanel;
   }
 
@@ -251,6 +252,8 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     myEnabledAttributeFolding.setSelected(settings.isAttributeFoldingEnabled());
 
+    myEnableConversionOfClipboardText.setSelected(settings.isConversionOfClipboardTextEnabled());
+
     myKrokiUrl.setTextToTriggerEmptyTextStatus("https://kroki.io");
 
     NumberFormat rateFormat = NumberFormat.getNumberInstance();
@@ -350,7 +353,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myVerticalLayout.isSelected(), myEditorTop.isSelected() || myEditorLeft.isSelected(), myEnableInjections.isSelected(),
       myLanguageForPassthrough.getText(), myDisabledInjectionsByLanguage.getText(),
       myShowAsciiDocWarningsAndErrorsInEditor.isSelected(), myInplacePreviewRefresh.isSelected(),
-      myEnableKroki.isSelected(), krokiUrl, myEnabledAttributeFolding.isSelected(),
+      myEnableKroki.isSelected(), krokiUrl, myEnabledAttributeFolding.isSelected(), myEnableConversionOfClipboardText.isSelected(),
       getZoom(),
       myHideErrorsInSourceBlocks.isSelected(), myHideErrorsByLanguage.getText());
   }

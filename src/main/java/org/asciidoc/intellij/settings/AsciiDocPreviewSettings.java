@@ -95,6 +95,9 @@ public final class AsciiDocPreviewSettings {
   @Attribute("EnabledFoldedAttributeReferencedExperimental")
   private boolean myEnableAttributeFolding = false;
 
+  @Attribute("EnableConversionOfClipboardTextExperimental")
+  private boolean myEnableConversionOfClipboardText = false;
+
   @Attribute("Zoom")
   private Integer myZoom = 100;
 
@@ -121,6 +124,7 @@ public final class AsciiDocPreviewSettings {
                                  boolean enableKroki,
                                  String krokiUrl,
                                  boolean enableAttributeFolding,
+                                 boolean enableConversionOfClipboardText,
                                  int zoom,
                                  boolean hideErrorsInSourceBlocks,
                                  @Nullable String hideErrorsByLanguage) {
@@ -139,6 +143,7 @@ public final class AsciiDocPreviewSettings {
     myEnableKroki = enableKroki;
     myKrokiUrl = krokiUrl;
     myEnableAttributeFolding = enableAttributeFolding;
+    myEnableConversionOfClipboardText = enableConversionOfClipboardText;
     myZoom = zoom;
     myHideErrorsInSourceBlocks = hideErrorsInSourceBlocks;
     myHideErrorsByLanguage = hideErrorsByLanguage;
@@ -312,6 +317,9 @@ public final class AsciiDocPreviewSettings {
     if (myEnableAttributeFolding != that.myEnableAttributeFolding) {
       return false;
     }
+    if (myEnableConversionOfClipboardText != that.myEnableConversionOfClipboardText) {
+      return false;
+    }
     if (!Objects.equals(myZoom, that.myZoom)) {
       return false;
     }
@@ -341,6 +349,7 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + (myEnableKroki ? 1 : 0);
     result = 31 * result + Objects.hashCode(myKrokiUrl);
     result = 31 * result + (myEnableAttributeFolding ? 1 : 0);
+    result = 31 * result + (myEnableConversionOfClipboardText ? 1 : 0);
     result = 31 * result + Objects.hashCode(myZoom);
     result = 31 * result + (myHideErrorsInSourceBlocks ? 1 : 0);
     result = 31 * result + Objects.hashCode(myHideErrorsByLanguage);
@@ -376,6 +385,10 @@ public final class AsciiDocPreviewSettings {
       );
     }
     return list;
+  }
+
+  public boolean isConversionOfClipboardTextEnabled() {
+    return myEnableConversionOfClipboardText;
   }
 
   public interface Holder {

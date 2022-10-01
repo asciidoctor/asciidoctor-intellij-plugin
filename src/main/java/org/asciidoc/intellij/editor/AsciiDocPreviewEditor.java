@@ -234,6 +234,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         settings.getAsciiDocPreviewSettings().isKrokiEnabled(),
         settings.getAsciiDocPreviewSettings().getKrokiUrl(),
         settings.getAsciiDocPreviewSettings().isAttributeFoldingEnabled(),
+        settings.getAsciiDocPreviewSettings().isConversionOfClipboardTextEnabled(),
         settings.getAsciiDocPreviewSettings().getZoom(),
         settings.getAsciiDocPreviewSettings().isHideErrorsInSourceBlocks(),
         settings.getAsciiDocPreviewSettings().getHideErrorsByLanguage()));
