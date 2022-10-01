@@ -1,6 +1,7 @@
 .idea/*
 !/.idea/runConfigurations/*.xml
 !/.idea/externalDependencies.xml
+!/.idea/misc.xml
 !/.idea/checkstyle-idea.xml
 !/.idea/codeStyles
 !/.idea/codeStyles/*.xml
