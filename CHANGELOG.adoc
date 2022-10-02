@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.52
+
+- Add error message in preview when loading the custom stylesheet fails (#1076)
+
 === 0.37.51
 
 - Convert formatted text from clipboard on paste (#75)
