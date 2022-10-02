@@ -9,7 +9,8 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.37.52
 
-- Add error message in preview when loading the custom stylesheet fails (#1076)
+- Add an error message in preview when loading the custom stylesheet fails (#1076)
+- Line comments are now followed by a single blank (thanks to @marcoebbinghaus) (#601)
 
 === 0.37.51
 
