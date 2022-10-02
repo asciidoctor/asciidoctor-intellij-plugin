@@ -10,7 +10,7 @@ public class AsciiDocCommenter implements Commenter {
   @Nullable
   @Override
   public String getLineCommentPrefix() {
-    return "//";
+    return "// ";
   }
 
   @Nullable
