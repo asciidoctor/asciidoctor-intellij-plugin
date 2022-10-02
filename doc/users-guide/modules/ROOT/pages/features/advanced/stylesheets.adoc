@@ -116,7 +116,9 @@ The following example uses a dark skin.
 :stylesheet: dark.css
 ----
 
-If the remote stylesheet is not available due to an unreachable server or a missing stylesheet, the preview will default to the standard stylesheet.
+If the remote stylesheet is not available due to an unreachable server or a missing stylesheet, the preview will default to the standard stylesheet. Starting with release 0.37.52 of the plugin, the preview shows an error message to notify the user that this happened.
+
+To debug problems with remote stylesheets, use the xref:features/preview/jcef-preview.adoc#devtools[DevTools available for the JCEF preview]. Looking at the console or network tab reveals the full errormessage why a remote stylesheet wasn't loaded.
 
 === Add additional styles or HTML headers
 

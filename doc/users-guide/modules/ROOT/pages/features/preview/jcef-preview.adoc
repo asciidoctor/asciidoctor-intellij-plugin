@@ -16,7 +16,7 @@ The JCEF preview provides better HTML preview and additional features like scrol
 As the preview is based on an up-to-date Google Chrome rendering engine, it offers in-par rendering compared to modern browsers.
 This includes rendering of fonts and SVGs.
 
-== How to enable the JavaFX preview
+== How to enable the JCEF preview
 
 Once JCEF is available, the user can change the preview to JCEF in the plugin's settings via menu:File[Settings... > Languages & Frameworks > AsciiDoc > Preview Browser].
 
