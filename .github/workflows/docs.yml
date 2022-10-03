@@ -13,6 +13,11 @@ on:
       - '.github/workflows/docs.yml'
       - 'qodana.yaml'
 
+concurrency:
+  # Only run once for latest commit per ref and cancel other (previous) runs.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   qodana-docs:
     name: Qodana Docs
