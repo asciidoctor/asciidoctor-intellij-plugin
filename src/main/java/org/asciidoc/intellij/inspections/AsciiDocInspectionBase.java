@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Key;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
@@ -68,6 +69,9 @@ public abstract class AsciiDocInspectionBase extends LocalInspectionTool {
   protected static boolean isExcludedByIfdef(PsiElement element, boolean goUp) {
     if (goUp && element != null && element.getPrevSibling() == null) {
       element = element.getParent();
+      if (element instanceof PsiFile || element instanceof PsiDirectory) {
+        return false;
+      }
     }
     if (goUp && element != null) {
       element = element.getPrevSibling();
@@ -82,8 +86,14 @@ public abstract class AsciiDocInspectionBase extends LocalInspectionTool {
       }
       if (goUp) {
         element = element.getParent();
+        if (element instanceof PsiFile || element instanceof PsiDirectory) {
+          return false;
+        }
         if (element != null && element.getPrevSibling() == null) {
           element = element.getParent();
+        }
+        if (element instanceof PsiFile || element instanceof PsiDirectory) {
+          return false;
         }
         if (element != null) {
           element = element.getPrevSibling();
