@@ -5,7 +5,7 @@
 {description}
 Use this to avoid manual downloads of pre-releases.
 
-== Add our early-access-repository (EAP) to the users IDE
+== Add our early-access-repository (EAP) to the user's IDE
 
 To add the repository to the IDE, follow these steps:
 
