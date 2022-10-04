@@ -16,9 +16,9 @@ To preview changes locally, the following prerequisites are necessary:
 . Fork and clone this repository: https://github.com/ahus1/intellij-asciidoc-plugin.ahus1.de
 . Fork and clone the plugin's repository: https://github.com/asciidoctor/asciidoctor-intellij-plugin to a folder named _asciidoctor-intellij-plugin_ as a sibling to the first repository.
 +
-If you choose a different folder, you'll need to adapt the folders in _antora-playbook-author.yml_.
+If the user chooses a different folder, they'll need to adapt the folders in _antora-playbook-author.yml_.
 . Change content for the theme in files _antora-playbook.yml_ and _antora-playbook-author.yml_ or sub-folder __antora_
-. Test your changes (recommended for every non-trivial change):
+. Test the changes (recommended for every non-trivial change):
 .. Install all dependencies defined by the `package.json` file
 +
 ----
