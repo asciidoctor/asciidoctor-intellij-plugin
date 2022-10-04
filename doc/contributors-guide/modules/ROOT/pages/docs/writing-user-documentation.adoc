@@ -3,7 +3,7 @@
 
 {description}
 
-== Write for your readers
+== Write for the reader
 
 This guideline enables contributors to write in a style that is comprehensible for the reader.
 

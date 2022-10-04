@@ -59,9 +59,14 @@ jobs:
         if: github.event_name == 'pull_request'
         run: git fetch --deepen=1
 
+      - name: Remove files that would trigger a full build (we're only interested in the docs)
+        run: rm -rf .idea gradle build.gradle
+
       - name: 'Qodana for Docs'
         uses: JetBrains/qodana-action@v2022.2.2
         with:
+          # as Gradle is disabled above, we won't download any artifacts, so no caching is necessary
+          use-caches: false
           # https://hub.docker.com/r/jetbrains/qodana-jvm-community/tags
           args: >
             --linter,jetbrains/qodana-jvm-community:2022.2,
