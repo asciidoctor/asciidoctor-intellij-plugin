@@ -9,7 +9,7 @@ endif::[]
 [#prerequisites]
 == Prerequisites
 
-To use this plugin, you need to have one of the IntelliJ family of IDEs like IntelliJ IDEA, GoLand, WebStorm or PyCharm installed.
+To use this plugin, the user of the plugin have one of the IntelliJ family of IDEs like IntelliJ IDEA, GoLand, WebStorm or PyCharm installed.
 See below for <<google-android-studio,Android Studio>> and <<intellij-mps,IntelliJ MPS>>.
 
 All default download packages include the JetBrains Runtime 11, a pre-bundled OpenJDK runtime environment.
