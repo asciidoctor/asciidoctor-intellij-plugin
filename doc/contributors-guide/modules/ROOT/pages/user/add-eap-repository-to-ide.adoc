@@ -1,13 +1,13 @@
 = Using the Early Access repository of the AsciiDoc plugin
 :navtitle: Using the Early Access repository
-:description: Add the repository to receive notifications of new preview releases and download them directly to your IDE.
+:description: Add the repository to receive notifications of new preview releases and download them directly to the IDE.
 
 {description}
 Use this to avoid manual downloads of pre-releases.
 
-== Add our early-access-repository (EAP) to your IDE
+== Add our early-access-repository (EAP) to the users IDE
 
-Follow these steps to add the repository to your IDE:
+To add the repository to the IDE, follow these steps:
 
 . Go to menu:File[Settings... > Plugins]
 +
@@ -18,4 +18,4 @@ image::adding-eap-repository.png[]
 
 Use the https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issue numbers] given in the release notes to join the discussion on the respective GitHub issues.
 
-Open new issues if a new release breaks existing functionality or doesn't work as expected in your project.
+Open new issues when a new version breaks existing functionality or does not work as expected in the project.
