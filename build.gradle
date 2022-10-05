@@ -137,7 +137,7 @@ dependencies {
   // end of markdown_to_asciidoc
 
   implementation 'org.apache.commons:commons-text:1.10.0'
-  implementation 'io.sentry:sentry:6.4.2'
+  implementation 'io.sentry:sentry:6.4.3'
 
   // when updating the versions here, also update them in AsciiDocDownloaderUtil for dynamic download
   testImplementation 'org.asciidoctor:asciidoctorj-diagram:2.2.3'
