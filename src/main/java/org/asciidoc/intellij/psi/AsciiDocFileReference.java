@@ -75,6 +75,7 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.COMPONENT_MODULE;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.FAMILY;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.MODULE;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN_WITHOUT_FILE;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.VERSION;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.isAntoraPartial;
 
@@ -629,7 +630,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   private static final Pattern VALID_FILENAME = Pattern.compile("^([\\p{Alnum}_\\-{}./\\\\() ,$:@]|(%[a-zA-Z0-9]))*$", Pattern.UNICODE_CHARACTER_CLASS);
 
   private void resolve(String key, List<ResolveResult> results, int depth, Collection<String> searchedKeys) {
-    if (searchedKeys.contains(key) || !VALID_FILENAME.matcher(key).matches() || URL_PREFIX_PATTERN.matcher(key).find()) {
+    if (searchedKeys.contains(key) || !VALID_FILENAME.matcher(key).matches() || URL_PREFIX_PATTERN_WITHOUT_FILE.matcher(key).find()) {
       // skip all non-valid filenames, also URLs
       return;
     }
@@ -661,7 +662,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       return;
     }
     for (String k : keys) {
-      if (!VALID_FILENAME.matcher(k).matches() || URL_PREFIX_PATTERN.matcher(k).find()) {
+      if (!VALID_FILENAME.matcher(k).matches() || URL_PREFIX_PATTERN_WITHOUT_FILE.matcher(k).find()) {
         // skip all non-valid filenames, also URLs
         return;
       }
@@ -788,7 +789,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   private void resolveAttributes(String key, List<ResolveResult> results, int depth, Collection<String> searchedKeys) {
-    if (!VALID_FILENAME.matcher(key).matches() || URL_PREFIX_PATTERN.matcher(key).find()) {
+    if (!VALID_FILENAME.matcher(key).matches() || URL_PREFIX_PATTERN_WITHOUT_FILE.matcher(key).find()) {
       // skip all non-valid filenames, also URLs
       return;
     }
@@ -810,14 +811,14 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           continue;
         }
         searched.add(value);
-        if (URL_PREFIX_PATTERN.matcher(value).find()) {
+        if (URL_PREFIX_PATTERN_WITHOUT_FILE.matcher(value).find()) {
           continue;
         }
         String newKey = new StringBuilder(key).replace(matcher.start(), matcher.end(), value).toString();
         resolve(newKey, results, depth + 1, searchedKeys);
       }
     } else {
-      if (URL_PREFIX_PATTERN.matcher(key).find()) {
+      if (URL_PREFIX_PATTERN_WITHOUT_FILE.matcher(key).find()) {
         PsiElementResolveResult result = new PsiElementResolveResult(new BrowsableUrl(key));
         if (!results.contains(result)) {
           results.add(result);
@@ -936,7 +937,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
             toAntoraLookupItem(items, antoraModule);
           }
         } else if (AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(base).matches()) {
-          Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(key);
+          Matcher urlMatcher = URL_PREFIX_PATTERN_WITHOUT_FILE.matcher(key);
           if (!urlMatcher.find()) {
             if (!"image".equals(macroName)) {
               List<VirtualFile> vfs = AsciiDocUtil.resolvePrefix(root, antoraModuleDir, base);
@@ -1323,7 +1324,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   private List<@NotNull PsiElement> resolve(String fileName) {
     fileName = removeFileProtocolPrefix(fileName);
-    if (URL_PREFIX_PATTERN.matcher(fileName).matches()) {
+    if (URL_PREFIX_PATTERN_WITHOUT_FILE.matcher(fileName).matches()) {
       return null;
     }
     if (fileName.contains("%")) {

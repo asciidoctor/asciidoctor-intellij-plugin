@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.37.53
 
 - Allow ID attribute on all macros, for example on images
+- Resolve `+++file:///+++` URIs to local files when auto-completing in the editor.
 
 === 0.37.52
 

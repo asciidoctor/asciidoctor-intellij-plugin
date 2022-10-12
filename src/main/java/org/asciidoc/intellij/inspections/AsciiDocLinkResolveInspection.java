@@ -98,7 +98,7 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
           }
           if (resolvedBody == null) {
             return;
-          } else if (AsciiDocUtil.URL_PREFIX_PATTERN.matcher(resolvedBody).find()) {
+          } else if (AsciiDocUtil.URL_PREFIX_PATTERN_WITHOUT_FILE.matcher(resolvedBody).find()) {
             // this is a URL, don't
             return;
           } else if (o instanceof AsciiDocLink && ((AsciiDocLink) o).getMacroName().equals("link") && resolvedBody.startsWith("about:")) {
