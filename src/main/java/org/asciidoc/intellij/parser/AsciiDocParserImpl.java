@@ -617,7 +617,7 @@ public class AsciiDocParserImpl {
         PsiBuilder.Marker tag = myBuilder.mark();
         next();
         tag.done(AsciiDocElementTypes.INCLUDE_TAG);
-      } else if ((at(ATTRIBUTE_REF_START) || at(ATTR_VALUE)) && "id".equals(name) && macroId == null) {
+      } else if ((at(ATTRIBUTE_REF_START) || at(ATTR_VALUE)) && "id".equals(name)) {
         PsiBuilder.Marker blockIdMarker = myBuilder.mark();
         while ((at(ATTRIBUTE_REF_START) || at(ATTR_VALUE)) && emptyLines == 0) {
           if (at(ATTRIBUTE_REF_START)) {

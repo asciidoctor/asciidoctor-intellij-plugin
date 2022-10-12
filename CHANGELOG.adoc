@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.53
+
+- Allow ID attribute on all macros, for example on images
+
 === 0.37.52
 
 - Add an error message in preview when loading the custom stylesheet fails (#1076)
