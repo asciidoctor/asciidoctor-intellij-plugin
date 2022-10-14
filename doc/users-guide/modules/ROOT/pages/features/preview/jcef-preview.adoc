@@ -29,21 +29,45 @@ include::partial$content-security-policy.adoc[]
 [[limitations]]
 == Limitations of the JCEF preview
 
+The following paragraphs describe problems where either a workaround is available or a fix is the latest version of IntelliJ or the AsciiDoc plugin.
+
+=== Preview not showing on RDP (workaround available)
+
+When using RDP to access the IDE, a user might not see the preview, and it appears as a blank space.
+This might be due to issue https://youtrack.jetbrains.com/issue/IDEA-299007[IDEA-299007].
+The root is that hardware acceleration is not available for the preview.
+
+As a workaround, set the registry option `ide.browser.jcef.gpu.disable` to `true`.
+
+The registry is available via menu menu:Help[Find action...], then enter "`Registry`" to search the action, then choose "`Registry...`".
+In the dialog that opens, start typing the registry key given above to restrict the list.
+Check the checkbox on the right to enable this property.
+Press btn:[Close] to close the dialog.
+Restart the IDE to apply the setting.
+
+=== Undocked window support (fixed)
+
 When using tool windows in the undocked mode prior to plugin version 0.35.1, the preview will overlap with the tool window.
 See issue https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/751[#751] for details.
+
+=== Working with a http proxy (fixed)
 
 The JCEF preview doesn't support the IntelliJ proxy configuration prior to 2021.1.
 Configuring a proxy for JCEF requires an IDE restart.
 Therefore, remote images in the preview might not show for users behind a proxy.
 See '`xref:faq/jcef-no-proxy-support.adoc[]`' for more information.
 
+=== Switching focus (fixed)
+
 Once a JCEF preview is open in a project, it now and then brings the focus to the project when editing files in a different window in IntelliJ 2020.2.
 This is fixed in the https://blog.jetbrains.com/idea/2020/11/intellij-idea-2020-2-4/[2020.2.4] and 2020.3 release.
 See JetBrains issue https://youtrack.jetbrains.com/issue/IDEA-247541["`JCEF: steals focus from a different frame`"] for more information.
 
+=== Copy-and-paste on macOS (fixed)
+
 On macOS there is no copy-and-paste from the JCEF preview in IntelliJ 2020.2.
 This is fixed in IntelliJ 2020.3 (see issues https://youtrack.jetbrains.com/issue/IDEA-241604/[IDEA-241604] and https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/533[asciidoctor-intellij-plugin/#322]).
-As a workaround, open the preview in the browser by clicking on your favorite browser symbol when hovering in the upper right corner of the editor and copying the contents of the browser window.
+As a workaround, open the preview in the browser by clicking on any of the browser symbols when hovering in the upper right corner of the editor and copying the contents of the browser window.
 
 == Benefits of the JCEF preview
 
