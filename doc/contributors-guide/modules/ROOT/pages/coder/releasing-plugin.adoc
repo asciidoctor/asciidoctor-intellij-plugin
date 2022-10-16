@@ -13,7 +13,7 @@ This file can be downloaded and installed manually as described in xref:user/ins
 . Edit the draft release.
 . The tag version must not be changed, as it is already baked into the change log.
 . Add a meaningful headline for the release.
-. If you find typos in the long description for the release, fix them in the changelog and wait for the build to update the draft release.
+. If there are any typos in the long description for the release, fix them in the changelog and wait for the build to update the draft release.
 . The long description supports Markdown, while the changelog is written in AsciiDoc.
 The syntax might need to be changed to make the content appear correctly in Markdown.
 . Check the box "`This is a pre-release`".
