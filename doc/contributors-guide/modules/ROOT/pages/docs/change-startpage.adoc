@@ -15,7 +15,7 @@ If you want to preview your changes locally:
 
 . Fork and clone this repository: https://github.com/ahus1/intellij-asciidoc-plugin.ahus1.de
 . Change content in sub-folder _startpage_
-. Test your changes (recommended for every non-trivial change):
+. Test the changes (recommended for every non-trivial change):
 .. Install Jekyll using bundler:
 +
 ----
