@@ -62,8 +62,8 @@ public class AsciiDocDownloaderUtil {
 
   // when updating the version, also update the sha256 hash!
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-pdf
-  public static final String ASCIIDOCTORJ_PDF_VERSION = "2.3.0";
-  private static final String ASCIIDOCTORJ_PDF_HASH = "0e07655cdb1cc8b404ff12aa10576e8375bdd8b469713a5e057434fa531755b6";
+  public static final String ASCIIDOCTORJ_PDF_VERSION = "2.3.3";
+  private static final String ASCIIDOCTORJ_PDF_HASH = "1b5890c403f5d6280440fb2af59d08583d189f62e3f4c51a03e7386374270fbb";
 
   // when updating the version, also update the sha256 hash!
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram
