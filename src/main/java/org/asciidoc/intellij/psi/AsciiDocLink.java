@@ -20,9 +20,8 @@ public class AsciiDocLink extends AsciiDocASTWrapperPsiElement implements HasFil
     super(node);
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     return ReferenceProvidersRegistry.getReferencesFromProviders(this);
   }
 
@@ -72,7 +71,7 @@ public class AsciiDocLink extends AsciiDocASTWrapperPsiElement implements HasFil
   public void setAnchor(String anchor) {
     PsiElement child = this.getFirstChild();
     while (child != null) {
-      if (child.getNode().getElementType() == AsciiDocTokenTypes.LINKANCHOR) {
+      if (child.getNode() != null && child.getNode().getElementType() == AsciiDocTokenTypes.LINKANCHOR) {
         if (child instanceof LeafElement) {
           ((LeafElement) child).replaceWithText(anchor);
         }
@@ -97,7 +96,7 @@ public class AsciiDocLink extends AsciiDocASTWrapperPsiElement implements HasFil
 
   public static TextRange getBodyRange(AsciiDocLink element) {
     PsiElement child = element.getFirstChild();
-    while (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.LINKSTART) {
+    while (child != null && child.getNode() != null && child.getNode().getElementType() == AsciiDocTokenTypes.LINKSTART) {
       child = child.getNextSibling();
     }
     if (child == null) {
@@ -105,24 +104,7 @@ public class AsciiDocLink extends AsciiDocASTWrapperPsiElement implements HasFil
     }
     int start = child.getStartOffsetInParent();
     int end = start;
-    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.INLINE_ATTRS_START) {
-      end = child.getStartOffsetInParent() + child.getTextLength();
-      child = child.getNextSibling();
-    }
-    return TextRange.create(start, end);
-  }
-
-  public static TextRange getFileRange(AsciiDocLink element) {
-    PsiElement child = element.getFirstChild();
-    while (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.LINKSTART) {
-      child = child.getNextSibling();
-    }
-    if (child == null) {
-      return TextRange.EMPTY_RANGE;
-    }
-    int start = child.getStartOffsetInParent();
-    int end = start;
-    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.INLINE_ATTRS_START) {
+    while (child != null && child.getNode() != null && child.getNode().getElementType() != AsciiDocTokenTypes.INLINE_ATTRS_START) {
       end = child.getStartOffsetInParent() + child.getTextLength();
       child = child.getNextSibling();
     }

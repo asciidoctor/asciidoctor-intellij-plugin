@@ -35,6 +35,9 @@ public interface AsciiDocBlock extends PsiElement, AsciiDocSelfDescribe {
 
   @Nullable
   default String getTitle() {
+    if (getNode() == null) {
+      return null;
+    }
     ASTNode titleNode = getNode().findChildByType(AsciiDocElementTypes.TITLE);
     if (titleNode == null) {
       return null;
@@ -61,7 +64,7 @@ public interface AsciiDocBlock extends PsiElement, AsciiDocSelfDescribe {
   @Nullable
   default PsiElement getFirstSignificantChildForFolding() {
     PsiElement child = getFirstChild();
-    while (child != null &&
+    while (child != null && child.getNode() != null &&
       INSIGNIFICANT_TOKENS_FOR_FOLDING.contains(child.getNode().getElementType()) &&
         child.getNextSibling() != null) {
       child = child.getNextSibling();

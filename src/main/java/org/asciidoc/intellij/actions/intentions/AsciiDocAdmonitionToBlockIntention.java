@@ -28,7 +28,7 @@ public class AsciiDocAdmonitionToBlockIntention extends Intention {
     if (statementAtCaret == null) {
       return false;
     }
-    if (statementAtCaret.getNode().getElementType() != AsciiDocTokenTypes.ADMONITION) {
+    if (statementAtCaret.getNode() != null && statementAtCaret.getNode().getElementType() != AsciiDocTokenTypes.ADMONITION) {
       return false;
     }
     return true;
@@ -40,7 +40,7 @@ public class AsciiDocAdmonitionToBlockIntention extends Intention {
     if (statementAtCaret == null) {
       return;
     }
-    if (statementAtCaret.getNode().getElementType() != AsciiDocTokenTypes.ADMONITION) {
+    if (statementAtCaret.getNode() != null && statementAtCaret.getNode().getElementType() != AsciiDocTokenTypes.ADMONITION) {
       return;
     }
     PsiElement loop = statementAtCaret.getNextSibling();
@@ -66,7 +66,7 @@ public class AsciiDocAdmonitionToBlockIntention extends Intention {
         } else {
           onNewLine = false;
         }
-        if (loop instanceof AsciiDocBlock || loop.getNode().getElementType() == AsciiDocTokenTypes.CONTINUATION) {
+        if (loop instanceof AsciiDocBlock || (loop.getNode() != null && loop.getNode().getElementType() == AsciiDocTokenTypes.CONTINUATION)) {
           break;
         }
         buffer.append(loop.getText());

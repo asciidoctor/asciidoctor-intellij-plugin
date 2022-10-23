@@ -100,7 +100,7 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
           }
         } else if (element instanceof AsciiDocHtmlEntity) {
           addDescriptors(element);
-        } else if (COLLAPSABLE_TYPES.containsKey(element.getNode().getElementType())) {
+        } else if (element.getNode() != null && COLLAPSABLE_TYPES.containsKey(element.getNode().getElementType())) {
           addDescriptors(element);
         }
         super.visitElement(element);
@@ -147,7 +147,7 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
       descriptors.add(new FoldingDescriptor(element, range));
     } else if (element instanceof AsciiDocHtmlEntity) {
       descriptors.add(new FoldingDescriptor(element, range));
-    } else if (COLLAPSABLE_TYPES.containsKey(element.getNode().getElementType())) {
+    } else if (element.getNode() != null && COLLAPSABLE_TYPES.containsKey(element.getNode().getElementType())) {
       descriptors.add(new FoldingDescriptor(element, range));
     }
   }

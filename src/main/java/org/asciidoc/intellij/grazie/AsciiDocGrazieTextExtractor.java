@@ -91,7 +91,7 @@ public class AsciiDocGrazieTextExtractor extends TextExtractor {
         super.visitElement(element);
         if (languageSupport.getElementBehavior(root, element) == AsciiDocLanguageSupport.Behavior.TEXT) {
           int pos = element.getTextOffset();
-          if (element.getNode().getElementType() == AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START
+          if (element.getNode() != null && element.getNode().getElementType() == AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START
             && element.getTextLength() == 2) {
             // ` at the end of '`
             ranges.add(new TextRange(pos + 1, pos + 2));
@@ -100,22 +100,22 @@ public class AsciiDocGrazieTextExtractor extends TextExtractor {
             // AsciiDoc will eat extra spaces when rendering. Let's do the same here.
             ranges.add(new TextRange(pos + 1, pos + element.getTextLength()));
           }
-          if ((element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION
+          if (element.getNode() != null && (element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION
             || element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_CONTINUATION_LEGACY)
             && element.getTextLength() == 3) {
             // this will strip out the '+' or '\' and the newline from the continuation before forwarding it to the grammar check
             ranges.add(new TextRange(pos + 1, pos + 3));
           }
-          if ((element.getNode().getElementType() == AsciiDocTokenTypes.DESCRIPTION_END)) {
+          if (element.getNode() != null && element.getNode().getElementType() == AsciiDocTokenTypes.DESCRIPTION_END) {
             // this will strip the duplicated characters
             ranges.add(new TextRange(pos, pos + element.getTextLength() - 1));
           }
-          if (element.getNode().getElementType() == AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END
+          if (element.getNode() != null && element.getNode().getElementType() == AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END
             && element.getTextLength() == 2) {
             // ` at the beginning of `'
             ranges.add(new TextRange(pos, pos + 1));
           }
-          if (element.getNode().getElementType() == AsciiDocTokenTypes.HEADING_OLDSTYLE && element.getTextLength() >= 1) {
+          if (element.getNode() != null && element.getNode().getElementType() == AsciiDocTokenTypes.HEADING_OLDSTYLE && element.getTextLength() >= 1) {
             // ignore second line of heading
             String heading = element.getText();
             int i = heading.indexOf('\n');
@@ -123,7 +123,7 @@ public class AsciiDocGrazieTextExtractor extends TextExtractor {
               ranges.add(new TextRange(pos + i, pos + heading.length()));
             }
           }
-          if (element.getNode().getElementType() == AsciiDocTokenTypes.HEADING_TOKEN && element.getTextLength() >= 1
+          if (element.getNode() != null && element.getNode().getElementType() == AsciiDocTokenTypes.HEADING_TOKEN && element.getTextLength() >= 1
             && element.getPrevSibling() == null) {
             // ignore "##" or "==" at start of heading
             String heading = element.getText();

@@ -99,10 +99,10 @@ public class AsciiDocListing extends AbstractAsciiDocCodeBlock {
 
     // check for markdown style listing
     PsiElement child = this.getFirstChild();
-    if (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER &&
+    if (child != null && child.getNode() != null && child.getNode().getElementType() == AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER &&
         child.getText().startsWith("`")) {
       child = child.getNextSibling();
-      if (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.LISTING_TEXT) {
+      if (child != null && child.getNode() != null && child.getNode().getElementType() == AsciiDocTokenTypes.LISTING_TEXT) {
         return "source-" + child.getText();
       }
     }

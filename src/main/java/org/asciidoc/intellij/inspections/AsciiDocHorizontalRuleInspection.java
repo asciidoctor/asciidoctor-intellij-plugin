@@ -19,8 +19,8 @@ public class AsciiDocHorizontalRuleInspection extends AsciiDocInspectionBase {
   protected AsciiDocVisitor buildAsciiDocVisitor(@NotNull ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
     return new AsciiDocVisitor() {
       @Override
-      public void visitElement(PsiElement o) {
-        if (o != null && o.getNode().getElementType() == HORIZONTALRULE) {
+      public void visitElement(@NotNull PsiElement o) {
+        if (o.getNode() != null && o.getNode().getElementType() == HORIZONTALRULE) {
           if (o.getNode().getText().startsWith("-") || o.getNode().getText().startsWith("*") || o.getNode().getText().startsWith("_")) {
             LocalQuickFix[] fixes = new LocalQuickFix[]{MARKDOWN_HORIZONTAL_RULE_QUICKFIX};
             holder.registerProblem(o, TEXT_HINT_MARKDOWN, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixes);

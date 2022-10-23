@@ -60,7 +60,7 @@ public class AsciiDocAddAdocExtensionToXref implements LocalQuickFix {
           child = child.getNextSibling();
         }
         if (child instanceof LeafPsiElement && range.getEndOffset() <= child.getTextLength()
-          && child.getNode().getElementType() == AsciiDocTokenTypes.LINKFILE) {
+          && child.getNode() != null && child.getNode().getElementType() == AsciiDocTokenTypes.LINKFILE) {
           return (LeafPsiElement) child;
         }
       }

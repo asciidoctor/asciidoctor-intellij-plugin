@@ -20,8 +20,8 @@ public class AsciiDocAttributeContinuationInspection extends AsciiDocInspectionB
   protected AsciiDocVisitor buildAsciiDocVisitor(@NotNull ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
     return new AsciiDocVisitor() {
       @Override
-      public void visitElement(PsiElement o) {
-        if (o != null && o.getNode().getElementType() == ATTRIBUTE_CONTINUATION_LEGACY) {
+      public void visitElement(@NotNull PsiElement o) {
+        if (o.getNode() != null && o.getNode().getElementType() == ATTRIBUTE_CONTINUATION_LEGACY) {
           LocalQuickFix[] fixes = new LocalQuickFix[]{ATTRIBUTE_CONTINUATION_LEGACY_QUICKFIX};
           holder.registerProblem(o, TEXT_HINT_LEGACY, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixes);
         }

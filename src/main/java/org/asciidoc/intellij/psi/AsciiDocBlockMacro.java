@@ -243,11 +243,11 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock implements HasFile
   private static TextRange getRangeOfBody(AsciiDocBlockMacro element) {
     PsiElement child = element.getFirstChild();
     // skip over pre-block until macro ID starts
-    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.BLOCK_MACRO_ID) {
+    while (child != null && child.getNode() != null && child.getNode().getElementType() != AsciiDocTokenTypes.BLOCK_MACRO_ID) {
       child = child.getNextSibling();
     }
     // skip over macro ID
-    while (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.BLOCK_MACRO_ID) {
+    while (child != null && child.getNode() != null && child.getNode().getElementType() == AsciiDocTokenTypes.BLOCK_MACRO_ID) {
       child = child.getNextSibling();
     }
     if (child == null) {
@@ -255,7 +255,7 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock implements HasFile
     }
     int start = child.getStartOffsetInParent();
     int end = start;
-    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.ATTRS_START) {
+    while (child != null && child.getNode() != null && child.getNode().getElementType() != AsciiDocTokenTypes.ATTRS_START) {
       end = child.getStartOffsetInParent() + child.getTextLength();
       child = child.getNextSibling();
     }
@@ -276,24 +276,24 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock implements HasFile
   public TextRange getAttributeRange() {
     PsiElement child = this.getFirstChild();
     // skip over pre-block until macro ID starts
-    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.BLOCK_MACRO_ID) {
+    while (child != null && child.getNode() != null && child.getNode().getElementType() != AsciiDocTokenTypes.BLOCK_MACRO_ID) {
       child = child.getNextSibling();
     }
-    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.ATTRS_START) {
+    while (child != null && child.getNode() != null && child.getNode().getElementType() != AsciiDocTokenTypes.ATTRS_START) {
       child = child.getNextSibling();
     }
-    while (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.ATTRS_START) {
+    while (child != null && child.getNode() != null && child.getNode().getElementType() == AsciiDocTokenTypes.ATTRS_START) {
       child = child.getNextSibling();
     }
     if (child == null) {
       return TextRange.EMPTY_RANGE;
     }
     int start = child.getStartOffsetInParent();
-    while (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.ATTRS_START) {
+    while (child != null && child.getNode() != null && child.getNode().getElementType() == AsciiDocTokenTypes.ATTRS_START) {
       child = child.getNextSibling();
     }
     int end = start;
-    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.ATTRS_END) {
+    while (child != null && child.getNode() != null && child.getNode().getElementType() != AsciiDocTokenTypes.ATTRS_END) {
       end = child.getStartOffsetInParent() + child.getTextLength();
       child = child.getNextSibling();
     }

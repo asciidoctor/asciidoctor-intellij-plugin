@@ -39,6 +39,9 @@ public class AsciiDocListingStyleInspection extends AsciiDocInspectionBase {
     if (block.getType() != AsciiDocBlock.Type.LISTING) {
       return false;
     }
+    if (block.getNode() == null) {
+      return false;
+    }
     ASTNode node  = block.getNode().getFirstChildNode();
     while (node != null && node.getElementType() != AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER) {
       node = node.getTreeNext();

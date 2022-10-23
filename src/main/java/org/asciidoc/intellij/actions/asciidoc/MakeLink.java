@@ -79,7 +79,7 @@ public class MakeLink extends FormatAsciiDocAction {
       PsiFile psiFile = PsiDocumentManager.getInstance(editor.getProject()).getPsiFile(editor.getDocument());
       if (psiFile != null) {
         PsiElement statementAtCaret = AsciiDocUtil.getStatementAtCaret(editor, psiFile);
-        if (statementAtCaret != null && (statementAtCaret.getNode().getElementType() == AsciiDocTokenTypes.URL_LINK
+        if (statementAtCaret != null && statementAtCaret.getNode() != null && (statementAtCaret.getNode().getElementType() == AsciiDocTokenTypes.URL_LINK
           || statementAtCaret.getNode().getElementType() == AsciiDocTokenTypes.URL_EMAIL)) {
           int start = statementAtCaret.getTextOffset();
           int end = statementAtCaret.getTextOffset() + statementAtCaret.getTextLength();
@@ -124,7 +124,7 @@ public class MakeLink extends FormatAsciiDocAction {
       PsiFile psiFile = PsiDocumentManager.getInstance(editor.getProject()).getPsiFile(editor.getDocument());
       if (psiFile != null) {
         PsiElement statementAtCaret = psiFile.findElementAt(editor.getSelectionModel().getSelectionStart());
-        return statementAtCaret != null && statementAtCaret.getNode().getElementType() == AsciiDocTokenTypes.URL_LINK;
+        return statementAtCaret != null && statementAtCaret.getNode() != null && statementAtCaret.getNode().getElementType() == AsciiDocTokenTypes.URL_LINK;
       }
     }
     return false;
@@ -135,7 +135,7 @@ public class MakeLink extends FormatAsciiDocAction {
       PsiFile psiFile = PsiDocumentManager.getInstance(editor.getProject()).getPsiFile(editor.getDocument());
       if (psiFile != null) {
         PsiElement statementAtCaret = psiFile.findElementAt(editor.getSelectionModel().getSelectionStart());
-        return statementAtCaret != null && statementAtCaret.getNode().getElementType() == AsciiDocTokenTypes.URL_EMAIL;
+        return statementAtCaret != null && statementAtCaret.getNode() != null && statementAtCaret.getNode().getElementType() == AsciiDocTokenTypes.URL_EMAIL;
       }
     }
     return false;
@@ -147,9 +147,9 @@ public class MakeLink extends FormatAsciiDocAction {
       PsiDocumentManager.getInstance(editor.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument());
       if (psiFile != null) {
         PsiElement statementAtCaret = psiFile.findElementAt(editor.getSelectionModel().getSelectionStart());
-        if (statementAtCaret != null && statementAtCaret.getNode().getElementType() == AsciiDocTokenTypes.URL_LINK) {
-          if (statementAtCaret.getPrevSibling() != null && statementAtCaret.getPrevSibling().getNode().getElementType() == AsciiDocTokenTypes.URL_START
-            && statementAtCaret.getNextSibling() != null && statementAtCaret.getNextSibling().getNode().getElementType() == AsciiDocTokenTypes.URL_END) {
+        if (statementAtCaret != null && statementAtCaret.getNode() != null && statementAtCaret.getNode().getElementType() == AsciiDocTokenTypes.URL_LINK) {
+          if (statementAtCaret.getPrevSibling() != null && statementAtCaret.getPrevSibling().getNode() != null && statementAtCaret.getPrevSibling().getNode().getElementType() == AsciiDocTokenTypes.URL_START
+            && statementAtCaret.getNextSibling() != null && statementAtCaret.getNextSibling().getNode() != null && statementAtCaret.getNextSibling().getNode().getElementType() == AsciiDocTokenTypes.URL_END) {
             statementAtCaret.getPrevSibling().delete();
             statementAtCaret.getNextSibling().delete();
             PsiDocumentManager.getInstance(editor.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument());

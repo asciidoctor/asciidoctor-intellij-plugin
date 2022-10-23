@@ -22,9 +22,8 @@ public class AsciiDocIncludeTagInDocument extends AsciiDocASTWrapperPsiElement {
     super(node);
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     return ReferenceProvidersRegistry.getReferencesFromProviders(this);
   }
 
@@ -35,7 +34,7 @@ public class AsciiDocIncludeTagInDocument extends AsciiDocASTWrapperPsiElement {
                                                             @NotNull TextRange range,
                                                             String newContent) throws IncorrectOperationException {
       PsiElement child = element.getFirstChild();
-      while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.ATTR_VALUE) {
+      while (child != null && child.getNode() != null && child.getNode().getElementType() != AsciiDocTokenTypes.ATTR_VALUE) {
         range = range.shiftRight(-child.getTextLength());
         child = child.getNextSibling();
       }
