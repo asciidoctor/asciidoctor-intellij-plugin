@@ -1145,10 +1145,13 @@ public class AsciiDocWrapper {
         Map<String, Object> result;
         try {
           Yaml yaml = new Yaml();
-          result = yaml.load(currentFile.getText());
-          if (result == null) {
+          Object r = yaml.load(currentFile.getText());
+          if (!(r instanceof Map)) {
             // result will be null if file is empty
             result = new HashMap<>();
+          } else {
+            //noinspection unchecked
+            result = (Map<String, Object>) r;
           }
           // starting from Antora 3.0.0.alpha-3 a version can be empty. It will be treated internally as an empty string
           result.putIfAbsent("version", "");
