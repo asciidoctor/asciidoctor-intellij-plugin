@@ -22,8 +22,8 @@ public class AsciiDocPageBreakInspection extends AsciiDocInspectionBase {
   protected AsciiDocVisitor buildAsciiDocVisitor(@NotNull ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
     return new AsciiDocVisitor() {
       @Override
-      public void visitElement(PsiElement o) {
-        if (o != null && o.getNode().getElementType() == PAGEBREAK) {
+      public void visitElement(@NotNull PsiElement o) {
+        if (o.getNode() != null && o.getNode().getElementType() == PAGEBREAK) {
           if (o.getNode().getText().trim().length() > 3) {
             LocalQuickFix[] fixes = new LocalQuickFix[]{PAGEBREAK_SHORTEN_QUICKFIX};
             holder.registerProblem(o, TEXT_HINT_PAGEBREAK, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixes);

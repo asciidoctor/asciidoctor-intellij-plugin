@@ -35,7 +35,7 @@ public class AsciiDocCompletionContributor extends CompletionContributor {
 
     int offset = context.getStartOffset();
     PsiElement element = context.getFile().findElementAt(offset);
-    if (element != null) {
+    if (element != null && element.getNode() != null) {
       if (element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_NAME) {
         // the identifier end offset needs to be set as otherwise an id containing a "-" will not be replaced
         context.getOffsetMap().addOffset(CompletionInitializationContext.IDENTIFIER_END_OFFSET, element.getTextOffset() + element.getTextLength());
@@ -47,8 +47,8 @@ public class AsciiDocCompletionContributor extends CompletionContributor {
       if (element.getNode().getElementType() == AsciiDocTokenTypes.ATTRIBUTE_REF) {
         PsiElement parent = element.getParent().getParent();
         // help the autocomplete in AsciiDocFileReference to replace the full reference if it contains a nested attribute
-        if (parent.getNode().getElementType() == AsciiDocElementTypes.BLOCK_MACRO || parent.getNode().getElementType() == AsciiDocElementTypes.INLINE_MACRO
-          || parent.getNode().getElementType() == AsciiDocElementTypes.ATTRIBUTE_IN_BRACKETS) {
+        if (parent.getNode() != null && (parent.getNode().getElementType() == AsciiDocElementTypes.BLOCK_MACRO || parent.getNode().getElementType() == AsciiDocElementTypes.INLINE_MACRO
+          || parent.getNode().getElementType() == AsciiDocElementTypes.ATTRIBUTE_IN_BRACKETS)) {
           for (PsiReference reference : parent.getReferences()) {
             if (reference.getRangeInElement().shiftRight(parent.getTextOffset()).contains(element.getTextRange())) {
               context.getOffsetMap().addOffset(IDENTIFIER_FILE_REFERENCE, parent.getTextOffset() + reference.getRangeInElement().getEndOffset());
@@ -61,7 +61,7 @@ public class AsciiDocCompletionContributor extends CompletionContributor {
 
   public AsciiDocCompletionContributor() {
     extend(CompletionType.BASIC, PlatformPatterns.psiElement().withElementType(AsciiDocTokenTypes.ATTRIBUTE_NAME).withLanguage(AsciiDocLanguage.INSTANCE),
-      new CompletionProvider<CompletionParameters>() {
+      new CompletionProvider<>() {
         @Override
         public void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext processingContext,
                                    @NotNull CompletionResultSet resultSet) {
@@ -75,7 +75,7 @@ public class AsciiDocCompletionContributor extends CompletionContributor {
                 int offset = insertionContext.getStartOffset();
                 PsiElement element = insertionContext.getFile().findElementAt(offset);
                 if (element != null) {
-                  if (element.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_NAME) {
+                  if (element.getNode() != null && element.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_NAME) {
                     // the finalizing : hasn't been entered yet, autocomplete it here
                     offset += attribute.length();
                     insertionContext.getDocument().insertString(offset, ":");
@@ -94,7 +94,7 @@ public class AsciiDocCompletionContributor extends CompletionContributor {
         }
       });
     extend(CompletionType.BASIC, PlatformPatterns.psiElement().withElementType(AsciiDocTokenTypes.ATTR_VALUE).withLanguage(AsciiDocLanguage.INSTANCE),
-      new CompletionProvider<CompletionParameters>() {
+      new CompletionProvider<>() {
         @Override
         public void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext processingContext,
                                    @NotNull CompletionResultSet resultSet) {

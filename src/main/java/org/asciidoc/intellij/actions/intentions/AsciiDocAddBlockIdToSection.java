@@ -47,7 +47,7 @@ public class AsciiDocAddBlockIdToSection extends Intention {
         return null;
       }
     }
-    if (statementAtCaret.getNode().getElementType() == AsciiDocTokenTypes.HEADING_TOKEN) {
+    if (statementAtCaret.getNode() != null && statementAtCaret.getNode().getElementType() == AsciiDocTokenTypes.HEADING_TOKEN) {
       statementAtCaret = statementAtCaret.getParent();
     }
     if (!(statementAtCaret instanceof AsciiDocSection)) {

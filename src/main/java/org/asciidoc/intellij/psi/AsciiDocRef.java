@@ -17,9 +17,8 @@ public class AsciiDocRef extends AsciiDocASTWrapperPsiElement implements HasAnch
     super(node);
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     TextRange range = getRangeOfBody(this);
     if (!range.isEmpty()) {
       String file = this.getText().substring(range.getStartOffset(), range.getEndOffset());
@@ -53,7 +52,7 @@ public class AsciiDocRef extends AsciiDocASTWrapperPsiElement implements HasAnch
   private static TextRange getRangeOfBody(AsciiDocRef element) {
     PsiElement child = element.getFirstChild();
     // skip over start ID
-    while (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.REFSTART) {
+    while (child != null && child.getNode() != null && child.getNode().getElementType() == AsciiDocTokenTypes.REFSTART) {
       child = child.getNextSibling();
     }
     if (child == null) {
@@ -62,6 +61,7 @@ public class AsciiDocRef extends AsciiDocASTWrapperPsiElement implements HasAnch
     int start = child.getStartOffsetInParent();
     int end = start;
     while (child != null
+      && child.getNode() != null
       && child.getNode().getElementType() != AsciiDocTokenTypes.SEPARATOR
       && child.getNode().getElementType() != AsciiDocTokenTypes.REFEND) {
       end = child.getStartOffsetInParent() + child.getTextLength();
@@ -77,7 +77,7 @@ public class AsciiDocRef extends AsciiDocASTWrapperPsiElement implements HasAnch
                                            @NotNull TextRange range,
                                            String newContent) throws IncorrectOperationException {
       PsiElement child = element.getFirstChild();
-      while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.REF) {
+      while (child != null && child.getNode() != null && child.getNode().getElementType() != AsciiDocTokenTypes.REF) {
         range = range.shiftRight(-child.getTextLength());
         child = child.getNextSibling();
       }

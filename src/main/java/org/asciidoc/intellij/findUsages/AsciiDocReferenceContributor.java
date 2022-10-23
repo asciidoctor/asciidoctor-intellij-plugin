@@ -46,7 +46,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
                                                      context) {
         int start = 0;
         PsiElement child = element.getFirstChild();
-        while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_REF) {
+        while (child != null && child.getNode() != null && child.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_REF) {
           start += child.getTextLength();
           child = child.getNextSibling();
         }
@@ -130,7 +130,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
   }
 
   private List<PsiReference> findFileReferences(PsiElement element) {
-    if (element.getNode().findChildByType(AsciiDocTokenTypes.URL_LINK) != null) {
+    if (element.getNode() != null && element.getNode().findChildByType(AsciiDocTokenTypes.URL_LINK) != null) {
       return Collections.emptyList();
     }
     if (element.getChildren().length > 0 && element.getChildren()[0] instanceof AsciiDocAttributeReference) {
@@ -217,7 +217,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
 
   private List<PsiReference> findUrlReferencesInLinks(PsiElement element) {
     PsiElement child = element.getFirstChild();
-    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.URL_LINK) {
+    while (child != null && child.getNode() != null && child.getNode().getElementType() != AsciiDocTokenTypes.URL_LINK) {
       child = child.getNextSibling();
     }
     if (child != null) {
@@ -250,7 +250,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
   private List<PsiReference> findUrlReferencesInAttributeDefinition(PsiElement element) {
     PsiElement child = element.getFirstChild();
     List<PsiReference> result = new ArrayList<>();
-    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_VAL) {
+    while (child != null && child.getNode() != null && child.getNode().getElementType() != AsciiDocTokenTypes.ATTRIBUTE_VAL) {
       child = child.getNextSibling();
     }
     if (child != null) {

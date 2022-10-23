@@ -47,7 +47,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_
 
 /**
  * Suggest word selections to the editor.
- * See {@link com.intellij.codeInsight.editorActions.wordSelection.NaturalLanguageTextSelectioner}
+ * See <code>com.intellij.codeInsight.editorActions.wordSelection.NaturalLanguageTextSelectioner</code>
  * for more ideas.
  */
 public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
@@ -100,7 +100,7 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
 
       // expand start/endFormatting within paragraph
       while (startFormatting != null && endFormatting != null) {
-        while (startFormatting != null &&
+        while (startFormatting != null && startFormatting.getNode() != null &&
           !SYMMETRIC_FORMATTING.containsKey(startFormatting.getNode().getElementType()) &&
           !startFormatting.getText().contains("\n")) {
           startFormatting = startFormatting.getPrevSibling();
@@ -108,7 +108,7 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
         if (startFormatting == null) {
           break;
         }
-        while (endFormatting != null &&
+        while (endFormatting != null && startFormatting.getNode() != null &&
           SYMMETRIC_FORMATTING.get(startFormatting.getNode().getElementType()) != endFormatting.getNode().getElementType() &&
           !endFormatting.getText().contains("\n")) {
           endFormatting = endFormatting.getNextSibling();
@@ -124,7 +124,7 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
         if (endFormatting instanceof PsiWhiteSpace && endFormatting.getText().contains("\n")) {
           endOffset = -endFormatting.getTextLength() + endFormatting.getText().indexOf("\n");
         }
-        if (SYMMETRIC_FORMATTING.get(startFormatting.getNode().getElementType()) == endFormatting.getNode().getElementType()) {
+        if (startFormatting.getNode() != null && SYMMETRIC_FORMATTING.get(startFormatting.getNode().getElementType()) == endFormatting.getNode().getElementType()) {
           // we might be looking at the identical token (for example a double quote) for start and end,
           // prevent to report this with its end first and start second, which would lead to an inverse and icorrect range
           if (startFormatting.getTextRange().getEndOffset() < endFormatting.getTextRange().getStartOffset()) {

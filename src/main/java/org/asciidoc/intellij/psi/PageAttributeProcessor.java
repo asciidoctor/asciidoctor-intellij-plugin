@@ -76,15 +76,15 @@ public class PageAttributeProcessor implements PsiElementProcessor<PsiElement> {
         titleSeen = true;
         return true;
       }
-    } else if (titleSeen && element.getNode().getElementType() == AsciiDocTokenTypes.EMPTY_LINE) {
+    } else if (titleSeen && element.getNode() != null && element.getNode().getElementType() == AsciiDocTokenTypes.EMPTY_LINE) {
       return false;
-    } else if (element.getNode().getElementType() == AsciiDocTokenTypes.HEADER) {
+    } else if (element.getNode() != null && element.getNode().getElementType() == AsciiDocTokenTypes.HEADER) {
       return true;
-    } else if (element.getNode().getElementType() == AsciiDocTokenTypes.BLOCKIDSTART) {
+    } else if (element.getNode() != null && element.getNode().getElementType() == AsciiDocTokenTypes.BLOCKIDSTART) {
       return true;
-    } else if (element.getNode().getElementType() == AsciiDocTokenTypes.BLOCKIDEND) {
+    } else if (element.getNode() != null && element.getNode().getElementType() == AsciiDocTokenTypes.BLOCKIDEND) {
       return true;
-    } else if (element.getNode().getElementType() == AsciiDocTokenTypes.HEADING_OLDSTYLE) {
+    } else if (element.getNode() != null && element.getNode().getElementType() == AsciiDocTokenTypes.HEADING_OLDSTYLE) {
       return true;
     } else if (element instanceof PsiWhiteSpace) {
       return true;

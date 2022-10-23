@@ -36,7 +36,7 @@ public class LanguageListCompletionContributor extends CompletionContributor {
           element = element.getPrevSibling();
           continue;
         }
-        if (element.getNode().getElementType() == AsciiDocTokenTypes.SEPARATOR) {
+        if (element.getNode() != null && element.getNode().getElementType() == AsciiDocTokenTypes.SEPARATOR) {
           element = element.getPrevSibling();
           continue;
         }

@@ -46,12 +46,12 @@ public class AsciiDocPassthroughInspection extends AsciiDocInspectionBase {
   }
 
   public static boolean isObsoletePassthroughStart(PsiElement e) {
-    return e.getNode().getElementType() == AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START
+    return e.getNode() != null && e.getNode().getElementType() == AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START
       && e.getNode().getText().equals(OBSOLETE_PASSTRHOUGH);
   }
 
   public static boolean isObsoletePassthroughEnd(PsiElement e) {
-    return e.getNode().getElementType() == AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END
+    return e.getNode() != null && e.getNode().getElementType() == AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END
       && e.getNode().getText().equals(OBSOLETE_PASSTRHOUGH);
   }
 

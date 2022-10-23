@@ -127,7 +127,7 @@ public class AsciiDocInlineMacro extends AsciiDocASTWrapperPsiElement implements
                                                    @NotNull TextRange range,
                                                    String newContent) throws IncorrectOperationException {
       PsiElement child = element.getFirstChild();
-      while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.INLINE_MACRO_BODY) {
+      while (child != null && child.getNode() != null && child.getNode().getElementType() != AsciiDocTokenTypes.INLINE_MACRO_BODY) {
         range = range.shiftRight(-child.getTextLength());
         child = child.getNextSibling();
       }
@@ -155,11 +155,11 @@ public class AsciiDocInlineMacro extends AsciiDocASTWrapperPsiElement implements
   private static TextRange getRangeOfBody(AsciiDocInlineMacro element) {
     PsiElement child = element.getFirstChild();
     // skip over pre-block until macro ID starts
-    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.INLINE_MACRO_ID) {
+    while (child != null && child.getNode() != null && child.getNode().getElementType() != AsciiDocTokenTypes.INLINE_MACRO_ID) {
       child = child.getNextSibling();
     }
     // skip over macro ID
-    while (child != null && child.getNode().getElementType() == AsciiDocTokenTypes.INLINE_MACRO_ID) {
+    while (child != null && child.getNode() != null && child.getNode().getElementType() == AsciiDocTokenTypes.INLINE_MACRO_ID) {
       child = child.getNextSibling();
     }
     if (child == null) {
@@ -167,7 +167,7 @@ public class AsciiDocInlineMacro extends AsciiDocASTWrapperPsiElement implements
     }
     int start = child.getStartOffsetInParent();
     int end = start;
-    while (child != null && child.getNode().getElementType() != AsciiDocTokenTypes.INLINE_ATTRS_START) {
+    while (child != null && child.getNode() != null && child.getNode().getElementType() != AsciiDocTokenTypes.INLINE_ATTRS_START) {
       end = child.getStartOffsetInParent() + child.getTextLength();
       child = child.getNextSibling();
     }

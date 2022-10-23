@@ -47,7 +47,7 @@ public class AsciiDocFindUsagesProvider implements FindUsagesProvider {
         name = "???";
       }
     } else {
-      name = "??? " + element.getNode().getElementType();
+      name = "??? " + (element.getNode() != null ? element.getNode().getElementType() : element.getClass().getName());
     }
     return name;
   }

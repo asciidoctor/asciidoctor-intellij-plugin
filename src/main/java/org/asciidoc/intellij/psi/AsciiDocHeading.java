@@ -4,7 +4,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.ModificationTracker;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -35,10 +34,6 @@ public class AsciiDocHeading extends AsciiDocASTWrapperPsiElement {
     return ReferenceProvidersRegistry.getReferencesFromProviders(this);
   }
 
-  public static TextRange getBodyRange(AsciiDocHeading element) {
-    return element.getTextRange();
-  }
-
   private static String trimHeading(String text) {
     if (text.charAt(0) == '=') {
       // new style heading
@@ -63,7 +58,7 @@ public class AsciiDocHeading extends AsciiDocASTWrapperPsiElement {
         PsiElement child = getFirstChild();
         boolean hasAttribute = false;
         while (child != null) {
-          if (HEADINGS.contains(child.getNode().getElementType())) {
+          if (child.getNode() != null && HEADINGS.contains(child.getNode().getElementType())) {
             sb.append(child.getText());
           } else if (child instanceof AsciiDocAttributeReference) {
             hasAttribute = true;
@@ -108,6 +103,7 @@ public class AsciiDocHeading extends AsciiDocASTWrapperPsiElement {
     // only if the block ID is the last element in the heading it is the block ID of the section
     if (blockId != null &&
       blockId.getNextSibling() != null &&
+      blockId.getNextSibling().getNode() != null &&
       blockId.getNextSibling().getNode().getElementType() == AsciiDocTokenTypes.INLINEIDEND &&
       blockId.getNextSibling().getNextSibling() == null) {
       return blockId;
