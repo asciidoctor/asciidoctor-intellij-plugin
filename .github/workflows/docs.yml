@@ -63,13 +63,17 @@ jobs:
         uses: JetBrains/qodana-action@v2022.2.2
         with:
           # https://hub.docker.com/r/jetbrains/qodana-jvm-community/tags
+          # this disables the Gradle plugin to avoid the Gradle initializiation and the dependency download
+          # as that is not necessary for the Grazie and AsciiDoc plugins to check spelling and links.
+          # TODO: the plugin `org.jetbrains.plugins.gradle` should also be suppressed, but the parameter doesn't allow
+          # a comma when called from the Qodana action.
           args: >
             --linter,jetbrains/qodana-jvm-community:2022.2,
+            --property=idea.suppressed.plugins.id=com.intellij.gradle
             -v,${{ github.workspace }}/grazie:/opt/idea/plugins/grazie,
             -v,${{ github.workspace }}/grazie-pro:/opt/idea/plugins/grazie-pro,
             -v,${{ github.workspace }}/asciidoctor-intellij-plugin:/opt/idea/plugins/asciidoctor-intellij-plugin,
             --baseline,doc/qodana-baseline.sarif.json
-          # pr-mode: false
 
       # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/uploading-a-sarif-file-to-github#example-workflow-that-runs-the-eslint-analysis-tool
       - name: Upload SARIF report to GitHub
