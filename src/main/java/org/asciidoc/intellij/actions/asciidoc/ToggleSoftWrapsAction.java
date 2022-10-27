@@ -22,11 +22,6 @@ public class ToggleSoftWrapsAction extends AbstractToggleUseSoftWrapsAction {
   }
 
   @Override
-  public void setSelected(@NotNull AnActionEvent e, boolean state) {
-    super.setSelected(e, state);
-  }
-
-  @Override
   public void update(@NotNull AnActionEvent event) {
     PsiFile file = event.getData(LangDataKeys.PSI_FILE);
     boolean enabled = false;

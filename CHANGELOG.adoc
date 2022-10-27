@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.55
+
+- Require IntelliJ 2021.3.2 as minimum version update deprecated APIs
+
 === 0.37.54
 
 - Prevent NPE when analyzing natural language text (#1204)
