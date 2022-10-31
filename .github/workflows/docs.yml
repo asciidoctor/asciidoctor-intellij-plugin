@@ -46,13 +46,13 @@ jobs:
       - name: Download Grazie plugin for grammar checks
         # https://plugins.jetbrains.com/plugin/12175-grazie/versions
         run: |
-          curl -L -o grazie.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=166128'
+          curl -L -o grazie.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=234946'
           unzip grazie.zip
 
       - name: Download Grazie Professional plugin for grammar checks
         # https://plugins.jetbrains.com/plugin/16136-grazie-professional/versions
         run: |
-          curl -L -o grazie-pro.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=172750'
+          curl -L -o grazie-pro.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=238061'
           unzip grazie-pro.zip
 
       - name: Get one more commit so Qodana we can identify the changes
@@ -60,7 +60,7 @@ jobs:
         run: git fetch --deepen=1
 
       - name: 'Qodana for Docs'
-        uses: JetBrains/qodana-action@v2022.2.2
+        uses: JetBrains/qodana-action@v2022.2.3
         with:
           # https://hub.docker.com/r/jetbrains/qodana-jvm-community/tags
           # this disables the Gradle plugin to avoid the Gradle initializiation and the dependency download
@@ -69,7 +69,7 @@ jobs:
           # a comma when called from the Qodana action.
           args: >
             --linter,jetbrains/qodana-jvm-community:2022.2,
-            --property=idea.suppressed.plugins.id=com.intellij.gradle
+            --property=idea.suppressed.plugins.id=com.intellij.gradle,
             -v,${{ github.workspace }}/grazie:/opt/idea/plugins/grazie,
             -v,${{ github.workspace }}/grazie-pro:/opt/idea/plugins/grazie-pro,
             -v,${{ github.workspace }}/asciidoctor-intellij-plugin:/opt/idea/plugins/asciidoctor-intellij-plugin,
