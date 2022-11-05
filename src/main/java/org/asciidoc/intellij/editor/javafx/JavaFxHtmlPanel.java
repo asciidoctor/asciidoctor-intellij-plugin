@@ -303,6 +303,8 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
               }
             }));
           });
+        } catch (IllegalAccessError ex) {
+          LOG.warn("class loading problem: " + ex.getMessage());
         } catch (Throwable ex) {
           String message = "Error initializing JavaFX: " + ex.getMessage();
           LOG.error(message, ex);
