@@ -76,6 +76,49 @@ JCEF preview is an embedded Chrome browser.
 After enabling the DevTools, users can right-click on the preview and use "`Open DevTools`".
 This opens a fully equipped Chrome developer tools window that allows users to inspect the HTML created in the preview and to view the JavaScript console of the preview.
 
+// https://youtrack.jetbrains.com/issue/IDEA-286008
+[WARNING]
+====
+In IntelliJ 2021.3.1+, closing the DevTools will also close the IDE.
+This is tracked in upstream issue https://youtrack.jetbrains.com/issue/IDEA-286008[IDEA-286008].
+
+Possible Workarounds:
+
+* Enable "`Confirm before existing the IDE`" in the IDE's settings.
+Once the DevTools have been closed for an editor, the editor needs to be closed and re-opened before DevTools can be opened again.
+
+* Turn off registry option `ide.browser.jcef.asciidocView.osr.enabled`.
++
+With OSR turned off, the IDE doesn't close any more on closing the DevTools; instead the preview goes blank once dev tools are closed (see https://youtrack.jetbrains.com/issue/IDEA-284130[IDEA-284130]).
+Closing and re-opening the editor restores the preview.
++
+Once OSR is turned off, unpinned tool windows can no longer show above the preview (see https://youtrack.jetbrains.com/issue/IDEA-252845[IDEA-252845]).
+====
+
+For the AsciiDoc plugin 0.37.55+::
++
+--
+Use the menu item menu:Help[Find Action...] and choose "`Open Devtools Window for the current AsciiDoc Preview`".
+
+Users can define their own shortcut in the Keymap settings entry for this action.
+--
+
+For IntelliJ 2022.3 and later::
++
+--
+Set the registry key `ide.browser.jcef.contextMenu.devTools.enabled` to `true` and set `ide.browser.jcef.asciidocView.osr.enabled` to false to enable this feature.
+
+Once OSR is turned off, unpinned tool windows can no longer show above the preview (see https://youtrack.jetbrains.com/issue/IDEA-252845[IDEA-252845]).
+
+The registry is available via menu menu:Help[Find action...], then enter "`Registry`" to search the action, then choose "`Registry...`".
+In the dialog that opens, start typing the registry key given above to restrict the list.
+Check the checkbox on the right to enable this property.
+Press btn:[Close] to close the dialog.
+The DevTools are available for all newly opened editors.
+For editors already open, close and re-open them to see the DevTools.
+No IDE restart is required.
+--
+
 // https://youtrack.jetbrains.com/issue/IDEA-276906
 For IntelliJ 2021.3 and later::
 +
@@ -89,25 +132,6 @@ Press btn:[Close] to close the dialog.
 The DevTools are available for all newly opened editors.
 For editors already open, close and re-open them to see the DevTools.
 No IDE restart is required.
-
-// https://youtrack.jetbrains.com/issue/IDEA-286008
-[WARNING]
-====
-In IntelliJ 2021.3.1, closing the DevTools will also close the IDE.
-This is tracked in upstream issue https://youtrack.jetbrains.com/issue/IDEA-286008[IDEA-286008].
-
-Possible Workarounds:
-
-* Enable "`Confirm before existing the IDE`" in the IDE's settings.
-Once the DevTools have been closed for an editor, the editor needs to be closed and re-opened before DevTools can be opened again.
-
-* Turn off registry option "`ide.browser.jcef.asciidocView.osr.enabled`".
-+
-With OSR turned off, the IDE doesn't close any more on closing the DevTools; instead the preview goes blank once dev tools are closed (see https://youtrack.jetbrains.com/issue/IDEA-284130[IDEA-284130]).
-Closing and re-opening the editor restores the preview.
-+
-Once OSR is turned off, unpinned tool windows can no longer show above the preview (see https://youtrack.jetbrains.com/issue/IDEA-252845[IDEA-252845]).
-====
 --
 
 For IntelliJ 2021.2 and earlier::

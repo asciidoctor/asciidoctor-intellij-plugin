@@ -137,6 +137,9 @@
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
     </group>
 
+    <action id="AsciiDocOpenDevtools" text="Open Devtools Window for the current AsciiDoc Preview"
+            class="org.asciidoc.intellij.actions.OpenDevtoolsAction"/>
+
     <group id="AsciiDocConvert" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
       <action id="asciidoc.convert.document" class="org.asciidoc.intellij.actions.ConvertToAsciiDocAction"
               text="Convert to AsciiDoc" description="Convert this document to AsciiDoc">

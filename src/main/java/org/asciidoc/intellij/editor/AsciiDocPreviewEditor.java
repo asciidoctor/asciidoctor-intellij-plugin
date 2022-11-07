@@ -472,6 +472,10 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     return preferredFocusedComponent;
   }
 
+  public AsciiDocHtmlPanel getPanel() {
+    return myPanel;
+  }
+
   /**
    * Get the editor displayable name.
    *
