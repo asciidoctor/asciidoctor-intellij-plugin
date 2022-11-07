@@ -32,10 +32,10 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.ui.jcef.JBCefBrowser;
 import com.intellij.ui.jcef.JBCefBrowserBase;
 import com.intellij.ui.jcef.JBCefJSQuery;
 import com.intellij.ui.jcef.JBCefPsiNavigationUtils;
+import com.intellij.ui.jcef.JCEFHtmlPanel;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.UIUtil;
 import org.apache.commons.io.IOUtils;
@@ -81,7 +81,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlPanel {
+public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtmlPanel {
 
   private static final Logger LOG = Logger.getInstance(AsciiDocJCEFHtmlPanel.class);
 
@@ -197,7 +197,7 @@ public class AsciiDocJCEFHtmlPanel extends JBCefBrowser implements AsciiDocHtmlP
   private Editor editor;
 
   public AsciiDocJCEFHtmlPanel(Document document, Path imagesPath) {
-    super(JBCefBrowser.createBuilder().setOffScreenRendering(isOffScreenRenderingEnabled()).setClient(null).setUrl(OUR_CLASS_URL + "@" + new Random().nextInt(Integer.MAX_VALUE)));
+    super(isOffScreenRenderingEnabled(), null, OUR_CLASS_URL + "@" + new Random().nextInt(Integer.MAX_VALUE));
 
     this.imagesPath = imagesPath;
 
