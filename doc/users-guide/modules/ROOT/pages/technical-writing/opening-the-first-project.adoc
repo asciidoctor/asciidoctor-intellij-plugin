@@ -16,6 +16,10 @@ See xref:./installing-intellij.adoc[] and xref:./starting-intellij-first-time.ad
 A project is usually either a single folder on the local disk, or a remote Git repository.
 While a project can xref:features/advanced/multimodule.adoc[consist of multiple local folders], this is an advanced case which is possible but not recommended for users new to IntelliJ.
 
+This dialog shows the startup screen when IntelliJ is started for the first time.
+
+image::technical-writing/intellij-first-start.png[]
+
 In this dialog, the user has the following options:
 
 New Project:: Choose a name and a local folder where to create the project.
@@ -37,6 +41,8 @@ image::technical-writing/intellij-empty-project.png[]
 To return to the start view, the user chooses the menu entry menu:File[Close Project].
 This view will then contain a list of previously opened projects.
 The buttons for a new project, to open a folder and to get sources from VCS are in the upper row (smaller, and still with the same name as before).
+
+The same options are also available when a project is open from the menu via menu:File[New,Project...], menu:Project from Existing Sources...[] and menu:Project from Version Control...[].
 
 == Further reading
 
