@@ -1,0 +1,43 @@
+= Opening a project in IntelliJ IDEA
+:navtitle: Opening a project
+:description: Opening the first project in IntelliJ IDEA when starting it for the first time.
+
+{description}
+
+include::partial$technical-writing-series.adoc[]
+
+== Prerequisites
+
+This assumes that IntelliJ IDEA is already installed on the PC and is started.
+See xref:./installing-intellij.adoc[] and xref:./starting-intellij-first-time.adoc[] on how to do this.
+
+== Opening a project
+
+A project is usually either a single folder on the local disk, or a remote Git repository.
+While a project can xref:features/advanced/multimodule.adoc[consist of multiple local folders], this is an advanced case which is possible but not recommended for users new to IntelliJ.
+
+In this dialog, the user has the following options:
+
+New Project:: Choose a name and a local folder where to create the project.
+For a technical writing project, choose the menu entry menu:Empty Project[] to avoid creating unnecessary build scripts.
+
+Open:: Choose a folder on the local disk to open it as a project.
+Usually, this is the root folder of a previously checked-out Git repository.
+If the project contains a lot of files, it might help to open only a sub-folder with the documentation.
+
+Get from VCS::
+Specify a URL with the remote repository and an empty local folder where to check out the files.
+
+Once the step is complete, IntelliJ opens the project in the IDE view.
+
+Assuming the user chose to create an empty project with the name "`helloworld`", the result will look similar to the following.
+
+image::technical-writing/intellij-empty-project.png[]
+
+To return to the start view, the user chooses the menu entry menu:File[Close Project].
+This view will then contain a list of previously opened projects.
+The buttons for a new project, to open a folder and to get sources from VCS are in the upper row (smaller, and still with the same name as before).
+
+== Further reading
+
+Continue to xref:./editor-the-file-asciidoc-file.adoc[] for the next step of this series.

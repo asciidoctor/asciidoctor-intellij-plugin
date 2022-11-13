@@ -41,10 +41,12 @@ It provides the writer with...
 
 == Where to go from here
 
-To continue your journey,
+To continue the journey with one of the following:
 
-* visit the (short) xref:quick-start.adoc[] guide or (in depth) xref:installation.adoc[] guide,
-* read about the xref:features.adoc[], or
-* use the navigation on the left to learn about a specific topic you are interested in.
+* Visit the
+** (short) xref:quick-start.adoc[] guide or the
+** (in depth) xref:technical-writing/index.adoc[] guide.
+* Read about the xref:features.adoc[].
+* Use the navigation on the left to learn about a specific topic you are interested in.
 
 If you got questions, please raise them as a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[new GitHub issue].

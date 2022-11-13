@@ -1,0 +1,48 @@
+= Collaborate with others using IntelliJ's Git integration
+:navtitle: Collaborate using Git
+:description: Setting up IntelliJ IDEA when starting it for the first time.
+
+{description}
+
+include::partial$technical-writing-series.adoc[]
+
+== Prerequisites
+
+This assumes that IntelliJ IDEA is already installed on the PC and is started and that the reader is familiar with editing content in IntelliJ.
+See xref:./installing-intellij.adoc[] and xref:./editor-the-file-asciidoc-file.adoc[] on how to do this.
+
+In order for the Git functionality in IntelliJ to work, the user needs to install a Git client.
+
+== Accessing Git from the IntelliJ GUI
+
+This paragraph assumes that the user wants to use IntelliJ's integrated Git functionality.
+To use the Git command line, choose the "`Terminal`" toolbox tab in IntelliJ to interact with the command line instead of following these steps.
+
+The following example assumes that:
+
+* The project is a checked-out remote repository.
+* The local repository has a remote "`upstream`" with points to the main repository where people collaborate around a branch "`main`".
+* The local repository has a remote "`origin`" with points to a clone of the main repository where the user wants to create a branch from where they want to create a pull request later.
++ The currently checked out branch in the local repository is "`main`" and points to the remote "`origin`".
+
+=== Overview of the controls and tool windows
+
+image::technical-writing/intellij-git.png[]
+
+. Git tool window, click on "`Git`" to show and hide the window.
+
+. With the "`Log`" tab active, it shows local and (if available) remote branches, plus the commits in the repository.
+
+. In the menu:Branch[] dropdown, select _HEAD_ to show only the commits of the current branch.
+
+. The "`Commit`" tool window shows all local changes that can then be committed.
+
+=== Learning more about Git functionality
+
+See https://www.jetbrains.com/help/idea/using-git-integration.html[the IntelliJ documentation] for details.
+Use menu:Help[Learn IDE Features] and choose the next final section "`Git`" to start the tutorial covering Git.
+
+== Further reading
+
+This is the final page of the guide.
+Return to the overview xref:./index.adoc[].

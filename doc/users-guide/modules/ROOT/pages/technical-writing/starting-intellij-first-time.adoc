@@ -1,0 +1,72 @@
+= Starting IntelliJ for the first time
+:navtitle: Starting IntelliJ
+:description: Setting up IntelliJ IDEA when starting it for the first time.
+
+{description}
+
+include::partial$technical-writing-series.adoc[]
+
+== Prerequisites
+
+This assumes that IntelliJ IDEA is already installed on the PC.
+See xref:./installing-intellij.adoc[] on how to do this.
+
+== First setup steps of the IDE
+
+When starting the IDE for the first time, this is the start screen:
+
+image::technical-writing/intellij-first-start.png[]
+
+This screen allows technical writers to
+
+* Opening a new or existing project
+
+* Customizing the IDE
+
+* Installing Plugins
+
+* Start a tutorial to learn an IntelliJ IDEA
+
+Users find a short introduction video in the online help for IntelliJ IDEA in chapter https://www.jetbrains.com/help/idea/run-for-the-first-time.html[Run IntelliJ IDEA for the first time].
+
+Once the user opened their first project, IntelliJ IDEA will skip this screen and load the previous project.
+Users can return to this screen by choosing the menu item menu:File[Close Project] until no project is open.
+Then this screen appears again.
+
+Use the following sections to configure the IDE before opening the first project.
+
+=== Installing Plugins
+
+This dialog allows installing plugins from the JetBrains marketplace.
+To install the AsciiDoc plugin, choose the tab menu:Marketplace[], type _AsciiDoc_ in the search field, and choose the AsciiDoc plugin.
+Press the button btn:[Install] to install the plugin.
+
+image::technical-writing/intellij-install-plugin-asciidoc.png[]
+
+If a user wants to install, uninstall or disable plugins later, https://www.jetbrains.com/help/idea/managing-plugins.html[they can do this via the IDE's settings].
+
+=== Optional: Customize the IDE
+
+The customize screen allows users to choose the color theme.
+While dark mode ("`Darcula`") is the default, users can choose a light or high contrast mode.
+
+image::technical-writing/intellij-customize.png[]
+
+All future dialogs in this guide use the IntelliJ light theme.
+
+If a user wants to change this later, https://www.jetbrains.com/help/idea/user-interface-themes.html[this can be changed in the IDE's settings].
+
+=== Optional: Start a tutorial to learn an IntelliJ IDEA
+
+The button btn:[Start Learning] starts a tutorial that explains the IDEs features.
+
+image::technical-writing/intellij-tutorial.png[]
+
+Most chapters of the tutorial use Java code to explain how the editor, auto-completion and refactoring works.
+While the tutorial is about Java, most keyboard shortcuts and functionality will work similarly for AsciiDoc due to the installed AsciiDoc plugin.
+
+The last chapter that explains Git is based on a YAML file and could be helpful to technical writers not yet familiar with Git.
+
+== Further reading
+
+Continue to xref:./opening-the-first-project.adoc[] for the next step of this series.

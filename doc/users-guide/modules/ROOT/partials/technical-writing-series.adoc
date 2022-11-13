@@ -1,0 +1,2 @@
+This is part of the step-by-step series to set up a technical writing environment with IntelliJ and the AsciiDoc plugin.
+See the page xref:page$technical-writing/index.adoc[] for an overview of all steps.

@@ -7,7 +7,8 @@ ifndef::env-site[]
 endif::[]
 
 {description}
-Continue to section xref:installation.adoc[] for a more detailed guide.
+Change to the page xref:installation.adoc[] for a more detailed guide,
+or xref:technical-writing/index.adoc[] for a step-by-step-guide installing IntelliJ for technical writing.
 
 == Prerequisite
 

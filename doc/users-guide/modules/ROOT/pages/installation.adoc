@@ -6,6 +6,11 @@ ifndef::env-site[]
 :imagesdir: ../images
 endif::[]
 
+{description}
+
+For users already familiar with JetBrains IntelliJ, there's a xref:quick-start.adoc[] documentation.
+For those new to IntelliJ, there is a xref:technical-writing/index.adoc[] with a step-by-step-guide installing IntelliJ for technical writing.
+
 [#prerequisites]
 == Prerequisites
 
