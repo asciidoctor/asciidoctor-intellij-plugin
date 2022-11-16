@@ -1,0 +1,22 @@
+= Searching content
+:description: All AsciiDoc content is indexed, which allows fast searching.
+
+{description}
+
+== Overview
+
+There is standard functionality to search in IntelliJ:
+
+Users can search in a single file using kbd:[Ctrl+F].
+Replacing is done via kbd:[Ctrl+R].
+
+Users can search in all files using kbd:[Ctrl+Shift+F].
+By default, the search is case-insensitive and searches for text snippets.
+It can be changed to search case-sensitive and with regexes.
+Replacing is available via kbd:[Ctrl+Shift+R].
+
+When searching in the project, and also renaming entities, the plugin adds two new search scopes: _AsciiDoc files_ and _AsciiDoc files without Symlinks_.
+
+Using kbd:[Shift+Shift] (search everything), the user can search for all named elements. By default, the search returns file names.
+The plugin adds the capability to include section headings, attribute names, tags and IDs.
+

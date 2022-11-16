@@ -1,6 +1,8 @@
 = Previewing content
 :description: Per default, the preview is on the right side of a vertical split screen and shows the rendered contents of the editor.
 
+{description}
+
 == Overview
 
 By default, the preview is on the right side of a vertical split screen.

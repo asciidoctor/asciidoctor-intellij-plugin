@@ -26,6 +26,13 @@ The IntelliJ AsciiDoc Plugin adds to your IDE:
 
 Learn more about it in the xref:features/editor.adoc[] section.
 
+== Advanced search functionality
+
+* All named elements can be searched, like section titles, IDs, and attribute names.
+* Two additional search scopes to filter searching in AsciiDoc content.
+
+Learn more about it in the xref:features/search.adoc[] section.
+
 == Configurable preview
 
 * Provides a two-pane AsciiDoc preview editor based on https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] with a live preview.

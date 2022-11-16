@@ -11,6 +11,7 @@
 * xref:features.adoc[]
 ** xref:features/editor.adoc[]
 ** xref:features/keymap.adoc[]
+** xref:features/search.adoc[]
 ** xref:features/preview.adoc[]
 *** xref:features/preview/diagrams.adoc[]
 *** xref:features/preview/javafx-preview.adoc[]

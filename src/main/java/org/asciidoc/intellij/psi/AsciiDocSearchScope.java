@@ -9,6 +9,8 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collection;
 
 /**
@@ -20,6 +22,7 @@ import java.util.Collection;
 public class AsciiDocSearchScope extends GlobalSearchScope {
 
   private final FileIndexFacade myFileIndexFacade;
+  private boolean excludeSymLinks;
 
   public AsciiDocSearchScope(Project project) {
     super(project);
@@ -30,12 +33,34 @@ public class AsciiDocSearchScope extends GlobalSearchScope {
     return GlobalSearchScope.getScopeRestrictedByFileTypes(this, AsciiDocFileType.INSTANCE);
   }
 
+  public AsciiDocSearchScope excludeSymlinks() {
+    this.excludeSymLinks = true;
+    return this;
+  }
+
   @Override
   public boolean contains(@NotNull VirtualFile file) {
     // even if isSearchInLibraries returns false, the check for isInLibraryXXX is still needed
-    return !myFileIndexFacade.isExcludedFile(file) &&
+    boolean result = !myFileIndexFacade.isExcludedFile(file) &&
       !myFileIndexFacade.isInLibraryClasses(file) &&
       !myFileIndexFacade.isInLibrarySource(file);
+
+    if (result && excludeSymLinks) {
+      if (file.isInLocalFileSystem()) {
+        Path path = Path.of(file.getPath());
+        Path realPath;
+        try {
+          realPath = path.toRealPath();
+          if (!realPath.toString().equals(path.toString())) {
+            result = false;
+          }
+        } catch (IOException e) {
+          // ignored
+        }
+      }
+    }
+
+    return result;
   }
 
   @Override

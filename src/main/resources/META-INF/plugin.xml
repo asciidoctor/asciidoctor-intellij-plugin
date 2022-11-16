@@ -228,6 +228,7 @@
                              key="settings.asciidoc.preview.name"
                              instance="org.asciidoc.intellij.settings.AsciiDocPreviewConfigurable">
     </applicationConfigurable>
+    <searchScopesProvider implementation="org.asciidoc.intellij.searchScopes.AsciiDocSearchScopeProvider" />
     <applicationService serviceImplementation="org.asciidoc.intellij.settings.AsciiDocApplicationSettings"/>
     <editorNotificationProvider
       implementation="org.asciidoc.intellij.editor.javafx.notification.JavaFxCouldBeEnabledNotificationProvider"/>
