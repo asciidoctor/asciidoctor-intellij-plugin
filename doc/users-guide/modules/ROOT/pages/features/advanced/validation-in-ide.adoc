@@ -31,7 +31,7 @@ Use the icon icon:question[] to read the docs of the IDE to find out about addit
 . In the pop-up window, the directory is preselected.
 Keep this selection, or choose a different scope or the whole project depending on where files should be inspected.
 +
-The plugin also adds two custom scopes: _AsciiDoc files_ and _AsciiDoc files without Symlinks_, which are applied to the whole project.
+New in plugin version 0.37.55+: The plugin also adds two custom scopes: _AsciiDoc files_ and _AsciiDoc files without Symlinks_, which are applied to the whole project.
 The scope without symlinks avoids validating a file multiple times with duplicate error messages.
 In this scope, it will only be validated once in its original location.
 While this avoids duplicate error messages, it might also hide error messages that are context dependent on the symlink location.
