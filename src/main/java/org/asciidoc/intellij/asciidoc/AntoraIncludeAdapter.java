@@ -91,6 +91,12 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
       }
     }
 
+    // workaround to avoid a logged error
+    // https://youtrack.jetbrains.com/issue/IDEA-306288
+    if (resolved != null && !resolved.isValid()) {
+      resolved = null;
+    }
+
     if (resolved != null && ATTRIBUTES.matcher(target).find()) {
       if (psiFile == null) {
         VirtualFile finalResolved = resolved;

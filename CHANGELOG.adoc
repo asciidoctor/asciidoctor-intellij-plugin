@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.37.56
+
+- Avoid "Invalid file" error when files are removed concurrently (#1220)
+
 === 0.37.55
 
 - Require IntelliJ 2021.3.2 as minimum version update deprecated APIs
