@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public class AsciiDocCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
 
   @Override
-  public CustomCodeStyleSettings createCustomSettings(CodeStyleSettings settings) {
+  public CustomCodeStyleSettings createCustomSettings(@NotNull CodeStyleSettings settings) {
     return new AsciiDocCodeStyleSettings(settings);
   }
 
@@ -30,7 +30,7 @@ public class AsciiDocCodeStyleSettingsProvider extends CodeStyleSettingsProvider
   public CodeStyleConfigurable createConfigurable(@NotNull CodeStyleSettings settings, @NotNull CodeStyleSettings modelSettings) {
     return new CodeStyleAbstractConfigurable(settings, modelSettings, this.getConfigurableDisplayName()) {
       @Override
-      protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
+      protected @NotNull CodeStyleAbstractPanel createPanel(@NotNull CodeStyleSettings settings) {
         return new AsciiDocCodeStyleMainPanel(getCurrentSettings(), settings);
       }
     };
@@ -43,7 +43,7 @@ public class AsciiDocCodeStyleSettingsProvider extends CodeStyleSettingsProvider
 
     @Override
     protected void initTabs(CodeStyleSettings settings) {
-      // when adding new tabs, please see other JetBrains language plugins for the order of tabs
+      addIndentOptionsTab(settings);
       addSpacesTab(settings);
       addBlankLinesTab(settings);
     }

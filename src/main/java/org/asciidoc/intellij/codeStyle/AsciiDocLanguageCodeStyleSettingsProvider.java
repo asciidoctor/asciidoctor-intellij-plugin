@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.codeStyle;
 
+import com.intellij.application.options.IndentOptionsEditor;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable;
@@ -15,6 +16,7 @@ import java.io.Reader;
 
 import static com.intellij.openapi.util.io.StreamUtil.readText;
 import static com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS;
+import static com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider.SettingsType.INDENT_SETTINGS;
 import static com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider.SettingsType.SPACING_SETTINGS;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -30,6 +32,11 @@ public class AsciiDocLanguageCodeStyleSettingsProvider extends LanguageCodeStyle
   }
 
   @Override
+  public IndentOptionsEditor getIndentOptionsEditor() {
+    return new IndentOptionsEditor();
+  }
+
+  @Override
   public void customizeSettings(@NotNull CodeStyleSettingsCustomizable consumer, @NotNull SettingsType settingsType) {
     if (settingsType == SPACING_SETTINGS) {
       consumer.showCustomOption(AsciiDocCodeStyleSettings.class, "FORMATTING_ENABLED", "Enable Formatting (disabling this will override all options)", CodeStyleSettingsCustomizableOptions.getInstance().SPACES_OTHER);
@@ -42,7 +49,7 @@ public class AsciiDocLanguageCodeStyleSettingsProvider extends LanguageCodeStyle
 
   @Override
   public String getCodeSample(@NotNull SettingsType settingsType) {
-    if (settingsType == SPACING_SETTINGS || settingsType == BLANK_LINES_SETTINGS) {
+    if (settingsType == SPACING_SETTINGS || settingsType == BLANK_LINES_SETTINGS || settingsType == INDENT_SETTINGS) {
       return loadSample(settingsType);
     }
     return null;
