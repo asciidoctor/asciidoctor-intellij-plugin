@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.asciidoc;
 
+import com.google.common.html.HtmlEscapers;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
@@ -7,15 +8,20 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.tree.IElementType;
+import org.asciidoc.intellij.lexer.AsciiDocLexer;
+import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.psi.AttributeDeclaration;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.asciidoctor.jruby.ast.impl.PhraseNodeImpl;
+import org.jetbrains.annotations.NotNull;
 import org.jruby.RubyObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -24,6 +30,7 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_PREFIX_AND_FAMILY_PA
 import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.findAntoraNavFiles;
 
+@SuppressWarnings("UnnecessaryUnicodeEscape")
 public class AntoraReferenceAdapter {
   private static final com.intellij.openapi.diagnostic.Logger LOG =
     com.intellij.openapi.diagnostic.Logger.getInstance(AntoraReferenceAdapter.class);
@@ -178,6 +185,7 @@ public class AntoraReferenceAdapter {
               if (refTextResolved != null) {
                 refText = refTextResolved;
               }
+              refText = simpleAsciiDocParsing(refText);
               phraseNode.setString("text", refText);
             }
           }
@@ -228,5 +236,49 @@ public class AntoraReferenceAdapter {
         phraseNode.setString("target", target);
       }
     }
+  }
+
+  private static final HashMap<IElementType, String> HTML_TOKEN_TRANSLATION = new HashMap<>();
+  static {
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.ITALIC_START, "<em>");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.ITALIC_END, "</em>");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.DOUBLEITALIC_START, "<em>");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.DOUBLEITALIC_END, "</em>");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.BOLD_START, "<b>");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.BOLD_END, "</b>");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.DOUBLEBOLD_START, "<b>");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.DOUBLEBOLD_END, "</b>");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.PASSTRHOUGH_INLINE_START, "");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.PASSTRHOUGH_INLINE_END, "");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.MONO_START, "<code>");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.MONO_END, "</code>");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.DOUBLEMONO_START, "<code>");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.DOUBLEMONO_END, "</code>");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START, "\u201D");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END, "\u201C");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START, "\u2019");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END, "\u2018");
+  }
+
+  /**
+   * This will translate simple formatting (especially quotes) to HTML to gradually improve the display of tocs and xrefs.
+   */
+  @NotNull
+  private static String simpleAsciiDocParsing(String asciiDoc) {
+    AsciiDocLexer lexer = new AsciiDocLexer();
+    lexer.start(asciiDoc);
+    StringBuilder sb = new StringBuilder();
+    while (lexer.getTokenStart() != lexer.getBufferEnd()) {
+      String replacement = HTML_TOKEN_TRANSLATION.get(lexer.getTokenType());
+      if (replacement != null) {
+        sb.append(replacement);
+      } else if (lexer.getTokenType() == AsciiDocTokenTypes.PASSTRHOUGH_CONTENT) {
+        sb.append(lexer.getTokenText());
+      } else {
+        sb.append(HtmlEscapers.htmlEscaper().escape(lexer.getTokenText()));
+      }
+      lexer.advance();
+    }
+    return sb.toString();
   }
 }

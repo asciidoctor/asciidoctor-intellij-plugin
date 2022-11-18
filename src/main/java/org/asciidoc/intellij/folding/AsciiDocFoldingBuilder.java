@@ -39,8 +39,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+@SuppressWarnings("UnnecessaryUnicodeEscape")
 public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements DumbAware {
-  private static final Map<String, String> COLLAPSABLE_ATTRIBUTES = new HashMap<>();
+  public static final Map<String, String> COLLAPSABLE_ATTRIBUTES = new HashMap<>();
 
   // https://asciidoctor.org/docs/user-manual/#charref-attributes
   // only fold those pre-defined attributes that have visible characters

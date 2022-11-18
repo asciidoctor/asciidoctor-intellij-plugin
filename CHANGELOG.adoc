@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Avoid "Invalid file" error when files are removed concurrently (#1220)
 - Add tab/space indent configuration for AsciiDoc code style (#1218)
+- Parse formatted page titles for Antora xrefs in pages and navigations (#1223)
 
 === 0.37.55
 

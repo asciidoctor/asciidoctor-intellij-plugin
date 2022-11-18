@@ -44,6 +44,7 @@ import com.intellij.serviceContainer.AlreadyDisposedException;
 import com.intellij.util.text.CharArrayUtil;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.AsciiDocWrapper;
+import org.asciidoc.intellij.folding.AsciiDocFoldingBuilder;
 import org.asciidoc.intellij.psi.search.AsciiDocAntoraPlaybookIndex;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
@@ -424,6 +425,10 @@ public class AsciiDocUtil {
   }
 
   public static List<AttributeDeclaration> findAttributes(Project project, String key, PsiElement current, Scope scope) {
+    String constant = AsciiDocFoldingBuilder.COLLAPSABLE_ATTRIBUTES.get(key);
+    if (constant != null) {
+      return List.of(new AsciiDocAttributeDeclarationDummy(key, constant));
+    }
 
     PsiFile containingFile = current.getContainingFile();
     PsiAttributeCache cache = getPsiAttributeCache(project, containingFile);
@@ -2024,9 +2029,7 @@ public class AsciiDocUtil {
           }
         }
       }
-      Iterator<AntoraModule> iterator = result.iterator();
-      while (iterator.hasNext()) {
-        AntoraModule antoraModule = iterator.next();
+      for (AntoraModule antoraModule : result) {
         // title might not have been included on all modules, populate other if it has been set on some
         if (antoraModule.getTitle() == null) {
           antoraModule.setTitle(componentTitles.get(antoraModule.getComponent()));
