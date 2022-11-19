@@ -1,4 +1,4 @@
-= Navigation in an IntelliJ Project
+= Navigating in an IntelliJ Project
 :navtitle: Navigating in a project
 :description: How to follow references and navigate within in an IntelliJ Project.
 
@@ -14,7 +14,7 @@ include::partial$technical-writing-series.adoc[]
 This assumes that IntelliJ IDEA is open with a project with some existing content.
 See xref:./opening-the-first-project.adoc[] and xref:./editor-the-file-asciidoc-file.adoc[] on how to do this.
 
-== Navigation in an AsciiDoc project
+== Navigating in an AsciiDoc project
 
 This section describes how to get from one AsciiDoc document to related documents
 Use the menu item menu:Navigate[] for a full list of options, or use menu:Help[Find Action...] to search all action available in the IDE.
