@@ -24,6 +24,8 @@ Each page gives a brief overview to get started and links to other pages in this
 . xref:./starting-intellij-first-time.adoc[Starting IntelliJ IDEA for the first time and installing the AsciiDoc plugin].
 . xref:./opening-the-first-project.adoc[Opening the first project in IntelliJ IDEA].
 . xref:./editor-the-file-asciidoc-file.adoc[Adding a file to a project and editing AsciiDoc content in an existing project.].
+. xref:./navigating-in-a-project.adoc[Navigating from one file to other referenced files in a project].
+. xref:./searching-in-a-project.adoc[Searching AsciiDoc content in a project].
 . xref:./git-integration.adoc[Collaborate with others using IntelliJ IDEA's Git integration].
 
 ////

@@ -97,9 +97,9 @@ Once the user places the cursor in the editor, the preview scrolls so that it sh
 
 The main things to know about the preview are:
 
-* Clicking on an external link opens them in a new window of the system's browser.
+* Clicking on an external link opens it in a new window of the system's browser.
 
-* Clicking on an internal link opens the file in the editor.
+* Clicking on an internal link opens the target in the editor.
 
 * Clicking on text content places the cursor in the editor in that paragraph.
 If the content is from an included AsciiDoc file, the editor opens that file in a new editor tab.

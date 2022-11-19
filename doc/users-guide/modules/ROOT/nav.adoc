@@ -5,6 +5,8 @@
 ** xref:technical-writing/starting-intellij-first-time.adoc[]
 ** xref:technical-writing/opening-the-first-project.adoc[]
 ** xref:technical-writing/editor-the-file-asciidoc-file.adoc[]
+** xref:technical-writing/navigating-in-a-project.adoc[]
+** xref:technical-writing/searching-in-a-project.adoc[]
 ** xref:technical-writing/git-integration.adoc[]
 * xref:installation.adoc[]
 * xref:recommended-settings.adoc[]

@@ -1,0 +1,72 @@
+= Searching in an IntelliJ Project
+:navtitle: Searching in a project
+:description: How to search for keywords and named elements in an IntelliJ Project.
+
+{description}
+
+Searching content is used here to describe filtering content, for example, with a keyword.
+Navigation is used to describe how to get from one AsciiDoc file to a referenced image or another AsciiDoc file.
+Read more about navigating in xref:./navigating-in-a-project.adoc[].
+
+include::partial$technical-writing-series.adoc[]
+
+== Prerequisites
+
+This assumes that IntelliJ IDEA is open with a project with some existing content.
+See xref:./opening-the-first-project.adoc[] and xref:./editor-the-file-asciidoc-file.adoc[] on how to do this.
+
+== Searching within an AsciiDoc project
+
+This describes several ways on how to search through the contents of a project, open the right files.
+Use the menu item menu:Navigate[] for a full list of options, or use menu:Help[Find Action...] to search all action available in the IDE.
+
+To return to previously edited files, use the following options:
+
+--
+* To return to a previous file, use kbd:[Ctrl+E] and select the file to return to.
+* Use kbd:[Alt+Shift+Left] and kbd:[Alt+Shift+Right] to move backwards and forwards in the latest cursor positions.
+* To return to the previous editing position, use kbd:[Ctrl+Shift+Backspace].
+--
+
+Search for a text snippet in the current file::
+
+To search within the current file, use kbd:[Ctrl+F].
+This is by default case-insensitive and uses a plain text search.
+Using the icons at the end of the input field, the use can switch to a case-sensitive search and a search with regular expressions.
+
+Search for a text snippet in the current file::
+
+To search within all files of the project, use kbd:[Ctrl+Shift+F].
++
+image::technical-writing/intellij-find-in-files.png[]
++
+This is by default case-insensitive and uses a plain text search.
+Using the icons at the end of the input field, the use can switch to a case-sensitive search and a search with regular expressions.
++
+Use the menu items menu:In Project[], menu:Module[], menu:Directory[] and menu:Scope[] to limit the search to a specific area.
++
+Move the selection up and down, and use the small editor window to edit the code directly.
++
+Use btn:[Open in Find Window] to open the list of files in a tool window which allows opening each occurrence in an editor and then jump with kbd:[Ctrl+Alt+Down] and kbd:[Ctrl+Alt+Up] between them.
+
+Search by File Name::
+
+To search a file by its name, use kbd:[Ctrl+Shift+N].
++
+image::technical-writing/intellij-find-file.png[]
++
+Type parts of the path and the file name to restrict the search to the file.
+
+Search Everywhere::
+
+A user can search for all named elements in a project.
+This includes attributes, IDs and section heading.
+Use kbd:[Shift+Shift] to open the dialog.
++
+image::technical-writing/intellij-search-everywhere.png[]
+
+== Further reading
+
+Read more about keyboard shortcuts in xref:features/keymap.adoc[].
+
+Continue to xref:./git-integration.adoc[] for the next step of this series.
