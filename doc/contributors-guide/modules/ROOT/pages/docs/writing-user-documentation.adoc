@@ -30,9 +30,14 @@ Example:
 +
 displays as
 +
+--
 * kbd:[Alt+F7] (Windows)
 * kbd:[Alt+Shift+7] (Linux)
 * kbd:[⌥+F7] (macOS)
+--
++
+The UI theme displays an operating switcher which tries to auto-detect the operating system of the visitor, which will then show only the shortcuts relevant to the selected operating system.
+Therefore, always put all three operating systems into the docs.
 
 Use active voice::
 Active voice: "`The preview displays the result`" +
