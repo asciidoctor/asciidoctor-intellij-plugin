@@ -12,19 +12,41 @@ Reference card of the default key map
 https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA_ReferenceCard.pdf
 ////
 
-== Windows/Linux
+== List of Hotkeys
 
 [caption=]
 .General
 [width="75%",cols="4,3",grid="bot",options="header"]
 |===
 ^| Description ^| Shortcut
-| Search everywhere | 2x kbd:[Shift]
-| Smart code completion | kbd:[Ctrl+Shift+Space]
-| Show intention actions and quick-fixes | kbd:[At+Enter]
-| Open corresponding tool window | kbd:[Alt+0] ... kbd:[Alt+9]
-| Open Settings dialog | kbd:[Ctrl+Alt+S]
-| Find Action | kbd:[Ctrl+Shift+A]
+| Search everywhere |
+[.windows.linux]#2x kbd:[Shift]#
+
+[.macos]#2x kbd:[⇧]#
+
+| Smart code completion | [.windows.linux]#kbd:[Ctrl+Shift+Space]#
+
+[.macos]#kbd:[⌃+⇧+Space]#
+
+| Show intention actions and quick-fixes | [.windows.linux]#kbd:[At+Enter]#
+
+[.macos]#kbd:[⌘+Enter]#
+
+| Open corresponding tool window | [.windows.linux]#kbd:[Alt+0] ... kbd:[Alt+9]#
+
+[.macos]#kbd:[⌘+0] ... kbd:[⌘+9]#
+
+| Save all | [.windows.linux]#kbd:[Ctrl+S]#
+
+[.macos]#kbd:[⌘+S]#
+
+| Open Settings dialog | [.windows.linux]#kbd:[Ctrl+Alt+S]#
+
+[.macos]#kbd:[⌘+,]#
+
+| Find Action | [.windows.linux]#kbd:[Ctrl+Shift+A]#
+
+[.macos]#kbd:[⌘+⇧+A]#
 |===
 
 [caption=]
@@ -32,8 +54,18 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 [width="75%",cols="4,3",grid="bot",options="header"]
 |===
 ^| Description ^| Shortcut
-| Extend selection | kbd:[Ctrl+W]
-| Shrink selection | kbd:[Ctrl+Shift+W]
+| Extend selection |
+
+[.windows.linux]#kbd:[Ctrl+W]#
+
+[.macos]#kbd:[⌥+Up]#
+
+| Shrink selection |
+
+[.windows.linux]#kbd:[Ctrl+Shift+W]#
+
+[.macos]#kbd:[⌥+Down]#
+
 | Toggle bold for the selected text | kbd:[*]
 | Toggle emphasize for the selected text | kbd:[_]
 | Toggle monospace font for the selected text | kbd:[`]
@@ -42,40 +74,128 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 | Toggle single quotes for the selected text | kbd:[']
 | Toggle passthrough for the selected text | kbd:[+]
 | Toggle passthrough for the selected text | kbd:[$]
-| Show intention actions and quick-fixes | kbd:[Alt+Enter]
-| Reformat code | kbd:[Ctrl+Alt+L]
-| Auto-indent line(s) | kbd:[Ctrl+Alt+I]
-| Indent/unindent selected lines | kbd:[Tab] / kbd:[Shift+Tab]
-| Cut current line to clipboard  | kbd:[Ctrl+X],kbd:[Shift+Delete]
-| Copy current line to clipboard | kbd:[Ctrl+C],kbd:[Ctrl+Insert]
+
+| Show intention actions and quick-fixes | [.windows.linux]#kbd:[Alt+Enter]#
+
+[.macos]#kbd:[⌥+Enter]#
+
+| Reformat code | [.windows.linux]#kbd:[Ctrl+Alt+L]#
+
+[.macos]#kbd:[⌘+⌥+L]#
+
+| Auto-indent line(s) | [.windows.linux]#kbd:[Ctrl+Alt+I]#
+
+[.macos]#kbd:[⌃+⌥+I]#
+
+| Indent/unindent selected lines | [.windows.linux]#kbd:[Tab] / kbd:[Shift+Tab]#
+
+[.macos]#kbd:[Right] / kbd:[⇧+Right]#
+
+| Cut current line to clipboard  | [.windows.linux]#kbd:[Ctrl+X],kbd:[Shift+Delete]#
+
+[.macos]#kbd:[⌘+X]#
+
+| Copy current line to clipboard | [.windows.linux]#kbd:[Ctrl+C],kbd:[Ctrl+Insert]#
+
+[.macos]#kbd:[⌘+C]#
+
 | Paste from clipboard +
-(text or images) | kbd:[Ctrl+V],kbd:[Shift+Insert]
-| Move current line up/down | kbd:[Ctrl+Shift+Up]/kbd:[Down]
-| Duplicate current line  | kbd:[Ctrl+D]
-| Delete line at caret | kbd:[Ctrl+Y]
-| Smart line join | kbd:[Ctrl+Shift+J]
-| Smart line split | kbd:[Ctrl+Enter]
-| Start new line | kbd:[Shift+Enter]
-| Toggle case for word at caret or selected block | kbd:[Ctrl+Shift+U]
-| Delete to word end | kbd:[Ctrl+Delete]
-| Delete to word start | kbd:[Ctrl+Backspace]
-| Close active editor tab | kbd:[Ctrl+F4]
+(text or images) | [.windows.linux]#kbd:[Ctrl+V],kbd:[Shift+Insert]#
+
+[.macos]#kbd:[⌘+V]#
+
+| Move current line up/down | [.windows.linux]#kbd:[Ctrl+Shift+Up]/kbd:[Down]#
+
+[.macos]#kbd:[⇧+⌘+Up]/kbd:[Down]#
+
+| Duplicate current line  | [.windows.linux]#kbd:[Ctrl+D]#
+
+[.macos]#kbd:[⌘+D]#
+
+| Delete line at caret | [.windows.linux]#kbd:[Ctrl+Y]#
+
+[.macos]#kbd:[⌘+Backspace]#
+
+| Smart line join | [.windows.linux]#kbd:[Ctrl+Shift+J]#
+
+[.macos]#kbd:[⌃+⇧+J]#
+
+| Smart line split | [.windows.linux]#kbd:[Ctrl+Enter]#
+
+[.macos]#kbd:[⌘+Enter]#
+
+| Start new line | [.windows.linux]#kbd:[Shift+Enter]#
+
+[.macos]#kbd:[⇧+Enter]#
+
+| Toggle case for word at caret or selected block | [.windows.linux]#kbd:[Ctrl+Shift+U]#
+
+[.macos]#kbd:[⌘+⇧+U]#
+
+| Delete to word end | [.windows.linux]#kbd:[Ctrl+Delete]#
+
+[.macos]#kbd:[⌥+Backspace]#
+
+| Delete to word start | [.windows.linux]#kbd:[Ctrl+Backspace]#
+
+[.macos]#kbd:[⌥+Delete]#
+
+| Close active editor tab | [.windows.linux]#kbd:[Ctrl+F4]#
+
+[.macos]#kbd:[⌘+W]#
+
 | Basic code completion +
-(for example file names) | kbd:[Ctrl+Space]
+(for example file names) | [.windows.linux]#kbd:[Ctrl+Space]#
+
+[.macos]#kbd:[^+Space]#
+
 | Smart code completion +
-(for example file names) | kbd:[Ctrl+Shift+Space]
+(for example file names) | [.windows.linux]#kbd:[Ctrl+Shift+Space]#
+
+[.macos]#kbd:[^+⇧+Space]#
+
 | Complete the statement +
-(for example macros) | kbd:[Ctrl+Shift+Enter]
-| Quick documentation lookup | kbd:[Ctrl+Q]
-| Brief Info | kbd:[Ctrl+mouse]
-| Expand/collapse block or attribute | kbd:[Ctrl+NumPad+] / kbd:[NumPad-]
-| Expand/collapse all | kbd:[Ctrl+Shift+NumPad+] / kbd:[NumPad-]
-| Comment/uncomment with line comment | kbd:[Ctrl+/]
-| Comment/uncomment with block comment | kbd:[Ctrl+Shift+/]
-| Select till the end of a code block | kbd:[Ctrl+Shift++]+]
-| Select till the start of a code block | kbd:[Ctrl+Shift++[+]
+(for example macros) | [.windows.linux]#kbd:[Ctrl+Shift+Enter]#
+
+[.macos]#kbd:[⌘+⇧+Enter]#
+
+| Quick documentation lookup | [.windows.linux]#kbd:[Ctrl+Q]#
+
+[.macos]#kbd:[^+J]#
+
+| Brief Info | [.windows.linux]#kbd:[Ctrl+mouse]#
+
+[.macos]#kbd:[⌘+mouse]#
+
+| Expand/collapse block or attribute | [.windows.linux]#kbd:[Ctrl+NumPad+] / kbd:[NumPad-]#
+
+[.macos]#kbd:[⌘ + ++ + ++] / kbd:[⌘+-]#
+
+| Expand/collapse all | [.windows.linux]#kbd:[Ctrl+Shift+NumPad+] / kbd:[NumPad-]#
+
+[.macos]#kbd:[⌘ + ⇧ + ++ + ++] / kbd:[⌘ + ⇧+-]#
+
+| Comment/uncomment with line comment | [.windows.linux]#kbd:[Ctrl+/]#
+
+[.macos]#kbd:[⌘+/]#
+
+| Comment/uncomment with block comment | [.windows.linux]#kbd:[Ctrl+Shift+/]#
+
+[.macos]#kbd:[⌘ + ++⌥++ + /]#
+
+| Select till the end of a code block | [.windows.linux]#kbd:[Ctrl+Shift++]+]#
+
+[.macos]#kbd:[⌘ + ⇧ + +]+]#
+
+| Select till the start of a code block | [.windows.linux]#kbd:[Ctrl+Shift++[+]#
+
+[.macos]#kbd:[⌘ + ⇧ + +[+]#
+
 | Surround with... +
-(Use it with `ad-tag-include` template in any language to add tags for includes.) | kbd:[Ctrl+Alt+T]
+(Use it with `ad-tag-include` template in any language to add tags for includes.) | [.windows.linux]#kbd:[Ctrl+Alt+T]#
+
+[.macos]#kbd:[⌘+⌥+T]#
+
 |===
 
 [caption=]
@@ -84,136 +204,101 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 |===
 ^| Description ^| Shortcut
 | Go to declaration +
-Works also for file and class names in italics or monospace | kbd:[Ctrl+B], kbd:[Ctrl+Click]
-| Go to class | kbd:[Ctrl+N]
-| Go to file | kbd:[Ctrl+Shift+N]
-| Go to symbol | kbd:[Ctrl+Alt+Shift+N]
-| Go to next/previous editor tab | kbd:[Alt+Right/Left]
+Works also for file and class names in italics or monospace | [.windows.linux]#kbd:[Ctrl+B], kbd:[Ctrl+Click]#
+
+[.macos]#kbd:[⌘+B], kbd:[⌘+Click]#
+
+| Go to class | [.windows.linux]#kbd:[Ctrl+N]#
+
+[.macos]#kbd:[⌘+O]#
+
+| Go to file | [.windows.linux]#kbd:[Ctrl+Shift+N]#
+
+[.macos]#kbd:[⌘+⇧+O]#
+
+| Go to symbol | [.windows.linux]#kbd:[Ctrl+Alt+Shift+N]#
+
+[.macos]#kbd:[⌘+⌥+O]#
+
+| Go to next/previous editor tab | [.windows.linux]#kbd:[Alt+Right/Left]#
+
+[.macos]#kbd:[^+Right/Left]#
+
 | Go back to the previous tool window | kbd:[F12]
 | Go to editor (from the tool window) | kbd:[Esc]
-| Hide active or last active window | kbd:[Shift+Esc]
-| Go to line | kbd:[Ctrl+G]
-| Find in current file | kbd:[Ctrl+F]
-| Replace in current file | kbd:[Ctrl+R]
+| Hide active or last active window | [.windows.linux]#kbd:[Shift+Esc]#
+
+[.macos]#kbd:[⇧+Esc]#
+
+| Go to line | [.windows.linux]#kbd:[Ctrl+G]#
+
+[.macos]#kbd:[⌘+L]#
+
+| Find in current file | [.windows.linux]#kbd:[Ctrl+F]#
+
+[.macos]#kbd:[⌘+F]#
+
+| Find usages | [.windows]#kbd:[Alt+F7]#
+
+[.linux]#kbd:[Alt+Shift+7]#
+
+[.macos]#kbd:[⌥+F7]#
+
+| Replace in current file | [.windows.linux]#kbd:[Ctrl+R]#
+
+[.macos]#kbd:[⌘+R]#
+
 | Rename +
-(for example ID or file name) | kbd:[Shift+F6]
-| Recent files popup | kbd:[Ctrl+E]
-| Navigate back/forward | kbd:[Ctrl+Alt+Left/Right]
-| Navigate to last edit location | kbd:[Ctrl+Shift+Backspace]
-| Select current file or symbol in any view | kbd:[Alt+F1]
-| Go to declaration | kbd:[Ctrl+B],kbd:[Ctrl+Click]
-| File structure popup | kbd:[Ctrl+F12]
-| Show navigation bar | kbd:[Alt+Home]
-| Toggle bookmark | kbd:[F11]
-| Toggle bookmark with mnemonic | kbd:[Ctrl+F11]
-| Go to numbered bookmark | kbd:[Ctrl+0] ... kbd:[Ctrl+9]
-| Show bookmarks | kbd:[Shift+F11]
+(for example ID or file name) | [.windows.linux]#kbd:[Shift+F6]#
+
+[.macos]#kbd:[⇧+F6]#
+
+| Recent files popup | [.windows.linux]#kbd:[Ctrl+E]#
+
+[.macos]#kbd:[⌘+E]#
+
+| Navigate back/forward | [.windows.linux]#kbd:[Ctrl+Alt+Left/Right]#
+
+[.macos]#kbd:[⌘+⌥+Left/Right]#
+
+| Navigate to last edit location | [.windows.linux]#kbd:[Ctrl+Shift+Backspace]#
+
+[.macos]#kbd:[⌘+⇧+Backspace]#
+
+| Select current file or symbol in any view | [.windows.linux]#kbd:[Alt+F1]#
+
+[.macos]#kbd:[⌥+F1]#
+
+| Go to declaration | [.windows.linux]#kbd:[Ctrl+B],kbd:[Ctrl+Click]#
+
+[.macos]#kbd:[⌘+B],kbd:[⌘+Click]#
+
+| File structure popup | [.windows.linux]#kbd:[Ctrl+F12]#
+
+[.macos]#kbd:[⌘+F12]#
+
+| Show navigation bar | [.windows.linux]#kbd:[Alt+Home]#
+
+[.macos]#kbd:[⌥+Home]#
+
+| Toggle bookmark | [.windows.linux]#kbd:[F11]#
+
+[.macos]#kbd:[F3]#
+
+| Toggle bookmark with mnemonic | [.windows.linux]#kbd:[Ctrl+F11]#
+
+[.macos]#kbd:[⌥+F3]#
+
+| Go to numbered bookmark | [.windows.linux]#kbd:[Ctrl+0] ... kbd:[Ctrl+9]#
+
+[.macos]#kbd:[^0] ... kbd:[^9]#
+
+| Show bookmarks | [.windows.linux]#kbd:[Shift+F11]#
+
+[.macos]#kbd:[⌘+F3]#
 
 |===
 
-== MacOS
+== Further reading
 
-[caption=]
-.General
-[width="75%",cols="4,3",grid="bot",options="header"]
-|===
-^| Description ^| Shortcut
-| Search everywhere | 2x kbd:[⇧]
-| Smart code completion | kbd:[⌃+⇧+Space]
-| Show intention actions and quick-fixes | kbd:[⌘+Enter]
-| Open corresponding tool window | kbd:[⌘+0] ... kbd:[⌘+9]
-| Save all | kbd:[⌘+S]
-| Open Settings dialog | kbd:[⌘+,]
-| Find Action | kbd:[⌘+⇧+A]
-|===
-
-[caption=]
-.Editing
-[width="75%",cols="4,3",grid="bot",options="header"]
-|===
-^| Description ^| Shortcut
-| Extend selection | kbd:[⌥+Up]
-| Shrink selection | kbd:[⌥+Down]
-| Toggle bold for the selected text | kbd:[*]
-| Toggle emphasize for the selected text | kbd:[_]
-| Toggle monospace font for the selected text | kbd:[`]
-| Toggle custom styling for the selected text | kbd:[#]
-| Toggle double quotes for the selected text | kbd:["]
-| Toggle single quotes for the selected text | kbd:[']
-| Toggle passthrough for the selected text | kbd:[+]
-| Toggle passthrough for the selected text | kbd:[$]
-| Show intention actions and quick-fixes | kbd:[⌥+Enter]
-| Reformat code | kbd:[⌘+⌥+L]
-| Auto-indent line(s) | kbd:[⌃+⌥+I]
-| Indent/unindent selected lines | kbd:[Right] / kbd:[⇧+Right]
-| Cut current line to clipboard  | kbd:[⌘+X]
-| Copy current line to clipboard | kbd:[⌘+C]
-| Paste from clipboard +
-(text or images) | kbd:[⌘+V]
-| Move current line up/down | kbd:[⇧+⌘+Up]/kbd:[Down]
-| Duplicate current line  | kbd:[⌘+D]
-| Delete line at caret | kbd:[⌘+Backspace]
-| Smart line join | kbd:[⌃+⇧+J]
-| Smart line split | kbd:[⌘+Enter]
-| Start new line | kbd:[⇧+Enter]
-| Toggle case for word at caret or selected block | kbd:[⌘+⇧+U]
-| Delete to word start | kbd:[⌥+Backspace]
-| Delete to word end | kbd:[⌥+Delete]
-| Close active editor tab | kbd:[⌘+W]
-| Basic code completion +
-(for example file names) | kbd:[^+Space]
-| Smart code completion +
-(for example file names) | kbd:[^+⇧+Space]
-| Complete the statement +
-(for example macros) | kbd:[⌘+⇧+Enter]
-| Quick documentation lookup | kbd:[^+J]
-| Brief Info | kbd:[⌘+mouse]
-| Expand/collapse block or attribute | kbd:[⌘ + ++ + ++] / kbd:[⌘+-]
-| Expand/collapse all | kbd:[⌘ + ⇧ + ++ + ++] / kbd:[⌘ + ⇧+-]
-| Comment/uncomment with line comment | kbd:[⌘+/]
-| Comment/uncomment with block comment | kbd:[⌘ + ++⌥++ + /]
-| Select till the end of a code block | kbd:[⌘ + ⇧ + +]+]
-| Select till the start of a code block | kbd:[⌘ + ⇧ + +[+]
-| Surround with... +
-(Use it with `ad-tag-include` template in any language to add tags for includes.) | kbd:[⌘+⌥+T]
-|===
-
-[caption=]
-.Navigating
-[width="75%",cols="4,3",grid="bot",options="header"]
-|===
-^| Description ^| Shortcut
-| Go to declaration +
-Works also for file and class names in italics or monospace | kbd:[⌘+B], kbd:[⌘+Click]
-| Go to class | kbd:[⌘+O]
-| Go to file | kbd:[⌘+⇧+O]
-| Go to symbol | kbd:[⌘+⌥+O]
-| Go to next/previous editor tab | kbd:[^+Right/Left]
-| Go back to the previous tool window | kbd:[F12]
-| Go to editor (from the tool window) | kbd:[Esc]
-| Hide active or last active window | kbd:[⇧+Esc]
-| Go to line | kbd:[⌘+L]
-| Find in current file | kbd:[⌘+F]
-| Replace in current file | kbd:[⌘+R]
-| Rename +
-(for example ID or file name) | kbd:[⇧+F6]
-| Recent files popup | kbd:[⌘+E]
-| Navigate back/forward | kbd:[⌘+⌥+Left/Right]
-| Navigate to last edit location | kbd:[⌘+⇧+Backspace]
-| Select current file or symbol in any view | kbd:[⌥+F1]
-| Go to declaration | kbd:[⌘+B],kbd:[⌘+Click]
-| File structure popup | kbd:[⌘+F12]
-| Show navigation bar | kbd:[⌥+Home]
-| Toggle bookmark | kbd:[F3]
-| Toggle bookmark with mnemonic | kbd:[⌥+F3]
-| Go to numbered bookmark | kbd:[^0] ... kbd:[^9]
-| Show bookmarks | kbd:[⌘+F3]
-
-|===
-
-
-
-
-
-
-
+See the https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA_ReferenceCard.pdf[reference card of the default key map] available on the JetBrains website.

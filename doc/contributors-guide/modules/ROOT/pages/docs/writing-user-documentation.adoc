@@ -19,8 +19,20 @@ Adding the shortcuts should help users new to IntelliJ.
 Name the actor::
 Examples: user, preview, editor, plugin
 
-Provide Keyboard shortcuts::
-Example: `+kbd:[Alt+7]+` displays as kbd:[Alt+7]
+Provide Keyboard shortcuts for different operating systems::
+Example:
++
+--
+* `++[.windows]#kbd:[Alt+F7]#++`
+* `++[.linux]#kbd:[Alt+Shift+7]#++`
+* `++[.macos]#kbd:[⌥+F7]#++`
+--
++
+displays as
++
+* kbd:[Alt+F7] (Windows)
+* kbd:[Alt+Shift+7] (Linux)
+* kbd:[⌥+F7] (macOS)
 
 Use active voice::
 Active voice: "`The preview displays the result`" +
