@@ -24,11 +24,15 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 
 [.macos]#2x kbd:[⇧]#
 
+| Basic code completion | [.windows.linux]#kbd:[Ctrl+Space]#
+
+[.macos]#kbd:[⌃+Space]#
+
 | Smart code completion | [.windows.linux]#kbd:[Ctrl+Shift+Space]#
 
 [.macos]#kbd:[⌃+⇧+Space]#
 
-| Show intention actions and quick-fixes | [.windows.linux]#kbd:[At+Enter]#
+| Show intention actions and quick-fixes | [.windows.linux]#kbd:[Alt+Enter]#
 
 [.macos]#kbd:[⌘+Enter]#
 
