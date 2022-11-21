@@ -74,17 +74,17 @@ The main things to know about the editor are:
 * When the user types the three letters kbd:[a]kbd:[d]kbd:[-], the editor suggests live templates for common AsciiDoc structures like lists, links and source code.
 Continue typing to narrow down the list, use the up and down arrows to highlight an entry, and use kbd:[Enter] to select an entry.
 
-* When typing a file name as part of an image macro or a reference, kbd:[Ctrl+Space] shows a list of suggestions.
+* When typing a file name as part of an image macro or a reference, [.windows.linux]#kbd:[Ctrl+Space]# [.macos]#kbd:[^+Space]# shows a list of suggestions.
 Press kbd:[Tab] to replace the text in editor for the current reference or press kbd:[Enter] to insert the text in the editor.
 
 * Using kbd:[Alt+Enter], the user can trigger context-specific features of the IDE, especially when there is an underlined text that indicate warnings and errors.
 Those features range from creating a missing file to choose a correct word when there is a spelling or grammar mistake.
 
-* After placing the cursor on an include-macro or a reference and pressing kbd:[Ctrl+B], the IDE opens that file in a new editor tab.
+* After placing the cursor on an include-macro or a reference and pressing [.windows.linux]#kbd:[Ctrl+B]# [.macos]#kbd:[⌘+B]#, the IDE opens that file in a new editor tab.
 
-* To rename an attribute name, file name or reference, place the cursor on it and press kbd:[Shift+F6], and the IDE renames the reference in all places if the checkboxes are enabled in the dialog that pops up after the key was pressed.
+* To rename an attribute name, file name or reference, place the cursor on it and press [.windows.linux]#kbd:[Shift+F6]# [.macos]#kbd:[⇧+F6]#, and the IDE renames the reference in all places if the checkboxes are enabled in the dialog that pops up after the key was pressed.
 
-* To format the complete file or a selection of text, press kbd:[Ctrl+Alt+L].
+* To format the complete file or a selection of text, press [.windows.linux]#kbd:[Ctrl+Alt+L]# [.macos]#kbd:[⌘+⌥+L]#.
 The default configuration removes unnecessary blanks and applies the one-sentence-per line rule. See xref:features/advanced/reformatting.adoc[] for details.
 
 To learn more about the editor's features, read the page xref:features/editor.adoc[].
