@@ -1,8 +1,12 @@
 = Inspections
-:description: Inspections allow highlighting of issues in the editor. They also allow for quick fixes that the user can select using Ctrl+Enter.
+:description: Inspections allow highlighting of issues in the editor. They also allow for quick fixes that the user can select using a shortcut.
 
 Inspections allow highlighting of issues in the editor.
-They also allow for quick fixes that the user can select using kbd:[Ctrl+Enter].
+
+They also allow for quick fixes that the user can select using [.windows.linux]#kbd:[Ctrl+Enter]# [.macos]#kbd:[⌘+Enter]#.
+
+== How Inspections work
+
 One example is the inspection that turns Markdown-styled headings into AsciiDoc styled headings.
 
 An inspection contains the following elements:
