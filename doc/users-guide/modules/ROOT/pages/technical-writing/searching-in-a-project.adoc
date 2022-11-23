@@ -23,20 +23,20 @@ Use the menu item menu:Navigate[] for a full list of options, or use menu:Help[F
 To return to previously edited files, use the following options:
 
 --
-* To return to a previous file, use [.windows.linux]#kbd:[Ctrl+E]# [.macos]#kbd:[⌘+E]# and select the file to return to.
-* Use [.linux]#kbd:[Alt+Shift+Left]# [.windows]#kbd:[Alt+Ctrl+Left]# [.macos]#kbd:[⌘ + ⌥ + ←]# and [.linux]#kbd:[Alt+Shift+Right]# [.windows]#kbd:[Alt+Ctrl+Right]# [.macos]#kbd:[⌘ + ⌥ + →]# to move backwards and forwards in the latest cursor positions.
-* To return to the previous editing position, use [.windows.linux]#kbd:[Ctrl+Shift+Backspace]# [.macos]#kbd:[⇧ + ⌘ + ⌫]#.
+* To return to a previous file, use [.windows.linux]#kbd:[Ctrl+E]# [.macos]#kbd:[⌘ E]# and select the file to return to.
+* Use [.linux]#kbd:[Alt+Shift+Left]# [.windows]#kbd:[Alt+Ctrl+Left]# [.macos]#kbd:[⌘ ⌥ ←]# and [.linux]#kbd:[Alt+Shift+Right]# [.windows]#kbd:[Alt+Ctrl+Right]# [.macos]#kbd:[⌘ ⌥ →]# to move backwards and forwards in the latest cursor positions.
+* To return to the previous editing position, use [.windows.linux]#kbd:[Ctrl+Shift+Backspace]# [.macos]#kbd:[⇧ ⌘ ⌫]#.
 --
 
 Search for a text snippet in the current file::
 
-To search within the current file, use [.windows.linux]#kbd:[Ctrl+F]# [.macos]#kbd:[⌘+F].
+To search within the current file, use [.windows.linux]#kbd:[Ctrl+F]# [.macos]#kbd:[⌘ F].
 This is by default case-insensitive and uses a plain text search.
 Using the icons at the end of the input field, the use can switch to a case-sensitive search and a search with regular expressions.
 
 Search for a text snippet in the current file::
 
-To search within all files of the project, use [.windows.linux]#kbd:[Ctrl+Shift+F]# [.macos]#kbd:[⌘ + ⇧ +F]#.
+To search within all files of the project, use [.windows.linux]#kbd:[Ctrl+Shift+F]# [.macos]#kbd:[⌘ ⇧ F]#.
 +
 image::technical-writing/intellij-find-in-files.png[]
 +
@@ -47,11 +47,11 @@ Use the menu items menu:In Project[], menu:Module[], menu:Directory[] and menu:S
 +
 Move the selection up and down, and use the small editor window to edit the code directly.
 +
-Use btn:[Open in Find Window] to open the list of files in a tool window which allows opening each occurrence in an editor and then jump with [.windows.linux]#kbd:[Ctrl+Alt+Down]# [.macos]#kbd:[⌘+ ⌥ + ↓]# and [.windows.linux]#kbd:[Ctrl+Alt+Up]# [.macos]#kbd:[⌘+ ⌥ + ↑]# between them.
+Use btn:[Open in Find Window] to open the list of files in a tool window which allows opening each occurrence in an editor and then jump with [.windows.linux]#kbd:[Ctrl+Alt+Down]# [.macos]#kbd:[⌘ ⌥ ↓]# and [.windows.linux]#kbd:[Ctrl+Alt+Up]# [.macos]#kbd:[⌘ ⌥ ↑]# between them.
 
 Search by File Name::
 
-To search a file by its name, use [.windows.linux]#kbd:[Ctrl+Shift+N]# [.macos]#kbd:[⌘ + ⇧ + O]#.
+To search a file by its name, use [.windows.linux]#kbd:[Ctrl+Shift+N]# [.macos]#kbd:[⌘ ⇧ O]#.
 +
 image::technical-writing/intellij-find-file.png[]
 +
@@ -61,7 +61,7 @@ Search Everywhere::
 
 A user can search for all named elements in a project.
 This includes attributes, IDs and section heading.
-Use [.windows.linux]#kbd:[Shift+Shift]# [.macos]#kbd:[⇧ + ⇧]# to open the dialog.
+Use [.windows.linux]#2x kbd:[Shift]# [.macos]#2x kbd:[⇧]# to open the dialog.
 +
 image::technical-writing/intellij-search-everywhere.png[]
 

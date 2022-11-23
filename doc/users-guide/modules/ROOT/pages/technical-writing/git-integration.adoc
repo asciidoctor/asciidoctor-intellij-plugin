@@ -36,10 +36,10 @@ image::technical-writing/intellij-git.png[]
 . In the menu:Branch[] dropdown, select _HEAD_ to show only the commits of the current branch.
 
 . The "`Commit`" tool window shows all local changes that can then be committed.
-Open it by click on the tool window or use the shortcut [.windows.linux]#kbd:[Alt+0]# [.macos]#kbd:[⌘+0]#.
+Open it by click on the tool window or use the shortcut [.windows.linux]#kbd:[Alt+0]# [.macos]#kbd:[⌘ 0]#.
 Explore the different actions in the toolbar by hovering with the mouse over the different icons.
 +
-Double-click on a highlighted file or press [.windows.linux]#kbd:[Ctrl+D]# [.macos]#kbd:[⌘+D]# to show the differences side-by-side. See the IntelliJ documentation on how to https://www.jetbrains.com/help/idea/comparing-file-versions.html[Compare file and folder versions] and https://www.jetbrains.com/help/idea/resolving-conflicts.html[Resolve Conflicts].
+Double-click on a highlighted file or press [.windows.linux]#kbd:[Ctrl+D]# [.macos]#kbd:[⌘ D]# to show the differences side-by-side. See the IntelliJ documentation on how to https://www.jetbrains.com/help/idea/comparing-file-versions.html[Compare file and folder versions] and https://www.jetbrains.com/help/idea/resolving-conflicts.html[Resolve Conflicts].
 
 === Learning more about Git functionality
 

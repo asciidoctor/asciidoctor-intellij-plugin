@@ -25,7 +25,7 @@ Example:
 --
 * `++[.windows]#kbd:[Alt+F7]#++`
 * `++[.linux]#kbd:[Alt+Shift+7]#++`
-* `++[.macos]#kbd:[⌥+F7]#++`
+* `++[.macos]#kbd:[⌥ F7]#++`
 --
 +
 displays as
@@ -33,11 +33,13 @@ displays as
 --
 * kbd:[Alt+F7] (Windows)
 * kbd:[Alt+Shift+7] (Linux)
-* kbd:[⌥+F7] (macOS)
+* kbd:[⌥ F7] (macOS)
 --
 +
 The UI theme displays an operating switcher which tries to auto-detect the operating system of the visitor, which will then show only the shortcuts relevant to the selected operating system.
 Therefore, always put all three operating systems into the docs.
++
+As per the https://developer.apple.com/design/human-interface-guidelines/inputs/keyboards/[Apple guidelines], there is no `+` but a space between the keys.
 
 Use active voice::
 Active voice: "`The preview displays the result`" +

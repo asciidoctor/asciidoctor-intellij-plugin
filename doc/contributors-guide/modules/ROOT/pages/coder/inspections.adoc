@@ -3,7 +3,7 @@
 
 Inspections allow highlighting of issues in the editor.
 
-They also allow for quick fixes that the user can select using [.windows.linux]#kbd:[Ctrl+Enter]# [.macos]#kbd:[⌘+Enter]#.
+They also allow for quick fixes that the user can select using [.windows.linux]#kbd:[Ctrl+Enter]# [.macos]#kbd:[⌘ ↩]#.
 
 == How Inspections work
 

@@ -84,7 +84,7 @@ To learn more about how to bundle multiple Git repositories as one IntelliJ proj
 
 === Antora editor support
 
-In the editor, the user can autocomplete filenames and references using [.windows.linux]#kbd:[Ctrl+Space]# [.macos]#kbd:[^+Space]# and can navigate to a folder or file using [.windows.linux]#kbd:[Ctrl+B]# [.macos]#kbd:[⌘+B]#.
+In the editor, the user can autocomplete filenames and references using [.windows.linux]#kbd:[Ctrl+Space]# [.macos]#kbd:[^ Space]# and can navigate to a folder or file using [.windows.linux]#kbd:[Ctrl+B]# [.macos]#kbd:[⌘ B]#.
 
 To allow auto-completion for components that reside in different Git repositories, consider using a xref:features/advanced/multimodule.adoc[multi-module project].
 
