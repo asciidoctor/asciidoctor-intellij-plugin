@@ -21,36 +21,37 @@ Use the menu item menu:Navigate[] for a full list of options, or use menu:Help[F
 
 While all other sections describe how to navigate forward, these are the most common ways to return to files opened previously:
 
-* To return to a previous file, use kbd:[Ctrl+E] and select the file to return to.
-* Use kbd:[Alt+Shift+Left] and kbd:[Alt+Shift+Right] to move backwards and forwards in the latest cursor positions.
-* To return to the previous editing position, use kbd:[Ctrl+Shift+Backspace].
+* To return to a previous file, use [.windows.linux]#kbd:[Ctrl+E]# [.macos]#kbd:[⌘+E]# and select the file to return to.
+* Use [.linux]#kbd:[Alt+Shift+Left]# [.windows]#kbd:[Alt+Ctrl+Left]# [.macos]#kbd:[⌘ + ⌥ + ←]# and [.linux]#kbd:[Alt+Shift+Right]# [.windows]#kbd:[Alt+Ctrl+Right]# [.macos]#kbd:[⌘ + ⌥ + →]#
+ to move backwards and forwards in the latest cursor positions.
+* To return to the previous editing position, use [.windows.linux]#kbd:[Ctrl+Shift+Backspace]# [.macos]#kbd:[⇧ + ⌘ + ⌫]#.
 
 === Navigation in the editor
 
 Moving the cursor within a file::
 
 The editor shows the content. After placing the cursor in the editor pane, the user can use the cursor keys to move up, down left and right, use the mouse and the scroll bar to move up and down, and also place the cursor.
-Use kbd:[Alt+Up] and kbd:[Alt+Down] to move the keyboard cursor by paragraph.
-Use kbd:[Ctrl+Left] and kbd:[Ctrl+Right] to move the keyboard cursor by one word.
+Use [.windows.linux]#kbd:[Alt+Up]# [.macos]#kbd:[⌃ + ⇧ + ↑]# and [.windows.linux]#kbd:[Alt+Down]# and [.macos]#kbd:[⌃ + ⇧ + ↓]# to move the keyboard cursor by paragraph.
+Use [.windows.linux]#kbd:[Ctrl+Left]# [.macos]#kbd:[⌥ + ←]# and [.windows.linux]#kbd:[Ctrl+Right]# [.macos]#kbd:[⌥ + →]# to move the keyboard cursor by one word.
 
 Navigation to referenced resource::
 
-After pressing the kbd:[Ctrl], all elements that allow navigation show as underlined when the mouse cursor hovers over them.
+After pressing the [.windows.linux]#kbd:[Ctrl]# [.macos]#kbd:[⌥]#, all elements that allow navigation show as underlined when the mouse cursor hovers over them.
 This works file names and references in macros like `++xref:[]++`, `++images:[]++` and `++include::[]++`.
-When the user clicks the element while the kbd:[Ctrl] key is still pressed, the IDE opens the referenced resource in an editor. If there are multiple possible targets, the IDE shows a list of targets for the user to choose the one to navigate to.
+When the user clicks the element while the [.windows.linux]#kbd:[Ctrl]# [.macos]#kbd:[⌥]# key is still pressed, the IDE opens the referenced resource in an editor. If there are multiple possible targets, the IDE shows a list of targets for the user to choose the one to navigate to.
 +
-The same functionality works when placing the editing cursor with the keyboard on such a reference, and pressing kbd:[Ctrl+B].
+The same functionality works when placing the editing cursor with the keyboard on such a reference, and pressing [.windows.linux]#kbd:[Ctrl+B]# [.macos]#kbd:[⌘+B]#.
 
 Finding other usages of an element::
 
 For each named element like an included file or a reference, the user can find its usages.
-With the mouse, this is available from the context menu which opens when right-clicking on the element. It is also available as a shortcut via kbd:[Alt+F7].
+With the mouse, this is available from the context menu which opens when right-clicking on the element. It is also available as a shortcut via [.windows]#kbd:[Alt+F7]# [.linux]#kbd:[Alt+Shift+7]# [.macos]#kbd:[⌥+F7]#.
 
 Jump to a line/column in a file::
 
-To jump within the current file, press kbd:[Ctrl+G] and enter the line, optionally followed by a colon and the column to where to jump to.
+To jump within the current file, press [.windows.linux]#kbd:[Ctrl+G]# [.macos]#kbd:[⌘+L]# and enter the line, optionally followed by a colon and the column to where to jump to.
 +
-To jump to a different file, press kbd:[Ctrl+Shift+N] and enter the file name, optionally followed by the line, optionally followed by a colon with the line and optionally followed with a colon with the column.
+To jump to a different file, press [.windows.linux]#kbd:[Ctrl+Shift+N]# [.macos]#kbd:[⌘+⇧+O]# and enter the file name, optionally followed by the line, optionally followed by a colon with the line and optionally followed with a colon with the column.
 
 === Navigation in the preview
 
@@ -93,12 +94,12 @@ Clicking it selects the file
 that is opened in active editor in the tree view which allows locating a file in the project's hierarchy.
 
 For each file, the user and find its usages, for example, where an AsciiDoc file is used as in an `include::[]` preprocessor macro.
-With the mouse, this is available from the context menu which opens when right-clicking on the element. It is also available as a shortcut via kbd:[Alt+F7].
+With the mouse, this is available from the context menu which opens when right-clicking on the element. It is also available as a shortcut via [.windows]#kbd:[Alt+F7]# [.linux]#kbd:[Alt+Shift+7]# [.macos]#kbd:[⌥+F7]#.
 
 Even when the project tool window is closed, the user can use the navigation bar to navigate the file tree using the current editor's file path.
 
 == Further reading
 
-Read more about keyboard shortcuts in xref:features/keymap.adoc[].
+Read more about keyboard shortcuts in xref:features/keymap.adoc[] and IntelliJ's docs about https://www.jetbrains.com/help/idea/navigating-through-the-source-code.html[Navigating through the source code].
 
 Continue to xref:./searching-in-a-project.adoc[] for the next step of this series.
