@@ -108,9 +108,9 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 
 [.macos]#kbd:[⌘ V]#
 
-| Move current line up/down | [.windows.linux]#kbd:[Ctrl+Shift+Up]/kbd:[Ctrl+Shift+Down]#
+| Move current line up/down | [.windows.linux]#kbd:[Ctrl+Shift+Up] / kbd:[Ctrl+Shift+Down]#
 
-[.macos]#kbd:[⇧ ⌘ ↑]/kbd:[⇧ ⌘ ↓]#
+[.macos]#kbd:[⇧ ⌘ ↑] / kbd:[⇧ ⌘ ↓]#
 
 | Duplicate current line  | [.windows.linux]#kbd:[Ctrl+D]#
 
