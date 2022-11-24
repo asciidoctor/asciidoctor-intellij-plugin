@@ -18,9 +18,9 @@ The IntelliJ IDE provides a variable _asciidoctorconfigdir_ that users can use t
 
 Sample content:
 
+.Example .asciidoctorconfig file
 [source,asciidoc]
 ----
-// .asciidoctorconfig
 :experimental:
 :icons: font
 :myprojectbasedir: {asciidoctorconfigdir}

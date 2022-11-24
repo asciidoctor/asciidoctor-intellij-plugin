@@ -8,6 +8,7 @@
 ** xref:technical-writing/navigating-in-a-project.adoc[]
 ** xref:technical-writing/searching-in-a-project.adoc[]
 ** xref:technical-writing/git-integration.adoc[]
+** xref:technical-writing/preparing-a-repository.adoc[]
 * xref:installation.adoc[]
 * xref:recommended-settings.adoc[]
 * xref:features.adoc[]

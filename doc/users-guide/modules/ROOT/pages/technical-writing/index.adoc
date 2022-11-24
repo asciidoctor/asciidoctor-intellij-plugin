@@ -27,9 +27,9 @@ Each page gives a brief overview to get started and links to other pages in this
 . xref:./navigating-in-a-project.adoc[Navigating from one file to other referenced files in a project].
 . xref:./searching-in-a-project.adoc[Searching AsciiDoc content in a project].
 . xref:./git-integration.adoc[Collaborate with others using IntelliJ IDEA's Git integration].
+. xref:./preparing-a-repository.adoc[Preparing a Git repository for AsciiDoc and IntelliJ to work with a team of technical writers].
 
 ////
-. xref:./preparing-a-git-repository.adoc[Preparing a Git repository for AsciiDoc and IntelliJ to work with a team of technical writers].
 . xref:./recommended-plugins.adoc[Enhance a writer's productivity with plugins for IntelliJ].
 ////
 

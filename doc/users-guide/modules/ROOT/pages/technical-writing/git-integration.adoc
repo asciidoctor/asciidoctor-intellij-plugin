@@ -48,5 +48,4 @@ Double-click on a highlighted file or press [.windows.linux]#kbd:[Ctrl+D]# [.mac
 
 == Further reading
 
-This is the final page of the guide.
-Return to the overview xref:./index.adoc[].
+Continue to xref:./preparing-a-repository.adoc[] for the next step of this series.
