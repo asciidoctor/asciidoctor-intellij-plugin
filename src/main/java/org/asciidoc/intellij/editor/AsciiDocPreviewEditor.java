@@ -394,7 +394,6 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
                 final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
                 myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, null, retrievePanelProvider(settings));
                 myPanel.setEditor(editor);
-                myPanel.scrollToLine(targetLineNo, document.getLineCount());
                 forceRenderCycle();
                 renderIfVisible();
               }
@@ -650,7 +649,20 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
   void scrollToLine(int line) {
     targetLineNo = line;
-    renderIfVisible();
+    boolean executed = false;
+    synchronized (lazyExecutor) {
+      if (lazyExecutor.isIdle()) {
+        lazyExecutor.execute(() -> {
+          if (myPanel != null) {
+            myPanel.scrollToLine(line, document.getLineCount());
+          }
+        });
+        executed = true;
+      }
+    }
+    if (!executed) {
+      renderIfVisible();
+    }
   }
 
   private class MyUpdatePanelOnSettingsChangedListener implements AsciiDocApplicationSettings.SettingsChangedListener {
@@ -673,7 +685,6 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
               if (!mySwingAlarm.isDisposed()) {
                 synchronized (this) {
                   myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
-                  myPanel.scrollToLine(targetLineNo, document.getLineCount());
                   forceRenderCycle(); // force a refresh of the preview by resetting the current memorized content
                 }
                 renderIfVisible();

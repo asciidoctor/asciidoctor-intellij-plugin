@@ -70,9 +70,13 @@ public class LazyApplicationPoolExecutor implements Disposable {
         }
       }
     };
-    if (myPooledAlarm.getActiveRequestCount() == 0 && (future == null || future.isDone())) {
+    if (isIdle()) {
       scheduleNext();
     }
+  }
+
+  public boolean isIdle() {
+    return myPooledAlarm.getActiveRequestCount() == 0 && (future == null || future.isDone());
   }
 
   private synchronized void scheduleNext() {

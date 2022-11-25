@@ -91,7 +91,7 @@ window.__IntelliJTools.scrollToLine = (function () {
           (resultY < document.documentElement.scrollTop) || // position above window
           (resultY > document.documentElement.scrollTop + window.height) // position below window
          ) {
-        document.documentElement.scrollTop = document.body.scrollTop = newValue;
+        window.scrollTo({ top: newValue, left: 0, behavior: "auto" });
       }
 
       oldLineToScroll = newLineToScroll;

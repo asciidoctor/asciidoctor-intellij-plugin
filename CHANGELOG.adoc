@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.37.57
 
 - Fixing already disposed preview if devtools have been closed before
+- Reduce interaction with JCEF scrolling in the editor (#1226)
 
 === 0.37.56
 

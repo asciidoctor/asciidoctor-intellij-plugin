@@ -903,7 +903,10 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
 
   @Override
-  public void scrollToLine(int line, int lineCount) {
+  public synchronized void scrollToLine(int line, int lineCount) {
+    if (this.lineCount == lineCount && this.line == line) {
+      return;
+    }
     this.lineCount = lineCount;
     this.line = line;
     try {
