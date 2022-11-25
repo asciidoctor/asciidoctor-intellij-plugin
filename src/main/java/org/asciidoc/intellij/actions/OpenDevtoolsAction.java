@@ -15,7 +15,10 @@ public class OpenDevtoolsAction extends AsciiDocAction {
     if (fileEditor instanceof AsciiDocSplitEditor) {
       AsciiDocHtmlPanel panel = ((AsciiDocSplitEditor) fileEditor).getSecondEditor().getPanel();
       if (panel instanceof AsciiDocJCEFHtmlPanel) {
-        ((AsciiDocJCEFHtmlPanel) panel).openDevtools();
+        AsciiDocJCEFHtmlPanel asciiDocJCEFHtmlPanel = (AsciiDocJCEFHtmlPanel) panel;
+        if (!asciiDocJCEFHtmlPanel.isDisposed()) {
+          asciiDocJCEFHtmlPanel.openDevtools();
+        }
       }
     }
   }
