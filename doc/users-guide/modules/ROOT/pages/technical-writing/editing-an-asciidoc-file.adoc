@@ -1,6 +1,7 @@
 = Editing an AsciiDoc file in IntelliJ
 :navtitle: Editing an AsciiDoc file
 :description: Adding a file to a project and editing AsciiDoc content in an existing project.
+:page-aliases: technical-writing/editor-the-file-asciidoc-file.adoc
 
 {description}
 

@@ -12,7 +12,7 @@ include::partial$technical-writing-series.adoc[]
 == Prerequisites
 
 This assumes that IntelliJ IDEA is open with a project with some existing content.
-See xref:./opening-the-first-project.adoc[] and xref:./editor-the-file-asciidoc-file.adoc[] on how to do this.
+See xref:./opening-the-first-project.adoc[] and xref:./editing-an-asciidoc-file.adoc[] on how to do this.
 
 == Navigating in an AsciiDoc project
 
@@ -70,7 +70,7 @@ If the content is from an included AsciiDoc file, the editor opens that file in 
 === Navigation in the structure tool window
 
 The structure view is usually hidden.
-The user opens and hides it by clicking on menu:Structure[] in the tool border of the IDE's window.
+The user opens and hides it by clicking on menu:Structure[] in the tool border of the IDE's window in the lower left corner.
 
 image::technical-writing/intellij-structure-view.png[]
 

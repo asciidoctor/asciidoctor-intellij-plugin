@@ -13,7 +13,7 @@ include::partial$technical-writing-series.adoc[]
 == Prerequisites
 
 This assumes that IntelliJ IDEA is open with a project with some existing content.
-See xref:./opening-the-first-project.adoc[] and xref:./editor-the-file-asciidoc-file.adoc[] on how to do this.
+See xref:./opening-the-first-project.adoc[] and xref:./editing-an-asciidoc-file.adoc[] on how to do this.
 
 == Searching within an AsciiDoc project
 

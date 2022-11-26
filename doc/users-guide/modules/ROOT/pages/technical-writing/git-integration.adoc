@@ -9,7 +9,7 @@ include::partial$technical-writing-series.adoc[]
 == Prerequisites
 
 This assumes that IntelliJ IDEA is already installed on the PC and is started and that the reader is familiar with editing content in IntelliJ.
-See xref:./installing-intellij.adoc[] and xref:./editor-the-file-asciidoc-file.adoc[] on how to do this.
+See xref:./installing-intellij.adoc[] and xref:./editing-an-asciidoc-file.adoc[] on how to do this.
 
 In order for the Git functionality in IntelliJ to work, the user needs to install a Git client.
 

@@ -46,4 +46,4 @@ The same options are also available when a project is open from the menu via men
 
 == Further reading
 
-Continue to xref:./editor-the-file-asciidoc-file.adoc[] for the next step of this series.
+Continue to xref:./editing-an-asciidoc-file.adoc[] for the next step of this series.

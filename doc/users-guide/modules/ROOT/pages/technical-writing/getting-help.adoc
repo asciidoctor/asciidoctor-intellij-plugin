@@ -1,0 +1,90 @@
+= Getting help from docs and other users
+:navtitle: Getting help
+:description: This summarizes the different online forums where users of the plugin can get help from other users, and where they can discuss new ideas.
+
+{description}
+
+include::partial$technical-writing-series.adoc[]
+
+Use this page if one of the pages in the user guide doesn't provide the necessary information, or to continue the learning journey of technical writing.
+
+== Documentation resources for AsciiDoc, Asciidoctor and Antora
+
+There are different documentation sites for different topics:
+
+https://docs.asciidoctor.org/asciidoc/latest/[AsciiDoc Language Documentation]::
+This is the reference documentation for the AsciiDoc language.
+Find out which macros exist, how to format tables, links, lists etc.
+
+https://docs.asciidoctor.org/asciidoctor/latest/[Asciidoctor Documentation]::
+Learn about how to use the Asciidoctor implementation to convert AsciiDoc content to HTML and other formats on the command line or how to embed it into a build process.
+
+https://asciidoctor.org/docs/asciidoc-recommended-practices/[AsciiDoc Recommended Practices]::
+An opinionated list of common practices, and an explanation of the rule "`One Sentence Per Line`".
+
+https://docs.asciidoctor.org/[Other Asciidoctor projects]::
+An overview of related projects the community has built over the years.
+
+[#asciidoc-community-chats-on-zulip]
+== AsciiDoc community chats on Zulip
+
+There are different Zulip chats for different topics.
+Most of the content is accessible without registration, and users can search previous discussions to find answers to their questions.
+
+Register for free and log-in to find more content, as not all channels are accessible without logging in first.
+Posting questions and answers requires registration and logging in as well.
+
+The maintainers of Asciidoctor and the AsciiDoc plugin for IntelliJ are active in all three Zulip chats.
+Still, getting answers to new questions might take some hours or days.
+
+https://asciidoctor.zulipchat.com/[Asciidoctor Zulip Chat]::
+This chat covers questions and answers around Asciidoctor, the open source implementation to turn AsciiDoc content into HTML, PDF, epub and other formats.
+Go to https://asciidoctor.zulipchat.com/ to join the chat, and have a look at https://asciidoctor.org/ to find out more about the project.
+
+https://asciidoctor.zulipchat.com/[Antora Zulip Chat]::
+This chat covers questions and answers around Antora, the open source multi-repository documentation site generator for tech writers that is based on AsciiDoc.
+Go to https://antora.zulipchat.com/ to join the chat, and have a look at https://antora.org/ to find out more about the project.
+On the website, scroll down to find a high-level summary of the project's features.
+Click on menu:Docs[] in the upper right corner for an extensive documentation.
+
+https://asciidoc.zulipchat.com/[AsciiDoc Zulip Chat]::
+The AsciiDoc Working Group at Eclipse steers the future of the AsciiDoc Language.
+Go to https://asciidoc.zulipchat.com/ to join the chat, and have a look at https://asciidoc.org/ and https://asciidoc-wg.ecipse.org/ to find out more about the working group's activities.
+
+== GitHub
+
+For questions around the plugin, to browse open issues and to join the discussion about the future roadmap, visit the https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issues of the IntelliJ plugin project].
+
+To read and search the issues, no registration is required.
+To create issues and comments, register for a free GitHub account.
+
+When creating a new issue, there is a category menu:Question / Discussion[] for general inquiries.
+
+The maintainers of the AsciiDoc plugin for IntelliJ read the issues.
+As this is a spare time project, answers might take days and sometimes more than a week.
+
+In general, the responses are slower than in the <<asciidoc-community-chats-on-zulip>>.
+On the other hand follow-up activities are better tracked on GitHub issues.
+
+== Write-the-Docs community
+
+The Write The Docs community provides a website for technical writers at https://www.writethedocs.org/, organizes conferences around the world which make their recordings available free of charge, and supports the community with a publicly available Slack channel.
+
+The Slack instance has many channels, for example #asciidoc, #static-site-generator and #docs-as-code.
+They might give additional insights, still the <<asciidoc-community-chats-on-zulip,Zulip chats mentioned above>> seem to be more active and more focused on AsciiDoc content at the time of writing.
+
+Use the chat to get answers to your questions, and help others with their questions.
+
+== Meetups (online and in-person)
+
+The Write-the-Docs community offers local meetups.
+See https://www.writethedocs.org/meetups/ for a list.
+Join the Write-the-Docs Slack instance and watch the channel #meetups to see postings of upcoming meetings.
+
+There's also the Meetup https://www.meetup.com/continuous-documentation-regulars[Continuous Documentation Regulars] which is happens to be hosted by the maintainer of the AsciiDoc plugin.
+Expect topics around documentation as code in general, not necessarily focused on AsciiDoc only.
+
+== Further reading
+
+This can't capture all activities in the community.
+Use the chats listed above to find out more, and come back here and contribute content to this page by clicking on the menu:Edit[] link in the upper right corner.

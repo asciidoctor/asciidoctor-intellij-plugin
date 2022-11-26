@@ -20,10 +20,12 @@ To get a full overview of all features of the plugin, see xref:features.adoc[].
 Follow these steps to set up IntelliJ IDEA as the tool for technical writing.
 Each page gives a brief overview to get started and links to other pages in this guide for additional information.
 
+If the information in the following pages is missing an aspect and leaves questions unanswered, visit the xref:./getting-help.adoc[] page to find more documentation resources and learn where to contact other users of the plugin to collaborate and to get answers to questions.
+
 . xref:./installing-intellij.adoc[Installing IntelliJ IDEA as the workplace for technical writing].
 . xref:./starting-intellij-first-time.adoc[Starting IntelliJ IDEA for the first time and installing the AsciiDoc plugin].
 . xref:./opening-the-first-project.adoc[Opening the first project in IntelliJ IDEA].
-. xref:./editor-the-file-asciidoc-file.adoc[Adding a file to a project and editing AsciiDoc content in an existing project.].
+. xref:./editing-an-asciidoc-file.adoc[Adding a file to a project and editing AsciiDoc content in an existing project].
 . xref:./navigating-in-a-project.adoc[Navigating from one file to other referenced files in a project].
 . xref:./searching-in-a-project.adoc[Searching AsciiDoc content in a project].
 . xref:./git-integration.adoc[Collaborate with others using IntelliJ IDEA's Git integration].
@@ -45,4 +47,4 @@ If there are missing features, link:mailto:alexander.schwartz@gmx.net?subject=Fe
 
 To get a full overview of all features of the plugin, see xref:features.adoc[].
 
-To custom the plugin's settings, see xref:recommended-settings.adoc[] for recommended settings.
+To customize the plugin's settings, see xref:recommended-settings.adoc[] for recommended settings.
