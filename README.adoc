@@ -35,6 +35,7 @@ Refer to the link:{homepage-url}/docs/users-guide/installation.html[installation
 * Recognizes the AsciiDoc file extension (.adoc, .asciidoc, .ad)
 * Provides a two-pane AsciiDoc preview editor based on https://asciidoctor.org/[Asciidoctor] with a live preview.
 * Toolbar and context menu for basic formatting and to create tables.
+* Convert AsciiDoc to Microsoft Word (DOCX) by using pandoc.
 * Refactor Markdown to AsciiDoc: Right-click on a file, or use the Refactor menu, and the Markdown document will be replaced by the AsciiDoc equivalent.
 Also, supports undo if the user is not happy with the result!
 

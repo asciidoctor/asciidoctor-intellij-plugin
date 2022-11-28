@@ -235,6 +235,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         settings.getAsciiDocPreviewSettings().getKrokiUrl(),
         settings.getAsciiDocPreviewSettings().isAttributeFoldingEnabled(),
         settings.getAsciiDocPreviewSettings().isConversionOfClipboardTextEnabled(),
+        settings.getAsciiDocPreviewSettings().isEnableBuiltInMermaid(),
         settings.getAsciiDocPreviewSettings().getZoom(),
         settings.getAsciiDocPreviewSettings().isHideErrorsInSourceBlocks(),
         settings.getAsciiDocPreviewSettings().getHideErrorsByLanguage()));
@@ -673,6 +674,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     public void onSettingsChange(@NotNull AsciiDocApplicationSettings settings) {
       ApplicationManager.getApplication().invokeLater(() -> {
         reprocessAnnotations();
+        AsciiDocDownloadNotificationProvider.hideNotification();
 
         // trigger re-parsing of content as language injection might have changed
         // TODO - doesn't work reliably yet when switching back-and-forth

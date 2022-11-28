@@ -31,6 +31,13 @@ public class AsciiDocDownloadNotificationProvider extends EditorNotifications.Pr
     }
   }
 
+  public static void hideNotification() {
+    if (notification) {
+      notification = false;
+      ApplicationManager.getApplication().invokeLater(EditorNotifications::updateAll);
+    }
+  }
+
   @NotNull
   @Override
   public Key<EditorNotificationPanel> getKey() {
