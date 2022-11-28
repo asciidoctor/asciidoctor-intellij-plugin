@@ -70,6 +70,7 @@ public class JCEFCouldBeEnabledNotificationProvider extends EditorNotifications.
           oldPreviewSettings.getKrokiUrl(),
           oldPreviewSettings.isAttributeFoldingEnabled(),
           oldPreviewSettings.isConversionOfClipboardTextEnabled(),
+          oldPreviewSettings.isEnableBuiltInMermaid(),
           oldPreviewSettings.getZoom(),
           oldPreviewSettings.isHideErrorsInSourceBlocks(),
           oldPreviewSettings.getHideErrorsByLanguage()));

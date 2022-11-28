@@ -98,6 +98,9 @@ public final class AsciiDocPreviewSettings {
   @Attribute("EnableConversionOfClipboardTextExperimental")
   private boolean myEnableConversionOfClipboardText = false;
 
+  @Attribute("EnableBuiltInMermaidExperimental")
+  private boolean myEnableBuiltInMermaid = false;
+
   @Attribute("Zoom")
   private Integer myZoom = 100;
 
@@ -125,6 +128,7 @@ public final class AsciiDocPreviewSettings {
                                  String krokiUrl,
                                  boolean enableAttributeFolding,
                                  boolean enableConversionOfClipboardText,
+                                 boolean enableBuiltInMermaid,
                                  int zoom,
                                  boolean hideErrorsInSourceBlocks,
                                  @Nullable String hideErrorsByLanguage) {
@@ -144,6 +148,7 @@ public final class AsciiDocPreviewSettings {
     myKrokiUrl = krokiUrl;
     myEnableAttributeFolding = enableAttributeFolding;
     myEnableConversionOfClipboardText = enableConversionOfClipboardText;
+    myEnableBuiltInMermaid = enableBuiltInMermaid;
     myZoom = zoom;
     myHideErrorsInSourceBlocks = hideErrorsInSourceBlocks;
     myHideErrorsByLanguage = hideErrorsByLanguage;
@@ -320,6 +325,9 @@ public final class AsciiDocPreviewSettings {
     if (myEnableConversionOfClipboardText != that.myEnableConversionOfClipboardText) {
       return false;
     }
+    if (myEnableBuiltInMermaid != that.myEnableBuiltInMermaid) {
+      return false;
+    }
     if (!Objects.equals(myZoom, that.myZoom)) {
       return false;
     }
@@ -350,6 +358,7 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + Objects.hashCode(myKrokiUrl);
     result = 31 * result + (myEnableAttributeFolding ? 1 : 0);
     result = 31 * result + (myEnableConversionOfClipboardText ? 1 : 0);
+    result = 31 * result + (myEnableBuiltInMermaid ? 1 : 0);
     result = 31 * result + Objects.hashCode(myZoom);
     result = 31 * result + (myHideErrorsInSourceBlocks ? 1 : 0);
     result = 31 * result + Objects.hashCode(myHideErrorsByLanguage);
@@ -389,6 +398,10 @@ public final class AsciiDocPreviewSettings {
 
   public boolean isConversionOfClipboardTextEnabled() {
     return myEnableConversionOfClipboardText;
+  }
+
+  public boolean isEnableBuiltInMermaid() {
+    return myEnableBuiltInMermaid;
   }
 
   public interface Holder {

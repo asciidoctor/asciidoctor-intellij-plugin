@@ -248,6 +248,10 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
       myGoogleFontsCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/googlefonts.css") + "\">";
+      myMermaidScript = "<script type=\"module\">\n" +
+        "      import mermaid from '" +
+        PreviewStaticServer.getScriptUrl("mermaid/mermaid.esm.min.mjs") + "'\n" +
+        "      mermaid.init();\n " + "      window.mermaid = mermaid;" + "    </script>";
     } catch (IOException e) {
       String message = "Unable to combine CSS resources: " + e.getMessage();
       LOG.error(message, e);
@@ -549,6 +553,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   @Nullable
   private String myGoogleFontsCssLink;
 
+  @Nullable
+  private String myMermaidScript;
+
   private volatile boolean hasLoadedOnce = false;
   private byte[] previousDigest;
 
@@ -566,7 +573,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       stamp = 0;
     }
     long iterationStamp = stamp;
-    String emptyFrame = prepareHtml(wrapHtmlForPage(""), attributes);
+    String emptyFrame = prepareHtml(wrapHtmlForPage("<!--start-->" + htmlParam + "<!--end-->"), attributes).replaceAll("(?ms)<!--start-->.*<!--end-->", "");
     if (!emptyFrame.equals(frameHtml)) {
       forceRefresh = true;
       frameHtml = emptyFrame;
@@ -594,6 +601,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         replaceResult = false;
         getCefBrowser().executeJavaScript(
             "function finish() {" +
+            "if (window.mermaid !== undefined) window.mermaid.init(); " +
             "if ('__IntelliJTools' in window) {" +
             "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
             "__IntelliJTools.processImages && __IntelliJTools.processImages();" +
@@ -784,9 +792,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     }
 
     if (isAntora) {
-      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, attributes, editor != null ? editor.getProject() : null);
+      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, myMermaidScript, attributes, editor != null ? editor.getProject() : null);
     } else {
-      html = AsciiDocWrapper.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, attributes, editor != null ? editor.getProject() : null);
+      html = AsciiDocWrapper.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, myMermaidScript, attributes, editor != null ? editor.getProject() : null);
     }
 
     html = html.replaceAll("<head>", "<head>\n" +

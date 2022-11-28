@@ -75,6 +75,7 @@ public class JavaFxCouldBeEnabledNotificationProvider extends EditorNotification
           oldPreviewSettings.getKrokiUrl(),
           oldPreviewSettings.isAttributeFoldingEnabled(),
           oldPreviewSettings.isConversionOfClipboardTextEnabled(),
+          oldPreviewSettings.isEnableBuiltInMermaid(),
           oldPreviewSettings.getZoom(),
           oldPreviewSettings.isHideErrorsInSourceBlocks(),
           oldPreviewSettings.getHideErrorsByLanguage()));

@@ -87,6 +87,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private LinkLabel<?> myDownloadDependenciesFailedDitaaminiPickFile;
   private LinkLabel<?> myDownloadDependenciesFailedDitaaminiBrowser;
   private JBCheckBox myEnableConversionOfClipboardText;
+  private JBCheckBox myEnableBuiltInMermaid;
 
     public JComponent getComponent() {
     return myMainPanel;
@@ -254,6 +255,8 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
 
     myEnableConversionOfClipboardText.setSelected(settings.isConversionOfClipboardTextEnabled());
 
+    myEnableBuiltInMermaid.setSelected(settings.isEnableBuiltInMermaid());
+
     myKrokiUrl.setTextToTriggerEmptyTextStatus("https://kroki.io");
 
     NumberFormat rateFormat = NumberFormat.getNumberInstance();
@@ -354,6 +357,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myLanguageForPassthrough.getText(), myDisabledInjectionsByLanguage.getText(),
       myShowAsciiDocWarningsAndErrorsInEditor.isSelected(), myInplacePreviewRefresh.isSelected(),
       myEnableKroki.isSelected(), krokiUrl, myEnabledAttributeFolding.isSelected(), myEnableConversionOfClipboardText.isSelected(),
+      myEnableBuiltInMermaid.isSelected(),
       getZoom(),
       myHideErrorsInSourceBlocks.isSelected(), myHideErrorsByLanguage.getText());
   }

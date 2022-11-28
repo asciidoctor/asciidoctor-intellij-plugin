@@ -57,7 +57,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       writer.flush();
       String html = asciidocWrapper.render(":stylesheet: test.css", Collections.emptyList());
       html = "<head></head>" + html;
-      html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", asciidocWrapper.getAttributes(), getProject());
+      html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", null, asciidocWrapper.getAttributes(), getProject());
       assertThat(html).withFailMessage("should contain testcss").contains("testcss");
       assertThat(html).withFailMessage("should not contain standardcss").doesNotContain("standardcss");
     }
@@ -71,7 +71,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       ":stylesdir: https://example.com\n" +
       ":stylesheet: dark.css", Collections.emptyList());
     html = "<head></head>" + html;
-    html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", asciidocWrapper.getAttributes(), getProject());
+    html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", null, asciidocWrapper.getAttributes(), getProject());
     assertThat(html).withFailMessage("should contain testcss").containsPattern("<link[^>]*https://example.com/dark.css");
     assertThat(html).withFailMessage("should contain standardcss as backup").contains("standardcss");
   }
@@ -80,7 +80,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     String html = asciidocWrapper.render(":linkcss:\n" +
       ":stylesheet: https://example.com/dark.css", Collections.emptyList());
     html = "<head></head>" + html;
-    html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", asciidocWrapper.getAttributes(), getProject());
+    html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", null, asciidocWrapper.getAttributes(), getProject());
     assertThat(html).withFailMessage("should contain testcss").containsPattern("<link[^>]*https://example.com/dark.css");
     assertThat(html).withFailMessage("should contain standardcss as backup").contains("standardcss");
   }
@@ -96,7 +96,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       writerFooter.flush();
       String html = asciidocWrapper.render(":docinfo: shared", Collections.emptyList());
       html = "<head></head><body>" + html + "</body>";
-      html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", asciidocWrapper.getAttributes(), getProject());
+      html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", null, asciidocWrapper.getAttributes(), getProject());
       assertThat(html).contains("myHeader");
       assertThat(html).contains("myFooter");
     }

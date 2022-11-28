@@ -284,6 +284,9 @@ public class AsciiDocWrapper {
     if (springRestDocs) {
       md = md + ".restdoc";
     }
+    if (asciiDocApplicationSettings.getAsciiDocPreviewSettings().isEnableBuiltInMermaid()) {
+      md = md + ".mermaid";
+    }
     if (format == FileType.JAVAFX || format == FileType.JCEF || format == FileType.HTML || format == FileType.BROWSER) {
       // special ruby extensions loaded for JAVAFX and HTML
       md = md + "." + format.name();
@@ -411,6 +414,15 @@ public class AsciiDocWrapper {
           try (InputStream is = this.getClass().getResourceAsStream("/kroki-extension.rb")) {
             if (is == null) {
               throw new RuntimeException("unable to load script kroki-extension.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
+          }
+        }
+
+        if (format.backend.equals("html5") && asciiDocApplicationSettings.getAsciiDocPreviewSettings().isEnableBuiltInMermaid()) {
+          try (InputStream is = this.getClass().getResourceAsStream("/mermaid-extension.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script mermaid-extension.rb");
             }
             asciidoctor.rubyExtensionRegistry().loadClass(is);
           }
@@ -1291,7 +1303,7 @@ public class AsciiDocWrapper {
 
   @NotNull
   public static String enrichPage(@NotNull String html, String
-    standardCss, @NotNull Map<String, String> attributes, @Nullable Project project) {
+    standardCss, String mermaidScript, @NotNull Map<String, String> attributes, @Nullable Project project) {
 
     html = enrichPageMaxWidth(html, attributes);
 
@@ -1415,6 +1427,12 @@ public class AsciiDocWrapper {
         }
       }
     }
+
+    AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
+    if (mermaidScript != null && html.contains("<pre class=\"mermaid\">") && asciiDocApplicationSettings.getAsciiDocPreviewSettings().isEnableBuiltInMermaid()) {
+      html = html.replaceAll("</body>", mermaidScript + "</body>");
+    }
+
     return html;
   }
 

@@ -94,6 +94,8 @@ public class BrowserPanel implements Disposable {
   private String myGoogleFontsCssLink;
   @Nullable
   private String myDroidSansMonoCssLink;
+  @Nullable
+  private String myMermaidScript;
 
   private final SignWithMac signWithMac = new SignWithMac();
 
@@ -131,6 +133,10 @@ public class BrowserPanel implements Disposable {
       myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
       myGoogleFontsCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/googlefonts.css") + "\">";
       myDroidSansMonoCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/droidsansmono.css") + "\">";
+      myMermaidScript = "<script type=\"module\">\n" +
+        "      import mermaid from '" +
+        PreviewStaticServer.getScriptUrl("mermaid/mermaid.esm.min.mjs") + "'\n" +
+        "      mermaid.init();\n " + "      window.mermaid = mermaid;" + "    </script>";
     } catch (IOException e) {
       String message = "Unable to combine CSS resources: " + e.getMessage();
       log.error(message, e);
@@ -394,9 +400,9 @@ public class BrowserPanel implements Disposable {
 
     /* Add CSS line and JavaScript */
     if (isAntora) {
-      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, attributes, project);
+      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, myMermaidScript, attributes, project);
     } else {
-      html = AsciiDocWrapper.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDroidSansMonoCssLink + myDejavuCssLink, attributes, project);
+      html = AsciiDocWrapper.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDroidSansMonoCssLink + myDejavuCssLink, myMermaidScript, attributes, project);
     }
     html = html.replace("</body>", getScriptingLines() + "</body>");
     return html;

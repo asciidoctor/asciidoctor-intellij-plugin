@@ -74,6 +74,14 @@ To avoid this, consider using `interactive` for Kroki diagrams as an alternative
 See <<interative-vs-inlined>> and <<avoid-flicker>> for a discussion of tradeoffs.
 ====
 
+== Using embedded Mermaid support
+
+As an experimental option in plugin version 0.38.1+, there's an embedded Mermaid support that is embedded in the plugin and will render Mermaid diagrams within the IDE without external helpers.
+
+To enable the support, toggle the checkbox menu:Enable built-in Mermaid Diagrams support[] in the plugin's settings.
+
+This is currently only supported for Mermaid diagrams, and only for the JCEF preview.
+
 == Advanced options
 
 === PNG-only JavaFX preview
