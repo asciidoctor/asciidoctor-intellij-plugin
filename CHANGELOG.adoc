@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.38.1
+
+- Avoid exception when generating a preview on adding an ID
+
 === 0.37.57
 
 - Fixing already disposed preview if devtools have been closed before

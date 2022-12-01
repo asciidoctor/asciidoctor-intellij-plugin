@@ -1,6 +1,8 @@
 package org.asciidoc.intellij.actions.intentions;
 
+import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -13,6 +15,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class AsciiDocAddBlockIdToSection extends Intention {
+
+  @Override
+  public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
+    if (editor instanceof FileEditor) {
+      if (file.getVirtualFile().equals(((FileEditor) editor).getFile())) {
+        return IntentionPreviewInfo.EMPTY;
+      }
+    }
+    return super.generatePreview(project, editor, file);
+  }
 
   @Override
   public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
