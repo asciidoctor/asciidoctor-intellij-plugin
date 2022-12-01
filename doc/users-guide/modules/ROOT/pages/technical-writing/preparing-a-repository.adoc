@@ -14,9 +14,9 @@ See xref:./installing-intellij.adoc[] and xref:./opening-the-first-project.adoc[
 [NOTE]
 ====
 To set up these features, some proficiency with IntelliJ is beneficial.
-After the setup is complete and each file has been committed and pushed to the repository, those features will work for all other contributors without additional set up activities on their side as long as they use IntelliJ and a recent version of the AsciiDoc plugin.
+After the setup is complete and each file has been committed and pushed to the repository, those features will work for all other contributors without additional set-up activities on their side as long as they use IntelliJ and a recent version of the AsciiDoc plugin.
 
-Users new to IntelliJ should consider to try out these features with another IntelliJ user.
+Users new to IntelliJ should consider trying out these features with another IntelliJ user.
 ====
 
 == Recipes for repositories
@@ -29,9 +29,9 @@ When these files change, those changes are effective immediately when the other 
 
 This simplifies onboarding of technical writers, and provides a smooth and similar working experience for every contributor.
 
-=== Align formatting across IDE installations with `.editorconfig`
+=== Align the formatting across IDE installations with `.editorconfig`
 
-If technical writers would configure their IDE's AsciiDoc formatting manually, this would be a tedious task and could lead to different configurations in different IDEs.
+If technical writers configured their IDE's AsciiDoc formatting manually, this would be a tedious task and could lead to different configurations in different IDEs.
 
 The solution is an `.editorconfig` file which commits the editor settings to the repository.
 Most settings are about code formatting.
@@ -51,7 +51,7 @@ root = true
 [{*.ad,*.adoc,*.asciidoc,.asciidoctorconfig}]
 # Ensure that content is UTF-8 encoded
 charset = utf-8
-# No line should contain trainling whitespace
+# No line should contain trailing whitespace
 trim_trailing_whitespace = true
 # Ensure a newline at the end of each file
 insert_final_newline = true
@@ -68,7 +68,7 @@ When working in a larger project, the content is often broken down in several fi
 
 This can lead to a situation where the attributes are defined in a parent document, and are not available in the sibling documents.
 This results in a preview that shows only the attribute names, but not their value, which makes it less useful for technical writers.
-Also images might not show in the preview, as the folder for images is not specified.
+Also, images might not show in the preview, as the folder for images is not specified.
 
 To provide those attributes as a hint for the preview, consider adding an `.asciidoctorconfig` file.
 This can be added to any folder of the project, and will be prepended for rendering the preview for all AsciiDoc files in that folder and its subfolders.
@@ -98,7 +98,7 @@ When editing an AsciiDoc file in IntelliJ, the AsciiDoc plugin renders a preview
 For regular AsciiDoc content, it uses the classic Asciidoctor stylesheet.
 For Antora content, it uses the default Antora stylesheet.
 
-This leads to a situation where the final CSS of the site is different than the preview.
+This leads to a situation where the final CSS of the site is different from the preview.
 To solve this, configure the IDE to use the CSS of the regular website for the plugin's preview.
 
 A minimal setup can add the stylesheet information to a file `.asciidoctorconfig` in the root folder of the project:
@@ -116,7 +116,7 @@ A minimal setup can add the stylesheet information to a file `.asciidoctorconfig
 
 When sites use several CSS files, the recommended approach is to create one CSS file that combines all CSS files for the preview.
 That file could also include customizations for a good preview, like adjusted borders and workaround for font handling.
-This file needs to be added by the person maintaing the public website.
+This file needs to be added by the person maintaining the website.
 
 .Example CSS customizing the existing stylesheets for the IDE's preview
 [source,css]
@@ -138,6 +138,7 @@ body {
 
 See xref:features/advanced/stylesheets.adoc[] for more information and variants.
 
+[#specifying-required-plugins]
 === Specifying required plugins
 
 A repository can contain a special file `.idea/externalDependencies.xml` to list all required plugins to work with the project.
@@ -153,7 +154,7 @@ Once everything is set up, commit the file `.idea/externalDependencies.xml` to t
 In most projects, the folder `.idea` is excluded and none of the files will be committed.
 To change this for IntelliJ for a Git repository, update the following settings in the `.gitignore` file which is usually in the root folder of the project.
 
-.Example .gitignore file to allow committing the external dependencies
+.Example .gitignore file to allow committing external dependencies
 [source,gitignore]
 ----
 # Ignore everything in the '.idea' folder from the versioning
@@ -171,5 +172,4 @@ Read more in the IntelliJ docs about https://www.jetbrains.com/help/idea/setting
 
 == Further reading
 
-This is the final page of the guide.
-Return to the overview xref:./index.adoc[].
+Continue to xref:./recommended-plugins.adoc[] for the next step of this series.

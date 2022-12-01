@@ -105,11 +105,11 @@ This opens the following menu:
 +
 .Settings menu when installing from JetBrains Marketplace
 image::install-from-marketplace.png[Screenshot from settings menu when installing from JetBrains Marketplace]
-. Select _Plugins_ from the settings tree
-. Select _Marketplace_ tab if it is not selected yet
-. Search for 'asciidoc'
-. Click on _Install_
-. Once the download is complete, restart your IDE
+. Select _Plugins_ from the settings tree.
+. Select _Marketplace_ tab if it is not selected yet.
+. Search for 'asciidoc'.
+. Click on the button btn:[Install].
+. Once the download is complete, press the button btn:[Apply] and restart the IDE if there is a prompt to do so.
 
 include::partial$installation-complete.adoc[]
 

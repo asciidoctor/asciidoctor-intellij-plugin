@@ -1,0 +1,96 @@
+= Recommended Plugins for Technical Writing
+:navtitle: Recommended Plugins
+:description: The plugins listed on this page improve the workflow for technical writers.
+
+{description}
+
+include::partial$technical-writing-series.adoc[]
+
+== Prerequisites
+
+This assumes that IntelliJ IDEA is already installed on the PC, a project is open and some first AsciiDoc content exists.
+See xref:./installing-intellij.adoc[], xref:./opening-the-first-project.adoc[] and xref:./editing-an-asciidoc-file.adoc[] for details.
+
+== Adding plugins to IntelliJ
+
+A user can install additional plugins to add features to the IDE.
+Each additional plugin will slightly increase the memory usage and startup time of the IDE, so there's always a small tradeoff.
+
+Steps to install a plugin::
++
+. Open the IDE's setting via menu:File[Settings...]. +
+This opens the following menu:
++
+.Settings menu when installing from JetBrains Marketplace
+image::install-from-marketplace.png[Screenshot from settings menu when installing from JetBrains Marketplace]
+. Select _Plugins_ from the settings tree
+. Select _Marketplace_ tab if it is not selected yet
+. Search for a plugin by its name, in this example 'asciidoc'.
+. Click on the button btn:[Install].
+. Once the download is complete, press the button btn:[Apply] and restart the IDE if there is a prompt to do so.
+
+Sometimes 3rd party plugin might need some time to be available for the latest version of IntelliJ, so they might prevent a user from upgrading to the latest version of IntelliJ.
+The plugins listed here are well-maintained and are usually available once a new version of IntelliJ is available.
+
+If a plugin should suggested to other contributors to a plugin, consider adding it to the required plugins for the project and checking in that configuration to the repository.
+See xref:./preparing-a-repository.adoc#specifying-required-plugins[Specifying required plugins] for details.
+
+=== Advanced Terminal with clickable file names
+
+In the Terminal tool window, IntelliJ offers a command line interface.
+
+A command like [.linx.macos]#`ls`# [.windows]#`dir`# will show a list of files, but to open one of them the user would need to mark the text, copy it to the clipboard and paste it into a search field for search by file via [.windows.linux]#kbd:[Ctrl+Shift+N]# [.macos]#kbd:[⌘ ⇧ O]#.
+
+To avoid the copy-and-paste of file names and to make the filenames clickable, install the plugin https://plugins.jetbrains.com/plugin/7677-awesome-console[Awesome Console].
+It will also make URLs in the console clickable.
+
+=== Advanced Grammar checking with Grazie Professional
+
+The plugin Grazie already offers spell and grammar checking for several languages, and auto-detect the language of the text.
+For IntelliJ it is installed by default, so no additional action is necessary for the user.
+
+For additional grammar checking, and typing suggestions, there's the plugin https://plugins.jetbrains.com/plugin/16136-grazie-professional[Grazie Professional].
+
+include::partial$memory-requirements-grazie.adoc[]
+
+It has built-in styleguides, and can be enhanced https://plugins.jetbrains.com/plugin/16136-grazie-professional/docs/project-style-guides.html[by custom Vale rules on a per-project basis].
+
+Read more in xref:features/advanced/grammar-checking.adoc[]
+
+=== Accessing archive contents in the IDE
+
+When a repository contains a ZIP or tar file or another archive format, IntelliJ's default installation can't show their contents in the IDE.
+
+To access the contents of an archive like a regular folder, install the https://plugins.jetbrains.com/plugin/9491-archive-browser[Archive Browser] plugin.
+
+=== Editing Diagrams as Code with PlantUML
+
+The https://plantuml.com/[PlantUML project] supports different kinds of UML diagrams which can be edited and committed to a repository as plain text.
+
+Those diagrams can be rendered in an AsciiDoc file using Asciidoctor Diagram or Kroki, see xref:features/preview/diagrams.adoc[] for more details.
+
+To include such a diagram in AsciiDoc content, use an example like this:
+
+[source,asciidoc]
+-----
+[plantuml]
+----
+\include::mydiagram.puml[]
+----
+-----
+
+To edit such a file with the extension `.puml` with a preview window, install the https://plugins.jetbrains.com/plugin/7017-plantuml-integration[PlantUML diagram].
+
+=== Editing Diagrams with diagrams.net in the IDE
+
+The https://diagrams.net/[diagrams.net project] (previously known as draw.io) offers a what-you-see-is-what-you-get graphical editor for diagrams.
+The files can be stored as XML, SVG or PNG.
+The special feature of SVGs and PNGs is that they can be displayed in a browser without conversion, yet they are still editable with the diagrams.net editor.
+
+To edit such a file in the IDE, install the https://plugins.jetbrains.com/plugin/15635-diagrams-net-integration[Diagrams.net plugin].
+While this plugin is still a very early version, it can support technical writers in managing their content.
+
+== Further reading
+
+This is the final page of the guide.
+Return to the overview xref:./index.adoc[].

@@ -30,10 +30,7 @@ If the information in the following pages is missing an aspect and leaves questi
 . xref:./searching-in-a-project.adoc[Searching AsciiDoc content in a project].
 . xref:./git-integration.adoc[Collaborate with others using IntelliJ IDEA's Git integration].
 . xref:./preparing-a-repository.adoc[Preparing a Git repository for AsciiDoc and IntelliJ to work with a team of technical writers].
-
-////
 . xref:./recommended-plugins.adoc[Enhance a writer's productivity with plugins for IntelliJ].
-////
 
 == Improving this guide
 
