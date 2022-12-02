@@ -200,7 +200,7 @@
     <fileType name="AsciiDoc" extensions="adoc;asciidoc;ad" fileNames=".asciidoctorconfig" language="AsciiDoc"
               implementationClass="org.asciidoc.intellij.file.AsciiDocFileType" fieldName="INSTANCE"/>
     <fileEditorProvider implementation="org.asciidoc.intellij.editor.AsciiDocSplitEditorProvider"/>
-    <liveTemplateContext implementation="org.asciidoc.intellij.template.AsciiDocTemplateContextType$File"/>
+    <liveTemplateContext implementation="org.asciidoc.intellij.template.AsciiDocTemplateContextType$File" contextId="AsciiDoc" baseContextId="OTHER"/>
     <defaultLiveTemplates file="liveTemplates/AsciiDocLiveTemplates.xml" />
     <lang.ast.factory language="AsciiDoc" implementationClass="org.asciidoc.intellij.psi.AsciiDocASTFactory"/>
     <lang.parserDefinition language="AsciiDoc"
@@ -369,7 +369,7 @@
                              implementationClass="org.asciidoc.intellij.findUsages.AsciiDocFindUsagesProvider"/>
     <lang.findUsagesProvider language="" implementationClass="org.asciidoc.intellij.findUsages.AsciiDocFindTagsProvider"/>
     <psi.referenceContributor language="AsciiDoc" implementation="org.asciidoc.intellij.findUsages.AsciiDocReferenceContributor"/>
-    <psi.referenceContributor implementation="org.asciidoc.intellij.findUsages.AsciiDocIncludeTagReferenceContributor"/>
+    <psi.referenceContributor implementation="org.asciidoc.intellij.findUsages.AsciiDocIncludeTagReferenceContributor" language="" />
     <referencesSearch implementation="org.asciidoc.intellij.findUsages.AsciiDocIdReferencesSearch"/>
     <completion.contributor language="AsciiDoc" implementationClass="org.asciidoc.intellij.completion.AsciiDocCompletionContributor"/>
     <lookup.charFilter implementation="org.asciidoc.intellij.completion.AsciiDocCharFilter" order="before java" id="default"/>
@@ -383,16 +383,19 @@
     <codeStyleSettingsProvider implementation="org.asciidoc.intellij.codeStyle.AsciiDocCodeStyleSettingsProvider"/>
     <moveFileHandler implementation="org.asciidoc.intellij.psi.AsciiDocMoveFileHandler"/>
     <intentionAction>
+      <language>AsciiDoc</language>
       <bundleName>AsciiDocBundle</bundleName>
       <categoryKey>asciidoc.intention.category</categoryKey>
       <className>org.asciidoc.intellij.actions.intentions.AsciiDocExtractIntention</className>
     </intentionAction>
     <intentionAction>
+      <language>AsciiDoc</language>
       <bundleName>AsciiDocBundle</bundleName>
       <categoryKey>asciidoc.intention.category</categoryKey>
       <className>org.asciidoc.intellij.actions.intentions.AsciiDocInlineIntention</className>
     </intentionAction>
     <intentionAction>
+      <language>AsciiDoc</language>
       <bundleName>AsciiDocBundle</bundleName>
       <categoryKey>asciidoc.intention.category</categoryKey>
       <className>org.asciidoc.intellij.actions.intentions.AsciiDocAddBlockIdToSection</className>
@@ -400,11 +403,13 @@
     <renameInputValidator implementation="org.asciidoc.intellij.namesValidator.AsciiDocRenameInputValidator"/>
     <lang.namesValidator language="AsciiDoc" implementationClass="org.asciidoc.intellij.namesValidator.AsciiDocNamesValidator"/>
     <intentionAction>
+      <language>AsciiDoc</language>
       <bundleName>AsciiDocBundle</bundleName>
       <categoryKey>asciidoc.intention.category</categoryKey>
       <className>org.asciidoc.intellij.injection.AsciiDocCodeFenceErrorHighlightingIntention</className>
     </intentionAction>
     <intentionAction>
+      <language>AsciiDoc</language>
       <bundleName>AsciiDocBundle</bundleName>
       <categoryKey>asciidoc.intention.category</categoryKey>
       <className>org.asciidoc.intellij.actions.intentions.AsciiDocAdmonitionToBlockIntention</className>
