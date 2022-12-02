@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.threading;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -28,7 +29,9 @@ public class AsciiDocProcessUtil {
     } else {
       retryable(() -> {
         if (!ProgressManager.getInstance().runInReadActionWithWriteActionPriority(runnable, AsciiDocDelegatingProgressIndicator.build())) {
-          throw new ProcessCanceledException();
+          // this is a specialized ProcessCanceledException which can be handled in InternalReadAction.kt:81
+          // consider using ReadAction.computeCancellable instead in the future.
+          throw new ReadAction.CannotReadException();
         }
       });
     }

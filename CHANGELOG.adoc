@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Avoid exception when generating a preview on adding an ID
 - Require IntelliJ 2022.1.1 as minimum version
+- Handle foreground priority differently to avoid logged `ProcessCanceledException` (#1236)
 
 === 0.37.57
 
