@@ -539,14 +539,17 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     if (FileDocumentManager.getInstance().getUnsavedDocuments().length > 0) {
       ApplicationManager.getApplication().invokeLater(() -> {
         // don't try to run save-all in parallel, therefore synchronize
+        if (!project.isDisposed()) {
+          // save the content in all other editors as their content might be referenced in preview
+          // don't use ApplicationManager.getApplication().saveAll() as it will save in the background and will save settings as well
+          // must not be called inside a write action as it might trigger AWT popups in save actions
+          for (Document unsavedDocument : FileDocumentManager.getInstance().getUnsavedDocuments()) {
+            FileDocumentManager.getInstance().saveDocument(unsavedDocument);
+          }
+        }
         ApplicationManager.getApplication().runWriteAction(() -> {
           // project might be already closed (yes, this really happens when you work in multiple projects opened in separate windows)
           if (!project.isDisposed()) {
-            // save the content in all other editors as their content might be referenced in preview
-            // don't use ApplicationManager.getApplication().saveAll() as it will save in the background and will save settings as well
-            for (Document unsavedDocument : FileDocumentManager.getInstance().getUnsavedDocuments()) {
-              FileDocumentManager.getInstance().saveDocument(unsavedDocument);
-            }
             reprocessAnnotations();
             forceRenderCycle(); // force a refresh of the preview by resetting the current memorized content
             renderIfVisible();
