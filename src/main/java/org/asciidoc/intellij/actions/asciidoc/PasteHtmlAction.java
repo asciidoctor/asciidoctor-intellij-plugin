@@ -25,7 +25,6 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,7 +95,7 @@ public class PasteHtmlAction extends AsciiDocAction {
         }
       }
       OutputStream outputStream = process.getOutputStream();
-      outputStream.write(html.getBytes(Charset.defaultCharset()));
+      outputStream.write(html.getBytes(StandardCharsets.UTF_8));
       outputStream.close();
 
       String stdout = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);

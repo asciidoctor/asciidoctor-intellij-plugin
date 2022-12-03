@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - Handle foreground priority differently to avoid logged `ProcessCanceledException` (#1236)
 - Handle AWT dialogs when auto-saving content (#1237)
 - Optimize spell checking tokenizer for better handling of attributes (#1228)
+- Handle problems with input encoding when system is not using UTF-8 as a default (#1074)
 
 === 0.37.57
 
