@@ -60,8 +60,8 @@ intellij {
 
 asciidoctor {
   // this dependency is necessary as Gradle 7.x is confused that the source dir (?) leads to an implicit dependency
-  // https://docs.gradle.org/7.3/userguide/validation_problems.html#implicit_dependency
-  dependsOn = [ generateLexer ]
+  // https://docs.gradle.org/7.6/userguide/validation_problems.html#implicit_dependency
+  dependsOn = [ generateLexer, processTestResources ]
   sourceDir file('.')
   sources {
     include 'CHANGELOG.adoc'
@@ -109,6 +109,7 @@ publishPlugin {
 }
 
 test {
+  useJUnitPlatform()
   testLogging {
     // this show the full exception on failed tests on the build server
     exceptionFormat = 'full'
@@ -144,7 +145,10 @@ dependencies {
   testImplementation 'org.asciidoctor:asciidoctorj-pdf:2.3.3'
 
   testImplementation(gradleTestKit())
-  testImplementation 'junit:junit:4.13.2'
+  testRuntimeOnly('org.junit.platform:junit-platform-launcher:1.9.0')
+  testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.9.0')
+  testRuntimeOnly('org.junit.vintage:junit-vintage-engine:5.9.0')
+
   testImplementation 'com.tngtech.archunit:archunit-junit4:1.0.1'
   testImplementation 'org.assertj:assertj-core:3.23.1'
   testImplementation 'org.mockito:mockito-core:4.9.0'
@@ -178,12 +182,12 @@ tasks.withType(AbstractArchiveTask).configureEach {
 grammarKit {
 }
 
-task showLinkToContributorGuide {
+tasks.register("showLinkToContributorGuide") {
   println("\nFirst time contributing to this plugin? Have a look at the IntelliJ AsciiDoc Plugin contributor's guide for coders:\n" +
     "https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/contribute-as-a-coder.html\n")
 }
 
-task checkJavaVersion {
+tasks.register("checkJavaVersion") {
   if (JavaVersion.current() != JavaVersion.VERSION_17) {
     throw new GradleException("As of IntellIJ 2022.3, this build must be run with Java 17, see:\n" +
       "https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/setup-environment.html")
@@ -191,9 +195,9 @@ task checkJavaVersion {
 }
 
 generateLexer {
-  source = "src/main/java/org/asciidoc/intellij/lexer/asciidoc.flex"
-  targetDir = "gen/org/asciidoc/intellij/lexer"
-  targetClass = "_AsciiDocLexer"
+  source.set("src/main/java/org/asciidoc/intellij/lexer/asciidoc.flex")
+  targetDir.set("gen/org/asciidoc/intellij/lexer")
+  targetClass.set("_AsciiDocLexer")
 }
 
 java {
