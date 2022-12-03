@@ -24,6 +24,9 @@ import org.asciidoc.intellij.psi.AsciiDocTextQuoted;
 import org.asciidoc.intellij.psi.AsciiDocUrl;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class AsciiDocLanguageSupport {
 
   public enum Behavior {
@@ -156,6 +159,25 @@ public class AsciiDocLanguageSupport {
     AsciiDocTokenTypes.ATTRIBUTE_REF,
     AsciiDocTokenTypes.ATTRIBUTE_REF_END);
 
+  private static final Set<String> SEPARATING_ATTRIBUTES = new HashSet<>();
+  static {
+    SEPARATING_ATTRIBUTES.add("sp");
+    SEPARATING_ATTRIBUTES.add("zwsp");
+    SEPARATING_ATTRIBUTES.add("apos");
+    SEPARATING_ATTRIBUTES.add("quot");
+    SEPARATING_ATTRIBUTES.add("lsquo");
+    SEPARATING_ATTRIBUTES.add("rsquo");
+    SEPARATING_ATTRIBUTES.add("ldquo");
+    SEPARATING_ATTRIBUTES.add("rdquo");
+  }
+
+  private static final Set<String> EMPTY_ATTRIBUTES = new HashSet<>();
+  static {
+    EMPTY_ATTRIBUTES.add("blank");
+    EMPTY_ATTRIBUTES.add("empty");
+    EMPTY_ATTRIBUTES.add("wj");
+  }
+
   public Behavior getElementBehavior(@NotNull PsiElement root, @NotNull PsiElement child) {
     if (root != child && child.getNode() != null && NODES_TO_CHECK.contains(child.getNode().getElementType())) {
       return Behavior.ABSORB;
@@ -166,7 +188,14 @@ public class AsciiDocLanguageSupport {
         return Behavior.ABSORB;
       }
     } else if (child instanceof AsciiDocAttributeReference) {
-      return Behavior.UNKNOWN;
+      AsciiDocAttributeReference attributeReference = (AsciiDocAttributeReference) child;
+      if (SEPARATING_ATTRIBUTES.contains(attributeReference.getName())) {
+        return Behavior.SEPARATE;
+      } else if (EMPTY_ATTRIBUTES.contains(attributeReference.getName())) {
+          return Behavior.ABSORB;
+      } else {
+        return Behavior.UNKNOWN;
+      }
     } else if (child instanceof AsciiDocHtmlEntity) {
       return Behavior.UNKNOWN;
     } else if (child instanceof AsciiDocTextQuoted && ((AsciiDocTextQuoted) child).isMono()) {

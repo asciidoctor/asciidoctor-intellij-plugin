@@ -12,13 +12,18 @@ import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class AsciiDocAttributeReference extends AsciiDocASTWrapperPsiElement {
+
+  @Override
+  public String getName() {
+    return getRangeOfBody(this).substring(this.getText());
+  }
+
   public AsciiDocAttributeReference(@NotNull ASTNode node) {
     super(node);
   }
 
-  @NotNull
   @Override
-  public PsiReference[] getReferences() {
+  public PsiReference @NotNull [] getReferences() {
     return ReferenceProvidersRegistry.getReferencesFromProviders(this);
   }
 
@@ -45,12 +50,16 @@ public class AsciiDocAttributeReference extends AsciiDocASTWrapperPsiElement {
     @NotNull
     @Override
     public TextRange getRangeInElement(@NotNull AsciiDocAttributeReference element) {
-      PsiElement child = element.findChildByType(AsciiDocTokenTypes.ATTRIBUTE_REF);
-      if (child != null) {
-        return TextRange.create(child.getStartOffsetInParent(), child.getStartOffsetInParent() + child.getTextLength());
-      } else {
-        return TextRange.EMPTY_RANGE;
-      }
+      return AsciiDocAttributeReference.getRangeOfBody(element);
+    }
+  }
+
+  private static TextRange getRangeOfBody(AsciiDocAttributeReference element) {
+    PsiElement child = element.findChildByType(AsciiDocTokenTypes.ATTRIBUTE_REF);
+    if (child != null) {
+      return TextRange.create(child.getStartOffsetInParent(), child.getStartOffsetInParent() + child.getTextLength());
+    } else {
+      return TextRange.EMPTY_RANGE;
     }
   }
 }

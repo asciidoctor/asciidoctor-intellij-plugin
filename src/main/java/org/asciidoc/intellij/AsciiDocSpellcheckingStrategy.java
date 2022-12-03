@@ -23,7 +23,7 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
   private final AsciiDocLanguageSupport languageSupport = new AsciiDocLanguageSupport();
 
   /**
-   * Return a tokenizer it it is a file's top child, or if is a content root.
+   * Return a tokenizer if it is a file's top child, or if is a content root.
    * If it is a context root, the tokenizer will analyze if text tokens are separated by non-printable tokens
    * and will combine them to words.
    */
@@ -69,7 +69,6 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
       AsciiDocLanguageSupport.Behavior elementBehavior = languageSupport.getElementBehavior(root, child);
       switch (elementBehavior) {
         case STEALTH:
-        case UNKNOWN:
         case ABSORB:
           length += child.getTextLength();
           if (sb.length() == 0) {
@@ -77,9 +76,11 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
             length = 0;
           }
           break;
+        case UNKNOWN:
         case SEPARATE:
         case TEXT:
-          if (child instanceof PsiWhiteSpace || elementBehavior == AsciiDocLanguageSupport.Behavior.SEPARATE) {
+          if (child instanceof PsiWhiteSpace || elementBehavior == AsciiDocLanguageSupport.Behavior.SEPARATE
+            || elementBehavior == AsciiDocLanguageSupport.Behavior.UNKNOWN) {
             flush();
             length += child.getTextLength();
             offset += length;

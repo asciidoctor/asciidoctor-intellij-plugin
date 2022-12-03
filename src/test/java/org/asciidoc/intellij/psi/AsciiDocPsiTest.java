@@ -470,6 +470,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "TEXTfootnote:[This is a footnote]\n" +
       "kbd:[Keyboard]\n" +
       "btn:[Button]\n" +
+      "a{nbsp}blank\n" +
+      "em{empty}pty\n" +
       "A <<id,reftext>>.\n" +
       "|===\n" +
       "| Cell contents.\n" +
@@ -507,6 +509,9 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "is",
       "a",
       "footnote",
+      "a",
+      "blank",
+      "empty",
       "Cell",
       "contents.");
   }
@@ -946,6 +951,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
   public void testLinkSpecialFilenames() {
     // given...
+    //noinspection UnnecessaryUnicodeEscape
     PsiFile[] psiFile = myFixture.configureByFiles(
       getTestName(true) + "/test.adoc",
       getTestName(true) + "/special_filename_\u00E4\u00DF_(),.adoc",
