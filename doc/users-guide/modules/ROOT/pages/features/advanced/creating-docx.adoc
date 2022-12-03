@@ -19,7 +19,7 @@ On first use the plugin downloads a version of Pandoc that is compatible with th
 
 == Specifying a format template
 
-If the plugin finds a file named `reference.adoc` in the current project, it will use that as a template for formatting styles of the generated document.
+If the plugin finds a file named `reference.docx` in the current project, it will use that as a template for formatting styles of the generated document.
 Users can download xref:attachment$reference.docx[this template] and modify it for their needs.
 See the https://pandoc.org/MANUAL.html#option--reference-doc[Pandoc manual section about the reference file] for more details.
 
