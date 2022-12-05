@@ -98,7 +98,7 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
     }
 
     if (resolved != null && ATTRIBUTES.matcher(target).find()) {
-      if (psiFile == null) {
+      if (psiFile == null && resolved.isValid()) {
         VirtualFile finalResolved = resolved;
         psiFile = AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> PsiManager.getInstance(project).findFile(finalResolved));
       }

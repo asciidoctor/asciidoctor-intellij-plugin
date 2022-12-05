@@ -893,7 +893,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       } else {
         ApplicationManager.getApplication().invokeLater(() -> {
           VirtualFile targetFile = VirtualFileManager.getInstance().findFileByUrl("file://" + file);
-          if (targetFile != null) {
+          if (targetFile != null && targetFile.isValid()) {
             Project project = ProjectUtil.guessProjectForContentFile(targetFile);
             if (project != null) {
               if (LightEdit.owns(project)) {

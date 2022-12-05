@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.38.3
+
+- Handling Invalid file exception when installing the plugin and refreshing editors (#1238)
+
 === 0.38.2
 
 - Adding built-in Mermaid support (#1199)

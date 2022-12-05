@@ -42,7 +42,7 @@ public class AsciiDocSplitEditorProvider extends SplitTextEditorProvider {
         for (FileEditor editor : fem.getAllEditors()) {
           if (!(editor instanceof AsciiDocSplitEditor)) {
             VirtualFile vFile = editor.getFile();
-            if (vFile != null) {
+            if (vFile != null && vFile.isValid()) {
               PsiFile pFile = pm.findFile(vFile);
               if (pFile != null) {
                 if (pFile.getLanguage() == AsciiDocLanguage.INSTANCE) {

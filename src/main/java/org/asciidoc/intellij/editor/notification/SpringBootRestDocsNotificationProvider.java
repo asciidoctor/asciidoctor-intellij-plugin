@@ -42,7 +42,7 @@ public class SpringBootRestDocsNotificationProvider extends EditorNotifications.
   @Override
   public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull final FileEditor fileEditor, @NotNull Project project) {
     // only in AsciiDoc files
-    if (file.getFileType() != AsciiDocFileType.INSTANCE) {
+    if (file.getFileType() != AsciiDocFileType.INSTANCE || !file.isValid()) {
       return null;
     }
 
