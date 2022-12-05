@@ -1066,7 +1066,7 @@ public class AsciiDocWrapper {
   private static final Key<CachedValue<Map<String, Object>>> KEY_ASCIIDOC_YAML_ATTRIBUTES = new Key<>("asciidoc-antora-yaml");
 
   private static List<AttributeDeclaration> getAntoraPlaybookAsciiDocAttributes(Project project, VirtualFile antoraFile) {
-    if (antoraFile.isValid()) {
+    if (!antoraFile.isValid()) {
       return Collections.emptyList();
     }
     PsiFile currentFile = PsiManager.getInstance(project).findFile(antoraFile);
@@ -1107,7 +1107,7 @@ public class AsciiDocWrapper {
   }
 
   private static List<AttributeDeclaration> getAntoraComponentDescriptorAsciiDocAttributes(Project project, VirtualFile antoraFile) {
-    if (antoraFile.isValid()) {
+    if (!antoraFile.isValid()) {
       return Collections.emptyList();
     }
     PsiFile currentFile = PsiManager.getInstance(project).findFile(antoraFile);
