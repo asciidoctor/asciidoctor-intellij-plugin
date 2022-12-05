@@ -39,7 +39,15 @@ image::technical-writing/intellij-git.png[]
 Open it by click on the tool window or use the shortcut [.windows.linux]#kbd:[Alt+0]# [.macos]#kbd:[⌘ 0]#.
 Explore the different actions in the toolbar by hovering with the mouse over the different icons.
 +
-Double-click on a highlighted file or press [.windows.linux]#kbd:[Ctrl+D]# [.macos]#kbd:[⌘ D]# to show the differences side-by-side. See the IntelliJ documentation on how to https://www.jetbrains.com/help/idea/comparing-file-versions.html[Compare file and folder versions] and https://www.jetbrains.com/help/idea/resolving-conflicts.html[Resolve Conflicts].
+Double-click on a highlighted file or press [.windows.linux]#kbd:[Ctrl+D]# [.macos]#kbd:[⌘ D]# to show the differences side-by-side. See the IntelliJ documentation on how to https://www.jetbrains.com/help/idea/comparing-file-versions.html[Compare file and folder versions].
+
+=== Resolving merge conflicts
+
+There's a chapter how to resolve merge conflicts with Git in the IntelliJ docs called https://www.jetbrains.com/help/idea/resolving-conflicts.html#distributed-version-control-systems[Resolve conflicts in Distributed Version Control Systems].
+
+When a merge conflict occurs, it is usually good to start with menu:Apply non-conclicting changes[] first, either with the menu:All[] option or the magic wand icon image:technical-writing/magicResolveToolbar.svg[].
+
+For a walk-though of handling a conflict with Git, watch the 5:34 min video https://www.jetbrains.com/help/idea/resolving-conflicts.html#resolve-conflicts-productivity-tips[at the end of the IntelliJ manual page resolving conflicts].
 
 === Learning more about Git functionality
 
