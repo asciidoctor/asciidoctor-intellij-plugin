@@ -57,6 +57,20 @@ It has built-in styleguides, and can be enhanced https://plugins.jetbrains.com/p
 
 Read more in xref:features/advanced/grammar-checking.adoc[]
 
+=== Spell checking for additional languages with Hunspell
+
+While the Grazie and Grazie Professional plugins support a range of languages, the list is still rather short.
+At the time of writing this, Czech is, for example, missing.
+
+The Hunspell community maintains a lot of freely available dictionaries.
+Those can be used together with IntelliJ with the https://plugins.jetbrains.com/plugin/10275-hunspell[Hunspell plugin].
+
+[NOTE]
+====
+* IntelliJ 2022.3 is not supported at the time of writing. Follow https://youtrack.jetbrains.com/issue/IDEA-307064[IDEA-307064] for updates.
+* The Czech dictionary in the JetBrains hunspell-dictionaries repo has a broken encoding at the time of writing. Follow https://github.com/JetBrains/hunspell-dictionaries/pull/3[JetBrains/hunspell-dictionaries#3] for updates.
+====
+
 === Accessing archive contents in the IDE
 
 When a repository contains a ZIP or tar file or another archive format, IntelliJ's default installation can't show their contents in the IDE.
