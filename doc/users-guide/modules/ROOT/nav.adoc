@@ -9,6 +9,7 @@
 ** xref:technical-writing/searching-in-a-project.adoc[]
 ** xref:technical-writing/git-integration.adoc[]
 ** xref:technical-writing/preparing-a-repository.adoc[]
+** xref:technical-writing/using-antora-with-intellij.adoc[]
 ** xref:technical-writing/recommended-plugins.adoc[]
 ** xref:technical-writing/getting-help.adoc[]
 * xref:installation.adoc[]

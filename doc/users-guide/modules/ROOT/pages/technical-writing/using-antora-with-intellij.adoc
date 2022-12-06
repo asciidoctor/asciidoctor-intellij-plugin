@@ -1,0 +1,288 @@
+= Using Antora with IntelliJ
+:description: How to set up IntelliJ for writing content for Antora, the static site generator for AsciiDoc content.
+
+{description}
+
+include::partial$technical-writing-series.adoc[]
+
+== Why to use Antora
+
+Antora is a static site generator that pulls AsciiDoc content from multiple Git repositories, converts it to HTML, and applies a custom multi-page theme to the output.
+The result can be hosted on any web server.
+All content is grouped into components which have a name an optional version identifier.
+The user of the published site can then choose the component with the version they are interested in, navigate from page to page and use an optional full-text index.
+
+This documentation of the AsciiDoc plugin for IntelliJ is maintained in an Antora structure and published using Antora, so it can serve as one possible example what the result can look like.
+To find out more about Antora, visit https://antora.org/[the Antora homepage] and https://docs.antora.org/antora/latest/[read the Antora docs].
+
+There's a 20-minute summary about Antora's concepts plus a demo of IntelliJ in a talk at the conference FOSDEM 2020 by the author of this plugin: https://vimeo.com/509522749[Creating a documentation site for users with AsciiDoc and Antora].
+
+== What to learn on this page
+
+This page describes how to:
+
+* Using Antora with one or multiple content repositories with IntelliJ.
+* Enabling navigation between components in different repositories.
+* Configuring the preview to use a stylesheet that makes it look like the published site.
+
+== Prerequisites
+
+This assumes that IntelliJ IDEA is already installed on the PC and a project is open.
+See xref:./installing-intellij.adoc[] and xref:./opening-the-first-project.adoc[].
+
+The following sections assume that the reader knows about the concepts of Antora.
+Use the links in the previous section to learn about the concepts.
+
+For those new to Antora, it would be good practice to start with the https://docs.antora.org/antora/latest/install-and-run-quickstart/[Antora Quickstart] to try out Antora on the command line before continuing with this page.
+
+To set up the playbook repository, basic knowledge of Node and npm is required.
+If such a setup already exists, such a project can be added to the local IntelliJ development environment without knowledge about Node and npm.
+
+[NOTE]
+====
+With the long list of prerequisites, this is an advanced topic.
+To set up these features, some proficiency with IntelliJ and the command line is beneficial.
+After the setup is complete and each file has been committed and pushed to the repository, those features will work for all other contributors with minimal additional setup.
+
+Users new to IntelliJ and Antora should consider trying out these features with another IntelliJ user.
+====
+
+== Basic structure of an Antora setup
+
+A standard setup consists of one or more repositories storing content in Antora components plus one repository with an Antora playbook and the theme.
+
+The following sections give a high-level overview of these repositories to the extent needed to describe the IntelliJ setup later on this page.
+They also provide pointers to best practices.
+
+[#outline-of-an-antora-content-repository]
+=== Outline of an Antora content repository
+
+Each component has at least an `antora.yml` file with the name of the component, plus a module folder.
+The default module is named `ROOT`.
+
+.Folder structure of an Antora component
+----
+📒 my-content-repo
+└─📒 docs <1>
+  ├─📄 .asciidoctorconfig <2>
+  └─📒 my-component
+    ├─📄 antora.yml <3>
+    └─📂 modules
+      ├─📂 ROOT
+      │ ├─📂 attachments
+      │ ├─📂 examples
+      │ ├─📂 images
+      │ ├─📂 pages
+      │ │ └─📄 index.adoc <4>
+      │ ├─📂 partials
+      │ └─📄 nav.adoc
+      └─📂 a-named-module
+        └─📂 pages
+----
+
+<.> The components can be located in one or more sub-folders in the content repository as defined in the playbook.
+<.> Configure additional attributes for the preview in the IDE in an `.asciidoctorconfig` file.
+See <<site-css-in-the-preview>> and xref:./preparing-a-repository.adoc#provide-hints-for-the-preview-with-asciidoctorconfig[Provide hints for the preview with `.asciidoctorconfig`] for details.
+<.> The `antora.yml` file is required in the main folder of the component.
+<.> Each page is a single AsciiDoc file in the `pages` folder, with `index.adoc` being the default folder.
+File names of pages must not start with an underscore (`_`) or a dot (`.`).
+
+The `antora.yml` file defines at a minimum the name of the component.
+
+.Example antora.yml file
+----
+title: My component name <1>
+name: my-component
+version: '1.0' <2>
+nav:
+  - modules/ROOT/nav.adoc <3>
+asciidoc:
+  attributes: <4>
+    my-attribute: 'my-value'
+    another-attribute: 'another-value'
+----
+
+<.> The title is optional and defaults to the name of the component.
+<.> The version is optional and can be determined by rules specified in the Antora playbook from the branch or tag name.
+<.> Zero or more navigation files determine the navigation outline for the component.
+<.> For each component, attributes can be defined.
+Site attributes are defined in the Antora playbook which is described in the next section.
+
+Some of this can be seen in action in https://github.com/asciidoctor/asciidoctor-intellij-plugin/tree/main/doc/users-guide[this project's GitHub repository].
+
+[#outline-of-an-antora-playbook-repository]
+=== Outline of an Antora playbook repository
+
+This outline lists common files and their purpose in a playbook repository.
+Depending on the setup, there might be additional files, and some of them might have other names.
+
+The following assumes that the version of Antora and its plugins are managed via a `package.json` file and the npm package manager.
+
+.Folder structure of an Antora Playbook repository
+----
+📒 my-playbook-repo
+├─📄 antora-playbook.yml <1>
+├─📄 antora-playbook-author.yml <2>
+├─📄 package.json <3>
+├─📄 package-lock.json <4>
+├─📄 ui-bundle.zip <5>
+├─📄 README.adoc <6>
+└─📂 supplemental_ui <7>
+  ├─📂 css
+  │  └─📄 preview.css <8>
+  └─📂 partials
+    ├─📄 footer-content.hbs
+    └─📄 header-content.hbs
+----
+
+<.> The `antora-playbook.yml` or similar file name is required to steer the creation of the production site.
+<.> The `antora-playbook-author.yml` or similar file name is optional to provide a pre-configured playbook for an author's local preview.
+<.> As Antora is based on Node, a `package.json` would define the version ranges of Antora and the used plugins.
+Its `scripts` section should list the commands to, for example, building the production site, building an author's local preview and running a minimal local webserver with the author's local preview.
+<.> For the packages specified in `package.json` and their transitive dependencies the npm package manager stores the versions in a separate file `package-lock.json`.
+<.> The standard theme for the site can be stored in a ZIP archive in the repository, or in a remote location specified in the playbook.
+<.> A `README.adoc` in the root folder of the repository or a similar file is a good practice to describe to users how to build the site for production and for a local preview.
+<.> A folder `supplemental_ui` overrides the files in the UI theme.
+<.> A CSS file for the preview in the IDE is optional, and can be added via the supplemental UI.
+See <<site-css-in-the-preview>> for details.
+
+An example playbook file could look as follows:
+
+.Example antora-playbook.yml file
+----
+site:
+  title: My example site
+  url: https://example.com <1>
+  start_page: my-component::index.adoc
+content:
+  sources:
+    - url: https://github.com/example/conent
+      start_paths:
+        - doc/my-component
+        - doc/other-component
+      branches:
+        - 'main'
+
+ui:
+  bundle:
+    url: ui-bundle.zip
+    snapshot: true
+  supplemental_files: supplemental_ui
+  output_dir: antora
+
+runtime:
+  fetch: true
+  cache_dir: ./.cache/antora
+  log:
+    failure_level: error <2>
+
+output:
+  clean: true
+  dir: _site/docs
+
+asciidoc:
+  attributes: <3>
+    global-attribute: 'global-value'
+----
+
+<.> The 404, site-map, and canonical urls are only generated when am URL is defined.
+<.> This option ensures that the build-process exits with an error code if, for example, cross-references are broken.
+This will make a continuous integration build fail, which usually triggers a notification to the technical writer.
+<.> Global AsciiDoc attributes used across all components.
+
+To generate an author's preview, the file is similar.
+The only difference is that instead of pointing to a remote Git repository, it points to a local relative URL instead.
+
+.Example antora-playbook-author.yml file
+----
+site:
+  # ...
+content:
+  sources:
+    - url: ../my-content-repo <1>
+      start_paths:
+        - doc/my-component
+        - doc/other-component
+      branches:
+        - 'HEAD' <2>
+
+# ...
+----
+
+<1> Use a relative path to point to a local checked-out Git repository with the author's modifications checked out.
+<2> Instead of specifying a branch or tag, only list `HEAD` to render the currently checked-out content.
+
+Some of this can be seen in action in https://github.com/ahus1/intellij-asciidoc-plugin.ahus1.de[this project's GitHub repository for the playbook, although it contains a lot more than this].
+
+== Using IntelliJ to work with an Antora setup
+
+As described above, the setup contains multiple Git repositories.
+
+The recommended is to check to create one parent folder and then check out all Git repositories as sub-folders of the newly created folder.
+
+.Folder structure for playbook and content repositories
+----
+📒 parent-folder
+├─📒 my-playbook-repo
+│  ├─📄 antora-playbook.yml
+│  └─📄 ...
+├─📒 my-content-repo
+│  └─📒 docs
+│    └─📒 my-component
+│       ├─📄 antora.yml
+│       └─📂 modules
+│          └─📂 ...
+└─📒 other-content-repo
+   └─📂 ...
+----
+
+To render the preview and allow navigation between components, the IDE would need to know about all components, and also the playbook to know about attributes defined there.
+
+Depending on how many content repositories exist and how many attributes are defined in the playbook, there are two different setups:
+
+. **Single content repository and only a few AsciiDoc attributes in the playbook**
++
+This is a simple scenario, and it allows the user to open only the single content repository in IntelliJ.
+The folder structure described above is still recommended for generating the author's preview, so that the author's playbook can use a relative path to the local sandbox of the content repository.
++
+When the user opens only the content repository, the IDE doesn't know about the attributes defined in the Antora playbook.
++
+To let the IDE know about the attributes in the playbook and to show a preview similar to the real site, add an `.asciidoctorconfig` file in the content repository as outlined in <<outline-of-an-antora-content-repository>> and duplicate the attributes of the Antora playbook in this file.
+See xref:./preparing-a-repository.adoc#provide-hints-for-the-preview-with-asciidoctorconfig[Provide hints for the preview with `.asciidoctorconfig`] for more details.
++
+If there is more than one content repository, the downside of this approach it that the IDE can't follow navigation links to components outside the repository.
+Also, the page titles of those navigation links won't be rendered in the preview.
+See the next section on how to avoid this.
+
+. **Multiple content repositories or a lot of AsciiDoc attributes in the playbook**
++
+To avoid duplicating the attributes from the Antora playbook in multiple content repositories, the content repositories can be opened together with the playbook repository in one project.
++
+Here the user opens the parent repository.
++
+In this setup, the IDE can read all AsciiDoc attributes from the playbook, and they don't need to be duplicated in an `.asciidoctorconfig` file.
+The IDE also knows about all components, so auto-completion and validation for cross-references work as expected.
+All page titles for those cross-references are also correctly rendered in the preview.
++
+In this scenario, the menu:Git[] toolbox window shows the history of all Git repositories in the sub-folders of the parent folder.
++
+See xref:features/advanced/multimodule.adoc[] for an alternative setup without a parent folder.
+
+[[site-css-in-the-preview]]
+== Using the site's CSS in the preview
+
+To use the site's CSS in the preview, perform two steps:
+
+. Prepare a `preview.css` file in the published site.
+This can be added via the `supplemental_ui` as described in the <<outline-of-an-antora-playbook-repository>>.
+
+. Reference the `preview.css` file in the `.asciidoctorconfig` file as an external CSS file as described in the <<outline-of-an-antora-content-repository>>.
+
+This can be seen in action for the documentation of this plugin in the `https://github.com/ahus1/intellij-asciidoc-plugin.ahus1.de/blob/main/_antora/supplemental_ui/css/preview.css[preview.css]` file in the playbook repository and the `https://github.com/asciidoctor/asciidoctor-intellij-plugin/blob/main/doc/.asciidoctorconfig[.asciidoctorconfig]` file in the content repository.
+
+
+See xref:./preparing-a-repository.adoc#custom-styling-for-the-preview[Custom styling for the preview] for details on how to do this.
+
+== Further reading
+
+Continue to xref:./recommended-plugins.adoc[] for the next step of this series.

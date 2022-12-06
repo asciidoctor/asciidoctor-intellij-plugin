@@ -62,6 +62,7 @@ See xref:features/advanced/reformatting.adoc[] for details.
 
 See the IntelliJ docs about https://www.jetbrains.com/help/idea/editorconfig.html[EditorConfig support] for further information.
 
+[#provide-hints-for-the-preview-with-asciidoctorconfig]
 === Provide hints for the preview with `.asciidoctorconfig`
 
 When working in a larger project, the content is often broken down in several files which are included in one or more parent documents using `include::[]` preprocessor macros.
@@ -86,12 +87,13 @@ Other IDEs like Eclipse and VSCode support this file in a similar way, although 
 ----
 <1> Define a custom attribute.
 <2> Define attributes that enable Asciidoctor features and rendering.
-<3> Specify the location of the images. The attribute `++{asciidoctorconfigdir}++` points to the folder with the `.asciidoctorconfig` file, and in this example `/images` contains all images.
+<3> Specify the location of the images.The attribute `++{asciidoctorconfigdir}++` points to the folder with the `.asciidoctorconfig` file, and in this example `/images` contains all images.
 
 After this change, the attribute value `++{myprojectname}++` will show as `Awesome product`, the `:experimental` setting enables macros like the `++kbd:[]++` macro, and images in the sub-folder `images` will show in the preview.
 
 See xref:features/advanced/asciidoctorconfig-file.adoc[] for more information.
 
+[#custom-styling-for-the-preview]
 === Custom styling for the preview
 
 When editing an AsciiDoc file in IntelliJ, the AsciiDoc plugin renders a preview with a default stylesheet.
@@ -172,4 +174,4 @@ Read more in the IntelliJ docs about https://www.jetbrains.com/help/idea/setting
 
 == Further reading
 
-Continue to xref:./recommended-plugins.adoc[] for the next step of this series.
+Continue to xref:./using-antora-with-intellij.adoc[] for the next step of this series.
