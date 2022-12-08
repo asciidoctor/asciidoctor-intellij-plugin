@@ -45,7 +45,7 @@ Double-click on a highlighted file or press [.windows.linux]#kbd:[Ctrl+D]# [.mac
 
 There's a chapter how to resolve merge conflicts with Git in the IntelliJ docs called https://www.jetbrains.com/help/idea/resolving-conflicts.html#distributed-version-control-systems[Resolve conflicts in Distributed Version Control Systems].
 
-When a merge conflict occurs, it is usually good to start with menu:Apply non-conclicting changes[] first, either with the menu:All[] option or the magic wand icon image:technical-writing/magicResolveToolbar.svg[].
+When a merge conflict occurs, it is usually good to start with menu:Apply non-conflicting changes[] first, either with the menu:All[] option or the magic wand icon image:technical-writing/magicResolveToolbar.svg[].
 
 For a walk-though of handling a conflict with Git, watch the 5:34 min video https://www.jetbrains.com/help/idea/resolving-conflicts.html#resolve-conflicts-productivity-tips[at the end of the IntelliJ manual page resolving conflicts].
 
