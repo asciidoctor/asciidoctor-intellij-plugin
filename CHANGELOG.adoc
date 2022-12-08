@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.38.3
 
 - Handling Invalid file exception when installing the plugin and refreshing editors (#1238)
+- Bump asciidoctorj-pdf from 2.3.3 to 2.3.4 (#1246)
 
 === 0.38.2
 
