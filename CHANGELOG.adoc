@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Handling Invalid file exception when installing the plugin and refreshing editors (#1238)
 - Bump asciidoctorj-pdf from 2.3.3 to 2.3.4 (#1246)
+- Support quick-fixes in IC 2022.3 when those change a different file than the current file (#1248)
 
 === 0.38.2
 
