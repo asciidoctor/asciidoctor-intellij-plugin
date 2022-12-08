@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.project.Project;
@@ -18,7 +17,7 @@ import java.util.Objects;
 /**
  * @author Alexander Schwartz 2016
  */
-public class AsciiDocConvertMarkdownHeading implements LocalQuickFix {
+public class AsciiDocConvertMarkdownHeading extends AsciiDocLocalQuickFix {
 
   @Override
   public @IntentionFamilyName @NotNull String getFamilyName() {

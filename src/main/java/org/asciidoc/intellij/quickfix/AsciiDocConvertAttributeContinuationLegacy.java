@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.lang.ASTNode;
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class AsciiDocConvertAttributeContinuationLegacy implements LocalQuickFix {
+public class AsciiDocConvertAttributeContinuationLegacy extends AsciiDocLocalQuickFix {
 
   @Override
   public @IntentionFamilyName @NotNull String getFamilyName() {

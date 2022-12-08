@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.project.Project;
@@ -15,12 +14,33 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Alexander Schwartz 2020
  */
-public class AsciiDocAddBlockIdToSection implements LocalQuickFix {
+public class AsciiDocAddBlockIdToSection extends AsciiDocLocalQuickFix {
 
   @Override
   public @IntentionFamilyName @NotNull String getFamilyName() {
     return AsciiDocBundle.message("asciidoc.quickfix.addBlockIdToSection");
   }
+
+  /*
+
+  @Override
+  public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull ProblemDescriptor previewDescriptor) {
+    PsiElement element = previewDescriptor.getPsiElement();
+    if (element instanceof HasAnchorReference) {
+      AsciiDocSection section = ((HasAnchorReference) element).resolveAnchorForSection();
+      if (section != null && section.getContainingFile() != null && section.getContainingFile().isPhysical()) {
+        return IntentionPreviewInfo.EMPTY;
+      }
+    }
+    try {
+      return LocalQuickFix.super.generatePreview(project, previewDescriptor);
+    } catch (IncorrectOperationException ex) {
+      return IntentionPreviewInfo.EMPTY;
+    }
+  }
+
+
+   */
 
   @Override
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {

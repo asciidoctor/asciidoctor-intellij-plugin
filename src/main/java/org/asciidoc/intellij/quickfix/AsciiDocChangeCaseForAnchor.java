@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.project.Project;
@@ -19,7 +18,7 @@ import java.util.List;
 /**
  * @author Alexander Schwartz 2020
  */
-public class AsciiDocChangeCaseForAnchor implements LocalQuickFix {
+public class AsciiDocChangeCaseForAnchor extends AsciiDocLocalQuickFix {
 
   @Override
   public @IntentionFamilyName @NotNull String getFamilyName() {

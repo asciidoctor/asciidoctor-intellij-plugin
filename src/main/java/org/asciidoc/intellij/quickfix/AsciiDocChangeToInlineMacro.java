@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.quickfix;
 
-import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.lang.ASTNode;
@@ -17,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Alexander Schwartz 2020
  */
-public class AsciiDocChangeToInlineMacro implements LocalQuickFix {
+public class AsciiDocChangeToInlineMacro extends AsciiDocLocalQuickFix {
 
   @Override
   public @IntentionFamilyName @NotNull String getFamilyName() {
