@@ -5,16 +5,18 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Toggleable;
+import com.intellij.openapi.actionSystem.UpdateInBackground;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actions.AbstractToggleUseSoftWrapsAction;
 import com.intellij.openapi.editor.impl.softwrap.SoftWrapAppliancePlaces;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiFile;
 import org.asciidoc.intellij.actions.AsciiDocActionUtil;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ToggleSoftWrapsAction extends AbstractToggleUseSoftWrapsAction {
+public class ToggleSoftWrapsAction extends AbstractToggleUseSoftWrapsAction implements DumbAware, UpdateInBackground {
 
   public ToggleSoftWrapsAction() {
     super(SoftWrapAppliancePlaces.MAIN_EDITOR, false);
