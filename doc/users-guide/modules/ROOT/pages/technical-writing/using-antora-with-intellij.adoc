@@ -85,7 +85,7 @@ The default module is named `ROOT`.
 See <<site-css-in-the-preview>> and xref:./preparing-a-repository.adoc#provide-hints-for-the-preview-with-asciidoctorconfig[Provide hints for the preview with `.asciidoctorconfig`] for details.
 <.> The `antora.yml` file is required in the main folder of the component.
 <.> Each page is a single AsciiDoc file in the `pages` folder, with `index.adoc` being the default folder.
-File names of pages must not start with an underscore (`_`) or a dot (`.`).
+File names of pages must not start with an underscore (`_`) or a dot (`.`), as those characters https://docs.antora.org/antora/latest/standard-directories/#hidden-files[mark a page as unpublished or hidden].
 
 The `antora.yml` file defines at a minimum the name of the component.
 
