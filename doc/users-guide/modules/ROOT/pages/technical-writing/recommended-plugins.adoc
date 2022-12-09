@@ -67,8 +67,26 @@ Those can be used together with IntelliJ with the https://plugins.jetbrains.com/
 
 [NOTE]
 ====
-* IntelliJ 2022.3 is not supported at the time of writing. Follow https://youtrack.jetbrains.com/issue/IDEA-307064[IDEA-307064] for updates.
-* The Czech dictionary in the JetBrains hunspell-dictionaries repo has a broken encoding at the time of writing. Follow https://github.com/JetBrains/hunspell-dictionaries/pull/3[JetBrains/hunspell-dictionaries#3] for updates.
+* IntelliJ 2022.3 is not supported as described in bug https://youtrack.jetbrains.com/issue/IDEA-307064[IDEA-307064].
+Update to IntelliJ version 2022.3.1 Preview or later for this to work.
+* The Czech dictionary in the JetBrains hunspell-dictionaries repo has a broken encoding at the time of writing.
+Follow https://github.com/JetBrains/hunspell-dictionaries/pull/3[JetBrains/hunspell-dictionaries#3] for updates.
+====
+
+=== Additional status information about Git in the current repository
+
+While IntelliJ includes standard support for Git, this plugin adds additional functionality like:
+
+* In-editor notification of who is the latest editor of the current line.
+* Status indicator in the lower right corner about changes
+
+To add these functionalities, install the https://plugins.jetbrains.com/plugin/7499-gittoolbox[GitToolBox] plugin.
+For additional information about the plugin, see the https://github.com/zielu/GitToolBox/wiki/Manual#commit-dialog-gitmoji-completion[GitToolBox plugin's manual].
+
+[NOTE]
+====
+At the time of writing, this plugin is free.
+In the near future, the author plans to offer additional features in a freemium model, meaning that users will need to pay to get functionality that exceeds the current functionality.
 ====
 
 === Accessing archive contents in the IDE
