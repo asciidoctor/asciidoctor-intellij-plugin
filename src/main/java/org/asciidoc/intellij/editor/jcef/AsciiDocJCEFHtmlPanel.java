@@ -917,6 +917,13 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     }
     this.lineCount = lineCount;
     this.line = line;
+    scrollToLineInBrowser(line, lineCount);
+  }
+
+  /**
+   * Scroll line in browser, which is independent of the locking, so it can be called from onLoadingStateChange to set the scrolling.
+   */
+  private void scrollToLineInBrowser(int line, int lineCount) {
     try {
       getCefBrowser().executeJavaScript(
         "if ('__IntelliJTools' in window) " +
@@ -971,11 +978,12 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
           }
         }
         if (!hasLoadedOnce && myScrollPreservingListener.myScrollY == 0) {
-          scrollToLine(line, lineCount);
+          scrollToLineInBrowser(line, lineCount);
+        } else {
+          getCefBrowser().executeJavaScript("document.documentElement.scrollTop = ({} || document.body).scrollTop = " + myScrollY,
+            getCefBrowser().getURL(), 0);
         }
         hasLoadedOnce = true;
-        getCefBrowser().executeJavaScript("document.documentElement.scrollTop = ({} || document.body).scrollTop = " + myScrollY,
-          getCefBrowser().getURL(), 0);
       }
     }
   }

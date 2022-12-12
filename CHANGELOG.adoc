@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.38.4
+
+- Regression: Fix 3-seconds-delay when showing the preview (#1226)
+
 === 0.38.3
 
 - Handling Invalid file exception when installing the plugin and refreshing editors (#1238)
