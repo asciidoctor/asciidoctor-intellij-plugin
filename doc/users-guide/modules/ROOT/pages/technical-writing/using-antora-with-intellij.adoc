@@ -295,4 +295,4 @@ See xref:./preparing-a-repository.adoc#custom-styling-for-the-preview[Custom sty
 
 == Further reading
 
-Continue to xref:./long-lasting-decisions-antora.adoc[] for the next step of this series.
+Continue to xref:./recommended-plugins.adoc[] for the next step of this series.
