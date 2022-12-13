@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.38.5
+
+- Use the linked stylesheet in the browser preview
+
 === 0.38.4
 
 - Regression: Fix 3-seconds-delay when showing the preview (#1226)

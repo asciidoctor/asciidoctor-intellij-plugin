@@ -127,12 +127,12 @@ public class BrowserPanel implements Disposable {
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
         myInlineCssDarcula = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
       }
-      myAntoraCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("antora/preview.css") + "\">";
-      myAntoraDarculaCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("antora/preview-darcula.css") + "\">";
-      myFontAwesomeCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
-      myDejavuCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
-      myGoogleFontsCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/googlefonts.css") + "\">";
-      myDroidSansMonoCssLink = "<link rel=\"stylesheet\" href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/droidsansmono.css") + "\">";
+      myAntoraCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("antora/preview.css") + "\">";
+      myAntoraDarculaCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("antora/preview-darcula.css") + "\">";
+      myFontAwesomeCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
+      myDejavuCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
+      myGoogleFontsCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/googlefonts.css") + "\">";
+      myDroidSansMonoCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/droidsansmono.css") + "\">";
       myMermaidScript = "<script type=\"module\">\n" +
         "      import mermaid from '" +
         PreviewStaticServer.getScriptUrl("mermaid/mermaid.esm.min.mjs") + "'\n" +
@@ -413,7 +413,7 @@ public class BrowserPanel implements Disposable {
     StringBuilder result = new StringBuilder();
 
     if (inlineCss != null) {
-      result.append("<style>\n").append(inlineCss).append("\n</style>\n");
+      result.append("<style data-default>\n").append(inlineCss).append("\n</style>\n");
     }
     return result.toString();
   }
