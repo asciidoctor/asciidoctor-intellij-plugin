@@ -47,6 +47,7 @@ After the setup is complete and each file has been committed and pushed to the r
 Users new to IntelliJ and Antora should consider trying out these features with another IntelliJ user.
 ====
 
+[#basic-structure-of-an-antora-setup]
 == Basic structure of an Antora setup
 
 A standard setup consists of one or more repositories storing content in Antora components plus one repository with an Antora playbook and the theme.
@@ -218,7 +219,7 @@ Some of this can be seen in action in https://github.com/ahus1/intellij-asciidoc
 
 As described above, the setup contains multiple Git repositories.
 
-The recommended is to check to create one parent folder and then check out all Git repositories as sub-folders of the newly created folder.
+The recommended setup is to check to create one parent folder and then check out all Git repositories as sub-folders of the newly created folder.
 
 .Folder structure for playbook and content repositories
 ----
@@ -267,6 +268,16 @@ All page titles for those cross-references are also correctly rendered in the pr
 In this scenario, the menu:Git[] toolbox window shows the history of all Git repositories in the sub-folders of the parent folder.
 +
 See xref:features/advanced/multimodule.adoc[] for an alternative setup without a parent folder.
++
+*The tradeoff:* Users might struggle with this approach, and would want to open only a single repository as they usually do.
+Such a scenario might be where the Antora content is stored side-by-side with source code or other information stored in the repository.
+If there are only few cross-references between the components, checking out other content repositories is seen as an unnecessary overhead, and checking out the playbook repository is a nuisance.
++
+In such a situation, it might be simpler to duplicate the playbook's attributes in an `.asciidoctorconfig` file, and authors would rely on the IDE's preview to prepare their changes.
++
+When only a single content repository is checked out, links to other components will not show the page title, can't be validated in the IDE and can't be navigated to.
+This might change in a future version of the AsciiDoc plugin for IntelliJ once Antora Atlas is supported: With the information stored in the site manifest, the local IDE can retrieve the page titles of the pages in other components together with their links to the final site.
+Follow https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/1250[GitHub issue #1250] for the progress on this issue.
 
 [[site-css-in-the-preview]]
 == Using the site's CSS in the preview
@@ -280,9 +291,8 @@ This can be added via the `supplemental_ui` as described in the <<outline-of-an-
 
 This can be seen in action for the documentation of this plugin in the `https://github.com/ahus1/intellij-asciidoc-plugin.ahus1.de/blob/main/_antora/supplemental_ui/css/preview.css[preview.css]` file in the playbook repository and the `https://github.com/asciidoctor/asciidoctor-intellij-plugin/blob/main/doc/.asciidoctorconfig[.asciidoctorconfig]` file in the content repository.
 
-
 See xref:./preparing-a-repository.adoc#custom-styling-for-the-preview[Custom styling for the preview] for details on how to do this.
 
 == Further reading
 
-Continue to xref:./recommended-plugins.adoc[] for the next step of this series.
+Continue to xref:./long-lasting-decisions-antora.adoc[] for the next step of this series.
