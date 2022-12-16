@@ -25,6 +25,8 @@ public class AsciiDocBraceMatcher extends PairedBraceMatcherAdapter {
         new BracePair(AsciiDocTokenTypes.LBRACKET, AsciiDocTokenTypes.RBRACKET, false),
         new BracePair(AsciiDocTokenTypes.LT, AsciiDocTokenTypes.GT, false),
         new BracePair(AsciiDocTokenTypes.BOLD_START, AsciiDocTokenTypes.BOLD_END, false),
+        new BracePair(AsciiDocTokenTypes.SUBSCRIPT_START, AsciiDocTokenTypes.SUBSCRIPT_END, false),
+        new BracePair(AsciiDocTokenTypes.SUPERSCRIPT_START, AsciiDocTokenTypes.SUPERSCRIPT_END, false),
         new BracePair(AsciiDocTokenTypes.DOUBLEBOLD_START, AsciiDocTokenTypes.DOUBLEBOLD_END, false),
         new BracePair(AsciiDocTokenTypes.ITALIC_START, AsciiDocTokenTypes.ITALIC_END, false),
         new BracePair(AsciiDocTokenTypes.DOUBLEITALIC_START, AsciiDocTokenTypes.DOUBLEITALIC_END, false),

@@ -254,6 +254,10 @@ public class AntoraReferenceAdapter {
     HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.MONO_END, "</code>");
     HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.DOUBLEMONO_START, "<code>");
     HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.DOUBLEMONO_END, "</code>");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.SUBSCRIPT_START, "<sub>");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.SUBSCRIPT_END, "</sub>");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.SUPERSCRIPT_START, "<sup>");
+    HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.SUPERSCRIPT_END, "</sup>");
     HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START, "\u201D");
     HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END, "\u201C");
     HTML_TOKEN_TRANSLATION.put(AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START, "\u2019");

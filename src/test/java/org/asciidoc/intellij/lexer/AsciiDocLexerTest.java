@@ -1828,6 +1828,66 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:PASSTRHOUGH_INLINE_END ('+++')");
   }
 
+  public void testSuperscriptSimple() {
+    doTest("^super^",
+      "AsciiDoc:SUPERSCRIPT_START ('^')\n" +
+        "AsciiDoc:TEXT ('super')\n" +
+        "AsciiDoc:SUPERSCRIPT_END ('^')");
+  }
+
+  public void testSuperscriptInside() {
+    doTest("outside^inside^outside",
+      "AsciiDoc:TEXT ('outside')\n" +
+        "AsciiDoc:SUPERSCRIPT_START ('^')\n" +
+        "AsciiDoc:TEXT ('inside')\n" +
+        "AsciiDoc:SUPERSCRIPT_END ('^')\n" +
+        "AsciiDoc:TEXT ('outside')");
+  }
+
+  public void testNotSuperscriptStart() {
+    doTest("^ inside^",
+      "AsciiDoc:TEXT ('^')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('inside^')");
+  }
+
+  public void testNotSuperscriptEnd() {
+    doTest("^inside ^",
+      "AsciiDoc:TEXT ('^inside')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('^')");
+  }
+
+  public void testSubscriptSimple() {
+    doTest("~sub~",
+      "AsciiDoc:SUBSCRIPT_START ('~')\n" +
+        "AsciiDoc:TEXT ('sub')\n" +
+        "AsciiDoc:SUBSCRIPT_END ('~')");
+  }
+
+  public void testSubscriptInside() {
+    doTest("outside~inside~outside",
+      "AsciiDoc:TEXT ('outside')\n" +
+        "AsciiDoc:SUBSCRIPT_START ('~')\n" +
+        "AsciiDoc:TEXT ('inside')\n" +
+        "AsciiDoc:SUBSCRIPT_END ('~')\n" +
+        "AsciiDoc:TEXT ('outside')");
+  }
+
+  public void testNotSubscriptStart() {
+    doTest("~ inside~",
+      "AsciiDoc:TEXT ('~')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('inside~')");
+  }
+
+  public void testNotSubscriptEnd() {
+    doTest("~inside ~",
+      "AsciiDoc:TEXT ('~inside')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('~')");
+  }
+
   public void testPassThroughInlineDollars() {
     doTest("$$pt\npt2$$",
       "AsciiDoc:PASSTRHOUGH_INLINE_START ('$$')\n" +

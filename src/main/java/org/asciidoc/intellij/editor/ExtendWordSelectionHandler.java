@@ -40,6 +40,10 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.MONO_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.RBRACKET;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.RPAREN;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SINGLE_QUOTE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SUBSCRIPT_END;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SUBSCRIPT_START;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SUPERSCRIPT_END;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.SUPERSCRIPT_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END;
@@ -60,6 +64,8 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
 
   static {
     SYMMETRIC_FORMATTING.put(BOLD_START, BOLD_END);
+    SYMMETRIC_FORMATTING.put(SUBSCRIPT_START, SUBSCRIPT_END);
+    SYMMETRIC_FORMATTING.put(SUPERSCRIPT_START, SUPERSCRIPT_END);
     SYMMETRIC_FORMATTING.put(DOUBLEBOLD_START, DOUBLEBOLD_END);
     SYMMETRIC_FORMATTING.put(ITALIC_START, ITALIC_END);
     SYMMETRIC_FORMATTING.put(DOUBLEITALIC_START, DOUBLEITALIC_END);

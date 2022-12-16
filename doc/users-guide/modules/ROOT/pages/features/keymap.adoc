@@ -16,7 +16,7 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 
 [caption=]
 .General
-[width="75%",cols="4,3",grid="bot",options="header"]
+[width="75%",cols="4a,3a",grid="bot",options="header"]
 |===
 ^| Description ^| Shortcut
 | Search everywhere |
@@ -55,7 +55,7 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 
 [caption=]
 .Editing
-[width="75%",cols="4,3",grid="bot",options="header"]
+[width="75%",cols="4a,3a",grid="bot",options="header"]
 |===
 ^| Description ^| Shortcut
 | Extend selection |
@@ -76,8 +76,9 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 | Toggle custom styling for the selected text | kbd:[#]
 | Toggle double quotes for the selected text | kbd:["]
 | Toggle single quotes for the selected text | kbd:[']
-| Toggle passthrough for the selected text | kbd:[+]
-| Toggle passthrough for the selected text | kbd:[$]
+| Toggle pass-through for the selected text | kbd:[+] or kbd:[$]
+| Toggle superscript for the selected text^1^ | kbd:[^]
+| Toggle subscript for the selected text^1^ | kbd:[~]
 
 | Show intention actions and quick-fixes | [.windows.linux]#kbd:[Alt+Enter]#
 
@@ -204,7 +205,7 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 
 [caption=]
 .Navigating
-[width="75%",cols="4,3",grid="bot",options="header"]
+[width="75%",cols="4a,3a",grid="bot",options="header"]
 |===
 ^| Description ^| Shortcut
 | Go to declaration +
@@ -302,6 +303,8 @@ Works also for file and class names in italics or monospace | [.windows.linux]#k
 [.macos]#kbd:[⌘ F3]#
 
 |===
+
+^1^: Supported from plugin version 0.38.5
 
 == Further reading
 

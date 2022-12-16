@@ -403,6 +403,8 @@ class AsciiDocFormattingBlock extends AbstractBlock {
   private static final TokenSet TEXT_SET = TokenSet.create(AsciiDocTokenTypes.TEXT, AsciiDocTokenTypes.BOLD, AsciiDocTokenTypes.BOLDITALIC,
     AsciiDocTokenTypes.ITALIC, AsciiDocTokenTypes.DOUBLE_QUOTE, AsciiDocTokenTypes.SINGLE_QUOTE,
     AsciiDocTokenTypes.BOLD_START, AsciiDocTokenTypes.BOLD_END,
+    AsciiDocTokenTypes.SUPERSCRIPT_START, AsciiDocTokenTypes.SUPERSCRIPT_END,
+    AsciiDocTokenTypes.SUBSCRIPT_START, AsciiDocTokenTypes.SUBSCRIPT_END,
     AsciiDocTokenTypes.DOUBLEBOLD_START, AsciiDocTokenTypes.DOUBLEBOLD_END,
     AsciiDocTokenTypes.ITALIC_START, AsciiDocTokenTypes.ITALIC_END,
     AsciiDocTokenTypes.DOUBLEITALIC_START, AsciiDocTokenTypes.DOUBLEITALIC_END,

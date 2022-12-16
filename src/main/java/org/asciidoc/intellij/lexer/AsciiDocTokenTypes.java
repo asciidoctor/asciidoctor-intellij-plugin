@@ -54,6 +54,10 @@ public interface AsciiDocTokenTypes {
   IElementType INLINE_ATTRS_END = new AsciiDocElementType("INLINE_ATTRS_END");
   IElementType BOLD_START = new AsciiDocElementType("BOLD_START");
   IElementType BOLD_END = new AsciiDocElementType("BOLD_END");
+  IElementType SUPERSCRIPT_START = new AsciiDocElementType("SUPERSCRIPT_START");
+  IElementType SUPERSCRIPT_END = new AsciiDocElementType("SUPERSCRIPT_END");
+  IElementType SUBSCRIPT_START = new AsciiDocElementType("SUBSCRIPT_START");
+  IElementType SUBSCRIPT_END = new AsciiDocElementType("SUBSCRIPT_END");
   IElementType DOUBLEBOLD_START = new AsciiDocElementType("DOUBLEBOLD_START");
   IElementType DOUBLEBOLD_END = new AsciiDocElementType("DOUBLEBOLD_END");
   IElementType BOLD = new AsciiDocElementType("BOLD");

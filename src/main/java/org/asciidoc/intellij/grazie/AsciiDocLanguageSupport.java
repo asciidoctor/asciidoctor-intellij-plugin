@@ -100,6 +100,8 @@ public class AsciiDocLanguageSupport {
     AsciiDocTokenTypes.RPAREN,
     AsciiDocTokenTypes.DOUBLE_QUOTE,
     AsciiDocTokenTypes.SINGLE_QUOTE,
+    AsciiDocTokenTypes.SUBSCRIPT_START,
+    AsciiDocTokenTypes.SUPERSCRIPT_START,
     AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_START,
     AsciiDocTokenTypes.TYPOGRAPHIC_DOUBLE_QUOTE_END,
     AsciiDocTokenTypes.ASSIGNMENT,

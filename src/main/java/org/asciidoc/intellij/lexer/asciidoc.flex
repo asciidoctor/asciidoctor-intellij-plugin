@@ -34,6 +34,8 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
   private boolean singlemono = false;
   private boolean doublemono = false;
   private boolean typographicquote = false;
+  private boolean superscript = false;
+  private boolean subscript = false;
   private boolean isTags = false;
   private String style = null;
   private int headerLines = 0;
@@ -155,6 +157,49 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
     return false;
   }
 
+  private boolean isScriptEnd() {
+    return isScriptEnd(getTokenStart(), getTokenEnd());
+  }
+
+  private boolean isScriptEnd(int start, int end) {
+    if (start > 0) {
+      char c = zzBuffer.charAt(start -1);
+      if (c == ' ' || c == '\t' || c == '\n') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private boolean isScriptStart() {
+    if(getTokenEnd() < zzBuffer.length()) {
+      char c = zzBuffer.charAt(getTokenEnd());
+      if (Character.isSpaceChar(c)) {
+        return false;
+      }
+    }
+    char q = zzBuffer.charAt(getTokenStart());
+    int linebreaks = 0;
+    // an unconstrainted start is only valid if there is an unconstrained end in the same paragraph
+    for (int i = getTokenStart() + 1; i < zzEndRead; ++i) {
+      int c = zzBuffer.charAt(i);
+      if (c == '\n') {
+        ++ linebreaks;
+        if (linebreaks == 2) {
+          break;
+        }
+      } else if (linebreaks > 0 && !Character.isSpaceChar(c)) {
+        linebreaks = 0;
+      }
+      if (q == zzBuffer.charAt(i)) {
+        if (isScriptEnd(i, i+1)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   private boolean constraintQuoteEndsInCurrentParagraph() {
     char q = zzBuffer.charAt(getTokenStart());
     int linebreaks = 0;
@@ -215,6 +260,8 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
     singlemono = false;
     doublemono = false;
     typographicquote = false;
+    superscript = false;
+    subscript = false;
     isTags = false;
   }
   private IElementType textFormat() {
@@ -352,6 +399,8 @@ WORD = {SPACE}* [^\n]* {SPACE}* \n {SPACE}* [^\ \t\n] | {SPACE}* [^\n]*[^\ \t\n]
 WORDNOBRACKET =  {SPACE}* [^\n\]]* {SPACE}* \n {SPACE}* [^\ \t\n\]] | {SPACE}* [^\n\]]*[^\ \t\n\]]
 WORDNOPLUS =     {SPACE}* [^\n\+]* {SPACE}* \n {SPACE}* [^\ \t\n\+] | {SPACE}* [^\n\+]*[^\ \t\n\+]
 BOLD = "*"
+SUPERSCRIPT = "^"
+SUBSCRIPT = "~"
 BULLET = ("*"+|"-")
 ENUMERATION = ([0-9]*|[a-zA-Z]?)"."+
 CALLOUT = "<" ([0-9]+|".") ">"
@@ -1384,6 +1433,34 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          }
                        }
   // BOLD END
+
+  {SUPERSCRIPT}        {
+                         if (isEscaped() && !superscript) {
+                           return textFormat();
+                         } else {
+                           if(isScriptStart() && !superscript) {
+                             superscript = true; return AsciiDocTokenTypes.SUPERSCRIPT_START;
+                           } else if (superscript && isScriptEnd()) {
+                             superscript = false; return AsciiDocTokenTypes.SUPERSCRIPT_END;
+                           } else {
+                             return textFormat();
+                           }
+                         }
+                       }
+
+  {SUBSCRIPT}        {
+                         if (isEscaped() && !subscript) {
+                           return textFormat();
+                         } else {
+                           if(isScriptStart() && !subscript) {
+                             subscript = true; return AsciiDocTokenTypes.SUBSCRIPT_START;
+                           } else if (subscript && isScriptEnd()) {
+                             subscript = false; return AsciiDocTokenTypes.SUBSCRIPT_END;
+                           } else {
+                             return textFormat();
+                           }
+                         }
+                       }
 
   // ITALIC START
   {DOUBLEITALIC}       {

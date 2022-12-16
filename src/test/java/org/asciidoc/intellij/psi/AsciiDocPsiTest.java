@@ -472,6 +472,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "btn:[Button]\n" +
       "a{nbsp}blank\n" +
       "em{empty}pty\n" +
+      "normal1^super^\n" +
+      "normal2~sub~\n" +
       "A <<id,reftext>>.\n" +
       "|===\n" +
       "| Cell contents.\n" +
@@ -512,6 +514,10 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       "a",
       "blank",
       "empty",
+      "normal1",
+      "normal2",
+      "sub",
+      "super",
       "Cell",
       "contents.");
   }
