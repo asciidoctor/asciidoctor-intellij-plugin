@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.38.5
 
 - Use the linked stylesheet in the browser preview
+- Support Antora component properties `prerelease` and `ext` (#1254)
 
 === 0.38.4
 

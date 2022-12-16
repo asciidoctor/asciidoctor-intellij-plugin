@@ -65,7 +65,10 @@
       ]
     },
     "prerelease": {
-      "type": "string",
+      "type": [
+        "string",
+        "boolean"
+      ],
       "description": "The prerelease key is a marker that this version is considered prerelease. Prerelease versions are skipped when selecting the latest version of a component (unless all versions are prereleases, in which case the normal rules apply)."
     },
     "nav": {
@@ -84,6 +87,10 @@
         }
       },
       "description": "Configuration passed on to AsciiDoc processing"
+    },
+    "ext": {
+      "type": "object",
+      "description": "Configurations for Antora extensions"
     }
   },
   "definitions": {
