@@ -1,15 +1,14 @@
 package org.asciidoc.intellij.editor.browser;
 
-import com.intellij.util.Base64;
 import org.jetbrains.annotations.NotNull;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Random;
 
 public class SignWithMac {
@@ -32,9 +31,9 @@ public class SignWithMac {
       Mac mac = Mac.getInstance("HmacSHA256");
       SecretKeySpec key = new SecretKeySpec(macKey, "HmacSHA256");
       mac.init(key);
-      String hash = Base64.encode(mac.doFinal(file.getBytes(StandardCharsets.UTF_8)));
-      return URLEncoder.encode(file, StandardCharsets.UTF_8.toString()) + "&amp;mac=" + hash;
-    } catch (NoSuchAlgorithmException | InvalidKeyException | UnsupportedEncodingException e) {
+      String hash = Base64.getEncoder().encodeToString(mac.doFinal(file.getBytes(StandardCharsets.UTF_8)));
+      return URLEncoder.encode(file, StandardCharsets.UTF_8) + "&amp;mac=" + hash;
+    } catch (NoSuchAlgorithmException | InvalidKeyException e) {
       throw new IllegalStateException("unable to calculate mac", e);
     }
   }
@@ -44,7 +43,7 @@ public class SignWithMac {
       Mac m = Mac.getInstance("HmacSHA256");
       SecretKeySpec key = new SecretKeySpec(macKey, "HmacSHA256");
       m.init(key);
-      String hash = Base64.encode(m.doFinal(file.getBytes(StandardCharsets.UTF_8)));
+      String hash = Base64.getEncoder().encodeToString(m.doFinal(file.getBytes(StandardCharsets.UTF_8)));
       mac = mac.replace(" ", "+");
       return hash.equals(mac);
     } catch (NoSuchAlgorithmException | InvalidKeyException e) {

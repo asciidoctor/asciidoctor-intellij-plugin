@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.ui.HTMLEditorKitBuilder;
 import com.intellij.util.ui.UIUtil;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
@@ -61,7 +62,7 @@ final class JeditorHtmlPanel implements AsciiDocHtmlPanel {
     // since it contains fix for incorrect styling of tooltips
     final String cssFile = isDarcula() ? "darcula.css" : "preview.css";
     final StyleSheet customStyle = loadStyleSheet(JeditorHtmlPanel.class.getResource(cssFile));
-    final StyleSheet style = UIUtil.getHTMLEditorKit().getStyleSheet();
+    final StyleSheet style = HTMLEditorKitBuilder.simple().getStyleSheet();
     style.addStyleSheet(customStyle);
     kit.setStyleSheet(style);
 

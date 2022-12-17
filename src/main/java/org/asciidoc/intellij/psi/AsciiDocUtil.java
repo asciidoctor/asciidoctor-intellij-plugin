@@ -994,15 +994,15 @@ public class AsciiDocUtil {
       return Collections.emptyList();
     }
 
-    PsiFile[] files =
-      FilenameIndex.getFilesByName(project, ANTORA_YML, new AsciiDocSearchScope(project));
+    Collection<VirtualFile> files =
+      FilenameIndex.getVirtualFilesByName(ANTORA_YML, new AsciiDocSearchScope(project));
     ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
     Collection<VirtualFile> result = new HashSet<>();
-    for (PsiFile file : files) {
-      if (index.isInLibrary(file.getVirtualFile())
-        || index.isExcluded(file.getVirtualFile())
-        || index.isInLibraryClasses(file.getVirtualFile())
-        || index.isInLibrarySource(file.getVirtualFile())) {
+    for (VirtualFile file : files) {
+      if (index.isInLibrary(file)
+        || index.isExcluded(file)
+        || index.isInLibraryClasses(file)
+        || index.isInLibrarySource(file)) {
         continue;
       }
       Map<String, Object> antora;
@@ -1024,7 +1024,7 @@ public class AsciiDocUtil {
           if (item == null) {
             continue;
           }
-          VirtualFile fileByRelativePath = file.getVirtualFile().getParent().findFileByRelativePath(item.toString());
+          VirtualFile fileByRelativePath = file.getParent().findFileByRelativePath(item.toString());
           if (fileByRelativePath != null) {
             result.add(fileByRelativePath);
           }
