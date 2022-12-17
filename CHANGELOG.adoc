@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Use the linked stylesheet in the browser preview
 - Support Antora component properties `prerelease` and `ext` (#1254)
 - Support superscript and subscript in the editor (#1251)
+- When saving other editors contents before rendering the preview, log exceptions thrown there instead of reporting them (#1257)
 
 === 0.38.4
 

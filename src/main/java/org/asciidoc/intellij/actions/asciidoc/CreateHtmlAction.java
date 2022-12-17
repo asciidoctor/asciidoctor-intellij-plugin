@@ -3,6 +3,7 @@ package org.asciidoc.intellij.actions.asciidoc;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -27,6 +28,8 @@ import java.util.List;
 public class CreateHtmlAction extends AsciiDocFileAction {
 
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.CreateHtmlAction";
+
+  private static final Logger LOG = Logger.getInstance(CreateHtmlAction.class);
 
   private final AsciiDocExtensionService extensionService = ApplicationManager.getApplication().getService(AsciiDocExtensionService.class);
   private Project project;
@@ -58,8 +61,12 @@ public class CreateHtmlAction extends AsciiDocFileAction {
 
     if (FileDocumentManager.getInstance().getUnsavedDocuments().length > 0) {
       ApplicationManager.getApplication().runWriteAction(() -> {
-        for (Document unsavedDocument : FileDocumentManager.getInstance().getUnsavedDocuments()) {
-          FileDocumentManager.getInstance().saveDocument(unsavedDocument);
+        try {
+          for (Document unsavedDocument : FileDocumentManager.getInstance().getUnsavedDocuments()) {
+            FileDocumentManager.getInstance().saveDocument(unsavedDocument);
+          }
+        } catch (RuntimeException ex) {
+          LOG.warn("Unable to save other file (might be a problem in another plugin", ex);
         }
       });
     }

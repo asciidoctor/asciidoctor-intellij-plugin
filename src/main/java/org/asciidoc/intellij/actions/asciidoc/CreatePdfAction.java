@@ -75,8 +75,12 @@ public class CreatePdfAction extends AsciiDocFileAction {
 
     if (FileDocumentManager.getInstance().getUnsavedDocuments().length > 0) {
       ApplicationManager.getApplication().runWriteAction(() -> {
-        for (Document unsavedDocument : FileDocumentManager.getInstance().getUnsavedDocuments()) {
-          FileDocumentManager.getInstance().saveDocument(unsavedDocument);
+        try {
+          for (Document unsavedDocument : FileDocumentManager.getInstance().getUnsavedDocuments()) {
+            FileDocumentManager.getInstance().saveDocument(unsavedDocument);
+          }
+        } catch (RuntimeException ex) {
+          LOG.warn("Unable to save other file (might be a problem in another plugin", ex);
         }
       });
     }

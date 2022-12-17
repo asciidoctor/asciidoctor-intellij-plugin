@@ -544,8 +544,12 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           // save the content in all other editors as their content might be referenced in preview
           // don't use ApplicationManager.getApplication().saveAll() as it will save in the background and will save settings as well
           // must not be called inside a write action as it might trigger AWT popups in save actions
-          for (Document unsavedDocument : FileDocumentManager.getInstance().getUnsavedDocuments()) {
-            FileDocumentManager.getInstance().saveDocument(unsavedDocument);
+          try {
+            for (Document unsavedDocument : FileDocumentManager.getInstance().getUnsavedDocuments()) {
+              FileDocumentManager.getInstance().saveDocument(unsavedDocument);
+            }
+          } catch (RuntimeException ex) {
+            LOG.warn("Unable to save other file (might be a problem in another plugin", ex);
           }
         }
         ApplicationManager.getApplication().runWriteAction(() -> {
