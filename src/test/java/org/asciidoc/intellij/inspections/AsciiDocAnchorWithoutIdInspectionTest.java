@@ -1,13 +1,13 @@
 package org.asciidoc.intellij.inspections;
 
-import org.asciidoc.intellij.quickfix.AsciiDocAddBlockIdToSection;
+import org.asciidoc.intellij.AsciiDocBundle;
 
 /**
  * @author Alexander Schwartz
  */
 public class AsciiDocAnchorWithoutIdInspectionTest extends AsciiDocQuickFixTestBase {
 
-  private static final String NAME = new AsciiDocAddBlockIdToSection().getName();
+  private static final String NAME = AsciiDocBundle.message("asciidoc.quickfix.addBlockIdToSection");
 
   @Override
   public void setUp() throws Exception {

@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.quickfix;
 
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.lang.ASTNode;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Alexander Schwartz 2020
  */
-public class AsciiDocChangeToBlockOrPreprocessorMacro extends AsciiDocLocalQuickFix {
+public class AsciiDocChangeToBlockOrPreprocessorMacro implements LocalQuickFix {
   private final String macroType;
 
   public AsciiDocChangeToBlockOrPreprocessorMacro(String macroType) {

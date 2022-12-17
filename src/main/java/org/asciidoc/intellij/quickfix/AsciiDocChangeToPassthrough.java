@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.quickfix;
 
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.project.Project;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Alexander Schwartz 2020
  */
-public class AsciiDocChangeToPassthrough extends AsciiDocLocalQuickFix {
+public class AsciiDocChangeToPassthrough implements LocalQuickFix {
 
   @Override
   public @IntentionFamilyName @NotNull String getFamilyName() {

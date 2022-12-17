@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.quickfix;
 
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.util.IntentionFamilyName;
 import com.intellij.openapi.project.Project;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Alexander Schwartz 2020
  */
-public class AsciiDocAddAdocExtensionToXref extends AsciiDocLocalQuickFix {
+public class AsciiDocAddAdocExtensionToXref implements LocalQuickFix {
 
   @Override
   public @IntentionFamilyName @NotNull String getFamilyName() {

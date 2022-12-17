@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - Support Antora component properties `prerelease` and `ext` (#1254)
 - Support superscript and subscript in the editor (#1251)
 - When saving other editors contents before rendering the preview, log exceptions thrown there instead of reporting them (#1257)
+- Add preview for AddBlockIdToSection if it is in another file (#1248)
 
 === 0.38.4
 

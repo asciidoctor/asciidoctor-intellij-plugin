@@ -16,19 +16,18 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AsciiDocAnchorWithoutIdInspection extends AsciiDocInspectionBase {
   private static final String TEXT_HINT_ANCHOR_WITHOUT_ID = "Section doesn't have explicit block ID";
-  private static final AsciiDocAddBlockIdToSection ADD_BLOCK_ID_TO_SECTION = new AsciiDocAddBlockIdToSection();
 
   @NotNull
   @Override
   protected AsciiDocVisitor buildAsciiDocVisitor(@NotNull ProblemsHolder holder, @NotNull LocalInspectionToolSession session) {
     return new AsciiDocVisitor() {
       @Override
-      public void visitElement(PsiElement o) {
+      public void visitElement(@NotNull PsiElement o) {
         if (o instanceof HasAnchorReference) {
           AsciiDocSection section = ((HasAnchorReference) o).resolveAnchorForSection();
           AsciiDocFileReference anchor = ((HasAnchorReference) o).getAnchorReference();
           if (section != null && anchor != null && section.getBlockId() == null && !anchor.isPossibleRefText()) {
-            LocalQuickFix[] fixes = new LocalQuickFix[]{ADD_BLOCK_ID_TO_SECTION};
+            LocalQuickFix[] fixes = new LocalQuickFix[]{new AsciiDocAddBlockIdToSection(o)};
             holder.registerProblem(o, TEXT_HINT_ANCHOR_WITHOUT_ID, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, anchor.getRangeInElement(), fixes);
           }
         }
