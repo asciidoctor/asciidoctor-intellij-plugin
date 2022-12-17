@@ -68,7 +68,10 @@ public class AsciiDocAddBlockIdToSection implements LocalQuickFix {
           String origText = section.getContainingFile().getText();
           StringBuilder newText = new StringBuilder(origText);
           newText.insert(firstChild.getTextOffset(), "[#" + id + "]\n");
-          intentionPreviewInfo = new IntentionPreviewInfo.CustomDiff(AsciiDocFileType.INSTANCE, section.getContainingFile().getName(), origText, newText.toString());
+          intentionPreviewInfo =
+            // Filename parameter is not supported in 2022.1 yet
+            // new IntentionPreviewInfo.CustomDiff(AsciiDocFileType.INSTANCE, section.getContainingFile().getName(), origText, newText.toString());
+            new IntentionPreviewInfo.CustomDiff(AsciiDocFileType.INSTANCE, origText, newText.toString());
         }
       }
     }
