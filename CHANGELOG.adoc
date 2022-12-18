@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - When saving other editors contents before rendering the preview, log exceptions thrown there instead of reporting them (#1257)
 - Add preview for AddBlockIdToSection if it is in another file (#1248)
 - Avoid re-formatting for table content with block markers starting with `!`, `;`, `,` and `:`
+- When moving editor tab to a new window, initialize preview (#1258)
 
 === 0.38.4
 

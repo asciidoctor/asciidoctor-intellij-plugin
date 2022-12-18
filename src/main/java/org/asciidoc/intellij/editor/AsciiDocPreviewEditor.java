@@ -537,6 +537,9 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    */
   @Override
   public void selectNotify() {
+    if (myPanel == null) {
+      setupPanel();
+    }
     if (FileDocumentManager.getInstance().getUnsavedDocuments().length > 0) {
       ApplicationManager.getApplication().invokeLater(() -> {
         // don't try to run save-all in parallel, therefore synchronize

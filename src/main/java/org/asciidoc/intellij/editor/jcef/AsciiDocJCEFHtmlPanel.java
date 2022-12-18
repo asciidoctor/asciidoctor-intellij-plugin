@@ -48,6 +48,7 @@ import org.asciidoc.intellij.psi.AsciiDocFileUtil;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.cef.browser.CefBrowser;
+import org.cef.handler.CefLifeSpanHandlerAdapter;
 import org.cef.handler.CefLoadHandler;
 import org.cef.handler.CefLoadHandlerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -263,14 +264,22 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     }
     uiZoom = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getZoom() / 100.0;
 
-    ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      synchronized (this) {
-        if (stamp == 0) {
-          // ensure that this is still the first call; avoid to overwrite a different text
-          setHtml("<div id=\"content\">Initializing...</div>", Collections.emptyMap());
-        }
+    myCefClient.addLifeSpanHandler(new CefLifeSpanHandlerAdapter() {
+      @Override
+      public void onAfterCreated(CefBrowser browser) {
+        // don't queue old content as it might overtake the setHtml() when is added as deferred content
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+          if (stamp == 0) {
+            synchronized (this) {
+              if (stamp == 0) {
+                // ensure that this is still the first call; avoid to overwrite a different text
+                setHtml("<div id=\"content\">Initializing...</div>", Collections.emptyMap());
+              }
+            }
+          }
+        });
       }
-    });
+    }, getCefBrowser());
 
   }
 
