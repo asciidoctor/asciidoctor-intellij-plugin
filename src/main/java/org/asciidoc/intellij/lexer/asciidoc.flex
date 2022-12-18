@@ -376,7 +376,7 @@ EXAMPLE_BLOCK_DELIMITER = "====" "="* {SPACE}*
 SIDEBAR_BLOCK_DELIMITER = "****" "*"* {SPACE}*
 QUOTE_BLOCK_DELIMITER = "____" "_"* {SPACE}*
 LITERAL_BLOCK_DELIMITER = "...." "."* {SPACE}*
-TABLE_BLOCK_DELIMITER = [|!] "===" "="* {SPACE}*
+TABLE_BLOCK_DELIMITER = [|!,:] "===" "="* {SPACE}*
 CELLPREFIX = (([0-9]+)[*]|([0-9]+)?([\.]?[0-9]+)?[+])?[\^<>]?([\.][\^<>])?[aehlmdsv]?
 OPEN_BLOCK_DELIMITER = "--" {SPACE}*
 CONTINUATION = "+"

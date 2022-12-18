@@ -69,13 +69,15 @@ public class AsciiDocStandardBlock extends AsciiDocASTWrapperPsiElement implemen
       return title;
     }
     StringBuilder sb = new StringBuilder();
-    PsiElement child = getFirstSignificantChildForFolding();
-    if (child instanceof AsciiDocBlockAttributes && !StringUtil.isEmpty(getStyle())) {
-      sb.append("[").append(getStyle()).append("] ");
-    }
-    String summary = AsciiDocStandardBlock.summary(this);
-    if (summary != null) {
-      sb.append(summary);
+    if (!getDefaultTitle().equals("Table")) {
+      PsiElement child = getFirstSignificantChildForFolding();
+      if (child instanceof AsciiDocBlockAttributes && !StringUtil.isEmpty(getStyle())) {
+        sb.append("[").append(getStyle()).append("] ");
+      }
+      String summary = AsciiDocStandardBlock.summary(this);
+      if (summary != null) {
+        sb.append(summary);
+      }
     }
     if (sb.length() == 0) {
       sb.append("(").append(getDefaultTitle()).append(")");
@@ -89,22 +91,42 @@ public class AsciiDocStandardBlock extends AsciiDocASTWrapperPsiElement implemen
   }
 
   @Override
+  @SuppressWarnings("checkstyle:MissingSwitchDefault")
   public String getDefaultTitle() {
-    ASTNode delimiter = getNode().findChildByType(TokenSet.create(AsciiDocTokenTypes.BLOCK_DELIMITER, AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER));
     String title = null;
-    if (delimiter != null) {
-      String d = delimiter.getText();
-      if (d.startsWith("|")) {
+    switch (getType()) {
+      case UNKNOWN:
+        break;
+      case TABLE:
         title = "Table";
-      } else if (d.startsWith("*")) {
+        break;
+      case SIDEBAR:
         title = "Sidebar";
-      } else if (d.startsWith("=")) {
+        break;
+      case EXAMPLE:
         title = "Example";
-      } else if (d.startsWith(".")) {
+        break;
+      case LITERAL:
         title = "Literal";
-      } else if (d.startsWith("_")) {
+        break;
+      case PASSTHROUGH:
+        title = "Passthrough";
+        break;
+      case QUOTE:
         title = "Quote";
-      }
+        break;
+      case BLOCKMACRO:
+        title = "Blockmacro";
+        break;
+      case LISTING:
+        title = "Listing";
+        break;
+      case VERSE:
+        title = "Verse";
+        break;
+      case FRONTMATTER:
+        title = "Frontmatter";
+        break;
     }
     if (title == null) {
       title = AsciiDocBlock.super.getDefaultTitle();
@@ -118,7 +140,7 @@ public class AsciiDocStandardBlock extends AsciiDocASTWrapperPsiElement implemen
     ASTNode delimiter = getNode().findChildByType(TokenSet.create(AsciiDocTokenTypes.BLOCK_DELIMITER, AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER));
     if (delimiter != null) {
       String d = delimiter.getText();
-      if (d.startsWith("|")) {
+      if (d.startsWith("|") || d.startsWith(";") || d.startsWith(":") || d.startsWith("!")) {
         type = Type.TABLE;
       } else if (d.startsWith("*")) {
         type = Type.SIDEBAR;

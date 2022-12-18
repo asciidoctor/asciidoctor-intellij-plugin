@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - Support superscript and subscript in the editor (#1251)
 - When saving other editors contents before rendering the preview, log exceptions thrown there instead of reporting them (#1257)
 - Add preview for AddBlockIdToSection if it is in another file (#1248)
+- Avoid re-formatting for table content with block markers starting with `!`, `;`, `,` and `:`
 
 === 0.38.4
 
