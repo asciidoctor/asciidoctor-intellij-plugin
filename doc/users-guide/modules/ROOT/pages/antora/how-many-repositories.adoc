@@ -1,0 +1,177 @@
+= Structuring Antora repositories
+:description: How many repositories to use for components and playbooks in when using Antora together with the AsciiDoc Plugin for IntelliJ.
+
+{description}
+
+include::partial$antora-series.adoc[]
+
+== Overview for different options
+
+The introduction to using Antora with IntelliJ described xref:../technical-writing/using-antora-with-intellij.adoc#basic-structure-of-an-antora-setup[the setup of using multiple content repositories with Antora components and an additional Git repository for the playbook].
+This section describes that setup in more details and its alternatives:
+
+* How many content repositories to have.
+* Where to store the different component versions (in branches or folders in the main branch).
+* Where to store the playbooks.
+
+See the following table show the set of combinations:
+
+[%autowidth]
+|===
+|Content Repositories |Versions |Playbook Repository
+
+|<<variant-1,Multiple repositories>>
+|<<variant-1,In branches>>
+|<<variant-1,Separate repository>>
+
+|<<variant-2,Single repository>>
+|<<variant-2,In branches>>
+|<<variant-2,Separate repository>>
+
+|<<variant-3,Single repository>>
+|<<variant-3,In branches>>
+|<<variant-3,Separate branch>>
+
+|<<variant-4,Single repository>>
+|<<variant-4,In folders>>
+|<<variant-4,In the content repository>>
+
+|===
+
+[#variant-1]
+=== Multiple content repositories with Antora components, additional Git repository for the playbook
+
+One of the most outstanding features of Antora is to pull content from multiple repositories and branches and create one consistent site from it where all links work and are checked at build-time.
+
+Those different content repositories offer possibilities which can be useful in a specific scenario:
+
+* Each repository could be maintained by different people with separate responsibilities and permissions.
+* Some repositories could contain generated content, other repositories could contain content created by humans.
++
+[#antora-collector]
+For content which can be generated on the fly, the https://gitlab.com/antora/antora-collector-extension[Antora Collector extension] can help as it allows to use generate the content when building the site which removes the need to store it in a Git repository.
+Having it separated would ensure that humans don't interfere with generated content.
+This comes with the trade-off that it can slow down the generation of the final site.
+* Some repositories could be public and would allow contributors to read and contribute to the site's source, while others would be private.
+Still, all combined repositories could be used to create one public site.
+As an alternative, different playbooks could create different public or private sites with different combinations of the content repositories.
+
+While the content repositories change when the content changes, the Antora playbook changes when new components or versions appear, and the UI changes when the user experience changes or the design changes.
+As they change for different reasons than the content, they should get a different place, therefore, they should get their own repository.
+Also, there might be different people responsible for the layout of the site and the content published, another indication for an extra repository.
+
+There is a cost of changing this later:
+
+* When combining multiple repositories with the content in branches into a lower number of repositories or a single repository, this is a tedious task as all branches will need to receive the right content.
+Upon moving the content, the Git history will be cut in the middle: The old history will stay in the old repository, and won't be moved.
+
+With so many repositories, there are some tradeoffs:
+
+* If a user needs to contribute to multiple repositories, they would need to check out all of them one by one.
+If this is the case for a lot of users, this might indicate that repositories should be consolidated to fewer repositories, but it would require that the components in one repository follow the same versioning scheme, as tags and branches in repositories should match the versions of the components.
+
+* To build an author's preview, all repositories would need to be checked out, as it would expect all repositories to be available locally.
+As an alternative, different author's playbooks could be offered which use some local repositories and some remote repositories.
+
+In a scenario where the components are very independent and have only a few links between them, an author could simplify the setup as follows if they skip the build with the author's playbook and rely on the IDE's features for validation and preview.
+See <<author-preview-in-ide>> below.
+
+The upcoming scenarios attempt to remedy these tradeoffs at the cost of limiting the possibilities described in this paragraph which might not be needed in all situations.
+
+[#variant-2]
+=== Single content repositories with Antora components, additional Git repository for the playbook
+
+In this scenario, all components are stored in one Git repository.
+
+* Antora supports placing them in different folders, so different responsibilities can be mapped to different folders.
+https://docs.antora.org/antora/latest/playbook/content-source-start-paths/[Antora supports multiple start paths in the same repository].
+* Placing generated content into the single Git repository is not recommended, as it would create lots of history entries which could disturb users.
+See the information about <<antora-collector,Antora collector>> above to generate content on-the-fly.
+* All users can see all content.
+Permission to change could be managed with https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners[GitHub code owners] which would handle the approval of pull requests for their content.
+* Users need to check out only a single content repository, and all cross-references between components will work.
+
+As content exists in different branches, the repository with the playbook and the UI has only a single main branch.
+Having those repositories separate helps to have the up-to-date UI in a separate folder while switching the other folder between releases and feature branches.
+Also, there might be different people responsible for the layout of the site and the content published, another indication for an extra repository.
+
+There is a cost of changing this later:
+
+* When separating a single repository into multiple repositories, this is a tedious task as all branches will need to receive the right content.
+Upon moving the content, the Git history will be cut in the middle: The old history will stay in the old repository, and won't be moved.
+
+When users check out only the content repository, the following setup might be simplifying it for writers:
+
+. Duplicate the necessary attributes from the playbook in the `.asciidoctorconfig` file as described in xref:../technical-writing/preparing-a-repository.adoc#provide-hints-for-the-preview-with-asciidoctorconfig[Provide hints for the preview with `.asciidoctorconfig`], and
+. Configure the stylesheet for the IDE's preview as described in xref:../technical-writing/using-antora-with-intellij.adoc#site-css-in-the-preview[Using the site's CSS in the preview].
+
+This setup might be good enough so that the authors don't need to build a local author's preview.
+
+While this comes with the cost of maintaining the playbook's attributes in a second place, it might still be a viable alternative.
+
+[#variant-3]
+=== Single repository for everything, separate branch for the playbook
+
+This setup is very similar to the previous setup <<variant-2>>: The user has a parent folder with two folders, one for the content, another for the playbook.
+
+To create two worktrees from a single repository, follow these steps:
+
+. Create the parent folder.
+. Check out the content repository as before into the content folder.
+. Create a second worktree, by issuing a command like the following on the command line in the content folder:
++
+----
+git worktree add --track -b <branch> <path> <remote>/<branch>
+----
+
+See the https://git-scm.com/docs/git-worktree[Git worktree documentation] for details.
+The branch can be switched independently in each worktree, but no two worktrees must be on the same branch.
+
+To set up the branch for the playbook, it should be a detached branch that doesn't have a common parent with the content branch.
+
+Such a setup can help if having a separate repository for the playbook is difficult in an organization.
+Having a separate detached branch for the playbook is technically well-supported by Git, still it is not a common practice, so it will need an extra effort for the authors to understand the setup.
+If authors use the IDE for the preview as described in
+
+Such a setup can be changed to a setup with a separate playbook repository at any time without losing the Git history of the playbook.
+
+[#variant-4]
+=== Single repository for everything, playbook in the main branch
+
+In this variant the authors check out only one repository with both the content and the playbook.
+As the playbook is in the main branch, it is not possible to switch between branches for different actively maintained versions, as the author would then lose the access to the most recent playbook.
+
+Such a single-repository-setup is only possible when the different component versions are not stored in different branches, but in different folders in the main branch.
+
+Such a setup looks simple at the start.
+With the growing number of versions, the number of folders will grow and authors might be confused which folder to edit.
+When the setup is restructured to a component versions in branches, the history would be cut-off.
+
+When maintaining multiple versions, files in different folders need to change.
+If the versions would be in different branches, the authors could use the Git functionality of cherry-picking changes from one branch to another.
+
+[#author-preview-in-ide]
+=== Author preview in the IDE
+
+Having a separate playbook for an author's preview will give the best possible preview.
+
+Still it has an additional effort for the author:
+
+. Install node on the machine they are authoring content, or use a pre-packaged setup which utilizes containers with tools like Docker or Podman.
+. Run a local webserver to view the locally generated site.
+. The turnaround time for the site to build locally.
+
+With the following steps, the preview in the IDE might be enhanced sufficiently enough to skip the local preview build for the authors.
+
+. Check out only the one or the few repositories content repositories the authors are interested in.
+. Duplicate the necessary attributes from the playbook in the `.asciidoctorconfig` file as described in xref:../technical-writing/preparing-a-repository.adoc#provide-hints-for-the-preview-with-asciidoctorconfig[Provide hints for the preview with `.asciidoctorconfig`].
+. Configure the stylesheet for the IDE's preview as described in xref:../technical-writing/using-antora-with-intellij.adoc#site-css-in-the-preview[Using the site's CSS in the preview].
+
+While this comes with the cost of maintaining the playbook's attributes in multiple places, it might still be a viable alternative.
+
+When only a single content repository out of many is checked out, links to components in other repositories will not show the page title, can't be validated in the IDE and can't be navigated to.
+This might change in a future version of the AsciiDoc plugin for IntelliJ once Antora Atlas is supported: With the information stored in the site manifest, the local IDE can retrieve the page titles of the pages in other components together with their links to the final site.
+Follow https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/1250[GitHub issue #1250] for the progress on this issue.
+
+It is still a good practice to build a preview for pull requests on the server to see the results for changes before the changes are merged and published to the live site.
+

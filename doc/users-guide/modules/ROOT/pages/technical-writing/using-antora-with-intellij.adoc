@@ -274,10 +274,7 @@ Such a scenario might be where the Antora content is stored side-by-side with so
 If there are only few cross-references between the components, checking out other content repositories is seen as an unnecessary overhead, and checking out the playbook repository is a nuisance.
 +
 In such a situation, it might be simpler to duplicate the playbook's attributes in an `.asciidoctorconfig` file, and authors would rely on the IDE's preview to prepare their changes.
-+
-When only a single content repository is checked out, links to other components will not show the page title, can't be validated in the IDE and can't be navigated to.
-This might change in a future version of the AsciiDoc plugin for IntelliJ once Antora Atlas is supported: With the information stored in the site manifest, the local IDE can retrieve the page titles of the pages in other components together with their links to the final site.
-Follow https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/1250[GitHub issue #1250] for the progress on this issue.
+See xref:antora/how-many-repositories.adoc#author-preview-in-ide[Author preview in the IDE] for details.
 
 [[site-css-in-the-preview]]
 == Using the site's CSS in the preview
@@ -294,5 +291,7 @@ This can be seen in action for the documentation of this plugin in the `https://
 See xref:./preparing-a-repository.adoc#custom-styling-for-the-preview[Custom styling for the preview] for details on how to do this.
 
 == Further reading
+
+To read more about Antora, continue with xref:antora/index.adoc[] which describes areas for decisions and different solutions for different scenarios.
 
 Continue to xref:./recommended-plugins.adoc[] for the next step of this series.

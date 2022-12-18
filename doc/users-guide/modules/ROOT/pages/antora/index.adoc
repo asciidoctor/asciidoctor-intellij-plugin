@@ -1,0 +1,64 @@
+= Decisions around Antora
+:navtitle: Decisions around Antora
+:description: Decisions to take when starting with Antora which are difficult to reverse and their trade-offs. Everything in the context of using it with IntelliJ.
+
+{description}
+
+== Prerequisites
+
+This assumes the reader is reasonably familiar with technical writing with IntelliJ and the AsciiDoc plugin.
+See the page xref:page$technical-writing/index.adoc[] for step-by-step guide.
+
+This assumes basic knowledge about Antora.
+See xref:technical-writing/using-antora-with-intellij.adoc[] for an introduction and links.
+
+== Why some decisions are different from others
+
+When starting on a new topic, there are some decisions that need to be taken at the beginning and which show their impact only later in the project.
+So the people involved might want to take the "`right`" decision.
+
+At the same time:
+
+* The impact might not be known in advance.
+* Future scenarios might be difficult to assess.
+* Some of those decisions might not be easily reversible later in the process.
+* It might not be clear which decisions those would be and what the costs or reversing would be.
+
+When talking to IT architects, they call those decisions "`architecture decisions`", and they argue to take a structured approach and document assumptions, context, options, people involved and the decisions in an https://adr.github.io/[architecture decision record (ADR)].
+
+When talking to IT consultants, they claim that there is no single "`right`" decision, and their answer is "`it depends`".
+See https://blog.frankel.ch/it-depends/[Nicolas Fränkel's blog post on this topic].
+
+Still, this page tries to help with better decisions when starting with Antora.
+Continue for one more section to find out how.
+
+== How this page helps with decisions
+
+This page has been written looking back at the implementation of some Antora sites, and it welcomes feedback from other users to collect more knowledge.
+
+It focuses on:
+
+. Decisions that proved to be difficult to be reversed, so new users should focus on them on their start with Antora.
+. Shows different options and their trade-off in different scenarios and how this changes over time.
+. Provides a practical example which is usually linked to this documentation which also uses Antora.
+. As this guide is part of the AsciiDoc plugin for IntelliJ, it takes the perspective of a technical writer managing the content.
+
+== Decisions and possible options
+
+. xref:./how-many-repositories.adoc[How many repositories to use for components and playbooks]
+
+For the future, additional pages are might appear here like for example:
+
+* Should generate content be committed to Antora repositories?
+* Which UI bundle to use, and where to place it?
+* Where should an author's playbook be placed?
+* What should be a component, what a module?
+
+include::partial$improve-this-guide.adoc[leveloffset=+1]
+
+== Further reading
+
+To get a full overview of all features of the plugin, see xref:features.adoc[].
+
+To customize the plugin's settings, see xref:recommended-settings.adoc[] for recommended settings.
+

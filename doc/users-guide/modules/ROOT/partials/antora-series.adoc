@@ -1,0 +1,2 @@
+This is part of a decisions guide for technical writing environments with Antora and the AsciiDoc plugin for IntelliJ.
+See the page xref:page$antora/index.adoc[] for other decisions.

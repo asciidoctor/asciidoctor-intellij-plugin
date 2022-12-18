@@ -1,0 +1,7 @@
+= Improving this guide
+
+Each of the pages in the guide has an "`Edit this page`" link in the upper right corner.
+Use this to edit the content on GitHub.
+As an alternative, all content to this guide is hosted in the https://github.com/asciidoctor/asciidoctor-intellij-plugin[Git repository of the AsciiDoc plugin] in the _doc_ folder, so it can be edited in an IDE like any other AsciiDoc content.
+
+If there are missing features, link:mailto:alexander.schwartz@gmx.net?subject=Feedback%20to%20IntelliJ%20Technical%20Setup[contact the maintainer via email] or https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/new/choose[create an issue on GitHub].
