@@ -133,13 +133,75 @@ note right
 end note
 ----
 
-// TODO: Try out https://gitlab.com/djencks/asciidoctor-antora-kref
-// it might be able to use a "kref" inside Kroki diagrams
-
 [NOTE]
 ====
 In this documentation the image above is non-interactive, as the target link of the note would not resolve.
 ====
+
+=== Using extensions to create links
+
+An extension with custom inline macro can create the links from an `+xref:[]+`.
+Use the JavaScript extension for example with Antora, and use the Ruby extension for IntelliJ as described in xref:features/advanced/asciidoctor-extensions.adoc[].
+
+.JavaScript extension to add a custom inline macro `+linkinpuml:...[]+`
+[source,javascript]
+----
+function register (registry, context) {
+  registry.inlineMacro('linkinpuml', function () {
+    this.matchFormat('short')
+    this.positionalAttributes(['content'])
+    this.process((parent, target, attrs) => {
+      const anchor = parent.applySubstitutions(attrs.content, ['macros'])
+      const [_, href, text] = anchor.match(/^<a href="(.+?)"[^>]*>(.*)<\/a>$/)
+      const prefix = attrs.prefix
+      return `[[${prefix ? [prefix, href].join('/') : href} ${text}]]`
+    })
+  })
+}
+
+module.exports.register = register
+----
+
+.Ruby extension to add a custom inline macro `+linkinpuml:...[]+`
+[source,ruby]
+----
+require 'asciidoctor/extensions' unless RUBY_ENGINE == 'opal'
+
+include ::Asciidoctor
+
+class LinkInPumlMacro < Extensions::InlineMacroProcessor
+  use_dsl
+  named :'link-in-puml'
+
+  def process parent, target, attrs
+
+    anchor = parent.apply_subs("xref:#{target}[]", [:macros])
+
+    # parse the anchor
+    matches = anchor.match(%r{^<a href="(?<href>.+?)"[^>]*>(?<text>.*)</a>$})
+
+    if matches
+      # matched, output the href
+      create_inline(parent, :quoted, matches[:href])
+    else
+      # no match, output the target as-is
+      create_inline(parent, :quoted, target)
+    end
+
+  end
+end
+----
+
+.Example PlantUML code which substitutes the macro to create a link
+[source,asciidoc]
+----
+[plantuml, format=svg, opts="inline",subs=+macros]
+....
+!include <C4/C4_Container>
+
+System(systemAlias, "Label", "Optional Description", $link="linkinpuml:target.adoc[]")
+....
+----
 
 [#avoid-flicker]
 === Avoid flicker in preview on refresh
