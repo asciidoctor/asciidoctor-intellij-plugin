@@ -1,0 +1,88 @@
+= Using tables with AsciiDoc in IntelliJ
+:navtitle: Using tables in AsciiDoc
+:description: How to use tables in AsciiDoc documents efficiently when working with IntelliJ.
+
+{description}
+Tables help technical writers to structure content for their readers.
+
+include::partial$technical-writing-series.adoc[]
+
+== Prerequisites
+
+This assumes that IntelliJ IDEA is open with a project with some existing content.
+See xref:./opening-the-first-project.adoc[] and xref:./editing-an-asciidoc-file.adoc[] on how to do this.
+
+== Creating a new table
+
+There are multiple ways to create a AsciiDoc table in IntelliJ.
+See the following sections for an overview.
+
+For large tables, <<use-csv-or-other-delimited-formats, consider the CSV format>>.
+
+=== Live template
+
+Type on the keyboard kbd:[a]kbd:[d]kbd:[-]kbd:[t]kbd:[a]kbd:[b]kbd:[l]kbd:[e] and use a live-template to create a table.
+To find out more about live templates, see the xref:features/advanced/livetemplates.adoc[] page.
+
+=== Draw the size of the table
+
+Use the menu icon for tables (image:technical-writing/intellij-table-icon.png[table icon]) and use the mouse to create a table of the desired size.
+
+image::technical-writing/intellij-table-choose-size.png[]
+
+=== Create table by size
+
+As above, but select menu:Create Table Dialog...[] to specify the size of the height and width of the table.
+
+image::technical-writing/intellij-table-dimensions.png[]
+
+=== Paste a table from a spreadsheet
+
+As above, but select menu:Paste Table...[] to paste a table which has been copied for example from a spreadsheet programm to the clipboard.
+For this to work usually menu:tab[] separator works best.
+Independent of the format the user selects, it is converted to the standard AsciiDoc table when pasted.
+
+image::technical-writing/intellij-table-paste.png[]
+
+[#use-csv-or-other-delimited-formats]
+=== Use CSV or other delimited formats
+
+Use an include to create a table from a CSV file.
+This is ideals for large, uniform tables.
+
+IntelliJ includes CSV file support, see the screenshots at the end of this section.
+It allows adding and moving rows and columns more efficiently than the standard AsciiDoc format.
+Therefore, the CSV contents should be included from a separate file and not edited in the AsciiDoc file directly.
+
+Such a CSV file can even be edited in a spreadsheet program if required.
+
+A table that reads data from a CSV file reads as follows:
+
+[source,asciidoc]
+-----
+[%header,format=csv]
+|===
+\include::tracks.csv[]
+|===
+-----
+
+When opening the CSV file in IntelliJ for the first time, it will show in a standard editor.
+
+image::technical-writing/intellij-csv-editor-1.png[]
+
+To configure the CSV format, click on the table icon in the upper right of the editor.
+To switch to the table view click on the menu:Data[] tab at the bottom.
+
+image::technical-writing/intellij-csv-editor-2.png[]
+
+See the https://docs.asciidoctor.org/asciidoc/latest/tables/data-format/[AsciiDoc manual about tables in CSV, TSV and DSV data format] for details what data formats are supported.
+
+== Future ideas
+
+For future ideas about editing tables, follow this GitHub issue https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/1256[asciidoctor/asciidoctor-intellij-plugin#1256]
+
+== Further reading
+
+Read more about keyboard shortcuts in xref:features/keymap.adoc[].
+
+Continue to xref:./git-integration.adoc[] for the next step of this series.

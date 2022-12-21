@@ -69,4 +69,4 @@ image::technical-writing/intellij-search-everywhere.png[]
 
 Read more about keyboard shortcuts in xref:features/keymap.adoc[].
 
-Continue to xref:./git-integration.adoc[] for the next step of this series.
+Continue to xref:./using-tables-in-a-project.adoc[] for the next step of this series.

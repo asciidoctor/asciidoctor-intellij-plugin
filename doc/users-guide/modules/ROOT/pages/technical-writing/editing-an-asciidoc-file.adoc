@@ -73,7 +73,7 @@ It uses similar highlighting for suspected spelling and grammar errors.
 The main things to know about the editor are:
 
 * When the user types the three letters kbd:[a]kbd:[d]kbd:[-], the editor suggests live templates for common AsciiDoc structures like lists, links and source code.
-Continue typing to narrow down the list, use the up and down arrows to highlight an entry, and use kbd:[Enter] to select an entry.
+Continue typing to narrow down the list, use the up and down arrows to highlight an entry, and use kbd:[Enter] to select an entry. See xref:features/advanced/livetemplates.adoc[] for additional information.
 
 * When typing a file name as part of an image macro or a reference, [.windows.linux]#kbd:[Ctrl+Space]# [.macos]#kbd:[^ Space]# shows a list of suggestions.
 Press kbd:[Tab] to replace the text in editor for the current reference or press kbd:[Enter] to insert the text in the editor.
