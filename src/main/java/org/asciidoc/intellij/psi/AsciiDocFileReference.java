@@ -70,6 +70,7 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_FAMILY_PATTERN;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_PREFIX_AND_FAMILY_PATTERN;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_PREFIX_PATTERN;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_SUPPORTED;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_YML;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ATTRIBUTES;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.COMPONENT_MODULE;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.FAMILY;
@@ -1360,7 +1361,12 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           }
         }
       }
+      List<@NotNull PsiElement> collectorFiles = getCollectorFiles(element, startDir, fileName);
+      if (!collectorFiles.isEmpty()) {
+        return collectorFiles;
+      }
     }
+
     if (fileName.length() == 0) {
       return Collections.singletonList(startDir);
     }
@@ -1408,6 +1414,74 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     }
     // check if file name is absolute path
     return resolveAbsolutePath(element, fileName);
+  }
+
+  private List<@NotNull PsiElement> getCollectorFiles(PsiElement element, PsiDirectory startDir, String fileName) {
+    VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(startDir);
+    if (antoraModuleDir != null) {
+      VirtualFile antoraFile = antoraModuleDir.getParent().getParent().findChild(ANTORA_YML);
+      if (antoraFile == null) {
+        return Collections.emptyList();
+      }
+      Map<String, Object> antora;
+      try {
+        antora = AsciiDocWrapper.readAntoraYaml(myElement.getProject(), antoraFile);
+      } catch (YAMLException ex) {
+        return Collections.emptyList();
+      }
+      Object ext = antora.get("ext");
+      if (!(ext instanceof Map)) {
+        return Collections.emptyList();
+      }
+      Object collector = ((Map<?, ?>) ext).get("collector");
+      if (collector instanceof List) {
+        for (Object item : ((List<?>) collector)) {
+          if (item instanceof Map) {
+            List<@NotNull PsiElement> result = matchCollector(element, startDir, fileName, antoraFile.getParent(), (Map<?, ?>) item);
+            if (!result.isEmpty()) {
+              return result;
+            }
+          }
+        }
+      } else if (collector instanceof Map) {
+        List<@NotNull PsiElement> result = matchCollector(element, startDir, fileName, antoraFile.getParent(), (Map<?, ?>) collector);
+        if (!result.isEmpty()) {
+          return result;
+        }
+      }
+    }
+    return Collections.emptyList();
+  }
+
+  private List<@NotNull PsiElement> matchCollector(PsiElement element, PsiDirectory startDir, String fileName, VirtualFile antoraComponentDir, Map<?, ?> item) {
+    if (!(item.get("scan") instanceof Map)) {
+      return Collections.emptyList();
+    }
+    item = (Map<?, ?>) item.get("scan");
+    String fullFile = fileName;
+    if (!SystemInfo.isWindows && fullFile.length() > 1 && !fullFile.startsWith("/")) {
+      fullFile = startDir.getVirtualFile().getCanonicalPath() + "/" + fullFile;
+    } else if (SystemInfo.isWindows && !fullFile.matches("/[A-Z]:/.*")) {
+      fullFile = startDir.getVirtualFile().getCanonicalPath() + "/" + fullFile;
+    }
+    String base = antoraComponentDir.getCanonicalPath();
+    if (base == null) {
+      return Collections.emptyList();
+    }
+    if (item.get("base") != null) {
+      base = base + "/" + item.get("base");
+    }
+    if (!(item.get("dir") instanceof String)) {
+      return Collections.emptyList();
+    }
+    if (fullFile.startsWith(base)) {
+      fullFile = antoraComponentDir.getCanonicalPath() + "/" + item.get("dir") + "/" + fullFile.substring(base.length());
+    }
+    List<@NotNull PsiElement> psiElements = resolveAbsolutePath(element, fullFile);
+    if (psiElements == null) {
+      return Collections.emptyList();
+    }
+    return psiElements;
   }
 
   @SuppressWarnings("checkstyle:MethodLength")

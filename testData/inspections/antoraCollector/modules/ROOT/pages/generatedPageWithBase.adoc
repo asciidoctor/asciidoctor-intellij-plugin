@@ -1,0 +1,3 @@
+= Pages should resolve with base
+
+xref:generated-page-with-base.adoc[]

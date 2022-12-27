@@ -1,0 +1,3 @@
+= Generated page with base
+
+This is a generated page.

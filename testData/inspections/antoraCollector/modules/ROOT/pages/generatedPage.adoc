@@ -1,0 +1,3 @@
+= Pages should resolve
+
+xref:generated-page.adoc[]

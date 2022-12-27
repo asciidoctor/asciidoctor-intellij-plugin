@@ -9,7 +9,8 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.38.6
 
-- Initialize the preview earlier, as window might not be visible, yet (#1258)
+- Initialize the preview earlier, as the window might not be visible, yet (#1258)
+- Initial support for the Antora Collector Extension (#1177)
 
 === 0.38.5
 

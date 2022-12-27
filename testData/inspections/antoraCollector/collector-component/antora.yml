@@ -1,0 +1,4 @@
+name: generated-name
+asciidoc:
+  attributes:
+    generated-attribute: generated-value

@@ -1,0 +1,11 @@
+name: antora-collector
+version: ~
+ext:
+  collector:
+    - scan:
+        dir: ./collector-component
+    - scan:
+        dir: ./collector-page
+    - scan:
+        dir: ./collector-page-with-base
+        base: modules/ROOT/pages

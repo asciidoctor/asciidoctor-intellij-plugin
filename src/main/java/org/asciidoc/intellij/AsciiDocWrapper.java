@@ -37,6 +37,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.serviceContainer.AlreadyDisposedException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -1076,6 +1077,7 @@ public class AsciiDocWrapper {
     return CachedValuesManager.getCachedValue(currentFile, KEY_ASCIIDOC_ATTRIBUTES,
       () -> {
         List<AttributeDeclaration> result = new ArrayList<>();
+        Object reference = currentFile;
         try {
           Map<String, Object> antora;
           antora = AsciiDocWrapper.readAntoraYaml(project, antoraFile);
@@ -1097,11 +1099,15 @@ public class AsciiDocWrapper {
                 result.add(new AsciiDocAttributeDeclarationDummy(k.toString(), vs));
               });
             }
+            if (antora.get("ext") != null) {
+              // extensions like the collector make this more difficult, therefore don't look only at this single file
+              reference = PsiModificationTracker.MODIFICATION_COUNT;
+            }
           }
         } catch (YAMLException ignored) {
           // continue without detailed Antora information
         }
-        return CachedValueProvider.Result.create(result, currentFile);
+        return CachedValueProvider.Result.create(result, reference);
       }
     );
   }
@@ -1117,6 +1123,7 @@ public class AsciiDocWrapper {
     return CachedValuesManager.getCachedValue(currentFile, KEY_ASCIIDOC_ATTRIBUTES,
       () -> {
         List<AttributeDeclaration> result = new ArrayList<>();
+        Object reference = currentFile;
         try {
           Map<String, Object> antora = readAntoraYaml(project, antoraFile);
           mapAttribute(result, antora, "name", "page-component-name");
@@ -1143,10 +1150,14 @@ public class AsciiDocWrapper {
               });
             }
           }
+          if (antora.get("ext") != null) {
+            // extensions like the collector make this more difficult, therefore don't look only at this single file
+            reference = PsiModificationTracker.MODIFICATION_COUNT;
+          }
         } catch (YAMLException ignored) {
           // continue without detailed Antora information
         }
-        return CachedValueProvider.Result.create(result, currentFile);
+        return CachedValueProvider.Result.create(result, reference);
       }
     );
   }
@@ -1161,7 +1172,7 @@ public class AsciiDocWrapper {
       handleAntoraYamlException(ex, antoraFile.getCanonicalPath());
       throw ex;
     }
-    return CachedValuesManager.getCachedValue(currentFile, KEY_ASCIIDOC_YAML_ATTRIBUTES,
+    Map<String, Object> componentDescriptor = CachedValuesManager.getCachedValue(currentFile, KEY_ASCIIDOC_YAML_ATTRIBUTES,
       () -> {
         Map<String, Object> result;
         try {
@@ -1176,12 +1187,92 @@ public class AsciiDocWrapper {
           }
           // starting from Antora 3.0.0.alpha-3 a version can be empty. It will be treated internally as an empty string
           result.putIfAbsent("version", "");
+          result = Collections.unmodifiableMap(result);
           return CachedValueProvider.Result.create(result, currentFile);
         } catch (YAMLException ex) {
           handleAntoraYamlException(ex, antoraFile.getCanonicalPath());
           throw ex;
         }
       });
+
+    if (antoraFile.getName().equals("antora.yml")) {
+      // clone the map to avoid polluting the cache
+      Object ext = componentDescriptor.get("ext");
+      if ((ext instanceof Map)) {
+        Object collector = ((Map<?, ?>) ext).get("collector");
+        if (collector != null) {
+          // clone the component descriptor to avoid modifying the original
+          componentDescriptor = new HashMap<>(componentDescriptor);
+          if (collector instanceof List) {
+            for (Object item : ((List<?>) collector)) {
+              if (item instanceof Map) {
+                parseCollectorScan(project, antoraFile.getParent(), componentDescriptor, (Map<?, ?>) item);
+              }
+            }
+          } else if (collector instanceof Map) {
+            parseCollectorScan(project, antoraFile.getParent(), componentDescriptor, (Map<?, ?>) collector);
+          }
+          componentDescriptor = Collections.unmodifiableMap(componentDescriptor);
+        }
+      }
+    }
+    return componentDescriptor;
+  }
+
+  /**
+   * Overwrite all Antora component descriptor properties with those found in generated <code>antora.yml</code> component descriptor.
+   * If it doesn't exist, do nothing.
+   */
+  private static void parseCollectorScan(Project project, VirtualFile parent, Map<String, Object> combined, Map<?, ?> item) {
+    if (!(item.get("scan") instanceof Map)) {
+      return;
+    }
+    item = (Map<?, ?>) item.get("scan");
+    if (item.get("basedir") != null) {
+      return;
+    }
+    if (!(item.get("dir") instanceof String)) {
+      return;
+    }
+    String dir = (String) item.get("dir");
+    parent = parent.findFileByRelativePath(dir);
+    if (parent == null) {
+      return;
+    }
+    VirtualFile generatedAntoraFile = parent.findChild("antora.yml");
+    if (generatedAntoraFile == null) {
+      return;
+    }
+    PsiFile currentFile = PsiManager.getInstance(project).findFile(generatedAntoraFile);
+    if (currentFile == null) {
+      return;
+    }
+
+    Map<String, Object> componentDescriptor = CachedValuesManager.getCachedValue(currentFile, KEY_ASCIIDOC_YAML_ATTRIBUTES,
+      () -> {
+        Map<String, Object> result;
+        try {
+          Yaml yaml = new Yaml();
+          Object r = yaml.load(currentFile.getText());
+          if (!(r instanceof Map)) {
+            // result will be null if file is empty
+            result = new HashMap<>();
+          } else {
+            //noinspection unchecked
+            result = (Map<String, Object>) r;
+          }
+          result = Collections.unmodifiableMap(result);
+          return CachedValueProvider.Result.create(result, currentFile);
+        } catch (YAMLException ex) {
+          handleAntoraYamlException(ex, generatedAntoraFile.getCanonicalPath());
+          throw ex;
+        }
+      });
+
+    combined.putAll(componentDescriptor);
+    if (componentDescriptor.get("prerelease") == null) {
+      combined.remove("prerelease");
+    }
   }
 
   private static void handleAntoraYamlException(YAMLException ex, @Nullable String canonicalPath) {
