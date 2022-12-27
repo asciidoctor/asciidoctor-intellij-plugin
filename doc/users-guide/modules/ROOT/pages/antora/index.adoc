@@ -45,11 +45,11 @@ It focuses on:
 
 == Decisions and possible options
 
-. xref:./how-many-repositories.adoc[How many repositories to use for components and playbooks]
+. xref:./how-many-repositories.adoc[How many repositories to use for components and playbooks].
+. xref:./generated-content-in-antora.adoc[How to handle generated content in Antora projects].
 
-For the future, additional pages are might appear here like for example:
+For the future, additional pages might appear here like for example:
 
-* Should generate content be committed to Antora repositories?
 * Which UI bundle to use, and where to place it?
 * Where should an author's playbook be placed?
 * What should be a component, what a module?

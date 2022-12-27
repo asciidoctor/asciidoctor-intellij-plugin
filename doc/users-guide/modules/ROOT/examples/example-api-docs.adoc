@@ -1,0 +1,5 @@
+// suppress inspection "AsciiDocAttributeShouldBeDefined" for whole file
+
+// tag::example[]
+This the link:{apidocs}[link to the API docs].
+// end::example[]

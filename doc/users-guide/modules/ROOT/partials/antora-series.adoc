@@ -1,2 +1,2 @@
-This is part of a decisions guide for technical writing environments with Antora and the AsciiDoc plugin for IntelliJ.
-See the page xref:page$antora/index.adoc[] for other decisions.
+This is part of a decision guide for technical writing environments with Antora and the AsciiDoc plugin for IntelliJ.
+See the page xref:page$antora/index.adoc[] for prerequisites and other decisions.

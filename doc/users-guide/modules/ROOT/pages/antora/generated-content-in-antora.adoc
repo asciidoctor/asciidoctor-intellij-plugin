@@ -1,0 +1,111 @@
+= Generated content and attachments in Antora projects
+:navtitle: Generated content and attachments
+:description: How to handle attachments and generated content in an Antora project, and whether to commit it to Git or not.
+
+{description}
+
+include::partial$antora-series.adoc[]
+
+== Why committing attachments and generated content can become a problem
+
+A standard Antora setup reads content only from Git repositories where the content has been committed.
+
+At the same time, committing generated content to a Git repository will bloat the size of the repository, and will a lot of entries to the Git commit history of that repository.
+This is even more problematic for attachments, which are bigger in their size.
+
+Whenever Antora generates the site, or technical writers clone the repository, all the data in the repository is transferred, which wastes both time and resources.
+
+== Overview for different options
+
+=== Handling generated Antora content
+
+This section describes a scenario when the generated content should be processed by Antora like any other manually written pages.
+In a similar way, this would also work for images and attachments.
+
+This is different from, for example, generated JavaDocs, which won't be processed with Antora.
+This is covered in the next section.
+
+==== Committing generated Antora content in the content repository
+
+When committing the content to the regular repository, this makes it simpler for technical writers to reference the content as they need to check out only a single repository.
+
+When this content changes frequently, this leads to a cluttered Git history of the repository.
+
+Therefore, this option should be chosen only if the generated content is small and doesn't change frequently.
+Usually, committing it to a separate repository has advantages, see the section <<handling-generated-non-antora-content>> for details.
+
+==== Committing generated Antora content to a separate repository
+
+When committing generated content to a separate repository, this can could have the following advantages:
+
+* Technical writers don't need to check out the latest changes from the generated content when creating their content.
++
+This has the assumption that the writer's content doesn't link too much with the generated content.
+
+* The size of the content repository doesn't grow with the generated content.
+
+* The repository with the generated content can squash the commits to reduce the size when needed.
++
+When doing so, and technical writers eventually check out the content repository, they would need specific instructions how to handle a repository where contents are regularly squashed/force-pushed.
+The command for this is usually `git pull --rebase` which would ignore any local changes.
+
+Even if the content is in a separate repository, it can still be in the same component as the manually created content, as Antora supports https://docs.antora.org/antora/latest/distributed-component-version/[distributed component versions]: Both repositories would have in their branches an `antora.yml` file with the same name and version.
+At build time, Antora will merge the contents.
+A page with manually written content can then for example include a generated partial.
+
+It might still be helpful for the writer to check out both content repositories in one parent folder as described on the page xref:technical-writing/using-antora-with-intellij.adoc[] to have working cross-references between manually created and generated content.
+Once both repositories have been checked out, generated images show in the preview of the manually created content and attachments can be linked and cross-references can be set.
+
+==== Capture content using Antora collector
+
+There is the https://gitlab.com/antora/antora-collector-extension[Antora Collector Extension] which allows content that is not checked into a Git repository to be used as a source for an Antora generated site.
+It is currently an early alpha version, it its behavior will change over time as it matures.
+
+The Antora Collector Extension can generate content on the fly during the build-process of the site.
+The script is run once per component that has the extension configured in its descriptor.
+
+If the content can't be generated fast enough to ensure the fast rebuilt of the site, consider the collector as a small wrapper which downloads and unpacks an archive from an artifact repository.
+That archive can be re-built independently and as needed.
+This helps the process, especially in scenarios if the generated content is rather static.
+
+See xref:features/advanced/antora.adoc#antora-collector-extension-support[Antora Collector Extension] on which features are currently supported by the plugin and how to use it.
+
+[#handling-generated-non-antora-content]
+=== Handling generated non-Antora content
+
+This describes how to add content to an Antora site which doesn't need to be processed by Antora, such as JavaDoc contents or other API docs.
+
+This contents will not have the header, footer and navigation outline that would be present on all Antora pages as it is not processed by Antora.
+
+==== Adding the content after the Antora run
+
+Antora creates its contents in folder specified in the Antora playbook as the `ui.output_dir` property.
+Once the Antora run is complete, add the folders with their contents to the folder.
+
+The following setup helps technical writers by providing working links to the API docs in all environments.
+
+. Reference the API folder in the Antora content with an attribute:
++
+[source,asciidoc]
+----
+include::example$example-api-docs.adoc[tags=example]
+----
+
+. To make it work for the production build, define the attribute in the Antora site playbook with and absolute path `/path/to/apidocs`.
+
+. To make it work for the author's build preview, define the attribute in the Antora author's playbook the full URL like `https://example.com/path/to/apidocs` so an author can click on it in the locally built site.
+
+. To make it work in the IDE's preview, define in an `.asciidoctorconfig` file in the content repository the full URL like `https://example.com/path/to/apidocs` so an author can click on it in the preview to navigate to the final site.
++
+See xref:technical-writing/preparing-a-repository.adoc#provide-hints-for-the-preview-with-asciidoctorconfig[Provide hints for the preview with `.asciidoctorconfig`] for details on how to do this.
+
+== Options that don't work yet
+
+=== Using Git's Large File System (LFS)
+
+At the moment, Antora doesn't support Git Large File System (LFS for short).
+There is an open GitLab issue https://gitlab.com/antora/antora/-/issues/185[antora/antora#185] that tracks the state of this feature.
+
+Once this has been implemented, cloning the site for building or for technical writers wouldn't need to download all attachments and images.
+Instead, they would be downloaded "`as needed`".
+While this might work good for images, this might still not be a good solution for large files.

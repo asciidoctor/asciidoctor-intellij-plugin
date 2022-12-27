@@ -16,6 +16,7 @@
 ** xref:technical-writing/getting-help.adoc[]
 * xref:antora/index.adoc[]
 ** xref:antora/how-many-repositories.adoc[]
+** xref::antora/generated-content-in-antora.adoc[]
 * xref:recommended-settings.adoc[]
 * xref:features.adoc[]
 ** xref:features/editor.adoc[]
