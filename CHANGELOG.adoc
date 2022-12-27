@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.38.6
+
+- Initialize the preview earlier, as window might not be visible, yet (#1258)
+
 === 0.38.5
 
 - Use the linked stylesheet in the browser preview

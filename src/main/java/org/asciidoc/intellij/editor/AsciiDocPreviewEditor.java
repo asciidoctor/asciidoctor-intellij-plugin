@@ -396,7 +396,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
                 myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, null, retrievePanelProvider(settings));
                 myPanel.setEditor(editor);
                 forceRenderCycle();
-                renderIfVisible();
+                // when this happens, the panel has just been initialized, and it isn't yet displayable; therefore always render it.
+                render();
               }
             }
           }
