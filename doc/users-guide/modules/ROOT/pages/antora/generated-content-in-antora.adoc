@@ -93,9 +93,9 @@ include::example$example-api-docs.adoc[tags=example]
 
 . To make it work for the production build, define the attribute in the Antora site playbook with and absolute path `/path/to/apidocs`.
 
-. To make it work for the author's build preview, define the attribute in the Antora author's playbook the full URL like `https://example.com/path/to/apidocs` so an author can click on it in the locally built site.
+. To make it work for the author's build preview, define the attribute in the Antora author's playbook the full URL like `++https://example.com/path/to/apidocs++` so an author can click on it in the locally built site.
 
-. To make it work in the IDE's preview, define in an `.asciidoctorconfig` file in the content repository the full URL like `https://example.com/path/to/apidocs` so an author can click on it in the preview to navigate to the final site.
+. To make it work in the IDE's preview, define in an `.asciidoctorconfig` file in the content repository the full URL like `++https://example.com/path/to/apidocs++` so an author can click on it in the preview to navigate to the final site.
 +
 See xref:technical-writing/preparing-a-repository.adoc#provide-hints-for-the-preview-with-asciidoctorconfig[Provide hints for the preview with `.asciidoctorconfig`] for details on how to do this.
 
