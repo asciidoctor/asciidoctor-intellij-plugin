@@ -38,11 +38,18 @@ Assuming the user chose to create an empty project with the name "`helloworld`",
 
 image::technical-writing/intellij-empty-project.png[]
 
+IntelliJ IDEA can open multiple projects concurrently.
+To open another project, choose the menu entry menu:File[New] to see the same three options like on the start screen.
+
 To return to the start view, the user chooses the menu entry menu:File[Close Project].
 This view will then contain a list of previously opened projects.
 The buttons for a new project, to open a folder and to get sources from VCS are in the upper row (smaller, and still with the same name as before).
 
 The same options are also available when a project is open from the menu via menu:File[New,Project...], menu:Project from Existing Sources...[] and menu:Project from Version Control...[].
+
+When using the menu menu:File[Exit] instead of menu:File[Close Project], the IDE exists directly.
+When started again, it restores the previously open projects.
+To return to the start screen, use menu:File[Close Project].
 
 == Further reading
 
