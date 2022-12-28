@@ -30,7 +30,7 @@ To return to previously edited files, use the following options:
 
 Search for a text snippet in the current file::
 
-To search within the current file, use [.windows.linux]#kbd:[Ctrl+F]# [.macos]#kbd:[⌘ F].
+To search within the current file, use [.windows.linux]#kbd:[Ctrl+F]# [.macos]#kbd:[⌘ F]#.
 This is by default case-insensitive and uses a plain text search.
 Using the icons at the end of the input field, the use can switch to a case-sensitive search and a search with regular expressions.
 
