@@ -1,13 +1,24 @@
 = Reformatting Content
-:description: The user can reformat AsciiDoc in the editor using “Reformat Code” (Ctrl+Alt+L).
+:description: The user can reformat AsciiDoc contents in the editor and on the command line using “Reformat Code”.
 
-The user can reformat AsciiDoc in the editor using "`Reformat Code`" (kbd:[Ctrl+Alt+L]).
-They can disable formatting completely or configure parameters using menu:Settings...[Editor > Code Style > AsciiDoc].
-
-Project specific settings can be checked-in together with the code as either XML or `.editorconfig` files to share the settings across all contributors to a project.
+{description}
 
 [[reformatting,reformatting]]
 == Reformatting
+
+The user can reformat AsciiDoc in the editor using "`Reformat Code`" ([.windows.linux]#kbd:[Ctrl+Alt+L]# [.macos]#kbd:[⌘ ⌥ L]# ).
+They can disable formatting completely or configure parameters using menu:Settings...[Editor > Code Style > AsciiDoc].
+
+Project-specific settings can be checked-in together with the code as either XML or `.editorconfig` files to share the settings across all contributors to a project.
+
+Users can reformat a single AsciiDoc file when placing the cursor in an editor, or folders with all files and subdirectories when selecting a folder in the project's tree view.
+
+=== Using the command line for reformatting
+
+The IntelliJ IDEA formatter is https://www.jetbrains.com/help/idea/command-line-formatter.html[available form the command line].
+It allows both reformatting of files, and checking that the formatting of the files correct using the "`dry run`" option.
+
+=== Styling of the reformatting
 
 Currently, reformatting adjusts empty lines around headings, lists and blocks.
 It also adjusts spaces around list items.
@@ -24,7 +35,7 @@ See xref:faq/indent-missing-on-pasting.adoc[] for details on how to disable this
 Settings can be stored in the IDE instance or within the project.
 Users can switch change them in the menu menu:Settings...[Editor > Code Style > AsciiDoc].
 
-Project specific settings can be stored in two different ways: an XML file in the folder `.idea/codeStyles`, and in an `.editorconfig` file.
+Project-specific settings can be stored in two different ways: an XML file in the folder `.idea/codeStyles`, and in an `.editorconfig` file.
 
 === Settings per IDE instance
 
