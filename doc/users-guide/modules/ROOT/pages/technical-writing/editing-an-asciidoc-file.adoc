@@ -29,7 +29,7 @@ Rectify this by following the steps in xref:installation.adoc#marketplace-via-se
 
 . Enter the new file name, and choose either an empty template or the Article template.
 
-. Press btn:[OK]
+. Press kbd:[Enter]
 
 When choosing the article template, and using a file name `README.adoc`, the result should look similar to the following screenshot.
 
