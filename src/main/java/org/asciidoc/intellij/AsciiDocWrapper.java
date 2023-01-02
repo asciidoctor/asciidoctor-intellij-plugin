@@ -1424,8 +1424,10 @@ public class AsciiDocWrapper {
         // a background color as a background color is necessary for OSR JCEF preview
         // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/954
         html = html
-          .replace("<head>", "<head>" + "<link rel='stylesheet' type='text/css' href='" + css + "' onload=\"document.head.querySelectorAll('[data-default]').forEach(e => e.remove())\" onerror=\"var node = document.getElementById('mathjaxerrortext'); var text = document.createTextNode('Unable to load custom stylesheet, check if URL is valid and accessible: ' + this.href); node.parentNode.insertBefore(text, node) \" />" +
-            "<style>body { background-color: rgb(255, 255, 255); }</style>" + standardCss);
+          .replace("<head>", "<head>" +
+            "<style>body { background-color: rgb(255, 255, 255); }</style>" +
+            "<link rel='stylesheet' type='text/css' href='" + css + "' onload=\"document.head.querySelectorAll('[data-default]').forEach(e => e.remove())\" onerror=\"var node = document.getElementById('mathjaxerrortext'); var text = document.createTextNode('Unable to load custom stylesheet, check if URL is valid and accessible: ' + this.href); node.parentNode.insertBefore(text, node) \" />" +
+            standardCss);
       } else {
         // custom stylesheet set
         VirtualFile stylesdirVf = LocalFileSystem.getInstance().findFileByPath(attributes.get("docdir"));

@@ -108,12 +108,12 @@ body {
 The https://github.com/darshandsoni/asciidoctor-skins[asciidoctor-skins] project hosts multiple stylesheets users can link to.
 The following example uses a dark skin.
 
-.Dark theme based on the asciidoctor-skins project
+.Fedora theme based on the asciidoctor-skins project
 [source,asciidoc]
 ----
 :linkcss:
 :stylesdir: https://darshandsoni.com/asciidoctor-skins/css
-:stylesheet: dark.css
+:stylesheet: fedora.css
 ----
 
 If the remote stylesheet is not available due to an unreachable server or a missing stylesheet, the preview will default to the standard stylesheet. Starting with release 0.37.52 of the plugin, the preview shows an error message to notify the user that this happened.
