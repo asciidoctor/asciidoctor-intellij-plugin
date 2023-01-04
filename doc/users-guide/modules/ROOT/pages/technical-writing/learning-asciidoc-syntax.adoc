@@ -1,4 +1,5 @@
 = Learning the AsciiDoc syntax
+:navtitle: Learning AsciiDoc syntax
 :description: Learn about the AsciiDoc syntax in small training exercises.
 
 The AsciiDoc Language reference documentation is the go-to-guide for writing AsciiDoc content.
