@@ -69,6 +69,8 @@ Use [.windows.linux]#2x kbd:[Shift]# [.macos]#2x kbd:[⇧]# to open the dialog.
 +
 image::technical-writing/intellij-search-everywhere.png[]
 
+To search for symbols only (which includes the AsciiDoc section headings, attribute names, etc.), jump there directly using [.windows.linux]#kbd:[Ctrl+Shift+N]# [.macos]#kbd:[⌘ ⇧ N]#.
+
 == Further reading
 
 Read more about keyboard shortcuts in xref:features/keymap.adoc[].
