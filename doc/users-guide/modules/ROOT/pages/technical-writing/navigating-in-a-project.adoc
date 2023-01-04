@@ -74,12 +74,14 @@ The user opens and hides it by clicking on menu:Structure[] in the tool border o
 
 image::technical-writing/intellij-structure-view.png[]
 
-When the current file contains several levels of section headings, there is a hierarchical view of the current levels at the bottom of the editor.
-Clicking on any of the levels shown there places the cursor on the element named there.
-
-There's a separate structure tool window showing the structure of the current editor.
+It always shows the structure of the current editor.
 Use the icons in front of the structure view to expand and collapse parts of the tree.
 Click on an item to open the referenced file in the editor and place the cursor on that item.
+
+Using the keyboard, the same view is available via [.windows.linux]#kbd:[Ctrl+F12]# [.macos]#kbd:[⌘ F12]#.
+
+When the current file contains several levels of section headings, there is a hierarchical view of the current levels at the bottom of the editor.
+Clicking on any of the levels shown there places the cursor on the element named there.
 
 === Navigation in the project tool window
 
