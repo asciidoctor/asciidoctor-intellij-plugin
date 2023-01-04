@@ -16,7 +16,7 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 
 [caption=]
 .General
-[width="75%",cols="4a,3a",grid="bot",options="header"]
+[width="75%",cols="4a,3a",options="header"]
 |===
 ^| Description ^| Shortcut
 | Search everywhere |
@@ -55,7 +55,7 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 
 [caption=]
 .Editing
-[width="75%",cols="4a,3a",grid="bot",options="header"]
+[width="75%",cols="4a,3a",options="header"]
 |===
 ^| Description ^| Shortcut
 | Extend selection |
@@ -205,7 +205,7 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 
 [caption=]
 .Navigating
-[width="75%",cols="4a,3a",grid="bot",options="header"]
+[width="75%",cols="4a,3a",options="header"]
 |===
 ^| Description ^| Shortcut
 | Go to declaration +
