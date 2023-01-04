@@ -95,7 +95,7 @@ In the upper right corner is a crosshair icon:
 Clicking it selects the file
 that is opened in active editor in the tree view which allows locating a file in the project's hierarchy.
 
-For each file, the user and find its usages, for example, where an AsciiDoc file is used as in an `include::[]` preprocessor macro.
+For each file, the user can find its usages, for example, where an AsciiDoc file is used as in an `include::[]` preprocessor macro.
 With the mouse, this is available from the context menu which opens when right-clicking on the element. It is also available as a shortcut via [.windows]#kbd:[Alt+F7]# [.linux]#kbd:[Alt+Shift+7]# [.macos]#kbd:[⌥ F7]#.
 
 Even when the project tool window is closed, the user can use the navigation bar to navigate the file tree using the current editor's file path.

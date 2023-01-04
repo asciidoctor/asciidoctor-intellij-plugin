@@ -34,7 +34,7 @@ To search within the current file, use [.windows.linux]#kbd:[Ctrl+F]# [.macos]#k
 This is by default case-insensitive and uses a plain text search.
 Using the icons at the end of the input field, the use can switch to a case-sensitive search and a search with regular expressions.
 
-Search for a text snippet in the current file::
+Search for a text snippet across all files in a project::
 
 To search within all files of the project, use [.windows.linux]#kbd:[Ctrl+Shift+F]# [.macos]#kbd:[⌘ ⇧ F]#.
 +
