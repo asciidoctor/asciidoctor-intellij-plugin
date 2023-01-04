@@ -33,6 +33,8 @@ Search for a text snippet in the current file::
 To search within the current file, use [.windows.linux]#kbd:[Ctrl+F]# [.macos]#kbd:[⌘ F]#.
 This is by default case-insensitive and uses a plain text search.
 Using the icons at the end of the input field, the use can switch to a case-sensitive search and a search with regular expressions.
++
+If you want to replace instead of searching, you can use [.windows.linux]#kbd:[Ctrl+R]# [.macos]#kbd:[⌘ R]# instead.
 
 Search for a text snippet across all files in a project::
 
@@ -46,6 +48,8 @@ Using the icons at the end of the input field, the use can switch to a case-sens
 Use the menu items menu:In Project[], menu:Module[], menu:Directory[] and menu:Scope[] to limit the search to a specific area.
 +
 Move the selection up and down, and use the small editor window to edit the code directly.
++
+If you want to replace instead of searching, you can use [.windows.linux]#kbd:[Ctrl+Shift+R]# [.macos]#kbd:[⌘ ⇧ R]# instead.
 +
 Use btn:[Open in Find Window] to open the list of files in a tool window which allows opening each occurrence in an editor and then jump with [.windows.linux]#kbd:[Ctrl+Alt+Down]# [.macos]#kbd:[⌘ ⌥ ↓]# and [.windows.linux]#kbd:[Ctrl+Alt+Up]# [.macos]#kbd:[⌘ ⌥ ↑]# between them.
 
