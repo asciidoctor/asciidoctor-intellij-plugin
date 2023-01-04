@@ -1,0 +1,55 @@
+= Learning the AsciiDoc syntax
+:description: Learn about the AsciiDoc syntax in small training exercises.
+
+The AsciiDoc Language reference documentation is the go-to-guide for writing AsciiDoc content.
+{description}
+
+include::partial$technical-writing-series.adoc[]
+
+== Prerequisites
+
+This assumes that IntelliJ IDEA is open with a project with some existing content.
+See xref:./opening-the-first-project.adoc[] and xref:./editing-an-asciidoc-file.adoc[] on how to do this.
+
+== Learning the AsciiDoc syntax with Kata
+
+A kata is an exercise which focuses on learning something new.
+
+The primary goals of this exercise are:
+
+. Train the AsciiDoc syntax in several key areas.
+. Learn how to use the https://docs.asciidoctor.org/asciidoc/latest/[AsciiDoc reference documentation].
+
+To start the kata, check out the GitHub project https://github.com/ahus1/asciidoc-kata:
+
+. Open the menu menu:File[New > Project from Version Control].
++
+image::technical-writing/intellij-clone-kata-repo.png[]
+. As version control, choose menu:Git[].
+. As URL, enter `++https://github.com/ahus1/asciidoc-kata++`.
+. As Directory, enter an empty local folder.
+. Choose the button btn:[Clone].
+
+The repository contains several files with kata, with the first one named `01_formatting.adoc`.
+Open the file, and it should show in the editor as seen below:
+
+image::technical-writing/intellij-first-kata.png[]
+
+The block between the `====` marks and which shows with a yellow background in the preview contains the instructions.
+It also contains links to the AsciiDoc language documentation which contain information to find a solution for the exercise.
+Click on the blue links in the preview to open them in the system browser.
+
+At the end, indicated with tree dots (`++...++`), start typing the solution.
+
+After this first exercise, pick other exercises which are relevant to your day-to-day projects.
+
+== Variants of the exercise
+
+Instead of practicing the AsciiDoc syntax alone, learners can team up with a second person to solve these exercises.
+
+There's also a collaborative web editor which has been designed for such a training.
+See this https://www.ahus1.de/post/interactive-asciidoc-training[blog post] for details on how to run such a training event.
+
+== Further reading
+
+Continue to xref:./using-tables-in-a-project.adoc[] for the next step of this series.
