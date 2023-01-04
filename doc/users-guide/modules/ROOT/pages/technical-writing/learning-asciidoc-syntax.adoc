@@ -36,11 +36,13 @@ Open the file, and it should show in the editor as seen below:
 
 image::technical-writing/intellij-first-kata.png[]
 
-The block between the `====` marks and which shows with a yellow background in the preview contains the instructions.
-It also contains links to the AsciiDoc language documentation which contain information to find a solution for the exercise.
+The block between the `====` markings on the left contains the instructions.
+The same texts shows with a yellow background on the right in the preview.
+It contains links to the AsciiDoc language documentation which contain information to find a solution for the exercise.
 Click on the blue links in the preview to open them in the system browser.
 
 At the end, indicated with tree dots (`++...++`), start typing the solution.
+Use the preview on the right to verify that the AsciiDoc content entered on the left renders the expected results.
 
 After this first exercise, pick other exercises which are relevant to your day-to-day projects.
 
