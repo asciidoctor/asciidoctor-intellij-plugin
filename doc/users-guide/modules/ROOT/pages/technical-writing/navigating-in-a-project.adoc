@@ -51,14 +51,14 @@ Jump to a line/column in a file::
 
 To jump within the current file, press [.windows.linux]#kbd:[Ctrl+G]# [.macos]#kbd:[⌘ L]# and enter the line, optionally followed by a colon and the column to where to jump to.
 +
-To jump to a different file, press [.windows.linux]#kbd:[Ctrl+Shift+N]# [.macos]#kbd:[⌘ ⇧ O]# and enter the file name, optionally followed by the line, optionally followed by a colon with the line and optionally followed with a colon with the column.
+To jump to a different file, press [.windows.linux]#kbd:[Ctrl+Shift+N]# [.macos]#kbd:[⌘ ⇧ O]# and enter the file name, optionally followed by a colon with the line and optionally followed with a colon with the column.
 
 === Navigation in the preview
 
 By default, the plugin shows a split view for each AsciiDoc file showing both the editor and the preview.
 Users can choose to show only the preview or only the editor via the icons in the menu bar or via the plugin's settings via menu:File[Settings...,Languages & Frameworks, AsciiDoc].
 
-Once the user places the cursor in the editor, the preview scrolls so that it shows the paragraph where the cursor is placed in the preview.
+Once the user places the cursor in the editor, the preview scrolls so that it shows the paragraph where the cursor is placed.
 
 * Clicking on an external link opens it in a new window of the system's browser.
 
@@ -79,6 +79,7 @@ Use the icons in front of the structure view to expand and collapse parts of the
 Click on an item to open the referenced file in the editor and place the cursor on that item.
 
 Using the keyboard, the same view is available via [.windows.linux]#kbd:[Ctrl+F12]# [.macos]#kbd:[⌘ F12]#.
+Users can then use the keyboard to narrow it down to entries containing the typed text.
 
 When the current file contains several levels of section headings, there is a hierarchical view of the current levels at the bottom of the editor.
 Clicking on any of the levels shown there places the cursor on the element named there.
