@@ -197,12 +197,14 @@ public class AsciiDocParserImpl {
       commentAfterEmptyLine = 0;
 
       if (at(BLOCK_MACRO_ID) || at(BLOCK_DELIMITER) || at(LITERAL_BLOCK_DELIMITER) || at(LISTING_BLOCK_DELIMITER)
-        || at(PASSTRHOUGH_BLOCK_DELIMITER) || at(FRONTMATTER_DELIMITER) || at(CELLSEPARATOR)) {
+        || at(PASSTRHOUGH_BLOCK_DELIMITER) || at(FRONTMATTER_DELIMITER) || at(CELLSEPARATOR) || at(ATTRS_START)) {
         if (!continuation) {
           endListDelimiter();
           endBlockNoDelimiter();
         } else {
-          continuation = false;
+          if (!at(ATTRS_START)) {
+            continuation = false;
+          }
         }
       }
 

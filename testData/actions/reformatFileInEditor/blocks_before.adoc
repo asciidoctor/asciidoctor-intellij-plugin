@@ -24,6 +24,7 @@ Groovy
 Text
 Should be on one line.
 
+Text
 [source]
 ----
 Test1

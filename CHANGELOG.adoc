@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.38.7
 
 - Reorder stylesheets to allow dark background in custom stylesheet
+- Closing blocks on attribute start
 
 === 0.38.6
 
