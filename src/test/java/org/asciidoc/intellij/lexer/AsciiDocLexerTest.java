@@ -51,6 +51,19 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testNoLineCommentWithCellCharacterInTable() {
+    doTest("|===\n" +
+        "|//comment\n" +
+        "|===\n",
+      "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:TEXT ('//comment')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
   public void testLineCommentAndFormattingInCell() {
     doTest("|===\n" +
         "| _x_x_x\n" +
@@ -603,6 +616,17 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:TEXT ('////\\nfoo')\n" +
         "AsciiDoc:WHITE_SPACE (' ')\n" +
         "AsciiDoc:TEXT ('bar\\n////\\nabc')");
+  }
+
+
+  public void testNonCommentBlockCell() {
+    doTest("|===\n|////\n|===",
+      "AsciiDoc:BLOCK_DELIMITER ('|===')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CELLSEPARATOR ('|')\n" +
+        "AsciiDoc:TEXT ('////')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('|===')");
   }
 
   public void testBlockMacro() {

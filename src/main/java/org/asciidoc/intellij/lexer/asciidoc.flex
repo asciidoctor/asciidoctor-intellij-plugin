@@ -1179,7 +1179,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <PREBLOCK, SINGLELINE, PASSTHROUGH_NO_DELIMITER, HEADER, LIST> {
-  {LINE_COMMENT} [^/] {
+  ^ {LINE_COMMENT} [^/] {
     yypushback(1); // ... as this might be a newline character
     // the line comment might be stopped while reading a comment within a table up until the cell separator
     if (tableChar != 0) {
@@ -1192,15 +1192,15 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <PREBLOCK, SINGLELINE, DELIMITER, HEADER> {
-  {COMMENT_BLOCK_DELIMITER} $ { clearStyle(); resetFormatting(); yypushstate(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
-  {COMMENT_BLOCK_DELIMITER} / [^\/\n \t] { yypushback(yylength());
+  ^ {COMMENT_BLOCK_DELIMITER} $ { clearStyle(); resetFormatting(); yypushstate(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
+  ^ {COMMENT_BLOCK_DELIMITER} / [^\/\n \t] { yypushback(yylength());
           if (yystate() == SINGLELINE) {
               yybegin(INSIDE_LINE); // avoid infinite loop, as STARTBLOCK would return to SINGLELINE
           } else {
               yybegin(STARTBLOCK);
           }
   }
-  {COMMENT_BLOCK_DELIMITER} { clearStyle(); resetFormatting(); yypushstate(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
+  ^ {COMMENT_BLOCK_DELIMITER} { clearStyle(); resetFormatting(); yypushstate(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
 }
 
 <BIBSTART> {
