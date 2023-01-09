@@ -10,6 +10,8 @@ xref:module:page.adoc[]
 
 xref:oldpagename.adoc[]
 
+xref:oldpagename.adoc#anchor[]
+
 xref:2.0@my-component:ROOT:test.adoc[]
 
 :xrefvar: 2.0@my-component:ROOT:

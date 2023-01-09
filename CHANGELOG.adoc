@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - Closing blocks on attribute start
 - Fix handling of comments in table cells
 - Prevent EDT warning when generating a preview when adding a description
+- For Antora pages with page alias, resolve anchors
 
 === 0.38.6
 

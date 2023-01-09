@@ -684,7 +684,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   @SuppressWarnings("StringSplitter")
   private void resolveAntoraPageAlias(String key, List<ResolveResult> results, int depth) {
-    if (ANTORA_SUPPORTED.contains(macroName) && !isAnchor && !isFolder() && depth == 0 && results.size() == 0 && !macroName.equals("include")) {
+    if (ANTORA_SUPPORTED.contains(macroName) && !isFolder() && depth == 0 && results.size() == 0 && !macroName.equals("include")) {
       VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(root);
       if (antoraModuleDir != null) {
         List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(root.getProject(), "page-aliases", root);

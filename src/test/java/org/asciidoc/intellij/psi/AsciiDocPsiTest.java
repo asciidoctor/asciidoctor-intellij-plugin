@@ -776,7 +776,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       }
     }
 
-    assertSize(11, urls);
+    assertSize(12, urls);
 
     // link
     assertReferencesResolve(urls.get(0), 2);
@@ -790,17 +790,20 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     // xref to old page name
     assertReferencesResolve(urls.get(3), 1);
 
+    // xref to old page name with anchor
+    assertReferencesResolve(urls.get(4), 2);
+
     // xref with attribute
-    assertReferencesResolve(urls.get(5), 1);
+    assertReferencesResolve(urls.get(6), 1);
 
     // xref page in sub
-    assertReferencesResolve(urls.get(8), 2);
+    assertReferencesResolve(urls.get(9), 2);
 
     // xref page relative
-    assertReferencesResolve(urls.get(9), 4);
+    assertReferencesResolve(urls.get(10), 4);
 
     // xref page relative
-    assertReferencesResolve(urls.get(10), 2);
+    assertReferencesResolve(urls.get(11), 2);
 
     urls.clear();
 
