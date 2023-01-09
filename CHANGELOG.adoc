@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Reorder stylesheets to allow dark background in custom stylesheet
 - Closing blocks on attribute start
 - Fix handling of comments in table cells
+- Prevent EDT warning when generating a preview when adding a description
 
 === 0.38.6
 

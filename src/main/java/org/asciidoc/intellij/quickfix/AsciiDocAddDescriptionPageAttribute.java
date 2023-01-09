@@ -3,6 +3,7 @@ package org.asciidoc.intellij.quickfix;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.util.IntentionFamilyName;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -53,11 +54,13 @@ public class AsciiDocAddDescriptionPageAttribute implements LocalQuickFix {
       anchor = anchor.getNextSibling();
     }
     anchor = anchor.getLastChild();
-    ((Navigatable) anchor).navigate(false);
-    FileEditor selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(anchor.getContainingFile().getVirtualFile());
-    if (selectedEditor instanceof TextEditor) {
-      Editor editor = ((TextEditor) selectedEditor).getEditor();
-      editor.getSelectionModel().setSelection(anchor.getTextOffset(), anchor.getTextOffset() + anchor.getTextLength());
+    if (ApplicationManager.getApplication().isDispatchThread()) {
+      ((Navigatable) anchor).navigate(false);
+      FileEditor selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(anchor.getContainingFile().getVirtualFile());
+      if (selectedEditor instanceof TextEditor) {
+        Editor editor = ((TextEditor) selectedEditor).getEditor();
+        editor.getSelectionModel().setSelection(anchor.getTextOffset(), anchor.getTextOffset() + anchor.getTextLength());
+      }
     }
   }
 
