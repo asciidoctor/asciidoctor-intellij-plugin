@@ -683,7 +683,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   // bibtext doesn't allow for line breaks. Adding {STRING} at the end so that it is as long as the regular bullet match
   {BULLET} / {SPACE}+ {BIBSTART} [^\n]* {BIBEND} ({STRING} | \n) {
         String delimiter = "nodel-list-bullet-" + yytext();
-        while (blockStack.contains(delimiter)) {
+        while (blockStack.contains(delimiter) && isNoDel()) {
           blockStack.pop();
         }
         blockStack.push(delimiter);
@@ -693,7 +693,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   }
   {BULLET} / {SPACE}+ {STRING} {
         String delimiter = "nodel-list-bullet-" + yytext();
-        while (blockStack.contains(delimiter)) {
+        while (blockStack.contains(delimiter) && isNoDel()) {
           blockStack.pop();
         }
         blockStack.push(delimiter);
@@ -701,7 +701,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
       }
   {ENUMERATION} / {SPACE}+ {STRING} {
         String delimiter = "nodel-list-enum-" + yytext();
-        while (blockStack.contains(delimiter)) {
+        while (blockStack.contains(delimiter) && isNoDel()) {
           blockStack.pop();
         }
         blockStack.push(delimiter);
@@ -727,7 +727,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           -- start;
         }
         delimiter += zzBuffer.subSequence(start+1, end);
-        while (blockStack.contains(delimiter)) {
+        while (blockStack.contains(delimiter) && isNoDel()) {
           blockStack.pop();
         }
         blockStack.push(delimiter);
@@ -753,7 +753,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           -- start;
         }
         delimiter += zzBuffer.subSequence(start+1, end);
-        while (blockStack.contains(delimiter)) {
+        while (blockStack.contains(delimiter) && isNoDel()) {
           blockStack.pop();
         }
         blockStack.push(delimiter);
@@ -761,7 +761,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
       }
   ^ {CALLOUT} / {SPACE}+ {STRING} {
         String delimiter = "nodel-list-callout";
-        while (blockStack.contains(delimiter)) {
+        while (blockStack.contains(delimiter) && isNoDel()) {
           blockStack.pop();
         }
         blockStack.push(delimiter);

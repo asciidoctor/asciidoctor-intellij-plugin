@@ -2241,6 +2241,33 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testContinuationWithBlockAndEnumeration() {
+    doTest("* Test\n" +
+        "+\n" +
+        "--\n" +
+        "* Test\n" +
+        "--\n" +
+        "\n" +
+        "== Section\n",
+      "AsciiDoc:BULLET ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Test')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:CONTINUATION ('+')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('--')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BULLET ('*')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('Test')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:BLOCK_DELIMITER ('--')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
+        "AsciiDoc:HEADING_TOKEN ('== Section')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
   public void testHorizontalRule() {
     doTest("'''\n",
       "AsciiDoc:HORIZONTALRULE (''''')\n" +

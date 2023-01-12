@@ -10,7 +10,7 @@ public class AsciiDocWordsScanner extends DefaultWordsScanner {
 
   @Override
   public int getVersion() {
-    return 27;
+    return 28;
   }
 
   public AsciiDocWordsScanner() {
