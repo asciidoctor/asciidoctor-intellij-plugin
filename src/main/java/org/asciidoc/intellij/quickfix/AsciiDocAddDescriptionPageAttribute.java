@@ -54,6 +54,7 @@ public class AsciiDocAddDescriptionPageAttribute implements LocalQuickFix {
       anchor = anchor.getNextSibling();
     }
     anchor = anchor.getLastChild();
+    // use IntentionPreviewUtils.isIntentionPreviewActive() from 222.3739.24 onwards
     if (ApplicationManager.getApplication().isDispatchThread()) {
       ((Navigatable) anchor).navigate(false);
       FileEditor selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(anchor.getContainingFile().getVirtualFile());
