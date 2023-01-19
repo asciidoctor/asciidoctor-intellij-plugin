@@ -719,7 +719,7 @@ public class AsciiDocUtil {
           }
         }
       }
-      if (roots.contains(dir.getName())) {
+      if (roots.contains(dir.getPath())) {
         break;
       }
       dir = dir.getParent();
@@ -745,7 +745,7 @@ public class AsciiDocUtil {
           return attachments;
         }
       }
-      if (roots.contains(dir.getName())) {
+      if (roots.contains(dir.getPath())) {
         break;
       }
       dir = dir.getParent();
@@ -764,7 +764,7 @@ public class AsciiDocUtil {
           return pages;
         }
       }
-      if (roots.contains(dir.getName())) {
+      if (roots.contains(dir.getPath())) {
         break;
       }
       dir = dir.getParent();
@@ -782,7 +782,7 @@ public class AsciiDocUtil {
         dir.getParent().getParent().findChild(ANTORA_YML) != null) {
         return dir;
       }
-      if (roots.contains(dir.getName())) {
+      if (roots.contains(dir.getPath())) {
         break;
       }
       dir = dir.getParent();
@@ -894,7 +894,7 @@ public class AsciiDocUtil {
           return imagesDir + FAMILY_IMAGE + "s";
         }
       }
-      if (roots.contains(dir.getName())) {
+      if (roots.contains(dir.getPath())) {
         break;
       }
       dir = dir.getParent();
@@ -922,7 +922,7 @@ public class AsciiDocUtil {
           return attachmentsDir + FAMILY_ATTACHMENT + "s";
         }
       }
-      if (roots.contains(dir.getName())) {
+      if (roots.contains(dir.getPath())) {
         break;
       }
       dir = dir.getParent();
@@ -949,7 +949,7 @@ public class AsciiDocUtil {
           return images;
         }
       }
-      if (roots.contains(dir.getName())) {
+      if (roots.contains(dir.getPath())) {
         break;
       }
       dir = dir.getParent();
@@ -968,7 +968,7 @@ public class AsciiDocUtil {
           return examples;
         }
       }
-      if (roots.contains(dir.getName())) {
+      if (roots.contains(dir.getPath())) {
         break;
       }
       dir = dir.getParent();
@@ -1068,7 +1068,7 @@ public class AsciiDocUtil {
           }
         }
       }
-      if (roots.contains(dir.getName())) {
+      if (roots.contains(dir.getPath())) {
         break;
       }
       dir = dir.getParent();
@@ -1130,7 +1130,7 @@ public class AsciiDocUtil {
           return staticFolder;
         }
       }
-      if (roots.contains(dir.getName())) {
+      if (roots.contains(dir.getPath())) {
         break;
       }
       dir = dir.getParent();

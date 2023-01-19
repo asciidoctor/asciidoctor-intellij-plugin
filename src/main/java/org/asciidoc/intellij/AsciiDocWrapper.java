@@ -745,7 +745,7 @@ public class AsciiDocWrapper {
               });
             }
           }
-          if (roots.contains(folder.getName())) {
+          if (roots.contains(folder.getPath())) {
             break;
           }
           folder = folder.getParent();
