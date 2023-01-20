@@ -7,15 +7,18 @@ public class AsciiDocAttributeDeclarationDummy implements AttributeDeclaration {
   private final boolean soft;
 
   public AsciiDocAttributeDeclarationDummy(String attributeName, String attributeValue) {
-    boolean soft = false;
-    if (attributeValue == null) {
-      soft = true;
-    } else if (attributeName.endsWith("@")) {
-      soft = true;
-      attributeName = attributeName.substring(0, attributeName.length() - 1);
-    } else if (attributeValue.endsWith("@")) {
-      soft = true;
-      attributeValue = attributeValue.substring(0, attributeValue.length() - 1);
+    this(attributeName, attributeValue, attributeValue == null);
+  }
+
+  public AsciiDocAttributeDeclarationDummy(String attributeName, String attributeValue, boolean soft) {
+    if (attributeValue != null) {
+      if (attributeName.endsWith("@")) {
+        soft = true;
+        attributeName = attributeName.substring(0, attributeName.length() - 1);
+      } else if (attributeValue.endsWith("@")) {
+        soft = true;
+        attributeValue = attributeValue.substring(0, attributeValue.length() - 1);
+      }
     }
     this.attributeValue = attributeValue;
     this.attributeName = attributeName;

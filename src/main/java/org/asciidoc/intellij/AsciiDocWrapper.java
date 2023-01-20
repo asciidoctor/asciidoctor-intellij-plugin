@@ -1088,15 +1088,18 @@ public class AsciiDocWrapper {
               @SuppressWarnings("unchecked") Map<Object, Object> map = (Map<Object, Object>) attributes;
               map.forEach((k, v) -> {
                 String vs;
+                boolean soft = false;
                 if (v == null) {
                   vs = null;
+                  soft = false;
                 } else if (v instanceof Boolean && !(Boolean) v) {
                   // false -> soft unset
                   vs = null;
+                  soft = true;
                 } else {
                   vs = v.toString();
                 }
-                result.add(new AsciiDocAttributeDeclarationDummy(k.toString(), vs));
+                result.add(new AsciiDocAttributeDeclarationDummy(k.toString(), vs, soft));
               });
             }
             if (antora.get("ext") != null) {
@@ -1138,15 +1141,18 @@ public class AsciiDocWrapper {
               @SuppressWarnings("unchecked") Map<Object, Object> map = (Map<Object, Object>) attributes;
               map.forEach((k, v) -> {
                 String vs;
+                boolean soft = false;
                 if (v == null) {
                   vs = null;
+                  soft = false;
                 } else if (v instanceof Boolean && !(Boolean) v) {
                   // false -> soft unset
                   vs = null;
+                  soft = true;
                 } else {
                   vs = v.toString();
                 }
-                result.add(new AsciiDocAttributeDeclarationDummy(k.toString(), vs));
+                result.add(new AsciiDocAttributeDeclarationDummy(k.toString(), vs, soft));
               });
             }
           }
