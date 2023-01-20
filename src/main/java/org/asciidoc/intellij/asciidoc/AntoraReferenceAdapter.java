@@ -2,7 +2,6 @@ package org.asciidoc.intellij.asciidoc;
 
 import com.google.common.html.HtmlEscapers;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -200,8 +199,8 @@ public class AntoraReferenceAdapter {
           if (imagesdir != null) {
             source = new File(fileBaseDir, imagesdir);
             try {
-              File canonical = source.getCanonicalFile();
-              source = SystemInfoRt.isWindows && canonical.getAbsolutePath().contains(" ") ? source.getAbsoluteFile() : canonical;
+              // resolve all relative directories with ".." as FileUtil.getRelativePath will otherwise not work
+              source = source.getCanonicalFile();
             } catch (IOException e) {
               LOG.info("unable to compute canonical file from '" + fileBaseDir + "' and '" + imagesdir + "'", e);
             }
