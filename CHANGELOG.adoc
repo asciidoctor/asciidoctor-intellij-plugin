@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Fix parsing of nodes enumerations inside of blocks
 - No longer look outside the project folder for context information like `.asciidoctorconfig` files or Antora component descriptors (#1279)
 - Support hard unset attribute for Antora component descriptors and playbooks (#1278)
+- Avoid outdated path information for the preview after moving a file (#1276)
 
 === 0.38.7
 

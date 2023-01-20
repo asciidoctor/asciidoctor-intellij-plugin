@@ -87,6 +87,8 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private static final Logger LOG = Logger.getInstance(AsciiDocJCEFHtmlPanel.class);
 
   private final Path imagesPath;
+  @NotNull
+  private final Document document;
 
   private JBCefJSQuery myJSQuerySetScrollY;
   private JBCefJSQuery myRenderedIteration;
@@ -126,9 +128,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   @NotNull
   private final BridgeSettingListener myBridgeSettingListener = new BridgeSettingListener();
 
-  @NotNull
-  private final String base;
-  private VirtualFile parentDirectory;
   private volatile int lineCount;
   private volatile int line;
   private volatile boolean forceRefresh = true;
@@ -202,17 +201,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
     this.imagesPath = imagesPath;
 
-    VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-    if (file != null) {
-      parentDirectory = file.getParent();
-    }
-    if (parentDirectory != null) {
-      // parent will be null if we use Language Injection and Fragment Editor
-      base = parentDirectory.getUrl().replaceAll("^file://", "")
-        .replaceAll(":", "%3A");
-    } else {
-      base = "";
-    }
+    this.document = document;
 
     registerHandlers();
 
@@ -494,7 +483,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       VirtualFile baseDir = saveImageLastDir;
 
       if (baseDir == null) {
-        baseDir = parentDirectory;
+        baseDir = getParentDirectory();
       }
 
       VirtualFile finalBaseDir = baseDir;
@@ -696,9 +685,32 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private static final Pattern IMAGE_RELATIVE = Pattern.compile("<img src=\"([^:\"]*)\"");
   private static final Pattern IMAGE_AS_OBJECT = Pattern.compile("<object ([^>])*data=\"([^:\"]*)\"");
 
+  private String getBase() {
+    VirtualFile parentDirectory = getParentDirectory();
+    String base;
+    if (parentDirectory != null) {
+      // parent will be null if we use Language Injection and Fragment Editor
+      base = parentDirectory.getUrl().replaceAll("^file://", "")
+        .replaceAll(":", "%3A");
+    } else {
+      base = "";
+    }
+    return base;
+  }
+
+  @Nullable
+  private VirtualFile getParentDirectory() {
+    VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+    VirtualFile parentDirectory = null;
+    if (file != null) {
+      parentDirectory = file.getParent();
+    }
+    return parentDirectory;
+  }
+
   private String prepareHtml(@NotNull String html, @NotNull Map<String, String> attributes) {
     // Antora plugin might resolve some absolute URLs, convert them to local file, so they get their MD5 that prevents caching
-    String baseForHtml = ESCAPED_COLON.matcher(base).replaceAll(":");
+    String baseForHtml = ESCAPED_COLON.matcher(getBase()).replaceAll(":");
     Matcher matcher = IMAGE_FROM_ANTORA.matcher(html);
     while (matcher.find()) {
       final MatchResult matchResult = matcher.toMatchResult();
@@ -747,7 +759,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         replacement = calculateFileAndMd5(file, baseForHtml);
       }
       if (replacement == null && file.startsWith("/") && editor != null) {
-        VirtualFile hugoStaticFile = AsciiDocUtil.findHugoStaticFolder(editor.getProject(), this.parentDirectory);
+        VirtualFile hugoStaticFile = AsciiDocUtil.findHugoStaticFolder(editor.getProject(), getParentDirectory());
         if (hugoStaticFile != null) {
           replacement = calculateFileAndMd5(file.substring(1), hugoStaticFile.getCanonicalPath());
         }
@@ -960,7 +972,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   @Override
   public void setEditor(Editor editor) {
     if (editor != null && editor.getProject() != null) {
-      if (AsciiDocUtil.findAntoraPagesDir(editor.getProject(), parentDirectory) != null) {
+      if (AsciiDocUtil.findAntoraPagesDir(editor.getProject(), getParentDirectory()) != null) {
         isAntora = true;
       }
     }
@@ -1057,7 +1069,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme) || "mailto".equalsIgnoreCase(scheme)) {
       BrowserUtil.browse(uri);
     } else if ("file".equalsIgnoreCase(scheme) || scheme == null) {
-      AsciiDocFileUtil.openInEditor(uri, editor, parentDirectory);
+      AsciiDocFileUtil.openInEditor(uri, editor, getParentDirectory());
     } else {
       LOG.warn("won't open URI as it might be unsafe: " + uri);
     }

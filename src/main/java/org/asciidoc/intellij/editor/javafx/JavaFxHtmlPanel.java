@@ -132,6 +132,8 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
   private final JPanel myPanelWrapper;
   @NotNull
   private final List<Runnable> myInitActions = new ArrayList<>();
+  @NotNull
+  private final Document document;
   @Nullable
   private volatile JFXPanel myPanel;
   @Nullable
@@ -155,14 +157,11 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
   @NotNull
   private final BridgeSettingListener myBridgeSettingListener = new BridgeSettingListener();
   private boolean isAntora;
-  @NotNull
-  private final String base;
 
   private int lineCount;
 
   private final Path imagesPath;
 
-  private VirtualFile parentDirectory;
   private VirtualFile saveImageLastDir = null;
 
   private volatile CountDownLatch rendered = new CountDownLatch(1);
@@ -181,18 +180,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     myPanelWrapper = new JPanel(new BorderLayout());
     myPanelWrapper.setBackground(JBColor.background());
     lineCount = document.getLineCount();
-
-    VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-    if (file != null) {
-      parentDirectory = file.getParent();
-    }
-    if (parentDirectory != null) {
-      // parent will be null if we use Language Injection and Fragment Editor
-      base = parentDirectory.getUrl().replaceAll("^file://", "")
-        .replaceAll(":", "%3A");
-    } else {
-      base = "";
-    }
+    this.document = document;
 
     try {
       Properties p = new Properties();
@@ -400,7 +388,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       VirtualFile baseDir = saveImageLastDir;
 
       if (baseDir == null) {
-        baseDir = parentDirectory;
+        baseDir = getParentDirectory();
       }
 
       VirtualFile finalBaseDir = baseDir;
@@ -613,7 +601,31 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     return null;
   }
 
+  private String getBase() {
+    VirtualFile parentDirectory = getParentDirectory();
+    String base;
+    if (parentDirectory != null) {
+      // parent will be null if we use Language Injection and Fragment Editor
+      base = parentDirectory.getUrl().replaceAll("^file://", "")
+        .replaceAll(":", "%3A");
+    } else {
+      base = "";
+    }
+    return base;
+  }
+
+  @Nullable
+  private VirtualFile getParentDirectory() {
+    VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+    VirtualFile parentDirectory = null;
+    if (file != null) {
+      parentDirectory = file.getParent();
+    }
+    return parentDirectory;
+  }
+
   private String prepareHtml(@NotNull String html, @NotNull Map<String, String> attributes) {
+    String base = getBase();
     // Antora plugin might resolve some absolute URLs, convert them to localfile so they get their MD5 that prevents caching
     Pattern pattern = Pattern.compile("<img src=\"file:///([^\"]*)\"");
     Matcher matcher = pattern.matcher(html);
@@ -665,7 +677,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
         replacement = calculateFileAndMd5(file, base);
       }
       if (replacement == null && file.startsWith("/") && editor != null) {
-        VirtualFile hugoStaticFile = AsciiDocUtil.findHugoStaticFolder(editor.getProject(), this.parentDirectory);
+        VirtualFile hugoStaticFile = AsciiDocUtil.findHugoStaticFolder(editor.getProject(), getParentDirectory());
         if (hugoStaticFile != null) {
           replacement = calculateFileAndMd5(file.substring(1), hugoStaticFile.getCanonicalPath());
         }
@@ -801,7 +813,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
   @Override
   public void setEditor(Editor editor) {
     if (editor != null && editor.getProject() != null) {
-      if (AsciiDocUtil.findAntoraPagesDir(editor.getProject(), parentDirectory) != null) {
+      if (AsciiDocUtil.findAntoraPagesDir(editor.getProject(), getParentDirectory()) != null) {
         isAntora = true;
       }
     }
@@ -851,7 +863,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme) || "mailto".equalsIgnoreCase(scheme)) {
         BrowserUtil.browse(uri);
       } else if ("file".equalsIgnoreCase(scheme) || scheme == null) { // A-Z as a Windows drive like C:/
-        AsciiDocFileUtil.openInEditor(uri, editor, parentDirectory);
+        AsciiDocFileUtil.openInEditor(uri, editor, getParentDirectory());
       } else {
         LOG.warn("won't open URI as it might be unsafe: " + uri);
       }
