@@ -8,6 +8,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.serviceContainer.AlreadyDisposedException;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import com.intellij.util.PatternUtil;
@@ -53,7 +54,11 @@ public class EnableSoftWrapNotificationProvider extends EditorNotifications.Prov
     panel.setText("Writing AsciiDoc works best with soft-wrap enabled. Do you want to enable it by default?");
     panel.createActionLabel("Yes, take me to the Soft Wrap settings!", () -> ApplicationManager.getApplication().invokeLater(() -> {
       if (!project.isDisposed()) {
-        showSettingsDialog(project, "preferences.editor", "soft wraps");
+        try {
+          showSettingsDialog(project, "preferences.editor", "soft wraps");
+        } catch (AlreadyDisposedException ex) {
+          // ignored
+        }
       }
     }));
     panel.createActionLabel("Do not show again", () -> {
