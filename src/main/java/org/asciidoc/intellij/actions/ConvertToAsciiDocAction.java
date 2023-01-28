@@ -68,25 +68,29 @@ public class ConvertToAsciiDocAction extends AnAction implements UpdateInBackgro
         CommandProcessor.getInstance().executeCommand(project, new Runnable() {
           @Override
           public void run() {
-            PsiFile asciiDocFile = file.getContainingDirectory().findFile(newFileName);
-            if (deleteFile.get() && asciiDocFile != null) {
-              asciiDocFile.delete();
-            } else if (asciiDocFile != null) {
-              // file might have appeared "in between", stop here
-              return;
-            }
-            @NotNull @NonNls CharSequence asciiDocContent;
             try {
-              asciiDocContent = convertMarkdownToAsciiDoc(file.getText());
-            } catch (RuntimeException ex) {
-              throw AsciiDocPsiImplUtil.getRuntimeException("Unable to convert Markdown content to AsciiDoc", file.getText(), ex);
+              PsiFile asciiDocFile = file.getContainingDirectory().findFile(newFileName);
+              if (deleteFile.get() && asciiDocFile != null) {
+                asciiDocFile.delete();
+              } else if (asciiDocFile != null) {
+                // file might have appeared "in between", stop here
+                return;
+              }
+              @NotNull @NonNls CharSequence asciiDocContent;
+              try {
+                asciiDocContent = convertMarkdownToAsciiDoc(file.getText());
+              } catch (RuntimeException ex) {
+                throw AsciiDocPsiImplUtil.getRuntimeException("Unable to convert Markdown content to AsciiDoc", file.getText(), ex);
+              }
+              asciiDocFile = PsiFileFactory.getInstance(project).createFileFromText(newFileName, AsciiDocFileType.INSTANCE, asciiDocContent);
+              PsiFile newFile = (PsiFile) file.getContainingDirectory().add(asciiDocFile);
+
+              newFile.navigate(true);
+
+              deleteVirtualFile();
+            } catch (AlreadyDisposedException ex) {
+              // ignored
             }
-            asciiDocFile = PsiFileFactory.getInstance(project).createFileFromText(newFileName, AsciiDocFileType.INSTANCE, asciiDocContent);
-            PsiFile newFile = (PsiFile) file.getContainingDirectory().add(asciiDocFile);
-
-            newFile.navigate(true);
-
-            deleteVirtualFile();
           }
 
           private void deleteVirtualFile() {
