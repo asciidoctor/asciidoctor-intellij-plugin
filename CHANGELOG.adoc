@@ -7,6 +7,12 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.38.9
+
+- Updated dialog notice for submitting errors (#1285)
+- Ignore an already disposed exception (#1284)
+- Ignore an already disposed exception (#1283)
+
 === 0.38.8
 
 - Fix parsing of nodes enumerations inside of blocks
