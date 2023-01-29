@@ -35,15 +35,17 @@ public class FormatAsciiDocActionTest {
       {" ", "123", "\u00E4", false, "numbers postfixed by umlaut"},
       {" ", " test", " ", false, "word with surrounding space also selected"},
       {" ", "test", "'s", false, "word with apostrophe should avoid typographic quote"},
+      {"'", "test", "'", true, "word with single quotes should lead to typographic quote"},
+      {"\"", "test", "\"", true, "word with single quotes should lead to typographic quote"},
       {"", "", "", true, "empty string with no prefix and suffix"},
     });
   }
 
-  private Document document;
-  private int start;
-  private int end;
-  private String explanation;
-  private boolean isWord;
+  private final Document document;
+  private final int start;
+  private final int end;
+  private final String explanation;
+  private final boolean isWord;
 
   public FormatAsciiDocActionTest(String prefix, String selection, String postfix, boolean isWord, String explanation) {
     document = new MockDocument();

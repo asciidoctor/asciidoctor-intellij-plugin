@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * When pressing a formatting character like '*', '`', '#' or '_', the selection will be wrapped (or unwrapped)
  * with the formatting given an AsciiDoc document.
- *
+ * <p>
  * Heavily inspired by {@link SelectionQuotingTypedHandler}, but different as it toggles the formatting.
  */
 public class FormattingQuotedTypedHandler extends TypedHandlerDelegate {
@@ -58,13 +58,13 @@ public class FormattingQuotedTypedHandler extends TypedHandlerDelegate {
         // ... or add it around the text
         int border = 0;
         if (newText == null) {
-          boolean word = FormatAsciiDocAction.isWord(editor.getDocument(), selectionStart, selectionEnd, "" + c);
+          boolean word = FormatAsciiDocAction.isWord(editor.getDocument(), selectionStart, selectionEnd, String.valueOf(c));
           if (word || c == '"' || c == '\'' || c == '~' || c == '^') {
             newText = c + selectedText + c;
             border = 1;
           } else {
             // prefix a string to prevent that adding two chars results in an integer
-            newText = "" + c + c + selectedText + c + c;
+            newText = String.valueOf(c) + c + selectedText + c + c;
             border = 2;
           }
         }

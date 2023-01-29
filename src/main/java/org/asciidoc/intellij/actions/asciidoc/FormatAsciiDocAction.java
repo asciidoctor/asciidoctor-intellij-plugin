@@ -59,8 +59,9 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
     if (formatChar.equals("$")) {
       return false;
     }
+    String precededBy = "";
     if (start > 0) {
-      String precededBy = document.getText(new TextRangeInterval(start - 1, start));
+      precededBy = document.getText(new TextRangeInterval(start - 1, start));
       // not a word if selection is preceded by a semicolon, colon, an alphabetic characters, a digit or an underscore
       if (precededBy.matches("(?U)[;:\\w_]")) {
         return false;
@@ -79,8 +80,9 @@ public abstract class FormatAsciiDocAction extends AsciiDocAction {
       if (succeededBy.matches("(?U)[\\w_]")) {
         return false;
       }
-      if (succeededBy.matches("'") && formatChar.equals("`")) {
-        // this would lead to a typographic quote, therefore use two quotes
+      if (!precededBy.equals("'") && succeededBy.equals("'") && formatChar.equals("`")) {
+        // This would lead to a typographic quote at the end, but not at the beginning.
+        // Let's assume the user wants to create monospaced text, and therefore use two quotes
         return false;
       }
     }
