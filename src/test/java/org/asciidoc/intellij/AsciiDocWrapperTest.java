@@ -8,6 +8,7 @@ import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 import org.asciidoc.intellij.ui.SplitFileEditor;
 import org.asciidoctor.SafeMode;
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 
 import java.io.BufferedWriter;
@@ -36,12 +37,37 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     asciidocWrapper = new AsciiDocWrapper(getProject(), new File(System.getProperty("java.io.tmpdir")), null, "test");
   }
 
-  public void testShouldRenderPlantUmlAsPng() {
-    String html = asciidocWrapper.render("[plantuml,test,format=svg]\n" +
-      "----\n" +
-      "List <|.. ArrayList\n" +
-      "----\n", Collections.emptyList());
-    Assert.assertTrue(html.contains("src=\"test.png\""));
+  public void testShouldRenderPlantUmlAsPngWhenUsingJavaFX() {
+    AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
+      SplitFileEditor.SplitEditorLayout.SPLIT,
+      JavaFxHtmlPanelProvider.INFO,
+      AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
+      SafeMode.UNSAFE,
+      new HashMap<>(),
+      true,
+      true,
+      true,
+      "",
+      "",
+      true,
+      true,
+      false,
+      "",
+      true,
+      true,
+      true,
+      1,
+      false,
+      ""));
+    try {
+      String html = asciidocWrapper.render("[plantuml,test,format=svg]\n" +
+        "----\n" +
+        "List <|.. ArrayList\n" +
+        "----\n", Collections.emptyList());
+      Assertions.assertThat(html).contains("src=\"test.png\"");
+    } finally {
+      AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
+    }
   }
 
   public void testShouldRenderPlainAsciidoc() {
