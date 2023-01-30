@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.38.10
+
+- Adding a debug name for AsciiDoc StubFileElementTypes to avoid a warning in IntelliJ 2023.1 EAP (#1289)
+
 === 0.38.9
 
 - Updated dialog notice for submitting errors (#1285)

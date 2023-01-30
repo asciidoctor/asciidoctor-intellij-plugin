@@ -8,11 +8,11 @@ import org.asciidoc.intellij.psi.AsciiDocFile;
 public class AsciiDocFileElementType extends IStubFileElementType<PsiFileStub<AsciiDocFile>> {
 
   public AsciiDocFileElementType() {
-    super(AsciiDocLanguage.INSTANCE);
+    super("ASCIIDOC_FILE", AsciiDocLanguage.INSTANCE);
   }
 
   @Override
   public int getStubVersion() {
-    return super.getStubVersion() + 48;
+    return super.getStubVersion() + 49;
   }
 }
