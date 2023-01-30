@@ -30,17 +30,17 @@ public class AsciiDocCreateMissingFileInspectionTest extends AsciiDocQuickFixTes
   @Override
   protected String getBasePath() {
     try {
-      File path = new File("build/testdata/missingfile");
+      File path = new File("build/testData/missingfile");
       FileUtils.deleteDirectory(path);
       FileUtils.forceMkdir(path);
-      FileUtils.copyDirectory(new File("testdata/inspections/missingfile"), new File("build/testdata/missingfile"));
+      FileUtils.copyDirectory(new File("testData/inspections/missingfile"), new File("build/testData/missingfile"));
       if (System.getProperty("os.name").toLowerCase().contains("win")) {
         // highlighting contains a "C:" in the path name on windows, therefore the fixture needs to be patched
-        String contents = FileUtils.readFileToString(new File("build/testdata/missingfile/createMissingIncludeFile.adoc"), StandardCharsets.UTF_8);
-        contents = contents.replaceAll("/src", new File("build/testdata/missingfile/createMissingIncludeFile.adoc").getAbsolutePath().charAt(0) + ":" + "/src");
-        FileUtils.writeStringToFile(new File("build/testdata/missingfile/createMissingIncludeFile.adoc"), contents, StandardCharsets.UTF_8);
+        String contents = FileUtils.readFileToString(new File("build/testData/missingfile/createMissingIncludeFile.adoc"), StandardCharsets.UTF_8);
+        contents = contents.replaceAll("/src", new File("build/testData/missingfile/createMissingIncludeFile.adoc").getAbsolutePath().charAt(0) + ":" + "/src");
+        FileUtils.writeStringToFile(new File("build/testData/missingfile/createMissingIncludeFile.adoc"), contents, StandardCharsets.UTF_8);
       }
-      return "../build/testdata/missingfile";
+      return "../build/testData/missingfile";
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
