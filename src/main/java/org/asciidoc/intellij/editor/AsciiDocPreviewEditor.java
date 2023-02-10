@@ -352,7 +352,16 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           if (event.getFile() != null) {
             if (!project.isDisposed()) {
               try {
-                if (ProjectFileIndex.getInstance(project).getModuleForFile(event.getFile()) != null) {
+                VirtualFile file = event.getFile();
+                // if the file has been deleted, use the parent folder to determine the module
+                if (!file.isValid()) {
+                  file = file.getParent();
+                }
+                if (file == null || !file.isValid()) {
+                  continue;
+                }
+                // check if the modified file was part of the project
+                if (ProjectFileIndex.getInstance(project).getModuleForFile(file) != null) {
                   // As an include might have been modified, force the refresh of the preview
                   forceRenderCycle();
                   renderIfVisible();
