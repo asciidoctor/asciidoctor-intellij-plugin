@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.38.11
 
 - Upgrade AsciidoctorJ to 2.2.4 and PlantUML to 1.2022.14
+- Ignore Antora playbooks that are inside of a module, as they are probably examples (#1293)
 
 === 0.38.10
 

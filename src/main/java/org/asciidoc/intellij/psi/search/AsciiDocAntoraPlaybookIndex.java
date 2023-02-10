@@ -6,6 +6,7 @@ import com.intellij.util.containers.CollectionFactory;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
 import org.asciidoc.intellij.psi.AsciiDocSearchScope;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +34,10 @@ public class AsciiDocAntoraPlaybookIndex {
   public static Collection<VirtualFile> getVirtualFiles(@NotNull Project project) {
     Set<VirtualFile> files = CollectionFactory.createSmallMemoryFootprintSet();
     FileBasedIndex.getInstance().processValues(NAME, PLAYBOOK_KEY, null, (file, value) -> {
-      files.add(file);
+      if (AsciiDocUtil.findAntoraModuleDir(project, file) == null) {
+        // if a playbook is located in an example folder, ignore it
+        files.add(file);
+      }
       return true;
     }, new AsciiDocSearchScope(project), null);
     return files;
