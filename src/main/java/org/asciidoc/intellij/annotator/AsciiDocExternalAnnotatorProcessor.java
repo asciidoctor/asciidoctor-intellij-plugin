@@ -2,12 +2,14 @@ package org.asciidoc.intellij.annotator;
 
 import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.ExternalAnnotator;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.problems.Problem;
@@ -47,8 +49,8 @@ import java.util.Set;
  *
  * @author Alexander Schwartz 2019
  */
-public class AsciiDocExternalAnnotatorProcessor extends com.intellij.lang.annotation.ExternalAnnotator<
-  AsciiDocInfoType, AsciiDocAnnotationResultType> {
+public class AsciiDocExternalAnnotatorProcessor extends ExternalAnnotator<AsciiDocInfoType, AsciiDocAnnotationResultType>
+implements DumbAware {
 
   public static final String INCLUDE_FILE_NOT_FOUND = "include file not found";
 

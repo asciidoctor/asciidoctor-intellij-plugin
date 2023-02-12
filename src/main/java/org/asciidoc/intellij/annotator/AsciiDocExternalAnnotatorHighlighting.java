@@ -1,8 +1,10 @@
 package org.asciidoc.intellij.annotator;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.lang.annotation.ExternalAnnotator;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.asciidoc.intellij.highlighting.AsciiDocSyntaxHighlighter;
@@ -17,8 +19,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Alexander Schwartz 2021
  */
-public class AsciiDocExternalAnnotatorHighlighting extends com.intellij.lang.annotation.ExternalAnnotator<
-  String, String> {
+public class AsciiDocExternalAnnotatorHighlighting extends ExternalAnnotator<String, String> implements DumbAware {
   @Override
   public @Nullable String collectInformation(@NotNull PsiFile file, @NotNull Editor editor, boolean hasErrors) {
     // dummy implementation, just return anything

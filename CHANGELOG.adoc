@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Upgrade AsciidoctorJ to 2.2.4 and PlantUML to 1.2022.14
 - Ignore Antora playbooks that are inside a module, as they are probably examples (#1293)
 - Update the preview also when files are deleted
+- Run external annotators for formatting and error highlighting also during indexing
 
 === 0.38.10
 
