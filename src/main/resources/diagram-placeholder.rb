@@ -54,6 +54,7 @@ Extensions.register do
       pikchr
       plantuml
       rackdiag
+      salt
       seqdiag
       structurizr
       svgbob

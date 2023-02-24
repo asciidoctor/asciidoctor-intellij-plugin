@@ -76,6 +76,8 @@ public class LanguageGuesser {
       lang = parts[1];
     } else if ("diagram-plantuml".equals(languageName)) {
       lang = "puml";
+    } else if ("diagram-salt".equals(languageName)) {
+      lang = "puml";
     } else if ("diagram-graphviz".equals(languageName)) {
       lang = "dot";
     }

@@ -91,6 +91,8 @@ public class AsciiDocListing extends AbstractAsciiDocCodeBlock {
           return "source-" + attr[1];
         } else if ("plantuml".equalsIgnoreCase(firstAttr)) {
           return "diagram-plantuml";
+        } else if ("salt".equalsIgnoreCase(firstAttr)) {
+          return "diagram-salt";
         } else if ("graphviz".equalsIgnoreCase(firstAttr)) {
           return "diagram-graphviz";
         }

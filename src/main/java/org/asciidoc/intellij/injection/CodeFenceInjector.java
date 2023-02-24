@@ -33,7 +33,19 @@ public class CodeFenceInjector implements MultiHostInjector {
       TextRange range = ((AsciiDocElementWithLanguage) context).getContentTextRange();
       if (!range.equals(TextRange.EMPTY_RANGE)) {
         registrar.startInjecting(language);
-        registrar.addPlace(null, null, ((AsciiDocElementWithLanguage) context), range);
+        String prefix = null;
+        String suffix = null;
+        if (language.getID().equalsIgnoreCase("puml") && !range.substring(context.getText()).startsWith("@start")) {
+          String fenceLanguage = ((AsciiDocElementWithLanguage) context).getFenceLanguage();
+          if (fenceLanguage.equals("diagram-plantuml")) {
+            prefix = "@startuml\n";
+            suffix = "\n@enduml";
+          } else if (fenceLanguage.equals("diagram-salt")) {
+            prefix = "@startsalt\n";
+            suffix = "\n@endsalt";
+          }
+        }
+        registrar.addPlace(prefix, suffix, ((AsciiDocElementWithLanguage) context), range);
         registrar.doneInjecting();
       }
     }
