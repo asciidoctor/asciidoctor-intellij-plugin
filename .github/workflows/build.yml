@@ -101,14 +101,14 @@ jobs:
           VERSION="$(perl -0777 -ne '/=== ([.0-9]*)/s && print $1; ' CHANGELOG.adoc)"
           NAME="asciidoctor-intellij-plugin"
           CHANGELOG="$(perl -0777 -ne '/===.*?\n\s*(.*?)\s*===/s && print $1; ' CHANGELOG.adoc)"
-          CHANGELOG="${CHANGELOG//'%'/'%25'}"
-          CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
-          CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
           ARTIFACT="${NAME}-${VERSION}.zip"
+
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "name=$NAME" >> $GITHUB_OUTPUT
-          echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
           echo "artifact=$ARTIFACT" >> $GITHUB_OUTPUT
 
       # Build artifact using buildPlugin Gradle task
