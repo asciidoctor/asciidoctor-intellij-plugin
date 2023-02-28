@@ -50,7 +50,7 @@ jobs:
         run: |
           VERSION="$(perl -0777 -ne '/=== ([.0-9]*)/s && print $1; ' CHANGELOG.adoc)"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "::set-output name=version::$VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       # Publish the plugin to the Marketplace
       - name: Publish Plugin
