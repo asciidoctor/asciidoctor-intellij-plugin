@@ -29,9 +29,9 @@ public class AsciiDocInlineMacro extends AsciiDocASTWrapperPsiElement implements
       // standard asciidoctor
       "image", "video", "audio",
       // asciidoctor diagram
-      "a2s", "actdiag", "blockdiag", "ditaa", "erd", "graphviz", "meme", "mermaid", "msc",
-      "nwdiag", "packetdiag", "plantuml", "rackdiag", "seqdiag", "shaape", "svgbob",
-      "syntrax", "umlet", "vega", "vegalite", "wavedrom"
+      "a2s", "actdiag", "blockdiag", "d2", "dbml", "ditaa", "erd", "graphviz", "meme",
+      "mermaid", "msc", "nwdiag", "packetdiag", "plantuml", "rackdiag", "seqdiag",
+      "shaape", "svgbob", "syntrax", "umlet", "vega", "vegalite", "wavedrom"
   ));
 
   public AsciiDocInlineMacro(@NotNull ASTNode node) {

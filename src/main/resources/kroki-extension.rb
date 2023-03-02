@@ -112,6 +112,8 @@ module AsciidoctorExtensions
       bpmn
       bytefield
       c4plantuml
+      d2
+      dbml
       ditaa
       erd
       excalidraw
