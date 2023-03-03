@@ -214,8 +214,11 @@ implements DumbAware {
       }
       ab.create();
     }
-    // consider using reportProblemsFromExternalSource available from 2019.x?
-    theProblemSolver.reportProblems(file.getVirtualFile(), problems);
+    if (problems.size() > 0) {
+      theProblemSolver.reportProblemsFromExternalSource(file.getVirtualFile(), AsciiDocExternalAnnotatorProcessor.class);
+    } else {
+      theProblemSolver.clearProblemsFromExternalSource(file.getVirtualFile(), AsciiDocExternalAnnotatorProcessor.class);
+    }
   }
 
   /**

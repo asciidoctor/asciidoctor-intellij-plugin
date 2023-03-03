@@ -13,6 +13,7 @@ import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.workspaceModel.ide.WorkspaceModelTopics;
+import org.asciidoc.intellij.annotator.AsciiDocExternalAnnotatorProcessor;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.api.CmdlineRemoteProto;
@@ -51,9 +52,7 @@ public class AsciiDocTargetScopeProvider extends BuildTargetScopeProvider {
       if (!file.isDirectory() && AsciiDocFileType.INSTANCE == file.getFileType()
         && !myFileIndexFacade.isInLibraryClasses(file)
         && !myFileIndexFacade.isInLibrarySource(file)) {
-        // this will clear the problems for all Asciidoc files in the modules
-        // consider using clearProblemsFromExternalSource available from 2019.x?
-        theProblemSolver.clearProblems(file);
+        theProblemSolver.clearProblemsFromExternalSource(file, AsciiDocExternalAnnotatorProcessor.class);
         PsiFile psiFile = null;
         if (file.isValid()) {
           psiFile = PsiManager.getInstance(project).findFile(file);
