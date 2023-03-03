@@ -5,9 +5,9 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
+import com.intellij.ui.EditorNotificationProvider;
 import com.intellij.ui.EditorNotifications;
 import com.intellij.ui.scale.JBUIScale;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
@@ -17,24 +17,18 @@ import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+import java.util.function.Function;
+
 /**
  * This notification shows how to fix the symptoms of a blurry preview.
  * Ticket: https://youtrack.jetbrains.com/issue/IDEA-213110
  */
-public class JavaFxMightBeBlurredNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> implements DumbAware {
-  private static final Key<EditorNotificationPanel> KEY = Key.create("Preview might be blurry");
-
+public class JavaFxMightBeBlurredNotificationProvider implements EditorNotificationProvider, DumbAware {
   private static final String ASCIIDOC_PREVIEW_MIGHT_BE_BLURRY = "asciidoc.preview.might.be.blurry";
 
-  @NotNull
   @Override
-  public Key<EditorNotificationPanel> getKey() {
-    return KEY;
-  }
-
-  @Nullable
-  @Override
-  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull final FileEditor fileEditor, @NotNull Project project) {
+  public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project, @NotNull VirtualFile file) {
     // only in AsciiDoc files
     if (file.getFileType() != AsciiDocFileType.INSTANCE) {
       return null;
@@ -92,14 +86,16 @@ public class JavaFxMightBeBlurredNotificationProvider extends EditorNotification
         return null;
     }
 
-    final EditorNotificationPanel panel = new EditorNotificationPanel();
-    panel.setText(message);
-    panel.createActionLabel("Yes, the preview is blurry, show me how to fix it!", ()
-      -> BrowserUtil.browse("https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/faq/blurry-preview.html"));
-    panel.createActionLabel("Do not show again", () -> {
-      PropertiesComponent.getInstance().setValue(ASCIIDOC_PREVIEW_MIGHT_BE_BLURRY, true);
-      EditorNotifications.updateAll();
-    });
-    return panel;
+    return fileEditor -> {
+      final EditorNotificationPanel panel = new EditorNotificationPanel();
+      panel.setText(message);
+      panel.createActionLabel("Yes, the preview is blurry, show me how to fix it!", ()
+              -> BrowserUtil.browse("https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/faq/blurry-preview.html"));
+      panel.createActionLabel("Do not show again", () -> {
+        PropertiesComponent.getInstance().setValue(ASCIIDOC_PREVIEW_MIGHT_BE_BLURRY, true);
+        EditorNotifications.updateAll();
+      });
+      return panel;
+    };
   }
 }

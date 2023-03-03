@@ -6,35 +6,29 @@ import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.serviceContainer.AlreadyDisposedException;
 import com.intellij.ui.EditorNotificationPanel;
+import com.intellij.ui.EditorNotificationProvider;
 import com.intellij.ui.EditorNotifications;
 import com.intellij.util.PatternUtil;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+import java.util.function.Function;
+
 import static com.intellij.ide.actions.ShowSettingsUtilImpl.showSettingsDialog;
 
 /**
  * Notify user that permanent softwrap is available.
  */
-public class EnableSoftWrapNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> implements DumbAware {
-  private static final Key<EditorNotificationPanel> KEY = Key.create("Enable Softwrap for Asciidoctor");
-
+public class EnableSoftWrapNotificationProvider implements EditorNotificationProvider, DumbAware {
   private static final String SOFTWRAP_AVAILABLE = "asciidoc.softwrap.enable";
 
-  @NotNull
   @Override
-  public Key<EditorNotificationPanel> getKey() {
-    return KEY;
-  }
-
-  @Nullable
-  @Override
-  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull final FileEditor fileEditor, @NotNull Project project) {
+  public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project, @NotNull VirtualFile file) {
     // only in AsciiDoc files
     if (file.getFileType() != AsciiDocFileType.INSTANCE) {
       return null;
@@ -50,22 +44,24 @@ public class EnableSoftWrapNotificationProvider extends EditorNotifications.Prov
       return null;
     }
 
-    final EditorNotificationPanel panel = new EditorNotificationPanel();
-    panel.setText("Writing AsciiDoc works best with soft-wrap enabled. Do you want to enable it by default?");
-    panel.createActionLabel("Yes, take me to the Soft Wrap settings!", () -> ApplicationManager.getApplication().invokeLater(() -> {
-      if (!project.isDisposed()) {
-        try {
-          showSettingsDialog(project, "preferences.editor", "soft wraps");
-        } catch (AlreadyDisposedException ex) {
-          // ignored
+    return fileEditor -> {
+      final EditorNotificationPanel panel = new EditorNotificationPanel();
+      panel.setText("Writing AsciiDoc works best with soft-wrap enabled. Do you want to enable it by default?");
+      panel.createActionLabel("Yes, take me to the Soft Wrap settings!", () -> ApplicationManager.getApplication().invokeLater(() -> {
+        if (!project.isDisposed()) {
+          try {
+            showSettingsDialog(project, "preferences.editor", "soft wraps");
+          } catch (AlreadyDisposedException ex) {
+            // ignored
+          }
         }
-      }
-    }));
-    panel.createActionLabel("Do not show again", () -> {
-      PropertiesComponent.getInstance().setValue(SOFTWRAP_AVAILABLE, true);
-      EditorNotifications.updateAll();
-    });
-    return panel;
+      }));
+      panel.createActionLabel("Do not show again", () -> {
+        PropertiesComponent.getInstance().setValue(SOFTWRAP_AVAILABLE, true);
+        EditorNotifications.updateAll();
+      });
+      return panel;
+    };
   }
 
   /**
@@ -95,5 +91,4 @@ public class EnableSoftWrapNotificationProvider extends EditorNotifications.Prov
     }
     return false;
   }
-
 }

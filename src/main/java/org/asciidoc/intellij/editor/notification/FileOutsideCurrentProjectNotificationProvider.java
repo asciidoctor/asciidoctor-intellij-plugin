@@ -6,32 +6,26 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
+import com.intellij.ui.EditorNotificationProvider;
 import com.intellij.ui.EditorNotifications;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+import java.util.function.Function;
+
 /**
  * Notify user that they opened a file outside of the current project and that functionality is limited.
  */
-public class FileOutsideCurrentProjectNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel> implements DumbAware {
-  private static final Key<EditorNotificationPanel> KEY = Key.create("File outside current project");
-
+public class FileOutsideCurrentProjectNotificationProvider implements EditorNotificationProvider, DumbAware {
   private static final String FILEOUTSIDEFOLDER = "asciidoc.fileoutsidefolder";
 
-  @NotNull
   @Override
-  public Key<EditorNotificationPanel> getKey() {
-    return KEY;
-  }
-
-  @Nullable
-  @Override
-  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull final FileEditor fileEditor, @NotNull Project project) {
+  public @Nullable Function<? super @NotNull FileEditor, ? extends @Nullable JComponent> collectNotificationData(@NotNull Project project, @NotNull VirtualFile file) {
     // only in AsciiDoc files
     if (file.getFileType() != AsciiDocFileType.INSTANCE) {
       return null;
@@ -57,14 +51,16 @@ public class FileOutsideCurrentProjectNotificationProvider extends EditorNotific
       }
     }
 
-    final EditorNotificationPanel panel = new EditorNotificationPanel();
-    panel.setText("The file you're editing is outside of the current project's folder. Auto-complete and validation is limited.");
-    panel.createActionLabel("Tell me more!", ()
-      -> BrowserUtil.browse("https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/faq/validation-for-asciidoc-files.html"));
-    panel.createActionLabel("Do not show again", () -> {
-      PropertiesComponent.getInstance().setValue(FILEOUTSIDEFOLDER, true);
-      EditorNotifications.updateAll();
-    });
-    return panel;
+    return fileEditor -> {
+      final EditorNotificationPanel panel = new EditorNotificationPanel();
+      panel.setText("The file you're editing is outside of the current project's folder. Auto-complete and validation is limited.");
+      panel.createActionLabel("Tell me more!", ()
+              -> BrowserUtil.browse("https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/faq/validation-for-asciidoc-files.html"));
+      panel.createActionLabel("Do not show again", () -> {
+        PropertiesComponent.getInstance().setValue(FILEOUTSIDEFOLDER, true);
+        EditorNotifications.updateAll();
+      });
+      return panel;
+    };
   }
 }
