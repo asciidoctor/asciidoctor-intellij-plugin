@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.psi;
 
+import com.google.errorprone.annotations.CheckReturnValue;
 import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.CompletionUtilCore;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -44,7 +45,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.error.YAMLException;
 
-import javax.annotation.CheckReturnValue;
 import javax.swing.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.InvalidPathException;
