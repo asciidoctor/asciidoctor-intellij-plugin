@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.38.12
+
+- Support d2 and dbml diagrams for Kroki (thanks to @croemmich) (#1305)
+
 === 0.38.11
 
 - Upgrade AsciidoctorJ to 2.2.4 and PlantUML to 1.2022.14
