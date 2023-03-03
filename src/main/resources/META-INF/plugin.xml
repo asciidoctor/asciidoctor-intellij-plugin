@@ -240,10 +240,6 @@
       implementation="org.asciidoc.intellij.editor.jcef.notification.ChangeJdkForJCEFNotificationProvider"/>
     <editorNotificationProvider
       implementation="org.asciidoc.intellij.editor.notification.ExtensionsAvailableNotificationProvider"/>
-    <editorNotificationProvider
-      implementation="org.asciidoc.intellij.editor.javafx.notification.JavaFxMightBeBlurredNotificationProvider" />
-    <editorNotificationProvider
-      implementation="org.asciidoc.intellij.editor.javafx.notification.JavaFxInitializationIsStuckNotificationProvider"/>
     <editorNotificationProvider implementation="org.asciidoc.intellij.editor.notification.SpringBootRestDocsNotificationProvider"/>
     <editorNotificationProvider
       implementation="org.asciidoc.intellij.editor.notification.AntoraNotificationProvider"/>
