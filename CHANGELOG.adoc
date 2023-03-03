@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.38.12
 
 - Support d2 and dbml diagrams for Kroki (thanks to @croemmich) (#1305)
+- Updating to Kroki Asciidoctor 0.8.0
 
 === 0.38.11
 

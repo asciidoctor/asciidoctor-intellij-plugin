@@ -2,6 +2,7 @@
 # Original source:
 # https://github.com/Mogztter/asciidoctor-kroki/blob/master/ruby/lib/asciidoctor/extensions/asciidoctor_kroki/extension.rb
 
+require 'cgi'
 require 'asciidoctor/extensions' unless RUBY_ENGINE == 'opal'
 
 # Asciidoctor extensions
@@ -65,7 +66,7 @@ module AsciidoctorExtensions
 
       unless (path = resolve_target_path(target))
         logger.error message_with_context "#{diagram_type} block macro not found: #{target}.", source_location: parent.document.reader.cursor_at_mark
-        create_block(parent, 'paragraph', unresolved_block_macro_message(diagram_type, target), {})
+        return create_block(parent, 'paragraph', unresolved_block_macro_message(diagram_type, target), {})
       end
 
       begin
@@ -94,7 +95,7 @@ module AsciidoctorExtensions
         require 'open-uri'
         ::OpenURI.open_uri(target, &:read)
       else
-        File.open(target, &:read)
+        File.read(target, mode: 'rb:utf-8:utf-8')
       end
     end
 
@@ -132,6 +133,7 @@ module AsciidoctorExtensions
       vegalite
       wavedrom
       structurizr
+      diagramsnet
     ].freeze
   end
 
@@ -141,6 +143,7 @@ module AsciidoctorExtensions
     include Asciidoctor::Logging
 
     TEXT_FORMATS = %w[txt atxt utxt].freeze
+    BUILTIN_ATTRIBUTES = %w[target width height format fallback link float align role caption title cloaked-context subs].freeze
 
     class << self
       # rubocop:disable Metrics/AbcSize
@@ -152,13 +155,12 @@ module AsciidoctorExtensions
         if (subs = attrs['subs'])
           diagram_text = parent.apply_subs(diagram_text, parent.resolve_subs(subs))
         end
-        title = attrs.delete('title')
-        caption = attrs.delete('caption')
         attrs.delete('opts')
         format = get_format(doc, attrs, diagram_type)
         attrs['role'] = get_role(format, attrs['role'])
         attrs['format'] = format
-        kroki_diagram = KrokiDiagram.new(diagram_type, format, diagram_text)
+        opts = attrs.filter { |key, _| key.is_a?(String) && BUILTIN_ATTRIBUTES.none? { |k| key == k } && !key.end_with?('-option') }
+        kroki_diagram = KrokiDiagram.new(diagram_type, format, diagram_text, attrs['target'], opts)
         kroki_client = KrokiClient.new({
                                          server_url: server_url(doc),
                                          http_method: http_method(doc),
@@ -166,11 +168,14 @@ module AsciidoctorExtensions
                                          source_location: doc.reader.cursor_at_mark,
                                          http_client: KrokiHttpClient
                                        }, logger)
+        alt = get_alt(attrs)
+        title = attrs.delete('title')
+        caption = attrs.delete('caption')
         if TEXT_FORMATS.include?(format)
           text_content = kroki_client.text_content(kroki_diagram)
           block = processor.create_block(parent, 'literal', text_content, attrs)
         else
-          attrs['alt'] = get_alt(attrs)
+          attrs['alt'] = alt
           attrs['target'] = create_image_src(doc, kroki_diagram, kroki_client)
           block = processor.create_image_block(parent, attrs)
         end
@@ -225,8 +230,8 @@ module AsciidoctorExtensions
         if format == 'png'
           # redirect PNG format to SVG if the diagram library only supports SVG as output format.
           # this is useful when the default format has been set to PNG
-          # Currently, mermaid, nomnoml, svgbob, wavedrom only support SVG as output format.
-          svg_only_diagram_types = %i[mermaid nomnoml svgbob wavedrom]
+          # Currently, nomnoml, svgbob, wavedrom only support SVG as output format.
+          svg_only_diagram_types = %i[nomnoml svgbob wavedrom]
           format = 'svg' if svg_only_diagram_types.include?(diagram_type)
         end
         format
@@ -256,10 +261,9 @@ module AsciidoctorExtensions
         images_dir = doc.attr('imagesdir', '')
         if (images_output_dir = doc.attr('imagesoutdir'))
           images_output_dir
-        elsif (out_dir = doc.attr('outdir'))
+        # the nested document logic will become obsolete once https://github.com/asciidoctor/asciidoctor/commit/7edc9da023522be67b17e2a085d72e056703a438 is released
+        elsif (out_dir = doc.attr('outdir') || (doc.nested? ? doc.parent_document : doc).options[:to_dir])
           File.join(out_dir, images_dir)
-        elsif (to_dir = doc.attr('to_dir'))
-          File.join(to_dir, images_dir)
         else
           File.join(doc.base_dir, images_dir)
         end
@@ -274,16 +278,19 @@ module AsciidoctorExtensions
     require 'zlib'
     require 'digest'
 
-    attr_reader :type, :text, :format
+    attr_reader :type, :text, :format, :target, :opts
 
-    def initialize(type, format, text)
+    def initialize(type, format, text, target = nil, opts = {})
       @text = text
       @type = type
       @format = format
+      @target = target
+      @opts = opts
     end
 
     def get_diagram_uri(server_url)
-      _join_uri_segments(server_url, @type, @format, encode)
+      query_params = opts.map { |k, v| "#{k}=#{_url_encode(v.to_s)}" }.join('&') unless opts.empty?
+      _join_uri_segments(server_url, @type, @format, encode) + (query_params ? "?#{query_params}" : '')
     end
 
     def encode
@@ -292,26 +299,29 @@ module AsciidoctorExtensions
 
     def save(output_dir_path, kroki_client)
       diagram_url = get_diagram_uri(kroki_client.server_url)
-      diagram_name = "diag-#{Digest::SHA256.hexdigest diagram_url}.#{@format}"
+      diagram_name = "#{@target || 'diag'}-#{Digest::SHA256.hexdigest diagram_url}.#{@format}"
       file_path = File.join(output_dir_path, diagram_name)
       encoding = case @format
-                 when 'txt', 'atxt', 'utxt'
+                 when 'txt', 'atxt', 'utxt', 'svg'
                    'utf8'
-                 when 'svg', 'binary'
+                 else
                    'binary'
                  end
       # file is either (already) on the file system or we should read it from Kroki
-      contents = File.exist?(file_path) ? File.open(file_path, &:read) : kroki_client.get_image(self, encoding)
-      FileUtils.mkdir_p(output_dir_path)
-      if encoding == 'binary'
-        File.binwrite(file_path, contents)
-      else
-        File.write(file_path, contents)
+      unless File.exist?(file_path)
+        contents = kroki_client.get_image(self, encoding)
+        FileUtils.mkdir_p(output_dir_path)
+        File.write(file_path, contents, mode: 'wb')
       end
+
       diagram_name
     end
 
     private
+
+    def _url_encode(text)
+      CGI.escape(text).gsub(/\+/, '%20')
+    end
 
     def _join_uri_segments(base, *uris)
       segments = []
@@ -320,8 +330,8 @@ module AsciidoctorExtensions
       segments.concat(uris.map do |uri|
         # remove leading and trailing slashes
         uri.to_s
-           .gsub(%r{^/+}, '')
-           .gsub(%r{/+$}, '')
+          .gsub(%r{^/+}, '')
+          .gsub(%r{/+$}, '')
       end)
       segments.join('/')
     end
@@ -359,6 +369,7 @@ module AsciidoctorExtensions
       type = kroki_diagram.type
       format = kroki_diagram.format
       text = kroki_diagram.text
+      opts = kroki_diagram.opts
       if @method == 'adaptive' || @method == 'get'
         uri = kroki_diagram.get_diagram_uri(server_url)
         if uri.length > @max_uri_length
@@ -366,15 +377,15 @@ module AsciidoctorExtensions
           if @method == 'get'
             # The request might be rejected by the server with a 414 Request-URI Too Large.
             # Consider using the attribute kroki-http-method with the value 'adaptive'.
-            @http_client.get(uri, encoding)
+            @http_client.get(uri, opts, encoding)
           else
-            @http_client.post("#{@server_url}/#{type}/#{format}", text, encoding)
+            @http_client.post("#{@server_url}/#{type}/#{format}", text, opts, encoding)
           end
         else
-          @http_client.get(uri, encoding)
+          @http_client.get(uri, opts, encoding)
         end
       else
-        @http_client.post("#{@server_url}/#{type}/#{format}", text, encoding)
+        @http_client.post("#{@server_url}/#{type}/#{format}", text, opts, encoding)
       end
     end
   end
@@ -387,12 +398,13 @@ module AsciidoctorExtensions
     require 'json'
 
     class << self
-      REFERER = "asciidoctor/kroki.rb/0.5.0-intellij"
+      REFERER = "asciidoctor/kroki.rb/0.8.0-intellij"
 
-      def get(uri, _)
+      def get(uri, opts, _)
         uri = URI(uri)
-        request = ::Net::HTTP::Get.new(uri)
-        request['referer'] = REFERER
+        headers = opts.transform_keys { |key| "Kroki-Diagram-Options-#{key}" }
+                      .merge({ 'referer' => REFERER })
+        request = ::Net::HTTP::Get.new(uri, headers)
         ::Net::HTTP.start(
           uri.hostname,
           uri.port,
@@ -402,12 +414,16 @@ module AsciidoctorExtensions
         end
       end
 
-      def post(uri, data, _)
+      def post(uri, data, opts, _)
+        headers = opts.transform_keys { |key| "Kroki-Diagram-Options-#{key}" }
+                      .merge({
+                               'Content-Type' => 'text/plain',
+                               'referer' => REFERER
+                             })
         res = ::Net::HTTP.post(
           URI(uri),
           data,
-          'Content-Type' => 'text/plain',
-          'Referer' => REFERER
+          headers
         )
         res.body
       end
