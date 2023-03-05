@@ -1372,14 +1372,18 @@ public class AsciiDocUtil {
       sourceDir = sourceDir.getParent();
     }
     if (antoraModuleDir != null) {
-      return replaceAntoraPrefix(myElement.getProject(), antoraModuleDir, sourceDir, key, defaultFamily);
+      String macroName = null;
+      if (myElement instanceof AsciiDocBlockMacro) {
+        macroName = ((AsciiDocBlockMacro) myElement).getMacroName();
+      }
+      return replaceAntoraPrefix(myElement.getProject(), antoraModuleDir, sourceDir, key, defaultFamily, macroName);
     } else {
       return Collections.singletonList(key);
     }
   }
 
-  private static String replaceAntoraRelativePath(VirtualFile sourceDir, VirtualFile moduleDir, String key) {
-    if (key.startsWith("./") && sourceDir != null) {
+  private static String replaceAntoraRelativePath(VirtualFile sourceDir, VirtualFile moduleDir, String key, String macroName, boolean antoraPrefix) {
+    if ((key.startsWith("./") || (!antoraPrefix && Objects.equals(macroName, "include"))) && sourceDir != null) {
       String relativePath = FileUtil.getRelativePath(moduleDir.getPath(), sourceDir.getPath(), '/');
       if (relativePath != null) {
         int startInFamiliesDir = relativePath.indexOf('/');
@@ -1390,7 +1394,12 @@ public class AsciiDocUtil {
         }
       }
       if (relativePath != null) {
-        key = relativePath + key.substring(1);
+        if (key.startsWith("./")) {
+          key = key.substring(1);
+        } else {
+          key = "/" + key;
+        }
+        key = relativePath + key;
       }
     }
     return key;
@@ -1464,6 +1473,10 @@ public class AsciiDocUtil {
   }
 
   public static List<String> replaceAntoraPrefix(Project project, VirtualFile moduleDir, VirtualFile sourceDir, String originalKey, String defaultFamily) {
+    return replaceAntoraPrefix(project, moduleDir, sourceDir, originalKey, defaultFamily, null);
+  }
+
+  public static List<String> replaceAntoraPrefix(Project project, VirtualFile moduleDir, VirtualFile sourceDir, String originalKey, String defaultFamily, String macroName) {
     Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(originalKey);
     if (urlMatcher.find()) {
       return Collections.singletonList(originalKey);
@@ -1501,29 +1514,34 @@ public class AsciiDocUtil {
           key = version.replaceFirst("");
         }
 
+        boolean antoraPrefix = false;
+
         Matcher componentModule = COMPONENT_MODULE.matcher(key);
         if (componentModule.find()) {
           otherComponentName = componentModule.group("component");
           otherModuleName = componentModule.group("module");
           key = componentModule.replaceFirst("");
+          antoraPrefix = true;
         } else {
           Matcher module = MODULE.matcher(key);
           if (module.find()) {
             otherModuleName = module.group("module");
             key = module.replaceFirst("");
+            antoraPrefix = true;
           }
         }
         Matcher family = FAMILY.matcher(key);
         if (family.find()) {
           otherFamily = family.group("family");
           key = family.replaceFirst("");
+          antoraPrefix = true;
         } else {
           if (defaultFamily == null) {
             return Collections.singletonList(originalKey);
           }
         }
 
-        key = replaceAntoraRelativePath(sourceDir, moduleDir, key);
+        key = replaceAntoraRelativePath(sourceDir, moduleDir, key, macroName, antoraPrefix);
 
         if (otherFamily == null || otherFamily.length() == 0) {
           otherFamily = defaultFamily;

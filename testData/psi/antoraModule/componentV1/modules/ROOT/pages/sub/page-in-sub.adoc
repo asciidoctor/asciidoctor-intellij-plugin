@@ -1,1 +1,5 @@
 Page in subfolder
+
+include::include-in-sub.adoc[]
+
+include::./include-in-sub.adoc[]

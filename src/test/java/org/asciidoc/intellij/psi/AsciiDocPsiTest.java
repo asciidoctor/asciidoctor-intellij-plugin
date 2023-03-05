@@ -709,6 +709,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       getTestName(true) + "/componentV1/modules/ROOT/pages/test.adoc",
       getTestName(true) + "/componentV1/modules/ROOT/pages/page-in-root.adoc",
       getTestName(true) + "/componentV1/modules/ROOT/pages/sub/page-in-sub.adoc",
+      getTestName(true) + "/componentV1/modules/ROOT/pages/sub/include-in-sub.adoc",
       getTestName(true) + "/componentV1/modules/ROOT/attachments/attachment.txt",
       getTestName(true) + "/componentV1/modules/ROOT/attachments/attachment-in-root.txt",
       getTestName(true) + "/componentV1/modules/ROOT/examples/example.txt",
@@ -807,7 +808,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
     urls.clear();
 
-    for (AsciiDocBlock block : Objects.requireNonNull(PsiTreeUtil.getChildrenOfType(psiFile[10], AsciiDocBlock.class))) {
+    for (AsciiDocBlock block : Objects.requireNonNull(PsiTreeUtil.getChildrenOfType(psiFile[11], AsciiDocBlock.class))) {
       AsciiDocLink[] links = PsiTreeUtil.getChildrenOfType(block, AsciiDocLink.class);
       if (links != null) {
         urls.addAll(Arrays.asList(links));
@@ -836,7 +837,14 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
     urls.clear();
 
-    for (AsciiDocList list : Objects.requireNonNull(PsiTreeUtil.getChildrenOfType(psiFile[11], AsciiDocList.class))) {
+    macros = PsiTreeUtil.getChildrenOfType(psiFile[2], AsciiDocBlockMacro.class);
+    assertNotNull(macros);
+    assertSize(2, macros);
+
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "include-in-sub.adoc", "page"), "/src/antoraModule/componentV1/modules/ROOT/pages/sub/include-in-sub.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "./include-in-sub.adoc", "page"), "/src/antoraModule/componentV1/modules/ROOT/pages/sub/include-in-sub.adoc");
+
+    for (AsciiDocList list : Objects.requireNonNull(PsiTreeUtil.getChildrenOfType(psiFile[12], AsciiDocList.class))) {
       for (AsciiDocListItem listItem : Objects.requireNonNull(PsiTreeUtil.getChildrenOfType(list, AsciiDocListItem.class))) {
         AsciiDocLink[] links = PsiTreeUtil.getChildrenOfType(listItem, AsciiDocLink.class);
         if (links != null) {
