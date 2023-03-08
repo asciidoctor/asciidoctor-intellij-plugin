@@ -76,7 +76,7 @@ While this is currently only supported by the IntelliJ plugin, users can use Asc
 
 \include::chapter01.adoc[]
 
-\include::chapter01.adoc[]
+\include::chapter02.adoc[]
 ----
 
 
