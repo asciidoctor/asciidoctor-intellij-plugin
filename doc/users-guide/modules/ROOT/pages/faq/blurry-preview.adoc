@@ -76,4 +76,4 @@ When downloading click on the format (pre-populated with .EXE for Windows users)
 
 == Help, preview is still blurry!
 
-that the maintainers can investigate the issue, open a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issue].
+To have the maintainers investigate the issue, open a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issue].
