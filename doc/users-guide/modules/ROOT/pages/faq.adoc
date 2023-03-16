@@ -129,3 +129,10 @@ Please consider adding a rating for the plugin in the https://plugins.jetbrains.
 
 This plugin is based on Asciidoctor and a lot of ideas from its community.
 To support Asciidoctor, please consider contributing funds via https://opencollective.com/asciidoctor[Open Collective].
+
+=== I'm getting an error "`SSLError / certificate verify failed`"
+
+This happens if the remote server presents a certificate which is not trusted.
+Usually this happens if it uses a self-signed certificate or an unknown/private root certificate authority.
+
+See the page about xref:faq/custom-tls-certificates.adoc[] on how to fix this.
