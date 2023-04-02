@@ -1,3 +1,4 @@
 :linkcss:
 :stylesdir: https://intellij-asciidoc-plugin.ahus1.de/docs/antora/css/
 :stylesheet: preview.css
+:source-highlighter: highlightjs

@@ -21,7 +21,7 @@ On first use the plugin downloads a version of Pandoc that is compatible with th
 
 If the plugin finds a file named `reference.docx` in the current project, it will use that as a template for formatting styles of the generated document.
 Users can download xref:attachment$reference.docx[this template] and modify it for their needs.
-See the https://pandoc.org/MANUAL.html#option--reference-doc[Pandoc manual section about the reference file] for more details.
+See the link:++https://pandoc.org/MANUAL.html#option--reference-doc++[Pandoc manual section about the reference file] for more details.
 
 == Automation on the command line
 
@@ -30,4 +30,22 @@ The conversion the plugin performs has two steps:
 . Convert the AsciiDoc file to DocBook using the Asciidoctor DocBook backend.
 . Convert the DocBook output to DOCX using Pandoc.
 
-How this can be automated shows the DocToolchain collection in the https://doctoolchain.org/docToolchain/v2.0.x/015_tasks/03_task_convertToDocx.html[convertToDocx Gradle snippet].
+How this can be automated on the command line shows the following example:
+
+.Example without a reference file
+[source,bash]
+----
+# convert AsciiDoc 'my-document.adoc' to DocBook 'my-document.xml'
+asciidoctor -b docbook my-document.adoc
+# convert DocBook 'my-document.xml' to DOCX 'my-document.docx'
+pandoc -r docbook -t docx -o my-document.docx my-document.xml
+----
+
+.Example with a reference file
+[source,bash]
+----
+# convert AsciiDoc 'my-document.adoc' to DocBook 'my-document.xml'
+asciidoctor -b docbook my-document.adoc
+# convert DocBook 'my-document.xml' to DOCX 'my-document.docx'
+pandoc -r docbook -t docx -o my-document.docx --reference-doc=reference.docx my-document.xml
+----
