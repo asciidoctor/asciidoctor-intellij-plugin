@@ -80,10 +80,10 @@ public class AsciiDocDownloaderUtil {
 
 
   // https://github.com/jgm/pandoc/releases/
-  public static final String PANDOC_VERSION = "2.18";
-  private static final String PANDOC_WINDOWS_HASH = "769a7b2544da87274d585de5f9e03f268d35a8121b44e45637e607d7aeb78ece";
-  private static final String PANDOC_MACOS_HASH = "55bd37ef2a3941a7af65f72e94dc8de4e9e4f179a93909d6ecc24c55a4ef4255";
-  private static final String PANDOC_LINUX_HASH = "103df36dc21081b7205d763ef7705e340eb0ea7e18694239b328a549892cc007";
+  public static final String PANDOC_VERSION = "3.1.2";
+  private static final String PANDOC_WINDOWS_HASH = "c3541f1a352003498979f2659c2570ac6dd227ec12533b75a76c4d109e75d218";
+  private static final String PANDOC_MACOS_HASH = "72c43b1de30e67d3a2f69bfd69881e5fcf6ed3c2583c2ad22142c390d185f0b4";
+  private static final String PANDOC_LINUX_HASH = "4e1c607f7e4e9243fa1e1f5b208cd4f1d3f6fd055d5d8c39ba0cdc38644e1c35";
 
   private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
   // this is similar to the path where for example the grazie plugin places its dictionaries
