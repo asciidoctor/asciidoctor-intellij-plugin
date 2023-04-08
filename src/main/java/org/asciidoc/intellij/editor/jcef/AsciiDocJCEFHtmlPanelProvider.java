@@ -13,8 +13,8 @@ public class AsciiDocJCEFHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
 
   @NotNull
   @Override
-  public AsciiDocHtmlPanel createHtmlPanel(Document document, Path imagesPath) {
-    return new AsciiDocJCEFHtmlPanel(document, imagesPath);
+  public AsciiDocHtmlPanel createHtmlPanel(Document document, Path imagesPath, Runnable forceRefresh) {
+    return new AsciiDocJCEFHtmlPanel(document, imagesPath, forceRefresh);
   }
 
   @NotNull

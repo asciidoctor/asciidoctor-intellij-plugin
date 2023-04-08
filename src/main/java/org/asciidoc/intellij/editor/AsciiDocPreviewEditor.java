@@ -304,7 +304,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
               if (!mySwingAlarm.isDisposed()) {
                 synchronized (this) {
                   if (myPanel != null) {
-                    myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, null);
+                    myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, null, AsciiDocPreviewEditor.this::forceRefresh);
                   }
                 }
               }
@@ -402,7 +402,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
             synchronized (this) {
               if (myPanel == null) {
                 final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
-                myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, null, retrievePanelProvider(settings));
+                myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, null, retrievePanelProvider(settings), AsciiDocPreviewEditor.this::forceRefresh);
                 myPanel.setEditor(editor);
                 forceRenderCycle();
                 // when this happens, the panel has just been initialized, and it isn't yet displayable; therefore always render it.
@@ -420,7 +420,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   @Contract("_, _, _, null, null -> fail")
   private static AsciiDocHtmlPanel detachOldPanelAndCreateAndAttachNewOne(Document document, Path imagesDir, @NotNull JPanel panelWrapper,
                                                                           @Nullable AsciiDocHtmlPanel oldPanel,
-                                                                          @Nullable AsciiDocHtmlPanelProvider newPanelProvider) {
+                                                                          @Nullable AsciiDocHtmlPanelProvider newPanelProvider,
+                                                                          Runnable forceRefresh) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     if (oldPanel == null && newPanelProvider == null) {
       throw new IllegalArgumentException("Either create new one or leave the old");
@@ -435,7 +436,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
     AsciiDocHtmlPanel newPanel;
     try {
-      newPanel = newPanelProvider.createHtmlPanel(document, imagesDir);
+      newPanel = newPanelProvider.createHtmlPanel(document, imagesDir, forceRefresh);
     } catch (IllegalStateException ex) {
       if (ex.getMessage() != null && ex.getMessage().startsWith("JCEF is not supported")) {
         LOG.warn("JCEF panel couldn't be initialized", ex);
@@ -444,7 +445,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         // increase event log counter
         notification.setImportant(true);
         Notifications.Bus.notify(notification);
-        newPanel = new JeditorHtmlPanelProvider().createHtmlPanel(document, imagesDir);
+        newPanel = new JeditorHtmlPanelProvider().createHtmlPanel(document, imagesDir, forceRefresh);
       } else {
         throw ex;
       }
@@ -455,6 +456,11 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     panelWrapper.add(newPanel.getComponent(), BorderLayout.CENTER);
 
     return newPanel;
+  }
+
+  private void forceRefresh() {
+    forceRenderCycle();
+    render();
   }
 
   /**
@@ -706,7 +712,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
             try {
               if (!mySwingAlarm.isDisposed()) {
                 synchronized (this) {
-                  myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider);
+                  myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider, AsciiDocPreviewEditor.this::forceRefresh);
                   forceRenderCycle(); // force a refresh of the preview by resetting the current memorized content
                 }
                 renderIfVisible();

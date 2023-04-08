@@ -12,7 +12,7 @@ public final class JeditorHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
 
   @NotNull
   @Override
-  public AsciiDocHtmlPanel createHtmlPanel(Document document, Path imagesPath) {
+  public AsciiDocHtmlPanel createHtmlPanel(Document document, Path imagesPath, Runnable forceRefresh) {
     return new JeditorHtmlPanel(document);
   }
 

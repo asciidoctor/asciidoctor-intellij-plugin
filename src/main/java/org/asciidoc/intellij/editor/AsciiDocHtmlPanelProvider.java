@@ -17,7 +17,7 @@ public abstract class AsciiDocHtmlPanelProvider {
     ExtensionPointName.create("org.asciidoc.intellij.html.panel.provider");
 
   @NotNull
-  public abstract AsciiDocHtmlPanel createHtmlPanel(Document document, Path imagesPath);
+  public abstract AsciiDocHtmlPanel createHtmlPanel(Document document, Path imagesPath, Runnable forceRefresh);
 
   @NotNull
   public abstract AvailabilityInfo isAvailable();
@@ -49,10 +49,10 @@ public abstract class AsciiDocHtmlPanelProvider {
   public static class ProviderInfo {
     @NotNull
     @Attribute("name")
-    private String myName;
+    private final String myName;
     @NotNull
     @Attribute("className")
-    private String className;
+    private final String className;
 
     @SuppressWarnings("unused")
     private ProviderInfo() {

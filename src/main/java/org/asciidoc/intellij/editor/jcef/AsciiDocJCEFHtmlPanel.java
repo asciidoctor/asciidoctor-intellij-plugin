@@ -48,6 +48,7 @@ import org.asciidoc.intellij.psi.AsciiDocFileUtil;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.cef.browser.CefBrowser;
+import org.cef.browser.CefFrame;
 import org.cef.handler.CefLifeSpanHandlerAdapter;
 import org.cef.handler.CefLoadHandler;
 import org.cef.handler.CefLoadHandlerAdapter;
@@ -196,7 +197,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   @Nullable
   private Editor editor;
 
-  public AsciiDocJCEFHtmlPanel(Document document, Path imagesPath) {
+  public AsciiDocJCEFHtmlPanel(Document document, Path imagesPath, Runnable forceRefresh) {
     super(isOffScreenRenderingEnabled(), null, OUR_CLASS_URL + "@" + new Random().nextInt(Integer.MAX_VALUE));
 
     this.imagesPath = imagesPath;
@@ -210,6 +211,16 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
         myScrollPreservingListener.onLoadingStateChange(browser, isLoading, canGoBack, canGoForward);
         myBridgeSettingListener.onLoadingStateChange(browser, isLoading, canGoBack, canGoForward);
+      }
+
+      @Override
+      public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
+        // The user might have clicked on a URL that navigates somewhere else. If that happens, reset the HTML view
+        if (browser.getURL() != null && !browser.getURL().startsWith("file:///jbcefbrowser/")) {
+          LOG.warn("Noticed that the user navigated to " + browser.getURL() + ", resetting the preview");
+          previousDigest = null;
+          forceRefresh.run();
+        }
       }
     };
     getJBCefClient().addLoadHandler(myCefLoadHandler, getCefBrowser());
