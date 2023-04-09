@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Upgrade to pandoc version 3.1.2
 - For JCEF preview, reset the preview when clicking on a link leads to a different page (#1324)
 - Bump org.asciidoctor:asciidoctorj-diagram from 2.2.4 to 2.2.7 (#1326)
+- Set attribute `allow-uri-read` when Kroki is enabled for diagrams (#1323)
 
 === 0.38.12
 

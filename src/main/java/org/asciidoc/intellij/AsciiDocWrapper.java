@@ -1350,6 +1350,10 @@ public class AsciiDocWrapper {
     }
 
     if (settings.getAsciiDocPreviewSettings().isKrokiEnabled()) {
+      if (settings.getAsciiDocPreviewSettings().getSafeMode(project) == SafeMode.UNSAFE) {
+        // when rendering PDFs with Kroki, or when embedding diagrams in HTML the attribute 'allow-uri-read' needs to be set
+        attrs.setAttribute("allow-uri-read", "");
+      }
       String krokiUrl = settings.getAsciiDocPreviewSettings().getKrokiUrl();
       if (!StringUtils.isEmpty(krokiUrl)) {
         attrs.setAttribute("kroki-server-url", krokiUrl);

@@ -62,6 +62,10 @@ When Kroki is enabled, the plugin sends the text diagrams to an instance of Krok
 By default, it sends the diagrams to the free public cloud instance {uri-kroki}[kroki.io], but users can install Kroki on their own infrastructure.
 Once the custom instance is set up, update the server URL in the plugin's settings to point to it.
 
+=== Creating PDFs with Kroki diagrams
+
+include::partial$kroki-pdf.adoc[leveloffset=+2]
+
 === Inline diagrams with Kroki
 
 When using the diagram option `inline`, users will need to set the attribute `allow-uri-read` in the plugin's settings to allow the download of the diagrams at render time.

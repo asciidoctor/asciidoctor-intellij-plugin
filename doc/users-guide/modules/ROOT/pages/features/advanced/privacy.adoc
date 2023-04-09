@@ -34,6 +34,7 @@ I'm not a lawyer, but usually people consider IP addresses as personal informati
 
 * If the user chooses to use the Kroki diagram preview instead of Asciidoctor Diagram, the contents of the diagrams will be transmitted to a Kroki server and rendered there.
 They can choose to host their own Kroki server.
+Enabling Kroki also enables the attribute `allow-uri-read` if the _Safe mode_ is set to _UNSAFE_. This allows Asciidoctor to read contents from remote locations when converting the AsciiDoc content.
 
 * In general, users should only edit trusted content in their IDE.
 If they choose to check out and open an untrusted project, the code of that project might contain malicious snippets as part of the AsciiDoc content and other scripts.

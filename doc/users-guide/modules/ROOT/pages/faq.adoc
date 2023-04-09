@@ -105,8 +105,7 @@ See xref:faq/could-not-find-dot-executable.adoc[] for more information.
 
 === Creating a PDF with Kroki enabled shows URLs instead of diagrams
 
-In order for Kroki to embed diagrams in the PDF, the attribute `allow-uri-read` needs to be set in the plugin's configuration.
-This allows Asciidoctor to retrieve the diagram and embed it in the PDF.
+include::partial$kroki-pdf.adoc[leveloffset=+2]
 
 === Diagrams embedded in PDFs don't show arrows or text properly
 

@@ -1,0 +1,4 @@
+In order for Kroki to embed diagrams in the PDF, the attribute `allow-uri-read` needs to be set in the plugin's configuration.
+This allows Asciidoctor to retrieve the diagram and embed it in the PDF.
+
+NOTE: Starting with plugin release 0.38.13 the attribute is set automatically once Kroki for diagrams has been enabled and the plugin is running in the default UNSAFE mode.

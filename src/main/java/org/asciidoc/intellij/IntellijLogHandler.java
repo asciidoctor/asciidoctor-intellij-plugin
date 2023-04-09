@@ -52,7 +52,8 @@ public class IntellijLogHandler implements LogHandler {
       .createNotification("Message during rendering " + file, message.toString(), notificationType);
     notification.setImportant(notificationType != NotificationType.INFORMATION);
 
-    if (logRecord.getMessage().startsWith("allow-uri-read is not enabled; cannot embed remote image")) {
+    if (logRecord.getMessage().startsWith("allow-uri-read is not enabled; cannot embed remote image")
+      || logRecord.getMessage().contains("(allow-uri-read attribute not enabled)")) {
       notification.addAction(NotificationAction.createSimpleExpiring(
         "Set 'allow-uri-read' property", this::setAllowUriRead));
     }

@@ -173,7 +173,7 @@ public class BrowserPanel implements Disposable {
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     Path imagesPath = globalImagesPath;
     VirtualFile parent = file.getParent();
-    if (settings.getAsciiDocPreviewSettings().getSafeMode() != SafeMode.UNSAFE) {
+    if (settings.getAsciiDocPreviewSettings().getSafeMode(project) != SafeMode.UNSAFE) {
       if (parent != null && parent.getCanonicalPath() != null) {
         imagesPath = AsciiDocWrapper.tempImagesPath(Path.of(parent.getCanonicalPath()), project);
       }
