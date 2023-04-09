@@ -18,7 +18,6 @@ import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.Consumer;
 import com.intellij.util.download.DownloadableFileDescription;
 import com.intellij.util.download.DownloadableFileService;
 import com.intellij.util.download.FileDownloader;
@@ -47,6 +46,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -193,7 +193,7 @@ public class AsciiDocDownloaderUtil {
       pickFile(downloadName, project, ASCIIDOCTORJ_DIAGRAM_HASH, onSuccess);
     } catch (IOException ex) {
       LOG.warn("Can't pick file '" + downloadName + "'", ex);
-      ApplicationManager.getApplication().invokeLater(() -> onFailure.consume(ex));
+      ApplicationManager.getApplication().invokeLater(() -> onFailure.accept(ex));
     }
   }
 
@@ -203,7 +203,7 @@ public class AsciiDocDownloaderUtil {
       pickFile(downloadName, project, ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH, onSuccess);
     } catch (IOException ex) {
       LOG.warn("Can't pick file '" + downloadName + "'", ex);
-      ApplicationManager.getApplication().invokeLater(() -> onFailure.consume(ex));
+      ApplicationManager.getApplication().invokeLater(() -> onFailure.accept(ex));
     }
   }
 
@@ -213,7 +213,7 @@ public class AsciiDocDownloaderUtil {
       pickFile(downloadName, project, hashPandoc(), onSuccess);
     } catch (IOException ex) {
       LOG.warn("Can't pick file '" + downloadName + "'", ex);
-      ApplicationManager.getApplication().invokeLater(() -> onFailure.consume(ex));
+      ApplicationManager.getApplication().invokeLater(() -> onFailure.accept(ex));
     }
   }
 
@@ -223,7 +223,7 @@ public class AsciiDocDownloaderUtil {
       pickFile(downloadName, project, ASCIIDOCTORJ_DIAGRAM_DITAAMINI_HASH, onSuccess);
     } catch (IOException ex) {
       LOG.warn("Can't pick file '" + downloadName + "'", ex);
-      ApplicationManager.getApplication().invokeLater(() -> onFailure.consume(ex));
+      ApplicationManager.getApplication().invokeLater(() -> onFailure.accept(ex));
     }
   }
 
@@ -233,7 +233,7 @@ public class AsciiDocDownloaderUtil {
       pickFile(downloadName, project, ASCIIDOCTORJ_PDF_HASH, onSuccess);
     } catch (IOException ex) {
       LOG.warn("Can't pick file '" + downloadName + "'", ex);
-      ApplicationManager.getApplication().invokeLater(() -> onFailure.consume(ex));
+      ApplicationManager.getApplication().invokeLater(() -> onFailure.accept(ex));
     }
   }
 
@@ -329,7 +329,7 @@ public class AsciiDocDownloaderUtil {
         } catch (IOException e) {
           LOG.warn("Can't download content '" + downloadUrl + "' as '" + fileName + "'", e);
           createFailureNotification(e, true);
-          ApplicationManager.getApplication().invokeLater(() -> onFailure.consume(e));
+          ApplicationManager.getApplication().invokeLater(() -> onFailure.accept(e));
         }
       }
 
@@ -349,7 +349,7 @@ public class AsciiDocDownloaderUtil {
                   } catch (IOException ex) {
                     LOG.warn("Can't pick file '" + downloadUrl + "' as '" + fileName + "'", ex);
                     createFailureNotification(ex, false);
-                    ApplicationManager.getApplication().invokeLater(() -> onFailure.consume(ex));
+                    ApplicationManager.getApplication().invokeLater(() -> onFailure.accept(ex));
                   }
                 }
               )),
@@ -404,6 +404,7 @@ public class AsciiDocDownloaderUtil {
   public static boolean downloadCompletePandoc() {
     return getPanddocFile().exists();
   }
+
   public static File getPanddocFile() {
     String archiveName = DOWNLOAD_PATH + File.separator + "pandoc-" + PANDOC_VERSION + "-" + archivePandoc();
     String fileName = DOWNLOAD_PATH + File.separator + "pandoc-" + PANDOC_VERSION + File.separator + executablePandoc();
