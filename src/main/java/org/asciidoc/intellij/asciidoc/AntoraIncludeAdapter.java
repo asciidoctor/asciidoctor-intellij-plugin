@@ -53,9 +53,13 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
     if (urlMatcher.find()) {
       return false;
     }
+    // if the first character is a slash ('/'), this is probably an already expanded Linux path name
+    if (target.startsWith("/")) {
+      return false;
+    }
     Matcher matcher = ANTORA_PREFIX_AND_FAMILY_PATTERN.matcher(target);
     if (matcher.find()) {
-      // if the second character is a colon, this is probably an already expanded windows path name
+      // if the second character is a colon (':'), this is probably an already expanded windows path name
       if (matcher.group().length() == 2 && matcher.group().charAt(1) == ':' && target.length() > 2 && target.charAt(2) == '/') {
         return false;
       }
