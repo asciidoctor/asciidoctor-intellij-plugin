@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - Bump org.asciidoctor:asciidoctorj-diagram from 2.2.4 to 2.2.7 (#1326)
 - Set attribute `allow-uri-read` when Kroki is enabled for diagrams (#1323)
 - Prevent an include error when using absolute paths with Antora for example via a `partialsdir` attributes (#1325)
+- Update to AsciidoctorJ PDF 2.3.6
 
 === 0.38.12
 
