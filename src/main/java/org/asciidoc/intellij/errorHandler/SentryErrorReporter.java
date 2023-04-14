@@ -117,8 +117,8 @@ class SentryErrorReporter {
 
           event.setTag("java_vendor", SystemInfo.JAVA_VENDOR);
           event.setTag("java_version", SystemInfo.JAVA_VERSION);
-          event.setTag("ui.theme", getUiTheme());
-          event.setTag("ui.dark", getUiMode());
+          event.setTag("ui_theme", getUiTheme());
+          event.setTag("ui_dark", getUiMode());
           if (SystemInfoRt.isLinux) {
             event.setTag("linux_platform", getLinuxPlatformName());
           }
