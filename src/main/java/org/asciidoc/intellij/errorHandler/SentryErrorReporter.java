@@ -11,10 +11,13 @@ import com.intellij.openapi.application.impl.ApplicationInfoImpl;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.diagnostic.SubmittedReportInfo;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
+import com.jsoftbiz.utils.OS;
 import io.sentry.DuplicateEventDetectionEventProcessor;
 import io.sentry.ILogger;
 import io.sentry.Sentry;
@@ -30,6 +33,7 @@ import org.asciidoc.intellij.AsciiDocWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.UIManager;
 import java.nio.charset.StandardCharsets;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -113,6 +117,11 @@ class SentryErrorReporter {
 
           event.setTag("java_vendor", SystemInfo.JAVA_VENDOR);
           event.setTag("java_version", SystemInfo.JAVA_VERSION);
+          event.setTag("ui.theme", getUiTheme());
+          event.setTag("ui.dark", getUiMode());
+          if (SystemInfoRt.isLinux) {
+            event.setTag("linux_platform", getLinuxPlatformName());
+          }
 
           // clear the server name, as it is of no use to analyze the error
           event.setServerName(null);
@@ -233,5 +242,17 @@ class SentryErrorReporter {
     if (!activePlugins.isEmpty()) {
       contexts.put("active plugins", activePlugins);
     }
+  }
+
+  private static String getUiTheme() {
+    return UIManager.getLookAndFeel().getName();
+  }
+
+  private static String getUiMode() {
+    return String.valueOf(EditorColorsManager.getInstance().isDarkEditor());
+  }
+
+  private static String getLinuxPlatformName() {
+    return OS.OS.getPlatformName();
   }
 }
