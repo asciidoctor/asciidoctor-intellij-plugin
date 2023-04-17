@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.38.13
 
 - Bump org.asciidoctor:asciidoctorj-pdf from 2.3.6 to 2.3.7
+- Bump org.asciidoctor:asciidoctorj from 2.5.7 to 2.5.8
 
 === 0.38.13
 
