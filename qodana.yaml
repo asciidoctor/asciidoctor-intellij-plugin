@@ -2,7 +2,7 @@ version: 1.0
 profile:
   path: doc/asciidoc-inspection.xml
 plugins:
-  # Quodana plugin ('tanvd.grazi') is already installed, no need to download it again
+  # Grazie plugin ('tanvd.grazi') is already installed, no need to download it again
   - id: com.intellij.grazie.pro
   # Order of plugin in the order which they depend on. AsciiDoc depends on Qodana pro, therefore add it after
   - id: org.asciidoctor.intellij.asciidoc
