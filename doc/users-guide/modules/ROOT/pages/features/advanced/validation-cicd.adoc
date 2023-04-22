@@ -107,5 +107,8 @@ include::example$workflow-docs.yml[tags=!cleanup]
 The following issues in the Qodana issue tracker are open.
 Voting for them will make this integration simpler.
 
+* https://youtrack.jetbrains.com/issue/QD-1291[QD-1291^]
+Qodana easy plugin installation
 * https://youtrack.jetbrains.com/issue/QD-1290[QD-1290^]
 Add soft wrap to code preview
+
