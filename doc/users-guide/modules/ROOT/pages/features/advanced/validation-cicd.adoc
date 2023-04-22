@@ -74,7 +74,7 @@ include::example$qodana.yaml[]
 
 . Setup file with all inspections to run.
 It is placed in the root folder where it will run.
-For this setup all inspections are specified one-by-one.
+For this setup, all inspections are specified one-by-one.
 Alternative setups could configure only deviations from a standard configuration.
 +
 .doc/asciidoc-inspection.xml

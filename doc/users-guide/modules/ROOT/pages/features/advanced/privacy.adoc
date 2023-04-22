@@ -17,7 +17,7 @@ Still, this is a spare time project that is happy to accept contributions of any
 
 == The good news
 
-* The plugin doesn't use tracking and will not collect statistical information about the users or content they edit.
+* The plugin does not use tracking and will not collect statistical information about the users or content they edit.
 
 * The plugin has been designed in a way that the user can edit content on their local PC, and the preview will be rendered locally as well using an embedded instance of Asciidoctor.
 
@@ -30,7 +30,7 @@ The following list is probably incomplete, but should cover the major points:
 
 * If the content includes a remote image, the preview will pull that image from the internet and will reveal their IP address.
 The same applies if they choose to include a remote style sheet for the preview.
-I'm not a lawyer, but usually people consider IP addresses as personal information in the EU.
+I am not a lawyer, but usually people consider IP addresses as personal information in the EU.
 
 * If the user chooses to use the Kroki diagram preview instead of Asciidoctor Diagram, the contents of the diagrams will be transmitted to a Kroki server and rendered there.
 They can choose to host their own Kroki server.

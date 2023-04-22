@@ -15,8 +15,8 @@ The developer can reference these snippets in the documentation.
 
 == What the AsciiDoc plugin provides
 
-This plugin supports the developers when documenting their Spring REST Docs.
-It provides auto-complete for the editor and renders a preview, that shows the documentation content together with the recorded examples of the tests.
+This plugin supports developers when documenting their Spring REST Docs.
+It provides auto-complete for the editor and renders a preview that shows the documentation content together with the recorded examples of the tests.
 
 NOTE: As the editor support requires the `generated-snippets` folder to be present, users need to run their tests to create and populate it *before* the editor support activates.
 
@@ -51,6 +51,6 @@ Press kbd:[Ctrl+B] to navigate to the folder.
 
 == Example project
 
-The Spring REST Docs projects provides an example project how to set up things: https://github.com/spring-projects/spring-restdocs/tree/master/samples/rest-notes-spring-hateoas
+The Spring REST Docs project provides an example project how to set up things: https://github.com/spring-projects/spring-restdocs-samples/tree/main/restful-notes-spring-hateoas
 
 As the editor support requires the generated snippets-folder to be present, users need to run their tests to create and populate it before the editor support activates.

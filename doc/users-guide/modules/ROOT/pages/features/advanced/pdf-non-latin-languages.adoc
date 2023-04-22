@@ -70,14 +70,14 @@ Once the setup is complete, the user can use the _Create PDF from current file_ 
 
 == Setup for Japanese, Korean and Taiwanese fonts
 
-Follow the instructions above, and use the fonts available in https://github.com/minjiex/kaigen-gothic/tree/master/dist[@minjiex's kaigen-gothic^] repository or other TTF fonts.
+Follow the instructions above and use the fonts available in https://github.com/minjiex/kaigen-gothic/tree/master/dist[@minjiex's kaigen-gothic^] repository or other TTF fonts.
 
 == Advanced Features
 
 When using a multi-file document, users want to avoid putting the PDF attributes in each file, but still want to be able to create PDF previews from each file.
 
 A solution to this is an _.asciidoctorconfig_ file that contains the attributes.
-The AsciiDoc plugin will apply the attributes in this file to each file and its subfolders.
+The AsciiDoc plugin will apply the attributes in this file to each file in that folder and the folders beneath it.
 A typical file would look like this:
 
 ..asciidoctorconfig
@@ -92,14 +92,14 @@ Read more about this feature in the chapter _xref:features/advanced/asciidoctorc
 
 == Further reading
 
-You find more documentation reading the chapter https://github.com/asciidoctor/asciidoctor-pdf#support-for-non-latin-languages["`Support for Non-Latin Languages`" in Asciidoctor PDF's documentation].
+Find more documentation reading the chapter https://github.com/asciidoctor/asciidoctor-pdf#support-for-non-latin-languages["`Support for Non-Latin Languages`" in Asciidoctor PDF's documentation].
 
 == Public examples
 
 There is https://github.com/diguage/jdk-source-analysis[@diguage's "`JDK source code analysis`" document] available.
 It contains AsciiDoc in Chinese plus a working setup for an _.asciidoctorconfig_ file.
 As fonts, the author has chosen Source Han Serif and converted them to TTF.
-You'll need to download the fonts in _cfg/fonts_ first to make it work.
+Download the fonts in _cfg/fonts_ first to make it work.
 
 image::pdf-with-chinese-characters-preview.png[]
 

@@ -16,18 +16,18 @@ Users can reformat a single AsciiDoc file when placing the cursor in an editor, 
 === Using the command line for reformatting
 
 The IntelliJ IDEA formatter is https://www.jetbrains.com/help/idea/command-line-formatter.html[available form the command line].
-It allows both reformatting of files, and checking that the formatting of the files correct using the "`dry run`" option.
+It allows both reformatting of files and checking that the formatting of the files correct using the "`dry run`" option.
 
 === Styling of the reformatting
 
-Currently, reformatting adjusts empty lines around headings, lists and blocks.
+Currently, reformatting adjusts empty lines around headings, lists, and blocks.
 It also adjusts spaces around list items.
 
 By default, it re-formats blocks to the https://asciidoctor.org/docs/asciidoc-recommended-practices/#one-sentence-per-line[one-sentence-per-line] style.
 The user can disable this in the code style settings.
 
 By default, the IDE will remove leading blanks when pasting content to an AsciiDoc document.
-This doesn't change the rendering of the content as those blanks are optional for AsciiDoc.
+This does not change the rendering of the content as those blanks are optional for AsciiDoc.
 See xref:faq/indent-missing-on-pasting.adoc[] for details on how to disable this.
 
 == IDE vs. Project specific settings
@@ -52,7 +52,7 @@ Once the file has been committed, the formatting settings are available to other
 === Settings per project as an `.editorconfig` file
 
 The `.editorconfig` file is an https://editorconfig.org/[open standard] that allows for several configuration options that will be applied across IDEs of different vendors.
-For some IDEs an additional plugin might be necessary to support the features.
+For some IDEs, an additional plugin might be necessary to support the features.
 
 The JetBrains family of IDEs supports the `.editorconfig` https://www.jetbrains.com/help/idea/editorconfig.html[files out of the box]. It also allows custom properties starting with `ij_`.
 The AsciiDoc plugin for IntelliJ uses custom properties starting with `ij_`, therefore, those settings are only effective for IntelliJ.

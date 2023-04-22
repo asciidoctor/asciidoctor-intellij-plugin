@@ -6,7 +6,7 @@
 
 == Configuring stylesheets
 
-This chapter walks you through the steps to prepare an _.asciidoctorconfig_ file to either replace the stylesheet or to add additional styles to the HTML header.
+This chapter walks the user through the steps to prepare an _.asciidoctorconfig_ file to either replace the stylesheet or to add additional styles to the HTML header.
 
 The _.asciidoctorconfig_ file will configure the preview of all AsciiDoc files in the folder where it is located and this folder's sub-folders.
 See _xref:features/advanced/asciidoctorconfig-file.adoc[]_ for more details.
@@ -22,7 +22,7 @@ Swing preview doesn't support modern CSS, and will therefore not support custom 
 === Replace default stylesheet
 
 This replaces the standard stylesheet with a custom stylesheet.
-You can use local content, or link to a remote stylesheet.
+Use local content or link to a remote stylesheet.
 
 ==== Using local project's content
 
@@ -38,7 +38,7 @@ You can use local content, or link to a remote stylesheet.
 As this uses \{asciidoctorconfigdir}, the folder is relative to the _.asciidoctorconfig_ file.
 <.> Filename of the stylesheet to be used.
 
-. Place your stylesheet in the _.asciidoctor_ folder:
+. Place the stylesheet in the _.asciidoctor_ folder:
 +
 ..asciidoctor/preview-stylesheet.css
 [source,css]
@@ -51,7 +51,7 @@ body {
 [#remote-stylesheet]
 ==== Using a remote stylesheet
 
-NOTE: This has been available since plugin version 0.31.31+.
+NOTE: This has been available since the plugin version 0.31.31+.
 
 Once the document or the configuration set the `linkcss` attribute, the preview will link to an external stylesheet and will no longer embed the stylesheet.
 
@@ -85,7 +85,7 @@ Due to the current nature of the plugin and browser's security controls, a style
 As a workaround, use an absolute path with protocol and hostname instead.
 ====
 
-A more complex example, that wraps multiple stylesheets of the original site, overwrites fonts with an absolute URL and then adds custom changes for the preview can look like the following:
+A more complex example that wraps multiple stylesheets of the original site, overwrites fonts with an absolute URL and then adds custom changes for the preview can look like the following:
 
 .Example CSS customizing the existing stylesheets for the IDE's preview
 [source,css]
@@ -142,11 +142,11 @@ Follow these steps to enable Docinfo Files:
 :docinfodir: {asciidoctorconfigdir}/.asciidoctor <1>
 :docinfo: shared <2>
 ----
-<.> point to a directory with docinfo files.
+<.> Point to a directory with docinfo files.
 As this uses \{asciidoctorconfigdir}, the folder is relative to the _.asciidoctorconfig_ file.
 <.> Tell the renderer to include the shared docinfo file _docinfo.html_.
 
-. Place your _docinfo.html_ in the _.asciidoctor_ folder
+. Place the _docinfo.html_ in the _.asciidoctor_ folder
 +
 ..asciidoctor/docinfo.html
 [source]
