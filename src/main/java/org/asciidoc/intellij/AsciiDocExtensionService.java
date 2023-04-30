@@ -21,6 +21,7 @@ public final class AsciiDocExtensionService {
 
   public @NotNull List<String> getExtensions(Project project) {
     return Optional.ofNullable(ProjectUtil.guessProjectDir(project))
+      .filter(VirtualFile::isValid)
       .flatMap(dir -> Optional.ofNullable(dir.findChild(".asciidoctor")))
       .flatMap(file -> Optional.ofNullable(file.findChild("lib")))
       .flatMap(file -> Optional.ofNullable(file.getChildren()))

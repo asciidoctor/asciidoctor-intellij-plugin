@@ -114,6 +114,7 @@ This document provides a high-level view of the changes introduced by release.
 - Parse formatted page titles for Antora xrefs in pages and navigations (#1223)
 - Rename search scope _All files without Symlinks_ to _Project files without Symlinks_ (#1216)
 - Trying to avoid already disposed exception when accessing settings for line wrapping
+- Ignore invalid directory structures when determining extensions (#1348)
 
 === 0.37.55
 
