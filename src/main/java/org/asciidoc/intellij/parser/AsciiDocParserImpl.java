@@ -869,7 +869,11 @@ public class AsciiDocParserImpl {
       if (myBlockMarker.peek().delimiter.equals("enum_" + sign)) {
         otherItemExisted = true;
       }
-      closeBlockMarker();
+      if (myPreBlockMarker != null) {
+        closeBlockMarker(myPreBlockMarker);
+      } else {
+        closeBlockMarker();
+      }
     }
     PsiBuilder.Marker myBlockStartMarker;
     if (myPreBlockMarker != null) {
