@@ -153,6 +153,9 @@ public class AsciiDocExtensionServiceTest {
     mockedProjectUtil
       .when(() -> ProjectUtil.guessProjectDir(project))
       .thenReturn(projectDirFile);
+    if (projectDirFile != null) {
+      when(projectDirFile.isValid()).thenReturn(true);
+    }
   }
 
   private VirtualFile createVirtualFileMock(final @Nullable String extension) {
