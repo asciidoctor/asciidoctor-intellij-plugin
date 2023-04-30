@@ -20,9 +20,9 @@ public class AsciiDocSearchScopeProvider implements SearchScopeProvider {
   @Override
   public @NotNull List<SearchScope> getSearchScopes(@NotNull Project project, @NotNull DataContext dataContext) {
     ArrayList<SearchScope> result = new ArrayList<>();
-    result.add(new AsciiDocSearchScopeWithName(new AsciiDocSearchScope(project).excludeSymlinks(), "Project files without Symlinks"));
-    result.add(new AsciiDocSearchScopeWithName(new AsciiDocSearchScope(project).restrictedByAsciiDocFileType(), "AsciiDoc files"));
-    result.add(new AsciiDocSearchScopeWithName(new AsciiDocSearchScope(project).excludeSymlinks().restrictedByAsciiDocFileType(), "AsciiDoc files without Symlinks"));
+    result.add(new AsciiDocSearchScopeWithName(new AsciiDocSearchScope(project).onlyFilesFromThisProject().excludeSymlinks(), "Project files without Symlinks"));
+    result.add(new AsciiDocSearchScopeWithName(new AsciiDocSearchScope(project).onlyFilesFromThisProject().restrictedByAsciiDocFileType(), "AsciiDoc files"));
+    result.add(new AsciiDocSearchScopeWithName(new AsciiDocSearchScope(project).onlyFilesFromThisProject().excludeSymlinks().restrictedByAsciiDocFileType(), "AsciiDoc files without Symlinks"));
     return result;
   }
 }

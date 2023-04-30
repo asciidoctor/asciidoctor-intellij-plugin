@@ -119,6 +119,7 @@ This document provides a high-level view of the changes introduced by release.
 - Require IntelliJ 2021.3.2 as minimum version update deprecated APIs
 - Add an action to open the dev tools for the JCEF preview
 - Add custom AsciiDoc search scopes (#1216)
+- When using the custom AsciiDoc scopes, show only files from the current project
 
 === 0.37.54
 

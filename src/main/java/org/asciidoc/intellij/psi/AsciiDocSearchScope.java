@@ -23,6 +23,7 @@ public class AsciiDocSearchScope extends GlobalSearchScope {
 
   private final FileIndexFacade myFileIndexFacade;
   private boolean excludeSymLinks;
+  private boolean onlyFilesFromThisProject;
 
   public AsciiDocSearchScope(Project project) {
     super(project);
@@ -38,12 +39,21 @@ public class AsciiDocSearchScope extends GlobalSearchScope {
     return this;
   }
 
+  public AsciiDocSearchScope onlyFilesFromThisProject() {
+    this.onlyFilesFromThisProject = true;
+    return this;
+  }
+
   @Override
   public boolean contains(@NotNull VirtualFile file) {
     // even if isSearchInLibraries returns false, the check for isInLibraryXXX is still needed
     boolean result = !myFileIndexFacade.isExcludedFile(file) &&
       !myFileIndexFacade.isInLibraryClasses(file) &&
       !myFileIndexFacade.isInLibrarySource(file);
+
+    if (result && onlyFilesFromThisProject) {
+      result = myFileIndexFacade.isInProjectScope(file);
+    }
 
     if (result && excludeSymLinks) {
       if (file.isInLocalFileSystem()) {
