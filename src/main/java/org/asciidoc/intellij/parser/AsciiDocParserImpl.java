@@ -865,12 +865,11 @@ public class AsciiDocParserImpl {
       sign = myBuilder.getTokenText();
     }
     boolean otherItemExisted = false;
-    while (myBlockMarker.stream().anyMatch(o -> o.delimiter.equals("enum_" + sign)) &&
-      myBlockMarker.peek().delimiter.startsWith("enum")) {
+    while (myBlockMarker.stream().anyMatch(o -> o.delimiter.equals("enum_" + sign))) {
       if (myBlockMarker.peek().delimiter.equals("enum_" + sign)) {
         otherItemExisted = true;
       }
-      endEnumerationDelimiter();
+      closeBlockMarker();
     }
     PsiBuilder.Marker myBlockStartMarker;
     if (myPreBlockMarker != null) {

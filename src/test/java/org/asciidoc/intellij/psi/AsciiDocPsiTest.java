@@ -160,6 +160,31 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertEquals("[hi]", children[2].getText());
   }
 
+  public void testNestedLists() {
+    PsiFile psiFile = configureByAsciiDoc(". first\n" +
+      ".. test\n" +
+      ". second\n" +
+      ".. test");
+    PsiElement[] children = psiFile.getChildren();
+    assertEquals(1, children.length);
+
+    assertEquals(1, children.length);
+    assertEquals(AsciiDocElementTypes.LIST, children[0].getNode().getElementType());
+
+    assertEquals(2, children[0].getChildren().length);
+
+    assertEquals(AsciiDocElementTypes.LIST_ITEM, children[0].getChildren()[0].getNode().getElementType());
+    assertEquals(1, children[0].getChildren()[0].getChildren().length);
+
+    assertEquals(AsciiDocElementTypes.LIST, children[0].getChildren()[0].getChildren()[0].getNode().getElementType());
+    assertEquals(".. test", children[0].getChildren()[0].getChildren()[0].getText());
+
+    assertEquals(AsciiDocElementTypes.LIST_ITEM, children[0].getChildren()[0].getNode().getElementType());
+    assertEquals(1, children[0].getChildren()[1].getChildren().length);
+
+  }
+
+
   public void testEnumerationFollowedByText() {
     PsiFile psiFile = configureByAsciiDoc("[square]\n* Hi\n\n* Ho\n* http://www.gmx.net\n\nText");
     PsiElement[] children = psiFile.getChildren();
