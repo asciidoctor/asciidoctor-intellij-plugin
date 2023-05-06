@@ -82,8 +82,10 @@ public class AsciiDocDownloaderUtil {
   // https://github.com/jgm/pandoc/releases/
   public static final String PANDOC_VERSION = "3.1.2";
   private static final String PANDOC_WINDOWS_HASH = "c3541f1a352003498979f2659c2570ac6dd227ec12533b75a76c4d109e75d218";
-  private static final String PANDOC_MACOS_HASH = "72c43b1de30e67d3a2f69bfd69881e5fcf6ed3c2583c2ad22142c390d185f0b4";
-  private static final String PANDOC_LINUX_HASH = "4e1c607f7e4e9243fa1e1f5b208cd4f1d3f6fd055d5d8c39ba0cdc38644e1c35";
+  private static final String PANDOC_MACOS_X8664_HASH = "72c43b1de30e67d3a2f69bfd69881e5fcf6ed3c2583c2ad22142c390d185f0b4";
+  private static final String PANDOC_MACOS_ARM64_HASH = "aa0eab6cf10e5d54d255d68f8fae47e08da071565a3d2b8d242be29a8c1f1460";
+  private static final String PANDOC_LINUX_AMD_HASH = "4e1c607f7e4e9243fa1e1f5b208cd4f1d3f6fd055d5d8c39ba0cdc38644e1c35";
+  private static final String PANDOC_LINUX_ARM_HASH = "8ac04ce0aedae38f0c9f64bfe634910378cc326d091092395a2140a7ec819d54";
 
   private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
   // this is similar to the path where for example the grazie plugin places its dictionaries
@@ -155,9 +157,18 @@ public class AsciiDocDownloaderUtil {
     if (SystemInfoRt.isWindows) {
       return PANDOC_WINDOWS_HASH;
     } else if (SystemInfoRt.isMac) {
-      return PANDOC_MACOS_HASH;
+      if (System.getProperty("os.arch").toLowerCase().contains("arm")) {
+        return PANDOC_MACOS_ARM64_HASH;
+      } else {
+        return PANDOC_MACOS_X8664_HASH;
+      }
+
     } else if (SystemInfoRt.isLinux) {
-      return PANDOC_LINUX_HASH;
+      if (System.getProperty("os.arch").toLowerCase().contains("arm")) {
+        return PANDOC_LINUX_ARM_HASH;
+      } else {
+        return PANDOC_LINUX_AMD_HASH;
+      }
     } else {
       throw new IllegalStateException("unsupported operating system: " + System.getProperty("os.name"));
     }
@@ -167,9 +178,21 @@ public class AsciiDocDownloaderUtil {
     if (SystemInfoRt.isWindows) {
       return "windows-x86_64.zip";
     } else if (SystemInfoRt.isMac) {
-      return "macOS.zip";
+      String arch;
+      if (System.getProperty("os.arch").toLowerCase().contains("arm")) {
+        arch = "arm64";
+      } else {
+        arch = "x86_64";
+      }
+      return arch + "-macOS.zip";
     } else if (SystemInfoRt.isLinux) {
-      return "linux-amd64.tar.gz";
+      String arch;
+      if (System.getProperty("os.arch").toLowerCase().contains("arm")) {
+        arch = "arm64";
+      } else {
+        arch = "amd64";
+      }
+      return "linux-" + arch + ".tar.gz";
     } else {
       throw new IllegalStateException("unsupported operating system: " + System.getProperty("os.name"));
     }
