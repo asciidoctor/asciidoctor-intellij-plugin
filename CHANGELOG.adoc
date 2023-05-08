@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.38.15
 
 - Fix download of Pandoc on Mac (#1349)
+- Bump org.asciidoctor:asciidoctorj-diagram from 2.2.7 to 2.2.8 (#1354)
 
 === 0.38.14
 
