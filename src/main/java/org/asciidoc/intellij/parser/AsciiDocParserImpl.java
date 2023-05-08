@@ -865,7 +865,7 @@ public class AsciiDocParserImpl {
       sign = myBuilder.getTokenText();
     }
     boolean otherItemExisted = false;
-    while (myBlockMarker.stream().anyMatch(o -> o.delimiter.equals("enum_" + sign))) {
+    while (listItemExists("enum_" + sign)) {
       if (myBlockMarker.peek().delimiter.equals("enum_" + sign)) {
         otherItemExisted = true;
       }
@@ -890,6 +890,19 @@ public class AsciiDocParserImpl {
       }
     }
     myBlockMarker.push(new BlockMarker("enum_" + sign, myBlockStartMarker, type));
+  }
+
+  private boolean listItemExists(String delimiter) {
+    for (int i = myBlockMarker.size() - 1; i >= 0; --i) {
+      String myBlockDelimiter = myBlockMarker.get(i).delimiter;
+      if (myBlockDelimiter.equals(delimiter)) {
+        return true;
+      }
+      if (myBlockDelimiter.equals("--")) {
+        break;
+      }
+    }
+    return false;
   }
 
   private void endEnumerationDelimiter() {
