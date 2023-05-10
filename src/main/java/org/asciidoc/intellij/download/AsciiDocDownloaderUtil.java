@@ -45,6 +45,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
@@ -157,14 +158,14 @@ public class AsciiDocDownloaderUtil {
     if (SystemInfoRt.isWindows) {
       return PANDOC_WINDOWS_HASH;
     } else if (SystemInfoRt.isMac) {
-      if (System.getProperty("os.arch").toLowerCase().contains("arm")) {
+      if (System.getProperty("os.arch").toLowerCase(Locale.ROOT).contains("arm")) {
         return PANDOC_MACOS_ARM64_HASH;
       } else {
         return PANDOC_MACOS_X8664_HASH;
       }
 
     } else if (SystemInfoRt.isLinux) {
-      if (System.getProperty("os.arch").toLowerCase().contains("arm")) {
+      if (System.getProperty("os.arch").toLowerCase(Locale.ROOT).contains("arm")) {
         return PANDOC_LINUX_ARM_HASH;
       } else {
         return PANDOC_LINUX_AMD_HASH;
@@ -179,7 +180,7 @@ public class AsciiDocDownloaderUtil {
       return "windows-x86_64.zip";
     } else if (SystemInfoRt.isMac) {
       String arch;
-      if (System.getProperty("os.arch").toLowerCase().contains("arm")) {
+      if (System.getProperty("os.arch").toLowerCase(Locale.ROOT).contains("arm")) {
         arch = "arm64";
       } else {
         arch = "x86_64";
@@ -187,7 +188,7 @@ public class AsciiDocDownloaderUtil {
       return arch + "-macOS.zip";
     } else if (SystemInfoRt.isLinux) {
       String arch;
-      if (System.getProperty("os.arch").toLowerCase().contains("arm")) {
+      if (System.getProperty("os.arch").toLowerCase(Locale.ROOT).contains("arm")) {
         arch = "arm64";
       } else {
         arch = "amd64";

@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -203,7 +204,7 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
               // an xref can be only a block ID, then it is an anchor even without the # prefix
               && (AsciiDocRenameInputValidator.BLOCK_ID_PATTERN.matcher(file).matches()
               // or it is just a section heading, then it contains at least one blank and some uppercase letters
-              || (file.contains(" ") && !file.toLowerCase().equals(file)
+              || (file.contains(" ") && !file.toLowerCase(Locale.ROOT).equals(file)
             ))
               && !file.contains(".")
             )
