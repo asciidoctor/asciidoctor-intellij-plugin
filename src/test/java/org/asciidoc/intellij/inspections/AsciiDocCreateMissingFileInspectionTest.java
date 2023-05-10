@@ -8,6 +8,7 @@ import org.junit.Assert;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 public class AsciiDocCreateMissingFileInspectionTest extends AsciiDocQuickFixTestBase {
 
@@ -34,7 +35,7 @@ public class AsciiDocCreateMissingFileInspectionTest extends AsciiDocQuickFixTes
       FileUtils.deleteDirectory(path);
       FileUtils.forceMkdir(path);
       FileUtils.copyDirectory(new File("testData/inspections/missingfile"), new File("build/testData/missingfile"));
-      if (System.getProperty("os.name").toLowerCase().contains("win")) {
+      if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("win")) {
         // highlighting contains a "C:" in the path name on windows, therefore the fixture needs to be patched
         String contents = FileUtils.readFileToString(new File("build/testData/missingfile/createMissingIncludeFile.adoc"), StandardCharsets.UTF_8);
         contents = contents.replaceAll("/src", new File("build/testData/missingfile/createMissingIncludeFile.adoc").getAbsolutePath().charAt(0) + ":" + "/src");

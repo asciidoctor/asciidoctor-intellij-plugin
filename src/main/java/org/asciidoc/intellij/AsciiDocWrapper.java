@@ -107,6 +107,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.ServiceConfigurationError;
@@ -431,7 +432,7 @@ public class AsciiDocWrapper {
 
         if (extensionsEnabled) {
           for (String extension : extensions) {
-            if (extension.toLowerCase().endsWith(".rb")) {
+            if (extension.toLowerCase(Locale.ROOT).endsWith(".rb")) {
               asciidoctor.rubyExtensionRegistry().requireLibrary(extension);
             }
           }
@@ -516,7 +517,7 @@ public class AsciiDocWrapper {
     }
     File tempDirectory = null;
     for (String extension : extensions) {
-      if (extension.toLowerCase().endsWith(".jar")) {
+      if (extension.toLowerCase(Locale.ROOT).endsWith(".jar")) {
         File jar = new File(extension);
         try {
           if (jar.exists()) {

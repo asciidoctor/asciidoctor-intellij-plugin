@@ -95,7 +95,7 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
       @Override
       public void visitElement(@NotNull PsiElement element) {
         if (attributeFoldingEnabled && element instanceof AsciiDocAttributeReference) {
-          if (!element.getText().toLowerCase().endsWith("dir}")) {
+          if (!element.getText().toLowerCase(Locale.ROOT).endsWith("dir}")) {
             // avoid replacing imagesdir, partialsdir, attachmentdir, etc. as this would be too verbose
             addDescriptors(element);
           }

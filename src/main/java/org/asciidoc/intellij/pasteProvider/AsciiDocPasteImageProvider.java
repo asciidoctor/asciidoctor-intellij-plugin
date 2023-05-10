@@ -20,6 +20,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class AsciiDocPasteImageProvider implements PasteProvider {
@@ -74,7 +75,7 @@ public class AsciiDocPasteImageProvider implements PasteProvider {
         throw new IllegalStateException("The class implementation of " + produce.getClass().getName() + " did return null for getTransferData() when it shouldn't. Please report to authors!");
       }
       for (File f : fileList) {
-        String name = f.getName().toLowerCase();
+        String name = f.getName().toLowerCase(Locale.ROOT);
         if (name.endsWith(".png") || name.endsWith(".svg") || name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".gif")) {
           return true;
         }

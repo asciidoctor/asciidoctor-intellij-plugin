@@ -891,7 +891,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     }
     // natural reference: needs a space an capitalization
     //noinspection RedundantIfStatement
-    if (!resolvedKey.contains(" ") || resolvedKey.toLowerCase().equals(key)) {
+    if (!resolvedKey.contains(" ") || resolvedKey.toLowerCase(Locale.ROOT).equals(key)) {
       return false;
     }
     return true;
