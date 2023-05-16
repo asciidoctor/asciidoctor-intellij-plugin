@@ -31,7 +31,7 @@ Plugin Version: ____
 
 <!--
     Go to: Help -> About
-    Use the "copy to clipboard" button and paste the information below.
+    Use the "Copy and Close" button and paste the information below.
 -->
 IntelliJ Details: ____
 
