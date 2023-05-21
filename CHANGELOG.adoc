@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.38.16
 
 - Rework structure view for nested lists (#1346)
+- Pasting of images doesn't trigger Pandoc, but pastes only the image (#1349)
 
 === 0.38.15
 
