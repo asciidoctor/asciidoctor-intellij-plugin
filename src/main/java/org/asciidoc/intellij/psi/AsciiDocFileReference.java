@@ -654,7 +654,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
               return;
             }
           }
-        } else if (AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(key).find() || AsciiDocUtil.ANTORA_FAMILY_PATTERN.matcher(key).find()) {
+        } else if (AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(key).find() || AsciiDocUtil.ANTORA_FAMILY_PATTERN.matcher(key).find() || key.startsWith("./")) {
           keys = handleAntora(key);
         }
       }

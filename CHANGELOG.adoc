@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.38.18
+
+- Fix relative paths for images in Antora (#1366)
+
 === 0.38.17
 
 - Fixing potential deadlock cause on auto-completion during indexing (#1362)

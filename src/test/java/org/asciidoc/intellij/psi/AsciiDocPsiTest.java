@@ -897,10 +897,14 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       getTestName(true) + "/modules/ROOT/pages/sub/test.adoc",
       getTestName(true) + "/modules/ROOT/pages/sub/page.adoc",
       getTestName(true) + "/modules/ROOT/attachments/sub/attachment.txt",
+      getTestName(true) + "/modules/ROOT/images/sub/image.txt",
       getTestName(true) + "/antora.yml"
     );
 
-    AsciiDocLink[] links = PsiTreeUtil.getChildrenOfType(psiFile[0].getFirstChild(), AsciiDocLink.class);
+    AsciiDocBlock[] blocks = PsiTreeUtil.getChildrenOfType(psiFile[0], AsciiDocBlock.class);
+    assertNotNull(blocks);
+
+    AsciiDocLink[] links = PsiTreeUtil.getChildrenOfType(blocks[0], AsciiDocLink.class);
     assertNotNull(links);
     assertSize(3, links);
 
@@ -909,7 +913,14 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
     assertReferencesResolve(links[0], 3);
     assertReferencesResolve(links[1], 2);
-    assertReferencesResolve(links[2], 3);
+
+    AsciiDocInlineMacro[] inlineMacros = PsiTreeUtil.getChildrenOfType(blocks[1], AsciiDocInlineMacro.class);
+    assertNotNull(inlineMacros);
+    assertSize(1, inlineMacros);
+
+    assertReferencesResolve(inlineMacros[0], 2);
+
+    assertReferencesResolve(blocks[2], 2);
   }
 
 

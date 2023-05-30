@@ -2,3 +2,6 @@ xref:attachment$./attachment.txt[]
 xref:./page.adoc[]
 xref:my-component::./page.adoc[]
 
+image:./image.txt[]
+
+image::./image.txt[]

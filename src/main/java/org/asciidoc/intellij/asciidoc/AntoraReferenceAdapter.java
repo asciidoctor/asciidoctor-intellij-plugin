@@ -100,7 +100,7 @@ public class AntoraReferenceAdapter {
           return;
         }
       } else {
-        if (type.equals("image")) {
+        if (type.equals("image") && !target.startsWith("./")) {
           // it is an image, this will be looked up in the imagesdir anyway, no change necessary
           // this ensures that for example generated PlantUML will not have a full path prefix
           return;
