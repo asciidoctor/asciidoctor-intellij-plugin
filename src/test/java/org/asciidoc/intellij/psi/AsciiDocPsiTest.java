@@ -586,7 +586,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
         for (TextContent textContent : textAt) {
           String text = textContent.toString().trim();
           for (String line : text.split("\\n", -1)) {
-            if (line.length() > 0) {
+            if (!line.isEmpty()) {
               texts.add(line);
             }
           }
