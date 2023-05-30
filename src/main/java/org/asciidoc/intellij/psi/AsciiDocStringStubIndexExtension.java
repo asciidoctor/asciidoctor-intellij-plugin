@@ -9,7 +9,8 @@ import com.intellij.psi.stubs.StubIndex;
 import com.intellij.util.Processor;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Mix-in to iterate over all entries within the Index.
@@ -26,7 +27,7 @@ public abstract class AsciiDocStringStubIndexExtension<T extends PsiElement> ext
   @SuppressWarnings("UnusedReturnValue")
   public boolean processAllElements(Project project, Processor<? super T> processor, GlobalSearchScope scope) {
     // first create a list, then process the list to avoid calling StubIndex recursively and thereby creating deadlocks
-    LinkedList<String> list = new LinkedList<>();
+    List<String> list = new ArrayList<>();
     StubIndex.getInstance().processAllKeys(getKey(), e -> {
       ProgressManager.checkCanceled();
       return list.add(e);
