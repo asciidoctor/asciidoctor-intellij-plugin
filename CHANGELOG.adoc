@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.38.18
 
 - Fix relative paths for images in Antora (#1366)
+- Adding sentences to the extending selection breaks (#1332)
 
 === 0.38.17
 

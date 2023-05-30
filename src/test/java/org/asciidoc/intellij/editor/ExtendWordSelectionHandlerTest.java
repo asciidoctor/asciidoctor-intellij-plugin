@@ -42,6 +42,14 @@ public class ExtendWordSelectionHandlerTest extends BasePlatformTestCase {
     Assertions.assertThat(ranges).containsExactlyInAnyOrder("text", "'text'", "alt='text'", "[alt='text']", "image:file.png[alt='text']");
   }
 
+  public void testCursorWithSentences() {
+    // given...
+    List<String> ranges = prepareRanges("One sentence. (Another <caret>sentence) word. Third sentence.");
+
+    // then...
+    Assertions.assertThat(ranges).containsExactlyInAnyOrder("sentence", "Another sentence", "(Another sentence)", "(Another sentence) word.");
+  }
+
   private List<String> prepareRanges(@Language("asciidoc") String content) {
     // parse caret from text string so we don't need to pass it as a parameter
     int cursor = content.indexOf(CARET);

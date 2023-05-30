@@ -29,6 +29,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DOUBLEITALIC_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DOUBLEMONO_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DOUBLEMONO_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.DOUBLE_QUOTE;
+import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.END_OF_SENTENCE;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_END;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.INLINE_ATTRS_START;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.ITALIC_END;
@@ -105,10 +106,25 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
       PsiElement endFormatting = element;
 
       // expand start/endFormatting within paragraph
+      boolean foundSentence = false;
       while (startFormatting != null && endFormatting != null) {
+        boolean inSentence = false;
         while (startFormatting != null && startFormatting.getNode() != null &&
           !SYMMETRIC_FORMATTING.containsKey(startFormatting.getNode().getElementType()) &&
           !startFormatting.getText().contains("\n")) {
+          if (!foundSentence) {
+            PsiElement searchForEndOfSentence = startFormatting;
+            while (searchForEndOfSentence.getPrevSibling() != null && searchForEndOfSentence.getPrevSibling() instanceof PsiWhiteSpace) {
+              searchForEndOfSentence = searchForEndOfSentence.getPrevSibling();
+            }
+            if (searchForEndOfSentence.getPrevSibling() != null && searchForEndOfSentence.getPrevSibling().getNode().getElementType() == END_OF_SENTENCE) {
+              while (startFormatting instanceof PsiWhiteSpace) {
+                startFormatting = startFormatting.getNextSibling();
+              }
+              inSentence = true;
+              break;
+            }
+          }
           startFormatting = startFormatting.getPrevSibling();
         }
         if (startFormatting == null) {
@@ -117,6 +133,11 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
         while (endFormatting != null && startFormatting.getNode() != null &&
           SYMMETRIC_FORMATTING.get(startFormatting.getNode().getElementType()) != endFormatting.getNode().getElementType() &&
           !endFormatting.getText().contains("\n")) {
+          if (!foundSentence) {
+            if (endFormatting.getNode().getElementType() == END_OF_SENTENCE) {
+              break;
+            }
+          }
           endFormatting = endFormatting.getNextSibling();
         }
         if (endFormatting == null) {
@@ -139,6 +160,12 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
         }
         ranges.add(TextRange.create(startFormatting.getTextOffset() + startOffset, endFormatting.getTextRange().getEndOffset() + endOffset));
         // expand one step further and try again
+        if (inSentence) {
+          while (startFormatting.getPrevSibling() != null && startFormatting.getPrevSibling() instanceof PsiWhiteSpace) {
+            startFormatting = startFormatting.getPrevSibling();
+          }
+          foundSentence = true;
+        }
         startFormatting = startFormatting.getPrevSibling();
         endFormatting = endFormatting.getNextSibling();
       }
