@@ -36,11 +36,11 @@ allprojects {
 }
 
 intellij {
-  version = 'IC-231.8770.65' // 'IC-231.7864.76-EAP-SNAPSHOT'
+  version = 'IC-232.6095.10-EAP-SNAPSHOT' // 'IC-231.8770.65'
   pluginName = 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild = false
   plugins = [
-    'PsiViewer:231-SNAPSHOT', // used for debugging
+    'PsiViewer:232.2-SNAPSHOT', // used for debugging
     'PlantUML integration:5.12.0', // used to test highlighting of plantuml diagrams
     'com.intellij.platform.images', // dependency for PlantUML plugin
     'tanvd.grazi', // used for spell and grammar checking checking
@@ -54,7 +54,7 @@ intellij {
     // 'com.jetbrains.performancePlugin:213.5744.122' // used run YourKit CPU profiling in test IDE
     // see https://intellij-support.jetbrains.com/hc/en-us/articles/207241235
     // https://plugins.jetbrains.com/plugin/16136-grazie-professional/
-    'com.intellij.grazie.pro:0.3.202-223'
+    'com.intellij.grazie.pro:0.3.224'
   ]
 }
 
