@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.ui;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
@@ -128,29 +127,12 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
                                                       @NotNull final Project project,
                                                       @NotNull final VirtualFile file) {
     if (provider instanceof AsyncFileEditorProvider) {
-      return new Builder() {
-        @Override
-        public @NotNull FileEditor build() {
-          FileEditor[] fileEditors = new FileEditor[1];
-          ApplicationManager.getApplication().invokeAndWait(() -> {
-            // attempt to switch to EDT to create an editor as this might trigger Swing
-            // see: https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/1368
-            fileEditors[0] = ((AsyncFileEditorProvider) provider).createEditorAsync(project, file).build();
-          });
-          return fileEditors[0];
-        }
-      };
+      return ((AsyncFileEditorProvider) provider).createEditorAsync(project, file);
     } else {
       return new Builder() {
         @Override
-        public @NotNull FileEditor build() {
-          FileEditor[] fileEditors = new FileEditor[1];
-          ApplicationManager.getApplication().invokeAndWait(() -> {
-            // attempt to switch to EDT to create an editor as this might trigger Swing
-            // see: https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/1368
-            fileEditors[0] = provider.createEditor(project, file);
-          });
-          return fileEditors[0];
+        public FileEditor build() {
+          return provider.createEditor(project, file);
         }
       };
     }
