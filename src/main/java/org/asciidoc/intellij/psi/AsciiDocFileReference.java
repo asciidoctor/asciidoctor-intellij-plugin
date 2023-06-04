@@ -1149,13 +1149,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
           }
         }
         // plus sections from current file with ID or full section name
-        List<AsciiDocSection> sections = AsciiDocFileUtil.findSections(root.getProject());
-        PsiFile myFile = root.getContainingFile().getOriginalFile();
+        // advocate to only use automatic references in the current file
+        List<AsciiDocSection> sections = AsciiDocFileUtil.findSections(root.getContainingFile().getOriginalFile());
         for (AsciiDocSection section : sections) {
-          // advocate to only use automatic references in current file
-          if (!section.getContainingFile().equals(myFile)) {
-            continue;
-          }
           // if they have a block ID, we've seen them above
           if (section.getBlockId() != null) {
             continue;

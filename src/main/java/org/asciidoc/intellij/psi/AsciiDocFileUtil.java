@@ -14,6 +14,7 @@ import com.intellij.openapi.util.UserDataHolderEx;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
@@ -78,6 +79,18 @@ public class AsciiDocFileUtil {
         result.add(asciiDocSection);
         return true;
       }, scope);
+    return result;
+  }
+
+  public static List<AsciiDocSection> findSections(PsiFile file) {
+    List<AsciiDocSection> result = new ArrayList<>();
+    GlobalSearchScope fileScope = GlobalSearchScope.FilesScope.fileScope(file);
+    final GlobalSearchScope scope = new AsciiDocSearchScope(file.getProject()).restrictedByAsciiDocFileType().union(fileScope);
+    AsciiDocSectionKeyIndex.getInstance().processAllElements(file.getProject(),
+            asciiDocSection -> {
+              result.add(asciiDocSection);
+              return true;
+            }, scope);
     return result;
   }
 
