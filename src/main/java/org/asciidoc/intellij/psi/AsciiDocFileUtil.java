@@ -43,7 +43,7 @@ public class AsciiDocFileUtil {
   }
 
   public static List<AsciiDocSection> findSections(Project project, String key) {
-    if (key.length() == 0) {
+    if (key.isEmpty()) {
       return Collections.emptyList();
     }
     ProjectSectionCache cache = getProjectSectionCache(project);
