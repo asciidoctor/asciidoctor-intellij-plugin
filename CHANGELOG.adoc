@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.38.19
 
 - Bump asciidoctorj from 2.5.8 to 2.5.9 and Asciidoctor to 2.0.20 (#1369)
+- Bump asciidoctorj from 2.5.9 to 2.5.10 and JRuby to 9.4.2.0 (#1372)
 - Speed up autocompletion by instantiating fewer stubs
 
 === 0.38.18
