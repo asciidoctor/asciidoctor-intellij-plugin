@@ -97,21 +97,22 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
     }
     ArrayList<TextRange> ranges = new ArrayList<>();
     PsiElement element = e;
+    boolean foundSentence = false;
+    boolean foundLine = false;
     do {
       TextRange range = element.getTextRange();
       // add element as is
-      ranges.add(range);
+      addRange(ranges, range);
 
       PsiElement startFormatting = element;
       PsiElement endFormatting = element;
 
       // expand start/endFormatting within paragraph
-      boolean foundSentence = false;
       while (startFormatting != null && endFormatting != null) {
         boolean inSentence = false;
         while (startFormatting != null && startFormatting.getNode() != null &&
           !SYMMETRIC_FORMATTING.containsKey(startFormatting.getNode().getElementType()) &&
-          !startFormatting.getText().contains("\n")) {
+          !(!foundLine && startFormatting instanceof PsiWhiteSpace && startFormatting.getText().contains("\n"))) {
           if (!foundSentence) {
             PsiElement searchForEndOfSentence = startFormatting;
             while (searchForEndOfSentence.getPrevSibling() != null && searchForEndOfSentence.getPrevSibling() instanceof PsiWhiteSpace) {
@@ -132,7 +133,7 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
             // special handling for the first sentence in a paragraph
             while (endFormatting != null) {
               if (endFormatting.getNode().getElementType() == END_OF_SENTENCE) {
-                ranges.add(TextRange.create(element.getParent().getTextOffset(), endFormatting.getTextRange().getEndOffset()));
+                addRange(ranges, TextRange.create(element.getParent().getTextOffset(), endFormatting.getTextRange().getEndOffset()));
                 break;
               }
               endFormatting = endFormatting.getNextSibling();
@@ -142,7 +143,7 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
         }
         while (endFormatting != null && startFormatting.getNode() != null &&
           SYMMETRIC_FORMATTING.get(startFormatting.getNode().getElementType()) != endFormatting.getNode().getElementType() &&
-          !endFormatting.getText().contains("\n")) {
+          !(!foundLine && endFormatting instanceof PsiWhiteSpace && endFormatting.getText().contains("\n"))) {
           if (!foundSentence) {
             if (endFormatting.getNode().getElementType() == END_OF_SENTENCE) {
               break;
@@ -156,19 +157,21 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
         int startOffset = 0;
         if (startFormatting instanceof PsiWhiteSpace && startFormatting.getText().contains("\n")) {
           startOffset = startFormatting.getTextLength();
+          foundLine = true;
         }
         int endOffset = 0;
         if (endFormatting instanceof PsiWhiteSpace && endFormatting.getText().contains("\n")) {
           endOffset = -endFormatting.getTextLength() + endFormatting.getText().indexOf("\n");
+          foundLine = true;
         }
         if (startFormatting.getNode() != null && SYMMETRIC_FORMATTING.get(startFormatting.getNode().getElementType()) == endFormatting.getNode().getElementType()) {
           // we might be looking at the identical token (for example a double quote) for start and end,
           // prevent to report this with its end first and start second, which would lead to an inverse and icorrect range
           if (startFormatting.getTextRange().getEndOffset() < endFormatting.getTextRange().getStartOffset()) {
-            ranges.add(TextRange.create(startFormatting.getTextRange().getEndOffset(), endFormatting.getTextRange().getStartOffset()));
+            addRange(ranges, TextRange.create(startFormatting.getTextRange().getEndOffset(), endFormatting.getTextRange().getStartOffset()));
           }
         }
-        ranges.add(TextRange.create(startFormatting.getTextOffset() + startOffset, endFormatting.getTextRange().getEndOffset() + endOffset));
+        addRange(ranges, TextRange.create(startFormatting.getTextOffset() + startOffset, endFormatting.getTextRange().getEndOffset() + endOffset));
         // expand one step further and try again
         if (inSentence) {
           while (startFormatting.getPrevSibling() != null && startFormatting.getPrevSibling() instanceof PsiWhiteSpace) {
@@ -179,8 +182,19 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
         startFormatting = startFormatting.getPrevSibling();
         endFormatting = endFormatting.getNextSibling();
       }
+      if (!foundLine) {
+        if (element.getText().contains("\n")) {
+          foundLine = true;
+        }
+      }
       element = element.getParent();
     } while (element != null && !(element instanceof PsiFile));
     return ranges;
+  }
+
+  private static void addRange(ArrayList<TextRange> ranges, TextRange range) {
+    if (!ranges.contains(range)) {
+      ranges.add(range);
+    }
   }
 }

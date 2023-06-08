@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - Bump asciidoctorj from 2.5.9 to 2.5.10 and JRuby to 9.4.2.0 (#1372)
 - Speed up autocompletion by instantiating fewer stubs
 - Fix extending selection for first sentence in paragraph (#1332)
+- Reworking selection of adjecent list items (#1332)
 
 === 0.38.18
 
