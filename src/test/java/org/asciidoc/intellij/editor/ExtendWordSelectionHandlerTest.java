@@ -50,6 +50,14 @@ public class ExtendWordSelectionHandlerTest extends BasePlatformTestCase {
     Assertions.assertThat(ranges).containsExactlyInAnyOrder("sentence", "Another sentence", "(Another sentence)", "(Another sentence) word.");
   }
 
+  public void testCursorWithFirstSentenceInParagraph() {
+    // given...
+    List<String> ranges = prepareRanges("\nFirst Paragraph.\n\nOne <caret>sentence. Another sentence.");
+
+    // then...
+    Assertions.assertThat(ranges).containsExactlyInAnyOrder("One sentence.", "One sentence. Another sentence.", "sentence");
+  }
+
   private List<String> prepareRanges(@Language("asciidoc") String content) {
     // parse caret from text string so we don't need to pass it as a parameter
     int cursor = content.indexOf(CARET);

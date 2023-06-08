@@ -128,6 +128,16 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
           startFormatting = startFormatting.getPrevSibling();
         }
         if (startFormatting == null) {
+          if (!foundSentence) {
+            // special handling for the first sentence in a paragraph
+            while (endFormatting != null) {
+              if (endFormatting.getNode().getElementType() == END_OF_SENTENCE) {
+                ranges.add(TextRange.create(element.getParent().getTextOffset(), endFormatting.getTextRange().getEndOffset()));
+                break;
+              }
+              endFormatting = endFormatting.getNextSibling();
+            }
+          }
           break;
         }
         while (endFormatting != null && startFormatting.getNode() != null &&
