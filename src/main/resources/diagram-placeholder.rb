@@ -64,6 +64,22 @@ Extensions.register do
       vega
       vegalite
       wavedrom
+      bookland
+      codabar
+      code25
+      code25iata
+      code25interleaved
+      code39
+      code93
+      code128
+      code128a
+      code128b
+      code128c
+      ean8
+      ean13
+      gs1_128
+      qrcode
+      upca
     ].freeze
   names.each { |name|
     block_macro DummyDiagramBlockMacro, name
