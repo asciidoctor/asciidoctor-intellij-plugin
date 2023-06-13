@@ -64,7 +64,7 @@ jobs:
         run: git fetch --deepen=1
 
       - name: 'Qodana for Docs'
-        uses: JetBrains/qodana-action@v2022.3.4
+        uses: JetBrains/qodana-action@v2023.1.4
         with:
           # https://hub.docker.com/r/jetbrains/qodana-jvm-community/tags
           # this disables the Gradle plugin to avoid the Gradle initialization and the dependency download
