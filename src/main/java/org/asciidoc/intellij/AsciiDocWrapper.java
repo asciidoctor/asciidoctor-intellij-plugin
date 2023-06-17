@@ -501,8 +501,8 @@ public class AsciiDocWrapper {
     boolean epubPresent = AsciiDocDownloaderUtil.getAsciidoctorJEpubFile().exists();
     if (!epubPresent) {
       // try to find it in the class path for tests
-      try (InputStream is = this.getClass().getResourceAsStream("/gems/asciidoctor-pdf-" +
-        AsciiDocDownloaderUtil.ASCIIDOCTORJ_EPUB_VERSION + "/lib/asciidoctor-pdf.rb")) {
+      try (InputStream is = this.getClass().getResourceAsStream("/gems/asciidoctor-epub3-" +
+        AsciiDocDownloaderUtil.ASCIIDOCTORJ_EPUB_VERSION + "/lib/asciidoctor-epub3.rb")) {
         if (is != null) {
           epubPresent = true;
         }
