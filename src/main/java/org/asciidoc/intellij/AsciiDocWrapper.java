@@ -301,9 +301,11 @@ public class AsciiDocWrapper {
     if (diagramPresent) {
       md = md + ".diagram";
     }
-    boolean pdfPresent = isPdfPresent();
-    if (pdfPresent) {
+    if (isPdfPresent()) {
       md = md + ".pdf";
+    }
+    if (isEpubPresent()) {
+      md = md + ".epub";
     }
     Asciidoctor asciidoctor = INSTANCES.get(md);
     if (asciidoctor == null) {
@@ -391,6 +393,13 @@ public class AsciiDocWrapper {
           try (InputStream is = this.getClass().getResourceAsStream("/pdf-antora.rb")) {
             if (is == null) {
               throw new RuntimeException("unable to load script pdf-antora.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
+          }
+        } else if (format.backend.equals("epub")) {
+          try (InputStream is = this.getClass().getResourceAsStream("/epub-antora.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script epub-antora.rb");
             }
             asciidoctor.rubyExtensionRegistry().loadClass(is);
           }
@@ -485,6 +494,23 @@ public class AsciiDocWrapper {
       }
     }
     return pdfPresent;
+  }
+
+
+  private boolean isEpubPresent() {
+    boolean epubPresent = AsciiDocDownloaderUtil.getAsciidoctorJEpubFile().exists();
+    if (!epubPresent) {
+      // try to find it in the class path for tests
+      try (InputStream is = this.getClass().getResourceAsStream("/gems/asciidoctor-pdf-" +
+        AsciiDocDownloaderUtil.ASCIIDOCTORJ_EPUB_VERSION + "/lib/asciidoctor-pdf.rb")) {
+        if (is != null) {
+          epubPresent = true;
+        }
+      } catch (IOException ex) {
+        throw new RuntimeException("unable to open stream", ex);
+      }
+    }
+    return epubPresent;
   }
 
   /**
@@ -1384,6 +1410,7 @@ public class AsciiDocWrapper {
 
   public enum FileType {
     PDF("pdf"),
+    EPUB("epub"),
     HTML("html5"),
     BROWSER("html5"),
     JAVAFX("html5"),
@@ -1656,7 +1683,7 @@ public class AsciiDocWrapper {
       }
       // add styleheet at the end of the header to avoid interfering with the mechanism to unload the standard stylesheet once the custom stylesheet has been loaded
       html = html
-          .replace("</head>", "<link rel='stylesheet' data-default type='text/css' href='" + css + "' />" + "</head>");
+        .replace("</head>", "<link rel='stylesheet' data-default type='text/css' href='" + css + "' />" + "</head>");
       html = html.replace("</body>", "" + js + "</body>");
       html = html.replace("</body>", "<script>\n" +
         "if (!hljs.initHighlighting.called) {\n" +

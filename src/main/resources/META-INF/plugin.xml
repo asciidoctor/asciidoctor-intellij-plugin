@@ -115,6 +115,11 @@
                 text="PDF"
                 description="Create PDF from current file">
         </action>
+        <action class="org.asciidoc.intellij.actions.asciidoc.CreateEpubAction"
+                id="org.asciidoc.intellij.actions.asciidoc.CreateEpubAction"
+                text="EPUB"
+                description="Create EPUB from current file">
+        </action>
         <action class="org.asciidoc.intellij.actions.asciidoc.CreateDocxAction"
                 id="org.asciidoc.intellij.actions.asciidoc.CreateDocxAction"
                 text="DOCX"

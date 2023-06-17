@@ -65,6 +65,8 @@ public class AsciiDocDownloaderUtil {
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-pdf
   public static final String ASCIIDOCTORJ_PDF_VERSION = "2.3.7";
   private static final String ASCIIDOCTORJ_PDF_HASH = "9c3d8e8f9ce10ecef50ff7b2456562f4e43abbbded2a1a36bdfab8c7096be1c7";
+  public static final String ASCIIDOCTORJ_EPUB_VERSION = "1.5.1";
+  private static final String ASCIIDOCTORJ_EPUB_HASH = "8b66d1a90a2719fe63b1e6ad51d82f6bb114ab66cda93dbcdd7335d0f1f602f7";
 
   // when updating the version, also update the sha256 hash!
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram
@@ -106,8 +108,18 @@ public class AsciiDocDownloaderUtil {
     return file.exists();
   }
 
+  public static boolean downloadCompleteAsciidoctorJEpub() {
+    var file = getAsciidoctorJEpubFile();
+    return file.exists();
+  }
+
   public static File getAsciidoctorJPdfFile() {
     String fileName = DOWNLOAD_PATH + File.separator + "asciidoctorj-pdf-" + ASCIIDOCTORJ_PDF_VERSION + ".jar";
+    return new File(fileName);
+  }
+
+  public static File getAsciidoctorJEpubFile() {
+    var fileName = DOWNLOAD_PATH + File.separator + "asciidoctorj-epub3-" + ASCIIDOCTORJ_EPUB_VERSION + ".jar";
     return new File(fileName);
   }
 
@@ -300,11 +312,25 @@ public class AsciiDocDownloaderUtil {
     download(downloadName, url, ASCIIDOCTORJ_PDF_HASH, project, onSuccess, onFailure);
   }
 
+  public static void downloadAsciidoctorJEpub(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
+    String downloadName = "asciidoctorj-epub3-" + ASCIIDOCTORJ_EPUB_VERSION + ".jar";
+    String url = getAsciidoctorJEpubUrl();
+    download(downloadName, url, ASCIIDOCTORJ_EPUB_HASH, project, onSuccess, onFailure);
+  }
+
   public static String getAsciidoctorJPdfUrl() {
     return "https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-pdf/" +
       ASCIIDOCTORJ_PDF_VERSION +
       "/asciidoctorj-pdf-" +
       ASCIIDOCTORJ_PDF_VERSION +
+      ".jar";
+  }
+
+  public static String getAsciidoctorJEpubUrl() {
+    return "https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-epub3/" +
+      ASCIIDOCTORJ_EPUB_VERSION +
+      "/asciidoctorj-epub3-" +
+      ASCIIDOCTORJ_EPUB_VERSION +
       ".jar";
   }
 
