@@ -7,16 +7,16 @@
 
 There is standard functionality to search in IntelliJ:
 
-Users can search in a single file using kbd:[Ctrl+F].
-Replacing is done via kbd:[Ctrl+R].
+Users can search in a single file using [.windows.linux]#kbd:[Ctrl+F]# [.macos]#kbd:[⌘ F]#.
+Replacing is done via [.windows.linux]#kbd:[Ctrl+R]# [.macos]#kbd:[⌘ R]#.
 
-Users can search in all files using kbd:[Ctrl+Shift+F].
+Users can search in all files using [.windows.linux]#kbd:[Ctrl+Shift+F]# [.macos]#kbd:[⌃ ⇧ F]#.
 By default, the search is case-insensitive and searches for text snippets.
 It can be changed to search case-sensitive and with regexes.
-Replacing is available via kbd:[Ctrl+Shift+R].
+Replacing is available via [.windows.linux]#kbd:[Ctrl+Shift+R]# [.macos]#kbd:[⌃ ⇧ R]#.
 
 New in plugin version 0.37.56+: When searching in the project, and also renaming entities, the plugin adds new search scopes: _Project files without Symlinks, _AsciiDoc files_ and _AsciiDoc files without Symlinks_.
 
-Using kbd:[Shift+Shift] (search everything), the user can search for all named elements. By default, the search returns file names.
+Using [.windows.linux]#kbd:[Shift+Shift]# [.macos]#kbd:[⇧ ⇧]# (search everything), the user can search for all named elements. By default, the search returns file names.
 The plugin adds the capability to include section headings, attribute names, tags and IDs.
 
