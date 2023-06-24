@@ -66,13 +66,13 @@ jobs:
       - name: 'Qodana for Docs'
         uses: JetBrains/qodana-action@v2023.1.5
         with:
+          upload-result: true
           # https://hub.docker.com/r/jetbrains/qodana-jvm-community/tags
           # this disables the Gradle plugin to avoid the Gradle initialization and the dependency download
           # as that is not necessary for the Grazie and AsciiDoc plugins to check spelling and links.
           # TODO: the plugin `org.jetbrains.plugins.gradle` should also be suppressed, but the parameter doesn't allow
           # a comma when called from the Qodana action. Therefore overwrite it with an empty folder.
           args: >
-            --upload-result,true,
             --linter,jetbrains/qodana-jvm-community:2023.1,
             --property=idea.suppressed.plugins.id=com.intellij.gradle,
             -v,${{ github.workspace }}/grazie:/opt/idea/plugins/grazie,
