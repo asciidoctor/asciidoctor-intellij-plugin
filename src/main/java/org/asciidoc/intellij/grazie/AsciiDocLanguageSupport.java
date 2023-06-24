@@ -287,9 +287,8 @@ public class AsciiDocLanguageSupport {
     return CachedValuesManager.getCachedValue(psiElement, KEY_ASCIIDOC_CONTEXT_ROOT,
       () -> {
         boolean result;
-        if (psiElement instanceof AsciiDocAttributeDeclarationImpl &&
-          ((AsciiDocAttributeDeclarationImpl) psiElement).hasSpellCheckableContent()) {
-          result = true;
+        if (psiElement instanceof AsciiDocAttributeDeclarationImpl) {
+          result = ((AsciiDocAttributeDeclarationImpl) psiElement).hasSpellCheckableContent();
         } else if (psiElement instanceof AsciiDocInlineMacro &&
           ((AsciiDocInlineMacro) psiElement).getMacroName().equals("footnote")) {
           result = true;

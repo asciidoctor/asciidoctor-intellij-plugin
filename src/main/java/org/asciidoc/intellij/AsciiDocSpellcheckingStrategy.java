@@ -10,6 +10,7 @@ import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy;
 import com.intellij.spellchecker.tokenizer.TokenConsumer;
 import com.intellij.spellchecker.tokenizer.Tokenizer;
 import org.asciidoc.intellij.grazie.AsciiDocLanguageSupport;
+import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationImpl;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -33,6 +34,12 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
   public Tokenizer getTokenizer(PsiElement element) {
     // run tokenizing on all top level elements in the file and those marked as root elements in the language support.
     if (languageSupport.isMyContextRoot(element) || element.getParent() instanceof PsiFile) {
+      if (element instanceof AsciiDocAttributeDeclarationImpl) {
+        if (!((AsciiDocAttributeDeclarationImpl) element).hasSpellCheckableContent()) {
+          // the AsciiDocAttributeDeclarationImpl is special, as it is sometimes a root element, sometimes not
+          return EMPTY_TOKENIZER;
+        }
+      }
       return new Tokenizer<>() {
         @Override
         public void tokenize(@NotNull PsiElement root, TokenConsumer consumer) {

@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.38.20
+
+- Don't spell-check on attribute declarations on the top of a file
+
 === 0.38.19
 
 - Bump asciidoctorj from 2.5.8 to 2.5.9 and Asciidoctor to 2.0.20 (#1369)
