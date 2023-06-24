@@ -1,13 +1,13 @@
 = Spring REST Docs
 :description: The plugin supports the operation::[]-macro: It provides auto-complete for the editor and renders the contents in the preview.
 
-https://docs.spring.io/spring-restdocs/docs/current/reference/html5/[Spring REST Docs] allow the developer to write API documentation using information recorded in test cases. The plugin supports the `operation::[]`-macro of Spring REST Docs in the editor and the preview.
+https://docs.spring.io/spring-restdocs/docs/current/reference/htmlsingle/[Spring REST Docs] allow the developer to write API documentation using information recorded in test cases. The plugin supports the `operation::[]`-macro of Spring REST Docs in the editor and the preview.
 
 NOTE: This requires version 0.30.6+ of the plugin.
 
 == What Spring REST Docs provides
 
-https://docs.spring.io/spring-restdocs/docs/current/reference/html5/[Spring REST Docs] allow the developer to write API documentation using information recorded in test cases.
+https://docs.spring.io/spring-restdocs/docs/current/reference/htmlsingle/[Spring REST Docs] allow the developer to write API documentation using information recorded in test cases.
 These ensure that the examples in the documentation work with the current version of the code.
 
 When running the tests, Spring REST Docs creates a folder `generated-snippets` with the recorded examples.
