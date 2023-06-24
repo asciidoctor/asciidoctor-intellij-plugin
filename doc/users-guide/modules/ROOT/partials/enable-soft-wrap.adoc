@@ -3,6 +3,6 @@ This can lead to lines larger than the editor's width.
 
 Using soft wraps will make the content readable in the editor, as each line wraps at the width of the editor.
 
-Go to menu:File[Settings... > Editor > General > Soft Wraps] and enable soft wrap for the file extension you use for AsciiDoc files (usually *.adoc).
+Go to menu:File[Settings... > Editor > General > Soft Wraps] and enable soft wrap for the file extension used in the project for AsciiDoc files (usually *.adoc).
 
 image::enable-softwrap.png[Editor settings showing soft wrap]

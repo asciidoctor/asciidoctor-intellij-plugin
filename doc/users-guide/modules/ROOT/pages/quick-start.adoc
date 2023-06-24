@@ -15,11 +15,13 @@ or xref:technical-writing/index.adoc[] for a step-by-step-guide installing Intel
 . An installed JetBrains IDE like IntelliJ IDEA, GoLand, WebStorm or PyCharm. +
 This plugin fully supports the free IntelliJ IDEA Community edition.
 
-To install the plugin on IntelliJ MPS or Google Android Studio, please refer to the chapter _xref:installation.adoc[]_.
+To install the plugin on IntelliJ MPS or Google Android Studio, refer to the chapter _xref:installation.adoc[]_.
 
 [WARNING]
 --
-Please use the pre-bundled JetBrains OpenJDK Runtime 11 to run your IDE. This provides the best live preview based on JavaFX or JCEF. You can check this in the menu menu:Help[About].
+Use the pre-bundled JetBrains OpenJDK Runtime 11 to run the IDE.
+This provides the best live preview based on JavaFX or JCEF.
+Check this in the menu menu:Help[About].
 
 It should state:
 
@@ -29,7 +31,7 @@ Runtime version: 11.0...
 VM: ... 64-Bit Server VM by JetBrains s.r.o
 ====
 
-Please refer to xref:installation.adoc#prerequisites[Installation Prerequisites] if this is not the case.
+Refer to xref:installation.adoc#prerequisites[Installation Prerequisites] if this is not the case.
 --
 
 == Plugin installation
@@ -38,9 +40,9 @@ Please refer to xref:installation.adoc#prerequisites[Installation Prerequisites]
 +
 image::install-plugin-marketplace-closeup.png[Install AsciiDoc plugin from marketplace]
 
-. Restart your IDE to activate the plugin.
+. Restart the IDE to activate the plugin.
 
-For detailed installation instructions, please follow the instructions in section xref:installation.adoc[].
+For detailed installation instructions, follow the instructions in section xref:installation.adoc[].
 
 == Post installation
 

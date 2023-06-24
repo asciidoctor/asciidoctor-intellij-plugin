@@ -23,11 +23,11 @@ If neither JavaFX of JCEF preview is not available, refer to xref:installation.a
 
 image::settings-asciidoc.png[AsciiDoc settings]
 
-If your preview is blurry, xref:faq/blurry-preview.adoc[follow these instructions to remedy this].
+If the preview is blurry, xref:faq/blurry-preview.adoc[follow these instructions to remedy this].
 
 [#enable-javafx-jcef-for-android-studio]
 === Enable JavaFX or JCEF for Android Studio
 
-To use a rich preview for Android Studio, you'll need to download additional components.
+To use a rich preview for Android Studio, download additional components.
 include::partial$android-studio-next-steps.adoc[]
 
