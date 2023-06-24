@@ -48,12 +48,6 @@ jobs:
           curl -L -o grazie.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=257026'
           unzip grazie.zip
 
-      - name: Download Grazie Professional plugin for grammar checks
-        # https://plugins.jetbrains.com/plugin/16136-grazie-professional/versions
-        run: |
-          curl -L -o grazie-pro.zip 'https://plugins.jetbrains.com/plugin/download?rel=true&updateId=260567'
-          unzip grazie-pro.zip
-
       - name: Create empty folder to overwrite disabled plugin
         run: |
           mkdir empty
@@ -72,7 +66,6 @@ jobs:
             --property=idea.suppressed.plugins.id=com.intellij.gradle,
             -v,${{ github.workspace }}/grazie:/opt/idea/plugins/grazie,
             -v,${{ github.workspace }}/empty:/opt/idea/plugins/gradle-java,
-            -v,${{ github.workspace }}/grazie-pro:/opt/idea/plugins/grazie-pro,
             --baseline,doc/qodana-baseline.sarif.json
 
       # https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/uploading-a-sarif-file-to-github#example-workflow-that-runs-the-eslint-analysis-tool
