@@ -56,6 +56,7 @@ jobs:
         uses: JetBrains/qodana-action@v2023.2.1
         with:
           upload-result: true
+          pr-mode: false
           # https://hub.docker.com/r/jetbrains/qodana-jvm-community/tags
           # this disables the Gradle plugin to avoid the Gradle initialization and the dependency download
           # as that is not necessary for the Grazie and AsciiDoc plugins to check spelling and links.
@@ -64,7 +65,6 @@ jobs:
           args: >
             --linter,jetbrains/qodana-jvm-community:2023.2,
             --property=idea.suppressed.plugins.id=com.intellij.gradle,
-            -v,${{ github.workspace }}/grazie:/opt/idea/plugins/grazie,
             -v,${{ github.workspace }}/empty:/opt/idea/plugins/gradle-java,
             --baseline,doc/qodana-baseline.sarif.json
 
