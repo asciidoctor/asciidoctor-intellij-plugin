@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.38.20
 
 - Don't spell-check on attribute declarations on the top of a file
+- Restore compatibility with the latest IntelliJ 2023.2 EAP
 
 === 0.38.19
 

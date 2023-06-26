@@ -9,10 +9,10 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.FileIndexFacade;
 import com.intellij.openapi.roots.ModuleRootManager;
+// import com.intellij.platform.backend.workspace.WorkspaceModelTopics;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.workspaceModel.ide.WorkspaceModelTopics;
 import org.asciidoc.intellij.annotator.AsciiDocExternalAnnotatorProcessor;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
@@ -31,12 +31,12 @@ public class AsciiDocTargetScopeProvider extends BuildTargetScopeProvider {
     if (forceBuild) {
       ReadAction.run(() -> {
         // avoid exception "Directory index can only be queried after project initialization" in RootIndex.java
-        //noinspection UnstableApiUsage
-        if (WorkspaceModelTopics.Companion.getInstance(project).getModulesAreLoaded()) {
+        // TODO: the following works only in 2023.2 ... therefore commented out for now.
+        // if (WorkspaceModelTopics.Companion.getInstance(project).getModulesAreLoaded()) {
           for (Module module : ModuleManager.getInstance(project).getModules()) {
             clearProblemsForAsciidocFiles(module, project);
           }
-        }
+        // }
       });
     }
     return super.getBuildTargetScopes(baseScope, project, forceBuild);
