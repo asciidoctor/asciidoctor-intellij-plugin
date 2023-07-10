@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.39.1
 
 - Dropping support for IntelliJ 2022.1
+- Bump asciidoctorj-pdf from 2.3.7 to 2.3.9 (#1392)
 
 === 0.38.20
 
