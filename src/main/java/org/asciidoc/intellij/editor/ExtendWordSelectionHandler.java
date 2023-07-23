@@ -192,7 +192,7 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
     return ranges;
   }
 
-  private static void addRange(ArrayList<TextRange> ranges, TextRange range) {
+  private static void addRange(List<TextRange> ranges, TextRange range) {
     if (!ranges.contains(range)) {
       ranges.add(range);
     }

@@ -83,7 +83,7 @@ public class AsciiDocGrazieTextExtractor extends TextExtractor {
   }
 
   @NotNull
-  public ArrayList<TextRange> getStealthyRanges(@NotNull PsiElement root, @NotNull TextContent parentText) {
+  public List<TextRange> getStealthyRanges(@NotNull PsiElement root, @NotNull TextContent parentText) {
     ArrayList<TextRange> ranges = new ArrayList<>();
     AsciiDocVisitor visitor = new AsciiDocVisitor() {
       @Override
