@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.39.1
+
+- Dropping support for IntelliJ 2022.1
+
 === 0.38.20
 
 - Don't spell-check on attribute declarations on the top of a file
