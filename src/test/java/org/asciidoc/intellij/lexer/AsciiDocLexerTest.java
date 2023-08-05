@@ -1838,6 +1838,23 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:INLINE_ATTRS_END (']')");
   }
 
+  public void testPassWithEscapedContent() {
+    doTest("pass:[\\]]",
+      "AsciiDoc:INLINE_MACRO_ID ('pass:')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:MACROTEXT ('\\]')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
+  }
+
+  public void testStemWithSomethingLookingLikeAnAttribute() {
+    doTest("stem:[{attr}]",
+      "AsciiDoc:INLINE_MACRO_ID ('stem:')\n" +
+        "AsciiDoc:INLINE_ATTRS_START ('[')\n" +
+        "AsciiDoc:MACROTEXT ('{attr}')\n" +
+        "AsciiDoc:INLINE_ATTRS_END (']')");
+  }
+
+
   public void testPassThroughInlineThreePlus() {
     doTest("+++pt\npt2+++",
       "AsciiDoc:PASSTRHOUGH_INLINE_START ('+++')\n" +

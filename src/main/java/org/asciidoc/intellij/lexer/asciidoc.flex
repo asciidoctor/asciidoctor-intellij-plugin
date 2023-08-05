@@ -1662,7 +1662,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
           } else if (yytext().toString().equals("footnote:")) {
             yybegin(INLINE_MACRO_TEXT);
             return AsciiDocTokenTypes.INLINE_MACRO_ID;
-          } else if (yytext().toString().equals("pass:")) {
+          } else if (yytext().toString().equals("pass:") || yytext().toString().equals("stem:")) {
             yybegin(PASS_MACRO);
             return AsciiDocTokenTypes.INLINE_MACRO_ID;
           } else if (yytext().toString().equals("btn:")) {
@@ -1695,7 +1695,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
               // this might be an xref with a blank as this pattern is less strict than the xref pattern
               yybegin(LINKFILEWITHBLANK);
               return AsciiDocTokenTypes.LINKSTART;
-            } else if (yytext().toString().equals("pass:")) {
+            } else if (yytext().toString().equals("pass:") || yytext().toString().equals("stem:")) {
               yybegin(PASS_MACRO);
               return AsciiDocTokenTypes.INLINE_MACRO_ID;
             } else if (yytext().toString().equals("menu:")) {
@@ -2181,15 +2181,6 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                          }
                        }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
-  {CONTINUATION} / {SPACE}* "\n" {
-                         if (isPrefixedBy(SPACES)) {
-                           yypushstate();
-                           yybegin(EOL_POP);
-                           return AsciiDocTokenTypes.CONTINUATION;
-                         } else {
-                           return AsciiDocTokenTypes.MACROTEXT;
-                         }
-                       }
   [^]                  { return AsciiDocTokenTypes.MACROTEXT; }
 }
 
