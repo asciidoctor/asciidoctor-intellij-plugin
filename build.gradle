@@ -61,7 +61,7 @@ intellij {
 asciidoctor {
   // this dependency is necessary as Gradle 7.x is confused that the source dir (?) leads to an implicit dependency
   // https://docs.gradle.org/7.6/userguide/validation_problems.html#implicit_dependency
-  dependsOn = [ generateLexer, processTestResources ]
+  dependsOn = [ generateLexer, processTestResources, downloadAndroidStudioProductReleasesXml, downloadIdeaProductReleasesXml ]
   sourceDir file('.')
   sources {
     include 'CHANGELOG.adoc'
