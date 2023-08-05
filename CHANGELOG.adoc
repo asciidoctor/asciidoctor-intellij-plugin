@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Dropping support for IntelliJ 2022.1
 - Bump asciidoctorj-pdf from 2.3.7 to 2.3.9 (#1392)
 - Don't highlight attributes in equations (#1409)
+- Bump org.asciidoctor:asciidoctorj-diagram from 2.2.9 to 2.2.10
 
 === 0.38.20
 
