@@ -2318,6 +2318,12 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:LINE_BREAK ('\\n')");
   }
 
+  public void testPagebreakWithAutocomplete() {
+    doTest("<<<IntellijIdeaRulezzz\n",
+            "AsciiDoc:PAGEBREAK ('<<<IntellijIdeaRulezzz')\n" +
+                    "AsciiDoc:LINE_BREAK ('\\n')");
+  }
+
   public void testEscapedBlockId() {
     doTest("\\[[id]]",
       "AsciiDoc:TEXT ('\\')\n" +
