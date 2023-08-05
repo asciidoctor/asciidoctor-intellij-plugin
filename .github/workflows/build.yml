@@ -161,7 +161,7 @@ jobs:
         id: properties
         shell: bash
         run: |
-          IDE_VERSIONS="$(./gradlew properties --console=plain -q | grep "^pluginVerifierIdeVersions:" | base64)"
+          IDE_VERSIONS=($(./gradlew properties --console=plain -q | grep "^pluginVerifierIdeVersions:" | sha256sum))
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "ideVersions=$IDE_VERSIONS" >> $GITHUB_OUTPUT
           echo "pluginVerifierHomeDir=~/.cache/pluginVerifier" >> $GITHUB_OUTPUT
