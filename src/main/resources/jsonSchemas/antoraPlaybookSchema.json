@@ -174,6 +174,31 @@
               "type": "string",
               "description": "Specifies the format of the log messages.",
               "pattern": "^(json|pretty)$"
+            },
+            "destination": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "file": {
+                  "type": ["string", "number"],
+                  "description": "By default, Antora writes the log information to stdout. The value of this key can be a path to a local file, the value stdout (or 1) for the standard output stream, or the value stderr (or 2) for the standard error stream."
+                },
+                "append": {
+                  "type": "boolean",
+                  "description": "By default, the value is false. If you set the value to true, Antora will not truncate (i.e., clear) the file before writing to it. That means the log messages from a previous run of Antora will be preserved.",
+                  "default": false
+                },
+                "buffer_size": {
+                  "type": "number",
+                  "description": "By default, the value is 0, which means Antora does not buffer log messages. If the value is greater than 0, then Antora will batch log messages until they reach the specified size in bytes. Once the resident size of the buffered log messages meet or exceed this value, Antora will flush the buffer to the destination.",
+                  "default": 0
+                },
+                "sync": {
+                  "type": "boolean",
+                  "description": "By default, the value is true, which means Antora writes to the destination using a synchronous operation. If you set the value to false, Antora will switch to writing to the destination using an asynchronous operation. This means log messages will be written the next time the Node.js process can perform an I/O operation.",
+                  "default": true
+                }
+              }
             }
           }
         }
