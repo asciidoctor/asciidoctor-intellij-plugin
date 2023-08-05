@@ -4,14 +4,13 @@ import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Toggleable;
-import com.intellij.openapi.actionSystem.UpdateInBackground;
 import com.intellij.openapi.project.DumbAware;
 import org.asciidoc.intellij.actions.AsciiDocActionUtil;
 import org.asciidoc.intellij.ui.SplitFileEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-abstract class BaseChangeSplitLayoutAction extends AnAction implements DumbAware, Toggleable, LightEditCompatible, UpdateInBackground {
+abstract class BaseChangeSplitLayoutAction extends AnAction implements DumbAware, Toggleable, LightEditCompatible {
   @Nullable
   private final SplitFileEditor.SplitEditorLayout myLayoutToSet;
 

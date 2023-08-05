@@ -4,7 +4,6 @@ import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.actionSystem.UpdateInBackground;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -19,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Erik Pragt
  */
-public abstract class AsciiDocAction extends AnAction implements DumbAware, LightEditCompatible, UpdateInBackground {
+public abstract class AsciiDocAction extends AnAction implements DumbAware, LightEditCompatible {
 
   @Override
   public void update(@NotNull AnActionEvent event) {
