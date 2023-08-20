@@ -158,8 +158,8 @@ public class AsciiDocDownloaderUtil {
     if (SystemInfoRt.isWindows) {
       return PANDOC_WINDOWS_HASH;
     } else if (SystemInfoRt.isMac) {
-      String os_arch = System.getProperty("os.arch").toLowerCase(Locale.ROOT);
-      if (os_arch.contains("arm") || os_arch.contains("aarch64")) {
+      String osArch = System.getProperty("os.arch").toLowerCase(Locale.ROOT);
+      if (osArch.contains("arm") || osArch.contains("aarch64")) {
         return PANDOC_MACOS_ARM64_HASH;
       } else {
         return PANDOC_MACOS_X8664_HASH;
@@ -181,8 +181,8 @@ public class AsciiDocDownloaderUtil {
       return "windows-x86_64.zip";
     } else if (SystemInfoRt.isMac) {
       String arch;
-      String os_arch = System.getProperty("os.arch").toLowerCase(Locale.ROOT);
-      if (os_arch.contains("arm") || os_arch.contains("aarch64")) {
+      String osArch = System.getProperty("os.arch").toLowerCase(Locale.ROOT);
+      if (osArch.contains("arm") || osArch.contains("aarch64")) {
         arch = "arm64";
       } else {
         arch = "x86_64";
