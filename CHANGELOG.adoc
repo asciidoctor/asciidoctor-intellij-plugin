@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.39.2
+
+- Fix detection of Apple M processors when downloading Pandoc (#1413)
+
 === 0.39.1
 
 - Dropping support for IntelliJ 2022.1
