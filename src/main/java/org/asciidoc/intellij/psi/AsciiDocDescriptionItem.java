@@ -3,6 +3,7 @@ package org.asciidoc.intellij.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +41,11 @@ public class AsciiDocDescriptionItem extends AsciiDocASTWrapperPsiElement implem
     StringBuilder sb = new StringBuilder();
     if (child instanceof AsciiDocBlockAttributes) {
       sb.append("[").append(getStyle()).append("] ");
+    }
+    // The term is its own root element, get a separate summary of it
+    AsciiDocDescriptionTerm term = PsiTreeUtil.findChildOfType(this, AsciiDocDescriptionTerm.class);
+    if (term != null) {
+      sb.append(AsciiDocStandardBlock.summary(term)).append(": ");
     }
     String summary = AsciiDocStandardBlock.summary(this);
     if (summary != null) {

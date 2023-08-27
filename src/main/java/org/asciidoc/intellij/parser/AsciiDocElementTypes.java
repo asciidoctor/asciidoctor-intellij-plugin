@@ -21,6 +21,7 @@ public interface AsciiDocElementTypes {
   IElementType INLINE_MACRO = new AsciiDocElementType("INLINE_MACRO");
   IElementType BLOCK = new AsciiDocElementType("BLOCK");
   IElementType DESCRIPTION_ITEM = new AsciiDocElementType("DESCRIPTION_ITEM");
+  IElementType DESCRIPTION_TERM = new AsciiDocElementType("DESCRIPTION_TERM");
   IElementType LIST = new AsciiDocElementType("LIST");
   IElementType LIST_ITEM = new AsciiDocElementType("LIST_ITEM");
   IElementType CELL = new AsciiDocCellType("CELL");

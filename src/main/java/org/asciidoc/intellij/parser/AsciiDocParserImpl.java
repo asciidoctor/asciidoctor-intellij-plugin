@@ -102,6 +102,7 @@ import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_LINK;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_PREFIX;
 import static org.asciidoc.intellij.lexer.AsciiDocTokenTypes.URL_START;
 import static org.asciidoc.intellij.parser.AsciiDocElementTypes.DESCRIPTION_ITEM;
+import static org.asciidoc.intellij.parser.AsciiDocElementTypes.DESCRIPTION_TERM;
 import static org.asciidoc.intellij.parser.AsciiDocElementTypes.LIST;
 import static org.asciidoc.intellij.parser.AsciiDocElementTypes.LIST_ITEM;
 import static org.asciidoc.intellij.psi.AsciiDocTextQuoted.ALLQUOTES;
@@ -284,7 +285,7 @@ public class AsciiDocParserImpl {
 
       if (at(DESCRIPTION)) {
         markPreBlock();
-      } else if (myBlockMarker.size() == 0 || (myPreBlockMarker != null && myBuilder.rawLookup(((PsiBuilderImpl.ProductionMarker) myPreBlockMarker).getStartIndex() - myBuilder.rawTokenIndex()) != DESCRIPTION)) {
+      } else if (myBlockMarker.isEmpty() || (myPreBlockMarker != null && myBuilder.rawLookup(((PsiBuilderImpl.ProductionMarker) myPreBlockMarker).getStartIndex() - myBuilder.rawTokenIndex()) != DESCRIPTION)) {
         startBlockNoDelimiter();
       }
 
@@ -490,7 +491,7 @@ public class AsciiDocParserImpl {
     IElementType quote = myBuilder.getTokenType();
     IElementType endQuote = QUOTEPAIRS.get(quote);
     next();
-    while ((at(MONO) || at(BOLD) || at(TEXT) || at(MONOITALIC) || at(MONOBOLDITALIC) || at(MONOBOLD) ||
+    while ((at(MONO) || at(BOLD) || at(TEXT) || at(DESCRIPTION) || at(MONOITALIC) || at(MONOBOLDITALIC) || at(MONOBOLD) ||
       at(ITALIC) || at(BOLDITALIC) || ALLQUOTES.contains(myBuilder.getTokenType()) ||
       at(ATTRIBUTE_REF_START) || at(INLINE_MACRO_ID) ||
       at(PASSTRHOUGH_CONTENT) ||
@@ -505,6 +506,11 @@ public class AsciiDocParserImpl {
         break;
       } else if (tokensToStop.contains(myBuilder.getTokenType())) {
         break;
+      } else if (at(DESCRIPTION)) {
+        if (myPreBlockMarker == null) {
+          myPreBlockMarker = quoteMarker.precede();
+        }
+        next();
       } else if (QUOTEPAIRS.get(myBuilder.getTokenType()) != null) {
         HashSet<IElementType> childSetToStop = new HashSet<>(tokensToStop);
         childSetToStop.add(endQuote);
@@ -840,7 +846,7 @@ public class AsciiDocParserImpl {
   }
 
   private void endBlockNoDelimiter() {
-    if (myBlockMarker.size() > 0 && myBlockMarker.peek().delimiter.equals("nodel")) {
+    if (!myBlockMarker.isEmpty() && myBlockMarker.peek().delimiter.equals("nodel")) {
       dropPreBlock();
       closeBlockMarker();
     }
@@ -865,6 +871,14 @@ public class AsciiDocParserImpl {
       sign = myBuilder.getTokenText();
     }
     boolean otherItemExisted = false;
+    if (!myBlockMarker.isEmpty() && type == DESCRIPTION_ITEM) {
+      // drop unnecessary wrapping of a description item
+      BlockMarker marker = myBlockMarker.peek();
+      if (marker.delimiter.equals("nodel") && ((PsiBuilderImpl.ProductionMarker) marker.marker).getStartIndex() == ((PsiBuilderImpl.ProductionMarker) myPreBlockMarker).getStartIndex()) {
+        myBlockMarker.pop();
+        marker.marker.drop();
+      }
+    }
     while (listItemExists("enum_" + sign)) {
       if (myBlockMarker.peek().delimiter.equals("enum_" + sign)) {
         otherItemExisted = true;
@@ -889,6 +903,12 @@ public class AsciiDocParserImpl {
         myBlockStartMarker = beginBlock();
       }
     }
+    if (type == DESCRIPTION_ITEM) {
+      // wrap the term with its own root element to allow better spell checking.
+      PsiBuilder.Marker term = myBlockStartMarker;
+      myBlockStartMarker = myBlockStartMarker.precede();
+      term.done(DESCRIPTION_TERM);
+    }
     myBlockMarker.push(new BlockMarker("enum_" + sign, myBlockStartMarker, type));
   }
 
@@ -906,7 +926,7 @@ public class AsciiDocParserImpl {
   }
 
   private void endEnumerationDelimiter() {
-    if (myBlockMarker.size() > 0 && myBlockMarker.peek().delimiter.startsWith("enum")) {
+    if (!myBlockMarker.isEmpty() && myBlockMarker.peek().delimiter.startsWith("enum")) {
       if (myPreBlockMarker != null) {
         closeBlockMarker(myPreBlockMarker);
       } else {
@@ -917,7 +937,7 @@ public class AsciiDocParserImpl {
 
   private void endListDelimiter() {
     endEnumerationDelimiter();
-    if (myBlockMarker.size() > 0 && myBlockMarker.peek().delimiter.startsWith("list")) {
+    if (!myBlockMarker.isEmpty() && myBlockMarker.peek().delimiter.startsWith("list")) {
       if (myPreBlockMarker != null) {
         closeBlockMarker(myPreBlockMarker);
       } else {

@@ -21,6 +21,7 @@ import org.asciidoc.intellij.psi.AsciiDocBlockIdImpl;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocCell;
 import org.asciidoc.intellij.psi.AsciiDocDescriptionItem;
+import org.asciidoc.intellij.psi.AsciiDocDescriptionTerm;
 import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocHeading;
 import org.asciidoc.intellij.psi.AsciiDocHtmlEntity;
@@ -97,6 +98,9 @@ public class AsciiDocParserDefinition implements ParserDefinition {
     }
     if (node.getElementType() == AsciiDocElementTypes.DESCRIPTION_ITEM) {
       return new AsciiDocDescriptionItem(node);
+    }
+    if (node.getElementType() == AsciiDocElementTypes.DESCRIPTION_TERM) {
+      return new AsciiDocDescriptionTerm(node);
     }
     if (node.getElementType() == AsciiDocElementTypes.LIST_ITEM) {
       return new AsciiDocListItem(node);

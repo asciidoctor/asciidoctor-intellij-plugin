@@ -40,7 +40,7 @@ intellij {
   pluginName = 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild = false
   plugins = [
-    'PsiViewer:232.2-SNAPSHOT', // used for debugging
+    'PsiViewer:232.2', // used for debugging
     // 'PlantUML integration:6.3.0-IJ2023.2', // used to test highlighting of plantuml diagrams
     // 'com.intellij.platform.images', // dependency for PlantUML plugin
     'tanvd.grazi', // used for spell and grammar checking checking
@@ -54,7 +54,7 @@ intellij {
     // 'com.jetbrains.performancePlugin:213.5744.122' // used run YourKit CPU profiling in test IDE
     // see https://intellij-support.jetbrains.com/hc/en-us/articles/207241235
     // https://plugins.jetbrains.com/plugin/16136-grazie-professional/
-    'com.intellij.grazie.pro:0.3.230'
+    'com.intellij.grazie.pro:0.3.244'
   ]
 }
 
