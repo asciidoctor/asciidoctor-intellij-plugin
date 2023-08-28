@@ -126,7 +126,7 @@ dependencies {
    * double check the snakeyaml version.
    * https://github.com/asciidoctor/asciidoctorj-pdf/issues/25
    */
-  implementation 'org.snakeyaml:snakeyaml-engine:2.6'
+  implementation 'org.snakeyaml:snakeyaml-engine:2.7'
   implementation 'org.asciidoctor:asciidoctorj:2.5.10' // WARNING: when upgrading asciidoctorj, see comment above about snakeyaml!
   implementation 'commons-io:commons-io:2.13.0'
   // used to be 'nl.jworks.markdown_to_asciidoc:markdown_to_asciidoc:1.1' that is only available on jcenter/bintray
