@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.39.4
+
+- Fix class cast exception when parsing Antora information (#1422)
+
 === 0.39.3
 
 - Enhanced parsing of description lists, leading to an improved AST and grammar checking (#1419)

@@ -1664,17 +1664,17 @@ public class AsciiDocUtil {
     if (urlMatcher.find()) {
       return false;
     }
-    return (boolean) AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
+    return AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
       String key = originalKey;
       VirtualFile antoraFile = moduleDir.getParent().getParent().findChild(ANTORA_YML);
       if (antoraFile == null) {
-        return Collections.singletonList(originalKey);
+        return false;
       }
       Map<String, Object> antora;
       try {
         antora = AsciiDocWrapper.readAntoraYaml(myElement.getProject(), antoraFile);
       } catch (YAMLException ex) {
-        return Collections.singletonList(originalKey);
+        return false;
       }
       String myComponentName = getAttributeAsString(antora, "name");
       String myComponentVersion = getAttributeAsString(antora, "version");
@@ -1697,7 +1697,7 @@ public class AsciiDocUtil {
       if (componentModule.find()) {
         otherComponentName = componentModule.group("component");
       }
-      return getOtherAntoraComponents(myElement.getProject(), moduleDir, myComponentName, myComponentVersion, otherComponentVersion, otherComponentName).size() > 0;
+      return !getOtherAntoraComponents(myElement.getProject(), moduleDir, myComponentName, myComponentVersion, otherComponentVersion, otherComponentName).isEmpty();
     });
   }
 
