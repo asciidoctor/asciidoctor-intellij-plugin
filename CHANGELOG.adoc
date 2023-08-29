@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.39.4
 
 - Fix class cast exception when parsing Antora information (#1422)
+- Fix regex problem when `idseparator` contains regex special characters (#1423)
 
 === 0.39.3
 

@@ -99,7 +99,7 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
     // transform some characters to separator
     key = key.replaceAll("[ .-]", Matcher.quoteReplacement(idSeparator));
     // remove duplicates separators
-    key = key.replaceAll(idSeparator + idSeparator, Matcher.quoteReplacement(idSeparator));
+    key = key.replaceAll(Pattern.quote(idSeparator + idSeparator), Matcher.quoteReplacement(idSeparator));
     // remove separator at end
     key = StringUtil.trimEnd(key, Matcher.quoteReplacement(idSeparator));
     return key;
