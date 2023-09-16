@@ -111,7 +111,9 @@ public class CreatePdfAction extends AsciiDocFileAction {
       AsciiDocUtil.selectFileInProjectView(project, virtualFile);
       if (virtualFilePdf != null) {
         if (successful) {
-          new OpenFileDescriptor(project, virtualFilePdf).navigate(true);
+          ApplicationManager.getApplication().invokeLater(() -> {
+            new OpenFileDescriptor(project, virtualFilePdf).navigate(true);
+          });
         }
       }
     });

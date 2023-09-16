@@ -74,7 +74,9 @@ public class CreatePdfFromPreviewAction extends AsciiDocAction implements DumbAw
               VirtualFile virtualFile = target != null ? target : parent;
               AsciiDocUtil.selectFileInProjectView(project, virtualFile);
               if (target != null) {
-                new OpenFileDescriptor(project, target).navigate(true);
+                ApplicationManager.getApplication().invokeLater(() -> {
+                  new OpenFileDescriptor(project, target).navigate(true);
+                });
               }
             });
           } else {

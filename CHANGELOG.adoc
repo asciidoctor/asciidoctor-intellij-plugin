@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.39.5
 
 - Upgrade to embedded Mermaid 10.4.0 (#1430)
+- Handle opening the PDF in the event dispatcher thread (#1431)
 
 === 0.39.4
 

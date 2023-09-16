@@ -186,7 +186,9 @@ public class CreateDocxAction extends AsciiDocFileAction {
       AsciiDocUtil.selectFileInProjectView(project, virtualFile);
       if (virtualFileDocx != null) {
         if (finalSuccessful) {
-          new OpenFileDescriptor(project, virtualFileDocx).navigate(true);
+          ApplicationManager.getApplication().invokeLater(() -> {
+            new OpenFileDescriptor(project, virtualFileDocx).navigate(true);
+          });
         }
       }
     });
