@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.ui;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
@@ -12,8 +11,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider, DumbAware {
 
@@ -62,18 +59,11 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
     return new Builder() {
       @Override
       public @NotNull FileEditor build() {
-        if (!ApplicationManager.getApplication().isDispatchThread()) {
-          // FileEditorManagerImpl$dumbModeFinished$fileToNewProviders will call this in a background thread
-          // EditorImpl wants to be called from EDT only, let's switch to EDT for this.
-          // This is a known problem: https://youtrack.jetbrains.com/issue/IDEA-318259 in 2023.2 and will be fixed in 2023.3
-          AtomicReference<FileEditor> editor = new AtomicReference<>();
-          ApplicationManager.getApplication().invokeAndWait(() -> {
-            editor.set(createSplitEditor(firstBuilder.build(), secondBuilder.build()));
-          });
-          return editor.get();
-        } else {
-          return createSplitEditor(firstBuilder.build(), secondBuilder.build());
-        }
+        // FileEditorManagerImpl$dumbModeFinished$fileToNewProviders will call this in a background thread
+        // EditorImpl wants to be called from EDT only, let's switch to EDT for this.
+        // This is a known problem: https://youtrack.jetbrains.com/issue/IDEA-318259 in 2023.2 and will be fixed in 2023.3
+        // A workaround didn't work as expected, reverting it.
+        return createSplitEditor(firstBuilder.build(), secondBuilder.build());
       }
     };
   }
