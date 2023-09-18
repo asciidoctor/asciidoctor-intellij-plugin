@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.39.6
+
+- Improve lexing of URLs in description lists
+
 === 0.39.5
 
 - Upgrade to embedded Mermaid 10.4.0 (#1430)

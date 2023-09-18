@@ -3227,6 +3227,24 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:URL_END ('>')");
   }
 
+  public void testUrlDescriptionList() {
+    doTest("http://example.com:: test",
+      "AsciiDoc:URL_LINK ('http://example.com')\n" +
+        "AsciiDoc:DESCRIPTION_END ('::')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('test')");
+  }
+
+  public void testUrlNoDescriptionList() {
+    doTest("text\nhttp://example.com:: test",
+      "AsciiDoc:TEXT ('text')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:URL_LINK ('http://example.com:')\n" +
+        "AsciiDoc:TEXT (':')\n" +
+        "AsciiDoc:WHITE_SPACE (' ')\n" +
+        "AsciiDoc:TEXT ('test')");
+  }
+
   public void testUrlInQuotes() {
     doTest("\"`http://www.gmx.net`\"",
       "AsciiDoc:TYPOGRAPHIC_DOUBLE_QUOTE_START ('\"`')\n" +

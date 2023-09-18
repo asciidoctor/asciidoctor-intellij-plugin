@@ -1830,6 +1830,15 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   {TYPOGRAPHIC_SINGLE_QUOTE_END} { if (typographicquote) { yypushback(yylength()); yypopstate(); }
                          else { yypushback(yylength()-1); return AsciiDocTokenTypes.URL_LINK; }
                        }
+  {DESCRIPTION_END} / {SPACE}+ {
+          if (blockStack.size() > 0 && blockStack.peek().equals("nodel-list-desc-" + yytext())) {
+            yypushback(yylength());
+            yypopstate();
+          } else {
+            yypushback(yylength() - 1);
+            return AsciiDocTokenTypes.URL_LINK;
+          }
+      }
   [^]                  { return AsciiDocTokenTypes.URL_LINK; }
 }
 
