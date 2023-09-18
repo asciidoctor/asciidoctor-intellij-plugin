@@ -163,6 +163,8 @@ public class AsciiDocParserImpl {
   @SuppressWarnings("checkstyle:MethodLength")
   public void parse() {
     myBuilder.setDebugMode(ApplicationManager.getApplication().isUnitTestMode());
+    // temporarily enabled to retrieve more detailed information when parsing fails
+    myBuilder.setDebugMode(true);
     if (LOG.isDebugEnabled()) {
       myBuilder.setDebugMode(true);
       if (LOG.isTraceEnabled()) {
@@ -862,6 +864,14 @@ public class AsciiDocParserImpl {
     } else if (at(DESCRIPTION_END)) {
       type = DESCRIPTION_ITEM;
       sign = myBuilder.getTokenText();
+      if (!myBlockMarker.isEmpty()) {
+        BlockMarker marker = myBlockMarker.peek();
+        if (marker.delimiter.equals("nodel")) {
+          dropPreBlock();
+          myPreBlockMarker = marker.marker;
+          myBlockMarker.pop();
+        }
+      }
       if (myPreBlockMarker == null) {
         return;
       }
@@ -871,14 +881,6 @@ public class AsciiDocParserImpl {
       sign = myBuilder.getTokenText();
     }
     boolean otherItemExisted = false;
-    if (!myBlockMarker.isEmpty() && type == DESCRIPTION_ITEM) {
-      // drop unnecessary wrapping of a description item
-      BlockMarker marker = myBlockMarker.peek();
-      if (marker.delimiter.equals("nodel") && ((PsiBuilderImpl.ProductionMarker) marker.marker).getStartIndex() == ((PsiBuilderImpl.ProductionMarker) myPreBlockMarker).getStartIndex()) {
-        myBlockMarker.pop();
-        marker.marker.drop();
-      }
-    }
     while (listItemExists("enum_" + sign)) {
       if (myBlockMarker.peek().delimiter.equals("enum_" + sign)) {
         otherItemExisted = true;
