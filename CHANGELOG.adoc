@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.39.7
+
+- Workaround for tree parsing to avoid errors (#1432)
+
 === 0.39.6
 
 - Improve lexing of URLs in description lists

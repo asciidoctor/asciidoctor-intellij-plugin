@@ -164,7 +164,7 @@ public class AsciiDocParserImpl {
   public void parse() {
     myBuilder.setDebugMode(ApplicationManager.getApplication().isUnitTestMode());
     // temporarily enabled to retrieve more detailed information when parsing fails
-    myBuilder.setDebugMode(true);
+    // myBuilder.setDebugMode(true);
     if (LOG.isDebugEnabled()) {
       myBuilder.setDebugMode(true);
       if (LOG.isTraceEnabled()) {
@@ -508,11 +508,6 @@ public class AsciiDocParserImpl {
         break;
       } else if (tokensToStop.contains(myBuilder.getTokenType())) {
         break;
-      } else if (at(DESCRIPTION)) {
-        if (myPreBlockMarker == null) {
-          myPreBlockMarker = quoteMarker.precede();
-        }
-        next();
       } else if (QUOTEPAIRS.get(myBuilder.getTokenType()) != null) {
         HashSet<IElementType> childSetToStop = new HashSet<>(tokensToStop);
         childSetToStop.add(endQuote);
