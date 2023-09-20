@@ -84,7 +84,7 @@ public class AsciiDocDownloaderUtil {
   // content shouldn't be placed in the plugin's folder, as this will be replace upon plugin updates
   public static final String DOWNLOAD_PATH = PathManager.getSystemPath() + File.separator + DOWNLOAD_CACHE_DIRECTORY + File.separator + "asciidoctor-intellij-plugin";
 
-  public static PandocInfo pandoc = PandocInfo.identify();
+  private static final PandocInfo PANDOC = PandocInfo.identify();
 
   public static boolean downloadComplete() {
     return downloadCompleteAsciidoctorJPdf() && downloadCompleteAsciidoctorJDiagram();
@@ -142,9 +142,9 @@ public class AsciiDocDownloaderUtil {
   }
 
   public static void downloadPandoc(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
-    String downloadName = pandoc.archiveFilename;
-    String url = pandoc.sourceUrl;
-    download(downloadName, url, pandoc.hash, project, onSuccess, onFailure);
+    String downloadName = PANDOC.archiveFilename;
+    String url = PANDOC.sourceUrl;
+    download(downloadName, url, PANDOC.hash, project, onSuccess, onFailure);
   }
 
   public static void pickAsciidoctorJDiagram(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
@@ -168,9 +168,9 @@ public class AsciiDocDownloaderUtil {
   }
 
   public static void pickPandoc(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
-    String downloadName = pandoc.archiveFilename;
+    String downloadName = PANDOC.archiveFilename;
     try {
-      pickFile(downloadName, project, pandoc.hash, onSuccess);
+      pickFile(downloadName, project, PANDOC.hash, onSuccess);
     } catch (IOException ex) {
       LOG.warn("Can't pick file '" + downloadName + "'", ex);
       ApplicationManager.getApplication().invokeLater(() -> onFailure.accept(ex));
@@ -355,8 +355,8 @@ public class AsciiDocDownloaderUtil {
   }
 
   public static File getPanddocFile() {
-    String archiveName = pandoc.fullArchiveFilename(DOWNLOAD_PATH);
-    String fileName = pandoc.fullBinaryPath(DOWNLOAD_PATH);
+    String archiveName = PANDOC.fullArchiveFilename(DOWNLOAD_PATH);
+    String fileName = PANDOC.fullBinaryPath(DOWNLOAD_PATH);
     String destDir = DOWNLOAD_PATH;
 
     if (SystemInfoRt.isWindows || SystemInfoRt.isMac) {

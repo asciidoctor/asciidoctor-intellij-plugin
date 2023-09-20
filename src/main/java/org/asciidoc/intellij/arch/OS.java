@@ -16,7 +16,7 @@ public enum OS {
   }
 
   /**
-   * Get active OS
+   * Get active OS.
    */
   public static OS identfy() {
     for (OS os : OS.values()) {
