@@ -8,7 +8,8 @@ public enum OS {
   WINDOWS(SystemInfoRt.isWindows),
   OTHER(true);
 
-  final boolean active;
+  @SuppressWarnings("checkstyle:VisibilityModifier")
+  public final boolean active;
 
   OS(boolean active) {
     this.active = active;

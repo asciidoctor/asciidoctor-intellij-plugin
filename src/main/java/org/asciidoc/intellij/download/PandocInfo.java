@@ -13,15 +13,19 @@ public enum PandocInfo {
   MAC_INTEL_64("72c43b1de30e67d3a2f69bfd69881e5fcf6ed3c2583c2ad22142c390d185f0b4", "bin/pandoc", "x86_64-macOS.zip"),
   OTHER(null, null, null);
 
-  final static public Platform PLATFORM = Platform.identify();
-  final static public String VERSION = "3.1.2";
+  public static final Platform PLATFORM = Platform.identify();
+  public static final String VERSION = "3.1.2";
 
-  final public String hash;
-
-  final public String binary;
-  final public String archiveFilename;
-  final public String sourceUrl;
-  final public String extractionDir;
+  @SuppressWarnings("checkstyle:VisibilityModifier")
+  public final String hash;
+  @SuppressWarnings("checkstyle:VisibilityModifier")
+  public final String binary;
+  @SuppressWarnings("checkstyle:VisibilityModifier")
+  public final String archiveFilename;
+  @SuppressWarnings("checkstyle:VisibilityModifier")
+  public final String sourceUrl;
+  @SuppressWarnings("checkstyle:VisibilityModifier")
+  public final String extractionDir;
 
   PandocInfo(String hash, String binary, String archiveFilename) {
     this.hash = hash;
@@ -60,7 +64,7 @@ public enum PandocInfo {
       default:
         break;
     }
-    return "" + baseDir + File.separator + this.extractionDir + suffix + File.separator + this.binary;
+    return baseDir + File.separator + this.extractionDir + suffix + File.separator + this.binary;
   }
 
   public String fullArchiveFilename(String baseDir) {

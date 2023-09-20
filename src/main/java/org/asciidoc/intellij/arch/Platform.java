@@ -8,8 +8,11 @@ public enum Platform {
   MAC_INTEL_64(OS.MAC, Arch.INTEL, "x86_64"),
   OTHER(null, null, "");
 
+  @SuppressWarnings("checkstyle:VisibilityModifier")
   public final String archName;
+  @SuppressWarnings("checkstyle:VisibilityModifier")
   public final OS os;
+  @SuppressWarnings("checkstyle:VisibilityModifier")
   public final Arch arch;
 
   Platform(OS os, Arch arch, String archName) {
