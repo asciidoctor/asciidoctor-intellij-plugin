@@ -45,7 +45,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
@@ -80,18 +79,12 @@ public class AsciiDocDownloaderUtil {
   private static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_HASH = "5e1dde15a88bf4ca2be60663ae12fcf8c215321e8eeca4e7947fb22732556cc9";
 
 
-  // https://github.com/jgm/pandoc/releases/
-  public static final String PANDOC_VERSION = "3.1.2";
-  private static final String PANDOC_WINDOWS_HASH = "c3541f1a352003498979f2659c2570ac6dd227ec12533b75a76c4d109e75d218";
-  private static final String PANDOC_MACOS_X8664_HASH = "72c43b1de30e67d3a2f69bfd69881e5fcf6ed3c2583c2ad22142c390d185f0b4";
-  private static final String PANDOC_MACOS_ARM64_HASH = "aa0eab6cf10e5d54d255d68f8fae47e08da071565a3d2b8d242be29a8c1f1460";
-  private static final String PANDOC_LINUX_AMD_HASH = "4e1c607f7e4e9243fa1e1f5b208cd4f1d3f6fd055d5d8c39ba0cdc38644e1c35";
-  private static final String PANDOC_LINUX_ARM_HASH = "8ac04ce0aedae38f0c9f64bfe634910378cc326d091092395a2140a7ec819d54";
-
   private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
   // this is similar to the path where for example the grazie plugin places its dictionaries
   // content shouldn't be placed in the plugin's folder, as this will be replace upon plugin updates
   public static final String DOWNLOAD_PATH = PathManager.getSystemPath() + File.separator + DOWNLOAD_CACHE_DIRECTORY + File.separator + "asciidoctor-intellij-plugin";
+
+  private static final PandocInfo PANDOC = PandocInfo.identify();
 
   public static boolean downloadComplete() {
     return downloadCompleteAsciidoctorJPdf() && downloadCompleteAsciidoctorJDiagram();
@@ -149,68 +142,9 @@ public class AsciiDocDownloaderUtil {
   }
 
   public static void downloadPandoc(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
-    String downloadName = "pandoc-" + PANDOC_VERSION + "-" + archivePandoc();
-    String url = getPandocUrl();
-    download(downloadName, url, hashPandoc(), project, onSuccess, onFailure);
-  }
-
-  private static String hashPandoc() {
-    if (SystemInfoRt.isWindows) {
-      return PANDOC_WINDOWS_HASH;
-    } else if (SystemInfoRt.isMac) {
-      String osArch = System.getProperty("os.arch").toLowerCase(Locale.ROOT);
-      if (osArch.contains("arm") || osArch.contains("aarch64")) {
-        return PANDOC_MACOS_ARM64_HASH;
-      } else {
-        return PANDOC_MACOS_X8664_HASH;
-      }
-
-    } else if (SystemInfoRt.isLinux) {
-      if (System.getProperty("os.arch").toLowerCase(Locale.ROOT).contains("arm")) {
-        return PANDOC_LINUX_ARM_HASH;
-      } else {
-        return PANDOC_LINUX_AMD_HASH;
-      }
-    } else {
-      throw new IllegalStateException("unsupported operating system: " + System.getProperty("os.name"));
-    }
-  }
-
-  private static String archivePandoc() {
-    if (SystemInfoRt.isWindows) {
-      return "windows-x86_64.zip";
-    } else if (SystemInfoRt.isMac) {
-      String arch;
-      String osArch = System.getProperty("os.arch").toLowerCase(Locale.ROOT);
-      if (osArch.contains("arm") || osArch.contains("aarch64")) {
-        arch = "arm64";
-      } else {
-        arch = "x86_64";
-      }
-      return arch + "-macOS.zip";
-    } else if (SystemInfoRt.isLinux) {
-      String arch;
-      if (System.getProperty("os.arch").toLowerCase(Locale.ROOT).contains("arm")) {
-        arch = "arm64";
-      } else {
-        arch = "amd64";
-      }
-      return "linux-" + arch + ".tar.gz";
-    } else {
-      throw new IllegalStateException("unsupported operating system: " + System.getProperty("os.name"));
-    }
-  }
-
-  private static String executablePandoc() {
-    if (SystemInfoRt.isWindows) {
-      return "pandoc.exe";
-    } else if (SystemInfoRt.isMac) {
-      return "bin/pandoc";
-    } else if (SystemInfoRt.isLinux) {
-      return "bin/pandoc";
-    } else {
-      throw new IllegalStateException("unsupported operating system: " + System.getProperty("os.name"));
-    }
+    String downloadName = PANDOC.archiveFilename;
+    String url = PANDOC.sourceUrl;
+    download(downloadName, url, PANDOC.hash, project, onSuccess, onFailure);
   }
 
   public static void pickAsciidoctorJDiagram(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
@@ -234,9 +168,9 @@ public class AsciiDocDownloaderUtil {
   }
 
   public static void pickPandoc(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
-    String downloadName = "pandoc-" + PANDOC_VERSION + "-" + archivePandoc();
+    String downloadName = PANDOC.archiveFilename;
     try {
-      pickFile(downloadName, project, hashPandoc(), onSuccess);
+      pickFile(downloadName, project, PANDOC.hash, onSuccess);
     } catch (IOException ex) {
       LOG.warn("Can't pick file '" + downloadName + "'", ex);
       ApplicationManager.getApplication().invokeLater(() -> onFailure.accept(ex));
@@ -265,18 +199,14 @@ public class AsciiDocDownloaderUtil {
 
   public static String getAsciidoctorJDiagramUrl() {
     return "https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram/" +
-      ASCIIDOCTORJ_DIAGRAM_VERSION +
-      "/asciidoctorj-diagram-" +
-      ASCIIDOCTORJ_DIAGRAM_VERSION +
-      ".jar";
+      ASCIIDOCTORJ_DIAGRAM_VERSION + "/asciidoctorj-diagram-" +
+      ASCIIDOCTORJ_DIAGRAM_VERSION + ".jar";
   }
 
   public static String getAsciidoctorJDiagramPlantumlUrl() {
     return "https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-plantuml/" +
-      ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION +
-      "/asciidoctorj-diagram-plantuml-" +
-      ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION +
-      ".jar";
+      ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION + "/asciidoctorj-diagram-plantuml-" +
+      ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION + ".jar";
   }
 
   public static String getAsciidoctorJDiagramDitaaminiUrl() {
@@ -285,15 +215,6 @@ public class AsciiDocDownloaderUtil {
       "/asciidoctorj-diagram-ditaamini-" +
       ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION +
       ".jar";
-  }
-
-  public static String getPandocUrl() {
-    return "https://github.com/jgm/pandoc/releases/download/" +
-      PANDOC_VERSION +
-      "/pandoc-" +
-      PANDOC_VERSION +
-      "-" +
-      archivePandoc();
   }
 
   public static void downloadAsciidoctorJPdf(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
@@ -310,7 +231,9 @@ public class AsciiDocDownloaderUtil {
       ".jar";
   }
 
-  private static void download(String downloadName, String downloadUrl, String downloadHash, @Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
+  private static void download(String downloadName, String downloadUrl, String downloadHash,
+                               @Nullable Project project, @NotNull Runnable onSuccess,
+                               @NotNull Consumer<Throwable> onFailure) {
     File directory = new File(DOWNLOAD_PATH);
     if (!directory.exists()) {
       //noinspection ResultOfMethodCallIgnored
@@ -432,89 +355,101 @@ public class AsciiDocDownloaderUtil {
   }
 
   public static File getPanddocFile() {
-    String archiveName = DOWNLOAD_PATH + File.separator + "pandoc-" + PANDOC_VERSION + "-" + archivePandoc();
-    String fileName = DOWNLOAD_PATH + File.separator + "pandoc-" + PANDOC_VERSION + File.separator + executablePandoc();
+    String archiveName = PANDOC.fullArchiveFilename(DOWNLOAD_PATH);
+    String fileName = PANDOC.fullBinaryPath(DOWNLOAD_PATH);
     String destDir = DOWNLOAD_PATH;
 
     if (SystemInfoRt.isWindows || SystemInfoRt.isMac) {
-      if (new File(archiveName).exists() && !new File(fileName).exists()) {
-        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(archiveName))) {
-          byte[] buffer = new byte[10240];
-          ZipEntry zipEntry = zis.getNextEntry();
-          while (zipEntry != null) {
-            File newFile = new File(destDir, zipEntry.getName());
-            if (zipEntry.isDirectory()) {
-              if (!newFile.isDirectory() && !newFile.mkdirs()) {
-                throw new IOException("Failed to create directory " + newFile);
-              }
-            } else {
-              // fix for Windows-created archives
-              File parent = newFile.getParentFile();
-              if (!parent.isDirectory() && !parent.mkdirs()) {
-                throw new IOException("Failed to create directory " + parent);
-              }
-
-              // write file content
-              try (FileOutputStream fos = new FileOutputStream(newFile)) {
-                int len;
-                while ((len = zis.read(buffer)) > 0) {
-                  fos.write(buffer, 0, len);
-                }
-              }
-
-              if (SystemInfoRt.isMac) {
-                if (Objects.equals(newFile, new File(fileName))) {
-                  if (!newFile.setExecutable(true, true)) {
-                    throw new IOException("can't make entry executable: " + newFile.getCanonicalPath());
-                  }
-                }
-              }
-            }
-            zipEntry = zis.getNextEntry();
-          }
-        } catch (IOException e) {
-          throw new RuntimeException(e);
-        }
-      }
+      extractZipArchive(archiveName, fileName, destDir, SystemInfoRt.isMac);
     } else if (SystemInfoRt.isLinux) {
-      if (new File(archiveName).exists() && !new File(fileName).exists()) {
-        try (InputStream fi = Files.newInputStream(Paths.get(archiveName));
-             InputStream bi = new BufferedInputStream(fi);
-             InputStream gzi = new GzipCompressorInputStream(bi)) {
-          File targetDir = new File(destDir);
-          try (ArchiveInputStream i = new TarArchiveInputStream(gzi)) {
-            ArchiveEntry entry;
-            while ((entry = i.getNextEntry()) != null) {
-              if (!i.canReadEntryData(entry)) {
-                // log something?
-                continue;
-              }
-              File f = new File(targetDir, entry.getName());
-              if (entry.isDirectory()) {
-                if (!f.isDirectory() && !f.mkdirs()) {
-                  throw new IOException("failed to create directory " + f);
-                }
-              } else {
-                File parent = f.getParentFile();
-                if (!parent.isDirectory() && !parent.mkdirs()) {
-                  throw new IOException("failed to create directory " + parent);
-                }
-                try (OutputStream o = Files.newOutputStream(f.toPath())) {
-                  IOUtils.copy(i, o);
-                }
-                if (Objects.equals(f, new File(fileName))) {
-                  if (!f.setExecutable(true, true)) {
-                    throw new IOException("can't make entry executable: " + f.getCanonicalPath());
-                  }
-                }
-              }
-            }
-          }
-        } catch (IOException ex) {
-          throw new RuntimeException(ex);
-        }
-      }
+      extractTarArchive(archiveName, fileName, destDir);
     }
     return new File(fileName);
+  }
+
+  protected static void extractZipArchive(String archiveName, String fileName, String destDir, boolean setExecutable) {
+    File archiveFile = new File(archiveName);
+    File targetFile = new File(fileName);
+
+    if (archiveFile.exists() && !targetFile.exists()) {
+      try (ZipInputStream zis = new ZipInputStream(new FileInputStream(archiveName))) {
+        byte[] buffer = new byte[10240];
+        ZipEntry zipEntry = zis.getNextEntry();
+        while (zipEntry != null) {
+          File newFile = new File(destDir, zipEntry.getName());
+          if (zipEntry.isDirectory()) {
+            if (!newFile.isDirectory() && !newFile.mkdirs()) {
+              throw new IOException("Failed to create directory " + newFile);
+            }
+          } else {
+            // fix for Windows-created archives
+            File parent = newFile.getParentFile();
+            if (!parent.isDirectory() && !parent.mkdirs()) {
+              throw new IOException("Failed to create directory " + parent);
+            }
+
+            // write file content
+            try (FileOutputStream fos = new FileOutputStream(newFile)) {
+              int len;
+              while ((len = zis.read(buffer)) > 0) {
+                fos.write(buffer, 0, len);
+              }
+            }
+
+            if (setExecutable && Objects.equals(newFile, targetFile)) {
+              if (!newFile.setExecutable(true, true)) {
+                throw new IOException("can't make entry executable: " + newFile.getCanonicalPath());
+              }
+            }
+          }
+          zipEntry = zis.getNextEntry();
+        }
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+  protected static void extractTarArchive(String archiveName, String fileName, String destDir) {
+    File archiveFile = new File(archiveName);
+    File targetFile = new File(fileName);
+
+    if (archiveFile.exists() && !targetFile.exists()) {
+      File targetDir = new File(destDir);
+      try (InputStream fi = Files.newInputStream(Paths.get(archiveName));
+           InputStream bi = new BufferedInputStream(fi);
+           InputStream gzi = new GzipCompressorInputStream(bi)) {
+        try (ArchiveInputStream i = new TarArchiveInputStream(gzi)) {
+          ArchiveEntry entry;
+          while ((entry = i.getNextEntry()) != null) {
+            if (!i.canReadEntryData(entry)) {
+              // log something?
+              continue;
+            }
+            File f = new File(targetDir, entry.getName());
+            if (entry.isDirectory()) {
+              if (!f.isDirectory() && !f.mkdirs()) {
+                throw new IOException("failed to create directory " + f);
+              }
+            } else {
+              File parent = f.getParentFile();
+              if (!parent.isDirectory() && !parent.mkdirs()) {
+                throw new IOException("failed to create directory " + parent);
+              }
+              try (OutputStream o = Files.newOutputStream(f.toPath())) {
+                IOUtils.copy(i, o);
+              }
+              if (Objects.equals(f, new File(fileName))) {
+                if (!f.setExecutable(true, true)) {
+                  throw new IOException("can't make entry executable: " + f.getCanonicalPath());
+                }
+              }
+            }
+          }
+        }
+      } catch (IOException ex) {
+        throw new RuntimeException(ex);
+      }
+    }
   }
 }
