@@ -166,7 +166,10 @@
         <!--
         <module name="InterfaceIsType"/>
         -->
-        <module name="VisibilityModifier"/>
+        <module name="VisibilityModifier">
+          <property name="allowPublicImmutableFields" value="true"/>
+          <property name="immutableClassCanonicalNames" value="java.lang.String, java.lang.Integer, java.lang.Byte, java.lang.Character, java.lang.Short, java.lang.Boolean, java.lang.Long, java.lang.Double, java.lang.Float, java.lang.StackTraceElement, java.math.BigInteger, java.math.BigDecimal, java.io.File, java.util.Locale, java.util.UUID, java.net.URL, java.net.URI, java.net.Inet4Address, java.net.Inet6Address, java.net.InetSocketAddress, org.asciidoc.intellij.arch.OS, org.asciidoc.intellij.arch.Arch" />
+        </module>
 
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sf.net/config_misc.html -->

@@ -16,15 +16,10 @@ public enum PandocInfo {
   public static final Platform PLATFORM = Platform.identify();
   public static final String VERSION = "3.1.2";
 
-  @SuppressWarnings("checkstyle:VisibilityModifier")
   public final String hash;
-  @SuppressWarnings("checkstyle:VisibilityModifier")
   public final String binary;
-  @SuppressWarnings("checkstyle:VisibilityModifier")
   public final String archiveFilename;
-  @SuppressWarnings("checkstyle:VisibilityModifier")
   public final String sourceUrl;
-  @SuppressWarnings("checkstyle:VisibilityModifier")
   public final String extractionDir;
 
   PandocInfo(String hash, String binary, String archiveFilename) {
