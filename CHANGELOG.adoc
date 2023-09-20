@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.39.9
 
 - Fix IntelliJ 2023.3 EAP compatibility (#1439)
+- Reworked parsing of definition lists (#1432)
 
 === 0.39.8
 

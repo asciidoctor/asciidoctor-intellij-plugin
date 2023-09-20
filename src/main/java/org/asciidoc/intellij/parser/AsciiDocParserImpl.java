@@ -1,7 +1,6 @@
 package org.asciidoc.intellij.parser;
 
 import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.impl.PsiBuilderImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
@@ -115,6 +114,8 @@ import static org.asciidoc.intellij.psi.AsciiDocTextQuoted.QUOTEPAIRS;
 public class AsciiDocParserImpl {
   private static final com.intellij.openapi.diagnostic.Logger LOG =
     com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDocParserImpl.class);
+  public static final String DEL_START_OF_PARAGRAPH = "start_of_paragraph";
+  public static final String DEL_NONE = "nodel";
 
   private static class SectionMarker {
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -285,11 +286,14 @@ public class AsciiDocParserImpl {
         continue;
       }
 
-      if (at(DESCRIPTION)) {
-        markPreBlock();
-      } else if (myBlockMarker.isEmpty() || (myPreBlockMarker != null && myBuilder.rawLookup(((PsiBuilderImpl.ProductionMarker) myPreBlockMarker).getStartIndex() - myBuilder.rawTokenIndex()) != DESCRIPTION)) {
+      if (myBlockMarker.isEmpty()) {
         startBlockNoDelimiter();
       }
+
+      if (newLines > 0) {
+        startNewLine();
+      }
+      newLines = 0;
 
       if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
         parseUrl();
@@ -319,7 +323,11 @@ public class AsciiDocParserImpl {
 
   private void closeBlockMarker(PsiBuilder.Marker myPreBlockId) {
     BlockMarker currentBlock = myBlockMarker.pop();
-    currentBlock.marker.doneBefore(currentBlock.type, myPreBlockId);
+    if (currentBlock.delimiter.equals(DEL_START_OF_PARAGRAPH)) {
+      currentBlock.marker.drop();
+    } else {
+      currentBlock.marker.doneBefore(currentBlock.type, myPreBlockId);
+    }
   }
 
 
@@ -779,8 +787,12 @@ public class AsciiDocParserImpl {
   }
 
   private void closeBlockMarker() {
-    BlockMarker currentBLock = myBlockMarker.pop();
-    currentBLock.marker.done(currentBLock.type);
+    BlockMarker currentBlock = myBlockMarker.pop();
+    if (currentBlock.delimiter.equals(DEL_START_OF_PARAGRAPH)) {
+      currentBlock.marker.drop();
+    } else {
+      currentBlock.marker.done(currentBlock.type);
+    }
   }
 
   private void parseBlock() {
@@ -839,11 +851,29 @@ public class AsciiDocParserImpl {
     } else {
       myBlockStartMarker = beginBlock();
     }
-    myBlockMarker.push(new BlockMarker("nodel", myBlockStartMarker, AsciiDocElementTypes.BLOCK));
+    myBlockMarker.push(new BlockMarker(DEL_NONE, myBlockStartMarker, AsciiDocElementTypes.BLOCK));
+  }
+
+  private void startNewLine() {
+    if (!myBlockMarker.isEmpty() && myBlockMarker.peek().delimiter.equals(DEL_START_OF_PARAGRAPH)) {
+      return;
+    }
+    PsiBuilder.Marker myBlockStartMarker;
+    if (myPreBlockMarker != null) {
+      myBlockStartMarker = myPreBlockMarker;
+      myPreBlockMarker = null;
+    } else {
+      myBlockStartMarker = beginBlock();
+    }
+    myBlockMarker.push(new BlockMarker(DEL_START_OF_PARAGRAPH, myBlockStartMarker, AsciiDocElementTypes.BLOCK));
   }
 
   private void endBlockNoDelimiter() {
-    if (!myBlockMarker.isEmpty() && myBlockMarker.peek().delimiter.equals("nodel")) {
+    if (!myBlockMarker.isEmpty() && myBlockMarker.peek().delimiter.equals(DEL_START_OF_PARAGRAPH)) {
+      dropPreBlock();
+      closeBlockMarker();
+    }
+    if (!myBlockMarker.isEmpty() && myBlockMarker.peek().delimiter.equals(DEL_NONE)) {
       dropPreBlock();
       closeBlockMarker();
     }
@@ -859,13 +889,11 @@ public class AsciiDocParserImpl {
     } else if (at(DESCRIPTION_END)) {
       type = DESCRIPTION_ITEM;
       sign = myBuilder.getTokenText();
-      if (!myBlockMarker.isEmpty()) {
+      while (!myBlockMarker.isEmpty() && (myBlockMarker.peek().delimiter.equals(DEL_NONE) || myBlockMarker.peek().delimiter.equals(DEL_START_OF_PARAGRAPH))) {
         BlockMarker marker = myBlockMarker.peek();
-        if (marker.delimiter.equals("nodel")) {
-          dropPreBlock();
-          myPreBlockMarker = marker.marker;
-          myBlockMarker.pop();
-        }
+        dropPreBlock();
+        myPreBlockMarker = marker.marker;
+        myBlockMarker.pop();
       }
       if (myPreBlockMarker == null) {
         return;
