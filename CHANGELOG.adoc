@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.39.8
+
+- Fixing Pandoc download loop on macOS (thanks to @mlasevich) (#1429)
+
 === 0.39.7
 
 - Workaround for tree parsing to avoid errors (#1432)
