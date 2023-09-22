@@ -21,7 +21,7 @@ public class AsciiDocGrammarInspectionTest extends AsciiDocQuickFixTestBase {
     // to avoid: com.intellij.openapi.progress.ProcessCanceledException: java.lang.IncompatibleClassChangeError
     disabled.add(PluginId.getId("com.intellij.grazie.pro"));
 
-    DisabledPluginsState.saveDisabledPluginsAndInvalidate(disabled);
+    DisabledPluginsState.Companion.saveDisabledPluginsAndInvalidate(disabled);
   }
 
   private static final String NAME = new AsciiDocChangeCaseForAnchor().getName();
