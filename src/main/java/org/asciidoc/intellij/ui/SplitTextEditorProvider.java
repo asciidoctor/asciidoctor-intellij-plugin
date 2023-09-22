@@ -1,9 +1,11 @@
 package org.asciidoc.intellij.ui;
 
+import com.intellij.openapi.fileEditor.AsyncFileEditorProvider;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
 import com.intellij.openapi.fileEditor.FileEditorProvider;
 import com.intellij.openapi.fileEditor.FileEditorState;
+import com.intellij.openapi.progress.CoroutinesKt;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -11,7 +13,7 @@ import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class SplitTextEditorProvider implements FileEditorProvider, DumbAware {
+public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider, DumbAware {
 
   private static final String FIRST_EDITOR = "first_editor";
   private static final String SECOND_EDITOR = "second_editor";
@@ -40,13 +42,31 @@ public abstract class SplitTextEditorProvider implements FileEditorProvider, Dum
   @NotNull
   @Override
   public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-    return createSplitEditor(myFirstProvider.createEditor(project, file), mySecondProvider.createEditor(project, file));
+    return createEditorAsync(project, file).build();
   }
 
   @NotNull
   @Override
   public String getEditorTypeId() {
     return myEditorTypeId;
+  }
+
+  @NotNull
+  @Override
+  public Builder createEditorAsync(@NotNull final Project project, @NotNull final VirtualFile file) {
+    final Builder firstBuilder = getBuilderFromEditorProvider(myFirstProvider, project, file);
+    final Builder secondBuilder = getBuilderFromEditorProvider(mySecondProvider, project, file);
+
+    return new Builder() {
+      @Override
+      public @NotNull FileEditor build() {
+        // FileEditorManagerImpl$dumbModeFinished$fileToNewProviders will call this in a background thread
+        // EditorImpl wants to be called from EDT only, let's switch to EDT for this.
+        // This is a known problem: https://youtrack.jetbrains.com/issue/IDEA-318259 in 2023.2 and will be fixed in 2023.3
+        // A workaround didn't work as expected, reverting it.
+        return createSplitEditor(firstBuilder.build(), secondBuilder.build());
+      }
+    };
   }
 
   @NotNull
@@ -107,4 +127,20 @@ public abstract class SplitTextEditorProvider implements FileEditorProvider, Dum
     return FileEditorPolicy.HIDE_DEFAULT_EDITOR;
   }
 
+  @NotNull
+  private static Builder getBuilderFromEditorProvider(@NotNull final FileEditorProvider provider,
+                                                      @NotNull final Project project,
+                                                      @NotNull final VirtualFile file) {
+    if (provider instanceof AsyncFileEditorProvider) {
+      return CoroutinesKt.runBlockingMaybeCancellable((coroutineScope, continuation) ->
+        ((AsyncFileEditorProvider) provider).createEditorBuilder(project, file, continuation));
+    } else {
+      return new Builder() {
+        @Override
+        public FileEditor build() {
+          return provider.createEditor(project, file);
+        }
+      };
+    }
+  }
 }
