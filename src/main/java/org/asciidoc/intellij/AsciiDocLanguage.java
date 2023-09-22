@@ -24,7 +24,6 @@ import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.asciidoc.intellij.activities.AsciiDocHandleUnloadActivity;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,18 +77,6 @@ public class AsciiDocLanguage extends Language {
 
   private AsciiDocLanguage() {
     super(LANGUAGE_NAME);
-  }
-
-  static {
-    // startup activities ar running late, and might fail due to unloading. Therefore prevent unloading as early as possible.
-    // see: https://youtrack.jetbrains.com/issue/IDEA-266736
-    try {
-      AsciiDocHandleUnloadActivity.setupListener();
-    } catch (Throwable t) {
-      // catch all exceptions and errors here, to prevent the class initialization from failing
-      Logger log = Logger.getInstance(AsciiDocLanguage.class);
-      log.error("unable to setup unload activity listener", t);
-    }
   }
 
   public static boolean isAsciiDocFile(@NotNull Project project, @NotNull VirtualFile file) {
