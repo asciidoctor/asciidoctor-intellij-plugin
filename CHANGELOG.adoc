@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.39.10
+
+- Revert changes for 2023.3 EAP compatibility for older versions (#1439)
+
 === 0.39.9
 
 - Fix IntelliJ 2023.3 EAP compatibility (#1439)
