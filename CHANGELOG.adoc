@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.40.2
 
 - Expanding or collapsing a section will not scroll the editor or open the included file (#1436)
+- Update toobar elements in the background to remove load from EDT thread
 
 === 0.40.1
 
