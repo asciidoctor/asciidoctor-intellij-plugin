@@ -35,6 +35,12 @@ window.__IntelliJTools.lineCount = 0;
 
 window.__IntelliJTools.scrollEditorToLine = function (event) {
   try {
+    if (event.target.nodeName === 'DETAILS' || event.target.nodeName === 'SUMMARY') {
+      // The event is already handled by expanding/collapsing the element.
+      // Do not scroll there, especially don't open an included file.
+      event.stopPropagation();
+      return;
+    }
     var blocks = document.getElementsByClassName('has-source-line');
     var startY;
     var startFile = 'stdin';
