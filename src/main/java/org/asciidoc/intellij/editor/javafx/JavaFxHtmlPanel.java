@@ -54,6 +54,7 @@ import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.psi.AsciiDocFileUtil;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
+import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -156,7 +157,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
   private final ScrollPreservingListener myScrollPreservingListener = new ScrollPreservingListener();
   @NotNull
   private final BridgeSettingListener myBridgeSettingListener = new BridgeSettingListener();
-  private boolean isAntora;
+  private Boolean isAntoraCache;
 
   private int lineCount;
 
@@ -734,7 +735,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     // filter out Twitter's JavaScript, as it is problematic for JDK8 JavaFX
     // see: https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/235
     html = html.replaceAll("(?i)<script [a-z ]*src=\"https://platform\\.twitter\\.com/widgets\\.js\" [^>]*></script>", "");
-    if (isAntora) {
+    if (isAntora()) {
       html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, null, null, attributes, editor != null ? editor.getProject() : null);
     } else {
       html = AsciiDocWrapper.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, null, null, attributes, editor.getProject());
@@ -756,6 +757,16 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     } else {
       return null;
     }
+  }
+
+  private synchronized boolean isAntora() {
+    if (isAntoraCache == null) {
+      AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
+        isAntoraCache = editor != null && editor.getProject() != null
+          && AsciiDocUtil.findAntoraPagesDir(editor.getProject(), getParentDirectory()) != null;
+      });
+    }
+    return isAntoraCache;
   }
 
   private String calculateMd5(String file, String base) {
@@ -812,11 +823,6 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
 
   @Override
   public void setEditor(Editor editor) {
-    if (editor != null && editor.getProject() != null) {
-      if (AsciiDocUtil.findAntoraPagesDir(editor.getProject(), getParentDirectory()) != null) {
-        isAntora = true;
-      }
-    }
     this.editor = editor;
   }
 

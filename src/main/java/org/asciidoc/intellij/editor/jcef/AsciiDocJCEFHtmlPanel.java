@@ -47,6 +47,7 @@ import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
 import org.asciidoc.intellij.psi.AsciiDocFileUtil;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
+import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
 import org.cef.handler.CefLifeSpanHandlerAdapter;
@@ -95,7 +96,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private JBCefJSQuery myRenderedIteration;
   private JBCefJSQuery myRenderedResult;
   private JBCefJSQuery myScrollEditorToLine;
-  private boolean isAntora;
+  private Boolean isAntoraCache;
 
   @Override
   public void printToPdf(String target, Consumer<Boolean> success) {
@@ -831,7 +832,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       matcher.reset(html);
     }
 
-    if (isAntora) {
+    if (isAntora()) {
       html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink + AsciiDocHtmlPanel.getCssLines(myTabsCss), myMermaidScript, myAsciidoctorTabsScript, attributes, editor != null ? editor.getProject() : null);
     } else {
       html = AsciiDocWrapper.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, myMermaidScript, myAsciidoctorTabsScript, attributes, editor != null ? editor.getProject() : null);
@@ -843,6 +844,16 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     /* Add JavaScript for auto-scolling and clickable links */
     return html
       .replace("</body>", getScriptingLines() + "</body>");
+  }
+
+  private synchronized boolean isAntora() {
+    if (isAntoraCache == null) {
+      AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
+          isAntoraCache = editor != null && editor.getProject() != null
+            && AsciiDocUtil.findAntoraPagesDir(editor.getProject(), getParentDirectory()) != null;
+      });
+    }
+    return isAntoraCache;
   }
 
   private String calculateFileAndMd5(String file, String base) {
@@ -990,12 +1001,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
   @Override
   public void setEditor(Editor editor) {
-    if (editor != null && editor.getProject() != null) {
-      if (AsciiDocUtil.findAntoraPagesDir(editor.getProject(), getParentDirectory()) != null) {
-        isAntora = true;
-      }
-    }
-
     this.editor = editor;
   }
 

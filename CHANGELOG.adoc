@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.40.4
 
 - Fix exception when installing plugin with already open AsciiDoc file (#1441)
+- Avoid accessing index from EDT when initializing the editor
 
 === 0.40.3
 
