@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.40.3
+
+- Add Asciidoctor Tabs CSS also for Antora themed pages (#1425)
+
 === 0.40.2
 
 - Expanding or collapsing a section will not scroll the editor or open the included file (#1436)

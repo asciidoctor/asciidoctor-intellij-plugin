@@ -4,3 +4,22 @@ xref:<error descr="Antora Module doesn't resolve">nocomponent:nomodule</error>:p
 
 image::<error descr="Antora Module doesn't resolve">nocomponent:nomodule</error>:image.png[]
 
+
+
+[tabs]
+====
+Tab A:: Contents of Tab A.ddddddddddddddd
+dddddddd
+
+Tab B::
++
+Contents of Tab B.
+
+Tab C::
++
+--
+Contents of Tab C.
+
+Contains more than one block.
+--
+====

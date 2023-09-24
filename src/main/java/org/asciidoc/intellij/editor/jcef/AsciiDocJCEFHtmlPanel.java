@@ -242,7 +242,8 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         myInlineCss += IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/asciidoctor/tabs/tabs.css")) {
-        myInlineCss = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
+        myTabsCss = IOUtils.toString(is, StandardCharsets.UTF_8);
+        myInlineCss = myInlineCss + myTabsCss;
       }
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
         myInlineCssDarcula = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
@@ -552,6 +553,8 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   @Nullable
   private String myInlineCss;
   @Nullable
+  private String myTabsCss;
+  @Nullable
   private String myInlineCssDarcula;
   @Nullable
   private String myFontAwesomeCssLink;
@@ -566,7 +569,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
   @Nullable
   private String myMermaidScript;
-
   @Nullable
   private String myAsciidoctorTabsScript;
 
@@ -830,7 +832,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     }
 
     if (isAntora) {
-      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, myMermaidScript, myAsciidoctorTabsScript, attributes, editor != null ? editor.getProject() : null);
+      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink + AsciiDocHtmlPanel.getCssLines(myTabsCss), myMermaidScript, myAsciidoctorTabsScript, attributes, editor != null ? editor.getProject() : null);
     } else {
       html = AsciiDocWrapper.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, myMermaidScript, myAsciidoctorTabsScript, attributes, editor != null ? editor.getProject() : null);
     }

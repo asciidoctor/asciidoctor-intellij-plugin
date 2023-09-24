@@ -80,6 +80,7 @@ public class BrowserPanel implements Disposable {
 
   @Nullable
   private String myInlineCss;
+  private String myTabsCss;
   @Nullable
   private String myInlineCssDarcula;
   @Nullable
@@ -127,7 +128,8 @@ public class BrowserPanel implements Disposable {
         myInlineCss += IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/asciidoctor/tabs/tabs.css")) {
-        myInlineCss = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
+        myTabsCss = IOUtils.toString(is, StandardCharsets.UTF_8);
+        myInlineCss = myInlineCss + myTabsCss;
       }
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
         myInlineCssDarcula = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
@@ -404,7 +406,7 @@ public class BrowserPanel implements Disposable {
 
     /* Add CSS line and JavaScript */
     if (isAntora) {
-      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, myMermaidScript, myAsciidoctorTabsScript, attributes, project);
+      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink + getCssLines(myTabsCss), myMermaidScript, myAsciidoctorTabsScript, attributes, project);
     } else {
       html = AsciiDocWrapper.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDroidSansMonoCssLink + myDejavuCssLink, myMermaidScript, myAsciidoctorTabsScript, attributes, project);
     }
