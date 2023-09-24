@@ -41,6 +41,11 @@ window.__IntelliJTools.scrollEditorToLine = function (event) {
       event.stopPropagation();
       return;
     }
+    if (event.target.closest('.tablist')) {
+      // This is the list of tabs, don't scroll editor or switch to include here.
+      event.stopPropagation();
+      return;
+    }
     var blocks = document.getElementsByClassName('has-source-line');
     var startY;
     var startFile = 'stdin';

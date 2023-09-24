@@ -345,6 +345,11 @@ public class AsciiDocWrapper {
         // https://github.com/asciidoctor/asciidoctorj/issues/669
         Logger.getLogger("asciidoctor").setUseParentHandlers(false);
 
+        if (format == FileType.JCEF || format == FileType.BROWSER) {
+          // 'tabs-sync-option' ensures that the preview keeps the state of the tabs when editing
+          asciidoctor.requireLibrary("asciidoctor-tabs");
+        }
+
         if (!krokiEnabled && diagramPresent) {
           asciidoctor.requireLibrary("asciidoctor-diagram");
         } else if (!diagramPresent) {
@@ -1310,6 +1315,11 @@ public class AsciiDocWrapper {
       .attribute("skip-front-matter@")
       .attribute("env-idea");
 
+    if (fileType == FileType.JCEF || fileType == FileType.BROWSER) {
+      // 'tabs-sync-option' ensures that the preview keeps the state of the tabs when editing
+      builder.attribute("tabs-sync-option");
+    }
+
     if (springRestDocsSnippets != null) {
       builder.attribute("snippets", springRestDocsSnippets.getCanonicalPath());
     }
@@ -1414,7 +1424,7 @@ public class AsciiDocWrapper {
 
   @NotNull
   public static String enrichPage(@NotNull String html, String
-    standardCss, String mermaidScript, @NotNull Map<String, String> attributes, @Nullable Project project) {
+    standardCss, String mermaidScript, String asciidoctorTabsScript, @NotNull Map<String, String> attributes, @Nullable Project project) {
 
     html = enrichPageMaxWidth(html, attributes);
 
@@ -1544,6 +1554,9 @@ public class AsciiDocWrapper {
     AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
     if (mermaidScript != null && html.contains("<pre class=\"mermaid\">") && asciiDocApplicationSettings.getAsciiDocPreviewSettings().isEnableBuiltInMermaid()) {
       html = html.replaceAll("</body>", mermaidScript + "</body>");
+    }
+    if (asciidoctorTabsScript != null && html.contains("<div class=\"ulist tablist\">")) {
+      html = html.replaceAll("</body>", asciidoctorTabsScript + "</body>");
     }
 
     return html;

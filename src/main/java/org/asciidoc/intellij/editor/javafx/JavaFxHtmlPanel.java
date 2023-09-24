@@ -735,9 +735,9 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     // see: https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/235
     html = html.replaceAll("(?i)<script [a-z ]*src=\"https://platform\\.twitter\\.com/widgets\\.js\" [^>]*></script>", "");
     if (isAntora) {
-      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, null, attributes, editor != null ? editor.getProject() : null);
+      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, null, null, attributes, editor != null ? editor.getProject() : null);
     } else {
-      html = AsciiDocWrapper.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, null, attributes, editor.getProject());
+      html = AsciiDocWrapper.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, null, null, attributes, editor.getProject());
     }
 
     html = html.replaceAll("<head>", "<head>\n" +

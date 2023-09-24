@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Expanding or collapsing a section will not scroll the editor or open the included file (#1436)
 - Update toolbar elements in the background to remove load from EDT thread
 - Reworking editor creation again to avoid error in EDT (#1439)
+- Support Asciidoctor Tabs extension out-of-the box (#1425)
 
 === 0.40.1
 

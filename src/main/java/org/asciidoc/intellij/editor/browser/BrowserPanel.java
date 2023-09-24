@@ -96,6 +96,8 @@ public class BrowserPanel implements Disposable {
   private String myDroidSansMonoCssLink;
   @Nullable
   private String myMermaidScript;
+  @Nullable
+  private String myAsciidoctorTabsScript;
 
   private final SignWithMac signWithMac = new SignWithMac();
 
@@ -124,6 +126,9 @@ public class BrowserPanel implements Disposable {
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("rouge-github.css")) {
         myInlineCss += IOUtils.toString(is, StandardCharsets.UTF_8);
       }
+      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/asciidoctor/tabs/tabs.css")) {
+        myInlineCss = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
+      }
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
         myInlineCssDarcula = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
       }
@@ -135,6 +140,7 @@ public class BrowserPanel implements Disposable {
       myDroidSansMonoCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/droidsansmono.css") + "\">";
       myMermaidScript = "<script src=\"" + PreviewStaticServer.getScriptUrl("mermaid/mermaid.min.js") + "\"></script>" +
         "<script>mermaid.initialize(); window.mermaid = mermaid; </script>";
+      myAsciidoctorTabsScript = "<script src=\"" + PreviewStaticServer.getScriptUrl("tabs.js") + "\"></script>";
     } catch (IOException e) {
       String message = "Unable to combine CSS resources: " + e.getMessage();
       log.error(message, e);
@@ -398,9 +404,9 @@ public class BrowserPanel implements Disposable {
 
     /* Add CSS line and JavaScript */
     if (isAntora) {
-      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, myMermaidScript, attributes, project);
+      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink, myMermaidScript, myAsciidoctorTabsScript, attributes, project);
     } else {
-      html = AsciiDocWrapper.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDroidSansMonoCssLink + myDejavuCssLink, myMermaidScript, attributes, project);
+      html = AsciiDocWrapper.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDroidSansMonoCssLink + myDejavuCssLink, myMermaidScript, myAsciidoctorTabsScript, attributes, project);
     }
     html = html.replace("</body>", getScriptingLines() + "</body>");
     return html;
