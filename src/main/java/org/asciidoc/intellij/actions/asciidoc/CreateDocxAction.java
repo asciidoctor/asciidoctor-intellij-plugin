@@ -51,7 +51,7 @@ public class CreateDocxAction extends AsciiDocFileAction {
   @Override
   public void actionPerformed(AnActionEvent event) {
     project = event.getProject();
-    if (project == null) {
+    if (project == null || project.isDisposed()) {
       return;
     }
     Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
