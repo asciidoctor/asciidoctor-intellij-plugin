@@ -20,7 +20,6 @@ import org.asciidoc.intellij.ui.OverwriteFileDialog;
 import org.asciidoc.intellij.util.FilenameUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Collections;
