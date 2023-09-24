@@ -1,11 +1,13 @@
 package org.asciidoc.intellij.ui;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.AsyncFileEditorProvider;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
 import com.intellij.openapi.fileEditor.FileEditorProvider;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.progress.CoroutinesKt;
+import com.intellij.openapi.progress.TasksKt;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -132,12 +134,17 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
                                                       @NotNull final Project project,
                                                       @NotNull final VirtualFile file) {
     if (provider instanceof AsyncFileEditorProvider) {
-      return CoroutinesKt.runBlockingMaybeCancellable((coroutineScope, continuation) ->
-        ((AsyncFileEditorProvider) provider).createEditorBuilder(project, file, continuation));
+      if (ApplicationManager.getApplication().isDispatchThread()) {
+        return TasksKt.runWithModalProgressBlocking(project, "Editor", (coroutineScope, continuation) ->
+          ((AsyncFileEditorProvider) provider).createEditorBuilder(project, file, continuation));
+      } else {
+        return CoroutinesKt.runBlockingMaybeCancellable((coroutineScope, continuation) ->
+          ((AsyncFileEditorProvider) provider).createEditorBuilder(project, file, continuation));
+      }
     } else {
       return new Builder() {
         @Override
-        public FileEditor build() {
+        public @NotNull FileEditor build() {
           return provider.createEditor(project, file);
         }
       };
