@@ -174,8 +174,13 @@ public class ExtractIncludeDialog extends RefactoringDialog {
           myEditor.getCaretModel().moveToOffset(start + offset);
           myEditor.getCaretModel().getPrimaryCaret().removeSelection();
 
-          newFile.navigate(true);
           close(DialogWrapper.OK_EXIT_CODE);
+
+          ApplicationManager.getApplication().invokeLater(() -> {
+            if (newFile.isValid()) {
+              newFile.navigate(true);
+            }
+          });
         } catch (Exception e) {
           setErrorText("Unable to create include");
         }

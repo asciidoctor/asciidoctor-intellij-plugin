@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - Update toolbar elements in the background to remove load from EDT thread
 - Reworking editor creation again to avoid error in EDT (#1439)
 - Support Asciidoctor Tabs extension out-of-the box (#1425)
+- Avoid NPE and wrong thread when converting Markdown content (#1440)
 
 === 0.40.1
 

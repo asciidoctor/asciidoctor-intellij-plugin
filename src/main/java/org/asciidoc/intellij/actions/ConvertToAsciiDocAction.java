@@ -20,6 +20,7 @@ import org.asciidoc.intellij.ui.OverwriteFileDialog;
 import org.asciidoc.intellij.util.FilenameUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -56,7 +57,7 @@ public class ConvertToAsciiDocAction extends AnAction {
     ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(Collections.singleton(virtualFile));
 
     String newFileName = FilenameUtils.getBaseName(file.getName()) + "." + AsciiDocFileType.INSTANCE.getDefaultExtension();
-    PsiFile existingFile = file.getContainingDirectory().findFile(newFileName);
+    VirtualFile existingFile = virtualFile.getParent().findChild(newFileName);
 
     AtomicBoolean deleteFile = new AtomicBoolean(false);
     if (existingFile != null) {
@@ -90,9 +91,13 @@ public class ConvertToAsciiDocAction extends AnAction {
               asciiDocFile = PsiFileFactory.getInstance(project).createFileFromText(newFileName, AsciiDocFileType.INSTANCE, asciiDocContent);
               PsiFile newFile = (PsiFile) file.getContainingDirectory().add(asciiDocFile);
 
-              newFile.navigate(true);
-
               deleteVirtualFile();
+
+              ApplicationManager.getApplication().invokeLater(() -> {
+                if (newFile.isValid()) {
+                  newFile.navigate(true);
+                }
+              });
             } catch (AlreadyDisposedException ex) {
               // ignored
             }
@@ -124,7 +129,7 @@ public class ConvertToAsciiDocAction extends AnAction {
       VirtualFile file = event.getData(LangDataKeys.VIRTUAL_FILE);
       boolean enabled = false;
 
-      if (file != null) {
+      if (file != null && file.getParent() != null) {
         for (String ext : MARKDOWN_EXTENSIONS) {
           if (file.getName().endsWith("." + ext)) {
             enabled = true;
