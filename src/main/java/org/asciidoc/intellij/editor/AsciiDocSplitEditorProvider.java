@@ -36,9 +36,12 @@ public class AsciiDocSplitEditorProvider extends SplitTextEditorProvider {
                 if (pFile.getLanguage() == AsciiDocLanguage.INSTANCE) {
                   // an AsciiDoc file in a non-split editor, close and re-open the file to enforce split editor
                   ApplicationManager.getApplication().runWriteAction(() -> {
-                    // closing the file might trigger a save, therefore wrap in write action
+                    // closing the file might trigger a save, therefore, wrap in write action
                     fem.closeFile(vFile);
-                    fem.openFile(vFile, false);
+                    ApplicationManager.getApplication().invokeLater(() -> {
+                      // opening the file accesses AWT, must not be wrapped in a write action
+                      fem.openFile(vFile, false);
+                    });
                   });
                 }
               }
