@@ -22,30 +22,33 @@ public class AsciiDocSplitEditorProvider extends SplitTextEditorProvider {
     // when this plugin is installed at runtime, check if the existing editors as split editors.
     // If not, close the editor and re-open the files
     // on startup, the list of files is always empty (it is still being restored)
-    ApplicationManager.getApplication().invokeLater(() -> {
-      // run later, to avoid a cyclic dependency plugin is dynamically loaded
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      // Run later, to avoid a cyclic dependency plugin is dynamically loaded.
+      // Choose background thread as looking up files will use indexes which shouldn't block the AWT.
       for (Project project : ProjectManager.getInstance().getOpenProjects()) {
         FileEditorManager fem = FileEditorManager.getInstance(project);
         PsiManager pm = PsiManager.getInstance(project);
         for (FileEditor editor : fem.getAllEditors()) {
           if (!(editor instanceof AsciiDocSplitEditor)) {
-            VirtualFile vFile = editor.getFile();
-            if (vFile != null && vFile.isValid()) {
-              PsiFile pFile = pm.findFile(vFile);
-              if (pFile != null) {
-                if (pFile.getLanguage() == AsciiDocLanguage.INSTANCE) {
-                  // an AsciiDoc file in a non-split editor, close and re-open the file to enforce split editor
-                  ApplicationManager.getApplication().runWriteAction(() -> {
-                    // closing the file might trigger a save, therefore, wrap in write action
-                    fem.closeFile(vFile);
+            ApplicationManager.getApplication().runReadAction(() -> {
+              VirtualFile vFile = editor.getFile();
+              if (vFile != null && vFile.isValid()) {
+                PsiFile pFile = pm.findFile(vFile);
+                if (pFile != null) {
+                  if (pFile.getLanguage() == AsciiDocLanguage.INSTANCE) {
                     ApplicationManager.getApplication().invokeLater(() -> {
+                      // an AsciiDoc file in a non-split editor, close and re-open the file to enforce split editor
+                      ApplicationManager.getApplication().runWriteAction(() -> {
+                        // closing the file might trigger a save, therefore, wrap in write action
+                        fem.closeFile(vFile);
+                      });
                       // opening the file accesses AWT, must not be wrapped in a write action
                       fem.openFile(vFile, false);
                     });
-                  });
+                  }
                 }
               }
-            }
+            });
           }
         }
       }
