@@ -142,6 +142,9 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
                                      @NotNull TextRange range,
                                      @NotNull List<? super FoldingDescriptor> descriptors,
                                      @NotNull Document document) {
+    if (range.getLength() == 0) {
+      return;
+    }
     if (document.getLineNumber(range.getStartOffset()) != document.getLineNumber(range.getEndOffset() - 1)) {
       descriptors.add(new FoldingDescriptor(element, range));
     } else if (element instanceof AsciiDocAttributeReference) {
