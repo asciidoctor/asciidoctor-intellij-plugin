@@ -59,6 +59,7 @@ import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
 import org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
+import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
@@ -582,9 +583,17 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
       });
     } else {
       if (!project.isDisposed()) {
-        reprocessAnnotations();
-        forceRenderCycle(); // force a refresh of the preview by resetting the current memorized content
-        renderIfVisible();
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+          // try to reprocess annotations, but give priority to the write-thread in the EDT
+          try {
+            AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(this::reprocessAnnotations);
+          } catch (ProcessCanceledException ex) {
+            LOG.info("Skipping reprocessing annotations due to PCE");
+          }
+          // force a refresh of the preview by resetting the current memorized content
+          forceRenderCycle();
+          renderIfVisible();
+        });
       }
     }
   }
