@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Fix exception when installing plugin with already open AsciiDoc file (#1441)
 - Avoid accessing index from EDT when initializing the editor
 - Avoid empty range when building folding (#1442)
+- Reworking editor creation again to avoid error in EDT (#1439)
 
 === 0.40.3
 
