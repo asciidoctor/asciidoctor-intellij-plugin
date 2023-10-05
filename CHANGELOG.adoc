@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.39.11
+
+- Downgrade to PlantUML 1.2023.5 to avoid problems with Ditaa, grapviz and icons (#1446)
+
 === 0.39.10
 
 - Revert changes for 2023.3 EAP compatibility for older versions (#1439)
