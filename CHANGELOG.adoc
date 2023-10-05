@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.40.5
 
 - Downgrade to PlantUML 1.2023.5 to avoid problems with Ditaa, grapviz and icons (#1446)
+- Add Asciidoctor Tabs CSS also when converting to HTML (#1425)
 
 === 0.40.4
 

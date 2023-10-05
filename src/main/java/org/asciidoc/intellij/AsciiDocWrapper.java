@@ -345,7 +345,7 @@ public class AsciiDocWrapper {
         // https://github.com/asciidoctor/asciidoctorj/issues/669
         Logger.getLogger("asciidoctor").setUseParentHandlers(false);
 
-        if (format == FileType.JCEF || format == FileType.BROWSER) {
+        if (format == FileType.JCEF || format == FileType.BROWSER || format == FileType.HTML) {
           // 'tabs-sync-option' ensures that the preview keeps the state of the tabs when editing
           asciidoctor.requireLibrary("asciidoctor-tabs");
         }

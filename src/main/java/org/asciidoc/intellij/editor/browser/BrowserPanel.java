@@ -127,7 +127,7 @@ public class BrowserPanel implements Disposable {
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("rouge-github.css")) {
         myInlineCss += IOUtils.toString(is, StandardCharsets.UTF_8);
       }
-      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/asciidoctor/tabs/tabs.css")) {
+      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/tabs/data/css/tabs.css")) {
         myTabsCss = IOUtils.toString(is, StandardCharsets.UTF_8);
         myInlineCss = myInlineCss + myTabsCss;
       }

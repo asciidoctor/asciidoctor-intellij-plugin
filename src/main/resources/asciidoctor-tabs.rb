@@ -1,3 +1,3 @@
 # frozen_string_literal: true
 
-require_relative 'asciidoctor/tabs'
+require_relative 'tabs/package/asciidoctor/tabs'
