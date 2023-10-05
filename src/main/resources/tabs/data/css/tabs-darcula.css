@@ -1,0 +1,25 @@
+/*! Asciidoctor Tabs | Copyright (c) 2018-present Dan Allen | MIT License */
+
+.tablist > ul li {
+    background-color: #2c2c2c;
+}
+
+.tabs.is-loading .tablist li:not(:first-child),
+.tabs:not(.is-loading) .tablist li:not(.is-selected) {
+    background-color: #626262;
+}
+
+.tabs.is-loading .tablist li:first-child::after,
+.tabs:not(.is-loading) .tablist li.is-selected::after {
+    background-color: #2c2c2c;
+}
+
+.tabpanel {
+    background-color: #2c2c2c;
+}
+
+.tablist > ul li,
+.tabpanel {
+    border-color: #404040;
+}
+

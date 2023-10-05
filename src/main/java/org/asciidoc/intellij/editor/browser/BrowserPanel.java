@@ -81,6 +81,9 @@ public class BrowserPanel implements Disposable {
   @Nullable
   private String myInlineCss;
   private String myTabsCss;
+
+  @Nullable
+  private String myTabsCssDarcula;
   @Nullable
   private String myInlineCssDarcula;
   @Nullable
@@ -133,6 +136,9 @@ public class BrowserPanel implements Disposable {
       }
       try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
         myInlineCssDarcula = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
+      }
+      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/tabs/data/css/tabs-darcula.css")) {
+        myTabsCssDarcula = IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       myAntoraCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("antora/preview.css") + "\">";
       myAntoraDarculaCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("antora/preview-darcula.css") + "\">";
@@ -406,9 +412,9 @@ public class BrowserPanel implements Disposable {
 
     /* Add CSS line and JavaScript */
     if (isAntora) {
-      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink + getCssLines(myTabsCss), myMermaidScript, myAsciidoctorTabsScript, attributes, project);
+      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink + getCssLines(myTabsCss + (isDarcula() ? myTabsCssDarcula : "")), myMermaidScript, myAsciidoctorTabsScript, attributes, project);
     } else {
-      html = AsciiDocWrapper.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDroidSansMonoCssLink + myDejavuCssLink, myMermaidScript, myAsciidoctorTabsScript, attributes, project);
+      html = AsciiDocWrapper.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula + myTabsCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, myMermaidScript, myAsciidoctorTabsScript, attributes, project);
     }
     html = html.replace("</body>", getScriptingLines() + "</body>");
     return html;
