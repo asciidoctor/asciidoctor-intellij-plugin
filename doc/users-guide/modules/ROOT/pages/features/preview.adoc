@@ -25,6 +25,13 @@ When the user moves the cursor in the editor, the preview scrolls the text into 
 When the user clicks on the text in the preview, the editor moves the cursor to the clicked text.
 This is accurate at block level, unfortunately not yet on the line or the character level.
 If the content of the preview is part of an included file, the editor opens the included file (new in plugin version 0.32.5).
+When the user clicks on a collapsible block, this click will not place the cursor or open a file.
+
+The JCEF and browser preview as well as the HTML conversion support the https://github.com/asciidoctor/asciidoctor-tabs[Asciidoctor Tabs extension] (new i nplugin version 0.40.3).
+For the preview, it sets ths attribute `tabs-sync-option` so any re-rendering keeps the focus on the currently selected tab.
+Selecting a tab with a mouse click will not place the cursor in the editor and will not open an included file.
+To place the cursor or open the included file, click on the body of the tab.
+The Asciidoctor Tabs extension is not supported for the JavaFX preview, and not supported for the PDF generation.
 
 When the user clicks on an external URL, the preview opens it in an external browser.
 
