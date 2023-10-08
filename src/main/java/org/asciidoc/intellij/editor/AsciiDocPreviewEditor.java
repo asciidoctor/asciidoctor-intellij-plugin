@@ -53,6 +53,7 @@ import com.intellij.serviceContainer.AlreadyDisposedException;
 import com.intellij.util.Alarm;
 import com.intellij.util.FileContentUtilCore;
 import com.intellij.util.messages.MessageBusConnection;
+import io.sentry.protocol.App;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
@@ -704,17 +705,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   private class MyUpdatePanelOnSettingsChangedListener implements AsciiDocApplicationSettings.SettingsChangedListener {
     @Override
     public void onSettingsChange(@NotNull AsciiDocApplicationSettings settings) {
-      ApplicationManager.getApplication().invokeLater(() -> {
-        reprocessAnnotations();
-        AsciiDocDownloadNotificationProvider.hideNotification();
-
-        // trigger re-parsing of content as language injection might have changed
-        // TODO - doesn't work reliably yet when switching back-and-forth
-        VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-        if (file != null) {
-          FileContentUtilCore.reparseFiles(file);
-        }
-
+      ApplicationManager.getApplication().executeOnPooledThread(() -> {
         final AsciiDocHtmlPanelProvider newPanelProvider = retrievePanelProvider(settings);
         if (!mySwingAlarm.isDisposed()) {
           mySwingAlarm.addRequest(() -> {
@@ -731,6 +722,21 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
             }
           }, 0, ModalityState.stateForComponent(getComponent()));
         }
+        AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
+          reprocessAnnotations();
+          AsciiDocDownloadNotificationProvider.hideNotification();
+
+          // trigger re-parsing of content as language injection might have changed
+          // TODO - doesn't work reliably yet when switching back-and-forth
+          VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+          if (file != null) {
+            ApplicationManager.getApplication().invokeLater(() -> {
+              if (file.isValid()) {
+                FileContentUtilCore.reparseFiles(file);
+              }
+            });
+          }
+        });
       });
     }
   }
