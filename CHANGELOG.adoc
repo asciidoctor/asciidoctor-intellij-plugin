@@ -10,6 +10,8 @@ This document provides a high-level view of the changes introduced by release.
 === 0.40.6
 
 - Avoid EDT warning when changing plugin settings
+- Avoid temporary files in project folder when creating a PDF file (#1446)
+- Force re-regenerating diagrams when create a HTML file (#1446)
 
 === 0.40.5
 

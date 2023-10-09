@@ -1341,7 +1341,7 @@ public class AsciiDocWrapper {
 
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     if (imagesPath != null) {
-      if (fileType == FileType.JAVAFX || fileType == FileType.JCEF || fileType == FileType.BROWSER) {
+      if (fileType == FileType.JAVAFX || fileType == FileType.JCEF || fileType == FileType.BROWSER || fileType == FileType.PDF) {
         if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())
           || settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(AsciiDocJCEFHtmlPanelProvider.class.getName()) || fileType == FileType.BROWSER) {
           // will only work in UNSAFE mode as Asciidoctor will otherwise report path is outside of jail; recovering automatically
@@ -1357,6 +1357,8 @@ public class AsciiDocWrapper {
             attrs.setAttribute("imagesoutdir", new File(fileBaseDir, ".asciidoctor/images").getAbsolutePath());
           }
         }
+      } else {
+        attrs.setAttribute("diagram-nocache-option", "");
       }
     }
 
