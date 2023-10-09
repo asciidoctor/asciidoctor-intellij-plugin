@@ -6,7 +6,7 @@ buildscript {
 }
 plugins {
   id "org.jetbrains.intellij" version "1.16.0"
-  id "org.jetbrains.grammarkit" version "2021.2.2"
+  id "org.jetbrains.grammarkit" version "2022.3.2"
   id "checkstyle"
   id 'org.asciidoctor.jvm.convert' version '3.3.2'
   // once windows classpaths get too long, use this dependency to make them shorter again
@@ -196,21 +196,21 @@ tasks.register("checkJavaVersion") {
 }
 
 generateLexer {
-  source.set("src/main/java/org/asciidoc/intellij/lexer/asciidoc.flex")
+  sourceFile.set(file("src/main/java/org/asciidoc/intellij/lexer/asciidoc.flex"))
   targetDir.set("gen/org/asciidoc/intellij/lexer")
   targetClass.set("_AsciiDocLexer")
 }
 
 java {
-  targetCompatibility = "11"
-  sourceCompatibility = "11"
+  targetCompatibility = "17"
+  sourceCompatibility = "17"
 }
 
 compileJava {
   options.errorprone.excludedPaths = '.*(_AsciiDocLexer).*'
   options.errorprone.error('StreamResourceLeak') // enforce errors where there would be warning in the standard only
   options.errorprone.disable('MissingSummary', 'NullableOnContainingClass', 'CanIgnoreReturnValueSuggester')
-  options.compilerArgs.addAll(['--release', '11'])
+  options.compilerArgs.addAll(['--release', '17'])
   // will print link to contributor guide at the start of each build
   dependsOn showLinkToContributorGuide
   // checking that we run on JDK 11, as this is required to compile against IC 2020.3
