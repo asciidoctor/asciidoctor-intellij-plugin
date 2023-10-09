@@ -53,7 +53,6 @@ import com.intellij.serviceContainer.AlreadyDisposedException;
 import com.intellij.util.Alarm;
 import com.intellij.util.FileContentUtilCore;
 import com.intellij.util.messages.MessageBusConnection;
-import io.sentry.protocol.App;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
