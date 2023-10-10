@@ -1571,14 +1571,35 @@ public class AsciiDocUtil {
             default:
               continue;
           }
+          String value;
           if (target == null) {
-            continue;
+            // fallback to non-existing directory, to be used with Antora collector to locate a replacement
+            switch (otherFamily) {
+              case FAMILY_EXAMPLE:
+                value = otherDir.getPath() + "/examples";
+                break;
+              case FAMILY_ATTACHMENT:
+                value = otherDir.getPath() + "/attachments";
+                break;
+              case FAMILY_PAGE:
+                value = otherDir.getPath() + "/pages";
+                break;
+              case FAMILY_PARTIAL:
+                value = otherDir.getPath() + "/partials";
+                break;
+              case FAMILY_IMAGE:
+                value = otherDir.getPath() + "/images";
+                break;
+              default:
+                continue;
+            }
+          } else {
+            value = target.getPath();
           }
           String newKey = key;
-          if (newKey.length() != 0) {
+          if (!newKey.isEmpty()) {
             newKey = "/" + newKey;
           }
-          String value = target.getPath();
           value = value.replaceAll("\\\\", "/");
           newKey = value + newKey;
 

@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Avoid EDT warning when changing plugin settings
 - Avoid temporary files in project folder when creating a PDF file (#1446)
 - Force re-regenerating diagrams when create a HTML file (#1446)
+- Tuning support for Antora Collector for non-existing folders (#1177)
 
 === 0.40.5
 
