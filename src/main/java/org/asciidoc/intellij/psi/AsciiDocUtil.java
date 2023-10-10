@@ -1476,6 +1476,7 @@ public class AsciiDocUtil {
     return replaceAntoraPrefix(project, moduleDir, sourceDir, originalKey, defaultFamily, null);
   }
 
+  @SuppressWarnings("checkstyle:MethodLength")
   public static List<String> replaceAntoraPrefix(Project project, VirtualFile moduleDir, VirtualFile sourceDir, String originalKey, String defaultFamily, String macroName) {
     Matcher urlMatcher = URL_PREFIX_PATTERN.matcher(originalKey);
     if (urlMatcher.find()) {
