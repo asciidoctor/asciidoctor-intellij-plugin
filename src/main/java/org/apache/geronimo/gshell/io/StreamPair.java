@@ -19,9 +19,6 @@
 
 package org.apache.geronimo.gshell.io;
 
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-
 import java.io.PrintStream;
 
 /**
@@ -57,11 +54,6 @@ public class StreamPair {
     assert type != null;
 
     return type.get(this);
-  }
-
-  @Override
-  public String toString() {
-    return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
   }
 
   public void flush() {

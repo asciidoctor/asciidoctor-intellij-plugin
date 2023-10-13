@@ -175,56 +175,53 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
         if (title == null) {
           Set<String> values = new HashSet<>();
           if (!DumbService.isDumb(node.getPsi().getProject())) {
-            // this might be called from the EDIT thread. Index access might be slow, allow it for now.
-            SlowOperations.allowSlowOperations(() -> {
-              // search attributes contributed by Antora
-              Collection<AttributeDeclaration> attributes = AsciiDocUtil.collectAntoraAttributes(node.getPsi());
-              boolean onlyAntora = attributes.size() > 0;
-              attributes.forEach(attribute -> {
-                if (attribute.matchesKey(key)) {
-                  values.add(attribute.getAttributeValue());
-                }
-              });
+            // search attributes contributed by Antora
+            Collection<AttributeDeclaration> attributes = AsciiDocUtil.collectAntoraAttributes(node.getPsi());
+            boolean onlyAntora = attributes.size() > 0;
+            attributes.forEach(attribute -> {
+              if (attribute.matchesKey(key)) {
+                values.add(attribute.getAttributeValue());
+              }
+            });
 
-              Map<VirtualFile, Boolean> cache = new HashMap<>();
-              // search regular attributes
-              try {
-                iterateReferences:
-                for (PsiReference reference : node.getPsi().getReferences()) {
-                  if (reference instanceof AsciiDocAttributeDeclarationReference) {
-                    for (ResolveResult resolveResult : ((AsciiDocAttributeDeclarationReference) reference).multiResolve(false)) {
-                      PsiElement element = resolveResult.getElement();
-                      if (element != null && onlyAntora) {
-                        PsiFile file = element.getContainingFile();
-                        if (file != null) {
-                          VirtualFile vf = file.getVirtualFile();
-                          if (vf == null) {
-                            vf = file.getOriginalFile().getVirtualFile();
-                          }
-                          if (vf != null) {
-                            if (!cache.computeIfAbsent(vf, s -> AsciiDocUtil.findAntoraModuleDir(element.getProject(), s) != null)) {
-                              continue;
-                            }
+            Map<VirtualFile, Boolean> cache = new HashMap<>();
+            // search regular attributes
+            try {
+              iterateReferences:
+              for (PsiReference reference : node.getPsi().getReferences()) {
+                if (reference instanceof AsciiDocAttributeDeclarationReference) {
+                  for (ResolveResult resolveResult : ((AsciiDocAttributeDeclarationReference) reference).multiResolve(false)) {
+                    PsiElement element = resolveResult.getElement();
+                    if (element != null && onlyAntora) {
+                      PsiFile file = element.getContainingFile();
+                      if (file != null) {
+                        VirtualFile vf = file.getVirtualFile();
+                        if (vf == null) {
+                          vf = file.getOriginalFile().getVirtualFile();
+                        }
+                        if (vf != null) {
+                          if (!cache.computeIfAbsent(vf, s -> AsciiDocUtil.findAntoraModuleDir(element.getProject(), s) != null)) {
+                            continue;
                           }
                         }
                       }
-                      if (element instanceof AsciiDocAttributeDeclarationName) {
-                        PsiElement parent = element.getParent();
-                        if (parent instanceof AsciiDocAttributeDeclaration) {
-                          values.add(((AsciiDocAttributeDeclaration) parent).getAttributeValue());
-                          if (values.size() > 1) {
-                            break iterateReferences;
-                          }
+                    }
+                    if (element instanceof AsciiDocAttributeDeclarationName) {
+                      PsiElement parent = element.getParent();
+                      if (parent instanceof AsciiDocAttributeDeclaration) {
+                        values.add(((AsciiDocAttributeDeclaration) parent).getAttributeValue());
+                        if (values.size() > 1) {
+                          break iterateReferences;
                         }
                       }
                     }
                   }
                 }
-              } catch (IndexNotReadyException ignored) {
-                // if indexes are not ready, statement below will default to standard text
-                // even when checking for dumb mode in advance above, project might re-index while in this block.
               }
-            });
+            } catch (IndexNotReadyException ignored) {
+              // if indexes are not ready, statement below will default to standard text
+              // even when checking for dumb mode in advance above, project might re-index while in this block.
+            }
           }
           if (values.size() == 1) {
             title = values.iterator().next();

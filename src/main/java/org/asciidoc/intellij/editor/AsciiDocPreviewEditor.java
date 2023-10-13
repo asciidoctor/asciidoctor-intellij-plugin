@@ -17,8 +17,8 @@ package org.asciidoc.intellij.editor;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
-import com.intellij.ide.impl.TrustStateListener;
 import com.intellij.ide.structureView.StructureViewBuilder;
+import com.intellij.ide.trustedProjects.TrustedProjectsListener;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -324,7 +324,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
     settingsConnection.subscribe(AsciiDocApplicationSettings.SettingsChangedListener.TOPIC, new MyUpdatePanelOnSettingsChangedListener());
     settingsConnection.subscribe(EditorColorsManager.TOPIC, new MyEditorColorsListener());
-    settingsConnection.subscribe(TrustStateListener.TOPIC, new MyTrustChangedListener());
+    settingsConnection.subscribe(TrustedProjectsListener.TOPIC, new MyTrustChangedListener());
 
     // Listen to the document modifications.
     this.document.addDocumentListener(new DocumentListener() {
@@ -765,7 +765,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     }
   }
 
-  private class MyTrustChangedListener implements TrustStateListener {
+  private class MyTrustChangedListener implements TrustedProjectsListener {
     @Override
     public void onProjectTrusted(@NotNull Project project) {
       // opening a project in non-trusted mode forces the SECURE mode on preview rendering
