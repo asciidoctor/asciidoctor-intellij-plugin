@@ -21,7 +21,7 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringDecoder;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.asciidoc.intellij.editor.browser.BrowserPanel;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
