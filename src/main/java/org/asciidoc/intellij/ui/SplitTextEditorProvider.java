@@ -138,16 +138,16 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
         if (ApplicationManager.getApplication().isWriteAccessAllowed()) {
           // called from create file from template
           return CoroutinesKt.runBlockingMaybeCancellable((coroutineScope, continuation) ->
-            ((AsyncFileEditorProvider) provider).createEditorBuilder(project, file, continuation));
+            ((AsyncFileEditorProvider) provider).createEditorBuilder(project, file, null, continuation));
         } else {
           // called from a structure view builder without a write lock
           return TasksKt.runWithModalProgressBlocking(project, "Opening " + file.getName(), (coroutineScope, continuation) ->
-            ((AsyncFileEditorProvider) provider).createEditorBuilder(project, file, continuation));
+            ((AsyncFileEditorProvider) provider).createEditorBuilder(project, file, null, continuation));
         }
       } else {
         // called from project view
         return CoroutinesKt.runBlockingMaybeCancellable((coroutineScope, continuation) ->
-          ((AsyncFileEditorProvider) provider).createEditorBuilder(project, file, continuation));
+          ((AsyncFileEditorProvider) provider).createEditorBuilder(project, file, null, continuation));
       }
     } else {
       return new Builder() {

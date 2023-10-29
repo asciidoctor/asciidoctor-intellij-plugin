@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.41.0
+
+- Restore compatibility with latest 2023.3 EAP release
+
 === 0.40.7
 
 - Restore compatibility with latest 2023.3 EAP release
