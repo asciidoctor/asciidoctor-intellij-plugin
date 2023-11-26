@@ -60,6 +60,15 @@ public class LanguageGuesser {
       }
     }
 
+    if (!result.containsKey("csharp")) {
+      final Language l = result.get("c#");
+      if (l != null) {
+        // this is the official name in highlight.js
+        result.put("csharp", l);
+        result.remove("c#");
+      }
+    }
+
     return result;
   }
 
