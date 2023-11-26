@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.41.1
 
 - Add language support for C# which is known as `csharp` by highlight.js (#1474)
+- Update Antora default theme (#1473)
 
 === 0.41.0
 
