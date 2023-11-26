@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.40.8
+
+- Add language support for C# which is known as `csharp` by highlight.js (#1474)
+
 === 0.40.7
 
 - Restore compatibility with latest 2023.3 EAP release
