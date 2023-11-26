@@ -1,5 +1,6 @@
 /* this is the CSS to be used when rendering a preview in the IDE */
-@import "site.css";
+/* add a query URL here to avoid stale caches in the preview */
+@import "site.css?v2";
 body {
     padding-top: 0
 }
