@@ -24,6 +24,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.UserDataHolderEx;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.PsiDirectory;
@@ -847,6 +848,16 @@ public class AsciiDocUtil {
       ProgressManager.checkCanceled();
       for (VirtualFile contentRoot : ModuleRootManager.getInstance(module).getContentRoots()) {
         addRoot(roots, contentRoot);
+      }
+    }
+    if (roots.isEmpty()) {
+      // As seen with Rider, the modules don't reveal a root path. To cover for that, add the base path of the project.
+      String basePath = project.getBasePath();
+      if (basePath != null) {
+        VirtualFile vfBasePath = LocalFileSystem.getInstance().findFileByPath(basePath);
+        if (vfBasePath != null) {
+          addRoot(roots, vfBasePath);
+        }
       }
     }
     PROJECT_ROOTS.cache(project, roots);
