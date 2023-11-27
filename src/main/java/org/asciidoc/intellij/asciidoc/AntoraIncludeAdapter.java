@@ -8,7 +8,8 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.search.PsiShortNamesCache;
+import com.intellij.psi.search.FilenameIndex;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.apache.commons.lang.StringUtils;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
@@ -19,6 +20,7 @@ import org.asciidoctor.log.LogRecord;
 import org.asciidoctor.log.Severity;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -87,10 +89,9 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
       if (!readFile.contains("/") && resolved == null) {
         // if the readFile doesn't contain a full path name, this indicates safe mode.
         // Use alternative strategy to look up file somewhere in the project.
-        PsiFile[] filesByName = AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> PsiShortNamesCache.getInstance(project).getFilesByName(readFile));
-        if (filesByName.length == 1) {
-          psiFile = filesByName[0];
-          resolved = filesByName[0].getVirtualFile();
+        Collection<VirtualFile> filesByNames = AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> FilenameIndex.getVirtualFilesByName(readFile, GlobalSearchScope.projectScope(project)));
+        if (filesByNames.size() == 1) {
+          resolved = filesByNames.iterator().next();
         }
       }
     }
@@ -102,7 +103,7 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
     }
 
     if (resolved != null && ATTRIBUTES.matcher(target).find()) {
-      if (psiFile == null && resolved.isValid()) {
+      if (resolved.isValid()) {
         VirtualFile finalResolved = resolved;
         psiFile = AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> PsiManager.getInstance(project).findFile(finalResolved));
       }

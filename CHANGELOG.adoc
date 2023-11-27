@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Add language support for C# which is known as `csharp` by highlight.js (#1474)
 - Update Antora default theme (#1473)
 - Fall back to root project folder if no module folders have been found to avoid a message that the file has been opened outside the project
+- Fix Antora include support on non-Java JetBrains IDEs
 
 === 0.40.7
 
