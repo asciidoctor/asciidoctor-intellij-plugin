@@ -129,7 +129,7 @@ dependencies {
    */
   implementation 'org.snakeyaml:snakeyaml-engine:2.6'
   implementation 'org.asciidoctor:asciidoctorj:2.5.10' // WARNING: when upgrading asciidoctorj, see comment above about snakeyaml!
-  implementation 'commons-io:commons-io:2.15.0'
+  implementation 'commons-io:commons-io:2.15.1'
   // used to be 'nl.jworks.markdown_to_asciidoc:markdown_to_asciidoc:1.1' that is only available on jcenter/bintray
   implementation files('libs/markdown_to_asciidoc-1.1-p1.jar')
   // explicit dependencies of markdown_to_asciidoc
