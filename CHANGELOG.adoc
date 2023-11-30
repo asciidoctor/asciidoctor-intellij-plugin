@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.41.2
+
+- Always add root project folder to avoid a message that the file has been opened outside the project (#1474)
+
 === 0.41.1
 
 - Add language support for C# which is known as `csharp` by highlight.js (#1474)
