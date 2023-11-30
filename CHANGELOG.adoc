@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - Update Antora default theme (#1473)
 - Fall back to root project folder if no module folders have been found to avoid a message that the file has been opened outside the project
 - Fix Antora include support on non-Java JetBrains IDEs
+- Always add root project folder to avoid a message that the file has been opened outside the project (#1474)
 
 === 0.40.7
 

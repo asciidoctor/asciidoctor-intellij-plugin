@@ -850,14 +850,12 @@ public class AsciiDocUtil {
         addRoot(roots, contentRoot);
       }
     }
-    if (roots.isEmpty()) {
-      // As seen with Rider, the modules don't reveal a root path. To cover for that, add the base path of the project.
-      String basePath = project.getBasePath();
-      if (basePath != null) {
-        VirtualFile vfBasePath = LocalFileSystem.getInstance().findFileByPath(basePath);
-        if (vfBasePath != null) {
-          addRoot(roots, vfBasePath);
-        }
+    // As seen with Rider, the modules don't reveal a root path. To cover for that, add the base path of the project.
+    String basePath = project.getBasePath();
+    if (basePath != null) {
+      VirtualFile vfBasePath = LocalFileSystem.getInstance().findFileByPath(basePath);
+      if (vfBasePath != null) {
+        addRoot(roots, vfBasePath);
       }
     }
     PROJECT_ROOTS.cache(project, roots);
