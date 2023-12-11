@@ -40,7 +40,7 @@ jobs:
 
       - name: Download AsciiDoc plugin for AsciiDoc checks
         run: |
-          curl -L -o asciidoctor-intellij-plugin.zip https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases/download/0.38.2/asciidoctor-intellij-plugin-0.38.2.zip
+          curl -L -o asciidoctor-intellij-plugin.zip https://github.com/asciidoctor/asciidoctor-intellij-plugin/releases/download/0.41.2/asciidoctor-intellij-plugin-0.41.2.zip
           unzip asciidoctor-intellij-plugin.zip
 
       - name: Download Grazie plugin for grammar checks
@@ -64,7 +64,7 @@ jobs:
         run: git fetch --deepen=1
 
       - name: 'Qodana for Docs'
-        uses: JetBrains/qodana-action@v2023.2.9
+        uses: JetBrains/qodana-action@v2023.3.0
         with:
           upload-result: true
           # https://hub.docker.com/r/jetbrains/qodana-jvm-community/tags
@@ -73,7 +73,7 @@ jobs:
           # TODO: the plugin `org.jetbrains.plugins.gradle` should also be suppressed, but the parameter doesn't allow
           # a comma when called from the Qodana action. Therefore overwrite it with an empty folder.
           args: >
-            --linter,jetbrains/qodana-jvm-community:2023.2,
+            --linter,jetbrains/qodana-jvm-community:2023.3,
             --property=idea.suppressed.plugins.id=com.intellij.gradle,
             -v,${{ github.workspace }}/grazie:/opt/idea/plugins/grazie,
             -v,${{ github.workspace }}/empty:/opt/idea/plugins/gradle-java,
