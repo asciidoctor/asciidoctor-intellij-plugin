@@ -256,7 +256,7 @@ public class AsciiDocDownloaderUtil {
       public void run(@NotNull ProgressIndicator indicator) {
         try {
           List<VirtualFile> files = downloader.downloadFilesWithProgress(DOWNLOAD_PATH, project, null);
-          if (files == null || files.size() == 0) {
+          if (files == null || files.isEmpty()) {
             throw new IOException("Download failed");
           }
           File file = files.get(0).toNioPath().toFile();
