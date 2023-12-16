@@ -143,6 +143,7 @@ dependencies {
 
   // when updating the versions here, also update them in AsciiDocDownloaderUtil for dynamic download
   testImplementation 'org.asciidoctor:asciidoctorj-diagram:2.2.13'
+  testImplementation 'org.asciidoctor:asciidoctorj-diagram-plantuml:1.2023.12'
   testImplementation 'org.asciidoctor:asciidoctorj-pdf:2.3.9'
 
   testImplementation(gradleTestKit())
