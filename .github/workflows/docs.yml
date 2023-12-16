@@ -105,7 +105,8 @@ jobs:
 
       # Download plugin artifact provided by the previous job
       - name: Download Artifact
-        uses: actions/download-artifact@v4
+        # use download-artifact@v3 for now, as v4 is not yet compatible with qodana-action@v2023.2.9
+        uses: actions/download-artifact@v3
         with:
           name: qodana-report
 
