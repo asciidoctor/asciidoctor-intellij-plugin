@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.41.3
+=== 0.41.4
 
 - Fixing checkum when downloading PlantUML 1.2023.12 for diagrams (#1491)
 
