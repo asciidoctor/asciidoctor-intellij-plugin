@@ -72,7 +72,7 @@ public class AsciiDocDownloaderUtil {
 
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-plantuml/
   public static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION = "1.2023.12";
-  private static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH = "0dfdb327618d176f2219b349b9a504f1469b2d193f9c8455a9c040dfff80fe85";
+  private static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH = "541483ec36929c0d4aaa90d82deded3d22655fb4cf187805ced4dce84e01687b";
 
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-ditaamini/
   public static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION = "1.0.3";

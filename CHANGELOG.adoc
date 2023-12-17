@@ -9,6 +9,10 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.41.3
 
+- Fixing checkum when downloading PlantUML 1.2023.12 for diagrams (#1491)
+
+=== 0.41.3
+
 - Upgrade to PlantUML 1.2023.12 for diagrams (#1491)
 
 === 0.41.2
