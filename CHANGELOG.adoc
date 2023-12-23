@@ -7,6 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.41.5
+
+- Bump org.asciidoctor:asciidoctorj from 2.5.10 to 2.5.11 (#1499)
+- Bump org.asciidoctor:asciidoctorj-pdf from 2.3.9 to 2.3.10 (#1497)
+
 === 0.41.4
 
 - Fixing checksum when downloading PlantUML 1.2023.12 for diagrams (#1491)
