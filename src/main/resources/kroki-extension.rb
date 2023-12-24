@@ -128,12 +128,14 @@ module AsciidoctorExtensions
       rackdiag
       seqdiag
       svgbob
+      symbolator
       umlet
       vega
       vegalite
       wavedrom
       structurizr
       diagramsnet
+      wireviz
     ].freeze
   end
 
@@ -398,7 +400,7 @@ module AsciidoctorExtensions
     require 'json'
 
     class << self
-      REFERER = "asciidoctor/kroki.rb/0.8.0-intellij"
+      REFERER = "asciidoctor/kroki.rb/0.9.1-intellij"
 
       def get(uri, opts, _)
         uri = URI(uri)
