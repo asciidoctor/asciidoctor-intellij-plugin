@@ -56,6 +56,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
+import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanel;
 import org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
@@ -90,6 +91,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
    * single threaded with one task queue (one for each editor window).
    */
   private final LazyApplicationPoolExecutor lazyExecutor = new LazyApplicationPoolExecutor(this);
+  private final JLabel hint;
 
   /**
    * Indicates whether the HTML preview is obsolete and should regenerated from the AsciiDoc {@link #document}.
@@ -289,7 +291,11 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     }
     this.tempImagesPath = AsciiDocWrapper.tempImagesPath(parent, project);
 
-    myHtmlPanelWrapper = new JPanel(new BorderLayout());
+    myHtmlPanelWrapper = new JPanel();
+    LayoutManager overlay = new OverlayLayout(myHtmlPanelWrapper);
+    myHtmlPanelWrapper.setLayout(overlay);
+    hint = new JLabel();
+    myHtmlPanelWrapper.add(hint);
 
     myHtmlPanelWrapper.addComponentListener(new ComponentAdapter() {
       @Override
@@ -305,7 +311,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
               if (!mySwingAlarm.isDisposed()) {
                 synchronized (this) {
                   if (myPanel != null) {
-                    myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, null, AsciiDocPreviewEditor.this::forceRefresh);
+                    myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, hint, myPanel, null, AsciiDocPreviewEditor.this::forceRefresh);
                   }
                 }
               }
@@ -403,7 +409,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
             synchronized (this) {
               if (myPanel == null) {
                 final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
-                myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, null, retrievePanelProvider(settings), AsciiDocPreviewEditor.this::forceRefresh);
+                myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, hint, null, retrievePanelProvider(settings), AsciiDocPreviewEditor.this::forceRefresh);
                 myPanel.setEditor(editor);
                 forceRenderCycle();
                 // when this happens, the panel has just been initialized, and it isn't yet displayable; therefore always render it.
@@ -420,6 +426,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
   @Contract("_, _, _, null, null -> fail")
   private static AsciiDocHtmlPanel detachOldPanelAndCreateAndAttachNewOne(Document document, Path imagesDir, @NotNull JPanel panelWrapper,
+                                                                          @NotNull JLabel hint,
                                                                           @Nullable AsciiDocHtmlPanel oldPanel,
                                                                           @Nullable AsciiDocHtmlPanelProvider newPanelProvider,
                                                                           Runnable forceRefresh) {
@@ -454,7 +461,18 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     if (oldPanel != null) {
       newPanel.setEditor(oldPanel.getEditor());
     }
-    panelWrapper.add(newPanel.getComponent(), BorderLayout.CENTER);
+    panelWrapper.add(newPanel.getComponent(), BorderLayout.CENTER, 0);
+
+    if (newPanel instanceof AsciiDocJCEFHtmlPanel) {
+      hint.setText("<html>If you can read this and not the content of your document, your preview does not show. One possible reason is that you are using a remote desktop and " +
+        "GPU rendered content is not shown.<p>" +
+        "To fix this, update the IDE's registry and set the key 'ide.browser.jcef.gpu.disable' to the value 'true'.<p>" +
+        "To access the registry, open the menu 'Help | Find Action...' and then choose the action 'Registry...'. " +
+        "Once the registry opens, type the key to find the entry, and enable the checkbox to set the value to 'true'. " +
+        "Once you changed the value, restart the IDE for the setting to become effective.");
+    } else {
+      hint.setText("<html></html>");
+    }
 
     return newPanel;
   }
@@ -711,7 +729,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
             try {
               if (!mySwingAlarm.isDisposed()) {
                 synchronized (this) {
-                  myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, myPanel, newPanelProvider, AsciiDocPreviewEditor.this::forceRefresh);
+                  myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, hint, myPanel, newPanelProvider, AsciiDocPreviewEditor.this::forceRefresh);
                   forceRenderCycle(); // force a refresh of the preview by resetting the current memorized content
                 }
                 renderIfVisible();
