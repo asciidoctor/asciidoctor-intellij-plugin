@@ -7,7 +7,6 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationInfo;
-import com.intellij.openapi.application.impl.ApplicationInfoImpl;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.diagnostic.SubmittedReportInfo;
@@ -96,7 +95,7 @@ class SentryErrorReporter {
           os.setName(SystemInfo.OS_NAME);
           os.setVersion(SystemInfo.OS_VERSION + "-" + SystemInfo.OS_ARCH);
 
-          final ApplicationInfoImpl applicationInfo = (ApplicationInfoImpl) ApplicationInfo.getInstance();
+          final ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
           final SentryRuntime runtime = new SentryRuntime();
           runtime.setName(applicationInfo.getBuild().getProductCode());
 
