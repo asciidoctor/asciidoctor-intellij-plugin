@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.41.6
+
+- Avoid deadlock when creating a new AsciiDoc file (#1502)
+
 === 0.41.5
 
 - Bump org.asciidoctor:asciidoctorj from 2.5.10 to 2.5.11 (#1499)

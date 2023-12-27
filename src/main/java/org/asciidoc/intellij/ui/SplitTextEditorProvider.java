@@ -44,7 +44,10 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
   @NotNull
   @Override
   public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-    return createEditorAsync(project, file).build();
+    // called from create file from template
+    FileEditor first = myFirstProvider.createEditor(project, file);
+    FileEditor second = mySecondProvider.createEditor(project, file);
+    return createSplitEditor(first, second);
   }
 
   @NotNull
@@ -135,15 +138,9 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
                                                       @NotNull final VirtualFile file) {
     if (provider instanceof AsyncFileEditorProvider) {
       if (ApplicationManager.getApplication().isDispatchThread()) {
-        if (ApplicationManager.getApplication().isWriteAccessAllowed()) {
-          // called from create file from template
-          return CoroutinesKt.runBlockingMaybeCancellable((coroutineScope, continuation) ->
-            ((AsyncFileEditorProvider) provider).createEditorBuilder(project, file, null, continuation));
-        } else {
-          // called from a structure view builder without a write lock
-          return TasksKt.runWithModalProgressBlocking(project, "Opening " + file.getName(), (coroutineScope, continuation) ->
-            ((AsyncFileEditorProvider) provider).createEditorBuilder(project, file, null, continuation));
-        }
+        // called from a structure view builder without a write lock in 2023.3 pre-release, doesn't seem to be the case in 2023.3 final
+        return TasksKt.runWithModalProgressBlocking(project, "Opening " + file.getName(), (coroutineScope, continuation) ->
+          ((AsyncFileEditorProvider) provider).createEditorBuilder(project, file, null, continuation));
       } else {
         // called from project view
         return CoroutinesKt.runBlockingMaybeCancellable((coroutineScope, continuation) ->
