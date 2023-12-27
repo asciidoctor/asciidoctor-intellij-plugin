@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.41.6
 
 - Avoid deadlock when creating a new AsciiDoc file (#1502)
+- Fix Sentry reporting
 
 === 0.41.5
 
