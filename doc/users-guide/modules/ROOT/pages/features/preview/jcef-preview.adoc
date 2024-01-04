@@ -73,7 +73,6 @@ As a workaround, open the preview in the browser by clicking on any of the brows
 
 [[devtools]]
 JCEF preview is an embedded Chrome browser.
-After enabling the DevTools, users can right-click on the preview and use "`Open DevTools`".
 This opens a fully equipped Chrome developer tools window that allows users to inspect the HTML created in the preview and to view the JavaScript console of the preview.
 
 // https://youtrack.jetbrains.com/issue/IDEA-286008
@@ -114,7 +113,9 @@ The registry is available via menu menu:Help[Find action...], then enter "`Regis
 In the dialog that opens, start typing the registry key given above to restrict the list.
 Check the checkbox on the right to enable this property.
 Press btn:[Close] to close the dialog.
+
 The DevTools are available for all newly opened editors.
+Right-click on the preview and use "`Open DevTools`".
 For editors already open, close and re-open them to see the DevTools.
 No IDE restart is required.
 --
@@ -129,7 +130,9 @@ The registry is available via menu menu:Help[Find action...], then enter "`Regis
 In the dialog that opens, start typing the registry key given above to restrict the list.
 Check the checkbox on the right to enable this property.
 Press btn:[Close] to close the dialog.
+
 The DevTools are available for all newly opened editors.
+Right-click on the preview and use "`Open DevTools`".
 For editors already open, close and re-open them to see the DevTools.
 No IDE restart is required.
 --
