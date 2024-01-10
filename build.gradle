@@ -8,7 +8,7 @@ plugins {
   id "org.jetbrains.intellij" version "1.16.1"
   id "org.jetbrains.grammarkit" version "2022.3.2.1"
   id "checkstyle"
-  id 'org.asciidoctor.jvm.convert' version '3.3.2'
+  id 'org.asciidoctor.jvm.convert' version '4.0.1'
   // once windows classpaths get too long, use this dependency to make them shorter again
   id "com.github.ManifestClasspath" version "0.1.0-RELEASE"
   // https://github.com/tbroyer/gradle-errorprone-plugin
