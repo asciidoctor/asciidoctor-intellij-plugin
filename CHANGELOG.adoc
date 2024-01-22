@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.41.7
 
 - When opening includes from preview, move slow activities to the background (#1517)
+- Hide unused AsciiDoc action group in IntelliJ 2024.1 EAP
 
 === 0.41.6
 
