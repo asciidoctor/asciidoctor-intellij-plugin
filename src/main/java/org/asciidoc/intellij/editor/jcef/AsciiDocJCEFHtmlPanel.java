@@ -32,12 +32,12 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.jcef.JBCefBrowserBase;
 import com.intellij.ui.jcef.JBCefJSQuery;
 import com.intellij.ui.jcef.JBCefPsiNavigationUtils;
 import com.intellij.ui.jcef.JCEFHtmlPanel;
 import com.intellij.ui.scale.JBUIScale;
-import com.intellij.util.ui.UIUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.AsciiDocWrapper;
@@ -955,7 +955,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     switch (settings.getAsciiDocPreviewSettings().getPreviewTheme()) {
       case INTELLIJ:
-        return UIUtil.isUnderDarcula();
+        return !JBColor.isBright();
       case ASCIIDOC:
         return false;
       case DARCULA:

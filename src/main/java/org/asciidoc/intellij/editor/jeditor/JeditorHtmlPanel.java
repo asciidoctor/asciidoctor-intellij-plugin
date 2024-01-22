@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.HTMLEditorKitBuilder;
 import com.intellij.util.ui.UIUtil;
@@ -77,7 +78,7 @@ final class JeditorHtmlPanel implements AsciiDocHtmlPanel {
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     switch (settings.getAsciiDocPreviewSettings().getPreviewTheme()) {
       case INTELLIJ:
-        return UIUtil.isUnderDarcula();
+        return !JBColor.isBright();
       case ASCIIDOC:
         return false;
       case DARCULA:

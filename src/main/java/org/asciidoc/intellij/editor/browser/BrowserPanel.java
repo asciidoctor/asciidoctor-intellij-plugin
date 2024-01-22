@@ -13,7 +13,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.ui.JBColor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.asciidoc.intellij.AsciiDocExtensionService;
@@ -165,7 +165,7 @@ public class BrowserPanel implements Disposable {
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     switch (settings.getAsciiDocPreviewSettings().getPreviewTheme()) {
       case INTELLIJ:
-        return UIUtil.isUnderDarcula();
+        return !JBColor.isBright();
       case ASCIIDOC:
         return false;
       case DARCULA:

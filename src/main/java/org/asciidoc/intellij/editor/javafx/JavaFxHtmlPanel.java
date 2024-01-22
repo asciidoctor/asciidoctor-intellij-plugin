@@ -31,7 +31,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.scale.JBUIScale;
-import com.intellij.util.ui.UIUtil;
 import com.sun.javafx.application.PlatformImpl;
 import com.sun.javafx.webkit.WebConsoleListener;
 import javafx.application.Platform;
@@ -438,7 +437,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     switch (settings.getAsciiDocPreviewSettings().getPreviewTheme()) {
       case INTELLIJ:
-        return UIUtil.isUnderDarcula();
+        return !JBColor.isBright();
       case ASCIIDOC:
         return false;
       case DARCULA:
