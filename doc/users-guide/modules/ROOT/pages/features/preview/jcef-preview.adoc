@@ -5,8 +5,6 @@
 
 [NOTE]
 ====
-This is available from IntelliJ 2020.2+ and plugin version 0.31.x.
-
 Update to IntelliJ 2020.3+ for the best experience, as this fixes some limitations of earlier versions.
 ====
 
@@ -44,30 +42,6 @@ In the dialog that opens, start typing the registry key given above to restrict 
 Check the checkbox on the right to enable this property.
 Press btn:[Close] to close the dialog.
 Restart the IDE to apply the setting.
-
-=== Undocked window support (fixed)
-
-When using tool windows in the undocked mode prior to plugin version 0.35.1, the preview will overlap with the tool window.
-See issue https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/751[#751] for details.
-
-=== Working with a http proxy (fixed)
-
-The JCEF preview doesn't support the IntelliJ proxy configuration prior to 2021.1.
-Configuring a proxy for JCEF requires an IDE restart.
-Therefore, remote images in the preview might not show for users behind a proxy.
-See '`xref:faq/jcef-no-proxy-support.adoc[]`' for more information.
-
-=== Switching focus (fixed)
-
-Once a JCEF preview is open in a project, it now and then brings the focus to the project when editing files in a different window in IntelliJ 2020.2.
-This is fixed in the https://blog.jetbrains.com/idea/2020/11/intellij-idea-2020-2-4/[2020.2.4] and 2020.3 release.
-See JetBrains issue https://youtrack.jetbrains.com/issue/IDEA-247541["`JCEF: steals focus from a different frame`"] for more information.
-
-=== Copy-and-paste on macOS (fixed)
-
-On macOS there is no copy-and-paste from the JCEF preview in IntelliJ 2020.2.
-This is fixed in IntelliJ 2020.3 (see issues https://youtrack.jetbrains.com/issue/IDEA-241604/[IDEA-241604] and https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/533[asciidoctor-intellij-plugin/#322]).
-As a workaround, open the preview in the browser by clicking on any of the browser symbols when hovering in the upper right corner of the editor and copying the contents of the browser window.
 
 == Benefits of the JCEF preview
 
@@ -173,15 +147,6 @@ Change it to "`JCEF Browser`" if this is not the case.
 
 * Open menu item menu:Help[Find action...] and search for "`Choose Boot Java runtime for the IDE...`"
 * Choose a runtime "`11.0.x...`" labeled "`JetBrains Runtime with JCEF`" and install it.
-The IDE will restart.
-* Go to the settings of the AsciiDoc plugin and check if the preview is set to "`JCEF Browser`".
-Change it to "`JCEF Browser`" if this is not the case.
-
-*For Android Studio 4.2 and 2020.3+:*
-
-* Install the plugin "`Choose Runtime`".
-* Open menu item menu:Help[Find action...] and search for "`Choose Runtime...`"
-* Choose a runtime "jbrsdk-11_0_...tar.gz" or later and install it.
 The IDE will restart.
 * Go to the settings of the AsciiDoc plugin and check if the preview is set to "`JCEF Browser`".
 Change it to "`JCEF Browser`" if this is not the case.

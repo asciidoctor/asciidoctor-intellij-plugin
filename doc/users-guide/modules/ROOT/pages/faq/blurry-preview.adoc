@@ -29,50 +29,13 @@ IntelliJ running on OpenJDK or JetBrains Runtime (any version)
 
 == How do I fix this?
 
-There are four alternatives to fix this:
-
-* If on IntelliJ 2020.2+: <<change_jcef,Change to JCEF preview>>
-* If running on Linux users or running JDK 8: <<change_uiscale,Configure option _sun.java2d.uiScale.enabled_>>
-* For Windows users: <<change_reinstall,Reinstall IDE with JetBrains Runtime 11>>
-* To change Runtime of existing IDE: <<change_runtimeplugin,Install the '`Choose Runtime`' plugin>>
+Upgrade to IntelliJ 2020.3 which bundles JDK 11 as its runtime, and used the JCEF preview.
 
 [#change_jcef]
 === Change to JCEF preview
 
 This JCEF preview embeds a Chromium based browser in the IDE.
 As it supports high-resolution displays and is the preview technology recommended by JetBrains, follow the instructions in the chapter '`xref:features/preview/jcef-preview.adoc[]`' to activate it.
-
-[#change_uiscale]
-=== Configure option _sun.java2d.uiScale.enabled_
-
-Apply the following steps:
-
-. Go to Menu entry menu:Help[Edit Custom VM Options...]
-. Remove any previous set option containing `sun.java2d.uiScale.enabled`
-. Add the following line to the options:
-+
-----
--Dsun.java2d.uiScale.enabled=false
-----
-. Restart the IDE
-
-[#change_reinstall]
-=== Upgrade to JetBrains Runtime 11 for running the IDE
-
-Use one of the following options:
-
-* Download IntelliJ (or PyCharm, WebStorm, etc.) with JetBrains Runtime 11 (JBR11).
-This is available from release 2019.1, and will be the default starting from 2019.2. +
-When downloading click on the format (pre-populated with .EXE for Windows users) to select the JBR11 bundle https://www.jetbrains.com/idea/download/#section=windows[from the download page].
-
-* Use the https://www.jetbrains.com/toolbox/[JetBrains Toolbox application^] to download the JBR11 version
-
-[#change_runtimeplugin]
-=== Download a JetBrains Runtime using the "`Choose Runtime`" plugin
-
-* Install the plugin "`Choose Runtime`" as described in the JetBrains knowledge base "`https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Selecting the JDK version the IDE will run under^]`".
-* Choose a runtime "jbrsdk-11_0_8-...-x64-b944.34.tar.gz" or later and install it. The IDE will restart.
-* Go to the settings of the AsciiDoc plugin and check if the preview is set to "`JCEF Browser`" (recommended if available) or "`JavaFX WebView`".
 
 == Help, preview is still blurry!
 

@@ -7,8 +7,6 @@ This plugin renders the AsciiDoc contents when previewing the documentation.
 
 [NOTE]
 ====
-Support for this is available from AsciiDoc Plugin release 0.30.83 for IntelliJ IDEA 2019.3+ and 0.31.9 for IntelliJ IDEA 2020.2+.
-
 Starting with AsciiDoc Plugin release 0.31.13, it moved to a separate _Asciidoclet_ Plugin as it prevented the AsciiDoc Plugin to be dynamically installable without a restart.
 
 This feature is in its early development and marked "`experimental`".
@@ -43,20 +41,6 @@ Steps::
 Since IDEA release 2020.1 users can choose to show Javadoc comments rendered by the editor.
 With IDEA release 2020.2 and the latest version of the Asciidoclet Plugin this is supported for Asciidoclet as well.
 See chapter https://www.jetbrains.com/help/idea/working-with-code-documentation.html#toggle-rendered-view["`Render Javadocs`"] in the IDEA documentation for more information.
-
-=== Using IntelliJ 2019.3+
-
-Users need to enable this feature in the plugin's settings:
-
-Steps::
-. Open the menu menu:File[Settings... > Languages & Frameworks > AsciiDoc].
-. Check the checkbox "`Enable Asciidoclet support (AsciiDoc in JavaDoc)`".
-
-Once this check-box is enabled, the Quick-Help (kbd:[Ctrl+Q]) will render all Javadoc-comments as AsciiDoc.
-This is a global setting for all projects.
-
-Since IDEA release 2020.1 users can choose to show JavaDoc comments rendered by the editor.
-This is supported with the Asciidoclet plugin from IntelliJ 2020.2 onward only.
 
 == Detection of Asciidoclet vs. Javadoc
 
