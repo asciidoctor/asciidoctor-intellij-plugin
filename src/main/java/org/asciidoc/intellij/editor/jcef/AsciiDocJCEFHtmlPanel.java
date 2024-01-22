@@ -30,6 +30,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
+import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.JBColor;
@@ -430,25 +431,32 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         if (file.equals("stdin")) {
           scrollEditorToLine(line);
         } else {
-          ApplicationManager.getApplication().invokeLater(() -> {
-            VirtualFile targetFile = VirtualFileManager.getInstance().findFileByUrl("file://" + file);
-            if (targetFile != null) {
-              Project project = ProjectUtil.guessProjectForContentFile(targetFile);
-              if (project != null) {
-                if (LightEdit.owns(project)) {
-                  OpenFileAction.openFile(targetFile, project);
-                } else {
-                  int offset = -1;
-                  PsiFile psiFile = PsiManager.getInstance(project).findFile(targetFile);
-                  if (psiFile != null && line > 0) {
-                    offset = StringUtil.lineColToOffset(psiFile.getText(), line - 1, 0);
+          ApplicationManager.getApplication().executeOnPooledThread(() -> {
+            ApplicationManager.getApplication().runReadAction(() -> {
+              VirtualFile targetFile = VirtualFileManager.getInstance().findFileByUrl("file://" + file);
+              if (targetFile != null) {
+                Project project = ProjectUtil.guessProjectForContentFile(targetFile);
+                if (project != null) {
+                  if (LightEdit.owns(project)) {
+                    ApplicationManager.getApplication().invokeLater(() -> {
+                      OpenFileAction.openFile(targetFile, project);
+                    });
+                  } else {
+                    int offset = -1;
+                    PsiFile psiFile = PsiManager.getInstance(project).findFile(targetFile);
+                    if (psiFile != null && line > 0) {
+                      offset = StringUtil.lineColToOffset(psiFile.getText(), line - 1, 0);
+                    }
+                    Navigatable navigatable = PsiNavigationSupport.getInstance().createNavigatable(project, targetFile, offset);
+                    ApplicationManager.getApplication().invokeLater(() -> {
+                      navigatable.navigate(true);
+                    });
                   }
-                  PsiNavigationSupport.getInstance().createNavigatable(project, targetFile, offset).navigate(true);
+                } else {
+                  LOG.warn("unable to identify project: " + targetFile);
                 }
-              } else {
-                LOG.warn("unable to identify project: " + targetFile);
               }
-            }
+            });
           });
         }
       }
