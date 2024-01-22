@@ -879,11 +879,6 @@ public class AsciiDocUtil {
     roots.add(rootPath);
   }
 
-  @TestOnly
-  protected static void addPlaybook(TreeSet<String> playbooks, VirtualFile root) {
-    playbooks.add(root.getPath());
-  }
-
   public static String findAntoraImagesDirRelative(@NotNull Project project, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
     Collection<String> roots = getRoots(project);
