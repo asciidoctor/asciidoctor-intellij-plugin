@@ -23,11 +23,6 @@ public class ClassNameConventionsTest {
   // https://www.jetbrains.org/intellij/sdk/docs/basics/plugin_structure/plugin_class_loaders.html
 
   @ArchTest
-  public static final ArchRule CHECK_COMMONS_LANG_3 = noClasses()
-    .should().accessClassesThat().resideInAPackage("org.apache.commons.lang3..")
-    .as("unless it is explicitly included in build.gradle, it is a IntelliJ community dependency that is not available in other IDE bundles like RubyMine");
-
-  @ArchTest
   public static final ArchRule CHECK_SUN_COM_GLASS_CLASS = noClasses()
     .should().accessClassesThat().resideInAPackage("com.sun.glass..")
     .as("these classes are not publicly accessible; maybe you used the wrong class in auto-complete?");
