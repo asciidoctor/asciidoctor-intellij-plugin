@@ -52,7 +52,7 @@ jobs:
 
       # Validate wrapper
       - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v2.0.0
+        uses: gradle/wrapper-validation-action@v2.0.1
 
   # Build plugin with buildPlugin Gradle task and provide the artifact for the next workflow jobs
   # Requires gradle validation job to be passed
