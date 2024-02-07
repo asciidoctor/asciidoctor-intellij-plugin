@@ -36,7 +36,7 @@ allprojects {
 }
 
 intellij {
-  version = 'IC-241.8102.112-EAP-SNAPSHOT'
+  version = 'IC-241.10840.26-EAP-SNAPSHOT'
   pluginName = 'asciidoctor-intellij-plugin'
   updateSinceUntilBuild = false
   plugins = [

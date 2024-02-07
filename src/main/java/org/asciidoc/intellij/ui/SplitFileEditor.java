@@ -94,7 +94,7 @@ public abstract class SplitFileEditor<E1 extends TextEditor, E2 extends FileEdit
     AsciiDocToolbarPanel myToolbarWrapper = new AsciiDocToolbarPanel(myMainEditor.getEditor(), mySplitter);
     adjustToolbarVisibility(myToolbarWrapper, UISettings.getInstance());
     ApplicationManager.getApplication().getMessageBus().connect(this)
-      .subscribe(UISettingsListener.TOPIC, uiSettings -> adjustToolbarVisibility(myToolbarWrapper, uiSettings));
+      .subscribe(UISettingsListener.TOPIC, (UISettingsListener) uiSettings -> adjustToolbarVisibility(myToolbarWrapper, uiSettings));
 
     final JPanel result = new JPanel(new BorderLayout());
     result.add(myToolbarWrapper, BorderLayout.NORTH);
