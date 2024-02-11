@@ -4,6 +4,7 @@ public enum Platform {
   LINUX_ARM(OS.LINUX, Arch.ARM, "arm64"),
   LINUX_INTEL_64(OS.LINUX, Arch.INTEL, "amd64"),
   WINDOWS_INTEL_64(OS.WINDOWS, Arch.INTEL, "x86_64"),
+  WINDOWS_ARM(OS.WINDOWS, Arch.ARM, "aarch64"),
   MAC_ARM64(OS.MAC, Arch.ARM, "arm64"),
   MAC_INTEL_64(OS.MAC, Arch.INTEL, "x86_64"),
   OTHER(null, null, "");

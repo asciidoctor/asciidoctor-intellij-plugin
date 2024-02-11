@@ -22,7 +22,9 @@ import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
+import org.asciidoc.intellij.download.PandocInfo;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -46,6 +48,14 @@ public class CreateDocxAction extends AsciiDocFileAction {
   public boolean displayTextInToolbar() {
     // this doesn't have an icon, therefore show text
     return true;
+  }
+
+  @Override
+  public void update(@NotNull AnActionEvent event) {
+    super.update(event);
+    if (event.getPresentation().isVisible() && !PandocInfo.identify().supported) {
+      event.getPresentation().setVisible(false);
+    }
   }
 
   @Override

@@ -7,9 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.42.8
+=== 0.41.8
 
 - Workaround for slow EDT warning (#1533)
+- Support Windows 11 on ARM (#1537)
 
 === 0.41.7
 

@@ -16,6 +16,7 @@ import com.intellij.openapi.project.Project;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
+import org.asciidoc.intellij.download.PandocInfo;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +35,14 @@ public class PasteHtmlAction extends AsciiDocAction {
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.PasteHtmlAction";
 
   private static final Logger LOG = Logger.getInstance(PasteHtmlAction.class);
+
+  @Override
+  public void update(@NotNull AnActionEvent event) {
+    super.update(event);
+    if (event.getPresentation().isVisible() && !PandocInfo.identify().supported) {
+      event.getPresentation().setVisible(false);
+    }
+  }
 
   @Override
   public void actionPerformed(AnActionEvent event) {
