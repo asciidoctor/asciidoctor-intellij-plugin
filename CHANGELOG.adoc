@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.41.0
+
+- Bump org.asciidoctor:asciidoctorj-pdf to 2.3.12 (#1536)
+
 === 0.41.8
 
 - Workaround for slow EDT warning (#1533)
