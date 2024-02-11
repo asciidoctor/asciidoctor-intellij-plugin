@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.41.0
+=== 0.41.9
 
 - Bump org.asciidoctor:asciidoctorj-pdf to 2.3.12 (#1536)
 
