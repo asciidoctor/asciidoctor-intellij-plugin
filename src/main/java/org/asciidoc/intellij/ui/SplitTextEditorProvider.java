@@ -65,10 +65,6 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
     return new Builder() {
       @Override
       public @NotNull FileEditor build() {
-        // FileEditorManagerImpl$dumbModeFinished$fileToNewProviders will call this in a background thread
-        // EditorImpl wants to be called from EDT only, let's switch to EDT for this.
-        // This is a known problem: https://youtrack.jetbrains.com/issue/IDEA-318259 in 2023.2 and will be fixed in 2023.3
-        // A workaround didn't work as expected, reverting it.
         return createSplitEditor(firstBuilder.build(), secondBuilder.build());
       }
     };
