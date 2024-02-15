@@ -62,6 +62,16 @@ When Kroki is enabled, the plugin sends the text diagrams to an instance of Krok
 By default, it sends the diagrams to the free public cloud instance {uri-kroki}[kroki.io], but users can install Kroki on their own infrastructure.
 Once the custom instance is set up, update the server URL in the plugin's settings to point to it.
 
+
+=== Using a local Kroki instance
+If docker is installed, it is possible to launch a local Kroki instance listening on port 8000 using the following command:
+[source,shell]
+-----
+docker run --rm -p8000:8000 yuzutech/kroki:latest
+-----
+To use this instance, select http://locahost:8000/ as the URL in the Kroki settings.
+
+
 === Creating PDFs with Kroki diagrams
 
 include::partial$kroki-pdf.adoc[leveloffset=+2]
