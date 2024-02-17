@@ -16,7 +16,6 @@ jobs:
       version: ${{ steps.properties.outputs.version }}
     steps:
 
-      # Setup Java environment for the next steps
       - name: Setup Java
         uses: actions/setup-java@v4.0.0
         with:
