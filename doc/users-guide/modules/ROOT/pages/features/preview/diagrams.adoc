@@ -62,6 +62,22 @@ When Kroki is enabled, the plugin sends the text diagrams to an instance of Krok
 By default, it sends the diagrams to the free public cloud instance {uri-kroki}[kroki.io], but users can install Kroki on their own infrastructure.
 Once the custom instance is set up, update the server URL in the plugin's settings to point to it.
 
+=== Using a local Kroki instance
+
+Users of the AsciiDoc plugin can run a local Kroki instance using containers to avoid sending diagram data to a public cloud instance.
+
+If Docker is installed, it is possible to launch a local Kroki instance listening on port 8000 using the following command:
+
+[source,shell]
+-----
+docker run --rm -p8000:8000 yuzutech/kroki:latest
+-----
+
+To use this instance, open the AsciiDoc plugin's settings and enter as URL of a local Kroki instance `+http://locahost:8000/+`.
+
+Some diagrams (like `bpmn`, `excalidraw`, `mermaid` and `diagramsnet`) require running additional containers.
+See the https://docs.kroki.io/kroki/setup/install/[Kroki installation documentation] for details.
+
 === Creating PDFs with Kroki diagrams
 
 include::partial$kroki-pdf.adoc[leveloffset=+2]
