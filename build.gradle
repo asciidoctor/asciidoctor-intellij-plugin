@@ -131,13 +131,11 @@ dependencies {
   implementation 'org.snakeyaml:snakeyaml-engine:2.7'
   implementation 'org.asciidoctor:asciidoctorj:2.5.11' // WARNING: when upgrading asciidoctorj, see comment above about snakeyaml!
   implementation 'commons-io:commons-io:2.15.1'
-  // used to be 'nl.jworks.markdown_to_asciidoc:markdown_to_asciidoc:1.1' that is only available on jcenter/bintray
-  implementation files('libs/markdown_to_asciidoc-1.1-p1.jar')
-  // explicit dependencies of markdown_to_asciidoc
-  implementation 'org.pegdown:pegdown:1.6.0'
-  implementation 'org.parboiled:parboiled-java:1.4.1'
-  implementation 'org.jsoup:jsoup:1.14.3'
-  // end of markdown_to_asciidoc
+  implementation('io.github.markdown-asciidoc:markdown-to-asciidoc:2.0.0') {
+    // Exclude the Kotlin dependency, as this plugin uses only the Java version of the converter.
+    // This saves ~1.6 MB from the final plugin's bundle.
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
+  }
 
   implementation 'org.apache.commons:commons-text:1.11.0'
   implementation 'org.apache.commons:commons-lang3:3.14.0'
