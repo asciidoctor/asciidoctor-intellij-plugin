@@ -6,7 +6,7 @@ buildscript {
 }
 plugins {
   id "org.jetbrains.intellij" version "1.17.2"
-  id "org.jetbrains.grammarkit" version "2022.3.2.1"
+  id "org.jetbrains.grammarkit" version "2022.3.2.2"
   id "checkstyle"
   id 'org.asciidoctor.jvm.convert' version '4.0.2'
   // once windows classpaths get too long, use this dependency to make them shorter again
@@ -197,7 +197,7 @@ tasks.register("checkJavaVersion") {
 
 generateLexer {
   sourceFile.set(file("src/main/java/org/asciidoc/intellij/lexer/asciidoc.flex"))
-  targetDir.set("gen/org/asciidoc/intellij/lexer")
+  targetOutputDir.set(file("gen/org/asciidoc/intellij/lexer"))
   targetClass.set("_AsciiDocLexer")
 }
 
