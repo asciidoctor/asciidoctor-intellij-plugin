@@ -3,6 +3,7 @@ package org.asciidoc.intellij;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
+import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
@@ -38,35 +39,39 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
   }
 
   public void testShouldRenderPlantUmlAsPngWhenUsingJavaFX() {
-    AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
-      SplitFileEditor.SplitEditorLayout.SPLIT,
-      JavaFxHtmlPanelProvider.INFO,
-      AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
-      SafeMode.UNSAFE,
-      new HashMap<>(),
-      true,
-      true,
-      true,
-      "",
-      "",
-      true,
-      true,
-      false,
-      "",
-      true,
-      true,
-      true,
-      1,
-      false,
-      ""));
-    try {
-      String html = asciidocWrapper.render("[plantuml,test,format=svg]\n" +
-        "----\n" +
-        "List <|.. ArrayList\n" +
-        "----\n", Collections.emptyList());
-      Assertions.assertThat(html).contains("src=\"test.png\"");
-    } finally {
-      AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
+    if (new JavaFxHtmlPanelProvider().isAvailable() == AsciiDocHtmlPanelProvider.AvailabilityInfo.AVAILABLE) {
+      // JavaFX is not available on ARM Mac (M1/M2), therefore the plugins falls back to another preview and SVG will
+      // be available
+      AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
+        SplitFileEditor.SplitEditorLayout.SPLIT,
+        JavaFxHtmlPanelProvider.INFO,
+        AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
+        SafeMode.UNSAFE,
+        new HashMap<>(),
+        true,
+        true,
+        true,
+        "",
+        "",
+        true,
+        true,
+        false,
+        "",
+        true,
+        true,
+        true,
+        1,
+        false,
+        ""));
+      try {
+        String html = asciidocWrapper.render("[plantuml,test,format=svg]\n" +
+          "----\n" +
+          "List <|.. ArrayList\n" +
+          "----\n", Collections.emptyList());
+        Assertions.assertThat(html).contains("src=\"test.png\"");
+      } finally {
+        AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
+      }
     }
   }
 
@@ -303,7 +308,9 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
         "\n" +
         "Person *--1 Location\n" +
         "----\n", Collections.emptyList());
-      assertThat(html).contains("https://kroki.io/erd/png/eNqLDkgtKs7Pi-XSykvMTeXKSM1MzyjhKodQ2kmZRSUZ8Tn5yYklmfl58ZkpXFzRPlAeUAuQn5xZUslVXJJYksqVnF-aV1JUycUFMVJBS1fXUAGmGgCFAiQX");
+      // on Mac ARM, the JavaFX provider is not available, therefore it won't switch to PNG by default
+      assertThat(html).containsPattern("https://kroki.io/erd/(svg|png)/eNqLDkgtKs7Pi" +
+        "-XSykvMTeXKSM1MzyjhKodQ2kmZRSUZ8Tn5yYklmfl58ZkpXFzRPlAeUAuQn5xZUslVXJJYksqVnF-aV1JUycUFMVJBS1fXUAGmGgCFAiQX");
     } finally {
       AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
     }
@@ -505,7 +512,10 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
         "  ]\n" +
         "}\n" +
         "....\n", Collections.emptyList());
-      assertThat(html).contains("https://kroki.io/vega/png/eNqVVcmSmzAQvfsrKCVHgrE9VGZc5UP23PIBKR8ENKAZgSgQjikX_x5JLELYcpzLMDTv9fq6fVk5DnpfRxnkGO0dlHFe1vv1-gQp9lLCsyb0CFv3AGVdnwLvtWYFciX1D4l5JohPvq_eMyBpxoVhOxhKHMekSIUlcFfSEGMuI_0W_zvORf0V1gLnIONzHFJQrpX5hGkD9QRXFBRhDimrWon_hFwH4Zw1hQr63LkW4GcDGARW4BcD-LSzAr8awJeNFfjNAD7bgd_NHO2hfxjAzYsV-NMM_bEbcEf1lG_Hfio1SQtM6zuDYYxyUi5GI75cpuBIiMKcFJyg4NIpqiDie5FHDewElcyqKYUSlGvxbHJk1HCT2HDBmxMvHbIXFGEKd-o5K4Auh7elsoe4iLU1ZjkmsqrLqNtRoQ5KCNBYWqaG605UuEiVu34_JrveBt_zAw0XA5KueNVAX4h7O-t2kfVD-Q3z19kVJIIh2nXGwwYv-4nP826KWVcElKhQyDhnuYzYJ6ebO5Uxh1NIuAFuR7AOluPq7cbsxhlJTegeJJWIrjswNEBXC0XEYqXUSWDCxoUK5yZhPCsvyyLuT1oRxyN4k6wEJZbUpLQmvL2OtZxaT9vaeOM6-t2En1H10hgVJ4RS5XBko5oD0FC-3PaTqfX9p5sK4rmD1fy51PY4VQ7n2VQfnhqm4nSZ0aMeaLYuxDVQUoAJHcRrQq_rebfb7dD_dNaqpf7Qzi6qN4lKi8X3ggflcu1u0I34xpKkBrlzH7amN9Vp5dDGvu7HrxJHhLfGge9vNYeaT2fcORwOzvRbMZelu6CNXzbd7MPRphl5G1bdX_2bNmU=");
+      // on Mac ARM, the JavaFX provider is not available, therefore it won't switch to PNG by default
+      assertThat(html).containsPattern("https://kroki" +
+        ".io/vega/(svg|png)" +
+        "/eNqVVcmSmzAQvfsrKCVHgrE9VGZc5UP23PIBKR8ENKAZgSgQjikX_x5JLELYcpzLMDTv9fq6fVk5DnpfRxnkGO0dlHFe1vv1-gQp9lLCsyb0CFv3AGVdnwLvtWYFciX1D4l5JohPvq_eMyBpxoVhOxhKHMekSIUlcFfSEGMuI_0W_zvORf0V1gLnIONzHFJQrpX5hGkD9QRXFBRhDimrWon_hFwH4Zw1hQr63LkW4GcDGARW4BcD-LSzAr8awJeNFfjNAD7bgd_NHO2hfxjAzYsV-NMM_bEbcEf1lG_Hfio1SQtM6zuDYYxyUi5GI75cpuBIiMKcFJyg4NIpqiDie5FHDewElcyqKYUSlGvxbHJk1HCT2HDBmxMvHbIXFGEKd-o5K4Auh7elsoe4iLU1ZjkmsqrLqNtRoQ5KCNBYWqaG605UuEiVu34_JrveBt_zAw0XA5KueNVAX4h7O-t2kfVD-Q3z19kVJIIh2nXGwwYv-4nP826KWVcElKhQyDhnuYzYJ6ebO5Uxh1NIuAFuR7AOluPq7cbsxhlJTegeJJWIrjswNEBXC0XEYqXUSWDCxoUK5yZhPCsvyyLuT1oRxyN4k6wEJZbUpLQmvL2OtZxaT9vaeOM6-t2En1H10hgVJ4RS5XBko5oD0FC-3PaTqfX9p5sK4rmD1fy51PY4VQ7n2VQfnhqm4nSZ0aMeaLYuxDVQUoAJHcRrQq_rebfb7dD_dNaqpf7Qzi6qN4lKi8X3ggflcu1u0I34xpKkBrlzH7amN9Vp5dDGvu7HrxJHhLfGge9vNYeaT2fcORwOzvRbMZelu6CNXzbd7MPRphl5G1bdX_2bNmU=");
     } finally {
       AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
     }
