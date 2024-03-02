@@ -19,7 +19,7 @@ def check_duplicate_target(attributes, location, parent)
 end
 
 module DuplicateNameBlockHack
-  # see https://github.com/asciidoctor/asciidoctor-diagram/blob/master/lib/asciidoctor-diagram/extensions.rb for the source
+  # see https://github.com/asciidoctor/asciidoctor-diagram/blob/master/lib/asciidoctor-diagram/diagram_processor.rb for the source
   def process(parent, reader_or_target, attributes)
     location = parent.document.reader.cursor_at_mark
     # move back one line to place warning on macro
@@ -30,7 +30,7 @@ module DuplicateNameBlockHack
 end
 
 module DuplicateNameBlockMacroHack
-  # see https://github.com/asciidoctor/asciidoctor-diagram/blob/master/lib/asciidoctor-diagram/extensions.rb for the source
+  # see https://github.com/asciidoctor/asciidoctor-diagram/blob/master/lib/asciidoctor-diagram/diagram_processor.rb for the source
   def process(parent, reader_or_target, attributes)
     location = parent.document.reader.cursor_at_mark
     check_duplicate_target(attributes, location, parent)
