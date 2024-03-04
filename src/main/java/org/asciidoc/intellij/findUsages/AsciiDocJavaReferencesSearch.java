@@ -22,7 +22,9 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
 import com.intellij.util.text.StringSearcher;
 import org.asciidoc.intellij.AsciiDocLanguage;
+import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.psi.AsciiDocJavaReference;
+import org.asciidoc.intellij.psi.AsciiDocSearchScope;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,7 +70,7 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
       // when the user searches all references
       files = myDumbService.runReadActionInSmartMode(() ->
         CacheManager.getInstance(element.getProject())
-          .getFilesWithWord(name, UsageSearchContext.IN_CODE, (GlobalSearchScope) scope, false));
+          .getFilesWithWord(name, UsageSearchContext.IN_CODE, GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope) scope, AsciiDocFileType.INSTANCE), false));
       if (files.length == 0) {
         return;
       }
@@ -101,21 +103,19 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
         }
       }
       ProgressManager.checkCanceled();
-      if (psiFile.getLanguage() == AsciiDocLanguage.INSTANCE) {
-        final CharSequence text = ReadAction.compute(psiFile::getText);
-        LowLevelSearchUtil.processTexts(text, 0, text.length(), searcher, index -> {
-          myDumbService.runReadActionInSmartMode(() -> {
-            PsiReference referenceAt = psiFile.findReferenceAt(index);
-            if (referenceAt instanceof PsiMultiReference) {
-              for (PsiReference reference : ((PsiMultiReference) referenceAt).getReferences()) {
-                checkReference(consumer, element, reference);
-              }
+      final CharSequence text = ReadAction.compute(psiFile::getText);
+      LowLevelSearchUtil.processTexts(text, 0, text.length(), searcher, index -> {
+        myDumbService.runReadActionInSmartMode(() -> {
+          PsiReference referenceAt = psiFile.findReferenceAt(index);
+          if (referenceAt instanceof PsiMultiReference) {
+            for (PsiReference reference : ((PsiMultiReference) referenceAt).getReferences()) {
+              checkReference(consumer, element, reference);
             }
-            checkReference(consumer, element, referenceAt);
-          });
-          return true;
+          }
+          checkReference(consumer, element, referenceAt);
         });
-      }
+        return true;
+      });
     }
     if (pi != null) {
       pi.setText2(null);
