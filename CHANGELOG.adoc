@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Bump org.asciidoctor:asciidoctorj-pdf to 2.3.13 (#1547)
 - Remove code which must not be run in EDT to get compatible with IntelliJ 2024.1 EAP (#1533)
 - Speed-up Java references search to parse fewer files
+- When renaming Java classes, rename their references in AsciiDoc documents as well
 
 === 0.41.8
 

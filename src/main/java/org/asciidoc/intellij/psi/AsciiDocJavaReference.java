@@ -1,10 +1,13 @@
 package org.asciidoc.intellij.psi;
 
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.ElementManipulator;
+import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiPackage;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReferenceBase;
@@ -108,8 +111,13 @@ public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   @Override
-  public PsiElement bindToElement(@NotNull PsiElement element) {
-    return element;
+  public PsiElement bindToElement(@NotNull PsiElement otherElement) {
+    if (!(otherElement instanceof PsiNamedElement otherClass)) {
+      return otherElement;
+    }
+    ElementManipulator<PsiElement> manipulator = ElementManipulators.getManipulator(this.getElement());
+    manipulator.handleContentChange(this.getElement(), getRangeInElement(), otherClass.getName());
+    return otherElement;
   }
 
 }

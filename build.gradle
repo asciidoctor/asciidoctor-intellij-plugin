@@ -16,7 +16,7 @@ plugins {
 }
 
 checkstyle {
-  toolVersion '8.30'
+  toolVersion '9.3'
 }
 
 apply plugin: 'org.jetbrains.intellij'

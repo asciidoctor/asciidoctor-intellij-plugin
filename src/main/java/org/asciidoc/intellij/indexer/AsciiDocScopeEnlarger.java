@@ -1,10 +1,8 @@
 package org.asciidoc.intellij.indexer;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.UseScopeEnlarger;
-import com.intellij.util.SlowOperations;
 import org.asciidoc.intellij.psi.AsciiDocSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
