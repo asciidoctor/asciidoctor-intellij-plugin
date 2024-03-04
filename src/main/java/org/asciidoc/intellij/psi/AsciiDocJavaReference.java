@@ -29,8 +29,7 @@ public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implemen
   }
 
   public boolean matches(PsiElement psiElement) {
-    if (psiElement instanceof PsiClass) {
-      PsiClass psiClass = (PsiClass) psiElement;
+    if (psiElement instanceof PsiClass psiClass) {
       String otherName = psiClass.getName();
       if (otherName == null) {
         return false;

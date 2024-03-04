@@ -72,9 +72,8 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
       if (files.length == 0) {
         return;
       }
-    } else if (scope instanceof LocalSearchScope) {
+    } else if (scope instanceof LocalSearchScope localSearchScope) {
       // when the IDE highlights references of the current file in the editor
-      LocalSearchScope localSearchScope = (LocalSearchScope) scope;
       if (localSearchScope.getScope().length == 1 && localSearchScope.getScope()[0] instanceof PsiFile) {
         files = new PsiFile[] {(PsiFile) localSearchScope.getScope()[0]};
       } else {
@@ -121,8 +120,7 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
   }
 
   private void checkReference(@NotNull Processor<? super PsiReference> consumer, PsiElement element, PsiReference reference) {
-    if (reference instanceof AsciiDocJavaReference) {
-      AsciiDocJavaReference javaReference = (AsciiDocJavaReference) reference;
+    if (reference instanceof AsciiDocJavaReference javaReference) {
       if (javaReference.matches(element)) {
         consumer.process(reference);
       }
