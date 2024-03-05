@@ -873,8 +873,9 @@ public class AsciiDocUtil {
       return;
     }
     String higherEntry = roots.higher(rootPath);
-    if (higherEntry != null && higherEntry.startsWith(rootPath + "/")) {
+    while (higherEntry != null && higherEntry.startsWith(rootPath + "/")) {
       roots.remove(higherEntry);
+      higherEntry = roots.higher(rootPath);
     }
     roots.add(rootPath);
   }

@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - Remove code which must not be run in EDT to get compatible with IntelliJ 2024.1 EAP (#1533)
 - Speed-up Java references search to parse fewer files
 - When renaming Java classes, rename their references in AsciiDoc documents as well
+- Fixed calculation of root paths for multi-module projects (#1558)
 
 === 0.41.8
 
