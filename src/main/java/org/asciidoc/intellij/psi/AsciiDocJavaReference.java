@@ -7,6 +7,7 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
+import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiPackage;
 import com.intellij.psi.PsiPolyVariantReference;
@@ -115,7 +116,14 @@ public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implemen
       return otherElement;
     }
     ElementManipulator<PsiElement> manipulator = ElementManipulators.getManipulator(this.getElement());
-    manipulator.handleContentChange(this.getElement(), getRangeInElement(), otherClass.getName());
+    String oldName = myRangeInElement.substring(myElement.getText());
+    boolean isAnnotation = oldName.startsWith("@");
+    boolean isFullyQualifiedName = oldName.contains(".");
+    manipulator.handleContentChange(this.getElement(), getRangeInElement(),
+      (isAnnotation ? "@" : "") +
+        (isFullyQualifiedName ? ((PsiJavaFile) otherClass.getContainingFile()).getPackageName() + "." : "")
+        + otherClass.getName()
+    );
     return otherElement;
   }
 
