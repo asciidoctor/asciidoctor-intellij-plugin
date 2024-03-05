@@ -205,7 +205,7 @@
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
-  <template name="ad-source:golang" value="[source,go]&#10;.$FILENAME$.php&#10;----&#10;$SOURCE$&#10;----&#10;&#10;$END$" description="GO source code" toReformat="false" toShortenFQNames="true">
+  <template name="ad-source:golang" value="[source,go]&#10;.$FILENAME$.go&#10;----&#10;$SOURCE$&#10;----&#10;&#10;$END$" description="GO source code" toReformat="false" toShortenFQNames="true">
     <variable name="FILENAME" expression="" defaultValue="&quot;filename&quot;" alwaysStopAt="true" />
     <variable name="SOURCE" expression="" defaultValue="" alwaysStopAt="true" />
     <context>
