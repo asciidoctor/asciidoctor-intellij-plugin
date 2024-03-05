@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - Speed-up Java references search to parse fewer files
 - When renaming Java classes, rename their references in AsciiDoc documents as well
 - Fixed calculation of root paths for multi-module projects (#1558)
+- New live template for Golang source code snippets (thanks to @dozer111) (#1553)
 
 === 0.41.8
 
