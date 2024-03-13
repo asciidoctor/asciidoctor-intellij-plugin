@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Render preamble in preview with a slightly larger font (#1567)
 - Use Droid Sans Mono for rendering code in the JCEF preview
+- Bump org.asciidoctor:asciidoctorj from to 2.5.12 (#1562)
 
 === 0.41.9
 
