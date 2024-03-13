@@ -132,7 +132,7 @@ dependencies {
    * https://github.com/asciidoctor/asciidoctorj-pdf/issues/25
    */
   implementation 'org.snakeyaml:snakeyaml-engine:2.7'
-  implementation 'org.asciidoctor:asciidoctorj:2.5.11' // WARNING: when upgrading asciidoctorj, see comment above about snakeyaml!
+  implementation 'org.asciidoctor:asciidoctorj:2.5.12' // WARNING: when upgrading asciidoctorj, see comment above about snakeyaml!
   implementation 'commons-io:commons-io:2.15.1'
   implementation('io.github.markdown-asciidoc:markdown-to-asciidoc:2.0.0') {
     // Exclude the Kotlin dependency, as this plugin uses only the Java version of the converter.
