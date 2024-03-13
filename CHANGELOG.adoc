@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.41.10
 
 - Render preamble in preview with a slightly larger font (#1567)
+- Use Droid Sans Mono for rendering code in the JCEF preview
 
 === 0.41.9
 

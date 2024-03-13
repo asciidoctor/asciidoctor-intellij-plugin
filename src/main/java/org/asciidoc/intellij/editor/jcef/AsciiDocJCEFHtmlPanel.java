@@ -258,6 +258,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
       myGoogleFontsCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/googlefonts.css") + "\">";
+      myDroidSansMonoCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/droidsansmono.css") + "\">";
       myMermaidScript = "<script src=\"" + PreviewStaticServer.getScriptUrl("mermaid/mermaid.min.js") + "\"></script>" +
         "<script>mermaid.initialize(); window.mermaid = mermaid; </script>";
       myAsciidoctorTabsScript = "<script src=\"" + PreviewStaticServer.getScriptUrl("tabs.js") + "\"></script>";
@@ -555,11 +556,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     // the following lines have been added for JavaFX
     // TODO: revisit the following to find out if this is still true for JCEF
 
-    // JavaFX doesn't support synthetic bold/italic, and Droid Sans Mono doesn't have bold/italic styles delivered
-    // https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/193
-    // https://bugs.openjdk.java.net/browse/JDK-8089405
-    css = css.replaceAll("(\"Droid Sans Mono\"),", "");
-
     // otherwise embedded SVG images will be skewed to full height of one browser window
     css = css.replaceAll(Pattern.quote("object,embed{height:100%}"), "");
 
@@ -584,6 +580,8 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private String myDejavuCssLink;
   @Nullable
   private String myGoogleFontsCssLink;
+  @Nullable
+  private String myDroidSansMonoCssLink;
 
   @Nullable
   private String myMermaidScript;
@@ -852,7 +850,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     if (isAntora()) {
       html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink + AsciiDocHtmlPanel.getCssLines(myTabsCss + (isDarcula() ? myTabsCssDarcula : "")), myMermaidScript, myAsciidoctorTabsScript, attributes, editor != null ? editor.getProject() : null);
     } else {
-      html = AsciiDocWrapper.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula + myTabsCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, myMermaidScript, myAsciidoctorTabsScript, attributes, editor != null ? editor.getProject() : null);
+      html = AsciiDocWrapper.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula + myTabsCssDarcula : myInlineCss) + myFontAwesomeCssLink + myDroidSansMonoCssLink + myGoogleFontsCssLink + myDejavuCssLink, myMermaidScript, myAsciidoctorTabsScript, attributes, editor != null ? editor.getProject() : null);
     }
 
     html = html.replaceAll("<head>", "<head>\n" +
