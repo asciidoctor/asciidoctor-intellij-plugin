@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.41.10
+
+- Render preamble in preview with a slightly larger font (#1567)
+
 === 0.41.9
 
 - Bump org.asciidoctor:asciidoctorj-pdf to 2.3.13 (#1547)

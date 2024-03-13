@@ -329,6 +329,10 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     // https://bugs.openjdk.java.net/browse/JDK-8089405
     css = css.replaceAll("(\"Droid Sans Mono\"),", "");
 
+    // ensure that preamble renderes even if classes are appended with line numbers
+    // https://github.com/asciidoctor/asciidoctor/issues/4564
+    css = css.replaceAll(Pattern.quote("#preamble>.sectionbody>[class=paragraph]"), Matcher.quoteReplacement("#preamble>.sectionbody>[class^='paragraph has-source-line']"));
+
     return css;
   }
 

@@ -548,6 +548,10 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       css = IOUtils.toString(steam, StandardCharsets.UTF_8);
     }
 
+    // ensure that preamble renderes even if classes are appended with line numbers
+    // https://github.com/asciidoctor/asciidoctor/issues/4564
+    css = css.replaceAll(Pattern.quote("#preamble>.sectionbody>[class=paragraph]"), Matcher.quoteReplacement("#preamble>.sectionbody>[class^='paragraph has-source-line']"));
+
     // the following lines have been added for JavaFX
     // TODO: revisit the following to find out if this is still true for JCEF
 
