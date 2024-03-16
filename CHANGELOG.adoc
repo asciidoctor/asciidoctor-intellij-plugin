@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Prevent "Read access not allowed" when using LLMs (#1822)
 - Prevent "InvalidVirtualFileAccessException" when iterating the file tree (#1825)
 - Build correct URL for content security policy in IntelliJ 2025.2 EAP (#1837)
+- Update files that use symbolic links (#1840)
 
 === 0.44.5
 

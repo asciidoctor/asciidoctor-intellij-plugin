@@ -433,5 +433,7 @@
     <errorHandler implementation="org.asciidoc.intellij.errorHandler.AsciiDocErrorHandler"/>
     <registryKey defaultValue="true" description="Whether the AsciiDoc view should be displayed in the off-screen mode." key="ide.browser.jcef.asciidocView.osr.enabled" />
     <fileBasedIndex implementation="org.asciidoc.intellij.psi.search.AsciiDocAntoraPlaybookIndexImpl"/>
+    <fileBasedIndex implementation="org.asciidoc.intellij.psi.search.AsciiDocLinkIndexImpl"/>
+    <postStartupActivity implementation="org.asciidoc.intellij.psi.search.AsciiDocLinkProjectOpen"/>
   </extensions>
 </idea-plugin>
