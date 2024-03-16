@@ -97,10 +97,13 @@ public class CreatePdfAction extends AsciiDocFileAction {
         AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(project, fileBaseDir, tempImagesPath, file.getName());
         List<String> extensions = extensionService.getExtensions(project);
         String config = AsciiDocWrapper.config(editor.getDocument(), project);
-        asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.PDF);
+        if (!asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.PDF)) {
+          return false;
+        }
         if (Objects.equals("true", asciiDocWrapper.getAttributes().get("asciidoctor-diagram-missing-diagram-extension"))) {
           AsciiDocDownloadNotificationProvider.showNotification();
         }
+        return true;
       } finally {
         AsciiDocWrapper.cleanupImagesPath(tempImagesPath);
       }

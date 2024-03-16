@@ -61,6 +61,7 @@ import org.asciidoc.intellij.psi.AttributeDeclaration;
 import org.asciidoc.intellij.psi.search.AsciiDocAntoraPlaybookIndex;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
+import org.asciidoc.intellij.ui.FileAccessProblem;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Attributes;
 import org.asciidoctor.AttributesBuilder;
@@ -68,6 +69,7 @@ import org.asciidoctor.Options;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
 import org.asciidoctor.jruby.AsciidoctorJRuby;
+import org.asciidoctor.jruby.internal.AsciidoctorCoreException;
 import org.asciidoctor.log.LogHandler;
 import org.asciidoctor.log.LogRecord;
 import org.asciidoctor.log.Severity;
@@ -75,6 +77,7 @@ import org.intellij.lang.annotations.Language;
 import org.jcodings.EncodingDB;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jruby.exceptions.IOError;
 import org.jruby.exceptions.MainExitException;
 import org.jruby.platform.Platform;
 import org.jruby.util.ByteList;
@@ -117,6 +120,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_YML;
@@ -920,7 +924,7 @@ public class AsciiDocWrapper {
     return 0;
   }
 
-  public void convertTo(File file, String config, List<String> extensions, FileType format) {
+  public boolean convertTo(File file, String config, List<String> extensions, FileType format) {
     VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
       project,
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir));
@@ -959,28 +963,39 @@ public class AsciiDocWrapper {
       } catch (ProcessCanceledException ex) {
         throw ex;
       } catch (Exception | ServiceConfigurationError ex) {
-        LOG.warn("unable to render AsciiDoc document", ex);
-        logHandler.log(new LogRecord(Severity.FATAL, ex.getMessage()));
-        StringBuilder response = new StringBuilder();
-        response.append("unable to render AsciiDoc document");
-        Throwable t = ex;
-        do {
-          response.append("<p>").append(t.getClass().getCanonicalName()).append(": ").append(t.getMessage());
-          if (t instanceof MainExitException && t.getMessage().startsWith("unknown encoding name")) {
-            response.append("<p>Either your local encoding is not supported by JRuby, or you passed an unrecognized value to the Java property 'file.encoding' either in the IntelliJ options file or via the JAVA_TOOL_OPTION environment variable.");
-            String property = SafePropertyAccessor.getProperty("file.encoding", null);
-            response.append("<p>encoding passed by system property 'file.encoding': ").append(property);
-            response.append("<p>available encodings (excuding aliases): ");
-            EncodingDB.getEncodings().forEach(entry -> response.append(entry.getEncoding().getCharsetName()).append(" "));
+        if (ex instanceof AsciidoctorCoreException ac && (ac.getCause() instanceof IOError io)) {
+          ApplicationManager.getApplication().invokeLater(() -> {
+            String message = io.getMessage();
+            if (message != null) {
+              message = message.replaceAll("^" + Pattern.quote("(IOError)"), "");
+            }
+            new FileAccessProblem(message).show();
+          });
+        } else {
+          LOG.warn("unable to render AsciiDoc document", ex);
+          logHandler.log(new LogRecord(Severity.FATAL, ex.getMessage()));
+          StringBuilder response = new StringBuilder();
+          response.append("unable to render AsciiDoc document");
+          Throwable t = ex;
+          do {
+            response.append("<p>").append(t.getClass().getCanonicalName()).append(": ").append(t.getMessage());
+            if (t instanceof MainExitException && t.getMessage().startsWith("unknown encoding name")) {
+              response.append("<p>Either your local encoding is not supported by JRuby, or you passed an unrecognized value to the Java property 'file.encoding' either in the IntelliJ options file or via the JAVA_TOOL_OPTION environment variable.");
+              String property = SafePropertyAccessor.getProperty("file.encoding", null);
+              response.append("<p>encoding passed by system property 'file.encoding': ").append(property);
+              response.append("<p>available encodings (excuding aliases): ");
+              EncodingDB.getEncodings().forEach(entry -> response.append(entry.getEncoding().getCharsetName()).append(" "));
+            }
+            t = t.getCause();
+          } while (t != null);
+          response.append("<p>(the full exception stack trace is available in the IDE's log file. Visit menu item 'Help | Show Log in Explorer' to see the log)");
+          try {
+            boasErr.write(response.toString().getBytes(StandardCharsets.UTF_8));
+          } catch (IOException e) {
+            throw new RuntimeException("Unable to write bytes");
           }
-          t = t.getCause();
-        } while (t != null);
-        response.append("<p>(the full exception stack trace is available in the IDE's log file. Visit menu item 'Help | Show Log in Explorer' to see the log)");
-        try {
-          boasErr.write(response.toString().getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-          throw new RuntimeException("Unable to write bytes");
         }
+        return false;
       } finally {
         // SystemOutputHijacker.deregister();
         Notifier notifier = this::notifyAlways;
@@ -989,6 +1004,7 @@ public class AsciiDocWrapper {
     } finally {
       unlock();
     }
+    return true;
   }
 
   private static void lock() {

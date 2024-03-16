@@ -24,6 +24,7 @@ import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.download.PandocInfo;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
+import org.asciidoc.intellij.ui.FileAccessProblem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -116,14 +117,15 @@ public class CreateDocxAction extends AsciiDocFileAction {
           AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(project, fileBaseDir, tempImagesPath, file.getName());
           String config = AsciiDocWrapper.config(editor.getDocument(), project);
           List<String> extensions = extensionService.getExtensions(project);
-          asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.DOCX);
+          if (!asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.DOCX)) {
+            return false;
+          }
           File finalFile = new File(parent.getCanonicalPath(), docxFile);
           if (finalFile.exists()) {
             if (!finalFile.delete()) {
-              Notification notification = AsciiDocWrapper.getNotificationGroup()
-                .createNotification("Error creating DOCX from AsciiDoc file", "unable to delete target file " + docxFile, NotificationType.ERROR);
-              notification.setImportant(true);
-              Notifications.Bus.notify(notification);
+              ApplicationManager.getApplication().invokeLater(() -> {
+                new FileAccessProblem("Unable to delete target file " + docxFile).show();
+              });
               return false;
             }
           }
@@ -157,19 +159,18 @@ public class CreateDocxAction extends AsciiDocFileAction {
 
           int exitCode = process.waitFor();
           if (exitCode != 0) {
-            Notification notification = AsciiDocWrapper.getNotificationGroup()
-              .createNotification("Error creating DOCX from AsciiDoc file", stdout + " / " + stderr, NotificationType.ERROR);
-            notification.setImportant(true);
-            Notifications.Bus.notify(notification);
+            ApplicationManager.getApplication().invokeLater(() -> {
+              new FileAccessProblem("Error creating DOCX from AsciiDoc file: " + stdout + " / " + stderr).show();
+            });
             return false;
           }
 
           File xml = new File(parent.getCanonicalPath() + File.separator + docbookFile);
           if (!xml.delete()) {
-            Notification notification = AsciiDocWrapper.getNotificationGroup()
-              .createNotification("Can't delete temporary XML file " + xml.getCanonicalPath(), NotificationType.ERROR);
-            notification.setImportant(true);
-            Notifications.Bus.notify(notification);
+            String message = "Can't delete temporary XML file " + xml.getCanonicalPath();
+            ApplicationManager.getApplication().invokeLater(() -> {
+              new FileAccessProblem(message).show();
+            });
           }
 
         } catch (IOException e) {

@@ -82,10 +82,13 @@ public class CreateHtmlAction extends AsciiDocFileAction {
         AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(project, fileBaseDir, tempImagesPath, file.getName());
         String config = AsciiDocWrapper.config(editor.getDocument(), project);
         List<String> extensions = extensionService.getExtensions(project);
-        asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.HTML);
+        if (!asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.HTML)) {
+          return false;
+        }
       } finally {
         AsciiDocWrapper.cleanupImagesPath(tempImagesPath);
       }
+      return true;
     }, "Creating HTML", true, project);
     VirtualFile vf = ApplicationManager.getApplication().runWriteAction((Computable<? extends VirtualFile>) () -> {
       // write action is needed here to update the file system view via refreshAndFindFileByNioPath
