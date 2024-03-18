@@ -17,6 +17,7 @@ This document provides a high-level view of the changes introduced by release.
 - Disable off-screen-rendering if IDE's setting for off-screen-rendering is disabled (#1575)
 - Prevent exception when showing injected AsciiDoc content (#1576)
 - Prevent change-outside-of-command exception when creating a preview for adding an ID to a section (#1577)
+- Bump org.asciidoctor:asciidoctorj-pdf from 2.3.13 to 2.3.15 (#1573)
 
 === 0.41.9
 
