@@ -33,7 +33,6 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
 import icons.AsciiDocIcons;
-import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.PercentCodec;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -1327,8 +1326,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     if (fileName.contains("%")) {
       try {
         fileName = new String(new PercentCodec().decode(fileName.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
-      } catch (DecoderException e) {
-        // noop
+      } catch (Exception e) {
+        // noop for org.apache.commons.codec.DecoderException
+        // Starting in 2024.1, catching this exception in the common library doesn't work any more
       }
     }
     // resolving of files will take place relative to the original element, not the transposed one.

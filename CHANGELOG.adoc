@@ -20,6 +20,7 @@ This document provides a high-level view of the changes introduced by release.
 - Bump org.asciidoctor:asciidoctorj-pdf from 2.3.13 to 2.3.15 (#1573)
 - Capture AssertionError thrown when rendering PlantUML content (#1578)
 - Calculate tree view eagerly in the background to unblock EDT (#1579)
+- Prevent decoder exception when filename contains a percentage sind in IntelliJ 2024.1 EAP (#1580)
 
 === 0.41.9
 
