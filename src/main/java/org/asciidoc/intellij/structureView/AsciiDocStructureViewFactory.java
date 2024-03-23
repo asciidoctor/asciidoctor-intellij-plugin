@@ -17,11 +17,14 @@ public class AsciiDocStructureViewFactory implements PsiStructureViewFactory {
   @Nullable
   @Override
   public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
+    // this runs in the background task, so we can access slow file indexes etc.
+    AsciiDocStructureViewModel model  = new AsciiDocStructureViewModel((AsciiDocFile) psiFile);
     return new TreeBasedStructureViewBuilder() {
       @NotNull
       @Override
       public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
-        return new AsciiDocStructureViewModel((AsciiDocFile) psiFile);
+        // this runs in the EDT, therefore return the pre-computed elements here
+        return model;
       }
     };
   }
