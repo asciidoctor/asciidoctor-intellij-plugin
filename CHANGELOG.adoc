@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - Show error popup if a PDF file can't be written to disk (#1569)
 - Quoted strings now highlighted with a background in the editor even if they contain single or double quotes
 - Disable off-screen-rendering if IDE's setting for off-screen-rendering is disabled (#1575)
+- Prevent exception when showing injected AsciiDoc content (#1576)
 
 === 0.41.9
 

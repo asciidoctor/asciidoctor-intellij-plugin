@@ -2,6 +2,8 @@ package org.asciidoc.intellij.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.AbstractElementManipulator;
@@ -106,15 +108,17 @@ public abstract class AbstractAsciiDocCodeBlock extends CompositePsiElement impl
 
   @Override
   public boolean isValidHost() {
-    // must not use PsiTreeUtil.findChildOfType as it leads to exception
-    for (PsiElement e : this.getChildren()) {
-      // if there is a block macro (typically an include), disable highlighting for all of it
-      if (e instanceof AsciiDocBlockMacro) {
-        return false;
+    return ApplicationManager.getApplication().runReadAction((Computable<Boolean>) () -> {
+      // must not use PsiTreeUtil.findChildOfType as it leads to exception
+      for (PsiElement e : this.getChildren()) {
+        // if there is a block macro (typically an include), disable highlighting for all of it
+        if (e instanceof AsciiDocBlockMacro) {
+          return false;
+        }
       }
-    }
-    // check if there are i.e. non-matching elements
-    return !getContentTextRange().equals(TextRange.EMPTY_RANGE);
+      // check if there are i.e. non-matching elements
+      return !getContentTextRange().equals(TextRange.EMPTY_RANGE);
+    });
   }
 
   /**
