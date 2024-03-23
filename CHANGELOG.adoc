@@ -7,6 +7,12 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.41.11
+
+- Capture AssertionError thrown when rendering PlantUML content (#1578)
+- Calculate tree view eagerly in the background to unblock EDT (#1579)
+- Prevent decoder exception when filename contains a percentage sind in IntelliJ 2024.1 EAP (#1580)
+
 === 0.41.10
 
 - Render preamble in preview with a slightly larger font (#1567)
@@ -18,9 +24,6 @@ This document provides a high-level view of the changes introduced by release.
 - Prevent exception when showing injected AsciiDoc content (#1576)
 - Prevent change-outside-of-command exception when creating a preview for adding an ID to a section (#1577)
 - Bump org.asciidoctor:asciidoctorj-pdf from 2.3.13 to 2.3.15 (#1573)
-- Capture AssertionError thrown when rendering PlantUML content (#1578)
-- Calculate tree view eagerly in the background to unblock EDT (#1579)
-- Prevent decoder exception when filename contains a percentage sind in IntelliJ 2024.1 EAP (#1580)
 
 === 0.41.9
 
