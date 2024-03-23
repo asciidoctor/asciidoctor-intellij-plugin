@@ -3,7 +3,7 @@
 
 IntelliJ will interrupt threads for better interactivity.
 The disadvantage is that this is also triggered when the developer debugs the plugin.
-To disable this functionality find the action "`Disable ProcessCanceledException`" once the IDE has started.
+To disable this functionality find the action "`Skip Window Deactivation Events`" ("`Disable ProcessCanceledException`" in 2023.1 and earlier) once the IDE has started.
 Each restart will reset the settings.
 
 To enable logging at debug and trace level the user (or developer) can change settings via menu:Help[Debug Log Settings] and enter (including the hash at the beginning) a logger name.
