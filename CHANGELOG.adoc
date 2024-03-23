@@ -17,13 +17,13 @@ This document provides a high-level view of the changes introduced by release.
 
 - Render preamble in preview with a slightly larger font (#1567)
 - Use Droid Sans Mono for rendering code in the JCEF preview
-- Bump org.asciidoctor:asciidoctorj from to 2.5.12 (#1562)
+- Bump org.asciidoctor:asciidoctorj to 2.5.12 (#1562)
 - Show error popup if a PDF file can't be written to disk (#1569)
 - Quoted strings now highlighted with a background in the editor even if they contain single or double quotes
 - Disable off-screen-rendering if IDE's setting for off-screen-rendering is disabled (#1575)
 - Prevent exception when showing injected AsciiDoc content (#1576)
 - Prevent change-outside-of-command exception when creating a preview for adding an ID to a section (#1577)
-- Bump org.asciidoctor:asciidoctorj-pdf from 2.3.13 to 2.3.15 (#1573)
+- Bump org.asciidoctor:asciidoctorj-pdf to 2.3.15 (#1573)
 
 === 0.41.9
 
