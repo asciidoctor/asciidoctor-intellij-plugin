@@ -34,6 +34,7 @@ import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.jcef.JBCefApp;
 import com.intellij.ui.jcef.JBCefBrowserBase;
 import com.intellij.ui.jcef.JBCefJSQuery;
 import com.intellij.ui.jcef.JBCefPsiNavigationUtils;
@@ -1135,7 +1136,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   }
 
   private static boolean isOffScreenRenderingEnabled() {
-    return Registry.is("ide.browser.jcef.asciidocView.osr.enabled", true);
+    return Registry.is("ide.browser.jcef.asciidocView.osr.enabled", true) && JBCefApp.isOffScreenRenderingModeEnabled();
   }
 
 }

@@ -54,6 +54,7 @@ This opens a fully equipped Chrome developer tools window that allows users to i
 ====
 In IntelliJ 2021.3.1+, closing the DevTools will also close the IDE.
 This is tracked in upstream issue https://youtrack.jetbrains.com/issue/IDEA-286008[IDEA-286008].
+This seems to be fixed in 2024.1.+.
 
 Possible Workarounds:
 
@@ -62,8 +63,7 @@ Once the DevTools have been closed for an editor, the editor needs to be closed 
 
 * Turn off registry option `ide.browser.jcef.asciidocView.osr.enabled`.
 +
-With OSR turned off, the IDE doesn't close any more on closing the DevTools; instead the preview goes blank once dev tools are closed (see https://youtrack.jetbrains.com/issue/IDEA-284130[IDEA-284130]).
-Closing and re-opening the editor restores the preview.
+With OSR turned off, the IDE doesn't close any more on closing the DevTools.
 +
 Once OSR is turned off, unpinned tool windows can no longer show above the preview (see https://youtrack.jetbrains.com/issue/IDEA-252845[IDEA-252845]).
 ====
