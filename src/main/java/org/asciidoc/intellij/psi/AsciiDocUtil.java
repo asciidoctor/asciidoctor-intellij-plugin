@@ -426,6 +426,9 @@ public class AsciiDocUtil {
   }
 
   public static List<AttributeDeclaration> findAttributes(Project project, String key, PsiElement current, Scope scope) {
+    if (key == null) {
+      return Collections.emptyList();
+    }
     String constant = AsciiDocFoldingBuilder.COLLAPSABLE_ATTRIBUTES.get(key);
     if (constant != null) {
       return List.of(new AsciiDocAttributeDeclarationDummy(key, constant));

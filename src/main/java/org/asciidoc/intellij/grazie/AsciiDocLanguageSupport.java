@@ -7,6 +7,7 @@ import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.TokenType;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
@@ -181,7 +182,7 @@ public class AsciiDocLanguageSupport {
   }
 
   public Behavior getElementBehavior(@NotNull PsiElement root, @NotNull PsiElement child) {
-    if (root != child && child.getNode() != null && NODES_TO_CHECK.contains(child.getNode().getElementType())) {
+    if (root != child && NODES_TO_CHECK.contains(getElementType(child))) {
       return Behavior.ABSORB;
     } else if (root == child && child instanceof AsciiDocAttributeDeclarationImpl) {
       if (((AsciiDocAttributeDeclarationImpl) child).hasSpellCheckableContent()) {
@@ -202,7 +203,7 @@ public class AsciiDocLanguageSupport {
       return Behavior.UNKNOWN;
     } else if (child instanceof AsciiDocTextQuoted && ((AsciiDocTextQuoted) child).isMono()) {
       return Behavior.UNKNOWN;
-    } else if (child.getNode() != null && SEPARATOR_TOKENS.contains(child.getNode().getElementType())) {
+    } else if (SEPARATOR_TOKENS.contains(getElementType(child))) {
       return Behavior.SEPARATE;
     } else if (root != child && child instanceof AsciiDocInlineMacro && ((AsciiDocInlineMacro) child).getMacroName().equals("footnote")) {
       return Behavior.ABSORB;
@@ -210,7 +211,7 @@ public class AsciiDocLanguageSupport {
       // A link or URL can contain either a macro text or no text.
       // AsciiDoc will display the macro text, or the link/email address if no such text is provided.
       // Pass on the content that would be displayed by AsciiDoc to the grammar check.
-      (child.getNode() != null && (child.getNode().getElementType() == AsciiDocTokenTypes.URL_LINK || child.getNode().getElementType() == AsciiDocTokenTypes.URL_EMAIL) &&
+      ((getElementType(child) == AsciiDocTokenTypes.URL_LINK || getElementType(child) == AsciiDocTokenTypes.URL_EMAIL) &&
         isChildOfLinkOrUrl(child))) {
       boolean macroTextPresent = false;
       ASTNode node = child.getNode();
@@ -241,13 +242,21 @@ public class AsciiDocLanguageSupport {
       } else {
         return Behavior.UNKNOWN;
       }
-    } else if (child.getNode() != null && TEXT_TOKENS.contains(child.getNode().getElementType())) {
+    } else if (TEXT_TOKENS.contains(getElementType(child))) {
       return Behavior.TEXT;
-    } else if (child.getNode() != null && UNKNOWN_TOKENS.contains(child.getNode().getElementType())) {
+    } else if (UNKNOWN_TOKENS.contains(getElementType(child))) {
       return Behavior.UNKNOWN;
     } else {
       return Behavior.STEALTH;
     }
+  }
+
+  private static IElementType getElementType(@NotNull PsiElement child) {
+    ASTNode node = child.getNode();
+    if (node != null) {
+      return node.getElementType();
+    }
+    return null;
   }
 
   private boolean isChildOfLinkOrUrl(@NotNull PsiElement child) {
@@ -265,7 +274,7 @@ public class AsciiDocLanguageSupport {
     @Override
     public void visitElement(@NotNull PsiElement element) {
       super.visitElement(element);
-      if (element.getNode() != null && (element.getNode().getElementType() == AsciiDocTokenTypes.MACROTEXT || element.getNode().getElementType() == AsciiDocTokenTypes.REFTEXT)) {
+      if (getElementType(element) == AsciiDocTokenTypes.MACROTEXT || getElementType(element) == AsciiDocTokenTypes.REFTEXT) {
         found = true;
         return;
       }
@@ -293,7 +302,7 @@ public class AsciiDocLanguageSupport {
           ((AsciiDocInlineMacro) psiElement).getMacroName().equals("footnote")) {
           result = true;
         } else {
-          result = (psiElement.getNode() != null && NODES_TO_CHECK.contains(psiElement.getNode().getElementType()))
+          result = NODES_TO_CHECK.contains(getElementType(psiElement))
             || psiElement instanceof PsiComment;
         }
         // as the calculated value depends only on the PSI node and its subtree, try to be more specific than the PsiElement
