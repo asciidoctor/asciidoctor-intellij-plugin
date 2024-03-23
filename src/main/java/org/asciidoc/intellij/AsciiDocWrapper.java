@@ -834,7 +834,7 @@ public class AsciiDocWrapper {
         // AlreadyDisposedException: IDE is shutting down
         // ProcessCanceledException: reading interrupted by event dispatch thread
         throw ex;
-      } catch (Exception | ServiceConfigurationError ex) {
+      } catch (Exception | AssertionError | ServiceConfigurationError ex) {
         boolean exceptionInLog = checkIfExceptionShouldAppearInLog(ex);
         if (exceptionInLog) {
           logHandler.log(new LogRecord(Severity.FATAL, ex.getMessage()));
