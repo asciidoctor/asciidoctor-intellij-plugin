@@ -65,10 +65,4 @@ public class AsciiDocSplitEditorProvider extends SplitTextEditorProvider {
     return new AsciiDocSplitEditor(((TextEditor) firstEditor), ((AsciiDocPreviewEditor) secondEditor));
   }
 
-  @Override
-  public void disposeEditor(@NotNull FileEditor fileEditor) {
-    // default -- needed for IntelliJ IDEA 15 compatibility
-    Disposer.dispose(fileEditor);
-  }
-
 }
