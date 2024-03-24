@@ -22,7 +22,6 @@ import org.asciidoc.intellij.util.FilenameUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
