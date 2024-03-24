@@ -8,6 +8,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -67,6 +68,20 @@ public class ConvertToAsciiDocAction extends AnAction {
       }
     }
 
+    if (existingFile != null && !FileEditorManager.getInstance(project).getEditorList(existingFile).isEmpty()) {
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        // closing the file might trigger a save, therefore, wrap in write action
+        FileEditorManager.getInstance(project).closeFile(existingFile);
+      });
+    }
+
+    if (!FileEditorManager.getInstance(project).getEditorList(virtualFile).isEmpty()) {
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        // closing the file might trigger a save, therefore, wrap in write action
+        FileEditorManager.getInstance(project).closeFile(virtualFile);
+      });
+    }
+
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
@@ -89,8 +104,7 @@ public class ConvertToAsciiDocAction extends AnAction {
               }
               asciiDocFile = PsiFileFactory.getInstance(project).createFileFromText(newFileName, AsciiDocFileType.INSTANCE, asciiDocContent);
               PsiFile newFile = (PsiFile) file.getContainingDirectory().add(asciiDocFile);
-
-              deleteVirtualFile();
+              file.delete();
 
               ApplicationManager.getApplication().invokeLater(() -> {
                 if (newFile.isValid()) {
@@ -102,13 +116,6 @@ public class ConvertToAsciiDocAction extends AnAction {
             }
           }
 
-          private void deleteVirtualFile() {
-            try {
-              virtualFile.delete(this);
-            } catch (IOException e) {
-              log.error("unable to delete file", e);
-            }
-          }
         }, getName(), getGroupId(), UndoConfirmationPolicy.REQUEST_CONFIRMATION);
       }
     });

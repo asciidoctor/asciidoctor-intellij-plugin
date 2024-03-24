@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - Prevent decoder exception when filename contains a percentage sind in IntelliJ 2024.1 EAP (#1580)
 - Avoid NPE when searching for Java references (#1582)
 - Avoid invalidated objects when searching for Java references (#1583)
+- Close files before converting file from Markdown to AsciiDoc (#1584)
 
 === 0.41.10
 
