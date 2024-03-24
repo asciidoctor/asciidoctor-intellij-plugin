@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - Avoid NPE when searching for Java references (#1582)
 - Avoid invalidated objects when searching for Java references (#1583)
 - Close files before converting file from Markdown to AsciiDoc (#1584)
+- Add `structurizr.com` to the allow-list to show contents in an iframe in the preview (#1510)
 
 === 0.41.10
 

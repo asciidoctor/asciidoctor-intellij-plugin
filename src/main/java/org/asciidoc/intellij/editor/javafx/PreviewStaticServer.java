@@ -81,7 +81,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
         + "img-src file: data: localfile: *; connect-src 'none'; font-src *; " +
         "object-src data: file: localfile: *;" + // used for interactive SVGs
         "media-src 'none'; child-src 'none'; " +
-        "frame-src 'self' https://player.vimeo.com/ https://www.youtube.com/"; // used for vimeo/youtube iframes
+        "frame-src 'self' https://player.vimeo.com/ https://www.youtube.com/ https://structurizr.com/"; // used for vimeo/youtube iframes
     } else {
       // this will restrict external content as much as possible
       result = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/scripts/").toExternalForm() + "; "
