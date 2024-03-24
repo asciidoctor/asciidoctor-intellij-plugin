@@ -101,18 +101,20 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
       }
       ProgressManager.checkCanceled();
       final CharSequence text = ReadAction.compute(psiFile::getText);
-      LowLevelSearchUtil.processTexts(text, 0, text.length(), searcher, index -> {
-        myDumbService.runReadActionInSmartMode(() -> {
-          PsiReference referenceAt = psiFile.findReferenceAt(index);
-          if (referenceAt instanceof PsiMultiReference) {
-            for (PsiReference reference : ((PsiMultiReference) referenceAt).getReferences()) {
-              checkReference(consumer, element, reference);
+      if (text != null) {
+        LowLevelSearchUtil.processTexts(text, 0, text.length(), searcher, index -> {
+          myDumbService.runReadActionInSmartMode(() -> {
+            PsiReference referenceAt = psiFile.findReferenceAt(index);
+            if (referenceAt instanceof PsiMultiReference) {
+              for (PsiReference reference : ((PsiMultiReference) referenceAt).getReferences()) {
+                checkReference(consumer, element, reference);
+              }
             }
-          }
-          checkReference(consumer, element, referenceAt);
+            checkReference(consumer, element, referenceAt);
+          });
+          return true;
         });
-        return true;
-      });
+      }
     }
     if (pi != null) {
       pi.setText2(null);
