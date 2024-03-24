@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiPackage;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.cache.CacheManager;
@@ -104,13 +105,16 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
       if (text != null) {
         LowLevelSearchUtil.processTexts(text, 0, text.length(), searcher, index -> {
           myDumbService.runReadActionInSmartMode(() -> {
-            PsiReference referenceAt = psiFile.findReferenceAt(index);
-            if (referenceAt instanceof PsiMultiReference) {
-              for (PsiReference reference : ((PsiMultiReference) referenceAt).getReferences()) {
-                checkReference(consumer, element, reference);
+            try {
+              PsiReference referenceAt = psiFile.findReferenceAt(index);
+              if (referenceAt instanceof PsiMultiReference) {
+                for (PsiReference reference : ((PsiMultiReference) referenceAt).getReferences()) {
+                  checkReference(consumer, element, reference);
+                }
               }
+              checkReference(consumer, element, referenceAt);
+            } catch (PsiInvalidElementAccessException ignored) {
             }
-            checkReference(consumer, element, referenceAt);
           });
           return true;
         });
