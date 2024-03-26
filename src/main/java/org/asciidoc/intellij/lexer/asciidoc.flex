@@ -1051,7 +1051,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         resetFormatting();
         if (style == null) {
           yypushback(yylength()); yybegin(SINGLELINE);
-        } else if ("source".equals(style)) {
+        } else if ("source".equals(style) || "".equals(style)) {
           yypushback(yylength()); yybegin(LISTING_NO_DELIMITER);
         } else if ("pass".equals(style)) {
           yypushback(yylength()); yybegin(PASSTHROUGH_NO_DELIMITER);
@@ -2005,7 +2005,12 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         yybegin(ATTR_VAL_START);
       }
       return AsciiDocTokenTypes.ASSIGNMENT; }
-  ","                  { return AsciiDocTokenTypes.SEPARATOR; }
+  "," {
+      // if no style has been set yet, set to empty string which might be handled like "source" later
+      if (this.style == null) {
+          setStyle("");
+      }
+      return AsciiDocTokenTypes.SEPARATOR; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
   "]"                  { yybegin(EOL_POP); return AsciiDocTokenTypes.ATTRS_END; }

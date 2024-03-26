@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.41.12
 
 - Fix Kroki diagram rendering in preview which broke in release 0.41.10 (#1585)
+- Inject language in listings where `source` style is implicit (#1566)
 
 === 0.41.11
 

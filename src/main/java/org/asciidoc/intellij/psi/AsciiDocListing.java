@@ -87,7 +87,8 @@ public class AsciiDocListing extends AbstractAsciiDocCodeBlock {
             firstAttr = firstAttr.substring(0, locationOfPercent);
           }
         }
-        if (attr.length >= 2 && "source".equalsIgnoreCase(firstAttr)) {
+        if (attr.length >= 2 && ("source".equalsIgnoreCase(firstAttr) || firstAttr.isEmpty())) {
+          // empty first attribute defaults to source
           return "source-" + attr[1];
         } else if ("plantuml".equalsIgnoreCase(firstAttr)) {
           return "diagram-plantuml";

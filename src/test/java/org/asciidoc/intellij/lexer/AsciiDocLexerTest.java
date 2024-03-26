@@ -2573,6 +2573,19 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:TEXT ('Text')");
   }
 
+  public void testListingWithLanguageButNoSource() {
+    doTest("[,php]\nListing\n\nText",
+      "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:SEPARATOR (',')\n" +
+        "AsciiDoc:ATTR_NAME ('php')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:LISTING_TEXT ('Listing')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
   public void testListingWithRef() {
     doTest("[source#ref]\nListing\n\nText",
       "AsciiDoc:ATTRS_START ('[')\n" +

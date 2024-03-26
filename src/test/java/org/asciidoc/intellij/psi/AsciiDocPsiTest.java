@@ -260,6 +260,13 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertEquals("source-java", listing.getFenceLanguage());
   }
 
+  public void testListingLanguageWithoutSource() {
+    PsiFile psiFile = configureByAsciiDoc("[,java]\n----\nfoo\n----\n");
+    AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);
+    assertNotNull(listing);
+    assertEquals("source-java", listing.getFenceLanguage());
+  }
+
   public void testDiagramLanguage() {
     PsiFile psiFile = configureByAsciiDoc("[plantuml]\n----\nfoo\n----\n");
     AsciiDocListing listing = PsiTreeUtil.getChildOfType(psiFile, AsciiDocListing.class);

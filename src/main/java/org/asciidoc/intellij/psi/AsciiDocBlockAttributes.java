@@ -2,10 +2,13 @@ package org.asciidoc.intellij.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -48,9 +51,34 @@ public class AsciiDocBlockAttributes extends AsciiDocASTWrapperPsiElement {
       }
     }
 
-    Collection<AsciiDocAttributeInBrackets> children = PsiTreeUtil.findChildrenOfType(this, AsciiDocAttributeInBrackets.class);
-    if (children.size() > 0) {
-      return children.stream().map(AsciiDocAttributeInBrackets::getAttrName).toArray(String[]::new);
+    Collection<String> attrNames = new ArrayList<>();
+    PsiElement child = this.getFirstChild();
+    while (child != null) {
+      if (child.getNode().getElementType() == AsciiDocTokenTypes.SEPARATOR) {
+        // empty name attribute
+        attrNames.add("");
+        child = child.getNextSibling();
+      } else if (child instanceof AsciiDocAttributeInBrackets aib) {
+        attrNames.add(aib.getAttrName());
+        child = child.getNextSibling();
+        while (child != null) {
+          // skip all following whitespaces and one separator
+          if (child instanceof PsiWhiteSpace) {
+            child = child.getNextSibling();
+          } else if (child.getNode().getElementType() == AsciiDocTokenTypes.SEPARATOR) {
+            child = child.getNextSibling();
+            break;
+          } else {
+            // possibly ATTRS_END
+            break;
+          }
+        }
+      } else {
+        child = child.getNextSibling();
+      }
+    }
+    if (!attrNames.isEmpty()) {
+      return attrNames.toArray(String[]::new);
     }
     return null;
   }
