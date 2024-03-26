@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.41.12
+
+- Fix Kroki diagram rendering in preview which broke in release 0.41.10 (#1585)
+
 === 0.41.11
 
 - Capture AssertionError thrown when rendering PlantUML content (#1578)

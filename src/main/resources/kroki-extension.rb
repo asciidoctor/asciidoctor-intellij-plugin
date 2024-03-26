@@ -296,7 +296,7 @@ module AsciidoctorExtensions
     end
 
     def encode
-      Base64.urlsafe_encode64(Zlib::Deflate.deflate(@text, 9))
+      ([Zlib::Deflate.deflate(@text, 9)].pack 'm0').tr '+/', '-_'
     end
 
     def save(output_dir_path, kroki_client)
@@ -400,7 +400,7 @@ module AsciidoctorExtensions
     require 'json'
 
     class << self
-      REFERER = "asciidoctor/kroki.rb/0.9.1-intellij"
+      REFERER = "asciidoctor/kroki.rb/0.10.0-intellij"
 
       def get(uri, opts, _)
         uri = URI(uri)
