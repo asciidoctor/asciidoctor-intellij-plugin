@@ -16,7 +16,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Capture AssertionError thrown when rendering PlantUML content (#1578)
 - Calculate tree view eagerly in the background to unblock EDT (#1579)
-- Prevent decoder exception when filename contains a percentage sind in IntelliJ 2024.1 EAP (#1580)
+- Prevent decoder exception when filename contains a percentage sign in IntelliJ 2024.1 EAP (#1580)
 - Avoid NPE when searching for Java references (#1582)
 - Avoid invalidated objects when searching for Java references (#1583)
 - Close files before converting file from Markdown to AsciiDoc (#1584)
