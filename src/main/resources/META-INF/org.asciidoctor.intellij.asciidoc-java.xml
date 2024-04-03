@@ -4,6 +4,7 @@
     <psi.referenceContributor language="AsciiDoc" implementation="org.asciidoc.intellij.findUsages.AsciiDocJavaReferenceContributor"/>
     <lang.findUsagesProvider language="AsciiDoc" implementationClass="org.asciidoc.intellij.findUsages.AsciiDocFindJavaProvider"/>
     <referencesSearch implementation="org.asciidoc.intellij.findUsages.AsciiDocJavaReferencesSearch"/>
+    <useScopeEnlarger implementation="org.asciidoc.intellij.indexer.AsciiDocJavaScopeEnlarger" />
   </extensions>
   <extensions defaultExtensionNs="org.asciidoc.intellij">
     <asciidocRunner implementation="org.asciidoc.intellij.commandRunner.AsciiDocRunnerForJava" />

@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.41.13
+
+- Fix refactoring in Java and Kotlin code which was broken since 0.41.9 (#1591)
+
 === 0.41.12
 
 - Fix Kroki diagram rendering in preview which broke in release 0.41.10 (#1585)

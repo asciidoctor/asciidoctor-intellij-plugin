@@ -5,6 +5,15 @@
       <inspection_tool class="GraziCommit" enabled="true" level="TYPO" enabled_by_default="true" />
     </profile>
   </component>
+  <component name="GitSharedSettings">
+    <option name="FORCE_PUSH_PROHIBITED_PATTERNS">
+      <list>
+        <option value="master" />
+        <option value="mainx" />
+      </list>
+    </option>
+    <option name="synchronizeBranchProtectionRules" value="false" />
+  </component>
   <component name="IssueNavigationConfiguration">
     <option name="links">
       <list>
