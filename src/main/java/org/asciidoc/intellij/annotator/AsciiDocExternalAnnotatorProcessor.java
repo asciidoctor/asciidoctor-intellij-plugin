@@ -26,6 +26,7 @@ import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
 import org.asciidoc.intellij.psi.AsciiDocFile;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
+import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFile;
 import org.asciidoc.intellij.quickfix.AsciiDocCreateMissingFileIntentionAction;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
@@ -204,7 +205,7 @@ implements DumbAware {
         // document might have changed in the meantime, check number of lines to avoid out-of-bounds exception
         if (document != null && lineNumberForAnnotation < annotationResult.getDocument().getLineCount()) {
           PsiElement element = file.findElementAt(document.getLineStartOffset(lineNumberForAnnotation));
-          if (element != null && element.getParent() instanceof AsciiDocBlockMacro) {
+          if (element != null && AsciiDocCreateMissingFile.isAvailable(element.getParent())) {
             ab = ab.withFix(new AsciiDocCreateMissingFileIntentionAction(element.getParent()));
           }
         }

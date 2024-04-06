@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.41.15
+
+- Fix NPE for quick-fix to create an include when source is not a file (#1592)
+
 === 0.41.14
 
 - Fix syntax highlighting in the editor after block-macros with multiple attributes (#1613)
