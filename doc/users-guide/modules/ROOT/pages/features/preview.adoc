@@ -10,28 +10,28 @@ Using the configuration, the user can change the split to horizontal, and change
 
 The plugin uses https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] 2.x to render the preview.
 
-By default, the plugin runs Asciidoctor in mode _UNSAFE_, which is also the default when a user runs Asciidoctor from the command line.
-The user can change the behavior to other modes like _SAVE_, _SERVER_ and _SECURE_ in the plugin's settings.
+By default, the plugin runs Asciidoctor in _UNSAFE_ mode, which is also the default when a user runs Asciidoctor from the command line.
+In the plugin's settings, the user can change the behavior to other modes, such as _SAFE_, _SERVER_, and _SECURE_.
 See section https://asciidoctor.org/docs/user-manual/#running-asciidoctor-securely[Running Asciidoctor securely in the Asciidoctor User Manual] for more information about this feature.
 
-When using the JCEF of the JavaFX preview and the safe mode setting _SAVE_, _SERVER_ or _SECURE_, remote content is no longer allowed in the preview.
+Remote content is no longer allowed in the JavaFX preview when using the JCEF and the safe mode settings _SAFE_, _SERVER_, or _SECURE_.
 With this setting the plugin applies a Content Security Policy to prevent this (new in plugin version 0.32.32).
 
 When the user enters formulas using Asciidoctor's math support, the preview renders them using MathML.
-If the formula can't be parsed by MathML, the preview shows an error popup.
+If MathML can't parse the formula, the preview shows an error popup.
 
 When the user moves the cursor in the editor, the preview scrolls the text into the preview.
 
 When the user clicks on the text in the preview, the editor moves the cursor to the clicked text.
-This is accurate at block level, unfortunately not yet on the line or the character level.
-If the content of the preview is part of an included file, the editor opens the included file (new in plugin version 0.32.5).
+This is accurate at the block level, but unfortunately, it is not yet accurate at the line or character levels.
+If the preview content is part of an included file, the editor opens the included file (new in plugin version 0.32.5).
 When the user clicks on a collapsible block, this click will not place the cursor or open a file.
 
-The JCEF and browser preview as well as the HTML conversion support the https://github.com/asciidoctor/asciidoctor-tabs[Asciidoctor Tabs extension] (new i nplugin version 0.40.3).
+The JCEF, browser preview, and HTML conversion support the https://github.com/asciidoctor/asciidoctor-tabs[Asciidoctor Tabs extension] (new in plugin version 0.40.3).
 For the preview, it sets ths attribute `tabs-sync-option` so any re-rendering keeps the focus on the currently selected tab.
 Selecting a tab with a mouse click will not place the cursor in the editor and will not open an included file.
 To place the cursor or open the included file, click on the body of the tab.
-The Asciidoctor Tabs extension is not supported for the JavaFX preview, and not supported for the PDF generation.
+The Asciidoctor Tabs extension is not supported for the JavaFX preview and is not supported for PDF generation.
 
 When the user clicks on an external URL, the preview opens it in an external browser.
 
@@ -43,7 +43,7 @@ Windows and Linux users have a dropdown menu for this.
 MacOS users need to type the extension for the target file name (`.svg` or `.png`)
 
 The user can zoom in and out of the preview by holding kbd:[Ctrl] and scrolling the mouse wheel up or down.
-Clicking the middle mouse button whilst holding kbd:[Ctrl] resets the zoom to 100%.
+Clicking the middle mouse button while holding kbd:[Ctrl] resets the zoom to 100%.
 
 == Advanced
 
