@@ -3017,6 +3017,20 @@ public class AsciiDocLexerTest extends LexerTestCase {
         "AsciiDoc:ATTRS_END (']')");
   }
 
+  public void testBlockMacroWithTwoAttributes() {
+    doTest("macro::text[1,2]\n\nText",
+      "AsciiDoc:BLOCK_MACRO_ID ('macro::')\n" +
+        "AsciiDoc:BLOCK_MACRO_BODY ('text')\n" +
+        "AsciiDoc:ATTRS_START ('[')\n" +
+        "AsciiDoc:ATTR_NAME ('1')\n" +
+        "AsciiDoc:SEPARATOR (',')\n" +
+        "AsciiDoc:ATTR_NAME ('2')\n" +
+        "AsciiDoc:ATTRS_END (']')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:EMPTY_LINE ('\\n')\n" +
+        "AsciiDoc:TEXT ('Text')");
+  }
+
   public void testBlockMacroAutocompleteWithOtherMacroInSameLine() {
     doTest("xref:" + CompletionUtilCore.DUMMY_IDENTIFIER + " and other xref:complete[] normal text",
       "AsciiDoc:LINKSTART ('xref:')\n" +

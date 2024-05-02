@@ -2005,15 +2005,22 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         yybegin(ATTR_VAL_START);
       }
       return AsciiDocTokenTypes.ASSIGNMENT; }
-  "," {
-      // if no style has been set yet, set to empty string which might be handled like "source" later
-      if (this.style == null) {
-          setStyle("");
-      }
-      return AsciiDocTokenTypes.SEPARATOR; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
   "\n"                 { yypopstate(); return AsciiDocTokenTypes.LINE_BREAK; }
   "]"                  { yybegin(EOL_POP); return AsciiDocTokenTypes.ATTRS_END; }
+}
+
+<BLOCK_ATTRS> {
+  "," {
+        // if no style has been set yet, set to empty string which might be handled like "source" later
+        if (this.style == null) {
+            setStyle("");
+        }
+        return AsciiDocTokenTypes.SEPARATOR; }
+}
+
+<BLOCK_MACRO_ATTRS> {
+  "," { return AsciiDocTokenTypes.SEPARATOR; }
 }
 
 <BLOCK_ATTRS> {

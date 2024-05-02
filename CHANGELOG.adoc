@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.41.14
+
+- Fix syntax highlighting in the editor after block-macros with multiple attributes (#1613)
+
 === 0.41.13
 
 - Fix refactoring in Java and Kotlin code which was broken since 0.41.9 (#1591)
