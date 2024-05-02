@@ -571,7 +571,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <MULTILINE> {
-  "---" \n [a-zA-Z0-9_]+ ":" {
+  "---" \n ([ a-zA-Z0-9_'\"-]+ ":" | [ ]* "#") {
         if (zzMarkedPos == yylength()) {
           yybegin(FRONTMATTER); yypushstate(); yypushback(yylength()-3); yybegin(EOL_POP);
           return AsciiDocTokenTypes.FRONTMATTER_DELIMITER;

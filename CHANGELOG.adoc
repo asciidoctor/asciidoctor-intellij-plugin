@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Fix syntax highlighting in the editor after block-macros with multiple attributes (#1613)
 - Automatically clear lock for JCEF preview to prevent a blank preview (#1610)
+- Improved detection of frontmatter for AsciiDoc files (#1595)
 
 === 0.41.13
 

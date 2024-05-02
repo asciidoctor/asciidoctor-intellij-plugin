@@ -3334,10 +3334,19 @@ public class AsciiDocLexerTest extends LexerTestCase {
   }
 
   public void testFrontmatter() {
-    doTest("---\nhi: ho\n---",
+    doTest("---\nhi-hi: ho\n---",
       "AsciiDoc:FRONTMATTER_DELIMITER ('---')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
-        "AsciiDoc:FRONTMATTER ('hi: ho')\n" +
+        "AsciiDoc:FRONTMATTER ('hi-hi: ho')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:FRONTMATTER_DELIMITER ('---')");
+  }
+
+  public void testFrontmatterWithComment() {
+    doTest("---\n# comment\n---",
+      "AsciiDoc:FRONTMATTER_DELIMITER ('---')\n" +
+        "AsciiDoc:LINE_BREAK ('\\n')\n" +
+        "AsciiDoc:FRONTMATTER ('# comment')\n" +
         "AsciiDoc:LINE_BREAK ('\\n')\n" +
         "AsciiDoc:FRONTMATTER_DELIMITER ('---')");
   }
