@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.41.14
 
 - Fix syntax highlighting in the editor after block-macros with multiple attributes (#1613)
+- Automatically clear lock for JCEF preview to prevent a blank preview (#1610)
 
 === 0.41.13
 
