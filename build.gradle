@@ -102,8 +102,8 @@ runPluginVerifier {
   // https://github.com/JetBrains/gradle-intellij-plugin/blob/master/src/main/kotlin/org/jetbrains/intellij/tasks/RunPluginVerifierTask.kt#L485
   failureLevel = [FailureLevel.INVALID_PLUGIN, FailureLevel.COMPATIBILITY_PROBLEMS, FailureLevel.NOT_DYNAMIC]
   ideVersions = Arrays.asList(project.properties['pluginVerifierIdeVersions'].toString().split(','))
-  // Version 1.364 seems to have a problem, downgrading.
-  // https://youtrack.jetbrains.com/issue/MP-6388
+  // Version 1.364 seems has to have a problem due to https://youtrack.jetbrains.com/issue/MP-6388
+  // Version 1.365 has a problem as I can't disable the check for the 'intellij' in the plugin ID verification
   verifierVersion = '1.307'
 }
 
