@@ -50,7 +50,7 @@ image::technical-writing/toolbox-start-ide.png[]
 [#other-ides-by-jetbrains]
 == Other IDEs by JetBrains
 
-The company JetBrains maintains a portfolio of different IDEs with different target audiences.
+The company JetBrains maintains a portfolio of different IDEs with different primary audiences.
 Some of them are free and have "`Community`" in their name, others need a paid subscription.
 Students at universities might get a free subscription, and there are trial periods to try out the paid subscriptions.
 
@@ -65,8 +65,8 @@ Students at universities might get a free subscription, and there are trial peri
 [#alternative-installation-options]
 == Alternative installation options
 
-Users can also download IntelliJ IDEA from the JetBrains as an archive https://www.jetbrains.com/idea/download[from the download page].
-This is a good option to install the IDE on a PC which doesn't have an internet connection.
+Users can also download IntelliJ IDEA from JetBrains as an archive https://www.jetbrains.com/idea/download[from the download page].
+This is a good option to install the IDE on a PC that doesn't have an internet connection.
 
 Some Linux distributions contain pre-packaged versions of the IDE, but as those sometimes lack features or components that are required by the AsciiDoc plugin's preview.
 Therefore, they are _not_ recommended.

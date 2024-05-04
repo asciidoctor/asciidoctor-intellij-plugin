@@ -22,7 +22,7 @@ Follow these steps to set up IntelliJ IDEA as the tool for technical writing.
 Each page gives a brief overview to get started and links to other pages in this guide for additional information.
 
 [.shadow]#image:technical-writing/udemy-course.jpeg[link={link-udemy-course},float="right",align="center"]#
-There is an link:{link-udemy-course}[online course at Udemy] that contains approx. 60 minutes of video content covering several chapters of this guide.
+There is an link:{link-udemy-course}[online course at Udemy] that contains approx. Sixty minutes of video content covering several chapters of this guide.
 By clicking on this affiliate link, you ensure that almost all the money you pay is forwarded to the maintainer of this plugin.
 
 If the information in the following pages is missing an aspect and leaves questions unanswered, visit the xref:./getting-help.adoc[] page to find more documentation resources and learn where to contact other users of the plugin to collaborate and to get answers to questions.

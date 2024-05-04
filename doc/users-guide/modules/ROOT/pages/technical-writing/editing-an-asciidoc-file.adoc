@@ -48,7 +48,7 @@ image::technical-writing/intellij-tool-windows.png[]
 
 . The project view is a tree view of all files in the project.
 Clicking on "`Project`" hides and shows this view.
-This is a functionality of all tool windows.
+This works with all tool windows.
 
 . The structure view displays the structure of the current AsciiDoc file in the editor.
 Clicking on "`Structure`" hides and shows this view.

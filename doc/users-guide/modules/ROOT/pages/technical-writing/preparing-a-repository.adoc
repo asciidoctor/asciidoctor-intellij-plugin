@@ -57,7 +57,7 @@ trim_trailing_whitespace = true
 insert_final_newline = true
 ----
 
-The AsciiDoc plugin support reformatting settings which can be configured via this file as well.
+The AsciiDoc plugin supports reformatting settings which can be configured via this file as well.
 See xref:features/advanced/reformatting.adoc[] for details.
 
 See the IntelliJ docs about https://www.jetbrains.com/help/idea/editorconfig.html[EditorConfig support] for further information.
@@ -87,7 +87,7 @@ Other IDEs like Eclipse and VSCode support this file in a similar way, although 
 ----
 <1> Define a custom attribute.
 <2> Define attributes that enable Asciidoctor features and rendering.
-<3> Specify the location of the images.The attribute `++{asciidoctorconfigdir}++` points to the folder with the `.asciidoctorconfig` file, and in this example `/images` contains all images.
+<3> Specify the location of the images. The attribute `++{asciidoctorconfigdir}++` points to the folder with the `.asciidoctorconfig` file, and in this example `/images` contains all images.
 
 After this change, the attribute value `++{myprojectname}++` will show as `Awesome product`, the `:experimental` setting enables macros like the `++kbd:[]++` macro, and images in the sub-folder `images` will show in the preview.
 
@@ -165,7 +165,7 @@ To change this for IntelliJ for a Git repository, update the following settings 
 !/.idea/externalDependencies.xml
 ----
 
-For each plugin a minimum and maximum version can be specified.
+For each plugin, a minimum and maximum version can be specified.
 This can encourage collaborators to update to a minimum version if the project requires the latest features or bug fixes of a plugin.
 
 image::technical-writing/intelllij-required-plugin-version.png[]

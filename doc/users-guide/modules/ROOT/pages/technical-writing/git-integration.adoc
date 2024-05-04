@@ -21,9 +21,9 @@ To use the Git command line, choose the "`Terminal`" toolbox tab in IntelliJ to 
 The following example assumes that:
 
 * The project is a checked-out remote repository.
-* The local repository has a remote "`upstream`" with points to the main repository where people collaborate around a branch "`main`".
-* The local repository has a remote "`origin`" with points to a clone of the main repository where the user wants to create a branch from where they want to create a pull request later.
-+ The currently checked out branch in the local repository is "`main`" and points to the remote "`origin`".
+* The local repository has a remote `upstream` with points to the main repository where people collaborate around a branch `main`.
+* The local repository has a remote `origin` with points to a clone of the main repository where the user wants to create a branch from where they want to create a pull request later.
+* The currently checked-out branch in the local repository is `main` and points to the remote `origin`.
 
 === Overview of the controls and tool windows
 
@@ -39,7 +39,7 @@ image::technical-writing/intellij-git.png[]
 Open it by click on the tool window or use the shortcut [.windows.linux]#kbd:[Alt+0]# [.macos]#kbd:[⌘ 0]#.
 Explore the different actions in the toolbar by hovering with the mouse over the different icons.
 +
-Double-click on a highlighted file or press [.windows.linux]#kbd:[Ctrl+D]# [.macos]#kbd:[⌘ D]# to show the differences side-by-side. See the IntelliJ documentation on how to https://www.jetbrains.com/help/idea/comparing-file-versions.html[Compare file and folder versions].
+Double-click on a highlighted file or press [.windows.linux]#kbd:[Ctrl+D]# [.macos]#kbd:[⌘ D]# to show the difference side-by-side. See the IntelliJ documentation on how to https://www.jetbrains.com/help/idea/comparing-file-versions.html[Compare file and folder versions].
 
 === Resolving merge conflicts
 

@@ -25,7 +25,7 @@ This screen allows technical writers to
 
 * Installing Plugins
 
-* Start a tutorial to learn an IntelliJ IDEA
+* Start a tutorial to learn IntelliJ IDEA
 
 Users find a short introduction video in the online help for IntelliJ IDEA in chapter https://www.jetbrains.com/help/idea/run-for-the-first-time.html[Run IntelliJ IDEA for the first time].
 
@@ -47,7 +47,7 @@ If a user wants to install, uninstall or disable plugins later, https://www.jetb
 
 === Optional: Customize the IDE
 
-The customize screen allows users to choose the color theme.
+The customizing screen allows users to choose the color theme.
 While dark mode ("`Darcula`") is the default, users can choose a light or high contrast mode.
 
 image::technical-writing/intellij-customize.png[]
@@ -56,7 +56,7 @@ All future dialogs in this guide use the IntelliJ light theme.
 
 If a user wants to change this later, https://www.jetbrains.com/help/idea/user-interface-themes.html[this can be changed in the IDE's settings].
 
-=== Optional: Start a tutorial to learn an IntelliJ IDEA
+=== Optional: Start a tutorial to learn IntelliJ IDEA
 
 The button btn:[Start Learning] starts a tutorial that explains the IDEs features.
 

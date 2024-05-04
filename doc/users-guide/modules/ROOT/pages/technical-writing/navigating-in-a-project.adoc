@@ -90,9 +90,9 @@ The user opens and hides the project view by clicking on menu:Project[] in the t
 
 image::technical-writing/intellij-project-view.png[]
 
-In the upper right corner there are different view variants. For technical writing, the style menu:Project[] should be used.
+In the upper right corner, there are different view variants. For technical writing, the style menu:Project[] should be used.
 
-In the upper right corner is a crosshair icon:
+In the upper right corner is a cross-hair icon:
 Clicking it selects the file
 that is opened in active editor in the tree view which allows locating a file in the project's hierarchy.
 

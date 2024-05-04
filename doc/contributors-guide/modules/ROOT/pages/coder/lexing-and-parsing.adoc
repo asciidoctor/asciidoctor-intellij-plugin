@@ -13,7 +13,7 @@ Each token has a type and a snippet of characters.
 The standard tool in IntelliJ is https://jflex.de[JFlex].
 
 The heart of lexing is `asciidoc.flex`.
-It defines multiple states, and uses a lot of functionalities and tweaking to parse AsciiDoc.
+It defines multiple states and uses a lot of functionalities and tweaking to parse AsciiDoc.
 Developers can add new token types in `AsciiDocTokenTypes`.
 Ensure to update the list `TOKENS_TO_MERGE` if consecutive identical types of the tokens should be merged.
 If the content of the token types should be spell-checked, add the token types to the list of tokens in `AsciiDocSpellcheckingStrategy`.
@@ -29,7 +29,7 @@ A typical developer workflow for enhancing the lexer looks like this:
 . Change `asciidoc.flex` in the IDE, adding new entries to `AsciiDocTokenTypes` as needed.
 . Run `gradlew compileJava` on the command line.
 . Add a test case to `AsciiDocLexerTest` and run it from the IDE.
-. If lexing does not yet work as expected repeat from step 1.
+. If lexing does not yet work as expected, repeat from step 1.
 . If lexing returns the expected result, update the `expected` parameter in the test.
 
 There is a ready-to-use run-configuration in Intellij called "`AsciiDocLexerTest`" that will re-generate the lexer and run the tests in one go.
@@ -45,7 +45,7 @@ If you get the syntax wrong, the converter usually prints the wrong syntax "`as 
 Only a matching set of for example asterisks (`*`) produces bold text.
 --
 
-Here some JFlex rules for AsciiDoc together with an explanation:
+Here are some JFlex rules for AsciiDoc together with an explanation:
 
 Look ahead rules::
 +
@@ -65,7 +65,7 @@ End of line and end of file parsing::
 --
 JFlex supports `$` to describe the end of a line as look-ahead.
 But this doesn't work at the end of a file.
-To match the end of a file, the lexer uses the fact that JFlex will match the longest rule first (including any look-ahead rules).
+To match the end of a file, the lexer uses the fact that JFlex will match the longest rule first, including any look-ahead rules.
 So first match the end of a line, then when not at the end of a line with the same length, and then the end of the file (the shortest rule).
 
 .Example: matching a delimiter at the end of the file
@@ -85,7 +85,7 @@ So first match the end of a line, then when not at the end of a line with the sa
 Stateful parser::
 +
 --
-To parse bold, italic and monospace text (that can be nested) there is a set of boolean variables to memorize the current text style.
+To parse bold, italic and monospace text, which can be nested, there is a set of boolean variables to memorize the current text style.
 They are reset at the end of a block, like in a regular AsciiDoc file.
 The function `textFormat()` uses them to determine the current token type from a combination of these flags.
 
@@ -95,7 +95,7 @@ Other states memorize the length of block separator line to find the matching cl
 Qualifying matches, push back and state change::
 +
 --
-After a match the Java code checks additional conditions like if this is an unconstrained position in the stream.
+After a match, the Java code checks additional conditions like if this is an unconstrained position in the stream.
 If the code decides to discard the match, two possible strategies out of several are:
 
 . Push back all but the first character, and return the token type for the single character.
@@ -114,7 +114,7 @@ Auto-completion::
 +
 --
 Expressions described above match expressions once they have their closing syntax completed, and it is essential for the correct highlighting.
-To support autocomplete the matching must handle an expression where only the left part of the expression exists.
+To support autocomplete, the matching must handle an expression where only the left part of the expression exists.
 
 A special case is in the parser to support autocompletion, as IntelliJ inserts a special string when parsing the content for autocompletion (named `auto-complete` in our parser).
 
@@ -137,10 +137,10 @@ Highlighting is coloring the text in the editor.
 The file `AsciiDocSyntaxHighlighter` defines one `TextAttributesKey` to each entry in `AsciiDocTokenTypes` parsed during lexing.
 Currently, several tokens have the same highlighting `ASCIIDOC_MARKER`, so users have the same color for the pointy brackets around references (`\<<ref>>`)and markers for bold (`\*bold*`).
 
-Once you add a new `TextAttributesKey`, you should either:
+Once you add a new `TextAttributesKey`, either:
 
-. reference an existing color (like `ASCIIDOC_COMMENT` references `DefaultLanguageHighlighterColors.LINE_COMMENT`) OR
-. add a color the AsciiDoc themes `AsciidocDefault.xml` and `AsciidocDarcula.xml`
+. Reference an existing color (like `ASCIIDOC_COMMENT` references `DefaultLanguageHighlighterColors.LINE_COMMENT`).
+. Add a color the AsciiDoc themes `AsciidocDefault.xml` and `AsciidocDarcula.xml`.
 
 Once you add a new token, you will need to add it to `AsciiDocColorSettingsPage` so users can customize the colors of their theme.
 This class references also `SampleDocument.adoc` and `AsciiDocBundle.properties`, therefore you'll probably need to change these two files as well.
@@ -184,7 +184,7 @@ To support this `TITLE` and several other elements call `markPreBlock()` to memo
 It is stored in a variable `myPreBlockMarker`.
 
 When parsing of the block starts and the `myPreBlockMarker` is set, it uses this marker.
-If the marker is not set, is creates a new marker at the start of the block delimiter.
+If the marker is not set, it creates a new marker at the start of the block delimiter.
 When the block doesn't start on one of the following lines, `dropPreBlock()` drops the marker.
 --
 
@@ -222,7 +222,7 @@ The tests come in two variants:
 AsciiDocPsiTest::
 +
 --
-This test parses a minimal snippet of AsciiDoc, creates the PSI tree, and the lets you apply assertions like in normal unit tests.
+This test parses a minimal snippet of AsciiDoc, creates the PSI tree, and allows for assertions like in normal unit tests.
 
 Use this to write specific tests.
 Consider a given/when/then structure to write tests that are comprehensible for other developers.
@@ -239,7 +239,7 @@ Then put a matching AsciiDoc file to the example file directory (like `sectionsW
 When you run the test for the first time, it will create a known good file (like `sectionsWithPreBlock.txt`).
 Check the contents of the known good file if the result matches your expectations.
 
-On consecutive runs the test will compare the parser result with the contents of the known good file.
+On consecutive runs, the test will compare the parser result with the contents of the known good file.
 If the content matches, the test will pass.
 If there are differences, the test will fail.
 If you expected these differences, for example, because you changed the parser or lexer, copy the result shown in your IDE to the known good file.
@@ -263,7 +263,7 @@ Writing such a test is often slower as it requires more code and skill, but it w
 
 === References and renaming
 
-All PsiElement that reference files (like for example an `include::[]`) or IDs (like for example `\<<id>>`) return references.
+All PsiElement that reference files like, for example, an `include::[]`, or IDs like, for example, an `+<<id>>+` return references.
 Examples for this are `AsciiDocBlockMacro` and `AsciiDocRef`.
 They all need to provide a `Manipulator` that IntelliJ calls when the user renames such a reference.
 To make the "`Find References`" functionality work, the tokens that contain the IDs need to be part of the Identifier-Token-Set in `AsciiDocWordsScanner`.

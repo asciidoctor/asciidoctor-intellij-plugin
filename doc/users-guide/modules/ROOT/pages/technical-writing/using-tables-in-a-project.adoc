@@ -14,10 +14,10 @@ See xref:./opening-the-first-project.adoc[] and xref:./editing-an-asciidoc-file.
 
 == Creating a new table
 
-There are multiple ways to create a AsciiDoc table in IntelliJ.
+There are multiple ways to create an AsciiDoc table in IntelliJ.
 See the following sections for an overview.
 
-For large tables, <<use-csv-or-other-delimited-formats, consider the CSV format>>.
+For large tables, <<use-csv-or-other-delimited-formats,consider the CSV format>>.
 
 === Live template
 
@@ -32,7 +32,7 @@ image::technical-writing/intellij-table-choose-size.png[]
 
 === Create table by size
 
-As above, but select menu:Create Table Dialog...[] to specify the size of the height and width of the table.
+As above, but select menu:Create Table Dialog...[] to specify the table's height and width.
 
 image::technical-writing/intellij-table-dimensions.png[]
 
@@ -47,8 +47,8 @@ image::technical-writing/intellij-table-paste.png[]
 [#use-csv-or-other-delimited-formats]
 === Use CSV or other delimited formats
 
-Use an include to create a table from a CSV file.
-This is ideals for large, uniform tables.
+Use an include directive to create a table from a CSV file.
+This is ideal for large, uniform tables.
 
 IntelliJ includes CSV file support, see the screenshots at the end of this section.
 It allows adding and moving rows and columns more efficiently than the standard AsciiDoc format.

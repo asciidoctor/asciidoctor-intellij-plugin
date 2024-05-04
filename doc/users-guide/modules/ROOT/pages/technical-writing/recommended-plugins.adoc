@@ -8,7 +8,7 @@ include::partial$technical-writing-series.adoc[]
 
 == Prerequisites
 
-This assumes that IntelliJ IDEA is already installed on the PC, a project is open and some first AsciiDoc content exists.
+This assumes that IntelliJ IDEA is already installed on the PC, a project is open, and some first AsciiDoc content exists.
 See xref:./installing-intellij.adoc[], xref:./opening-the-first-project.adoc[] and xref:./editing-an-asciidoc-file.adoc[] for details.
 
 == Adding plugins to IntelliJ
@@ -29,10 +29,10 @@ image::install-from-marketplace.png[Screenshot from settings menu when installin
 . Click on the button btn:[Install].
 . Once the download is complete, press the button btn:[Apply] and restart the IDE if there is a prompt to do so.
 
-Sometimes 3rd party plugin might need some time to be available for the latest version of IntelliJ, so they might prevent a user from upgrading to the latest version of IntelliJ.
+Sometimes third-party plugins might need some time to be available for the latest version of IntelliJ, so they might prevent a user from upgrading to the latest version of IntelliJ.
 The plugins listed here are well-maintained and are usually available once a new version of IntelliJ is available.
 
-If a plugin should suggested to other contributors to a plugin, consider adding it to the required plugins for the project and checking in that configuration to the repository.
+If a plugin should be suggested to other contributors, consider adding it to the required plugins for the project and checking in that configuration to the repository.
 See xref:./preparing-a-repository.adoc#specifying-required-plugins[Specifying required plugins] for details.
 
 === Advanced Terminal with clickable file names
@@ -46,10 +46,10 @@ It will also make URLs in the console clickable.
 
 === Advanced Grammar checking with Grazie Professional
 
-The plugin Grazie already offers spell and grammar checking for several languages, and auto-detect the language of the text.
-For IntelliJ it is installed by default, so no additional action is necessary for the user.
+The plugin Grazie already offers spell and grammar checking for several languages, and autodetect the language of the text.
+For IntelliJ, it is installed by default, so no additional action is necessary for the user.
 
-For additional grammar checking, and typing suggestions, there's the plugin https://plugins.jetbrains.com/plugin/16136-grazie-professional[Grazie Professional].
+For additional grammar checking and typing suggestions, there's the plugin https://plugins.jetbrains.com/plugin/16136-grazie-professional[Grazie Professional].
 
 include::partial$memory-requirements-grazie.adoc[]
 
@@ -118,9 +118,9 @@ To edit such a file with the extension `.puml` with a preview window, install th
 
 === Editing Diagrams with diagrams.net in the IDE
 
-The https://diagrams.net/[diagrams.net project] (previously known as draw.io) offers a what-you-see-is-what-you-get graphical editor for diagrams.
+The https://diagrams.net/[diagrams.net project] (previously known as draw.io) offers a what-you-see-is-what-you-get (WYSIWYG) graphical editor for diagrams.
 The files can be stored as XML, SVG or PNG.
-The special feature of SVGs and PNGs is that they can be displayed in a browser without conversion, yet they are still editable with the diagrams.net editor.
+The special feature of SVGs and PNGs is that they can be displayed in a browser without a conversion, yet they are still editable with the diagrams.net editor.
 
 To edit such a file in the IDE, install the https://plugins.jetbrains.com/plugin/15635-diagrams-net-integration[Diagrams.net plugin].
 While this plugin is still a very early version, it can support technical writers in managing their content.

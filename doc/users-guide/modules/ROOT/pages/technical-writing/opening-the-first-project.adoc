@@ -14,7 +14,7 @@ See xref:./installing-intellij.adoc[] and xref:./starting-intellij-first-time.ad
 == Opening a project
 
 A project is usually either a single folder on the local disk, or a remote Git repository.
-While a project can xref:features/advanced/multimodule.adoc[consist of multiple local folders], this is an advanced case which is possible but not recommended for users new to IntelliJ.
+While a project can xref:features/advanced/multimodule.adoc[consist of multiple local folders], this is an advanced case that is possible but not recommended for users new to IntelliJ.
 
 This dialog shows the startup screen when IntelliJ is started for the first time.
 
@@ -27,14 +27,14 @@ For a technical writing project, choose the menu entry menu:Empty Project[] to a
 
 Open:: Choose a folder on the local disk to open it as a project.
 Usually, this is the root folder of a previously checked-out Git repository.
-If the project contains a lot of files, it might help to open only a sub-folder with the documentation.
+If the project contains a lot of files, it might help to open only a subfolder with the documentation.
 
 Get from VCS::
 Specify a URL with the remote repository and an empty local folder where to check out the files.
 
 Once the step is complete, IntelliJ opens the project in the IDE view.
 
-Assuming the user chose to create an empty project with the name "`helloworld`", the result will look similar to the following.
+Assuming the user chose to create an empty project with the name `helloworld`, the result will look similar to the following.
 
 image::technical-writing/intellij-empty-project.png[]
 

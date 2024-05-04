@@ -14,7 +14,7 @@ See xref:./opening-the-first-project.adoc[] and xref:./editing-an-asciidoc-file.
 
 == Learning the AsciiDoc syntax with Kata
 
-A kata is an exercise which focuses on learning something new.
+A kata is an exercise that focuses on learning something new.
 
 The primary goals of this exercise are:
 
@@ -50,7 +50,7 @@ After this first exercise, pick other exercises which are relevant to your day-t
 
 Instead of practicing the AsciiDoc syntax alone, learners can team up with a second person to solve these exercises.
 
-There's also a collaborative web editor which has been designed for such a training.
+There's also a collaborative web editor that has been designed for such a training.
 See this https://www.ahus1.de/post/interactive-asciidoc-training[blog post] for details on how to run such a training event.
 
 == Further reading
