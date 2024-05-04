@@ -89,6 +89,11 @@ jobs:
           # Path to SARIF file relative to the root of the repository
           sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
 
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/qodana/results/report
+
   github-pages:
     environment:
       name: github-pages
@@ -100,23 +105,11 @@ jobs:
     if: github.ref_name == 'main'
     permissions:
       pages: write
-      actions: read
       id-token: write
     steps:
 
-      # Download plugin artifact provided by the previous job
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: qodana-report
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./results/report
 
       - name: Deploy to GitHub Pages
         id: deployment
