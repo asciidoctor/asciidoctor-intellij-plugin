@@ -38,7 +38,7 @@ image::technical-writing/intellij-table-dimensions.png[]
 
 === Paste a table from a spreadsheet
 
-As above, but select menu:Paste Table...[] to paste a table which has been copied for example from a spreadsheet programm to the clipboard.
+As above, but select menu:Paste Table...[] to paste a table which has been copied, for example, from a spreadsheet program to the clipboard.
 For this to work usually menu:tab[] separator works best.
 Independent of the format the user selects, it is converted to the standard AsciiDoc table when pasted.
 

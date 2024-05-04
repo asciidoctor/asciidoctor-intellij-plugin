@@ -39,7 +39,7 @@ See xref:./preparing-a-repository.adoc#specifying-required-plugins[Specifying re
 
 In the Terminal tool window, IntelliJ offers a command line interface.
 
-A command like [.linx.macos]#`ls`# [.windows]#`dir`# will show a list of files, but to open one of them the user would need to mark the text, copy it to the clipboard and paste it into a search field for search by file via [.windows.linux]#kbd:[Ctrl+Shift+N]# [.macos]#kbd:[⌘ ⇧ O]#.
+A command like [.linux.macos]#`ls`# [.windows]#`dir`# will show a list of files, but to open one of them the user would need to mark the text, copy it to the clipboard and paste it into a search field for search by file via [.windows.linux]#kbd:[Ctrl+Shift+N]# [.macos]#kbd:[⌘ ⇧ O]#.
 
 To avoid the copy-and-paste of file names and to make the filenames clickable, install the plugin https://plugins.jetbrains.com/plugin/7677-awesome-console[Awesome Console].
 It will also make URLs in the console clickable.

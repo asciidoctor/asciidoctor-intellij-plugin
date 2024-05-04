@@ -122,26 +122,14 @@ Instead of writing content like this:
 
 [source,java,subs="quotes"]
 ----
-/\**
- * [source,java]
- * --
- *     ##@##SuppressWarnings("UnusedDeclaration")
- *     /\*...*/
- * --
-...
+include::example$asciidoclet-example-before.java[]
 ----
 
 Rewrite it like this:
 
 [source,java,subs="quotes"]
 ----
-/\**
- * [source,java]
- * --
- *     ##{at}##SuppressWarnings("UnusedDeclaration")
- *     /\*...*/
- * --
-...
+include::example$asciidoclet-example-after.java[]
 ----
 
 === Start path of includes
