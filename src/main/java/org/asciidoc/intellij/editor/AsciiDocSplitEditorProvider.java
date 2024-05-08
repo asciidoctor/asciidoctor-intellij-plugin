@@ -39,10 +39,14 @@ public class AsciiDocSplitEditorProvider extends SplitTextEditorProvider {
                       // an AsciiDoc file in a non-split editor, close and re-open the file to enforce split editor
                       ApplicationManager.getApplication().runWriteAction(() -> {
                         // closing the file might trigger a save, therefore, wrap in write action
-                        fem.closeFile(vFile);
+                        if (!project.isDisposed()) {
+                          fem.closeFile(vFile);
+                        }
                       });
                       // opening the file accesses AWT, must not be wrapped in a write action
-                      fem.openFile(vFile, false);
+                      if (!project.isDisposed()) {
+                        fem.openFile(vFile, false);
+                      }
                     });
                   }
                 }
@@ -56,10 +60,9 @@ public class AsciiDocSplitEditorProvider extends SplitTextEditorProvider {
 
   @Override
   protected FileEditor createSplitEditor(@NotNull final FileEditor firstEditor, @NotNull FileEditor secondEditor) {
-    if (!(firstEditor instanceof TextEditor) || !(secondEditor instanceof AsciiDocPreviewEditor)) {
+    if (!(firstEditor instanceof TextEditor) || !(secondEditor instanceof AsciiDocPreviewEditor asciiDocPreviewEditor)) {
       throw new IllegalArgumentException("Main editor should be TextEditor");
     }
-    AsciiDocPreviewEditor asciiDocPreviewEditor = (AsciiDocPreviewEditor) secondEditor;
     asciiDocPreviewEditor.setEditor(((TextEditor) firstEditor).getEditor());
     return new AsciiDocSplitEditor(((TextEditor) firstEditor), ((AsciiDocPreviewEditor) secondEditor));
   }
