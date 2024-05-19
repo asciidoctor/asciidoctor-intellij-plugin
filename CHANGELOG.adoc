@@ -7,14 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.41.16
-
-- Upgrade to AsciidoctorJ v2.5.13 and asciidoctor 2.0.23
-
 === 0.41.15
 
 - Fix NPE for quick-fix to create an include when source is not a file (#1592)
 - Prevent AlreadyDisposedException during startup when re-opening editors (#1617)
+- Upgrade to AsciidoctorJ v2.5.13 and asciidoctor 2.0.23
 
 === 0.41.14
 
