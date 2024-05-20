@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Fix NPE for quick-fix to create an include when source is not a file (#1592)
 - Prevent AlreadyDisposedException during startup when re-opening editors (#1617)
 - Upgrade to AsciidoctorJ v2.5.13 and asciidoctor 2.0.23
+- Detect dark editor theme in light IDE to apply correct background color for monospaced contents in the editor (#1620)
 
 === 0.41.14
 

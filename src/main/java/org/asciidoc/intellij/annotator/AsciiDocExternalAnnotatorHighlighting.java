@@ -4,6 +4,10 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -44,32 +48,32 @@ public class AsciiDocExternalAnnotatorHighlighting extends ExternalAnnotator<Str
           boolean isBold = ((AsciiDocTextQuoted) element).isBold();
           if (isMono && isBold && isItalic) {
             holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-              .enforcedTextAttributes(AsciiDocSyntaxHighlighter.ASCIIDOC_MONOBOLDITALIC.getDefaultAttributes())
+              .enforcedTextAttributes(attributesOf(AsciiDocSyntaxHighlighter.ASCIIDOC_MONOBOLDITALIC))
               .range(element)
               .create();
           } else if (isMono && isItalic) {
             holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-              .enforcedTextAttributes(AsciiDocSyntaxHighlighter.ASCIIDOC_MONOITALIC.getDefaultAttributes())
+              .enforcedTextAttributes(attributesOf(AsciiDocSyntaxHighlighter.ASCIIDOC_MONOITALIC))
               .range(element)
               .create();
           } else if (isBold && isItalic) {
             holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-              .enforcedTextAttributes(AsciiDocSyntaxHighlighter.ASCIIDOC_BOLDITALIC.getDefaultAttributes())
+              .enforcedTextAttributes(attributesOf(AsciiDocSyntaxHighlighter.ASCIIDOC_BOLDITALIC))
               .range(element)
               .create();
           } else if (isMono) {
             holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-              .enforcedTextAttributes(AsciiDocSyntaxHighlighter.ASCIIDOC_MONO.getDefaultAttributes())
+              .enforcedTextAttributes(attributesOf(AsciiDocSyntaxHighlighter.ASCIIDOC_MONO))
               .range(element)
               .create();
           } else if (isItalic) {
             holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-              .enforcedTextAttributes(AsciiDocSyntaxHighlighter.ASCIIDOC_ITALIC.getDefaultAttributes())
+              .enforcedTextAttributes(attributesOf(AsciiDocSyntaxHighlighter.ASCIIDOC_ITALIC))
               .range(element)
               .create();
           } else if (isBold) {
             holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-              .enforcedTextAttributes(AsciiDocSyntaxHighlighter.ASCIIDOC_BOLD.getDefaultAttributes())
+              .enforcedTextAttributes(attributesOf(AsciiDocSyntaxHighlighter.ASCIIDOC_BOLD))
               .range(element)
               .create();
           }
@@ -82,6 +86,13 @@ public class AsciiDocExternalAnnotatorHighlighting extends ExternalAnnotator<Str
       }
     };
     visitor.visitFile(file);
+  }
+
+  private static TextAttributes attributesOf(TextAttributesKey key) {
+    // Ensure that we get the theme of the editor, and not the theme of the IDE to determine the attributes.
+    // Otherwise we'll apply the wrong background color to monospaced contents.
+    String schema = EditorColorsManager.getInstance().isDarkEditor() ? "Darcula" : EditorColorsScheme.DEFAULT_SCHEME_NAME;
+    return EditorColorsManager.getInstance().getScheme(schema).getAttributes(key);
   }
 
 }
