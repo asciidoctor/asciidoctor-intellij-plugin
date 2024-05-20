@@ -91,8 +91,7 @@ public class AsciiDocExternalAnnotatorHighlighting extends ExternalAnnotator<Str
   private static TextAttributes attributesOf(TextAttributesKey key) {
     // Ensure that we get the theme of the editor, and not the theme of the IDE to determine the attributes.
     // Otherwise we'll apply the wrong background color to monospaced contents.
-    String schema = EditorColorsManager.getInstance().isDarkEditor() ? "Darcula" : EditorColorsScheme.DEFAULT_SCHEME_NAME;
-    return EditorColorsManager.getInstance().getScheme(schema).getAttributes(key);
+test    return EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key);
   }
 
 }
