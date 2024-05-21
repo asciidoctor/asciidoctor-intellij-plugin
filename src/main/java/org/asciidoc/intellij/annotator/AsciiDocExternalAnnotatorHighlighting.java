@@ -5,7 +5,6 @@ import com.intellij.lang.annotation.ExternalAnnotator;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.DumbAware;
@@ -91,7 +90,7 @@ public class AsciiDocExternalAnnotatorHighlighting extends ExternalAnnotator<Str
   private static TextAttributes attributesOf(TextAttributesKey key) {
     // Ensure that we get the theme of the editor, and not the theme of the IDE to determine the attributes.
     // Otherwise we'll apply the wrong background color to monospaced contents.
-test    return EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key);
+    return EditorColorsManager.getInstance().getGlobalScheme().getAttributes(key);
   }
 
 }
