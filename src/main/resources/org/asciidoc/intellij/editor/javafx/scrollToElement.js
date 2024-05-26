@@ -14,9 +14,12 @@ window.__IntelliJTools.scrollToLine = (function () {
 
     for (var i = 0; i < classes.length; i++) {
       var className = classes[i]
-      if (className.match(/^data-line-stdin-/)) {
-        return Number(className.substr("data-line-stdin-".length));
-      }
+    }
+    if (className.match(/^data-line-stdin-/)) {
+      return Number(className.substr("data-line-stdin-".length));
+    } else if (className.match(/^data-line-/)) {
+      // This is an include of another file
+      return -1;
     }
 
     return null
@@ -39,19 +42,28 @@ window.__IntelliJTools.scrollToLine = (function () {
     var startLine = 0;
     var endY;
     var endLine = lineCount;
+    var includeFound = false;
 
     for (var i = 0; i < blocks.length; i++) {
       var block = blocks[i]
       var lineOfBlock = getLine(block);
-      if (lineOfBlock <= newLineToScroll) {
+      if (lineOfBlock === -1) {
+        includeFound = true;
+      } else if (lineOfBlock <= newLineToScroll) {
         startY = calculateOffset(block)
         startLine = lineOfBlock
         // there might be no further block, therefore assume that the end is at the end of this block
         endY = startY + block.offsetHeight
-      }
-      else if (lineOfBlock > newLineToScroll) {
-        endY = calculateOffset(block)
-        endLine = lineOfBlock -1;
+        includeFound = false;
+      } else if (lineOfBlock > newLineToScroll) {
+        if (includeFound) {
+          // if there is an include, place the view where we expect the beginning of the include
+          endY = startY
+          endLine = startLine;
+        } else {
+          endY = calculateOffset(block)
+          endLine = lineOfBlock - 1;
+        }
         break
       }
     }

@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - Prevent AlreadyDisposedException during startup when re-opening editors (#1617)
 - Upgrade to AsciidoctorJ v2.5.13 and asciidoctor 2.0.23
 - Detect dark editor theme in light IDE to apply correct background color for monospaced contents in the editor (#1620)
+- Scroll preview to the beginning of an include (#1624)
 
 === 0.41.14
 
