@@ -34,6 +34,9 @@ blockquote cite a,blockquote cite a:visited {color: #bbbbbb}
 .quoteblock .quoteblock{color: #bbbbbb}
 .quoteblock .attribution cite,.verseblock .attribution cite{color: #bbbbbb}
 
+/* was: rgba(0,0,0,.9) */
+code {filter: invert(90%) hue-rotate(180deg);}
+
 /* was: f8f8f7 */
 table:not(.linenotable):not(.CodeRay) tbody tr{background:#45494a}
 table:not(.linenotable):not(.CodeRay) tr.even,table tr.alt,table tr:nth-of-type(even){background:#626262}
