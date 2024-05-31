@@ -7,6 +7,9 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.41.16
+...
+
 === 0.41.15
 
 - Fix NPE for quick-fix to create an include when source is not a file (#1592)
