@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.editor.Editor;
@@ -53,7 +54,8 @@ public class AsciiDocToolbarPanel extends JPanel {
     DefaultActionGroup toolbarGroup = new DefaultActionGroup();
 
     final DefaultActionGroup group = (DefaultActionGroup) actionManager.getAction(groupId);
-    AnAction[] children = group.getChildren(null);
+    @SuppressWarnings("RedundantCast") // needed for 2024.2
+    AnAction[] children = group.getChildren((AnActionEvent) null);
 
     //Create new group of actions without actions starting by SUB_ACTIONS_PREFIX.
     List<String> actionIds = actionManager.getActionIdList(SUB_ACTIONS_PREFIX);
