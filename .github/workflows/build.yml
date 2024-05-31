@@ -70,7 +70,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4.2.1
         with:
-          java-version: 17
+          java-version: 21
           distribution: 'corretto'
 
       # Check out current repository
