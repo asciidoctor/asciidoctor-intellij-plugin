@@ -47,7 +47,8 @@ public class AsciiDocGrammarInspectionTest extends AsciiDocQuickFixTestBase {
   }
 
   public void testSeparateBehavior() {
-    doTestNoFix(NAME, true);
+    // ignore highlighting, as it will show several Grammar errors which depend on the Grazie version
+    doTestNoFix(NAME, false);
   }
 
   @Override
