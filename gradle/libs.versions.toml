@@ -1,0 +1,14 @@
+[versions]
+# plugins
+intelliJPlatform = "2.0.0-beta5"
+errorpronePlugin = "3.1.0"
+grammarKit = "2022.3.2.2"
+asciidoctorConvert = "4.0.2"
+
+[libraries]
+
+[plugins]
+intelliJPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "intelliJPlatform" }
+errorpronePlugin = { id = "net.ltgt.errorprone", version.ref = "errorpronePlugin" }
+grammarKit = { id = "org.jetbrains.grammarkit", version.ref = "grammarKit" }
+asciidoctorConvert =  { id = 'org.asciidoctor.jvm.convert', version.ref = "asciidoctorConvert" }
