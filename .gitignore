@@ -17,4 +17,4 @@ build/
 /release.properties
 .DS_Store/
 *.releaseBackup
-
+.intellijPlatform
