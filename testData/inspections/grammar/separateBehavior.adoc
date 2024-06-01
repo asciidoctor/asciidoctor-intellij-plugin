@@ -2,4 +2,4 @@
 
 NOTE: A Note (Admonitions have behavior _SEPARATE_)
 
-something with a stealth range at the end to trigger a _StringOutOfBoundsException_:`'
+something with a stealth range at the end to trigger a _StringOutOfBoundsException_:`<GRAMMAR_ERROR descr="Unpaired symbol: ''' seems to be missing">'</GRAMMAR_ERROR>
