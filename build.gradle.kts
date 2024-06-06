@@ -27,13 +27,17 @@ repositories {
     // IntelliJ Platform Gradle Plugin Repositories Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-repositories-extension.html
     intellijPlatform {
         defaultRepositories()
+
+        // Needed when I download EAP versions which are only available on Maven.
+        // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1638#issuecomment-2151527333
+        jetbrainsRuntime()
     }
 }
 
 // Dependencies are managed with Gradle version catalog - read more: https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog
 dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.27.1")
-    compileOnly("com.google.errorprone:error_prone_core:2.27.1")
+    errorprone("com.google.errorprone:error_prone_core:2.28.0")
+    compileOnly("com.google.errorprone:error_prone_core:2.28.0")
     /* snakeyaml is s used by asciidoctorj-pdf, but is actually provided within jruby-stdlib
      * a snakeyaml version in the classpath takes precedence, but IntelliJ includes a version that is too old
      * therefore this plugin includes the same version of snakeyaml that is already included in jruby-stdlib
@@ -77,6 +81,10 @@ dependencies {
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
         create(properties("platformType"), properties("platformVersion"))
+
+        // Needed when I download EAP versions which are only available on Maven.
+        // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1638#issuecomment-2151527333
+        jetbrainsRuntime()
 
         // Plugin Dependencies. Uses `platformBundledPlugins` property from the gradle.properties file for bundled IntelliJ Platform plugins.
         bundledPlugins(listOf(
@@ -218,8 +226,10 @@ tasks {
 
 tasks.register("checkJavaVersion") {
     if (JavaVersion.current() != JavaVersion.VERSION_21) {
-        throw GradleException("As of IntellIJ 2024.2, this build must be run with Java 21, see:\n" +
-                "https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/setup-environment.html")
+        val message = "As of IntellIJ 2024.2, this build must be run with Java 21, see:\n" +
+                "https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/setup-environment.html"
+        println("\n" + message + "\n")
+        throw GradleException(message)
     }
 }
 
