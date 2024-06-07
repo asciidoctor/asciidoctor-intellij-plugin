@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.editor.notification;
 
 import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.project.BaseProjectDirectories;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -24,11 +25,17 @@ public class ExtensionsAvailableNotificationProvider implements EditorNotificati
       return null;
     }
     String bp = null;
+
+    projectsLoop:
     for (Project p : ProjectManager.getInstance().getOpenProjects()) {
-      if (p.getBasePath() != null && file.getPath().startsWith(p.getBasePath())) {
-        bp = p.getBasePath();
+      for (VirtualFile d : BaseProjectDirectories.getBaseDirectories(p)) {
+        if (file.getPath().startsWith(d.getPath())) {
+          bp = p.getBasePath();
+          break projectsLoop;
+        }
       }
     }
+
     if (bp == null) {
       return null;
     }
