@@ -258,12 +258,25 @@ public class AsciiDocWrapper {
    */
   @Nullable
   private final Path imagesPath;
-  private final String projectBasePath;
+  private final String root;
   private final Project project;
 
-  public AsciiDocWrapper(Project project, File fileBaseDir, @Nullable Path imagesPath, String name) {
-    this.projectBasePath = project.getBasePath();
-    this.fileBaseDir = fileBaseDir;
+  public AsciiDocWrapper(Project project, VirtualFile fileBaseDir, @Nullable Path imagesPath, String name) {
+    if (fileBaseDir != null) {
+      // parent will be null if we use Language Injection and Fragment Editor
+      this.fileBaseDir = new File(fileBaseDir.getPath());
+    } else {
+      this.fileBaseDir = new File("");
+    }
+    VirtualFile rootForFile = AsciiDocUtil.getRootForFile(project, fileBaseDir);
+    String root;
+    if (rootForFile != null) {
+      root = rootForFile.getPath();
+    } else {
+      // This might be a file outside a project root
+      root = project.getBasePath();
+    }
+    this.root = root;
     this.imagesPath = imagesPath;
     this.name = name;
     this.project = project;
@@ -276,16 +289,16 @@ public class AsciiDocWrapper {
     }
     boolean extensionsEnabled;
     AsciiDocApplicationSettings asciiDocApplicationSettings = AsciiDocApplicationSettings.getInstance();
-    if (extensions.size() > 0) {
-      asciiDocApplicationSettings.setExtensionsPresent(projectBasePath, true);
+    if (!extensions.isEmpty()) {
+      asciiDocApplicationSettings.setExtensionsPresent(root, true);
     }
     String md;
-    if (Boolean.TRUE.equals(asciiDocApplicationSettings.getExtensionsEnabled(project, projectBasePath))) {
+    if (Boolean.TRUE.equals(asciiDocApplicationSettings.getExtensionsEnabled(project, root))) {
       extensionsEnabled = true;
-      md = calcMd(projectBasePath, extensions);
+      md = calcMd(root, extensions);
     } else {
       extensionsEnabled = false;
-      md = calcMd(projectBasePath, Collections.emptyList());
+      md = calcMd(root, Collections.emptyList());
     }
     if (springRestDocs) {
       md = md + ".restdoc";
@@ -732,7 +745,7 @@ public class AsciiDocWrapper {
   public static @Language("asciidoc")
   String config(VirtualFile currentFile, Project project) {
     StringBuilder tempContent = new StringBuilder();
-    Collection<String> roots = AsciiDocUtil.getRoots(project);
+    Collection<VirtualFile> roots = AsciiDocUtil.getRoots(project);
     if (currentFile != null) {
       VirtualFile folder = currentFile.getParent();
       if (folder != null) {
@@ -755,7 +768,7 @@ public class AsciiDocWrapper {
               });
             }
           }
-          if (roots.contains(folder.getPath())) {
+          if (roots.contains(folder)) {
             break;
           }
           folder = folder.getParent();
@@ -1652,8 +1665,8 @@ public class AsciiDocWrapper {
               docfile = docfile.replaceAll("\\\\", "/");
             }
             if (docfile != null && project != null) {
-              for (String root : AsciiDocUtil.getRoots(project)) {
-                if (docfile.startsWith(root)) {
+              for (VirtualFile root : AsciiDocUtil.getRoots(project)) {
+                if (docfile.startsWith(root.getPath())) {
                   dir = root + "/" + dir;
                   break;
                 }
@@ -1664,8 +1677,8 @@ public class AsciiDocWrapper {
           } else {
             if (project != null) {
               boolean found = false;
-              for (String root : AsciiDocUtil.getRoots(project)) {
-                if (dir.startsWith(root)) {
+              for (VirtualFile root : AsciiDocUtil.getRoots(project)) {
+                if (dir.startsWith(root.getPath())) {
                   found = true;
                   break;
                 }

@@ -190,7 +190,7 @@ public class BrowserPanel implements Disposable {
         imagesPath = AsciiDocWrapper.tempImagesPath(Path.of(parent.getCanonicalPath()), project);
       }
     }
-    AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(project, new File(file.getParent().getCanonicalPath()),
+    AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(project, file.getParent(),
       imagesPath, file.getName());
     String html = asciiDocWrapper.render(document.getText(), config, extensions, asciiDocWrapper::notifyAlways, AsciiDocWrapper.FileType.BROWSER);
     if (file.getParent() != null) {

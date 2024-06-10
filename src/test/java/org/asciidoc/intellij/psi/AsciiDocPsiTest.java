@@ -3,9 +3,11 @@ package org.asciidoc.intellij.psi;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.grazie.text.TextContent;
 import com.intellij.grazie.text.TextExtractor;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -18,6 +20,7 @@ import com.intellij.spellchecker.inspections.Splitter;
 import com.intellij.spellchecker.tokenizer.TokenConsumer;
 import com.intellij.spellchecker.tokenizer.Tokenizer;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.AsciiDocSpellcheckingStrategy;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.grazie.AsciiDocGrazieTextExtractor;
@@ -37,6 +40,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Tests for {@link org.asciidoc.intellij.parser.AsciiDocParserImpl}.
@@ -720,6 +724,21 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertReferencesResolve(macros[0], 1);
     assertReferencesResolve(macros[1], 3);
   }
+
+  public void testReturnListOfCanonicalPathsOfExtensionFiles() {
+    // given...
+    ArrayList<VirtualFile> expected = new ArrayList<>();
+    expected.add(myFixture.copyFileToProject(getTestName(true) + "/.asciidoctor/lib/test.jar", ".asciidoctor/lib/test.jar"));
+    expected.add(myFixture.copyFileToProject(getTestName(true) + "/.asciidoctor/lib/test.rb", ".asciidoctor/lib/test.rb"));
+
+    // when...
+    AsciiDocExtensionService extensionService = ApplicationManager.getApplication().getService(AsciiDocExtensionService.class);
+    List<String> result = extensionService.getExtensions(myFixture.getProject());
+
+    // then...
+    Assertions.assertThat(expected.stream().map(VirtualFile::getPath).collect(Collectors.toList())).containsExactlyInAnyOrderElementsOf(result);
+  }
+
 
   public void testMavenSnippets() {
     // given...

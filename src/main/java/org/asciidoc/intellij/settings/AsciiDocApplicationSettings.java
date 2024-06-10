@@ -63,16 +63,16 @@ public class AsciiDocApplicationSettings implements PersistentStateComponent<Asc
     return myState.myPreviewSettings;
   }
 
-  public void setExtensionsEnabled(String projectBasePath, boolean extensionsEnabled) {
-    this.extensionsEnabled.put(projectBasePath, extensionsEnabled);
+  public void setExtensionsEnabled(String root, boolean extensionsEnabled) {
+    this.extensionsEnabled.put(root, extensionsEnabled);
     ApplicationManager.getApplication().getMessageBus().syncPublisher(SettingsChangedListener.TOPIC).onSettingsChange(this);
   }
 
-  public Boolean getExtensionsEnabled(Project project, String projectBasePath) {
+  public Boolean getExtensionsEnabled(Project project, String root) {
     if (TrustedProjects.getTrustedState(project) != ThreeState.YES) {
       return false;
     }
-    return this.extensionsEnabled.get(projectBasePath);
+    return this.extensionsEnabled.get(root);
   }
 
   public void setExtensionsPresent(String projectBasePath, boolean extensionsPresent) {
