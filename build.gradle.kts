@@ -1,6 +1,7 @@
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import net.ltgt.gradle.errorprone.errorprone
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask
 import org.jsoup.Jsoup
 import kotlin.streams.asSequence
@@ -113,7 +114,7 @@ dependencies {
 
         instrumentationTools()
         pluginVerifier()
-        testFramework(TestFrameworkType.Platform.JUnit4)
+        testFramework(TestFrameworkType.Platform)
     }
 }
 
@@ -148,7 +149,7 @@ intellijPlatform {
         failureLevel = listOf(VerifyPluginTask.FailureLevel.INVALID_PLUGIN, VerifyPluginTask.FailureLevel.COMPATIBILITY_PROBLEMS, VerifyPluginTask.FailureLevel.NOT_DYNAMIC)
         freeArgs = listOf("-mute", "TemplateWordInPluginId")
         ides {
-            ides(properties("pluginVerifierIdeVersions").get().split(','))
+            ides( provider { properties("pluginVerifierIdeVersions").get().split(',') } )
         }
     }
 }
