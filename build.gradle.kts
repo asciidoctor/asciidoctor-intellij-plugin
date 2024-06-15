@@ -19,7 +19,7 @@ plugins {
 }
 
 group = properties("pluginGroup").get()
-version = environment("VERSION").orElse("0.0.1")
+version = if (System.getenv("VERSION") != null) System.getenv("VERSION") else "0.0.1"
 
 // Configure project's dependencies
 repositories {
@@ -214,6 +214,8 @@ tasks {
 
     patchPluginXml {
         dependsOn (asciidoctor)
+        sinceBuild = "233.11799.241"
+        untilBuild = provider { null }
     }
 
     asciidoctor {
