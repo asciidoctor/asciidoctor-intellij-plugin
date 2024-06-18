@@ -88,13 +88,11 @@ public class CreatePdfAction extends AsciiDocFileAction {
     boolean successful = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       Path tempImagesPath = null;
       try {
-        File fileBaseDir = new File("");
-        if (parent != null && parent.getCanonicalPath() != null) {
+        if (parent != null) {
           // parent will be null if we use Language Injection and Fragment Editor
-          fileBaseDir = new File(parent.getCanonicalPath());
-          tempImagesPath = AsciiDocWrapper.tempImagesPath(fileBaseDir.toPath(), project);
+          tempImagesPath = AsciiDocWrapper.tempImagesPath(parent.toNioPath(), project);
         }
-        AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(project, fileBaseDir, tempImagesPath, file.getName());
+        AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(project, parent, tempImagesPath, file.getName());
         List<String> extensions = extensionService.getExtensions(project);
         String config = AsciiDocWrapper.config(editor.getDocument(), project);
         if (!asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.PDF)) {

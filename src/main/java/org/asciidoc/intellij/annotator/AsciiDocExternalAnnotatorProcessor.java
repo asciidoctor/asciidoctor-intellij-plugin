@@ -73,9 +73,10 @@ implements DumbAware {
     File fileBaseDir = new File("");
     VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(editor.getDocument());
     String name = "unknown";
+    VirtualFile parent = null;
     if (virtualFile != null) {
       name = file.getName();
-      VirtualFile parent = virtualFile.getParent();
+      parent = virtualFile.getParent();
       if (parent != null && parent.getCanonicalPath() != null) {
         // parent will be null if we use Language Injection and Fragment Editor
         fileBaseDir = new File(parent.getCanonicalPath());
@@ -91,7 +92,7 @@ implements DumbAware {
 
     Path tempImagesPath = AsciiDocWrapper.tempImagesPath(fileBaseDir.toPath(), file.getProject());
     try {
-      AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(file.getProject(), fileBaseDir,
+      AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(file.getProject(), parent,
         tempImagesPath, name);
       annotationResult.setDocname(new File(fileBaseDir, name).getAbsolutePath());
 

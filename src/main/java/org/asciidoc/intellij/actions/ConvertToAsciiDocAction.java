@@ -7,7 +7,6 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
@@ -33,7 +32,6 @@ import static nl.jworks.markdown_to_asciidoc.Converter.convertMarkdownToAsciiDoc
  * Created by erikp on 05/12/14.
  */
 public class ConvertToAsciiDocAction extends AnAction {
-  private final Logger log = Logger.getInstance(ConvertToAsciiDocAction.class);
 
   private static final String[] MARKDOWN_EXTENSIONS = {"markdown", "mkd", "md"};
 

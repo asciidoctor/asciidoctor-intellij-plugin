@@ -196,18 +196,14 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
   private AsciiDocWrapper getAsciiDocInstance() {
     if (asciidoc == null) {
-      File fileBaseDir = new File("");
       VirtualFile file = FileDocumentManager.getInstance().getFile(document);
       String name = "unknown";
+      VirtualFile parent = null;
       if (file != null) {
         name = file.getName();
-        VirtualFile parent = file.getParent();
-        if (parent != null && parent.getCanonicalPath() != null) {
-          // parent will be null if we use Language Injection and Fragment Editor
-          fileBaseDir = new File(parent.getCanonicalPath());
-        }
+        parent = file.getParent();
       }
-      asciidoc = new AsciiDocWrapper(project, fileBaseDir, tempImagesPath, name);
+      asciidoc = new AsciiDocWrapper(project, parent, tempImagesPath, name);
     }
     return asciidoc;
   }

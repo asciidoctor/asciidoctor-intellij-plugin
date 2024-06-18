@@ -74,12 +74,7 @@ public class CreateHtmlAction extends AsciiDocFileAction {
     boolean successful = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       Path tempImagesPath = AsciiDocWrapper.tempImagesPath(parent != null ? parent.toNioPath() : null, project);
       try {
-        File fileBaseDir = new File("");
-        if (parent != null && parent.getCanonicalPath() != null) {
-          // parent will be null if we use Language Injection and Fragment Editor
-          fileBaseDir = new File(parent.getCanonicalPath());
-        }
-        AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(project, fileBaseDir, tempImagesPath, file.getName());
+        AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(project, parent, tempImagesPath, file.getName());
         String config = AsciiDocWrapper.config(editor.getDocument(), project);
         List<String> extensions = extensionService.getExtensions(project);
         if (!asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.HTML)) {

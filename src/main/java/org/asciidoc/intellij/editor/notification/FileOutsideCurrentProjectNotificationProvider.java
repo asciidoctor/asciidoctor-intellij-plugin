@@ -45,8 +45,8 @@ public class FileOutsideCurrentProjectNotificationProvider implements EditorNoti
       return null;
     }
 
-    for (String root : AsciiDocUtil.getRoots(project)) {
-      if (fileName.startsWith(root)) {
+    for (VirtualFile root : AsciiDocUtil.getRoots(project)) {
+      if (fileName.startsWith(root.getPath())) {
         return null;
       }
     }

@@ -1,6 +1,7 @@
 package org.asciidoc.intellij;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
@@ -35,7 +36,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    asciidocWrapper = new AsciiDocWrapper(getProject(), new File(System.getProperty("java.io.tmpdir")), null, "test");
+    asciidocWrapper = new AsciiDocWrapper(getProject(), LocalFileSystem.getInstance().findFileByIoFile(new File(System.getProperty("java.io.tmpdir"))), null, "test");
   }
 
   public void testShouldRenderPlantUmlAsPngWhenUsingJavaFX() {
