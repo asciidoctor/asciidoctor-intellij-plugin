@@ -109,7 +109,7 @@ dependencies {
             // "com.jetbrains.performancePlugin:213.5744.122" // used run YourKit CPU profiling in test IDE
             // see https://intellij-support.jetbrains.com/hc/en-us/articles/207241235
             // https://plugins.jetbrains.com/plugin/16136-grazie-professional/
-            "com.intellij.grazie.pro:0.3.310"
+            "com.intellij.grazie.pro:0.3.313"
         ))
 
         instrumentationTools()
