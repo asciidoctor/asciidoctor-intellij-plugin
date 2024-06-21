@@ -8,7 +8,8 @@ This document provides a high-level view of the changes introduced by release.
 == Release notes
 
 === 0.41.16
-...
+
+- Custom extensions loading in multimodule projects (thanks to @o-nix) (#1633)
 
 === 0.41.15
 
