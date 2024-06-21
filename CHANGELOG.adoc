@@ -7,9 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.41.16
+=== 0.42.0
 
 - Custom extensions loading in multimodule projects (thanks to @o-nix) (#1633)
+- Restore compatibility with EAP 2024.2, the minimum version is now 2024.1 (#1636)
 
 === 0.41.15
 
