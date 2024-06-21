@@ -12,7 +12,7 @@ plugins {
   // once windows classpaths get too long, use this dependency to make them shorter again
   id "com.github.ManifestClasspath" version "0.1.0-RELEASE"
   // https://github.com/tbroyer/gradle-errorprone-plugin
-  id 'net.ltgt.errorprone' version '4.0.0' apply false
+  id 'net.ltgt.errorprone' version '4.0.1' apply false
 }
 
 checkstyle {
