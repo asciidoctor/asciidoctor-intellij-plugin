@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.42.1
+
+...
+
 === 0.42.0
 
 - Custom extensions loading in multimodule projects (thanks to @o-nix) (#1633)
