@@ -220,7 +220,7 @@ jobs:
       - name: Upload Release Asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload v${{ needs.build.outputs.version }} ./${{ needs.build.outputs.artifact }}
+        run: gh release upload ${{ needs.build.outputs.version }} ./${{ needs.build.outputs.artifact }}
 
   cleanup:
     name: Cleanup old builds
