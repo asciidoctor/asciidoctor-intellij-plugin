@@ -202,7 +202,12 @@ public abstract class SplitFileEditor<E1 extends TextEditor, E2 extends FileEdit
         mySecondEditor.setState(compositeState.getSecondState());
       }
       if (compositeState.getSplitLayout() != null) {
-        mySplitEditorLayout = SplitEditorLayout.valueOf(compositeState.getSplitLayout());
+        try {
+          mySplitEditorLayout = SplitEditorLayout.valueOf(compositeState.getSplitLayout());
+        } catch (IllegalArgumentException ignore) {
+          // found an obsolete or old value, using the default value
+          mySplitEditorLayout = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getSplitEditorLayout();
+        }
         invalidateLayout();
       }
     }
