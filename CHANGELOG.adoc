@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.42.1
 
-...
+- Reworking the changes for EAP, restoring preview and menu bar functionality (#1636)
 
 === 0.42.0
 

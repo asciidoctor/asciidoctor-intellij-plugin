@@ -3,17 +3,20 @@ package org.asciidoc.intellij.editor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.TextEditorWithPreviewProvider;
+import com.intellij.openapi.fileEditor.TextEditor;
+import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.asciidoc.intellij.AsciiDocLanguage;
+import org.asciidoc.intellij.ui.SplitTextEditorProvider;
+import org.jetbrains.annotations.NotNull;
 
-public class AsciiDocSplitEditorProvider extends TextEditorWithPreviewProvider {
+public class AsciiDocSplitEditorProvider extends SplitTextEditorProvider {
   public AsciiDocSplitEditorProvider() {
-    super(new AsciiDocPreviewEditorProvider());
+    super(new PsiAwareTextEditorProvider(), new AsciiDocPreviewEditorProvider());
 
     // when this plugin is installed at runtime, check if the existing editors as split editors.
     // If not, close the editor and re-open the files
@@ -53,6 +56,15 @@ public class AsciiDocSplitEditorProvider extends TextEditorWithPreviewProvider {
         }
       }
     });
+  }
+
+  @Override
+  protected FileEditor createSplitEditor(@NotNull final FileEditor firstEditor, @NotNull FileEditor secondEditor) {
+    if (!(firstEditor instanceof TextEditor) || !(secondEditor instanceof AsciiDocPreviewEditor asciiDocPreviewEditor)) {
+      throw new IllegalArgumentException("Main editor should be TextEditor");
+    }
+    asciiDocPreviewEditor.setEditor(((TextEditor) firstEditor).getEditor());
+    return new AsciiDocSplitEditor(((TextEditor) firstEditor), ((AsciiDocPreviewEditor) secondEditor));
   }
 
 }
