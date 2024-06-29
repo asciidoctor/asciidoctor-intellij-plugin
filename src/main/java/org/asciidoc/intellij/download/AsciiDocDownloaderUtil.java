@@ -71,8 +71,12 @@ public class AsciiDocDownloaderUtil {
   private static final String ASCIIDOCTORJ_DIAGRAM_HASH = "0a333766c28e76fd56612d41a15886b20985644d6618296178ee23ee36315804";
 
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-plantuml/
-  public static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION = "1.2024.3";
-  private static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH = "a8c2e02d06de6894ca6bf8ea992b306edf54853d17a722c853af0761244a338f";
+  public static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION = "1.2024.5";
+  private static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH = "3b08ee5fe5565e4fb61c6b8675ee2c4463ff06d77d6416afef0e528e14e97116";
+
+  // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-batik/
+  public static final String ASCIIDOCTORJ_DIAGRAM_BATIK_VERSION = "1.17";
+  private static final String ASCIIDOCTORJ_DIAGRAM_BATIK_HASH = "2109a77121c9d62af0b4687b0a7eb219c015c574bbd7f4ebec7cce5cd769e026";
 
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-ditaamini/
   public static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION = "1.0.3";
@@ -91,7 +95,7 @@ public class AsciiDocDownloaderUtil {
   }
 
   public static boolean downloadCompleteAsciidoctorJDiagram() {
-    return getAsciidoctorJDiagramFile().exists() && getAsciidoctorJDiagramPlantumlFile().exists() && getAsciidoctorJDiagramDitaaminiFile().exists();
+    return getAsciidoctorJDiagramFile().exists() && getAsciidoctorJDiagramPlantumlFile().exists() && getAsciidoctorJDiagramDitaaminiFile().exists() && getAsciidoctorJDiagramBatikFile().exists();
   }
 
   public static boolean downloadCompleteAsciidoctorJPdf() {
@@ -119,6 +123,11 @@ public class AsciiDocDownloaderUtil {
     return new File(fileName);
   }
 
+  public static File getAsciidoctorJDiagramBatikFile() {
+    String fileName = DOWNLOAD_PATH + File.separator + "asciidoctorj-diagram-batik-" + ASCIIDOCTORJ_DIAGRAM_BATIK_VERSION + ".jar";
+    return new File(fileName);
+  }
+
   public static void download(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
     downloadAsciidoctorJPdf(project, () -> downloadAsciidoctorJDiagram(project, onSuccess, onFailure), onFailure);
   }
@@ -138,7 +147,13 @@ public class AsciiDocDownloaderUtil {
   public static void downloadAsciidoctorJDiagramDitaamini(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
     String downloadName = "asciidoctorj-diagram-ditaamini-" + ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION + ".jar";
     String url = getAsciidoctorJDiagramDitaaminiUrl();
-    download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_DITAAMINI_HASH, project, onSuccess, onFailure);
+    download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_DITAAMINI_HASH, project, () -> downloadAsciidoctorJDiagramBatik(project, onSuccess, onFailure), onFailure);
+  }
+
+  public static void downloadAsciidoctorJDiagramBatik(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
+    String downloadName = "asciidoctorj-diagram-batik-" + ASCIIDOCTORJ_DIAGRAM_BATIK_VERSION + ".jar";
+    String url = getAsciidoctorJDiagramBatikUrl();
+    download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_BATIK_HASH, project, onSuccess, onFailure);
   }
 
   public static void downloadPandoc(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
@@ -187,6 +202,16 @@ public class AsciiDocDownloaderUtil {
     }
   }
 
+  public static void pickAsciidoctorJDiagramBatik(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
+    String downloadName = "asciidoctorj-diagram-batik-" + ASCIIDOCTORJ_DIAGRAM_BATIK_VERSION + ".jar";
+    try {
+      pickFile(downloadName, project, ASCIIDOCTORJ_DIAGRAM_BATIK_HASH, onSuccess);
+    } catch (IOException ex) {
+      LOG.warn("Can't pick file '" + downloadName + "'", ex);
+      ApplicationManager.getApplication().invokeLater(() -> onFailure.accept(ex));
+    }
+  }
+
   public static void pickAsciidoctorJPdf(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
     String downloadName = "asciidoctorj-pdf-" + ASCIIDOCTORJ_PDF_VERSION + ".jar";
     try {
@@ -207,6 +232,12 @@ public class AsciiDocDownloaderUtil {
     return "https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-plantuml/" +
       ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION + "/asciidoctorj-diagram-plantuml-" +
       ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION + ".jar";
+  }
+
+  public static String getAsciidoctorJDiagramBatikUrl() {
+    return "https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-batik/" +
+      ASCIIDOCTORJ_DIAGRAM_BATIK_VERSION + "/asciidoctorj-diagram-batik-" +
+      ASCIIDOCTORJ_DIAGRAM_BATIK_VERSION + ".jar";
   }
 
   public static String getAsciidoctorJDiagramDitaaminiUrl() {

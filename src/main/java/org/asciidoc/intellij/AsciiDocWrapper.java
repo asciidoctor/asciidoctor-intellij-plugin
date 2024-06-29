@@ -533,6 +533,10 @@ public class AsciiDocWrapper {
         if (file4.exists()) {
           urls.add(file4.toURI().toURL());
         }
+        File file5 = AsciiDocDownloaderUtil.getAsciidoctorJDiagramBatikFile();
+        if (file5.exists()) {
+          urls.add(file5.toURI().toURL());
+        }
       }
     } catch (MalformedURLException e) {
       throw new RuntimeException("unable to add JAR AsciidoctorJ to class path", e);
