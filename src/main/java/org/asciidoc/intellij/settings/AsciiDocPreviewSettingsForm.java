@@ -88,8 +88,11 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private LinkLabel<?> myDownloadDependenciesFailedDitaaminiBrowser;
   private JBCheckBox myEnableConversionOfClipboardText;
   private JBCheckBox myEnableBuiltInMermaid;
+  private LinkLabel<?> myDownloadDependenciesFailedBatikBrowser;
+  private JPanel myDownloadDependenciesFailedBatik;
+  private LinkLabel<?> myDownloadDependenciesFailedBatikPickFile;
 
-    public JComponent getComponent() {
+  public JComponent getComponent() {
     return myMainPanel;
   }
 
@@ -141,7 +144,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     myDownloadDependenciesHelp = ContextHelpLabel.create(
       AsciiDocBundle.message(
         "asciidoc.download.folderandcontents",
-        (AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().getName() + ", " + AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().getName() + ", " + AsciiDocDownloaderUtil.getAsciidoctorJDiagramDitaaminiFile().getName() + " and " + AsciiDocDownloaderUtil.getAsciidoctorJPdfFile().getName()),
+        (AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().getName() + ", " + AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().getName() + ", " + AsciiDocDownloaderUtil.getAsciidoctorJDiagramDitaaminiFile().getName() + ", " + AsciiDocDownloaderUtil.getAsciidoctorJDiagramBatikFile().getName() + " and " + AsciiDocDownloaderUtil.getAsciidoctorJPdfFile().getName()),
         AsciiDocDownloaderUtil.DOWNLOAD_PATH)
     );
   }
@@ -172,6 +175,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myDownloadDependenciesFailedDiagram.setVisible(false);
       myDownloadDependenciesFailedPlantuml.setVisible(false);
       myDownloadDependenciesFailedDitaamini.setVisible(false);
+      myDownloadDependenciesFailedBatik.setVisible(false);
       myDownloadDependenciesFailedPdf.setVisible(false);
     } else {
       myDownloadDependenciesComplete.setVisible(false);
@@ -180,6 +184,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myDownloadDependenciesFailedDiagram.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().exists());
       myDownloadDependenciesFailedPlantuml.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().exists());
       myDownloadDependenciesFailedDitaamini.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramDitaaminiFile().exists());
+      myDownloadDependenciesFailedBatik.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramBatikFile().exists());
       myDownloadDependenciesFailedPdf.setVisible(!AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJPdf());
     }
   }
@@ -286,6 +291,9 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
         if (!AsciiDocDownloaderUtil.getAsciidoctorJDiagramDitaaminiFile().exists()) {
           myDownloadDependenciesFailedDitaamini.setVisible(true);
         }
+        if (!AsciiDocDownloaderUtil.getAsciidoctorJDiagramBatikFile().exists()) {
+          myDownloadDependenciesFailedDitaamini.setVisible(true);
+        }
         if (!AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJPdf()) {
           myDownloadDependenciesFailedPdf.setVisible(true);
         }
@@ -317,6 +325,15 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     myDownloadDependenciesFailedDitaaminiPickFile.setListener((source, data) -> {
       AsciiDocDownloaderUtil.pickAsciidoctorJDiagramDitaamini(null, this::adjustDownloadDependenciesOptions, throwable ->
         myDownloadDependenciesFailedDitaaminiPickFile.setText("Pick failed: " + throwable.getMessage()));
+    }, null);
+
+    myDownloadDependenciesFailedBatikBrowser.setListener((source, data) -> {
+      BrowserUtil.browse(AsciiDocDownloaderUtil.getAsciidoctorJDiagramBatikUrl());
+    }, null);
+
+    myDownloadDependenciesFailedBatikPickFile.setListener((source, data) -> {
+      AsciiDocDownloaderUtil.pickAsciidoctorJDiagramBatik(null, this::adjustDownloadDependenciesOptions, throwable ->
+        myDownloadDependenciesFailedBatikPickFile.setText("Pick failed: " + throwable.getMessage()));
     }, null);
 
     myDownloadDependenciesFailedPdfBrowser.setListener((source, data) -> {
