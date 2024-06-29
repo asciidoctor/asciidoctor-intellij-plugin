@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.42.3
 
 - Bump org.asciidoctor:asciidoctorj-pdf from 2.3.15 to 2.3.17 (#1634)
+- Bump org.asciidoctor:asciidoctorj-diagram from 2.3.0 to 2.3.1 (#1639)
 
 === 0.42.2
 
