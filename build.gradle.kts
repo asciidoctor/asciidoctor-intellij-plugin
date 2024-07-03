@@ -58,17 +58,18 @@ dependencies {
 
     implementation("org.apache.commons:commons-text:1.12.0")
     implementation("org.apache.commons:commons-lang3:3.14.0")
-    implementation("io.sentry:sentry:7.10.0")
+    implementation("io.sentry:sentry:7.11.0")
 
     // when updating the versions here, also update them in AsciiDocDownloaderUtil for dynamic download
-    testImplementation("org.asciidoctor:asciidoctorj-diagram:2.3.0")
-    testImplementation("org.asciidoctor:asciidoctorj-diagram-plantuml:1.2024.3")
-    testImplementation("org.asciidoctor:asciidoctorj-pdf:2.3.15")
+    testImplementation("org.asciidoctor:asciidoctorj-diagram:2.3.1")
+    testImplementation("org.asciidoctor:asciidoctorj-diagram-plantuml:1.2024.5")
+    testImplementation("org.asciidoctor:asciidoctorj-diagram-batik:1.17")
+    testImplementation("org.asciidoctor:asciidoctorj-pdf:2.3.17")
 
     testImplementation(gradleTestKit())
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
-    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.10.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.3")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.3")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.10.3")
 
     testImplementation("com.tngtech.archunit:archunit-junit4:1.3.0")
     testImplementation("org.assertj:assertj-core:3.26.0")
