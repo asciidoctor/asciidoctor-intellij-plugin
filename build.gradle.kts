@@ -82,7 +82,8 @@ dependencies {
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
-        create(properties("platformType"), properties("platformVersion"))
+        // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1693
+        intellijIdeaCommunity(properties("platformVersion"), useInstaller = false)
 
         // Needed when I download EAP versions which are only available on Maven.
         // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1638#issuecomment-2151527333
@@ -150,6 +151,7 @@ intellijPlatform {
         failureLevel = listOf(VerifyPluginTask.FailureLevel.INVALID_PLUGIN, VerifyPluginTask.FailureLevel.COMPATIBILITY_PROBLEMS, VerifyPluginTask.FailureLevel.NOT_DYNAMIC)
         freeArgs = listOf("-mute", "TemplateWordInPluginId")
         ides {
+            // recommended()
             ides( provider { properties("pluginVerifierIdeVersions").get().split(',') } )
         }
     }
