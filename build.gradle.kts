@@ -37,8 +37,8 @@ repositories {
 
 // Dependencies are managed with Gradle version catalog - read more: https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog
 dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.28.0")
-    compileOnly("com.google.errorprone:error_prone_core:2.28.0")
+    errorprone("com.google.errorprone:error_prone_core:2.29.2")
+    compileOnly("com.google.errorprone:error_prone_core:2.29.2")
     /* snakeyaml is s used by asciidoctorj-pdf, but is actually provided within jruby-stdlib
      * a snakeyaml version in the classpath takes precedence, but IntelliJ includes a version that is too old
      * therefore this plugin includes the same version of snakeyaml that is already included in jruby-stdlib
@@ -57,8 +57,8 @@ dependencies {
     }
 
     implementation("org.apache.commons:commons-text:1.12.0")
-    implementation("org.apache.commons:commons-lang3:3.14.0")
-    implementation("io.sentry:sentry:7.11.0")
+    implementation("org.apache.commons:commons-lang3:3.15.0")
+    implementation("io.sentry:sentry:7.12.0")
 
     // when updating the versions here, also update them in AsciiDocDownloaderUtil for dynamic download
     testImplementation("org.asciidoctor:asciidoctorj-diagram:2.3.1")
@@ -72,7 +72,7 @@ dependencies {
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.10.3")
 
     testImplementation("com.tngtech.archunit:archunit-junit4:1.3.0")
-    testImplementation("org.assertj:assertj-core:3.26.0")
+    testImplementation("org.assertj:assertj-core:3.26.3")
     testImplementation("org.mockito:mockito-core:5.12.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
@@ -111,7 +111,7 @@ dependencies {
             // "com.jetbrains.performancePlugin:213.5744.122" // used run YourKit CPU profiling in test IDE
             // see https://intellij-support.jetbrains.com/hc/en-us/articles/207241235
             // https://plugins.jetbrains.com/plugin/16136-grazie-professional/
-            "com.intellij.grazie.pro:0.3.313"
+            "com.intellij.grazie.pro:0.3.320"
         ))
 
         instrumentationTools()
