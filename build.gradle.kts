@@ -151,7 +151,7 @@ intellijPlatform {
         freeArgs = listOf("-mute", "TemplateWordInPluginId")
         ides {
             // recommended()
-            ides( provider { properties("pluginVerifierIdeVersions").get().split(',') } )
+            ides( properties("pluginVerifierIdeVersions").get().split(',') )
         }
     }
 }
