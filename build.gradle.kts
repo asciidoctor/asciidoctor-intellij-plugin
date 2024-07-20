@@ -1,7 +1,6 @@
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import net.ltgt.gradle.errorprone.errorprone
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask
 import org.jsoup.Jsoup
 import kotlin.streams.asSequence
