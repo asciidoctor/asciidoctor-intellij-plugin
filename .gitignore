@@ -1,5 +1,5 @@
 .idea/*
-!/.idea/runConfigurations/*.xml
+!/.idea/runConfigurations/
 !/.idea/externalDependencies.xml
 !/.idea/misc.xml
 !/.idea/checkstyle-idea.xml
@@ -17,4 +17,4 @@ build/
 /release.properties
 .DS_Store/
 *.releaseBackup
-
+.intellijPlatform
