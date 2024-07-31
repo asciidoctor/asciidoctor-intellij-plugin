@@ -7,8 +7,8 @@
 [[JDK]]
 == Choosing a Java Version and Distribution
 
-Starting with IntelliJ 2022.3, JDK 17 is required to build the plugin, as IntelliJ uses JDK 17.
-https://blog.jetbrains.com/platform/2022/08/intellij-project-migrates-to-java-17/[See the JDK 17 announcement in the JetBrains blog for details].
+Starting with IntelliJ 2024.2, JDK 21 is required to build the plugin, as IntelliJ 2024.2 uses JDK 21. The runtime version of the plugin is still compatible with JDK 17.
+https://blog.jetbrains.com/idea/2024/05/intellij-idea-2024-2-eap-2/[See the JDK 21 announcement in the JetBrains blog for details].
 
 The AsciiDoc plugin uses only language features of Java 11 to allow the built plugin to run with earlier versions of IntelliJ as well.
 
