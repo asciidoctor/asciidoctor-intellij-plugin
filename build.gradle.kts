@@ -63,7 +63,7 @@ dependencies {
     testImplementation("org.asciidoctor:asciidoctorj-diagram:2.3.1")
     testImplementation("org.asciidoctor:asciidoctorj-diagram-plantuml:1.2024.5")
     testImplementation("org.asciidoctor:asciidoctorj-diagram-batik:1.17")
-    testImplementation("org.asciidoctor:asciidoctorj-pdf:2.3.17")
+    testImplementation("org.asciidoctor:asciidoctorj-pdf:2.3.18")
 
     testImplementation(gradleTestKit())
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.10.3")
