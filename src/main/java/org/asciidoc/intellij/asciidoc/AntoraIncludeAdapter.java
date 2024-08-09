@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_PREFIX_AND_FAMILY_PATTERN;
+import static org.asciidoc.intellij.psi.AsciiDocUtil.ANTORA_PREFIX_PATTERN;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.ATTRIBUTES;
 import static org.asciidoc.intellij.psi.AsciiDocUtil.URL_PREFIX_PATTERN;
 
@@ -157,10 +158,23 @@ public class AntoraIncludeAdapter extends IncludeProcessor {
           "Can't resolve Antora prefix while indexing is in progress"));
         reader.restoreLine("Can't resolve Antora prefix while indexing is in progress - include::" + target + "[]");
       } else {
-        log(new LogRecord(Severity.ERROR,
-          new AsciiDocCursor(file, reader.getDir(), reader.getDir(), reader.getLineNumber() - 1),
-          "Can't resolve Antora prefix '" + matcher.group() + "' for target '" + target + "'"));
-        reader.restoreLine("Unresolved Antora reference - include::" + target + "[]");
+        Matcher prefixMatcher = ANTORA_PREFIX_PATTERN.matcher(matcher.group());
+        boolean handled = false;
+        if (prefixMatcher.find()) {
+          String prefix = prefixMatcher.group();
+          String replacedPrefix = AsciiDocUtil.replaceAntoraPrefix(project, localModule, sourceDir, prefix, "page", "include").get(0);
+          if (Objects.equals(prefix, replacedPrefix)) {
+            reader.restoreLine("Unresolved Antora component - include::" + target + "[]");
+            handled = true;
+          }
+          // not need to log a warning or error here as the AsciiDocAntoraModuleResolveInspection will show an error under the right conditions
+        }
+        if (!handled) {
+          log(new LogRecord(Severity.ERROR,
+            new AsciiDocCursor(file, reader.getDir(), reader.getDir(), reader.getLineNumber() - 1),
+            "Can't resolve Antora prefix '" + matcher.group() + "' for target '" + target + "'"));
+          reader.restoreLine("Unresolved Antora reference - include::" + target + "[]");
+        }
       }
       return;
     }

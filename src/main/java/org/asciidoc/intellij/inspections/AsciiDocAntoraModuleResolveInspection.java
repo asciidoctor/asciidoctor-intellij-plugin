@@ -14,6 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 
 /**
+ * Show an error message if a version is specified, the component and the version exist in the current IDE's scope,
+ * but the module doesn't resolve.
+ *
  * @author Alexander Schwartz 2022
  */
 public class AsciiDocAntoraModuleResolveInspection extends AsciiDocInspectionBase {
