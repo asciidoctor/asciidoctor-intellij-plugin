@@ -182,6 +182,21 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       if (resolved.size() == 1) {
         PsiElement baseElement = resolved.get(0).getElement();
         if (baseElement instanceof PsiDirectory) {
+          if (isAntora && AsciiDocUtil.ANTORA_PREFIX_PATTERN.matcher(base).matches()) {
+            if (macroName.equals("image") || macroName.equals("video") || macroName.equals("audio")) {
+              PsiDirectory images = ((PsiDirectory) baseElement).findSubdirectory("images");
+              if (images == null) {
+                images = ((PsiDirectory) baseElement).createSubdirectory("images");
+              }
+              baseElement = images;
+            } else if (macroName.equals("xref") || macroName.equals("xref-attr") || macroName.equals("include")) {
+              PsiDirectory pages = ((PsiDirectory) baseElement).findSubdirectory("pages");
+              if (pages == null) {
+                pages = ((PsiDirectory) baseElement).createSubdirectory("pages");
+              }
+              baseElement = pages;
+            }
+          }
           PsiDirectory parent = (PsiDirectory) baseElement;
           String name = AsciiDocUtil.resolveAttributes(root, key);
           if (name != null) {

@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - Bump org.asciidoctor:asciidoctorj-diagram from 2.3.0 to 2.3.1 (#1639)
 - Bump org.asciidoctor:asciidoctorj-diagram-plantuml from 1.2024.3 to 1.2024.5 (#1638)
 - Don't show an error in the editor if an include doesn't find the Antora component (#1660)
+- When creating a missing file in an Antora component, put it in the correct family folder
 
 === 0.42.2
 
