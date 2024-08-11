@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.43.1
+
+- Fix syntax highlighting when preview is in dark mode (#1668)
+
 === 0.43.0
 
 - JDK 21 is now necessary for developing the plugin (#1646)
