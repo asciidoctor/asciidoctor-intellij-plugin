@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.42.4
+
+- Fix syntax highlighting when preview is in dark mode (#1668)
+
 === 0.42.3
 
 - Bump org.asciidoctor:asciidoctorj-pdf from 2.3.15 to 2.3.17 (#1634)
