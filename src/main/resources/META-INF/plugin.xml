@@ -12,7 +12,7 @@
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->
-  <idea-version since-build="233.11799.241"/> <!-- 2023.3 -->
+  <idea-version since-build="242.20224.159"/> <!-- 2024.2 -->
   <!-- please see https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html -->
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-javafx.xml">com.intellij.javafx</depends>

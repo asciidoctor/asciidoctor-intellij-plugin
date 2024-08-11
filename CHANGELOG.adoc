@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.43.1
 
 - Fix syntax highlighting when preview is in dark mode (#1668)
+- Starting with 0.43.x, the plugin requires IntelliJ 2024.2 to run due to incompatibilities in the generated binary
 
 === 0.43.0
 

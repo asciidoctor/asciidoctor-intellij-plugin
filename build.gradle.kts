@@ -161,8 +161,8 @@ checkstyle {
 }
 
 java {
-    targetCompatibility = JavaVersion.VERSION_17
-    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_21
 }
 
 grammarKit {}
@@ -216,7 +216,7 @@ tasks {
 
     patchPluginXml {
         dependsOn (asciidoctor)
-        sinceBuild = "233.11799.241"
+        sinceBuild = "242.20224.159"
         untilBuild = provider { null }
     }
 
