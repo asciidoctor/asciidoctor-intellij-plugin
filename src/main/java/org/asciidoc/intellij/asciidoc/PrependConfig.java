@@ -3,6 +3,7 @@ package org.asciidoc.intellij.asciidoc;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.extension.Preprocessor;
 import org.asciidoctor.extension.PreprocessorReader;
+import org.asciidoctor.extension.Reader;
 
 import java.util.Collections;
 
@@ -17,11 +18,12 @@ public class PrependConfig extends Preprocessor {
   private String config = "";
 
   @Override
-  public void process(Document document, PreprocessorReader reader) {
-    if (config.length() != 0) {
-      // otherwise an empty line at the beginning breaks level 0 detection
-      reader.push_include(config, null, null, 1, Collections.emptyMap());
+  public Reader process(Document document, PreprocessorReader reader) {
+    if (!config.isEmpty()) {
+      // otherwise, an empty line at the beginning breaks level 0 detection
+      reader.pushInclude(config, null, null, 1, Collections.emptyMap());
     }
+    return null;
   }
 
   public void setConfig(String config) {
