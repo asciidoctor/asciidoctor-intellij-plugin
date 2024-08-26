@@ -97,8 +97,6 @@ public class BrowserPanel implements Disposable {
   @Nullable
   private String myGoogleFontsCssLink;
   @Nullable
-  private String myDroidSansMonoCssLink;
-  @Nullable
   private String myMermaidScript;
   @Nullable
   private String myAsciidoctorTabsScript;
@@ -145,7 +143,6 @@ public class BrowserPanel implements Disposable {
       myFontAwesomeCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("font-awesome/css/font-awesome.min.css") + "\">";
       myDejavuCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
       myGoogleFontsCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/googlefonts.css") + "\">";
-      myDroidSansMonoCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/droidsansmono.css") + "\">";
       myMermaidScript = "<script src=\"" + PreviewStaticServer.getScriptUrl("mermaid/mermaid.min.js") + "\"></script>" +
         "<script>mermaid.initialize(); window.mermaid = mermaid; </script>";
       myAsciidoctorTabsScript = "<script src=\"" + PreviewStaticServer.getScriptUrl("tabs.js") + "\"></script>";

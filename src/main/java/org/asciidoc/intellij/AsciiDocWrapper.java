@@ -1331,7 +1331,7 @@ public class AsciiDocWrapper {
 
   public Options getExportOptions(Options options, FileType fileType) {
     if (fileType == FileType.HTML || fileType == FileType.BROWSER || fileType == FileType.DOCX) {
-      options.setOption(Options.HEADER_FOOTER, true);
+      options.setOption(Options.STANDALONE, true);
     }
     return options;
   }
@@ -1411,10 +1411,13 @@ public class AsciiDocWrapper {
 
     settings.getAsciiDocPreviewSettings().getAttributes().forEach(attrs::setAttribute);
 
-    OptionsBuilder opts = Options.builder().safe(settings.getSafe(project)).backend(fileType.backend).headerFooter(false)
+    OptionsBuilder opts = Options.builder().safe(settings.getSafe(project)).backend(fileType.backend).standalone(false)
       .attributes(attrs)
-      .option("sourcemap", "true")
-      .baseDir(fileBaseDir);
+      .option("sourcemap", "true");
+
+    if (fileBaseDir != null && fileBaseDir.exists()) {
+      opts = opts.baseDir(fileBaseDir);
+    }
 
     return opts.build();
   }
