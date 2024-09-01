@@ -17,7 +17,6 @@ plugins {
     alias(libs.plugins.asciidoctorConvert)
 }
 
-group = properties("pluginGroup").get()
 version = if (System.getenv("VERSION") != null) System.getenv("VERSION") else "0.0.1"
 
 // Configure project's dependencies
