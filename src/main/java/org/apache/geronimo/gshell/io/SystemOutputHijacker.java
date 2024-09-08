@@ -62,19 +62,21 @@ public class SystemOutputHijacker
   /**
    * Install the hijacker.
    */
-  public static synchronized void install() {
-    if (installed) {
-      throw new IllegalStateException("Already installed");
-    }
+  public static void install() {
+    synchronized (SystemOutputHijacker.class) {
+      if (installed) {
+        throw new IllegalStateException("Already installed");
+      }
 
-    // Capture the current set of streams
-    previous = new StreamPair(System.out, System.err);
+      // Capture the current set of streams
+      previous = new StreamPair(System.out, System.err);
+
+      installed = true;
+    }
 
     // Install our streams
     System.setOut(new DelegateStream(StreamPair.Type.OUT));
     System.setErr(new DelegateStream(StreamPair.Type.ERR));
-
-    installed = true;
   }
 
   /**
