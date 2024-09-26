@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.43.2
 
 - Prevent NPE as "previous" might not yet be known (#1687)
+- Upgrading to AsciidoctorJ 3.0.0 (#1682)
 
 === 0.43.1
 
