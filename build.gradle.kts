@@ -67,14 +67,14 @@ dependencies {
     testImplementation(gradleTestKit())
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.2")
-    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.11.1")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.11.2")
 
     testImplementation("com.tngtech.archunit:archunit-junit4:1.3.0")
     testImplementation("org.assertj:assertj-core:3.26.3")
     testImplementation("org.mockito:mockito-core:5.14.1")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.11.1")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.11.2")
 
     // implementation(libs.exampleLibrary)
 
