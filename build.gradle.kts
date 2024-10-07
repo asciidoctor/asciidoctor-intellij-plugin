@@ -65,7 +65,7 @@ dependencies {
     testImplementation("org.asciidoctor:asciidoctorj-pdf:2.3.18")
 
     testImplementation(gradleTestKit())
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.1")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.2")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.11.2")
 
