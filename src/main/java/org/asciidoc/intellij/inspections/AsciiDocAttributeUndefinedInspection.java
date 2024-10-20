@@ -37,22 +37,34 @@ public class AsciiDocAttributeUndefinedInspection extends AsciiDocInspectionBase
           }
           @NotNull PsiReference[] references = ((AsciiDocAttributeReference) o).getReferences();
           for (PsiReference reference : references) {
-            if (!(reference instanceof AsciiDocAttributeDeclarationReference)) {
+            if (!(reference instanceof AsciiDocAttributeDeclarationReference attributeDeclarationReference)) {
               continue;
             }
-            AsciiDocAttributeDeclarationReference attributeDeclarationReference = (AsciiDocAttributeDeclarationReference) reference;
             String key = attributeDeclarationReference.getValue().toLowerCase(Locale.US);
             // check for built-in attributes
             if (AsciiDocBundle.getBuiltInAttributesList().contains(key)) {
               continue;
             }
             // each environment has it own suffix like env-github, treat them as defined
+            // https://docs.asciidoctor.org/asciidoc/latest/attributes/document-attributes-ref/
             if (key.startsWith("env-")) {
+              continue;
+            }
+            if (key.startsWith("basebackend-")) {
+              continue;
+            }
+            if (key.startsWith("backend-")) {
+              continue;
+            }
+            if (key.startsWith("filetype-")) {
+              continue;
+            }
+            if (key.startsWith("doctype-")) {
               continue;
             }
             // check for attributes defined in settings or in Antora component descriptor
             List<AttributeDeclaration> attributes = AsciiDocUtil.findAttributes(o.getProject(), key, o);
-            if (attributes.size() > 0) {
+            if (!attributes.isEmpty()) {
               continue;
             }
             if (attributeDeclarationReference.multiResolve(false).length == 0) {

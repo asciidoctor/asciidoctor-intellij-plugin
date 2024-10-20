@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Prevent NPE as "previous" might not yet be known (#1687)
 - Upgrading to AsciidoctorJ 3.0.0 (#1682)
+- Avoid warning on built-in attributes (#1713)
 
 === 0.43.1
 
