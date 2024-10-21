@@ -2002,6 +2002,23 @@ public class AsciiDocUtil {
     return value.toString();
   }
 
+  public static class AntoraVersionAndList {
+    private final AntoraVersionDescriptor version;
+    private final List<AntoraModule> modules = new ArrayList<>();
+
+    public AntoraVersionAndList(AntoraVersionDescriptor version) {
+      this.version = version;
+    }
+
+    public List<AntoraModule> getModules() {
+      return modules;
+    }
+
+    public AntoraVersionDescriptor getVersion() {
+      return version;
+    }
+  }
+
   public static List<AntoraModule> collectAntoraPrefixes(Project project, VirtualFile moduleDir, boolean onlyThisComponent) {
     if (DumbService.isDumb(project)) {
       return Collections.emptyList();
@@ -2010,6 +2027,7 @@ public class AsciiDocUtil {
       List<VirtualFile> files =
         new ArrayList<>(FilenameIndex.getVirtualFilesByName(ANTORA_YML, new AsciiDocSearchScope(project)));
       List<AntoraModule> result = new ArrayList<>();
+      Map<String, AntoraVersionAndList> latestVersions = new HashMap<>();
       // sort by path proximity
       files.sort(Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
       ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
@@ -2045,12 +2063,23 @@ public class AsciiDocUtil {
         }
         String otherComponentName = getAttributeAsString(antora, "name");
         String otherComponentVersion = getAttributeAsString(antora, "version");
+        AntoraVersionDescriptor otherComponentVersionDescriptor = new AntoraVersionDescriptor(otherComponentVersion, getAttributeAsString(antora, "prerelease"));
+        AntoraVersionAndList latestVersion = latestVersions.get(otherComponentName);
+        if (latestVersion == null || latestVersion.getVersion().compareTo(otherComponentVersionDescriptor) < 0) {
+          latestVersion = new AntoraVersionAndList(otherComponentVersionDescriptor);
+          latestVersions.put(otherComponentName, latestVersion);
+        } else {
+          // this is not the latest version, don't record modules as the latest version
+          latestVersion = null;
+        }
         String title = getAttributeAsString(antora, "title");
         if (title != null && componentTitles.get(otherComponentName) == null) {
           componentTitles.put(otherComponentName, title);
         }
         String versionPrefix = "";
-        if (!Objects.equals(myComponentVersion, otherComponentVersion)) {
+        if (antora.get("version") instanceof Boolean && (Boolean) antora.get("version")) {
+          versionPrefix = "";
+        } else if (!Objects.equals(myComponentVersion, otherComponentVersion) || !Objects.equals(myComponentName, otherComponentName)) {
           versionPrefix = otherComponentVersion + "@";
           if (versionPrefix.length() == 1) {
             versionPrefix = "_" + versionPrefix;
@@ -2065,6 +2094,13 @@ public class AsciiDocUtil {
                 result.add(new AntoraModule(versionPrefix + module.getName() + ":", otherComponentName, module.getName(), title, module));
               }
               if (!onlyThisComponent) {
+                if (latestVersion != null && !Objects.equals(myComponentName, otherComponentName) && !versionPrefix.isEmpty()) {
+                  // we can link to the latest available version without prefixing a version number
+                  if (module.getName().equals("ROOT")) {
+                    latestVersion.getModules().add(new AntoraModule(otherComponentName + "::", otherComponentName, module.getName(), title, module));
+                  }
+                  latestVersion.getModules().add(new AntoraModule(otherComponentName + ":" + module.getName() + ":", otherComponentName, module.getName(), title, module));
+                }
                 if (module.getName().equals("ROOT")) {
                   result.add(new AntoraModule(versionPrefix + otherComponentName + "::", otherComponentName, module.getName(), title, module));
                 }
@@ -2074,6 +2110,7 @@ public class AsciiDocUtil {
           }
         }
       }
+      latestVersions.forEach((s, antoraVersionAndList) -> result.addAll(antoraVersionAndList.getModules()));
       Set<String> entries = new HashSet<>();
       Iterator<AntoraModule> iterator = result.iterator();
       while (iterator.hasNext()) {

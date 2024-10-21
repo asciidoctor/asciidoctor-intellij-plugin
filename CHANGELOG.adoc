@@ -12,6 +12,8 @@ This document provides a high-level view of the changes introduced by release.
 - Prevent NPE as "previous" might not yet be known (#1687)
 - Upgrading to AsciidoctorJ 3.0.0 (#1682)
 - Avoid warning on built-in attributes (#1713)
+- Autocomplete now suggests xref without a version number for the latest component version (#1708)
+- Autocomplete will never suggest the version `true` as it has a special meaning (#1708)
 
 === 0.43.1
 

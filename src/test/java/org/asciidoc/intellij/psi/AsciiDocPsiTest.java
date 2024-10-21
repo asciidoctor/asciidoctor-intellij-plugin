@@ -777,6 +777,10 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
       getTestName(true) + "/componentV2/antora.yml",
       getTestName(true) + "/componentVnull/modules/ROOT/pages/test.adoc",
       getTestName(true) + "/componentVnull/antora.yml",
+      getTestName(true) + "/othercomponentV1/modules/module1/pages/test.adoc",
+      getTestName(true) + "/othercomponentV1/antora.yml",
+      getTestName(true) + "/othercomponentV2/modules/module2/pages/test.adoc",
+      getTestName(true) + "/othercomponentV2/antora.yml",
       getTestName(true) + "/antora-playbook.yml"
     );
 
@@ -808,6 +812,19 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
     // image
     assertReferencesResolve(macros[0], 1);
+
+    // Test variants
+    ArrayList<String> items = new ArrayList<>();
+    for (Object variant : macros[0].getFileReference().getVariants()) {
+      if (variant instanceof LookupElementBuilder lb) {
+        items.add(lb.getLookupString());
+      }
+    }
+
+    // Both with an without version number is listed here for the latest module
+    assertContainsElements(items, Set.of("1.0@other-component:module1", "2.0@other-component:module2", "other-component:module2"));
+    // This module doesn't exist in the latest version
+    assertDoesntContain(items, Set.of("other-component:module1"));
 
     // examples include
     assertReferencesResolve(macros[1], 2);
