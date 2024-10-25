@@ -691,7 +691,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       html = html + "<script>window.iterationStamp=" + iterationStamp + ";</script>";
       html = wrapHtmlForPage(html);
       final String htmlToRender = prepareHtml(html, attributes);
-      loadHTML(htmlToRender, getCefBrowser().getURL());
+      loadHTML(htmlToRender);
       getCefBrowser().setZoomLevel(uiZoom - 1);
     }
     try {
