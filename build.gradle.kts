@@ -100,7 +100,7 @@ dependencies {
         // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
         // https://plugins.jetbrains.com/docs/intellij/plugin-dependencies.html
         plugins(listOf(
-            "PsiViewer:242.4697", // used for debugging
+            "PsiViewer:243.7768", // used for debugging
             // "PlantUML integration:6.3.0-IJ2023.2", // used to test highlighting of plantuml diagrams
             // "com.intellij.platform.images", // dependency for PlantUML plugin
             "com.intellij.javafx:1.0.4",
@@ -109,7 +109,7 @@ dependencies {
             // "com.jetbrains.performancePlugin:213.5744.122" // used run YourKit CPU profiling in test IDE
             // see https://intellij-support.jetbrains.com/hc/en-us/articles/207241235
             // https://plugins.jetbrains.com/plugin/16136-grazie-professional/
-            "com.intellij.grazie.pro:0.3.320"
+            "com.intellij.grazie.pro:0.3.343"
         ))
 
         instrumentationTools()
