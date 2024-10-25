@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.43.3
+
+...
+
 === 0.43.2
 
 - Prevent NPE as "previous" might not yet be known (#1687)
