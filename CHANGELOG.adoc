@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - Autocomplete now suggests xref without a version number for the latest component version (#1708)
 - Autocomplete will never suggest the version `true` as it has a special meaning (#1708)
 - Prevent preview frozen on initializing state on Intellij 2024.3 EAP (#1721)
+- Bump org.asciidoctor:asciidoctorj-pdf from 2.3.18 to 2.3.19 (#1714)
 
 === 0.43.1
 
