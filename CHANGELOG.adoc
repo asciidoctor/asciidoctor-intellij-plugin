@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.43.3
 
-...
+- Clear lock for JCEF preview to prevent a blank preview every time you open an AsciiDoc file (#1610)
 
 === 0.43.2
 

@@ -20,7 +20,6 @@ public class AsciiDocJCEFHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
   public static final ProviderInfo INFO = new ProviderInfo("JCEF Browser", AsciiDocJCEFHtmlPanelProvider.class.getName());
 
   private static final Logger LOG = Logger.getInstance(AsciiDocDownloaderUtil.class);
-  private static boolean staleCheckComplete;
 
   @NotNull
   @Override
@@ -32,23 +31,21 @@ public class AsciiDocJCEFHtmlPanelProvider extends AsciiDocHtmlPanelProvider {
   private static synchronized void clearStaleJCEFlock() {
     // Workaround for https://youtrack.jetbrains.com/issue/IJPL-148653,
     // when a lock file remains which the name of the old host name
-    if (!staleCheckComplete) {
-      staleCheckComplete = true;
-      Path jcefCache = PathManager.getSystemDir().resolve("jcef_cache");
-      if (jcefCache.toFile().exists()) {
-        Path singletonLock = jcefCache.resolve("SingletonLock");
-        try {
-          String hostName = InetAddress.getLocalHost().getHostName();
-          String lockFile = Files.readSymbolicLink(singletonLock).toFile().getName();
-          if (!lockFile.matches(Pattern.quote(hostName) + "-[0-9]*")) {
-            // delete the stale lock to prevent the preview from appearing blank
-            Files.delete(singletonLock);
-          }
-        } catch (NoSuchFileException ignore) {
-          // nop
-        } catch (IOException e) {
-          LOG.warn("Can't check lock", e);
+    // Run this check everytime an AsciiDoc editor is opened to prevent problems, for example, after a computer comes back from suspend mode.
+    Path jcefCache = PathManager.getSystemDir().resolve("jcef_cache");
+    if (jcefCache.toFile().exists()) {
+      Path singletonLock = jcefCache.resolve("SingletonLock");
+      try {
+        String hostName = InetAddress.getLocalHost().getHostName();
+        String lockFile = Files.readSymbolicLink(singletonLock).toFile().getName();
+        if (!lockFile.matches(Pattern.quote(hostName) + "-[0-9]*")) {
+          // delete the stale lock to prevent the preview from appearing blank
+          Files.delete(singletonLock);
         }
+      } catch (NoSuchFileException ignore) {
+        // nop
+      } catch (IOException e) {
+        LOG.warn("Can't check lock", e);
       }
     }
   }
