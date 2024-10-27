@@ -1,11 +1,6 @@
 = Installing the plugin
 :description: List of prerequisites and a step-by-step guide to install the plugin.
 
-// make preview work on non-Antora sites, for example, GitHub
-ifndef::env-site[]
-:imagesdir: ../images
-endif::[]
-
 {description}
 
 For users already familiar with JetBrains IntelliJ, there's a xref:quick-start.adoc[] documentation.

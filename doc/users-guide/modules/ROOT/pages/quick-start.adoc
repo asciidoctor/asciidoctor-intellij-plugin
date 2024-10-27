@@ -1,11 +1,6 @@
 = Quick Start
 :description: A minimal installation guide for those already familiar with their JetBrains IntelliJ based IDE.
 
-// make preview work on non-Antora sites, for example, GitHub
-ifndef::env-site[]
-:imagesdir: ../images
-endif::[]
-
 {description}
 Change to the page xref:installation.adoc[] for a more detailed guide,
 or xref:technical-writing/index.adoc[] for a step-by-step-guide installing IntelliJ for technical writing.
