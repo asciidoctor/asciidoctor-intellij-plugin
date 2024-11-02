@@ -74,6 +74,7 @@ import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -693,7 +694,11 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   public void dispose() {
     if (myPanel != null) {
       Disposer.dispose(myPanel);
+      synchronized (this) {
+        myPanel = detachOldPanelAndCreateAndAttachNewOne(document, tempImagesPath, myHtmlPanelWrapper, hint, myPanel, null, AsciiDocPreviewEditor.this::forceRefresh);
+      }
     }
+    Arrays.stream(myHtmlPanelWrapper.getComponentListeners()).forEach(l -> myHtmlPanelWrapper.removeComponentListener(l));
     AsciiDocWrapper.cleanupImagesPath(tempImagesPath);
   }
 

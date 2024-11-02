@@ -235,6 +235,9 @@ public class AsciiDocWrapper {
       } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
         LOG.error("unable to de-register shutdown hook", e);
       }
+      attributesRetriever = null;
+      antoraIncludeAdapter = null;
+      prependConfig = null;
       System.gc();
       // still, this is not enough; there are dangling ThreadLocals like "org.jruby.Ruby$FStringEqual"
       // in addition to that: classes are marked at "Held by JVM" and not unloaded. Reason is unknown, maybe

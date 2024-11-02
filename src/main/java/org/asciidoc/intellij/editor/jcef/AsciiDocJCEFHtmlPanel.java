@@ -395,30 +395,39 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
   private void disposeHandlers() {
     if (myJSQuerySetScrollY != null) {
+      myJSQuerySetScrollY.clearHandlers();
       Disposer.dispose(myJSQuerySetScrollY);
     }
     if (myRenderedIteration != null) {
+      myRenderedIteration.clearHandlers();
       Disposer.dispose(myRenderedIteration);
     }
     if (myRenderedResult != null) {
+      myRenderedResult.clearHandlers();
       Disposer.dispose(myRenderedResult);
     }
     if (myBrowserLog != null) {
+      myBrowserLog.clearHandlers();
       Disposer.dispose(myBrowserLog);
     }
     if (myScrollEditorToLine != null) {
+      myScrollEditorToLine.clearHandlers();
       Disposer.dispose(myScrollEditorToLine);
     }
     if (myZoomDelta != null) {
+      myZoomDelta.clearHandlers();
       Disposer.dispose(myZoomDelta);
     }
     if (myZoomReset != null) {
+      myZoomReset.clearHandlers();
       Disposer.dispose(myZoomReset);
     }
     if (mySaveImage != null) {
+      mySaveImage.clearHandlers();
       Disposer.dispose(mySaveImage);
     }
     if (myOpenLink != null) {
+      myOpenLink.clearHandlers();
       Disposer.dispose(myOpenLink);
     }
   }

@@ -277,6 +277,7 @@ public abstract class SplitFileEditor<E1 extends TextEditor, E2 extends FileEdit
 
   @Override
   public void dispose() {
+    myComponent.removeAll();
     Disposer.dispose(myMainEditor);
     Disposer.dispose(mySecondEditor);
   }

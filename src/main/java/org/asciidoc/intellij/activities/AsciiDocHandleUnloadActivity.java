@@ -1,20 +1,30 @@
 package org.asciidoc.intellij.activities;
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
+import com.intellij.codeInsight.daemon.impl.DaemonProgressIndicator;
 import com.intellij.ide.lightEdit.LightEditCompatible;
 import com.intellij.ide.plugins.CannotUnloadPluginException;
 import com.intellij.ide.plugins.DynamicPluginListener;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.messages.MessageBusConnection;
 import org.asciidoc.intellij.AsciiDocPlugin;
 import org.asciidoc.intellij.AsciiDocWrapper;
+import org.asciidoc.intellij.editor.AsciiDocSplitEditor;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -56,7 +66,7 @@ public class AsciiDocHandleUnloadActivity implements StartupActivity, DumbAware,
 
                 // before trying to re-enable this for internal mode, try to unload plugin in development mode and analyze heap dumps.
                 // if (!ApplicationManager.getApplication().isInternal()) {
-                throw new CannotUnloadPluginException("unloading mechanism is not safe, incomplete unloading might lead to strange exceptions");
+                   throw new CannotUnloadPluginException("unloading mechanism is not safe, incomplete unloading might lead to strange exceptions");
                 // }
                 // found that "IdeScriptEngineManagerImpl" will hold a reference to "org.jruby.embed.jsr223.JRubyEngineFactory"
                 // https://youtrack.jetbrains.com/issue/IDEA-285933
@@ -69,6 +79,38 @@ public class AsciiDocHandleUnloadActivity implements StartupActivity, DumbAware,
               if (Objects.equals(pluginDescriptor.getPluginId().getIdString(), AsciiDocPlugin.PLUGIN_ID)) {
                 LOG.info("beforePluginUnload");
                 AsciiDocWrapper.beforePluginUnload();
+                for (Project project : ProjectManager.getInstance().getOpenProjects()) {
+
+                  // Workaround for https://youtrack.jetbrains.com/issue/IJPL-18535/
+                  try {
+                    DaemonCodeAnalyzer dca = DaemonCodeAnalyzer.getInstance(project);
+                    Field myUpdateProgress = DaemonCodeAnalyzerImpl.class.getDeclaredField("myUpdateProgress");
+                    myUpdateProgress.setAccessible(true);
+                    Map<FileEditor, DaemonProgressIndicator> map = (Map<FileEditor, DaemonProgressIndicator>) myUpdateProgress.get(dca);
+                    map.entrySet().clear();
+                  } catch (NoSuchFieldException | IllegalAccessException e) {
+                    // nopp
+                  }
+
+                  // Possibly not necessary in the future if IntelliJ doesn't hold on to references
+                  FileEditorManager fem = FileEditorManager.getInstance(project);
+                  for (FileEditor editor : fem.getAllEditors()) {
+                    if ((editor instanceof AsciiDocSplitEditor)) {
+                      ApplicationManager.getApplication().runReadAction(() -> {
+                        VirtualFile vFile = editor.getFile();
+                        if (vFile != null && vFile.isValid()) {
+                          // an AsciiDoc file in a non-split editor, close and re-open the file to enforce split editor
+                          ApplicationManager.getApplication().runWriteAction(() -> {
+                            // closing the file might trigger a save, therefore, wrap in write action
+                            if (!project.isDisposed()) {
+                              fem.closeFile(vFile);
+                            }
+                          });
+                        }
+                      });
+                    }
+                  }
+                }
                 busConnection.dispose();
               }
             }
