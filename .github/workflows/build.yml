@@ -62,10 +62,6 @@ jobs:
       - name: Fetch Sources
         uses: actions/checkout@v4
 
-      # Validate wrapper
-      - name: Gradle Wrapper Validation
-        uses: gradle/actions/wrapper-validation@v4
-
       # Setup Gradle
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
