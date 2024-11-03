@@ -39,8 +39,11 @@ public class CodeFenceHighlightInfoFilter implements HighlightInfoFilter {
     PsiLanguageInjectionHost injectionHost = manager.getInjectionHost(file);
     PsiFile topLevelFile = manager.getTopLevelFile(file);
     if (topLevelFile.getFileType() == AsciiDocFileType.INSTANCE
-      && injectionHost instanceof AsciiDocElementWithLanguage) {
+      && injectionHost instanceof AsciiDocElementWithLanguage host) {
       if (!SEVERITIES.contains(highlightInfo.getSeverity())) {
+        if (!host.validateContent()) {
+          return false;
+        }
         if (AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isHideErrorsInSourceBlocks()) {
           return false;
         }

@@ -7,4 +7,8 @@ public interface AsciiDocElementWithLanguage extends PsiLanguageInjectionHost {
   String getFenceLanguage();
 
   TextRange getContentTextRange();
+
+  default boolean validateContent() {
+    return true;
+  }
 }

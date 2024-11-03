@@ -1,7 +1,6 @@
 package org.asciidoc.intellij.psi;
 
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.LiteralTextEscaper;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
@@ -27,46 +26,31 @@ public class AsciiDocListing extends AbstractAsciiDocCodeBlock {
   }
 
   @Override
-  public Type getType() {
-    return Type.LISTING;
-  }
-
-  @Override
-  public String getDefaultTitle() {
-    return "Listing";
-  }
-
-  @Override
   public TextRange getContentTextRange() {
     return getContentTextRange(AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER, AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER);
   }
 
-  @NotNull
   @Override
-  public LiteralTextEscaper<? extends AsciiDocElementWithLanguage> createLiteralTextEscaper() {
-    return new LiteralTextEscaper<AsciiDocElementWithLanguage>(this) {
-      @Override
-      public boolean decode(@NotNull TextRange rangeInsideHost, @NotNull StringBuilder outChars) {
-        outChars.append(rangeInsideHost.substring(myHost.getText()));
-        return true;
+  public boolean validateContent() {
+    final PsiElement element = findPsiChildByType(AsciiDocElementTypes.BLOCK_ATTRIBUTES);
+    if (element != null) {
+      AsciiDocBlockAttributes blockAttributes = PsiTreeUtil.findChildOfType(this, AsciiDocBlockAttributes.class);
+      if (blockAttributes != null) {
+        String[] attr = blockAttributes.getAttributes();
+        if (attr.length > 0 && attr[0].contains("%novalidate")) {
+          return false;
+        }
+        String opts = blockAttributes.getAttribute("opts");
+        if (opts != null) {
+          for (String opt : opts.split(",")) {
+            if (opt.trim().equals("novalidate")) {
+              return false;
+            }
+          }
+        }
       }
-
-      @Override
-      public int getOffsetInHost(int offsetInDecoded, @NotNull TextRange rangeInsideHost) {
-        return rangeInsideHost.getStartOffset() + offsetInDecoded;
-      }
-
-      @NotNull
-      @Override
-      public TextRange getRelevantTextRange() {
-        return myHost.getContentTextRange();
-      }
-
-      @Override
-      public boolean isOneLine() {
-        return false;
-      }
-    };
+    }
+    return true;
   }
 
   @Override
@@ -82,7 +66,7 @@ public class AsciiDocListing extends AbstractAsciiDocCodeBlock {
           return null;
         } else if (attr.length >= 1) {
           firstAttr = attr[0];
-          int locationOfPercent = firstAttr.indexOf("%"); // this handles for example "plantuml%interactive"
+          int locationOfPercent = firstAttr.indexOf("%"); // this handles, for example, "plantuml%interactive"
           if (locationOfPercent != -1) {
             firstAttr = firstAttr.substring(0, locationOfPercent);
           }

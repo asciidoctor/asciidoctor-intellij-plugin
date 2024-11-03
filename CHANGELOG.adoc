@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Clear lock for JCEF preview to prevent a blank preview every time you open an AsciiDoc file (#1610)
 - Notify user when an Antora component descriptor misses the name (#1728)
+- Allow disabling validation on individual code blocks (#830)
 
 === 0.43.2
 
