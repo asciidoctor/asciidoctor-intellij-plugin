@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.template;
 
-import com.intellij.codeInsight.template.EverywhereContextType;
 import com.intellij.codeInsight.template.TemplateActionContext;
 import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.psi.PsiElement;
@@ -8,14 +7,11 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class AsciiDocTemplateContextType extends TemplateContextType {
 
-  AsciiDocTemplateContextType(@NotNull @org.jetbrains.annotations.NonNls String id,
-                              @NotNull String presentableName,
-                              @Nullable Class<? extends TemplateContextType> baseContextType) {
-    super(id, presentableName, baseContextType);
+  AsciiDocTemplateContextType(@NotNull String presentableName) {
+    super(presentableName);
   }
 
   @Override
@@ -30,7 +26,7 @@ public abstract class AsciiDocTemplateContextType extends TemplateContextType {
 
   public static class File extends AsciiDocTemplateContextType {
     protected File() {
-      super("AsciiDoc", "AsciiDoc file", EverywhereContextType.class);
+      super("AsciiDoc file");
     }
   }
 
