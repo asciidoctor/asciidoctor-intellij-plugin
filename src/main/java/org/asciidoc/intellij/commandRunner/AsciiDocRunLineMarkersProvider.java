@@ -136,7 +136,7 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor imp
     }
     DataContext dataContext = createDataContext(project, virtualFile, null);
 
-    return ApplicationManager.getApplication().runReadAction((Computable<Boolean>) () -> RunAnythingProvider.EP_NAME.extensions()
+    return ApplicationManager.getApplication().runReadAction((Computable<Boolean>) () -> RunAnythingProvider.EP_NAME.getExtensionList().stream()
       .filter(it -> checkForCLI(it, allowRunConfigurations))
       .anyMatch(provider -> provider.findMatchingValue(dataContext, trimmedCmd) != null));
   }
@@ -167,7 +167,7 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor imp
     if (language == null) {
       return null;
     }
-    AsciiDocRunner runner = AsciiDocRunner.EP_NAME.extensions().filter(r -> {
+    AsciiDocRunner runner = AsciiDocRunner.EP_NAME.getExtensionList().stream().filter(r -> {
       try {
         return r.isApplicable(language);
       } catch (NoClassDefFoundError ex) {
@@ -183,7 +183,7 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor imp
     DumbAwareAction runAction = new DumbAwareAction(runner::getTitle, AllIcons.RunConfigurations.TestState.Run_run) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent event) {
-        Project project = event.getRequiredData(CommonDataKeys.PROJECT);
+        Project project = event.getData(CommonDataKeys.PROJECT);
         runner.run(listing.getContentTextRange().substring(listing.getText()), project, virtualFile, DefaultRunExecutor.getRunExecutorInstance());
       }
     };
