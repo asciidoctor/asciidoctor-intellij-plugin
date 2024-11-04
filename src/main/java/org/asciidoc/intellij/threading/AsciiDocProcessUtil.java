@@ -6,7 +6,6 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Ref;
 
 /**
  * Handling common pattern around not blocking the main thread.
@@ -27,13 +26,10 @@ public class AsciiDocProcessUtil {
     if (ApplicationManager.getApplication().isDispatchThread()) {
       ApplicationManager.getApplication().runReadAction(runnable);
     } else {
-      retryable(() -> {
-        if (!ProgressManager.getInstance().runInReadActionWithWriteActionPriority(runnable, AsciiDocDelegatingProgressIndicator.build())) {
-          // this is a specialized ProcessCanceledException which can be handled in InternalReadAction.kt:81
-          // consider using ReadAction.computeCancellable instead in the future.
-          throw new ReadAction.CannotReadException();
-        }
-      });
+      retryable(() -> ReadAction.computeCancellable(() -> {
+        runnable.run();
+        return null;
+      }));
     }
   }
 
@@ -46,29 +42,22 @@ public class AsciiDocProcessUtil {
    * @throws ProcessCanceledException when a write action needs priority
    */
   public static <T> T runInReadActionWithWriteActionPriority(Computable<T> computable) {
-    Ref<T> ref = new Ref<>();
     if (ApplicationManager.getApplication().isDispatchThread()) {
-      ref.set(ApplicationManager.getApplication().runReadAction(computable));
+      return ApplicationManager.getApplication().runReadAction(computable);
     } else {
-      retryable(() -> {
-        if (!ProgressManager.getInstance().runInReadActionWithWriteActionPriority(() -> ref.set(computable.compute()), AsciiDocDelegatingProgressIndicator.build())) {
-          throw new ProcessCanceledException();
-        }
-      });
+      return retryable(() -> ReadAction.computeCancellable(computable::compute));
     }
-    return ref.get();
   }
 
   /**
    * Retry if we receive a ProcessCanceledException to avoid throwing away previous computations and to continue
    * to make progress.
    */
-  private static void retryable(Runnable runnable) {
+  private static <T> T retryable(Computable<T> computable) {
     int retries = 2;
     while (true) {
       try {
-        runnable.run();
-        return;
+        return computable.compute();
       } catch (ProcessCanceledException e) {
         if (ApplicationManager.getApplication().isReadAccessAllowed()) {
           // this is nested within another read action, don't retry
