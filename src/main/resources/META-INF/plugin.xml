@@ -187,6 +187,10 @@
 
   </actions>
 
+  <applicationListeners>
+    <listener class="org.asciidoc.intellij.activities.AsciiDocHandleUnloadEvent" topic="com.intellij.ide.plugins.DynamicPluginListener" />
+  </applicationListeners>
+
   <extensions defaultExtensionNs="com.intellij">
     <notificationGroup displayType="NONE" id="asciidoctor" isLogByDefault="true" bundle="AsciiDocBundle" key="asciidoc.notifications.general" />
     <notificationGroup displayType="STICKY_BALLOON" id="asciidoctor-update" bundle="AsciiDocBundle" key="asciidoc.notifications.update" isLogByDefault="true" />
@@ -414,7 +418,6 @@
     </intentionAction>
 
     <daemon.highlightInfoFilter implementation="org.asciidoc.intellij.injection.CodeFenceHighlightInfoFilter"/>
-    <postStartupActivity implementation="org.asciidoc.intellij.activities.AsciiDocHandleUnloadActivity"/>
     <postStartupActivity implementation="org.asciidoc.intellij.activities.AsciiDocPluginUpdateActivity"/>
     <errorHandler implementation="org.asciidoc.intellij.errorHandler.AsciiDocErrorHandler"/>
     <registryKey defaultValue="true" description="Whether the AsciiDoc view should be displayed in the off-screen mode." key="ide.browser.jcef.asciidocView.osr.enabled" />
