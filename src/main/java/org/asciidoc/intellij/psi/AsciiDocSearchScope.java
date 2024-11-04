@@ -52,7 +52,7 @@ public class AsciiDocSearchScope extends GlobalSearchScope {
       !myFileIndexFacade.isInLibrarySource(file);
 
     if (result && onlyFilesFromThisProject) {
-      result = myFileIndexFacade.isInProjectScope(file);
+      result = myFileIndexFacade.isInContent(file);
     }
 
     if (result && excludeSymLinks) {
