@@ -1,12 +1,12 @@
 package org.asciidoc.intellij.toolbar;
 
+import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.util.ui.JBEmptyBorder;
 import icons.AsciiDocIcons;
@@ -53,7 +53,7 @@ public class AsciiDocToolbarPanel extends JPanel {
 
     DefaultActionGroup toolbarGroup = new DefaultActionGroup();
 
-    final DefaultActionGroup group = (DefaultActionGroup) actionManager.getAction(groupId);
+    final ActionGroup group = (ActionGroup) actionManager.getAction(groupId);
     @SuppressWarnings("RedundantCast") // needed for 2024.2
     AnAction[] children = group.getChildren((AnActionEvent) null);
 
@@ -74,10 +74,11 @@ public class AsciiDocToolbarPanel extends JPanel {
     tableMenuAction.getTemplatePresentation().setText("Create table");
     tableMenuAction.getTemplatePresentation().setIcon(AsciiDocIcons.EditorActions.TABLE);
     toolbarGroup.addAction(tableMenuAction);
-    final ActionToolbarImpl editorToolbar =
-      ((ActionToolbarImpl) actionManager.createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, toolbarGroup, true));
-    editorToolbar.setOpaque(false);
-    editorToolbar.setBorder(new JBEmptyBorder(0, 2, 0, 2));
+    final ActionToolbar editorToolbar =
+      actionManager.createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, toolbarGroup, true);
+    JComponent component = editorToolbar.getComponent();
+    component.setOpaque(false);
+    component.setBorder(new JBEmptyBorder(0, 2, 0, 2));
 
     return editorToolbar;
   }
