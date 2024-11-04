@@ -10,9 +10,15 @@
 Starting with IntelliJ 2024.2, JDK 21 is required to build the plugin, as IntelliJ 2024.2 uses JDK 21. The runtime version of the plugin is still compatible with JDK 17.
 https://blog.jetbrains.com/idea/2024/05/intellij-idea-2024-2-eap-2/[See the JDK 21 announcement in the JetBrains blog for details].
 
-The AsciiDoc plugin uses only language features of Java 11 to allow the built plugin to run with earlier versions of IntelliJ as well.
+The AsciiDoc plugin uses only language features of Java 17 to allow the built plugin to run with earlier versions of IntelliJ as well.
 
-JetBrains recommends https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html[Amazon Corretto JDK] for development, but other distributions based on OpenJDK should work as well.
+JetBrains recommends https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/downloads-list.html[Amazon Corretto JDK] for development, but other distributions based on OpenJDK should work as well.
+
+== Setup IntelliJ
+
+In IntelliJ, go to menu:File[Project Structure... > Project Settings > Project > SDK] and select `coretto-21` as the JDK.
+
+== Setup Gradle
 
 For the Gradle build tool to pick up the Java version, point the environment variable `JAVA_HOME` to the folder with the JDK:
 
@@ -26,7 +32,7 @@ export JAVA_HOME=...
 JAVA_HOME=c:\workspace\...
 ----
 
-== Verify the environment
+=== Verify the Gradle environment
 
 Developers can check their environment using the following command in the root folder of the project:
 
@@ -54,7 +60,7 @@ Revision:     ...
 Kotlin:       ...
 Groovy:       ...
 Ant:          ...
-JVM:          17.0.x (Amazon.com Inc. 17.0....)
+JVM:          21.0.x (Amazon.com Inc. 21.0....)
 OS:           ...
 ----
 
