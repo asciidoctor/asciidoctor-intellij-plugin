@@ -51,7 +51,7 @@ public class AsciiDocIncludeTagInDocument extends AsciiDocASTWrapperPsiElement {
           // trigger a save-all-and-refresh, as tags of references will have changed
           editor.selectNotify();
         }
-      }), ModalityState.NON_MODAL);
+      }), ModalityState.nonModal());
       return element;
     }
 
