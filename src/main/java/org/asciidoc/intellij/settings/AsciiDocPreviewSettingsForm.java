@@ -292,7 +292,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
           myDownloadDependenciesFailedDitaamini.setVisible(true);
         }
         if (!AsciiDocDownloaderUtil.getAsciidoctorJDiagramBatikFile().exists()) {
-          myDownloadDependenciesFailedDitaamini.setVisible(true);
+          myDownloadDependenciesFailedBatik.setVisible(true);
         }
         if (!AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJPdf()) {
           myDownloadDependenciesFailedPdf.setVisible(true);
@@ -349,6 +349,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     myDownloadDependenciesFailedDiagram.setVisible(false);
     myDownloadDependenciesFailedPlantuml.setVisible(false);
     myDownloadDependenciesFailedDitaamini.setVisible(false);
+    myDownloadDependenciesFailedBatik.setVisible(false);
     myDownloadDependenciesFailedPdf.setVisible(false);
   }
 
