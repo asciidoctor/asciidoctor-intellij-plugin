@@ -156,7 +156,7 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
   private final ScrollPreservingListener myScrollPreservingListener = new ScrollPreservingListener();
   @NotNull
   private final BridgeSettingListener myBridgeSettingListener = new BridgeSettingListener();
-  private Boolean isAntoraCache;
+  private volatile Boolean isAntoraCache;
 
   private int lineCount;
 
@@ -216,94 +216,98 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
       Notifications.Bus.notify(notification);
     }
 
-    ApplicationManager.getApplication().invokeLater(() -> runFX(new Runnable() {
-      @Override
-      public void run() {
-        if (new JavaFxHtmlPanelProvider().isAvailable() == AsciiDocHtmlPanelProvider.AvailabilityInfo.UNAVAILABLE) {
-          String message = "JavaFX unavailable, probably stuck";
-          LOG.warn(message);
-          return;
-        }
-        try {
-          // don't pass a lambda as startup as this will lead to classloader leak
-          PlatformImpl.startup(new Thread());
-          PlatformImpl.runLater(() -> {
-            myWebView = new WebView();
+    ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      // evaluate data in background
+      isAntora();
+      ApplicationManager.getApplication().invokeLater(() -> runFX(new Runnable() {
+        @Override
+        public void run() {
+          if (new JavaFxHtmlPanelProvider().isAvailable() == AsciiDocHtmlPanelProvider.AvailabilityInfo.UNAVAILABLE) {
+            String message = "JavaFX unavailable, probably stuck";
+            LOG.warn(message);
+            return;
+          }
+          try {
+            // don't pass a lambda as startup as this will lead to classloader leak
+            PlatformImpl.startup(new Thread());
+            PlatformImpl.runLater(() -> {
+              myWebView = new WebView();
 
-            updateFontSmoothingType(myWebView, false);
-            registerContextMenu(JavaFxHtmlPanel.this.myWebView);
-            myWebView.setContextMenuEnabled(false);
-            float uiZoom = (float) AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getZoom() / 100;
-            myWebView.setZoom(JBUIScale.scale(uiZoom));
-            myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>", Collections.emptyMap()));
+              updateFontSmoothingType(myWebView, false);
+              registerContextMenu(JavaFxHtmlPanel.this.myWebView);
+              myWebView.setContextMenuEnabled(false);
+              float uiZoom = (float) AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getZoom() / 100;
+              myWebView.setZoom(JBUIScale.scale(uiZoom));
+              myWebView.getEngine().loadContent(prepareHtml("<html><head></head><body>Initializing...</body>", Collections.emptyMap()));
 
-            myWebView.addEventFilter(ScrollEvent.SCROLL, scrollEvent -> {
-              // touch pads send lots of events with deltaY == 0, not handling them here
-              if (scrollEvent.isControlDown() && Double.compare(scrollEvent.getDeltaY(), 0.0) != 0) {
-                double zoom = myWebView.getZoom();
-                double factor = (scrollEvent.getDeltaY() > 0.0 ? 0.1 : -0.1)
-                  // normalize scrolling
-                  * (Math.abs(scrollEvent.getDeltaY()) / scrollEvent.getMultiplierY())
-                  // adding one to make it a factor that we can multiply the zoom by
-                  + 1;
-                zoom = zoom * factor;
-                // define minimum/maximum zoom
-                if (zoom < JBUIScale.scale(0.1f)) {
-                  zoom = 0.1;
-                } else if (zoom > JBUIScale.scale(10.f)) {
-                  zoom = 10;
-                }
-                myWebView.setZoom(zoom);
-                scrollEvent.consume();
-              }
-            });
-
-            myWebView.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
-              if (mouseEvent.isControlDown() && mouseEvent.getButton() == MouseButton.MIDDLE) {
-                float zoom = (float) AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getZoom() / 100;
-                myWebView.setZoom(JBUIScale.scale(zoom));
-                mouseEvent.consume();
-              }
-            });
-
-            WebConsoleListener.setDefaultListener((webView, message, lineNumber, sourceId) -> LOG.warn("Console message: " + message + "[at " + lineNumber + "]"));
-
-            final WebEngine engine = myWebView.getEngine();
-            engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
-            engine.getLoadWorker().stateProperty().addListener(myScrollPreservingListener);
-
-            final Scene scene = new Scene(myWebView);
-
-            ApplicationManager.getApplication().invokeLater(() -> runFX(() -> {
-              try {
-                synchronized (myInitActions) {
-                  myPanel = new JFXPanelWrapper();
-                  Platform.runLater(() -> myPanel.setScene(scene));
-                  for (Runnable action : myInitActions) {
-                    Platform.runLater(action);
+              myWebView.addEventFilter(ScrollEvent.SCROLL, scrollEvent -> {
+                // touch pads send lots of events with deltaY == 0, not handling them here
+                if (scrollEvent.isControlDown() && Double.compare(scrollEvent.getDeltaY(), 0.0) != 0) {
+                  double zoom = myWebView.getZoom();
+                  double factor = (scrollEvent.getDeltaY() > 0.0 ? 0.1 : -0.1)
+                    // normalize scrolling
+                    * (Math.abs(scrollEvent.getDeltaY()) / scrollEvent.getMultiplierY())
+                    // adding one to make it a factor that we can multiply the zoom by
+                    + 1;
+                  zoom = zoom * factor;
+                  // define minimum/maximum zoom
+                  if (zoom < JBUIScale.scale(0.1f)) {
+                    zoom = 0.1;
+                  } else if (zoom > JBUIScale.scale(10.f)) {
+                    zoom = 10;
                   }
-                  myInitActions.clear();
+                  myWebView.setZoom(zoom);
+                  scrollEvent.consume();
                 }
-                myPanelWrapper.add(myPanel, BorderLayout.CENTER);
-                myPanelWrapper.repaint();
-              } catch (Throwable e) {
-                LOG.warn("can't initialize JFXPanelWrapper", e);
-              }
-            }));
-          });
-        } catch (IllegalAccessError ex) {
-          LOG.warn("class loading problem: " + ex.getMessage());
-        } catch (Throwable ex) {
-          String message = "Error initializing JavaFX: " + ex.getMessage();
-          LOG.error(message, ex);
-          Notification notification = AsciiDocWrapper.getNotificationGroup().createNotification("Error rendering asciidoctor", message,
-            NotificationType.ERROR);
-          // increase event log counter
-          notification.setImportant(true);
-          Notifications.Bus.notify(notification);
+              });
+
+              myWebView.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+                if (mouseEvent.isControlDown() && mouseEvent.getButton() == MouseButton.MIDDLE) {
+                  float zoom = (float) AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getZoom() / 100;
+                  myWebView.setZoom(JBUIScale.scale(zoom));
+                  mouseEvent.consume();
+                }
+              });
+
+              WebConsoleListener.setDefaultListener((webView, message, lineNumber, sourceId) -> LOG.warn("Console message: " + message + "[at " + lineNumber + "]"));
+
+              final WebEngine engine = myWebView.getEngine();
+              engine.getLoadWorker().stateProperty().addListener(myBridgeSettingListener);
+              engine.getLoadWorker().stateProperty().addListener(myScrollPreservingListener);
+
+              final Scene scene = new Scene(myWebView);
+
+              ApplicationManager.getApplication().invokeLater(() -> runFX(() -> {
+                try {
+                  synchronized (myInitActions) {
+                    myPanel = new JFXPanelWrapper();
+                    Platform.runLater(() -> myPanel.setScene(scene));
+                    for (Runnable action : myInitActions) {
+                      Platform.runLater(action);
+                    }
+                    myInitActions.clear();
+                  }
+                  myPanelWrapper.add(myPanel, BorderLayout.CENTER);
+                  myPanelWrapper.repaint();
+                } catch (Throwable e) {
+                  LOG.warn("can't initialize JFXPanelWrapper", e);
+                }
+              }));
+            });
+          } catch (IllegalAccessError ex) {
+            LOG.warn("class loading problem: " + ex.getMessage());
+          } catch (Throwable ex) {
+            String message = "Error initializing JavaFX: " + ex.getMessage();
+            LOG.error(message, ex);
+            Notification notification = AsciiDocWrapper.getNotificationGroup().createNotification("Error rendering asciidoctor", message,
+              NotificationType.ERROR);
+            // increase event log counter
+            notification.setImportant(true);
+            Notifications.Bus.notify(notification);
+          }
         }
-      }
-    }));
+      }));
+    });
 
   }
 
@@ -762,12 +766,16 @@ public class JavaFxHtmlPanel implements AsciiDocHtmlPanel {
     }
   }
 
-  private synchronized boolean isAntora() {
+  private boolean isAntora() {
     if (isAntoraCache == null) {
-      AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
-        isAntoraCache = editor != null && editor.getProject() != null
-          && AsciiDocUtil.findAntoraPagesDir(editor.getProject(), getParentDirectory()) != null;
-      });
+      synchronized (this) {
+        if (isAntoraCache == null) {
+          AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
+            isAntoraCache = editor != null && editor.getProject() != null
+              && AsciiDocUtil.findAntoraPagesDir(editor.getProject(), getParentDirectory()) != null;
+          });
+        }
+      }
     }
     return isAntoraCache;
   }
