@@ -43,6 +43,8 @@ table:not(.linenotable):not(.CodeRay) tr.even,table tr.alt,table tr:nth-of-type(
 table:not(.linenotable):not(.CodeRay) thead,table tfoot{background:#626262}
 tbody tr th{background:#626262}
 
+td.icon { color: rgba(0,0,0,.8); }
+
 /* was: 7a2518 */
 .subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title,
 #toctitle,
