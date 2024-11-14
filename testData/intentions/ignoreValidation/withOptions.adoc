@@ -1,0 +1,4 @@
+[,java,opts=some]
+----
+<caret>System.out.println("Hello, world!");
+----

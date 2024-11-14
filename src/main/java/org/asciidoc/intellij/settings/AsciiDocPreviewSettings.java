@@ -389,8 +389,8 @@ public final class AsciiDocPreviewSettings {
   public List<String> getHiddenErrorsByLanguageAsList() {
     List<String> list = new ArrayList<>();
     if (myHideErrorsByLanguage != null) {
-      Arrays.asList(myHideErrorsByLanguage.split(";")).forEach(
-        entry -> list.add(entry.trim().toLowerCase(Locale.US))
+      Arrays.stream(myHideErrorsByLanguage.split(";")).map(String::trim).filter(s -> !s.isEmpty()).forEach(
+        list::add
       );
     }
     return list;

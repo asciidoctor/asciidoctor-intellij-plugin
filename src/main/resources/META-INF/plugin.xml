@@ -408,7 +408,19 @@
       <language>AsciiDoc</language>
       <bundleName>AsciiDocBundle</bundleName>
       <categoryKey>asciidoc.intention.category</categoryKey>
-      <className>org.asciidoc.intellij.injection.AsciiDocCodeFenceErrorHighlightingIntention</className>
+      <className>org.asciidoc.intellij.injection.AsciiDocCodeFenceErrorHighlightingIntentionAllLanguages</className>
+    </intentionAction>
+    <intentionAction>
+      <language>AsciiDoc</language>
+      <bundleName>AsciiDocBundle</bundleName>
+      <categoryKey>asciidoc.intention.category</categoryKey>
+      <className>org.asciidoc.intellij.injection.AsciiDocCodeFenceErrorHighlightingIntentionThisLanguage</className>
+    </intentionAction>
+    <intentionAction>
+      <language>AsciiDoc</language>
+      <bundleName>AsciiDocBundle</bundleName>
+      <categoryKey>asciidoc.intention.category</categoryKey>
+      <className>org.asciidoc.intellij.injection.AsciiDocCodeFenceErrorHighlightingIntentionThisBlock</className>
     </intentionAction>
     <intentionAction>
       <language>AsciiDoc</language>

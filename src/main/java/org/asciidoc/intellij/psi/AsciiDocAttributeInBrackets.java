@@ -10,6 +10,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.namesValidator.AsciiDocRenameInputValidator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -115,16 +116,23 @@ public class AsciiDocAttributeInBrackets extends AsciiDocASTWrapperPsiElement im
   }
 
   public String getAttrValue() {
-    TextRange bodyRange = getRangeOfBody(this);
-    if (bodyRange.isEmpty()) {
+    String value = getAttrValueUnresolved();
+    if (value == null) {
       return null;
     }
-    String value = bodyRange.substring(this.getText());
     String resolvedValue = AsciiDocUtil.resolveAttributes(this, value);
     if (resolvedValue != null) {
       value = resolvedValue;
     }
     return value;
+  }
+
+  public @Nullable String getAttrValueUnresolved() {
+    TextRange bodyRange = getRangeOfBody(this);
+    if (bodyRange.isEmpty()) {
+      return null;
+    }
+    return bodyRange.substring(this.getText());
   }
 
   public static class Manipulator extends AbstractElementManipulator<AsciiDocAttributeInBrackets> {

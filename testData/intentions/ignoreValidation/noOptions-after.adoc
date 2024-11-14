@@ -1,0 +1,4 @@
+[,java,opts=novalidate]
+----
+<caret>System.out.println("Hello, world!");
+----

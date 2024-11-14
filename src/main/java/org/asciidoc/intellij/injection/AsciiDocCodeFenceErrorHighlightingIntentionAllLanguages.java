@@ -24,12 +24,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class AsciiDocCodeFenceErrorHighlightingIntention implements IntentionAction {
+public class AsciiDocCodeFenceErrorHighlightingIntentionAllLanguages implements IntentionAction {
   @Nls(capitalization = Nls.Capitalization.Sentence)
   @NotNull
   @Override
   public String getText() {
-    return AsciiDocBundle.message("asciidoc.hide.errors.intention.text");
+    return AsciiDocBundle.message("asciidoc.hide.errors.allLanguages.intention.text");
   }
 
   @Nls(capitalization = Nls.Capitalization.Sentence)
@@ -55,6 +55,16 @@ public class AsciiDocCodeFenceErrorHighlightingIntention implements IntentionAct
     AsciiDocElementWithLanguage elementWithLanguage = PsiTreeUtil.getParentOfType(element, AsciiDocElementWithLanguage.class);
     if (elementWithLanguage == null) {
       return false;
+    }
+    if (!elementWithLanguage.validateContent()) {
+      return false;
+    }
+    String language = elementWithLanguage.getFenceLanguage();
+    if (language != null) {
+      if (AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getDisabledInjectionsByLanguageAsList().contains(language.substring(CodeFenceHighlightInfoFilter.SOURCE_PREFIX.length()))
+        || AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getHiddenErrorsByLanguageAsList().contains(language.substring(CodeFenceHighlightInfoFilter.SOURCE_PREFIX.length()))) {
+        return false;
+      }
     }
     List<Pair<PsiElement, TextRange>> injectedPsiFiles = InjectedLanguageManager.getInstance(project).getInjectedPsiFiles(elementWithLanguage);
     return injectedPsiFiles != null && injectedPsiFiles.size() > 0;

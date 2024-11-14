@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.43.4
 
 - Fix text color of non-icon admonitions in dark preview
+- Adding an intent to add the option to disable validation on individual code blocks (#830)
 
 === 0.43.3
 

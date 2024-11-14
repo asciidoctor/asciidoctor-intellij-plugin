@@ -49,6 +49,10 @@ System.out.println("Hello, world!");
 ----
 -----
 
+Add the `opts=novalidate` using an intent in the editor by pressing [.windows.linux]#kbd:[Alt+Enter]# [.macos]#kbd:[⌥ ↩]# and choosing *Hide errors in source blocks for this block*.
+
+NOTE: This is available since plugin version 0.43.3. The intent is available from 0.43.4.
+
 == How to edit files as a project
 
 The user selects the menu item menu:File[Open...], then selects the folder and opens it.
