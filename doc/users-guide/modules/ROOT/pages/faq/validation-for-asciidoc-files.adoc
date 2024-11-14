@@ -29,6 +29,8 @@ image::hide-errors-in-source-blocks.png[]
 To prevent this on individual code blocks, add the option `novalidate` to the source block.
 This option is a non-standard AsciiDoc option and specific to the AsciiDoc plugin for IntelliJ.
 
+NOTE: This is available since plugin version 0.43.3.
+
 .Adding the `novalidate` option to the beginning
 [source,asciidoc]
 -----
