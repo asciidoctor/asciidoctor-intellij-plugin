@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Fix text color of non-icon admonitions in dark preview
 - Adding an intent to add the option to disable validation on individual code blocks (#830)
 - Be more restrictive when highlighting missing images (#1727)
+- Fix the intention to add block IDs to recognize the current section (#1681)
 
 === 0.43.3
 

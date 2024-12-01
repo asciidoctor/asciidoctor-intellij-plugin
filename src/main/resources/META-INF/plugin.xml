@@ -400,7 +400,7 @@
       <language>AsciiDoc</language>
       <bundleName>AsciiDocBundle</bundleName>
       <categoryKey>asciidoc.intention.category</categoryKey>
-      <className>org.asciidoc.intellij.actions.intentions.AsciiDocAddBlockIdToSection</className>
+      <className>org.asciidoc.intellij.actions.intentions.AsciiDocAddBlockIdToSectionIntention</className>
     </intentionAction>
     <renameInputValidator implementation="org.asciidoc.intellij.namesValidator.AsciiDocRenameInputValidator"/>
     <lang.namesValidator language="AsciiDoc" implementationClass="org.asciidoc.intellij.namesValidator.AsciiDocNamesValidator"/>

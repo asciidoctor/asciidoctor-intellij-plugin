@@ -14,7 +14,7 @@ import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class AsciiDocAddBlockIdToSection extends Intention {
+public class AsciiDocAddBlockIdToSectionIntention extends Intention {
 
   @Override
   public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
@@ -50,20 +50,23 @@ public class AsciiDocAddBlockIdToSection extends Intention {
       // cursor is at the very end of the file, and there is document content, move one character
       statementAtCaret = file.findElementAt(editor.getSelectionModel().getSelectionStart() - 1);
     }
-    if (statementAtCaret == null) {
-      return null;
-    }
     while (statementAtCaret instanceof PsiWhiteSpace) {
-      statementAtCaret = statementAtCaret.getPrevSibling();
-      if (statementAtCaret == null) {
+      if (statementAtCaret.getTextOffset() == 0) {
         return null;
       }
+      statementAtCaret = file.findElementAt(statementAtCaret.getTextOffset() - 1);
+    }
+    if (statementAtCaret == null) {
+      return null;
     }
     if (statementAtCaret.getNode() != null && statementAtCaret.getNode().getElementType() == AsciiDocTokenTypes.HEADING_TOKEN) {
       statementAtCaret = statementAtCaret.getParent();
     }
-    if (!(statementAtCaret instanceof AsciiDocSection)) {
-      return null;
+    while (!(statementAtCaret instanceof AsciiDocSection)) {
+      statementAtCaret = statementAtCaret.getParent();
+      if (statementAtCaret == null) {
+        return null;
+      }
     }
     AsciiDocSection section = (AsciiDocSection) statementAtCaret;
     if (section.getBlockId() != null) {
