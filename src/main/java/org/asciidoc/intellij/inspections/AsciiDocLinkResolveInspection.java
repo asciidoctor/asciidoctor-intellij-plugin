@@ -104,7 +104,7 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
           } else if (o instanceof AsciiDocLink && ((AsciiDocLink) o).getMacroName().equals("link") && resolvedBody.startsWith("about:")) {
             // this is a special about: URL, don't report this as an error
             return;
-          } else if (AsciiDocFileReference.URL.matcher(resolvedBody).find() && (macroName.equals("image") || macroName.equals("video"))) {
+          } else if ((AsciiDocUtil.URL_PREFIX_PATTERN.matcher(resolvedBody).find() || resolvedBody.startsWith("data:")) && (macroName.equals("image") || macroName.equals("video"))) {
             // this is a data URI for an image, don't
             return;
           } else if (resolvedBody.startsWith("/")) {
@@ -239,7 +239,7 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
       if (decl.getContainingFile().equals(o.getContainingFile()) &&
         decl.getTextOffset() < o.getTextOffset() &&
         val != null &&
-        AsciiDocFileReference.URL.matcher(val).find()) {
+        (AsciiDocUtil.URL_PREFIX_PATTERN.matcher(val).find() || val.startsWith("data:"))) {
         continueResolving = false;
         break;
       }

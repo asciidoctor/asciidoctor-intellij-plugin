@@ -81,26 +81,7 @@ import static org.asciidoc.intellij.psi.AsciiDocUtil.isAntoraPartial;
 
 public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implements PsiPolyVariantReference {
   private static final int MAX_DEPTH = 10;
-  /**
-   * Detects strings that resemble URIs.
-   * <p>
-   * Examples:
-   * <ul>
-   * <li>http://domain</li>
-   * <li>https://domain
-   * <li>file:///path</li>
-   * <li>data:info</li>
-   * </ul>
-   * <p>
-   * not c:/sample.adoc or c:\sample.adoc.
-   * <p>
-   * taken from Asciidoctor rx.rb, UriSniffRx
-   */
-  public static final Pattern URL = Pattern.compile("^\\p{Alpha}[\\p{Alnum}.+-]+:/{0,2}", Pattern.UNICODE_CHARACTER_CLASS);
   public static final String FILE_PREFIX = "file:///";
-
-
-
   private final String key;
   private final String macroName;
   private final String base;
