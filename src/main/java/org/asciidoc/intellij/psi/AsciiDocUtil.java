@@ -1322,6 +1322,8 @@ public class AsciiDocUtil {
 
   public static final Pattern URL_PREFIX_PATTERN = Pattern.compile("^((https?|file|ftp|irc)://|mailto:)");
 
+  public static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+
   public static final Pattern URL_PREFIX_PATTERN_WITHOUT_FILE = Pattern.compile("^((https?|ftp|irc)://|mailto:)");
 
   // can include attributes

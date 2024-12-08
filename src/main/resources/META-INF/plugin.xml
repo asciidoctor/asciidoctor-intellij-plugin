@@ -199,6 +199,7 @@
     <typedHandler implementation="org.asciidoc.intellij.actions.AsciiDocTriggerAutoCompleteTypedHandler" order="after asciidocformattingquoted"/>
     <webBrowserUrlProvider implementation="org.asciidoc.intellij.web.AsciiDocBrowserUrlProvider"/>
     <customPasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteImageProvider" order="before asciidoc-paste-html-provider"/>
+    <customPasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteLinkProvider" order="before asciidoc-paste-html-provider"/>
     <customPasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteHtmlProvider" id="asciidoc-paste-html-provider" />
     <filePasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteImageProvider" />
     <fileType name="AsciiDoc" extensions="adoc;asciidoc;ad" fileNames=".asciidoctorconfig" language="AsciiDoc"

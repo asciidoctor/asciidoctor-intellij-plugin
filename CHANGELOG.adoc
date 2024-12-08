@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - Adding an intent to add the option to disable validation on individual code blocks (#830)
 - Be more restrictive when highlighting missing images (#1727)
 - Fix the intention to add block IDs to recognize the current section (#1681)
+- Pasting a URL from the clipboard wraps the selected text as a link (#1738)
 
 === 0.43.3
 
