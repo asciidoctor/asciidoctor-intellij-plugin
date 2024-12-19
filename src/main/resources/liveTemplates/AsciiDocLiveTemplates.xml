@@ -304,7 +304,7 @@
       <option name="AsciiDoc" value="true" />
     </context>
   </template>
-  <template name="ad-config-pdf" value="// use these attributes to configure some attributes for asciidoctor-pdf&#10;:pdf-page-size: $pdfSize$&#10;// see https://github.com/asciidoctor/asciidoctor-pdf/blob/master/docs/theming-guide.adoc&#10;:pdf-themesdir: $pdfTheme$&#10;" description="PDF-configuration for page-size and themesdir" toReformat="true" toShortenFQNames="true">
+  <template name="ad-config-pdf" value="// use these attributes to configure some attributes for asciidoctor-pdf&#10;:pdf-page-size: $pdfSize$&#10;// see https://github.com/asciidoctor/asciidoctor-pdf/blob/master/docs/theming-guide.adoc&#10;:pdf-themesdir: {docdir}/$pdfTheme$&#10;" description="PDF-configuration for page-size and themesdir" toReformat="true" toShortenFQNames="true">
     <variable name="pdfSize" expression="" defaultValue="&quot;A4&quot;" alwaysStopAt="true" />
     <variable name="pdfTheme" expression="" defaultValue="&quot;../pdfTheme&quot;" alwaysStopAt="true" />
     <context>

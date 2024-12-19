@@ -19,7 +19,7 @@ A complete example is available in https://github.com/ahus1/asciidoctor-deepdive
 [source,text]
 ----
 = 标题
-:pdf-themesdir: themes <1>
+:pdf-themesdir: {docdir}/themes <1>
 :pdf-theme: zh_CN <2>
 :pdf-fontsdir: fonts <3>
 
