@@ -201,6 +201,7 @@
     <customPasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteImageProvider" order="before asciidoc-paste-html-provider"/>
     <customPasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteLinkProvider" order="before asciidoc-paste-html-provider"/>
     <customPasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteHtmlProvider" id="asciidoc-paste-html-provider" />
+    <lineIndentProvider implementation="org.asciidoc.intellij.formatting.AsciiDocLineIndentProvider" />
     <filePasteProvider implementation="org.asciidoc.intellij.pasteProvider.AsciiDocPasteImageProvider" />
     <fileType name="AsciiDoc" extensions="adoc;asciidoc;ad" fileNames=".asciidoctorconfig" language="AsciiDoc"
               implementationClass="org.asciidoc.intellij.file.AsciiDocFileType" fieldName="INSTANCE"/>
@@ -221,6 +222,7 @@
     <spellchecker.bundledDictionaryProvider implementation="org.asciidoc.intellij.AsciiDocBundledDictionaryProvider" />
     <lang.commenter language="AsciiDoc" implementationClass="org.asciidoc.intellij.AsciiDocCommenter"/>
     <extendWordSelectionHandler implementation="org.asciidoc.intellij.editor.ExtendWordSelectionHandler"/>
+    <enterHandlerDelegate implementation="org.asciidoc.intellij.formatting.AsciiDocEnterHandlerDelegate"/>
     <braceMatcher filetype="AsciiDoc" implementationClass="org.asciidoc.intellij.braces.AsciiDocBraceMatcher"/>
     <quoteHandler fileType="AsciiDoc" className="org.asciidoc.intellij.braces.AsciiDocQuoteHandler"/>
     <todoIndexer filetype="AsciiDoc" implementationClass="org.asciidoc.intellij.indexer.AsciiDocTodoIndexer"/>
