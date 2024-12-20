@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.43.5
 
 - Update docs and templates to recommend an absolute path for the `pdf-themesdir` (#1750)
+- When rendering the preview for Antora, automatically switch to highlight.js syntax highlighting (#1736)
 
 === 0.43.4
 

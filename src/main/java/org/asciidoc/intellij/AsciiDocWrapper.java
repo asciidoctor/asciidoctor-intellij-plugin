@@ -1051,6 +1051,9 @@ public class AsciiDocWrapper {
     antoraModuleDir) {
     Collection<AttributeDeclaration> result = new ArrayList<>();
     if (antoraModuleDir != null) {
+      // Antora uses hightlight.js as the default. Making it soft-set so it can be overwritten when needed
+      result.add(new AsciiDocAttributeDeclarationDummy("source-highlighter", "highlight.js", true));
+
       result.addAll(collectAntoraAttributes(antoraModuleDir, project));
 
       VirtualFile baseDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
