@@ -116,7 +116,8 @@ See xref:faq/diagrams-in-pdf-without-text.adoc[] for more details.
 
 === Themes are not used when creating a PDF via the IDE
 
-To use a theme when creating PDFs in the IDE, always specify an absolute directory pointing to the `themes` folder.
+To use a theme when creating PDFs in the IDE, always specify an absolute directory pointing to the folders with the
+themes and the fonts.
 
 When specifying the folder in a regular AsciiDoc file, use the `{docdir}` attribute as a prefix to point to a folder
 relative to the current document:
@@ -124,6 +125,7 @@ relative to the current document:
 [source,asciidoc]
 ----
 :pdf-themesdir: {docdir}/themes
+:pdf-fontsdir: {docdir}/fonts
 ----
 
 When specifying a theme relative in an `.asciidoctorconfig` file, use the folder of that file by prefixing `{asciidoctorconfigdir}`:
@@ -131,6 +133,7 @@ When specifying a theme relative in an `.asciidoctorconfig` file, use the folder
 [source,asciidoc]
 ----
 :pdf-themesdir: {asciidoctorconfigdir}/themes
+:pdf-fontsdir: {asciidoctorconfigdir}/fonts
 ----
 
 == Other Troubles
