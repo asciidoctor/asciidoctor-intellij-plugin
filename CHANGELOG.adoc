@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - When rendering the preview for Antora, automatically switch to highlight.js syntax highlighting (#1736)
 - Make wrap-on-typing work for AsciiDoc without chopping an existing line into small chunks (#1653)
 - Handle YAML parsing errors when showing an editor notification about missing information in the Antora component descriptor (#1753)
+- Preventing NPE when creating a missing file (#1754)
 
 === 0.43.4
 

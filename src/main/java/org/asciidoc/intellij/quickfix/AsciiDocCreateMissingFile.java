@@ -20,7 +20,11 @@ import java.util.regex.Pattern;
 public interface AsciiDocCreateMissingFile {
 
   default void applyFix(PsiElement element, Project project) {
-    PsiDirectory parent = element.getContainingFile().getParent();
+    PsiFile containingFile = element.getContainingFile();
+    if (containingFile == null) {
+      return;
+    }
+    PsiDirectory parent = containingFile.getParent();
     if (parent == null) {
       return;
     }
