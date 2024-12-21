@@ -19,6 +19,7 @@
  */
 package org.asciidoc.intellij.psi;
 
+import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
@@ -50,6 +51,14 @@ public class AsciiDocAttributeDeclarationKeyIndex extends AsciiDocStringStubInde
 
   @Override
   public Collection<AsciiDocAttributeDeclaration> get(@NotNull String key, @NotNull Project project, @NotNull GlobalSearchScope scope) {
-    return StubIndex.getElements(getKey(), key.toLowerCase(Locale.US), project, scope, requiredClass());
+    try {
+      return StubIndex.getElements(getKey(), key.toLowerCase(Locale.US), project, scope, requiredClass());
+    } catch (NullPointerException e) {
+      if (e.getMessage().startsWith("Can't find stub index extension")) {
+        throw IndexNotReadyException.create();
+      } else {
+        throw e;
+      }
+    }
   }
 }

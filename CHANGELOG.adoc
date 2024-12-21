@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - Handle YAML parsing errors when showing an editor notification about missing information in the Antora component descriptor (#1753)
 - Preventing NPE when creating a missing file (#1754)
 - Preventing NPE when parsing block attributes for listings (#1755)
+- Handle a situation where an index is not yet known as index not ready (#1756)
 
 === 0.43.4
 
