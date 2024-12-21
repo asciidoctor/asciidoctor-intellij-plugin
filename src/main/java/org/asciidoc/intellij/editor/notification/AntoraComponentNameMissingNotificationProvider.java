@@ -7,15 +7,23 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotificationProvider;
+import com.intellij.ui.EditorNotifications;
+import com.intellij.util.messages.MessageBusConnection;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.yaml.snakeyaml.error.YAMLException;
+import org.yaml.snakeyaml.scanner.ScannerException;
 
 import javax.swing.*;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -40,10 +48,20 @@ public class AntoraComponentNameMissingNotificationProvider implements EditorNot
       if (antoraFile == null) {
         return null;
       }
-      antora = AsciiDocWrapper.readAntoraYaml(project, antoraFile);
+      try {
+        antora = AsciiDocWrapper.readAntoraYaml(project, antoraFile);
+      } catch (YAMLException ex) {
+        return prepareMessageFromException("Can't read Antora component descriptor 'antora.yml': ",
+          ex, file, antoraFile, project);
+      }
     } else if (file.getName().equals(ANTORA_YML)) {
       antoraFile = file;
-      antora = AsciiDocWrapper.readAntoraYaml(project, file);
+      try {
+        antora = AsciiDocWrapper.readAntoraYaml(project, file);
+      } catch (YAMLException ex) {
+        return prepareMessageFromException("Can't read Antora component descriptor 'antora.yml': ",
+          ex, file, antoraFile, project);
+      }
     } else {
       return null;
     }
@@ -52,16 +70,53 @@ public class AntoraComponentNameMissingNotificationProvider implements EditorNot
       return null;
     }
 
+    return prepareMessageFromException("The Antora component descriptor 'antora.yml' is missing the attribute 'name'" +
+      ".", null, file, antoraFile, project);
+  }
+
+  private static @NotNull Function<@NotNull FileEditor, @Nullable JComponent> prepareMessageFromException(String message, RuntimeException ex, @NotNull VirtualFile file, VirtualFile antoraFile, @NotNull Project project) {
     return fileEditor -> {
       final EditorNotificationPanel panel = new EditorNotificationPanel();
-      panel.setText("The Antora component descriptor 'antora.yml' is missing the attribute 'name'.");
+      String m = message;
+      if (ex instanceof ScannerException scannerException) {
+        m = m + scannerException.getProblem();
+      } else if (ex != null) {
+        m = m + ex.getMessage();
+      }
       if (!file.equals(antoraFile)) {
-        panel.createActionLabel("Open 'antora.yml'", ()
+        if (ex instanceof ScannerException scannerException) {
+          panel.createActionLabel("Open 'antora.yml'", ()
+            -> ApplicationManager.getApplication().invokeLater(()
+            -> new OpenFileDescriptor(project, antoraFile, scannerException.getProblemMark().getLine(),
+            scannerException.getProblemMark().getColumn()).navigate(true)));
+        } else {
+          panel.createActionLabel("Open 'antora.yml'", ()
           -> ApplicationManager.getApplication().invokeLater(()
           -> new OpenFileDescriptor(project, antoraFile).navigate(true)));
+          }
       }
+      panel.setText(m);
       panel.createActionLabel("Read more...", ()
         -> BrowserUtil.browse("https://docs.antora.org/antora/latest/component-version-descriptor/"));
+
+      MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(fileEditor);
+      connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
+        @Override
+        public void after(@NotNull List<? extends VFileEvent> events) {
+          // any modification of a file within the project refreshes the preview
+          for (VFileEvent event : events) {
+            if (event.getFile() != null) {
+              if (event.getFile().equals(antoraFile)) {
+                // Also update those in other AsciiDoc editors in the module
+                EditorNotifications.updateAll();
+                connection.disconnect();
+                break;
+              }
+            }
+          }
+        }
+      });
+
       return panel;
     };
   }
