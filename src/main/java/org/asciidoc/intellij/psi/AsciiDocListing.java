@@ -37,7 +37,7 @@ public class AsciiDocListing extends AbstractAsciiDocCodeBlock {
       AsciiDocBlockAttributes blockAttributes = PsiTreeUtil.findChildOfType(this, AsciiDocBlockAttributes.class);
       if (blockAttributes != null) {
         String[] attr = blockAttributes.getAttributes();
-        if (attr.length > 0 && attr[0].contains("%novalidate")) {
+        if (attr != null && attr.length > 0 && attr[0].contains("%novalidate")) {
           return false;
         }
         String opts = blockAttributes.getAttribute("opts");
