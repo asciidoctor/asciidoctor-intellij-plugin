@@ -19,12 +19,15 @@ public class AsciiDocProcessUtil {
    * thread for example when doing refactorings and fixes.
    * Use this as an alternative for
    * ApplicationManager.getApplication().runReadAction() to make tasks interruptable.
+   * When running in a background thread with a progress indicator and in a read action, use that one and proceed.
    *
    * @throws ProcessCanceledException when a write action needs priority
    */
   public static void runInReadActionWithWriteActionPriority(Runnable runnable) {
     if (ApplicationManager.getApplication().isDispatchThread()) {
       ApplicationManager.getApplication().runReadAction(runnable);
+    } else if (ApplicationManager.getApplication().isReadAccessAllowed() && ProgressManager.getInstance().getProgressIndicator() != null) {
+      runnable.run();
     } else {
       retryable(() -> ReadAction.computeCancellable(() -> {
         runnable.run();
@@ -38,12 +41,15 @@ public class AsciiDocProcessUtil {
    * thread for example when doing refactorings and fixes.
    * Use this as an alternative for
    * ApplicationManager.getApplication().runReadAction() to make tasks interruptable.
+   * When running in a background thread with a progress indicator and in a read action, use that one and proceed.
    *
    * @throws ProcessCanceledException when a write action needs priority
    */
   public static <T> T runInReadActionWithWriteActionPriority(Computable<T> computable) {
     if (ApplicationManager.getApplication().isDispatchThread()) {
       return ApplicationManager.getApplication().runReadAction(computable);
+    } else if (ApplicationManager.getApplication().isReadAccessAllowed() && ProgressManager.getInstance().getProgressIndicator() != null) {
+      return computable.compute();
     } else {
       return retryable(() -> ReadAction.computeCancellable(computable::compute));
     }

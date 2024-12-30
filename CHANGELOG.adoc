@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.43.6
 
-...
+- Run background threads under an existing progress indicator (#1759)
 
 === 0.43.5
 
