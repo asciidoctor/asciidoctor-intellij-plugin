@@ -26,8 +26,12 @@ public class AsciiDocProcessUtil {
   public static void runInReadActionWithWriteActionPriority(Runnable runnable) {
     if (ApplicationManager.getApplication().isDispatchThread()) {
       ApplicationManager.getApplication().runReadAction(runnable);
-    } else if (ApplicationManager.getApplication().isReadAccessAllowed() && ProgressManager.getInstance().getProgressIndicator() != null) {
-      runnable.run();
+    } else if (ProgressManager.getInstance().getProgressIndicator() != null) {
+      if (ApplicationManager.getApplication().isReadAccessAllowed()) {
+        runnable.run();
+      } else {
+        ApplicationManager.getApplication().runReadAction(runnable);
+      }
     } else {
       retryable(() -> ReadAction.computeCancellable(() -> {
         runnable.run();
@@ -48,8 +52,12 @@ public class AsciiDocProcessUtil {
   public static <T> T runInReadActionWithWriteActionPriority(Computable<T> computable) {
     if (ApplicationManager.getApplication().isDispatchThread()) {
       return ApplicationManager.getApplication().runReadAction(computable);
-    } else if (ApplicationManager.getApplication().isReadAccessAllowed() && ProgressManager.getInstance().getProgressIndicator() != null) {
-      return computable.compute();
+    } else if (ProgressManager.getInstance().getProgressIndicator() != null) {
+      if (ApplicationManager.getApplication().isReadAccessAllowed()) {
+        return computable.compute();
+      } else {
+        return ApplicationManager.getApplication().runReadAction(computable);
+      }
     } else {
       return retryable(() -> ReadAction.computeCancellable(computable::compute));
     }
