@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.43.7
+
+...
+
 === 0.43.6
 
 - Run background threads under an existing progress indicator (#1759)
