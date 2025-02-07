@@ -63,7 +63,7 @@ jobs:
       # as a release might go without errors for some time, the "fixed in next release" might be updated only too late
       # https://github.com/marketplace/actions/sentry-release
       - name: Create Sentry release
-        uses: getsentry/action-release@v1
+        uses: getsentry/action-release@v2
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
