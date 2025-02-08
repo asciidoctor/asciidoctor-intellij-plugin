@@ -87,6 +87,10 @@ dependencies {
         // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1638#issuecomment-2151527333
         jetbrainsRuntime()
 
+        // Temporary fix for EAP 225
+        // https://youtrack.jetbrains.com/issue/IJPL-177264
+        bundledModule("intellij.yaml.editing")
+
         // Plugin Dependencies. Uses `platformBundledPlugins` property from the gradle.properties file for bundled IntelliJ Platform plugins.
         bundledPlugins(listOf(
             "tanvd.grazi", // used for spell and grammar checking checking
