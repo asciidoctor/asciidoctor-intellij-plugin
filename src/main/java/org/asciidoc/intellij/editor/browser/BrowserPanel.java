@@ -19,7 +19,6 @@ import org.apache.commons.io.IOUtils;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
-import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanel;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
@@ -51,7 +50,7 @@ import java.util.regex.Pattern;
 public class BrowserPanel implements Disposable {
 
   private final Path globalImagesPath;
-  private final Logger log = Logger.getInstance(JavaFxHtmlPanel.class);
+  private final Logger log = Logger.getInstance(BrowserPanel.class);
   private final AsciiDocExtensionService extensionService = ApplicationManager.getApplication().getService(AsciiDocExtensionService.class);
 
   private String base;
@@ -109,33 +108,33 @@ public class BrowserPanel implements Disposable {
 
     try {
       Properties p = new Properties();
-      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/META-INF/asciidoctorj-version.properties")) {
+      try (InputStream is = PreviewStaticServer.class.getResourceAsStream("/META-INF/asciidoctorj-version.properties")) {
         p.load(is);
       }
       String asciidoctorVersion = p.getProperty("version.asciidoctor");
-      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
+      try (InputStream is = PreviewStaticServer.class.getResourceAsStream("/gems/asciidoctor-"
         + asciidoctorVersion
         + "/data/stylesheets/asciidoctor-default.css")) {
         myInlineCss = IOUtils.toString(is, StandardCharsets.UTF_8);
         // otherwise embedded SVG images will be skewed to full height of one browser window
         myInlineCss = myInlineCss.replaceAll(Pattern.quote("object,embed{height:100%}"), "");
       }
-      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
+      try (InputStream is = PreviewStaticServer.class.getResourceAsStream("/gems/asciidoctor-"
         + asciidoctorVersion
         + "/data/stylesheets/coderay-asciidoctor.css")) {
         myInlineCss += IOUtils.toString(is, StandardCharsets.UTF_8);
       }
-      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("rouge-github.css")) {
+      try (InputStream is = PreviewStaticServer.class.getResourceAsStream("rouge-github.css")) {
         myInlineCss += IOUtils.toString(is, StandardCharsets.UTF_8);
       }
-      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/tabs/data/css/tabs.css")) {
+      try (InputStream is = PreviewStaticServer.class.getResourceAsStream("/tabs/data/css/tabs.css")) {
         myTabsCss = IOUtils.toString(is, StandardCharsets.UTF_8);
         myInlineCss = myInlineCss + myTabsCss;
       }
-      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
+      try (InputStream is = PreviewStaticServer.class.getResourceAsStream("darcula.css")) {
         myInlineCssDarcula = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
       }
-      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/tabs/data/css/tabs-darcula.css")) {
+      try (InputStream is = PreviewStaticServer.class.getResourceAsStream("/tabs/data/css/tabs-darcula.css")) {
         myTabsCssDarcula = IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       myAntoraCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("antora/preview.css") + "\">";

@@ -15,7 +15,6 @@
   <idea-version since-build="251.0.0"/> <!-- 2025.1 EAP -->
   <!-- please see https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html -->
   <depends>com.intellij.modules.lang</depends>
-  <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-javafx.xml">com.intellij.javafx</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-intellilang.xml">org.intellij.intelliLang</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-java.xml">com.intellij.modules.java</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-json.xml">com.intellij.modules.json</depends>
@@ -34,7 +33,6 @@
 
   <extensions defaultExtensionNs="org.asciidoc.intellij">
     <html.panel.provider implementation="org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider"/>
-    <html.panel.provider implementation="org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider"/>
     <html.panel.provider implementation="org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider"/>
   </extensions>
 
@@ -238,11 +236,7 @@
     <searchScopesProvider implementation="org.asciidoc.intellij.searchScopes.AsciiDocSearchScopeProvider" />
     <applicationService serviceImplementation="org.asciidoc.intellij.settings.AsciiDocApplicationSettings"/>
     <editorNotificationProvider
-      implementation="org.asciidoc.intellij.editor.javafx.notification.JavaFxCouldBeEnabledNotificationProvider"/>
-    <editorNotificationProvider
       implementation="org.asciidoc.intellij.editor.jcef.notification.JCEFCouldBeEnabledNotificationProvider"/>
-    <editorNotificationProvider
-      implementation="org.asciidoc.intellij.editor.javafx.notification.ChangeJdkForJavaFXNotificationProvider"/>
     <editorNotificationProvider
       implementation="org.asciidoc.intellij.editor.jcef.notification.ChangeJdkForJCEFNotificationProvider"/>
     <editorNotificationProvider

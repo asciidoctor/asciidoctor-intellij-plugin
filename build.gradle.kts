@@ -107,7 +107,6 @@ dependencies {
             "PsiViewer:251.175", // used for debugging
             // "PlantUML integration:6.3.0-IJ2023.2", // used to test highlighting of plantuml diagrams
             // "com.intellij.platform.images", // dependency for PlantUML plugin
-            "com.intellij.javafx:1.0.4",
             // "com.google.ide-perf:1.2.0", // performance tracing
             // see https://github.com/google/ide-perf/blob/master/docs/user-guide.md
             // "com.jetbrains.performancePlugin:213.5744.122" // used run YourKit CPU profiling in test IDE

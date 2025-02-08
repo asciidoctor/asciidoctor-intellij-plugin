@@ -4,13 +4,11 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
-import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
-import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
+import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 import org.asciidoc.intellij.ui.SplitFileEditor;
 import org.asciidoctor.SafeMode;
-import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 
 import java.io.BufferedWriter;
@@ -37,43 +35,6 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
   public void setUp() throws Exception {
     super.setUp();
     asciidocWrapper = new AsciiDocWrapper(getProject(), LocalFileSystem.getInstance().findFileByIoFile(new File(System.getProperty("java.io.tmpdir"))), null, "test");
-  }
-
-  public void testShouldRenderPlantUmlAsPngWhenUsingJavaFX() {
-    if (new JavaFxHtmlPanelProvider().isAvailable() == AsciiDocHtmlPanelProvider.AvailabilityInfo.AVAILABLE) {
-      // JavaFX is not available on ARM Mac (M1/M2), therefore the plugins falls back to another preview and SVG will
-      // be available
-      AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
-        SplitFileEditor.SplitEditorLayout.SPLIT,
-        JavaFxHtmlPanelProvider.INFO,
-        AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
-        SafeMode.UNSAFE,
-        new HashMap<>(),
-        true,
-        true,
-        true,
-        "",
-        "",
-        true,
-        true,
-        false,
-        "",
-        true,
-        true,
-        true,
-        1,
-        false,
-        ""));
-      try {
-        String html = asciidocWrapper.render("[plantuml,test,format=svg]\n" +
-          "----\n" +
-          "List <|.. ArrayList\n" +
-          "----\n", Collections.emptyList());
-        Assertions.assertThat(html).contains("src=\"test.png\"");
-      } finally {
-        AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
-      }
-    }
   }
 
   public void testShouldRenderPlainAsciidoc() {
@@ -235,7 +196,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
   public void testShouldRenderBlockdiagWithSubstUsingKroki() {
     AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
       SplitFileEditor.SplitEditorLayout.SPLIT,
-      JavaFxHtmlPanelProvider.INFO,
+      AsciiDocJCEFHtmlPanelProvider.INFO,
       AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
       SafeMode.UNSAFE,
       new HashMap<>(),
@@ -273,7 +234,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
   public void testShouldRenderErdUsingKroki() {
     AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
       SplitFileEditor.SplitEditorLayout.SPLIT,
-      JavaFxHtmlPanelProvider.INFO,
+      AsciiDocJCEFHtmlPanelProvider.INFO,
       AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
       SafeMode.UNSAFE,
       new HashMap<>(),
@@ -320,7 +281,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
   public void testShouldRenderNomnomlUsingALocalKroki() {
     AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
       SplitFileEditor.SplitEditorLayout.SPLIT,
-      JavaFxHtmlPanelProvider.INFO,
+      AsciiDocJCEFHtmlPanelProvider.INFO,
       AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
       SafeMode.UNSAFE,
       new HashMap<>(),
@@ -356,7 +317,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
   public void testShouldRenderWaveDrom() {
     AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
       SplitFileEditor.SplitEditorLayout.SPLIT,
-      JavaFxHtmlPanelProvider.INFO,
+      AsciiDocJCEFHtmlPanelProvider.INFO,
       AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
       SafeMode.UNSAFE,
       new HashMap<>(),
@@ -395,7 +356,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
   public void testShouldRenderVega() {
     AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
       SplitFileEditor.SplitEditorLayout.SPLIT,
-      JavaFxHtmlPanelProvider.INFO,
+      AsciiDocJCEFHtmlPanelProvider.INFO,
       AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
       SafeMode.UNSAFE,
       new HashMap<>(),

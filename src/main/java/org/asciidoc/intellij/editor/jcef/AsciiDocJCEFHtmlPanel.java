@@ -44,7 +44,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
-import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanel;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
 import org.asciidoc.intellij.psi.AsciiDocFileUtil;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
@@ -230,28 +229,28 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
     try {
       java.util.Properties p = new java.util.Properties();
-      try (InputStream stream = JavaFxHtmlPanel.class.getResourceAsStream("/META-INF/asciidoctorj-version.properties")) {
+      try (InputStream stream = PreviewStaticServer.class.getResourceAsStream("/META-INF/asciidoctorj-version.properties")) {
         p.load(stream);
       }
       String asciidoctorVersion = p.getProperty("version.asciidoctor");
       myInlineCss = extractAndPatchAsciidoctorCss(asciidoctorVersion);
 
-      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
+      try (InputStream is = PreviewStaticServer.class.getResourceAsStream("/gems/asciidoctor-"
         + asciidoctorVersion
         + "/data/stylesheets/coderay-asciidoctor.css")) {
         myInlineCss += IOUtils.toString(is, StandardCharsets.UTF_8);
       }
-      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("rouge-github.css")) {
+      try (InputStream is = PreviewStaticServer.class.getResourceAsStream("rouge-github.css")) {
         myInlineCss += IOUtils.toString(is, StandardCharsets.UTF_8);
       }
-      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/tabs/data/css/tabs.css")) {
+      try (InputStream is = PreviewStaticServer.class.getResourceAsStream("/tabs/data/css/tabs.css")) {
         myTabsCss = IOUtils.toString(is, StandardCharsets.UTF_8);
         myInlineCss = myInlineCss + myTabsCss;
       }
-      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("darcula.css")) {
+      try (InputStream is = PreviewStaticServer.class.getResourceAsStream("darcula.css")) {
         myInlineCssDarcula = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
       }
-      try (InputStream is = JavaFxHtmlPanel.class.getResourceAsStream("/tabs/data/css/tabs-darcula.css")) {
+      try (InputStream is = PreviewStaticServer.class.getResourceAsStream("/tabs/data/css/tabs-darcula.css")) {
         myTabsCssDarcula = IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       myAntoraCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("antora/preview.css") + "\">";
@@ -553,7 +552,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private String extractAndPatchAsciidoctorCss(String asciidoctorVersion) throws IOException {
     String css;
 
-    try (InputStream steam = JavaFxHtmlPanel.class.getResourceAsStream("/gems/asciidoctor-"
+    try (InputStream steam = PreviewStaticServer.class.getResourceAsStream("/gems/asciidoctor-"
       + asciidoctorVersion
       + "/data/stylesheets/asciidoctor-default.css")) {
       css = IOUtils.toString(steam, StandardCharsets.UTF_8);

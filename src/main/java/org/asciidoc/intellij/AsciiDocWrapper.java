@@ -51,7 +51,6 @@ import org.asciidoc.intellij.asciidoc.AttributesRetriever;
 import org.asciidoc.intellij.asciidoc.PrependConfig;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
-import org.asciidoc.intellij.editor.javafx.JavaFxHtmlPanelProvider;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
 import org.asciidoc.intellij.editor.notification.IncompatiblePluginNotificationProvider;
@@ -1383,8 +1382,7 @@ public class AsciiDocWrapper {
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
     if (imagesPath != null) {
       if (fileType == FileType.JAVAFX || fileType == FileType.JCEF || fileType == FileType.BROWSER || fileType == FileType.PDF) {
-        if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(JavaFxHtmlPanelProvider.class.getName())
-          || settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(AsciiDocJCEFHtmlPanelProvider.class.getName()) || fileType == FileType.BROWSER) {
+        if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(AsciiDocJCEFHtmlPanelProvider.class.getName()) || fileType == FileType.BROWSER) {
           // will only work in UNSAFE mode as Asciidoctor will otherwise report path is outside of jail; recovering automatically
           if (settings.getAsciiDocPreviewSettings().getSafeMode(project) == SafeMode.UNSAFE) {
             attrs.setAttribute("outdir", imagesPath.toAbsolutePath().normalize().toString());

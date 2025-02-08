@@ -312,7 +312,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
     */
 
     byte[] data;
-    try (InputStream inputStream = JavaFxHtmlPanel.class.getResourceAsStream(resourceName)) {
+    try (InputStream inputStream = PreviewStaticServer.class.getResourceAsStream(resourceName)) {
       if (inputStream == null) {
         Responses.send(HttpResponseStatus.NOT_FOUND, channel, request);
         return;
