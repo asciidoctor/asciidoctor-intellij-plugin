@@ -15,7 +15,6 @@
  */
 package org.asciidoc.intellij;
 
-import com.intellij.ide.plugins.CannotUnloadPluginException;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationGroupManager;
@@ -189,17 +188,16 @@ public class AsciiDocWrapper {
   private static final com.intellij.openapi.diagnostic.Logger LOG =
     com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDocWrapper.class);
 
-  public static void checkUnloadPlugin() {
+  public static String checkUnloadPlugin() {
     lock();
     try {
-      if (INSTANCES.size() > 0) {
-        // as beforePluginUnload() is incomplete, vote against reloading
-        // as an incomplete unload would leave the user with disabled AsciiDoc functionality until the next restart.
-        throw new CannotUnloadPluginException("expecting JRuby classloader issues, don't allow unloading");
+      if (!INSTANCES.isEmpty()) {
+        return "expecting JRuby classloader issues, don't allow unloading";
       }
     } finally {
       unlock();
     }
+    return null;
   }
 
   @SuppressWarnings("DoNotCall")

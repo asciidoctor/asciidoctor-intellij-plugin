@@ -187,9 +187,11 @@
 
   <applicationListeners>
     <listener class="org.asciidoc.intellij.activities.AsciiDocHandleUnloadEvent" topic="com.intellij.ide.plugins.DynamicPluginListener" />
+    <listener class="org.asciidoc.intellij.activities.AsciiDocHandleUnloadEvent" topic="com.intellij.ide.plugins.DynamicPluginListener" />
   </applicationListeners>
 
   <extensions defaultExtensionNs="com.intellij">
+    <ide.dynamicPluginVetoer implementation="org.asciidoc.intellij.activities.AsciiDocHandleUnloadVetoer"/>
     <notificationGroup displayType="NONE" id="asciidoctor" isLogByDefault="true" bundle="AsciiDocBundle" key="asciidoc.notifications.general" />
     <notificationGroup displayType="STICKY_BALLOON" id="asciidoctor-update" bundle="AsciiDocBundle" key="asciidoc.notifications.update" isLogByDefault="true" />
     <lang.syntaxHighlighter language="AsciiDoc"  implementationClass="org.asciidoc.intellij.highlighting.AsciiDocSyntaxHighlighter" />
