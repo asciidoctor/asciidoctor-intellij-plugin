@@ -178,10 +178,10 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
             }
           }
         }
-      } catch (ProcessCanceledException e) {
-        renderIfVisible();
       } catch (AlreadyDisposedException e) {
         // noop - content hasn't rendered, project has been closed already
+      } catch (ProcessCanceledException e) {
+        renderIfVisible();
       } catch (Exception ex) {
         String message = "Error rendering preview: " + ex.getMessage();
         LOG.error(message, ex);
