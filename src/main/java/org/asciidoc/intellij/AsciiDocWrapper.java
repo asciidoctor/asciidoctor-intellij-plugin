@@ -850,8 +850,10 @@ public class AsciiDocWrapper {
           antoraIncludeAdapter.setAntoraDetails(null, null, null, null);
           asciidoctor.unregisterLogHandler(logHandler);
         }
-      } catch (AlreadyDisposedException | ProcessCanceledException ex) {
+      } catch (AlreadyDisposedException ex) {
         // AlreadyDisposedException: IDE is shutting down
+        throw ex;
+      } catch (ProcessCanceledException ex) {
         // ProcessCanceledException: reading interrupted by event dispatch thread
         throw ex;
       } catch (Exception | AssertionError | ServiceConfigurationError ex) {
