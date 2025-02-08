@@ -56,7 +56,7 @@ dependencies {
 
     implementation("org.apache.commons:commons-text:1.13.0")
     implementation("org.apache.commons:commons-lang3:3.17.0")
-    implementation("io.sentry:sentry:8.0.0")
+    implementation("io.sentry:sentry:8.1.0")
 
     // when updating the versions here, also update them in AsciiDocDownloaderUtil for dynamic download
     testImplementation("org.asciidoctor:asciidoctorj-diagram:2.3.1")
