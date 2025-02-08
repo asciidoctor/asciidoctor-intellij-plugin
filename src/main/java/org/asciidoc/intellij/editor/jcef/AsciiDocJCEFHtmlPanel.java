@@ -512,8 +512,13 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         new File(file.getParent(), fileName.substring(0, lastDotIndex) + ".svg").exists()) {
         extensions.add("svg");
       }
-      final FileSaverDescriptor descriptor = new FileSaverDescriptor("Export Image to", "Choose the destination file",
-        extensions.toArray(new String[]{}));
+      final FileSaverDescriptor descriptor = new FileSaverDescriptor("Export Image to File", "Choose the destination file");
+      if (extensions.size() == 1) {
+        descriptor.withExtensionFilter(extensions.get(0));
+      } else if (extensions.size() > 1) {
+        descriptor.withExtensionFilter("Image types", extensions.toArray(new String[]{}));
+      }
+
       FileSaverDialog saveFileDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, (Project) null);
 
       VirtualFile baseDir = saveImageLastDir;
