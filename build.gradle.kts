@@ -113,10 +113,10 @@ dependencies {
             // "com.jetbrains.performancePlugin:213.5744.122" // used run YourKit CPU profiling in test IDE
             // see https://intellij-support.jetbrains.com/hc/en-us/articles/207241235
             // https://plugins.jetbrains.com/plugin/16136-grazie-professional/
-            "com.intellij.grazie.pro:0.3.354"
+            // Disabled until https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1851 is resolved
+            // "com.intellij.grazie.pro:0.3.359"
         ))
 
-        instrumentationTools()
         pluginVerifier()
         testFramework(TestFrameworkType.Platform)
     }
@@ -195,6 +195,13 @@ tasks {
             // this shows the full exception on failed tests on the build server
             exceptionFormat = TestExceptionFormat.FULL
         }
+    }
+
+    jar {
+        exclude("com/intellij/**")
+    }
+    instrumentedJar {
+        exclude("com/intellij/**")
     }
 
     runIde {
