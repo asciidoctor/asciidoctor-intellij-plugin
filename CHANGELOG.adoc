@@ -7,9 +7,9 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-=== 0.43.7
+=== 0.44.1
 
-...
+- Compatibility with EAP 2025.1. JavaFX removed as a preview as it is no longer supported by JetBrains.
 
 === 0.43.6
 
