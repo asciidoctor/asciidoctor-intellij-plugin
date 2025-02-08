@@ -100,7 +100,7 @@ dependencies {
         // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
         // https://plugins.jetbrains.com/docs/intellij/plugin-dependencies.html
         plugins(listOf(
-            "PsiViewer:243.7768", // used for debugging
+            "PsiViewer:251.175", // used for debugging
             // "PlantUML integration:6.3.0-IJ2023.2", // used to test highlighting of plantuml diagrams
             // "com.intellij.platform.images", // dependency for PlantUML plugin
             "com.intellij.javafx:1.0.4",
