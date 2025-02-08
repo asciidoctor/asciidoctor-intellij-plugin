@@ -24,7 +24,7 @@ public abstract class AsciiDocCodeInsightFixtureTestCase extends BasePlatformTes
 
   @Override
   protected final String getTestDataPath() {
-    return new File("testData/" + getBasePath()).getAbsolutePath();
+    return new File("build/resources/test/testData/" + getBasePath()).getAbsolutePath();
   }
 
   protected void applySingleQuickFix(@NotNull String quickFixName) {

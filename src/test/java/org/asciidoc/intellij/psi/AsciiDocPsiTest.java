@@ -692,7 +692,7 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return new File("testData/" + getBasePath()).getAbsolutePath() + "/psi/";
+    return new File("build/resources/test/testData/" + getBasePath()).getAbsolutePath() + "/psi/";
   }
 
   public void testGradleSnippets() {

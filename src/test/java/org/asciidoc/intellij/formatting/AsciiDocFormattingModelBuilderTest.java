@@ -13,7 +13,7 @@ public class AsciiDocFormattingModelBuilderTest extends BasePlatformTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return new File("testData/" + getBasePath()).getAbsolutePath() + "/actions/reformatFileInEditor/";
+    return new File("build/resources/test/testData/" + getBasePath()).getAbsolutePath() + "/actions/reformatFileInEditor/";
   }
 
   private void doTest(LayoutCodeOptions options) {

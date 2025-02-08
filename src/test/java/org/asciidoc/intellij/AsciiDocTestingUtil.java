@@ -7,6 +7,6 @@ public class AsciiDocTestingUtil {
   }
 
   private static String findTestDataPath() {
-    return "testData";
+    return "build/resources/test/testData";
   }
 }
