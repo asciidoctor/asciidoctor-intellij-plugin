@@ -3,6 +3,7 @@ package org.asciidoc.intellij.actions.asciidoc;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.ActionUiKind;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -75,12 +76,12 @@ public class TableMenuAction extends AsciiDocAction {
       item.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-          action.actionPerformed(new AnActionEvent(e,
+          action.actionPerformed(AnActionEvent.createEvent(
             DataManager.getInstance().getDataContext(panel),
-            ActionPlaces.EDITOR_TOOLBAR,
             action.getTemplatePresentation(),
-            ActionManager.getInstance(),
-            e.getModifiers()
+            ActionPlaces.EDITOR_TOOLBAR,
+            ActionUiKind.TOOLBAR,
+            e
           ));
           popup.closeOk(null);
         }
@@ -89,8 +90,7 @@ public class TableMenuAction extends AsciiDocAction {
     }
     TableSizer tableSizer = new TableSizer();
     tableSizer.addActionListener(e -> {
-      if (e instanceof TableSizer.CreateTableActionEvent) {
-        TableSizer.CreateTableActionEvent ctae = (TableSizer.CreateTableActionEvent) e;
+      if (e instanceof TableSizer.CreateTableActionEvent ctae) {
         final Project project = event.getProject();
         if (project == null) {
           return;

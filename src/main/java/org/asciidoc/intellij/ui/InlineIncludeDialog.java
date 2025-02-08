@@ -30,11 +30,6 @@ public class InlineIncludeDialog extends InlineOptionsDialog {
   }
 
   @Override
-  protected String getBorderTitle() {
-    return "Inline";
-  }
-
-  @Override
   protected String getInlineAllText() {
     return "Inline all and remove included file";
   }
