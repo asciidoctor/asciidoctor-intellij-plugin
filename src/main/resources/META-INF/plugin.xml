@@ -373,7 +373,7 @@
     <psi.referenceContributor implementation="org.asciidoc.intellij.findUsages.AsciiDocIncludeTagReferenceContributor" language="" />
     <referencesSearch implementation="org.asciidoc.intellij.findUsages.AsciiDocIdReferencesSearch"/>
     <completion.contributor language="AsciiDoc" implementationClass="org.asciidoc.intellij.completion.AsciiDocCompletionContributor"/>
-    <lookup.charFilter implementation="org.asciidoc.intellij.completion.AsciiDocCharFilter" order="before java" id="default"/>
+    <lookup.charFilter implementation="org.asciidoc.intellij.completion.AsciiDocCharFilter" order="before java" id="asciidoc"/>
     <lang.documentationProvider language="AsciiDoc" implementationClass="org.asciidoc.intellij.AsciiDocDocumentationProvider"/>
     <httpRequestHandler implementation="org.asciidoc.intellij.editor.javafx.PreviewStaticServer"/>
     <completion.contributor language="AsciiDoc"

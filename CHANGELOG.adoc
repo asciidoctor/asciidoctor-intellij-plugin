@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.44.2
 
-...
+- Fix compatibility with Python in CLion EAP 2025.1 (#1778, thanks to @peci1)
 
 === 0.44.1
 
