@@ -10,9 +10,6 @@ import java.util.Objects;
 
 public class AsciiDocHandleUnloadVetoer implements DynamicPluginVetoer {
 
-  private static final com.intellij.openapi.diagnostic.Logger LOG =
-    com.intellij.openapi.diagnostic.Logger.getInstance(AsciiDocHandleUnloadVetoer.class);
-
   @Override
   public @Nullable String vetoPluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor) {
     if (Objects.equals(pluginDescriptor.getPluginId().getIdString(), AsciiDocPlugin.PLUGIN_ID)) {

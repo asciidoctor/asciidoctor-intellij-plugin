@@ -12,6 +12,8 @@ import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * This handler copies the auto-wrap-in-progress-flag from the handler-specific data context to the editor's data-content,
  * as the handler-specific data context is not available in the {@link AsciiDocLineIndentProvider}.
@@ -22,7 +24,7 @@ public class AsciiDocEnterHandlerDelegate implements EnterHandlerDelegate {
   @Override
   public Result preprocessEnter(@NotNull PsiFile file, @NotNull Editor editor, @NotNull Ref<Integer> caretOffset, @NotNull Ref<Integer> caretAdvance, @NotNull DataContext dataContext, @Nullable EditorActionHandler originalHandler) {
     if (file.getFileType() == AsciiDocFileType.INSTANCE) {
-      if (DataManager.getInstance().loadFromDataContext(dataContext, AutoHardWrapHandler.AUTO_WRAP_LINE_IN_PROGRESS_KEY) == Boolean.TRUE) {
+      if (Objects.equals(DataManager.getInstance().loadFromDataContext(dataContext, AutoHardWrapHandler.AUTO_WRAP_LINE_IN_PROGRESS_KEY), Boolean.TRUE)) {
         editor.putUserData(AutoHardWrapHandler.AUTO_WRAP_LINE_IN_PROGRESS_KEY, true);
       }
     }
@@ -32,7 +34,7 @@ public class AsciiDocEnterHandlerDelegate implements EnterHandlerDelegate {
   @Override
   public Result postProcessEnter(@NotNull PsiFile file, @NotNull Editor editor, @NotNull DataContext dataContext) {
     if (file.getFileType() == AsciiDocFileType.INSTANCE) {
-      if (editor.getUserData(AutoHardWrapHandler.AUTO_WRAP_LINE_IN_PROGRESS_KEY) == Boolean.TRUE) {
+      if (Objects.equals(editor.getUserData(AutoHardWrapHandler.AUTO_WRAP_LINE_IN_PROGRESS_KEY), Boolean.TRUE)) {
         editor.putUserData(AutoHardWrapHandler.AUTO_WRAP_LINE_IN_PROGRESS_KEY, null);
       }
     }
