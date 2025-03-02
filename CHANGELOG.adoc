@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.44.3
 
-...
+- When pasting a URL from the clipboard to an existing URL in the text, replace the existing URL with the new one (#1763)
 
 === 0.44.2
 

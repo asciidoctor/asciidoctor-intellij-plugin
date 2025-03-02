@@ -10,9 +10,12 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.editor.actions.PasteAction;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.asciidoc.intellij.actions.asciidoc.DocumentWriteAction;
 import org.asciidoc.intellij.file.AsciiDocFileType;
+import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +39,37 @@ public class AsciiDocPasteLinkProvider implements PasteProvider {
     }
     DocumentWriteAction.run(editor.getProject(), () -> {
       Document document = editor.getDocument();
+
+      if (editor.getProject() != null) {
+        PsiFile psiFile = PsiDocumentManager.getInstance(editor.getProject()).getPsiFile(editor.getDocument());
+        if (psiFile != null) {
+          PsiElement element = psiFile.findElementAt(editor.getSelectionModel().getSelectionStart());
+          if (element != null && element.getNode().getElementType() == AsciiDocTokenTypes.URL_LINK) {
+            Transferable produce = Objects.requireNonNull(dataContext.getData(PasteAction.TRANSFERABLE_PROVIDER)).produce();
+            if (produce.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+              try {
+                String url = produce.getTransferData(DataFlavor.stringFlavor).toString();
+                if (AsciiDocUtil.URL_PREFIX_PATTERN.matcher(url).find() || AsciiDocUtil.EMAIL_PATTERN.matcher(url).matches()) {
+                  boolean linkPrefix = element.getNode().getTreeParent().getFirstChildNode().getElementType().equals(AsciiDocTokenTypes.LINKSTART);
+                  if (element.getNode().getTreeNext() != null) {
+                    // Only do this if there is some text in brackets after the URL
+                    if (url.contains("[")) {
+                      url = (linkPrefix ? "" : "link:") + "++" + url + "++";
+                    } else if (AsciiDocUtil.EMAIL_PATTERN.matcher(url).matches()) {
+                      url = (linkPrefix ? "" : "link:") + ":mailto:" + url;
+                    }
+                  }
+                  document.replaceString(element.getNode().getStartOffset(), element.getNode().getStartOffset() + element.getTextLength(), url);
+                }
+                return;
+              } catch (IOException | UnsupportedFlavorException ignored) {
+                // ignored
+              }
+            }
+          }
+        }
+      }
+
       Caret currentCaret = editor.getCaretModel().getCurrentCaret();
       if (currentCaret.getSelectionRange().getLength() == 0) {
         return;
@@ -87,10 +121,25 @@ public class AsciiDocPasteLinkProvider implements PasteProvider {
     if (editor == null) {
       return false;
     }
-    Caret currentCaret = editor.getCaretModel().getCurrentCaret();
-    if (currentCaret.getSelectionRange().getLength() == 0) {
-      return false;
+
+    boolean isAtUrl = false;
+    if (editor.getProject() != null) {
+      PsiFile psiFile = PsiDocumentManager.getInstance(editor.getProject()).getPsiFile(editor.getDocument());
+      if (psiFile != null) {
+        PsiElement element = psiFile.findElementAt(editor.getSelectionModel().getSelectionStart());
+        if (element != null && element.getNode().getElementType() == AsciiDocTokenTypes.URL_LINK) {
+          isAtUrl = true;
+        }
+      }
     }
+
+    if (!isAtUrl) {
+      Caret currentCaret = editor.getCaretModel().getCurrentCaret();
+      if (currentCaret.getSelectionRange().getLength() == 0) {
+        return false;
+      }
+    }
+
     Transferable produce = Objects.requireNonNull(dataContext.getData(PasteAction.TRANSFERABLE_PROVIDER)).produce();
     if (produce.isDataFlavorSupported(DataFlavor.stringFlavor)) {
       try {

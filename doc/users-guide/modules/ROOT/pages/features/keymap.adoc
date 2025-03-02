@@ -105,7 +105,7 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 [.macos]#kbd:[⌘ C]#
 
 | Paste from clipboard +
-(text or images) | [.windows.linux]#kbd:[Ctrl+V],kbd:[Shift+Insert]#
+(text or images or URLs) | [.windows.linux]#kbd:[Ctrl+V],kbd:[Shift+Insert]#
 
 [.macos]#kbd:[⌘ V]#
 

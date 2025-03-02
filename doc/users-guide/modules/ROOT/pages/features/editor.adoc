@@ -223,6 +223,13 @@ In both cases, the user has the option to configure the image with additional at
 As a shortcut the user can also use kbd:[Ctrl+C] and kbd:[Ctrl+V] to add a reference to the image from within the project to the current document.
 This shortcut doesn't work yet for copying contents from outside the project.
 
+// See AsciiDocPasteLinkProvider
+.Available from release 0.43.4:
+If you want to change a snippet of text to a link, first select it in the editor, then paste the URL from the clipboard.
+
+.Available from release 0.44.3:
+To replace a URL in the text with the one from the clipboard, please the cursor on the URL in the editor, and paste the URL from the clipboard. This works even without selecting the URL first.
+
 // see: PasteHtmlAction
 The user can copy formatted text from the clipboard into the document.
 To do that, the user selects "`Paste formatted text`" from the editor's icon menu or from the context menu.
