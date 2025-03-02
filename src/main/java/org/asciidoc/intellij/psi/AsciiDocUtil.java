@@ -1143,12 +1143,15 @@ public class AsciiDocUtil {
     VirtualFile dir = fileBaseDir;
     Collection<VirtualFile> roots = getRoots(project);
     while (dir != null) {
-      if (dir.getParent() != null && dir.getParent().getName().equals("content")) {
-        VirtualFile staticFolder = dir.getParent().getParent().findChild("static");
-        boolean configExists = dir.getParent().getParent().findChild("config") != null ||
-          dir.getParent().getParent().findChild("config.toml") != null ||
-          dir.getParent().getParent().findChild("config.yaml") != null ||
-          dir.getParent().getParent().findChild("config.json") != null;
+      if (dir.getParent() != null && dir.getName().equals("content")) {
+        VirtualFile staticFolder = dir.getParent().findChild("static");
+        boolean configExists = dir.getParent().findChild("config") != null ||
+          dir.getParent().findChild("config.toml") != null ||
+          dir.getParent().findChild("config.yaml") != null ||
+          dir.getParent().findChild("config.json") != null ||
+          dir.getParent().findChild("hugo.toml") != null ||
+          dir.getParent().findChild("hugo.yaml") != null ||
+          dir.getParent().findChild("hugo.json") != null;
         if (staticFolder != null && configExists) {
           return staticFolder;
         }

@@ -13,7 +13,13 @@ NOTE: Support for static resources was added in plugin version 0.37.41.
 
 A project needs to have the following features for the AsciiDoc plugin for IntelliJ to recognize it as a Hugo project:
 
-* A configuration file (`config.toml`, `config.json` or `config.yaml`) or configuration folder (`config`).
+* A configuration file (`hugo.toml`, `hugo.json`, `hugo.yaml`, `config.toml`, `config.json` or `config.yaml`) or configuration folder (`config`).
++
+[NOTE]
+====
+The `hugo.*` file names are supported from plugin version 0.44.3 onwards.
+====
+
 * A folder `content` next to the configuration file or folder.
 * If a folder for static resources exists, it has to have the name `static` and needs to be next to the configuration file or folder.
 
@@ -51,6 +57,7 @@ https://gohugo.io/content-management/page-resources/[Page resources] exist in th
   │ └─📄 image-for-post.png
   └─📄 post-2-without-page-resources.adoc
 ----
+
 
 To reference an image in the post's folder, use a relative target name for the image.
 To reference an image in the static resources, use a target name for the image starting with a slash (`/`).
