@@ -87,9 +87,8 @@ dependencies {
         // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1638#issuecomment-2151527333
         jetbrainsRuntime()
 
-        // Temporary fix for EAP 225
-        // https://youtrack.jetbrains.com/issue/IJPL-177264
-        bundledModule("intellij.yaml.editing")
+        // Allow accessing the backend of
+        bundledModule("intellij.yaml.backend")
 
         // Plugin Dependencies. Uses `platformBundledPlugins` property from the gradle.properties file for bundled IntelliJ Platform plugins.
         bundledPlugins(listOf(
@@ -225,7 +224,7 @@ tasks {
 
     patchPluginXml {
         dependsOn (asciidoctor)
-        sinceBuild = "251.0.0"
+        sinceBuild = "251.23536.34"
         untilBuild = provider { null }
     }
 

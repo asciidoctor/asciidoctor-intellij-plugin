@@ -87,9 +87,7 @@ jobs:
 
       # Build artifact using buildPlugin Gradle task
       - name: Build Plugin
-        # Disable verify plugin until https://youtrack.jetbrains.com/issue/IJPL-177264 is resolved
-        # run: ./gradlew check verifyPlugin buildPlugin
-        run: ./gradlew check buildPlugin
+        run: ./gradlew check verifyPlugin buildPlugin
 
       # Upload plugin artifact to make it available in the next jobs
       - name: Upload artifact
