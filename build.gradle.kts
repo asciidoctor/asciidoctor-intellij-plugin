@@ -66,7 +66,7 @@ dependencies {
 
     testImplementation(gradleTestKit())
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.12.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.12.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.12.1")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.12.0")
 
     testImplementation("com.tngtech.archunit:archunit-junit4:1.4.0")
