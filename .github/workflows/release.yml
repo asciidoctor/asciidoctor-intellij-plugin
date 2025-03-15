@@ -63,7 +63,7 @@ jobs:
       # as a release might go without errors for some time, the "fixed in next release" might be updated only too late
       # https://github.com/marketplace/actions/sentry-release
       - name: Create Sentry release
-        uses: getsentry/action-release@v2
+        uses: getsentry/action-release@v3
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
@@ -71,6 +71,7 @@ jobs:
         with:
           environment: production
           version: ${{ github.ref }}
+          inject: false
   cleanup:
     name: Cleanup old builds
     # avoid 403 error with message "Resource not accessible by integration" (seen with dependabot)
