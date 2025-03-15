@@ -4,8 +4,12 @@ intelliJPlatform = "2.3.0"
 errorpronePlugin = "4.1.0"
 grammarKit = "2022.3.2.2"
 asciidoctorConvert = "4.0.4"
+junit = "5.12.1"
 
 [libraries]
+junitJupiterEngine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit"}
+junitVintageEngine = { group = "org.junit.vintage", name = "junit-vintage-engine", version.ref = "junit"}
+junitJupiterApi = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit"}
 
 [plugins]
 intelliJPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "intelliJPlatform" }
