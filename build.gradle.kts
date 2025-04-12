@@ -107,8 +107,7 @@ dependencies {
             // "com.jetbrains.performancePlugin:213.5744.122" // used run YourKit CPU profiling in test IDE
             // see https://intellij-support.jetbrains.com/hc/en-us/articles/207241235
             // https://plugins.jetbrains.com/plugin/16136-grazie-professional/
-            // Disabled until https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1851 is resolved
-            // "com.intellij.grazie.pro:0.3.359"
+            "com.intellij.grazie.pro:0.3.369"
         ))
 
         pluginVerifier()
