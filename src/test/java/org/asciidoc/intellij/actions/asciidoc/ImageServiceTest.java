@@ -3,6 +3,7 @@ package org.asciidoc.intellij.actions.asciidoc;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.BinaryLightVirtualFile;
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class ImageServiceTest {
   }
 
   @Test
+  @Ignore("Since gradle plugin intelliJPlatform 2.5.0 it seems unable to read SVGs during tests")
   public void shouldReturnWidthForNonPngJpegFiles() throws ExecutionException, InterruptedException, IOException {
     Optional<Integer> imageWidthOption = ImageService
       .getImageWidth(createVirtualFile("testFiles/test-image.svg"))

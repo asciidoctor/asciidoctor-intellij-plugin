@@ -85,9 +85,6 @@ dependencies {
         // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1638#issuecomment-2151527333
         jetbrainsRuntime()
 
-        // Allow accessing the backend of
-        bundledModule("intellij.yaml.backend")
-
         // Plugin Dependencies. Uses `platformBundledPlugins` property from the gradle.properties file for bundled IntelliJ Platform plugins.
         bundledPlugins(listOf(
             "tanvd.grazi", // used for spell and grammar checking checking
@@ -95,6 +92,7 @@ dependencies {
             "com.intellij.properties", // dependency to the Java plugin
             "org.jetbrains.plugins.yaml", // used to inject file references to Antora YAML files
             "com.jetbrains.sh",
+            "com.intellij.modules.json",
             "org.intellij.intelliLang"
         ))
 
