@@ -10,6 +10,8 @@ import org.asciidoc.intellij.AsciiDocLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * When auto-wrapping of lines in in-progress, don't adjust the line's indent to avoid confusing the logic in
  * {@link AutoHardWrapHandler#wrapLineIfNecessary}.
@@ -20,7 +22,7 @@ public class AsciiDocLineIndentProvider extends FormatterBasedLineIndentProvider
 
   @Override
   public @Nullable String getLineIndent(@NotNull Project project, @NotNull Editor editor, @Nullable Language language, int offset) {
-    if (editor.getUserData(AutoHardWrapHandler.AUTO_WRAP_LINE_IN_PROGRESS_KEY) == Boolean.TRUE) {
+    if (Objects.equals(editor.getUserData(AutoHardWrapHandler.AUTO_WRAP_LINE_IN_PROGRESS_KEY), Boolean.TRUE)) {
       return LineIndentProvider.DO_NOT_ADJUST;
     } else {
       return super.getLineIndent(project, editor, language, offset);

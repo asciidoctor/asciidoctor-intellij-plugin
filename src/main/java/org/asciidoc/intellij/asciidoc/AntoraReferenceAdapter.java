@@ -121,20 +121,11 @@ public class AntoraReferenceAdapter {
         }
         target = target.substring(0, target.length() - outfileSuffix.length()) + ".adoc";
       }
-      String defaultFamily;
-      switch (type) {
-        case "inline_anchor":
-          defaultFamily = "page";
-          break;
-        case "inline_image":
-        case "image":
-        case "audio":
-        case "video":
-          defaultFamily = "image";
-          break;
-        default:
-          throw new IllegalStateException("Unexpected value: " + type);
-      }
+      String defaultFamily = switch (type) {
+        case "inline_anchor" -> "page";
+        case "inline_image", "image", "audio", "video" -> "image";
+        default -> throw new IllegalStateException("Unexpected value: " + type);
+      };
       VirtualFile sourceDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
       List<String> replaced = AsciiDocUtil.replaceAntoraPrefix(project, antoraModuleDir, sourceDir, target, defaultFamily);
       if (replaced.size() == 1 && replaced.get(0).equals(target)) {
