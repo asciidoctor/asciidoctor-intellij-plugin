@@ -103,16 +103,12 @@ public class StreamPair {
     private PrintStream get(final StreamPair pair) {
       assert pair != null;
 
-      switch (this) {
-        case OUT:
-          return pair.out;
-
-        case ERR:
-          return pair.err;
-      }
+      return switch (this) {
+        case OUT -> pair.out;
+        case ERR -> pair.err;
+      };
 
       // Should never happen
-      throw new InternalError();
     }
   }
 }

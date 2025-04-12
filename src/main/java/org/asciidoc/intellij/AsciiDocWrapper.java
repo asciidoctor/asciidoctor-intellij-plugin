@@ -1136,7 +1136,7 @@ public class AsciiDocWrapper {
                 if (v == null) {
                   vs = null;
                   soft = false;
-                } else if (v instanceof Boolean && !(Boolean) v) {
+                } else if (v instanceof Boolean b && !b) {
                   // false -> soft unset
                   vs = null;
                   soft = true;
