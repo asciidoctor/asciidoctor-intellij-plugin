@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Bump org.asciidoctor:asciidoctorj-diagram-plantuml from 1.2024.5 to 1.2025.2 (#1811)
 - Bump org.asciidoctor:asciidoctorj-diagram from 2.3.1 to 2.3.2 (#1809)
+- Structural wrapping shouldn't remove brackets, braces and quotes (#1782)
 
 === 0.44.3
 
