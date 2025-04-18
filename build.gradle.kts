@@ -208,7 +208,7 @@ tasks {
         options.errorprone.excludedPaths = ".*(_AsciiDocLexer).*"
         options.errorprone.error("StreamResourceLeak") // enforce errors where there would be warning in the standard only
         options.errorprone.disable("MissingSummary", "NullableOnContainingClass", "CanIgnoreReturnValueSuggester")
-        options.compilerArgs.addAll(listOf("--release", "17"))
+        options.compilerArgs.addAll(listOf("--release", "21"))
         // will print link to contributor guide at the start of each build
         dependsOn (generateLexer, "showLinkToContributorGuide", "checkJavaVersion")
     }

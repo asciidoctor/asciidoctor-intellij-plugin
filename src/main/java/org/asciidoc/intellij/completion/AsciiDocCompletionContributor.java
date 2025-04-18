@@ -114,8 +114,7 @@ public class AsciiDocCompletionContributor extends CompletionContributor {
                   if (resolve != null) {
                     PsiTreeUtil.processElements(resolve.getContainingFile(), element -> {
                       for (PsiReference reference : element.getReferences()) {
-                        if (reference instanceof AsciiDocIncludeTagReferenceInElement) {
-                          AsciiDocIncludeTagReferenceInElement tagReference = (AsciiDocIncludeTagReferenceInElement) reference;
+                        if (reference instanceof AsciiDocIncludeTagReferenceInElement tagReference) {
                           if (!ids.contains(tagReference.getValue())) {
                             resultSet.addElement(LookupElementBuilder.create(tagReference.getValue())
                               .withCaseSensitivity(false)

@@ -1712,13 +1712,14 @@ public class AsciiDocWrapper {
       // add styleheet at the end of the header to avoid interfering with the mechanism to unload the standard stylesheet once the custom stylesheet has been loaded
       html = html
           .replace("</head>", "<link rel='stylesheet' data-default type='text/css' href='" + css + "' />" + "</head>");
-      html = html.replace("</body>", "" + js + "</body>");
-      html = html.replace("</body>", "<script>\n" +
-        "if (!hljs.initHighlighting.called) {\n" +
-        "  hljs.initHighlighting.called = true;\n" +
-        "  [].slice.call(document.querySelectorAll('pre.highlight > code')).forEach(function (el) { hljs.highlightElement(el) })\n" +
-        "}\n" +
-        "</script></body>");
+      html = html.replace("</body>", js + "</body>");
+      html = html.replace("</body>", """
+        <script>
+        if (!hljs.initHighlighting.called) {
+          hljs.initHighlighting.called = true;
+          [].slice.call(document.querySelectorAll('pre.highlight > code')).forEach(function (el) { hljs.highlightElement(el) })
+        }
+        </script></body>""");
     }
     return html;
   }

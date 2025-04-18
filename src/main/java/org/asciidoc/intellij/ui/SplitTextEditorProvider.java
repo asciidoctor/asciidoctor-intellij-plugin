@@ -80,10 +80,9 @@ public abstract class SplitTextEditorProvider implements FileEditorProvider, Dum
 
   @Override
   public void writeState(@NotNull FileEditorState state, @NotNull Project project, @NotNull Element targetElement) {
-    if (!(state instanceof SplitFileEditor.MyFileEditorState)) {
+    if (!(state instanceof SplitFileEditor.MyFileEditorState compositeState)) {
       return;
     }
-    final SplitFileEditor.MyFileEditorState compositeState = (SplitFileEditor.MyFileEditorState) state;
 
     Element child = new Element(FIRST_EDITOR);
     if (compositeState.getFirstState() != null) {

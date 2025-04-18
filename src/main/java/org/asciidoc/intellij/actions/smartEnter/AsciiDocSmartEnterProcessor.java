@@ -218,9 +218,8 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
     // if this is a link-macro, try to add title
     if (parent instanceof AsciiDocLink) {
       PsiReference[] references = parent.getReferences();
-      if (references.length > 0 && references[references.length - 1] instanceof AsciiDocFileReference) {
+      if (references.length > 0 && references[references.length - 1] instanceof AsciiDocFileReference fileReference) {
         // resolve file reference
-        AsciiDocFileReference fileReference = (AsciiDocFileReference) references[references.length - 1];
         if (AsciiDocUtil.findAntoraModuleDir(atCaret) != null && !fileReference.isAnchor()) {
           // for page links, Antora will retrieve the information automatically, therefore, leave it blank.
           return "";
@@ -232,7 +231,7 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
         if (resolve instanceof PsiFile && ((PsiFile) resolve).getFileType() == AsciiDocFileType.INSTANCE) {
           // get first section of referenced file
           Collection<AsciiDocSection> childrenOfType = PsiTreeUtil.findChildrenOfType(resolve, AsciiDocSection.class);
-          if (childrenOfType.size() > 0) {
+          if (!childrenOfType.isEmpty()) {
             AsciiDocSection next = childrenOfType.iterator().next();
             textToInsert = next.getTitle();
           }
@@ -250,14 +249,13 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
     // if this is an include-macro, try to add leveloffset-attribute to match
     if (parent instanceof AsciiDocBlockMacro && ((AsciiDocBlockMacro) parent).getMacroName().equals("include")) {
       PsiReference[] references = parent.getReferences();
-      if (references.length > 0 && references[references.length - 1] instanceof AsciiDocFileReference) {
+      if (references.length > 0 && references[references.length - 1] instanceof AsciiDocFileReference fileReference) {
         // resolve file reference
-        AsciiDocFileReference fileReference = (AsciiDocFileReference) references[references.length - 1];
         PsiElement resolve = fileReference.resolve();
         if (resolve instanceof PsiFile && ((PsiFile) resolve).getFileType() == AsciiDocFileType.INSTANCE) {
           // get first section of referenced file
           Collection<AsciiDocSection> childrenOfType = PsiTreeUtil.findChildrenOfType(resolve, AsciiDocSection.class);
-          if (childrenOfType.size() > 0) {
+          if (!childrenOfType.isEmpty()) {
             AsciiDocSection next = childrenOfType.iterator().next();
             int includeLevel = next.getHeadingLevel();
             AsciiDocSection parentSection = (AsciiDocSection) PsiTreeUtil.findFirstParent(parent, psiElement -> psiElement instanceof AsciiDocSection);

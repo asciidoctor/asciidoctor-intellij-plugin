@@ -37,17 +37,15 @@ public class AsciiDocBreadcrumbsInfoProvider implements BreadcrumbsProvider {
   @NotNull
   @Override
   public String getElementInfo(@NotNull PsiElement e) {
-    String title = "";
-    if (e instanceof AsciiDocSection) {
-      title = ((AsciiDocSection) e).getTitle();
-    } else if (e instanceof AbstractAsciiDocCodeBlock) {
-      title = ((AbstractAsciiDocCodeBlock) e).getTitle();
-      if (title == null) {
-        title = "(" + ((AbstractAsciiDocCodeBlock) e).getDefaultTitle() + ")";
-      }
-    } else if (e instanceof AsciiDocSelfDescribe) {
-      title = ((AsciiDocSelfDescribe) e).getFoldedSummary();
-    }
+    String title = switch (e) {
+      case AsciiDocSection asciiDocSection -> asciiDocSection.getTitle();
+      case AbstractAsciiDocCodeBlock abstractAsciiDocCodeBlock -> switch (abstractAsciiDocCodeBlock.getTitle()) {
+        case String s -> s;
+        case null -> "(" + abstractAsciiDocCodeBlock.getDefaultTitle() + ")";
+      };
+      case AsciiDocSelfDescribe asciiDocSelfDescribe -> asciiDocSelfDescribe.getFoldedSummary();
+      default -> "";
+    };
     return StringUtil.shortenTextWithEllipsis(title, 30, 5);
   }
 

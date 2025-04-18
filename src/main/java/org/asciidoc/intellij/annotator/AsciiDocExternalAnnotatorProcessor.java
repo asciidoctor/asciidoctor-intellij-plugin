@@ -216,7 +216,7 @@ implements DumbAware {
       }
       ab.create();
     }
-    if (problems.size() > 0) {
+    if (!problems.isEmpty()) {
       theProblemSolver.reportProblemsFromExternalSource(file.getVirtualFile(), AsciiDocExternalAnnotatorProcessor.class);
     } else {
       theProblemSolver.clearProblemsFromExternalSource(file.getVirtualFile(), AsciiDocExternalAnnotatorProcessor.class);
@@ -250,8 +250,7 @@ implements DumbAware {
       List<PsiReference> references = Arrays.asList(macro.getReferences());
       Collections.reverse(references);
       for (PsiReference reference : references) {
-        if (reference instanceof AsciiDocFileReference) {
-          AsciiDocFileReference fileReference = (AsciiDocFileReference) reference;
+        if (reference instanceof AsciiDocFileReference fileReference) {
           if (!fileReference.isFolder()) {
             PsiElement resolved = fileReference.resolve();
             if (resolved instanceof AsciiDocFile) {
@@ -272,18 +271,11 @@ implements DumbAware {
   }
 
   private HighlightSeverity toSeverity(Severity severity) {
-    switch (severity) {
-      case DEBUG:
-      case INFO:
-      case WARN:
-        return HighlightSeverity.WARNING;
-      case ERROR:
-      case FATAL:
-        return HighlightSeverity.ERROR;
-      case UNKNOWN:
-      default:
-        return HighlightSeverity.GENERIC_SERVER_ERROR_OR_WARNING;
-    }
+    return switch (severity) {
+      case DEBUG, INFO, WARN -> HighlightSeverity.WARNING;
+      case ERROR, FATAL -> HighlightSeverity.ERROR;
+      default -> HighlightSeverity.GENERIC_SERVER_ERROR_OR_WARNING;
+    };
   }
 
 }

@@ -10,15 +10,18 @@ import org.asciidoc.intellij.file.AsciiDocFileType;
 
 public class AsciiDocListingManipulatorTest extends BasePlatformTestCase {
   public void testSimpleCodeFence() {
-    doTest("[source,json]\n" +
-        "----\n" +
-        "hi<caret>ho\n" +
-        "----\n",
+    doTest("""
+        [source,json]
+        ----
+        hi<caret>ho
+        ----
+        """,
       "content",
-      "[source,json]\n" +
-        "----\n" +
-        "content\n" +
-        "----");
+      """
+        [source,json]
+        ----
+        content
+        ----""");
   }
 
   private void doTest(String text, String newContent, String expectedText) {

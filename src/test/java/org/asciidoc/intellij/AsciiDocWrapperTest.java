@@ -60,9 +60,10 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
   }
 
   public void testShouldUseLinkedStylesheetAndDir() {
-    String html = asciidocWrapper.render(":linkcss:\n" +
-      ":stylesdir: https://example.com\n" +
-      ":stylesheet: dark.css", Collections.emptyList());
+    String html = asciidocWrapper.render("""
+      :linkcss:
+      :stylesdir: https://example.com
+      :stylesheet: dark.css""", Collections.emptyList());
     html = "<head></head>" + html;
     html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", null, null, asciidocWrapper.getAttributes(), getProject());
     assertThat(html).withFailMessage("should contain testcss").containsPattern("<link[^>]*https://example.com/dark.css");
@@ -151,12 +152,15 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
         fail("Diagram already exists, but shouldn't before running AsciiDoc");
       }
       Writer fw = Files.newBufferedWriter(asciidoc.toPath(), UTF_8);
-      fw.write("Hello world.\n\n[plantuml, uml-example, png]\n" +
-        "----\n" +
-        "@startuml\n" +
-        "Alice -> Bob: Authentication Request\n" +
-        "@enduml\n" +
-        "----");
+      fw.write("""
+        Hello world.
+
+        [plantuml, uml-example, png]
+        ----
+        @startuml
+        Alice -> Bob: Authentication Request
+        @enduml
+        ----""");
       fw.close();
 
       // when...
@@ -216,15 +220,17 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       false,
       ""));
     try {
-      String html = asciidocWrapper.render(":action: generates\n" +
-        "\n" +
-        "[blockdiag,block-diag,svg,subs=+attributes]\n" +
-        "----\n" +
-        "blockdiag {\n" +
-        "  Kroki -> {action} -> \"Block diagrams\";\n" +
-        "  Kroki -> is -> \"very easy!\";\n" +
-        "}\n" +
-        "----\n", Collections.emptyList());
+      String html = asciidocWrapper.render("""
+        :action: generates
+
+        [blockdiag,block-diag,svg,subs=+attributes]
+        ----
+        blockdiag {
+          Kroki -> {action} -> "Block diagrams";
+          Kroki -> is -> "very easy!";
+        }
+        ----
+        """, Collections.emptyList());
       assertThat(html).contains("https://kroki.io/blockdiag/svg/eNpLyslPzk7JTExXqOZSUPAuys_OVNC1U0hPzUstSixJLQZxlJxAihRAqooSc4uVrJFVZkKUlKUWVSqkJhZXKgKlawGuixqn");
     } finally {
       AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
@@ -254,22 +260,24 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       false,
       ""));
     try {
-      String html = asciidocWrapper.render("[erd]\n" +
-        "----\n" +
-        "[Person]\n" +
-        "*name\n" +
-        "height\n" +
-        "weight\n" +
-        "+birth_location_id\n" +
-        "\n" +
-        "[Location]\n" +
-        "*id\n" +
-        "city\n" +
-        "state\n" +
-        "country\n" +
-        "\n" +
-        "Person *--1 Location\n" +
-        "----\n", Collections.emptyList());
+      String html = asciidocWrapper.render("""
+        [erd]
+        ----
+        [Person]
+        *name
+        height
+        weight
+        +birth_location_id
+
+        [Location]
+        *id
+        city
+        state
+        country
+
+        Person *--1 Location
+        ----
+        """, Collections.emptyList());
       // on Mac ARM, the JavaFX provider is not available, therefore it won't switch to PNG by default
       assertThat(html).containsPattern("https://kroki.io/erd/(svg|png)/eNqLDkgtKs7Pi" +
         "-XSykvMTeXKSM1MzyjhKodQ2kmZRSUZ8Tn5yYklmfl58ZkpXFzRPlAeUAuQn5xZUslVXJJYksqVnF-aV1JUycUFMVJBS1fXUAGmGgCFAiQX");
@@ -301,13 +309,15 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       false,
       ""));
     try {
-      String html = asciidocWrapper.render("[nomnoml]\n" +
-        "----\n" +
-        "[Pirate|eyeCount: Int|raid();pillage()|\n" +
-        "  [beard]--[parrot]\n" +
-        "  [beard]-:>[foul mouth]\n" +
-        "]\n" +
-        "----\n", Collections.emptyList());
+      String html = asciidocWrapper.render("""
+        [nomnoml]
+        ----
+        [Pirate|eyeCount: Int|raid();pillage()|
+          [beard]--[parrot]
+          [beard]-:>[foul mouth]
+        ]
+        ----
+        """, Collections.emptyList());
       assertThat(html).contains("http://internal.secure.domain/kroki/nomnoml/svg/eNqLDsgsSixJrUmtTHXOL80rsVLwzCupKUrMTNHQtC7IzMlJTE_V0KzhUlCITkpNLEqJ1dWNLkgsKsoviUUSs7KLTssvzVHIzS8tyYjligUAMhEd0g==");
     } finally {
       AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
@@ -337,16 +347,18 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       false,
       ""));
     try {
-      String html = asciidocWrapper.render("[wavedrom]\n" +
-        "....\n" +
-        "{ signal: [\n" +
-        "  { name: \"clk\",         wave: \"p.....|...\" },\n" +
-        "  { name: \"Data\",        wave: \"x.345x|=.x\", data: [\"head\", \"body\", \"tail\", \"data\"] },\n" +
-        "  { name: \"Request\",     wave: \"0.1..0|1.0\" },\n" +
-        "  {},\n" +
-        "  { name: \"Acknowledge\", wave: \"1.....|01.\" }\n" +
-        "]}\n" +
-        "....\n", Collections.emptyList());
+      String html = asciidocWrapper.render("""
+        [wavedrom]
+        ....
+        { signal: [
+          { name: "clk",         wave: "p.....|..." },
+          { name: "Data",        wave: "x.345x|=.x", data: ["head", "body", "tail", "data"] },
+          { name: "Request",     wave: "0.1..0|1.0" },
+          {},
+          { name: "Acknowledge", wave: "1.....|01." }
+        ]}
+        ....
+        """, Collections.emptyList());
       assertThat(html).contains("https://kroki.io/wavedrom/svg/eNqrVijOTM9LzLFSiOZSUKhWyEvMTbVSUErOyVbSUYCB8sQykGCBHgjUALGSQq0OsnKXxJJEhHqo8go9YxPTihpbvQqgVApQBdAOpYzUxBQgVykpP6USRJckZuaAaJC8UiyasUGphaWpxSVQk6HGGugZ6ukZ1BjqGcBcgarJMTk7L788JzUlPRWoEarJEOJ0A0OQ07liawGPW0Gr");
     } finally {
       AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
@@ -376,104 +388,106 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       false,
       ""));
     try {
-      String html = asciidocWrapper.render("[vega]\n" +
-        "....\n" +
-        "{\n" +
-        "  \"$schema\": \"https://vega.github.io/schema/vega/v5.json\",\n" +
-        "  \"width\": 400,\n" +
-        "  \"height\": 200,\n" +
-        "  \"padding\": 5,\n" +
-        "\n" +
-        "  \"data\": [\n" +
-        "    {\n" +
-        "      \"name\": \"table\",\n" +
-        "      \"values\": [\n" +
-        "        {\"category\": \"A\", \"amount\": 28},\n" +
-        "        {\"category\": \"B\", \"amount\": 55},\n" +
-        "        {\"category\": \"C\", \"amount\": 43},\n" +
-        "        {\"category\": \"D\", \"amount\": 91},\n" +
-        "        {\"category\": \"E\", \"amount\": 81},\n" +
-        "        {\"category\": \"F\", \"amount\": 53},\n" +
-        "        {\"category\": \"G\", \"amount\": 19},\n" +
-        "        {\"category\": \"H\", \"amount\": 87}\n" +
-        "      ]\n" +
-        "    }\n" +
-        "  ],\n" +
-        "\n" +
-        "  \"signals\": [\n" +
-        "    {\n" +
-        "      \"name\": \"tooltip\",\n" +
-        "      \"value\": {},\n" +
-        "      \"on\": [\n" +
-        "        {\"events\": \"rect:mouseover\", \"update\": \"datum\"},\n" +
-        "        {\"events\": \"rect:mouseout\",  \"update\": \"{}\"}\n" +
-        "      ]\n" +
-        "    }\n" +
-        "  ],\n" +
-        "\n" +
-        "  \"scales\": [\n" +
-        "    {\n" +
-        "      \"name\": \"xscale\",\n" +
-        "      \"type\": \"band\",\n" +
-        "      \"domain\": {\"data\": \"table\", \"field\": \"category\"},\n" +
-        "      \"range\": \"width\",\n" +
-        "      \"padding\": 0.05,\n" +
-        "      \"round\": true\n" +
-        "    },\n" +
-        "    {\n" +
-        "      \"name\": \"yscale\",\n" +
-        "      \"domain\": {\"data\": \"table\", \"field\": \"amount\"},\n" +
-        "      \"nice\": true,\n" +
-        "      \"range\": \"height\"\n" +
-        "    }\n" +
-        "  ],\n" +
-        "\n" +
-        "  \"axes\": [\n" +
-        "    { \"orient\": \"bottom\", \"scale\": \"xscale\" },\n" +
-        "    { \"orient\": \"left\", \"scale\": \"yscale\" }\n" +
-        "  ],\n" +
-        "\n" +
-        "  \"marks\": [\n" +
-        "    {\n" +
-        "      \"type\": \"rect\",\n" +
-        "      \"from\": {\"data\":\"table\"},\n" +
-        "      \"encode\": {\n" +
-        "        \"enter\": {\n" +
-        "          \"x\": {\"scale\": \"xscale\", \"field\": \"category\"},\n" +
-        "          \"width\": {\"scale\": \"xscale\", \"band\": 1},\n" +
-        "          \"y\": {\"scale\": \"yscale\", \"field\": \"amount\"},\n" +
-        "          \"y2\": {\"scale\": \"yscale\", \"value\": 0}\n" +
-        "        },\n" +
-        "        \"update\": {\n" +
-        "          \"fill\": {\"value\": \"steelblue\"}\n" +
-        "        },\n" +
-        "        \"hover\": {\n" +
-        "          \"fill\": {\"value\": \"red\"}\n" +
-        "        }\n" +
-        "      }\n" +
-        "    },\n" +
-        "    {\n" +
-        "      \"type\": \"text\",\n" +
-        "      \"encode\": {\n" +
-        "        \"enter\": {\n" +
-        "          \"align\": {\"value\": \"center\"},\n" +
-        "          \"baseline\": {\"value\": \"bottom\"},\n" +
-        "          \"fill\": {\"value\": \"#333\"}\n" +
-        "        },\n" +
-        "        \"update\": {\n" +
-        "          \"x\": {\"scale\": \"xscale\", \"signal\": \"tooltip.category\", \"band\": 0.5},\n" +
-        "          \"y\": {\"scale\": \"yscale\", \"signal\": \"tooltip.amount\", \"offset\": -2},\n" +
-        "          \"text\": {\"signal\": \"tooltip.amount\"},\n" +
-        "          \"fillOpacity\": [\n" +
-        "            {\"test\": \"datum === tooltip\", \"value\": 0},\n" +
-        "            {\"value\": 1}\n" +
-        "          ]\n" +
-        "        }\n" +
-        "      }\n" +
-        "    }\n" +
-        "  ]\n" +
-        "}\n" +
-        "....\n", Collections.emptyList());
+      String html = asciidocWrapper.render("""
+        [vega]
+        ....
+        {
+          "$schema": "https://vega.github.io/schema/vega/v5.json",
+          "width": 400,
+          "height": 200,
+          "padding": 5,
+
+          "data": [
+            {
+              "name": "table",
+              "values": [
+                {"category": "A", "amount": 28},
+                {"category": "B", "amount": 55},
+                {"category": "C", "amount": 43},
+                {"category": "D", "amount": 91},
+                {"category": "E", "amount": 81},
+                {"category": "F", "amount": 53},
+                {"category": "G", "amount": 19},
+                {"category": "H", "amount": 87}
+              ]
+            }
+          ],
+
+          "signals": [
+            {
+              "name": "tooltip",
+              "value": {},
+              "on": [
+                {"events": "rect:mouseover", "update": "datum"},
+                {"events": "rect:mouseout",  "update": "{}"}
+              ]
+            }
+          ],
+
+          "scales": [
+            {
+              "name": "xscale",
+              "type": "band",
+              "domain": {"data": "table", "field": "category"},
+              "range": "width",
+              "padding": 0.05,
+              "round": true
+            },
+            {
+              "name": "yscale",
+              "domain": {"data": "table", "field": "amount"},
+              "nice": true,
+              "range": "height"
+            }
+          ],
+
+          "axes": [
+            { "orient": "bottom", "scale": "xscale" },
+            { "orient": "left", "scale": "yscale" }
+          ],
+
+          "marks": [
+            {
+              "type": "rect",
+              "from": {"data":"table"},
+              "encode": {
+                "enter": {
+                  "x": {"scale": "xscale", "field": "category"},
+                  "width": {"scale": "xscale", "band": 1},
+                  "y": {"scale": "yscale", "field": "amount"},
+                  "y2": {"scale": "yscale", "value": 0}
+                },
+                "update": {
+                  "fill": {"value": "steelblue"}
+                },
+                "hover": {
+                  "fill": {"value": "red"}
+                }
+              }
+            },
+            {
+              "type": "text",
+              "encode": {
+                "enter": {
+                  "align": {"value": "center"},
+                  "baseline": {"value": "bottom"},
+                  "fill": {"value": "#333"}
+                },
+                "update": {
+                  "x": {"scale": "xscale", "signal": "tooltip.category", "band": 0.5},
+                  "y": {"scale": "yscale", "signal": "tooltip.amount", "offset": -2},
+                  "text": {"signal": "tooltip.amount"},
+                  "fillOpacity": [
+                    {"test": "datum === tooltip", "value": 0},
+                    {"value": 1}
+                  ]
+                }
+              }
+            }
+          ]
+        }
+        ....
+        """, Collections.emptyList());
       // on Mac ARM, the JavaFX provider is not available, therefore it won't switch to PNG by default
       assertThat(html).containsPattern("https://kroki" +
         ".io/vega/(svg|png)" +

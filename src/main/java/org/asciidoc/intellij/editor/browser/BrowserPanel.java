@@ -58,21 +58,23 @@ public class BrowserPanel implements Disposable {
   private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = NotNullLazyValue.lazy(() -> {
     //noinspection StringBufferReplaceableByString
     return new StringBuilder()
-      .append("<script type=\"text/x-mathjax-config\">\n" +
-        "MathJax.Hub.Config({\n" +
-        "  messageStyle: \"none\",\n" +
-        "  tex2jax: {\n" +
-        "    inlineMath: [[\"\\\\(\", \"\\\\)\"]],\n" +
-        "    displayMath: [[\"\\\\[\", \"\\\\]\"]],\n" +
-        "    ignoreClass: \"nostem|nolatexmath\"\n" +
-        "  },\n" +
-        "  asciimath2jax: {\n" +
-        "    delimiters: [[\"\\\\$\", \"\\\\$\"]],\n" +
-        "    ignoreClass: \"nostem|noasciimath\"\n" +
-        "  },\n" +
-        "  TeX: { equationNumbers: { autoNumber: \"none\" } }\n" +
-        "});\n" +
-        "</script>\n")
+      .append("""
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          messageStyle: "none",
+          tex2jax: {
+            inlineMath: [["\\\\(", "\\\\)"]],
+            displayMath: [["\\\\[", "\\\\]"]],
+            ignoreClass: "nostem|nolatexmath"
+          },
+          asciimath2jax: {
+            delimiters: [["\\\\$", "\\\\$"]],
+            ignoreClass: "nostem|noasciimath"
+          },
+          TeX: { equationNumbers: { autoNumber: "none" } }
+        });
+        </script>
+        """)
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("MathJax/MathJax.js")).append("&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n")
       .toString();
   });
@@ -159,16 +161,11 @@ public class BrowserPanel implements Disposable {
 
   private boolean isDarcula() {
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
-    switch (settings.getAsciiDocPreviewSettings().getPreviewTheme()) {
-      case INTELLIJ:
-        return !JBColor.isBright();
-      case ASCIIDOC:
-        return false;
-      case DARCULA:
-        return true;
-      default:
-        return false;
-    }
+    return switch (settings.getAsciiDocPreviewSettings().getPreviewTheme()) {
+      case INTELLIJ -> !JBColor.isBright();
+      case ASCIIDOC -> false;
+      case DARCULA -> true;
+    };
   }
 
   @NotNull

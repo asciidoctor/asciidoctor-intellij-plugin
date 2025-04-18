@@ -80,11 +80,9 @@ public abstract class AsciiDocHtmlPanelProvider {
       if (this == o) {
         return true;
       }
-      if (!(o instanceof ProviderInfo)) {
+      if (!(o instanceof ProviderInfo info)) {
         return false;
       }
-
-      ProviderInfo info = (ProviderInfo) o;
 
       if (!myName.equals(info.myName)) {
         return false;
