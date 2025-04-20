@@ -87,6 +87,13 @@ import java.util.function.Consumer;
 public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEditor {
 
   private static final Logger LOG = Logger.getInstance(AsciiDocPreviewEditor.class);
+  private static final String EMPTY_HTML = "<html></html>";
+  private static final String JCEF_HTML = "<html>If you can read this and not the content of your document, your preview does not show. One possible reason is that you are using a remote desktop and " +
+    "GPU rendered content is not shown.<p>" +
+    "To fix this, update the IDE's registry and set the key 'ide.browser.jcef.gpu.disable' to the value 'true'.<p>" +
+    "To access the registry, open the menu 'Help | Find Action...' and then choose the action 'Registry...'. " +
+    "Once the registry opens, type the key to find the entry, and enable the checkbox to set the value to 'true'. " +
+    "Once you changed the value, restart the IDE for the setting to become effective.</html>";
   private final AsciiDocExtensionService extensionService = ApplicationManager.getApplication().getService(AsciiDocExtensionService.class);
   /**
    * single threaded with one task queue (one for each editor window).
@@ -291,7 +298,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     myHtmlPanelWrapper = new JPanel();
     LayoutManager overlay = new OverlayLayout(myHtmlPanelWrapper);
     myHtmlPanelWrapper.setLayout(overlay);
-    hint = new JLabel();
+    hint = new JLabel(EMPTY_HTML);
     myHtmlPanelWrapper.add(hint);
 
     myHtmlPanelWrapper.addComponentListener(new ComponentAdapter() {
@@ -460,15 +467,10 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     }
     panelWrapper.add(newPanel.getComponent(), BorderLayout.CENTER, 0);
 
-    if (newPanel instanceof AsciiDocJCEFHtmlPanel) {
-      hint.setText("<html>If you can read this and not the content of your document, your preview does not show. One possible reason is that you are using a remote desktop and " +
-        "GPU rendered content is not shown.<p>" +
-        "To fix this, update the IDE's registry and set the key 'ide.browser.jcef.gpu.disable' to the value 'true'.<p>" +
-        "To access the registry, open the menu 'Help | Find Action...' and then choose the action 'Registry...'. " +
-        "Once the registry opens, type the key to find the entry, and enable the checkbox to set the value to 'true'. " +
-        "Once you changed the value, restart the IDE for the setting to become effective.");
-    } else {
-      hint.setText("<html></html>");
+    String hintText = newPanel instanceof AsciiDocJCEFHtmlPanel ? JCEF_HTML : EMPTY_HTML;
+    if (!Objects.equals(hint.getText(), hintText)) {
+      // defer UI update to avoid flicking of the shown text
+      ApplicationManager.getApplication().invokeLater(() -> hint.setText(hintText));
     }
 
     return newPanel;
