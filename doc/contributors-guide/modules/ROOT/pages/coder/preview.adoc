@@ -17,7 +17,7 @@ It also enables custom extensions in the `.asciidoctorconfig` folder.
 There are three different preview implementations:
 
 * `JeditorHtmlPanel` (for Swing)
-* `JavaFxHtmlPanel` (for JavaFX)
+* `JavaFxHtmlPanel` (for JavaFX, available up until IntelliJ 2024.3 and plugin version 0.43.x)
 * `AsciiDocJCEFHtmlPanel` (for JCEF, an embedded Chrome).
 
 The Swing preview will run on all JDKs and environments.
@@ -25,12 +25,12 @@ It has very limited functionality as it doesn't support JavaScript.
 Its capabilities to display HTML and CSS are limited.
 Therefore, the preview is not up-to-standards anymore.
 
-The JavaFX preview is the current default preview.
+The JavaFX is available until IntelliJ 2024.3.
 It is available when the user is running 64bit JDK with JavaFX (the default JDK for JetBrains IDE).
 Starting with release 2020.2 JetBrains doesn't ship JavaFX pre-bundled.
 Users can install the https://plugins.jetbrains.com/plugin/14250-javafx-runtime-for-plugins[JavaFX for plugins^] on 64bit JREs to re-enable the JavaFX preview.
 
-The JCEF preview is available from IntelliJ 2020.2 onwards when running the IDE with JetBrains Runtime.
+The JCEF preview is the current default preview and is available from IntelliJ 2020.2 onwards when running the IDE with JetBrains Runtime.
 
 The JavaFX and JCEF previews use HTML enriched with CSS and JavaScript.
 They use JavaScript to scroll the preview to the current position: once the user moves the cursor, the cursor line is transmitted to the preview using `scrollToLine()` and repositions the preview using JavaScript.

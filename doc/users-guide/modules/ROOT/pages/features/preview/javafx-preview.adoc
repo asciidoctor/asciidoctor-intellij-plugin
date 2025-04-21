@@ -7,7 +7,7 @@
 ====
 Starting from IntelliJ 2020.2 and plugin version 0.31.x the most advanced preview mode is xref:features/preview/jcef-preview.adoc[JCEF preview].
 JetBrains deprecated usage of JavaFX in plugins.
-Future versions of the IDE might not support the JavaFX preview at all.
+JavaFX preview is removed from IntelliJ 2025.1 and plugin version 0.44.x onwards.
 ====
 
 == Why to use the JavaFX preview
