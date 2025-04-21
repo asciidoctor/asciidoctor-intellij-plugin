@@ -9,6 +9,10 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.44.5
 
+...
+
+=== 0.44.5
+
 - Prevent a temporary UI freeze when resolving local host name (#1793)
 
 === 0.44.4
