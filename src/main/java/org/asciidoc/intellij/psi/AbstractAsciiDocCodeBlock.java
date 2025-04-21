@@ -18,6 +18,7 @@ import com.intellij.util.IncorrectOperationException;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,7 +95,10 @@ public abstract class AbstractAsciiDocCodeBlock extends CompositePsiElement impl
           if (sb.length() > 0) {
             sb.append("\\n");
           }
-          sb.append(child.getText());
+          PsiElement staticChild = child;
+          AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
+            sb.append(staticChild.getText());
+          });
 
           if (sb.length() >= AsciiDocCompositePsiElementBase.PRESENTABLE_TEXT_LENGTH) {
             break;
