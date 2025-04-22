@@ -24,6 +24,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.UserDataHolderEx;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.InvalidVirtualFileAccessException;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
@@ -759,18 +760,22 @@ public class AsciiDocUtil {
   public static @Nullable VirtualFile findAntoraPagesDir(@NotNull Project project, VirtualFile fileBaseDir) {
     VirtualFile dir = fileBaseDir;
     Collection<VirtualFile> roots = getRoots(project);
-    while (dir != null) {
-      if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
-        dir.getParent().getParent().findChild(ANTORA_YML) != null) {
-        VirtualFile pages = dir.findChild(FAMILY_PAGE + "s");
-        if (pages != null) {
-          return pages;
+    try {
+      while (dir != null) {
+        if (dir.getParent() != null && dir.getParent().getName().equals("modules") &&
+          dir.getParent().getParent().findChild(ANTORA_YML) != null) {
+          VirtualFile pages = dir.findChild(FAMILY_PAGE + "s");
+          if (pages != null) {
+            return pages;
+          }
         }
+        if (roots.contains(dir)) {
+          break;
+        }
+        dir = dir.getParent();
       }
-      if (roots.contains(dir)) {
-        break;
-      }
-      dir = dir.getParent();
+    } catch (InvalidVirtualFileAccessException e) {
+      return null;
     }
     return null;
   }

@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.44.6
 
 - Prevent "Read access not allowed" when using LLMs (#1822)
+- Prevent "InvalidVirtualFileAccessException" when iterating the file tree (#1825)
 
 === 0.44.5
 
