@@ -76,16 +76,16 @@ public class PreviewStaticServer extends HttpRequestHandler {
           highlightjs = " http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX;
         }
       }
-      result = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/scripts/").toExternalForm() + highlightjs + "; "
-        + "style-src 'unsafe-inline' https: http: " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/styles/").toExternalForm() + "; "
+      result = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "scripts/").toExternalForm() + highlightjs + "; "
+        + "style-src 'unsafe-inline' https: http: " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "styles/").toExternalForm() + "; "
         + "img-src file: data: localfile: *; connect-src 'none'; font-src *; " +
         "object-src data: file: localfile: *;" + // used for interactive SVGs
         "media-src 'none'; child-src 'none'; " +
         "frame-src 'self' https://player.vimeo.com/ https://www.youtube.com/ https://structurizr.com/"; // used for vimeo/youtube iframes
     } else {
       // this will restrict external content as much as possible
-      result = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/scripts/").toExternalForm() + "; "
-        + "style-src 'unsafe-inline' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/styles/").toExternalForm() + "; "
+      result = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "scripts/").toExternalForm() + "; "
+        + "style-src 'unsafe-inline' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "styles/").toExternalForm() + "; "
         + "img-src file: data: localfile: ; connect-src 'none'; " +
         "font-src " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/").toExternalForm() + "; " +
         "object-src data: file: localfile: ;" + // used for interactive SVGs
@@ -289,7 +289,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
 
   public static String signFile(String file) {
     String md5 = BrowserPanel.calculateMd5(file, null);
-    return Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/image?file=" + getBrowserPanel().signFile(file) + "&amp;hash=" + md5).toExternalForm();
+    return Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "image?file=" + getBrowserPanel().signFile(file) + "&amp;hash=" + md5).toExternalForm();
   }
 
   private void sendDocument(FullHttpRequest request, @NotNull VirtualFile file, @NotNull Project project, @NotNull Channel channel) {
