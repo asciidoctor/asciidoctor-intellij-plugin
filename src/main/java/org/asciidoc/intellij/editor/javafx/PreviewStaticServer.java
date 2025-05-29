@@ -34,7 +34,6 @@ import org.jetbrains.io.Responses;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -44,7 +43,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PreviewStaticServer extends HttpRequestHandler {
-  private Logger log = Logger.getInstance(PreviewStaticServer.class);
+  private final Logger log = Logger.getInstance(PreviewStaticServer.class);
 
   private static final Logger LOG = Logger.getInstance(PreviewStaticServer.class);
   private static final String PREFIX = "/ead61b63-b0a6-4ff2-a49a-86be75ccfd1a/";
@@ -126,23 +125,19 @@ public class PreviewStaticServer extends HttpRequestHandler {
 
   public static Url getFileUrl(OpenInBrowserRequest request, VirtualFile file) {
     Url url;
-    try {
-      StringBuilder sb = new StringBuilder();
-      sb.append("http://localhost:").append(BuiltInServerManager.getInstance().getPort()).append(PREFIX);
-      if (file instanceof LightVirtualFile) {
-        throw new IllegalStateException("unable to create a URL from a in-memory file");
-      }
-      String mac = getBrowserPanel().signFile(file.getPath()).replaceAll("&amp;", "&");
-      sb.append("source?file=").append(mac);
-      if (request.getProject().getPresentableUrl() != null) {
-        sb.append("&projectUrl=").append(URLEncoder.encode(request.getProject().getPresentableUrl(), StandardCharsets.UTF_8.toString()));
-      } else {
-        sb.append("&projectName=").append(URLEncoder.encode(request.getProject().getName(), StandardCharsets.UTF_8.toString()));
-      }
-      url = Urls.parseEncoded(sb.toString());
-    } catch (UnsupportedEncodingException e) {
-      throw new IllegalStateException("can't encode");
+    StringBuilder sb = new StringBuilder();
+    sb.append("http://localhost:").append(BuiltInServerManager.getInstance().getPort()).append(PREFIX);
+    if (file instanceof LightVirtualFile) {
+      throw new IllegalStateException("unable to create a URL from a in-memory file");
     }
+    String mac = getBrowserPanel().signFile(file.getPath()).replaceAll("&amp;", "&");
+    sb.append("source?file=").append(mac);
+    if (request.getProject().getPresentableUrl() != null) {
+      sb.append("&projectUrl=").append(URLEncoder.encode(request.getProject().getPresentableUrl(), StandardCharsets.UTF_8));
+    } else {
+      sb.append("&projectName=").append(URLEncoder.encode(request.getProject().getName(), StandardCharsets.UTF_8));
+    }
+    url = Urls.parseEncoded(sb.toString());
     if (request.isAppendAccessToken()) {
       url = BuiltInServerManager.getInstance().addAuthToken(Objects.requireNonNull(url));
     }
@@ -232,8 +227,8 @@ public class PreviewStaticServer extends HttpRequestHandler {
       }
       sendDocument(request, virtualFile, project, context.channel());
     } else if ("image".equals(action) && urlDecoder.parameters().get("file") != null && urlDecoder.parameters().get("mac") != null) {
-      String file = urlDecoder.parameters().get("file").get(0);
-      String mac = urlDecoder.parameters().get("mac").get(0);
+      String file = urlDecoder.parameters().get("file").getFirst();
+      String mac = urlDecoder.parameters().get("mac").getFirst();
       return sendImage(request, file, mac, context.channel());
     } else {
       return false;
@@ -248,7 +243,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
     if (parameters == null || parameters.size() != 1) {
       return null;
     }
-    return parameters.get(0);
+    return parameters.getFirst();
   }
 
   private boolean sendImage(FullHttpRequest request, String file, String mac, Channel channel) {

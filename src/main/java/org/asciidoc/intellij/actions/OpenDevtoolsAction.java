@@ -12,8 +12,8 @@ public class OpenDevtoolsAction extends AsciiDocAction {
   @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
     SplitFileEditor<?, ?> fileEditor = AsciiDocActionUtil.findSplitEditor(event);
-    if (fileEditor instanceof AsciiDocSplitEditor) {
-      AsciiDocHtmlPanel panel = ((AsciiDocSplitEditor) fileEditor).getSecondEditor().getPanel();
+    if (fileEditor instanceof AsciiDocSplitEditor asciiDocSplitEditor) {
+      AsciiDocHtmlPanel panel = asciiDocSplitEditor.getSecondEditor().getPanel();
       if (panel instanceof AsciiDocJCEFHtmlPanel asciiDocJCEFHtmlPanel) {
         if (!asciiDocJCEFHtmlPanel.isDisposed()) {
           asciiDocJCEFHtmlPanel.openDevtools();
@@ -26,8 +26,8 @@ public class OpenDevtoolsAction extends AsciiDocAction {
   public void update(@NotNull AnActionEvent event) {
     boolean visible = false;
     SplitFileEditor<?, ?> fileEditor = AsciiDocActionUtil.findSplitEditor(event);
-    if (fileEditor instanceof AsciiDocSplitEditor) {
-      AsciiDocHtmlPanel panel = ((AsciiDocSplitEditor) fileEditor).getSecondEditor().getPanel();
+    if (fileEditor instanceof AsciiDocSplitEditor asciiDocSplitEditor) {
+      AsciiDocHtmlPanel panel = asciiDocSplitEditor.getSecondEditor().getPanel();
       if (panel instanceof AsciiDocJCEFHtmlPanel) {
         visible = true;
       }

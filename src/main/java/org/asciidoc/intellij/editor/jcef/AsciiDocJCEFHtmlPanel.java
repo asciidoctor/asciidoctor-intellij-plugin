@@ -151,35 +151,37 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processImages.js")).append("\"></script>\n")
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("pickSourceLine.js")).append("\"></script>\n")
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("mouseEvents.js")).append("\"></script>\n")
-      .append("<script type=\"text/x-mathjax-config\">\n" +
-        "MathJax.Hub.Config({\n" +
-        "  messageStyle: \"none\",\n" +
-        "  EqnChunkDelay: 1," +
-        "  imageFont: null," +
-        "  tex2jax: {\n" +
-        "    inlineMath: [[\"\\\\(\", \"\\\\)\"]],\n" +
-        "    displayMath: [[\"\\\\[\", \"\\\\]\"]],\n" +
-        "    ignoreClass: \"nostem|nolatexmath\"\n" +
-        "  },\n" +
-        "  asciimath2jax: {\n" +
-        "    delimiters: [[\"\\\\$\", \"\\\\$\"]],\n" +
-        "    ignoreClass: \"nostem|noasciimath\"\n" +
-        "  },\n" +
-        "  TeX: { equationNumbers: { autoNumber: \"none\" } }\n" +
-        "});\n" +
-        "MathJax.Hub.Register.MessageHook(\"Math Processing Error\",function (message) {\n" +
-        " window.JavaPanelBridge && window.JavaPanelBridge.log(JSON.stringify(message)); \n" +
-        "});" +
-        "MathJax.Hub.Register.MessageHook(\"TeX Jax - parse error\",function (message) {\n" +
-        " var errortext = document.getElementById('mathjaxerrortext'); " +
-        " var errorformula = document.getElementById('mathjaxerrorformula'); " +
-        " if (errorformula && errortext) { " +
-        "   errortext.textContent = 'Math Formula problem: ' + message[1]; " +
-        "   errorformula.textContent = '\\n' + message[2]; " +
-        " } " +
-        " window.JavaPanelBridge && window.JavaPanelBridge.log(JSON.stringify(message)); \n" +
-        "});" +
-        "</script>\n")
+      .append("""
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          messageStyle: "none",
+          EqnChunkDelay: 1,
+          imageFont: null,
+          tex2jax: {
+            inlineMath: [["\\\\(", "\\\\)"]],
+            displayMath: [["\\\\[", "\\\\]"]],
+            ignoreClass: "nostem|nolatexmath"
+          },
+          asciimath2jax: {
+            delimiters: [["\\\\$", "\\\\$"]],
+            ignoreClass: "nostem|noasciimath"
+          },
+          TeX: { equationNumbers: { autoNumber: "none" } }
+        });
+        MathJax.Hub.Register.MessageHook("Math Processing Error",function (message) {
+         window.JavaPanelBridge && window.JavaPanelBridge.log(JSON.stringify(message));
+        });
+        MathJax.Hub.Register.MessageHook("TeX Jax - parse error",function (message) {
+         var errortext = document.getElementById('mathjaxerrortext');
+         var errorformula = document.getElementById('mathjaxerrorformula');
+         if (errorformula && errortext) {
+           errortext.textContent = 'Math Formula problem: ' + message[1];
+           errorformula.textContent = '\\n' + message[2];
+         }
+         window.JavaPanelBridge && window.JavaPanelBridge.log(JSON.stringify(message));
+        });
+        </script>
+        """)
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("MathJax/MathJax.js")).append("&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n")
       .toString();
   });
@@ -977,16 +979,12 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
 
   private boolean isDarcula() {
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
-    switch (settings.getAsciiDocPreviewSettings().getPreviewTheme()) {
-      case INTELLIJ:
-        return !JBColor.isBright();
-      case ASCIIDOC:
-        return false;
-      case DARCULA:
-        return true;
-      default:
-        return false;
-    }
+    return switch (settings.getAsciiDocPreviewSettings().getPreviewTheme()) {
+      case INTELLIJ -> !JBColor.isBright();
+      case ASCIIDOC -> false;
+      case DARCULA -> true;
+      default -> false;
+    };
   }
 
 
