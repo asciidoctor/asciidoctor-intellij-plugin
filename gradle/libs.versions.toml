@@ -4,7 +4,7 @@ intelliJPlatform = "2.6.0"
 errorpronePlugin = "4.2.0"
 grammarKit = "2022.3.2.2"
 asciidoctorConvert = "4.0.4"
-junit = "5.12.2"
+junit = "5.13.0"
 
 [libraries]
 junitJupiterEngine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit"}
