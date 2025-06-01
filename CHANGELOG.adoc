@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.44.7
 
 - Prevent exception when selecting a link pointing to a local folder in the preview (#1843)
+- Instead of notifications in the console of the IDE, use editor notifications to show Antora YAML problems (#1844)
 
 === 0.44.6
 

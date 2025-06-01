@@ -1218,31 +1218,24 @@ public class AsciiDocWrapper {
     }
     PsiFile currentFile = PsiManager.getInstance(project).findFile(antoraFile);
     if (currentFile == null) {
-      YAMLException ex = new YAMLException("file not found");
-      handleAntoraYamlException(ex, antoraFile.getCanonicalPath());
-      throw ex;
+      throw new YAMLException("File not found: " + antoraFile.getPath());
     }
     Map<String, Object> componentDescriptor = CachedValuesManager.getCachedValue(currentFile, KEY_ASCIIDOC_YAML_ATTRIBUTES,
       () -> {
         Map<String, Object> result;
-        try {
-          Yaml yaml = new Yaml();
-          Object r = yaml.load(currentFile.getText());
-          if (!(r instanceof Map)) {
-            // result will be null if file is empty
-            result = new HashMap<>();
-          } else {
-            //noinspection unchecked
-            result = (Map<String, Object>) r;
-          }
-          // starting from Antora 3.0.0.alpha-3 a version can be empty. It will be treated internally as an empty string
-          result.putIfAbsent("version", "");
-          result = Collections.unmodifiableMap(result);
-          return CachedValueProvider.Result.create(result, currentFile);
-        } catch (YAMLException ex) {
-          handleAntoraYamlException(ex, antoraFile.getCanonicalPath());
-          throw ex;
+        Yaml yaml = new Yaml();
+        Object r = yaml.load(currentFile.getText());
+        if (!(r instanceof Map)) {
+          // result will be null if file is empty
+          result = new HashMap<>();
+        } else {
+          //noinspection unchecked
+          result = (Map<String, Object>) r;
         }
+        // starting from Antora 3.0.0.alpha-3 a version can be empty. It will be treated internally as an empty string
+        result.putIfAbsent("version", "");
+        result = Collections.unmodifiableMap(result);
+        return CachedValueProvider.Result.create(result, currentFile);
       });
 
     if (antoraFile.getName().equals("antora.yml")) {
@@ -1301,37 +1294,23 @@ public class AsciiDocWrapper {
     Map<String, Object> componentDescriptor = CachedValuesManager.getCachedValue(currentFile, KEY_ASCIIDOC_YAML_ATTRIBUTES,
       () -> {
         Map<String, Object> result;
-        try {
-          Yaml yaml = new Yaml();
-          Object r = yaml.load(currentFile.getText());
-          if (!(r instanceof Map)) {
-            // result will be null if file is empty
-            result = new HashMap<>();
-          } else {
-            //noinspection unchecked
-            result = (Map<String, Object>) r;
-          }
-          result = Collections.unmodifiableMap(result);
-          return CachedValueProvider.Result.create(result, currentFile);
-        } catch (YAMLException ex) {
-          handleAntoraYamlException(ex, generatedAntoraFile.getCanonicalPath());
-          throw ex;
+        Yaml yaml = new Yaml();
+        Object r = yaml.load(currentFile.getText());
+        if (!(r instanceof Map)) {
+          // result will be null if file is empty
+          result = new HashMap<>();
+        } else {
+          //noinspection unchecked
+          result = (Map<String, Object>) r;
         }
+        result = Collections.unmodifiableMap(result);
+        return CachedValueProvider.Result.create(result, currentFile);
       });
 
     combined.putAll(componentDescriptor);
     if (componentDescriptor.get("prerelease") == null) {
       combined.remove("prerelease");
     }
-  }
-
-  private static void handleAntoraYamlException(YAMLException ex, @Nullable String canonicalPath) {
-    String message = canonicalPath + ": " + ex.getMessage();
-    LOG.warn("Error reading Antora component information", ex);
-    Notification notification = AsciiDocWrapper.getNotificationGroup().createNotification("Error reading Antora component information", message,
-      NotificationType.ERROR);
-    notification.setImportant(true);
-    Notifications.Bus.notify(notification);
   }
 
   public Options getExportOptions(Options options, FileType fileType) {
