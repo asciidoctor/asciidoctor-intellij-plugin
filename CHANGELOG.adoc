@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.44.7
+
+...
+
 === 0.44.6
 
 - Prevent "Read access not allowed" when using LLMs (#1822)
