@@ -1008,11 +1008,7 @@ public class AsciiDocWrapper {
             t = t.getCause();
           } while (t != null);
           response.append("<p>(the full exception stack trace is available in the IDE's log file. Visit menu item 'Help | Show Log in Explorer' to see the log)");
-          try {
-            boasErr.write(response.toString().getBytes(StandardCharsets.UTF_8));
-          } catch (IOException e) {
-            throw new RuntimeException("Unable to write bytes");
-          }
+          boasErr.write(response.toString().getBytes(StandardCharsets.UTF_8));
         }
         return false;
       } finally {
