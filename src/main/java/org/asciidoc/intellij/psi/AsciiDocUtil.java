@@ -6,6 +6,7 @@ import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
@@ -2291,6 +2292,10 @@ public class AsciiDocUtil {
   }
 
   public static void selectFileInProjectView(Project project, VirtualFile file) {
+    if (!ApplicationManager.getApplication().isDispatchThread()) {
+      ApplicationManager.getApplication().invokeLater(() -> selectFileInProjectView(project, file));
+      return;
+    }
     if (!LightEdit.owns(project) && !project.isDisposed()) {
       ProjectView projectView = ProjectView.getInstance(project);
       // trying to select project view pane as this will most likely show the PDF

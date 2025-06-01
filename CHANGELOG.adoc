@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.44.7
 
-...
+- Prevent exception when selecting a link pointing to a local folder in the preview (#1843)
 
 === 0.44.6
 
