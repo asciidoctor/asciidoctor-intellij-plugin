@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.44.8
+
+...
+
 === 0.44.7
 
 - Prevent exception when selecting a link pointing to a local folder in the preview (#1843)
