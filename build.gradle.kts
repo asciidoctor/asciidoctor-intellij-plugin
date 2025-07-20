@@ -47,7 +47,7 @@ dependencies {
      */
     implementation("org.snakeyaml:snakeyaml-engine:2.7")
     implementation("org.asciidoctor:asciidoctorj:3.0.0") // WARNING: when upgrading asciidoctorj, see comment above about snakeyaml!
-    implementation("commons-io:commons-io:2.19.0")
+    implementation("commons-io:commons-io:2.20.0")
     implementation("io.github.markdown-asciidoc:markdown-to-asciidoc:2.0.1") {
         // Exclude the Kotlin dependency, as this plugin uses only the Java version of the converter.
         // This saves ~1.6 MB from the final plugin"s bundle.
