@@ -54,7 +54,7 @@ dependencies {
         exclude("org.jetbrains.kotlin", "kotlin-stdlib")
     }
 
-    implementation("org.apache.commons:commons-text:1.13.1")
+    implementation("org.apache.commons:commons-text:1.14.0")
     implementation("org.apache.commons:commons-lang3:3.18.0")
     implementation("io.sentry:sentry:8.17.0")
 
