@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.44.9
+
+...
+
 === 0.44.8
 
 - Upgrade to mermaid 11.9.0 (#1869)
