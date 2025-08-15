@@ -71,7 +71,7 @@ dependencies {
 
     testImplementation("com.tngtech.archunit:archunit-junit4:1.4.1")
     testImplementation("org.assertj:assertj-core:3.27.3")
-    testImplementation("org.mockito:mockito-core:5.18.0")
+    testImplementation("org.mockito:mockito-core:5.19.0")
     testImplementation(libs.junitJupiterApi)
 
     // implementation(libs.exampleLibrary)
