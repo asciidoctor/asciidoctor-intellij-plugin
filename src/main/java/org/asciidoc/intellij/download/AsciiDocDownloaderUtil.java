@@ -131,6 +131,11 @@ public class AsciiDocDownloaderUtil {
     return new File(fileName);
   }
 
+  public static File getAsciidoctorJDiagramJSyntraxFile() {
+    String fileName = DOWNLOAD_PATH + File.separator + "asciidoctorj-diagram-jsyntrax-" + ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_VERSION + ".jar";
+    return new File(fileName);
+  }
+
   public static void download(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
     downloadAsciidoctorJPdf(project, () -> downloadAsciidoctorJDiagram(project, onSuccess, onFailure), onFailure);
   }
