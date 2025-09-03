@@ -161,7 +161,7 @@ public class AsciiDocDownloaderUtil {
 
   public static void downloadAsciidoctorJDiagramJSyntrax(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
     String downloadName = "asciidoctorj-diagram-jsyntrax-" + ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_VERSION + ".jar";
-    String url = getAsciidoctorJDiagramBatikUrl();
+    String url = getAsciidoctorJDiagramJSyntraxUrl();
     download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_HASH, project, onSuccess, onFailure);
   }
 
