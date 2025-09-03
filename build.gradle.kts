@@ -79,7 +79,8 @@ dependencies {
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
         // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1693
-        intellijIdeaCommunity(properties("platformVersion"), useInstaller = false)
+        // intellijIdeaCommunity(properties("platformVersion"), useInstaller = false)
+        intellijIdeaCommunity("2025.2.1")
 
         // Needed when I download EAP versions which are only available on Maven.
         // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1638#issuecomment-2151527333
