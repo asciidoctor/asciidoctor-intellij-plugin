@@ -84,7 +84,7 @@ public class AsciiDocDownloaderUtil {
 
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-jsyntrax/
   public static final String ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_VERSION = "1.38.2";
-  private static final String ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_HASH = "f312f49a4f73eb231efafa0489023ac72f6c77512e3d9f89b5c2521836d7a7c5";
+  private static final String ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_HASH = "f97a6f14049d8108aa41a645957093c8ce9b2179d96804e1224274f3be96ea02";
 
   private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
   // this is similar to the path where for example the grazie plugin places its dictionaries
@@ -215,6 +215,16 @@ public class AsciiDocDownloaderUtil {
     String downloadName = "asciidoctorj-diagram-batik-" + ASCIIDOCTORJ_DIAGRAM_BATIK_VERSION + ".jar";
     try {
       pickFile(downloadName, project, ASCIIDOCTORJ_DIAGRAM_BATIK_HASH, onSuccess);
+    } catch (IOException ex) {
+      LOG.warn("Can't pick file '" + downloadName + "'", ex);
+      ApplicationManager.getApplication().invokeLater(() -> onFailure.accept(ex));
+    }
+  }
+
+  public static void pickAsciidoctorJDiagramJSyntrax(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
+    String downloadName = "asciidoctorj-diagram-jsyntrax-" + ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_VERSION + ".jar";
+    try {
+      pickFile(downloadName, project, ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_HASH, onSuccess);
     } catch (IOException ex) {
       LOG.warn("Can't pick file '" + downloadName + "'", ex);
       ApplicationManager.getApplication().invokeLater(() -> onFailure.accept(ex));

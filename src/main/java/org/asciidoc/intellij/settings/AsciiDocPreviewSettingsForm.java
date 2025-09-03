@@ -336,6 +336,11 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
         myDownloadDependenciesFailedBatikPickFile.setText("Pick failed: " + throwable.getMessage()));
     }, null);
 
+    myDownloadDependenciesFailedBatikPickFile.setListener((source, data) -> {
+      AsciiDocDownloaderUtil.pickAsciidoctorJDiagramJSyntrax(null, this::adjustDownloadDependenciesOptions, throwable ->
+        myDownloadDependenciesFailedBatikPickFile.setText("Pick failed: " + throwable.getMessage()));
+    }, null);
+
     myDownloadDependenciesFailedPdfBrowser.setListener((source, data) -> {
       BrowserUtil.browse(AsciiDocDownloaderUtil.getAsciidoctorJPdfUrl());
     }, null);
