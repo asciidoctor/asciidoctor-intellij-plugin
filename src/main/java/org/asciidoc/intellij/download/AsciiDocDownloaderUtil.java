@@ -82,6 +82,9 @@ public class AsciiDocDownloaderUtil {
   public static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION = "1.0.3";
   private static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_HASH = "5e1dde15a88bf4ca2be60663ae12fcf8c215321e8eeca4e7947fb22732556cc9";
 
+  // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-jsyntrax/
+  public static final String ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_VERSION = "1.38.2";
+  private static final String ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_HASH = "f312f49a4f73eb231efafa0489023ac72f6c77512e3d9f89b5c2521836d7a7c5";
 
   private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
   // this is similar to the path where for example the grazie plugin places its dictionaries
@@ -153,7 +156,13 @@ public class AsciiDocDownloaderUtil {
   public static void downloadAsciidoctorJDiagramBatik(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
     String downloadName = "asciidoctorj-diagram-batik-" + ASCIIDOCTORJ_DIAGRAM_BATIK_VERSION + ".jar";
     String url = getAsciidoctorJDiagramBatikUrl();
-    download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_BATIK_HASH, project, onSuccess, onFailure);
+    download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_BATIK_HASH, project, () -> downloadAsciidoctorJDiagramJSyntrax(project, onSuccess, onFailure), onFailure);
+  }
+
+  public static void downloadAsciidoctorJDiagramJSyntrax(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
+    String downloadName = "asciidoctorj-diagram-jsyntrax-" + ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_VERSION + ".jar";
+    String url = getAsciidoctorJDiagramBatikUrl();
+    download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_HASH, project, onSuccess, onFailure);
   }
 
   public static void downloadPandoc(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
@@ -246,6 +255,12 @@ public class AsciiDocDownloaderUtil {
       "/asciidoctorj-diagram-ditaamini-" +
       ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION +
       ".jar";
+  }
+
+  public static String getAsciidoctorJDiagramJSyntraxUrl() {
+    return "https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-jsyntrax/" +
+      ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_VERSION + "/asciidoctorj-diagram-jsyntrax-" +
+      ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_VERSION + ".jar";
   }
 
   public static void downloadAsciidoctorJPdf(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
