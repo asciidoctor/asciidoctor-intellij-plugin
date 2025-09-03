@@ -82,6 +82,9 @@ public class AsciiDocDownloaderUtil {
   public static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION = "1.0.3";
   private static final String ASCIIDOCTORJ_DIAGRAM_DITAAMINI_HASH = "5e1dde15a88bf4ca2be60663ae12fcf8c215321e8eeca4e7947fb22732556cc9";
 
+  // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-jsyntrax/
+  public static final String ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_VERSION = "1.38.2";
+  private static final String ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_HASH = "f97a6f14049d8108aa41a645957093c8ce9b2179d96804e1224274f3be96ea02";
 
   private static final String DOWNLOAD_CACHE_DIRECTORY = "download-cache";
   // this is similar to the path where for example the grazie plugin places its dictionaries
@@ -128,6 +131,11 @@ public class AsciiDocDownloaderUtil {
     return new File(fileName);
   }
 
+  public static File getAsciidoctorJDiagramJSyntraxFile() {
+    String fileName = DOWNLOAD_PATH + File.separator + "asciidoctorj-diagram-jsyntrax-" + ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_VERSION + ".jar";
+    return new File(fileName);
+  }
+
   public static void download(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
     downloadAsciidoctorJPdf(project, () -> downloadAsciidoctorJDiagram(project, onSuccess, onFailure), onFailure);
   }
@@ -153,7 +161,13 @@ public class AsciiDocDownloaderUtil {
   public static void downloadAsciidoctorJDiagramBatik(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
     String downloadName = "asciidoctorj-diagram-batik-" + ASCIIDOCTORJ_DIAGRAM_BATIK_VERSION + ".jar";
     String url = getAsciidoctorJDiagramBatikUrl();
-    download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_BATIK_HASH, project, onSuccess, onFailure);
+    download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_BATIK_HASH, project, () -> downloadAsciidoctorJDiagramJSyntrax(project, onSuccess, onFailure), onFailure);
+  }
+
+  public static void downloadAsciidoctorJDiagramJSyntrax(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
+    String downloadName = "asciidoctorj-diagram-jsyntrax-" + ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_VERSION + ".jar";
+    String url = getAsciidoctorJDiagramJSyntraxUrl();
+    download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_HASH, project, onSuccess, onFailure);
   }
 
   public static void downloadPandoc(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
@@ -212,6 +226,16 @@ public class AsciiDocDownloaderUtil {
     }
   }
 
+  public static void pickAsciidoctorJDiagramJSyntrax(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
+    String downloadName = "asciidoctorj-diagram-jsyntrax-" + ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_VERSION + ".jar";
+    try {
+      pickFile(downloadName, project, ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_HASH, onSuccess);
+    } catch (IOException ex) {
+      LOG.warn("Can't pick file '" + downloadName + "'", ex);
+      ApplicationManager.getApplication().invokeLater(() -> onFailure.accept(ex));
+    }
+  }
+
   public static void pickAsciidoctorJPdf(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
     String downloadName = "asciidoctorj-pdf-" + ASCIIDOCTORJ_PDF_VERSION + ".jar";
     try {
@@ -246,6 +270,12 @@ public class AsciiDocDownloaderUtil {
       "/asciidoctorj-diagram-ditaamini-" +
       ASCIIDOCTORJ_DIAGRAM_DITAAMINI_VERSION +
       ".jar";
+  }
+
+  public static String getAsciidoctorJDiagramJSyntraxUrl() {
+    return "https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-jsyntrax/" +
+      ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_VERSION + "/asciidoctorj-diagram-jsyntrax-" +
+      ASCIIDOCTORJ_DIAGRAM_JSYNTRAX_VERSION + ".jar";
   }
 
   public static void downloadAsciidoctorJPdf(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
