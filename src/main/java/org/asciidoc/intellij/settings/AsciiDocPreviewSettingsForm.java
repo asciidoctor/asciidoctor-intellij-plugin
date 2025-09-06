@@ -86,6 +86,9 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JPanel myDownloadDependenciesFailedDitaamini;
   private LinkLabel<?> myDownloadDependenciesFailedDitaaminiPickFile;
   private LinkLabel<?> myDownloadDependenciesFailedDitaaminiBrowser;
+  private JPanel myDownloadDependenciesFailedJSyntrax;
+  private LinkLabel<?> myDownloadDependenciesFailedJSyntraxPickFile;
+  private LinkLabel<?> myDownloadDependenciesFailedJSyntraxBrowser;
   private JBCheckBox myEnableConversionOfClipboardText;
   private JBCheckBox myEnableBuiltInMermaid;
   private LinkLabel<?> myDownloadDependenciesFailedBatikBrowser;
@@ -176,6 +179,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myDownloadDependenciesFailedPlantuml.setVisible(false);
       myDownloadDependenciesFailedDitaamini.setVisible(false);
       myDownloadDependenciesFailedBatik.setVisible(false);
+      myDownloadDependenciesFailedJSyntrax.setVisible(false);
       myDownloadDependenciesFailedPdf.setVisible(false);
     } else {
       myDownloadDependenciesComplete.setVisible(false);
@@ -185,6 +189,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myDownloadDependenciesFailedPlantuml.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().exists());
       myDownloadDependenciesFailedDitaamini.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramDitaaminiFile().exists());
       myDownloadDependenciesFailedBatik.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramBatikFile().exists());
+      myDownloadDependenciesFailedJSyntrax.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramJSyntraxFile().exists());
       myDownloadDependenciesFailedPdf.setVisible(!AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJPdf());
     }
   }
@@ -294,6 +299,9 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
         if (!AsciiDocDownloaderUtil.getAsciidoctorJDiagramBatikFile().exists()) {
           myDownloadDependenciesFailedBatik.setVisible(true);
         }
+        if (!AsciiDocDownloaderUtil.getAsciidoctorJDiagramJSyntraxFile().exists()) {
+          myDownloadDependenciesFailedJSyntrax.setVisible(true);
+        }
         if (!AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJPdf()) {
           myDownloadDependenciesFailedPdf.setVisible(true);
         }
@@ -334,6 +342,15 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     myDownloadDependenciesFailedBatikPickFile.setListener((source, data) -> {
       AsciiDocDownloaderUtil.pickAsciidoctorJDiagramBatik(null, this::adjustDownloadDependenciesOptions, throwable ->
         myDownloadDependenciesFailedBatikPickFile.setText("Pick failed: " + throwable.getMessage()));
+    }, null);
+
+    myDownloadDependenciesFailedJSyntraxBrowser.setListener((source, data) -> {
+      BrowserUtil.browse(AsciiDocDownloaderUtil.getAsciidoctorJDiagramJSyntraxUrl());
+    }, null);
+
+    myDownloadDependenciesFailedJSyntraxPickFile.setListener((source, data) -> {
+      AsciiDocDownloaderUtil.pickAsciidoctorJDiagramJSyntrax(null, this::adjustDownloadDependenciesOptions, throwable ->
+        myDownloadDependenciesFailedJSyntraxPickFile.setText("Pick failed: " + throwable.getMessage()));
     }, null);
 
     myDownloadDependenciesFailedPdfBrowser.setListener((source, data) -> {

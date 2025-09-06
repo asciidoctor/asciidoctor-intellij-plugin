@@ -79,7 +79,8 @@ dependencies {
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
         // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1693
-        intellijIdeaCommunity(properties("platformVersion"), useInstaller = false)
+        // intellijIdeaCommunity(properties("platformVersion"), useInstaller = false)
+        intellijIdeaCommunity("2025.2.1")
 
         // Needed when I download EAP versions which are only available on Maven.
         // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1638#issuecomment-2151527333
@@ -99,7 +100,7 @@ dependencies {
         // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
         // https://plugins.jetbrains.com/docs/intellij/plugin-dependencies.html
         plugins(listOf(
-            "PsiViewer:251.175", // used for debugging
+            "PsiViewer:252.23892.248", // used for debugging
             // "PlantUML integration:6.3.0-IJ2023.2", // used to test highlighting of plantuml diagrams
             // "com.intellij.platform.images", // dependency for PlantUML plugin
             // "com.google.ide-perf:1.2.0", // performance tracing
