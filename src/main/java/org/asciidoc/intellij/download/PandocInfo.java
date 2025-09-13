@@ -69,17 +69,12 @@ public class PandocInfo {
   }
 
   public String fullBinaryPath(String baseDir) {
-    String suffix = "";
-    switch (PLATFORM) {
-      case MAC_INTEL_64:
-        suffix = "-x86_64";
-        break;
-      case MAC_ARM64:
-        suffix = "-arm64";
-        break;
-      default:
-        break;
-    }
+    String suffix =
+      switch (PLATFORM) {
+        case MAC_INTEL_64 -> "-x86_64";
+        case MAC_ARM64 -> "-arm64";
+        default -> "";
+      };
     return baseDir + File.separator + this.extractionDir + suffix + File.separator + this.binary;
   }
 

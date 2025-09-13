@@ -107,8 +107,8 @@ public class AsciiDocAntoraYamlReferenceContributor extends PsiReferenceContribu
     // find out if we are in an element as part 'nav'
     if (element.getParent() != null && element.getParent().getParent() != null) {
       PsiElement parent = element.getParent().getParent().getParent();
-      if (parent instanceof YAMLKeyValueImpl) {
-        PsiElement key = ((YAMLKeyValueImpl) parent).getKey();
+      if (parent instanceof YAMLKeyValueImpl yamlKeyValue) {
+        PsiElement key = yamlKeyValue.getKey();
         if (key != null && key.getText().equals("nav")) {
           macroName = "antora-nav";
         }
@@ -152,8 +152,8 @@ public class AsciiDocAntoraYamlReferenceContributor extends PsiReferenceContribu
 
     // find out if we are in an element as part 'start_page'
     PsiElement parent = element.getParent();
-    if (parent instanceof YAMLKeyValueImpl) {
-      PsiElement key = ((YAMLKeyValueImpl) parent).getKey();
+    if (parent instanceof YAMLKeyValueImpl yamlKeyValue) {
+      PsiElement key = yamlKeyValue.getKey();
       if (key != null && key.getText().equals("start_page")) {
         macroName = "antora-startpage";
       }
