@@ -98,7 +98,7 @@ public class AsciiDocDownloaderUtil {
   }
 
   public static boolean downloadCompleteAsciidoctorJDiagram() {
-    return getAsciidoctorJDiagramFile().exists() && getAsciidoctorJDiagramPlantumlFile().exists() && getAsciidoctorJDiagramDitaaminiFile().exists() && getAsciidoctorJDiagramBatikFile().exists();
+    return getAsciidoctorJDiagramFile().exists() && getAsciidoctorJDiagramPlantumlFile().exists() && getAsciidoctorJDiagramDitaaminiFile().exists() && getAsciidoctorJDiagramBatikFile().exists() && getAsciidoctorJDiagramJSyntraxFile().exists();
   }
 
   public static boolean downloadCompleteAsciidoctorJPdf() {
