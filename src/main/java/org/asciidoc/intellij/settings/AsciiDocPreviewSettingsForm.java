@@ -86,6 +86,9 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private JPanel myDownloadDependenciesFailedDitaamini;
   private LinkLabel<?> myDownloadDependenciesFailedDitaaminiPickFile;
   private LinkLabel<?> myDownloadDependenciesFailedDitaaminiBrowser;
+  private JPanel myDownloadDependenciesFailedJSyntrax;
+  private LinkLabel<?> myDownloadDependenciesFailedJSyntraxPickFile;
+  private LinkLabel<?> myDownloadDependenciesFailedJSyntraxBrowser;
   private JBCheckBox myEnableConversionOfClipboardText;
   private JBCheckBox myEnableBuiltInMermaid;
   private LinkLabel<?> myDownloadDependenciesFailedBatikBrowser;
@@ -121,11 +124,11 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     myLastItem = myPreviewProvider.getSelectedItem();
     myPreviewProvider.addItemListener(e -> {
       final Object item = e.getItem();
-      if (e.getStateChange() != ItemEvent.SELECTED || !(item instanceof AsciiDocHtmlPanelProvider.ProviderInfo)) {
+      if (e.getStateChange() != ItemEvent.SELECTED || !(item instanceof AsciiDocHtmlPanelProvider.ProviderInfo providerInfo)) {
         return;
       }
 
-      final AsciiDocHtmlPanelProvider provider = AsciiDocHtmlPanelProvider.createFromInfo((AsciiDocHtmlPanelProvider.ProviderInfo) item);
+      final AsciiDocHtmlPanelProvider provider = AsciiDocHtmlPanelProvider.createFromInfo(providerInfo);
       final AsciiDocHtmlPanelProvider.AvailabilityInfo availability = provider.isAvailable();
 
       if (!availability.checkAvailability(myMainPanel)) {
@@ -176,6 +179,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myDownloadDependenciesFailedPlantuml.setVisible(false);
       myDownloadDependenciesFailedDitaamini.setVisible(false);
       myDownloadDependenciesFailedBatik.setVisible(false);
+      myDownloadDependenciesFailedJSyntrax.setVisible(false);
       myDownloadDependenciesFailedPdf.setVisible(false);
     } else {
       myDownloadDependenciesComplete.setVisible(false);
@@ -185,6 +189,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myDownloadDependenciesFailedPlantuml.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().exists());
       myDownloadDependenciesFailedDitaamini.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramDitaaminiFile().exists());
       myDownloadDependenciesFailedBatik.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramBatikFile().exists());
+      myDownloadDependenciesFailedJSyntrax.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramJSyntraxFile().exists());
       myDownloadDependenciesFailedPdf.setVisible(!AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJPdf());
     }
   }
@@ -294,6 +299,9 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
         if (!AsciiDocDownloaderUtil.getAsciidoctorJDiagramBatikFile().exists()) {
           myDownloadDependenciesFailedBatik.setVisible(true);
         }
+        if (!AsciiDocDownloaderUtil.getAsciidoctorJDiagramJSyntraxFile().exists()) {
+          myDownloadDependenciesFailedJSyntrax.setVisible(true);
+        }
         if (!AsciiDocDownloaderUtil.downloadCompleteAsciidoctorJPdf()) {
           myDownloadDependenciesFailedPdf.setVisible(true);
         }
@@ -336,6 +344,15 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
         myDownloadDependenciesFailedBatikPickFile.setText("Pick failed: " + throwable.getMessage()));
     }, null);
 
+    myDownloadDependenciesFailedJSyntraxBrowser.setListener((source, data) -> {
+      BrowserUtil.browse(AsciiDocDownloaderUtil.getAsciidoctorJDiagramJSyntraxUrl());
+    }, null);
+
+    myDownloadDependenciesFailedJSyntraxPickFile.setListener((source, data) -> {
+      AsciiDocDownloaderUtil.pickAsciidoctorJDiagramJSyntrax(null, this::adjustDownloadDependenciesOptions, throwable ->
+        myDownloadDependenciesFailedJSyntraxPickFile.setText("Pick failed: " + throwable.getMessage()));
+    }, null);
+
     myDownloadDependenciesFailedPdfBrowser.setListener((source, data) -> {
       BrowserUtil.browse(AsciiDocDownloaderUtil.getAsciidoctorJPdfUrl());
     }, null);
@@ -350,6 +367,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     myDownloadDependenciesFailedPlantuml.setVisible(false);
     myDownloadDependenciesFailedDitaamini.setVisible(false);
     myDownloadDependenciesFailedBatik.setVisible(false);
+    myDownloadDependenciesFailedJSyntrax.setVisible(false);
     myDownloadDependenciesFailedPdf.setVisible(false);
   }
 
@@ -385,9 +403,9 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     // if a user enters infinity as a value, a Double is returned.
     // a user also managed to have a null value returned.
     // Therefore default to 100 in these cases.
-    if (!(value instanceof BigDecimal)) {
+    if (!(value instanceof BigDecimal bigDecimal)) {
       return 100;
     }
-    return ((BigDecimal) value).setScale(0, RoundingMode.UP).unscaledValue().intValue();
+    return bigDecimal.setScale(0, RoundingMode.UP).unscaledValue().intValue();
   }
 }

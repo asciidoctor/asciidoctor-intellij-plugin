@@ -60,6 +60,7 @@ Extensions.register do
       seqdiag
       structurizr
       svgbob
+      syntrax
       umlet
       vega
       vegalite

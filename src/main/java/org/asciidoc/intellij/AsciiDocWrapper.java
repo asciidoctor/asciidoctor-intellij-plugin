@@ -537,6 +537,10 @@ public class AsciiDocWrapper {
         if (file5.exists()) {
           urls.add(file5.toURI().toURL());
         }
+        File file6 = AsciiDocDownloaderUtil.getAsciidoctorJDiagramJSyntraxFile();
+        if (file6.exists()) {
+          urls.add(file6.toURI().toURL());
+        }
       }
     } catch (MalformedURLException e) {
       throw new RuntimeException("unable to add JAR AsciidoctorJ to class path", e);
