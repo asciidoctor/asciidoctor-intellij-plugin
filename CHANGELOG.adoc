@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.44.9
 
-...
+- Support Syntrax diagrams in Asciidoctor Diagram (#1895, thanks to @wfouche)
 
 === 0.44.8
 
