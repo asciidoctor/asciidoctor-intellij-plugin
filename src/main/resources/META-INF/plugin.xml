@@ -12,7 +12,7 @@
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
        on how to target different products -->
-  <idea-version since-build="251.23536.34"/> <!-- 2025.1 EAP, also change build.gradle.kts -->
+  <idea-version since-build="253.25908"/> <!-- 2025.1 EAP, also change build.gradle.kts -->
   <!-- please see https://plugins.jetbrains.com/docs/intellij/build-number-ranges.html -->
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-intellilang.xml">org.intellij.intelliLang</depends>
@@ -22,6 +22,7 @@
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-grazie.xml">tanvd.grazi</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-graziepro.xml">com.intellij.grazie.pro</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-sh.xml">com.jetbrains.sh</depends>
+  <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-jshell.xml">intellij.java.jshell</depends>
 
   <extensionPoints>
     <extensionPoint qualifiedName="org.asciidoc.intellij.html.panel.provider" dynamic="true"

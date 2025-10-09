@@ -79,8 +79,7 @@ dependencies {
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
-        // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1693
-        intellijIdeaCommunity(properties("platformVersion"), useInstaller = false)
+        create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
 
         // Needed when I download EAP versions which are only available on Maven.
         // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1638#issuecomment-2151527333
@@ -93,8 +92,7 @@ dependencies {
             "com.intellij.properties", // dependency to the Java plugin
             "org.jetbrains.plugins.yaml", // used to inject file references to Antora YAML files
             "com.jetbrains.sh",
-            "com.intellij.modules.json",
-            "org.intellij.intelliLang"
+            "com.intellij.modules.json"
         ))
 
         // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
@@ -108,7 +106,9 @@ dependencies {
             // "com.jetbrains.performancePlugin:213.5744.122" // used run YourKit CPU profiling in test IDE
             // see https://intellij-support.jetbrains.com/hc/en-us/articles/207241235
             // https://plugins.jetbrains.com/plugin/16136-grazie-professional/
-            "com.intellij.grazie.pro:0.3.390"
+            "com.intellij.grazie.pro:0.3.390",
+            // https://plugins.jetbrains.com/plugin/28663-jshell
+            "intellij.java.jshell:253.25908.20"
         ))
 
         pluginVerifier()
@@ -220,7 +220,7 @@ tasks {
 
     patchPluginXml {
         dependsOn (asciidoctor)
-        sinceBuild = "251.23536.34"
+        sinceBuild = "253.25908"
         untilBuild = provider { null }
     }
 

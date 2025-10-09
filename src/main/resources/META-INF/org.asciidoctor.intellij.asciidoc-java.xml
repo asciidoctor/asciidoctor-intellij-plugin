@@ -6,8 +6,5 @@
     <referencesSearch implementation="org.asciidoc.intellij.findUsages.AsciiDocJavaReferencesSearch"/>
     <useScopeEnlarger implementation="org.asciidoc.intellij.indexer.AsciiDocJavaScopeEnlarger" />
   </extensions>
-  <extensions defaultExtensionNs="org.asciidoc.intellij">
-    <asciidocRunner implementation="org.asciidoc.intellij.commandRunner.AsciiDocRunnerForJava" />
-  </extensions>
 </idea-plugin>
 
