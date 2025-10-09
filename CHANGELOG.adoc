@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.45.0
+
+- Compatibility with IntelliJ EAP 2025.3
+
 === 0.44.9
 
 - Support Syntrax diagrams in Asciidoctor Diagram (#1895, thanks to @wfouche)

@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="org.asciidoc.intellij">
+    <asciidocRunner implementation="org.asciidoc.intellij.commandRunner.AsciiDocRunnerForJava" />
+  </extensions>
+</idea-plugin>
