@@ -221,7 +221,7 @@ tasks {
     patchPluginXml {
         dependsOn (asciidoctor)
         sinceBuild = "251.23536.34"
-        untilBuild = provider { null }
+        untilBuild = "253.22441.33"
     }
 
     asciidoctor {
