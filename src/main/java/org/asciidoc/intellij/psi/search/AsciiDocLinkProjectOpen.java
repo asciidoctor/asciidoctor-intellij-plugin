@@ -41,7 +41,10 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware, Disp
                 continue;
               }
               if (!DumbService.isDumb(project)) {
-                linkSources.addAll(AsciiDocLinkIndex.getLinkSources(project, file.getCanonicalPath()));
+                String canonicalPath = file.getCanonicalPath();
+                if (canonicalPath != null) {
+                  linkSources.addAll(AsciiDocLinkIndex.getLinkSources(project, canonicalPath));
+                }
               }
             }
           }
