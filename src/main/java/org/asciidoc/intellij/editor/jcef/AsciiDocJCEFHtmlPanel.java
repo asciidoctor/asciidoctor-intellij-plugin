@@ -77,7 +77,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -202,7 +201,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private Editor editor;
 
   public AsciiDocJCEFHtmlPanel(Document document, Path imagesPath, Runnable forceRefresh) {
-    super(isOffScreenRenderingEnabled(), null, OUR_CLASS_URL + "@" + new Random().nextInt(Integer.MAX_VALUE));
+    super(isOffScreenRenderingEnabled(), null, null);
 
     this.imagesPath = imagesPath;
 
