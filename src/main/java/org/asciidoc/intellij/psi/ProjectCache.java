@@ -5,7 +5,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import com.intellij.serviceContainer.AlreadyDisposedException;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,24 +22,20 @@ public abstract class ProjectCache<ITEM> {
 
   public void cache(Project project, ITEM roots) {
     synchronized (projectItems) {
-      try {
-        if (!project.isDisposed()) {
-          if (projectItems.get(project) == null) {
-            // Listen to any file modification in the project, so that we can clear the cache
-            MessageBusConnection connection = project.getMessageBus().connect();
-            projectConnections.put(project, connection);
-            connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
-              @Override
-              public void after(@NotNull List<? extends VFileEvent> events) {
-                processEvent(events, project);
-              }
-            });
-            Disposer.register(project, () -> clear(project));
-          }
-          projectItems.put(project, roots);
+      if (!project.isDisposed()) {
+        if (projectItems.get(project) == null) {
+          // Listen to any file modification in the project, so that we can clear the cache
+          MessageBusConnection connection = project.getMessageBus().connect();
+          projectConnections.put(project, connection);
+          connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
+            @Override
+            public void after(@NotNull List<? extends VFileEvent> events) {
+              processEvent(events, project);
+            }
+          });
+          Disposer.register(project, () -> clear(project));
         }
-      } catch (AlreadyDisposedException ex) {
-        // noop - project already disposed
+        projectItems.put(project, roots);
       }
     }
   }

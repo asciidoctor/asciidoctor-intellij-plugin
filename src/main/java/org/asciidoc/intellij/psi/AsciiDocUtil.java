@@ -44,7 +44,6 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.serviceContainer.AlreadyDisposedException;
 import com.intellij.util.text.CharArrayUtil;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.AsciiDocWrapper;
@@ -817,8 +816,6 @@ public class AsciiDocUtil {
               roots.add(contentRootForFile);
             }
           }
-        } catch (AlreadyDisposedException ignored) {
-          // might happen if file is in a module that has already been disposed
         } catch (RuntimeException ex) {
           if (!ex.getClass().getSimpleName().equals("DisposalException")) {
             // might happen if file is in a module that has already been disposed

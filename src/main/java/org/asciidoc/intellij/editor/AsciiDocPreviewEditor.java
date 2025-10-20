@@ -49,7 +49,6 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
-import com.intellij.serviceContainer.AlreadyDisposedException;
 import com.intellij.util.Alarm;
 import com.intellij.util.FileContentUtilCore;
 import com.intellij.util.messages.MessageBusConnection;
@@ -178,8 +177,6 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
             }
           }
         }
-      } catch (AlreadyDisposedException e) {
-        // noop - content hasn't rendered, project has been closed already
       } catch (ProcessCanceledException e) {
         renderIfVisible();
       } catch (Exception ex) {
@@ -358,24 +355,20 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         for (VFileEvent event : events) {
           if (event.getFile() != null) {
             if (!project.isDisposed()) {
-              try {
-                VirtualFile file = event.getFile();
-                // if the file has been deleted, use the parent folder to determine the module
-                if (!file.isValid()) {
-                  file = file.getParent();
-                }
-                if (file == null || !file.isValid()) {
-                  continue;
-                }
-                // check if the modified file was part of the project
-                if (ProjectFileIndex.getInstance(project).getModuleForFile(file) != null) {
-                  // As an include might have been modified, force the refresh of the preview
-                  forceRenderCycle();
-                  renderIfVisible();
-                  break;
-                }
-              } catch (AlreadyDisposedException ex) {
-                // nop
+              VirtualFile file = event.getFile();
+              // if the file has been deleted, use the parent folder to determine the module
+              if (!file.isValid()) {
+                file = file.getParent();
+              }
+              if (file == null || !file.isValid()) {
+                continue;
+              }
+              // check if the modified file was part of the project
+              if (ProjectFileIndex.getInstance(project).getModuleForFile(file) != null) {
+                // As an include might have been modified, force the refresh of the preview
+                forceRenderCycle();
+                renderIfVisible();
+                break;
               }
             }
           }

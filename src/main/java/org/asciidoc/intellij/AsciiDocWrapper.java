@@ -37,7 +37,6 @@ import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.serviceContainer.AlreadyDisposedException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -851,9 +850,6 @@ public class AsciiDocWrapper {
           antoraIncludeAdapter.setAntoraDetails(null, null, null, null);
           asciidoctor.unregisterLogHandler(logHandler);
         }
-      } catch (AlreadyDisposedException ex) {
-        // AlreadyDisposedException: IDE is shutting down
-        throw ex;
       } catch (ProcessCanceledException ex) {
         // ProcessCanceledException: reading interrupted by event dispatch thread
         throw ex;

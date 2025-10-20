@@ -13,7 +13,6 @@ import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
-import com.intellij.serviceContainer.AlreadyDisposedException;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.psi.AsciiDocPsiImplUtil;
 import org.asciidoc.intellij.ui.OverwriteFileDialog;
@@ -85,32 +84,28 @@ public class ConvertToAsciiDocAction extends AnAction {
         CommandProcessor.getInstance().executeCommand(project, new Runnable() {
           @Override
           public void run() {
-            try {
-              PsiFile asciiDocFile = file.getContainingDirectory().findFile(newFileName);
-              if (deleteFile.get() && asciiDocFile != null) {
-                asciiDocFile.delete();
-              } else if (asciiDocFile != null) {
-                // file might have appeared "in between", stop here
-                return;
-              }
-              @NotNull @NonNls CharSequence asciiDocContent;
-              try {
-                asciiDocContent = convertMarkdownToAsciiDoc(file.getText());
-              } catch (RuntimeException ex) {
-                throw AsciiDocPsiImplUtil.getRuntimeException("Unable to convert Markdown content to AsciiDoc", file.getText(), ex);
-              }
-              asciiDocFile = PsiFileFactory.getInstance(project).createFileFromText(newFileName, AsciiDocFileType.INSTANCE, asciiDocContent);
-              PsiFile newFile = (PsiFile) file.getContainingDirectory().add(asciiDocFile);
-              file.delete();
-
-              ApplicationManager.getApplication().invokeLater(() -> {
-                if (newFile.isValid()) {
-                  newFile.navigate(true);
-                }
-              });
-            } catch (AlreadyDisposedException ex) {
-              // ignored
+            PsiFile asciiDocFile = file.getContainingDirectory().findFile(newFileName);
+            if (deleteFile.get() && asciiDocFile != null) {
+              asciiDocFile.delete();
+            } else if (asciiDocFile != null) {
+              // file might have appeared "in between", stop here
+              return;
             }
+            @NotNull @NonNls CharSequence asciiDocContent;
+            try {
+              asciiDocContent = convertMarkdownToAsciiDoc(file.getText());
+            } catch (RuntimeException ex) {
+              throw AsciiDocPsiImplUtil.getRuntimeException("Unable to convert Markdown content to AsciiDoc", file.getText(), ex);
+            }
+            asciiDocFile = PsiFileFactory.getInstance(project).createFileFromText(newFileName, AsciiDocFileType.INSTANCE, asciiDocContent);
+            PsiFile newFile = (PsiFile) file.getContainingDirectory().add(asciiDocFile);
+            file.delete();
+
+            ApplicationManager.getApplication().invokeLater(() -> {
+              if (newFile.isValid()) {
+                newFile.navigate(true);
+              }
+            });
           }
 
         }, getName(), getGroupId(), UndoConfirmationPolicy.REQUEST_CONFIRMATION);
@@ -128,22 +123,18 @@ public class ConvertToAsciiDocAction extends AnAction {
 
   @Override
   public void update(AnActionEvent event) {
-    try {
-      VirtualFile file = event.getData(LangDataKeys.VIRTUAL_FILE);
-      boolean enabled = false;
+    VirtualFile file = event.getData(LangDataKeys.VIRTUAL_FILE);
+    boolean enabled = false;
 
-      if (file != null && file.getParent() != null) {
-        for (String ext : MARKDOWN_EXTENSIONS) {
-          if (file.getName().endsWith("." + ext)) {
-            enabled = true;
-            break;
-          }
+    if (file != null && file.getParent() != null) {
+      for (String ext : MARKDOWN_EXTENSIONS) {
+        if (file.getName().endsWith("." + ext)) {
+          enabled = true;
+          break;
         }
       }
-      event.getPresentation().setEnabledAndVisible(enabled);
-    } catch (AlreadyDisposedException ex) {
-      // noop
     }
+    event.getPresentation().setEnabledAndVisible(enabled);
   }
 
 }
