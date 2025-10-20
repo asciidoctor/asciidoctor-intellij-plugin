@@ -55,7 +55,9 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware, Disp
               Set<VirtualFile> linkSources = new HashSet<>();
               canonicalPaths.forEach(canonicalPath -> linkSources.addAll(AsciiDocLinkIndex.getLinkSources(project, canonicalPath)));
               if (!linkSources.isEmpty()) {
-                ApplicationManager.getApplication().runWriteAction(() -> LocalFileSystem.getInstance().refreshFiles(linkSources));
+                ApplicationManager.getApplication().invokeLater(() -> {
+                  ApplicationManager.getApplication().runWriteAction(() -> LocalFileSystem.getInstance().refreshFiles(linkSources));
+                });
               }
             });
           });
