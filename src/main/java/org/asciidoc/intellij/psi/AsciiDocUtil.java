@@ -83,7 +83,7 @@ import java.util.regex.Pattern;
 import static org.asciidoc.intellij.psi.AsciiDocBlockIdStubElementType.BLOCK_ID_WITH_VAR;
 
 public class AsciiDocUtil {
-  private static final Logger log = Logger.getInstance(PreviewStaticServer.class);
+  private static final Logger LOG = Logger.getInstance(PreviewStaticServer.class);
 
   public static final String FAMILY_EXAMPLE = "example";
   public static final String FAMILY_ATTACHMENT = "attachment";
@@ -780,7 +780,7 @@ public class AsciiDocUtil {
         dir = dir.getParent();
       }
     } catch (InvalidVirtualFileAccessException e) {
-      log.warn("Unable to determine if the file is part of an Antora module: " + fileBaseDir.getCanonicalPath(), e);
+      LOG.warn("Unable to determine if the file is part of an Antora module: " + fileBaseDir.getCanonicalPath(), e);
       return null;
     }
     return null;
