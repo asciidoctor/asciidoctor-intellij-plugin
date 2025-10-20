@@ -7,6 +7,7 @@ import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
@@ -47,6 +48,7 @@ import com.intellij.serviceContainer.AlreadyDisposedException;
 import com.intellij.util.text.CharArrayUtil;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.AsciiDocWrapper;
+import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
 import org.asciidoc.intellij.folding.AsciiDocFoldingBuilder;
 import org.asciidoc.intellij.psi.search.AsciiDocAntoraPlaybookIndex;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -81,6 +83,8 @@ import java.util.regex.Pattern;
 import static org.asciidoc.intellij.psi.AsciiDocBlockIdStubElementType.BLOCK_ID_WITH_VAR;
 
 public class AsciiDocUtil {
+  private static final Logger log = Logger.getInstance(PreviewStaticServer.class);
+
   public static final String FAMILY_EXAMPLE = "example";
   public static final String FAMILY_ATTACHMENT = "attachment";
   public static final String FAMILY_PARTIAL = "partial";
@@ -776,6 +780,7 @@ public class AsciiDocUtil {
         dir = dir.getParent();
       }
     } catch (InvalidVirtualFileAccessException e) {
+      log.warn("Unable to determine if the file is part of an Antora module: " + fileBaseDir.getCanonicalPath(), e);
       return null;
     }
     return null;
