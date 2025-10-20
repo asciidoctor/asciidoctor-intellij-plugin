@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.44.10
 
 - Fixing exception when resolving links (#1925)
+- Avoid reentrant indexing (#1926)
 
 === 0.44.9
 

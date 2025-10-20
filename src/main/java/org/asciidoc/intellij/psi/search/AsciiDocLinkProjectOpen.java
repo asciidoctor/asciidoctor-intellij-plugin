@@ -32,7 +32,7 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware, Disp
       @Override
       public void after(@NotNull List<? extends VFileEvent> events) {
         // any modification of a file within the project refreshes the preview
-        Set<VirtualFile> linkSources = new HashSet<>();
+        Set<String> canonicalPaths = new HashSet<>();
         for (VFileEvent event : events) {
           if (event.getFile() != null) {
             if (!project.isDisposed()) {
@@ -43,17 +43,19 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware, Disp
               if (!DumbService.isDumb(project)) {
                 String canonicalPath = file.getCanonicalPath();
                 if (canonicalPath != null) {
-                  linkSources.addAll(AsciiDocLinkIndex.getLinkSources(project, canonicalPath));
+                  canonicalPaths.add(canonicalPath);
                 }
               }
             }
           }
         }
-        if (!linkSources.isEmpty()) {
+        if (!canonicalPaths.isEmpty()) {
           ApplicationManager.getApplication().invokeLater(() -> {
-            ApplicationManager.getApplication().runWriteAction(() -> {
-              LocalFileSystem.getInstance().refreshFiles(linkSources);
-            });
+            Set<VirtualFile> linkSources = new HashSet<>();
+            canonicalPaths.forEach(canonicalPath -> linkSources.addAll(AsciiDocLinkIndex.getLinkSources(project, canonicalPath)));
+            if (!linkSources.isEmpty()) {
+              ApplicationManager.getApplication().runWriteAction(() -> LocalFileSystem.getInstance().refreshFiles(linkSources));
+            }
           });
         }
       }
