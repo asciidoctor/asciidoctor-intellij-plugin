@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Fixing exception when resolving links (#1925)
 - Avoid reentrant indexing (#1926)
+- Align usage of JCEF with Markdown (#1918)
 
 === 0.45.0
 
