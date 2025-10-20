@@ -43,8 +43,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PreviewStaticServer extends HttpRequestHandler {
-  private final Logger log = Logger.getInstance(PreviewStaticServer.class);
-
   private static final Logger LOG = Logger.getInstance(PreviewStaticServer.class);
   private static final String PREFIX = "/ead61b63-b0a6-4ff2-a49a-86be75ccfd1a/";
   private static final Pattern PAYLOAD_PATTERN = Pattern.compile("((?<contentType>[^/]*)/(?<fileName>[a-zA-Z0-9./_-]*))|(?<action>(source|image))");
@@ -168,7 +166,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
     Matcher matcher = PAYLOAD_PATTERN.matcher(payLoad);
 
     if (!matcher.matches()) {
-      log.warn("won't deliver resource to preview as it might be unsafe: " + payLoad);
+      LOG.warn("won't deliver resource to preview as it might be unsafe: " + payLoad);
       return false;
     }
 
@@ -205,7 +203,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
       }
       VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(fileParameter);
       if (virtualFile == null) {
-        log.warn("unable to to find file '" + fileParameter + "', therefore unable to render it");
+        LOG.warn("unable to to find file '" + fileParameter + "', therefore unable to render it");
         return false;
       }
       StringBuilder nonMatchingProjects = new StringBuilder();
@@ -220,7 +218,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
         }
       }
       if (project == null) {
-        log.warn("unable to determine project for '" + projectNameParameter + "'/'" + projectUrlParameter
+        LOG.warn("unable to determine project for '" + projectNameParameter + "'/'" + projectUrlParameter
           + "' out of projects " + nonMatchingProjects
           + ", therefore unable to render it");
         return false;
