@@ -1,6 +1,6 @@
 [versions]
 # plugins
-intelliJPlatform = "2.10.0"
+intelliJPlatform = "2.10.1"
 errorpronePlugin = "4.3.0"
 grammarKit = "2022.3.2.2"
 asciidoctorConvert = "4.0.5"
