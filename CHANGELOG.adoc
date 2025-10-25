@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.45.2
+
+...
+
 === 0.45.1
 
 - Fixing exception when resolving links (#1925)
