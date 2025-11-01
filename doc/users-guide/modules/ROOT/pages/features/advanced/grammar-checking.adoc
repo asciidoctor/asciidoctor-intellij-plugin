@@ -12,7 +12,7 @@ The https://plugins.jetbrains.com/plugin/12175-grazie[Grazie] and https://plugin
 Once the plugin is installed, the IDE will highlight spelling and grammar problems in the editor.
 Users can also run xref:features/advanced/validation-in-ide.adoc[] or xref:features/advanced/validation-cicd.adoc[Validation during Continuous Integration and Delivery].
 
-== Grazie Plugin
+== Grazie Lite Plugin
 
 The https://plugins.jetbrains.com/plugin/12175-grazie[Grazie plugin] is pre-installed for most JetBrains IDEs and offers grammar and spell checking for several languages.
 While support for English is included, it will detect other languages and offer the download of additional files.
@@ -21,6 +21,9 @@ Once it has downloaded these files, spell checking and grammar checking is avail
 This plugin is available for both paid and free versions of IntelliJ.
 
 == Grazie Professional Plugin
+
+NOTE: This plugin is no longer supported in IntelliJ 2025.3 onwards.
+Therefore, its support has been removed from the plugin version 0.45.x and later.
 
 The https://plugins.jetbrains.com/plugin/16136-grazie-professional[Grazie Professional] is an optional plugin that needs to be installed by a user to their IDE.
 
