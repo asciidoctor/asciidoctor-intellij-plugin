@@ -20,7 +20,6 @@
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-json.xml">com.intellij.modules.json</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-yaml.xml">org.jetbrains.plugins.yaml</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-grazie.xml">tanvd.grazi</depends>
-  <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-graziepro.xml">com.intellij.grazie.pro</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-sh.xml">com.jetbrains.sh</depends>
   <depends optional="true" config-file="org.asciidoctor.intellij.asciidoc-jshell.xml">intellij.java.jshell</depends>
 
