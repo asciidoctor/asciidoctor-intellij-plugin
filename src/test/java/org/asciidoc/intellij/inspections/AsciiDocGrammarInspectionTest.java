@@ -9,7 +9,6 @@ import org.gradle.internal.impldep.org.junit.Ignore;
 /**
  * @author Alexander Schwartz
  */
-@Ignore("Doesn't work in 2025.3 due to Cannot invoke \"com.intellij.codeInspection.ex.LocalInspectionToolWrapper.getTool()\" because \"toolWrapper\" is null")
 public class AsciiDocGrammarInspectionTest extends AsciiDocQuickFixTestBase {
 
   private static final String NAME = new AsciiDocChangeCaseForAnchor().getName();
@@ -34,6 +33,7 @@ public class AsciiDocGrammarInspectionTest extends AsciiDocQuickFixTestBase {
     doTestNoFix(NAME, true);
   }
 
+  @Ignore("Doesn't work in 2025.3 due to Cannot invoke \"com.intellij.codeInspection.ex.LocalInspectionToolWrapper.getTool()\" because \"toolWrapper\" is null")
   public void testSeparateBehavior() {
     // ignore highlighting, as it will show several Grammar errors which depend on the Grazie version
     doTestNoFix(NAME, false);
