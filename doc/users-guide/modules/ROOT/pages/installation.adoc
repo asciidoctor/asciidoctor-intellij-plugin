@@ -62,6 +62,28 @@ Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
 
 Read more about choosing the JDK version of the IDE in the JetBrains knowledge base entry "`https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Selecting the JDK version the IDE will run under]`".
 
+=== AsciidoctorJ Diagram and PlantUML
+
+PlantUML primarily uses the Graphviz dot program to automatically determine the position and structure of elements in most diagrams. While PlantUML offers alternative layout engines, users sometimes need to install Graphviz separately depending on their operating system.
+
+If any PlantUML is rendered incorrectly in the IntelliJ Asciidoc Preview window when using AsciidocJ Diagram then consider installing the graphviz `dot` program using one of the following commands:
+
+macOS (using https://brew.sh/[brew.sh])::
+
+    `brew install graphviz`
+
+Linux (Debian, Ubuntu)::
+
+    `sudo apt install graphviz`
+
+Linux (Fedora, Redhat)::
+
+    `sudo dnf install graphviz`
+
+Windows (using https://scoop.sh/[scoop.sh])::
+
+    `scoop install graphviz`
+
 [#installplugin]
 == Installing the plugin
 
