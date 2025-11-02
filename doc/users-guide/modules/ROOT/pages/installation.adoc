@@ -64,9 +64,9 @@ Read more about choosing the JDK version of the IDE in the JetBrains knowledge b
 
 === AsciidoctorJ Diagram and PlantUML
 
-PlantUML primarily uses the Graphviz dot program to automatically determine the position and structure of elements in most diagrams. While PlantUML offers alternative layout engines, users sometimes need to install Graphviz separately depending on their operating system.
+PlantUML primarily uses the Graphviz dot program to automatically determine the position and structure of elements in diagrams. While PlantUML offers alternative layout engines, users sometimes need to install Graphviz separately depending on their operating system environment.
 
-If any PlantUML is rendered incorrectly in the IntelliJ Asciidoc Preview window when using AsciidocJ Diagram then consider installing the graphviz `dot` program using one of the following commands:
+If any PlantUML diagram is rendered incorrectly in the IntelliJ Asciidoc Preview window when using `AsciidoctorJ Diagram` as the diagram renderer then consider installing the graphviz `dot` program using one of the following commands:
 
 macOS (using https://brew.sh/[brew.sh])::
 
