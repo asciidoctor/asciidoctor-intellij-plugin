@@ -4,7 +4,6 @@ import com.intellij.grazie.ide.inspection.grammar.GrazieInspection;
 import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection;
 import com.intellij.testFramework.PlatformTestUtil;
 import org.asciidoc.intellij.quickfix.AsciiDocChangeCaseForAnchor;
-import org.gradle.internal.impldep.org.junit.Ignore;
 
 /**
  * @author Alexander Schwartz
@@ -33,11 +32,13 @@ public class AsciiDocGrammarInspectionTest extends AsciiDocQuickFixTestBase {
     doTestNoFix(NAME, true);
   }
 
-  @Ignore("Doesn't work in 2025.3 due to Cannot invoke \"com.intellij.codeInspection.ex.LocalInspectionToolWrapper.getTool()\" because \"toolWrapper\" is null")
+  // "Doesn't work in 2025.3 due to Cannot invoke \"com.intellij.codeInspection.ex.LocalInspectionToolWrapper.getTool()\" because \"toolWrapper\" is null")
+  /*
   public void testSeparateBehavior() {
     // ignore highlighting, as it will show several Grammar errors which depend on the Grazie version
     doTestNoFix(NAME, false);
   }
+   */
 
   @Override
   protected String getBasePath() {
