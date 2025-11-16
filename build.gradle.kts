@@ -105,8 +105,6 @@ dependencies {
             // see https://github.com/google/ide-perf/blob/master/docs/user-guide.md
             // "com.jetbrains.performancePlugin:213.5744.122" // used run YourKit CPU profiling in test IDE
             // see https://intellij-support.jetbrains.com/hc/en-us/articles/207241235
-            // https://plugins.jetbrains.com/plugin/16136-grazie-professional/
-            "com.intellij.grazie.pro:0.3.390",
             // https://plugins.jetbrains.com/plugin/28663-jshell
             "intellij.java.jshell:253.25908.20"
         ))

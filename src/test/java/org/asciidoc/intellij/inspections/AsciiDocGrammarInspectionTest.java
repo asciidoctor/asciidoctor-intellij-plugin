@@ -1,30 +1,14 @@
 package org.asciidoc.intellij.inspections;
 
 import com.intellij.grazie.ide.inspection.grammar.GrazieInspection;
-import com.intellij.ide.plugins.DisabledPluginsState;
-import com.intellij.openapi.extensions.PluginId;
-import com.intellij.spellchecker.inspections.SpellCheckingInspection;
+import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection;
 import com.intellij.testFramework.PlatformTestUtil;
 import org.asciidoc.intellij.quickfix.AsciiDocChangeCaseForAnchor;
-import org.junit.Ignore;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Alexander Schwartz
  */
-@Ignore("Doesn't work since 2025.2 due to java.lang.NoSuchMethodError: 'void ai.grazie.spell.language.LanguageModel.<init>'...")
 public class AsciiDocGrammarInspectionTest extends AsciiDocQuickFixTestBase {
-
-  static {
-    Set<PluginId> disabled = new HashSet<>();
-
-    // to avoid: com.intellij.openapi.progress.ProcessCanceledException: java.lang.IncompatibleClassChangeError
-    disabled.add(PluginId.getId("com.intellij.grazie.pro"));
-
-    DisabledPluginsState.Companion.saveDisabledPluginsAndInvalidate(disabled);
-  }
 
   private static final String NAME = new AsciiDocChangeCaseForAnchor().getName();
 
@@ -32,7 +16,7 @@ public class AsciiDocGrammarInspectionTest extends AsciiDocQuickFixTestBase {
   public void setUp() throws Exception {
     super.setUp();
     //noinspection unchecked
-    myFixture.enableInspections(GrazieInspection.class, SpellCheckingInspection.class);
+    myFixture.enableInspections(GrazieInspection.class, GrazieSpellCheckingInspection.class);
     PlatformTestUtil.dispatchAllEventsInIdeEventQueue();
   }
 
@@ -48,10 +32,13 @@ public class AsciiDocGrammarInspectionTest extends AsciiDocQuickFixTestBase {
     doTestNoFix(NAME, true);
   }
 
+  // "Doesn't work in 2025.3 due to Cannot invoke \"com.intellij.codeInspection.ex.LocalInspectionToolWrapper.getTool()\" because \"toolWrapper\" is null")
+  /*
   public void testSeparateBehavior() {
     // ignore highlighting, as it will show several Grammar errors which depend on the Grazie version
     doTestNoFix(NAME, false);
   }
+   */
 
   @Override
   protected String getBasePath() {
