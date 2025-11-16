@@ -41,12 +41,12 @@ dependencies {
      * a snakeyaml version in the classpath takes precedence, but IntelliJ includes a version that is too old
      * therefore this plugin includes the same version of snakeyaml that is already included in jruby-stdlib
      * to prevent loading the older version from IntelliJ.
-     * When a different version than jruby-stdlib 9.4.7.0 is used after upgrading asciidoctorj,
+     * When a different version than jruby-stdlib 9.4.14.0 is used after upgrading asciidoctorj,
      * double check the snakeyaml version.
      * https://github.com/asciidoctor/asciidoctorj-pdf/issues/25
      */
-    implementation("org.snakeyaml:snakeyaml-engine:2.7")
-    implementation("org.asciidoctor:asciidoctorj:3.0.0") // WARNING: when upgrading asciidoctorj, see comment above about snakeyaml!
+    implementation("org.snakeyaml:snakeyaml-engine:2.9")
+    implementation("org.asciidoctor:asciidoctorj:3.0.1") // WARNING: when upgrading asciidoctorj, see comment above about snakeyaml!
     implementation("commons-io:commons-io:2.21.0")
     implementation("io.github.markdown-asciidoc:markdown-to-asciidoc:2.0.1") {
         // Exclude the Kotlin dependency, as this plugin uses only the Java version of the converter.
