@@ -55,7 +55,7 @@ dependencies {
     }
 
     implementation("org.apache.commons:commons-text:1.14.0")
-    implementation("org.apache.commons:commons-lang3:3.19.0")
+    implementation("org.apache.commons:commons-lang3:3.20.0")
     implementation("io.sentry:sentry:8.26.0")
 
     // when updating the versions here, also update them in AsciiDocDownloaderUtil for dynamic download
