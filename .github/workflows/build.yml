@@ -60,7 +60,7 @@ jobs:
 
       # Check out current repository
       - name: Fetch Sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # Setup Gradle
       - name: Setup Gradle
@@ -108,7 +108,7 @@ jobs:
 
       # Check out current repository
       - name: Fetch Sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       # Remove old release drafts by using the curl request for the available releases with draft flag
       - name: Remove Old Release Drafts
