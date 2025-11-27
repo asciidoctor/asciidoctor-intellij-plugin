@@ -35,8 +35,8 @@ repositories {
 
 // Dependencies are managed with Gradle version catalog - read more: https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog
 dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.44.0")
-    compileOnly("com.google.errorprone:error_prone_core:2.44.0")
+    errorprone("com.google.errorprone:error_prone_core:2.45.0")
+    compileOnly("com.google.errorprone:error_prone_core:2.45.0")
     /* snakeyaml is s used by asciidoctorj-pdf, but is actually provided within jruby-stdlib
      * a snakeyaml version in the classpath takes precedence, but IntelliJ includes a version that is too old
      * therefore this plugin includes the same version of snakeyaml that is already included in jruby-stdlib
