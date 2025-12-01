@@ -59,7 +59,7 @@ dependencies {
     implementation("io.sentry:sentry:8.27.1")
 
     // when updating the versions here, also update them in AsciiDocDownloaderUtil for dynamic download
-    testImplementation("org.asciidoctor:asciidoctorj-diagram:3.0.1")
+    testImplementation("org.asciidoctor:asciidoctorj-diagram:3.1.0")
     testImplementation("org.asciidoctor:asciidoctorj-diagram-plantuml:1.2025.3")
     testImplementation("org.asciidoctor:asciidoctorj-diagram-batik:1.17")
     testImplementation("org.asciidoctor:asciidoctorj-diagram-jsyntrax:1.38.2")
