@@ -24,6 +24,28 @@ When the preview includes a diagram, the plugin shows an editor notification ask
 
 include::partial$download-dependencies.adoc[]
 
+=== Installing Graphviz dot to fix rendering problems in the preview
+
+If a PlantUML diagram is rendered incorrectly in the preview window when using Asciidoctor Diagram as the diagram renderer, consider installing the Graphviz dot program and avoid using the PlantUML's built-in Smetana render.
+
+Use one of the following commands to install Graphviz dot:
+
+macOS (using https://brew.sh/[brew.sh])::
+
+    `brew install graphviz`
+
+Linux (Debian, Ubuntu)::
+
+    `sudo apt install graphviz`
+
+Linux (Fedora, Red Hat)::
+
+    `sudo dnf install graphviz`
+
+Windows (using https://scoop.sh/[scoop.sh])::
+
+    `scoop install graphviz`
+
 [[temp-folder-asciidoctor,Temporary folder _.asciidoctor_ appearing in several places]]
 === Temporary folder _.asciidoctor_ appearing in several places
 
