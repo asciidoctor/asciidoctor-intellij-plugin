@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.45.3
+
+...
+
 === 0.45.2
 
 - Bump AsciidoctorJ Diagram to version 3.1.0 (#1960, thanks to @cachescrubber)
