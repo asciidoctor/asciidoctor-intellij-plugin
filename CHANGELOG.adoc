@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Bump AsciidoctorJ Diagram to version 3.1.0 (#1960, thanks to @cachescrubber)
 - Bump org.asciidoctor:asciidoctorj-pdf from 2.3.19 to 2.3.23 (#1934)
 - Remove Grazie Pro support (#1940)
+- Avoid deadlock when analyzing links (#1974)
 
 === 0.45.1
 

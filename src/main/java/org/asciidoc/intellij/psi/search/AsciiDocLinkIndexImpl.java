@@ -47,7 +47,7 @@ public class AsciiDocLinkIndexImpl extends ScalarIndexExtension<String> {
   }
 
   /**
-   * Files to be indexed need to end with ".yml", and need to contain both "antora" and "playbook".
+   * Files to be indexed are AsciiDoc files only.
    */
   @NotNull
   @Override
