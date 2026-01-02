@@ -264,7 +264,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(root);
         if (antoraModuleDir != null) {
           PsiElement parent = root.getParent();
-          while (parent != null && !(parent instanceof HasFileReference)) {
+          while (parent != null && !(parent instanceof HasFileReference) && !(parent instanceof PsiFile)) {
             parent = parent.getParent();
           }
           if (parent != null) {

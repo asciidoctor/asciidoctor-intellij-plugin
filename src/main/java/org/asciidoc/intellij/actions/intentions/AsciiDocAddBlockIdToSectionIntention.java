@@ -68,6 +68,9 @@ public class AsciiDocAddBlockIdToSectionIntention extends Intention {
       if (statementAtCaret == null) {
         return null;
       }
+      if (statementAtCaret instanceof PsiFile) {
+        return null;
+      }
     }
     AsciiDocSection section = (AsciiDocSection) statementAtCaret;
     if (section.getBlockId() != null) {

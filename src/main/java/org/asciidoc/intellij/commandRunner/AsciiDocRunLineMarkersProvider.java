@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.injection.LanguageGuesser;
@@ -61,6 +62,9 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor imp
         break;
       }
       if (element instanceof AsciiDocBlock || element instanceof AsciiDocSection) {
+        break;
+      }
+      if (element instanceof PsiFile) {
         break;
       }
       element = element.getParent();

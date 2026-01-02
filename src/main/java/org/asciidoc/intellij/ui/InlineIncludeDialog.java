@@ -73,7 +73,7 @@ public class InlineIncludeDialog extends InlineOptionsDialog {
       return element;
     }
 
-    while (!(element instanceof AsciiDocBlockMacro) && element.getParent() != null) {
+    while (!(element instanceof AsciiDocBlockMacro) && element.getParent() != null && !(element instanceof PsiFile)) {
       element = element.getParent();
     }
     if (element instanceof AsciiDocBlockMacro) {

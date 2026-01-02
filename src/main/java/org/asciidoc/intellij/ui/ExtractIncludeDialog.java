@@ -53,7 +53,7 @@ public class ExtractIncludeDialog extends RefactoringDialog {
     }
 
     while ((element instanceof AsciiDocBlockMacro || (!(element instanceof AsciiDocBlock) && !(element instanceof AsciiDocSection)))
-      && element.getParent() != null) {
+      && element.getParent() != null && !(element instanceof PsiFile)) {
       element = element.getParent();
     }
     if (element instanceof AsciiDocBlock || element instanceof AsciiDocSection) {
