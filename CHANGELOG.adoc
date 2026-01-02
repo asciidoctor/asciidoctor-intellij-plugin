@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.45.3
 
-...
+- Moving file type checking to the background (#1974)
 
 === 0.45.2
 

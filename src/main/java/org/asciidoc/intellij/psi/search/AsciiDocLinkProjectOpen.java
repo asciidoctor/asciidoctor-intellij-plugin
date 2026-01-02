@@ -37,28 +37,30 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware, Disp
       public void after(@NotNull List<? extends VFileEvent> events) {
         // any modification of a file within the project refreshes the preview
         Set<String> canonicalPaths = new HashSet<>();
-        for (VFileEvent event : events) {
-          if (event.getFile() != null) {
-            if (!project.isDisposed()) {
-              VirtualFile file = event.getFile();
-              if (!file.isValid()) {
-                continue;
-              }
-              if (!file.getFileType().equals(AsciiDocFileType.INSTANCE)) {
-                continue;
-              }
-              if (!DumbService.isDumb(project)) {
-                String canonicalPath = file.getCanonicalPath();
-                if (canonicalPath != null) {
-                  canonicalPaths.add(canonicalPath);
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+          for (VFileEvent event : events) {
+            if (event.getFile() != null) {
+              if (!project.isDisposed()) {
+                VirtualFile file = event.getFile();
+                if (!file.isValid()) {
+                  continue;
+                }
+                if (!file.getFileType().equals(AsciiDocFileType.INSTANCE)) {
+                  continue;
+                }
+                if (!DumbService.isDumb(project)) {
+                  String canonicalPath = file.getCanonicalPath();
+                  if (canonicalPath != null) {
+                    canonicalPaths.add(canonicalPath);
+                  }
                 }
               }
             }
           }
-        }
-        if (!canonicalPaths.isEmpty()) {
-          runInBackground(canonicalPaths, project);
-        }
+          if (!canonicalPaths.isEmpty()) {
+            runInBackground(canonicalPaths, project);
+          }
+        });
       }
     });
   }
