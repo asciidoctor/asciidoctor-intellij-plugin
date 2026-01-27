@@ -71,7 +71,7 @@ dependencies {
     testRuntimeOnly(libs.junitVintageEngine)
 
     testImplementation("com.tngtech.archunit:archunit-junit4:1.4.1")
-    testImplementation("org.assertj:assertj-core:3.27.6")
+    testImplementation("org.assertj:assertj-core:3.27.7")
     testImplementation("org.mockito:mockito-core:5.21.0")
     testImplementation(libs.junitJupiterApi)
 
