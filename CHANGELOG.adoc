@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.45.4
 
 - Avoid iterating to parents outside of current document (#1975)
+- Bump org.asciidoctor:asciidoctorj-diagram from 3.1.0 to 3.2.0 (#2008)
 
 === 0.45.3
 

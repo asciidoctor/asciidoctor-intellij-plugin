@@ -67,8 +67,8 @@ public class AsciiDocDownloaderUtil {
 
   // when updating the version, also update the sha256 hash!
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram
-  public static final String ASCIIDOCTORJ_DIAGRAM_VERSION = "3.1.0";
-  private static final String ASCIIDOCTORJ_DIAGRAM_HASH = "d8f5d000cfee60ede4e023c2cd2229697a24ff0f755f47a7ed0ba5cb4d1244e4";
+  public static final String ASCIIDOCTORJ_DIAGRAM_VERSION = "3.2.0";
+  private static final String ASCIIDOCTORJ_DIAGRAM_HASH = "ef6ec7412537303a9becac8025bfa528537882f2f558f4e798ac7d43b0f22f7a";
 
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-plantuml/
   public static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION = "1.2025.3";
