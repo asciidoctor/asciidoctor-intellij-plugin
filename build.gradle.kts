@@ -145,8 +145,7 @@ intellijPlatform {
         failureLevel = listOf(VerifyPluginTask.FailureLevel.INVALID_PLUGIN, VerifyPluginTask.FailureLevel.COMPATIBILITY_PROBLEMS, VerifyPluginTask.FailureLevel.NOT_DYNAMIC)
         freeArgs = listOf("-mute", "TemplateWordInPluginId")
         ides {
-            // recommended()
-            ides( properties("pluginVerifierIdeVersions").get().split(',') )
+            create(provider { properties("pluginVerifierIdeVersions").get().split(',') })
         }
     }
 }
