@@ -31,7 +31,12 @@ public class LanguageGuesser {
         continue;
       }
 
-      result.put(language.getID().toLowerCase(Locale.US).replaceAll(" ", ""), language);
+      // Handles for example "InjectablePHP" or "InjectedFreemarker"
+      result.put(language.getID()
+        .replaceAll("^Injectable", "")
+        .replaceAll("^Injected", "")
+        .toLowerCase(Locale.US)
+        .replaceAll(" ", ""), language);
     }
 
     final Language javascriptLanguage = result.get("javascript");
