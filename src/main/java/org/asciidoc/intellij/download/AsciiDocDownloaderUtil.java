@@ -67,12 +67,12 @@ public class AsciiDocDownloaderUtil {
 
   // when updating the version, also update the sha256 hash!
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram
-  public static final String ASCIIDOCTORJ_DIAGRAM_VERSION = "3.2.0";
-  private static final String ASCIIDOCTORJ_DIAGRAM_HASH = "ef6ec7412537303a9becac8025bfa528537882f2f558f4e798ac7d43b0f22f7a";
+  public static final String ASCIIDOCTORJ_DIAGRAM_VERSION = "3.2.1";
+  private static final String ASCIIDOCTORJ_DIAGRAM_HASH = "1e573218d5a4edb8af402af4b634be5e32b50bdd3878bcbcf92bc3ce9ee351ea";
 
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-plantuml/
-  public static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION = "1.2025.3";
-  private static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH = "d939792580579d1492619e2f3d1fb4c1f76e2360feadb5f91f108d6fde4e1adb";
+  public static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION = "1.2026.2";
+  private static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH = "802abcac3ad7e4a07135346af7950e913831acf3bdc17c83b73a9b75f5e364ad";
 
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-batik/
   public static final String ASCIIDOCTORJ_DIAGRAM_BATIK_VERSION = "1.19";
