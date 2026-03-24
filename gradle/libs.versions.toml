@@ -5,6 +5,7 @@ errorpronePlugin = "5.1.0"
 grammarKit = "2023.3.0.3"
 asciidoctorConvert = "4.0.5"
 junit = "6.0.3"
+gradleVersions = "0.53.0"
 
 [libraries]
 junitJupiterEngine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit"}
@@ -16,3 +17,4 @@ intelliJPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "inte
 errorpronePlugin = { id = "net.ltgt.errorprone", version.ref = "errorpronePlugin" }
 grammarKit = { id = "org.jetbrains.grammarkit", version.ref = "grammarKit" }
 asciidoctorConvert =  { id = 'org.asciidoctor.jvm.convert', version.ref = "asciidoctorConvert" }
+gradleVersions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersions"}

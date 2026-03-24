@@ -15,7 +15,7 @@ plugins {
     alias(libs.plugins.errorpronePlugin)
     alias(libs.plugins.grammarKit)
     alias(libs.plugins.asciidoctorConvert)
-    id("com.github.ben-manes.versions") version "0.53.0"
+    alias(libs.plugins.gradleVersions)
 }
 
 version = if (System.getenv("VERSION") != null) System.getenv("VERSION") else "0.0.1"
