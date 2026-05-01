@@ -385,7 +385,8 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       true,
       1,
       false,
-      ""));
+      "",
+      null));
     try {
       String html = asciidocWrapper.render("""
         :action: generates
@@ -487,7 +488,8 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       true,
       1,
       false,
-      ""));
+      "",
+      null));
     try {
       String html = asciidocWrapper.render("""
         [erd]
@@ -536,7 +538,8 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       true,
       1,
       false,
-      ""));
+      "",
+      null));
     try {
       String html = asciidocWrapper.render("""
         [nomnoml]
@@ -574,7 +577,8 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       true,
       1,
       false,
-      ""));
+      "",
+      null));
     try {
       String html = asciidocWrapper.render("""
         [wavedrom]
@@ -615,7 +619,8 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       true,
       1,
       false,
-      ""));
+      "",
+      null));
     try {
       String html = asciidocWrapper.render("""
         [vega]

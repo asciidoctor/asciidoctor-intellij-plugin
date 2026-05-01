@@ -1,15 +1,18 @@
-package org.asciidoc.intellij.commandRunner.arbitrary;
+package org.asciidoc.intellij.commandRunner.arbitrary.action;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import lombok.Setter;
+import org.asciidoc.intellij.commandRunner.arbitrary.AsciiDocBackgroundCommand;
 import org.jetbrains.annotations.NotNull;
 
-class AsciiDocRerunRunnerAction extends AnAction {
+@Setter
+public class AsciiDocRerunRunnerAction extends AnAction {
   private AsciiDocBackgroundCommand asciiDocBackgroundCommand;
 
-  AsciiDocRerunRunnerAction() {
+  public AsciiDocRerunRunnerAction() {
     super("Rerun", "Rerun the command", AllIcons.Actions.Rerun);
   }
 
@@ -28,9 +31,5 @@ class AsciiDocRerunRunnerAction extends AnAction {
     if (asciiDocBackgroundCommand != null) {
       asciiDocBackgroundCommand.rerun();
     }
-  }
-
-  public void setAsciiDocBackgroundCommand(AsciiDocBackgroundCommand asciiDocBackgroundCommand) {
-    this.asciiDocBackgroundCommand = asciiDocBackgroundCommand;
   }
 }
