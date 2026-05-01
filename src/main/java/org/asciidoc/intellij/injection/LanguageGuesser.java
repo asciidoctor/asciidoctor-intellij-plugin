@@ -1,13 +1,16 @@
 package org.asciidoc.intellij.injection;
 
+import com.intellij.diagnostic.ImplementationConflictException;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageUtil;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
+import org.asciidoc.intellij.commandRunner.AsciiDocRunnerForPowershell;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -113,6 +116,68 @@ public class LanguageGuesser {
         return provider.getElementType().getLanguage();
       }
     }
+
+    /*
+     Scripting languages for project setup and management are of course independent of their
+     project language. Take for example Python, which is used to manage Java-Projects.
+     Java-Projects use IntelliJ, which has no support for Python in the IDE itself,
+     so the language won't be found in the classpath, although JetBrains has support for that
+     langauge in general.
+      */
+    if (lang.equalsIgnoreCase("javascript")) {
+      return findLanguage(JavaScriptLanguage.class);
+    } else if (lang.equalsIgnoreCase("python")) {
+      return findLanguage(PythonLanguage.class);
+    } else if (AsciiDocRunnerForPowershell.isPowerShell(lang)) {
+      return findLanguage(PowershellLanguage.class);
+    } else if (lang.equalsIgnoreCase("ruby")) {
+      return findLanguage(RubyLanguage.class);
+    }
+
     return null;
+  }
+
+  private static <T extends Language> T findLanguage(Class<T> clazz) {
+    final T instance = Language.findInstance(clazz);
+    try {
+      return instance != null ? instance : clazz.getDeclaredConstructor().newInstance();
+    } catch (ImplementationConflictException e) {
+      /* The language has already been registered. For unknown reasons the language may not be found
+      via Language.findInstance(clazz), but already be registered. Then just try again. */
+      return Language.findInstance(clazz);
+    } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+      // This is controlled by us, there is definitely a no-parameter public constructor for all classes.
+      throw new RuntimeException(e);
+    }
+  }
+
+  private static class PythonLanguage extends Language {
+    protected PythonLanguage() {
+      super("python");
+    }
+  }
+
+  private static class PowershellLanguage extends Language {
+    protected PowershellLanguage() {
+      super("powershell");
+    }
+  }
+
+  private static class RubyLanguage extends Language {
+    protected RubyLanguage() {
+      super("ruby");
+    }
+  }
+
+  private static class JavaScriptLanguage extends Language {
+    protected JavaScriptLanguage() {
+      super("javascript");
+    }
+  }
+
+  private static class TypeScriptLanguage extends Language {
+    protected TypeScriptLanguage() {
+      super("typeScript");
+    }
   }
 }

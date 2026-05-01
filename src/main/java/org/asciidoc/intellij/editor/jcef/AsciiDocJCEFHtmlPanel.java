@@ -1,9 +1,12 @@
 package org.asciidoc.intellij.editor.jcef;
 
+import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.actions.OpenFileAction;
+import com.intellij.ide.impl.TrustedProjects;
 import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.util.PsiNavigationSupport;
+import com.intellij.lang.Language;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -43,8 +46,10 @@ import com.intellij.ui.scale.JBUIScale;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.AsciiDocWrapper;
+import org.asciidoc.intellij.commandRunner.AsciiDocRunner;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
+import org.asciidoc.intellij.injection.LanguageGuesser;
 import org.asciidoc.intellij.psi.AsciiDocFileUtil;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -121,6 +126,8 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private JBCefJSQuery mySaveImage;
   private JBCefJSQuery myBrowserLog;
   private JBCefJSQuery myOpenLink;
+  private JBCefJSQuery myRunCode;
+  private JBCefJSQuery myIsApplicable;
   private volatile CountDownLatch rendered = new CountDownLatch(1);
   private volatile CountDownLatch replaceResultLatch = new CountDownLatch(1);
   private final CefLoadHandler myCefLoadHandler;
@@ -150,6 +157,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processImages.js")).append("\"></script>\n")
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("pickSourceLine.js")).append("\"></script>\n")
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("mouseEvents.js")).append("\"></script>\n")
+      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("runCodeBlock.js")).append("\"></script>\n")
       .append("""
         <script type="text/x-mathjax-config">
         MathJax.Hub.Config({
@@ -303,6 +311,8 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     myZoomReset = JBCefJSQuery.create((JBCefBrowserBase) this);
     mySaveImage = JBCefJSQuery.create((JBCefBrowserBase) this);
     myOpenLink = JBCefJSQuery.create((JBCefBrowserBase) this);
+    myRunCode = JBCefJSQuery.create((JBCefBrowserBase) this);
+    myIsApplicable = JBCefJSQuery.create((JBCefBrowserBase) this);
 
     myJSQuerySetScrollY.addHandler((scrollY) -> {
       try {
@@ -391,6 +401,89 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       return null;
     });
 
+    myRunCode.addHandler((String codeBlock) -> {
+      if (codeBlock == null || codeBlock.isEmpty()) {
+        return null;
+      }
+      int newline = codeBlock.indexOf('\n');
+      if (newline == -1) {
+        return null;
+      }
+      String lang = codeBlock.substring(0, newline);
+      String code = codeBlock.substring(newline + 1);
+      ApplicationManager.getApplication().executeOnPooledThread(() -> {
+        VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
+        if (virtualFile == null) {
+          return;
+        }
+        Project project = null;
+        Editor localEditor = editor;
+        if (localEditor != null) {
+          project = localEditor.getProject();
+        }
+        if (project == null) {
+          project = ProjectUtil.guessProjectForContentFile(virtualFile);
+        }
+        if (project == null) {
+          return;
+        }
+        if (!TrustedProjects.isTrusted(project)) {
+          return;
+        }
+        Language language = LanguageGuesser.guessLanguage("source-" + lang);
+        if (language == null) {
+          return;
+        }
+        final Project finalProject = project;
+        for (AsciiDocRunner runner : AsciiDocRunner.EP_NAME.getExtensionList()) {
+          try {
+            if (runner.isApplicable(finalProject, language)) {
+              runner.run(code, finalProject, virtualFile, DefaultRunExecutor.getRunExecutorInstance());
+              break;
+            }
+          } catch (NoClassDefFoundError ex) {
+            // optional dependency not yet loaded — skip
+          }
+        }
+      });
+      return null;
+    });
+
+    myIsApplicable.addHandler((String lang) -> {
+      if (lang == null || lang.isEmpty()) {
+        return new JBCefJSQuery.Response("Empty language", 0, "Empty language");
+      }
+      VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
+      if (virtualFile == null) {
+        return new JBCefJSQuery.Response("No virtual file", 0, "No virtual file");
+      }
+      Project project = null;
+      Editor localEditor = editor;
+      if (localEditor != null) {
+        project = localEditor.getProject();
+      }
+      if (project == null) {
+        project = ProjectUtil.guessProjectForContentFile(virtualFile);
+      }
+      if (project == null) {
+        return new JBCefJSQuery.Response("No project", 0, "No project");
+      }
+      Language language = LanguageGuesser.guessLanguage("source-" + lang);
+      if (language == null) {
+        return new JBCefJSQuery.Response("Unknown language", 0, "Unknown language");
+      }
+      final Project finalProject = project;
+      for (AsciiDocRunner runner : AsciiDocRunner.EP_NAME.getExtensionList()) {
+        try {
+          if (runner.isApplicable(finalProject, language)) {
+            return new JBCefJSQuery.Response("true");
+          }
+        } catch (NoClassDefFoundError ex) {
+          // optional dependency not yet loaded — skip
+        }
+      }
+      return new JBCefJSQuery.Response("No applicable runner", 0, "No applicable runner");
+    });
   }
 
   private void disposeHandlers() {
@@ -429,6 +522,14 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     if (myOpenLink != null) {
       myOpenLink.clearHandlers();
       Disposer.dispose(myOpenLink);
+    }
+    if (myRunCode != null) {
+      myRunCode.clearHandlers();
+      Disposer.dispose(myRunCode);
+    }
+    if (myIsApplicable != null) {
+      myIsApplicable.clearHandlers();
+      Disposer.dispose(myIsApplicable);
     }
   }
 
@@ -647,13 +748,14 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       try {
         replaceResult = false;
         getCefBrowser().executeJavaScript(
-            "function finish() {" +
+          "function finish() {" +
             "if (window.mermaid !== undefined) window.mermaid.run(); " +
             "if (window.initTabs !== undefined) window.initTabs(); " +
             "if ('__IntelliJTools' in window) {" +
             "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
             "__IntelliJTools.processImages && __IntelliJTools.processImages();" +
             "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ");" +
+            "__IntelliJTools.addRunButtons && __IntelliJTools.addRunButtons();" +
             "}" +
             "window.JavaPanelBridge && window.JavaPanelBridge.rendered(" + iterationStamp + ");" +
             "}" +
@@ -678,12 +780,14 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "var elem2 = document.getElementById('content'); " +
             "__IntelliJTools.clearLinks && __IntelliJTools.clearLinks();" +
             "__IntelliJTools.clearSourceLine && __IntelliJTools.clearSourceLine();" +
+            "__IntelliJTools.clearRunButtons && __IntelliJTools.clearRunButtons();" +
             "elem2.parentNode.replaceChild(div.firstChild, elem2); " +
             "finish(); }); } " +
             // if no math was present before, replace contents, and do the MathJax typesetting afterwards in case Math has been added
             "else { " +
             "__IntelliJTools.clearLinks && __IntelliJTools.clearLinks();" +
             "__IntelliJTools.clearSourceLine && __IntelliJTools.clearSourceLine();" +
+            "__IntelliJTools.clearRunButtons && __IntelliJTools.clearRunButtons();" +
             "elem.parentNode.replaceChild(div.firstChild, elem); " +
             "MathJax.Hub.Typeset(div.firstChild); " +
             "finish(); " +
@@ -879,8 +983,8 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private synchronized boolean isAntora() {
     if (isAntoraCache == null) {
       AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
-          isAntoraCache = editor != null && editor.getProject() != null
-            && AsciiDocUtil.findAntoraPagesDir(editor.getProject(), getParentDirectory()) != null;
+        isAntoraCache = editor != null && editor.getProject() != null
+          && AsciiDocUtil.findAntoraPagesDir(editor.getProject(), getParentDirectory()) != null;
       });
     }
     return isAntoraCache;
@@ -1086,6 +1190,12 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "}," +
             "saveImage : function(src) {" +
             mySaveImage.inject("src") +
+            "}," +
+            "runCode : function(data) {" +
+            myRunCode.inject("data") +
+            "}," +
+            "isApplicable : function(lang, onSuccess, onFailure) {" +
+            myIsApplicable.inject("lang", "onSuccess", "onFailure") +
             "}" +
             "};" +
             "if ('__IntelliJTools' in window) {" +
@@ -1093,6 +1203,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "__IntelliJTools.processImages && __IntelliJTools.processImages();" +
             "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ");" +
             "__IntelliJTools.addMouseHandler && __IntelliJTools.addMouseHandler();" +
+            "__IntelliJTools.addRunButtons && __IntelliJTools.addRunButtons();" +
             "}; " +
             "JavaPanelBridge.rendered(window.iterationStamp);",
           getCefBrowser().getURL(), 0);

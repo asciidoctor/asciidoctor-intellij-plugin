@@ -123,7 +123,7 @@ The editor supports a default and dark theme.
 The user can change the colors of the theme in the IDE settings.
 
 // see: AbstractAsciiDocCodeBlock
-When using listings with `[source,lang]`, the plugin triggers language injection to the following code block when the IDE supports the language (either by default, or by a language plugin).
+When using listings with `[source,lang]`, the plugin triggers language injection to the following code block when the IDE supports the language (either by default, or by a language plugin like JShell -- which is needed for Java _and_ JShell).
 This allows syntax highlighting and code completion specific to the language of the code block.
 The user can disable this feature in the settings completely or for selected languages.
 For the user to re-format the code block, use "`Edit Fragment`" (kbd:[Alt+Enter]) and "`Reformat Code`" (kbd:[Ctrl+Shift+L]).

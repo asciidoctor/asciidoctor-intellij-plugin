@@ -7,6 +7,11 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.46
+
+- Added code execution in the JCEF Preview rendering.
+- Added code execution support for JavaScript, PowerShell, Python and Ruby.
+
 === 0.45.5
 
 ...

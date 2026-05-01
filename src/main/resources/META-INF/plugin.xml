@@ -34,6 +34,10 @@
   <extensions defaultExtensionNs="org.asciidoc.intellij">
     <html.panel.provider implementation="org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider"/>
     <html.panel.provider implementation="org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider"/>
+    <asciidocRunner implementation="org.asciidoc.intellij.commandRunner.AsciiDocRunnerForJavaScript" />
+    <asciidocRunner implementation="org.asciidoc.intellij.commandRunner.AsciiDocRunnerForPowershell" />
+    <asciidocRunner implementation="org.asciidoc.intellij.commandRunner.AsciiDocRunnerForPython" />
+    <asciidocRunner implementation="org.asciidoc.intellij.commandRunner.AsciiDocRunnerForRuby" />
   </extensions>
 
   <actions>
