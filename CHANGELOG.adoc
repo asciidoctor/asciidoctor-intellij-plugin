@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.45.11
 
 - Offer the languages of TextMate bundles in the code completion for source blocks (#2145)
+- Language running improved: Better interpreter finding, interpreters configurable, Go, TypeScript execution added (#2101, thanks to @JanDiederich)
 
 === 0.45.10
 
