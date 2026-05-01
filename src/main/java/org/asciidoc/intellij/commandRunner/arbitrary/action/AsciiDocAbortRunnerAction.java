@@ -1,15 +1,18 @@
-package org.asciidoc.intellij.commandRunner.arbitrary;
+package org.asciidoc.intellij.commandRunner.arbitrary.action;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import lombok.Setter;
+import org.asciidoc.intellij.commandRunner.arbitrary.AsciiDocBackgroundCommand;
 import org.jetbrains.annotations.NotNull;
 
-class AsciiDocAbortRunnerAction extends AnAction {
+@Setter
+public class AsciiDocAbortRunnerAction extends AnAction {
   private AsciiDocBackgroundCommand asciiDocBackgroundCommand;
 
-  AsciiDocAbortRunnerAction() {
+  public AsciiDocAbortRunnerAction() {
     super("Abort", "Abort the running command", AllIcons.Actions.Suspend);
   }
 
@@ -28,9 +31,5 @@ class AsciiDocAbortRunnerAction extends AnAction {
     if (asciiDocBackgroundCommand != null) {
       asciiDocBackgroundCommand.abort();
     }
-  }
-
-  public void setAsciiDocBackgroundCommand(AsciiDocBackgroundCommand asciiDocBackgroundCommand) {
-    this.asciiDocBackgroundCommand = asciiDocBackgroundCommand;
   }
 }

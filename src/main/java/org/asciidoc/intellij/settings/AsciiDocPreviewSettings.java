@@ -7,10 +7,12 @@ import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
+import com.intellij.util.xmlb.annotations.Transient;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
 import org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider;
+import org.asciidoc.intellij.settings.language.AsciiDocScriptLanguageSettings;
 import org.asciidoc.intellij.ui.SplitFileEditor;
 import org.asciidoctor.SafeMode;
 import org.jetbrains.annotations.NotNull;
@@ -105,6 +107,11 @@ public final class AsciiDocPreviewSettings {
   @Nullable
   private String myHideErrorsByLanguage;
 
+  @Tag("ScriptLanguageSettings")
+  @Property(surroundWithTag = false)
+  @Nullable
+  private AsciiDocScriptLanguageSettings myScriptLanguageSettings;
+
   public AsciiDocPreviewSettings() {
   }
 
@@ -125,7 +132,8 @@ public final class AsciiDocPreviewSettings {
                                  boolean enableBuiltInMermaid,
                                  int zoom,
                                  boolean hideErrorsInSourceBlocks,
-                                 @Nullable String hideErrorsByLanguage) {
+                                 @Nullable String hideErrorsByLanguage,
+                                 @Nullable AsciiDocScriptLanguageSettings scriptLanguageSettings) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myPreviewTheme = previewTheme;
@@ -146,6 +154,7 @@ public final class AsciiDocPreviewSettings {
     myZoom = zoom;
     myHideErrorsInSourceBlocks = hideErrorsInSourceBlocks;
     myHideErrorsByLanguage = hideErrorsByLanguage;
+    myScriptLanguageSettings = scriptLanguageSettings;
   }
 
   @NotNull
@@ -316,6 +325,9 @@ public final class AsciiDocPreviewSettings {
     if (!Objects.equals(myHideErrorsByLanguage, that.myHideErrorsByLanguage)) {
       return false;
     }
+    if (!Objects.equals(myScriptLanguageSettings, that.myScriptLanguageSettings)) {
+      return false;
+    }
     return attributes.equals(that.attributes);
   }
 
@@ -341,6 +353,7 @@ public final class AsciiDocPreviewSettings {
     result = 31 * result + Objects.hashCode(myZoom);
     result = 31 * result + (myHideErrorsInSourceBlocks ? 1 : 0);
     result = 31 * result + Objects.hashCode(myHideErrorsByLanguage);
+    result = 31 * result + Objects.hashCode(myScriptLanguageSettings);
     return result;
   }
 
@@ -381,6 +394,12 @@ public final class AsciiDocPreviewSettings {
 
   public boolean isEnableBuiltInMermaid() {
     return myEnableBuiltInMermaid;
+  }
+
+  @Transient
+  @Nullable
+  public AsciiDocScriptLanguageSettings getScriptLanguageSettings() {
+    return myScriptLanguageSettings;
   }
 
   public interface Holder {

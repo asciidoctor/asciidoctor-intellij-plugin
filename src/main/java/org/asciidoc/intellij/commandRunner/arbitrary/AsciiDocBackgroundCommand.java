@@ -19,7 +19,7 @@ import java.time.Instant;
 /**
  * Runs long-running script / command in background.
  */
-class AsciiDocBackgroundCommand extends Task.Backgroundable {
+public class AsciiDocBackgroundCommand extends Task.Backgroundable {
   private static final Logger LOG = Logger.getInstance(AsciiDocBackgroundCommand.class);
 
   private final AsciiDocRunnerArbitrary asciiDocRunnerArbitrary;
@@ -28,8 +28,8 @@ class AsciiDocBackgroundCommand extends Task.Backgroundable {
   private final AsciiDocRunnerArbitrary.ConsoleData consoleData;
 
   @Nullable
-  private ProcessHandler processHandler;
-  private boolean abort = false;
+  private volatile ProcessHandler processHandler;
+  private volatile boolean abort = false;
 
   AsciiDocBackgroundCommand(@NotNull AsciiDocRunnerArbitrary asciiDocRunnerArbitrary, @NotNull Project project,
                             @NotNull GeneralCommandLine commandLine,
@@ -66,6 +66,23 @@ class AsciiDocBackgroundCommand extends Task.Backgroundable {
 
       // Start notifying Listeners.
       processHandler.startNotify();
+
+      /*
+       For non-interactive commands, close stdin to prevent freezing with interpreters like PowerShell,
+       executing script files.
+       For interactive commands that accept user input (Y/N prompts, etc.), keep stdin open.
+      */
+      if (!asciiDocRunnerArbitrary.isInteractiveCommand()) {
+        try {
+          var input = processHandler.getProcessInput();
+          if (input != null) {
+            input.close();
+          }
+        } catch (Exception ignored) {
+          // Closing input stream might fail in some cases, but we can safely ignore it
+        }
+      }
+
       /*
        Wait indefinitely for process termination. The user can always stop it with the "Abort" button.
        Very useful, e.g., if the user starts an editor from a manual, like "editor -a -h -x -trx:264 ...",

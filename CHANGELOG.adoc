@@ -9,7 +9,11 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.45.7
 
-...
+ * Language running improved:
+ ** Better interpreter finding.
+ ** Interpreters configurable.
+ ** Go, TypeScript execution added.
+ ** Rare race-condition fixed when running a script.
 
 === 0.45.6
 

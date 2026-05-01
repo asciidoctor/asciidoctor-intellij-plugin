@@ -2,22 +2,24 @@ package org.asciidoc.intellij.commandRunner.arbitrary;
 
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.lang.Language;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.SystemInfo;
 import org.asciidoc.intellij.AsciiDocBundle;
+import org.asciidoc.intellij.settings.language.AsciiDocScriptLanguageSetting;
+import org.asciidoc.intellij.settings.language.AsciiDocScriptLanguageSettings;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jspecify.annotations.NonNull;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Locale;
 
+import static org.asciidoc.intellij.commandRunner.arbitrary.AsciiDocLanguageConstants.WIN_EXE_SUFFIX;
+
+/**
+ * Run adhoc Ruby code blocks in AsciiDoc documents.
+ */
 public class AsciiDocRunnerForRuby extends AsciiDocRunnerArbitrary {
   private static final String RUBY_LANGUAGE_ID = "ruby";
 
@@ -26,52 +28,58 @@ public class AsciiDocRunnerForRuby extends AsciiDocRunnerArbitrary {
   private static String interpreterCache = null;
 
   @Override
-  public boolean isApplicable(@NotNull Project project, Language language) {
-    return language != null &&
-      language.getID().equalsIgnoreCase(RUBY_LANGUAGE_ID)
-      && findInterpreter(project) != null;
+  public boolean isApplicable(Language language) {
+    return language != null //
+      && language.getID().equalsIgnoreCase(RUBY_LANGUAGE_ID) //
+      && hasInterpreter();
   }
 
-  @NonNull
   @Override
-  String codeRunParameter() {
-    return "-e";
+  @NotNull
+  List<String> codeRunParameters(@Nullable AsciiDocScriptLanguageSetting languageSetting) {
+    List<String> result = super.codeRunParameters(languageSetting);
+    if (!useTemporaryFile(languageSetting)) {
+      result.add("-e");
+    }
+    return result;
   }
 
   @Nullable
   @Override
-  String findInterpreter(Project project) {
+  String findInterpreter() {
     if (interpreterCache != null) {
       return interpreterCache;
     }
-    // This will most likely only work in RubyMine.
-    Sdk sdk = ProjectRootManager.getInstance(project).getProjectSdk();
-    if (sdk != null && isLikelyRubyInterpreter(sdk.getHomePath())) {
-      return sdk.getHomePath();
+
+    interpreterCache = findRubyInterpreter();
+    return interpreterCache;
+  }
+
+  @Override
+  @Nullable AsciiDocScriptLanguageSetting extractScriptLanguageSetting(
+    AsciiDocScriptLanguageSettings languageSettings) {
+    return languageSettings.getLanguageSettingRuby();
+  }
+
+  @Nullable
+  public static String findRubyInterpreter() {
+    // This will most likely only work in PyCharm.
+    // Check Global SDKs for a Ruby interpreter.
+    String sdkHomePath = findNativeInterpreter(RUBY_EXE);
+    if (sdkHomePath != null) {
+      return sdkHomePath;
     }
 
     // This should also work in IntelliJ.
-    List<String> candidates = SystemInfo.isWindows
-      ? List.of(RUBY_EXE + ".exe", RUBY_EXE)
-      : List.of(RUBY_EXE);
+    List<String> candidates = SystemInfo.isWindows ? List.of(RUBY_EXE + WIN_EXE_SUFFIX) : List.of(RUBY_EXE);
 
     for (String candidate : candidates) {
       if (canExecute(candidate)) {
-        interpreterCache = candidate;
         return candidate;
       }
     }
 
     return null;
-  }
-
-  private static boolean isLikelyRubyInterpreter(@Nullable String homePath) {
-    if (homePath == null || homePath.isBlank()) {
-      return false;
-    }
-
-    String fileName = Paths.get(homePath).getFileName().toString().toLowerCase(Locale.ROOT);
-    return fileName.startsWith(RUBY_LANGUAGE_ID) || fileName.equals("ruby.exe");
   }
 
   private static boolean canExecute(String candidate) {
@@ -89,5 +97,19 @@ public class AsciiDocRunnerForRuby extends AsciiDocRunnerArbitrary {
   @Override
   public String getTitle() {
     return AsciiDocBundle.message("asciidoc.runner.ruby");
+  }
+
+  @NotNull
+  public static List<AsciiDocSuggestedParameter> suggestedParameters() {
+    return List.of(//
+      new AsciiDocSuggestedParameter("-w", "Turn on warnings.", null)
+      //
+    );
+  }
+
+  @Override
+  @NotNull
+  TempFileInfo getTempFileInfo() {
+    return new TempFileInfo(".rb");
   }
 }
