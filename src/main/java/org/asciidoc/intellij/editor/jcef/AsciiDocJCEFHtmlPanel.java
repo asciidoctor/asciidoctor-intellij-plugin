@@ -456,7 +456,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         final Project finalProject = project;
         for (AsciiDocRunner runner : AsciiDocRunner.EP_NAME.getExtensionList()) {
           try {
-            if (runner.isApplicable(finalProject, language)) {
+            if (runner.isApplicable(language)) {
               runner.run(code, finalProject, virtualFile, DefaultRunExecutor.getRunExecutorInstance());
               break;
             }
@@ -491,10 +491,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       if (language == null) {
         return new JBCefJSQuery.Response("Unknown language", 0, "Unknown language");
       }
-      final Project finalProject = project;
       for (AsciiDocRunner runner : AsciiDocRunner.EP_NAME.getExtensionList()) {
         try {
-          if (runner.isApplicable(finalProject, language)) {
+          if (runner.isApplicable(language)) {
             return new JBCefJSQuery.Response("true");
           }
         } catch (NoClassDefFoundError ex) {

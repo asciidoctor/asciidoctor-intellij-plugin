@@ -1,6 +1,5 @@
 package org.asciidoc.intellij.injection;
 
-import com.intellij.diagnostic.ImplementationConflictException;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageUtil;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
@@ -17,8 +16,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LanguageGuesser {
+
+  private static final ConcurrentHashMap<Class<?>, Object> LANGUAGE_LOCKS = new ConcurrentHashMap<>();
 
   private static List<EmbeddedTokenTypesProvider> embeddedTokenTypesProviders() {
     return Arrays.asList(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME.getExtensions());
@@ -124,7 +126,9 @@ public class LanguageGuesser {
      so the language won't be found in the classpath, although JetBrains has support for that
      langauge in general.
       */
-    if (lang.equalsIgnoreCase("javascript")) {
+    if (lang.equalsIgnoreCase("go")) {
+      return findLanguage(GoLanguage.class);
+    } else if (lang.equalsIgnoreCase("javascript")) {
       return findLanguage(JavaScriptLanguage.class);
     } else if (lang.equalsIgnoreCase("python")) {
       return findLanguage(PythonLanguage.class);
@@ -132,22 +136,37 @@ public class LanguageGuesser {
       return findLanguage(PowershellLanguage.class);
     } else if (lang.equalsIgnoreCase("ruby")) {
       return findLanguage(RubyLanguage.class);
+    } else if (lang.equalsIgnoreCase("typescript")) {
+      return findLanguage(TypeScriptLanguage.class);
     }
 
     return null;
   }
 
   private static <T extends Language> T findLanguage(Class<T> clazz) {
-    final T instance = Language.findInstance(clazz);
-    try {
-      return instance != null ? instance : clazz.getDeclaredConstructor().newInstance();
-    } catch (ImplementationConflictException e) {
-      /* The language has already been registered. For unknown reasons the language may not be found
-      via Language.findInstance(clazz), but already be registered. Then just try again. */
-      return Language.findInstance(clazz);
-    } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-      // This is controlled by us, there is definitely a no-parameter public constructor for all classes.
-      throw new RuntimeException(e);
+    T instance = Language.findInstance(clazz);
+    if (instance != null) {
+      return instance;
+    }
+    Object lock = LANGUAGE_LOCKS.computeIfAbsent(clazz, lockObject -> new Object());
+    synchronized (lock) {
+      // Double-checked locking: another thread may have already created the instance
+      instance = Language.findInstance(clazz);
+      if (instance != null) {
+        return instance;
+      }
+      try {
+        return clazz.getDeclaredConstructor().newInstance();
+      } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+        // This is controlled by us, there is definitely a no-parameter public constructor for all classes.
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+  private static class GoLanguage extends Language {
+    protected GoLanguage() {
+      super("go");
     }
   }
 
@@ -177,7 +196,7 @@ public class LanguageGuesser {
 
   private static class TypeScriptLanguage extends Language {
     protected TypeScriptLanguage() {
-      super("typeScript");
+      super("typescript");
     }
   }
 }
