@@ -27,10 +27,13 @@ This is accurate at the block level, but unfortunately, it is not yet accurate a
 If the preview content is part of an included file, the editor opens the included file (new in plugin version 0.32.5).
 When the user clicks on a collapsible block, this click will not place the cursor or open a file.
 
-When using listings with `[source,lang]` and the user moves the mouse over them, 2 arrows appear in the top left corner, so the user can execute that script.
+When using listings with `[source,lang]` and the user moves the mouse over them, 2 arrows appear in the top left corner, so the user can execute that script, if the language is supported.
 Currently supported langauges are Bash, Java, JavaScript, PowerShell, Python and Ruby.
 Java _and_ JShell support need the JShell plugin to be installed and enabled.
-Unsupported languages will just be ignored, even if the arrows appear.
+
+Over every source code block, on mouse hovering over it,
+a copy button appears in the top left corner,
+that can be clicked to copy the source code to the clipboard.
 
 The JCEF, browser preview, and HTML conversion support the https://github.com/asciidoctor/asciidoctor-tabs[Asciidoctor Tabs extension] (new in plugin version 0.40.3).
 For the preview, it sets ths attribute `tabs-sync-option` so any re-rendering keeps the focus on the currently selected tab.

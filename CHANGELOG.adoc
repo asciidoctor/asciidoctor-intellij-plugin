@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Added code execution in the JCEF Preview rendering.
 - Added code execution support for JavaScript, PowerShell, Python and Ruby.
+- Added code copying to the JCEF Preview rendering.
 
 === 0.45.5
 

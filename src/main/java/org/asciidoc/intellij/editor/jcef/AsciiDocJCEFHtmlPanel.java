@@ -22,6 +22,7 @@ import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.fileChooser.FileSaverDescriptor;
 import com.intellij.openapi.fileChooser.FileSaverDialog;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Disposer;
@@ -33,6 +34,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
+import com.intellij.openapi.wm.WindowManager;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -43,6 +45,7 @@ import com.intellij.ui.jcef.JBCefJSQuery;
 import com.intellij.ui.jcef.JBCefPsiNavigationUtils;
 import com.intellij.ui.jcef.JCEFHtmlPanel;
 import com.intellij.ui.scale.JBUIScale;
+import com.intellij.util.ui.TextTransferable;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.asciidoc.intellij.AsciiDocWrapper;
@@ -126,6 +129,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private JBCefJSQuery mySaveImage;
   private JBCefJSQuery myBrowserLog;
   private JBCefJSQuery myOpenLink;
+  private JBCefJSQuery myCopyCode;
   private JBCefJSQuery myRunCode;
   private JBCefJSQuery myIsApplicable;
   private volatile CountDownLatch rendered = new CountDownLatch(1);
@@ -157,6 +161,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processImages.js")).append("\"></script>\n")
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("pickSourceLine.js")).append("\"></script>\n")
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("mouseEvents.js")).append("\"></script>\n")
+      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("copyCodeBlock.js")).append("\"></script>\n")
       .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("runCodeBlock.js")).append("\"></script>\n")
       .append("""
         <script type="text/x-mathjax-config">
@@ -311,6 +316,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     myZoomReset = JBCefJSQuery.create((JBCefBrowserBase) this);
     mySaveImage = JBCefJSQuery.create((JBCefBrowserBase) this);
     myOpenLink = JBCefJSQuery.create((JBCefBrowserBase) this);
+    myCopyCode = JBCefJSQuery.create((JBCefBrowserBase) this);
     myRunCode = JBCefJSQuery.create((JBCefBrowserBase) this);
     myIsApplicable = JBCefJSQuery.create((JBCefBrowserBase) this);
 
@@ -398,6 +404,19 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         return null;
       }
       openLink(r);
+      return null;
+    });
+
+    myCopyCode.addHandler((String codeBlock) -> {
+      CopyPasteManager.getInstance().setContents(new TextTransferable(codeBlock));
+
+      Project project = editor != null ? editor.getProject() : null;
+      if (project != null) {
+        var statusBar = WindowManager.getInstance().getStatusBar(project);
+        if (statusBar != null) {
+          statusBar.setInfo("Code block copied to clipboard");
+        }
+      }
       return null;
     });
 
@@ -522,6 +541,10 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     if (myOpenLink != null) {
       myOpenLink.clearHandlers();
       Disposer.dispose(myOpenLink);
+    }
+    if (myCopyCode != null) {
+      myCopyCode.clearHandlers();
+      Disposer.dispose(myCopyCode);
     }
     if (myRunCode != null) {
       myRunCode.clearHandlers();
@@ -755,6 +778,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
             "__IntelliJTools.processImages && __IntelliJTools.processImages();" +
             "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ");" +
+            "__IntelliJTools.addCopyButtons && __IntelliJTools.addCopyButtons();" +
             "__IntelliJTools.addRunButtons && __IntelliJTools.addRunButtons();" +
             "}" +
             "window.JavaPanelBridge && window.JavaPanelBridge.rendered(" + iterationStamp + ");" +
@@ -780,6 +804,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "var elem2 = document.getElementById('content'); " +
             "__IntelliJTools.clearLinks && __IntelliJTools.clearLinks();" +
             "__IntelliJTools.clearSourceLine && __IntelliJTools.clearSourceLine();" +
+            "__IntelliJTools.clearCopyButtons && __IntelliJTools.clearCopyButtons();" +
             "__IntelliJTools.clearRunButtons && __IntelliJTools.clearRunButtons();" +
             "elem2.parentNode.replaceChild(div.firstChild, elem2); " +
             "finish(); }); } " +
@@ -787,6 +812,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "else { " +
             "__IntelliJTools.clearLinks && __IntelliJTools.clearLinks();" +
             "__IntelliJTools.clearSourceLine && __IntelliJTools.clearSourceLine();" +
+            "__IntelliJTools.clearCopyButtons && __IntelliJTools.clearCopyButtons();" +
             "__IntelliJTools.clearRunButtons && __IntelliJTools.clearRunButtons();" +
             "elem.parentNode.replaceChild(div.firstChild, elem); " +
             "MathJax.Hub.Typeset(div.firstChild); " +
@@ -1191,6 +1217,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "saveImage : function(src) {" +
             mySaveImage.inject("src") +
             "}," +
+            "copyCode : function(data) {" +
+            myCopyCode.inject("data") +
+            "}," +
             "runCode : function(data) {" +
             myRunCode.inject("data") +
             "}," +
@@ -1203,6 +1232,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "__IntelliJTools.processImages && __IntelliJTools.processImages();" +
             "__IntelliJTools.pickSourceLine && __IntelliJTools.pickSourceLine(" + lineCount + ");" +
             "__IntelliJTools.addMouseHandler && __IntelliJTools.addMouseHandler();" +
+            "__IntelliJTools.addCopyButtons && __IntelliJTools.addCopyButtons();" +
             "__IntelliJTools.addRunButtons && __IntelliJTools.addRunButtons();" +
             "}; " +
             "JavaPanelBridge.rendered(window.iterationStamp);",
