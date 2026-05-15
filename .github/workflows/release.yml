@@ -70,7 +70,7 @@ jobs:
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         with:
           environment: production
-          version: ${{ github.ref }}
+          release: ${{ github.ref }}
           inject: false
   cleanup:
     name: Cleanup old builds
