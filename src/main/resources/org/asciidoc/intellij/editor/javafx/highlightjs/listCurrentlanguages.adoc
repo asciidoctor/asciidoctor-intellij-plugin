@@ -1,0 +1,34 @@
+// Also test the highlight.min.js with this. Plus:
+// "coderay" does neither support bash nor PowerShell,
+// at version 1.1.2. Bash is planned for 1.2, but
+// PowerShell not at all.
+:source-highlighter: highlight.js
+
+= List currently supported languages
+
+To list all currently supported languages in `highlight.min.js`, run the following shell command, depending on your operating system:
+
+== Bash (Linux)
+
+[source,bash]
+----
+grep -oP 'registerLanguage\("\K[^"]+' highlight.min.js > currentLanguages.txt
+----
+
+== PowerShell (Windows)
+
+[source,PowerShell]
+----
+Select-String -AllMatches -Path highlight.min.js `
+    -Pattern 'registerLanguage\("([^"]+)'`
+    | ForEach-Object {`
+        $_.Matches | ForEach-Object { $_.Groups[1].Value }`
+    } > currentLanguages.txt
+----
+
+You can of course install `bash` and `PowerShell` on both operating systems, but they aren't preinstalled in default setups.
+
+== Result
+
+The file `currentLanguages.txt` will then contain a list of all languages, supported in `highlight.min.js`.
+The advantage is that this is self-documenting, and can't be forgotten to maintain.
