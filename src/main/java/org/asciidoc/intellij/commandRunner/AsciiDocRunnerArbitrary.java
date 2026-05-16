@@ -31,6 +31,9 @@ import org.jspecify.annotations.NonNull;
 
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Abstract base class to run code in arbitrary language.
+ */
 public abstract class AsciiDocRunnerArbitrary implements AsciiDocRunner {
   private static final Logger LOG = Logger.getInstance(AsciiDocRunnerArbitrary.class);
   private static final int PROCESS_TIMEOUT_MILLIS = 30_000;

@@ -38,10 +38,10 @@ public class AsciiDocRunnerForPowershell extends AsciiDocRunnerArbitrary {
   }
 
   public static boolean isPowerShell(String value) {
-    return value.equals("powershell")
-      || value.equals("pwsh")
-      || value.equals("ps1")
-      || value.equals("posh")
-      || value.equals("power shell");
+    return value.equalsIgnoreCase("powershell")
+      || value.equalsIgnoreCase("pwsh")
+      || value.equalsIgnoreCase("ps1")
+      || value.equalsIgnoreCase("posh")
+      || value.equalsIgnoreCase("power shell");
   }
 }
