@@ -73,7 +73,7 @@ window.__IntelliJTools.addCopyButton = function (block, codeEl, lang) {
     event.stopPropagation()
     event.preventDefault()
     let codeText = codeEl.textContent || codeEl.innerText || ''
-    window.JavaPanelBridge.copyCode(lang + '\n' + codeText)
+    window.JavaPanelBridge.copyCode(codeText)
   })
   block.appendChild(btn)
 }

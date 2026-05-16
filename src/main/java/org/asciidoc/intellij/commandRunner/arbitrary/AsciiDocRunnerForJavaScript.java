@@ -1,4 +1,4 @@
-package org.asciidoc.intellij.commandRunner;
+package org.asciidoc.intellij.commandRunner.arbitrary;
 
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.lang.Language;

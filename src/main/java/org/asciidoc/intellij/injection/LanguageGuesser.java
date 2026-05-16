@@ -4,7 +4,7 @@ import com.intellij.diagnostic.ImplementationConflictException;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageUtil;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
-import org.asciidoc.intellij.commandRunner.AsciiDocRunnerForPowershell;
+import org.asciidoc.intellij.commandRunner.arbitrary.AsciiDocRunnerForPowershell;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
 import org.jetbrains.annotations.NotNull;
