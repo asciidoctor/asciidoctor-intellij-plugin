@@ -9,7 +9,9 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.45.5
 
-...
+* Updated `highlight.min.js` from 10.7.2 to 11.11.1.
+* Added the following langauges to `highlight.min.js`:     AspectJ, Basic, Delphi, Dockerfile, GLSL, Gradle,
+    GraphQL, Handlebars, Latex, PowerShell, Scala.
 
 === 0.45.4
 
