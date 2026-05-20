@@ -1538,7 +1538,7 @@ public class AsciiDocWrapper {
                 try (InputStream is = file.getInputStream()) {
                   content = IOUtils.toString(is, StandardCharsets.UTF_8);
                 } catch (IOException ex) {
-                  content = "<!-- unable to read contents from from " + file.getCanonicalPath() + ": " + ex.getMessage() + " -->";
+                  content = "<!-- unable to read contents from " + file.getCanonicalPath() + ": " + ex.getMessage() + " -->";
                 }
                 content = replaceAttributes(content, attributes);
                 html = html
@@ -1556,7 +1556,7 @@ public class AsciiDocWrapper {
                 try (InputStream is = file.getInputStream()) {
                   content = IOUtils.toString(is, StandardCharsets.UTF_8);
                 } catch (IOException ex) {
-                  content = "<!-- unable to read contents from from " + file.getCanonicalPath() + ": " + ex.getMessage() + " -->";
+                  content = "<!-- unable to read contents from " + file.getCanonicalPath() + ": " + ex.getMessage() + " -->";
                 }
                 content = replaceAttributes(content, attributes);
                 html = html
@@ -1685,9 +1685,12 @@ public class AsciiDocWrapper {
         }
       }
       // add styleheet at the end of the header to avoid interfering with the mechanism to unload the standard stylesheet once the custom stylesheet has been loaded
+      // language=JavaScript
       html = html
           .replace("</head>", "<link rel='stylesheet' data-default type='text/css' href='" + css + "' />" + "</head>");
+      // language=JavaScript
       html = html.replace("</body>", js + "</body>");
+      // language=JavaScript
       html = html.replace("</body>", """
         <script>
         if (!hljs.initHighlighting.called) {

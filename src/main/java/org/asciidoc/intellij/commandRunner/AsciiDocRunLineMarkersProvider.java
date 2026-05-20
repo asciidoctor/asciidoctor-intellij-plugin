@@ -173,7 +173,7 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor imp
     }
     AsciiDocRunner runner = AsciiDocRunner.EP_NAME.getExtensionList().stream().filter(r -> {
       try {
-        return r.isApplicable(language);
+        return r.isApplicable(listing.getProject(), language);
       } catch (NoClassDefFoundError ex) {
         // this might fail due to the optional dependency being loaded after the AsciiDoc plugin in the wrong classloader
         // https://youtrack.jetbrains.com/issue/IDEA-287090/

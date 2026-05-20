@@ -13,6 +13,7 @@ When building or running for the first time, the build-script downloads the comm
 
 To build this plugin, run:
 
+[source,bash]
 ----
 ./gradlew -Dfile.encoding=UTF-8 buildPlugin
 ----

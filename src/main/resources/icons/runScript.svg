@@ -1,0 +1,20 @@
+<!--
+ SVG icon for "AsciiDocRunnerArbitrary" tool window.
+ The icon design should work with both, dark and bright themes.
+ -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+     width="24" height="24" fill="none">
+    <defs>
+        <linearGradient id="bg" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#282828"/>
+            <stop offset="1" stop-color="#404040"/>
+        </linearGradient>
+    </defs>
+    <rect x="2" y="2" width="20" height="20" rx="4" fill="url(#bg)" stroke="#FFFFFF" stroke-width="1.5"/>
+    <!-- left arrow -->
+    <path d="M7.5 8.2l3 3.8-3 3.8" stroke="#00FF00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M13.8 18.9h4.4" stroke="#00FFB0" stroke-width="2" stroke-linecap="round"/>
+    <!-- right arrow -->
+    <path d="M14.6 8.2l3 3.8-3 3.8" stroke="#00FFB0" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round"/>
+</svg>
