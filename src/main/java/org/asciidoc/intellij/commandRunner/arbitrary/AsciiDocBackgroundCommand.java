@@ -4,7 +4,6 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.KillableColoredProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -23,25 +22,23 @@ import java.time.Instant;
 class AsciiDocBackgroundCommand extends Task.Backgroundable {
   private static final Logger LOG = Logger.getInstance(AsciiDocBackgroundCommand.class);
 
-  // Wait 24 hours. The user can abort manually any time.
-  private static final int PROCESS_TIMEOUT_MILLIS = 24 * 60 * 60 * 1_000;
-
   private final AsciiDocRunnerArbitrary asciiDocRunnerArbitrary;
   private final Project project;
   private final GeneralCommandLine commandLine;
-  private final ConsoleView consoleView;
+  private final AsciiDocRunnerArbitrary.ConsoleData consoleData;
 
   @Nullable
   private ProcessHandler processHandler;
   private boolean abort = false;
 
   AsciiDocBackgroundCommand(@NotNull AsciiDocRunnerArbitrary asciiDocRunnerArbitrary, @NotNull Project project,
-                            @NotNull GeneralCommandLine commandLine, @NotNull ConsoleView consoleView) {
+                            @NotNull GeneralCommandLine commandLine,
+                            @NotNull AsciiDocRunnerArbitrary.ConsoleData consoleData) {
     super(project, asciiDocRunnerArbitrary.getTitle());
     this.asciiDocRunnerArbitrary = asciiDocRunnerArbitrary;
     this.project = project;
     this.commandLine = commandLine;
-    this.consoleView = consoleView;
+    this.consoleData = consoleData;
   }
 
   /**
@@ -65,13 +62,18 @@ class AsciiDocBackgroundCommand extends Task.Backgroundable {
       Instant start = Instant.now();
       processHandler = new KillableColoredProcessHandler(commandLine);
 
-      consoleView.attachToProcess(processHandler);
+      consoleData.consoleView().attachToProcess(processHandler);
 
       // Start notifying Listeners.
       processHandler.startNotify();
-      if (!processHandler.waitFor(PROCESS_TIMEOUT_MILLIS)) {
+      /*
+       Wait indefinitely for process termination. The user can always stop it with the "Abort" button.
+       Very useful, e.g., if the user starts an editor from a manual, like "editor -a -h -x -trx:264 ...",
+       and works on it for a few days, not shutting the pc down between work days.
+       */
+      if (!processHandler.waitFor() && !abort && isRunning()) {
         processHandler.destroyProcess();
-        String timeoutMessage = "%s execution timed out after %d ms.".formatted(getTitle(), PROCESS_TIMEOUT_MILLIS);
+        String timeoutMessage = "Forcefully killed %s after error.".formatted(getTitle());
         appendSystemLine(timeoutMessage);
         asciiDocRunnerArbitrary.showError(project, timeoutMessage);
         return;
@@ -104,8 +106,8 @@ class AsciiDocBackgroundCommand extends Task.Backgroundable {
    * @param message Message.
    */
   private void appendSystemLine(String message) {
-    ApplicationManager.getApplication().invokeLater(() -> consoleView.print("[system] " + message + "\n",
-      ConsoleViewContentType.SYSTEM_OUTPUT));
+    ApplicationManager.getApplication().invokeLater(
+      () -> consoleData.consoleView().print("[system] " + message + "\n", ConsoleViewContentType.SYSTEM_OUTPUT));
   }
 
   /**
@@ -121,7 +123,7 @@ class AsciiDocBackgroundCommand extends Task.Backgroundable {
    * Terminate process.
    */
   public void abort() {
-    if (isRunning()) {
+    if (isRunning() && processHandler != null) {
       abort = true;
       processHandler.destroyProcess();
     }
@@ -134,5 +136,14 @@ class AsciiDocBackgroundCommand extends Task.Backgroundable {
    */
   public boolean isRunning() {
     return !isBasicallyTerminated();
+  }
+
+  /**
+   * Rerun the command.<br>
+   * If a command is currently running it gets aborted.
+   */
+  public void rerun() {
+    abort();
+    asciiDocRunnerArbitrary.rerun(project, commandLine, consoleData);
   }
 }

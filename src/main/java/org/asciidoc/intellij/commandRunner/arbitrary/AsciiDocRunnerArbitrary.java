@@ -33,13 +33,15 @@ import java.nio.charset.StandardCharsets;
  */
 public abstract class AsciiDocRunnerArbitrary implements AsciiDocRunner {
   /**
-   * Console-View and the Abort-Action belonging to it.
+   * Console-View, Abort- and Repeat-Action belonging to it.
    *
-   * @param consoleView Console-View.
-   * @param abortAction Abort-Action.
+   * @param consoleView  Console-View.
+   * @param abortAction  Abort-Action.
+   * @param repeatAction Repeat-Action.
    */
-  private record ConsoleData(@NotNull ConsoleView consoleView,
-                             @NotNull AsciiDocAbortRunnerAction abortAction) { // For Checkstyle.
+  record ConsoleData(@NotNull ConsoleView consoleView,
+                     @NotNull AsciiDocAbortRunnerAction abortAction,
+                     @NotNull AsciiDocRerunRunnerAction repeatAction) {
   }
 
   private static final String TOOL_WINDOW_ID = "AsciiDoc Runner";
@@ -70,10 +72,21 @@ public abstract class AsciiDocRunnerArbitrary implements AsciiDocRunner {
 
     // InvokeLater to get the Log-Console in the UI-Task.
     ApplicationManager.getApplication().invokeLater(() -> {
-      ConsoleData consoleView = openLogConsole(project, virtualFile);
-      runCommand(project, commandLine, consoleView);
+      ConsoleData consoleData = openLogConsole(project, virtualFile);
+      runCommand(project, commandLine, consoleData);
     });
     return true;
+  }
+
+  /**
+   * Rerun the current command in the same console as before, appending output to the existing output.
+   *
+   * @param project     Project.
+   * @param commandLine Command line.
+   * @param consoleData ConsoleData.
+   */
+  void rerun(Project project, GeneralCommandLine commandLine, ConsoleData consoleData) {
+    ApplicationManager.getApplication().invokeLater(() -> runCommand(project, commandLine, consoleData));
   }
 
   /**
@@ -94,9 +107,10 @@ public abstract class AsciiDocRunnerArbitrary implements AsciiDocRunner {
   private void runCommand(Project project, GeneralCommandLine commandLine, ConsoleData consoleData) {
     // ProgressManager to run long-running tasks in the background.
     AsciiDocBackgroundCommand backgroundCommand =
-      new AsciiDocBackgroundCommand(this, project, commandLine, consoleData.consoleView);
+      new AsciiDocBackgroundCommand(this, project, commandLine, consoleData);
     // Must be set before "run" call.
     consoleData.abortAction.setAsciiDocBackgroundCommand(backgroundCommand);
+    consoleData.repeatAction.setAsciiDocBackgroundCommand(backgroundCommand);
     ProgressManager.getInstance().run(backgroundCommand);
   }
 
@@ -118,7 +132,8 @@ public abstract class AsciiDocRunnerArbitrary implements AsciiDocRunner {
   abstract String findInterpreter(Project project);
 
   /**
-   * Create console to log and view output of script / command.
+   * Create console to log and view output of script / command.<br>
+   * It's a standard console, which is configured over the general UI settings.
    *
    * @param project     Project.
    * @param virtualFile Virtual file.
@@ -135,9 +150,15 @@ public abstract class AsciiDocRunnerArbitrary implements AsciiDocRunner {
 
     // Create the toolbar with the abort action
     DefaultActionGroup actionGroup = new DefaultActionGroup();
+
     AsciiDocAbortRunnerAction abortAction = new AsciiDocAbortRunnerAction();
     actionGroup.add(abortAction);
-    ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("AsciiDocConsoleToolbar", actionGroup, false);
+
+    AsciiDocRerunRunnerAction rerunAction = new AsciiDocRerunRunnerAction();
+    actionGroup.add(rerunAction);
+
+    ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar("AsciiDocConsoleToolbar", actionGroup,
+      false);
     toolbar.setTargetComponent(consoleView.getComponent());
 
     mainPanel.add(toolbar.getComponent(), BorderLayout.WEST);
@@ -150,7 +171,7 @@ public abstract class AsciiDocRunnerArbitrary implements AsciiDocRunner {
     toolWindow.getContentManager().setSelectedContent(content);
     toolWindow.show();
 
-    return new ConsoleData(consoleView, abortAction);
+    return new ConsoleData(consoleView, abortAction, rerunAction);
   }
 
   /**

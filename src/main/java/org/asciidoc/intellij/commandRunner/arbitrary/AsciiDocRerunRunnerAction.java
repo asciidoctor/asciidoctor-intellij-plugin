@@ -6,11 +6,11 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
 
-class AsciiDocAbortRunnerAction extends AnAction {
+class AsciiDocRerunRunnerAction extends AnAction {
   private AsciiDocBackgroundCommand asciiDocBackgroundCommand;
 
-  AsciiDocAbortRunnerAction() {
-    super("Abort", "Abort the running command", AllIcons.Actions.Suspend);
+  AsciiDocRerunRunnerAction() {
+    super("Rerun", "Rerun the command", AllIcons.Actions.Rerun);
   }
 
   @Override
@@ -20,13 +20,13 @@ class AsciiDocAbortRunnerAction extends AnAction {
 
   @Override
   public void update(@NotNull AnActionEvent event) {
-    event.getPresentation().setEnabled(asciiDocBackgroundCommand != null && asciiDocBackgroundCommand.isRunning());
+    event.getPresentation().setEnabled(asciiDocBackgroundCommand != null);
   }
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
     if (asciiDocBackgroundCommand != null) {
-      asciiDocBackgroundCommand.abort();
+      asciiDocBackgroundCommand.rerun();
     }
   }
 
