@@ -10,10 +10,11 @@ import com.intellij.sh.ShLanguage;
 import com.intellij.sh.run.ShRunner;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 
 public class AsciiDocRunnerForSh implements AsciiDocRunner {
   @Override
-  public boolean isApplicable(Language language) {
+  public boolean isApplicable(@NotNull Project project, Language language) {
     return language != null && language.is(ShLanguage.INSTANCE);
   }
 
@@ -25,7 +26,10 @@ public class AsciiDocRunnerForSh implements AsciiDocRunner {
       workingDirectory = workingDirectory.replace("/", "\\") + "\\";
     }
     if (shRunner != null && shRunner.isAvailable(project)) {
-      shRunner.run(project, command, workingDirectory, AsciiDocBundle.message("asciidoc.runner.snippet"), true);
+      String finalWorkingDirectory = workingDirectory;
+      ApplicationManager.getApplication().invokeLaterOnWriteThread(() ->
+        shRunner.run(project, command, finalWorkingDirectory,
+          AsciiDocBundle.message("asciidoc.runner.snippet"), true));
     }
     return true;
   }
