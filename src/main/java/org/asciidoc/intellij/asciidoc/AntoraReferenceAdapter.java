@@ -81,19 +81,22 @@ public class AntoraReferenceAdapter {
     if (URL_PREFIX_PATTERN.matcher(target).find()) {
       return null;
     }
-    Matcher matcher = ANTORA_PREFIX_AND_FAMILY_PATTERN.matcher(target);
+    // Antora may present a family-only resource id in its empty-module form, e.g. ":example$path";
+    // a leading colon means "current module", so strip it before resolving.
+    String normalized = target.startsWith(":") ? target.substring(1) : target;
+    Matcher matcher = ANTORA_PREFIX_AND_FAMILY_PATTERN.matcher(normalized);
     if (!matcher.find()) {
       // no Antora family/prefix (e.g. a plain relative path or a PlantUML standard library include) -> leave to caller
       return null;
     }
-    if (matcher.group().length() == 2 && matcher.group().charAt(1) == ':' && target.length() > 2 && target.charAt(2) == '/') {
+    if (matcher.group().length() == 2 && matcher.group().charAt(1) == ':' && normalized.length() > 2 && normalized.charAt(2) == '/') {
       // probably an already expanded windows path name (c:/...)
       return null;
     }
     VirtualFile sourceDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
     // diagram sources are commonly kept in the example family; the explicit prefix in the target wins anyway
-    List<String> replaced = AsciiDocUtil.replaceAntoraPrefix(project, antoraModuleDir, sourceDir, target, "example");
-    if (replaced.isEmpty() || (replaced.size() == 1 && replaced.get(0).equals(target))) {
+    List<String> replaced = AsciiDocUtil.replaceAntoraPrefix(project, antoraModuleDir, sourceDir, normalized, "example");
+    if (replaced.isEmpty() || (replaced.size() == 1 && replaced.get(0).equals(normalized))) {
       // unable to replace
       return null;
     }

@@ -1,8 +1,11 @@
 package org.asciidoc.intellij;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import org.asciidoc.intellij.asciidoc.AntoraReferenceAdapter;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -14,6 +17,7 @@ import org.junit.Assert;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -35,6 +39,94 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
   public void setUp() throws Exception {
     super.setUp();
     asciidocWrapper = new AsciiDocWrapper(getProject(), LocalFileSystem.getInstance().findFileByIoFile(new File(System.getProperty("java.io.tmpdir"))), null, "test");
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return new File("build/resources/test/testData/psi").getAbsolutePath();
+  }
+
+  // Regression test for #516: resolveAntoraResourcePath turns an Antora resource id (the form used as a
+  // Kroki diagram target and inside PlantUML !include, including the empty-module ":example$..." form)
+  // into a local path within the current Antora module. kroki-antora.rb relies on this so that
+  // plantuml::example$...[] and !include example$... resolve in the preview. Reuses the antoraModule
+  // fixture that the resolution tests in AsciiDocPsiTest also use.
+  public void testShouldResolveAntoraExampleResourceId() {
+    VirtualFile root = myFixture.copyDirectoryToProject("antoraModule", "antoraModule");
+    VirtualFile moduleDir = root.findFileByRelativePath("componentV1/modules/ROOT");
+    assertThat(moduleDir).isNotNull();
+    AntoraReferenceAdapter.setAntoraDetails(getProject(), moduleDir, new File(moduleDir.getPath() + "/pages"), "test.adoc");
+    try {
+      String resolved = AntoraReferenceAdapter.resolveAntoraResourcePath("example$example.txt");
+      assertThat(resolved).withFailMessage("example$ id should resolve to a local path").isNotNull();
+      assertThat(resolved.replace('\\', '/')).endsWith("componentV1/modules/ROOT/examples/example.txt");
+
+      // Antora may present a family-only id in its empty-module form ":example$..."
+      assertThat(AntoraReferenceAdapter.resolveAntoraResourcePath(":example$example.txt")).isEqualTo(resolved);
+
+      // not an Antora resource id (no family prefix) / a URL -> null, so the caller keeps the original target
+      assertThat(AntoraReferenceAdapter.resolveAntoraResourcePath("example.txt")).isNull();
+      assertThat(AntoraReferenceAdapter.resolveAntoraResourcePath("https://example.com/example.txt")).isNull();
+    } finally {
+      AntoraReferenceAdapter.setAntoraDetails(null, null, null, null);
+    }
+  }
+
+  // Regression test for #516 (Part 2): the PlantUML include preprocessor in kroki-antora.rb must inline
+  // !include / !includesub directives that point at Antora resources (resolved to local files) before
+  // the diagram is handed to Kroki, and strip the @startuml/@enduml tags. We drive the real Ruby code
+  // (kroki-extension.rb + kroki-antora.rb) with a stubbed resolver so the test is independent of Antora
+  // module resolution (which is covered separately by testShouldResolveAntoraExampleResourceId).
+  public void testShouldInlineAntoraResourceIncludesInPlantUml() throws Exception {
+    File dir = new File(System.getProperty("java.io.tmpdir"), "krokiPreprocess-" + System.nanoTime());
+    assertThat(dir.mkdirs()).isTrue();
+    org.asciidoctor.Asciidoctor adoc = org.asciidoctor.Asciidoctor.Factory.create();
+    try {
+      Files.writeString(new File(dir, "model.puml").toPath(),
+        "@startuml\n!startsub PART\nclass PartialMarker\n!endsub\nclass Unused\n@enduml\n", UTF_8);
+      Files.writeString(new File(dir, "layout.puml").toPath(),
+        "@startuml\nskinparam backgroundColor LayoutMarker\n@enduml\n", UTF_8);
+      // warm up the Ruby runtime so Asciidoctor's top-level Extensions constant is available when the
+      // kroki extension registers itself (mirrors how the plugin loads it mid-render).
+      adoc.convert("warmup", org.asciidoctor.Options.builder().safe(SafeMode.UNSAFE).build());
+      org.jruby.Ruby ruby = ((org.asciidoctor.jruby.internal.JRubyAsciidoctor) adoc).getRubyRuntime();
+      // kroki-extension.rb registers itself via a top-level `Extensions.register` (= Asciidoctor::Extensions);
+      // make that constant resolvable at top level in this standalone runtime so the script loads.
+      ruby.evalScriptlet("require 'asciidoctor/extensions'; "
+        + "Object.const_set(:Extensions, Asciidoctor::Extensions) unless Object.const_defined?(:Extensions)");
+      try (InputStream is = AsciiDocWrapper.class.getResourceAsStream("/kroki-extension.rb")) {
+        adoc.rubyExtensionRegistry().loadClass(is);
+      }
+      try (InputStream is = AsciiDocWrapper.class.getResourceAsStream("/kroki-antora.rb")) {
+        adoc.rubyExtensionRegistry().loadClass(is);
+      }
+      String base = dir.getPath().replace("\\", "/");
+      String script = ""
+        + "module AsciidoctorExtensions\n"
+        + "  module AntoraKroki\n"
+        + "    def self.resolve(t)\n"
+        + "      return nil unless t.is_a?(String) && t.start_with?('example$')\n"
+        + "      '" + base + "/' + t.sub('example$', '')\n"
+        + "    end\n"
+        + "  end\n"
+        + "end\n"
+        + "AsciidoctorExtensions::AntoraKroki.preprocess("
+        + "\"@startuml\\n!include example$layout.puml\\n!includesub example$model.puml!PART\\nclass MainMarker\\n@enduml\\n\")\n";
+      String out = ruby.evalScriptlet(script).asJavaString();
+
+      assertThat(out)
+        .withFailMessage("preprocessed diagram should inline target + includes and drop antora/plantuml syntax: %s", out)
+        .contains("MainMarker")          // the diagram's own content is kept
+        .contains("LayoutMarker")        // plain !include example$ inlined (first @startuml block)
+        .contains("PartialMarker")       // !includesub example$...!PART inlined (the named sub only)
+        .doesNotContain("Unused")        // content outside the !startsub/!endsub region is not included
+        .doesNotContain("example$")
+        .doesNotContain("!include")
+        .doesNotContain("@startuml");
+    } finally {
+      adoc.shutdown();
+      FileUtil.delete(dir);
+    }
   }
 
   public void testShouldRenderPlainAsciidoc() {
