@@ -62,6 +62,44 @@ public class AntoraReferenceAdapter {
     convertAntora(node, "video");
    }
 
+  /**
+   * Resolve an Antora resource identifier (for example {@code example$diagram.puml}, {@code partial$x.puml})
+   * to an absolute path on the local file system, relative to the current Antora module.
+   * <p>
+   * Used by the Kroki extension ({@code kroki-antora.rb}) to resolve diagram block-macro targets and
+   * PlantUML {@code !include} directives, which Asciidoctor does not resolve on its own (see
+   * <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/516">#516</a>).
+   *
+   * @param target an Antora resource id, possibly with a family prefix
+   * @return the absolute file system path, or {@code null} if not in an Antora module, not a resource id,
+   * a URL, or not resolvable (callers should then fall back to the unmodified target)
+   */
+  public static String resolveAntoraResourcePath(String target) {
+    if (antoraModuleDir == null || target == null || target.isEmpty()) {
+      return null;
+    }
+    if (URL_PREFIX_PATTERN.matcher(target).find()) {
+      return null;
+    }
+    Matcher matcher = ANTORA_PREFIX_AND_FAMILY_PATTERN.matcher(target);
+    if (!matcher.find()) {
+      // no Antora family/prefix (e.g. a plain relative path or a PlantUML standard library include) -> leave to caller
+      return null;
+    }
+    if (matcher.group().length() == 2 && matcher.group().charAt(1) == ':' && target.length() > 2 && target.charAt(2) == '/') {
+      // probably an already expanded windows path name (c:/...)
+      return null;
+    }
+    VirtualFile sourceDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
+    // diagram sources are commonly kept in the example family; the explicit prefix in the target wins anyway
+    List<String> replaced = AsciiDocUtil.replaceAntoraPrefix(project, antoraModuleDir, sourceDir, target, "example");
+    if (replaced.isEmpty() || (replaced.size() == 1 && replaced.get(0).equals(target))) {
+      // unable to replace
+      return null;
+    }
+    return replaced.get(0);
+  }
+
   @SuppressWarnings("checkstyle:MethodLength")
   public static void convertAntora(RubyObject node, String type) {
     if (antoraModuleDir != null) {
