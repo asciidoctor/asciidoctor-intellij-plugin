@@ -89,7 +89,7 @@ public class AntoraReferenceAdapter {
       // no Antora family/prefix (e.g. a plain relative path or a PlantUML standard library include) -> leave to caller
       return null;
     }
-    if (matcher.group().length() == 2 && matcher.group().charAt(1) == ':' && normalized.length() > 2 && normalized.charAt(2) == '/') {
+    if (isExpandedWindowsPath(matcher, normalized)) {
       // probably an already expanded windows path name (c:/...)
       return null;
     }
@@ -101,6 +101,13 @@ public class AntoraReferenceAdapter {
       return null;
     }
     return replaced.get(0);
+  }
+
+  // The ANTORA_PREFIX_AND_FAMILY_PATTERN also matches an already-expanded Windows path (e.g. "c:/..."),
+  // which must not be treated as an Antora resource id.
+  private static boolean isExpandedWindowsPath(Matcher matcher, String target) {
+    return matcher.group().length() == 2 && matcher.group().charAt(1) == ':'
+      && target.length() > 2 && target.charAt(2) == '/';
   }
 
   @SuppressWarnings("checkstyle:MethodLength")
@@ -136,7 +143,7 @@ public class AntoraReferenceAdapter {
       }
       Matcher matcher = ANTORA_PREFIX_AND_FAMILY_PATTERN.matcher(target);
       if (matcher.find()) {
-        if (matcher.group().length() == 2 && matcher.group().charAt(1) == ':' && target.length() > 2 && target.charAt(2) == '/') {
+        if (isExpandedWindowsPath(matcher, target)) {
           // if the second character is a colon, this is probably an already expanded windows path name
           return;
         }

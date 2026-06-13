@@ -20,9 +20,11 @@ require 'java'
 module AsciidoctorExtensions
   # Antora-aware PlantUML preprocessing helpers.
   module AntoraKroki
-    PLANTUML_FIRST_BLOCK_RX = /@startuml(?:\r?\n)([\s\S]*?)(?:\r?\n)@enduml/m
-    PLANTUML_BLOCKS_RX = /@startuml(?:\r?\n)([\s\S]*?)(?:\r?\n)@enduml/m
+    PLANTUML_BLOCK_RX = /@startuml(?:\r?\n)([\s\S]*?)(?:\r?\n)@enduml/m
     INCLUDE_RX = /^\s*!(include(?:_many|_once|url|sub)?)\s+(.*)$/
+    # Start of a trailing PlantUML comment in an !include line: an inline " #..." (introduced by a
+    # space) or a block "/'...". A backslash before the marker escapes it (so it is not a comment).
+    COMMENT_RX = %r{(?<!\\) #|(?<!\\)/'}
 
     module_function
 
@@ -102,21 +104,20 @@ module AsciidoctorExtensions
       original
     end
 
-    # Split a !include argument into [target, trailing-comment], honoring "# ..." and "/' ... '/" comments.
+    # Split a "!include" argument into [target, trailing-comment]. The space introducing a "#" comment
+    # is dropped; the "/" of a "/'" comment is kept (matching PlantUML). With no comment the whole
+    # value is the target and the comment is empty.
     def parse_target(value)
-      i = 3
-      while i < value.length
-        c = value[i]
-        return [value[0...(i - 1)].strip, value[(i - 1)..]] if c == "'" && value[i - 1] == '/' && value[i - 2] != '\\'
-        return [value[0...(i - 1)].strip, value[i..]] if c == '#' && value[i - 1] == ' ' && value[i - 2] != '\\'
+      match = COMMENT_RX.match(value)
+      return [value, ''] unless match
 
-        i += 1
-      end
-      [value, '']
+      marker = match.begin(0)
+      comment_start = value[marker] == ' ' ? marker + 1 : marker
+      [value[0...marker].strip, value[comment_start..]]
     end
 
     def first_block(text)
-      (m = text.match(PLANTUML_FIRST_BLOCK_RX)) ? m[1] : text
+      (m = text.match(PLANTUML_BLOCK_RX)) ? m[1] : text
     end
 
     def sub_text(text, sub)
@@ -128,7 +129,7 @@ module AsciidoctorExtensions
     end
 
     def index_text(text, index)
-      blocks = text.scan(PLANTUML_BLOCKS_RX)
+      blocks = text.scan(PLANTUML_BLOCK_RX)
       blocks[index] ? blocks[index][0] : ''
     end
 
