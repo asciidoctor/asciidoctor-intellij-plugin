@@ -1,9 +1,12 @@
 package org.asciidoc.intellij;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import org.asciidoc.intellij.asciidoc.AntoraReferenceAdapter;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
@@ -46,6 +49,53 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     return new File("build/resources/test/testData/psi").getAbsolutePath();
   }
 
+  // Spin up a standalone Asciidoctor runtime with the Kroki Ruby extensions loaded the way the plugin
+  // loads them mid-render, and return its Ruby runtime. The warmup convert initializes the runtime so
+  // the top-level Extensions constant that kroki-extension.rb registers against resolves.
+  private static org.jruby.Ruby loadKrokiExtensions(org.asciidoctor.Asciidoctor adoc) throws IOException {
+    adoc.convert("warmup", org.asciidoctor.Options.builder().safe(SafeMode.UNSAFE).build());
+    org.jruby.Ruby ruby = ((org.asciidoctor.jruby.internal.JRubyAsciidoctor) adoc).getRubyRuntime();
+    ruby.evalScriptlet("require 'asciidoctor/extensions'; "
+      + "Object.const_set(:Extensions, Asciidoctor::Extensions) unless Object.const_defined?(:Extensions)");
+    for (String script : new String[]{"/kroki-extension.rb", "/kroki-antora.rb"}) {
+      try (InputStream is = AsciiDocWrapper.class.getResourceAsStream(script)) {
+        adoc.rubyExtensionRegistry().loadClass(is);
+      }
+    }
+    return ruby;
+  }
+
+  // Replace AntoraKroki.resolve with a stub mapping example$X -> <prefix>X (and nil for anything without
+  // the example$ family marker), so the include preprocessor can be tested independently of real Antora
+  // resolution (covered separately by testShouldResolveAntoraExampleResourceId).
+  private static void stubExampleResolver(org.jruby.Ruby ruby, String prefix) {
+    ruby.evalScriptlet("""
+      module AsciidoctorExtensions
+        module AntoraKroki
+          def self.resolve(t)
+            return nil unless t.is_a?(String) && t.start_with?('example$')
+            '%s' + t.sub('example$', '')
+          end
+        end
+      end
+      """.formatted(prefix));
+  }
+
+  // A Kroki-enabled preview settings instance (default kroki.io server); used by the render-level tests.
+  private static AsciiDocPreviewSettings krokiEnabledSettings() {
+    return new AsciiDocPreviewSettings(
+      SplitFileEditor.SplitEditorLayout.SPLIT,
+      AsciiDocJCEFHtmlPanelProvider.INFO,
+      AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
+      SafeMode.UNSAFE,
+      new HashMap<>(),
+      true, true, true, "", "",
+      true, true,
+      true,   // enableKroki
+      "",     // krokiUrl -> default https://kroki.io
+      true, true, true, 1, false, "");
+  }
+
   // Regression test for #516: resolveAntoraResourcePath turns an Antora resource id (the form used as a
   // Kroki diagram target and inside PlantUML !include, including the empty-module ":example$..." form)
   // into a local path within the current Antora module. kroki-antora.rb relies on this so that
@@ -82,37 +132,24 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     assertThat(dir.mkdirs()).isTrue();
     org.asciidoctor.Asciidoctor adoc = org.asciidoctor.Asciidoctor.Factory.create();
     try {
-      Files.writeString(new File(dir, "model.puml").toPath(),
-        "@startuml\n!startsub PART\nclass PartialMarker\n!endsub\nclass Unused\n@enduml\n", UTF_8);
-      Files.writeString(new File(dir, "layout.puml").toPath(),
-        "@startuml\nskinparam backgroundColor LayoutMarker\n@enduml\n", UTF_8);
-      // warm up the Ruby runtime so Asciidoctor's top-level Extensions constant is available when the
-      // kroki extension registers itself (mirrors how the plugin loads it mid-render).
-      adoc.convert("warmup", org.asciidoctor.Options.builder().safe(SafeMode.UNSAFE).build());
-      org.jruby.Ruby ruby = ((org.asciidoctor.jruby.internal.JRubyAsciidoctor) adoc).getRubyRuntime();
-      // kroki-extension.rb registers itself via a top-level `Extensions.register` (= Asciidoctor::Extensions);
-      // make that constant resolvable at top level in this standalone runtime so the script loads.
-      ruby.evalScriptlet("require 'asciidoctor/extensions'; "
-        + "Object.const_set(:Extensions, Asciidoctor::Extensions) unless Object.const_defined?(:Extensions)");
-      try (InputStream is = AsciiDocWrapper.class.getResourceAsStream("/kroki-extension.rb")) {
-        adoc.rubyExtensionRegistry().loadClass(is);
-      }
-      try (InputStream is = AsciiDocWrapper.class.getResourceAsStream("/kroki-antora.rb")) {
-        adoc.rubyExtensionRegistry().loadClass(is);
-      }
-      String base = dir.getPath().replace("\\", "/");
-      String script = ""
-        + "module AsciidoctorExtensions\n"
-        + "  module AntoraKroki\n"
-        + "    def self.resolve(t)\n"
-        + "      return nil unless t.is_a?(String) && t.start_with?('example$')\n"
-        + "      '" + base + "/' + t.sub('example$', '')\n"
-        + "    end\n"
-        + "  end\n"
-        + "end\n"
-        + "AsciidoctorExtensions::AntoraKroki.preprocess("
-        + "\"@startuml\\n!include example$layout.puml\\n!includesub example$model.puml!PART\\nclass MainMarker\\n@enduml\\n\")\n";
-      String out = ruby.evalScriptlet(script).asJavaString();
+      Files.writeString(new File(dir, "model.puml").toPath(), """
+        @startuml
+        !startsub PART
+        class PartialMarker
+        !endsub
+        class Unused
+        @enduml
+        """, UTF_8);
+      Files.writeString(new File(dir, "layout.puml").toPath(), """
+        @startuml
+        skinparam backgroundColor LayoutMarker
+        @enduml
+        """, UTF_8);
+      org.jruby.Ruby ruby = loadKrokiExtensions(adoc);
+      stubExampleResolver(ruby, dir.getPath().replace("\\", "/") + "/");
+      String out = ruby.evalScriptlet("AsciidoctorExtensions::AntoraKroki.preprocess("
+        + "\"@startuml\\n!include example$layout.puml\\n!includesub example$model.puml!PART\\nclass MainMarker\\n@enduml\\n\")")
+        .asJavaString();
 
       assertThat(out)
         .withFailMessage("preprocessed diagram should inline target + includes and drop antora/plantuml syntax: %s", out)
@@ -135,26 +172,9 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
   public void testShouldFailOnUnresolvedAntoraInclude() throws Exception {
     org.asciidoctor.Asciidoctor adoc = org.asciidoctor.Asciidoctor.Factory.create();
     try {
-      adoc.convert("warmup", org.asciidoctor.Options.builder().safe(SafeMode.UNSAFE).build());
-      org.jruby.Ruby ruby = ((org.asciidoctor.jruby.internal.JRubyAsciidoctor) adoc).getRubyRuntime();
-      ruby.evalScriptlet("require 'asciidoctor/extensions'; "
-        + "Object.const_set(:Extensions, Asciidoctor::Extensions) unless Object.const_defined?(:Extensions)");
-      try (InputStream is = AsciiDocWrapper.class.getResourceAsStream("/kroki-extension.rb")) {
-        adoc.rubyExtensionRegistry().loadClass(is);
-      }
-      try (InputStream is = AsciiDocWrapper.class.getResourceAsStream("/kroki-antora.rb")) {
-        adoc.rubyExtensionRegistry().loadClass(is);
-      }
+      org.jruby.Ruby ruby = loadKrokiExtensions(adoc);
       // stub resolver: example$X -> /no/such/dir/X (an unreadable path); anything else -> nil.
-      ruby.evalScriptlet(""
-        + "module AsciidoctorExtensions\n"
-        + "  module AntoraKroki\n"
-        + "    def self.resolve(t)\n"
-        + "      return nil unless t.is_a?(String) && t.start_with?('example$')\n"
-        + "      '/no/such/dir/' + t.sub('example$', '')\n"
-        + "    end\n"
-        + "  end\n"
-        + "end\n");
+      stubExampleResolver(ruby, "/no/such/dir/");
 
       // 1) unresolved example$ include -> preprocess raises a named error carrying the resource id
       String raised = ruby.evalScriptlet(""
@@ -179,6 +199,44 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
         .contains("class X");
     } finally {
       adoc.shutdown();
+    }
+  }
+
+  // End-to-end: with Kroki enabled, a plantuml:: block macro whose target is an Antora example$ resource
+  // (which itself !includes another example$ resource) resolves + inlines through the full render pipeline
+  // and yields a Kroki image URL. Exercises the integration the preprocess/resolver unit tests don't.
+  // The fixture lives on the real filesystem (Kroki reads diagram files via java.io, which can't see the
+  // in-memory test VFS) and is registered as a project content root so its antora.yml gets indexed
+  // (Antora resolution looks modules up via the project index).
+  public void testShouldRenderAntoraExampleDiagramViaKroki() throws Exception {
+    File base = new File(System.getProperty("java.io.tmpdir"), "krokiE2E-" + System.nanoTime());
+    File examples = new File(base, "modules/ROOT/examples");
+    File pages = new File(base, "modules/ROOT/pages");
+    assertThat(examples.mkdirs()).isTrue();
+    assertThat(pages.mkdirs()).isTrue();
+    Files.writeString(new File(base, "antora.yml").toPath(), "name: e2e\nversion: ~\n", UTF_8);
+    Files.writeString(new File(examples, "layout.puml").toPath(),
+      "@startuml\nhide circle\nskinparam backgroundColor #EEEBDC\n@enduml\n", UTF_8);
+    Files.writeString(new File(examples, "model.puml").toPath(),
+      "@startuml\n!include example$layout.puml\nclass FromExampleInclude\n@enduml\n", UTF_8);
+    VirtualFile baseVf = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(base);
+    assertThat(baseVf).isNotNull();
+    VfsUtil.markDirtyAndRefresh(false, true, true, baseVf);
+    Module module = myFixture.getModule();
+    PsiTestUtil.addContentRoot(module, baseVf);
+    AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(krokiEnabledSettings());
+    try {
+      VirtualFile pagesVf = LocalFileSystem.getInstance().findFileByIoFile(pages);
+      assertThat(pagesVf).isNotNull();
+      AsciiDocWrapper wrapper = new AsciiDocWrapper(getProject(), pagesVf, null, "diagram.adoc");
+      String html = wrapper.render("plantuml::example$model.puml[]\n", Collections.emptyList());
+      assertThat(html)
+        .withFailMessage("expected a Kroki PlantUML image (example$ target + nested example$ include resolved end-to-end): %s", html)
+        .contains("https://kroki.io/plantuml/");
+    } finally {
+      AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
+      PsiTestUtil.removeContentEntry(module, baseVf);
+      FileUtil.delete(base);
     }
   }
 
