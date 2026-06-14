@@ -129,6 +129,59 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     }
   }
 
+  // A broken Antora include is a hard error (matching the Antora build, asciidoctor and PlantUML):
+  // preprocess raises a clear, named exception instead of silently rendering an incomplete diagram.
+  // A plain (non-resource) include has no family marker and must pass through untouched.
+  public void testShouldFailOnUnresolvedAntoraInclude() throws Exception {
+    org.asciidoctor.Asciidoctor adoc = org.asciidoctor.Asciidoctor.Factory.create();
+    try {
+      adoc.convert("warmup", org.asciidoctor.Options.builder().safe(SafeMode.UNSAFE).build());
+      org.jruby.Ruby ruby = ((org.asciidoctor.jruby.internal.JRubyAsciidoctor) adoc).getRubyRuntime();
+      ruby.evalScriptlet("require 'asciidoctor/extensions'; "
+        + "Object.const_set(:Extensions, Asciidoctor::Extensions) unless Object.const_defined?(:Extensions)");
+      try (InputStream is = AsciiDocWrapper.class.getResourceAsStream("/kroki-extension.rb")) {
+        adoc.rubyExtensionRegistry().loadClass(is);
+      }
+      try (InputStream is = AsciiDocWrapper.class.getResourceAsStream("/kroki-antora.rb")) {
+        adoc.rubyExtensionRegistry().loadClass(is);
+      }
+      // stub resolver: example$X -> /no/such/dir/X (an unreadable path); anything else -> nil.
+      ruby.evalScriptlet(""
+        + "module AsciidoctorExtensions\n"
+        + "  module AntoraKroki\n"
+        + "    def self.resolve(t)\n"
+        + "      return nil unless t.is_a?(String) && t.start_with?('example$')\n"
+        + "      '/no/such/dir/' + t.sub('example$', '')\n"
+        + "    end\n"
+        + "  end\n"
+        + "end\n");
+
+      // 1) unresolved example$ include -> preprocess raises a named error carrying the resource id
+      String raised = ruby.evalScriptlet(""
+        + "begin\n"
+        + "  AsciidoctorExtensions::AntoraKroki.preprocess("
+        + "\"@startuml\\n!include example$layout/missing.puml\\nclass MainMarker\\n@enduml\\n\")\n"
+        + "  'NO_ERROR'\n"
+        + "rescue => e\n"
+        + "  e.class.name + '|' + e.message\n"
+        + "end\n").asJavaString();
+      assertThat(raised)
+        .withFailMessage("expected a hard failure naming the unresolved include, got: %s", raised)
+        .contains("UnresolvedAntoraInclude")
+        .contains("example$layout/missing.puml");
+
+      // 2) a plain relative include (no family marker) is not ours to resolve -> passes through untouched
+      String out = ruby.evalScriptlet("AsciidoctorExtensions::AntoraKroki.preprocess("
+        + "\"@startuml\\n!include plain.puml\\nclass X\\n@enduml\\n\")").asJavaString();
+      assertThat(out)
+        .withFailMessage("plain relative include should pass through untouched: %s", out)
+        .contains("!include plain.puml")
+        .contains("class X");
+    } finally {
+      adoc.shutdown();
+    }
+  }
+
   public void testShouldRenderPlainAsciidoc() {
     String html = asciidocWrapper.render("this is *bold*.", Collections.emptyList());
     assertThat(html).withFailMessage("should contain formatted output").contains("<strong>bold</strong>");

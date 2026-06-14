@@ -18,6 +18,12 @@ require 'java'
 # See https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/516
 
 module AsciidoctorExtensions
+  # Raised when a PlantUML !include points at an Antora resource id that cannot be resolved/read.
+  # It is allowed to escape the defensive rescues below so the diagram fails loudly with a clear
+  # message — matching the Antora build, asciidoctor and standalone PlantUML, which all bail on a
+  # missing include rather than rendering a silently-incomplete diagram.
+  class UnresolvedAntoraInclude < StandardError; end
+
   # Antora-aware PlantUML preprocessing helpers.
   module AntoraKroki
     PLANTUML_BLOCK_RX = /@startuml(?:\r?\n)([\s\S]*?)(?:\r?\n)@enduml/m
@@ -37,6 +43,12 @@ module AsciidoctorExtensions
 
     def remote?(url)
       url.start_with?('http://') || url.start_with?('https://')
+    end
+
+    # An Antora resource id carries a family marker (e.g. example$, partial$, image$); plain PlantUML
+    # includes (relative paths, stdlib) have none and must pass through untouched.
+    def antora_resource_id?(target)
+      target.include?('$')
     end
 
     # Inline all Antora-resource !include directives in a PlantUML diagram, then strip the @startuml/@enduml
@@ -74,7 +86,13 @@ module AsciidoctorExtensions
       return original if remote?(target)
 
       resolved = resolve(target)
-      return original if resolved.nil? || !::File.readable?(resolved)
+      if resolved.nil? || !::File.readable?(resolved)
+        # A broken Antora resource id is a real authoring error: fail loudly (like the Antora build,
+        # asciidoctor and PlantUML) instead of silently rendering an incomplete diagram. A plain include
+        # (no family marker) is not ours to resolve, so it passes through untouched.
+        raise UnresolvedAntoraInclude, "kroki (antora): cannot resolve PlantUML include '#{target}'" if antora_resource_id?(target)
+        return original
+      end
       return original if include_stack.include?(resolved) # cycle guard
 
       raw = ::File.read(resolved, mode: 'rb:utf-8:utf-8')
@@ -100,6 +118,8 @@ module AsciidoctorExtensions
 
       inlined = process_includes(text, include_once, include_stack + [resolved])
       comment.empty? ? inlined : "#{inlined} #{comment}"
+    rescue UnresolvedAntoraInclude
+      raise # intentional hard failure: must not be swallowed by the defensive rescue below
     rescue StandardError
       original
     end
@@ -162,6 +182,8 @@ module AsciidoctorExtensions
           if %w[plantuml c4plantuml].include?(diagram_type.to_s)
             begin
               diagram_text = AntoraKroki.preprocess(diagram_text)
+            rescue UnresolvedAntoraInclude
+              raise # surface the clear error; don't silently render an incomplete diagram
             rescue StandardError
               # fall back to the unmodified diagram text
             end
