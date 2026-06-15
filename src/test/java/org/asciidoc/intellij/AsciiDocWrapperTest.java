@@ -187,7 +187,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
         + "end\n").asJavaString();
       assertThat(raised)
         .withFailMessage("expected a hard failure naming the unresolved include, got: %s", raised)
-        .contains("UnresolvedAntoraInclude")
+        .contains("AntoraIncludeError")
         .contains("example$layout/missing.puml");
 
       // 2) a plain relative include (no family marker) is not ours to resolve -> passes through untouched
@@ -199,6 +199,34 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
         .contains("class X");
     } finally {
       adoc.shutdown();
+    }
+  }
+
+  // Repeating !include_once for the same Antora resource must fail fast (matching the asciidoctor-kroki
+  // JS extension), not leave an unresolvable directive in the diagram sent to Kroki (PR #2054 review).
+  public void testShouldFailOnRepeatedIncludeOnce() throws Exception {
+    File dir = new File(System.getProperty("java.io.tmpdir"), "krokiIncludeOnce-" + System.nanoTime());
+    assertThat(dir.mkdirs()).isTrue();
+    org.asciidoctor.Asciidoctor adoc = org.asciidoctor.Asciidoctor.Factory.create();
+    try {
+      Files.writeString(new File(dir, "shared.puml").toPath(), "@startuml\nclass Shared\n@enduml\n", UTF_8);
+      org.jruby.Ruby ruby = loadKrokiExtensions(adoc);
+      stubExampleResolver(ruby, dir.getPath().replace("\\", "/") + "/");
+      String raised = ruby.evalScriptlet(""
+        + "begin\n"
+        + "  AsciidoctorExtensions::AntoraKroki.preprocess("
+        + "\"@startuml\\n!include_once example$shared.puml\\n!include_once example$shared.puml\\nclass Main\\n@enduml\\n\")\n"
+        + "  'NO_ERROR'\n"
+        + "rescue => e\n"
+        + "  e.class.name + '|' + e.message\n"
+        + "end\n").asJavaString();
+      assertThat(raised)
+        .withFailMessage("a repeated !include_once should fail fast, got: %s", raised)
+        .contains("AntoraIncludeError")
+        .contains("!include_once");
+    } finally {
+      adoc.shutdown();
+      FileUtil.delete(dir);
     }
   }
 

@@ -18,11 +18,12 @@ require 'java'
 # See https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/516
 
 module AsciidoctorExtensions
-  # Raised when a PlantUML !include points at an Antora resource id that cannot be resolved/read.
-  # It is allowed to escape the defensive rescues below so the diagram fails loudly with a clear
-  # message — matching the Antora build, asciidoctor and standalone PlantUML, which all bail on a
-  # missing include rather than rendering a silently-incomplete diagram.
-  class UnresolvedAntoraInclude < StandardError; end
+  # Raised when a PlantUML !include referencing an Antora resource cannot be safely inlined: the target
+  # can't be resolved/read, an !include_once target repeats, or an include cycle is detected. It is
+  # allowed to escape the defensive rescues below so the diagram fails loudly with a clear message —
+  # matching the asciidoctor-kroki JS extension and the rest of the toolchain (the Antora build,
+  # asciidoctor and standalone PlantUML all bail rather than render a broken diagram).
+  class AntoraIncludeError < StandardError; end
 
   # Antora-aware PlantUML preprocessing helpers.
   module AntoraKroki
@@ -90,10 +91,11 @@ module AsciidoctorExtensions
         # A broken Antora resource id is a real authoring error: fail loudly (like the Antora build,
         # asciidoctor and PlantUML) instead of silently rendering an incomplete diagram. A plain include
         # (no family marker) is not ours to resolve, so it passes through untouched.
-        raise UnresolvedAntoraInclude, "kroki (antora): cannot resolve PlantUML include '#{target}'" if antora_resource_id?(target)
+        raise AntoraIncludeError, "kroki (antora): cannot resolve PlantUML include '#{target}'" if antora_resource_id?(target)
         return original
       end
-      return original if include_stack.include?(resolved) # cycle guard
+      # A cycle would otherwise leave an unresolvable include in the output; fail like the JS extension.
+      raise AntoraIncludeError, "kroki (antora): recursive PlantUML include of '#{target}'" if include_stack.include?(resolved)
 
       raw = ::File.read(resolved, mode: 'rb:utf-8:utf-8')
 
@@ -111,14 +113,16 @@ module AsciidoctorExtensions
         end
 
       if directive == 'include_once'
-        return original if include_once.include?(resolved)
+        # The resource was already inlined; passing the directive through would leave an unresolvable
+        # include for Kroki. Fail like the asciidoctor-kroki JS extension rather than silently skip.
+        raise AntoraIncludeError, "kroki (antora): '#{target}' is included more than once with !include_once" if include_once.include?(resolved)
 
         include_once << resolved
       end
 
       inlined = process_includes(text, include_once, include_stack + [resolved])
       comment.empty? ? inlined : "#{inlined} #{comment}"
-    rescue UnresolvedAntoraInclude
+    rescue AntoraIncludeError
       raise # intentional hard failure: must not be swallowed by the defensive rescue below
     rescue StandardError
       original
@@ -182,7 +186,7 @@ module AsciidoctorExtensions
           if %w[plantuml c4plantuml].include?(diagram_type.to_s)
             begin
               diagram_text = AntoraKroki.preprocess(diagram_text)
-            rescue UnresolvedAntoraInclude
+            rescue AntoraIncludeError
               raise # surface the clear error; don't silently render an incomplete diagram
             rescue StandardError
               # fall back to the unmodified diagram text
