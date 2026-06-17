@@ -111,6 +111,16 @@ To avoid this, consider using `interactive` for Kroki diagrams as an alternative
 See <<interative-vs-inlined>> and <<avoid-flicker>> for a discussion of tradeoffs.
 ====
 
+=== Antora resource ids in Kroki diagrams
+
+When editing inside an Antora module with Kroki enabled, the plugin resolves Antora `example$`
+resource ids both as a diagram target (`+plantuml::example$dir/file.puml[]+`) and inside PlantUML
+`+!include+` / `+!includesub+` directives.
+Because the Kroki server has no access to the local file system, the referenced files are inlined
+into the diagram before it is sent to Kroki.
+An `example$` reference that cannot be resolved fails the diagram with a clear error rather than
+rendering it incompletely.
+
 == Using embedded Mermaid support
 
 As an experimental option in plugin version 0.38.1+, there's an embedded Mermaid support that is embedded in the plugin and will render Mermaid diagrams within the IDE without external helpers.
