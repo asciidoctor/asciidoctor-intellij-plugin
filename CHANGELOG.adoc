@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.45.6
 
-...
+- Declare dependency on the JCEF module so the plugin loads on 2026.2 where JCEF became a separate plugin (#2073)
 
 === 0.45.5
 
