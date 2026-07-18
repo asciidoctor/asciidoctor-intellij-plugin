@@ -440,6 +440,15 @@ public class AsciiDocWrapper {
             }
             asciidoctor.rubyExtensionRegistry().loadClass(is);
           }
+          // Antora support for Kroki: resolve example$/partial$ resource ids in diagram targets and
+          // inline PlantUML !include directives (no-op outside an Antora module). Must load after
+          // kroki-extension.rb as it prepends onto its classes.
+          try (InputStream is = this.getClass().getResourceAsStream("/kroki-antora.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script kroki-antora.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
+          }
         }
 
         if (format.backend.equals("html5") && asciiDocApplicationSettings.getAsciiDocPreviewSettings().isEnableBuiltInMermaid()) {
