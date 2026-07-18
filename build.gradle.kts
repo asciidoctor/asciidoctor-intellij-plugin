@@ -92,7 +92,8 @@ dependencies {
             "com.intellij.properties", // dependency to the Java plugin
             "org.jetbrains.plugins.yaml", // used to inject file references to Antora YAML files
             "com.jetbrains.sh",
-            "com.intellij.modules.json"
+            "com.intellij.modules.json",
+            "com.intellij.modules.jcef"
         ))
 
         // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
@@ -206,7 +207,6 @@ tasks {
         options.errorprone.excludedPaths = ".*(_AsciiDocLexer).*"
         options.errorprone.error("StreamResourceLeak") // enforce errors where there would be warning in the standard only
         options.errorprone.disable("MissingSummary", "NullableOnContainingClass", "CanIgnoreReturnValueSuggester")
-        options.compilerArgs.addAll(listOf("--release", "21"))
         // will print link to contributor guide at the start of each build
         dependsOn (generateLexer, "showLinkToContributorGuide", "checkJavaVersion")
     }
@@ -231,8 +231,8 @@ tasks {
 }
 
 tasks.register("checkJavaVersion") {
-    if (JavaVersion.current() != JavaVersion.VERSION_21) {
-        val message = "As of IntellIJ 2024.2, this build must be run with Java 21, see:\n" +
+    if (JavaVersion.current() != JavaVersion.VERSION_25) {
+        val message = "As of IntellIJ 2026.2, this build must be run with Java 25, see:\n" +
                 "https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/setup-environment.html"
         println("\n" + message + "\n")
         throw GradleException(message)
