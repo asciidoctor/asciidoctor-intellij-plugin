@@ -803,6 +803,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
         } else {
           yybegin(MULTILINE);
         }
+        if (tableChar != 0 && isPrefixedBy(PIPE)) {
+            return AsciiDocTokenTypes.LINE_BREAK;
+        }
         return AsciiDocTokenTypes.EMPTY_LINE;
       }
   {SPACE}* "\n"           { if (isNoDel()) { blockStack.pop(); } resetFormatting(); yybegin(MULTILINE); return AsciiDocTokenTypes.LINE_BREAK; } // blank lines within pre block don't have an effect
@@ -1185,6 +1188,10 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
     if (tableChar != 0) {
       zzEndReadL = limitLookahead(zzCurrentPosL);
     }
+    if (tableChar != 0 && isPrefixedBy(PIPE)) {
+        yybegin(INSIDE_LINE);
+        return textFormat();
+    }
     yypushstate();
     yybegin(LINECOMMENT);
     return AsciiDocTokenTypes.LINE_COMMENT;
@@ -1192,15 +1199,33 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <PREBLOCK, SINGLELINE, DELIMITER, HEADER> {
-  ^ {COMMENT_BLOCK_DELIMITER} $ { clearStyle(); resetFormatting(); yypushstate(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
+  ^ {COMMENT_BLOCK_DELIMITER} $ {
+          if (tableChar != 0 && isPrefixedBy(PIPE)) {
+              yybegin(INSIDE_LINE);
+              return textFormat();
+          } else {
+              clearStyle(); resetFormatting(); yypushstate(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT;
+          }
+      }
   ^ {COMMENT_BLOCK_DELIMITER} / [^\/\n \t] { yypushback(yylength());
-          if (yystate() == SINGLELINE) {
+          if (tableChar != 0 && isPrefixedBy(PIPE)) {
+              yybegin(INSIDE_LINE);
+              return textFormat();
+          } else if (yystate() == SINGLELINE) {
               yybegin(INSIDE_LINE); // avoid infinite loop, as STARTBLOCK would return to SINGLELINE
+              return textFormat();
           } else {
               yybegin(STARTBLOCK);
           }
   }
-  ^ {COMMENT_BLOCK_DELIMITER} { clearStyle(); resetFormatting(); yypushstate(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT; }
+  ^ {COMMENT_BLOCK_DELIMITER} {
+          if (tableChar != 0 && isPrefixedBy(PIPE)) {
+               yybegin(INSIDE_LINE);
+               return textFormat();
+          } else {
+               clearStyle(); resetFormatting(); yypushstate(); yybegin(COMMENT_BLOCK); blockDelimiterLength = yytext().toString().trim().length(); return AsciiDocTokenTypes.BLOCK_COMMENT;
+          }
+  }
 }
 
 <BIBSTART> {
