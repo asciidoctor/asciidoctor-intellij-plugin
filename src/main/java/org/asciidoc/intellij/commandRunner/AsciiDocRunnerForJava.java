@@ -12,7 +12,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +19,7 @@ import java.util.concurrent.TimeoutException;
 
 public class AsciiDocRunnerForJava implements AsciiDocRunner {
   @Override
-  public boolean isApplicable(@NotNull Project project, Language language) {
+  public boolean isApplicable(Language language) {
     return language != null &&
       (language.is(JavaLanguage.INSTANCE) || language.is(JShellLanguage.INSTANCE));
   }

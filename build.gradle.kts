@@ -37,6 +37,8 @@ repositories {
 dependencies {
     errorprone("com.google.errorprone:error_prone_core:2.50.0")
     compileOnly("com.google.errorprone:error_prone_core:2.50.0")
+    compileOnly("org.projectlombok:lombok:1.18.46")
+    annotationProcessor("org.projectlombok:lombok:1.18.46")
     /* snakeyaml is s used by asciidoctorj-pdf, but is actually provided within jruby-stdlib
      * a snakeyaml version in the classpath takes precedence, but IntelliJ includes a version that is too old
      * therefore this plugin includes the same version of snakeyaml that is already included in jruby-stdlib
