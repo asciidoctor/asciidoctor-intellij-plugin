@@ -689,7 +689,10 @@ public class AsciiDocLexerTest extends LexerTestCase {
 
 
   public void testNonCommentBlockCell() {
-    doTest("|===\n|////\n|===",
+    doTest("""
+        |===
+        |////
+        |===""",
       """
         AsciiDoc:BLOCK_DELIMITER ('|===')
         AsciiDoc:LINE_BREAK ('\\n')
