@@ -2,7 +2,7 @@
 # plugins
 intelliJPlatform = "2.18.1"
 errorpronePlugin = "5.1.0"
-grammarKit = "2023.3.0.3"
+grammarKit = "2023.3.0.4"
 asciidoctorConvert = "4.0.5"
 junit = "6.1.3"
 
