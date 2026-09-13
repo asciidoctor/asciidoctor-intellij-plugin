@@ -123,6 +123,30 @@ and inlined as well, only `+<stdlib>+` includes are passed through to the server
 Diagrams written inline in a `[plantuml]` block have no file location, so only absolute paths and the
 `kroki-plantuml-include-paths` directories work for their includes.
 
+=== Antora resource ids as Kroki diagram targets
+
+When editing inside an Antora module with Kroki enabled, a diagram source can be referenced by its Antora
+resource id, `+plantuml::example$order-model.puml[]+`, and the plugin resolves it to the file in the
+module's `examples` directory (plugin version 0.45.7+).
+This is the form the Antora site renders through the asciidoctor-kroki JavaScript extension, so page and
+preview agree.
+Includes inside the `.puml` file stay plain relative PlantUML includes (see above): resource ids belong in
+the AsciiDoc page, not in the diagram source, so every `.puml` remains a valid standalone diagram for the
+PlantUML CLI or the PlantUML integration plugin.
+
+=== Placeholders for Kroki diagrams that cannot be rendered
+
+A Kroki diagram can fail in the preview when the block macro's target cannot be resolved or read, or when
+one of its `+!include+` files does not exist.
+In both cases the preview shows a placeholder box instead of an error paragraph or a silently incomplete
+diagram (the Kroki server drops an include it cannot read and renders the rest).
+The box names the diagram type and the reason, and offers an *Open* link that opens the diagram source in
+the IDE editor -- where the PlantUML integration plugin, if installed, previews the file on its own.
+
+To show placeholders for all Kroki diagrams without contacting the server, for example while editing a
+page with many diagrams, set the document attribute `kroki-preview-placeholder` (in the document header or
+via the plugin's attribute settings).
+
 == Using embedded Mermaid support
 
 As an experimental option in plugin version 0.38.1+, there's an embedded Mermaid support that is embedded in the plugin and will render Mermaid diagrams within the IDE without external helpers.

@@ -1,8 +1,14 @@
 package org.asciidoc.intellij;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.BasePlatformTestCase;
+import org.asciidoc.intellij.asciidoc.AntoraReferenceAdapter;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
@@ -39,6 +45,146 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
   public void setUp() throws Exception {
     super.setUp();
     asciidocWrapper = new AsciiDocWrapper(getProject(), LocalFileSystem.getInstance().findFileByIoFile(new File(System.getProperty("java.io.tmpdir"))), null, "test");
+  }
+
+  protected String getTestDataPath() {
+    return new File("build/resources/test/testData/psi").getAbsolutePath();
+  }
+
+  // A Kroki-enabled preview settings instance (default kroki.io server); used by the render-level tests.
+  private static AsciiDocPreviewSettings krokiEnabledSettings() {
+    return new AsciiDocPreviewSettings(
+      SplitFileEditor.SplitEditorLayout.SPLIT,
+      AsciiDocJCEFHtmlPanelProvider.INFO,
+      AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
+      SafeMode.UNSAFE,
+      new HashMap<>(),
+      true, true, true, "", "",
+      true, true,
+      true,   // enableKroki
+      "",     // krokiUrl -> default https://kroki.io
+      true, true, true, 1, false, "");
+  }
+
+  // Regression test for #516: resolveAntoraResourcePath turns an Antora resource id (the form used as a
+  // Kroki diagram target and inside PlantUML !include, including the empty-module ":example$..." form)
+  // into a local path within the current Antora module. kroki-antora.rb relies on this so that
+  // plantuml::example$...[] and !include example$... resolve in the preview. Reuses the antoraModule
+  // fixture that the resolution tests in AsciiDocPsiTest also use.
+  public void testShouldResolveAntoraExampleResourceId() {
+    VirtualFile root = myFixture.copyDirectoryToProject("antoraModule", "antoraModule");
+    VirtualFile moduleDir = root.findFileByRelativePath("componentV1/modules/ROOT");
+    assertThat(moduleDir).isNotNull();
+    AntoraReferenceAdapter.setAntoraDetails(getProject(), moduleDir, new File(moduleDir.getPath() + "/pages"), "test.adoc");
+    try {
+      String resolved = AntoraReferenceAdapter.resolveAntoraResourcePath("example$example.txt");
+      assertThat(resolved).withFailMessage("example$ id should resolve to a local path").isNotNull();
+      assertThat(resolved.replace('\\', '/')).endsWith("componentV1/modules/ROOT/examples/example.txt");
+
+      // Antora may present a family-only id in its empty-module form ":example$..."
+      assertThat(AntoraReferenceAdapter.resolveAntoraResourcePath(":example$example.txt")).isEqualTo(resolved);
+
+      // not an Antora resource id (no family prefix) / a URL -> null, so the caller keeps the original target
+      assertThat(AntoraReferenceAdapter.resolveAntoraResourcePath("example.txt")).isNull();
+      assertThat(AntoraReferenceAdapter.resolveAntoraResourcePath("https://example.com/example.txt")).isNull();
+    } finally {
+      AntoraReferenceAdapter.setAntoraDetails(null, null, null, null);
+    }
+  }
+
+  // End-to-end: with Kroki enabled, a plantuml:: block macro whose target is an Antora example$ resource
+  // (which itself has a relative !include, resolved by the Kroki extension's preprocessor) renders through the
+  // full pipeline and yields a Kroki image URL whose diagram text contains the included file; the placeholder
+  // cases (unresolvable target, missing include file, kroki-preview-placeholder) are covered on the same fixture.
+  // The fixture lives on the real filesystem (Kroki reads diagram files via java.io, which can't see the
+  // in-memory test VFS) and is registered as a project content root so its antora.yml gets indexed
+  // (Antora resolution looks modules up via the project index).
+  public void testShouldRenderAntoraExampleDiagramViaKroki() throws Exception {
+    File base = new File(System.getProperty("java.io.tmpdir"), "krokiE2E-" + System.nanoTime());
+    File examples = new File(base, "modules/ROOT/examples");
+    File pages = new File(base, "modules/ROOT/pages");
+    assertThat(examples.mkdirs()).isTrue();
+    assertThat(pages.mkdirs()).isTrue();
+    Files.writeString(new File(base, "antora.yml").toPath(), "name: e2e\nversion: ~\n", UTF_8);
+    Files.writeString(new File(examples, "layout.puml").toPath(),
+      "@startuml\nhide circle\nskinparam backgroundColor #EEEBDC\n@enduml\n", UTF_8);
+    Files.writeString(new File(examples, "model.puml").toPath(),
+      "@startuml\n!include layout.puml\nclass FromExampleInclude\n@enduml\n", UTF_8);
+    File deep = new File(examples, "nested/deep");
+    assertThat(deep.mkdirs()).isTrue();
+    Files.writeString(new File(deep, "nested.puml").toPath(),
+      "@startuml\n!include ../../layout.puml\nclass FromNestedInclude\n@enduml\n", UTF_8);
+    Files.writeString(new File(examples, "broken.puml").toPath(),
+      "@startuml\n!include missing-layout.puml\nclass FromMissingInclude\n@enduml\n", UTF_8);
+    VirtualFile baseVf = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(base);
+    assertThat(baseVf).isNotNull();
+    VfsUtil.markDirtyAndRefresh(false, true, true, baseVf);
+    Module module = myFixture.getModule();
+    PsiTestUtil.addContentRoot(module, baseVf);
+    AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(krokiEnabledSettings());
+    try {
+      VirtualFile pagesVf = LocalFileSystem.getInstance().findFileByIoFile(pages);
+      assertThat(pagesVf).isNotNull();
+      AsciiDocWrapper wrapper = new AsciiDocWrapper(getProject(), pagesVf, null, "diagram.adoc");
+      String html = wrapper.render("plantuml::example$model.puml[]\n", Collections.emptyList());
+      assertThat(html)
+        .withFailMessage("expected a Kroki PlantUML image (example$ target resolved, relative include inlined): %s", html)
+        .contains("https://kroki.io/plantuml/");
+      Matcher m = Pattern.compile("https://kroki.io/plantuml/(?:svg|png)/([A-Za-z0-9_-]+)").matcher(html);
+      assertThat(m.find()).isTrue();
+      Inflater inflater = new Inflater();
+      inflater.setInput(Base64.getUrlDecoder().decode(m.group(1)));
+      byte[] buffer = new byte[8192];
+      String diagram = new String(buffer, 0, inflater.inflate(buffer), UTF_8);
+      assertThat(diagram).contains("FromExampleInclude").contains("hide circle").doesNotContain("!include");
+
+      // an unresolvable example$ target yields a placeholder naming the target instead of an error paragraph
+      String missing = wrapper.render("plantuml::example$missing.puml[]\n", Collections.emptyList());
+      assertThat(missing)
+        .withFailMessage("expected a placeholder for the unresolvable target: %s", missing)
+        .contains("class=\"kroki-placeholder\"")
+        .contains("plantuml diagram not rendered")
+        .contains("plantuml::example$missing.puml[]")
+        .contains("modules/ROOT/examples/missing.puml")
+        .doesNotContain("kroki-placeholder-open") // nothing to open: the file does not exist
+        .doesNotContain("Unresolved block macro")
+        .doesNotContain("https://kroki.io/plantuml/");
+
+      // a diagram two directories deep reaching the shared layout with ../../ (the real-world tree layout)
+      String nested = wrapper.render("plantuml::example$nested/deep/nested.puml[]\n", Collections.emptyList());
+      Matcher mn = Pattern.compile("https://kroki.io/plantuml/(?:svg|png)/([A-Za-z0-9_-]+)").matcher(nested);
+      assertThat(mn.find()).withFailMessage("expected a Kroki URL for the nested diagram: %s", nested).isTrue();
+      Inflater inflaterNested = new Inflater();
+      inflaterNested.setInput(Base64.getUrlDecoder().decode(mn.group(1)));
+      byte[] bufferNested = new byte[8192];
+      String nestedDiagram = new String(bufferNested, 0, inflaterNested.inflate(bufferNested), UTF_8);
+      assertThat(nestedDiagram).contains("FromNestedInclude").contains("hide circle").doesNotContain("!include");
+
+      // an include the preprocessor could not resolve (missing file) must not be sent to the server (PlantUML
+      // there silently drops the line and renders a degraded diagram): placeholder naming it, with an open link
+      String broken = wrapper.render("plantuml::example$broken.puml[]\n", Collections.emptyList());
+      assertThat(broken)
+        .withFailMessage("expected a placeholder for the missing include: %s", broken)
+        .contains("class=\"kroki-placeholder\"")
+        .contains("Cannot resolve PlantUML include: missing-layout.puml")
+        .contains(">Open broken.puml<")
+        .doesNotContain("https://kroki.io/plantuml/");
+
+      // with the kroki-preview-placeholder attribute set, a resolvable diagram becomes a placeholder linking to
+      // its source file and the Kroki server is not contacted
+      String placeholder = wrapper.render(":kroki-preview-placeholder:\n\nplantuml::example$model.puml[]\n", Collections.emptyList());
+      assertThat(placeholder)
+        .withFailMessage("expected a placeholder with an open link for the diagram source: %s", placeholder)
+        .contains("class=\"kroki-placeholder\"")
+        .contains("class=\"kroki-placeholder-open\"")
+        .contains("modules/ROOT/examples/model.puml\"")
+        .contains(">Open model.puml<")
+        .doesNotContain("https://kroki.io/plantuml/");
+    } finally {
+      AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
+      PsiTestUtil.removeContentEntry(module, baseVf);
+      FileUtil.delete(base);
+    }
   }
 
   public void testShouldRenderPlainAsciidoc() {
