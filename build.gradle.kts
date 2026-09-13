@@ -99,7 +99,7 @@ dependencies {
         // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
         // https://plugins.jetbrains.com/docs/intellij/plugin-dependencies.html
         plugins(listOf(
-            "PsiViewer:252.23892.248", // used for debugging
+            "PsiViewer:2026.2", // used for debugging
             // "PlantUML integration:6.3.0-IJ2023.2", // used to test highlighting of plantuml diagrams
             // "com.intellij.platform.images", // dependency for PlantUML plugin
             // "com.google.ide-perf:1.2.0", // performance tracing
@@ -107,7 +107,7 @@ dependencies {
             // "com.jetbrains.performancePlugin:213.5744.122" // used run YourKit CPU profiling in test IDE
             // see https://intellij-support.jetbrains.com/hc/en-us/articles/207241235
             // https://plugins.jetbrains.com/plugin/28663-jshell
-            "intellij.java.jshell:253.28294.218"
+            "intellij.java.jshell:262.8665.173"
         ))
 
         pluginVerifier()
