@@ -144,8 +144,8 @@ The box names the diagram type and the reason, and offers an *Open* link that op
 the IDE editor -- where the PlantUML integration plugin, if installed, previews the file on its own.
 
 To show placeholders for all Kroki diagrams without contacting the server, for example while editing a
-page with many diagrams, set the document attribute `kroki-preview-placeholder` (in the document header or
-via the plugin's attribute settings).
+page with many diagrams, set the document attribute `kroki-preview-placeholder` (in the document header,
+via the plugin's attribute settings, or via an `xref:features/advanced/asciidoctorconfig-file.adoc[.asciidoctorconfig]` file).
 
 == Using embedded Mermaid support
 
