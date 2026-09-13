@@ -18,7 +18,11 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Base64;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.Inflater;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -234,6 +238,68 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       assertThat(html).contains("https://kroki.io/blockdiag/svg/eNpLyslPzk7JTExXqOZSUPAuys_OVNC1U0hPzUstSixJLQZxlJxAihRAqooSc4uVrJFVZkKUlKUWVSqkJhZXKgKlawGuixqn");
     } finally {
       AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
+    }
+  }
+
+  // The embedded Kroki extension (asciidoctor-kroki 2.0) resolves PlantUML !include directives relative to the
+  // diagram file before the diagram is sent: the Kroki server has no file system, so without this the include
+  // line would be dropped there and the diagram rendered without it. Verified by decoding the diagram text from
+  // the generated Kroki URL.
+  public void testShouldInlineRelativePlantUmlIncludesUsingKroki() throws Exception {
+    File dir = new File(System.getProperty("java.io.tmpdir"), "krokiIncludes-" + System.nanoTime());
+    assertThat(dir.mkdirs()).isTrue();
+    AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
+      SplitFileEditor.SplitEditorLayout.SPLIT, AsciiDocJCEFHtmlPanelProvider.INFO, AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
+      SafeMode.UNSAFE, new HashMap<>(), true, true, true, "", "", true, true, true, "", true, true, true, 1, false, ""));
+    try {
+      Files.writeString(new File(dir, "layout.puml").toPath(), "@startuml\nskinparam backgroundColor LayoutMarker\n@enduml\n", UTF_8);
+      Files.writeString(new File(dir, "model.puml").toPath(), "@startuml\n!include layout.puml\nclass ModelMarker\n@enduml\n", UTF_8);
+      String html = asciidocWrapper.render("plantuml::" + new File(dir, "model.puml").getPath().replace('\\', '/') + "[]\n", Collections.emptyList());
+      Matcher m = Pattern.compile("https://kroki.io/plantuml/(?:svg|png)/([A-Za-z0-9_-]+)").matcher(html);
+      assertThat(m.find()).withFailMessage("expected a Kroki PlantUML URL: %s", html).isTrue();
+      byte[] deflated = Base64.getUrlDecoder().decode(m.group(1));
+      Inflater inflater = new Inflater();
+      inflater.setInput(deflated);
+      byte[] buffer = new byte[8192];
+      String diagram = new String(buffer, 0, inflater.inflate(buffer), UTF_8);
+      assertThat(diagram)
+        .withFailMessage("expected the relative include to be inlined before sending to Kroki: %s", diagram)
+        .contains("ModelMarker")
+        .contains("LayoutMarker")
+        .doesNotContain("!include");
+    } finally {
+      AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
+      com.intellij.openapi.util.io.FileUtil.delete(dir);
+    }
+  }
+
+  // An inline [plantuml] block has no file location; its includes resolve via kroki-plantuml-include-paths, which
+  // a document can point at a directory relative to itself with {docdir}.
+  public void testShouldInlinePlantUmlIncludesFromIncludePathsUsingKroki() throws Exception {
+    File dir = new File(System.getProperty("java.io.tmpdir"), "krokiIncludePaths-" + System.nanoTime());
+    File lib = new File(dir, "lib");
+    assertThat(lib.mkdirs()).isTrue();
+    AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
+      SplitFileEditor.SplitEditorLayout.SPLIT, AsciiDocJCEFHtmlPanelProvider.INFO, AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
+      SafeMode.UNSAFE, new HashMap<>(), true, true, true, "", "", true, true, true, "", true, true, true, 1, false, ""));
+    try {
+      Files.writeString(new File(lib, "colors.puml").toPath(), "@startuml\nskinparam backgroundColor PathsMarker\n@enduml\n", UTF_8);
+      AsciiDocWrapper wrapper = new AsciiDocWrapper(getProject(), LocalFileSystem.getInstance().refreshAndFindFileByIoFile(dir), null, "test");
+      String html = wrapper.render(":kroki-plantuml-include-paths: {docdir}/lib\n\n[plantuml]\n----\n@startuml\n!include colors.puml\nclass BlockMarker\n@enduml\n----\n", Collections.emptyList());
+      Matcher m = Pattern.compile("https://kroki.io/plantuml/(?:svg|png)/([A-Za-z0-9_-]+)").matcher(html);
+      assertThat(m.find()).withFailMessage("expected a Kroki PlantUML URL: %s", html).isTrue();
+      Inflater inflater = new Inflater();
+      inflater.setInput(Base64.getUrlDecoder().decode(m.group(1)));
+      byte[] buffer = new byte[8192];
+      String diagram = new String(buffer, 0, inflater.inflate(buffer), UTF_8);
+      assertThat(diagram)
+        .withFailMessage("expected the include to be resolved via kroki-plantuml-include-paths: %s", diagram)
+        .contains("BlockMarker")
+        .contains("PathsMarker")
+        .doesNotContain("!include");
+    } finally {
+      AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
+      com.intellij.openapi.util.io.FileUtil.delete(dir);
     }
   }
 

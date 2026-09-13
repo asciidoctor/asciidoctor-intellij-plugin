@@ -111,6 +111,18 @@ To avoid this, consider using `interactive` for Kroki diagrams as an alternative
 See <<interative-vs-inlined>> and <<avoid-flicker>> for a discussion of tradeoffs.
 ====
 
+=== PlantUML includes with Kroki
+
+The Kroki server has no access to the local file system, so the plugin resolves PlantUML
+`+!include+`, `+!includesub+`, `+!include_once+`, `+!include_many+` and `+!includeurl+` directives
+before the diagram is sent (plugin version 0.45.7+, using the include preprocessor of
+asciidoctor-kroki 2.0).
+Relative include paths resolve against the directory of the `.puml` file referenced by the block macro,
+then against each directory in the `kroki-plantuml-include-paths` attribute; `http(s)` includes are fetched
+and inlined as well, only `+<stdlib>+` includes are passed through to the server.
+Diagrams written inline in a `[plantuml]` block have no file location, so only absolute paths and the
+`kroki-plantuml-include-paths` directories work for their includes.
+
 == Using embedded Mermaid support
 
 As an experimental option in plugin version 0.38.1+, there's an embedded Mermaid support that is embedded in the plugin and will render Mermaid diagrams within the IDE without external helpers.

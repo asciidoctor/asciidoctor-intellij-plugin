@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.45.7
 
-...
+- Update the embedded Kroki extension to asciidoctor-kroki 2.0.0.rc.3: PlantUML `!include`, `!includesub`, `!include_once`, `!include_many` and `!includeurl` directives (relative to the diagram file, plus `kroki-plantuml-include-paths`) are now resolved before the diagram is sent to Kroki, a failed diagram no longer aborts the page, and block macro targets resolve relative to the document (#516)
 
 === 0.45.6
 
