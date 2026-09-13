@@ -55,7 +55,7 @@ public class AsciiDocRunnerForTypeScript extends AsciiDocRunnerArbitrary {
         .map(AsciiDocScriptLanguageSetting::getUtilPath)
         .orElse(null);
       String npxScript;
-      if (utilPath == null) {
+      if (StringUtils.isBlank(utilPath)) {
         npxScript = findNpxScript();
       } else {
         npxScript = utilPath;
