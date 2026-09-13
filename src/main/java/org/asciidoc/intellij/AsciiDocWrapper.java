@@ -440,6 +440,23 @@ public class AsciiDocWrapper {
             }
             asciidoctor.rubyExtensionRegistry().loadClass(is);
           }
+          // Antora support for Kroki: resolve example$ resource ids used as diagram block macro targets
+          // (no-op outside an Antora module). Must load after kroki-extension.rb as it prepends onto its classes.
+          try (InputStream is = this.getClass().getResourceAsStream("/kroki-antora.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script kroki-antora.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
+          }
+          // Placeholders for Kroki diagrams the preview cannot render (unresolvable target, missing include
+          // file), linking to the diagram source instead of failing the page or rendering a silently degraded
+          // diagram. Must load after kroki-antora.rb.
+          try (InputStream is = this.getClass().getResourceAsStream("/kroki-placeholder.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script kroki-placeholder.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
+          }
         }
 
         if (format.backend.equals("html5") && asciiDocApplicationSettings.getAsciiDocPreviewSettings().isEnableBuiltInMermaid()) {

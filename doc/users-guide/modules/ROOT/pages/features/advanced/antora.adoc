@@ -50,6 +50,10 @@ For this it searches all available `antora.yml` files in the current project.
 
 For `include::[]` macros the plugin supports the Antora families like `partial$`, `example$` and `page$`.
 
+When Kroki is enabled, the plugin also resolves an `example$` resource id used as the target of a diagram
+block macro, `+plantuml::example$dir/file.puml[]+`; includes inside the diagram file are plain relative
+PlantUML includes, resolved by the Kroki extension.
+
 [NOTE]
 ====
 Using Antora page families and includes works in the preview only for trusted project and when IDE is running in the default UNSAFE mode.
