@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.commandRunner.arbitrary;
 
+import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.lang.Language;
 import com.intellij.openapi.util.SystemInfo;
 import org.asciidoc.intellij.AsciiDocBundle;
@@ -8,6 +9,7 @@ import org.asciidoc.intellij.settings.language.AsciiDocScriptLanguageSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
@@ -59,9 +61,14 @@ public class AsciiDocRunnerForGo extends AsciiDocRunnerArbitrary {
     return value.equalsIgnoreCase("go");
   }
 
-  @NotNull
+  @Nullable
   public static String findGoInterpreter() {
-    return SystemInfo.isWindows ? WINDOWS_EXECUTABLE : UNIX_EXECUTABLE;
+    String interpreter = SystemInfo.isWindows ? WINDOWS_EXECUTABLE : UNIX_EXECUTABLE;
+    File file = PathEnvironmentVariableUtil.findInPath(interpreter);
+    if (file != null) {
+      return file.getAbsolutePath();
+    }
+    return null;
   }
 
   @NotNull
