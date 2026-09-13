@@ -117,6 +117,8 @@ dependencies {
 
 // Configure IntelliJ Platform Gradle Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-extension.html
 intellijPlatform {
+    sandboxContainer = layout.buildDirectory.dir("sandbox")
+
     pluginConfiguration {
         description = providers.fileContents(layout.projectDirectory.file("src/main/resources/META-INF/description.html")).asText
 
