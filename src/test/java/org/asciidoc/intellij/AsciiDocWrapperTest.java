@@ -397,7 +397,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     assertThat(dir.mkdirs()).isTrue();
     AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
       SplitFileEditor.SplitEditorLayout.SPLIT, AsciiDocJCEFHtmlPanelProvider.INFO, AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
-      SafeMode.UNSAFE, new HashMap<>(), true, true, true, "", "", true, true, true, "", true, true, true, 1, false, ""));
+      SafeMode.UNSAFE, new HashMap<>(), true, true, true, "", "", true, true, true, "", true, true, true, 1, false, "", null));
     try {
       Files.writeString(new File(dir, "layout.puml").toPath(), "@startuml\nskinparam backgroundColor LayoutMarker\n@enduml\n", UTF_8);
       Files.writeString(new File(dir, "model.puml").toPath(), "@startuml\n!include layout.puml\nclass ModelMarker\n@enduml\n", UTF_8);
@@ -428,7 +428,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     assertThat(lib.mkdirs()).isTrue();
     AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
       SplitFileEditor.SplitEditorLayout.SPLIT, AsciiDocJCEFHtmlPanelProvider.INFO, AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
-      SafeMode.UNSAFE, new HashMap<>(), true, true, true, "", "", true, true, true, "", true, true, true, 1, false, ""));
+      SafeMode.UNSAFE, new HashMap<>(), true, true, true, "", "", true, true, true, "", true, true, true, 1, false, "", null));
     try {
       Files.writeString(new File(lib, "colors.puml").toPath(), "@startuml\nskinparam backgroundColor PathsMarker\n@enduml\n", UTF_8);
       AsciiDocWrapper wrapper = new AsciiDocWrapper(getProject(), LocalFileSystem.getInstance().refreshAndFindFileByIoFile(dir), null, "test");
