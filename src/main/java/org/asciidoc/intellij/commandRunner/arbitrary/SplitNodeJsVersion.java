@@ -55,7 +55,7 @@ record SplitNodeJsVersion(@NotNull File directory, ImmutableIntArray numbers,
         return 1;
       }
     } else if (other.suffix != null) {
-      return 1;
+      return -1;
     } else {
       return 0;
     }
