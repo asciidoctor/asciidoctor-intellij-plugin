@@ -63,7 +63,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       true, true,
       true,   // enableKroki
       "",     // krokiUrl -> default https://kroki.io
-      true, true, true, 1, false, "");
+      true, true, true, 1, false, "", null);
   }
 
   // Regression test for #516: resolveAntoraResourcePath turns an Antora resource id (the form used as a

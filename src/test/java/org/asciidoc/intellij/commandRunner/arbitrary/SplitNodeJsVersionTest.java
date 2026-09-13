@@ -32,9 +32,9 @@ public class SplitNodeJsVersionTest {
 
     SplitNodeJsVersion[] expected = new SplitNodeJsVersion[]{
       new SplitNodeJsVersion(new File("v44.13.0"), ImmutableIntArray.of(44, 13, 0), null),
+      new SplitNodeJsVersion(new File("v44.13"), ImmutableIntArray.of(44, 13), null),
       new SplitNodeJsVersion(new File("v44.13.0-rc3"), ImmutableIntArray.of(44, 13, 0), "rc3"),
       new SplitNodeJsVersion(new File("v44.13.0-rc1"), ImmutableIntArray.of(44, 13, 0), "rc1"),
-      new SplitNodeJsVersion(new File("v44.13"), ImmutableIntArray.of(44, 13), null),
       new SplitNodeJsVersion(new File("v19"), ImmutableIntArray.of(19), null),
       new SplitNodeJsVersion(new File("v14.10"), ImmutableIntArray.of(14, 10), null),
       new SplitNodeJsVersion(new File("v12.13.14"), ImmutableIntArray.of(12, 13, 14), null),
