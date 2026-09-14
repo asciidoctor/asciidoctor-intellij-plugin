@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.settings;
 
 import com.intellij.ide.BrowserUtil;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.ContextHelpLabel;
@@ -15,9 +16,12 @@ import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanel;
 import org.asciidoc.intellij.editor.AsciiDocHtmlPanelProvider;
+import org.asciidoc.intellij.settings.language.AsciiDocScriptLanguageSettings;
+import org.asciidoc.intellij.settings.language.AsciiDocScriptLanguagesForm;
 import org.asciidoc.intellij.ui.SplitFileEditor;
 import org.asciidoctor.SafeMode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
@@ -36,6 +40,8 @@ import java.util.stream.Collectors;
 // these methods and attributes are necessary for this form as it is augmented at compile and run time
 @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
 public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Holder {
+  private final Logger log = Logger.getInstance(AsciiDocPreviewSettingsForm.class);
+
   private Object myLastItem;
   private ComboBox myPreviewProvider;
   private ComboBox myDefaultSplitLayout;
@@ -94,6 +100,24 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
   private LinkLabel<?> myDownloadDependenciesFailedBatikBrowser;
   private JPanel myDownloadDependenciesFailedBatik;
   private LinkLabel<?> myDownloadDependenciesFailedBatikPickFile;
+  private JButton setupLanguages;
+
+  @Nullable
+  private AsciiDocScriptLanguageSettings myScriptLanguageSettings;
+
+  public AsciiDocPreviewSettingsForm() {
+    setupLanguages.addActionListener(actionEvent -> showScriptLanguagesForm());
+  }
+
+  private void showScriptLanguagesForm() {
+    AsciiDocScriptLanguagesForm asciiDocScriptLanguagesForm = new AsciiDocScriptLanguagesForm(myMainPanel,
+      myScriptLanguageSettings,
+      (@NotNull AsciiDocScriptLanguageSettings acceptedSettings) -> {
+        myScriptLanguageSettings = acceptedSettings;
+        log.info("Set language interpreter settings to %s.".formatted(myScriptLanguageSettings));
+      });
+    asciiDocScriptLanguagesForm.show();
+  }
 
   public JComponent getComponent() {
     return myMainPanel;
@@ -369,6 +393,8 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     myDownloadDependenciesFailedBatik.setVisible(false);
     myDownloadDependenciesFailedJSyntrax.setVisible(false);
     myDownloadDependenciesFailedPdf.setVisible(false);
+
+    myScriptLanguageSettings = settings.getScriptLanguageSettings();
   }
 
   @NotNull
@@ -395,7 +421,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myEnableKroki.isSelected(), krokiUrl, myEnabledAttributeFolding.isSelected(), myEnableConversionOfClipboardText.isSelected(),
       myEnableBuiltInMermaid.isSelected(),
       getZoom(),
-      myHideErrorsInSourceBlocks.isSelected(), myHideErrorsByLanguage.getText());
+      myHideErrorsInSourceBlocks.isSelected(), myHideErrorsByLanguage.getText(), myScriptLanguageSettings);
   }
 
   private int getZoom() {

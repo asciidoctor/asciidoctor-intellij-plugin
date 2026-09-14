@@ -1,35 +1,50 @@
 package org.asciidoc.intellij.commandRunner.arbitrary;
 
 import com.intellij.lang.Language;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
 import org.asciidoc.intellij.AsciiDocBundle;
+import org.asciidoc.intellij.settings.language.AsciiDocScriptLanguageSetting;
+import org.asciidoc.intellij.settings.language.AsciiDocScriptLanguageSettings;
 import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Locale;
 
+/**
+ * Run adhoc PowerShell code blocks in AsciiDoc documents.
+ */
 public class AsciiDocRunnerForPowershell extends AsciiDocRunnerArbitrary {
 
   private static final String WINDOWS_EXECUTABLE = "powershell.exe";
   private static final String UNIX_EXECUTABLE = "pwsh";
 
   @Override
-  public String findInterpreter(@NotNull Project project) {
-    return SystemInfo.isWindows ? WINDOWS_EXECUTABLE : UNIX_EXECUTABLE;
+  String findInterpreter() {
+    return findPowerShellInterpreter();
   }
 
   @Override
-  public boolean isApplicable(@NotNull Project project, @NotNull Language language) {
+  @Nullable AsciiDocScriptLanguageSetting extractScriptLanguageSetting(
+    AsciiDocScriptLanguageSettings languageSettings) {
+    return languageSettings.getLanguageSettingPowerShell();
+  }
+
+  @Override
+  public boolean isApplicable(@NotNull Language language) {
     String id = language.getID().toLowerCase(Locale.ROOT);
     String displayName = language.getDisplayName().toLowerCase(Locale.ROOT);
-    return isPowerShell(id) || isPowerShell(displayName);
+    return (isPowerShell(id) || isPowerShell(displayName)) && hasInterpreter();
   }
 
-  @NonNull
   @Override
-  String codeRunParameter() {
-    return "-c";
+  @NotNull
+  List<String> codeRunParameters(@Nullable AsciiDocScriptLanguageSetting languageSetting) {
+    List<String> result = super.codeRunParameters(languageSetting);
+    if (!useTemporaryFile(languageSetting)) {
+      result.add("-c");
+    }
+    return result;
   }
 
   @Override
@@ -43,5 +58,25 @@ public class AsciiDocRunnerForPowershell extends AsciiDocRunnerArbitrary {
       || value.equalsIgnoreCase("ps1")
       || value.equalsIgnoreCase("posh")
       || value.equalsIgnoreCase("power shell");
+  }
+
+  @NotNull
+  public static String findPowerShellInterpreter() {
+    return SystemInfo.isWindows ? WINDOWS_EXECUTABLE : UNIX_EXECUTABLE;
+  }
+
+  @NotNull
+  public static List<AsciiDocSuggestedParameter> suggestedParameters() {
+    return List.of(//
+      new AsciiDocSuggestedParameter("-ExecutionPolicy Bypass",
+        "Bypasses the script-blocking policy.", null)
+      //
+    );
+  }
+
+  @Override
+  @NotNull
+  TempFileInfo getTempFileInfo() {
+    return new TempFileInfo(".ps1");
   }
 }
