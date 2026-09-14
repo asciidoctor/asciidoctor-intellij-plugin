@@ -7,7 +7,7 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
-== 0.46.0
+=== 0.46.0
 
 * Language running improved:
 ** Better interpreter finding.

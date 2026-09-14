@@ -29,6 +29,13 @@ public class AsciiDocBackgroundCommand extends Task.Backgroundable {
 
   @Nullable
   private volatile ProcessHandler processHandler;
+  /**
+   * Inform the thread that it has been forcefully aborted.
+   *
+   * <p>This is used to avoid showing error messages when the abortion was intentional,
+   * and the thread didn't end because the script ended or an error happened.
+   * <p>This is <b>not</b> a signal for a thread to stop its execution loop!
+   */
   private volatile boolean abort = false;
 
   AsciiDocBackgroundCommand(@NotNull AsciiDocRunnerArbitrary asciiDocRunnerArbitrary, @NotNull Project project,
