@@ -11,6 +11,7 @@ This document provides a high-level view of the changes introduced by release.
 
 - Keep the scroll position of the JCEF preview when the page is reloaded, for example after switching windows or a long idle time (#2122, thanks to @dvponomarev)
 - Scroll the preview to the cursor position also when the cursor line is below the visible area
+- Fix a freeze of all JCEF previews when zooming the preview with Ctrl+mouse wheel (#1944, thanks to @dvponomarev)
 
 === 0.45.7
 

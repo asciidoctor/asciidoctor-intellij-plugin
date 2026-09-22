@@ -44,7 +44,6 @@ import com.intellij.ui.jcef.JBCefBrowserBase;
 import com.intellij.ui.jcef.JBCefJSQuery;
 import com.intellij.ui.jcef.JBCefPsiNavigationUtils;
 import com.intellij.ui.jcef.JCEFHtmlPanel;
-import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.TextTransferable;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -124,7 +123,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     return (JComponent) getComponent().getComponents()[0];
   }
 
-  private JBCefJSQuery myZoomDelta;
   private JBCefJSQuery myZoomReset;
   private JBCefJSQuery mySaveImage;
   private JBCefJSQuery myBrowserLog;
@@ -151,7 +149,8 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   @NotNull
   private static final String OUR_CLASS_URL;
 
-  private double uiZoom;
+  private volatile double uiZoom;
+  private volatile boolean zoomApplied;
 
   private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = NotNullLazyValue.lazy(() -> {
     return "<script src=\"" + PreviewStaticServer.getScriptUrl("scrollToElement.js") + "\"></script>\n"
@@ -309,7 +308,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     myRenderedResult = JBCefJSQuery.create((JBCefBrowserBase) this);
     myBrowserLog = JBCefJSQuery.create((JBCefBrowserBase) this);
     myScrollEditorToLine = JBCefJSQuery.create((JBCefBrowserBase) this);
-    myZoomDelta = JBCefJSQuery.create((JBCefBrowserBase) this);
     myZoomReset = JBCefJSQuery.create((JBCefBrowserBase) this);
     mySaveImage = JBCefJSQuery.create((JBCefBrowserBase) this);
     myOpenLink = JBCefJSQuery.create((JBCefBrowserBase) this);
@@ -361,27 +359,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     });
 
     myScrollEditorToLine.addHandler(this::handleScrollEditorLine);
-
-    myZoomDelta.addHandler((r) -> {
-      try {
-        double deltaY = Double.parseDouble(r);
-        if (Double.compare(deltaY, 0.0) != 0) {
-          uiZoom = getCefBrowser().getZoomLevel() + 1;
-          double factor = (deltaY > 0.0 ? -0.2 : +0.2);
-          uiZoom = uiZoom + factor;
-          // define minimum/maximum zoom
-          if (uiZoom < JBUIScale.scale(0.1f)) {
-            uiZoom = 0.1;
-          } else if (uiZoom > JBUIScale.scale(10.f)) {
-            uiZoom = 10;
-          }
-          getCefBrowser().setZoomLevel(uiZoom - 1);
-        }
-      } catch (NumberFormatException e) {
-        LOG.warn("unable parse line number: " + r, e);
-      }
-      return null;
-    });
 
     myZoomReset.addHandler((r) -> {
       uiZoom = 1.0;
@@ -522,10 +499,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     if (myScrollEditorToLine != null) {
       myScrollEditorToLine.clearHandlers();
       Disposer.dispose(myScrollEditorToLine);
-    }
-    if (myZoomDelta != null) {
-      myZoomDelta.clearHandlers();
-      Disposer.dispose(myZoomDelta);
     }
     if (myZoomReset != null) {
       myZoomReset.clearHandlers();
@@ -833,7 +806,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       html = wrapHtmlForPage(html);
       final String htmlToRender = prepareHtml(html, attributes);
       loadHTML(htmlToRender);
-      getCefBrowser().setZoomLevel(uiZoom - 1);
     }
     try {
       // slow down the rendering of the next version of the preview until the rendering if the current version is complete
@@ -1191,7 +1163,11 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private class BridgeSettingListener extends CefLoadHandlerAdapter {
     @Override
     public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
-      getCefBrowser().setZoomLevel(uiZoom - 1);
+      // apply the configured zoom once: afterwards the zoom is the user's to change via Ctrl+wheel
+      if (!zoomApplied) {
+        zoomApplied = true;
+        getCefBrowser().setZoomLevel(uiZoom - 1);
+      }
       if (!isLoading) {
         getCefBrowser().executeJavaScript(
           "window.JavaPanelBridge = {" +
@@ -1206,9 +1182,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "}," +
             "scrollEditorToLine : function(sourceLine) {" +
             myScrollEditorToLine.inject("sourceLine") +
-            "}," +
-            "zoomDelta : function(deltaY) {" +
-            myZoomDelta.inject("deltaY") +
             "}," +
             "zoomReset : function() {" +
             myZoomReset.inject(null) +
