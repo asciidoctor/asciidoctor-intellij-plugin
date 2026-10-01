@@ -1181,7 +1181,14 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         if (!hasLoadedOnce && myScrollPreservingListener.myScrollY == 0) {
           scrollToLineInBrowser(line, lineCount);
         } else {
-          getCefBrowser().executeJavaScript("document.documentElement.scrollTop = ({} || document.body).scrollTop = " + myScrollY,
+          // Restore the position with window.scrollTo(), which scrolls the viewport regardless of the document mode.
+          // The previous code "document.documentElement.scrollTop = ({} || document.body).scrollTop = myScrollY" never scrolled:
+          // - the page built by wrapHtmlForPage() has no DOCTYPE, so Chromium renders it in quirks mode,
+          //   where the viewport is scrolled via document.body and assigning document.documentElement.scrollTop is ignored;
+          // - "({} || document.body)" always evaluates to the empty object, so document.body.scrollTop was never assigned either.
+          // Reading the position ("document.documentElement.scrollTop || document.body.scrollTop") works in both modes,
+          // therefore myScrollY was correct, but after each full reload of the page the preview ended up at the top.
+          getCefBrowser().executeJavaScript("window.scrollTo(0, " + myScrollY + ");",
             getCefBrowser().getURL(), 0);
         }
         hasLoadedOnce = true;
