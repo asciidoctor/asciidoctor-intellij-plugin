@@ -364,6 +364,7 @@ public class AsciiDocWrapper {
         if (format == FileType.JCEF || format == FileType.BROWSER || format == FileType.HTML) {
           // 'tabs-sync-option' ensures that the preview keeps the state of the tabs when editing
           asciidoctor.requireLibrary("asciidoctor-tabs");
+          asciidoctor.requireLibrary("asciidoctor-carousels");
         }
 
         if (!krokiEnabled && diagramPresent) {
@@ -1458,7 +1459,8 @@ public class AsciiDocWrapper {
 
   @NotNull
   public static String enrichPage(@NotNull String html, String
-    standardCss, String mermaidScript, String asciidoctorTabsScript, @NotNull Map<String, String> attributes, @Nullable Project project) {
+    standardCss, String mermaidScript, String asciidoctorTabsScript, String asciidoctorCarouselsScript,
+    @NotNull Map<String, String> attributes, @Nullable Project project) {
 
     html = enrichPageMaxWidth(html, attributes);
 
@@ -1591,6 +1593,9 @@ public class AsciiDocWrapper {
     }
     if (asciidoctorTabsScript != null && html.contains("<div class=\"ulist tablist\">")) {
       html = html.replaceAll("</body>", asciidoctorTabsScript + "</body>");
+    }
+    if (asciidoctorCarouselsScript != null && html.contains("openblock carousel")) {
+      html = html.replaceAll("</body>", asciidoctorCarouselsScript + "</body>");
     }
 
     return html;
