@@ -92,8 +92,8 @@ public final class AsciiDocPreviewSettings {
   @Attribute("EnableConversionOfClipboardTextExperimental")
   private boolean myEnableConversionOfClipboardText = false;
 
-  @Attribute("EnableBuiltInMermaidExperimental")
-  private boolean myEnableBuiltInMermaid = false;
+  @Attribute("EnableBuiltInMermaid")
+  private boolean myEnableBuiltInMermaid = true;
 
   @Attribute("Zoom")
   private Integer myZoom = 100;

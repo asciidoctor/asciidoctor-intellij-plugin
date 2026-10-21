@@ -149,9 +149,10 @@ via the plugin's attribute settings, or via an `xref:features/advanced/asciidoct
 
 == Using embedded Mermaid support
 
-As an experimental option in plugin version 0.38.1+, there's an embedded Mermaid support that is embedded in the plugin and will render Mermaid diagrams within the IDE without external helpers.
+Since plugin version 0.38.1, there's an embedded Mermaid support that is embedded in the plugin and will render Mermaid diagrams within the IDE without external helpers.
+It is enabled by default from 0.45.8.
 
-To enable the support, toggle the checkbox menu:Enable built-in Mermaid Diagrams support[] in the plugin's settings.
+To disable the support, clear the checkbox menu:Enable built-in Mermaid Diagrams support[] in the plugin's settings.
 
 This is currently only supported for Mermaid diagrams, and only for the JCEF preview.
 

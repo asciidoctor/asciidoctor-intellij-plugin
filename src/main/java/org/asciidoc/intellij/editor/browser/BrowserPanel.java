@@ -142,7 +142,7 @@ public class BrowserPanel implements Disposable {
       myDejavuCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("dejavu/dejavu.css") + "\">";
       myGoogleFontsCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("googlefonts/googlefonts.css") + "\">";
       myMermaidScript = "<script src=\"" + PreviewStaticServer.getScriptUrl("mermaid/mermaid.min.js") + "\"></script>" +
-        "<script>mermaid.initialize(); window.mermaid = mermaid; </script>";
+        "<script src=\"" + PreviewStaticServer.getScriptUrl("mermaid/asciidoc-mermaid.js") + "\"></script>";
       myAsciidoctorTabsScript = "<script src=\"" + PreviewStaticServer.getScriptUrl("tabs.js") + "\"></script>";
     } catch (IOException e) {
       String message = "Unable to combine CSS resources: " + e.getMessage();
