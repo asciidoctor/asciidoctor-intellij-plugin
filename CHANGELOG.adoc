@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.45.8
+
+...
+
 === 0.45.7
 
 - Resolve Antora `example$` resource ids as Kroki diagram block macro targets inside an Antora module, and show a placeholder with an open-in-editor link for Kroki diagrams the preview cannot render (unresolvable target, missing include file) instead of an error paragraph or a silently degraded diagram (#516, thanks to @cachescrubber)
