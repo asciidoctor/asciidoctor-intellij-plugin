@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import java.util.Comparator;
+import java.util.NavigableSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -16,7 +17,7 @@ public class AsciiDocUtilTest {
   @Test
   public void shouldAddOneEntry() {
     // given...
-    TreeSet<VirtualFile> roots = initialRoots();
+    NavigableSet<VirtualFile> roots = initialRoots();
 
     // when...
     AsciiDocUtil.addRoot(roots, new MockVirtualFile(true, "root"));
@@ -29,7 +30,7 @@ public class AsciiDocUtilTest {
   @Test
   public void shouldDeduplicateTwoIdenticalEntries() {
     // given...
-    TreeSet<VirtualFile> roots = initialRoots();
+    NavigableSet<VirtualFile> roots = initialRoots();
 
     // when...
     AsciiDocUtil.addRoot(roots, new MockVirtualFile(true, "root"));
@@ -43,7 +44,7 @@ public class AsciiDocUtilTest {
   @Test
   public void shouldDominateLongerRootByShorterRootWithShorterPathFirst() {
     // given...
-    TreeSet<VirtualFile> roots = initialRoots();
+    NavigableSet<VirtualFile> roots = initialRoots();
 
     // when...
     AsciiDocUtil.addRoot(roots, new MockVirtualFile(true, "root"));
@@ -57,7 +58,7 @@ public class AsciiDocUtilTest {
   @Test
   public void shouldDominateLongerRootByShorterRootWithLongerPathFirst() {
     // given...
-    TreeSet<VirtualFile> roots = initialRoots();
+    NavigableSet<VirtualFile> roots = initialRoots();
 
     // when...
     AsciiDocUtil.addRoot(roots, new MockVirtualFile(true, "root/subpath"));
@@ -68,11 +69,11 @@ public class AsciiDocUtilTest {
       .containsExactlyInAnyOrder("MOCK_ROOT:/root");
   }
 
-  private static @NotNull ListAssert<String> assertThat(TreeSet<VirtualFile> roots) {
+  private static @NotNull ListAssert<String> assertThat(NavigableSet<VirtualFile> roots) {
     return Assertions.assertThat(roots.stream().map(VirtualFile::getPath).collect(Collectors.toList()));
   }
 
-  private static @NotNull TreeSet<VirtualFile> initialRoots() {
+  private static @NotNull NavigableSet<VirtualFile> initialRoots() {
     return new TreeSet<>(Comparator.comparing(VirtualFile::getPath));
   }
 
