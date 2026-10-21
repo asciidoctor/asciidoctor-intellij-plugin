@@ -61,3 +61,4 @@
 ** xref:faq/troubleshooting-mps.adoc[]
 ** xref:faq/diagrams-in-pdf-without-text.adoc[]
 ** xref:faq/could-not-find-dot-executable.adoc[]
+** xref:faq/custom-tls-certificates.adoc[]
