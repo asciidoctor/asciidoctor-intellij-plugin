@@ -56,9 +56,7 @@ public class BrowserPanel implements Disposable {
   private String base;
 
   private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = NotNullLazyValue.lazy(() -> {
-    //noinspection StringBufferReplaceableByString
-    return new StringBuilder()
-      .append("""
+    return """
         <script type="text/x-mathjax-config">
         MathJax.Hub.Config({
           messageStyle: "none",
@@ -74,9 +72,8 @@ public class BrowserPanel implements Disposable {
           TeX: { equationNumbers: { autoNumber: "none" } }
         });
         </script>
-        """)
-      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("MathJax/MathJax.js")).append("&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n")
-      .toString();
+        """
+      + "<script src=\"" + PreviewStaticServer.getScriptUrl("MathJax/MathJax.js") + "&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n";
   });
 
   @Nullable

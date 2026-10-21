@@ -154,16 +154,14 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private double uiZoom;
 
   private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = NotNullLazyValue.lazy(() -> {
-    //noinspection StringBufferReplaceableByString
-    return new StringBuilder()
-      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("scrollToElement.js")).append("\"></script>\n")
-      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processLinks.js")).append("\"></script>\n")
-      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("processImages.js")).append("\"></script>\n")
-      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("pickSourceLine.js")).append("\"></script>\n")
-      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("mouseEvents.js")).append("\"></script>\n")
-      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("copyCodeBlock.js")).append("\"></script>\n")
-      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("runCodeBlock.js")).append("\"></script>\n")
-      .append("""
+    return "<script src=\"" + PreviewStaticServer.getScriptUrl("scrollToElement.js") + "\"></script>\n"
+      + "<script src=\"" + PreviewStaticServer.getScriptUrl("processLinks.js") + "\"></script>\n"
+      + "<script src=\"" + PreviewStaticServer.getScriptUrl("processImages.js") + "\"></script>\n"
+      + "<script src=\"" + PreviewStaticServer.getScriptUrl("pickSourceLine.js") + "\"></script>\n"
+      + "<script src=\"" + PreviewStaticServer.getScriptUrl("mouseEvents.js") + "\"></script>\n"
+      + "<script src=\"" + PreviewStaticServer.getScriptUrl("copyCodeBlock.js") + "\"></script>\n"
+      + "<script src=\"" + PreviewStaticServer.getScriptUrl("runCodeBlock.js") + "\"></script>\n"
+      + """
         <script type="text/x-mathjax-config">
         MathJax.Hub.Config({
           messageStyle: "none",
@@ -193,9 +191,8 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
          window.JavaPanelBridge && window.JavaPanelBridge.log(JSON.stringify(message));
         });
         </script>
-        """)
-      .append("<script src=\"").append(PreviewStaticServer.getScriptUrl("MathJax/MathJax.js")).append("&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n")
-      .toString();
+        """
+      + "<script src=\"" + PreviewStaticServer.getScriptUrl("MathJax/MathJax.js") + "&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n";
   });
 
   static {
