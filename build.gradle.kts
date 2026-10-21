@@ -56,7 +56,7 @@ dependencies {
 
     implementation("org.apache.commons:commons-text:1.15.0")
     implementation("org.apache.commons:commons-lang3:3.20.0")
-    implementation("io.sentry:sentry:8.54.0")
+    implementation("io.sentry:sentry:8.58.0")
 
     // when updating the versions here, also update them in AsciiDocDownloaderUtil for dynamic download
     testImplementation("org.asciidoctor:asciidoctorj-diagram:3.2.1")
@@ -70,7 +70,7 @@ dependencies {
     testRuntimeOnly(libs.junitJupiterEngine)
     testRuntimeOnly(libs.junitVintageEngine)
 
-    testImplementation("com.tngtech.archunit:archunit-junit4:1.5.0")
+    testImplementation("com.tngtech.archunit:archunit-junit4:1.5.1")
     testImplementation("org.assertj:assertj-core:3.27.7")
     testImplementation("org.mockito:mockito-core:5.23.0")
     testImplementation(libs.junitJupiterApi)

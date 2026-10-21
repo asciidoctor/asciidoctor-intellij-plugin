@@ -36,6 +36,10 @@ public class AsciiDocLinkIndexImpl extends ScalarIndexExtension<String> {
   public DataIndexer<String, Void, FileContent> getIndexer() {
     return inputData -> {
       String canonicalPath = inputData.getFile().getCanonicalPath();
+      if (canonicalPath == null) {
+        // broken symlink
+        return Collections.emptyMap();
+      }
       return Collections.singletonMap(canonicalPath, null);
     };
   }
@@ -56,7 +60,13 @@ public class AsciiDocLinkIndexImpl extends ScalarIndexExtension<String> {
       if (!vf.getFileType().equals(AsciiDocFileType.INSTANCE)) {
         return false;
       }
-      return !Objects.equals(vf.getPath(), vf.getCanonicalPath());
+      String canonicalPath = vf.getCanonicalPath();
+      if (canonicalPath == null) {
+        // broken symlink
+        return false;
+      }
+      // return true on a symlink
+      return !Objects.equals(vf.getPath(), canonicalPath);
     };
   }
 
