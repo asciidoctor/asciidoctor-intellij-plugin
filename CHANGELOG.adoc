@@ -12,7 +12,8 @@ This document provides a high-level view of the changes introduced by release.
 - Keep the scroll position of the JCEF preview when the page is reloaded, for example after switching windows or a long idle time (#2122, thanks to @dvponomarev)
 - Scroll the preview to the cursor position also when the cursor line is below the visible area
 - Enable the built-in Mermaid support by default and remove its experimental mark
-- Upgrade to mermaid 12.2.0 (#2036)
+- Upgrade to mermaid 12.2.0 (#1968)
+- Resolve a relative `imagesoutdir` for diagrams against the document folder when exporting to HTML or DOCX (#2036)
 - Run the HTML, PDF and DOCX export in a background task instead of a modal dialog, so the IDE stays usable while it runs (#2039)
 - Show the error message of the parser for Mermaid diagrams with syntax errors in the preview (#2062)
 - Highlight code blocks with TextMate bundles when the IDE has no language plugin for them, for example Go in IntelliJ IDEA Community (#2053)

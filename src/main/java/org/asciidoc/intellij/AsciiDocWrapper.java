@@ -393,6 +393,13 @@ public class AsciiDocWrapper {
             }
             asciidoctor.rubyExtensionRegistry().loadClass(is);
           }
+        } else if ((format == FileType.HTML || format == FileType.DOCX) && diagramPresent && !krokiEnabled) {
+          try (InputStream is = this.getClass().getResourceAsStream("/diagram-imagesoutdir-patch.rb")) {
+            if (is == null) {
+              throw new RuntimeException("unable to load script diagram-imagesoutdir-patch.rb");
+            }
+            asciidoctor.rubyExtensionRegistry().loadClass(is);
+          }
         } else if (format == FileType.JCEF && diagramPresent) {
           try (InputStream is = this.getClass().getResourceAsStream("/plantuml-patch.rb")) {
             if (is == null) {
@@ -1370,6 +1377,10 @@ public class AsciiDocWrapper {
     Attributes attrs = builder.build();
 
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
+    if ((fileType == FileType.HTML || fileType == FileType.DOCX) && fileBaseDir != null) {
+      // relative paths like imagesoutdir would otherwise be resolved against the working directory of the IDE (#1968)
+      attrs.setAttribute("outdir", fileBaseDir.getAbsolutePath());
+    }
     if (imagesPath != null) {
       if (fileType == FileType.JAVAFX || fileType == FileType.JCEF || fileType == FileType.BROWSER || fileType == FileType.PDF) {
         if (settings.getAsciiDocPreviewSettings().getHtmlPanelProviderInfo().getClassName().equals(AsciiDocJCEFHtmlPanelProvider.class.getName()) || fileType == FileType.BROWSER) {

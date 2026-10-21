@@ -92,6 +92,23 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     }
   }
 
+  // #1968: a relative imagesoutdir must be resolved against the document, not the working directory of the IDE
+  public void testShouldWriteDiagramsToRelativeImagesOutDirWhenExportingHtml() throws Exception {
+    File base = new File(System.getProperty("java.io.tmpdir"), "imagesoutdir-" + System.nanoTime());
+    assertThat(base.mkdirs()).isTrue();
+    File adoc = new File(base, "diagram.adoc");
+    Files.writeString(adoc.toPath(), ":imagesoutdir: images\n:imagesdir: images\n\n[plantuml,target=my-diagram,format=png]\n----\nAlice -> Bob: Hi\n----\n", UTF_8);
+    VirtualFile baseVf = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(base);
+    assertThat(baseVf).isNotNull();
+    try {
+      AsciiDocWrapper wrapper = new AsciiDocWrapper(getProject(), baseVf, null, "diagram.adoc");
+      assertThat(wrapper.convertTo(adoc, "", Collections.emptyList(), AsciiDocWrapper.FileType.HTML)).isTrue();
+      assertThat(new File(base, "images/my-diagram.png")).exists();
+    } finally {
+      FileUtil.delete(base);
+    }
+  }
+
   // End-to-end: with Kroki enabled, a plantuml:: block macro whose target is an Antora example$ resource
   // (which itself has a relative !include, resolved by the Kroki extension's preprocessor) renders through the
   // full pipeline and yields a Kroki image URL whose diagram text contains the included file; the placeholder
