@@ -146,9 +146,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private volatile boolean replaceResult = false;
   private volatile String frameHtml = null;
 
-  @NotNull
-  private static final String OUR_CLASS_URL;
-
   private volatile double uiZoom;
   private volatile boolean zoomApplied;
 
@@ -193,18 +190,6 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         """
       + "<script src=\"" + PreviewStaticServer.getScriptUrl("MathJax/MathJax.js") + "&amp;config=TeX-MML-AM_HTMLorMML\"></script>\n";
   });
-
-  static {
-    String url = "about:blank";
-    try {
-      // JCEF will complain with a "Not allowed to load local resource" error when non-ascii characters are included in this random URL
-      // therefore using toASCIIString()
-      url = AsciiDocJCEFHtmlPanel.class.getResource(AsciiDocJCEFHtmlPanel.class.getSimpleName() + ".class").toURI().toASCIIString();
-    } catch (Exception ex) {
-      LOG.warn("unable to initialize url", ex);
-    }
-    OUR_CLASS_URL = url;
-  }
 
   @Nullable
   private Editor editor;
