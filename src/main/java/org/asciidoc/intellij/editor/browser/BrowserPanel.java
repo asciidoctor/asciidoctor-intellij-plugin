@@ -86,6 +86,10 @@ public class BrowserPanel implements Disposable {
   @Nullable
   private String myTabsCssDarcula;
   @Nullable
+  private String myCarouselsCss;
+  @Nullable
+  private String myCarouselsCssDarcula;
+  @Nullable
   private String myInlineCssDarcula;
   @Nullable
   private String myFontAwesomeCssLink;
@@ -101,6 +105,8 @@ public class BrowserPanel implements Disposable {
   private String myMermaidScript;
   @Nullable
   private String myAsciidoctorTabsScript;
+  @Nullable
+  private String myAsciidoctorCarouselsScript;
 
   private final SignWithMac signWithMac = new SignWithMac();
 
@@ -133,11 +139,18 @@ public class BrowserPanel implements Disposable {
         myTabsCss = IOUtils.toString(is, StandardCharsets.UTF_8);
         myInlineCss = myInlineCss + myTabsCss;
       }
+      try (InputStream is = PreviewStaticServer.class.getResourceAsStream("/carousels/data/css/carousels.css")) {
+        myCarouselsCss = IOUtils.toString(is, StandardCharsets.UTF_8);
+        myInlineCss = myInlineCss + myCarouselsCss;
+      }
       try (InputStream is = PreviewStaticServer.class.getResourceAsStream("darcula.css")) {
         myInlineCssDarcula = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       try (InputStream is = PreviewStaticServer.class.getResourceAsStream("/tabs/data/css/tabs-darcula.css")) {
         myTabsCssDarcula = IOUtils.toString(is, StandardCharsets.UTF_8);
+      }
+      try (InputStream is = PreviewStaticServer.class.getResourceAsStream("/carousels/data/css/carousels-darcula.css")) {
+        myCarouselsCssDarcula = IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       myAntoraCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("antora/preview.css") + "\">";
       myAntoraDarculaCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("antora/preview-darcula.css") + "\">";
@@ -147,6 +160,7 @@ public class BrowserPanel implements Disposable {
       myMermaidScript = "<script src=\"" + PreviewStaticServer.getScriptUrl("mermaid/mermaid.min.js") + "\"></script>" +
         "<script>mermaid.initialize(); window.mermaid = mermaid; </script>";
       myAsciidoctorTabsScript = "<script src=\"" + PreviewStaticServer.getScriptUrl("tabs.js") + "\"></script>";
+      myAsciidoctorCarouselsScript = "<script src=\"" + PreviewStaticServer.getScriptUrl("carousels.js") + "\"></script>";
     } catch (IOException e) {
       String message = "Unable to combine CSS resources: " + e.getMessage();
       log.error(message, e);
@@ -405,9 +419,9 @@ public class BrowserPanel implements Disposable {
 
     /* Add CSS line and JavaScript */
     if (isAntora) {
-      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink + getCssLines(myTabsCss + (isDarcula() ? myTabsCssDarcula : "")), myMermaidScript, myAsciidoctorTabsScript, attributes, project);
+      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink + getCssLines(myTabsCss + (isDarcula() ? myTabsCssDarcula : "") + myCarouselsCss + (isDarcula() ? myCarouselsCssDarcula : "")), myMermaidScript, myAsciidoctorTabsScript, myAsciidoctorCarouselsScript, attributes, project);
     } else {
-      html = AsciiDocWrapper.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula + myTabsCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, myMermaidScript, myAsciidoctorTabsScript, attributes, project);
+      html = AsciiDocWrapper.enrichPage(html, getCssLines(isDarcula() ? myInlineCssDarcula + myTabsCssDarcula + myCarouselsCssDarcula : myInlineCss) + myFontAwesomeCssLink + myGoogleFontsCssLink + myDejavuCssLink, myMermaidScript, myAsciidoctorTabsScript, myAsciidoctorCarouselsScript, attributes, project);
     }
     html = html.replace("</body>", getScriptingLines() + "</body>");
     return html;

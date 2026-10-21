@@ -41,6 +41,9 @@ Selecting a tab with a mouse click will not place the cursor in the editor and w
 To place the cursor or open the included file, click on the body of the tab.
 The Asciidoctor Tabs extension is not supported for the JavaFX preview and is not supported for PDF generation.
 
+The JCEF, browser preview, and HTML conversion also support the https://github.com/asciidoctor/asciidoctor-carousels[Asciidoctor Carousels extension].
+As with the Asciidoctor Tabs extension, it is not supported for the JavaFX preview and is not supported for PDF generation.
+
 When the user clicks on an external URL, the preview opens it in an external browser.
 
 When the user clicks on a relative link within the project (usually a `\link:[]` reference), the preview opens the referenced file in a new editor.
