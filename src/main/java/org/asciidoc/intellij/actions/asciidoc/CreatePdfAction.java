@@ -11,7 +11,9 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -21,12 +23,14 @@ import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CreatePdfAction extends AsciiDocFileAction {
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.CreatePdfAction";
@@ -85,37 +89,45 @@ public class CreatePdfAction extends AsciiDocFileAction {
       });
     }
     VirtualFile parent = file.getParent();
-    boolean successful = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-      Path tempImagesPath = null;
-      try {
-        if (parent != null) {
-          // parent will be null if we use Language Injection and Fragment Editor
-          tempImagesPath = AsciiDocWrapper.tempImagesPath(parent.toNioPath(), project);
+    final Project currentProject = project;
+    final AtomicBoolean successful = new AtomicBoolean(false);
+    ProgressManager.getInstance().run(new Task.Backgroundable(currentProject, "Creating PDF", true) {
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) {
+        Path tempImagesPath = null;
+        try {
+          if (parent != null) {
+            // parent will be null if we use Language Injection and Fragment Editor
+            tempImagesPath = AsciiDocWrapper.tempImagesPath(parent.toNioPath(), currentProject);
+          }
+          AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(currentProject, parent, tempImagesPath, file.getName());
+          List<String> extensions = extensionService.getExtensions(currentProject);
+          String config = AsciiDocWrapper.config(editor.getDocument(), currentProject);
+          if (!asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.PDF)) {
+            return;
+          }
+          if (Objects.equals("true", asciiDocWrapper.getAttributes().get("asciidoctor-diagram-missing-diagram-extension"))) {
+            AsciiDocDownloadNotificationProvider.showNotification();
+          }
+          successful.set(true);
+        } finally {
+          AsciiDocWrapper.cleanupImagesPath(tempImagesPath);
         }
-        AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(project, parent, tempImagesPath, file.getName());
-        List<String> extensions = extensionService.getExtensions(project);
-        String config = AsciiDocWrapper.config(editor.getDocument(), project);
-        if (!asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.PDF)) {
-          return false;
-        }
-        if (Objects.equals("true", asciiDocWrapper.getAttributes().get("asciidoctor-diagram-missing-diagram-extension"))) {
-          AsciiDocDownloadNotificationProvider.showNotification();
-        }
-        return true;
-      } finally {
-        AsciiDocWrapper.cleanupImagesPath(tempImagesPath);
       }
-    }, "Creating PDF", true, project);
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      VirtualFile virtualFilePdf = changeFileExtension(file);
-      VirtualFile virtualFile = virtualFilePdf != null ? virtualFilePdf : parent;
-      AsciiDocUtil.selectFileInProjectView(project, virtualFile);
-      if (virtualFilePdf != null) {
-        if (successful) {
-          ApplicationManager.getApplication().invokeLater(() -> {
-            new OpenFileDescriptor(project, virtualFilePdf).navigate(true);
-          });
-        }
+
+      @Override
+      public void onFinished() {
+        // runs on the EDT, regardless if the task was successful, failed or cancelled
+        ApplicationManager.getApplication().runWriteAction(() -> {
+          VirtualFile virtualFilePdf = changeFileExtension(file);
+          VirtualFile virtualFile = virtualFilePdf != null ? virtualFilePdf : parent;
+          AsciiDocUtil.selectFileInProjectView(currentProject, virtualFile);
+          if (virtualFilePdf != null && successful.get()) {
+            ApplicationManager.getApplication().invokeLater(() -> {
+              new OpenFileDescriptor(currentProject, virtualFilePdf).navigate(true);
+            });
+          }
+        });
       }
     });
   }

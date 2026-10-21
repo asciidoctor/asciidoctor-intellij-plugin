@@ -11,7 +11,9 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -36,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CreateDocxAction extends AsciiDocFileAction {
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.CreateDocxAction";
@@ -105,17 +108,27 @@ public class CreateDocxAction extends AsciiDocFileAction {
     if (parent == null || parent.getCanonicalPath() == null) {
       return;
     }
-    boolean successful;
-    try {
-      successful = ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+    final Project currentProject = project;
+    final AtomicBoolean successful = new AtomicBoolean(false);
+    ProgressManager.getInstance().run(new Task.Backgroundable(currentProject, "Creating DOCX file", true) {
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) {
+        try {
+          successful.set(convert());
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+        }
+      }
+
+      private boolean convert() throws InterruptedException {
         String docbookFile = file.getName().replaceAll("\\.(adoc|asciidoc|ad)$", ".xml");
         String docxFile = file.getName().replaceAll("\\.(adoc|asciidoc|ad)$", ".docx");
-        Path tempImagesPath = AsciiDocWrapper.tempImagesPath(parent.toNioPath(), project);
+        Path tempImagesPath = AsciiDocWrapper.tempImagesPath(parent.toNioPath(), currentProject);
         Process process = null;
         try {
-          AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(project, parent, tempImagesPath, file.getName());
-          String config = AsciiDocWrapper.config(editor.getDocument(), project);
-          List<String> extensions = extensionService.getExtensions(project);
+          AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(currentProject, parent, tempImagesPath, file.getName());
+          String config = AsciiDocWrapper.config(editor.getDocument(), currentProject);
+          List<String> extensions = extensionService.getExtensions(currentProject);
           if (!asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.DOCX)) {
             return false;
           }
@@ -141,7 +154,7 @@ public class CreateDocxAction extends AsciiDocFileAction {
             "-o",
             parent.getCanonicalPath() + File.separator + docxFile));
           Collection<VirtualFile> reference = ApplicationManager.getApplication().runReadAction((Computable<Collection<VirtualFile>>)
-            () -> FilenameIndex.getVirtualFilesByName("reference.docx", GlobalSearchScope.projectScope(project))
+            () -> FilenameIndex.getVirtualFilesByName("reference.docx", GlobalSearchScope.projectScope(currentProject))
           );
           if (reference.size() == 1) {
             cmd.add("--reference-doc");
@@ -185,21 +198,21 @@ public class CreateDocxAction extends AsciiDocFileAction {
           AsciiDocWrapper.cleanupImagesPath(tempImagesPath);
         }
         return true;
-      }, "Creating DOCX file", true, project);
-    } catch (InterruptedException e) {
-      successful = false;
-    }
-    boolean finalSuccessful = successful;
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      VirtualFile virtualFileDocx = changeFileExtensionDocx(file);
-      VirtualFile virtualFile = virtualFileDocx != null ? virtualFileDocx : parent;
-      AsciiDocUtil.selectFileInProjectView(project, virtualFile);
-      if (virtualFileDocx != null) {
-        if (finalSuccessful) {
-          ApplicationManager.getApplication().invokeLater(() -> {
-            new OpenFileDescriptor(project, virtualFileDocx).navigate(true);
-          });
-        }
+      }
+
+      @Override
+      public void onFinished() {
+        // runs on the EDT, regardless if the task was successful, failed or cancelled
+        ApplicationManager.getApplication().runWriteAction(() -> {
+          VirtualFile virtualFileDocx = changeFileExtensionDocx(file);
+          VirtualFile virtualFile = virtualFileDocx != null ? virtualFileDocx : parent;
+          AsciiDocUtil.selectFileInProjectView(currentProject, virtualFile);
+          if (virtualFileDocx != null && successful.get()) {
+            ApplicationManager.getApplication().invokeLater(() -> {
+              new OpenFileDescriptor(currentProject, virtualFileDocx).navigate(true);
+            });
+          }
+        });
       }
     });
   }
