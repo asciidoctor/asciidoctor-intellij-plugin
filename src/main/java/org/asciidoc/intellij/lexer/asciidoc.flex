@@ -334,6 +334,47 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
     }
   }
 
+  /**
+   * Block attributes can be spread over several lines, for example <code>[source,yaml]</code> followed
+   * by <code>[caption="Example"]</code>. The style comes from the first attribute of the first line, so
+   * a line that starts with a named attribute must keep the style of the attribute line above it.
+   */
+  private boolean keepsStyleOfLineAbove() {
+    // the line above must be a block attribute line like [source,yaml], but not an anchor like [[id]]
+    int end = getTokenStart() - 1;
+    if (end < 0 || zzBuffer.charAt(end) != '\n') {
+      return false;
+    }
+    int start = end;
+    while (start > 0 && zzBuffer.charAt(start - 1) != '\n') {
+      start--;
+    }
+    while (end > start && (zzBuffer.charAt(end - 1) == ' ' || zzBuffer.charAt(end - 1) == '\t')) {
+      end--;
+    }
+    if (end - start < 3 || zzBuffer.charAt(start) != '[' || zzBuffer.charAt(start + 1) == '['
+      || zzBuffer.charAt(end - 1) != ']') {
+      return false;
+    }
+    // this line must start with a named attribute like caption="Example"
+    int pos = getTokenEnd();
+    while (pos < zzBuffer.length() && (zzBuffer.charAt(pos) == ' ' || zzBuffer.charAt(pos) == '\t')) {
+      pos++;
+    }
+    int nameStart = pos;
+    while (pos < zzBuffer.length() && (Character.isLetterOrDigit(zzBuffer.charAt(pos))
+      || zzBuffer.charAt(pos) == '_' || zzBuffer.charAt(pos) == '-')) {
+      pos++;
+    }
+    if (pos == nameStart) {
+      return false;
+    }
+    while (pos < zzBuffer.length() && (zzBuffer.charAt(pos) == ' ' || zzBuffer.charAt(pos) == '\t')) {
+      pos++;
+    }
+    return pos < zzBuffer.length() && zzBuffer.charAt(pos) == '=';
+  }
+
   private void yypushstate () {
     stateStack.push(yystate());
   }
@@ -932,7 +973,7 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
   ^ ("toc") "::" / [^ \n] { yypushstate(); yybegin(BLOCK_MACRO); return AsciiDocTokenTypes.BLOCK_MACRO_ID; }
   // if it starts like a block attribute, but has characters after the closing bracket, it's not
   {BLOCK_ATTRS_START} / [^\[\#] ([^\]\"\']* | (\" [^\"\n]* \") | (\' [^\"\n]* \') )* "]" [ \t]* [^\n] { yypushback(yylength()); yybegin(STARTBLOCK); }
-  {BLOCK_ATTRS_START} / [^\[] { yybegin(MULTILINE); yypushstate(); clearStyle(); yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.ATTRS_START; }
+  {BLOCK_ATTRS_START} / [^\[] { yybegin(MULTILINE); yypushstate(); if (!keepsStyleOfLineAbove()) { clearStyle(); } yybegin(BLOCK_ATTRS); return AsciiDocTokenTypes.ATTRS_START; }
   {ANCHORSTART} / [^\]\n]+ {ANCHOREND} { resetFormatting(); yybegin(ANCHORID); return AsciiDocTokenTypes.BLOCKIDSTART; }
   {BLOCKIDSTART} / [^\[\]\n]* {BLOCKIDEND} {
                          if (!isEscaped()) {

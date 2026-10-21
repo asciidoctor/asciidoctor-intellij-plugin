@@ -2868,6 +2868,112 @@ public class AsciiDocLexerTest extends LexerTestCase {
         AsciiDoc:TEXT ('Text')""");
   }
 
+  public void testListingWithOpenBlockAndNamedAttributeLine() {
+    doTest("""
+        .My example
+        [source,yaml]
+        [caption="Example"]
+        --
+        Listing
+        --
+        Text""",
+      """
+        AsciiDoc:TITLE_TOKEN ('.')
+        AsciiDoc:TEXT ('My')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('example')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:ATTRS_START ('[')
+        AsciiDoc:ATTR_NAME ('source')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:ATTR_NAME ('yaml')
+        AsciiDoc:ATTRS_END (']')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:ATTRS_START ('[')
+        AsciiDoc:ATTR_NAME ('caption')
+        AsciiDoc:ASSIGNMENT ('=')
+        AsciiDoc:DOUBLE_QUOTE ('"')
+        AsciiDoc:ATTR_VALUE ('Example')
+        AsciiDoc:DOUBLE_QUOTE ('"')
+        AsciiDoc:ATTRS_END (']')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LISTING_BLOCK_DELIMITER ('--')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LISTING_TEXT ('Listing')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LISTING_BLOCK_DELIMITER ('--')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:TEXT ('Text')""");
+  }
+
+  public void testListingWithOpenBlockAndNamedAttributeLineFirst() {
+    doTest("""
+        [caption="Example"]
+        [source,yaml]
+        --
+        Listing
+        --
+        Text""",
+      """
+        AsciiDoc:ATTRS_START ('[')
+        AsciiDoc:ATTR_NAME ('caption')
+        AsciiDoc:ASSIGNMENT ('=')
+        AsciiDoc:DOUBLE_QUOTE ('"')
+        AsciiDoc:ATTR_VALUE ('Example')
+        AsciiDoc:DOUBLE_QUOTE ('"')
+        AsciiDoc:ATTRS_END (']')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:ATTRS_START ('[')
+        AsciiDoc:ATTR_NAME ('source')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:ATTR_NAME ('yaml')
+        AsciiDoc:ATTRS_END (']')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LISTING_BLOCK_DELIMITER ('--')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LISTING_TEXT ('Listing')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LISTING_BLOCK_DELIMITER ('--')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:TEXT ('Text')""");
+  }
+
+  public void testListingWithOpenBlockAndSeveralNamedAttributes() {
+    doTest("""
+        [source,yaml]
+        [caption="Example",role=lead]
+        --
+        Listing
+        --
+        Text""",
+      """
+        AsciiDoc:ATTRS_START ('[')
+        AsciiDoc:ATTR_NAME ('source')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:ATTR_NAME ('yaml')
+        AsciiDoc:ATTRS_END (']')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:ATTRS_START ('[')
+        AsciiDoc:ATTR_NAME ('caption')
+        AsciiDoc:ASSIGNMENT ('=')
+        AsciiDoc:DOUBLE_QUOTE ('"')
+        AsciiDoc:ATTR_VALUE ('Example')
+        AsciiDoc:DOUBLE_QUOTE ('"')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:ATTR_NAME ('role')
+        AsciiDoc:ASSIGNMENT ('=')
+        AsciiDoc:ATTR_VALUE ('lead')
+        AsciiDoc:ATTRS_END (']')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LISTING_BLOCK_DELIMITER ('--')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LISTING_TEXT ('Listing')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LISTING_BLOCK_DELIMITER ('--')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:TEXT ('Text')""");
+  }
+
   public void testPassthroughWithNoDelimiters() {
     doTest("[pass]\nPas**ss**ss\n\nText",
       """
