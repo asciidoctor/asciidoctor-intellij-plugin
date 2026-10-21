@@ -85,6 +85,18 @@ public class LanguageGuesser {
     return Collections.unmodifiableMap(langIdToLanguage());
   }
 
+  /**
+   * Extract the language name of a source block, for example "go" from "source-go".
+   */
+  @Nullable
+  public static String findSourceLanguageName(@NotNull String languageName) {
+    String[] parts = languageName.split("-", -1);
+    if (parts.length > 1 && "source".equals(parts[0])) {
+      return parts[1];
+    }
+    return null;
+  }
+
   @Nullable
   public static Language guessLanguage(@NotNull String languageName) {
     String[] parts = languageName.split("-", -1);

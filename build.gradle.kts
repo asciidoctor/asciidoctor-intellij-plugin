@@ -92,6 +92,7 @@ dependencies {
             "com.intellij.properties", // dependency to the Java plugin
             "org.jetbrains.plugins.yaml", // used to inject file references to Antora YAML files
             "com.jetbrains.sh",
+            "org.jetbrains.plugins.textmate", // used to highlight code blocks for languages that the IDE doesn't support
             "com.intellij.modules.json",
             "com.intellij.modules.jcef"
         ))

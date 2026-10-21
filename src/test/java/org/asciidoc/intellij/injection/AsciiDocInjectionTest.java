@@ -1,12 +1,16 @@
 package org.asciidoc.intellij.injection;
 
 import com.intellij.codeInsight.intention.impl.QuickEditAction;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixture4TestCase;
+import org.asciidoc.intellij.psi.AsciiDocListing;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.function.Consumer;
@@ -44,6 +48,21 @@ public class AsciiDocInjectionTest extends LightPlatformCodeInsightFixture4TestC
       "{hi: 'ho',\n" +
       "me: 'too'}\n" +
       "----\n");
+  }
+
+  @Test
+  public void shouldInjectTextMateForLanguageWithoutIdeSupport() {
+    String text = """
+      [source,go]
+      ----
+      package main
+      ----
+      """;
+    myFixture.configureByText("a.adoc", text);
+    var host = PsiTreeUtil.findChildOfType(myFixture.getFile(), AsciiDocListing.class);
+    var injected = InjectedLanguageManager.getInstance(getProject()).getInjectedPsiFiles(host);
+    Assert.assertNotNull(injected);
+    Assert.assertEquals(1, injected.size());
   }
 
   private void withInjectedContent(PsiFile file, Consumer<PsiFile> action) {
