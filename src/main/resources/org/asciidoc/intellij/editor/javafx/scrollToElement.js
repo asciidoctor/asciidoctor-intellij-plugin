@@ -100,8 +100,8 @@ window.__IntelliJTools.scrollToLine = (function () {
       if (
           (oldLineToScroll < newLineToScroll && oldValue < newValue) || // consistent scrolling up
           (oldLineToScroll > newLineToScroll && oldValue > newValue) || // consistent scrolling down
-          (resultY < document.documentElement.scrollTop) || // position above window
-          (resultY > document.documentElement.scrollTop + window.height) // position below window
+          (resultY < oldValue) || // position above window
+          (resultY > oldValue + window.height) // position below window
          ) {
         window.scrollTo({ top: newValue, left: 0, behavior: "auto" });
       }

@@ -1178,7 +1178,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         if (!hasLoadedOnce && myScrollPreservingListener.myScrollY == 0) {
           scrollToLineInBrowser(line, lineCount);
         } else {
-          getCefBrowser().executeJavaScript("document.documentElement.scrollTop = ({} || document.body).scrollTop = " + myScrollY,
+          // The page has no DOCTYPE (quirks mode), where assigning document.documentElement.scrollTop is ignored;
+          // window.scrollTo() works in both modes.
+          getCefBrowser().executeJavaScript("window.scrollTo(0, " + myScrollY + ");",
             getCefBrowser().getURL(), 0);
         }
         hasLoadedOnce = true;
