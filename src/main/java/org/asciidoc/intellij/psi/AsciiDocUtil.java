@@ -555,11 +555,10 @@ public class AsciiDocUtil {
         }
       }
     } else {
-      result = Collections.unmodifiableList(result);
-      cache.put(key, scope, result);
+      cache.put(key, scope, Collections.unmodifiableList(result));
     }
 
-    return result;
+    return Collections.unmodifiableList(result);
   }
 
   /**
