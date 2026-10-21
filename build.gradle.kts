@@ -158,10 +158,6 @@ checkstyle {
 }
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(25)
-        vendor = JvmVendorSpec.AMAZON
-    }
     targetCompatibility = JavaVersion.VERSION_21
     sourceCompatibility = JavaVersion.VERSION_21
 }
