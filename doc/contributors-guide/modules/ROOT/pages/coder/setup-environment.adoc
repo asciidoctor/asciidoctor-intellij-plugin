@@ -4,63 +4,18 @@
 
 {description}
 
-[[JDK]]
-== Choosing a Java Version and Distribution
+== Install Mise
 
-Starting with IntelliJ 2026.2, JDK 25 is required to build the plugin, as IntelliJ 2026.2 uses JDK 25. The runtime version of the plugin is still compatible with JDK 21.
+Install https://mise.jdx.dev/getting-started.html[Mise] for your operating system by following the installation instructions for your platform.
 
-The AsciiDoc plugin uses only language features of Java 21 to allow the built plugin to run with earlier versions of IntelliJ as well.
+This project declares its development Java version in `mise.toml`. From the project directory, run `mise install` to install the required version.
 
-JetBrains recommends https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/downloads-list.html[Amazon Corretto JDK] for development, but other distributions based on OpenJDK should work as well.
+== Install the Mise IntelliJ plugin
 
-== Setup IntelliJ
+In IntelliJ, install the Mise plugin from menu:Settings[Plugins]. The plugin lets IntelliJ use the Java version configured by Mise for this project.
 
-In IntelliJ, go to menu:File[Project Structure... > Project Settings > Project > SDK] and select `coretto-25` as the JDK.
+== Open and compile the project
 
-== Setup Gradle
+Open the project in IntelliJ and import it as a Gradle project. Select the Mise-managed Corretto 25 SDK as the project SDK if IntelliJ prompts you to choose one.
 
-For the Gradle build tool to pick up the Java version, point the environment variable `JAVA_HOME` to the folder with the JDK:
-
-.Setting the environment variable on Linux/MacOS
-----
-export JAVA_HOME=...
-----
-
-.Setting the environment variable on Windows
-----
-JAVA_HOME=c:\workspace\...
-----
-
-=== Verify the Gradle environment
-
-Developers can check their environment using the following command in the root folder of the project:
-
-.Linux/MacOS command
-----
-./gradlew --version
-----
-
-.Windows command
-----
-gradlew --version
-----
-
-The output should be similar to:
-
-[%nowrap]
-----
-------------------------------------------------------------
-Gradle ...
-------------------------------------------------------------
-
-Build time:   ...
-Revision:     ...
-
-Kotlin:       ...
-Groovy:       ...
-Ant:          ...
-JVM:          25.0.x (Amazon.com Inc. 25.0....)
-OS:           ...
-----
-
-
+The project is then ready to compile. For command-line builds, run `./gradlew buildPlugin` on Linux/macOS or `gradlew.bat buildPlugin` on Windows.
