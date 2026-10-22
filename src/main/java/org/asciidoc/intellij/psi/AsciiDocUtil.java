@@ -72,6 +72,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NavigableSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -887,7 +888,7 @@ public class AsciiDocUtil {
   }
 
   @TestOnly
-  protected static void addRoot(TreeSet<VirtualFile> roots, VirtualFile root) {
+  protected static void addRoot(NavigableSet<VirtualFile> roots, VirtualFile root) {
     String rootPath = root.getPath();
     if (roots.contains(root)) {
       return;

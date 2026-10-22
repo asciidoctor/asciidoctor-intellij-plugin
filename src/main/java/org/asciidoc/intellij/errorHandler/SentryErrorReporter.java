@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.errorHandler;
 
+import com.google.errorprone.annotations.FormatMethod;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.plugins.PluginManagerCore;
@@ -55,6 +56,7 @@ class SentryErrorReporter {
         );
         options.setLogger(new ILogger() {
           @Override
+          @FormatMethod
           public void log(@NotNull SentryLevel level, @NotNull String message, Object... args) {
             if (!isEnabled(level)) {
               return;
@@ -72,6 +74,7 @@ class SentryErrorReporter {
           }
 
           @Override
+          @FormatMethod
           public void log(@NotNull SentryLevel level, Throwable throwable, @NotNull String message, Object... args) {
             if (!isEnabled(level)) {
               return;

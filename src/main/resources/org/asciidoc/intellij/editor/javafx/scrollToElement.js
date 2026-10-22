@@ -89,7 +89,7 @@ window.__IntelliJTools.scrollToLine = (function () {
       relativeWindowPosition = 0.1
     }
     // if we catch the cursor (i.e. due to edit after scrolling), we'll place it at x% of the window height
-    else if (resultY < oldValue || resultY > oldValue + window.height) {
+    else if (resultY < oldValue || resultY > oldValue + height) {
       relativeWindowPosition = 0.3
     }
 
@@ -100,8 +100,8 @@ window.__IntelliJTools.scrollToLine = (function () {
       if (
           (oldLineToScroll < newLineToScroll && oldValue < newValue) || // consistent scrolling up
           (oldLineToScroll > newLineToScroll && oldValue > newValue) || // consistent scrolling down
-          (resultY < document.documentElement.scrollTop) || // position above window
-          (resultY > document.documentElement.scrollTop + window.height) // position below window
+          (resultY < oldValue) || // position above window
+          (resultY > oldValue + height) // position below window
          ) {
         window.scrollTo({ top: newValue, left: 0, behavior: "auto" });
       }

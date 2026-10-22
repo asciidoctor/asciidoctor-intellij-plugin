@@ -54,7 +54,7 @@ public class AsciiDocIncludeTagReferenceContributor extends PsiReferenceContribu
       }).withText(StandardPatterns.string().with(new ValuePatternCondition<>("find") {
         @Override
         public boolean accepts(@NotNull final String str, final ProcessingContext context) {
-          return TAG_PATTERN.matcher(newBombedCharSequence(str)).find();
+          return mayContainTag(str) && TAG_PATTERN.matcher(newBombedCharSequence(str)).find();
         }
 
         @Override
@@ -78,8 +78,19 @@ public class AsciiDocIncludeTagReferenceContributor extends PsiReferenceContribu
   public static final String TAG_PATTERN_STR = "\\b(tag|end)::([a-zA-Z0-9_-]*)\\[](?=$|[ \\n])";
   public static final Pattern TAG_PATTERN = Pattern.compile(TAG_PATTERN_STR);
 
+  /**
+   * Cheap check to skip the regular expression on texts that can't contain a tag.
+   * Matching is slow on large texts in IntelliJ, as the bombed char sequence checks for cancellation on every character.
+   */
+  private static boolean mayContainTag(String text) {
+    return text.contains("tag::") || text.contains("end::");
+  }
+
   private List<PsiReference> findTagInElement(PsiElement element) {
     String text = element.getText();
+    if (!mayContainTag(text)) {
+      return Collections.emptyList();
+    }
     Matcher matcher = TAG_PATTERN.matcher(text);
     List<PsiReference> result = null;
     while (matcher.find()) {

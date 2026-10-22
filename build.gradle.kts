@@ -209,6 +209,8 @@ tasks {
         options.errorprone.excludedPaths = ".*(_AsciiDocLexer).*"
         options.errorprone.error("StreamResourceLeak") // enforce errors where there would be warning in the standard only
         options.errorprone.disable("MissingSummary", "NullableOnContainingClass", "CanIgnoreReturnValueSuggester")
+        // IElementType, Language, PSI elements and AST nodes are singletons or identity-based, and are intentionally compared with ==
+        options.errorprone.disable("ReferenceEquality")
         // will print link to contributor guide at the start of each build
         dependsOn (generateLexer, "showLinkToContributorGuide", "checkJavaVersion")
     }
