@@ -10,11 +10,10 @@ import com.intellij.sh.ShLanguage;
 import com.intellij.sh.run.ShRunner;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
 
 public class AsciiDocRunnerForSh implements AsciiDocRunner {
   @Override
-  public boolean isApplicable(@NotNull Project project, Language language) {
+  public boolean isApplicable(Language language) {
     return language != null && language.is(ShLanguage.INSTANCE);
   }
 

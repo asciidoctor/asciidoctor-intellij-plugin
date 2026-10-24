@@ -238,7 +238,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         settings.getAsciiDocPreviewSettings().isEnableBuiltInMermaid(),
         settings.getAsciiDocPreviewSettings().getZoom(),
         settings.getAsciiDocPreviewSettings().isHideErrorsInSourceBlocks(),
-        settings.getAsciiDocPreviewSettings().getHideErrorsByLanguage()));
+        settings.getAsciiDocPreviewSettings().getHideErrorsByLanguage(),
+        settings.getAsciiDocPreviewSettings().getScriptLanguageSettings()));
 
       /* the following will not work, IntelliJ will show the error "parent must be showing" when this is
          triggered during startup. */
