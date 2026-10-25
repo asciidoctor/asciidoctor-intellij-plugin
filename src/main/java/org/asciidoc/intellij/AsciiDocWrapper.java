@@ -899,7 +899,7 @@ public class AsciiDocWrapper {
           }
           if (IncompatiblePluginNotificationProvider.isIncompatiblePluginIntelliJScriptingInstalled()) {
             response.append("<p>The plugin <b>IntelliJ Scripting: Ruby</b> is installed which is incompatible with the AsciiDoc plugin.");
-            response.append("<p>Uninstall the plugin <b>IntelliJ Scripting: Ruby</b> and restart the IDE to fix this.");
+            response.append("<p>Disable or uninstall the plugin <b>IntelliJ Scripting: Ruby</b> and restart the IDE to fix this.");
           }
           t = t.getCause();
         } while (t != null);

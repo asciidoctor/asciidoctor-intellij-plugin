@@ -3,7 +3,6 @@ package org.asciidoc.intellij.editor.notification;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
@@ -18,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.function.Function;
+
+import static com.intellij.ide.actions.ShowSettingsUtilImpl.showSettingsDialog;
 
 /**
  * Notify user that an incompatible plugin has been installed.
@@ -39,12 +40,12 @@ public class IncompatiblePluginNotificationProvider implements EditorNotificatio
       return fileEditor -> {
         final EditorNotificationPanel panel = new EditorNotificationPanel();
         panel.setText("The plugin IntelliJ Scripting: Ruby is incompatible with the AsciiDoc plugin.");
+        // Plugins are not allowed to disable other plugins anymore since 2026.2.
+        // From 2026.3 onwards, PluginPermissionService.withPermission(DisablePluginRequest) could be used
+        // to ask the user for consent and disable the plugin directly.
         //noinspection DialogTitleCapitalization
-        panel.createActionLabel("Disable plugin IntelliJ Scripting: Ruby and restart", ()
-                -> {
-          PluginManagerCore.disablePlugin(PLUGIN_ID_SCRIPTING_RUBY);
-          ApplicationManager.getApplication().restart();
-        });
+        panel.createActionLabel("Open plugin settings to disable IntelliJ Scripting: Ruby", ()
+                -> showSettingsDialog(project, "preferences.pluginManager", "IntelliJ Scripting: Ruby"));
         panel.createActionLabel("Do not show again", () -> {
           PropertiesComponent.getInstance().setValue(INCOMPATIBLE_SCRIPTING_RUBY, true);
           EditorNotifications.updateAll();
