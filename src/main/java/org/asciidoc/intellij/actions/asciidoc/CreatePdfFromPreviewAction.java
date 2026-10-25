@@ -4,6 +4,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -24,10 +25,9 @@ import java.nio.file.Path;
 public class CreatePdfFromPreviewAction extends AsciiDocAction implements DumbAware {
   public static final String ID = "org.asciidoc.intellij.actions.asciidoc.CreatePdfFromPreviewAction";
 
-  @Override
-  public boolean displayTextInToolbar() {
+  public CreatePdfFromPreviewAction() {
     // this doesn't have an icon, therefore show text
-    return true;
+    getTemplatePresentation().putClientProperty(ActionUtil.SHOW_TEXT_IN_TOOLBAR, true);
   }
 
   @Override

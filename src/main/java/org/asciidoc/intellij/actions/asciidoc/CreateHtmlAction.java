@@ -2,6 +2,7 @@ package org.asciidoc.intellij.actions.asciidoc;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -38,10 +39,9 @@ public class CreateHtmlAction extends AsciiDocFileAction {
   private final AsciiDocExtensionService extensionService = ApplicationManager.getApplication().getService(AsciiDocExtensionService.class);
   private Project project;
 
-  @Override
-  public boolean displayTextInToolbar() {
+  public CreateHtmlAction() {
     // this doesn't have an icon, therefore show text
-    return true;
+    getTemplatePresentation().putClientProperty(ActionUtil.SHOW_TEXT_IN_TOOLBAR, true);
   }
 
   @Override

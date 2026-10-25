@@ -4,6 +4,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -48,10 +49,9 @@ public class CreateDocxAction extends AsciiDocFileAction {
 
   private Project project;
 
-  @Override
-  public boolean displayTextInToolbar() {
+  public CreateDocxAction() {
     // this doesn't have an icon, therefore show text
-    return true;
+    getTemplatePresentation().putClientProperty(ActionUtil.SHOW_TEXT_IN_TOOLBAR, true);
   }
 
   @Override

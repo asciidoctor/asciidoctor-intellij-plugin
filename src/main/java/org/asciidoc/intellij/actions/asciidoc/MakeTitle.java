@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.actions.asciidoc;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -17,10 +18,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class MakeTitle extends AsciiDocAction {
 
-  @Override
-  public boolean displayTextInToolbar() {
+  public MakeTitle() {
     // this doesn't have an icon, therefore show text
-    return true;
+    getTemplatePresentation().putClientProperty(ActionUtil.SHOW_TEXT_IN_TOOLBAR, true);
   }
 
   @Override
