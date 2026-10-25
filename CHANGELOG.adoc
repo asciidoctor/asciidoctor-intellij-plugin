@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Fix "Read access is allowed from inside read-action only" when Search Everywhere reads the name of a section (#2140)
 - Avoid "file text mismatch" errors by searching for Java references only in AsciiDoc files (#2141)
 - Report stack traces and a semantic plugin version to Sentry for errors submitted via the IDE error dialog
+- Stop retrying the link refresh after a project is closed and skip it while indexing is running to avoid "Index is not created" errors
 
 === 0.45.9
 

@@ -67,8 +67,16 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware, Disp
 
   private static void runInBackground(Set<String> canonicalPaths, @NonNull Project project) {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
+      // stop retrying when the project is gone, otherwise this re-schedules itself endlessly
+      if (project.isDisposed()) {
+        return;
+      }
       try {
         AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
+          // the index might not be available yet if indexing started after the file change was observed
+          if (DumbService.isDumb(project)) {
+            return;
+          }
           Set<VirtualFile> linkSources = new HashSet<>();
           canonicalPaths.forEach(canonicalPath -> linkSources.addAll(AsciiDocLinkIndex.getLinkSources(project, canonicalPath)));
           if (!linkSources.isEmpty()) {
