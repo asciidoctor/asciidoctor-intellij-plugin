@@ -60,7 +60,8 @@ jobs:
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         with:
           environment: production
-          release: ${{ github.ref }}
+          # must match the release name used by SentryErrorReporter, and use package@version for Sentry's semver detection
+          release: org.asciidoctor.intellij.asciidoc@${{ steps.properties.outputs.version }}
           inject: false
   cleanup:
     name: Cleanup old builds

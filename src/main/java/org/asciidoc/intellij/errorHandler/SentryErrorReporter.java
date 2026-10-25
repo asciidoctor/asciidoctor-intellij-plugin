@@ -47,7 +47,9 @@ class SentryErrorReporter {
     if (!initialized) {
       Sentry.init(options -> {
         options.setDsn("https://ad6d66fcd1704192b283e054a3e68ba8@o502663.ingest.sentry.io/5585225");
-        options.setRelease(getPluginVersion(AsciiDocPlugin.PLUGIN_ID));
+        // Sentry detects semantic versions only in the format "package@version"
+        final String version = getPluginVersion(AsciiDocPlugin.PLUGIN_ID);
+        options.setRelease(version == null ? null : AsciiDocPlugin.PLUGIN_ID + "@" + version);
         options.getEventProcessors().removeIf(
           // this duplicate event processor might remove messages based on the exception only;
           // users might have written different error messages that might then be discarded
