@@ -165,10 +165,11 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
   }
 
   public void testNestedLists() {
-    PsiFile psiFile = configureByAsciiDoc(". first\n" +
-      ".. test\n" +
-      ". second\n" +
-      ".. test");
+    PsiFile psiFile = configureByAsciiDoc("""
+      . first
+      .. test
+      . second
+      .. test""");
     PsiElement[] children = psiFile.getChildren();
     assertEquals(1, children.length);
 
@@ -287,13 +288,15 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
   }
 
   public void testDescriptionNestedNote() {
-    PsiFile psiFile = configureByAsciiDoc("[#id]\n" +
-      "Test:: Value\n" +
-      "+\n" +
-      "[NOTE]\n" +
-      "====\n" +
-      "Note\n" +
-      "====\n");
+    PsiFile psiFile = configureByAsciiDoc("""
+      [#id]
+      Test:: Value
+      +
+      [NOTE]
+      ====
+      Note
+      ====
+      """);
     AsciiDocDescriptionItem descriptionItem = PsiTreeUtil.getChildOfType(PsiTreeUtil.getChildOfType(psiFile, AsciiDocList.class), AsciiDocDescriptionItem.class);
     assertNotNull(descriptionItem);
     assertEquals("Test: Value", descriptionItem.getFoldedSummary());
@@ -462,12 +465,14 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
   public void testListSeparatedByComment() {
     // given...
-    PsiFile psiFile = configureByAsciiDoc("* list 1\n" +
-      "* another item\n" +
-      "\n" +
-      "// break\n" +
-      "\n" +
-      ". not a nested item\n");
+    PsiFile psiFile = configureByAsciiDoc("""
+      * list 1
+      * another item
+
+      // break
+
+      . not a nested item
+      """);
 
     // then...
     AsciiDocList[] lists = PsiTreeUtil.getChildrenOfType(psiFile, AsciiDocList.class);
@@ -499,21 +504,24 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
   @SuppressWarnings({"rawtypes", "unchecked"})
   public void testSpellCheck() {
     // given...
-    PsiFile psiFile = configureByAsciiDoc("// not within block, therefore separate elements\n" +
-      "**A**nother\n\n" +
-      "// within block, therefore split by word breaks\n" +
-      "== Heading\n**E**quivalent **M**odulo\n" +
-      "TEXTfootnote:[This is a footnote]\n" +
-      "kbd:[Keyboard]\n" +
-      "btn:[Button]\n" +
-      "a{nbsp}blank\n" +
-      "em{empty}pty\n" +
-      "normal1^super^\n" +
-      "normal2~sub~\n" +
-      "A <<id,reftext>>.\n" +
-      "|===\n" +
-      "| Cell contents.\n" +
-      "|===");
+    PsiFile psiFile = configureByAsciiDoc("""
+      // not within block, therefore separate elements
+      **A**nother
+
+      // within block, therefore split by word breaks
+      == Heading
+      **E**quivalent **M**odulo
+      TEXTfootnote:[This is a footnote]
+      kbd:[Keyboard]
+      btn:[Button]
+      a{nbsp}blank
+      em{empty}pty
+      normal1^super^
+      normal2~sub~
+      A <<id,reftext>>.
+      |===
+      | Cell contents.
+      |===""");
 
     AsciiDocSpellcheckingStrategy spellcheckingStrategy = new AsciiDocSpellcheckingStrategy();
 

@@ -43,11 +43,13 @@ public class AsciiDocInjectionTest extends LightPlatformCodeInsightFixture4TestC
     );
 
     // then...
-    myFixture.checkResult("[source,json]\n" +
-      "----\n" +
-      "{hi: 'ho',\n" +
-      "me: 'too'}\n" +
-      "----\n");
+    myFixture.checkResult("""
+      [source,json]
+      ----
+      {hi: 'ho',
+      me: 'too'}
+      ----
+      """);
   }
 
   @Test
