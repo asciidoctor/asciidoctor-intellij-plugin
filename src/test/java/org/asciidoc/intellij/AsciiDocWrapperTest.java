@@ -47,6 +47,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     asciidocWrapper = new AsciiDocWrapper(getProject(), LocalFileSystem.getInstance().findFileByIoFile(new File(System.getProperty("java.io.tmpdir"))), null, "test");
   }
 
+  @Override
   protected String getTestDataPath() {
     return new File("build/resources/test/testData/psi").getAbsolutePath();
   }

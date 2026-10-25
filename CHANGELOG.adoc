@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.45.9
 
 - Support IntelliJ 2026.3 (#2138)
+- Stale JCEF locks are cleared automatically by IDE, no need to clear via the plugin logic
 
 === 0.45.8
 
