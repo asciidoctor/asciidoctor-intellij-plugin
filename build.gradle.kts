@@ -163,6 +163,15 @@ java {
     sourceCompatibility = JavaVersion.VERSION_21
 }
 
+// Workaround for IntelliJ Platform Gradle Plugin 2.19.0 on Gradle 9.8: it registers the metadata rule that fixes the local Ivy artifact paths
+// of bundled plugins when the platform is resolved. Resolving the platform first makes sure that the rule is in place before
+// any other configuration (like compileClasspath) is resolved, as otherwise it fails with "Could not find grazie-IU-....jar".
+// Remove this once a release of the plugin newer than 2.19.0 is used, which registers the rule eagerly.
+// See https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/2262
+configurations.named("intellijPlatformDependency") {
+    resolve()
+}
+
 sourceSets {
     main {
         java.srcDirs(project.files(file("gen")))
