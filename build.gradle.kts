@@ -190,6 +190,13 @@ tasks {
         }
     }
 
+    prepareTestSandbox {
+        // The bundled Air plugin (including Junie) starts a socket server thread that fails tests with "Thread leaked"
+        doLast {
+            sandboxConfigDirectory.get().asFile.resolve("disabled_plugins.txt").writeText("com.intellij.air\n")
+        }
+    }
+
     jar {
         exclude("com/intellij/**")
     }
