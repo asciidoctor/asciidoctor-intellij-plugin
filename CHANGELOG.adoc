@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.45.9
+
+...
+
 === 0.45.8
 
 - Keep the scroll position of the JCEF preview when the page is reloaded, for example after switching windows or a long idle time (#2122, thanks to @dvponomarev)
