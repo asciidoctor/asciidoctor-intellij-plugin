@@ -59,7 +59,7 @@ public class AsciiDocTargetScopeProvider extends BuildTargetScopeProvider {
         }
         if (psiFile != null) {
           // the DaemonCodeAnalyzer will only trigger for any open file (independent of the file we pass here)
-          DaemonCodeAnalyzer.getInstance(project).restart(psiFile);
+          DaemonCodeAnalyzer.getInstance(project).restart(psiFile, "AsciiDoc preview updated");
         }
       }
       return true;

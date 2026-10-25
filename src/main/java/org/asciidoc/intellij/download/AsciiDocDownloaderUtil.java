@@ -377,7 +377,7 @@ public class AsciiDocDownloaderUtil {
       //noinspection ResultOfMethodCallIgnored
       directory.mkdirs();
     }
-    @NotNull VirtualFile[] virtualFiles = FileChooser.chooseFiles(FileChooserDescriptorFactory.createSingleFileDescriptor()
+    @NotNull VirtualFile[] virtualFiles = FileChooser.chooseFiles(FileChooserDescriptorFactory.singleFile()
         .withFileFilter(virtualFile -> virtualFile.getName().equals(downloadName))
         .withTitle("Pick Local File...")
         .withDescription("Please select file '" + downloadName + "' on your local disk."),

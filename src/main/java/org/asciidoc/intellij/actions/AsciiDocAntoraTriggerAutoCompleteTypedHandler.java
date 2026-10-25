@@ -18,7 +18,7 @@ public class AsciiDocAntoraTriggerAutoCompleteTypedHandler extends TypedHandlerD
       if (charTyped == '/' // for nav files
       ) {
         // for now, always try to show the lookup. The condition could try to be more specific in the future.
-        AutoPopupController.getInstance(project).autoPopupMemberLookup(editor, null);
+        AutoPopupController.getInstance(project).scheduleAutoPopup(editor, null);
       }
     }
     return Result.CONTINUE;
