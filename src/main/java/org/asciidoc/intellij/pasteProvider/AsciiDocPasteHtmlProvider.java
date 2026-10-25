@@ -4,9 +4,11 @@ import com.intellij.ide.PasteProvider;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.ActionUiKind;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actions.PasteAction;
 import com.intellij.psi.PsiFile;
@@ -30,7 +32,8 @@ public class AsciiDocPasteHtmlProvider implements PasteProvider {
     }
     AnAction action = ActionManager.getInstance().getAction(PasteHtmlAction.ID);
     if (action != null) {
-      action.actionPerformed(AnActionEvent.createFromDataContext(ActionPlaces.UNKNOWN, null, dataContext));
+      AnActionEvent event = AnActionEvent.createEvent(dataContext, action.getTemplatePresentation().clone(), ActionPlaces.UNKNOWN, ActionUiKind.NONE, null);
+      ActionUtil.performAction(action, event);
     }
   }
 

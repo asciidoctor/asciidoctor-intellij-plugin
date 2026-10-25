@@ -1,7 +1,5 @@
 package org.asciidoc.intellij.errorHandler;
 
-import com.intellij.diagnostic.AbstractMessage;
-import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.ErrorReportSubmitter;
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
 import com.intellij.openapi.diagnostic.SubmittedReportInfo;
@@ -11,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.List;
 
 public class AsciiDocErrorHandler extends ErrorReportSubmitter {
   @NotNull
@@ -29,12 +26,11 @@ public class AsciiDocErrorHandler extends ErrorReportSubmitter {
   public boolean submit(IdeaLoggingEvent @NotNull [] events, @Nullable String additionalInfo, @NotNull Component parentComponent, @NotNull Consumer<? super SubmittedReportInfo> consumer) {
     for (IdeaLoggingEvent event : events) {
       Throwable throwable = event.getThrowable();
-      List<Attachment> attachments = null;
-      if (event.getData() instanceof AbstractMessage) {
-        throwable = ((AbstractMessage) event.getData()).getThrowable();
-        attachments = ((AbstractMessage) event.getData()).getIncludedAttachments();
+      if (throwable == null || throwable.getStackTrace().length == 0) {
+        // errors from the IDE's error dialog come as a text-only throwable
+        throwable = StackTraceParser.parse(event.getThrowableText());
       }
-      SentryErrorReporter.submitErrorReport(throwable, attachments, additionalInfo, consumer);
+      SentryErrorReporter.submitErrorReport(throwable, event.getAttachments(), additionalInfo, consumer);
     }
 
     return true;

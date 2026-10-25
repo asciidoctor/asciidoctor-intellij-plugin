@@ -48,6 +48,10 @@ public class CreatePdfAction extends AsciiDocFileAction {
 
   @Override
   public void actionPerformed(AnActionEvent event) {
+    perform(event);
+  }
+
+  private void perform(AnActionEvent event) {
     project = event.getProject();
     if (project == null) {
       return;
@@ -72,7 +76,7 @@ public class CreatePdfAction extends AsciiDocFileAction {
           .notify(new Notification("asciidoctor", AsciiDocBundle.message("asciidoc.download.title"),
             AsciiDocBundle.message("asciidoc.download.asciidoctorj-pdf.success"),
             NotificationType.INFORMATION));
-        this.actionPerformed(event);
+        perform(event);
       }, e -> LOG.warn("unable to download", e));
       return;
     }

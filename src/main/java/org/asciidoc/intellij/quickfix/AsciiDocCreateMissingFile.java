@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.quickfix;
 
 import com.intellij.ide.actions.OpenFileAction;
+import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
@@ -64,7 +65,8 @@ public interface AsciiDocCreateMissingFile {
         // creating an empty file makes sense
         String fileName = element.getFirstChild().getNextSibling().getText();
         boolean isDrawioFile = Pattern.matches("^.*[.](drawio|dio)[.](svg|png)$", fileName);
-        boolean isDrawioPluginInstalled = PluginId.findId("de.docs_as_co.intellij.plugin.drawio", "de.docs_as_co.intellij.plugin.diagramsnet") != null;
+        boolean isDrawioPluginInstalled = PluginManager.isPluginInstalled(PluginId.getId("de.docs_as_co.intellij.plugin.drawio"))
+            || PluginManager.isPluginInstalled(PluginId.getId("de.docs_as_co.intellij.plugin.diagramsnet"));
         if (!isDrawioPluginInstalled || !isDrawioFile) {
           return false;
         }

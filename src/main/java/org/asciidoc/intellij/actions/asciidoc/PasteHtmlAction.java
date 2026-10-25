@@ -46,6 +46,10 @@ public class PasteHtmlAction extends AsciiDocAction {
 
   @Override
   public void actionPerformed(AnActionEvent event) {
+    perform(event);
+  }
+
+  private void perform(AnActionEvent event) {
     Project project = event.getProject();
     if (project == null) {
       return;
@@ -59,7 +63,7 @@ public class PasteHtmlAction extends AsciiDocAction {
       // download pandoc asynchronously for the next attempt.
       AsciiDocDownloaderUtil.downloadPandoc(editor.getProject(), () -> {
         Notifications.Bus.notify(new Notification("asciidoctor", AsciiDocBundle.message("asciidoc.download.title"), AsciiDocBundle.message("asciidoc.download.pandoc.success"), NotificationType.INFORMATION));
-        actionPerformed(event);
+        perform(event);
       }, e -> LOG.warn("unable to download", e));
       return;
     }

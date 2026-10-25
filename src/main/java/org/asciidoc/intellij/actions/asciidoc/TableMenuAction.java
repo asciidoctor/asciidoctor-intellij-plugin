@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.ActionUiKind;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
@@ -76,7 +77,7 @@ public class TableMenuAction extends AsciiDocAction {
       item.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-          action.actionPerformed(AnActionEvent.createEvent(
+          ActionUtil.performAction(action, AnActionEvent.createEvent(
             DataManager.getInstance().getDataContext(panel),
             action.getTemplatePresentation(),
             ActionPlaces.EDITOR_TOOLBAR,
