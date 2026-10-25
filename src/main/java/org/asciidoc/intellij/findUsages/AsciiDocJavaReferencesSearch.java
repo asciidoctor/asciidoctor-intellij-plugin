@@ -75,8 +75,11 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
       }
     } else if (scope instanceof LocalSearchScope localSearchScope) {
       // when the IDE highlights references of the current file in the editor
-      if (localSearchScope.getScope().length == 1 && localSearchScope.getScope()[0] instanceof PsiFile) {
-        files = new PsiFile[] {(PsiFile) localSearchScope.getScope()[0]};
+      // only AsciiDoc files can contain references; reading the text of other files (like the Java file being edited)
+      // might fail with a "file text mismatch" while a document is changing
+      if (localSearchScope.getScope().length == 1 && localSearchScope.getScope()[0] instanceof PsiFile psiFile
+        && psiFile.getFileType() == AsciiDocFileType.INSTANCE) {
+        files = new PsiFile[] {psiFile};
       } else {
         return;
       }
