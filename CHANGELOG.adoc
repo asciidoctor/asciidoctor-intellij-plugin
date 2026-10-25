@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.45.9
 
-...
+- Support IntelliJ 2026.3 (#2138)
 
 === 0.45.8
 

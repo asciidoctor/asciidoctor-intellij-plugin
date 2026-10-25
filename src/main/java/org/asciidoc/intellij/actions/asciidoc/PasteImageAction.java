@@ -28,8 +28,8 @@ import com.intellij.util.ui.ImageUtil;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
+import org.asciidoc.intellij.ui.OptionAction;
 import org.asciidoc.intellij.ui.PasteImageDialog;
-import org.jdesktop.swingx.action.BoundAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -148,9 +148,9 @@ public class PasteImageAction extends AsciiDocAction {
 
   private void pasteImageFlavour(VirtualFile initialTargetDirectory, CopyPasteManager manager) {
     List<Action> options = new ArrayList<>();
-    BoundAction png = new BoundAction("PNG (good for screenshots, diagrams and line art)", ACTION_SAVE_PNG);
+    OptionAction png = new OptionAction("PNG (good for screenshots, diagrams and line art)", ACTION_SAVE_PNG);
     options.add(png);
-    BoundAction jpeg = new BoundAction("JPEG (good for photo images)", ACTION_SAVE_JPEG);
+    OptionAction jpeg = new OptionAction("JPEG (good for photo images)", ACTION_SAVE_JPEG);
     options.add(jpeg);
     if (Objects.equals(previousFileFormat, ACTION_SAVE_JPEG)) {
       jpeg.setSelected(true);
@@ -227,8 +227,8 @@ public class PasteImageAction extends AsciiDocAction {
     if (fileList != null) {
       for (File imageFile : fileList) {
         List<Action> options = new ArrayList<>();
-        options.add(new BoundAction("Copy file to current directory, then insert a reference.", ACTION_COPY_FILE));
-        BoundAction onlyReference = new BoundAction("Only insert a reference.", ACTION_INSERT_REFERENCE);
+        options.add(new OptionAction("Copy file to current directory, then insert a reference.", ACTION_COPY_FILE));
+        OptionAction onlyReference = new OptionAction("Only insert a reference.", ACTION_INSERT_REFERENCE);
         VirtualFile imageVirtualFile = LocalFileSystem.getInstance().findFileByIoFile(imageFile);
         if (project != null) {
           // if project-local file, make reference the default

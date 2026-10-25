@@ -1,7 +1,6 @@
 package org.asciidoc.intellij.ui;
 
 import com.intellij.openapi.util.Pair;
-import org.jdesktop.swingx.action.AbstractActionExt;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +15,7 @@ public final class OptionsPanelFactory {
     boolean selectFirst = true;
 
     for (Action option : options) {
-      if (option instanceof AbstractActionExt && ((AbstractActionExt) option).isSelected()) {
+      if (option instanceof OptionAction && ((OptionAction) option).isSelected()) {
         selectFirst = false;
       }
     }
@@ -26,7 +25,7 @@ public final class OptionsPanelFactory {
       if (selectFirst) {
         radioButton.setSelected(true);
         selectFirst = false;
-      } else if (option instanceof AbstractActionExt && ((AbstractActionExt) option).isSelected()) {
+      } else if (option instanceof OptionAction && ((OptionAction) option).isSelected()) {
         radioButton.setSelected(true);
       }
       buttonGroup.add(radioButton);

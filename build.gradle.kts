@@ -108,7 +108,7 @@ dependencies {
             // "com.jetbrains.performancePlugin:213.5744.122" // used run YourKit CPU profiling in test IDE
             // see https://intellij-support.jetbrains.com/hc/en-us/articles/207241235
             // https://plugins.jetbrains.com/plugin/28663-jshell
-            "intellij.java.jshell:262.8665.173"
+            "intellij.java.jshell:263.7307.35"
         ))
 
         pluginVerifier()

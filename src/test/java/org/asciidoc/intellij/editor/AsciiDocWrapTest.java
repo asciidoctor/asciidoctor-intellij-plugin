@@ -11,8 +11,9 @@ public class AsciiDocWrapTest extends AbstractWrapTest {
 
   public void testWrapAfterSpaceOnMargin() {
     mySettings.setDefaultRightMargin(10);
-    // this will wrap three additional characters as it is not a plain text editor.
-    checkWrapOnTyping(AsciiDocFileType.INSTANCE, "a", "text text <caret>", "text \ntext a<caret>");
+    // Since 2026.3 (IJPL-245538) no columns are reserved for languages without string literals, so the word that exceeds the margin is wrapped.
+    // Before, three additional characters were reserved, and the word before was wrapped as well.
+    checkWrapOnTyping(AsciiDocFileType.INSTANCE, "a", "text text <caret>", "text text \na<caret>");
   }
 
   public void testWrapWithNextLine() {
