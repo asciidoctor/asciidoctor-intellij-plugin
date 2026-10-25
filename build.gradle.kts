@@ -163,8 +163,6 @@ java {
     sourceCompatibility = JavaVersion.VERSION_21
 }
 
-grammarKit {}
-
 sourceSets {
     main {
         java.srcDirs(project.files(file("gen")))
@@ -182,7 +180,7 @@ tasks {
 
     generateLexer {
         sourceFile.set(file("src/main/java/org/asciidoc/intellij/lexer/asciidoc.flex"))
-        targetOutputDir.set(file("gen/org/asciidoc/intellij/lexer"))
+        targetRootOutputDir.set(file("gen"))
     }
 
     test {
