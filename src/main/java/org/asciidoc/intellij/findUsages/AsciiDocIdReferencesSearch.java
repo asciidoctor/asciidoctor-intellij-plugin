@@ -121,7 +121,7 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
       );
 
       if (element instanceof AsciiDocAttributeDeclarationName) {
-        Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(name, element.getProject(),
+        Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().getDeclarations(name, element.getProject(),
           // searching also the libraries is generally not useful; therefore restrict to project scope
           ((GlobalSearchScope) scope).intersectWith(new AsciiDocSearchScope(element.getProject()).restrictedByAsciiDocFileType())
         );

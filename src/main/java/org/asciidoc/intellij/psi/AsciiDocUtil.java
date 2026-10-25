@@ -129,13 +129,13 @@ public class AsciiDocUtil {
     }
 
     final GlobalSearchScope scope = new AsciiDocSearchScope(project).restrictedByAsciiDocFileType();
-    Collection<AsciiDocBlockId> asciiDocBlockIds = AsciiDocBlockIdKeyIndex.getInstance().get(key, project, scope);
+    Collection<AsciiDocBlockId> asciiDocBlockIds = AsciiDocBlockIdKeyIndex.getInstance().getBlockIds(key, project, scope);
     for (AsciiDocBlockId asciiDocBlockId : asciiDocBlockIds) {
       result = collectBlockId(result, asciiDocBlockId);
     }
     if (result == null) {
       // if no block IDs have been found, search for block IDs that have attribute that need to resolve
-      asciiDocBlockIds = AsciiDocBlockIdKeyIndex.getInstance().get(BLOCK_ID_WITH_VAR, project, scope);
+      asciiDocBlockIds = AsciiDocBlockIdKeyIndex.getInstance().getBlockIds(BLOCK_ID_WITH_VAR, project, scope);
       for (AsciiDocBlockId asciiDocBlockId : asciiDocBlockIds) {
         String name = asciiDocBlockId.getName();
         if (!matchKeyWithName(name, key, project, new ArrayDeque<>())) {
@@ -334,7 +334,7 @@ public class AsciiDocUtil {
 
     ProgressManager.checkCanceled();
     final GlobalSearchScope scope = new AsciiDocSearchScope(project).restrictedByAsciiDocFileType();
-    Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().get(key, project, scope);
+    Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().getDeclarations(key, project, scope);
     Map<VirtualFile, Boolean> cache = new HashMap<>();
     for (AsciiDocAttributeDeclaration asciiDocAttributeDeclaration : asciiDocAttributeDeclarations) {
       VirtualFile virtualFile = asciiDocAttributeDeclaration.getContainingFile().getVirtualFile();

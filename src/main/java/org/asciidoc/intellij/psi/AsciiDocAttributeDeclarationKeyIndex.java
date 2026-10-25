@@ -49,8 +49,7 @@ public class AsciiDocAttributeDeclarationKeyIndex extends AsciiDocStringStubInde
     return AsciiDocAttributeDeclaration.class;
   }
 
-  @Override
-  public Collection<AsciiDocAttributeDeclaration> get(@NotNull String key, @NotNull Project project, @NotNull GlobalSearchScope scope) {
+  public Collection<AsciiDocAttributeDeclaration> getDeclarations(@NotNull String key, @NotNull Project project, @NotNull GlobalSearchScope scope) {
     try {
       return StubIndex.getElements(getKey(), key.toLowerCase(Locale.US), project, scope, requiredClass());
     } catch (NullPointerException e) {

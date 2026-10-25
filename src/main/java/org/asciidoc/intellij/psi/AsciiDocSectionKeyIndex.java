@@ -29,8 +29,7 @@ public class AsciiDocSectionKeyIndex extends AsciiDocStringStubIndexExtension<As
     return AsciiDocSection.class;
   }
 
-  @Override
-  public Collection<AsciiDocSection> get(@NotNull String key, @NotNull Project project, @NotNull GlobalSearchScope scope) {
+  public Collection<AsciiDocSection> getSections(@NotNull String key, @NotNull Project project, @NotNull GlobalSearchScope scope) {
     if (key.equals(AsciiDocSectionStubElementType.SECTION_WITH_VAR)) {
       return StubIndex.getElements(getKey(), key, project, scope, requiredClass());
     } else {

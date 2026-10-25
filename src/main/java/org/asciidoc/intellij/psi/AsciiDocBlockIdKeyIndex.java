@@ -28,8 +28,7 @@ public class AsciiDocBlockIdKeyIndex extends AsciiDocStringStubIndexExtension<As
     return AsciiDocBlockId.class;
   }
 
-  @Override
-  public Collection<AsciiDocBlockId> get(@NotNull String key, @NotNull Project project, @NotNull GlobalSearchScope scope) {
+  public Collection<AsciiDocBlockId> getBlockIds(@NotNull String key, @NotNull Project project, @NotNull GlobalSearchScope scope) {
     return StubIndex.getElements(getKey(), key, project, scope, requiredClass());
   }
 }
