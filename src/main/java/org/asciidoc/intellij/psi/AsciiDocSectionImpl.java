@@ -2,6 +2,7 @@ package org.asciidoc.intellij.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.RuntimeExceptionWithAttachments;
 import com.intellij.openapi.util.Key;
@@ -237,7 +238,10 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
 
   @Override
   public String getName() {
-    return getTitle();
+    // This is a NavigationItem and not a PsiNamedElement, therefore Search Everywhere's ML ranking calls this
+    // from a background thread without a read action, which fails when accessing the stub.
+    // Making this a PsiNamedElement would avoid this, but would offer a rename refactoring that can't be performed.
+    return ReadAction.compute(this::getTitle);
   }
 
   @Override
