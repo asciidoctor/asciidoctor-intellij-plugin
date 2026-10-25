@@ -224,10 +224,19 @@ tasks {
         untilBuild = provider { null }
     }
 
+    asciidoctorj {
+        // same JRuby version as bundled with the asciidoctorj dependency of the plugin
+        setJrubyVersion("9.4.14.0")
+    }
+
     asciidoctor {
         sourceDir(file("."))
         sources {
             include("CHANGELOG.adoc")
+        }
+        // silences the warning when JRuby loads its native library on JDK 25
+        jvm {
+            jvmArgs("--enable-native-access=ALL-UNNAMED")
         }
     }
 
