@@ -68,7 +68,8 @@ public class JCEFCouldBeEnabledNotificationProvider implements EditorNotificatio
             oldPreviewSettings.isEnableBuiltInMermaid(),
             oldPreviewSettings.getZoom(),
             oldPreviewSettings.isHideErrorsInSourceBlocks(),
-            oldPreviewSettings.getHideErrorsByLanguage()));
+            oldPreviewSettings.getHideErrorsByLanguage(),
+            oldPreviewSettings.getScriptLanguageSettings()));
           EditorNotifications.updateAll();
         } else {
           Logger.getInstance(JCEFCouldBeEnabledNotificationProvider.class).warn("Could not install and apply JCEF");

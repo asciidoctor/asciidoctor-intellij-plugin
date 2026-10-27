@@ -64,7 +64,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       true, true,
       true,   // enableKroki
       "",     // krokiUrl -> default https://kroki.io
-      true, true, true, 1, false, "");
+      true, true, true, 1, false, "", null);
   }
 
   // Regression test for #516: resolveAntoraResourcePath turns an Antora resource id (the form used as a
@@ -386,7 +386,8 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       true,
       1,
       false,
-      ""));
+      "",
+      null));
     try {
       String html = asciidocWrapper.render("""
         :action: generates
@@ -414,7 +415,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     assertThat(dir.mkdirs()).isTrue();
     AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
       SplitFileEditor.SplitEditorLayout.SPLIT, AsciiDocJCEFHtmlPanelProvider.INFO, AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
-      SafeMode.UNSAFE, new HashMap<>(), true, true, true, "", "", true, true, true, "", true, true, true, 1, false, ""));
+      SafeMode.UNSAFE, new HashMap<>(), true, true, true, "", "", true, true, true, "", true, true, true, 1, false, "", null));
     try {
       Files.writeString(new File(dir, "layout.puml").toPath(), "@startuml\nskinparam backgroundColor LayoutMarker\n@enduml\n", UTF_8);
       Files.writeString(new File(dir, "model.puml").toPath(), "@startuml\n!include layout.puml\nclass ModelMarker\n@enduml\n", UTF_8);
@@ -445,7 +446,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     assertThat(lib.mkdirs()).isTrue();
     AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(new AsciiDocPreviewSettings(
       SplitFileEditor.SplitEditorLayout.SPLIT, AsciiDocJCEFHtmlPanelProvider.INFO, AsciiDocHtmlPanel.PreviewTheme.INTELLIJ,
-      SafeMode.UNSAFE, new HashMap<>(), true, true, true, "", "", true, true, true, "", true, true, true, 1, false, ""));
+      SafeMode.UNSAFE, new HashMap<>(), true, true, true, "", "", true, true, true, "", true, true, true, 1, false, "", null));
     try {
       Files.writeString(new File(lib, "colors.puml").toPath(), "@startuml\nskinparam backgroundColor PathsMarker\n@enduml\n", UTF_8);
       AsciiDocWrapper wrapper = new AsciiDocWrapper(getProject(), LocalFileSystem.getInstance().refreshAndFindFileByIoFile(dir), null, "test");
@@ -488,7 +489,8 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       true,
       1,
       false,
-      ""));
+      "",
+      null));
     try {
       String html = asciidocWrapper.render("""
         [erd]
@@ -537,7 +539,8 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       true,
       1,
       false,
-      ""));
+      "",
+      null));
     try {
       String html = asciidocWrapper.render("""
         [nomnoml]
@@ -575,7 +578,8 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       true,
       1,
       false,
-      ""));
+      "",
+      null));
     try {
       String html = asciidocWrapper.render("""
         [wavedrom]
@@ -616,7 +620,8 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       true,
       1,
       false,
-      ""));
+      "",
+      null));
     try {
       String html = asciidocWrapper.render("""
         [vega]
