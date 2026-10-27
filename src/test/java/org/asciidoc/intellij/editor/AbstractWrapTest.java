@@ -28,8 +28,8 @@ public abstract class AbstractWrapTest extends LightPlatformCodeInsightTestCase 
     String name = "test." + fileType.getDefaultExtension();
     configureFromFileText(name, initial);
     assertFileTypeResolved(fileType, name);
-    for (char c : textToType.toCharArray()) {
-      type(c);
+    for (int i = 0; i < textToType.length(); i++) {
+      type(textToType.charAt(i));
     }
     checkResultByText(expected);
   }

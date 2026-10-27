@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * @author max
- */
 package org.asciidoc.intellij.psi;
 
 import com.intellij.openapi.project.IndexNotReadyException;
