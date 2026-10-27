@@ -91,6 +91,7 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
@@ -1647,7 +1648,7 @@ public class AsciiDocWrapper {
     return html;
   }
 
-  private static String enrichPageHighlightJs(@NotNull String html, @NotNull Map<String, String> attributes, @Nullable Project project) {
+  static String enrichPageHighlightJs(@NotNull String html, @NotNull Map<String, String> attributes, @Nullable Project project) {
     /* Add HighlightJS line */
     if (Objects.equals(attributes.get("source-highlighter"), "highlightjs") || // will work both with and without a dot
       Objects.equals(attributes.get("source-highlighter"), "highlight.js")) {
@@ -1672,18 +1673,32 @@ public class AsciiDocWrapper {
             }
           }
         } else {
+          if (dir.startsWith("file:")) {
+            // a "file:" URL is an absolute location; convert it to a path so it is checked against the project roots below
+            dir = URLDecoder.decode(dir.substring("file:".length()), StandardCharsets.UTF_8).replace('\\', '/');
+            if (dir.startsWith("///")) {
+              dir = dir.substring(2);
+            }
+          }
           // if not an absolute path on linux or windows, prefix project root
           if (!dir.startsWith("/") && dir.indexOf(':') != 1) {
             String docfile = attributes.get("docfile");
-            if (Platform.IS_WINDOWS) {
+            if (Platform.IS_WINDOWS && docfile != null) {
               docfile = docfile.replaceAll("\\\\", "/");
             }
             if (docfile != null && project != null) {
+              // a relative path is only allowed below the project root that contains the document;
+              // otherwise (for example a document outside the project) it must not be served
+              boolean found = false;
               for (VirtualFile root : AsciiDocUtil.getRoots(project)) {
                 if (docfile.startsWith(root.getPath())) {
                   dir = root + "/" + dir;
+                  found = true;
                   break;
                 }
+              }
+              if (!found) {
+                dir = ""; // not allowed scenario, for example a document outside the project
               }
             } else {
               dir = ""; // not allowed scenario

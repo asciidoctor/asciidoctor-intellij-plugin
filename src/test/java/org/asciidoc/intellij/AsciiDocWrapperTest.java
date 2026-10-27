@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.Inflater;
@@ -731,4 +732,31 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
     }
   }
+
+  private String highlightJsCss(String highlightJsDir, String docFile) {
+    Map<String, String> attributes = new HashMap<>();
+    attributes.put("source-highlighter", "highlightjs");
+    attributes.put("highlightjsdir", highlightJsDir);
+    attributes.put("docfile", docFile);
+    return AsciiDocWrapper.enrichPageHighlightJs("<head></head><body></body>", attributes, getProject());
+  }
+
+  public void testHighlightJsDirWithFileUrlInsideProjectIsServed() {
+    String html = highlightJsCss("file:///src/hl", "/src/doc.adoc");
+    assertThat(html).contains("file=%2Fsrc%2Fhl%2Fstyles%2Fgithub.min.css");
+  }
+
+  public void testHighlightJsDirRelativeInsideProjectIsServed() {
+    String html = highlightJsCss("hl", "/src/doc.adoc");
+    assertThat(html).contains("%2Fsrc%2Fhl%2Fstyles%2Fgithub.min.css");
+  }
+
+  public void testHighlightJsDirOutsideProjectIsNotServed() {
+    // a "file:" URL or relative path that doesn't lead to a project root must not be signed as-is
+    String html = highlightJsCss("file:///elsewhere/hl", "/src/doc.adoc");
+    assertThat(html).doesNotContain("elsewhere");
+    html = highlightJsCss("hl", "/elsewhere/doc.adoc");
+    assertThat(html).doesNotContain("hl%2Fstyles");
+  }
+
 }

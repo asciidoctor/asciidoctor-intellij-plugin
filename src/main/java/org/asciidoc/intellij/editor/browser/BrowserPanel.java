@@ -477,7 +477,7 @@ public class BrowserPanel implements Disposable {
     }
     try {
       return FileUtils.readFileToByteArray(new File(file));
-    } catch (IOException e) {
+    } catch (IOException | InvalidPathException e) {
       return null;
     }
   }
