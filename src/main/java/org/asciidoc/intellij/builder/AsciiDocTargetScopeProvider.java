@@ -3,6 +3,8 @@ package org.asciidoc.intellij.builder;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.compiler.impl.BuildTargetScopeProvider;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -25,6 +27,8 @@ import java.util.List;
  * currently selected/open files using {@link DaemonCodeAnalyzer}.
  */
 public class AsciiDocTargetScopeProvider extends BuildTargetScopeProvider {
+  private static final Logger LOG = Logger.getInstance(AsciiDocTargetScopeProvider.class);
+
   @NotNull
   @Override
   public List<CmdlineRemoteProto.Message.ControllerMessage.ParametersMessage.TargetTypeBuildScope> getBuildTargetScopes(@NotNull CompileScope baseScope, @NotNull Project project, boolean forceBuild) {
@@ -34,7 +38,14 @@ public class AsciiDocTargetScopeProvider extends BuildTargetScopeProvider {
         // TODO: the following works only in 2023.2 ... therefore commented out for now.
         // if (WorkspaceModelTopics.Companion.getInstance(project).getModulesAreLoaded()) {
           for (Module module : ModuleManager.getInstance(project).getModules()) {
-            clearProblemsForAsciidocFiles(module, project);
+            try {
+              clearProblemsForAsciidocFiles(module, project);
+            } catch (ProcessCanceledException e) {
+              throw e;
+            } catch (RuntimeException e) {
+              // clearing problems is optional; a damaged virtual file system or an invalid file name must not prevent the build
+              LOG.warn("unable to clear problems for module " + module.getName(), e);
+            }
           }
         // }
       });
