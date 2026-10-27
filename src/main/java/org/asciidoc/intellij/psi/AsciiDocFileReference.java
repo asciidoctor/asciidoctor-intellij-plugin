@@ -51,6 +51,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -1087,6 +1088,10 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         // handle special volume information on MacOS X
         // see for example: https://youtrack.jetbrains.com/issue/R-1028
         Object item;
+        if (candidate instanceof PsiFile psiFile && (psiFile.getName().indexOf('\r') >= 0 || psiFile.getName().indexOf('\n') >= 0)) {
+          // macOS folders can contain a file named "Icon\r"; the platform asserts on line separators in names
+          continue;
+        }
         if (SystemInfo.isMac && candidate instanceof PsiFile psiFile && psiFile.getName().equals(".VolumeIcon.icns")) {
           item = candidate;
         } else {
@@ -1104,7 +1109,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       variants = ArrayUtils.addAll(variants, getVariantsForAnchor());
     }
 
-    return variants;
+    // skipped candidates leave null entries
+    return Arrays.stream(variants).filter(Objects::nonNull).toArray();
   }
 
   @NotNull

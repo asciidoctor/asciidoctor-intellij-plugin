@@ -143,6 +143,20 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertTrue(((LookupElementBuilder) blockMacro.getReferences()[0].getVariants()[0]).getAllLookupStrings().contains(".."));
   }
 
+  public void testFileNamesWithLineSeparatorsAreNotOfferedAsVariants() {
+    // macOS folders can contain a file named "Icon\r"
+    myFixture.addFileToProject("dir/Icon\r", "");
+    myFixture.addFileToProject("dir/other.png", "");
+    PsiFile psiFile = configureByAsciiDoc("image::dir/foo.png[]");
+    AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) psiFile.getChildren()[0];
+    List<String> items = new ArrayList<>();
+    for (Object variant : blockMacro.getReferences()[1].getVariants()) {
+      items.add(((LookupElementBuilder) variant).getLookupString());
+    }
+    assertContainsElements(items, "other.png");
+    assertDoesntContain(items, "Icon\r");
+  }
+
   public void testIfdefBlockMacroWithReferences() {
     PsiFile psiFile = configureByAsciiDoc(":hi: ho\nifdef::hi,ho+hu[]");
     PsiElement[] children = psiFile.getChildren();
