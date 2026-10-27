@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.45.11
+
+...
+
 === 0.45.10
 
 - Fix "Read access is allowed from inside read-action only" when Search Everywhere reads the name of a section (#2140)
