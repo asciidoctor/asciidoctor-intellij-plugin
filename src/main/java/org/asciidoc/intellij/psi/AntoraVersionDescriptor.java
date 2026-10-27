@@ -64,7 +64,7 @@ public class AntoraVersionDescriptor implements Comparable<AntoraVersionDescript
     if (!Objects.equals(version, "") && Objects.equals(o.version, "")) {
       return -1;
     }
-    int result = -scheme.compareTo(o.scheme);
+    int result = o.scheme.compareTo(scheme);
     if (result != 0) {
       return result;
     }
