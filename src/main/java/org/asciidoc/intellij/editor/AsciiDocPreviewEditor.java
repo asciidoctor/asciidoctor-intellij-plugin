@@ -24,6 +24,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -73,10 +74,13 @@ import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -99,6 +103,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
   private transient String currentContent = null;
   private transient int lastRenderCycle = 0;
   private final AtomicInteger forcedRenderCycle = new AtomicInteger(1);
+  private final ConcurrentLinkedQueue<VFileEvent> pendingVfsEvents = new ConcurrentLinkedQueue<>();
+  private final AtomicBoolean vfsCheckScheduled = new AtomicBoolean(false);
 
   private transient int targetLineNo = 0;
   private transient int currentLineNo = 0;
@@ -352,28 +358,55 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
       @Override
       public void after(@NotNull List<? extends VFileEvent> events) {
-        // any modification of a file within the project refreshes the preview
+        // this listener might be called on a thread that is not allowed to use the read lock, therefore check the events in the background
+        boolean queued = false;
         for (VFileEvent event : events) {
           if (event.getFile() != null) {
-            if (!project.isDisposed()) {
-              VirtualFile file = event.getFile();
-              // if the file has been deleted, use the parent folder to determine the module
-              if (!file.isValid()) {
-                file = file.getParent();
-              }
-              if (file == null || !file.isValid()) {
-                continue;
-              }
-              // check if the modified file was part of the project
-              if (ProjectFileIndex.getInstance(project).getModuleForFile(file) != null) {
-                // As an include might have been modified, force the refresh of the preview
-                forceRenderCycle();
-                renderIfVisible();
-                break;
-              }
-            }
+            pendingVfsEvents.add(event);
+            queued = true;
           }
         }
+        // one background task handles all events that arrive while it is waiting to run
+        if (queued && vfsCheckScheduled.compareAndSet(false, true)) {
+          ApplicationManager.getApplication().executeOnPooledThread(() -> {
+            vfsCheckScheduled.set(false);
+            List<VFileEvent> eventsToCheck = new ArrayList<>();
+            VFileEvent pending;
+            while ((pending = pendingVfsEvents.poll()) != null) {
+              eventsToCheck.add(pending);
+            }
+            if (project.isDisposed() || eventsToCheck.isEmpty() || !isModifiedInProject(eventsToCheck)) {
+              return;
+            }
+            // As an include might have been modified, force the refresh of the preview
+            forceRenderCycle();
+            renderIfVisible();
+          });
+        }
+      }
+
+      private boolean isModifiedInProject(List<? extends VFileEvent> events) {
+        // any modification of a file within the project refreshes the preview
+        return ReadAction.compute(() -> {
+          for (VFileEvent event : events) {
+            VirtualFile file = event.getFile();
+            if (file == null || project.isDisposed()) {
+              continue;
+            }
+            // if the file has been deleted, use the parent folder to determine the module
+            if (!file.isValid()) {
+              file = file.getParent();
+            }
+            if (file == null || !file.isValid()) {
+              continue;
+            }
+            // check if the modified file was part of the project
+            if (ProjectFileIndex.getInstance(project).getModuleForFile(file) != null) {
+              return true;
+            }
+          }
+          return false;
+        });
       }
     });
 
