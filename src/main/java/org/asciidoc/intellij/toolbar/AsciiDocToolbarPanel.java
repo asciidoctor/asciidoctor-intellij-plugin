@@ -5,11 +5,13 @@ import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.util.ui.JBEmptyBorder;
 import icons.AsciiDocIcons;
 import org.asciidoc.intellij.actions.asciidoc.TableMenuAction;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,6 +25,7 @@ import static org.asciidoc.intellij.actions.asciidoc.TableMenuAction.SUB_ACTIONS
  */
 public class AsciiDocToolbarPanel extends JPanel {
 
+  private static final Logger LOG = Logger.getInstance(AsciiDocToolbarPanel.class);
   private static final String ASCII_DOC_ACTION_GROUP_ID = "AsciiDoc.TextFormatting";
 
   public AsciiDocToolbarPanel(Editor editor, @NotNull final JComponent targetComponentForActions) {
@@ -36,17 +39,21 @@ public class AsciiDocToolbarPanel extends JPanel {
     this.add("Center", panel);
 
     final ActionToolbar toolbar = createToolbarFromGroupId(ASCII_DOC_ACTION_GROUP_ID);
-    toolbar.setTargetComponent(targetComponentForActions);
-    panel.add(toolbar.getComponent());
+    if (toolbar != null) {
+      toolbar.setTargetComponent(targetComponentForActions);
+      panel.add(toolbar.getComponent());
+    }
 
   }
 
-  @NotNull
+  @Nullable
   private static ActionToolbar createToolbarFromGroupId(@NotNull String groupId) {
     final ActionManager actionManager = ActionManager.getInstance();
 
     if (!actionManager.isGroup(groupId)) {
-      throw new IllegalStateException(groupId + " should have been a group");
+      // the group is missing if the editor is created while the plugin is being loaded or unloaded; show the editor without a toolbar
+      LOG.warn(groupId + " should have been a group");
+      return null;
     }
 
     DefaultActionGroup toolbarGroup = new DefaultActionGroup();
