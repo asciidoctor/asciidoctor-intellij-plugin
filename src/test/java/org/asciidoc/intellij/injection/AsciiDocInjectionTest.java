@@ -67,6 +67,18 @@ public class AsciiDocInjectionTest extends LightPlatformCodeInsightFixture4TestC
     Assert.assertEquals(1, injected.size());
   }
 
+  @Test
+  public void shouldOfferTextMateLanguagesInCompletion() {
+    myFixture.configureByText("a.adoc", "[source,<caret>]\n----\ncode\n----\n");
+    myFixture.completeBasic();
+    var lookupStrings = myFixture.getLookupElementStrings();
+    Assert.assertNotNull(lookupStrings);
+    // go is not provided by the IDE, only by the TextMate bundles
+    Assert.assertTrue(lookupStrings.toString(), lookupStrings.contains("go"));
+    // languages provided by the IDE are still offered
+    Assert.assertTrue(lookupStrings.toString(), lookupStrings.contains("json"));
+  }
+
   private void withInjectedContent(PsiFile file, Consumer<PsiFile> action) {
     var quickEdit = new QuickEditAction();
     var handler = quickEdit.invokeImpl(getProject(), myFixture.getEditor(), file);

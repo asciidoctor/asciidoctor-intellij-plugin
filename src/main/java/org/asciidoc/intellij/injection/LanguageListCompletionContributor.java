@@ -21,34 +21,42 @@ public class LanguageListCompletionContributor extends CompletionContributor {
 
   @Override
   public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
-    final PsiElement completionElement = parameters.getPosition();
-    if (PsiUtilCore.getElementType(completionElement) == AsciiDocTokenTypes.ATTR_NAME) {
-      PsiElement element = completionElement.getParent();
-      if (!(element instanceof AsciiDocAttributeInBrackets)) {
-        return;
-      }
-      element = element.getPrevSibling();
-      while (true) {
-        if (element == null) {
-          return;
-        }
-        if (element instanceof PsiWhiteSpace) {
-          element = element.getPrevSibling();
-          continue;
-        }
-        if (element.getNode() != null && element.getNode().getElementType() == AsciiDocTokenTypes.SEPARATOR) {
-          element = element.getPrevSibling();
-          continue;
-        }
-        if (!(element instanceof AsciiDocAttributeInBrackets)) {
-          return;
-        }
-        break;
-      }
-      if (Objects.equals(((AsciiDocAttributeInBrackets) element).getAttrName(), "source")) {
-        doFillVariants(result);
-      }
+    if (isSourceLanguagePosition(parameters)) {
+      doFillVariants(result);
     }
+  }
+
+  /**
+   * Check if the completion is requested for the language of a source block, for example in <code>[source,&lt;caret&gt;]</code>.
+   */
+  static boolean isSourceLanguagePosition(@NotNull CompletionParameters parameters) {
+    final PsiElement completionElement = parameters.getPosition();
+    if (PsiUtilCore.getElementType(completionElement) != AsciiDocTokenTypes.ATTR_NAME) {
+      return false;
+    }
+    PsiElement element = completionElement.getParent();
+    if (!(element instanceof AsciiDocAttributeInBrackets)) {
+      return false;
+    }
+    element = element.getPrevSibling();
+    while (true) {
+      if (element == null) {
+        return false;
+      }
+      if (element instanceof PsiWhiteSpace) {
+        element = element.getPrevSibling();
+        continue;
+      }
+      if (element.getNode() != null && element.getNode().getElementType() == AsciiDocTokenTypes.SEPARATOR) {
+        element = element.getPrevSibling();
+        continue;
+      }
+      if (!(element instanceof AsciiDocAttributeInBrackets)) {
+        return false;
+      }
+      break;
+    }
+    return Objects.equals(((AsciiDocAttributeInBrackets) element).getAttrName(), "source");
   }
 
   private static void doFillVariants(@NotNull CompletionResultSet result) {

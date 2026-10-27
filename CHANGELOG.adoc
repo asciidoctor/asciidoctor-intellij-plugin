@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.45.11
 
-...
+- Offer the languages of TextMate bundles in the code completion for source blocks (#2145)
 
 === 0.45.10
 
