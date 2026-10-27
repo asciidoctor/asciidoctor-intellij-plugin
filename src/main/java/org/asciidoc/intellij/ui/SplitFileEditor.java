@@ -188,6 +188,11 @@ public abstract class SplitFileEditor<E1 extends TextEditor, E2 extends FileEdit
   @NotNull
   @Override
   public FileEditorState getState(@NotNull FileEditorStateLevel level) {
+    if (myMainEditor.getEditor().getDocument().isInBulkUpdate()) {
+      // the platform's text editor throws an exception when asked for its state during a bulk update,
+      // for example when an external patch replaces the document text; skip the state for this history entry
+      return new MyFileEditorState(mySplitEditorLayout.name(), null, null);
+    }
     return new MyFileEditorState(mySplitEditorLayout.name(), myMainEditor.getState(level), mySecondEditor.getState(level));
   }
 
