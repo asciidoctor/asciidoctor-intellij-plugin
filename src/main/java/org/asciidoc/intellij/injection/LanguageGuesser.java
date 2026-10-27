@@ -35,6 +35,10 @@ public class LanguageGuesser {
       if (!LanguageUtil.isInjectableLanguage(language)) {
         continue;
       }
+      // the language of the reworked terminal creates PSI files that can't be used for injections (ClassCastException to PsiFileImpl)
+      if (language.getID().equals("TerminalOutput")) {
+        continue;
+      }
 
       // Handles for example "InjectablePHP" or "InjectedFreemarker"
       result.put(language.getID()
