@@ -58,8 +58,9 @@ public class AsciiDocPluginUpdateActivity implements ProjectActivity, DumbAware,
             changes.append(matcher.group());
           }
           // during hot-install, startup activity runs while notification groups are registered in write thread concurrently
-          // therefore trigger notification in a read action that waits until the registration is complete
-          ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runReadAction(() -> {
+          // therefore trigger notification in a read action that waits until the registration is complete;
+          // the activity runs in the background, as the notification group lookup is forbidden on the EDT
+          ApplicationManager.getApplication().runReadAction(() -> {
             NotificationGroup group = NotificationGroupManager.getInstance().getNotificationGroup("asciidoctor-update");
             if (group != null) {
               // might happen on initial installation of the plugin at runtime
@@ -77,7 +78,7 @@ public class AsciiDocPluginUpdateActivity implements ProjectActivity, DumbAware,
                 .setListener(new NotificationListener.UrlOpeningListener(false));
               Notifications.Bus.notify(notification, project);
             }
-          }));
+          });
         }
         jc.resume(Unit.INSTANCE);
       }
