@@ -18,6 +18,7 @@ import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,23 +37,29 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware, Disp
       @Override
       public void after(@NotNull List<? extends VFileEvent> events) {
         // any modification of a file within the project refreshes the preview
+        // resolve the files here: for a creation event, this looks up the file in its parent directory,
+        // which fails on a background thread when another thread is deleting the file at the same time
+        List<VirtualFile> files = new ArrayList<>();
+        for (VFileEvent event : events) {
+          VirtualFile file = event.getFile();
+          if (file != null) {
+            files.add(file);
+          }
+        }
         Set<String> canonicalPaths = new HashSet<>();
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
-          for (VFileEvent event : events) {
-            if (event.getFile() != null) {
-              if (!project.isDisposed()) {
-                VirtualFile file = event.getFile();
-                if (!file.isValid()) {
-                  continue;
-                }
-                if (!file.getFileType().equals(AsciiDocFileType.INSTANCE)) {
-                  continue;
-                }
-                if (!DumbService.isDumb(project)) {
-                  String canonicalPath = file.getCanonicalPath();
-                  if (canonicalPath != null) {
-                    canonicalPaths.add(canonicalPath);
-                  }
+          for (VirtualFile file : files) {
+            if (!project.isDisposed()) {
+              if (!file.isValid()) {
+                continue;
+              }
+              if (!file.getFileType().equals(AsciiDocFileType.INSTANCE)) {
+                continue;
+              }
+              if (!DumbService.isDumb(project)) {
+                String canonicalPath = file.getCanonicalPath();
+                if (canonicalPath != null) {
+                  canonicalPaths.add(canonicalPath);
                 }
               }
             }
