@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.45.11
+
+...
+
 === 0.45.10
 
 - Offer the languages of TextMate bundles in the code completion for source blocks (#2145)

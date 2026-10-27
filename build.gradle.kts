@@ -222,14 +222,25 @@ tasks {
         systemProperty("ide.plugins.snapshot.on.unload.fail", "true")
     }
 
+    // checks that have been fixed everywhere; keep them as errors so they don't come back
+    val fixedErrorProneChecks = arrayOf(
+        "NonApiType", "BooleanLiteral", "UnnecessaryStringBuilder", "AnnotateFormatMethod",
+        "LoopOverCharArray", "DuplicateAssertion", "UnusedNestedClass", "AlmostJavadoc", "StringConcatToTextBlock"
+    )
+
     compileJava {
         options.errorprone.excludedPaths = ".*(_AsciiDocLexer).*"
         options.errorprone.error("StreamResourceLeak") // enforce errors where there would be warning in the standard only
+        options.errorprone.error(*fixedErrorProneChecks)
         options.errorprone.disable("MissingSummary", "NullableOnContainingClass", "CanIgnoreReturnValueSuggester")
         // IElementType, Language, PSI elements and AST nodes are singletons or identity-based, and are intentionally compared with ==
         options.errorprone.disable("ReferenceEquality")
         // will print link to contributor guide at the start of each build
         dependsOn (generateLexer, "showLinkToContributorGuide", "checkJavaVersion")
+    }
+
+    compileTestJava {
+        options.errorprone.error(*fixedErrorProneChecks)
     }
 
     checkstyleMain {
