@@ -58,13 +58,14 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor imp
       if ((element instanceof AsciiDocTextQuoted)) {
         return handleQuotedText((AsciiDocTextQuoted) element);
       }
+      // check this first: PsiFile#getPrevSibling searches the parent directory and fails if the file is stale
+      if (element instanceof PsiFile) {
+        break;
+      }
       if (element.getPrevSibling() != null) {
         break;
       }
       if (element instanceof AsciiDocBlock || element instanceof AsciiDocSection) {
-        break;
-      }
-      if (element instanceof PsiFile) {
         break;
       }
       element = element.getParent();
