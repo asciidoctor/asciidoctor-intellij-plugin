@@ -24,6 +24,10 @@ public class AsciiDocExtractIntention extends Intention {
     if (AsciiDocFileType.INSTANCE != file.getFileType()) {
       return false;
     }
+    // extracting modifies the file, therefore not available in read-only files like VCS revisions
+    if (!file.isWritable()) {
+      return false;
+    }
     if (editor.getSelectionModel().getSelectedText() != null) {
       return true;
     }

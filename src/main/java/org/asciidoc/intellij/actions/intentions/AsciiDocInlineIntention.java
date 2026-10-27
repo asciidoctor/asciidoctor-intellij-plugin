@@ -17,6 +17,10 @@ public class AsciiDocInlineIntention extends Intention {
     if (AsciiDocFileType.INSTANCE != file.getFileType()) {
       return false;
     }
+    // inlining modifies the file; resolving in read-only files like VCS revisions would also trigger slow operations
+    if (!file.isWritable()) {
+      return false;
+    }
     PsiElement element = InlineIncludeDialog.getElement(editor, file);
     if (element == null) {
       return false;
