@@ -1,5 +1,7 @@
 package org.asciidoc.intellij;
 
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -13,6 +15,8 @@ import org.asciidoc.intellij.grazie.AsciiDocLanguageSupport;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationImpl;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ConcurrentModificationException;
+
 /**
  * For given {@link PsiElement}s, check if they should be spell checked and run a tokenizer.
  * This removes for example restricted formatting from the text (like <code>**E**quivalent</code>).
@@ -21,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Alexander Schwartz (alexander.schwartz@gmx.net)
  */
 public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
+  private static final Logger LOG = Logger.getInstance(AsciiDocSpellcheckingStrategy.class);
   private final AsciiDocLanguageSupport languageSupport = new AsciiDocLanguageSupport();
 
   /**
@@ -110,10 +115,65 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
      */
     public void flush() {
       if (sb.length() > 0) {
-        consumer.consumeToken(root, sb.toString(), false, offset, TextRange.allOf(sb.toString()), PlainTextSplitter.getInstance());
+        consumeToken(sb.toString());
         sb.setLength(0);
       }
     }
+
+    /**
+     * Older versions of LanguageTool bundled with Grazie (fixed in IntelliJ 2026.3) keep their languages in non-thread-safe lists,
+     * which fail when Grazie initializes languages while another thread spell checks.
+     * See <a href="https://github.com/languagetool-org/languagetool/pull/12050">LanguageTool PR 12050</a> for the upstream fix.
+     * Retry once for a transient failure, and otherwise skip the token; the next inspection run will check it again.
+     */
+    private void consumeToken(String text) {
+      for (int attempt = 1; ; attempt++) {
+        try {
+          consumer.consumeToken(root, text, false, offset, TextRange.allOf(text), PlainTextSplitter.getInstance());
+          return;
+        } catch (ProcessCanceledException e) {
+          throw e;
+        } catch (RuntimeException e) {
+          if (!isLanguageToolRace(e)) {
+            throw e;
+          }
+          if (attempt == 1 && hasCause(e, ConcurrentModificationException.class)) {
+            continue;
+          }
+          LOG.debug("skipping spell check of token due to concurrent LanguageTool initialization", e);
+          return;
+        }
+      }
+    }
+  }
+
+  /**
+   * Detect failures caused by unsynchronized access to LanguageTool's static language lists.
+   */
+  static boolean isLanguageToolRace(Throwable throwable) {
+    for (Throwable t = throwable; t != null; t = t.getCause()) {
+      if (t instanceof ProcessCanceledException) {
+        return false;
+      }
+      if (t instanceof ConcurrentModificationException || t instanceof NullPointerException
+        || t instanceof ArrayIndexOutOfBoundsException) {
+        for (StackTraceElement element : t.getStackTrace()) {
+          if ("org.languagetool.Languages".equals(element.getClassName())) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  private static boolean hasCause(Throwable throwable, Class<? extends Throwable> type) {
+    for (Throwable t = throwable; t != null; t = t.getCause()) {
+      if (type.isInstance(t)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }
