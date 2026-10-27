@@ -12,6 +12,9 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorCopyPasteHelper;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.ide.CopyPasteManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.AsciiDocWrapper;
@@ -19,13 +22,17 @@ import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.download.PandocInfo;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,45 +75,97 @@ public class PasteHtmlAction extends AsciiDocAction {
       return;
     }
 
-    String result = getAsciiDocContentFromClipboard(editor);
-    if (result != null) {
-      CommandProcessor.getInstance().executeCommand(project,
-        () -> ApplicationManager.getApplication().runWriteAction(() -> {
-          EditorCopyPasteHelper.getInstance().pasteTransferable(editor, new StringAsTransferable(result));
-        }), "Paste Formatted Text", AsciiDocFileType.INSTANCE.getName(), UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
-      );
-    } else {
-      // fallback, trigger standard paste procedure
-      CommandProcessor.getInstance().executeCommand(project,
-        () -> ApplicationManager.getApplication().runWriteAction(() -> {
-          EditorCopyPasteHelper.getInstance().pasteFromClipboard(editor);
-        }), "Paste Formatted Text", AsciiDocFileType.INSTANCE.getName(), UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
-      );
+    CopyPasteManager manager = CopyPasteManager.getInstance();
+    String html = readHtmlFromClipboard(manager);
+    if (html == null) {
+      pasteFromClipboard(project, editor);
+      return;
     }
+    String plainText = manager.getContents(DataFlavor.stringFlavor);
+    String basePath = project.getBasePath();
+    String htmlToConvert = stripHtmlClipboardHeader(html);
+
+    // starting and waiting for the external process might block, therefore don't do this on the EDT
+    ProgressManager.getInstance().run(new Task.Backgroundable(project, AsciiDocBundle.message("asciidoc.paste.html.converting"), true) {
+      private String result;
+
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) {
+        result = convertHtmlToAsciiDoc(htmlToConvert, basePath, plainText);
+      }
+
+      @Override
+      public void onFinished() {
+        if (project.isDisposed() || editor.isDisposed()) {
+          return;
+        }
+        if (result != null) {
+          CommandProcessor.getInstance().executeCommand(project,
+            () -> ApplicationManager.getApplication().runWriteAction(() -> {
+              EditorCopyPasteHelper.getInstance().pasteTransferable(editor, new StringAsTransferable(result));
+            }), "Paste Formatted Text", AsciiDocFileType.INSTANCE.getName(), UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
+          );
+        } else {
+          pasteFromClipboard(project, editor);
+        }
+      }
+    });
   }
 
-  private String getAsciiDocContentFromClipboard(Editor editor) {
+  @Nullable
+  private static String readHtmlFromClipboard(CopyPasteManager manager) {
+    // depending on the platform, the HTML flavor is delivered as a String, a Reader or a stream
+    Object data = manager.getContents(DataFlavor.allHtmlFlavor);
+    try {
+      if (data instanceof String) {
+        return (String) data;
+      } else if (data instanceof Reader) {
+        try (Reader reader = (Reader) data) {
+          StringWriter writer = new StringWriter();
+          reader.transferTo(writer);
+          return writer.toString();
+        }
+      } else if (data instanceof InputStream) {
+        try (InputStream stream = (InputStream) data) {
+          return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+        }
+      }
+    } catch (IOException e) {
+      LOG.warn("unable to read HTML from clipboard", e);
+    }
+    return null;
+  }
+
+  private static void pasteFromClipboard(Project project, Editor editor) {
+    // fallback, trigger standard paste procedure
+    CommandProcessor.getInstance().executeCommand(project,
+      () -> ApplicationManager.getApplication().runWriteAction(() -> {
+        EditorCopyPasteHelper.getInstance().pasteFromClipboard(editor);
+      }), "Paste Formatted Text", AsciiDocFileType.INSTANCE.getName(), UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION
+    );
+  }
+
+  private static String stripHtmlClipboardHeader(String html) {
+    // strip HTML clipboard format (HTML_CF header)
+    // https://learn.microsoft.com/en-us/windows/win32/dataxchg/html-clipboard-format
+    int start = html.indexOf("<html");
+    if (start > 0) {
+      return html.substring(start);
+    } else if (start == -1) {
+      start = html.indexOf("<HTML");
+      if (start > 0) {
+        return html.substring(start);
+      }
+    }
+    return html;
+  }
+
+  private String convertHtmlToAsciiDoc(String html, String basePath, String plainText) {
     Process process = null;
     try {
       List<String> cmd = new ArrayList<>(Arrays.asList(AsciiDocDownloaderUtil.getPanddocFile().getAbsolutePath(), "--wrap=none", "-f", "html", "-t", "asciidoctor"));
-      process = new ProcessBuilder(cmd.toArray(String[]::new)).directory(new File(editor.getProject().getBasePath())).start();
+      process = new ProcessBuilder(cmd.toArray(String[]::new)).directory(new File(basePath)).start();
 
-      CopyPasteManager manager = CopyPasteManager.getInstance();
-      String html = manager.getContents(DataFlavor.allHtmlFlavor);
-      if (html == null) {
-        return null;
-      }
-      // strip HTML clipboard format (HTML_CF header)
-      // https://learn.microsoft.com/en-us/windows/win32/dataxchg/html-clipboard-format
-      int start = html.indexOf("<html");
-      if (html.indexOf("<html") > 0) {
-        html = html.substring(start);
-      } else if (start == -1) {
-        start = html.indexOf("<HTML");
-        if (start > 0) {
-          html = html.substring(start);
-        }
-      }
       OutputStream outputStream = process.getOutputStream();
       outputStream.write(html.getBytes(StandardCharsets.UTF_8));
       outputStream.close();
@@ -114,20 +173,15 @@ public class PasteHtmlAction extends AsciiDocAction {
       String stdout = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
       String stderr = new String(process.getErrorStream().readAllBytes(), StandardCharsets.UTF_8);
 
-      // to kill the process
-      // process.destroy();
-
       int exitCode = process.waitFor();
       if (exitCode != 0) {
         Notification notification = AsciiDocWrapper.getNotificationGroup().createNotification("Error creating AsciiDOc from HTML clipboard contents", stdout + " / " + stderr, NotificationType.ERROR);
         notification.setImportant(true);
         Notifications.Bus.notify(notification);
-        String text = manager.getContents(DataFlavor.getTextPlainUnicodeFlavor());
-        if (text == null) {
+        if (plainText == null) {
           return null;
         }
-        text = text.replaceAll("\r\n", "\n");
-        return text;
+        return plainText.replaceAll("\r\n", "\n");
       }
 
       stdout = stdout.replaceAll("\r\n", "\n");
@@ -138,6 +192,9 @@ public class PasteHtmlAction extends AsciiDocAction {
     } catch (IOException | InterruptedException e) {
       if (process != null) {
         process.destroy();
+      }
+      if (e instanceof InterruptedException) {
+        Thread.currentThread().interrupt();
       }
       Notification notification = AsciiDocWrapper.getNotificationGroup().createNotification("Error creating AsciiDoc from HTML", e.getMessage(), NotificationType.ERROR);
       notification.setImportant(true);

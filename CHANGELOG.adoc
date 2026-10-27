@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - Avoid "file text mismatch" errors by searching for Java references only in AsciiDoc files (#2141)
 - Report stack traces and a semantic plugin version to Sentry for errors submitted via the IDE error dialog
 - Stop retrying the link refresh after a project is closed and skip it while indexing is running to avoid "Index is not created" errors
+- Paste formatted text from clipboard now runs as a background task to not block the EDT thread
 
 === 0.45.9
 
