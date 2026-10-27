@@ -173,7 +173,6 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     PsiElement[] children = psiFile.getChildren();
     assertEquals(1, children.length);
 
-    assertEquals(1, children.length);
     assertEquals(AsciiDocElementTypes.LIST, children[0].getNode().getElementType());
 
     assertEquals(2, children[0].getChildren().length);
