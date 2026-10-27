@@ -35,8 +35,8 @@ repositories {
 
 // Dependencies are managed with Gradle version catalog - read more: https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog
 dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.50.0")
-    compileOnly("com.google.errorprone:error_prone_core:2.50.0")
+    errorprone("com.google.errorprone:error_prone_core:2.51.0")
+    compileOnly("com.google.errorprone:error_prone_core:2.51.0")
     compileOnly("org.projectlombok:lombok:1.18.46")
     annotationProcessor("org.projectlombok:lombok:1.18.46")
     /* snakeyaml is s used by asciidoctorj-pdf, but is actually provided within jruby-stdlib
