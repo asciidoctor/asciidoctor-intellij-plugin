@@ -20,23 +20,23 @@ import java.util.List;
 public class CodeFenceInjector implements MultiHostInjector {
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
-    if (!(context instanceof AsciiDocElementWithLanguage)) {
+    if (!(context instanceof AsciiDocElementWithLanguage asciiDocElementWithLanguage)) {
       return;
     }
 
-    final Language language = findLangForInjection((AsciiDocElementWithLanguage) context);
+    final Language language = findLangForInjection(asciiDocElementWithLanguage);
     if (language == null || LanguageParserDefinitions.INSTANCE.forLanguage(language) == null) {
       return;
     }
 
-    if (((AsciiDocElementWithLanguage) context).isValidHost()) {
-      TextRange range = ((AsciiDocElementWithLanguage) context).getContentTextRange();
+    if (asciiDocElementWithLanguage.isValidHost()) {
+      TextRange range = asciiDocElementWithLanguage.getContentTextRange();
       if (!range.equals(TextRange.EMPTY_RANGE)) {
         registrar.startInjecting(language);
         String prefix = null;
         String suffix = null;
         if (language.getID().equalsIgnoreCase("puml") && !range.substring(context.getText()).startsWith("@start")) {
-          String fenceLanguage = ((AsciiDocElementWithLanguage) context).getFenceLanguage();
+          String fenceLanguage = asciiDocElementWithLanguage.getFenceLanguage();
           if (fenceLanguage.equals("diagram-plantuml")) {
             prefix = "@startuml\n";
             suffix = "\n@enduml";
@@ -45,7 +45,7 @@ public class CodeFenceInjector implements MultiHostInjector {
             suffix = "\n@endsalt";
           }
         }
-        registrar.addPlace(prefix, suffix, ((AsciiDocElementWithLanguage) context), range);
+        registrar.addPlace(prefix, suffix, asciiDocElementWithLanguage, range);
         registrar.doneInjecting();
       }
     }

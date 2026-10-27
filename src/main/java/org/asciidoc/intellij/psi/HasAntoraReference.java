@@ -8,10 +8,10 @@ public interface HasAntoraReference {
   @Nullable
   default AsciiDocFileReference getAntoraReference() {
     for (PsiReference reference : getReferences()) {
-      if (reference instanceof AsciiDocFileReference) {
-        AsciiDocFileReference fileReference = (AsciiDocFileReference) reference;
+      if (reference instanceof AsciiDocFileReference fileReference) {
+        
         if (fileReference.isAntora()) {
-          return (AsciiDocFileReference) reference;
+          return fileReference;
         }
       }
     }

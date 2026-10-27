@@ -188,8 +188,8 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
             try {
               iterateReferences:
               for (PsiReference reference : node.getPsi().getReferences()) {
-                if (reference instanceof AsciiDocAttributeDeclarationReference) {
-                  for (ResolveResult resolveResult : ((AsciiDocAttributeDeclarationReference) reference).multiResolve(false)) {
+                if (reference instanceof AsciiDocAttributeDeclarationReference asciiDocAttributeDeclarationReference) {
+                  for (ResolveResult resolveResult : asciiDocAttributeDeclarationReference.multiResolve(false)) {
                     PsiElement element = resolveResult.getElement();
                     if (element != null && onlyAntora) {
                       PsiFile file = element.getContainingFile();
@@ -207,8 +207,8 @@ public class AsciiDocFoldingBuilder extends CustomFoldingBuilder implements Dumb
                     }
                     if (element instanceof AsciiDocAttributeDeclarationName) {
                       PsiElement parent = element.getParent();
-                      if (parent instanceof AsciiDocAttributeDeclaration) {
-                        values.add(((AsciiDocAttributeDeclaration) parent).getAttributeValue());
+                      if (parent instanceof AsciiDocAttributeDeclaration asciiDocAttributeDeclaration) {
+                        values.add(asciiDocAttributeDeclaration.getAttributeValue());
                         if (values.size() > 1) {
                           break iterateReferences;
                         }

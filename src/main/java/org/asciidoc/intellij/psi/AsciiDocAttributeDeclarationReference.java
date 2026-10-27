@@ -36,10 +36,10 @@ public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiE
     final List<AttributeDeclaration> declarations = AsciiDocUtil.findAttributes(project, key, AsciiDocUtil.findAntoraModuleDir(myElement) != null);
     List<ResolveResult> results = new ArrayList<>();
     for (AttributeDeclaration d : declarations) {
-      if (!(d instanceof AsciiDocAttributeDeclaration)) {
+      if (!(d instanceof AsciiDocAttributeDeclaration declaration)) {
         continue;
       }
-      AsciiDocAttributeDeclaration declaration = (AsciiDocAttributeDeclaration) d;
+      
       results.add(new PsiElementResolveResult(declaration.getNavigationElement()));
     }
     return results.toArray(new ResolveResult[0]);
@@ -73,8 +73,8 @@ public class AsciiDocAttributeDeclarationReference extends PsiReferenceBase<PsiE
           .withCaseSensitivity(false)
           .withTailText(value, true)
           .withInsertHandler(getLookupElementInsertHandler(attributeName));
-        if (declaration instanceof AsciiDocAttributeDeclaration) {
-          lb = lb.withTypeText(((AsciiDocAttributeDeclaration) declaration).getContainingFile().getName());
+        if (declaration instanceof AsciiDocAttributeDeclaration asciiDocAttributeDeclaration) {
+          lb = lb.withTypeText(asciiDocAttributeDeclaration.getContainingFile().getName());
         }
         variants.add(lb);
       }

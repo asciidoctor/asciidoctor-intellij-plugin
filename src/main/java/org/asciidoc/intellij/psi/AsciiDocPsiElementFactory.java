@@ -21,11 +21,11 @@ public class AsciiDocPsiElementFactory {
     PsiFile psiFile = ((PsiFileFactoryImpl) PsiFileFactory.getInstance(project))
       .trySetupPsiForFile(virtualFile, AsciiDocLanguage.INSTANCE, true, true);
 
-    if (!(psiFile instanceof AsciiDocFile)) {
+    if (!(psiFile instanceof AsciiDocFile asciiDocFile)) {
       throw new RuntimeException("Cannot create a new markdown file. Text: " + text);
     }
 
-    return (AsciiDocFile) psiFile;
+    return asciiDocFile;
   }
 
 
@@ -34,10 +34,10 @@ public class AsciiDocPsiElementFactory {
                                               @NotNull String text) {
     final AsciiDocFile file = createFile(project, text);
     PsiElement firstChild = file.getFirstChild();
-    if (!(firstChild instanceof AsciiDocListing)) {
+    if (!(firstChild instanceof AsciiDocListing listing)) {
       throw AsciiDocPsiImplUtil.getRuntimeException("unable to covert to one listing", text, null);
     }
-    AsciiDocListing listing = (AsciiDocListing) firstChild;
+    
     Objects.requireNonNull(listing, "listing should have been found");
     if (listing.getNextSibling() != null) {
       throw AsciiDocPsiImplUtil.getRuntimeException("unable to covert to one listing", text, null);

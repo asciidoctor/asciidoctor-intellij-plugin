@@ -60,11 +60,11 @@ public class AsciiDocSplitEditorProvider extends SplitTextEditorProvider {
 
   @Override
   protected FileEditor createSplitEditor(@NotNull final FileEditor firstEditor, @NotNull FileEditor secondEditor) {
-    if (!(firstEditor instanceof TextEditor) || !(secondEditor instanceof AsciiDocPreviewEditor asciiDocPreviewEditor)) {
+    if (!(firstEditor instanceof TextEditor textEditor) || !(secondEditor instanceof AsciiDocPreviewEditor asciiDocPreviewEditor)) {
       throw new IllegalArgumentException("Main editor should be TextEditor");
     }
-    asciiDocPreviewEditor.setEditor(((TextEditor) firstEditor).getEditor());
-    return new AsciiDocSplitEditor(((TextEditor) firstEditor), ((AsciiDocPreviewEditor) secondEditor));
+    asciiDocPreviewEditor.setEditor(textEditor.getEditor());
+    return new AsciiDocSplitEditor(textEditor, asciiDocPreviewEditor);
   }
 
 }

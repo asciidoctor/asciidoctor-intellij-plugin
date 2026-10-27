@@ -36,9 +36,9 @@ public class AsciiDocIncludeTagReferenceContributor extends PsiReferenceContribu
         @Override
         public boolean accepts(@NotNull PsiElement psiElement, ProcessingContext context) {
           // for plain text files, only the file appears here, not its element
-          if (psiElement instanceof PsiFile) {
-            PsiFile file = (PsiFile) psiElement;
-            VirtualFile virtualFile = ((PsiFile) psiElement).getVirtualFile();
+          if (psiElement instanceof PsiFile file) {
+            
+            VirtualFile virtualFile = file.getVirtualFile();
             if (virtualFile == null) {
               virtualFile = file.getOriginalFile().getVirtualFile();
             }

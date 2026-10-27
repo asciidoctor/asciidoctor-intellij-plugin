@@ -23,8 +23,8 @@ public class AsciiDocReferencePatternInspection extends AsciiDocInspectionBase {
     return new AsciiDocVisitor() {
       @Override
       public void visitElement(PsiElement o) {
-        if (o instanceof AsciiDocBlockId) {
-          AsciiDocBlockId blockId = (AsciiDocBlockId) o;
+        if (o instanceof AsciiDocBlockId blockId) {
+          
           if (!blockId.patternIsValid()) {
             String key = blockId.getName();
             String explanation = null;

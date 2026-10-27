@@ -58,8 +58,8 @@ public class AsciiDocAddDescriptionPageAttribute implements LocalQuickFix {
     if (ApplicationManager.getApplication().isDispatchThread()) {
       ((Navigatable) anchor).navigate(false);
       FileEditor selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(anchor.getContainingFile().getVirtualFile());
-      if (selectedEditor instanceof TextEditor) {
-        Editor editor = ((TextEditor) selectedEditor).getEditor();
+      if (selectedEditor instanceof TextEditor textEditor) {
+        Editor editor = textEditor.getEditor();
         editor.getSelectionModel().setSelection(anchor.getTextOffset(), anchor.getTextOffset() + anchor.getTextLength());
       }
     }

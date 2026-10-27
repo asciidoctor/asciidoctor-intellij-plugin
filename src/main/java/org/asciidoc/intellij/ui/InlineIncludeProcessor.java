@@ -76,8 +76,8 @@ public class InlineIncludeProcessor extends BaseRefactoringProcessor {
     List<UsageInfo> usages = new ArrayList<>();
     for (PsiReference ref : ReferencesSearch.search(myResolved, ProjectScope.getProjectScope(myProject), false).findAll()) {
       PsiElement element = ref.getElement();
-      if (element instanceof AsciiDocBlockMacro) {
-        if ("include".equals(((AsciiDocBlockMacro) element).getMacroName())) {
+      if (element instanceof AsciiDocBlockMacro asciiDocBlockMacro) {
+        if ("include".equals(asciiDocBlockMacro.getMacroName())) {
           UsageInfo info = new UsageInfo(element);
           usages.add(info);
         }

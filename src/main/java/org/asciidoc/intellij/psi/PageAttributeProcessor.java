@@ -28,9 +28,9 @@ public class PageAttributeProcessor implements PsiElementProcessor<PsiElement> {
     if (element instanceof PsiFile) {
       return true;
     }
-    if (element instanceof AsciiDocAttributeDeclaration) {
+    if (element instanceof AsciiDocAttributeDeclaration attributeDeclaration) {
       // last attribute definition should take precedence
-      AsciiDocAttributeDeclaration attributeDeclaration = (AsciiDocAttributeDeclaration) element;
+      
       if (attributeDeclaration.getAttributeName().equals("doctitle")) {
         result.removeIf(ad -> ad.getAttributeName().equals("doctitle"));
       }
@@ -49,8 +49,8 @@ public class PageAttributeProcessor implements PsiElementProcessor<PsiElement> {
     if (PsiTreeUtil.getParentOfType(element, AsciiDocBlockId.class, false) != null) {
       return true;
     }
-    if (element instanceof AsciiDocBlockMacro) {
-      AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) element;
+    if (element instanceof AsciiDocBlockMacro blockMacro) {
+      
       if (blockMacro.getMacroName().equals("include")) {
         AsciiDocFileReference fileReference = blockMacro.getFileReference();
         if (fileReference != null) {
@@ -67,11 +67,11 @@ public class PageAttributeProcessor implements PsiElementProcessor<PsiElement> {
     if (PsiTreeUtil.getParentOfType(element, AsciiDocHeading.class, false) != null) {
       return true;
     }
-    if (element instanceof AsciiDocSection) {
-      if (((AsciiDocSection) element).getHeadingLevel() == 1) {
+    if (element instanceof AsciiDocSection asciiDocSection) {
+      if (asciiDocSection.getHeadingLevel() == 1) {
         // only allow doctitle to be taken from heading if not already set
         if (result.stream().noneMatch(attributeDeclaration -> attributeDeclaration.getAttributeName().equals("doctitle"))) {
-          result.add(new AsciiDocAttributeDeclarationDummy("doctitle", ((AsciiDocSection) element).getTitle()));
+          result.add(new AsciiDocAttributeDeclarationDummy("doctitle", asciiDocSection.getTitle()));
         }
         titleSeen = true;
         return true;

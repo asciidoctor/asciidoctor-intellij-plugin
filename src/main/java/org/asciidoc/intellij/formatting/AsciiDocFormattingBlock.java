@@ -225,50 +225,50 @@ class AsciiDocFormattingBlock extends AbstractBlock {
   }
 
   private boolean isCellStart(Block block) {
-    return block instanceof AsciiDocFormattingBlock &&
-      AsciiDocTokenTypes.CELLSEPARATOR.equals(((AsciiDocFormattingBlock) block).getNode().getElementType());
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      AsciiDocTokenTypes.CELLSEPARATOR.equals(asciiDocFormattingBlock.getNode().getElementType());
   }
 
   private static boolean isAttributeDeclaration(Block block) {
-    return block instanceof AsciiDocFormattingBlock &&
-      AsciiDocElementTypes.ATTRIBUTE_DECLARATION.equals(((AsciiDocFormattingBlock) block).getNode().getElementType());
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      AsciiDocElementTypes.ATTRIBUTE_DECLARATION.equals(asciiDocFormattingBlock.getNode().getElementType());
   }
 
   private boolean isBlockStart(Block block) {
-    return block instanceof AsciiDocFormattingBlock &&
-      (AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER.equals(((AsciiDocFormattingBlock) block).getNode().getElementType())
-        || AsciiDocTokenTypes.BLOCK_DELIMITER.equals(((AsciiDocFormattingBlock) block).getNode().getElementType())
-        || AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER.equals(((AsciiDocFormattingBlock) block).getNode().getElementType())
-        || AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER.equals(((AsciiDocFormattingBlock) block).getNode().getElementType())
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      (AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER.equals(asciiDocFormattingBlock.getNode().getElementType())
+        || AsciiDocTokenTypes.BLOCK_DELIMITER.equals(asciiDocFormattingBlock.getNode().getElementType())
+        || AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER.equals(asciiDocFormattingBlock.getNode().getElementType())
+        || AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER.equals(asciiDocFormattingBlock.getNode().getElementType())
       ) &&
-      ((AsciiDocFormattingBlock) block).getNode().getTreeNext() != null;
+      asciiDocFormattingBlock.getNode().getTreeNext() != null;
   }
 
   private boolean isBlockEnd(Block block) {
-    return block instanceof AsciiDocFormattingBlock &&
-      (AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER.equals(((AsciiDocFormattingBlock) block).getNode().getElementType())
-        || AsciiDocTokenTypes.BLOCK_DELIMITER.equals(((AsciiDocFormattingBlock) block).getNode().getElementType())
-        || AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER.equals(((AsciiDocFormattingBlock) block).getNode().getElementType())
-        || AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER.equals(((AsciiDocFormattingBlock) block).getNode().getElementType())
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      (AsciiDocTokenTypes.LISTING_BLOCK_DELIMITER.equals(asciiDocFormattingBlock.getNode().getElementType())
+        || AsciiDocTokenTypes.BLOCK_DELIMITER.equals(asciiDocFormattingBlock.getNode().getElementType())
+        || AsciiDocTokenTypes.PASSTRHOUGH_BLOCK_DELIMITER.equals(asciiDocFormattingBlock.getNode().getElementType())
+        || AsciiDocTokenTypes.LITERAL_BLOCK_DELIMITER.equals(asciiDocFormattingBlock.getNode().getElementType())
       ) &&
-      ((AsciiDocFormattingBlock) block).getNode().getTreeNext() == null;
+      asciiDocFormattingBlock.getNode().getTreeNext() == null;
   }
 
   private boolean isSeparator(Block block) {
-    return block instanceof AsciiDocFormattingBlock &&
-      AsciiDocTokenTypes.SEPARATOR.equals(((AsciiDocFormattingBlock) block).getNode().getElementType());
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      AsciiDocTokenTypes.SEPARATOR.equals(asciiDocFormattingBlock.getNode().getElementType());
   }
 
   private boolean hasBlankLineBetween(Block child1, Block child2) {
-    if (!(child1 instanceof AsciiDocFormattingBlock)) {
+    if (!(child1 instanceof AsciiDocFormattingBlock block1)) {
       return false;
     }
-    if (!(child2 instanceof AsciiDocFormattingBlock)) {
+    if (!(child2 instanceof AsciiDocFormattingBlock block2)) {
       return false;
     }
     int newlines = 0;
-    ASTNode node = ((AsciiDocFormattingBlock) child1).getNode().getTreeNext();
-    while (node != null && node != ((AsciiDocFormattingBlock) child2).getNode()) {
+    ASTNode node = block1.getNode().getTreeNext();
+    while (node != null && node != block2.getNode()) {
       if (node instanceof PsiWhiteSpace && "\n".equals(node.getText())) {
         newlines++;
         if (newlines == 2) {
@@ -284,14 +284,14 @@ class AsciiDocFormattingBlock extends AbstractBlock {
   }
 
   private boolean hasNewlinesBetween(Block child1, Block child2) {
-    if (!(child1 instanceof AsciiDocFormattingBlock)) {
+    if (!(child1 instanceof AsciiDocFormattingBlock block1)) {
       return false;
     }
-    if (!(child2 instanceof AsciiDocFormattingBlock)) {
+    if (!(child2 instanceof AsciiDocFormattingBlock block2)) {
       return false;
     }
-    ASTNode node = ((AsciiDocFormattingBlock) child1).getNode().getTreeNext();
-    while (node != null && node != ((AsciiDocFormattingBlock) child2).getNode()) {
+    ASTNode node = block1.getNode().getTreeNext();
+    while (node != null && node != block2.getNode()) {
       if (node instanceof PsiWhiteSpace && "\n".equals(node.getText())) {
         return true;
       }
@@ -301,19 +301,19 @@ class AsciiDocFormattingBlock extends AbstractBlock {
   }
 
   private boolean isComment(Block block) {
-    return block instanceof AsciiDocFormattingBlock &&
-      (AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER.equals(((AsciiDocFormattingBlock) block).getNode().getElementType())
-        || AsciiDocTokenTypes.LINE_COMMENT.equals(((AsciiDocFormattingBlock) block).getNode().getElementType()));
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      (AsciiDocTokenTypes.COMMENT_BLOCK_DELIMITER.equals(asciiDocFormattingBlock.getNode().getElementType())
+        || AsciiDocTokenTypes.LINE_COMMENT.equals(asciiDocFormattingBlock.getNode().getElementType()));
   }
 
   private boolean isBlockAttribute(Block block) {
-    return block instanceof AsciiDocFormattingBlock &&
-      AsciiDocElementTypes.BLOCK_ATTRIBUTES.equals(((AsciiDocFormattingBlock) block).getNode().getElementType());
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      AsciiDocElementTypes.BLOCK_ATTRIBUTES.equals(asciiDocFormattingBlock.getNode().getElementType());
   }
 
   private boolean isBlockIdEnd(Block block) {
-    return block instanceof AsciiDocFormattingBlock &&
-      AsciiDocTokenTypes.BLOCKIDEND.equals(((AsciiDocFormattingBlock) block).getNode().getElementType());
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      AsciiDocTokenTypes.BLOCKIDEND.equals(asciiDocFormattingBlock.getNode().getElementType());
   }
 
   private boolean isPreprocessorMacro(Block block) {
@@ -333,25 +333,25 @@ class AsciiDocFormattingBlock extends AbstractBlock {
         return false;
       }
     }
-    return block instanceof AsciiDocFormattingBlock &&
-      (AsciiDocElementTypes.BLOCK.equals(((AsciiDocFormattingBlock) block).getNode().getElementType())
-        || AsciiDocElementTypes.LISTING.equals(((AsciiDocFormattingBlock) block).getNode().getElementType()));
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      (AsciiDocElementTypes.BLOCK.equals(asciiDocFormattingBlock.getNode().getElementType())
+        || AsciiDocElementTypes.LISTING.equals(asciiDocFormattingBlock.getNode().getElementType()));
   }
 
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   private boolean isContinuation(Block block) {
-    return block instanceof AsciiDocFormattingBlock &&
-      ((AsciiDocFormattingBlock) block).getNode().getText().equals("+");
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      asciiDocFormattingBlock.getNode().getText().equals("+");
   }
 
   private boolean isEndOfSentence(Block block) {
-    return block instanceof AsciiDocFormattingBlock &&
-      AsciiDocTokenTypes.END_OF_SENTENCE.equals(((AsciiDocFormattingBlock) block).getNode().getElementType());
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      AsciiDocTokenTypes.END_OF_SENTENCE.equals(asciiDocFormattingBlock.getNode().getElementType());
   }
 
   private boolean isTitleInsideTitle(Block block) {
-    if (block instanceof AsciiDocFormattingBlock) {
-      AsciiDocFormattingBlock adBlock = (AsciiDocFormattingBlock) block;
+    if (block instanceof AsciiDocFormattingBlock adBlock) {
+      
       ASTNode node = adBlock.getNode();
       do {
         if (AsciiDocElementTypes.TITLE.equals(node.getElementType())) {
@@ -364,14 +364,14 @@ class AsciiDocFormattingBlock extends AbstractBlock {
   }
 
   private static boolean isSection(Block block) {
-    return block instanceof AsciiDocFormattingBlock &&
-      (AsciiDocElementTypes.SECTION.equals(((AsciiDocFormattingBlock) block).getNode().getElementType())
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      (AsciiDocElementTypes.SECTION.equals(asciiDocFormattingBlock.getNode().getElementType())
         || isChildOf(AsciiDocElementTypes.HEADING, block));
   }
 
   private static boolean isHeader(Block block) {
-    return block instanceof AsciiDocFormattingBlock &&
-      AsciiDocTokenTypes.HEADER.equals(((AsciiDocFormattingBlock) block).getNode().getElementType());
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      AsciiDocTokenTypes.HEADER.equals(asciiDocFormattingBlock.getNode().getElementType());
   }
 
   private static boolean isChildOf(IElementType element, Block block) {
@@ -386,18 +386,18 @@ class AsciiDocFormattingBlock extends AbstractBlock {
   }
 
   private static boolean isBullet(Block block) {
-    return block instanceof AsciiDocFormattingBlock &&
-      AsciiDocTokenTypes.BULLET.equals(((AsciiDocFormattingBlock) block).getNode().getElementType());
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      AsciiDocTokenTypes.BULLET.equals(asciiDocFormattingBlock.getNode().getElementType());
   }
 
   private static boolean isEnumeration(Block block) {
-    return block instanceof AsciiDocFormattingBlock &&
-      AsciiDocTokenTypes.ENUMERATION.equals(((AsciiDocFormattingBlock) block).getNode().getElementType());
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      AsciiDocTokenTypes.ENUMERATION.equals(asciiDocFormattingBlock.getNode().getElementType());
   }
 
   private boolean isCallOut(Block block) {
-    return block instanceof AsciiDocFormattingBlock &&
-      AsciiDocTokenTypes.CALLOUT.equals(((AsciiDocFormattingBlock) block).getNode().getElementType());
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      AsciiDocTokenTypes.CALLOUT.equals(asciiDocFormattingBlock.getNode().getElementType());
   }
 
   private static final TokenSet TEXT_SET = TokenSet.create(AsciiDocTokenTypes.TEXT, AsciiDocTokenTypes.BOLD, AsciiDocTokenTypes.BOLDITALIC,
@@ -417,10 +417,10 @@ class AsciiDocFormattingBlock extends AbstractBlock {
     AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_END, AsciiDocTokenTypes.TYPOGRAPHIC_SINGLE_QUOTE_START);
 
   private static boolean isPartOfSentence(Block block) {
-    return block instanceof AsciiDocFormattingBlock &&
-      TEXT_SET.contains(((AsciiDocFormattingBlock) block).getNode().getElementType()) &&
-      !"::".equals(((AsciiDocFormattingBlock) block).getNode().getText()) && // should stay on a separate line as reformatting might create property list item
-      !"--".equals(((AsciiDocFormattingBlock) block).getNode().getText()); // should stay on a separate line as it might be part of a quote
+    return block instanceof AsciiDocFormattingBlock asciiDocFormattingBlock &&
+      TEXT_SET.contains(asciiDocFormattingBlock.getNode().getElementType()) &&
+      !"::".equals(asciiDocFormattingBlock.getNode().getText()) && // should stay on a separate line as reformatting might create property list item
+      !"--".equals(asciiDocFormattingBlock.getNode().getText()); // should stay on a separate line as it might be part of a quote
   }
 
   @Override
@@ -439,9 +439,9 @@ class AsciiDocFormattingBlock extends AbstractBlock {
     }
 
     ASTNode treePrev = myNode.getTreePrev();
-    if (treePrev instanceof PsiWhiteSpace) {
+    if (treePrev instanceof PsiWhiteSpace psiWhiteSpace) {
       int spaces = 0;
-      char[] chars = ((PsiWhiteSpace) treePrev).textToCharArray();
+      char[] chars = psiWhiteSpace.textToCharArray();
       int i = treePrev.getTextLength() - 1;
       for (; i >= 0; --i) {
         if (chars[i] == ' ') {

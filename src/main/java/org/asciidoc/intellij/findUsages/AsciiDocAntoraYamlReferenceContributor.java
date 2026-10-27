@@ -210,15 +210,15 @@ public class AsciiDocAntoraYamlReferenceContributor extends PsiReferenceContribu
   }
 
   private TextRange calcRange(YAMLScalar element) {
-    if (element instanceof YAMLPlainTextImpl) {
-      List<TextRange> contentRanges = ((YAMLPlainTextImpl) element).getContentRanges();
+    if (element instanceof YAMLPlainTextImpl yamlPlainTextImpl) {
+      List<TextRange> contentRanges = yamlPlainTextImpl.getContentRanges();
       if (contentRanges.size() == 1) {
         return contentRanges.get(0);
       } else {
         return null;
       }
-    } else if (element instanceof YAMLQuotedTextImpl) {
-      List<TextRange> contentRanges = ((YAMLQuotedTextImpl) element).getContentRanges();
+    } else if (element instanceof YAMLQuotedTextImpl yamlQuotedTextImpl) {
+      List<TextRange> contentRanges = yamlQuotedTextImpl.getContentRanges();
       if (contentRanges.size() == 1) {
         return contentRanges.get(0);
       } else {

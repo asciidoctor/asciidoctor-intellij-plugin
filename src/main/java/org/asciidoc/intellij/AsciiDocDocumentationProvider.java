@@ -22,8 +22,8 @@ public class AsciiDocDocumentationProvider extends AbstractDocumentationProvider
   @Nullable
   @Override
   public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element) {
-    if (object instanceof String) {
-      return new DummyElement((String) object, psiManager);
+    if (object instanceof String string) {
+      return new DummyElement(string, psiManager);
     }
     return null;
   }
@@ -65,8 +65,8 @@ public class AsciiDocDocumentationProvider extends AbstractDocumentationProvider
 
   @Override
   public String generateDoc(final PsiElement element, @Nullable final PsiElement originalElement) {
-    if (element instanceof DummyElement) {
-      DummyElement el = (DummyElement) element;
+    if (element instanceof DummyElement el) {
+      
       if (AsciiDocBundle.containsAttribute(el.getKey())) {
         String defaultValue = AsciiDocBundle.message(AsciiDocBundle.BUILTIN_ATTRIBUTE_PREFIX + el.getKey() + ".default-value");
         defaultValue = StringEscapeUtils.escapeHtml4(defaultValue);

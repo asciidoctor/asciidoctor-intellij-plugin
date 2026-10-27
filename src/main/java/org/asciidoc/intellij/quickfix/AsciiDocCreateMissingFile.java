@@ -30,15 +30,15 @@ public interface AsciiDocCreateMissingFile {
       return;
     }
     for (PsiReference r : element.getReferences()) {
-      if (r instanceof AsciiDocFileReference) {
-        AsciiDocFileReference adr = (AsciiDocFileReference) r;
+      if (r instanceof AsciiDocFileReference adr) {
+        
         PsiElement resolved = r.resolve();
         if (resolved == null) {
           if (adr.canBeCreated()) {
             PsiElement e = adr.createFileOrFolder();
-            if (e instanceof PsiFile) {
+            if (e instanceof PsiFile file) {
               ApplicationManager.getApplication().invokeLater(() -> {
-                PsiFile file = ((PsiFile) e);
+                
                 VirtualFile vf = file.getVirtualFile();
                 if (vf == null) {
                   vf = file.getOriginalFile().getVirtualFile();
@@ -58,9 +58,9 @@ public interface AsciiDocCreateMissingFile {
   static boolean isAvailable(PsiElement element) {
     boolean isAvailable = false;
     PsiFile containingFile = element.getContainingFile();
-    if (element instanceof AsciiDocBlockMacro) {
+    if (element instanceof AsciiDocBlockMacro asciiDocBlockMacro) {
       // this will create empty files, doesn't make sense for all images
-      if (((AsciiDocBlockMacro) element).getMacroName().equals("image")) {
+      if (asciiDocBlockMacro.getMacroName().equals("image")) {
         // in case of image macro with a draw.io image and the plugin is installed,
         // creating an empty file makes sense
         String fileName = element.getFirstChild().getNextSibling().getText();
@@ -76,8 +76,8 @@ public interface AsciiDocCreateMissingFile {
       PsiDirectory parent = containingFile.getParent();
       if (parent != null) {
         for (PsiReference r : element.getReferences()) {
-          if (r instanceof AsciiDocFileReference) {
-            AsciiDocFileReference adr = (AsciiDocFileReference) r;
+          if (r instanceof AsciiDocFileReference adr) {
+            
             PsiElement resolved = r.resolve();
             if (resolved == null) {
               if (adr.canBeCreated()) {

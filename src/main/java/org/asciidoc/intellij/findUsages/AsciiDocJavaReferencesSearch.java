@@ -47,14 +47,14 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
       // use scope determined by user here, as effective search scope would return the module and its dependants
       SearchScope scope = p.getScopeDeterminedByUser();
 
-      if (element instanceof PsiClass) {
-        String name = ((PsiClass) element).getName();
+      if (element instanceof PsiClass psiClass) {
+        String name = psiClass.getName();
         if (name != null && !name.isEmpty()) {
           search(consumer, element, name, scope);
         }
       } else //noinspection ConstantConditions
-        if (element instanceof PsiPackage) {
-        String name = ((PsiPackage) element).getName();
+        if (element instanceof PsiPackage psiPackage) {
+        String name = psiPackage.getName();
         if (name != null && !name.isEmpty()) {
           search(consumer, element, name, scope);
         }
@@ -65,11 +65,11 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
   private void search(@NotNull Processor<? super PsiReference> consumer, PsiElement element, String name, SearchScope scope) {
     DumbService myDumbService = DumbService.getInstance(element.getProject());
     PsiFile[] files;
-    if (scope instanceof GlobalSearchScope) {
+    if (scope instanceof GlobalSearchScope globalSearchScope) {
       // when the user searches all references
       files = myDumbService.runReadActionInSmartMode(() ->
         CacheManager.getInstance(element.getProject())
-          .getFilesWithWord(name, UsageSearchContext.IN_CODE, GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope) scope, AsciiDocFileType.INSTANCE), false));
+          .getFilesWithWord(name, UsageSearchContext.IN_CODE, GlobalSearchScope.getScopeRestrictedByFileTypes(globalSearchScope, AsciiDocFileType.INSTANCE), false));
       if (files.length == 0) {
         return;
       }
@@ -110,8 +110,8 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
           myDumbService.runReadActionInSmartMode(() -> {
             try {
               PsiReference referenceAt = psiFile.findReferenceAt(index);
-              if (referenceAt instanceof PsiMultiReference) {
-                for (PsiReference reference : ((PsiMultiReference) referenceAt).getReferences()) {
+              if (referenceAt instanceof PsiMultiReference psiMultiReference) {
+                for (PsiReference reference : psiMultiReference.getReferences()) {
                   checkReference(consumer, element, reference);
                 }
               }

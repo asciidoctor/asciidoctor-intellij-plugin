@@ -15,7 +15,7 @@ public final class OptionsPanelFactory {
     boolean selectFirst = true;
 
     for (Action option : options) {
-      if (option instanceof OptionAction && ((OptionAction) option).isSelected()) {
+      if (option instanceof OptionAction optionAction && optionAction.isSelected()) {
         selectFirst = false;
       }
     }
@@ -25,7 +25,7 @@ public final class OptionsPanelFactory {
       if (selectFirst) {
         radioButton.setSelected(true);
         selectFirst = false;
-      } else if (option instanceof OptionAction && ((OptionAction) option).isSelected()) {
+      } else if (option instanceof OptionAction optionAction && optionAction.isSelected()) {
         radioButton.setSelected(true);
       }
       buttonGroup.add(radioButton);

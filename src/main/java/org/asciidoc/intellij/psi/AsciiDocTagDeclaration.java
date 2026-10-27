@@ -29,9 +29,9 @@ public class AsciiDocTagDeclaration extends FakePsiElement implements PsiNameIde
 
   @Override
   public boolean isEquivalentTo(PsiElement another) {
-    return another instanceof AsciiDocTagDeclaration
-      && ref.getElement().getContainingFile() == ((AsciiDocTagDeclaration) another).ref.getElement().getContainingFile()
-      && ref.getKey().equals(((AsciiDocTagDeclaration) another).ref.getKey());
+    return another instanceof AsciiDocTagDeclaration asciiDocTagDeclaration
+      && ref.getElement().getContainingFile() == asciiDocTagDeclaration.ref.getElement().getContainingFile()
+      && ref.getKey().equals(asciiDocTagDeclaration.ref.getKey());
   }
 
   @Override
@@ -55,8 +55,8 @@ public class AsciiDocTagDeclaration extends FakePsiElement implements PsiNameIde
       // reverse order, so we start at the end
       Arrays.sort(references, (o1, o2) -> o2.getRangeInElement().getStartOffset() - o1.getRangeInElement().getStartOffset());
       for (PsiReference reference : references) {
-        if (reference instanceof AsciiDocIncludeTagReferenceInElement
-          && ((AsciiDocIncludeTagReferenceInElement) reference).getKey().equals(getName())) {
+        if (reference instanceof AsciiDocIncludeTagReferenceInElement asciiDocIncludeTagReferenceInElement
+          && asciiDocIncludeTagReferenceInElement.getKey().equals(getName())) {
           sb.replace(reference.getRangeInElement().getStartOffset(), reference.getRangeInElement().getEndOffset(), name);
         }
       }

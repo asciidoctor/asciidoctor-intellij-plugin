@@ -99,21 +99,21 @@ public class AsciiDocStructureViewElement extends PsiTreeElementBase<PsiElement>
   }
 
   private static String getPresentableElementText(PsiElement element) {
-    if (element instanceof AsciiDocSection) {
-      return ((AsciiDocSection) element).getTitle();
+    if (element instanceof AsciiDocSection asciiDocSection) {
+      return asciiDocSection.getTitle();
     }
-    if (element instanceof PsiFile) {
-      return ((PsiFile) element).getName();
+    if (element instanceof PsiFile psiFile) {
+      return psiFile.getName();
     }
-    if (element instanceof AbstractAsciiDocCodeBlock) {
-      String title = ((AbstractAsciiDocCodeBlock) element).getTitle();
+    if (element instanceof AbstractAsciiDocCodeBlock abstractAsciiDocCodeBlock) {
+      String title = abstractAsciiDocCodeBlock.getTitle();
       if (title == null) {
-        title = "(" + ((AbstractAsciiDocCodeBlock) element).getDefaultTitle() + ")";
+        title = "(" + abstractAsciiDocCodeBlock.getDefaultTitle() + ")";
       }
       return title;
     }
-    if (element instanceof AsciiDocSelfDescribe) {
-      return ((AsciiDocSelfDescribe) element).getFoldedSummary();
+    if (element instanceof AsciiDocSelfDescribe asciiDocSelfDescribe) {
+      return asciiDocSelfDescribe.getFoldedSummary();
     }
     return "";
   }

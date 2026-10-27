@@ -41,10 +41,10 @@ public class AsciiDocExternalAnnotatorHighlighting extends ExternalAnnotator<Str
       @Override
       public void visitElement(@NotNull PsiElement element) {
         super.visitElement(element);
-        if (element instanceof AsciiDocTextQuoted) {
-          boolean isMono = ((AsciiDocTextQuoted) element).isMono();
-          boolean isItalic = ((AsciiDocTextQuoted) element).isItalic();
-          boolean isBold = ((AsciiDocTextQuoted) element).isBold();
+        if (element instanceof AsciiDocTextQuoted asciiDocTextQuoted) {
+          boolean isMono = asciiDocTextQuoted.isMono();
+          boolean isItalic = asciiDocTextQuoted.isItalic();
+          boolean isBold = asciiDocTextQuoted.isBold();
           if (isMono && isBold && isItalic) {
             holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
               .enforcedTextAttributes(attributesOf(AsciiDocSyntaxHighlighter.ASCIIDOC_MONOBOLDITALIC))

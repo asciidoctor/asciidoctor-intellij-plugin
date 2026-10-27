@@ -147,8 +147,8 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
   @Override
   public String getAttribute(String name) {
     for (PsiElement child : this.getChildren()) {
-      if (child instanceof AsciiDocBlockAttributes) {
-        return ((AsciiDocBlockAttributes) child).getAttribute(name);
+      if (child instanceof AsciiDocBlockAttributes asciiDocBlockAttributes) {
+        return asciiDocBlockAttributes.getAttribute(name);
       }
       if (child instanceof AsciiDocHeading) {
         break;
@@ -221,8 +221,8 @@ public class AsciiDocSectionImpl extends AsciiDocSectionStubElementImpl<AsciiDoc
 
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof AsciiDocVisitor) {
-      ((AsciiDocVisitor) visitor).visitSections(this);
+    if (visitor instanceof AsciiDocVisitor asciiDocVisitor) {
+      asciiDocVisitor.visitSections(this);
       return;
     }
 

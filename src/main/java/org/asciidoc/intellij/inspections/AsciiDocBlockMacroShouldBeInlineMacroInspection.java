@@ -27,8 +27,8 @@ public class AsciiDocBlockMacroShouldBeInlineMacroInspection extends AsciiDocIns
     return new AsciiDocVisitor() {
       @Override
       public void visitElement(@NotNull PsiElement o) {
-        if (o instanceof AsciiDocBlockMacro) {
-          AsciiDocBlockMacro macro = (AsciiDocBlockMacro) o;
+        if (o instanceof AsciiDocBlockMacro macro) {
+          
           if (INLINE_MACROS.contains(macro.getMacroName())) {
             LocalQuickFix[] fixes = new LocalQuickFix[]{CHANGE_TO_INLINE_MACRO};
             String message = AsciiDocBundle.message("asciidoc.blockMacroShouldBeInlineMacro.message", macro.getMacroName());

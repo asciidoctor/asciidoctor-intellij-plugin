@@ -247,12 +247,12 @@ public class AsciiDocSmartEnterProcessor extends SmartEnterProcessor {
     PsiElement parent = atCaret.getParent();
 
     // if this is an include-macro, try to add leveloffset-attribute to match
-    if (parent instanceof AsciiDocBlockMacro && ((AsciiDocBlockMacro) parent).getMacroName().equals("include")) {
+    if (parent instanceof AsciiDocBlockMacro asciiDocBlockMacro && asciiDocBlockMacro.getMacroName().equals("include")) {
       PsiReference[] references = parent.getReferences();
       if (references.length > 0 && references[references.length - 1] instanceof AsciiDocFileReference fileReference) {
         // resolve file reference
         PsiElement resolve = fileReference.resolve();
-        if (resolve instanceof PsiFile && ((PsiFile) resolve).getFileType() == AsciiDocFileType.INSTANCE) {
+        if (resolve instanceof PsiFile psiFile && psiFile.getFileType() == AsciiDocFileType.INSTANCE) {
           // get first section of referenced file
           Collection<AsciiDocSection> childrenOfType = PsiTreeUtil.findChildrenOfType(resolve, AsciiDocSection.class);
           if (!childrenOfType.isEmpty()) {

@@ -21,8 +21,8 @@ public class AsciiDocDescriptionItem extends AsciiDocASTWrapperPsiElement implem
 
   @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof AsciiDocVisitor) {
-      ((AsciiDocVisitor) visitor).visitBlocks(this);
+    if (visitor instanceof AsciiDocVisitor asciiDocVisitor) {
+      asciiDocVisitor.visitBlocks(this);
       return;
     }
 

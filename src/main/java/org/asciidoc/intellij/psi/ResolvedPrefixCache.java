@@ -28,10 +28,10 @@ public class ResolvedPrefixCache {
       if (this == o) {
         return true;
       }
-      if (!(o instanceof Key)) {
+      if (!(o instanceof Key key)) {
         return false;
       }
-      Key key = (Key) o;
+      
       return Objects.equals(moduleDir, key.moduleDir) && Objects.equals(otherKey, key.otherKey);
     }
 

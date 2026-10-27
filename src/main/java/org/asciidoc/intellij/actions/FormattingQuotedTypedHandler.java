@@ -70,7 +70,7 @@ public class FormattingQuotedTypedHandler extends TypedHandlerDelegate {
         }
         final int caretOffset = selectionModel.getSelectionStart();
         boolean ltrSelection = selectionModel.getLeadSelectionOffset() != selectionModel.getSelectionEnd();
-        boolean restoreStickySelection = editor instanceof EditorEx && ((EditorEx) editor).isStickySelection();
+        boolean restoreStickySelection = editor instanceof EditorEx editorEx && editorEx.isStickySelection();
         selectionModel.removeSelection();
         editor.getDocument().replaceString(selectionStart, selectionEnd, newText);
         TextRange replacedTextRange = new TextRange(caretOffset + border, caretOffset + newText.length() - border);

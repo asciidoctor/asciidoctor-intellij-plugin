@@ -27,8 +27,8 @@ public class AsciiDocChangeToInlineMacro implements LocalQuickFix {
   @Override
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
     PsiElement element = descriptor.getPsiElement();
-    if (element instanceof AsciiDocBlockMacro) {
-      AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) element;
+    if (element instanceof AsciiDocBlockMacro blockMacro) {
+      
       ASTNode macroId = blockMacro.getNode().getFirstChildNode();
       if (macroId.getElementType() == AsciiDocTokenTypes.BLOCK_MACRO_ID) {
         String inlineMacro = macroId.getText().replaceAll(":$", "");

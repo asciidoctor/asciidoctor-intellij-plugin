@@ -32,8 +32,8 @@ public class AsciiDocChangeXrefWithNaturalCrossReferenceToId implements LocalQui
   @Override
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
     PsiElement element = descriptor.getPsiElement();
-    if (element instanceof AsciiDocLink) {
-      AsciiDocLink link = (AsciiDocLink) element;
+    if (element instanceof AsciiDocLink link) {
+      
       LeafPsiElement child = getChild(link);
       if (child != null) {
         AsciiDocFileReference fileReference = link.getAnchorReference();

@@ -28,8 +28,8 @@ public class AsciiDocDescriptionExistsInspection extends AsciiDocInspectionBase 
     return new AsciiDocVisitor() {
       @Override
       public void visitElement(@NotNull PsiElement o) {
-        if (o instanceof AsciiDocSectionImpl) {
-          AsciiDocSectionImpl section = (AsciiDocSectionImpl) o;
+        if (o instanceof AsciiDocSectionImpl section) {
+          
           if (section.getHeadingLevel() == 1) {
             VirtualFile antoraPagesDir = AsciiDocUtil.findAntoraPagesDir(o);
             if (antoraPagesDir != null) {

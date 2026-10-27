@@ -25,10 +25,10 @@ public class ProjectAttributeCache {
       if (this == o) {
         return true;
       }
-      if (!(o instanceof Key)) {
+      if (!(o instanceof Key key1)) {
         return false;
       }
-      Key key1 = (Key) o;
+      
       return Objects.equals(key, key1.key) && onlyAntora == key1.onlyAntora;
     }
 

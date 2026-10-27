@@ -21,10 +21,10 @@ public class AsciiDocCharFilter extends CharFilter {
     // we're probably auto-completing a path in a BLOCK_MACRO, use "/" as completion char
     // can't check PSI element here, as block macro might not have brackets yet
     if (c == '/') {
-      if (lookup instanceof LookupImpl) {
+      if (lookup instanceof LookupImpl lookupImpl) {
         // when opened by AutoPopupController, the lookup will only be SEMI_FOCUSED
         // set to FOCUSED, otherwise selection will not work in LookupTypeHandler
-        ((LookupImpl) lookup).setLookupFocusDegree(LookupFocusDegree.FOCUSED);
+        lookupImpl.setLookupFocusDegree(LookupFocusDegree.FOCUSED);
       }
       return Result.SELECT_ITEM_AND_FINISH_LOOKUP;
     }

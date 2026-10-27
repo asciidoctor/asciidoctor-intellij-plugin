@@ -19,8 +19,8 @@ public class AsciiDocAddBlockIdToSectionIntention extends Intention {
 
   @Override
   public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
-    if (editor instanceof FileEditor) {
-      if (file.getVirtualFile().equals(((FileEditor) editor).getFile())) {
+    if (editor instanceof FileEditor fileEditor) {
+      if (file.getVirtualFile().equals(fileEditor.getFile())) {
         return IntentionPreviewInfo.EMPTY;
       }
     }

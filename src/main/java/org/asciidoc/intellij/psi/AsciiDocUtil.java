@@ -362,8 +362,8 @@ public class AsciiDocUtil {
           continue;
         }
         Object asciidoc = antora.get("asciidoc");
-        if (asciidoc instanceof Map) {
-          @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
+        if (asciidoc instanceof Map<?, ?> asciidocMap) {
+          Object attributes = asciidocMap.get("attributes");
           if (attributes instanceof Map) {
             @SuppressWarnings("unchecked") Map<Object, Object> map = (Map<Object, Object>) attributes;
             map.forEach((k, v) -> {
@@ -541,7 +541,7 @@ public class AsciiDocUtil {
       // first, check if attributes are already included from this file to avoid duplicates
       boolean attributesFromCurrentFile = false;
       for (AttributeDeclaration attributeDeclaration : result) {
-        if (attributeDeclaration instanceof AsciiDocAttributeDeclaration && ((AsciiDocAttributeDeclaration) attributeDeclaration).getContainingFile() == containingFile) {
+        if (attributeDeclaration instanceof AsciiDocAttributeDeclaration asciiDocAttributeDeclaration && asciiDocAttributeDeclaration.getContainingFile() == containingFile) {
           attributesFromCurrentFile = true;
           break;
         }
@@ -638,7 +638,7 @@ public class AsciiDocUtil {
       // first, check if attributes are already included from this file to avoid duplicates
       boolean attributesFromCurrentFile = false;
       for (AttributeDeclaration attributeDeclaration : result) {
-        if (attributeDeclaration instanceof AsciiDocAttributeDeclaration && ((AsciiDocAttributeDeclaration) attributeDeclaration).getContainingFile() == containingFile) {
+        if (attributeDeclaration instanceof AsciiDocAttributeDeclaration asciiDocAttributeDeclaration && asciiDocAttributeDeclaration.getContainingFile() == containingFile) {
           attributesFromCurrentFile = true;
           break;
         }
@@ -1122,8 +1122,8 @@ public class AsciiDocUtil {
 
   public static VirtualFile findHugoStaticFolder(PsiElement element) {
     VirtualFile vf = null;
-    if (element instanceof PsiFile) {
-      vf = ((PsiFile) element).getVirtualFile();
+    if (element instanceof PsiFile psiFile) {
+      vf = psiFile.getVirtualFile();
     } else if (element instanceof PsiDirectory d) {
       vf = d.getVirtualFile();
     } else {
@@ -1229,8 +1229,8 @@ public class AsciiDocUtil {
 
   public static boolean isAntoraPage(PsiElement element) {
     VirtualFile vf = null;
-    if (element instanceof PsiFile) {
-      vf = ((PsiFile) element).getVirtualFile();
+    if (element instanceof PsiFile psiFile) {
+      vf = psiFile.getVirtualFile();
     } else if (element instanceof PsiDirectory d) {
       vf = d.getVirtualFile();
     } else {
@@ -1256,8 +1256,8 @@ public class AsciiDocUtil {
 
   public static boolean isAntoraPartial(PsiElement element) {
     VirtualFile vf = null;
-    if (element instanceof PsiFile) {
-      vf = ((PsiFile) element).getVirtualFile();
+    if (element instanceof PsiFile psiFile) {
+      vf = psiFile.getVirtualFile();
     } else if (element instanceof PsiDirectory d) {
       vf = d.getVirtualFile();
     } else {
@@ -1284,8 +1284,8 @@ public class AsciiDocUtil {
   public static @Nullable VirtualFile findAntoraPagesDir(PsiElement element) {
     VirtualFile antoraPagesDir = null;
     VirtualFile vf = null;
-    if (element instanceof PsiFile) {
-      vf = ((PsiFile) element).getVirtualFile();
+    if (element instanceof PsiFile psiFile) {
+      vf = psiFile.getVirtualFile();
     } else if (element instanceof PsiDirectory d) {
       vf = d.getVirtualFile();
     } else {
@@ -1307,8 +1307,8 @@ public class AsciiDocUtil {
   public static VirtualFile findAntoraModuleDir(PsiElement element) {
     VirtualFile antoraModuleDir = null;
     VirtualFile vf = null;
-    if (element instanceof PsiFile) {
-      vf = ((PsiFile) element).getVirtualFile();
+    if (element instanceof PsiFile psiFile) {
+      vf = psiFile.getVirtualFile();
     } else if (element instanceof PsiDirectory d) {
       vf = d.getVirtualFile();
     } else {

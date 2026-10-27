@@ -28,8 +28,8 @@ public class AsciiDocAntoraModuleResolveInspection extends AsciiDocInspectionBas
     return new AsciiDocVisitor() {
       @Override
       public void visitElement(@NotNull PsiElement o) {
-        if (o instanceof HasAntoraReference) {
-          AsciiDocFileReference file = ((HasAntoraReference) o).getAntoraReference();
+        if (o instanceof HasAntoraReference hasAntoraReference) {
+          AsciiDocFileReference file = hasAntoraReference.getAntoraReference();
           if (file != null) {
             String key = file.getRangeInElement().substring(o.getText());
             Matcher version = AsciiDocUtil.VERSION.matcher(key);

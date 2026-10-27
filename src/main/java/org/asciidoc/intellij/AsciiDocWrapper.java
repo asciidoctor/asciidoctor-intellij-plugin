@@ -1147,8 +1147,8 @@ public class AsciiDocWrapper {
           Map<String, Object> antora;
           antora = AsciiDocWrapper.readAntoraYaml(project, antoraFile);
           Object asciidoc = antora.get("asciidoc");
-          if (asciidoc instanceof Map) {
-            @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
+          if (asciidoc instanceof Map<?, ?> asciidocMap) {
+            Object attributes = asciidocMap.get("attributes");
             if (attributes instanceof Map) {
               @SuppressWarnings("unchecked") Map<Object, Object> map = (Map<Object, Object>) attributes;
               map.forEach((k, v) -> {
@@ -1200,8 +1200,8 @@ public class AsciiDocWrapper {
           mapAttribute(result, antora, "version", "page-version");
           mapAttribute(result, antora, "display-version", "page-display-version");
           Object asciidoc = antora.get("asciidoc");
-          if (asciidoc instanceof Map) {
-            @SuppressWarnings("rawtypes") Object attributes = ((Map) asciidoc).get("attributes");
+          if (asciidoc instanceof Map<?, ?> asciidocMap) {
+            Object attributes = asciidocMap.get("attributes");
             if (attributes instanceof Map) {
               @SuppressWarnings("unchecked") Map<Object, Object> map = (Map<Object, Object>) attributes;
               map.forEach((k, v) -> {
@@ -1210,7 +1210,7 @@ public class AsciiDocWrapper {
                 if (v == null) {
                   vs = null;
                   soft = false;
-                } else if (v instanceof Boolean && !(Boolean) v) {
+                } else if (v instanceof Boolean b && !b) {
                   // false -> soft unset
                   vs = null;
                   soft = true;

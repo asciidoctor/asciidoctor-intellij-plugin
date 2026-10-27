@@ -68,8 +68,8 @@ public class AsciiDocGrazieTextExtractor extends TextExtractor {
     if (textContent != null) {
       return StringUtil.shortenTextWithEllipsis(textContent.toString().replaceAll("\n", " "), 50, 5);
     } else {
-      if (root instanceof AsciiDocBlockMacro) {
-        return ((AsciiDocBlockMacro) root).getMacroName() + "::" + ((AsciiDocBlockMacro) root).getResolvedBody() + "[]";
+      if (root instanceof AsciiDocBlockMacro asciiDocBlockMacro) {
+        return asciiDocBlockMacro.getMacroName() + "::" + asciiDocBlockMacro.getResolvedBody() + "[]";
       }
       return null;
     }

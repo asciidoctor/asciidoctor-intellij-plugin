@@ -29,8 +29,8 @@ public class AsciiDocChangeCaseForAnchor implements LocalQuickFix {
   @Override
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
     PsiElement element = descriptor.getPsiElement();
-    if (element instanceof AsciiDocLink) {
-      AsciiDocLink link = (AsciiDocLink) element;
+    if (element instanceof AsciiDocLink link) {
+      
       AsciiDocFileReference anchor = link.getAnchorReference();
       if (anchor != null) {
         ResolveResult[] resolveResultsAnchor = anchor.multiResolve(false);
@@ -38,10 +38,10 @@ public class AsciiDocChangeCaseForAnchor implements LocalQuickFix {
           List<ResolveResult> resolveResultsAnchorCaseInsensitive = anchor.multiResolveAnchor(true);
           if (resolveResultsAnchorCaseInsensitive.size() == 1) {
             PsiElement target = resolveResultsAnchorCaseInsensitive.get(0).getElement();
-            if (target instanceof PsiNamedElement) {
-              link.setAnchor(((PsiNamedElement) target).getName());
-            } else if (target instanceof AsciiDocSection) {
-              AsciiDocSection section = (AsciiDocSection) target;
+            if (target instanceof PsiNamedElement psiNamedElement) {
+              link.setAnchor(psiNamedElement.getName());
+            } else if (target instanceof AsciiDocSection section) {
+              
               AsciiDocBlockId blockId = section.getBlockId();
               if (blockId != null) {
                 link.setAnchor(blockId.getName());

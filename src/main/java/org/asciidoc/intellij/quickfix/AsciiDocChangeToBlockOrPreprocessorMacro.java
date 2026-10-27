@@ -32,8 +32,8 @@ public class AsciiDocChangeToBlockOrPreprocessorMacro implements LocalQuickFix {
   @Override
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
     PsiElement element = descriptor.getPsiElement();
-    if (element instanceof AsciiDocInlineMacro) {
-      AsciiDocInlineMacro inlineMacro = (AsciiDocInlineMacro) element;
+    if (element instanceof AsciiDocInlineMacro inlineMacro) {
+      
       ASTNode macroId = inlineMacro.getNode().getFirstChildNode();
       if (macroId.getElementType() == AsciiDocTokenTypes.INLINE_MACRO_ID) {
         String blockMacro = macroId.getText() + ":";

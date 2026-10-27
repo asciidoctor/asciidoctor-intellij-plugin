@@ -121,10 +121,10 @@ public class AntoraVersionDescriptor implements Comparable<AntoraVersionDescript
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof AntoraVersionDescriptor)) {
+    if (!(obj instanceof AntoraVersionDescriptor antoraVersionDescriptor)) {
       return false;
     }
-    return Objects.equals(((AntoraVersionDescriptor) obj).version, version);
+    return Objects.equals(antoraVersionDescriptor.version, version);
   }
 
   @Override

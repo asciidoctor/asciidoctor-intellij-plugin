@@ -31,11 +31,11 @@ public class AsciiDocAttributeUndefinedInspection extends AsciiDocInspectionBase
     return new AsciiDocVisitor() {
       @Override
       public void visitElement(@NotNull PsiElement o) {
-        if (o instanceof AsciiDocAttributeReference) {
+        if (o instanceof AsciiDocAttributeReference asciiDocAttributeReference) {
           if (isExcludedByIfdef(o, true)) {
             return;
           }
-          @NotNull PsiReference[] references = ((AsciiDocAttributeReference) o).getReferences();
+          @NotNull PsiReference[] references = asciiDocAttributeReference.getReferences();
           for (PsiReference reference : references) {
             if (!(reference instanceof AsciiDocAttributeDeclarationReference attributeDeclarationReference)) {
               continue;

@@ -48,10 +48,10 @@ public class AsciiDocChooseByNameContributor implements ChooseByNameContributor 
     list.addAll(sections);
     list.addAll(ids);
     attributes.forEach(d -> {
-      if (!(d instanceof AsciiDocAttributeDeclaration)) {
+      if (!(d instanceof AsciiDocAttributeDeclaration declaration)) {
         return;
       }
-      AsciiDocAttributeDeclaration declaration = (AsciiDocAttributeDeclaration) d;
+      
       list.add(declaration.getAttributeDeclarationName());
     });
     return list.toArray(new NavigationItem[0]);

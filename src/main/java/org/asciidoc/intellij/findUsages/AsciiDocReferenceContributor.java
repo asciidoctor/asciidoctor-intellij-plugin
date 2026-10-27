@@ -141,8 +141,8 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
       }
       for (PsiReference reference : ref.getReferences()) {
         PsiElement resolve = reference.resolve();
-        if (resolve instanceof AsciiDocAttributeDeclaration) {
-          String attributeValue = ((AsciiDocAttributeDeclaration) resolve).getAttributeValue();
+        if (resolve instanceof AsciiDocAttributeDeclaration asciiDocAttributeDeclaration) {
+          String attributeValue = asciiDocAttributeDeclaration.getAttributeValue();
           if (attributeValue != null) {
             if (URL_IN_ATTRIBUTE_VAL.matcher(attributeValue).find()) {
               return Collections.emptyList();

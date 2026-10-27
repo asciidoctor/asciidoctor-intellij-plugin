@@ -82,8 +82,8 @@ public class AsciiDocMoveFileHandler extends MoveFileHandler {
   @Override
   public void retargetUsages(List<? extends UsageInfo> usageInfos, Map<PsiElement, PsiElement> oldToNewMap) {
     for (UsageInfo usageInfo : usageInfos) {
-      if (usageInfo instanceof MyUsageInfo) {
-        MyUsageInfo myUsageInfo = (MyUsageInfo) usageInfo;
+      if (usageInfo instanceof MyUsageInfo myUsageInfo) {
+        
         if (myUsageInfo.element.getContainingFile() != null && myUsageInfo.element.getContainingFile().getVirtualFile() != null
           && Objects.equals(myUsageInfo.element.getContainingFile().getVirtualFile().getCanonicalPath(), myUsageInfo.originalFile)) {
           // When moving multiple elements, the moved element will have been processed already.

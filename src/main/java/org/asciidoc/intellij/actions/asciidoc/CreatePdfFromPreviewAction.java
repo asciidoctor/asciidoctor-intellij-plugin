@@ -37,8 +37,8 @@ public class CreatePdfFromPreviewAction extends AsciiDocAction implements DumbAw
       Project project = event.getProject();
       if (project != null) {
         FileEditor editor = event.getData(LangDataKeys.FILE_EDITOR);
-        if (editor instanceof AsciiDocSplitEditor) {
-          AsciiDocPreviewEditor previewEditor = ((AsciiDocSplitEditor) editor).getSecondEditor();
+        if (editor instanceof AsciiDocSplitEditor asciiDocSplitEditor) {
+          AsciiDocPreviewEditor previewEditor = asciiDocSplitEditor.getSecondEditor();
           enabled = previewEditor.isPrintingSupported();
         }
       }
@@ -61,8 +61,8 @@ public class CreatePdfFromPreviewAction extends AsciiDocAction implements DumbAw
       return;
     }
 
-    if (editor instanceof AsciiDocSplitEditor) {
-      AsciiDocPreviewEditor previewEditor = ((AsciiDocSplitEditor) editor).getSecondEditor();
+    if (editor instanceof AsciiDocSplitEditor asciiDocSplitEditor) {
+      AsciiDocPreviewEditor previewEditor = asciiDocSplitEditor.getSecondEditor();
       String canonicalPath = file.getCanonicalPath();
       if (canonicalPath != null) {
         String targetString = canonicalPath.replaceAll("\\.(adoc|asciidoc|ad)$", ".pdf");

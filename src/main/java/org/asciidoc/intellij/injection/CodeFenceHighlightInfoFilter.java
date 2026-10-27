@@ -47,7 +47,7 @@ public class CodeFenceHighlightInfoFilter implements HighlightInfoFilter {
         if (AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isHideErrorsInSourceBlocks()) {
           return false;
         }
-        String language = ((AsciiDocElementWithLanguage) injectionHost).getFenceLanguage();
+        String language = host.getFenceLanguage();
         if (language != null && language.startsWith(SOURCE_PREFIX)) {
           if (AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().getHiddenErrorsByLanguageAsList().contains(language.substring(SOURCE_PREFIX.length()))) {
             return false;

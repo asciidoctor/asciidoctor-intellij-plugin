@@ -225,7 +225,8 @@ tasks {
     // checks that have been fixed everywhere; keep them as errors so they don't come back
     val fixedErrorProneChecks = arrayOf(
         "NonApiType", "BooleanLiteral", "UnnecessaryStringBuilder", "AnnotateFormatMethod",
-        "LoopOverCharArray", "DuplicateAssertion", "UnusedNestedClass", "AlmostJavadoc", "StringConcatToTextBlock"
+        "LoopOverCharArray", "DuplicateAssertion", "UnusedNestedClass", "AlmostJavadoc", "StringConcatToTextBlock",
+        "PatternMatchingInstanceof"
     )
 
     compileJava {

@@ -20,11 +20,11 @@ public class AsciiDocAttributeDeclarationName extends AsciiDocASTWrapperPsiEleme
 
   @Override
   public boolean isEquivalentTo(PsiElement another) {
-    if (!(another instanceof AsciiDocAttributeDeclarationName)) {
+    if (!(another instanceof AsciiDocAttributeDeclarationName asciiDocAttributeDeclarationName)) {
       return false;
     }
     String myName = getName();
-    String otherName = ((AsciiDocAttributeDeclarationName) another).getName();
+    String otherName = asciiDocAttributeDeclarationName.getName();
     if (myName == null && otherName == null) {
       return true;
     }
@@ -58,8 +58,8 @@ public class AsciiDocAttributeDeclarationName extends AsciiDocASTWrapperPsiEleme
   @Override
   public PsiElement setName(@NotNull String s) throws IncorrectOperationException {
     ASTNode node = getNode().getFirstChildNode();
-    if (node instanceof LeafElement) {
-      ((LeafElement) node).replaceWithText(s);
+    if (node instanceof LeafElement leafElement) {
+      leafElement.replaceWithText(s);
     } else {
       throw new IncorrectOperationException("Bad child");
     }

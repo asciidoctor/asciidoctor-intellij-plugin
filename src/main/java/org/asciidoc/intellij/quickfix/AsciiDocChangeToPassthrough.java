@@ -24,8 +24,8 @@ public class AsciiDocChangeToPassthrough implements LocalQuickFix {
   @Override
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
     PsiElement element = descriptor.getPsiElement();
-    if (element instanceof AsciiDocAttributeReference) {
-      AsciiDocAttributeReference attributeReference = (AsciiDocAttributeReference) element;
+    if (element instanceof AsciiDocAttributeReference attributeReference) {
+      
       PsiElement newElement = createPassthrough(project, "+" + attributeReference.getText() + "+");
       attributeReference.replace(newElement);
     }

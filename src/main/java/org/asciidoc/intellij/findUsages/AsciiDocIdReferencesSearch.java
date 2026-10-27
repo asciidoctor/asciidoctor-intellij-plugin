@@ -63,14 +63,14 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
       // use scope determined by user here, as effective search scope would return the module and its dependants
       SearchScope scope = p.getScopeDeterminedByUser();
 
-      if (element instanceof AsciiDocNamedElement) {
-        String name = ((AsciiDocNamedElement) element).getName();
+      if (element instanceof AsciiDocNamedElement asciiDocNamedElement) {
+        String name = asciiDocNamedElement.getName();
         if (name != null && name.length() > 0) {
           search(consumer, element, name, scope);
         }
       } else //noinspection ConstantConditions
-        if (element instanceof PsiDirectory) {
-        String name = ((PsiDirectory) element).getName();
+        if (element instanceof PsiDirectory psiDirectory) {
+        String name = psiDirectory.getName();
         if (name.endsWith("s") && name.length() > 1) {
           // it might be a partials, attachments, etc. directory; search for the family and attribute
           VirtualFile antoraModuleDir = AsciiDocUtil.findAntoraModuleDir(element);
@@ -189,8 +189,8 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
           ProgressManager.checkCanceled();
           myDumbService.runReadActionInSmartMode(() -> {
             PsiReference referenceAt = psiFile.findReferenceAt(index + (psiFile.getLanguage() == AsciiDocLanguage.INSTANCE ? 0 : 2));
-            if (referenceAt instanceof PsiMultiReference) {
-              for (PsiReference reference : ((PsiMultiReference) referenceAt).getReferences()) {
+            if (referenceAt instanceof PsiMultiReference psiMultiReference) {
+              for (PsiReference reference : psiMultiReference.getReferences()) {
                 checkReference(consumer, element, reference);
               }
             }
@@ -229,8 +229,8 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
 
   private void checkReference(@NotNull Processor<? super PsiReference> consumer, PsiElement element, PsiReference reference) {
     if (reference != null) {
-      if (reference instanceof PsiPolyVariantReference) {
-        for (ResolveResult resolved : ((PsiPolyVariantReference) reference).multiResolve(false)) {
+      if (reference instanceof PsiPolyVariantReference psiPolyVariantReference) {
+        for (ResolveResult resolved : psiPolyVariantReference.multiResolve(false)) {
           if (PsiManager.getInstance(element.getProject()).areElementsEquivalent(element, resolved.getElement())) {
             consumer.process(reference);
           }

@@ -198,8 +198,8 @@ public abstract class SplitFileEditor<E1 extends TextEditor, E2 extends FileEdit
 
   @Override
   public void setState(@NotNull FileEditorState state) {
-    if (state instanceof MyFileEditorState) {
-      final MyFileEditorState compositeState = (MyFileEditorState) state;
+    if (state instanceof MyFileEditorState compositeState) {
+      
       if (compositeState.getFirstState() != null) {
         myMainEditor.setState(compositeState.getFirstState());
       }
@@ -324,9 +324,9 @@ public abstract class SplitFileEditor<E1 extends TextEditor, E2 extends FileEdit
 
     @Override
     public boolean canBeMergedWith(FileEditorState otherState, FileEditorStateLevel level) {
-      return otherState instanceof MyFileEditorState
-        && (myFirstState == null || myFirstState.canBeMergedWith(((MyFileEditorState) otherState).myFirstState, level))
-        && (mySecondState == null || mySecondState.canBeMergedWith(((MyFileEditorState) otherState).mySecondState, level));
+      return otherState instanceof MyFileEditorState myFileEditorState
+        && (myFirstState == null || myFirstState.canBeMergedWith(myFileEditorState.myFirstState, level))
+        && (mySecondState == null || mySecondState.canBeMergedWith(myFileEditorState.mySecondState, level));
     }
   }
 

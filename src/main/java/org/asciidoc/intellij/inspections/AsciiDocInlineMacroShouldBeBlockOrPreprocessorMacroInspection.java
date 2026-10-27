@@ -27,8 +27,8 @@ public class AsciiDocInlineMacroShouldBeBlockOrPreprocessorMacroInspection exten
     return new AsciiDocVisitor() {
       @Override
       public void visitElement(@NotNull PsiElement o) {
-        if (o instanceof AsciiDocInlineMacro) {
-          AsciiDocInlineMacro macro = (AsciiDocInlineMacro) o;
+        if (o instanceof AsciiDocInlineMacro macro) {
+          
           if (PREPROCESSOR_MACROS.contains(macro.getMacroName())) {
             LocalQuickFix[] fixes = new LocalQuickFix[]{new AsciiDocChangeToBlockOrPreprocessorMacro("preprocessor")};
             String message = AsciiDocBundle.message("asciidoc.inlineMacroShouldBeBlockOrPreprocessorMacro.message", macro.getMacroName(), "preprocessor");

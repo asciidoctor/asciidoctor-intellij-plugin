@@ -30,10 +30,10 @@ public class AsciiDocSearchScopeWithName extends GlobalSearchScope {
   @SuppressWarnings("checkstyle:EqualsHashCode")
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof AsciiDocSearchScopeWithName)) {
+    if (!(obj instanceof AsciiDocSearchScopeWithName asciiDocSearchScopeWithName)) {
       return false;
     }
-    return Objects.equals(name, ((AsciiDocSearchScopeWithName) obj).name);
+    return Objects.equals(name, asciiDocSearchScopeWithName.name);
   }
 
   @Override

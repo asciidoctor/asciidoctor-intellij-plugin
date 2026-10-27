@@ -184,14 +184,14 @@ public class AsciiDocLanguageSupport {
   public Behavior getElementBehavior(@NotNull PsiElement root, @NotNull PsiElement child) {
     if (root != child && NODES_TO_CHECK.contains(getElementType(child))) {
       return Behavior.ABSORB;
-    } else if (root == child && child instanceof AsciiDocAttributeDeclarationImpl) {
-      if (((AsciiDocAttributeDeclarationImpl) child).hasSpellCheckableContent()) {
+    } else if (root == child && child instanceof AsciiDocAttributeDeclarationImpl asciiDocAttributeDeclarationImpl) {
+      if (asciiDocAttributeDeclarationImpl.hasSpellCheckableContent()) {
         return Behavior.TEXT;
       } else {
         return Behavior.ABSORB;
       }
-    } else if (child instanceof AsciiDocAttributeReference) {
-      AsciiDocAttributeReference attributeReference = (AsciiDocAttributeReference) child;
+    } else if (child instanceof AsciiDocAttributeReference attributeReference) {
+      
       if (SEPARATING_ATTRIBUTES.contains(attributeReference.getName())) {
         return Behavior.SEPARATE;
       } else if (EMPTY_ATTRIBUTES.contains(attributeReference.getName())) {
@@ -201,11 +201,11 @@ public class AsciiDocLanguageSupport {
       }
     } else if (child instanceof AsciiDocHtmlEntity) {
       return Behavior.UNKNOWN;
-    } else if (child instanceof AsciiDocTextQuoted && ((AsciiDocTextQuoted) child).isMono()) {
+    } else if (child instanceof AsciiDocTextQuoted asciiDocTextQuoted && asciiDocTextQuoted.isMono()) {
       return Behavior.UNKNOWN;
     } else if (SEPARATOR_TOKENS.contains(getElementType(child))) {
       return Behavior.SEPARATE;
-    } else if (root != child && child instanceof AsciiDocInlineMacro && ((AsciiDocInlineMacro) child).getMacroName().equals("footnote")) {
+    } else if (root != child && child instanceof AsciiDocInlineMacro asciiDocInlineMacro && asciiDocInlineMacro.getMacroName().equals("footnote")) {
       return Behavior.ABSORB;
     } else if (
       // A link or URL can contain either a macro text or no text.
@@ -228,9 +228,9 @@ public class AsciiDocLanguageSupport {
         return Behavior.TEXT;
       }
     } else if (child instanceof AsciiDocInlineMacro
-      || (child instanceof AsciiDocLink && ((AsciiDocLink) child).getMacroName().equals("xref"))
+      || (child instanceof AsciiDocLink asciiDocLink && asciiDocLink.getMacroName().equals("xref"))
       || (child instanceof AsciiDocRef)) {
-      if (child instanceof AsciiDocInlineMacro && ((AsciiDocInlineMacro) child).getMacroName().equals("kbd")) {
+      if (child instanceof AsciiDocInlineMacro asciiDocInlineMacro && asciiDocInlineMacro.getMacroName().equals("kbd")) {
         // mark keyboard macros as "unknown" to avoid showing spell checker or grammar errors for them
         return Behavior.UNKNOWN;
       }
@@ -296,10 +296,10 @@ public class AsciiDocLanguageSupport {
     return CachedValuesManager.getCachedValue(psiElement, KEY_ASCIIDOC_CONTEXT_ROOT,
       () -> {
         boolean result;
-        if (psiElement instanceof AsciiDocAttributeDeclarationImpl) {
-          result = ((AsciiDocAttributeDeclarationImpl) psiElement).hasSpellCheckableContent();
-        } else if (psiElement instanceof AsciiDocInlineMacro &&
-          ((AsciiDocInlineMacro) psiElement).getMacroName().equals("footnote")) {
+        if (psiElement instanceof AsciiDocAttributeDeclarationImpl asciiDocAttributeDeclarationImpl) {
+          result = asciiDocAttributeDeclarationImpl.hasSpellCheckableContent();
+        } else if (psiElement instanceof AsciiDocInlineMacro asciiDocInlineMacro &&
+          asciiDocInlineMacro.getMacroName().equals("footnote")) {
           result = true;
         } else {
           result = NODES_TO_CHECK.contains(getElementType(psiElement))
@@ -308,8 +308,8 @@ public class AsciiDocLanguageSupport {
         // as the calculated value depends only on the PSI node and its subtree, try to be more specific than the PsiElement
         // as using the PsiElement would invalidate the cache on the file level.
         Object dep = psiElement;
-        if (psiElement instanceof AsciiDocModificationTracker) {
-          dep = (ModificationTracker) () -> ((AsciiDocModificationTracker) psiElement).getModificationCount();
+        if (psiElement instanceof AsciiDocModificationTracker asciiDocModificationTracker) {
+          dep = (ModificationTracker) () -> asciiDocModificationTracker.getModificationCount();
         }
         return CachedValueProvider.Result.create(result, dep);
       }

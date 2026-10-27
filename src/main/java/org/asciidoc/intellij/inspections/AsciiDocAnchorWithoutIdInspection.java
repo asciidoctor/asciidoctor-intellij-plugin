@@ -23,9 +23,9 @@ public class AsciiDocAnchorWithoutIdInspection extends AsciiDocInspectionBase {
     return new AsciiDocVisitor() {
       @Override
       public void visitElement(@NotNull PsiElement o) {
-        if (o instanceof HasAnchorReference) {
-          AsciiDocSection section = ((HasAnchorReference) o).resolveAnchorForSection();
-          AsciiDocFileReference anchor = ((HasAnchorReference) o).getAnchorReference();
+        if (o instanceof HasAnchorReference hasAnchorReference) {
+          AsciiDocSection section = hasAnchorReference.resolveAnchorForSection();
+          AsciiDocFileReference anchor = hasAnchorReference.getAnchorReference();
           if (section != null && anchor != null && section.getBlockId() == null && !anchor.isPossibleRefText()) {
             LocalQuickFix[] fixes = new LocalQuickFix[]{new AsciiDocAddBlockIdToSection(o)};
             holder.registerProblem(o, TEXT_HINT_ANCHOR_WITHOUT_ID, ProblemHighlightType.GENERIC_ERROR_OR_WARNING, anchor.getRangeInElement(), fixes);

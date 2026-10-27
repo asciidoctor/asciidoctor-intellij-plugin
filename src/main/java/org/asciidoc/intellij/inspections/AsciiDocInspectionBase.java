@@ -127,8 +127,8 @@ public abstract class AsciiDocInspectionBase extends LocalInspectionTool {
   }
 
   private static boolean isExcludedByIfDef(PsiElement element) {
-    if (element instanceof AsciiDocBlockMacro) {
-      AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) element;
+    if (element instanceof AsciiDocBlockMacro blockMacro) {
+      
       if (blockMacro.getMacroName().equals("ifdef") || blockMacro.getMacroName().equals("ifndef")) {
         String attributeName = blockMacro.getResolvedBody();
         List<AttributeDeclaration> attributes = AsciiDocUtil.findAttributes(element.getProject(), attributeName, element);
@@ -152,8 +152,8 @@ public abstract class AsciiDocInspectionBase extends LocalInspectionTool {
   }
 
   private static boolean isEndIf(PsiElement element) {
-    if (element instanceof AsciiDocBlockMacro) {
-      AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) element;
+    if (element instanceof AsciiDocBlockMacro blockMacro) {
+      
       if (blockMacro.getMacroName().equals("endif")) {
         return true;
       }

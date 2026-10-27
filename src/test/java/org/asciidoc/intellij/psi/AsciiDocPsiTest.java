@@ -997,8 +997,8 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
   private void assertReferencesResolve(PsiElement element, int numberOfReferences) {
     assertSize(numberOfReferences, element.getReferences());
     for (PsiReference reference : element.getReferences()) {
-      if (reference instanceof PsiPolyVariantReference) {
-        assertTrue("reference didn't resolve: '" + reference.getRangeInElement().substring(element.getText()) + "' in '" + element.getText() + "'", ((PsiPolyVariantReference) reference).multiResolve(false).length > 0);
+      if (reference instanceof PsiPolyVariantReference psiPolyVariantReference) {
+        assertTrue("reference didn't resolve: '" + reference.getRangeInElement().substring(element.getText()) + "' in '" + element.getText() + "'", psiPolyVariantReference.multiResolve(false).length > 0);
       } else {
         assertNotNull("reference didn't resolve: '" + reference.getRangeInElement().substring(element.getText()) + "' in '" + element.getText() + "'", reference.resolve());
       }

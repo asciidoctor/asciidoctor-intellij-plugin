@@ -45,10 +45,10 @@ public class AsciiDocAttributeDeclarationDummy implements AttributeDeclaration {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof AsciiDocAttributeDeclarationDummy)) {
+    if (!(o instanceof AsciiDocAttributeDeclarationDummy that)) {
       return false;
     }
-    AsciiDocAttributeDeclarationDummy that = (AsciiDocAttributeDeclarationDummy) o;
+    
     return Objects.equals(attributeValue, that.attributeValue) &&
       Objects.equals(attributeName, that.attributeName) &&
       isSoft() == that.isSoft();

@@ -50,8 +50,8 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
       @Override
       public void visitElement(@NotNull PsiElement o) {
         boolean continueResolving = true;
-        if (o instanceof AsciiDocBlockMacro) {
-          AsciiDocBlockMacro blockMacro = (AsciiDocBlockMacro) o;
+        if (o instanceof AsciiDocBlockMacro blockMacro) {
+          
           if (blockMacro.getMacroName().equals("include")) {
             AsciiDocAttributeInBrackets opts = blockMacro.getAttribute("opts");
             if (opts != null) {
@@ -70,8 +70,8 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
             continueResolving = hasImagesDirAsUrl(o);
           }
         }
-        if (o instanceof AsciiDocInlineMacro) {
-          if (((AsciiDocInlineMacro) o).getMacroName().equals("image")) {
+        if (o instanceof AsciiDocInlineMacro asciiDocInlineMacro) {
+          if (asciiDocInlineMacro.getMacroName().equals("image")) {
             continueResolving = hasImagesDirAsUrl(o);
           }
         }
@@ -79,14 +79,14 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
           (o instanceof AsciiDocLink || o instanceof AsciiDocBlockMacro || o instanceof AsciiDocInlineMacro || o instanceof AsciiDocAttributeInBrackets)) {
           String resolvedBody;
           String macroName = "";
-          if (o instanceof AsciiDocLink) {
-            resolvedBody = ((AsciiDocLink) o).getResolvedBody();
-          } else if (o instanceof AsciiDocBlockMacro) {
-            resolvedBody = ((AsciiDocBlockMacro) o).getResolvedBody();
-            macroName = ((AsciiDocBlockMacro) o).getMacroName();
-          } else if (o instanceof AsciiDocInlineMacro) {
-            resolvedBody = ((AsciiDocInlineMacro) o).getResolvedBody();
-            macroName = ((AsciiDocInlineMacro) o).getMacroName();
+          if (o instanceof AsciiDocLink asciiDocLink) {
+            resolvedBody = asciiDocLink.getResolvedBody();
+          } else if (o instanceof AsciiDocBlockMacro asciiDocBlockMacro) {
+            resolvedBody = asciiDocBlockMacro.getResolvedBody();
+            macroName = asciiDocBlockMacro.getMacroName();
+          } else if (o instanceof AsciiDocInlineMacro asciiDocInlineMacro) {
+            resolvedBody = asciiDocInlineMacro.getResolvedBody();
+            macroName = asciiDocInlineMacro.getMacroName();
           } else {
             AsciiDocAttributeInBrackets attr = (AsciiDocAttributeInBrackets) o;
             String attrName = attr.getAttrName();
@@ -101,7 +101,7 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
           } else if (AsciiDocUtil.URL_PREFIX_PATTERN_WITHOUT_FILE.matcher(resolvedBody).find()) {
             // this is a URL, don't
             return;
-          } else if (o instanceof AsciiDocLink && ((AsciiDocLink) o).getMacroName().equals("link") && resolvedBody.startsWith("about:")) {
+          } else if (o instanceof AsciiDocLink asciiDocLink && asciiDocLink.getMacroName().equals("link") && resolvedBody.startsWith("about:")) {
             // this is a special about: URL, don't report this as an error
             return;
           } else if ((AsciiDocUtil.URL_PREFIX_PATTERN.matcher(resolvedBody).find() || resolvedBody.startsWith("data:")) && (macroName.equals("image") || macroName.equals("video"))) {
@@ -121,8 +121,8 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
             }
           }
         }
-        if (o instanceof HasAntoraReference) {
-          AsciiDocFileReference file = ((HasAntoraReference) o).getAntoraReference();
+        if (o instanceof HasAntoraReference hasAntoraReference) {
+          AsciiDocFileReference file = hasAntoraReference.getAntoraReference();
           if (file != null) {
             ResolveResult[] resolveResults = file.multiResolve(false);
             if (resolveResults.length == 0) {
@@ -136,8 +136,8 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
           continueResolving = !isExcludedByIfdef(o, true);
         }
         // check for file to resolve
-        if (continueResolving && o instanceof HasFileReference) {
-          AsciiDocFileReference file = ((HasFileReference) o).getFileReference();
+        if (continueResolving && o instanceof HasFileReference hasFileReference) {
+          AsciiDocFileReference file = hasFileReference.getFileReference();
           if (file != null) {
             ResolveResult[] resolveResults = file.multiResolve(false);
             if (resolveResults.length == 0) {
@@ -156,8 +156,8 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
         if (continueResolving) {
           continueResolving = checkCapitalizationOfFiles(o, holder);
         }
-        if (continueResolving && o instanceof HasAnchorReference) {
-          AsciiDocFileReference anchor = ((HasAnchorReference) o).getAnchorReference();
+        if (continueResolving && o instanceof HasAnchorReference hasAnchorReference) {
+          AsciiDocFileReference anchor = hasAnchorReference.getAnchorReference();
           if (anchor != null) {
             ResolveResult[] resolveResultsAnchor = anchor.multiResolve(false);
             // only present an error if the anchor's attributes uniquely resolve
@@ -184,8 +184,8 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
   private boolean checkCapitalizationOfFiles(@NotNull PsiElement o, @NotNull ProblemsHolder holder) {
     boolean continueResolving = true;
     for (PsiReference reference : o.getReferences()) {
-      if (reference instanceof AsciiDocFileReference) {
-        AsciiDocFileReference fileReference = (AsciiDocFileReference) reference;
+      if (reference instanceof AsciiDocFileReference fileReference) {
+        
         if (fileReference.isAnchor() || fileReference.isAntora()) {
           continue;
         }
@@ -231,10 +231,10 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
     List<AttributeDeclaration> imagesdirs = AsciiDocUtil.findAttributes(o.getProject(), "imagesdir");
     // if there is an imagesdir declaration in the same file before the image, and it contains a URL, don't continue
     for (AttributeDeclaration d : imagesdirs) {
-      if (!(d instanceof AsciiDocAttributeDeclaration)) {
+      if (!(d instanceof AsciiDocAttributeDeclaration decl)) {
         continue;
       }
-      AsciiDocAttributeDeclaration decl = (AsciiDocAttributeDeclaration) d;
+      
       String val = decl.getAttributeValue();
       if (decl.getContainingFile().equals(o.getContainingFile()) &&
         decl.getTextOffset() < o.getTextOffset() &&

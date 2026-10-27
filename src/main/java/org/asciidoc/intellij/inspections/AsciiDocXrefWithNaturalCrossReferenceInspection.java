@@ -23,8 +23,8 @@ public class AsciiDocXrefWithNaturalCrossReferenceInspection extends AsciiDocIns
     return new AsciiDocVisitor() {
       @Override
       public void visitElement(@NotNull PsiElement o) {
-        if (o instanceof AsciiDocLink) {
-          AsciiDocLink link = (AsciiDocLink) o;
+        if (o instanceof AsciiDocLink link) {
+          
           if (link.getMacroName().equals("xref")) {
             AsciiDocFileReference reference = link.getAnchorReference();
             if (reference != null) {

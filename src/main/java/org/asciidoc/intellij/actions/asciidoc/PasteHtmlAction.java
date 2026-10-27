@@ -117,16 +117,16 @@ public class PasteHtmlAction extends AsciiDocAction {
     // depending on the platform, the HTML flavor is delivered as a String, a Reader or a stream
     Object data = manager.getContents(DataFlavor.allHtmlFlavor);
     try {
-      if (data instanceof String) {
-        return (String) data;
-      } else if (data instanceof Reader) {
-        try (Reader reader = (Reader) data) {
+      if (data instanceof String string) {
+        return string;
+      } else if (data instanceof Reader reader) {
+        try (reader) {
           StringWriter writer = new StringWriter();
           reader.transferTo(writer);
           return writer.toString();
         }
-      } else if (data instanceof InputStream) {
-        try (InputStream stream = (InputStream) data) {
+      } else if (data instanceof InputStream stream) {
+        try (stream) {
           return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
         }
       }

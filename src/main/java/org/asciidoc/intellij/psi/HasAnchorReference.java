@@ -8,9 +8,9 @@ public interface HasAnchorReference {
   @Nullable
   default AsciiDocFileReference getAnchorReference() {
     for (PsiReference reference : getReferences()) {
-      if (reference instanceof AsciiDocFileReference) {
-        if (((AsciiDocFileReference) reference).isAnchor()) {
-          return (AsciiDocFileReference) reference;
+      if (reference instanceof AsciiDocFileReference asciiDocFileReference) {
+        if (asciiDocFileReference.isAnchor()) {
+          return asciiDocFileReference;
         }
       }
     }

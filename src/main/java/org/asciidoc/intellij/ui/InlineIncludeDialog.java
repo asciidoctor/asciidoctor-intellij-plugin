@@ -104,8 +104,8 @@ public class InlineIncludeDialog extends InlineOptionsDialog {
         continue;
       }
       PsiElement resolve = fileReference.resolve();
-      if (resolve instanceof PsiFile) {
-        return (PsiFile) resolve;
+      if (resolve instanceof PsiFile psiFile) {
+        return psiFile;
       }
     }
     return null;

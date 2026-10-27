@@ -34,8 +34,8 @@ public class AsciiDocSpellcheckingStrategy extends SpellcheckingStrategy {
   public Tokenizer getTokenizer(PsiElement element) {
     // run tokenizing on all top level elements in the file and those marked as root elements in the language support.
     if (languageSupport.isMyContextRoot(element) || element.getParent() instanceof PsiFile) {
-      if (element instanceof AsciiDocAttributeDeclarationImpl) {
-        if (!((AsciiDocAttributeDeclarationImpl) element).hasSpellCheckableContent()) {
+      if (element instanceof AsciiDocAttributeDeclarationImpl asciiDocAttributeDeclarationImpl) {
+        if (!asciiDocAttributeDeclarationImpl.hasSpellCheckableContent()) {
           // the AsciiDocAttributeDeclarationImpl is special, as it is sometimes a root element, sometimes not
           return EMPTY_TOKENIZER;
         }

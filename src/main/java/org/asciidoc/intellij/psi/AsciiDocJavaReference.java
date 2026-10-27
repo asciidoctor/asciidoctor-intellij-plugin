@@ -52,8 +52,8 @@ public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implemen
         return true;
       }
       return false;
-    } else if (psiElement instanceof PsiPackage) {
-      if (getValue().equals(((PsiPackage) psiElement).getName())) {
+    } else if (psiElement instanceof PsiPackage psiPackage) {
+      if (getValue().equals(psiPackage.getName())) {
         return true;
       }
     }

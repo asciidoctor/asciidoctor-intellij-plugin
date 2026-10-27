@@ -57,8 +57,8 @@ public class AsciiDocIncludeTagReferenceInElement extends PsiReferenceBase<PsiEl
       // using a matcher on the element's text first avoids generating unnecessary references on other elements
       if (matcher.find()) {
         for (PsiReference reference : element.getReferences()) {
-          if (reference instanceof AsciiDocIncludeTagReferenceInElement) {
-            AsciiDocIncludeTagReferenceInElement tagReference = (AsciiDocIncludeTagReferenceInElement) reference;
+          if (reference instanceof AsciiDocIncludeTagReferenceInElement tagReference) {
+            
             if (tagReference.getType().equals("tag") && tagReference.key.equals(key)) {
               // will result to the first tag with the given name in the file
               results.add(new PsiElementResolveResult(new AsciiDocTagDeclaration(tagReference)));
@@ -84,8 +84,8 @@ public class AsciiDocIncludeTagReferenceInElement extends PsiReferenceBase<PsiEl
     List<LookupElement> variants = new ArrayList<>();
     PsiTreeUtil.processElements(myElement.getContainingFile(), element -> {
       for (PsiReference reference : element.getReferences()) {
-        if (reference instanceof AsciiDocIncludeTagReferenceInElement) {
-          AsciiDocIncludeTagReferenceInElement tagReference = (AsciiDocIncludeTagReferenceInElement) reference;
+        if (reference instanceof AsciiDocIncludeTagReferenceInElement tagReference) {
+          
           if (tagReference.getType().equals("tag")) {
             variants.add(LookupElementBuilder.create(tagReference.key));
           }

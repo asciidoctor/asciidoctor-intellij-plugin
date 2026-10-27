@@ -22,8 +22,8 @@ public class AsciiDocDescriptionLengthInspection extends AsciiDocInspectionBase 
     return new AsciiDocVisitor() {
       @Override
       public void visitElement(@NotNull PsiElement o) {
-        if (o instanceof AsciiDocAttributeDeclarationImpl) {
-          AsciiDocAttributeDeclarationImpl declaration = (AsciiDocAttributeDeclarationImpl) o;
+        if (o instanceof AsciiDocAttributeDeclarationImpl declaration) {
+          
           if ("description".equalsIgnoreCase(declaration.getAttributeName())) {
             String value = declaration.getAttributeValue();
             if (value != null && value.length() > MAX_LENGTH) {
