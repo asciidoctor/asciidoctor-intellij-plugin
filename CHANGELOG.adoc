@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.45.11
 
-...
+- Allow creating PDF/DOCX/HTML files from read-only files like archives
 
 === 0.45.10
 

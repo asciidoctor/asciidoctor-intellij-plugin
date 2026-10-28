@@ -15,14 +15,13 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
+import org.asciidoc.intellij.ui.FileAccessProblem;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -75,17 +74,26 @@ public class CreateHtmlAction extends AsciiDocFileAction {
       });
     }
     VirtualFile parent = file.getParent();
+    VirtualFile target = findTargetDirectory(file);
+    if (target == null && parent != null) {
+      new FileAccessProblem("Can't find a writable folder for the HTML file of " + file.getPath()).show();
+      return;
+    }
+    String content = editor.getDocument().getText();
     final Project currentProject = project;
     final AtomicBoolean successful = new AtomicBoolean(false);
     ProgressManager.getInstance().run(new Task.Backgroundable(currentProject, "Creating HTML", true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        Path tempImagesPath = AsciiDocWrapper.tempImagesPath(parent != null ? parent.toNioPath() : null, currentProject);
+        Path tempImagesPath = AsciiDocWrapper.tempImagesPathForFolder(target, currentProject);
         try {
-          AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(currentProject, parent, tempImagesPath, file.getName());
+          AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(currentProject, target, tempImagesPath, file.getName());
           String config = AsciiDocWrapper.config(editor.getDocument(), currentProject);
           List<String> extensions = extensionService.getExtensions(currentProject);
-          successful.set(asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.HTML));
+          successful.set(convert(asciiDocWrapper, file, content, target, config, extensions, AsciiDocWrapper.FileType.HTML));
+        } catch (IOException ex) {
+          LOG.warn("unable to create HTML", ex);
+          ApplicationManager.getApplication().invokeLater(() -> new FileAccessProblem("Unable to create HTML: " + ex.getMessage()).show());
         } finally {
           AsciiDocWrapper.cleanupImagesPath(tempImagesPath);
         }
@@ -96,8 +104,8 @@ public class CreateHtmlAction extends AsciiDocFileAction {
         // runs on the EDT, regardless if the task was successful, failed or cancelled
         VirtualFile vf = ApplicationManager.getApplication().runWriteAction((Computable<? extends VirtualFile>) () -> {
           // write action is needed here to update the file system view via refreshAndFindFileByNioPath
-          VirtualFile virtualFileHtml = changeFileExtension(file);
-          VirtualFile virtualFile = virtualFileHtml != null ? virtualFileHtml : parent;
+          VirtualFile virtualFileHtml = findOutputFile(target, file, "html");
+          VirtualFile virtualFile = virtualFileHtml != null ? virtualFileHtml : target;
           AsciiDocUtil.selectFileInProjectView(currentProject, virtualFile);
           return virtualFileHtml;
         });
@@ -107,17 +115,6 @@ public class CreateHtmlAction extends AsciiDocFileAction {
         }
       }
     });
-  }
-
-  @Nullable
-  private VirtualFile changeFileExtension(VirtualFile file) {
-    Path path = file.getFileSystem().getNioPath(file);
-    if (path == null) {
-      return null;
-    }
-    return VirtualFileManager.getInstance().refreshAndFindFileByNioPath(
-      path.getParent().resolve(file.getName().replaceAll("\\.(adoc|asciidoc|ad)$", ".html"))
-    );
   }
 
 }

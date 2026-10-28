@@ -18,7 +18,6 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.asciidoc.intellij.AsciiDocBundle;
@@ -29,7 +28,6 @@ import org.asciidoc.intellij.download.PandocInfo;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.ui.FileAccessProblem;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -108,10 +106,11 @@ public class CreateDocxAction extends AsciiDocFileAction {
         }
       });
     }
-    VirtualFile parent = file.getParent();
-    if (parent == null || parent.getCanonicalPath() == null) {
+    VirtualFile target = findTargetDirectory(file);
+    if (target == null || target.getCanonicalPath() == null) {
       return;
     }
+    String content = editor.getDocument().getText();
     final Project currentProject = project;
     final AtomicBoolean successful = new AtomicBoolean(false);
     ProgressManager.getInstance().run(new Task.Backgroundable(currentProject, "Creating DOCX file", true) {
@@ -127,16 +126,16 @@ public class CreateDocxAction extends AsciiDocFileAction {
       private boolean convert() throws InterruptedException {
         String docbookFile = file.getName().replaceAll("\\.(adoc|asciidoc|ad)$", ".xml");
         String docxFile = file.getName().replaceAll("\\.(adoc|asciidoc|ad)$", ".docx");
-        Path tempImagesPath = AsciiDocWrapper.tempImagesPath(parent.toNioPath(), currentProject);
+        Path tempImagesPath = AsciiDocWrapper.tempImagesPathForFolder(target, currentProject);
         Process process = null;
         try {
-          AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(currentProject, parent, tempImagesPath, file.getName());
+          AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(currentProject, target, tempImagesPath, file.getName());
           String config = AsciiDocWrapper.config(editor.getDocument(), currentProject);
           List<String> extensions = extensionService.getExtensions(currentProject);
-          if (!asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.DOCX)) {
+          if (!AsciiDocFileAction.convert(asciiDocWrapper, file, content, target, config, extensions, AsciiDocWrapper.FileType.DOCX)) {
             return false;
           }
-          File finalFile = new File(parent.getCanonicalPath(), docxFile);
+          File finalFile = new File(target.getCanonicalPath(), docxFile);
           if (finalFile.exists()) {
             if (!finalFile.delete()) {
               ApplicationManager.getApplication().invokeLater(() -> {
@@ -148,15 +147,15 @@ public class CreateDocxAction extends AsciiDocFileAction {
           List<String> cmd = new ArrayList<>(Arrays.asList(
             AsciiDocDownloaderUtil.getPanddocFile().getAbsolutePath(),
             "-s",
-            parent.getCanonicalPath() + File.separator + docbookFile,
+            target.getCanonicalPath() + File.separator + docbookFile,
             "-t",
             "docx",
             "-f",
             "docbook",
             "--resource-path",
-            parent.getCanonicalPath(),
+            target.getCanonicalPath(),
             "-o",
-            parent.getCanonicalPath() + File.separator + docxFile));
+            target.getCanonicalPath() + File.separator + docxFile));
           Collection<VirtualFile> reference = ApplicationManager.getApplication().runReadAction((Computable<Collection<VirtualFile>>)
             () -> FilenameIndex.getVirtualFilesByName("reference.docx", GlobalSearchScope.projectScope(currentProject))
           );
@@ -166,7 +165,7 @@ public class CreateDocxAction extends AsciiDocFileAction {
             cmd.add(reference.stream().findFirst().get().getCanonicalPath());
 
           }
-          process = new ProcessBuilder(cmd.toArray(String[]::new)).directory(new File(parent.getCanonicalPath())).start();
+          process = new ProcessBuilder(cmd.toArray(String[]::new)).directory(new File(target.getCanonicalPath())).start();
           String stdout = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
           String stderr = new String(process.getErrorStream().readAllBytes(), StandardCharsets.UTF_8);
 
@@ -181,7 +180,7 @@ public class CreateDocxAction extends AsciiDocFileAction {
             return false;
           }
 
-          File xml = new File(parent.getCanonicalPath() + File.separator + docbookFile);
+          File xml = new File(target.getCanonicalPath() + File.separator + docbookFile);
           if (!xml.delete()) {
             String message = "Can't delete temporary XML file " + xml.getCanonicalPath();
             ApplicationManager.getApplication().invokeLater(() -> {
@@ -208,8 +207,8 @@ public class CreateDocxAction extends AsciiDocFileAction {
       public void onFinished() {
         // runs on the EDT, regardless if the task was successful, failed or cancelled
         ApplicationManager.getApplication().runWriteAction(() -> {
-          VirtualFile virtualFileDocx = changeFileExtensionDocx(file);
-          VirtualFile virtualFile = virtualFileDocx != null ? virtualFileDocx : parent;
+          VirtualFile virtualFileDocx = findOutputFile(target, file, "docx");
+          VirtualFile virtualFile = virtualFileDocx != null ? virtualFileDocx : target;
           AsciiDocUtil.selectFileInProjectView(currentProject, virtualFile);
           if (virtualFileDocx != null && successful.get()) {
             ApplicationManager.getApplication().invokeLater(() -> {
@@ -219,17 +218,6 @@ public class CreateDocxAction extends AsciiDocFileAction {
         });
       }
     });
-  }
-
-  @Nullable
-  private VirtualFile changeFileExtensionDocx(VirtualFile file) {
-    Path path = file.getFileSystem().getNioPath(file);
-    if (path == null) {
-      return null;
-    }
-    return VirtualFileManager.getInstance().refreshAndFindFileByNioPath(
-      path.getParent().resolve(file.getName().replaceAll("\\.(adoc|asciidoc|ad)$", ".docx"))
-    );
   }
 
 }

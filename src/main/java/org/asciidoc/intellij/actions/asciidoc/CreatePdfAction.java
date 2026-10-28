@@ -17,17 +17,16 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
 import org.asciidoc.intellij.download.AsciiDocDownloaderUtil;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
+import org.asciidoc.intellij.ui.FileAccessProblem;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
@@ -93,6 +92,12 @@ public class CreatePdfAction extends AsciiDocFileAction {
       });
     }
     VirtualFile parent = file.getParent();
+    VirtualFile target = findTargetDirectory(file);
+    if (target == null && parent != null) {
+      new FileAccessProblem("Can't find a writable folder for the PDF file of " + file.getPath()).show();
+      return;
+    }
+    String content = editor.getDocument().getText();
     final Project currentProject = project;
     final AtomicBoolean successful = new AtomicBoolean(false);
     ProgressManager.getInstance().run(new Task.Backgroundable(currentProject, "Creating PDF", true) {
@@ -100,20 +105,23 @@ public class CreatePdfAction extends AsciiDocFileAction {
       public void run(@NotNull ProgressIndicator indicator) {
         Path tempImagesPath = null;
         try {
-          if (parent != null) {
-            // parent will be null if we use Language Injection and Fragment Editor
-            tempImagesPath = AsciiDocWrapper.tempImagesPath(parent.toNioPath(), currentProject);
+          if (target != null) {
+            // target will be null if we use Language Injection and Fragment Editor
+            tempImagesPath = AsciiDocWrapper.tempImagesPathForFolder(target, currentProject);
           }
-          AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(currentProject, parent, tempImagesPath, file.getName());
+          AsciiDocWrapper asciiDocWrapper = new AsciiDocWrapper(currentProject, target, tempImagesPath, file.getName());
           List<String> extensions = extensionService.getExtensions(currentProject);
           String config = AsciiDocWrapper.config(editor.getDocument(), currentProject);
-          if (!asciiDocWrapper.convertTo(new File(file.getCanonicalPath()), config, extensions, AsciiDocWrapper.FileType.PDF)) {
+          if (!convert(asciiDocWrapper, file, content, target, config, extensions, AsciiDocWrapper.FileType.PDF)) {
             return;
           }
           if (Objects.equals("true", asciiDocWrapper.getAttributes().get("asciidoctor-diagram-missing-diagram-extension"))) {
             AsciiDocDownloadNotificationProvider.showNotification();
           }
           successful.set(true);
+        } catch (IOException ex) {
+          LOG.warn("unable to create PDF", ex);
+          ApplicationManager.getApplication().invokeLater(() -> new FileAccessProblem("Unable to create PDF: " + ex.getMessage()).show());
         } finally {
           AsciiDocWrapper.cleanupImagesPath(tempImagesPath);
         }
@@ -123,8 +131,8 @@ public class CreatePdfAction extends AsciiDocFileAction {
       public void onFinished() {
         // runs on the EDT, regardless if the task was successful, failed or cancelled
         ApplicationManager.getApplication().runWriteAction(() -> {
-          VirtualFile virtualFilePdf = changeFileExtension(file);
-          VirtualFile virtualFile = virtualFilePdf != null ? virtualFilePdf : parent;
+          VirtualFile virtualFilePdf = findOutputFile(target, file, "pdf");
+          VirtualFile virtualFile = virtualFilePdf != null ? virtualFilePdf : target;
           AsciiDocUtil.selectFileInProjectView(currentProject, virtualFile);
           if (virtualFilePdf != null && successful.get()) {
             ApplicationManager.getApplication().invokeLater(() -> {
@@ -134,17 +142,6 @@ public class CreatePdfAction extends AsciiDocFileAction {
         });
       }
     });
-  }
-
-  @Nullable
-  private VirtualFile changeFileExtension(VirtualFile file) {
-    Path path = file.getFileSystem().getNioPath(file);
-    if (path == null) {
-      return null;
-    }
-    return VirtualFileManager.getInstance().refreshAndFindFileByNioPath(
-      path.getParent().resolve(file.getName().replaceAll("\\.(adoc|asciidoc|ad)$", ".pdf"))
-    );
   }
 
 }

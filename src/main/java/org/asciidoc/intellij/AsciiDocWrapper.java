@@ -731,6 +731,22 @@ public class AsciiDocWrapper {
   }
 
   /**
+   * Same as {@link #tempImagesPath(Path, Project)}, but takes the document's folder as a virtual file.
+   * If it is not a writable folder on the local file system (for example inside an archive), a folder in the system's temporary folder is used.
+   */
+  @Nullable
+  public static Path tempImagesPathForFolder(@Nullable VirtualFile parent, @Nullable Project project) {
+    Path path = null;
+    if (parent != null && parent.isInLocalFileSystem()) {
+      path = parent.getFileSystem().getNioPath(parent);
+      if (path != null && !Files.isWritable(path)) {
+        path = null;
+      }
+    }
+    return tempImagesPath(path, project);
+  }
+
+  /**
    * Call this method to create in UNSAFE mode a fresh temporary folder that will be used for temporary files when running Asciidoctor, or a relative folder to the parent in any other mode.
    * This handles the situation that a temporary folder that is not a sub-folder of the document's parent can't be read from or written to when
    * the mode is not UNSAFE.
@@ -969,6 +985,15 @@ public class AsciiDocWrapper {
   }
 
   public boolean convertTo(File file, String config, List<String> extensions, FileType format) {
+    return convertTo(file, config, extensions, format, null);
+  }
+
+  /**
+   * Convert a file.
+   *
+   * @param toDir folder to write the output to, or null to write it next to the file
+   */
+  public boolean convertTo(File file, String config, List<String> extensions, FileType format, @Nullable Path toDir) {
     VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
       project,
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir));
@@ -996,8 +1021,11 @@ public class AsciiDocWrapper {
         try {
           ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
           if (indicator == null || !indicator.isCanceled()) {
-            asciidoctor.convertFile(file, getExportOptions(
-              getDefaultOptions(format, springRestDocsSnippets, attributes), format));
+            Options exportOptions = getExportOptions(getDefaultOptions(format, springRestDocsSnippets, attributes), format);
+            if (toDir != null) {
+              exportOptions.setToDir(toDir.toAbsolutePath().toString());
+            }
+            asciidoctor.convertFile(file, exportOptions);
           }
         } finally {
           prependConfig.setConfig("");
