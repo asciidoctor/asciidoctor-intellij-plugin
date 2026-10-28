@@ -882,6 +882,10 @@ public class AsciiDocUtil {
         addRoot(roots, vfBasePath);
       }
     }
+    // The content root might not be a module, but it is still the natural root for its documentation.
+    for (VirtualFile contentRoot : ProjectRootManager.getInstance(project).getContentRoots()) {
+      addRoot(roots, contentRoot);
+    }
     PROJECT_ROOTS.cache(project, roots);
     return Collections.unmodifiableCollection(roots);
   }
