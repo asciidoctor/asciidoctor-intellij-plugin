@@ -1339,7 +1339,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     }
     if (("image".equals(macroName) || "video".equals(macroName) || "audio".equals(macroName)) && fileName.startsWith("/")) {
       VirtualFile hugoStaticFile = AsciiDocUtil.findHugoStaticFolder(myElement);
-      if (hugoStaticFile != null && hugoStaticFile.getCanonicalPath() != null) {
+      if (hugoStaticFile != null && hugoStaticFile.isValid() && hugoStaticFile.getCanonicalPath() != null) {
         startDir = PsiManager.getInstance(root.getProject()).findDirectory(hugoStaticFile);
         fileName = fileName.substring(1);
       }
@@ -1354,7 +1354,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         return resolveReferenceInPartial(fileName, element, startDir);
       } else if (!base.startsWith(".") && (macroName.equals("xref") || macroName.equals("xref-attr"))) {
         VirtualFile antoraPagesDir = AsciiDocUtil.findAntoraPagesDir(root);
-        if (antoraPagesDir != null) {
+        if (antoraPagesDir != null && antoraPagesDir.isValid()) {
           PsiDirectory directory = PsiManager.getInstance(root.getProject()).findDirectory(antoraPagesDir);
           if (directory != null) {
             startDir = directory;
