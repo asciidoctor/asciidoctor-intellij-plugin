@@ -1,0 +1,5 @@
+<weak_warning descr="Listing in an open block, the conventional delimiter is ....">.Title
+[plantuml]
+--
+A -> B
+--</weak_warning>

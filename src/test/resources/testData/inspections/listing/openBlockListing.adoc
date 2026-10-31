@@ -1,0 +1,5 @@
+<weak_warning descr="Listing in an open block, the conventional delimiter is ----">[source,java]
+--
+public class Person {
+}
+--</weak_warning>

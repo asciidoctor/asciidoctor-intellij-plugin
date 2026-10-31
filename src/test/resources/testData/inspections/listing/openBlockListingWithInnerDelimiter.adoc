@@ -1,0 +1,8 @@
+<weak_warning descr="Listing in an open block, the conventional delimiter is ----">[source,asciidoc]
+--
+Some text:
+
+----
+code
+----
+--</weak_warning>

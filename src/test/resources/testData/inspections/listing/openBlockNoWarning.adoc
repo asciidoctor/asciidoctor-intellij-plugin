@@ -1,0 +1,14 @@
+[source,java]
+----
+public class Person {
+}
+----
+
+[NOTE]
+--
+An open block without listing content.
+--
+
+--
+A plain open block.
+--

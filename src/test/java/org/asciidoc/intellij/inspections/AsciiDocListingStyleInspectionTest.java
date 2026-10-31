@@ -1,6 +1,7 @@
 package org.asciidoc.intellij.inspections;
 
 import org.asciidoc.intellij.quickfix.AsciiDocConvertMarkdownListing;
+import org.asciidoc.intellij.quickfix.AsciiDocConvertOpenBlockListing;
 
 /**
  * @author Fatih Bozik
@@ -8,6 +9,7 @@ import org.asciidoc.intellij.quickfix.AsciiDocConvertMarkdownListing;
 public class AsciiDocListingStyleInspectionTest extends AsciiDocQuickFixTestBase {
 
   private static final String NAME = new AsciiDocConvertMarkdownListing().getName();
+  private static final String OPEN_BLOCK_NAME = new AsciiDocConvertOpenBlockListing().getName();
 
   @Override
   public void setUp() throws Exception {
@@ -22,6 +24,22 @@ public class AsciiDocListingStyleInspectionTest extends AsciiDocQuickFixTestBase
 
   public void testMarkdownListingWithTitle() {
     doTest(NAME, true);
+  }
+
+  public void testOpenBlockListing() {
+    doTest(OPEN_BLOCK_NAME, true);
+  }
+
+  public void testOpenBlockPlantumlWithTitle() {
+    doTest(OPEN_BLOCK_NAME, true);
+  }
+
+  public void testOpenBlockListingWithInnerDelimiter() {
+    doTest(OPEN_BLOCK_NAME, true);
+  }
+
+  public void testOpenBlockNoWarning() {
+    doTestNoFix(OPEN_BLOCK_NAME, true);
   }
 
   @Override
