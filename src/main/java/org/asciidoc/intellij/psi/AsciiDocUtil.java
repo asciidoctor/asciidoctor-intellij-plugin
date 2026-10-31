@@ -1473,8 +1473,13 @@ public class AsciiDocUtil {
         key = module.replaceFirst("");
       }
 
+      VirtualFile antoraDir = antoraFile.getParent();
+      if (antoraDir == null) {
+        return Collections.singletonList(originalKey);
+      }
+
       String backup = null;
-      List<VirtualFile> otherDirs = getOtherAntoraModuleDir(project, antoraFile.getParent(), myModuleName, myComponentName, myComponentVersion, myComponentVersion, myComponentName, otherModuleName);
+      List<VirtualFile> otherDirs = getOtherAntoraModuleDir(project, antoraDir, myModuleName, myComponentName, myComponentVersion, myComponentVersion, myComponentName, otherModuleName);
       List<String> result = new ArrayList<>();
       for (VirtualFile otherDir : otherDirs) {
         VirtualFile target = AsciiDocUtil.findAntoraPagesDir(project, otherDir);
