@@ -60,7 +60,7 @@ Students at universities might get a free subscription, and there are trial peri
 
 * For web developers, there is WebStorm.
 
-* For Android developers, there's Android Studio, which unfortunately requires some additional steps to enable the preview, see xref:features/preview/jcef-preview.adoc#choose-jdk[JCEF Preview documentation about Android Studio].
+* For Android developers, there's Android Studio, which unfortunately requires some additional steps to enable the preview (the JetBrains Toolbox doesn't offer it), see xref:features/preview/jcef-preview.adoc#choose-jdk[JCEF Preview documentation about Android Studio].
 
 [#alternative-installation-options]
 == Alternative installation options
@@ -68,8 +68,9 @@ Students at universities might get a free subscription, and there are trial peri
 Users can also download IntelliJ IDEA from JetBrains as an archive https://www.jetbrains.com/idea/download[from the download page].
 This is a good option to install the IDE on a PC that doesn't have an internet connection.
 
-Some Linux distributions contain pre-packaged versions of the IDE, but as those sometimes lack features or components that are required by the AsciiDoc plugin's preview.
+Some Linux distributions contain pre-packaged versions of the IDE, but as those sometimes lack features or components that are required by the AsciiDoc plugin's preview (for example the JetBrains Runtime with JCEF).
 Therefore, they are _not_ recommended.
+Prefer the JetBrains Toolbox, as it installs the IDE with the matching runtime and keeps it up-to-date.
 
 == Further reading
 

@@ -10,19 +10,19 @@ include::partial$enable-soft-wrap.adoc[]
 
 == Configuring preview
 
-To get the best preview experience, switch the preview browser to _JavaFX WebView_ or _JCEF Browser_.
-See below how to <<enable-javafx-jcef-for-android-studio,enable JavaFX or JCEF for Android Studio>>.
+To get the best preview experience, switch the preview browser to _JCEF Browser_.
+See below how to <<enable-jcef-for-android-studio,enable JCEF for Android Studio>>.
+The JavaFX preview is no longer available.
 
 Go to menu menu:File[Settings... > Languages & Frameworks > AsciiDoc] to review or change this setting.
-If neither JavaFX of JCEF preview is not available, refer to xref:installation.adoc#prerequisites[Installation Prerequisites].
+If the JCEF preview is not available, refer to xref:installation.adoc#prerequisites[Installation Prerequisites].
 
 image::settings-asciidoc.png[AsciiDoc settings]
 
 If the preview is blurry, xref:faq/blurry-preview.adoc[follow these instructions to remedy this].
 
-[#enable-javafx-jcef-for-android-studio]
-=== Enable JavaFX or JCEF for Android Studio
+[#enable-jcef-for-android-studio]
+=== Enable JCEF for Android Studio
 
 To use a rich preview for Android Studio, download additional components.
 include::partial$android-studio-next-steps.adoc[]
-

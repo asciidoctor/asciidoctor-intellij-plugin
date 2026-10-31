@@ -12,15 +12,20 @@ For those new to IntelliJ, there is a xref:technical-writing/index.adoc[] with a
 To use this plugin, the user of the plugin needs to have one of the IntelliJ family of IDEs like IntelliJ IDEA, GoLand, WebStorm or PyCharm installed.
 See below for <<google-android-studio,Android Studio>> and <<intellij-mps,IntelliJ MPS>>.
 
-All default download packages include the JetBrains Runtime 11, a pre-bundled OpenJDK runtime environment.
-Use the pre-bundled JetBrains Runtime to run the IDE as it proves to be the most stable.
+Install the IDE with the https://www.jetbrains.com/toolbox-app/[JetBrains Toolbox^].
+The Toolbox downloads the IDE with its pre-bundled JetBrains Runtime, a JDK that includes the JCEF browser.
+It also keeps the IDE up-to-date, so the IDE and the plugin stay compatible.
+See xref:technical-writing/installing-intellij.adoc[] for a step-by-step guide.
 
-Up to and including IntelliJ IDEA 2020.1 the pre-bundled OpenJDK includes JavaFX, which is required for a rich preview in 2020.1 and earlier.
+Use the pre-bundled JetBrains Runtime to run the IDE, as it is the most stable and includes the JCEF browser that the plugin needs for its rich preview.
+The preview is based on an embedded Chrome browser with up-to-date JavaScript and CSS handling.
 
-From IntelliJ 2020.2 onward the plugin supports the JCEF browser preview that is pre-bundled in the JetBrains runtime that pre-bundled with 2020.2 and later.
-It uses an embedded Chrome browser with up-to-date JavaScript and CSS handling.
-
-include::partial$javafx-preview-requires-plugin.adoc[]
+[NOTE]
+====
+The JavaFX preview is no longer available.
+JetBrains removed JavaFX support for plugins from IntelliJ 2025.1, and the plugin removed the JavaFX preview in version 0.44.1.
+Use the xref:features/preview/jcef-preview.adoc[JCEF preview] instead.
+====
 
 If you've already installed the IDE and the plugin, continue to section xref:features.adoc[].
 
@@ -28,9 +33,9 @@ If you have the IDE installed already, continue to the next section <<installplu
 
 If you are looking for a free version of the IDE, choose IntelliJ IDEA Community edition.
 All other IDEs require a paid subscription.
-You can still download them and use them with a free, time-limited evaluation subscription.
+You can still install them with the JetBrains Toolbox and use them with a free, time-limited evaluation subscription.
 
-You can download them from the JetBrains homepage: link:https://www.jetbrains.com/idea/download/[^]
+You can download the Toolbox from the JetBrains homepage: link:https://www.jetbrains.com/toolbox-app/[^]
 
 [#google-android-studio]
 === Google Android Studio
@@ -51,14 +56,10 @@ Open an issue on GitHub to contribute to making MPS support better.
 
 === More information on JDKs
 
-To use the JavaFX preview instead of the Swing preview, you'll need to run IntelliJ with 64bit Java and JavaFX installed.
-Starting with IntelliJ 2020.3, the JetBrains platform requires JDK 11 to run.
-Oracle JDK installations include JavaFX, but can make the IDE unstable and crash.
-OpenJDK included in a Linux distribution usually doesn't include JavaFX.
-
-The event more advanced JCEF preview will only work with JetBrains OpenJDK runtime.
-
-Therefore, JetBrains OpenJDK pre-bundled with your IDE is recommended.
+The plugin's preview needs a JetBrains Runtime with JCEF support.
+Install the IDE with the JetBrains Toolbox to get the matching JetBrains Runtime.
+Don't replace the IDE's runtime with a JDK from your Linux distribution or Oracle, as these don't include JCEF and can make the IDE unstable.
+If the preview doesn't show, see xref:features/preview/jcef-preview.adoc#choose-jdk[selecting a different JetBrains JDK].
 
 Read more about choosing the JDK version of the IDE in the JetBrains knowledge base entry "`https://intellij-support.jetbrains.com/hc/en-us/articles/206544879-Selecting-the-JDK-version-the-IDE-will-run-under[Selecting the JDK version the IDE will run under]`".
 

@@ -162,13 +162,7 @@ GitHub renders Mermaid only for `[source,mermaid]` blocks, so the preview suppor
 
 == Advanced options
 
-=== PNG-only JavaFX preview
-
-// see: plantuml-png-patch.rb and kroki-extension.rb
-JavaFX has a problem displaying SVG files correctly.
-Therefore, the plugin displays all diagrams in the JavaFX preview as PNGs even when the user specifies SVG as the diagram format.
-
-When using IntelliJ 2020.2+ and plugin version 0.31.25+, the JCEF preview will show diagrams as SVGs when the user specifies SVG as the diagram format.
+The JCEF preview shows diagrams as SVGs when the user specifies SVG as the diagram format.
 
 [#interative-vs-inlined]
 === Interactive vs inlined SVGs

@@ -1,4 +1,4 @@
-= Blurry preview when using JavaFX
+= Blurry preview when using JavaFX (obsolete)
 :navtitle: JavaFX blurry preview
 :description: When the characters in the preview look blurry, while the editor shows sharp characters.
 
@@ -12,7 +12,8 @@ The following JetBrains ticket contains examples: https://youtrack.jetbrains.com
 
 == Environment
 
-This only happens when using the JavaFX preview.
+This only happened when using the JavaFX preview, which is no longer available.
+Use the JCEF preview, as described below.
 The current combinations seems to be:
 
 * Operating System Windows 10, +

@@ -25,7 +25,6 @@
 ** xref:features/search.adoc[]
 ** xref:features/preview.adoc[]
 *** xref:features/preview/diagrams.adoc[]
-*** xref:features/preview/javafx-preview.adoc[]
 *** xref:features/preview/jcef-preview.adoc[]
 *** xref:features/preview/source-highlighting.adoc[]
 ** Advanced
@@ -54,7 +53,6 @@
 * xref:faq.adoc[]
 ** xref:faq/indent-missing-on-pasting.adoc[]
 ** xref:faq/jcef-no-proxy-support.adoc[]
-** xref:faq/javafx-initialization-stuck.adoc[]
 ** xref:faq/validation-for-asciidoc-files.adoc[]
 ** xref:faq/blurry-preview.adoc[]
 ** xref:faq/errno-enoent.adoc[]

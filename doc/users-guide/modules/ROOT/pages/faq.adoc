@@ -83,16 +83,17 @@ See xref:faq/could-not-find-dot-executable.adoc[] for more information.
 
 === The preview is blurry!
 
-This sometimes happens when using the JavaFX preview on high-resolution displays.
+This sometimes happened when using the JavaFX preview on high-resolution displays.
+JavaFX is no longer available, so this shouldn't happen with the current JCEF preview.
 
 See xref:faq/blurry-preview.adoc[] for more information.
 
 === The preview is ugly!
 
 This sometimes happens when using Swing preview.
-This activates when neither JavaFX nor JCEF preview are available.
+This activates when the JCEF preview is not available.
 
-See chapters '`xref:features/preview/jcef-preview.adoc[]`' and '`xref:features/preview/javafx-preview.adoc[]`' for more information.
+See chapter '`xref:features/preview/jcef-preview.adoc[]`' and xref:installation.adoc[] for more information.
 
 === Could not find the 'dot' (or other) executable. How to fix it?
 

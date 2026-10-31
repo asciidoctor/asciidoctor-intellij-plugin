@@ -14,7 +14,7 @@ By default, the plugin runs Asciidoctor in _UNSAFE_ mode, which is also the defa
 In the plugin's settings, the user can change the behavior to other modes, such as _SAFE_, _SERVER_, and _SECURE_.
 See section https://asciidoctor.org/docs/user-manual/#running-asciidoctor-securely[Running Asciidoctor securely in the Asciidoctor User Manual] for more information about this feature.
 
-Remote content is no longer allowed in the JavaFX preview when using the JCEF and the safe mode settings _SAFE_, _SERVER_, or _SECURE_.
+Remote content is no longer allowed in the JCEF preview when using the safe mode settings _SAFE_, _SERVER_, or _SECURE_.
 With this setting the plugin applies a Content Security Policy to prevent this (new in plugin version 0.32.32).
 
 When the user enters formulas using Asciidoctor's math support, the preview renders them using MathML.
@@ -44,7 +44,7 @@ The JCEF, browser preview, and HTML conversion support the https://github.com/as
 For the preview, it sets ths attribute `tabs-sync-option` so any re-rendering keeps the focus on the currently selected tab.
 Selecting a tab with a mouse click will not place the cursor in the editor and will not open an included file.
 To place the cursor or open the included file, click on the body of the tab.
-The Asciidoctor Tabs extension is not supported for the JavaFX preview and is not supported for PDF generation.
+The Asciidoctor Tabs extension is not supported for PDF generation.
 
 When the user clicks on an external URL, the preview opens it in an external browser.
 

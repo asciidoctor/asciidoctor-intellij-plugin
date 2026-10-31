@@ -14,7 +14,7 @@ See _xref:features/advanced/asciidoctorconfig-file.adoc[]_ for more details.
 [WARNING]
 ====
 * If the configuration references remote content like fonts or stylesheets, these will require an online connection for the preview to load them.
-* Only JCEF and JavaFX preview support proper stylesheets.
+* Only the JCEF preview supports proper stylesheets.
 Swing preview doesn't support modern CSS, and will therefore not support custom CSS.
 * **New with version 0.35.16:** If no online connection exists, or the local stylesheet is missing, the preview defaults to the standard stylesheet.
 ====

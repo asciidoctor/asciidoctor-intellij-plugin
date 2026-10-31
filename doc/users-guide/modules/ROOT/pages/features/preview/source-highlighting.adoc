@@ -3,11 +3,11 @@
 
 Source highlighting shows source code listings in a document colored for better readability similar to an IDE.
 The preview supports different highlighting for source code like Coderay, Rouge and highlight.js.
-The plugin supports this both for the JCEF and the JavaFX preview modes.
+The plugin supports this in the JCEF preview.
 
 == How to use source highlighting
 
-Source highlighting in the preview works best when JCEF or JavaFX are selected in the plugin's settings as the preview browser.
+Source highlighting in the preview works best when JCEF is selected in the plugin's settings as the preview browser.
 
 Once a document contains a code block marked with a language that the source highlighter supports, the preview shows it highlighted.
 

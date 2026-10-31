@@ -1,1 +1,0 @@
-Starting with IDEA 2020.2, the JavaFX preview is only available after installing the plugin https://plugins.jetbrains.com/plugin/14250-javafx-runtime-for-plugins["`JavaFX for plugins`"^].

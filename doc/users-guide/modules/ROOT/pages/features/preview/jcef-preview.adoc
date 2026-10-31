@@ -5,7 +5,8 @@
 
 [NOTE]
 ====
-Update to IntelliJ 2020.3+ for the best experience, as this fixes some limitations of earlier versions.
+The JCEF preview is the only rich preview.
+The JavaFX preview is no longer available, as JetBrains removed JavaFX support for plugins from IntelliJ 2025.1.
 ====
 
 == Why to use the JCEF preview
@@ -16,7 +17,8 @@ This includes rendering of fonts and SVGs.
 
 == How to enable the JCEF preview
 
-Once JCEF is available, the user can change the preview to JCEF in the plugin's settings via menu:File[Settings... > Languages & Frameworks > AsciiDoc > Preview Browser].
+The JCEF preview is the default when it is available.
+If the preview was changed, the user can change it back the preview to JCEF in the plugin's settings via menu:File[Settings... > Languages & Frameworks > AsciiDoc > Preview Browser].
 
 == Security options
 
@@ -123,30 +125,18 @@ It will also enable additional diagnostic error messages like "`Slow operations 
 
 == When the JCEF preview is available
 
-JCEF preview is only available from IntelliJ 2020.2+ and plugin version 0.31.x.
-It requires that the user runs on the pre-packaged JetBrains OpenJDK 11.
+The JCEF preview requires that the user runs the IDE on the JetBrains Runtime that is pre-bundled with the IDE.
+Install the IDE with the https://www.jetbrains.com/toolbox-app/[JetBrains Toolbox^] to always get the matching runtime, and let the Toolbox keep the IDE up-to-date.
+Don't use IDE packages from a Linux distribution, as they usually lack the JetBrains Runtime with JCEF.
 
 [[choose-jdk]]
 === Selecting a different JetBrains JDK using the "`Choose Runtime`" plugin
 
-This is recommended for Android Studio 4.2 and 2020.3+ that doesn't ship with either JavaFX or JCEF support.
+This is recommended for Android Studio that doesn't ship with JCEF support.
 Watch https://issuetracker.google.com/issues/159933628[this issue] in Android Studio's issue tracker for progress.
 
-JavaFX preview that used to work with Android Studio 4.0 will not work with Android Studio 4.2 as it doesn't package the necessary classes in the IDE.
-Therefore, follow these steps to enable JCEF preview for Android Studio.
-
-*For Android Studio 2022.2+:*
-
 * Open menu item menu:Help[Find action...] and search for "`Choose Boot Java runtime for the IDE...`"
-* Choose a runtime "`17.0.x...`" labeled "`JetBrains Runtime with JCEF`" and install it.
-The IDE will restart.
-* Go to the settings of the AsciiDoc plugin and check if the preview is set to "`JCEF Browser`".
-Change it to "`JCEF Browser`" if this is not the case.
-
-*For Android Studio 2021.1+:*
-
-* Open menu item menu:Help[Find action...] and search for "`Choose Boot Java runtime for the IDE...`"
-* Choose a runtime "`11.0.x...`" labeled "`JetBrains Runtime with JCEF`" and install it.
+* Choose the newest runtime labeled "`JetBrains Runtime with JCEF`" and install it.
 The IDE will restart.
 * Go to the settings of the AsciiDoc plugin and check if the preview is set to "`JCEF Browser`".
 Change it to "`JCEF Browser`" if this is not the case.

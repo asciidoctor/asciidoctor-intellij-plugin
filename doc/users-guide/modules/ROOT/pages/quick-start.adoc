@@ -14,17 +14,19 @@ To install the plugin on IntelliJ MPS or Google Android Studio, refer to the cha
 
 [WARNING]
 --
-Use the pre-bundled JetBrains OpenJDK Runtime 11 to run the IDE.
-This provides the best live preview based on JavaFX or JCEF.
+Install the IDE with the https://www.jetbrains.com/toolbox-app/[JetBrains Toolbox^] and use the pre-bundled JetBrains Runtime to run the IDE.
+This provides the best live preview based on JCEF.
 Check this in the menu menu:Help[About].
 
 It should state:
 
 ====
 [%hardbreaks]
-Runtime version: 11.0...
+Runtime version: ...
 VM: ... 64-Bit Server VM by JetBrains s.r.o
 ====
+
+JavaFX is no longer available as a preview.
 
 Refer to xref:installation.adoc#prerequisites[Installation Prerequisites] if this is not the case.
 --
