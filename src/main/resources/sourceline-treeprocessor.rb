@@ -2,6 +2,21 @@ require 'asciidoctor/extensions'
 
 include ::Asciidoctor
 
+# Asciidoctor peeks two lines to detect setext section titles. If the next block starts on the last line of an include,
+# the second line is read from the parent document. This pops the include and moves the last line of the include
+# to the parent document, so the block's source location points to the including file instead of the included file.
+# Limit the peek to the lines remaining in the current include to keep the source location of the block.
+# See https://github.com/asciidoctor/asciidoctor/issues/4907
+module PeekLinesWithinInclude
+  def peek_lines num = nil, direct = false
+    if num && !@include_stack.empty? && (remaining = @lines.size) > 0 && remaining < num
+      num = remaining
+    end
+    super num, direct
+  end
+end
+Asciidoctor::PreprocessorReader.prepend PeekLinesWithinInclude
+
 # inspired by AsciiDocFX
 # see: https://github.com/asciidocfx/AsciidocFX/blob/master/conf/public/js/asciidoctor-data-line.js
 class SourceLineTreeProcessor < Extensions::Treeprocessor

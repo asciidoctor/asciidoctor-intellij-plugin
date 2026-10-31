@@ -222,6 +222,40 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     }
   }
 
+  // The source location of a block starting on the last line of an include must point to the included file,
+  // otherwise clicking it in the preview doesn't open the included file (#1018)
+  public void testShouldKeepSourceFileForLastLineOfInclude() throws Exception {
+    File base = new File(System.getProperty("java.io.tmpdir"), "include-source-" + System.nanoTime());
+    File partials = new File(base, "modules/ROOT/partials");
+    File pages = new File(base, "modules/ROOT/pages");
+    assertThat(partials.mkdirs()).isTrue();
+    assertThat(pages.mkdirs()).isTrue();
+    Files.writeString(new File(base, "antora.yml").toPath(), "name: e2e\nversion: ~\n", UTF_8);
+    Files.writeString(new File(pages, "page.adoc").toPath(), "x\n", UTF_8);
+    Files.writeString(new File(partials, "p.adoc").toPath(),
+      "intro\n\n// tag::a[]\nfirst para\n\nlast para\n// end::a[]\n\nafter\n", UTF_8);
+    VirtualFile baseVf = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(base);
+    assertThat(baseVf).isNotNull();
+    VfsUtil.markDirtyAndRefresh(false, true, true, baseVf);
+    PsiTestUtil.addContentRoot(myFixture.getModule(), baseVf);
+    try {
+      VirtualFile pagesVf = LocalFileSystem.getInstance().findFileByIoFile(pages);
+      AsciiDocWrapper wrapper = new AsciiDocWrapper(getProject(), pagesVf, null, "page.adoc");
+      String partial = new File(partials, "p.adoc").getPath();
+      String html = wrapper.render("text\n\ninclude::partial$p.adoc[tags=a]\n\nend\n", Collections.emptyList());
+      assertThat(html)
+        .contains("data-line-stdin-1")
+        .contains("data-line-" + partial + "-4")
+        .contains("data-line-" + partial + "-6")
+        .contains("data-line-stdin-5");
+      html = wrapper.render("text\n\ninclude::partial$p.adoc[]\n\nend\n", Collections.emptyList());
+      assertThat(html).contains("data-line-" + partial + "-9");
+    } finally {
+      PsiTestUtil.removeContentEntry(myFixture.getModule(), baseVf);
+      FileUtil.delete(base);
+    }
+  }
+
   public void testShouldRenderPlainAsciidoc() {
     String html = asciidocWrapper.render("this is *bold*.", Collections.emptyList());
     assertThat(html).withFailMessage("should contain formatted output").contains("<strong>bold</strong>");
