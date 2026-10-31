@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -29,8 +30,9 @@ public final class ImageService {
 
   @Nullable
   private static BufferedImage readVirtualFile(final VirtualFile virtualFile) {
-    try {
-      return ImageIO.read(virtualFile.getInputStream());
+    // ImageIO.read doesn't close the stream it is given
+    try (InputStream is = virtualFile.getInputStream()) {
+      return ImageIO.read(is);
     } catch (IOException exception) {
       pushErrorNotification(exception);
       return null;
