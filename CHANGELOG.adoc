@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.45.12
+
+...
+
 === 0.45.11
 
 - Allow creating PDF/DOCX/HTML files from read-only files like archives
