@@ -153,6 +153,7 @@ public class AsciiDocLanguageSupport {
     AsciiDocElementTypes.REF, // can nest REFTEXT
     AsciiDocElementTypes.LINK, // can nest MACROTEXT
     AsciiDocElementTypes.INLINE_MACRO, // can nest MACROTEXT
+    AsciiDocElementTypes.FOOTNOTE_TEXT, // can nest TEXT, links and other inline elements
     AsciiDocElementTypes.QUOTED // will nest MONO, ITALIC and others
   ), NODES_TO_CHECK);
 
@@ -298,8 +299,7 @@ public class AsciiDocLanguageSupport {
         boolean result;
         if (psiElement instanceof AsciiDocAttributeDeclarationImpl asciiDocAttributeDeclarationImpl) {
           result = asciiDocAttributeDeclarationImpl.hasSpellCheckableContent();
-        } else if (psiElement instanceof AsciiDocInlineMacro asciiDocInlineMacro &&
-          asciiDocInlineMacro.getMacroName().equals("footnote")) {
+        } else if (getElementType(psiElement) == AsciiDocElementTypes.FOOTNOTE_TEXT) {
           result = true;
         } else {
           result = NODES_TO_CHECK.contains(getElementType(psiElement))

@@ -321,6 +321,39 @@ public class AsciiDocParserImpl {
     closeSections(0);
   }
 
+  /**
+   * Parse the content of a footnote that has been lexed on its own, therefore it contains only inline elements.
+   */
+  void parseInline() {
+    myBuilder.setWhitespaceSkippedCallback((type, start, end) -> {
+      if (type == LINE_BREAK || type == EMPTY_LINE) {
+        newLines++;
+      }
+    });
+    while (!myBuilder.eof()) {
+      newLines = 0;
+      if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
+        parseUrl();
+      } else if (at(INLINEIDSTART)) {
+        parseInlineId();
+      } else if (at(INLINE_MACRO_ID)) {
+        parseInlineMacro();
+      } else if (at(REFSTART)) {
+        parseRef();
+      } else if (at(BIBSTART)) {
+        parseBib();
+      } else if (at(LINKSTART)) {
+        parseLink();
+      } else if (QUOTEPAIRS.containsKey(myBuilder.getTokenType())) {
+        parseQuoted(new HashSet<>());
+      } else if (at(ATTRIBUTE_REF_START)) {
+        parseAttributeReference();
+      } else {
+        next();
+      }
+    }
+  }
+
   private void closeBlockMarker(PsiBuilder.Marker myPreBlockId) {
     BlockMarker currentBlock = myBlockMarker.pop();
     if (currentBlock.delimiter.equals(DEL_START_OF_PARAGRAPH)) {
@@ -573,9 +606,13 @@ public class AsciiDocParserImpl {
     PsiBuilder.Marker inlineMacroMarker = myBuilder.mark();
     String macroId = myBuilder.getTokenText();
     next();
+    boolean footnote = "footnote:".equals(macroId);
     while (atInlineMacro()
       && newLines == 0) {
-      if (at(INLINE_ATTRS_END)) {
+      if (footnote && at(INLINE_ATTRS_START)) {
+        next();
+        parseFootnoteText();
+      } else if (at(INLINE_ATTRS_END)) {
         next();
         break;
       } else if (at(URL_LINK)) {
@@ -591,6 +628,18 @@ public class AsciiDocParserImpl {
       }
     }
     inlineMacroMarker.done(AsciiDocElementTypes.INLINE_MACRO);
+  }
+
+  // the text of a footnote is a lazy element that is parsed on demand, as it can contain other inline elements
+  private void parseFootnoteText() {
+    if (at(INLINE_ATTRS_END)) {
+      return;
+    }
+    PsiBuilder.Marker textMarker = myBuilder.mark();
+    while (!myBuilder.eof() && !at(INLINE_ATTRS_END)) {
+      next();
+    }
+    textMarker.collapse(AsciiDocElementTypes.FOOTNOTE_TEXT);
   }
 
   private boolean atInlineMacro() {

@@ -4,6 +4,8 @@ import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.MergingLexerAdapter;
 import com.intellij.psi.tree.IElementType;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 
 /**
@@ -11,7 +13,15 @@ import java.io.IOException;
  */
 public class AsciiDocLexer extends MergingLexerAdapter {
   public AsciiDocLexer() {
+    this(false);
+  }
+
+  private AsciiDocLexer(boolean inlineOnly) {
     super(new FlexAdapter(new _AsciiDocLexer(null) {
+      {
+        setInlineOnly(inlineOnly);
+      }
+
       // limit of full pushbacks per parsed token
       private static final int MAX_PUSHBACKS = 10000;
       private int pushbacks = 0;
@@ -52,5 +62,17 @@ public class AsciiDocLexer extends MergingLexerAdapter {
       }
 
     }), AsciiDocTokenTypes.TOKENS_TO_MERGE);
+  }
+
+  /**
+   * A lexer that starts inside a line instead of at the start of a block, to lex a fragment that contains only inline elements.
+   */
+  public static AsciiDocLexer inline() {
+    return new AsciiDocLexer(true) {
+      @Override
+      public void start(@NotNull CharSequence buffer, int startOffset, int endOffset, int initialState) {
+        super.start(buffer, startOffset, endOffset, initialState == 0 ? _AsciiDocLexer.INSIDE_LINE : initialState);
+      }
+    };
   }
 }

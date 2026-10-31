@@ -25,6 +25,7 @@ public interface AsciiDocElementTypes {
   IElementType LIST = new AsciiDocElementType("LIST");
   IElementType LIST_ITEM = new AsciiDocElementType("LIST_ITEM");
   IElementType CELL = new AsciiDocCellType("CELL");
+  IElementType FOOTNOTE_TEXT = new AsciiDocFootnoteTextType("FOOTNOTE_TEXT");
   IElementType BLOCK_ATTRIBUTES = new AsciiDocElementType("BLOCK_ATTRIBUTES");
   IElementType ATTRIBUTE_IN_BRACKETS = new AsciiDocElementType("ATTRIBUTE_IN_BRACKETS");
   IElementType REF = new AsciiDocElementType("REF");

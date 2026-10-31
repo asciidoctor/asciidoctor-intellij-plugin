@@ -10,8 +10,10 @@ import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.asciidoc.intellij.highlighting.AsciiDocSyntaxHighlighter;
 import org.asciidoc.intellij.inspections.AsciiDocVisitor;
+import org.asciidoc.intellij.parser.AsciiDocElementTypes;
 import org.asciidoc.intellij.psi.AsciiDocTextQuoted;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +43,9 @@ public class AsciiDocExternalAnnotatorHighlighting extends ExternalAnnotator<Str
       @Override
       public void visitElement(@NotNull PsiElement element) {
         super.visitElement(element);
+        if (element.getNode() != null && element.getNode().getElementType() == AsciiDocElementTypes.FOOTNOTE_TEXT) {
+          highlightTokens(element, holder);
+        }
         if (element instanceof AsciiDocTextQuoted asciiDocTextQuoted) {
           boolean isMono = asciiDocTextQuoted.isMono();
           boolean isItalic = asciiDocTextQuoted.isItalic();
@@ -85,6 +90,25 @@ public class AsciiDocExternalAnnotatorHighlighting extends ExternalAnnotator<Str
       }
     };
     visitor.visitFile(file);
+  }
+
+  /**
+   * The text of a footnote is parsed lazily and therefore not part of the tokens of the highlighting lexer.
+   * Apply the highlighting for each token here.
+   */
+  private static void highlightTokens(PsiElement element, AnnotationHolder holder) {
+    AsciiDocSyntaxHighlighter highlighter = new AsciiDocSyntaxHighlighter();
+    for (PsiElement leaf : PsiTreeUtil.collectElements(element, e -> e.getFirstChild() == null)) {
+      if (leaf.getNode() == null) {
+        continue;
+      }
+      for (TextAttributesKey key : highlighter.getTokenHighlights(leaf.getNode().getElementType())) {
+        holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+          .textAttributes(key)
+          .range(leaf)
+          .create();
+      }
+    }
   }
 
   private static TextAttributes attributesOf(TextAttributesKey key) {

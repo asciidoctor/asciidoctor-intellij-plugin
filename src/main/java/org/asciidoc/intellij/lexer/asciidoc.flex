@@ -354,6 +354,13 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
     }
   }
 
+  // true if lexing a fragment that contains only inline elements
+  private boolean inlineOnly = false;
+
+  public void setInlineOnly(boolean inlineOnly) {
+    this.inlineOnly = inlineOnly;
+  }
+
   private void yyinitialIfNotInBlock() {
     if (blockStack.size() == 0 && style == null && tableChar == 0) {
       yybegin(YYINITIAL);
@@ -1368,7 +1375,11 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <INSIDE_LINE, DESCRIPTION, TITLE> {
-  "\n"                 { if (isNoDelList()) {
+  "\n"                 { if (inlineOnly) {
+                           // a fragment like the text of a footnote continues in the next line, with no block syntax
+                           return AsciiDocTokenTypes.LINE_BREAK;
+                         }
+                         if (isNoDelList()) {
                            yybegin(LIST);
                          } else if (isNoDel()) {
                            yybegin(SINGLELINE);
@@ -1937,7 +1948,8 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                            yypushback(yylength());
                          }
                        }
-  "[" [^\]\n]* "]"     { return AsciiDocTokenTypes.MACROTEXT; }
+  // nested brackets, for example from macros in a footnote, might span multiple lines, but not an empty line
+  "[" ( [^\[\]\n] | "\n"? "[" [^\]\n]* "]" | "\n" [^\n\[\]] )* "]" { return AsciiDocTokenTypes.MACROTEXT; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
   {CONTINUATION} / {SPACE}* "\n" {
                          if (isPrefixedBy(SPACES)) {

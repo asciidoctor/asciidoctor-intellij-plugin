@@ -695,6 +695,72 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
     assertNotNull("reference should exist", reference);
   }
 
+  public void testXrefAndReferenceInFootnoteResolution() {
+    // given...
+    @SuppressWarnings({"AsciiDocAnchorWithoutId", "AsciiDocXrefWithNaturalCrossReference"})
+    PsiFile psiFile = configureByAsciiDoc("Text footnote:[see xref:_a_section[] and <<A Section>>. Done] more\n\n== A Section\n");
+
+    // then...
+    var elements = new ArrayList<PsiElement>(PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocLink.class));
+    elements.addAll(PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocRef.class));
+    Assertions.assertThat(elements).hasSize(2);
+    for (PsiElement element : elements) {
+      PsiReference[] references = element.getReferences();
+      Assertions.assertThat(references).hasSize(1);
+      assertNotNull("declaration should exist", references[0].resolve());
+    }
+  }
+
+  public void testFootnoteWithFormattingUrlAndMacroAndBlockSyntaxLikeText() {
+    // given...
+    PsiFile psiFile = configureByAsciiDoc("Text footnote:[== *bold* http://example.com[a link] and kbd:[Ctrl+C]] more\n");
+
+    // then...
+    Assertions.assertThat(PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocTextQuoted.class)).hasSize(1);
+    Assertions.assertThat(PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocUrl.class)).hasSize(1);
+    Assertions.assertThat(PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocSection.class)).isEmpty();
+    Assertions.assertThat(PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocInlineMacro.class)).hasSize(2);
+  }
+
+  public void testFootnoteContentIsHighlighted() {
+    // given...
+    configureByAsciiDoc("Text footnote:[see xref:file2.adoc[text] and kbd:[Ctrl]] more\n");
+
+    // when...
+    var highlighted = myFixture.doHighlighting().stream()
+      .filter(i -> i.forcedTextAttributesKey != null)
+      .map(i -> myFixture.getFile().getText().substring(i.getStartOffset(), i.getEndOffset()) + "=" + i.forcedTextAttributesKey.getExternalName())
+      .collect(Collectors.toList());
+
+    // then...
+    Assertions.assertThat(highlighted).contains("xref:=ASCIIDOC_MARKER", "kbd:=ASCIIDOC.INLINE_MACRO_ID");
+  }
+
+  public void testMultiLineFootnoteDoesNotInterpretBlockSyntax() {
+    // given...
+    PsiFile psiFile = configureByAsciiDoc("Text footnote:[first line\n* not a list\n== not heading\n----\nsecond] more\n");
+
+    // then...
+    Assertions.assertThat(PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocList.class)).isEmpty();
+    Assertions.assertThat(PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocSection.class)).isEmpty();
+    Assertions.assertThat(PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocInlineMacro.class)).hasSize(1);
+    Assertions.assertThat(PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocInlineMacro.class).iterator().next().getText())
+      .endsWith("second]");
+    Assertions.assertThat(psiFile.getText()).endsWith("more\n");
+  }
+
+  public void testMultiLineFootnoteWithMultiLineMacroText() {
+    // given...
+    PsiFile psiFile = configureByAsciiDoc("Text footnote:[in note\nmulti xref:b.adoc[a\nb] and a [[anchor]]\nhttps://x.org[the\nlink] done] more\n");
+
+    // then...
+    Assertions.assertThat(PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocLink.class)).hasSize(1);
+    Assertions.assertThat(PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocUrl.class)).hasSize(1);
+    Assertions.assertThat(PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocInlineMacro.class)).hasSize(1);
+    Assertions.assertThat(PsiTreeUtil.findChildrenOfType(psiFile, AsciiDocInlineMacro.class).iterator().next().getText())
+      .endsWith("done]");
+  }
+
   public void testXrefResolution() {
     // given...
     @SuppressWarnings({"AsciiDocAnchorWithoutId", "AsciiDocXrefWithNaturalCrossReference"})

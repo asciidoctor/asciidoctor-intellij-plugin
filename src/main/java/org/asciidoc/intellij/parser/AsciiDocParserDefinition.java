@@ -153,6 +153,9 @@ public class AsciiDocParserDefinition implements ParserDefinition {
     if (node.getElementType() == AsciiDocElementTypes.HEADING) {
       return new AsciiDocHeading(node);
     }
+    if (node.getElementType() == AsciiDocElementTypes.FOOTNOTE_TEXT) {
+      return new com.intellij.extapi.psi.ASTWrapperPsiElement(node);
+    }
     throw new UnsupportedOperationException("Unknown node type " + node.getElementType());
   }
 
