@@ -90,6 +90,24 @@ module AsciidoctorExtensions
 
   end
 
+  # GitHub renders Mermaid only for [source,mermaid] and ```mermaid, and ignores [mermaid].
+  # Render those source blocks as diagrams as well, so the same document works in the preview and on GitHub.
+  #
+  class MermaidSourceTreeProcessor < Extensions::Treeprocessor
+    def process(document)
+      document.find_by(context: :listing, style: 'source') { |block| block.attributes['language'] == 'mermaid' }.each do |block|
+        parent = block.parent
+        next unless parent.respond_to?(:blocks) && (index = parent.blocks.index { |candidate| candidate.equal?(block) })
+
+        attrs = block.attributes.reject { |key, _| ['style', 'language', 'linenums', 'cloaked-context', 'attribute_entries', 1, 2].include?(key) }
+        title = block.instance_variable_get(:@title)
+        attrs['title'] = title if title
+        parent.blocks[index] = MermaidProcessor.process(self, parent, attrs, 'mermaid', block.source, ::Asciidoctor::LoggerManager.logger)
+      end
+      document
+    end
+  end
+
   # Mermaid API
   #
   module Mermaid
@@ -158,4 +176,5 @@ Extensions.register do
     block_macro AsciidoctorExtensions::MermaidBlockMacroProcessor, name
     block AsciidoctorExtensions::MermaidBlockProcessor, name
   }
+  treeprocessor AsciidoctorExtensions::MermaidSourceTreeProcessor
 end

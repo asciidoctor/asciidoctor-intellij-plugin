@@ -212,6 +212,34 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     assertThat(html).withFailMessage("should contain data line to allow navigation to source line in preview").contains("data-line-stdin-1");
   }
 
+  // GitHub only renders Mermaid for [source,mermaid] and ```mermaid, so the built-in Mermaid support should handle them too (#1463)
+  public void testShouldRenderMermaidSourceBlock() {
+    String html = asciidocWrapper.render("""
+      .A title
+      [source,mermaid]
+      ----
+      graph TD
+        A --> B
+      ----
+
+      [mermaid]
+      ----
+      graph LR
+        C --> D
+      ----
+
+      [source,java]
+      ----
+      class E {}
+      ----
+      """, Collections.emptyList());
+    assertThat(html).contains("<pre class=\"mermaid\">graph TD\n  A --> B</pre>");
+    assertThat(html).contains("<pre class=\"mermaid\">graph LR\n  C --> D</pre>");
+    assertThat(html).contains("A title");
+    assertThat(html).contains("data-lang=\"java\"");
+    assertThat(html).doesNotContain("language-mermaid");
+  }
+
   public void testShouldUseCustomStylesheet() throws IOException {
     File testCss = new File(System.getProperty("java.io.tmpdir"), "test.css");
     try (BufferedWriter writer = Files.newBufferedWriter(testCss.toPath(), UTF_8)) {

@@ -9,7 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.45.12
 
-...
+- Render Mermaid diagrams in the preview also for `[source,mermaid]` and fenced `mermaid` blocks, as GitHub renders only those (#1463)
 
 === 0.45.11
 
