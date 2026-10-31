@@ -240,6 +240,27 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     assertThat(html).doesNotContain("language-mermaid");
   }
 
+  public void testShouldRenderMermaidTheme() {
+    String html = asciidocWrapper.render("""
+      [mermaid,theme=forest]
+      ----
+      flowchart
+        A --> B
+      ----
+
+      [mermaid,theme=dark]
+      ----
+      ---
+      title: Example
+      ---
+      flowchart
+        C --> D
+      ----
+      """, Collections.emptyList());
+    assertThat(html).contains("<pre class=\"mermaid\">%%{init: {'theme': 'forest'}}%%\nflowchart\n  A --> B</pre>");
+    assertThat(html).contains("<pre class=\"mermaid\">---\ntitle: Example\n---\n%%{init: {'theme': 'dark'}}%%\nflowchart\n  C --> D</pre>");
+  }
+
   public void testShouldUseCustomStylesheet() throws IOException {
     File testCss = new File(System.getProperty("java.io.tmpdir"), "test.css");
     try (BufferedWriter writer = Files.newBufferedWriter(testCss.toPath(), UTF_8)) {

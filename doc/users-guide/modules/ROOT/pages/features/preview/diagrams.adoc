@@ -156,6 +156,10 @@ To disable the support, clear the checkbox menu:Enable built-in Mermaid Diagrams
 
 This is currently only supported for Mermaid diagrams, and only for the JCEF preview.
 
+Since 0.45.12: Set the theme of a diagram with the `theme` attribute, for example `[mermaid,theme=forest]`.
+The plugin adds the matching `%%{init: {'theme': 'forest'}}%%` directive in front of the diagram.
+GitHub renders Mermaid only for `[source,mermaid]` blocks, so the preview supports them as well as `[mermaid]`.
+
 == Advanced options
 
 === PNG-only JavaFX preview

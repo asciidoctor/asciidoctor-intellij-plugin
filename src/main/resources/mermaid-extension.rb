@@ -133,6 +133,9 @@ module AsciidoctorExtensions
         title = attrs.delete('title')
         caption = attrs.delete('caption')
         attrs.delete('opts')
+        if (theme = attrs.delete('theme')) && theme.match?(/\A[\w-]+\z/)
+          diagram_text = with_theme(diagram_text, theme)
+        end
         attrs['alt'] = get_alt(attrs)
         html = %(<pre class="mermaid">#{diagram_text}</pre>)
         block = processor.create_open_block parent, [], attrs,  content_model: :compound
@@ -144,6 +147,14 @@ module AsciidoctorExtensions
       # rubocop:enable Metrics/AbcSize
 
       private
+
+      # Mermaid needs the front matter (if any) to be first in the text, so add the directive after it.
+      # The directive comes first so that an init directive in the diagram itself still wins.
+      def with_theme(text, theme)
+        front_matter = text[/\A---[ \t]*\r?\n.*?\r?\n---[ \t]*(?:\r?\n|\z)/m] || ''
+        front_matter += "\n" unless front_matter.empty? || front_matter.end_with?("\n")
+        %(#{front_matter}%%{init: {'theme': '#{theme}'}}%%\n#{text[front_matter.length..] || ''})
+      end
 
       def get_alt(attrs)
         if (title = attrs['title'])

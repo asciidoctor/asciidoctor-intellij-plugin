@@ -84,7 +84,8 @@ public class PreviewStaticServer extends HttpRequestHandler {
       result = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "scripts/").toExternalForm() + "; "
         + "style-src 'unsafe-inline' " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "styles/").toExternalForm() + "; "
         + "img-src file: data: localfile: ; connect-src 'none'; " +
-        "font-src " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "/").toExternalForm() + "; " +
+        "font-src " + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "styles/").toExternalForm() + " "
+        + Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + "scripts/").toExternalForm() + "; " + // scripts/ for the MathJax fonts
         "object-src data: file: localfile: ;" + // used for interactive SVGs
         "media-src 'none'; child-src 'none'; " +
         "frame-src 'self'"; // used for vimeo/youtube iframes
