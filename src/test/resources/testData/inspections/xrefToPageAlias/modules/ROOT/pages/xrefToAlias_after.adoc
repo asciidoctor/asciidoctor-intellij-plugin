@@ -1,0 +1,5 @@
+= Alias
+
+xref:<caret>newpage.adoc[text] and xref:sub/older.adoc#anchor[]
+
+A real page: xref:newpage.adoc[] and a missing one: xref:missing.adoc[].

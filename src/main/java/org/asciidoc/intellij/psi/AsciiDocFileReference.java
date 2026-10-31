@@ -717,10 +717,26 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
               continue;
             }
             results.add(new PsiElementResolveResult(declImpl.getContainingFile()));
+            resolvedViaPageAlias = true;
           }
         }
       }
     }
+  }
+
+  // set during the resolve when the result comes from the fallback to an Antora page alias
+  private boolean resolvedViaPageAlias;
+
+  public boolean inspectAntoraXrefViaPageAlias() {
+    if (!"xref".equals(macroName) || !isFile() || key.isEmpty() || isAnchor) {
+      return false;
+    }
+    if (!isAntora && AsciiDocUtil.findAntoraModuleDir(root) == null) {
+      return false;
+    }
+    resolvedViaPageAlias = false;
+    multiResolve(false);
+    return resolvedViaPageAlias;
   }
 
   private static final Pattern STRIP_FILE_EXTENSION = Pattern.compile(".adoc$");

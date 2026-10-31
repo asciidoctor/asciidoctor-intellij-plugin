@@ -317,6 +317,10 @@
                      groupName="General" enabledByDefault="true" level="WARNING"
                      shortName="AsciiDocXrefWithNaturalCrossReference"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocXrefWithNaturalCrossReferenceInspection"/>
+    <localInspection language="AsciiDoc" displayName="An xref should not point to an Antora page alias" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="WARNING"
+                     shortName="AsciiDocXrefToPageAlias"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocXrefToPageAliasInspection"/>
     <localInspection language="AsciiDoc" displayName="Inline macro used with block macro syntax" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="WARNING"
                      shortName="AsciiDocBlockMacroShouldBeInlineMacro"

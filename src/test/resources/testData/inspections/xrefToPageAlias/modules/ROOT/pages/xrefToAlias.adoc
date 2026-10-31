@@ -1,0 +1,5 @@
+= Alias
+
+xref:<warning descr="This xref points to a page alias; update it to the page's current location"><caret>old.adoc</warning>[text] and xref:<warning descr="This xref points to a page alias; update it to the page's current location">sub/older.adoc</warning>#anchor[]
+
+A real page: xref:newpage.adoc[] and a missing one: xref:missing.adoc[].

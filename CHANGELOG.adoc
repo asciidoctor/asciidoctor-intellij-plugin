@@ -14,6 +14,7 @@ This document provides a high-level view of the changes introduced by release.
 - Load the Font Awesome fonts in the preview also in a restricted safe mode or for untrusted projects, so that icons show up in Mermaid diagrams and with `:icons: font` (#1280)
 - Resolve references to other attributes in attribute values from `antora.yml` in the preview (#2142, #1866)
 - Improve the contrast of the table of contents in the dark preview theme (#2139)
+- Warn when an Antora xref points to a `page-aliases` alias instead of the page, with a quick fix (#1772)
 - Keep the original resolution when pasting an image from the clipboard on displays with scaling like 120% (#1893)
 - Resolve a relative `highlightjsdir` against the project root so that the highlight.js files are loaded (#1878)
 - Open the included file when clicking on a block in the preview that starts on the last line of an include, for example with `tags=` (#1018)

@@ -1,0 +1,4 @@
+= New page
+:page-aliases: old.adoc, sub/older.adoc, other:legacy.adoc
+
+Text.

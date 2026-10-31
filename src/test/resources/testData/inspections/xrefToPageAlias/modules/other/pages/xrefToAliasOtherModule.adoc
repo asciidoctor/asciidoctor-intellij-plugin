@@ -1,0 +1,3 @@
+= Other
+
+xref:<warning descr="This xref points to a page alias; update it to the page's current location"><caret>legacy.adoc</warning>[]
