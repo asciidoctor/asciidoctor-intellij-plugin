@@ -57,6 +57,7 @@ import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanel;
+import org.asciidoc.intellij.editor.jcef.AsciiDocJcefRecovery;
 import org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider;
 import org.asciidoc.intellij.settings.AsciiDocApplicationSettings;
 import org.asciidoc.intellij.settings.AsciiDocPreviewSettings;
@@ -451,6 +452,22 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     }
   }
 
+  /**
+   * The JCEF process might have terminated (for example after a suspend), resulting in an NPE within the JCEF classes,
+   * or in an IllegalStateException when the IDE has already disposed the terminated CefApp.
+   */
+  private static AsciiDocHtmlPanel restartJcefAndCreatePanel(AsciiDocHtmlPanelProvider provider, Document document, Path imagesDir,
+                                                             Runnable forceRefresh, RuntimeException ex) {
+    if (!AsciiDocJcefRecovery.isJcefServerFailure(ex)) {
+      throw ex;
+    }
+    LOG.warn("JCEF panel couldn't be initialized as the JCEF process is not available, trying to restart JCEF", ex);
+    if (!AsciiDocJcefRecovery.restartJcef()) {
+      throw ex;
+    }
+    return provider.createHtmlPanel(document, imagesDir, forceRefresh);
+  }
+
   @Contract("_, _, _, null, null -> fail")
   private static AsciiDocHtmlPanel detachOldPanelAndCreateAndAttachNewOne(Document document, Path imagesDir, @NotNull JPanel panelWrapper,
                                                                           @NotNull JLabel hint,
@@ -481,9 +498,13 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         notification.setImportant(true);
         Notifications.Bus.notify(notification);
         newPanel = new JeditorHtmlPanelProvider().createHtmlPanel(document, imagesDir, forceRefresh);
+      } else if (AsciiDocJcefRecovery.isJcefServerFailure(ex)) {
+        newPanel = restartJcefAndCreatePanel(newPanelProvider, document, imagesDir, forceRefresh, ex);
       } else {
         throw ex;
       }
+    } catch (NullPointerException ex) {
+      newPanel = restartJcefAndCreatePanel(newPanelProvider, document, imagesDir, forceRefresh, ex);
     }
     if (oldPanel != null) {
       newPanel.setEditor(oldPanel.getEditor());
