@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Render Mermaid diagrams in the preview also for `[source,mermaid]` and fenced `mermaid` blocks, as GitHub renders only those (#1463)
 - Support the `theme` attribute for built-in Mermaid diagrams (#1280)
 - Load the Font Awesome fonts in the preview also in a restricted safe mode or for untrusted projects, so that icons show up in Mermaid diagrams and with `:icons: font` (#1280)
+- Highlight URLs in quoted block attributes like the attribution of a quote block (#838)
 
 === 0.45.11
 

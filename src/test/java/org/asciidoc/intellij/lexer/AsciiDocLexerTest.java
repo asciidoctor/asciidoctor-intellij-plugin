@@ -1743,6 +1743,89 @@ public class AsciiDocLexerTest extends LexerTestCase {
       "AsciiDoc:TEXT ('Hi\\&#x123Af;Ho')");
   }
 
+  public void testUrlWithTextInQuoteAttribution() {
+    doTest("[quote,'https://google.com[Google]']\n____\nHey Google\n____\n",
+      """
+        AsciiDoc:ATTRS_START ('[')
+        AsciiDoc:ATTR_NAME ('quote')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:SINGLE_QUOTE (''')
+        AsciiDoc:URL_LINK ('https://google.com')
+        AsciiDoc:ATTR_VALUE ('[Google]')
+        AsciiDoc:SINGLE_QUOTE (''')
+        AsciiDoc:ATTRS_END (']')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:BLOCK_DELIMITER ('____')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:TEXT ('Hey')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('Google')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:BLOCK_DELIMITER ('____')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
+  public void testQuotedAttributesWithSpaceAndBracketInQuote() {
+    doTest("[quote, \"https://x.com[X]\",'Title ]']\n____\nx\n____\n",
+      """
+        AsciiDoc:ATTRS_START ('[')
+        AsciiDoc:ATTR_NAME ('quote')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:DOUBLE_QUOTE ('"')
+        AsciiDoc:URL_LINK ('https://x.com')
+        AsciiDoc:ATTR_VALUE ('[X]')
+        AsciiDoc:DOUBLE_QUOTE ('"')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:SINGLE_QUOTE (''')
+        AsciiDoc:ATTR_VALUE ('Title ]')
+        AsciiDoc:SINGLE_QUOTE (''')
+        AsciiDoc:ATTRS_END (']')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:BLOCK_DELIMITER ('____')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:TEXT ('x')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:BLOCK_DELIMITER ('____')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
+  public void testUnclosedQuoteInAttributeIsNotAQuotedValue() {
+    doTest("[quote,'Author]\n____\nx\n____\n",
+      """
+        AsciiDoc:ATTRS_START ('[')
+        AsciiDoc:ATTR_NAME ('quote')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:ATTR_NAME (''Author')
+        AsciiDoc:ATTRS_END (']')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:BLOCK_DELIMITER ('____')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:TEXT ('x')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:BLOCK_DELIMITER ('____')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
+  public void testApostropheInsideUnquotedAttributeValue() {
+    doTest("[quote,Bob's book]\n____\nx\n____\n",
+      """
+        AsciiDoc:ATTRS_START ('[')
+        AsciiDoc:ATTR_NAME ('quote')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:ATTR_NAME ('Bob's')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:ATTR_NAME ('book')
+        AsciiDoc:ATTRS_END (']')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:BLOCK_DELIMITER ('____')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:TEXT ('x')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:BLOCK_DELIMITER ('____')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
   public void testAttrInLink() {
     doTest("link:http://url.com{path}[text]",
       """

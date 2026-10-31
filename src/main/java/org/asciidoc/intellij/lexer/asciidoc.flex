@@ -2049,6 +2049,9 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <BLOCK_ATTRS> {
+  // quoted positional value, for example the attribution of a quote block
+  "\'" / ( [^\'\n] | "\\\'" )* "\'" { yypushstate(); yybegin(ATTRS_SINGLE_QUOTE); return AsciiDocTokenTypes.SINGLE_QUOTE; }
+  "\"" / ( [^\"\n] | "\\\"" )* "\"" { yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE); return AsciiDocTokenTypes.DOUBLE_QUOTE; }
   [^\],=\n\t }#]+ {
           if ((yycharat(0) != '.' && yycharat(0) != '%') && !yytext().toString().equals("role")) {
             String style = yytext().toString();
