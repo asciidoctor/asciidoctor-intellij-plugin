@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - Support the `theme` attribute for built-in Mermaid diagrams (#1280)
 - Load the Font Awesome fonts in the preview also in a restricted safe mode or for untrusted projects, so that icons show up in Mermaid diagrams and with `:icons: font` (#1280)
 - Resolve references to other attributes in attribute values from `antora.yml` in the preview (#2142)
+- Improve the contrast of the table of contents in the dark preview theme (#2139)
 - Highlight URLs in quoted block attributes like the attribution of a quote block (#838)
 - Suggest the listing delimiter `----` for `[source]` blocks and the literal delimiter `+....+` for diagram blocks like `[plantuml]` as a weak warning when they use the open block delimiter `--`, with a quick fix (#457)
 - Recognize cross-references, inline macros, URLs and formatting inside footnotes, so that they are highlighted and can be navigated (#951)
