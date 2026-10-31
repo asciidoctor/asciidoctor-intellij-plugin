@@ -38,6 +38,22 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Alexander Schwartz 2018
  */
 public class AsciiDocWrapperTest extends BasePlatformTestCase {
+
+  public void testAttributeReferencesInAttributeValuesAreResolved() {
+    Map<String, String> values = new HashMap<>();
+    values.put("fleetmanager-version", "1.0.0");
+    values.put("fleetmanager-arm-file", "fleetmanager-arm64-{fleetManager-version}.tar");
+    values.put("a", "{b}");
+    values.put("b", "{a}");
+    assertThat(AsciiDocWrapper.resolveAttributeReferences("fleetmanager-arm64-{fleetManager-version}.tar", values, 0))
+      .isEqualTo("fleetmanager-arm64-1.0.0.tar");
+    assertThat(AsciiDocWrapper.resolveAttributeReferences("{fleetmanager-arm-file}", values, 0))
+      .isEqualTo("fleetmanager-arm64-1.0.0.tar");
+    assertThat(AsciiDocWrapper.resolveAttributeReferences("{unknown} and \\{fleetmanager-version}", values, 0))
+      .isEqualTo("{unknown} and \\{fleetmanager-version}");
+    // must terminate for circular references
+    assertThat(AsciiDocWrapper.resolveAttributeReferences("{a}", values, 0)).contains("{");
+  }
   private final Logger log = Logger.getInstance(AsciiDocWrapperTest.class);
 
   private AsciiDocWrapper asciidocWrapper;

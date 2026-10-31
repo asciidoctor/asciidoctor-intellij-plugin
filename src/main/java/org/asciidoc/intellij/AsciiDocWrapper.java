@@ -1369,6 +1369,33 @@ public class AsciiDocWrapper {
     return options;
   }
 
+  private static final Pattern ATTRIBUTE_REFERENCE = Pattern.compile("(?<!\\\\)\\{([\\w][\\w-]*)}");
+  private static final int MAX_ATTRIBUTE_NESTING = 10;
+
+  /**
+   * Attributes passed via the API are not expanded by Asciidoctor, therefore expand references to other attributes
+   * like for example in the attributes of an <code>antora.yml</code> (#2142).
+   * Unknown references are left unchanged.
+   */
+  static String resolveAttributeReferences(String value, Map<String, String> values, int depth) {
+    if (depth >= MAX_ATTRIBUTE_NESTING || value.indexOf('{') == -1) {
+      return value;
+    }
+    Matcher matcher = ATTRIBUTE_REFERENCE.matcher(value);
+    StringBuilder result = new StringBuilder();
+    while (matcher.find()) {
+      String replacement = values.get(matcher.group(1).toLowerCase(Locale.ROOT));
+      if (replacement == null) {
+        replacement = matcher.group();
+      } else {
+        replacement = resolveAttributeReferences(replacement, values, depth + 1);
+      }
+      matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
+    }
+    matcher.appendTail(result);
+    return result.toString();
+  }
+
   @SuppressWarnings("checkstyle:ParameterNumber")
   private Options getDefaultOptions(FileType fileType, VirtualFile
     springRestDocsSnippets, Collection<AttributeDeclaration> attributes) {
@@ -1390,9 +1417,15 @@ public class AsciiDocWrapper {
       builder.attribute("snippets", springRestDocsSnippets.getCanonicalPath());
     }
 
+    Map<String, String> attributeValues = new HashMap<>();
     for (AttributeDeclaration entry : attributes) {
       if (entry.getAttributeValue() != null) {
-        builder.attribute(entry.getAttributeName(), entry.getAttributeValue() + (entry.isSoft() ? "@" : ""));
+        attributeValues.put(entry.getAttributeName().toLowerCase(Locale.ROOT), entry.getAttributeValue());
+      }
+    }
+    for (AttributeDeclaration entry : attributes) {
+      if (entry.getAttributeValue() != null) {
+        builder.attribute(entry.getAttributeName(), resolveAttributeReferences(entry.getAttributeValue(), attributeValues, 0) + (entry.isSoft() ? "@" : ""));
       } else {
         builder.attribute("!" + entry.getAttributeName(), entry.isSoft() ? "@" : "");
       }
