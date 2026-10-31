@@ -1753,7 +1753,7 @@ public class AsciiDocWrapper {
               boolean found = false;
               for (VirtualFile root : AsciiDocUtil.getRoots(project)) {
                 if (docfile.startsWith(root.getPath())) {
-                  dir = root + "/" + dir;
+                  dir = root.getPath() + "/" + dir;
                   found = true;
                   break;
                 }

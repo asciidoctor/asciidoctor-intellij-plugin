@@ -847,7 +847,8 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
 
   public void testHighlightJsDirRelativeInsideProjectIsServed() {
     String html = highlightJsCss("hl", "/src/doc.adoc");
-    assertThat(html).contains("%2Fsrc%2Fhl%2Fstyles%2Fgithub.min.css");
+    // must be a plain path, not the URL of the virtual file (like "file:///src/hl")
+    assertThat(html).contains("file=%2Fsrc%2Fhl%2Fstyles%2Fgithub.min.css");
   }
 
   public void testHighlightJsDirOutsideProjectIsNotServed() {

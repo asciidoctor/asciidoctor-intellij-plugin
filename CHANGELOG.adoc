@@ -15,6 +15,7 @@ This document provides a high-level view of the changes introduced by release.
 - Resolve references to other attributes in attribute values from `antora.yml` in the preview (#2142, #1866)
 - Improve the contrast of the table of contents in the dark preview theme (#2139)
 - Keep the original resolution when pasting an image from the clipboard on displays with scaling like 120% (#1893)
+- Resolve a relative `highlightjsdir` against the project root so that the highlight.js files are loaded (#1878)
 - Open the included file when clicking on a block in the preview that starts on the last line of an include, for example with `tags=` (#1018)
 - Highlight URLs in quoted block attributes like the attribution of a quote block (#838)
 - Suggest the listing delimiter `----` for `[source]` blocks and the literal delimiter `+....+` for diagram blocks like `[plantuml]` as a weak warning when they use the open block delimiter `--`, with a quick fix (#457)
