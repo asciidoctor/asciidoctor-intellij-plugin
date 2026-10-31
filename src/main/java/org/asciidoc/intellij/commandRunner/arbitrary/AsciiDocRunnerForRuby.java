@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.commandRunner.arbitrary;
 
+import org.asciidoc.intellij.injection.LanguageGuesser;
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.lang.Language;
 import com.intellij.openapi.util.SystemInfo;
@@ -30,7 +31,7 @@ public class AsciiDocRunnerForRuby extends AsciiDocRunnerArbitrary {
   @Override
   public boolean isApplicable(Language language) {
     return language != null //
-      && language.getID().equalsIgnoreCase(RUBY_LANGUAGE_ID) //
+      && LanguageGuesser.getLanguageName(language).equalsIgnoreCase(RUBY_LANGUAGE_ID) //
       && hasInterpreter();
   }
 

@@ -20,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class LanguageGuesser {
 
+  private static final String PLACEHOLDER_PREFIX = "asciidoc-placeholder-";
+
   private static final ConcurrentHashMap<Class<?>, Object> LANGUAGE_LOCKS = new ConcurrentHashMap<>();
 
   private static List<EmbeddedTokenTypesProvider> embeddedTokenTypesProviders() {
@@ -180,37 +182,67 @@ public class LanguageGuesser {
     }
   }
 
-  private static class GoLanguage extends Language {
+  /**
+   * Identify a language by its name, no matter if it is a language of the IDE or one of the placeholders of this class.
+   */
+  @NotNull
+  public static String getLanguageName(@NotNull Language language) {
+    String id = language.getID();
+    return id.startsWith(PLACEHOLDER_PREFIX) ? id.substring(PLACEHOLDER_PREFIX.length()) : id;
+  }
+
+  /**
+   * A language that only exists to tell the runners which language a block has, as the IDE doesn't provide it.
+   * Languages register themselves globally, therefore use a prefix for the ID.
+   * Otherwise, other plugins looking up a language by its name, for example Markdown for its code fences, would find it,
+   * and highlight their code fences with a language that has no parser instead of falling back to TextMate.
+   */
+  private abstract static class PlaceholderLanguage extends Language {
+    private final String name;
+
+    protected PlaceholderLanguage(String name) {
+      super(PLACEHOLDER_PREFIX + name);
+      this.name = name;
+    }
+
+    @NotNull
+    @Override
+    public String getDisplayName() {
+      return name;
+    }
+  }
+
+  private static class GoLanguage extends PlaceholderLanguage {
     protected GoLanguage() {
       super("go");
     }
   }
 
-  private static class PythonLanguage extends Language {
+  private static class PythonLanguage extends PlaceholderLanguage {
     protected PythonLanguage() {
       super("python");
     }
   }
 
-  private static class PowershellLanguage extends Language {
+  private static class PowershellLanguage extends PlaceholderLanguage {
     protected PowershellLanguage() {
       super("powershell");
     }
   }
 
-  private static class RubyLanguage extends Language {
+  private static class RubyLanguage extends PlaceholderLanguage {
     protected RubyLanguage() {
       super("ruby");
     }
   }
 
-  private static class JavaScriptLanguage extends Language {
+  private static class JavaScriptLanguage extends PlaceholderLanguage {
     protected JavaScriptLanguage() {
       super("javascript");
     }
   }
 
-  private static class TypeScriptLanguage extends Language {
+  private static class TypeScriptLanguage extends PlaceholderLanguage {
     protected TypeScriptLanguage() {
       super("typescript");
     }

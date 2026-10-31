@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.commandRunner.arbitrary;
 
+import org.asciidoc.intellij.injection.LanguageGuesser;
 import com.intellij.lang.Language;
 import com.intellij.openapi.util.SystemInfo;
 import org.asciidoc.intellij.AsciiDocBundle;
@@ -32,7 +33,7 @@ public class AsciiDocRunnerForPowershell extends AsciiDocRunnerArbitrary {
 
   @Override
   public boolean isApplicable(@NotNull Language language) {
-    String id = language.getID().toLowerCase(Locale.ROOT);
+    String id = LanguageGuesser.getLanguageName(language).toLowerCase(Locale.ROOT);
     String displayName = language.getDisplayName().toLowerCase(Locale.ROOT);
     return (isPowerShell(id) || isPowerShell(displayName)) && hasInterpreter();
   }

@@ -79,6 +79,15 @@ public class AsciiDocInjectionTest extends LightPlatformCodeInsightFixture4TestC
     Assert.assertTrue(lookupStrings.toString(), lookupStrings.contains("json"));
   }
 
+  @Test
+  public void shouldNotRegisterPlaceholderLanguageUnderItsPlainName() {
+    var language = LanguageGuesser.guessLanguage("source-go");
+    Assert.assertNotNull(language);
+    Assert.assertEquals("go", LanguageGuesser.getLanguageName(language));
+    // other plugins like Markdown look up languages by their ID, and they'd pick up a language without a parser for their code fences
+    Assert.assertNull(com.intellij.lang.Language.findLanguageByID("go"));
+  }
+
   private void withInjectedContent(PsiFile file, Consumer<PsiFile> action) {
     var quickEdit = new QuickEditAction();
     var handler = quickEdit.invokeImpl(getProject(), myFixture.getEditor(), file);

@@ -1,5 +1,6 @@
 package org.asciidoc.intellij.commandRunner.arbitrary;
 
+import org.asciidoc.intellij.injection.LanguageGuesser;
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
@@ -35,7 +36,7 @@ public class AsciiDocRunnerForJavaScript extends AsciiDocRunnerArbitrary {
   @Override
   public boolean isApplicable(Language language) {
     return language != null //
-      && language.getID().equalsIgnoreCase(JAVA_SCRIPT_LANGUAGE_ID) //
+      && LanguageGuesser.getLanguageName(language).equalsIgnoreCase(JAVA_SCRIPT_LANGUAGE_ID) //
       && hasInterpreter();
   }
 
