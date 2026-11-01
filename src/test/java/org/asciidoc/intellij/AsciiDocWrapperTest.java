@@ -318,7 +318,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       writer.flush();
       String html = asciidocWrapper.render(":stylesheet: test.css", Collections.emptyList());
       html = "<head></head>" + html;
-      html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", null, null, asciidocWrapper.getAttributes(), getProject());
+      html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", null, null, null, asciidocWrapper.getAttributes(), getProject());
       assertThat(html).withFailMessage("should contain testcss").contains("testcss");
       assertThat(html).withFailMessage("should not contain standardcss").doesNotContain("standardcss");
     }
@@ -333,7 +333,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       :stylesdir: https://example.com
       :stylesheet: dark.css""", Collections.emptyList());
     html = "<head></head>" + html;
-    html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", null, null, asciidocWrapper.getAttributes(), getProject());
+    html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", null, null, null, asciidocWrapper.getAttributes(), getProject());
     assertThat(html).withFailMessage("should contain testcss").containsPattern("<link[^>]*https://example.com/dark.css");
     assertThat(html).withFailMessage("should contain standardcss as backup").contains("standardcss");
   }
@@ -342,7 +342,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     String html = asciidocWrapper.render(":linkcss:\n" +
       ":stylesheet: https://example.com/dark.css", Collections.emptyList());
     html = "<head></head>" + html;
-    html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", null, null, asciidocWrapper.getAttributes(), getProject());
+    html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", null, null, null, asciidocWrapper.getAttributes(), getProject());
     assertThat(html).withFailMessage("should contain testcss").containsPattern("<link[^>]*https://example.com/dark.css");
     assertThat(html).withFailMessage("should contain standardcss as backup").contains("standardcss");
   }
@@ -358,7 +358,7 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
       writerFooter.flush();
       String html = asciidocWrapper.render(":docinfo: shared", Collections.emptyList());
       html = "<head></head><body>" + html + "</body>";
-      html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", null, null, asciidocWrapper.getAttributes(), getProject());
+      html = AsciiDocWrapper.enrichPage(html, "/* standardcss */", null, null, null, asciidocWrapper.getAttributes(), getProject());
       assertThat(html).contains("myHeader");
       assertThat(html).contains("myFooter");
     }
@@ -368,6 +368,22 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     if (!docinfoFooter.delete()) {
       throw new RuntimeException("unable to delete file");
     }
+  }
+
+  public void testShouldInjectCarouselsScriptWhenCarouselIsPresent() {
+    String html = "<html><head></head><body>" +
+      "<div id=\"content\"><div class=\"openblock carousel is-loading\">carousel</div></div>" +
+      "</body></html>";
+    String enriched = AsciiDocWrapper.enrichPage(html, null, null, null,
+      "<script src=\"carousels.js\"></script>", new HashMap<>(), getProject());
+    assertThat(enriched).contains("<script src=\"carousels.js\"></script></body>");
+  }
+
+  public void testShouldNotInjectCarouselsScriptWithoutCarousel() {
+    String html = "<html><head></head><body><div id=\"content\">text</div></body></html>";
+    String enriched = AsciiDocWrapper.enrichPage(html, null, null, null,
+      "<script src=\"carousels.js\"></script>", new HashMap<>(), getProject());
+    assertThat(enriched).doesNotContain("carousels.js");
   }
 
   // disabled due to classloader problems; plugin's Snake YAML is not used
