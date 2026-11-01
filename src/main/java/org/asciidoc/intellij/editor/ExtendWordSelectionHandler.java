@@ -167,8 +167,10 @@ public class ExtendWordSelectionHandler extends ExtendWordSelectionHandlerBase {
         if (startFormatting.getNode() != null && SYMMETRIC_FORMATTING.get(startFormatting.getNode().getElementType()) == endFormatting.getNode().getElementType()) {
           // we might be looking at the identical token (for example a double quote) for start and end,
           // prevent to report this with its end first and start second, which would lead to an inverse and icorrect range
-          if (startFormatting.getTextRange().getEndOffset() < endFormatting.getTextRange().getStartOffset()) {
-            addRange(ranges, TextRange.create(startFormatting.getTextRange().getEndOffset(), endFormatting.getTextRange().getStartOffset()));
+          int innerStart = startFormatting.getTextRange().getEndOffset();
+          int innerEnd = endFormatting.getTextRange().getStartOffset();
+          if (innerStart < innerEnd) {
+            addRange(ranges, TextRange.create(innerStart, innerEnd));
           }
         }
         addRange(ranges, TextRange.create(startFormatting.getTextOffset() + startOffset, endFormatting.getTextRange().getEndOffset() + endOffset));
