@@ -735,6 +735,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "__IntelliJTools.addCopyButtons && __IntelliJTools.addCopyButtons();" +
             "__IntelliJTools.addRunButtons && __IntelliJTools.addRunButtons();" +
             "}" +
+            "}" +
+            // signal early once the DOM has been replaced, so a slow mermaid, link or image processing doesn't delay the next refresh
+            "function signalRendered() {" +
             "window.JavaPanelBridge && window.JavaPanelBridge.rendered(" + iterationStamp + ");" +
             "}" +
             "function updateContent() { " +
@@ -761,6 +764,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "__IntelliJTools.clearCopyButtons && __IntelliJTools.clearCopyButtons();" +
             "__IntelliJTools.clearRunButtons && __IntelliJTools.clearRunButtons();" +
             "elem2.parentNode.replaceChild(div.firstChild, elem2); " +
+            "signalRendered(); " +
             "finish(); }); } " +
             // if no math was present before, replace contents, and do the MathJax typesetting afterwards in case Math has been added
             "else { " +
@@ -769,6 +773,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
             "__IntelliJTools.clearCopyButtons && __IntelliJTools.clearCopyButtons();" +
             "__IntelliJTools.clearRunButtons && __IntelliJTools.clearRunButtons();" +
             "elem.parentNode.replaceChild(div.firstChild, elem); " +
+            "signalRendered(); " +
             "MathJax.Hub.Typeset(div.firstChild); " +
             "finish(); " +
             "} " +
@@ -794,7 +799,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     try {
       // slow down the rendering of the next version of the preview until the rendering if the current version is complete
       // this prevents us building up a queue that would lead to a lagging preview
-      if (htmlParam.length() > 0 && !rendered.await(3, TimeUnit.SECONDS)) {
+      if (htmlParam.length() > 0 && !rendered.await(10, TimeUnit.SECONDS)) {
         // error handling only if:
         // the preview has rendered once -- as we don't want to close a window that is opening
         // this preview hasn't been disposed -- as this wouldn't make much sense
