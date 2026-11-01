@@ -12,6 +12,7 @@ import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.ElementManipulator;
 import com.intellij.psi.ElementManipulators;
@@ -307,16 +308,33 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
     if (otherAntoraModuleDir != null && myAntoraModuleDir != null) {
       ElementManipulator<PsiElement> manipulator = ElementManipulators.getManipulator(this.getElement());
       if (manipulator != null) {
-        VirtualFile otherAntoraPagesDir = AsciiDocUtil.findAntoraPagesDir(otherElement);
         VirtualFile otherVf;
         if (otherElement instanceof PsiDirectory psiDirectory) {
           otherVf = psiDirectory.getVirtualFile();
         } else {
           otherVf = otherElement.getContainingFile().getVirtualFile();
         }
-        if (otherVf.getCanonicalPath() != null && otherAntoraPagesDir != null &&
-          otherAntoraPagesDir.getCanonicalPath() != null &&
-          otherVf.getCanonicalPath().startsWith(otherAntoraPagesDir.getCanonicalPath())) {
+        String family = null;
+        VirtualFile otherAntoraFamilyDir = null;
+        // the partials directory can be inside the pages directory, therefore check the more specific directories first
+        for (String candidate : List.of(AsciiDocUtil.FAMILY_PARTIAL, AsciiDocUtil.FAMILY_EXAMPLE, AsciiDocUtil.FAMILY_IMAGE,
+          AsciiDocUtil.FAMILY_ATTACHMENT, AsciiDocUtil.FAMILY_PAGE)) {
+          VirtualFile dir = switch (candidate) {
+            case AsciiDocUtil.FAMILY_PARTIAL -> AsciiDocUtil.findAntoraPartials(otherElement);
+            case AsciiDocUtil.FAMILY_EXAMPLE -> AsciiDocUtil.findAntoraExamplesDir(otherElement);
+            case AsciiDocUtil.FAMILY_IMAGE -> AsciiDocUtil.findAntoraImagesDir(otherElement);
+            case AsciiDocUtil.FAMILY_ATTACHMENT -> AsciiDocUtil.findAntoraAttachmentsDir(otherElement);
+            default -> AsciiDocUtil.findAntoraPagesDir(otherElement);
+          };
+          if (dir != null && VfsUtilCore.isAncestor(dir, otherVf, false)) {
+            family = candidate;
+            otherAntoraFamilyDir = dir;
+            break;
+          }
+        }
+        boolean isPage = AsciiDocUtil.FAMILY_PAGE.equals(family);
+        boolean isNavOrStartPage = this.macroName.equals("antora-nav") || this.macroName.equals("antora-startpage");
+        if (otherAntoraFamilyDir != null && (isPage || !isNavOrStartPage)) {
           if (this.macroName.equals("antora-nav")) {
             String relativePath = FileUtil.getRelativePath(otherVf.getParent().getPath(),
               otherVf.getPath(), '/');
@@ -361,12 +379,16 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
               sb.append(otherAntoraModuleDir.getName());
               sb.append(":");
             }
+            boolean defaultFamily = AsciiDocUtil.FAMILY_IMAGE.equals(family) && IMAGE_MACROS.contains(macroName);
+            if (!isPage && !defaultFamily) {
+              sb.append(family).append("$");
+            }
             String relativePath;
-            if (macroName.equals("include") && Objects.equals(myAntoraModuleDir, otherAntoraModuleDir)) {
+            if (isPage && macroName.equals("include") && Objects.equals(myAntoraModuleDir, otherAntoraModuleDir)) {
               // includes within the same module will always be relative to the file
               relativePath = FileUtil.getRelativePath(myElement.getContainingFile().getVirtualFile().getParent().getPath(), otherVf.getPath(), '/');
             } else {
-              relativePath = FileUtil.getRelativePath(otherAntoraPagesDir.getPath(), otherVf.getPath(), '/');
+              relativePath = FileUtil.getRelativePath(otherAntoraFamilyDir.getPath(), otherVf.getPath(), '/');
             }
             if (relativePath != null) {
               sb.append(relativePath);
@@ -726,6 +748,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
 
   // set during the resolve when the result comes from the fallback to an Antora page alias
   private boolean resolvedViaPageAlias;
+
+  private static final Set<String> IMAGE_MACROS = Set.of("image", "video", "audio");
 
   public boolean inspectAntoraXrefViaPageAlias() {
     if (!"xref".equals(macroName) || !isFile() || key.isEmpty() || isAnchor) {
