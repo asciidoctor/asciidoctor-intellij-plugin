@@ -24,7 +24,7 @@ public class AsciiDocSearchScopeWithName extends GlobalSearchScope {
 
   @Override
   protected int calcHashCode() {
-    return Objects.hash(name);
+    return Objects.hashCode(name);
   }
 
   @SuppressWarnings("checkstyle:EqualsHashCode")

@@ -226,7 +226,7 @@ tasks {
     val fixedErrorProneChecks = arrayOf(
         "NonApiType", "BooleanLiteral", "UnnecessaryStringBuilder", "AnnotateFormatMethod",
         "LoopOverCharArray", "DuplicateAssertion", "UnusedNestedClass", "AlmostJavadoc", "StringConcatToTextBlock",
-        "PatternMatchingInstanceof", "ArgumentSelectionDefectChecker"
+        "PatternMatchingInstanceof", "ArgumentSelectionDefectChecker", "HashCodeInObjectsHash"
     )
 
     compileJava {
