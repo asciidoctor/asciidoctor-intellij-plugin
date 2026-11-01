@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.45.13
 
 - Reduce jumps of the JCEF preview to the top (#1767)
+- Upgrade to PlantUML 1.2026.9 ahead of asciidoctorj-diagram-plantuml (#1917). Since PlantUML 1.2026.3, a `salt` line inside `@startuml` is rejected; use `@startsalt` without that line instead
 
 === 0.45.12
 
@@ -19,6 +20,7 @@ This document provides a high-level view of the changes introduced by release.
 - Resolve references to other attributes in attribute values from `antora.yml` in the preview (#2142, #1866)
 - Improve the contrast of the table of contents in the dark preview theme (#2139)
 - Reduce jumps of the JCEF preview to the top (#1767)
+- Upgrade to PlantUML 1.2026.9 ahead of asciidoctorj-diagram-plantuml (#1917). Since PlantUML 1.2026.3, a `salt` line inside `@startuml` is rejected; use `@startsalt` without that line instead
 - Warn when an Antora xref points to a `page-aliases` alias instead of the page, with a quick fix (#1772)
 - Update Antora references when moving a file between pages, partials, examples, images and attachments (#1765)
 - Use the text selected in the editor as the default file name and alt text when pasting an image (#1680)

@@ -171,7 +171,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     myDownloadDependenciesHelp = ContextHelpLabel.create(
       AsciiDocBundle.message(
         "asciidoc.download.folderandcontents",
-        (AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().getName() + ", " + AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().getName() + ", " + AsciiDocDownloaderUtil.getAsciidoctorJDiagramDitaaminiFile().getName() + ", " + AsciiDocDownloaderUtil.getAsciidoctorJDiagramBatikFile().getName() + " and " + AsciiDocDownloaderUtil.getAsciidoctorJPdfFile().getName()),
+        (AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().getName() + ", " + AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().getName() + ", " + AsciiDocDownloaderUtil.getPlantumlLgplFile().getName() + ", " + AsciiDocDownloaderUtil.getAsciidoctorJDiagramDitaaminiFile().getName() + ", " + AsciiDocDownloaderUtil.getAsciidoctorJDiagramBatikFile().getName() + " and " + AsciiDocDownloaderUtil.getAsciidoctorJPdfFile().getName()),
         AsciiDocDownloaderUtil.DOWNLOAD_PATH)
     );
   }
@@ -210,7 +210,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
       myDownloadDependenciesLink.setVisible(true);
       myDownloadDependenciesHelp.setVisible(true);
       myDownloadDependenciesFailedDiagram.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().exists());
-      myDownloadDependenciesFailedPlantuml.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().exists());
+      myDownloadDependenciesFailedPlantuml.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().exists() || !AsciiDocDownloaderUtil.getPlantumlLgplFile().exists());
       myDownloadDependenciesFailedDitaamini.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramDitaaminiFile().exists());
       myDownloadDependenciesFailedBatik.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramBatikFile().exists());
       myDownloadDependenciesFailedJSyntrax.setVisible(!AsciiDocDownloaderUtil.getAsciidoctorJDiagramJSyntraxFile().exists());
@@ -314,7 +314,7 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
         if (!AsciiDocDownloaderUtil.getAsciidoctorJDiagramFile().exists()) {
           myDownloadDependenciesFailedDiagram.setVisible(true);
         }
-        if (!AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().exists()) {
+        if (!AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().exists() || !AsciiDocDownloaderUtil.getPlantumlLgplFile().exists()) {
           myDownloadDependenciesFailedPlantuml.setVisible(true);
         }
         if (!AsciiDocDownloaderUtil.getAsciidoctorJDiagramDitaaminiFile().exists()) {
@@ -342,12 +342,22 @@ public class AsciiDocPreviewSettingsForm implements AsciiDocPreviewSettings.Hold
     }, null);
 
     myDownloadDependenciesFailedPlantumlBrowser.setListener((source, data) -> {
-      BrowserUtil.browse(AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlUrl());
+      // two jars belong to PlantUML; offer the one that is still missing
+      if (AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().exists()) {
+        BrowserUtil.browse(AsciiDocDownloaderUtil.getPlantumlLgplUrl());
+      } else {
+        BrowserUtil.browse(AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlUrl());
+      }
     }, null);
 
     myDownloadDependenciesFailedPlantumlPickFile.setListener((source, data) -> {
-      AsciiDocDownloaderUtil.pickAsciidoctorJDiagramPlantuml(null, this::adjustDownloadDependenciesOptions, throwable ->
-        myDownloadDependenciesFailedPlantumlPickFile.setText("Pick failed: " + throwable.getMessage()));
+      if (AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile().exists()) {
+        AsciiDocDownloaderUtil.pickPlantumlLgpl(null, this::adjustDownloadDependenciesOptions, throwable ->
+          myDownloadDependenciesFailedPlantumlPickFile.setText("Pick failed: " + throwable.getMessage()));
+      } else {
+        AsciiDocDownloaderUtil.pickAsciidoctorJDiagramPlantuml(null, this::adjustDownloadDependenciesOptions, throwable ->
+          myDownloadDependenciesFailedPlantumlPickFile.setText("Pick failed: " + throwable.getMessage()));
+      }
     }, null);
 
     myDownloadDependenciesFailedDitaaminiBrowser.setListener((source, data) -> {

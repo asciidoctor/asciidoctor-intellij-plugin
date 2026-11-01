@@ -74,6 +74,13 @@ public class AsciiDocDownloaderUtil {
   public static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION = "1.2026.2";
   private static final String ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH = "802abcac3ad7e4a07135346af7950e913831acf3bdc17c83b73a9b75f5e364ad";
 
+  // Newer PlantUML than the one bundled in asciidoctorj-diagram-plantuml, placed in front of it on the class path.
+  // Remove once asciidoctorj-diagram-plantuml bundles this version or a newer one.
+  // https://github.com/asciidoctor/asciidoctorj-diagram/issues/71
+  // https://repo1.maven.org/maven2/net/sourceforge/plantuml/plantuml-lgpl/
+  public static final String PLANTUML_LGPL_VERSION = "1.2026.9";
+  private static final String PLANTUML_LGPL_HASH = "1dbb847646f0f440595fecd5f991e902aae47dc3391a01f64bab548089241a46";
+
   // https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-batik/
   public static final String ASCIIDOCTORJ_DIAGRAM_BATIK_VERSION = "1.19";
   private static final String ASCIIDOCTORJ_DIAGRAM_BATIK_HASH = "e12c99b9d14e02c6c9cc3f9af7adfa5102c255e341f9aa9c34ab7537e7a38cc5";
@@ -98,7 +105,7 @@ public class AsciiDocDownloaderUtil {
   }
 
   public static boolean downloadCompleteAsciidoctorJDiagram() {
-    return getAsciidoctorJDiagramFile().exists() && getAsciidoctorJDiagramPlantumlFile().exists() && getAsciidoctorJDiagramDitaaminiFile().exists() && getAsciidoctorJDiagramBatikFile().exists() && getAsciidoctorJDiagramJSyntraxFile().exists();
+    return getAsciidoctorJDiagramFile().exists() && getAsciidoctorJDiagramPlantumlFile().exists() && getPlantumlLgplFile().exists() && getAsciidoctorJDiagramDitaaminiFile().exists() && getAsciidoctorJDiagramBatikFile().exists() && getAsciidoctorJDiagramJSyntraxFile().exists();
   }
 
   public static boolean downloadCompleteAsciidoctorJPdf() {
@@ -118,6 +125,11 @@ public class AsciiDocDownloaderUtil {
 
   public static File getAsciidoctorJDiagramPlantumlFile() {
     String fileName = DOWNLOAD_PATH + File.separator + "asciidoctorj-diagram-plantuml-" + ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION + ".jar";
+    return new File(fileName);
+  }
+
+  public static File getPlantumlLgplFile() {
+    String fileName = DOWNLOAD_PATH + File.separator + "plantuml-lgpl-" + PLANTUML_LGPL_VERSION + ".jar";
     return new File(fileName);
   }
 
@@ -149,7 +161,13 @@ public class AsciiDocDownloaderUtil {
   public static void downloadAsciidoctorJDiagramPlantuml(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
     String downloadName = "asciidoctorj-diagram-plantuml-" + ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION + ".jar";
     String url = getAsciidoctorJDiagramPlantumlUrl();
-    download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH, project, () -> downloadAsciidoctorJDiagramDitaamini(project, onSuccess, onFailure), onFailure);
+    download(downloadName, url, ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH, project, () -> downloadPlantumlLgpl(project, onSuccess, onFailure), onFailure);
+  }
+
+  public static void downloadPlantumlLgpl(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
+    String downloadName = "plantuml-lgpl-" + PLANTUML_LGPL_VERSION + ".jar";
+    String url = getPlantumlLgplUrl();
+    download(downloadName, url, PLANTUML_LGPL_HASH, project, () -> downloadAsciidoctorJDiagramDitaamini(project, onSuccess, onFailure), onFailure);
   }
 
   public static void downloadAsciidoctorJDiagramDitaamini(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
@@ -190,6 +208,16 @@ public class AsciiDocDownloaderUtil {
     String downloadName = "asciidoctorj-diagram-plantuml-" + ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION + ".jar";
     try {
       pickFile(downloadName, project, ASCIIDOCTORJ_DIAGRAM_PLANTUML_HASH, onSuccess);
+    } catch (IOException ex) {
+      LOG.warn("Can't pick file '" + downloadName + "'", ex);
+      ApplicationManager.getApplication().invokeLater(() -> onFailure.accept(ex));
+    }
+  }
+
+  public static void pickPlantumlLgpl(@Nullable Project project, @NotNull Runnable onSuccess, @NotNull Consumer<Throwable> onFailure) {
+    String downloadName = "plantuml-lgpl-" + PLANTUML_LGPL_VERSION + ".jar";
+    try {
+      pickFile(downloadName, project, PLANTUML_LGPL_HASH, onSuccess);
     } catch (IOException ex) {
       LOG.warn("Can't pick file '" + downloadName + "'", ex);
       ApplicationManager.getApplication().invokeLater(() -> onFailure.accept(ex));
@@ -256,6 +284,11 @@ public class AsciiDocDownloaderUtil {
     return "https://repo1.maven.org/maven2/org/asciidoctor/asciidoctorj-diagram-plantuml/" +
       ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION + "/asciidoctorj-diagram-plantuml-" +
       ASCIIDOCTORJ_DIAGRAM_PLANTUML_VERSION + ".jar";
+  }
+
+  public static String getPlantumlLgplUrl() {
+    return "https://repo1.maven.org/maven2/net/sourceforge/plantuml/plantuml-lgpl/" +
+      PLANTUML_LGPL_VERSION + "/plantuml-lgpl-" + PLANTUML_LGPL_VERSION + ".jar";
   }
 
   public static String getAsciidoctorJDiagramBatikUrl() {

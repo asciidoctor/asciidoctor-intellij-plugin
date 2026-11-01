@@ -549,6 +549,11 @@ public class AsciiDocWrapper {
         if (file2.exists()) {
           urls.add(file2.toURI().toURL());
         }
+        // must be before the JAR with the bundled PlantUML to take precedence
+        File plantumlLgpl = AsciiDocDownloaderUtil.getPlantumlLgplFile();
+        if (plantumlLgpl.exists()) {
+          urls.add(plantumlLgpl.toURI().toURL());
+        }
         File file3 = AsciiDocDownloaderUtil.getAsciidoctorJDiagramPlantumlFile();
         if (file3.exists()) {
           urls.add(file3.toURI().toURL());
