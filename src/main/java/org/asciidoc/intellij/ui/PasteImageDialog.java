@@ -110,6 +110,10 @@ public final class PasteImageDialog extends DialogWrapper implements ImageAttrib
     return super.doValidate();
   }
 
+  public void setInitialAltText(@NotNull String altText) {
+    attributesPanel.setInitialAltText(altText);
+  }
+
   public String getSelectedActionCommand() {
     return buttonGroup.getSelection().getActionCommand();
   }

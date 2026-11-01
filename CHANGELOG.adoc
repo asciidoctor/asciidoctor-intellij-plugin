@@ -16,6 +16,7 @@ This document provides a high-level view of the changes introduced by release.
 - Improve the contrast of the table of contents in the dark preview theme (#2139)
 - Warn when an Antora xref points to a `page-aliases` alias instead of the page, with a quick fix (#1772)
 - Update Antora references when moving a file between pages, partials, examples, images and attachments (#1765)
+- Use the text selected in the editor as the default file name and alt text when pasting an image (#1680)
 - Keep the original resolution when pasting an image from the clipboard on displays with scaling like 120% (#1893)
 - Resolve a relative `highlightjsdir` against the project root so that the highlight.js files are loaded (#1878)
 - Open the included file when clicking on a block in the preview that starts on the last line of an include, for example with `tags=` (#1018)

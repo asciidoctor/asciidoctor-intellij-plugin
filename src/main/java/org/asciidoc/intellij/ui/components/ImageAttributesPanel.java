@@ -26,6 +26,11 @@ public final class ImageAttributesPanel extends JPanel {
     setupPanel();
   }
 
+  public void setInitialAltText(@NotNull String altText) {
+    altTextField.setText(altText);
+    altCheckBox.setSelected(true);
+  }
+
   private void enableCheckboxAndRemoveTooltip() {
     widthCheckBox.setEnabled(true);
     widthCheckBox.setToolTipText(null);

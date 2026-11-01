@@ -166,6 +166,8 @@ public class PasteImageAction extends AsciiDocAction {
       final CompletableFuture<Optional<Integer>> initialWidthFuture =
         CompletableFuture.completedFuture(Optional.of(bufferedImage.getWidth()));
       final PasteImageDialog dialog = createPasteImageDataDialog(options, initialWidthFuture);
+      String selectedText = editor.getSelectionModel().getSelectedText();
+      PasteImageSelection.toAltText(selectedText).ifPresent(dialog::setInitialAltText);
 
       dialog.show();
 
@@ -177,7 +179,8 @@ public class PasteImageAction extends AsciiDocAction {
         FileSaverDialog saveFileDialog = FileChooserFactory.getInstance().createSaveFileDialog(descriptor, project);
         String ext = ACTION_SAVE_PNG.equals(dialog.getSelectedActionCommand()) ? "png" : "jpg";
         String date = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss-SSS").format(LocalDateTime.now(ZoneId.systemDefault()));
-        VirtualFileWrapper destination = saveFileDialog.save(initialTargetDirectory, "image-" + date + "." + ext);
+        VirtualFileWrapper destination = saveFileDialog.save(initialTargetDirectory,
+          PasteImageSelection.toFileName(selectedText, ext).orElse("image-" + date + "." + ext));
         if (destination != null) {
           memorizeTargetFolder(destination);
           CommandProcessor.getInstance().executeCommand(project,
@@ -239,6 +242,7 @@ public class PasteImageAction extends AsciiDocAction {
         options.add(onlyReference);
 
         final PasteImageDialog dialog = PasteImageDialog.createPasteImageFileDialog(options, getImageWidth(imageVirtualFile));
+        PasteImageSelection.toAltText(editor.getSelectionModel().getSelectedText()).ifPresent(dialog::setInitialAltText);
 
         dialog.show();
 
