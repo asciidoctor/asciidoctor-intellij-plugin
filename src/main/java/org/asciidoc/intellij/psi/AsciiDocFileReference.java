@@ -305,7 +305,9 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   public PsiElement bindToElement(@NotNull PsiElement otherElement) {
     VirtualFile otherAntoraModuleDir = AsciiDocUtil.findAntoraModuleDir(otherElement);
     VirtualFile myAntoraModuleDir = AsciiDocUtil.findAntoraModuleDir(this.getElement());
-    if (otherAntoraModuleDir != null && myAntoraModuleDir != null) {
+    if (otherAntoraModuleDir == null && myAntoraModuleDir == null) {
+      bindToElementWithoutAntora(otherElement);
+    } else if (otherAntoraModuleDir != null && myAntoraModuleDir != null) {
       ElementManipulator<PsiElement> manipulator = ElementManipulators.getManipulator(this.getElement());
       if (manipulator != null) {
         VirtualFile otherVf;
@@ -399,6 +401,39 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       }
     }
     return otherElement;
+  }
+
+  /**
+   * Update a plain relative path after the target has been moved.
+   * Paths using attributes, absolute paths, URLs and anchors are left untouched as the new path can't be derived safely.
+   */
+  private void bindToElementWithoutAntora(@NotNull PsiElement otherElement) {
+    if (isAnchor || !PLAIN_PATH_MACROS.contains(macroName) || base.startsWith("/") || base.contains("{") || key.contains("{")) {
+      return;
+    }
+    ElementManipulator<PsiElement> manipulator = ElementManipulators.getManipulator(this.getElement());
+    PsiFile myFile = this.getElement().getContainingFile().getOriginalFile();
+    if (manipulator == null || myFile.getVirtualFile() == null || myFile.getVirtualFile().getParent() == null) {
+      return;
+    }
+    VirtualFile otherVf = otherElement instanceof PsiDirectory psiDirectory ? psiDirectory.getVirtualFile() :
+      otherElement.getContainingFile() != null ? otherElement.getContainingFile().getVirtualFile() : null;
+    if (otherVf == null) {
+      return;
+    }
+    // a different name means that the target was renamed, which is handled separately; or it was resolved using a different extension
+    String segment = StringUtil.trimEnd(key, "/");
+    if (!otherVf.getName().equals(segment.substring(segment.lastIndexOf('/') + 1))) {
+      return;
+    }
+    String relativePath = FileUtil.getRelativePath(myFile.getVirtualFile().getParent().getPath(), otherVf.getPath(), '/');
+    if (relativePath == null) {
+      return;
+    }
+    if (key.endsWith("/")) {
+      relativePath += "/";
+    }
+    manipulator.handleContentChange(this.getElement(), getRangeInElement().shiftLeft(base.length()).grown(base.length()), relativePath);
   }
 
   private void multiResolveAnchor(Set<LookupElementBuilder> items, String key, List<ResolveResult> results, boolean ignoreCase, ArrayDeque<Trinity<String, String, String>> stack) {
@@ -750,6 +785,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
   private boolean resolvedViaPageAlias;
 
   private static final Set<String> IMAGE_MACROS = Set.of("image", "video", "audio");
+  private static final Set<String> PLAIN_PATH_MACROS = Set.of("link", "include", "xref");
 
   public boolean inspectAntoraXrefViaPageAlias() {
     if (!"xref".equals(macroName) || !isFile() || key.isEmpty() || isAnchor) {
