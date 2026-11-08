@@ -9,10 +9,36 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase;
 import com.intellij.util.DocumentUtil;
 import org.asciidoc.intellij.editor.AsciiDocSplitEditorProvider;
 
+import java.util.Objects;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class SplitFileEditorTest extends BasePlatformTestCase {
+
+  private static final FileEditorState NON_NULL_ONLY = new FileEditorState() {
+    @Override
+    public boolean canBeMergedWith(FileEditorState otherState, FileEditorStateLevel level) {
+      // same as the platform's TextEditorState
+      return Objects.requireNonNull(otherState) == this;
+    }
+  };
+
+  public void testStateWithoutSubStatesCanBeMergedWithStateWithSubStates() {
+    SplitFileEditor.MyFileEditorState withoutStates = new SplitFileEditor.MyFileEditorState("SPLIT", null, null);
+    SplitFileEditor.MyFileEditorState withStates = new SplitFileEditor.MyFileEditorState("SPLIT", NON_NULL_ONLY, NON_NULL_ONLY);
+    assertThat(withoutStates.canBeMergedWith(withStates, FileEditorStateLevel.NAVIGATION)).isTrue();
+    assertThat(withStates.canBeMergedWith(withStates, FileEditorStateLevel.NAVIGATION)).isTrue();
+  }
+
+  public void testStateWithSubStatesCannotBeMergedWithStateWithoutSubStates() {
+    SplitFileEditor.MyFileEditorState withoutStates = new SplitFileEditor.MyFileEditorState("SPLIT", null, null);
+    SplitFileEditor.MyFileEditorState withFirst = new SplitFileEditor.MyFileEditorState("SPLIT", NON_NULL_ONLY, null);
+    SplitFileEditor.MyFileEditorState withSecond = new SplitFileEditor.MyFileEditorState("SPLIT", null, NON_NULL_ONLY);
+    assertThat(withFirst.canBeMergedWith(withoutStates, FileEditorStateLevel.NAVIGATION)).isFalse();
+    assertThat(withSecond.canBeMergedWith(withoutStates, FileEditorStateLevel.NAVIGATION)).isFalse();
+    assertThat(withFirst.canBeMergedWith(withSecond, FileEditorStateLevel.NAVIGATION)).isFalse();
+  }
 
   public void testGetStateDuringBulkUpdateDoesNotFail() {
     myFixture.configureByText("test.adoc", "some text");

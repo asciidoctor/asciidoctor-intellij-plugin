@@ -325,8 +325,13 @@ public abstract class SplitFileEditor<E1 extends TextEditor, E2 extends FileEdit
     @Override
     public boolean canBeMergedWith(FileEditorState otherState, FileEditorStateLevel level) {
       return otherState instanceof MyFileEditorState myFileEditorState
-        && (myFirstState == null || myFirstState.canBeMergedWith(myFileEditorState.myFirstState, level))
-        && (mySecondState == null || mySecondState.canBeMergedWith(myFileEditorState.mySecondState, level));
+        && canBeMerged(myFirstState, myFileEditorState.myFirstState, level)
+        && canBeMerged(mySecondState, myFileEditorState.mySecondState, level);
+    }
+
+    // the other state might not have a sub-state yet, and the platform doesn't accept null as a parameter
+    private static boolean canBeMerged(@Nullable FileEditorState state, @Nullable FileEditorState otherState, FileEditorStateLevel level) {
+      return state == null || (otherState != null && state.canBeMergedWith(otherState, level));
     }
   }
 
