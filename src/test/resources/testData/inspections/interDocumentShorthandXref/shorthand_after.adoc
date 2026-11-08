@@ -1,0 +1,8 @@
+= Title
+
+[#local]
+== Local
+
+See <<local>>, <<#local>> and <<local,text>>.
+
+See xref:other.adoc#anchor[the text] and xref:other.adoc#anchor[] and xref:sub/other.adoc#["a, b"].

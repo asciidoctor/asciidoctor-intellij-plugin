@@ -321,6 +321,10 @@
                      groupName="General" enabledByDefault="true" level="WARNING"
                      shortName="AsciiDocXrefToPageAlias"
                      implementationClass="org.asciidoc.intellij.inspections.AsciiDocXrefToPageAliasInspection"/>
+    <localInspection language="AsciiDoc" displayName="Shorthand cross-reference to another document" groupPath="AsciiDoc"
+                     groupName="General" enabledByDefault="true" level="WARNING"
+                     shortName="AsciiDocInterDocumentShorthandXref"
+                     implementationClass="org.asciidoc.intellij.inspections.AsciiDocInterDocumentShorthandXrefInspection"/>
     <localInspection language="AsciiDoc" displayName="Inline macro used with block macro syntax" groupPath="AsciiDoc"
                      groupName="General" enabledByDefault="true" level="WARNING"
                      shortName="AsciiDocBlockMacroShouldBeInlineMacro"

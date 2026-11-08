@@ -1,0 +1,8 @@
+= Title
+
+[#local]
+== Local
+
+See <<local>>, <<#local>> and <<local,text>>.
+
+See <<<warning descr="Use the xref macro for a cross-reference to another document; the shorthand syntax is only for references within the same document">other.adoc#anchor</warning>,the text>> and <<<warning descr="Use the xref macro for a cross-reference to another document; the shorthand syntax is only for references within the same document">other#anchor</warning>>> and <<<warning descr="Use the xref macro for a cross-reference to another document; the shorthand syntax is only for references within the same document">sub/other.adoc#</warning>,a, b>>.

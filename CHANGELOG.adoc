@@ -9,6 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.45.13
 
+- Warn about the deprecated shorthand cross-reference syntax `<<file.adoc#anchor,text>>` for references to other documents, with a quick fix to change it to `xref:file.adoc#anchor[text]` (#1867)
 - Update the path of `link:`, `xref:` and `include::` macros when the referenced file or folder is moved, also outside of Antora modules (#1915)
 - Don't show auto-generated section IDs in the completion or validation for cross-references when disabled via `:!sectids:` in the file, in an `.asciidoctorconfig` or in an `antora.yml` (#1845)
 - Avoid an exception when the navigation history compares the state of a split editor that has no text editor state
