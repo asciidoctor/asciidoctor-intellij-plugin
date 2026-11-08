@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.45.13
 
 - Avoid an exception when the navigation history compares the state of a split editor that has no text editor state
+- Reduce the load and the risk of UI freezes when many files change at once by combining the lookups for files that link to changed files
 - Allow up to 60 seconds to convert large Markdown files to AsciiDoc instead of failing after 2 seconds
 - Reduce jumps of the JCEF preview to the top (#1767)
 - Upgrade to PlantUML 1.2026.9 ahead of asciidoctorj-diagram-plantuml (#1917). Since PlantUML 1.2026.3, a `salt` line inside `@startuml` is rejected; use `@startsalt` without that line instead
