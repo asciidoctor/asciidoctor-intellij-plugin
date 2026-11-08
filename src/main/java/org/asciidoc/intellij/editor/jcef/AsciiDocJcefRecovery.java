@@ -74,10 +74,15 @@ public final class AsciiDocJcefRecovery {
   private static void registerSchemeHandlers() {
     try {
       CefApp cefApp = CefApp.getInstance();
-      for (JBCefApp.JBCefCustomSchemeHandlerFactory factory : JBCefApp.getCefCustomSchemeHandlerFactories()) {
-        cefApp.registerSchemeHandlerFactory(factory.getSchemeName(), factory.getDomainName(), factory);
+      // internal API, therefore use reflection
+      Method method = JBCefApp.class.getDeclaredMethod("getCefCustomSchemeHandlerFactories");
+      method.setAccessible(true);
+      for (Object entry : (Iterable<?>) method.invoke(null)) {
+        if (entry instanceof JBCefApp.JBCefCustomSchemeHandlerFactory factory) {
+          cefApp.registerSchemeHandlerFactory(factory.getSchemeName(), factory.getDomainName(), factory);
+        }
       }
-    } catch (RuntimeException | LinkageError e) {
+    } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
       LOG.warn("Unable to register scheme handlers after restarting JCEF", e);
     }
   }
