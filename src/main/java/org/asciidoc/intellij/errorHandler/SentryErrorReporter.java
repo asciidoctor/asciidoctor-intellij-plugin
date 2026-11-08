@@ -219,7 +219,7 @@ class SentryErrorReporter {
     final Map<String, Object> bundledPlugins = new HashMap<>();
     final Map<String, Object> activePlugins = new HashMap<>();
     for (IdeaPluginDescriptor plugin : PluginManager.getPlugins()) {
-      if (!plugin.isEnabled()) {
+      if (PluginManagerCore.isDisabled(plugin.getPluginId())) {
         continue;
       }
 

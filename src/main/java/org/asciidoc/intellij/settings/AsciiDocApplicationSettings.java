@@ -1,13 +1,12 @@
 package org.asciidoc.intellij.settings;
 
-import com.intellij.ide.impl.TrustedProjects;
+import com.intellij.ide.trustedProjects.TrustedProjects;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.EditorNotifications;
-import com.intellij.util.ThreeState;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Property;
@@ -69,7 +68,7 @@ public class AsciiDocApplicationSettings implements PersistentStateComponent<Asc
   }
 
   public Boolean getExtensionsEnabled(Project project, String root) {
-    if (TrustedProjects.getTrustedState(project) != ThreeState.YES) {
+    if (!TrustedProjects.isProjectTrusted(project)) {
       return false;
     }
     return this.extensionsEnabled.get(root);
@@ -83,7 +82,7 @@ public class AsciiDocApplicationSettings implements PersistentStateComponent<Asc
   }
 
   public Boolean getExtensionsPresent(Project project, String projectBasePath) {
-    if (TrustedProjects.getTrustedState(project) != ThreeState.YES) {
+    if (!TrustedProjects.isProjectTrusted(project)) {
       return false;
     }
     return this.extensionsPresent.get(projectBasePath);

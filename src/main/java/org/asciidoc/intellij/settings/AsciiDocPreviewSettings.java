@@ -1,8 +1,7 @@
 package org.asciidoc.intellij.settings;
 
-import com.intellij.ide.impl.TrustedProjects;
+import com.intellij.ide.trustedProjects.TrustedProjects;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.ThreeState;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Property;
@@ -183,7 +182,7 @@ public final class AsciiDocPreviewSettings {
   public SafeMode getSafeMode(Project project) {
     SafeMode safeMode = getSafeMode();
     if (safeMode == SafeMode.UNSAFE) {
-      if (project != null && TrustedProjects.getTrustedState(project) != ThreeState.YES) {
+      if (project != null && !TrustedProjects.isProjectTrusted(project)) {
         safeMode = SafeMode.SECURE;
       }
     }

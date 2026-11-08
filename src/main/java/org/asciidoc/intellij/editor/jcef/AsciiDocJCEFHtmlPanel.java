@@ -3,7 +3,7 @@ package org.asciidoc.intellij.editor.jcef;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.actions.OpenFileAction;
-import com.intellij.ide.impl.TrustedProjects;
+import com.intellij.ide.trustedProjects.TrustedProjects;
 import com.intellij.ide.lightEdit.LightEdit;
 import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.lang.Language;
@@ -405,7 +405,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         if (project == null) {
           return;
         }
-        if (!TrustedProjects.isTrusted(project)) {
+        if (!TrustedProjects.isProjectTrusted(project)) {
           return;
         }
         Language language = LanguageGuesser.guessLanguage("source-" + lang);

@@ -102,7 +102,7 @@ public final class PasteImageDialog extends DialogWrapper implements ImageAttrib
         widthField.validateContent();
       } catch (final ConfigurationException exception) {
         final String errorMessageWithoutFieldNamePrefix = exception
-          .getMessage()
+          .getMessageHtml().toString()
           .substring(ImageWidthField.FIELD_NAME.length() + 1);
         return new ValidationInfo(errorMessageWithoutFieldNamePrefix, widthField);
       }

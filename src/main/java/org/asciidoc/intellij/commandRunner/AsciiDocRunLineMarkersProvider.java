@@ -10,7 +10,7 @@ import com.intellij.ide.actions.runAnything.RunAnythingRunConfigurationProvider;
 import com.intellij.ide.actions.runAnything.activity.RunAnythingCommandProvider;
 import com.intellij.ide.actions.runAnything.activity.RunAnythingProvider;
 import com.intellij.ide.actions.runAnything.activity.RunAnythingRecentProjectProvider;
-import com.intellij.ide.impl.TrustedProjects;
+import com.intellij.ide.trustedProjects.TrustedProjects;
 import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -39,7 +39,7 @@ public class AsciiDocRunLineMarkersProvider extends RunLineMarkerContributor imp
 
   @Override
   public @Nullable Info getInfo(@NotNull PsiElement element) {
-    if (!TrustedProjects.isTrusted(element.getProject())) {
+    if (!TrustedProjects.isProjectTrusted(element.getProject())) {
       return null;
     }
     // Line markers need to be placed at leaf elements only

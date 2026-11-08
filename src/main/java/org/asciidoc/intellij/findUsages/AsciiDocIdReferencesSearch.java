@@ -4,7 +4,6 @@ import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -86,7 +85,6 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
   }
 
   private void search(@NotNull Processor<? super PsiReference> consumer, PsiElement element, String name, SearchScope scope) {
-    DumbService myDumbService = DumbService.getInstance(element.getProject());
     PsiFile[] files;
     boolean localSearch = false;
     if (scope instanceof GlobalSearchScope) {
@@ -110,7 +108,7 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
       String nameFinal = nameToSearch;
 
       GlobalSearchScope finalScope = (GlobalSearchScope) scope;
-      files = myDumbService.runReadActionInSmartMode(() -> {
+      files = ReadAction.nonBlocking(() -> {
         short context = UsageSearchContext.IN_CODE;
         if (element instanceof AsciiDocTagDeclaration) {
           context = UsageSearchContext.ANY;
@@ -118,7 +116,7 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
         return CacheManager.getInstance(element.getProject())
           .getFilesWithWord(nameFinal, context, finalScope, false);
         }
-      );
+      ).inSmartMode(element.getProject()).executeSynchronously();
 
       if (element instanceof AsciiDocAttributeDeclarationName) {
         Collection<AsciiDocAttributeDeclaration> asciiDocAttributeDeclarations = AsciiDocAttributeDeclarationKeyIndex.getInstance().getDeclarations(name, element.getProject(),
@@ -187,7 +185,7 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
       if (text == null) {
         LowLevelSearchUtil.processTexts(text, 0, text.length(), psiFile.getLanguage() == AsciiDocLanguage.INSTANCE ? asciidocSearcher : tagdeclarationSearcher, index -> {
           ProgressManager.checkCanceled();
-          myDumbService.runReadActionInSmartMode(() -> {
+          ReadAction.nonBlocking(() -> {
             PsiReference referenceAt = psiFile.findReferenceAt(index + (psiFile.getLanguage() == AsciiDocLanguage.INSTANCE ? 0 : 2));
             if (referenceAt instanceof PsiMultiReference psiMultiReference) {
               for (PsiReference reference : psiMultiReference.getReferences()) {
@@ -195,7 +193,8 @@ public class AsciiDocIdReferencesSearch extends QueryExecutorBase<PsiReference, 
               }
             }
             checkReference(consumer, element, referenceAt);
-          });
+            return null;
+          }).inSmartMode(element.getProject()).executeSynchronously();
           return true;
         });
       }

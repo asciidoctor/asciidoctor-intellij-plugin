@@ -59,6 +59,6 @@ public class IncompatiblePluginNotificationProvider implements EditorNotificatio
 
   public static boolean isIncompatiblePluginIntelliJScriptingInstalled() {
     IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(PLUGIN_ID_SCRIPTING_RUBY);
-    return plugin != null && plugin.isEnabled();
+    return plugin != null && !PluginManagerCore.isDisabled(plugin.getPluginId());
   }
 }

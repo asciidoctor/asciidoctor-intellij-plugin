@@ -4,7 +4,6 @@ import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -63,13 +62,13 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
   }
 
   private void search(@NotNull Processor<? super PsiReference> consumer, PsiElement element, String name, SearchScope scope) {
-    DumbService myDumbService = DumbService.getInstance(element.getProject());
     PsiFile[] files;
     if (scope instanceof GlobalSearchScope globalSearchScope) {
       // when the user searches all references
-      files = myDumbService.runReadActionInSmartMode(() ->
+      files = ReadAction.nonBlocking(() ->
         CacheManager.getInstance(element.getProject())
-          .getFilesWithWord(name, UsageSearchContext.IN_CODE, GlobalSearchScope.getScopeRestrictedByFileTypes(globalSearchScope, AsciiDocFileType.INSTANCE), false));
+          .getFilesWithWord(name, UsageSearchContext.IN_CODE, GlobalSearchScope.getScopeRestrictedByFileTypes(globalSearchScope, AsciiDocFileType.INSTANCE), false))
+        .inSmartMode(element.getProject()).executeSynchronously();
       if (files.length == 0) {
         return;
       }
@@ -107,7 +106,7 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
       final CharSequence text = ReadAction.compute(psiFile::getText);
       if (text != null) {
         LowLevelSearchUtil.processTexts(text, 0, text.length(), searcher, index -> {
-          myDumbService.runReadActionInSmartMode(() -> {
+          ReadAction.nonBlocking(() -> {
             try {
               PsiReference referenceAt = psiFile.findReferenceAt(index);
               if (referenceAt instanceof PsiMultiReference psiMultiReference) {
@@ -118,7 +117,8 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
               checkReference(consumer, element, referenceAt);
             } catch (PsiInvalidElementAccessException ignored) {
             }
-          });
+            return null;
+          }).inSmartMode(element.getProject()).executeSynchronously();
           return true;
         });
       }
