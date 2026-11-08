@@ -4,14 +4,11 @@
 https://antora.org/[Antora] helps to write and publish documentation websites.
 It allows combining documentation from multiple repositories into a single website.
 
-Each documentation component contains an `antora.yml` file https://docs.antora.org/antora/2.3/standard-directories/[with a common directory structure] with meta information about that component.
+Each documentation component contains an `antora.yml` file https://docs.antora.org/antora/latest/standard-directories/[with a common directory structure] with meta information about that component.
 
 == Pre-Requisites
 
-Users need to upgrade to version 0.30.31 or later of the plugin.
-Initial support has been added in issue https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/373[#373].
-
-Auto-complete in `antora.yml` files was implemented starting with plugin version 0.32.54.
+Install the plugin as it provides auto-complete in `antora.yml` files.
 
 == Detection of Antora
 
@@ -27,7 +24,7 @@ For example, `antora-playbook-author.yml` would be treated as an Antora playbook
 
 === Antora stylesheet for the preview
 
-Once the plugin detects that a page is part of an Antora module, it uses the Antora CSS theme for the preview (starting with plugin version 0.37.7).
+Once the plugin detects that a page is part of an Antora module, it uses the Antora CSS theme for the preview.
 The preview will be in light or dark mode as configured in the plugin's settings.
 
 To configure an individual stylesheet from a remote site, users should create an `.asciidoctorconfig` file like the following in the root or documentation folder of their project:
@@ -63,11 +60,6 @@ Otherwise, Asciidoctor will not be able to include files outside the document's 
 The plugin validates all references to files within the same component, and also across components.
 
 === Antora component and module name validation
-
-[NOTE]
-====
-Validation of component and module names requires plugin version 0.37.23 or later.
-====
 
 The plugin validates the referenced component and module names.
 If they don't exist, it will highlight this as an error in the editor window.
@@ -112,7 +104,7 @@ See section _xref:features/advanced/stylesheets.adoc#remote-stylesheet[Using a r
 
 The plugin reads all attributes defined in the module's `antora.yml` file's _asciidoc.attributes_ section and uses this for the preview and auto-completion.
 
-Starting with release 0.35.2 of the plugin, it also picks up attributes from an Antora playbook if this is within the same project.
+It also picks up attributes from an Antora playbook if this is within the same project.
 If the playbook and the components are in different Git repositories, this requires a xref:features/advanced/multimodule.adoc[multi-module project].
 
 The plugin sets multiple attributes to allow referencing files with the current Antora module:
@@ -135,8 +127,6 @@ While `imagesdir` and `attachmentsdir` use a relative path so that they work bes
 
 [NOTE]
 ====
-This is new in plugin version 0.38.6.
-
 Follow https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues/1177[asciidoctor/asciidoctor-intellij-plugin#1177] for updates on this feature.
 ====
 

@@ -16,7 +16,7 @@ See _xref:features/advanced/asciidoctorconfig-file.adoc[]_ for more details.
 * If the configuration references remote content like fonts or stylesheets, these will require an online connection for the preview to load them.
 * Only the JCEF preview supports proper stylesheets.
 Swing preview doesn't support modern CSS, and will therefore not support custom CSS.
-* **New with version 0.35.16:** If no online connection exists, or the local stylesheet is missing, the preview defaults to the standard stylesheet.
+* If no online connection exists, or the local stylesheet is missing, the preview defaults to the standard stylesheet.
 ====
 
 === Replace default stylesheet
@@ -50,8 +50,6 @@ body {
 
 [#remote-stylesheet]
 ==== Using a remote stylesheet
-
-NOTE: This has been available since the plugin version 0.31.31+.
 
 Once the document or the configuration set the `linkcss` attribute, the preview will link to an external stylesheet and will no longer embed the stylesheet.
 
@@ -116,7 +114,7 @@ The following example uses a dark skin.
 :stylesheet: fedora.css
 ----
 
-If the remote stylesheet is not available due to an unreachable server or a missing stylesheet, the preview will default to the standard stylesheet. Starting with release 0.37.52 of the plugin, the preview shows an error message to notify the user that this happened.
+If the remote stylesheet is not available due to an unreachable server or a missing stylesheet, the preview will default to the standard stylesheet. The preview shows an error message to notify the user that this happened.
 
 To debug problems with remote stylesheets, use the xref:features/preview/jcef-preview.adoc#devtools[DevTools available for the JCEF preview]. Looking at the console or network tab reveals the full error message why a remote stylesheet wasn't loaded.
 
@@ -128,7 +126,7 @@ The chapter https://asciidoctor.org/docs/user-manual/#docinfo-file["`Docinfo Fil
 [NOTE]
 ====
 * The contents will be embedded in the preview, therefore, relative links to the local file system will not work.
-* Attribute substitution is supported in plugin version 0.31.35+.
+* Attribute substitution is supported.
 To prevent an infinite recursion, substitution is limited to 100 attributes and 20 substitutions per attribute.
 ====
 

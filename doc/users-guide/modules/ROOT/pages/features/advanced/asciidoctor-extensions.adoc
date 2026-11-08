@@ -6,8 +6,7 @@ To see the rendered result in the preview, the plugin can use extensions while r
 
 [WARNING]
 ====
-This is an experimental feature starting with version 0.23.0. While it is experimental, names, conventions and functionality may change.
-Support for AsciidoctorJ extensions is available from 0.31.19.
+This is an experimental feature. While it is experimental, names, conventions and functionality may change.
 ====
 
 == Situation

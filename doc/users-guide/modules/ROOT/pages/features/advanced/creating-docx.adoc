@@ -4,11 +4,6 @@
 
 {description}
 
-[NOTE]
-====
-This feature is available since plugin version 0.37.26.
-====
-
 The user can choose menu:Create DOCX from current file[] from the editor's action toolbar to convert the current file to the DOCX format.
 If creation of the DOCX file succeeds, the exported file is opened in the system's default application, for example, Microsoft Word or LibreOffice.
 

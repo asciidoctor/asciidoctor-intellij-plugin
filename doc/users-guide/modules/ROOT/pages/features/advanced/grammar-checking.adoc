@@ -39,8 +39,8 @@ This plugin is available for both paid and free versions of IntelliJ.
 
 [NOTE]
 ====
-Scopes for Vale rules are available with plugin version 0.37.28+.
-For best scope support for _strong_, _emphasis_ and _link_, use the AsciiDoc plugin version 0.37.38+ and the Grazie Professional version 0.3.107+.
+Scopes for Vale rules are available.
+For best scope support for _strong_, _emphasis_ and _link_, use the Grazie Professional version 0.3.107+.
 ====
 
 The Grazie Professional plugin supports https://plugins.jetbrains.com/plugin/16136-grazie-professional/docs/project-style-guides.html[project style guides].

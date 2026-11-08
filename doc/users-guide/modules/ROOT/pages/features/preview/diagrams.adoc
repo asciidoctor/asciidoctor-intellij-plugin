@@ -17,7 +17,7 @@ The extension Asciidoctor Diagram renders the content of the editor, including a
 
 === Downloading Asciidoctor Diagram
 
-As of the AsciiDoc Plugin version 0.31.14+, Asciidoctor Diagram is no longer included in the plugin as default as it adds approximately 15 MB to the download of the installation and each update.
+Asciidoctor Diagram is not included in the plugin as default as it adds approximately 15 MB to the download of the installation and each update.
 
 // see: diagram-placeholder.rb + AsciiDocDownloadNotificationProvider.java
 When the preview includes a diagram, the plugin shows an editor notification asking the user to download the necessary dependency.
@@ -53,8 +53,6 @@ This is a folder that holds temporary files that are created, for example, for d
 
 When running in Asciidoctor's UNSAFE mode, the plugin creates a temporary folder outside the project.
 When running in any other mode, Asciidoctor needs to have this folder them relative to the document's folder.
-
-NOTE: Diagrams in the preview when running in any mode other than UNSAFE will only work starting with version 0.33.8.
 
 To avoid checking in these files, consider adding a file path to the ignore file of your version control system.
 
@@ -149,7 +147,7 @@ via the plugin's attribute settings, or via an `xref:features/advanced/asciidoct
 
 == Using embedded Mermaid support
 
-Since plugin version 0.38.1, there's an embedded Mermaid support that is embedded in the plugin and will render Mermaid diagrams within the IDE without external helpers.
+The plugin embeds Mermaid support and will render Mermaid diagrams within the IDE without external helpers.
 It is enabled by default from 0.45.8.
 
 To disable the support, clear the checkbox menu:Enable built-in Mermaid Diagrams support[] in the plugin's settings.

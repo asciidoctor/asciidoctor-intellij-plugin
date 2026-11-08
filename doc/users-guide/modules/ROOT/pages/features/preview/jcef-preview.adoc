@@ -70,7 +70,7 @@ With OSR turned off, the IDE doesn't close any more on closing the DevTools.
 Once OSR is turned off, unpinned tool windows can no longer show above the preview (see https://youtrack.jetbrains.com/issue/IDEA-252845[IDEA-252845]).
 ====
 
-For the AsciiDoc plugin 0.37.55+::
+Using an action::
 +
 --
 Use the menu item menu:Help[Find Action...] and choose "`Open Devtools Window for the current AsciiDoc Preview`".

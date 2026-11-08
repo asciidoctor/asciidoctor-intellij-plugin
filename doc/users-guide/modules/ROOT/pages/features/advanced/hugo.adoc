@@ -7,8 +7,6 @@ The AsciiDoc plugin for IntelliJ recognizes Hugo projects and will adjust accord
 Images in the static resources can be referenced with an absolute target.
 xref:features/advanced/frontmatter.adoc[] on a content page will be hidden from the preview.
 
-NOTE: Support for static resources was added in plugin version 0.37.41.
-
 == Pre-Requisites
 
 A project needs to have the following features for the AsciiDoc plugin for IntelliJ to recognize it as a Hugo project:

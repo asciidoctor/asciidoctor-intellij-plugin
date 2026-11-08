@@ -100,7 +100,7 @@ The IDE downloads the dictionaries for the selected languages once the user adds
 [[grazie]]
 // see: AsciiDocGrazieTextExtractor
 Starting with IntelliJ 2020.1, the bundled https://plugins.jetbrains.com/plugin/12175-grazie/[Grazie plugin] highlights possible grammar and spelling mistakes in the editor.
-As of plugin version 0.36.2, every heading and paragraph of the text will be checked.
+Every heading and paragraph of the text will be checked.
 It supports multiple languages: Once the user configured the languages in IDE's proofreading settings, the plugin detects the language of a section automatically.
 As it performs all checks locally with the help of libraries from https://languagetool.org/, it doesn't submit text written in the IDE to a third party cloud service.
 
@@ -151,7 +151,6 @@ Sometimes a user wants to run the examples in a document.
 For source code blocks or inline monospace quoted text, the plugin tries to identify executable commands.
 If it does, it will show a line marker with a green play button at the left of the editor to execute the command in a local shell.
 The current project needs to be a trusted project.
-This is available from plugin version 0.37.14 onwards.
 
 Currently, the following snippets are available to run:
 
@@ -265,7 +264,7 @@ To replace a URL in the text with the one from the clipboard, please the cursor 
 // see: PasteHtmlAction
 The user can copy formatted text from the clipboard into the document.
 To do that, the user selects "`Paste formatted text`" from the editor's icon menu or from the context menu.
-The plugin downloads https://pandoc.org/[Pandoc] to convert the clipboard's contents from HTML to AsciiDoc. (This is available from plugin version 0.37.51 onwards.)
+The plugin downloads https://pandoc.org/[Pandoc] to convert the clipboard's contents from HTML to AsciiDoc.
 
 The user can enable in the plugin settings that converting contents on paste, then and kbd:[Ctrl+V] will do the conversion automatically.
 
@@ -306,7 +305,6 @@ _Extract directive_ can take the selected text, current block or the current sec
 _Inline directive_ can take the file referenced via the selected include and put its content in the current document; optionally it can provide a preview, inline all occurrences of the file and delete the included file after inlining it.
 
 // see: AsciiDocAdmonitionToBlockIntention.java and AsciiDocAdmonitionToBlockAction.java
-.Available from release 0.31.35:
 The user can change single-line admonition to a block-style admonition.
 This is available from the "`Refactor"` context menu and as a context-sensitive intention "`Refactor to block admonition`" via kbd:[Alt+Enter].
 It is available when user places the cursor on the start of single-line admonition (like for example `NOTE:`).

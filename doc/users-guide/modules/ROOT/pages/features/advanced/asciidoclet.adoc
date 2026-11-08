@@ -7,7 +7,7 @@ This plugin renders the AsciiDoc contents when previewing the documentation.
 
 [NOTE]
 ====
-Starting with AsciiDoc Plugin release 0.31.13, it moved to a separate _Asciidoclet_ Plugin as it prevented the AsciiDoc Plugin to be dynamically installable without a restart.
+The feature is in a separate _Asciidoclet_ Plugin as it prevented the AsciiDoc Plugin to be dynamically installable without a restart.
 
 This feature is in its early development and marked "`experimental`".
 Its functionality might change over time.

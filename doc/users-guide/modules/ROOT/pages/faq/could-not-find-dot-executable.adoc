@@ -26,8 +26,6 @@ Starting with https://plantuml.com/en/graphviz-dot[PlantUML 1.2020.25], PlantUML
 There is no need to install GraphViz manually anymore.
 Still, PlantUML will use a locally installed GraphViz version if it finds one.
 
-Users should use plugin version 0.32.8 or later for this.
-
 === Remedy 2: Adding executable to PATH or document attribute
 
 Most of the time users can make diagrams work by adding the executable (like GraphViz' dot-executable) to the PATH environment variable.

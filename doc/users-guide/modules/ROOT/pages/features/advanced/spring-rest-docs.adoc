@@ -3,8 +3,6 @@
 
 https://docs.spring.io/spring-restdocs/docs/current/reference/htmlsingle/[Spring REST Docs] allow the developer to write API documentation using information recorded in test cases. The plugin supports the `operation::[]`-macro of Spring REST Docs in the editor and the preview.
 
-NOTE: This requires version 0.30.6+ of the plugin.
-
 == What Spring REST Docs provides
 
 https://docs.spring.io/spring-restdocs/docs/current/reference/htmlsingle/[Spring REST Docs] allow the developer to write API documentation using information recorded in test cases.
