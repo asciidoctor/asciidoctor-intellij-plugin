@@ -31,6 +31,25 @@ When creating a PDF for the first time, the plugin will download the necessary d
 
 include::partial$download-dependencies.adoc[]
 
+== Using a PDF theme
+
+The plugin doesn't offer a command-line option like `--theme`.
+Instead, set the document attributes `pdf-theme` and `pdf-themesdir` in the document or in an xref:features/advanced/asciidoctorconfig-file.adoc[`.asciidoctorconfig` file].
+Always specify an absolute directory for `pdf-themesdir`.
+Use `{docdir}` as a prefix for a folder relative to the current document, or `{asciidoctorconfigdir}` for a folder relative to the `.asciidoctorconfig` file.
+
+[source,asciidoc]
+----
+:pdf-themesdir: {docdir}/themes
+:pdf-theme: custom
+----
+
+This will use the file _themes/custom-theme.yml_.
+
+A PDF theme only applies when creating a PDF using menu:Create PDF from current file[].
+The preview shows the document as HTML and ignores the PDF theme.
+To change the look of the preview, use a xref:features/advanced/stylesheets.adoc[custom stylesheet] instead.
+
 == Non-latin languages and extra fonts
 
 There is a separate chapter on how to enable xref:features/advanced/pdf-non-latin-languages.adoc[Non-latin languages and extra fonts] when creating PDFs with AsciiDoc and this plugin.
