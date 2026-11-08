@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.startup.StartupActivity;
@@ -24,13 +25,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Refreshes AsciiDoc files that link to a changed AsciiDoc file, so that their previews are updated.
  */
 public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware {
 
-  private static final int DELAY_MS = 500;
+  private static final int DELAY_MS = 200;
   private static final int RETRY_DELAY_MS = 1000;
   private static final int MAX_ATTEMPTS = 3;
 
@@ -80,6 +82,7 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware {
     private final Alarm alarm;
     private final List<VirtualFile> pending = new ArrayList<>();
     private boolean scheduled;
+    private long lastFlush;
 
     private LinkRefresher(Project project) {
       this.project = project;
@@ -88,14 +91,17 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware {
     }
 
     private void schedule(List<VirtualFile> files) {
+      long delay;
       synchronized (this) {
         pending.addAll(files);
         if (scheduled) {
           return;
         }
         scheduled = true;
+        // the first change after a quiet period is handled immediately, further changes wait for the minimum interval
+        delay = Math.max(0, lastFlush + DELAY_MS - System.currentTimeMillis());
       }
-      alarm.addRequest(this::flush, DELAY_MS);
+      alarm.addRequest(this::flush, (int) delay);
     }
 
     private void flush() {
@@ -104,6 +110,12 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware {
         files = new ArrayList<>(pending);
         pending.clear();
         scheduled = false;
+        lastFlush = System.currentTimeMillis();
+      }
+      if (DumbService.isDumb(project)) {
+        // the index is not available, so wait for it; otherwise the files that link here would stay out of sync
+        DumbService.getInstance(project).runWhenSmart(() -> schedule(files));
+        return;
       }
       Set<String> canonicalPaths = new HashSet<>();
       for (VirtualFile file : files) {
@@ -113,11 +125,9 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware {
         if (!file.isValid() || !file.getFileType().equals(AsciiDocFileType.INSTANCE)) {
           continue;
         }
-        if (!DumbService.isDumb(project)) {
-          String canonicalPath = file.getCanonicalPath();
-          if (canonicalPath != null) {
-            canonicalPaths.add(canonicalPath);
-          }
+        String canonicalPath = file.getCanonicalPath();
+        if (canonicalPath != null) {
+          canonicalPaths.add(canonicalPath);
         }
       }
       if (!canonicalPaths.isEmpty()) {
@@ -130,19 +140,29 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware {
       if (project.isDisposed()) {
         return;
       }
+      AtomicBoolean dumb = new AtomicBoolean();
       try {
         AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
           // the index might not be available yet if indexing started after the file change was observed
           if (DumbService.isDumb(project)) {
+            dumb.set(true);
             return;
           }
           Set<VirtualFile> linkSources = new HashSet<>();
-          canonicalPaths.forEach(canonicalPath -> linkSources.addAll(AsciiDocLinkIndex.getLinkSources(project, canonicalPath)));
+          try {
+            canonicalPaths.forEach(canonicalPath -> linkSources.addAll(AsciiDocLinkIndex.getLinkSources(project, canonicalPath)));
+          } catch (IndexNotReadyException e) {
+            dumb.set(true);
+            return;
+          }
           if (!linkSources.isEmpty()) {
             ApplicationManager.getApplication().invokeLater(() ->
               ApplicationManager.getApplication().runWriteAction(() -> LocalFileSystem.getInstance().refreshFiles(linkSources)));
           }
         });
+        if (dumb.get()) {
+          DumbService.getInstance(project).runWhenSmart(() -> alarm.addRequest(() -> refresh(canonicalPaths, attempt), 0));
+        }
       } catch (ProcessCanceledException e) {
         if (attempt < MAX_ATTEMPTS) {
           // don't retry immediately, to give the write action and the index update time to complete
