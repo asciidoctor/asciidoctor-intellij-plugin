@@ -512,12 +512,11 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
     panelWrapper.add(newPanel.getComponent(), BorderLayout.CENTER, 0);
 
     if (newPanel instanceof AsciiDocJCEFHtmlPanel) {
-      hint.setText("<html>If you can read this and not the content of your document, your preview does not show. One possible reason is that you are using a remote desktop and " +
-        "GPU rendered content is not shown.<p>" +
-        "To fix this, update the IDE's registry and set the key 'ide.browser.jcef.gpu.disable' to the value 'true'.<p>" +
-        "To access the registry, open the menu 'Help | Find Action...' and then choose the action 'Registry...'. " +
-        "Once the registry opens, type the key to find the entry, and enable the checkbox to set the value to 'true'. " +
-        "Once you changed the value, restart the IDE for the setting to become effective.");
+      hint.setText("<html>If you can read this and not the content of your document, the embedded browser didn't paint the preview.<p>" +
+        "Switch to another editor tab and back, or toggle between the split and the preview-only layout, to show the preview again.<p>" +
+        "If this happens regularly, open the registry (menu 'Help | Find Action...', then the action 'Registry...'), " +
+        "set the key 'ide.browser.jcef.asciidocView.osr.enabled' to 'false', and restart the IDE.<p>" +
+        "On a remote desktop, set the key 'ide.browser.jcef.gpu.disable' to 'true' instead, and restart the IDE.");
     } else {
       hint.setText("<html></html>");
     }
