@@ -9,6 +9,7 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.45.13
 
+- Show the "Copy to clipboard" and run buttons of code blocks in the preview at the right instead of the left, so they no longer hide the code (#2157)
 - Don't show a placeholder for PlantUML diagrams that include C4-PlantUML files like `!include C4_Container.puml` when using Kroki, as the Kroki server provides them (#2158)
 - Add actions to insert, delete and move rows and columns of a table at the caret, in the editor context menu and as intentions via Alt+Enter, move between cells with Tab and Shift+Tab (Tab in the last cell appends a row), and move rows with the shortcuts for moving lines (#1256)
 - Warn about the deprecated shorthand cross-reference syntax `<<file.adoc#anchor,text>>` for references to other documents, with a quick fix to change it to `xref:file.adoc#anchor[text]` (#1867)

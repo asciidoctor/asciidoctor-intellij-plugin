@@ -17,7 +17,7 @@ window.__IntelliJTools.injectRunButtonStyle = function () {
     `.intellij-run-button {
       position: absolute;
       top: 4px;
-      left: 4px;
+      right: 30px;
       z-index: 100;
       background: transparent;
       border: none;
@@ -59,9 +59,9 @@ window.__IntelliJTools.addRunButton = function (block, codeEl, lang) {
   let btn = document.createElement('button')
   btn.className = 'intellij-run-button'
   btn.title = 'Run ' + lang
-  btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="30" height="30">
-                      <polygon points="0,1 7,7 0,13" fill="#59A869"/>
-                      <polygon points="6,1 13,7 6,13" fill="#59A869"/>
+  // IntelliJ "Run" icon (AllIcons.Actions.Execute)
+  btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                      <polygon fill="#59A869" fill-rule="evenodd" points="4 2 14 8 4 14"/>
                    </svg>`
   btn.addEventListener('click', function (event) {
     event.stopPropagation()

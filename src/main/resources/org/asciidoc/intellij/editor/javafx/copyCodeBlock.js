@@ -17,9 +17,10 @@ window.__IntelliJTools.injectCopyButtonStyle = function () {
     `.intellij-copy-button {
       position: absolute;
       top: 4px;
-      left: 30px;
+      right: 4px;
       z-index: 100;
       background: transparent;
+      color: inherit;
       border: none;
       border-radius: 4px;
       width: 22px;
@@ -37,6 +38,17 @@ window.__IntelliJTools.injectCopyButtonStyle = function () {
     .listingblock:hover > .intellij-copy-button {
       opacity: 0.9;
       pointer-events: auto;
+    }
+
+    /* make room for the button next to the language label of the default and the Antora stylesheet */
+    .listingblock:has(> .intellij-copy-button) code[data-lang]::before,
+    .listingblock:has(> .intellij-copy-button) .source-toolbox {
+      right: 32px;
+    }
+
+    .listingblock:has(> .intellij-copy-button):has(> .intellij-run-button) code[data-lang]::before,
+    .listingblock:has(> .intellij-copy-button):has(> .intellij-run-button) .source-toolbox {
+      right: 58px;
     }
 
     .intellij-copy-button:hover {
@@ -59,16 +71,13 @@ window.__IntelliJTools.addCopyButton = function (block, codeEl, lang) {
   let btn = document.createElement('button')
   btn.className = 'intellij-copy-button'
   btn.title = 'Copy ' + lang
-  btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg"
-                       viewBox="0 0 24 24" width="30" height="30"
-                       fill="none" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
-                            fill="#FFE082" stroke="#0D47B1" stroke-width="2.2"/>
-                      <rect x="8" y="2" width="8" height="4" rx="1" ry="1"
-                            fill="#D0D0D0" stroke="#0D47A1" stroke-width="2.2"/>
-                      <path d="M9 14l2 2 4-4" stroke="#FFFFFF" stroke-width="4"/>
-                      <path d="M9 14l2 2 4-4" stroke="#00C853" stroke-width="2.4"/>
-                  </svg>`
+  // IntelliJ "Copy" icon (AllIcons.Actions.Copy), colored like the surrounding text to fit light and dark themes
+  btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                      <g fill="currentColor" fill-rule="evenodd">
+                        <path d="M11,3 L4,3 L4,11 L2,11 L2,1 L11,1 L11,3 Z"/>
+                        <path d="M5,4 L14,4 L14,14 L5,14 L5,4 Z M7,6 L7,7 L12,7 L12,6 L7,6 Z M7,10 L7,11 L12,11 L12,10 L7,10 Z M7,8 L7,9 L12,9 L12,8 L7,8 Z"/>
+                      </g>
+                   </svg>`
   btn.addEventListener('click', function (event) {
     event.stopPropagation()
     event.preventDefault()
