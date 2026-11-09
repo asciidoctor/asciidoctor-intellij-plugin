@@ -15,7 +15,7 @@ require 'cgi'
 #   1. KrokiBlockMacroProcessor#process and KrokiBlockProcessor#process are wrapped: an unreadable target
 #      yields the placeholder directly; a `kroki-error` block returned by the Kroki extension is turned into
 #      the placeholder carrying its message.
-#   2. PlantUmlPreprocessor.preprocess is wrapped: a local `!include` (not `<stdlib>`, not http(s)) still
+#   2. PlantUmlPreprocessor.preprocess is wrapped: a local `!include` (not `<stdlib>`, not http(s), not a C4-PlantUML file the Kroki server provides) still
 #      present after preprocessing raises UnresolvedIncludeError, which the Kroki extension reports as a
 #      `kroki-error` block -> placeholder, so the server never renders a silently degraded diagram.
 #   3. Setting the document attribute `kroki-preview-placeholder` (e.g. via the plugin's attribute settings)
@@ -33,6 +33,9 @@ module AsciidoctorExtensions
     STYLE = 'border: 1px dashed #999; border-radius: 4px; padding: 0.6em 0.9em; margin: 0.5em 0; ' \
             'font-family: sans-serif; font-size: 0.9em; background: rgba(128,128,128,0.08);'
     LOCAL_INCLUDE_RX = /^\s*!include(?:_many|_once|sub|url)?\s+(\S+)/i
+    # The Kroki server replaces any include containing one of these file names (also with a path or URL) with its
+    # embedded C4-PlantUML library, see `ignoreInclude` in io.kroki.server.service.Plantuml.
+    KROKI_C4_RX = /c4(?:_(?:context|container|component|deployment|dynamic|sequence))?\.puml/i
 
     module_function
 
@@ -47,6 +50,7 @@ module AsciidoctorExtensions
 
         target = m[1].split('!').first
         next if target.start_with?('<', 'http://', 'https://')
+        next if KROKI_C4_RX.match?(target)
 
         target
       end.uniq

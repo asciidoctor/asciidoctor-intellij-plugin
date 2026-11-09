@@ -538,6 +538,24 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     }
   }
 
+  // The Kroki server provides the C4-PlantUML files itself, so such an include must not turn into a placeholder.
+  public void testShouldNotShowPlaceholderForC4IncludesUsingKroki() throws Exception {
+    AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(krokiEnabledSettings());
+    try {
+      String html = asciidocWrapper.render("[plantuml]\n----\n@startuml\n!include C4_Container.puml\nContainer(a, \"A\")\n@enduml\n----\n", Collections.emptyList());
+      assertThat(html)
+        .withFailMessage("expected a Kroki image for the C4 include: %s", html)
+        .contains("https://kroki.io/plantuml/")
+        .doesNotContain("kroki-placeholder");
+      html = asciidocWrapper.render("[plantuml]\n----\n@startuml\n!include missing-style.puml\n@enduml\n----\n", Collections.emptyList());
+      assertThat(html)
+        .withFailMessage("expected a placeholder for the missing include: %s", html)
+        .contains("kroki-placeholder");
+    } finally {
+      AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
+    }
+  }
+
   // An inline [plantuml] block has no file location; its includes resolve via kroki-plantuml-include-paths, which
   // a document can point at a directory relative to itself with {docdir}.
   public void testShouldInlinePlantUmlIncludesFromIncludePathsUsingKroki() throws Exception {
