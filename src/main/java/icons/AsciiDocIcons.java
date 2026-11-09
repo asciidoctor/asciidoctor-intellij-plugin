@@ -39,6 +39,10 @@ public class AsciiDocIcons {
     public static final Icon CODE_SPAN = load("/icons/editor_actions/Code_span.svg"); // 16x16
     public static final Icon IMAGE = load("/icons/editor_actions/image.svg"); // 16x16
     public static final Icon PASTE = load("/icons/editor_actions/paste.svg"); // 16x16
+    public static final Icon ADD_ROW_ABOVE = load("/icons/editor_actions/addRowAbove.svg"); // 16x16
+    public static final Icon ADD_ROW_BELOW = load("/icons/editor_actions/addRowBelow.svg"); // 16x16
+    public static final Icon ADD_COLUMN_LEFT = load("/icons/editor_actions/addColumnLeft.svg"); // 16x16
+    public static final Icon ADD_COLUMN_RIGHT = load("/icons/editor_actions/addColumnRight.svg"); // 16x16
   }
 
   public static class Structure {

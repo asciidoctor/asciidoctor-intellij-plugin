@@ -47,6 +47,48 @@
 
   <actions>
     <!-- Add your actions here -->
+    <!-- Table editing actions are only offered in the "AsciiDoc Table" group -->
+    <action id="asciidoc.tableedit.insertrowabove" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocTableEditAction$InsertRowAbove"
+            text="Insert Table Row Above" description="Insert Table Row Above at the caret"
+            icon="AsciiDocIcons.EditorActions.ADD_ROW_ABOVE">
+    </action>
+    <action id="asciidoc.tableedit.insertrowbelow" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocTableEditAction$InsertRowBelow"
+            text="Insert Table Row Below" description="Insert Table Row Below at the caret"
+            icon="AsciiDocIcons.EditorActions.ADD_ROW_BELOW">
+    </action>
+    <action id="asciidoc.tableedit.deleterow" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocTableEditAction$DeleteRow"
+            text="Delete Table Row" description="Delete Table Row at the caret"
+            icon="AllIcons.General.Remove">
+    </action>
+    <action id="asciidoc.tableedit.moverowup" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocTableEditAction$MoveRowUp"
+            text="Move Table Row Up" description="Move Table Row Up at the caret"
+            icon="AllIcons.Actions.MoveUp">
+    </action>
+    <action id="asciidoc.tableedit.moverowdown" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocTableEditAction$MoveRowDown"
+            text="Move Table Row Down" description="Move Table Row Down at the caret"
+            icon="AllIcons.Actions.MoveDown">
+    </action>
+    <action id="asciidoc.tableedit.insertcolumnleft" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocTableEditAction$InsertColumnLeft"
+            text="Insert Table Column Left" description="Insert Table Column Left at the caret"
+            icon="AsciiDocIcons.EditorActions.ADD_COLUMN_LEFT">
+    </action>
+    <action id="asciidoc.tableedit.insertcolumnright" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocTableEditAction$InsertColumnRight"
+            text="Insert Table Column Right" description="Insert Table Column Right at the caret"
+            icon="AsciiDocIcons.EditorActions.ADD_COLUMN_RIGHT">
+    </action>
+    <action id="asciidoc.tableedit.deletecolumn" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocTableEditAction$DeleteColumn"
+            text="Delete Table Column" description="Delete Table Column at the caret"
+            icon="AllIcons.General.Remove">
+    </action>
+    <action id="asciidoc.tableedit.movecolumnleft" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocTableEditAction$MoveColumnLeft"
+            text="Move Table Column Left" description="Move Table Column Left at the caret"
+            icon="AllIcons.Actions.Back">
+    </action>
+    <action id="asciidoc.tableedit.movecolumnright" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocTableEditAction$MoveColumnRight"
+            text="Move Table Column Right" description="Move Table Column Right at the caret"
+            icon="AllIcons.Actions.Forward">
+    </action>
+
     <group id="AsciiDoc" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
       <group id="AsciiDoc.TextFormatting" compact="true" description="Text Markup actions" popup="true"
              text="AsciiDoc" class="org.asciidoc.intellij.actions.asciidoc.AsciiDocActionGroup">
@@ -144,6 +186,25 @@
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
     </group>
 
+    <group id="AsciiDocTableEdit" text="AsciiDoc Table" popup="true">
+      <separator text="Row"/>
+      <group id="AsciiDocTableEditRows" text="Row" popup="false">
+        <reference ref="asciidoc.tableedit.insertrowabove"/>
+        <reference ref="asciidoc.tableedit.insertrowbelow"/>
+        <reference ref="asciidoc.tableedit.moverowup"/>
+        <reference ref="asciidoc.tableedit.moverowdown"/>
+        <reference ref="asciidoc.tableedit.deleterow"/>
+      </group>
+      <separator text="Column"/>
+      <group id="AsciiDocTableEditColumns" text="Column" popup="false">
+        <reference ref="asciidoc.tableedit.insertcolumnleft"/>
+        <reference ref="asciidoc.tableedit.insertcolumnright"/>
+        <reference ref="asciidoc.tableedit.movecolumnleft"/>
+        <reference ref="asciidoc.tableedit.movecolumnright"/>
+        <reference ref="asciidoc.tableedit.deletecolumn"/>
+      </group>
+      <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+    </group>
     <action id="AsciiDocOpenDevtools" text="Open Devtools Window for the current AsciiDoc Preview"
             class="org.asciidoc.intellij.actions.OpenDevtoolsAction"/>
 
@@ -444,6 +505,28 @@
       <categoryKey>asciidoc.intention.category</categoryKey>
       <className>org.asciidoc.intellij.actions.intentions.AsciiDocAdmonitionToBlockIntention</className>
     </intentionAction>
+
+    <intentionAction>
+      <language>AsciiDoc</language>
+      <bundleName>AsciiDocBundle</bundleName>
+      <categoryKey>asciidoc.intention.category</categoryKey>
+      <className>org.asciidoc.intellij.actions.intentions.AsciiDocTableIntention$Rows</className>
+      <descriptionDirectoryName>AsciiDocTableIntention</descriptionDirectoryName>
+    </intentionAction>
+    <intentionAction>
+      <language>AsciiDoc</language>
+      <bundleName>AsciiDocBundle</bundleName>
+      <categoryKey>asciidoc.intention.category</categoryKey>
+      <className>org.asciidoc.intellij.actions.intentions.AsciiDocTableIntention$Columns</className>
+      <descriptionDirectoryName>AsciiDocTableIntention</descriptionDirectoryName>
+    </intentionAction>
+
+    <editorActionHandler action="EditorTab" implementationClass="org.asciidoc.intellij.actions.asciidoc.AsciiDocTableNavigationHandler$Next"/>
+    <editorActionHandler action="MoveStatementUp" implementationClass="org.asciidoc.intellij.actions.asciidoc.AsciiDocTableMoveRowHandler$Up"/>
+    <editorActionHandler action="MoveStatementDown" implementationClass="org.asciidoc.intellij.actions.asciidoc.AsciiDocTableMoveRowHandler$Down"/>
+    <editorActionHandler action="MoveLineUp" implementationClass="org.asciidoc.intellij.actions.asciidoc.AsciiDocTableMoveRowHandler$Up"/>
+    <editorActionHandler action="MoveLineDown" implementationClass="org.asciidoc.intellij.actions.asciidoc.AsciiDocTableMoveRowHandler$Down"/>
+    <editorActionHandler action="EditorUnindentSelection" implementationClass="org.asciidoc.intellij.actions.asciidoc.AsciiDocTableNavigationHandler$Previous"/>
 
     <daemon.highlightInfoFilter implementation="org.asciidoc.intellij.injection.CodeFenceHighlightInfoFilter"/>
     <postStartupActivity implementation="org.asciidoc.intellij.activities.AsciiDocPluginUpdateActivity"/>

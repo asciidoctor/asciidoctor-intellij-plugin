@@ -294,6 +294,25 @@ To suppress an inspection for a file, use the quick-fix to add a comment at the 
 
 Use multiple lines to suppress multiple inspections, or separate multiple inspections with commas.
 
+=== Editing tables
+
+When the caret is in a table cell, the context menu offers the menu:AsciiDoc Table[] submenu.
+The actions are also available as context-sensitive intentions via kbd:[Alt+Enter] ("`Table: edit rows...`" and "`Table: edit columns...`"), which open a list of the possible actions.
+They insert rows above or below, insert columns left or right, delete the current row or column, and move the current row or column.
+They work with tables whose cells are on one line (`|a |b`) and tables with one cell per line and a blank line between the rows.
+New rows follow the layout of the neighboring row.
+The plugin updates the `cols` attribute when it changes the columns.
+It doesn't re-align the table.
+Header and footer rows can't be deleted or moved, and nothing is inserted above the header or below the footer.
+The actions are disabled for tables with column or row spans, a custom `format` or `separator`, nested tables, or `include::` and `ifdef::` lines.
+
+In a table, [.windows.linux]#kbd:[Tab]# [.macos]#kbd:[⇥]# and [.windows.linux]#kbd:[Shift+Tab]# [.macos]#kbd:[⇧ ⇥]# move the caret to the next and previous cell, and Tab in the last cell appends a new row.
+The keys to move a statement or a line up and down move the current row: [.windows.linux]#kbd:[Ctrl+Shift+Up] / kbd:[Ctrl+Shift+Down]# [.macos]#kbd:[⇧ ⌘ ↑] / kbd:[⇧ ⌘ ↓]# to move a statement, and [.windows.linux]#kbd:[Alt+Shift+Up] / kbd:[Alt+Shift+Down]# [.macos]#kbd:[⌥ ⇧ ↑] / kbd:[⌥ ⇧ ↓]# to move a line.
+Some desktop environments reserve the kbd:[Alt+Shift] combinations; in that case use the statement keys or assign your own.
+There are no default shortcuts for moving columns; assign your own to "`Move Table Column Left`" and "`Move Table Column Right`" in menu:Settings...[Keymap].
+
+Editing tables is available since 0.45.13.
+
 === Refactoring and intentions
 
 When the user moves a file or folder that is referenced by a `link:`, `xref:` or `include::` macro, the plugin updates the path in the AsciiDoc files.

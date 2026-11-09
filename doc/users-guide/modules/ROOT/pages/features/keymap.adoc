@@ -113,6 +113,15 @@ https://resources.jetbrains.com/storage/products/intellij-idea/docs/IntelliJIDEA
 
 [.macos]#kbd:[⇧ ⌘ ↑] / kbd:[⇧ ⌘ ↓]#
 
+| Move to next/previous table cell | [.windows.linux]#kbd:[Tab] / kbd:[Shift+Tab]#
+
+[.macos]#kbd:[⇥] / kbd:[⇧ ⇥]#
+
+| Move current table row up/down +
+(when in a table) | [.windows.linux]#kbd:[Ctrl+Shift+Up] / kbd:[Ctrl+Shift+Down], kbd:[Alt+Shift+Up] / kbd:[Alt+Shift+Down]#
+
+[.macos]#kbd:[⇧ ⌘ ↑] / kbd:[⇧ ⌘ ↓], kbd:[⌥ ⇧ ↑] / kbd:[⌥ ⇧ ↓]#
+
 | Duplicate current line  | [.windows.linux]#kbd:[Ctrl+D]#
 
 [.macos]#kbd:[⌘ D]#
