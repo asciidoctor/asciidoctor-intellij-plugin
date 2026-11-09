@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.45.14
+
+- Avoid the "Initializing..." placeholder of the preview blocking the real content for several seconds when a preview opens
+
 === 0.45.13
 
 - Show the "Copy to clipboard" and run buttons of code blocks in the preview at the right instead of the left, so they no longer hide the code (#2157)

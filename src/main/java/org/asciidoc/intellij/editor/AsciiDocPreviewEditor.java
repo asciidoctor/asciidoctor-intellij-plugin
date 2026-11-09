@@ -132,6 +132,8 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
 
   private AsciiDocWrapper asciidoc;
 
+  private static final long SLOW_RENDER_MILLIS = 1000;
+
   private void render() {
     lazyExecutor.execute(() -> {
       try {
@@ -156,7 +158,12 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
             }
             instance.updateFileName(fileBaseDir, name);
           }
+          long renderStart = System.nanoTime();
           String markup = instance.render(content, config, extensions);
+          long renderMillis = (System.nanoTime() - renderStart) / 1_000_000;
+          if (renderMillis > SLOW_RENDER_MILLIS) {
+            LOG.warn("rendering " + (file != null ? file.getName() : "document") + " took " + renderMillis + " ms");
+          }
           if (Objects.equals("true", instance.getAttributes().get("asciidoctor-diagram-missing-diagram-extension"))) {
             if (getComponent().isVisible() && getComponent().isDisplayable()) {
               AsciiDocDownloadNotificationProvider.showNotification();
@@ -165,7 +172,12 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
           if (markup != null) {
             AsciiDocHtmlPanel localPanel = myPanel;
             if (localPanel != null) {
+              long setHtmlStart = System.nanoTime();
               localPanel.setHtml(markup, instance.getAttributes());
+              long setHtmlMillis = (System.nanoTime() - setHtmlStart) / 1_000_000;
+              if (setHtmlMillis > SLOW_RENDER_MILLIS) {
+                LOG.warn("updating the preview panel took " + setHtmlMillis + " ms");
+              }
               synchronized (this) {
                 if (myPanel == localPanel) {
                   // only set the content if the panel hasn't been updated (due to settings changed)

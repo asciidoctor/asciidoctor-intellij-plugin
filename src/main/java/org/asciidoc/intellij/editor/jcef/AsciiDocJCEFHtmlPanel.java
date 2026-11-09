@@ -274,10 +274,11 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         // don't queue old content as it might overtake the setHtml() when is added as deferred content
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
           if (stamp == 0) {
-            synchronized (this) {
+            synchronized (AsciiDocJCEFHtmlPanel.this) {
               if (stamp == 0) {
                 // ensure that this is still the first call; avoid to overwrite a different text
-                setHtml("<div id=\"content\">Initializing...</div>", Collections.emptyMap());
+                // don't wait for the placeholder to finish loading, as this would delay the real content queued behind it
+                setHtml("<div id=\"content\">Initializing...</div>", Collections.emptyMap(), false);
               }
             }
           }
@@ -315,12 +316,16 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       try {
         if (r != null && r.length() > 0 && !r.equals("undefined")) {
           long iterationStamp = Integer.parseInt(r);
+          if (iterationStamp == fullLoadStamp) {
+            readyLoadStamp = iterationStamp;
+          }
           if (stamp == iterationStamp) {
             rendered.countDown();
           }
         } else if (r != null && r.equals("undefined")) {
           // TODO: find out why the first result is undefined
           if (stamp == 1) {
+            readyLoadStamp = fullLoadStamp;
             rendered.countDown();
           }
         }
@@ -682,10 +687,18 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private String myAsciidoctorTabsScript;
 
   private volatile boolean hasLoadedOnce = false;
+  // stamp of the last full page load, and of the last full page load that has signalled to be ready;
+  // in-place updates are only safe once they match, as otherwise they might target a superseded page like the placeholder
+  private volatile long fullLoadStamp = -1;
+  private volatile long readyLoadStamp = -2;
   private byte[] previousDigest;
 
   @Override
-  public synchronized void setHtml(@NotNull String htmlParam, @NotNull Map<String, String> attributes) {
+  public void setHtml(@NotNull String htmlParam, @NotNull Map<String, String> attributes) {
+    setHtml(htmlParam, attributes, true);
+  }
+
+  private synchronized void setHtml(@NotNull String htmlParam, @NotNull Map<String, String> attributes, boolean waitForRendered) {
     if (isDisposed()) {
       return;
     }
@@ -706,7 +719,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     String html = htmlParam;
     boolean result = false;
     final AsciiDocApplicationSettings settings = AsciiDocApplicationSettings.getInstance();
-    if (hasLoadedOnce && !forceRefresh && settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")) {
+    if (hasLoadedOnce && readyLoadStamp == fullLoadStamp && !forceRefresh && settings.getAsciiDocPreviewSettings().isInplacePreviewRefresh() && html.contains("id=\"content\"")) {
       String preparedHtml = prepareHtml(html, attributes);
       // If the HTML is identical, don't replace the preview
       try {
@@ -794,17 +807,20 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       html = html + "<script>window.iterationStamp=" + iterationStamp + ";</script>";
       html = wrapHtmlForPage(html);
       final String htmlToRender = prepareHtml(html, attributes);
+      fullLoadStamp = iterationStamp;
       loadHTML(htmlToRender);
     }
     try {
       // slow down the rendering of the next version of the preview until the rendering if the current version is complete
       // this prevents us building up a queue that would lead to a lagging preview
-      if (htmlParam.length() > 0 && !rendered.await(10, TimeUnit.SECONDS)) {
+      // don't wait while the page opens for the first time, as the signal might be delayed and would block the real content
+      if (waitForRendered && hasLoadedOnce && htmlParam.length() > 0 && !rendered.await(10, TimeUnit.SECONDS)) {
         // error handling only if:
         // the preview has rendered once -- as we don't want to close a window that is opening
         // this preview hasn't been disposed -- as this wouldn't make much sense
-        if (!this.isDisposed() && hasLoadedOnce) {
-          LOG.warn("rendering didn't complete in time, might be slow or broken");
+        LOG.warn("rendering didn't complete in time, might be slow or broken"
+          + (this.isDisposed() ? " (disposed)" : ""));
+        if (!this.isDisposed()) {
           forceRefresh = true;
         }
       }
@@ -965,12 +981,16 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   }
 
   private synchronized boolean isAntora() {
-    if (isAntoraCache == null) {
-      AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(() -> {
-        isAntoraCache = editor != null && editor.getProject() != null
-          && AsciiDocUtil.findAntoraPagesDir(editor.getProject(), getParentDirectory()) != null;
-      });
+    if (isAntoraCache != null) {
+      return isAntoraCache;
     }
+    Editor currentEditor = editor;
+    // the editor is set after the panel has been created; don't cache an answer before, as it would select the wrong stylesheet
+    if (currentEditor == null || currentEditor.getProject() == null) {
+      return false;
+    }
+    isAntoraCache = AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(
+      () -> AsciiDocUtil.findAntoraPagesDir(currentEditor.getProject(), getParentDirectory()) != null);
     return isAntoraCache;
   }
 
