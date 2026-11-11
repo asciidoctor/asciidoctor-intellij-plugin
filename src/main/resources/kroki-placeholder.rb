@@ -39,6 +39,17 @@ module AsciidoctorExtensions
 
     module_function
 
+    # True while processing a diagram of a document that uses a self-hosted Kroki server (set in
+    # KrokiPlaceholderErrorCapture), as such a server can provide include files that don't exist locally.
+    def custom_server?
+      Thread.current[:kroki_placeholder_custom_server] == true
+    end
+
+    def custom_server_url?(doc)
+      url = doc.attr('kroki-server-url').to_s.strip
+      !url.empty? && !url.match?(%r{\Ahttps?://(?:[\w-]+\.)*kroki\.io(?:[/:]|\z)}i)
+    end
+
     def placeholder_only?(doc)
       doc.attr?('kroki-preview-placeholder')
     end
@@ -148,6 +159,9 @@ module AsciidoctorExtensions
   module KrokiPlaceholderPreprocessor
     def preprocess(diagram_text, resource_path, include_paths, logger)
       text = super
+      # a self-hosted Kroki server may provide further include files on its own
+      return text if KrokiPlaceholder.custom_server?
+
       unresolved = KrokiPlaceholder.unresolved_includes(text)
       unless unresolved.empty?
         raise UnresolvedIncludeError, "Cannot resolve PlantUML include#{'s' if unresolved.size > 1}: #{unresolved.join(', ')}"
@@ -160,6 +174,7 @@ module AsciidoctorExtensions
   # block it only writes that reason to the log and returns the unchanged block.
   module KrokiPlaceholderErrorCapture
     def process(*args, **kwargs)
+      Thread.current[:kroki_placeholder_custom_server] = KrokiPlaceholder.custom_server_url?(args[1].document)
       super
     rescue StandardError => e
       Thread.current[:kroki_placeholder_error] = e.message

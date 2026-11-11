@@ -231,6 +231,13 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
         .contains("modules/ROOT/examples/model.puml\"")
         .contains(">Open model.puml<")
         .doesNotContain("https://kroki.io/plantuml/");
+
+      // a self-hosted Kroki server may provide includes that don't exist locally (#2163)
+      String custom = wrapper.render(":kroki-server-url: http://localhost:8000\n\n[plantuml]\n....\n@startuml\n!include azure/bastion.puml\n@enduml\n....\n", Collections.emptyList());
+      assertThat(custom)
+        .withFailMessage("expected the diagram to be sent to the custom server: %s", custom)
+        .doesNotContain("kroki-placeholder")
+        .contains("http://localhost:8000/plantuml/");
     } finally {
       AsciiDocApplicationSettings.getInstance().setAsciiDocPreviewSettings(AsciiDocPreviewSettings.DEFAULT);
       PsiTestUtil.removeContentEntry(module, baseVf);
