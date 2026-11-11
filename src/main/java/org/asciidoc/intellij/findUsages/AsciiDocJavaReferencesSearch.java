@@ -4,6 +4,7 @@ import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -65,10 +66,22 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
     PsiFile[] files;
     if (scope instanceof GlobalSearchScope globalSearchScope) {
       // when the user searches all references
-      files = ReadAction.nonBlocking(() ->
-        CacheManager.getInstance(element.getProject())
-          .getFilesWithWord(name, UsageSearchContext.IN_CODE, GlobalSearchScope.getScopeRestrictedByFileTypes(globalSearchScope, AsciiDocFileType.INSTANCE), false))
-        .inSmartMode(element.getProject()).executeSynchronously();
+      // inspections like "unused class" search while the IDE is indexing; waiting for smart mode is not possible there
+      if (DumbService.isDumb(element.getProject())) {
+        return;
+      }
+      try {
+        files = ReadAction.nonBlocking(() ->
+          CacheManager.getInstance(element.getProject())
+            .getFilesWithWord(name, UsageSearchContext.IN_CODE, GlobalSearchScope.getScopeRestrictedByFileTypes(globalSearchScope, AsciiDocFileType.INSTANCE), false))
+          .inSmartMode(element.getProject()).executeSynchronously();
+      } catch (IllegalStateException e) {
+        // indexing started after the check above, so the smart mode constraint can't be satisfied
+        if (DumbService.isDumb(element.getProject())) {
+          return;
+        }
+        throw e;
+      }
       if (files.length == 0) {
         return;
       }
