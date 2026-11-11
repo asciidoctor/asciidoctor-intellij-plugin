@@ -1,0 +1,423 @@
+/*! Asciidoctor Carousels | Copyright (c) 2026-present Asciidoctor Carousels contributors | MIT License */
+.carousel {
+  margin-bottom: 1.25em;
+}
+
+.carousel.carousel-align-left {
+  float: left;
+  margin-right: 1rem;
+}
+
+.carousel.carousel-align-right {
+  float: right;
+  margin-left: 1rem;
+}
+
+.carousel-stage {
+  position: relative;
+  overflow: hidden;
+  background-color: #fff;
+  border: 1px solid #dcdcdc;
+  max-width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.carousel-stage[style*='--carousel-width'] {
+  width: var(--carousel-width);
+}
+
+.carousel-stage-align-left {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+.carousel-stage-align-right {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+.carousel-stage-align-center {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.carousel-stage[style*='--carousel-aspect-ratio']:not([style*='--carousel-height']) {
+  aspect-ratio: var(--carousel-aspect-ratio);
+}
+
+.carousel-track {
+  display: flex;
+  align-items: stretch;
+  transition: transform 300ms ease-in-out;
+  will-change: transform;
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
+  min-width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-slide.is-hidden {
+  display: none;
+}
+
+.carousel-slide .imageblock,
+.carousel-slide .paragraph {
+  margin: 0;
+  width: 100%;
+}
+
+.carousel-slide .imageblock .content,
+.carousel-slide .paragraph p {
+  margin: 0;
+}
+
+.carousel-slide img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.carousel-slide-caption {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  max-width: calc(100% - 2rem);
+  padding: 0.4rem 0.75rem;
+  background-color: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.875em;
+  line-height: 1.4;
+  pointer-events: none;
+}
+
+.carousel-control {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 2.5em;
+  height: 2.5em;
+  padding: 0;
+  border: 1px solid #dcdcdc;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.55);
+  color: rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-50%);
+}
+
+.carousel-control-icon {
+  display: inline-block;
+  font-size: 2rem;
+  line-height: 1;
+  transform: translateY(-0.08em);
+}
+
+.carousel-control:focus-visible {
+  background-color: rgba(0, 0, 0, 0.45);
+  border-color: rgba(0, 0, 0, 0.45);
+  color: #fff;
+}
+
+.carousel-stage:hover .carousel-control {
+  background-color: rgba(0, 0, 0, 0.45);
+  border-color: rgba(0, 0, 0, 0.45);
+  color: #fff;
+}
+
+.carousel-control-prev {
+  left: 0.5rem;
+}
+
+.carousel-control-next {
+  right: 0.5rem;
+}
+
+.carousel-indicators {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.carousel-indicator-preview {
+  position: absolute;
+  z-index: 3;
+  display: none;
+  transform: translateX(-50%);
+  background-color: #fff;
+  border: 1px solid #dcdcdc;
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+}
+
+.carousel-indicator-preview.is-visible {
+  display: block;
+}
+
+.carousel-indicator-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.carousel-indicator {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid #dcdcdc;
+  border-radius: 50%;
+  background-color: #ececec;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  --carousel-progress: 0;
+}
+
+.carousel-indicator::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #2156a5;
+  border-radius: 50%;
+  clip-path: circle(50% at 50% 50%);
+  transform: scaleX(var(--carousel-progress));
+  transform-origin: left;
+  pointer-events: none;
+}
+
+.carousel-indicator.is-paused::before {
+  background-color: #7a2518;
+}
+
+.carousel-indicator:hover,
+.carousel-indicator:focus-visible {
+  background-color: #fff;
+}
+
+.carousel-indicator span {
+  position: relative;
+  z-index: 1;
+  color: #333;
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+.carousel-indicator.is-active span {
+  color: #fff;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.7);
+}
+
+/* Every effect other than slide stacks the slides and lets each one enter on
+   its own. The active slide stays in the flow so the stage keeps its height. */
+.carousel:not(.carousel-transition-slide) .carousel-track {
+  display: block;
+  transition: none;
+  /* Only the cube rotates the track; promoting it to its own layer elsewhere
+     costs memory and has upset composited preserve-3d layers in the past. */
+  will-change: auto;
+}
+
+.carousel:not(.carousel-transition-slide) .carousel-slide {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease-in-out;
+}
+
+.carousel:not(.carousel-transition-slide) .carousel-slide.is-active {
+  position: relative;
+  z-index: 2;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.carousel:not(.carousel-transition-slide) .carousel-stage {
+  height: var(--carousel-height, auto);
+}
+
+/* Fade: the slides cross-fade in place. Ken Burns shares the crossfade and
+   slowly drifts the image that is on screen. */
+.carousel.carousel-transition-kenburns .carousel-slide.is-active img {
+  /* Shorter than the three second interval the extension defaults to, so the
+     image has settled before the slide changes when autoplay is on. */
+  animation: carousel-ken-burns 800ms ease-out both;
+}
+
+/* The image starts a little under its full size and grows to the size of the
+   slide, the width the other effects show it at, then stops there. No frame
+   grows past scale(1): a slide already fills the stage, so anything larger
+   would crop the image and cut the corners off a logo. */
+@keyframes carousel-ken-burns {
+  from {
+    transform: scale(0.94) translate(-1.5%, 1.5%);
+  }
+
+  to {
+    transform: scale(1) translate(0, 0);
+  }
+}
+
+/* Zoom: the slide on screen settles back to its natural size while the slide
+   leaving grows towards the reader. */
+.carousel.carousel-transition-zoom .carousel-slide {
+  transform: scale(1.12);
+  transition: transform 400ms ease-out, opacity 400ms ease-out;
+}
+
+.carousel.carousel-transition-zoom .carousel-slide.is-active {
+  transform: scale(1);
+}
+
+/* Flip: each slide turns around the vertical centre line, so the neighbour on
+   either side swings in from the direction it belongs to. */
+.carousel.carousel-transition-flip .carousel-stage {
+  perspective: 1600px;
+}
+
+.carousel.carousel-transition-flip .carousel-track {
+  transform-style: preserve-3d;
+}
+
+.carousel.carousel-transition-flip .carousel-slide {
+  backface-visibility: hidden;
+  transition: transform 500ms ease-in-out, opacity 500ms ease-in-out;
+}
+
+.carousel.carousel-transition-flip .carousel-slide.is-prev {
+  transform: rotateY(90deg);
+}
+
+.carousel.carousel-transition-flip .carousel-slide.is-next {
+  transform: rotateY(-90deg);
+}
+
+.carousel.carousel-transition-flip .carousel-slide.is-active {
+  transform: rotateY(0deg);
+}
+
+/* Coverflow: the slides are inset so the two wings can stand beside the active
+   slide instead of on top of it. A wing turns its centre-facing edge towards
+   the reader and lets the outer edge recede, and the perspective magnifies
+   that near edge, so the offsets below are solved to land it just outside the
+   active slide at any stage width. That is also why the slide on screen no
+   longer fills the stage. */
+.carousel.carousel-transition-coverflow .carousel-stage {
+  perspective: 1400px;
+}
+
+.carousel.carousel-transition-coverflow .carousel-track {
+  transform-style: preserve-3d;
+}
+
+.carousel.carousel-transition-coverflow .carousel-slide {
+  backface-visibility: hidden;
+  /* The pose the active slide keeps. The wings below repeat the same three
+     functions, so the slides interpolate function by function. */
+  transform: translateX(0) rotateY(0deg) scale(0.72);
+  transition: transform 450ms ease-in-out, opacity 450ms ease-in-out;
+}
+
+.carousel.carousel-transition-coverflow .carousel-slide.is-prev,
+.carousel.carousel-transition-coverflow .carousel-slide.is-next {
+  opacity: 1;
+}
+
+.carousel.carousel-transition-coverflow .carousel-slide.is-prev {
+  transform: translateX(-76%) rotateY(-35deg) scale(0.72);
+}
+
+.carousel.carousel-transition-coverflow .carousel-slide.is-next {
+  transform: translateX(76%) rotateY(35deg) scale(0.72);
+}
+
+/* Cards: the neighbours sit behind the active slide like the rest of a deck. */
+.carousel.carousel-transition-cards .carousel-slide {
+  transition: transform 450ms ease-in-out, opacity 450ms ease-in-out;
+}
+
+.carousel.carousel-transition-cards .carousel-slide.is-prev,
+.carousel.carousel-transition-cards .carousel-slide.is-next {
+  opacity: 0.45;
+  transform: translateY(3%) scale(0.92);
+}
+
+.carousel.carousel-transition-cards .carousel-slide.is-prev {
+  transform: translate(-2%, 3%) scale(0.92);
+}
+
+.carousel.carousel-transition-cards .carousel-slide.is-next {
+  transform: translate(2%, 3%) scale(0.92);
+}
+
+/* Cube: the script arranges the slides on the faces of a prism and rotates the
+   track to roll it, so the faces hinge on their shared edges. */
+.carousel.carousel-transition-cube .carousel-stage {
+  perspective: 1200px;
+}
+
+.carousel.carousel-transition-cube .carousel-track {
+  transform-style: preserve-3d;
+  transition: transform 600ms ease-in-out;
+  will-change: transform;
+}
+
+.carousel.carousel-transition-cube .carousel-slide {
+  backface-visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-track,
+  .carousel-slide {
+    transition-duration: 1ms !important;
+  }
+
+  .carousel.carousel-transition-kenburns .carousel-slide.is-active img {
+    animation: none;
+  }
+}
+
+.carousel-stage[style*='--carousel-height'] .carousel-slide img {
+  height: var(--carousel-height, auto);
+  object-fit: contain;
+}
+
+@media (max-width: 767px) {
+  .carousel-control {
+    width: 2.25em;
+    height: 2.25em;
+  }
+}
