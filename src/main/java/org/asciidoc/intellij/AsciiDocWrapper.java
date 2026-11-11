@@ -1481,6 +1481,10 @@ public class AsciiDocWrapper {
       if (fileType == FileType.JAVAFX || fileType == FileType.JEDITOR) {
         attrs.setAttribute("kroki-default-format", "png");
       }
+      if (fileType == FileType.PDF && settings.getAsciiDocPreviewSettings().getSafeMode(project) != SafeMode.SECURE) {
+        // fetch diagrams while converting, so that a failure is reported instead of an unusable remote image in the PDF
+        attrs.setAttribute("kroki-fetch-diagram", "");
+      }
     }
 
     settings.getAsciiDocPreviewSettings().getAttributes().forEach(attrs::setAttribute);
