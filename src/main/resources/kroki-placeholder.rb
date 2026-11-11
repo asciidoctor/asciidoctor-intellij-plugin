@@ -157,7 +157,7 @@ module AsciidoctorExtensions
 
   # After the Kroki extension resolved what it could, a remaining local include means a missing file.
   module KrokiPlaceholderPreprocessor
-    def preprocess(diagram_text, resource_path, include_paths, logger)
+    def preprocess(diagram_text, resource_path, include_paths, logger, *)
       text = super
       # a self-hosted Kroki server may provide further include files on its own
       return text if KrokiPlaceholder.custom_server?

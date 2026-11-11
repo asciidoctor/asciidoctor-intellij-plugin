@@ -9,6 +9,8 @@ This document provides a high-level view of the changes introduced by release.
 
 === 0.45.15
 
+- Update the embedded Kroki extension to asciidoctor-kroki 2.0.0: it adds Lini diagrams, resolves relative PlantUML includes from the document's base directory, reads includes and remote targets of block macros following the rules of `include::` (in safe mode only from within the base directory, URLs only with `allow-uri-read`), fixes server URLs with a trailing slash, keeps the title on diagrams that couldn't be rendered, and supports the Ditaa option `separation=false`
+- Avoid an error in the "unused class" inspection of Java classes while the IDE is indexing
 - Resolve relative PlantUML `!include` targets in delimited Kroki diagrams against the directory of the document, not the working directory, so they also work in HTML and PDF export (#2164)
 - Fetch Kroki diagrams while exporting to PDF, so that a diagram that can't be rendered is reported instead of ending up as a remote image link (#2164)
 - Don't report PlantUML includes that can't be found locally when a custom Kroki server URL is configured, as the server might provide them (#2163)
