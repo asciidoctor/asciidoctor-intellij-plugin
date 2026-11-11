@@ -71,6 +71,14 @@ module AsciidoctorExtensions
     # Builds the placeholder block. `source` is the resolved local path of the diagram source (or nil for an
     # inline block), `message` the reason, `text` an optional diagram excerpt (inline blocks).
     def block(processor, parent, diagram_type, source, message, text = nil)
+      # HTML markup is only valid for HTML backends; other backends (for example PDF) get plain text
+      # (asciidoctor-pdf reports an HTML base backend, therefore check the backend itself)
+      unless parent.document.backend.to_s.start_with?('html')
+        plain = +"#{diagram_type} diagram not rendered"
+        plain << ": #{message}" if message && !message.empty?
+        return processor.create_paragraph(parent, plain, {})
+      end
+
       e = ->(s) { CGI.escapeHTML(s.to_s) }
       html = +"<div class=\"kroki-placeholder\" style=\"#{STYLE}\" data-kroki-type=\"#{e[diagram_type]}\">"
       html << "<div><strong>#{e[diagram_type]} diagram not rendered</strong></div>"
@@ -94,10 +102,11 @@ module AsciidoctorExtensions
         message = result.source.to_s.lines.first.to_s.strip
         text = nil
       else
-        message = 'Diagram could not be rendered'
+        # the Kroki extension only logs the reason for a delimited block, see KrokiPlaceholderErrorCapture
+        message = Thread.current[:kroki_placeholder_error]
         text = result.source.to_s
       end
-      message = 'Diagram could not be rendered' if message.empty?
+      message = 'Diagram could not be rendered' if message.to_s.empty?
       block(processor, parent, diagram_type, source, message, text)
     end
   end
@@ -126,6 +135,7 @@ module AsciidoctorExtensions
   module KrokiPlaceholderBlock
     def process(parent, reader, attrs)
       diagram_type = @name
+      Thread.current[:kroki_placeholder_error] = nil
       if KrokiPlaceholder.placeholder_only?(parent.document)
         # the only path that reads the text itself; otherwise the reader is left to the Kroki extension
         return KrokiPlaceholder.block(self, parent, diagram_type, nil, 'Preview placeholders enabled (kroki-preview-placeholder)', reader.string)
@@ -143,6 +153,23 @@ module AsciidoctorExtensions
         raise UnresolvedIncludeError, "Cannot resolve PlantUML include#{'s' if unresolved.size > 1}: #{unresolved.join(', ')}"
       end
       text
+    end
+  end
+
+  # Remembers why the Kroki extension failed (for example an HTTP error of the Kroki server), as for a delimited
+  # block it only writes that reason to the log and returns the unchanged block.
+  module KrokiPlaceholderErrorCapture
+    def process(*args, **kwargs)
+      super
+    rescue StandardError => e
+      Thread.current[:kroki_placeholder_error] = e.message
+      raise
+    end
+  end
+
+  class KrokiProcessor
+    class << self
+      prepend KrokiPlaceholderErrorCapture
     end
   end
 

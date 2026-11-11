@@ -7,6 +7,13 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.45.15
+
+- Resolve relative PlantUML `!include` targets in delimited Kroki diagrams against the directory of the document, not the working directory, so they also work in HTML and PDF export (#2164)
+- Fetch Kroki diagrams while exporting to PDF, so that a diagram that can't be rendered is reported instead of ending up as a remote image link (#2164)
+- Show a plain-text note instead of HTML markup for Kroki diagrams that could not be rendered in non-HTML exports like PDF (#2164)
+- Show the reason why a Kroki diagram in a delimited block couldn't be rendered, for example an error reported by the Kroki server, instead of only "Diagram could not be rendered" (#2162, #2164)
+
 === 0.45.14
 
 - Avoid the "Initializing..." placeholder of the preview blocking the real content for several seconds when a preview opens

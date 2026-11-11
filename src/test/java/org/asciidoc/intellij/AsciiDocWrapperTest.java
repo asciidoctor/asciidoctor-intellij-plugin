@@ -205,6 +205,22 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
         .contains(">Open broken.puml<")
         .doesNotContain("https://kroki.io/plantuml/");
 
+      // a delimited block resolves a relative include against the directory of its file, not the working directory
+      Files.writeString(new File(pages, "sibling.puml").toPath(), "@startuml\nclass FromSiblingInclude\n@enduml\n", UTF_8);
+      String sibling = wrapper.render("[plantuml]\n....\n@startuml\n!include sibling.puml\n@enduml\n....\n", Collections.emptyList());
+      assertThat(sibling)
+        .withFailMessage("expected the sibling include to be resolved: %s", sibling)
+        .doesNotContain("kroki-placeholder")
+        .contains("https://kroki.io/plantuml/");
+
+      // a delimited block names the reason as well, not only that the diagram could not be rendered
+      String inline = wrapper.render("[plantuml]\n....\n@startuml\n!include missing-inline.puml\n@enduml\n....\n", Collections.emptyList());
+      assertThat(inline)
+        .withFailMessage("expected a placeholder naming the reason: %s", inline)
+        .contains("class=\"kroki-placeholder\"")
+        .contains("Cannot resolve PlantUML include: missing-inline.puml")
+        .doesNotContain("Diagram could not be rendered");
+
       // with the kroki-preview-placeholder attribute set, a resolvable diagram becomes a placeholder linking to
       // its source file and the Kroki server is not contacted
       String placeholder = wrapper.render(":kroki-preview-placeholder:\n\nplantuml::example$model.puml[]\n", Collections.emptyList());

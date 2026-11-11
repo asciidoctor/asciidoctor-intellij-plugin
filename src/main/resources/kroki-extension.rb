@@ -5,8 +5,8 @@
 # This file concatenates the gem's version.rb, preprocess.rb, cache.rb and extension.rb (the
 # `require_relative` lines dropped) and appends the extension registration, so the plugin can load
 # it as a single script. Local changes are limited to this header, the "-intellij" suffix on the
-# HTTP referer, and the registration block at the end (the gem registers in asciidoctor_kroki.rb). To update: re-run the concatenation from the
-# gem sources and re-apply those three changes.
+# HTTP referer, the resource path of delimited blocks (KrokiBlockProcessor#process), and the registration block at the end (the gem registers in asciidoctor_kroki.rb). To update: re-run the concatenation from the
+# gem sources and re-apply those four changes.
 
 module Asciidoctor
   module AsciidoctorKroki
@@ -341,7 +341,10 @@ module AsciidoctorExtensions
       role = attrs['role']
       source_location = reader.cursor
       diagram_text = reader.string
-      KrokiProcessor.process(self, parent, attrs, diagram_type, diagram_text, @logger)
+      # resolve relative PlantUML includes against the directory of the file containing the block, not the working directory
+      dir = source_location.dir || parent.document.base_dir
+      resource_path = dir.to_s.empty? ? nil : ::File.join(dir, '_inline')
+      KrokiProcessor.process(self, parent, attrs, diagram_type, diagram_text, @logger, resource_path: resource_path)
     rescue => e # rubocop:disable Style/RescueStandardError
       # Matches the JavaScript/Node.js extension: a failure talking to the Kroki server (network
       # error, non-2xx response, unexpected content-type) shouldn't abort the whole document
