@@ -1,0 +1,28 @@
+= Custom TLS certificates
+:navtitle: Custom TLS certificates
+:description: When connecting to TLS with custom TLS certificates, users need to add them to the truststore of the IDE.
+
+{description}
+
+== Symptom
+
+When rendering an AsciiDoc document which for example connects to a Kroki diagram server that presents a self-signed certificate, the output contains an error similar to the following:
+
+====
+org.jruby.exceptions.StandardError: (SSLError) asciidoctor: FAILED: ...: Failed to load AsciiDoc document - certificate verify failed
+====
+
+== Cause: Untrusted certificate authority
+
+This happens if the remote server presents a certificate which is not trusted.
+Usually this happens if it uses a self-signed certificate or an unknown/private root certificate authority.
+
+== How do I fix this?
+
+Add the self-signed certificate or the matching root certificate authority to the IntelliJ's `cacerts` file.
+
+Users can also add certificates via the menu menu:File[Settings... > Tools > Server Certificates]. See https://www.jetbrains.com/help/idea/settings-tools-server-certificates.html[the IDE's help] for details.
+
+== Help, it still doesn't work!
+
+To have the maintainers investigate the issue, open a https://github.com/asciidoctor/asciidoctor-intellij-plugin/issues[GitHub issue].
