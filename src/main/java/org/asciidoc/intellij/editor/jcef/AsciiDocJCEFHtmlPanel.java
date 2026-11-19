@@ -242,11 +242,18 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
         myTabsCss = IOUtils.toString(is, StandardCharsets.UTF_8);
         myInlineCss = myInlineCss + myTabsCss;
       }
+      try (InputStream is = PreviewStaticServer.class.getResourceAsStream("/carousels/data/css/carousels.css")) {
+        myCarouselsCss = IOUtils.toString(is, StandardCharsets.UTF_8);
+        myInlineCss = myInlineCss + myCarouselsCss;
+      }
       try (InputStream is = PreviewStaticServer.class.getResourceAsStream("darcula.css")) {
         myInlineCssDarcula = myInlineCss + IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       try (InputStream is = PreviewStaticServer.class.getResourceAsStream("/tabs/data/css/tabs-darcula.css")) {
         myTabsCssDarcula = IOUtils.toString(is, StandardCharsets.UTF_8);
+      }
+      try (InputStream is = PreviewStaticServer.class.getResourceAsStream("/carousels/data/css/carousels-darcula.css")) {
+        myCarouselsCssDarcula = IOUtils.toString(is, StandardCharsets.UTF_8);
       }
       myAntoraCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("antora/preview.css") + "\">";
       myAntoraDarculaCssLink = "<link rel=\"stylesheet\" data-default href=\"" + PreviewStaticServer.getStyleUrl("antora/preview-darcula.css") + "\">";
@@ -257,6 +264,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       myMermaidScript = "<script src=\"" + PreviewStaticServer.getScriptUrl("mermaid/mermaid.min.js") + "\"></script>" +
         "<script src=\"" + PreviewStaticServer.getScriptUrl("mermaid/asciidoc-mermaid.js") + "\"></script>";
       myAsciidoctorTabsScript = "<script src=\"" + PreviewStaticServer.getScriptUrl("tabs.js") + "\"></script>";
+      myAsciidoctorCarouselsScript = "<script src=\"" + PreviewStaticServer.getScriptUrl("carousels.js") + "\"></script>";
     } catch (IOException e) {
       String message = "Unable to combine CSS resources: " + e.getMessage();
       LOG.error(message, e);
@@ -667,6 +675,10 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   @Nullable
   private String myTabsCssDarcula;
   @Nullable
+  private String myCarouselsCss;
+  @Nullable
+  private String myCarouselsCssDarcula;
+  @Nullable
   private String myInlineCssDarcula;
   @Nullable
   private String myFontAwesomeCssLink;
@@ -685,6 +697,8 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
   private String myMermaidScript;
   @Nullable
   private String myAsciidoctorTabsScript;
+  @Nullable
+  private String myAsciidoctorCarouselsScript;
 
   private volatile boolean hasLoadedOnce = false;
   // stamp of the last full page load, and of the last full page load that has signalled to be ready;
@@ -741,6 +755,7 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
           "function finish() {" +
             "if (window.mermaid !== undefined) window.mermaid.run(); " +
             "if (window.initTabs !== undefined) window.initTabs(); " +
+            "if (window.initCarousels !== undefined) window.initCarousels(); " +
             "if ('__IntelliJTools' in window) {" +
             "__IntelliJTools.processLinks && __IntelliJTools.processLinks();" +
             "__IntelliJTools.processImages && __IntelliJTools.processImages();" +
@@ -967,9 +982,9 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
     }
 
     if (isAntora()) {
-      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink + AsciiDocHtmlPanel.getCssLines(myTabsCss + (isDarcula() ? myTabsCssDarcula : "")), myMermaidScript, myAsciidoctorTabsScript, attributes, editor != null ? editor.getProject() : null);
+      html = AsciiDocWrapper.enrichPage(html, (isDarcula() ? myAntoraDarculaCssLink : myAntoraCssLink) + myFontAwesomeCssLink + AsciiDocHtmlPanel.getCssLines(myTabsCss + (isDarcula() ? myTabsCssDarcula : "") + myCarouselsCss + (isDarcula() ? myCarouselsCssDarcula : "")), myMermaidScript, myAsciidoctorTabsScript, myAsciidoctorCarouselsScript, attributes, editor != null ? editor.getProject() : null);
     } else {
-      html = AsciiDocWrapper.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula + myTabsCssDarcula : myInlineCss) + myFontAwesomeCssLink + myDroidSansMonoCssLink + myGoogleFontsCssLink + myDejavuCssLink, myMermaidScript, myAsciidoctorTabsScript, attributes, editor != null ? editor.getProject() : null);
+      html = AsciiDocWrapper.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula + myTabsCssDarcula + myCarouselsCssDarcula : myInlineCss) + myFontAwesomeCssLink + myDroidSansMonoCssLink + myGoogleFontsCssLink + myDejavuCssLink, myMermaidScript, myAsciidoctorTabsScript, myAsciidoctorCarouselsScript, attributes, editor != null ? editor.getProject() : null);
     }
 
     html = html.replaceAll("<head>", "<head>\n" +

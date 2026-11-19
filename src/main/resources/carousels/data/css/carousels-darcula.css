@@ -1,0 +1,31 @@
+/*! Asciidoctor Carousels | Copyright (c) 2026-present Asciidoctor Carousels contributors | MIT License */
+
+.carousel-stage {
+  background-color: #2c2c2c;
+  border-color: #404040;
+}
+
+.carousel-control {
+  background-color: rgba(44, 44, 44, 0.55);
+  border-color: #404040;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.carousel-indicator {
+  background-color: #626262;
+  border-color: #404040;
+}
+
+.carousel-indicator:hover,
+.carousel-indicator:focus-visible {
+  background-color: #2c2c2c;
+}
+
+.carousel-indicator span {
+  color: #bbb;
+}
+
+.carousel-indicator-preview {
+  background-color: #2c2c2c;
+  border-color: #404040;
+}
