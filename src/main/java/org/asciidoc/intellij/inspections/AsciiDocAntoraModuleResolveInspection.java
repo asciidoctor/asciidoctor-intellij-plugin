@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.codeInspection.util.InspectionMessage;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
+import org.asciidoc.intellij.antora.AntoraSiteManifestService;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.psi.HasAntoraReference;
@@ -39,7 +40,7 @@ public class AsciiDocAntoraModuleResolveInspection extends AsciiDocInspectionBas
               }
             }
             ResolveResult @NotNull [] resolved = file.multiResolve(false);
-            if (resolved.length == 0) {
+            if (resolved.length == 0 && !isInSiteManifest(o, key)) {
               holder.registerProblem(o, TEXT_HINT_MODULE_DOESNT_RESOLVE, ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 file.getRangeInElement());
             }
@@ -48,6 +49,14 @@ public class AsciiDocAntoraModuleResolveInspection extends AsciiDocInspectionBas
         super.visitElement(o);
       }
     };
+  }
+
+  private static boolean isInSiteManifest(PsiElement o, String key) {
+    AntoraSiteManifestService service = AntoraSiteManifestService.getInstance(o.getProject());
+    // the key is the component with an optional module, like "component:" or "component:module:"
+    String trimmed = key.replaceAll(":+$", "");
+    String reference = trimmed + (trimmed.contains(":") ? ":" : "::") + "x.adoc";
+    return service.lookup(reference, service.getManifests()) != null;
   }
 
 }

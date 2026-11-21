@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.tree.IElementType;
+import org.asciidoc.intellij.antora.AntoraSiteManifestService;
 import org.asciidoc.intellij.lexer.AsciiDocLexer;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
@@ -177,7 +178,10 @@ public class AntoraReferenceAdapter {
       VirtualFile sourceDir = LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir);
       List<String> replaced = AsciiDocUtil.replaceAntoraPrefix(project, antoraModuleDir, sourceDir, target, defaultFamily);
       if (replaced.size() == 1 && replaced.get(0).equals(target)) {
-        // unable to replace
+        // unable to replace locally, the page might be in another component that is listed in an Antora site manifest
+        if (type.equals("inline_anchor")) {
+          convertSiteManifestPage(phraseNode, target, anchor);
+        }
         return;
       }
       target = replaced.get(0);
@@ -275,6 +279,25 @@ public class AntoraReferenceAdapter {
       }
     }
   }
+
+  /**
+   * Link to the page on the published site, and use its title as the link text if there is none.
+   */
+  private static void convertSiteManifestPage(PhraseNodeImpl phraseNode, String target, String anchor) {
+    AntoraSiteManifestService service = AntoraSiteManifestService.getInstance(project);
+    // this runs while rendering, give a manifest that is currently loading some time
+    AntoraSiteManifestService.Lookup lookup = service.lookup(target, service.getManifestsAndWait(SITE_MANIFEST_WAIT_MS));
+    if (lookup == null || lookup.getPage() == null) {
+      return;
+    }
+    String title = lookup.getPage().getTitleHtml();
+    if (phraseNode.getText() == null && anchor == null && title != null) {
+      phraseNode.setString("text", title);
+    }
+    phraseNode.setString("target", lookup.getAbsoluteUrl() + (anchor != null ? "#" + anchor : ""));
+  }
+
+  private static final long SITE_MANIFEST_WAIT_MS = 5_000;
 
   private static final HashMap<IElementType, String> HTML_TOKEN_TRANSLATION = new HashMap<>();
   static {

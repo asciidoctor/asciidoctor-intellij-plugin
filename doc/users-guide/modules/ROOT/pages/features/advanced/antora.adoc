@@ -197,6 +197,33 @@ Negation and other advanced micromatch syntax are not supported.
 
 |===
 
+=== Antora Atlas site manifest support
+
+The https://gitlab.com/antora/antora-atlas-extension[Antora Atlas extension] publishes a `site-manifest.json` that lists all components, versions and pages of a site.
+The plugin uses it to work with xrefs to components that are not available in the current project, for example when previewing a single component of a larger site.
+
+* Pages of the manifest are not reported as unresolved, and a page that is missing in a known component and version is reported with a warning.
+Components that are neither available locally nor listed in a manifest are still reported as unresolved.
+* Completion offers the components, modules and pages of the manifest in addition to the local ones.
+* The preview links to the page on the published site and shows its title as the link text unless an explicit text is given.
+
+The manifest is located using the same attributes as the Atlas extension, set in `asciidoc.attributes` of the playbook or of the component's `antora.yml`:
+
+`primary-site-manifest-url`::
+URL or path of the manifest. Relative paths are resolved from the folder of the file declaring it, and names ending in `.gz` are supported.
+
+`primary-site-url`::
+URL of the site, the manifest is read from `site-manifest.json` below it. The value `.` is ignored.
+
+NOTE: A single-component repository usually has no playbook, therefore the attributes can be set in its `antora.yml`.
+The plugin never uses a custom attribute name for this.
+
+Manifests are downloaded in the background, cached in the IDE's system folder and revalidated at most every 30 minutes using the HTTP `ETag` header, which is stored next to the cached file.
+Nothing is downloaded when the project is not trusted ("safe mode").
+Editor highlighting and a visible preview are refreshed once a manifest has been downloaded or updated.
+A manifest that can't be downloaded is ignored without a message, just like the Atlas extension does.
+Only the latest version of each component is offered in completion, and xrefs written as `+<<...>>+` are not validated.
+
 === Examples of supported Antora syntax
 
 [source,asciidoc]

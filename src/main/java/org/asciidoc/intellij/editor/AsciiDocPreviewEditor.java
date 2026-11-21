@@ -55,6 +55,7 @@ import com.intellij.util.FileContentUtilCore;
 import com.intellij.util.messages.MessageBusConnection;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.AsciiDocWrapper;
+import org.asciidoc.intellij.antora.AntoraSiteManifestService;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanel;
@@ -369,6 +370,12 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         });
       }
     });
+    // a completed download of an Antora site manifest changes how xrefs are resolved
+    connection.subscribe(AntoraSiteManifestService.MANIFESTS_CHANGED, () ->
+      ApplicationManager.getApplication().executeOnPooledThread(() -> {
+        forceRenderCycle();
+        renderIfVisible();
+      }));
     connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
       @Override
       public void after(@NotNull List<? extends VFileEvent> events) {
