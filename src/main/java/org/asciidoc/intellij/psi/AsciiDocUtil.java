@@ -1959,13 +1959,19 @@ public class AsciiDocUtil {
           }
         }
       }
+      // the component of the current module is always known, even if it is in an excluded folder and not indexed
+      VirtualFile ownDescriptor = moduleDir.getParent() != null && moduleDir.getParent().getParent() != null
+        ? moduleDir.getParent().getParent().findChild(ANTORA_YML) : null;
+      if (files != null && ownDescriptor != null && !files.contains(ownDescriptor)) {
+        files.add(ownDescriptor);
+      }
       if (files != null) {
         // sort by path proximity
         files.sort(Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
         ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
         for (VirtualFile file : files) {
           if (index.isInLibrary(file)
-            || index.isExcluded(file)
+            || (index.isExcluded(file) && !file.equals(ownDescriptor))
             || index.isInLibraryClasses(file)
             || index.isInLibrarySource(file)) {
             continue;

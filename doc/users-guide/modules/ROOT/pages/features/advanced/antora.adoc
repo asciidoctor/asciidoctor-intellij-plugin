@@ -20,6 +20,17 @@ The plugin detects Antora playbooks by their name.
 The filename `antora-playbook.yml` would be detected as an Antora playbook, as well as any other file that ends with `.yml` and contains both words `antora` and `playbook`.
 For example, `antora-playbook-author.yml` would be treated as an Antora playbook as well, while `antora-localpreview.yml` would not be treated as an Antora playbook.
 
+[#antora-excluded-folders]
+== Excluded folders
+
+The plugin uses the IDE's index to find Antora components, their pages, partials and attributes.
+Folders that are excluded in the IDE aren't indexed.
+Therefore, don't exclude folders that contain Antora components, for example a clone of another documentation repository, if you want to link to them or work with them.
+
+If a file is in an excluded folder, the plugin still resolves Antora prefixes like `partial$`, `image$` and `example$` within the component of that file.
+References to other components, search, find usages and refactoring won't work for the excluded component, and the editor shows a notification.
+To avoid indexing generated content, exclude only the output or cache folders of Antora, for example `build` or `.cache`.
+
 == Support provided by the plugin
 
 === Antora stylesheet for the preview

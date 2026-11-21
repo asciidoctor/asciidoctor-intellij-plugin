@@ -17,6 +17,7 @@ This document provides a high-level view of the changes introduced by release.
 - Check the file type of changed files with read access when refreshing links after file changes, to avoid an error about missing read access
 - Avoid freezing the UI after exporting to HTML, PDF or DOCX by selecting the exported file in the project view outside of a write action
 - Declare the UTF-8 charset in the preview page, so that non-ASCII characters aren't shown as Windows-1252 mojibake in remote development (#2169)
+- Resolve Antora prefixes like `partial$` within the component of a file in an excluded folder, and show a notification that the component is not indexed (#1795)
 
 === 0.45.15
 
