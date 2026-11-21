@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Add completion and quick documentation for macros and their named and positional attributes (image, icon, audio, video, include, link, xref, toc, kbd, btn, menu, footnote, stem, index terms and more), and intentions to convert between positional and named attributes (#2172)
 - Fix lexing of quoted positional attribute values that contain a comma in block and inline macros, for example `image::a.png["Hello, world"]`
 - Improve support for the Antora Collector extension: `scan` as a list or string, `into` as the successor of `base`, `dir` relative to the repository root, and filtering with `files` (#1177)
+- Handle AsciiDoc files that are FreeMarker templates: lines with a directive or macro call are comments in the editor and hidden in the preview, and macro calls within a line are shown as a placeholder (#2173)
 - Use the Antora Atlas site manifest to validate xrefs to other components, offer them in completion and show their titles in the preview (#1250)
 - Fix the "Constraint inSmartMode cannot be satisfied" error when searching for usages of Java classes or packages in AsciiDoc files while the IDE is indexing
 - Don't report an error when scrolling the preview after the IDE's remote JCEF browser process has been disconnected

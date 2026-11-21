@@ -10,12 +10,14 @@ import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.util.ProcessingContext;
 import org.apache.commons.text.StringEscapeUtils;
+import org.asciidoc.intellij.lexer.AsciiDocFreemarker;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
 import org.asciidoc.intellij.namesValidator.AsciiDocRenameInputValidator;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationReference;
 import org.asciidoc.intellij.psi.AsciiDocAttributeReference;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
+import org.asciidoc.intellij.psi.AsciiDocFreemarkerFileReference;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagInDocument;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInDocument;
 import org.asciidoc.intellij.psi.AsciiDocLink;
@@ -78,6 +80,22 @@ public class AsciiDocReferenceContributor extends PsiReferenceContributor {
           references.addAll(urlReferences);
 
           return references.toArray(new PsiReference[0]);
+        }
+      });
+
+    registrar.registerReferenceProvider(psiElement().withElementType(AsciiDocTokenTypes.LINE_COMMENT),
+      new PsiReferenceProvider() {
+        @Override
+        public PsiReference @NotNull [] getReferencesByElement(@NotNull PsiElement element,
+                                                               @NotNull ProcessingContext context) {
+          // FreeMarker templates have directives that are handled like comments
+          Matcher matcher = AsciiDocFreemarker.INCLUDE_OR_IMPORT.matcher(element.getText());
+          if (matcher.lookingAt()) {
+            return new PsiReference[]{
+              new AsciiDocFreemarkerFileReference(element, TextRange.create(matcher.start(1), matcher.end(1)))
+            };
+          }
+          return PsiReference.EMPTY_ARRAY;
         }
       });
 

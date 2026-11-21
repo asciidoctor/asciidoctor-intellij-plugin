@@ -1,0 +1,22 @@
+= FreeMarker templates that generate AsciiDoc
+:description: Edit and preview AsciiDoc files that are FreeMarker templates.
+
+Some projects, like https://github.com/keycloak/keycloak/tree/main/docs/guides[Keycloak], write their guides as https://freemarker.apache.org/[FreeMarker] templates that generate AsciiDoc, and still name the files `.adoc`.
+
+The plugin treats a file as a template if it contains one of the directives `<#import`, `<#include`, `<#assign`, `<#macro`, `<#function`, `<#ftl`, `<#setting`, `<#noparse`, `<#list`, `<#if` or `<#switch`, or a call of a macro like `<@tmpl.guide`, each at the start of a line.
+Other files are not affected.
+
+Editor::
+A line that contains only a directive or macro call is handled like a comment, even if it spans multiple lines.
+It doesn't interrupt lists, paragraphs or blocks.
+Directives within a line or inside a verbatim block are not highlighted.
+
+Preview::
+Lines with only a directive or macro call are hidden.
+Self-closing macro calls like `<@links.guide id="..."/>` within a line are shown as a code placeholder, all other directives within a line are removed.
+Lines with `<#include "...">` are replaced by an AsciiDoc include of the template file, which is shown neutralized as well.
+Paths starting with a slash are resolved relative to the closest parent folder that contains them, other paths relative to the current file.
+Includes are only resolved within the content root of the project that contains the file, and never outside of it.
+In the editor, use kbd:[Ctrl+Click] on the path of an `<#include>` or `<#import>` to navigate to the file.
+Expressions like `${...}` are shown as they are.
+The preview doesn't run FreeMarker, therefore both branches of an `<#if>` and the content of a `<#list>` are shown once, and macros are not expanded.

@@ -32,6 +32,112 @@ public class AsciiDocLexerTest extends LexerTestCase {
       AsciiDoc:LINE_COMMENT ('// bar')""");
   }
 
+  public void testTemplateDirectiveBetweenListItems() {
+    doTest("<#assign a = 1>\n* one\n<#if x>\n* two\n</#if>\n", """
+        AsciiDoc:LINE_COMMENT ('<#assign a = 1>')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:BULLET ('*')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('one')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LINE_COMMENT ('<#if x>')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:BULLET ('*')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('two')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LINE_COMMENT ('</#if>')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
+  public void testNoTemplateDirectiveWithoutTemplateMarker() {
+    doTest("* one\n<#else>\n* two\n", """
+        AsciiDoc:BULLET ('*')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('one')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LT ('<')
+        AsciiDoc:TEXT ('#else')
+        AsciiDoc:GT ('>')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:BULLET ('*')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('two')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
+  public void testTemplateMacroOverMultipleLines() {
+    doTest("<@tmpl.guide\ntitle=\"a > b\"\nsummary='x' >\n\ntext\n", """
+        AsciiDoc:LINE_COMMENT ('<@tmpl.guide\\ntitle="a > b"\\nsummary='x' >')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:EMPTY_LINE ('\\n')
+        AsciiDoc:TEXT ('text')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
+  public void testTemplateMacroIndented() {
+    doTest("* item\n+\n  <@kc.start parameters=\"--optimized\"/>\n", """
+        AsciiDoc:BULLET ('*')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('item')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:CONTINUATION ('+')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LINE_COMMENT ('  <@kc.start parameters="--optimized"/>')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
+  public void testNoTemplateDirectiveWhenFollowedByText() {
+    doTest("<#if x>text\n", """
+        AsciiDoc:LT ('<')
+        AsciiDoc:TEXT ('#if')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('x')
+        AsciiDoc:GT ('>')
+        AsciiDoc:TEXT ('text')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
+  public void testNoTemplateDirectiveForOtherHtmlAndMentions() {
+    doTest("<a>\n\n<@user>\n\n<#>\n\n<#elseif x == \"a>\n", """
+        AsciiDoc:LT ('<')
+        AsciiDoc:TEXT ('a')
+        AsciiDoc:GT ('>')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:EMPTY_LINE ('\\n')
+        AsciiDoc:LT ('<')
+        AsciiDoc:TEXT ('@user')
+        AsciiDoc:GT ('>')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:EMPTY_LINE ('\\n')
+        AsciiDoc:LT ('<')
+        AsciiDoc:TEXT ('#')
+        AsciiDoc:GT ('>')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:EMPTY_LINE ('\\n')
+        AsciiDoc:LT ('<')
+        AsciiDoc:TEXT ('#elseif')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('x')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('==')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:DOUBLE_QUOTE ('"')
+        AsciiDoc:TEXT ('a')
+        AsciiDoc:GT ('>')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
+  public void testNoTemplateDirectiveInListing() {
+    doTest("----\n<#if x>\n----\n", """
+        AsciiDoc:LISTING_BLOCK_DELIMITER ('----')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LISTING_TEXT ('<#if x>')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LISTING_BLOCK_DELIMITER ('----')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
   public void testLineCommentAfterEnumeration() {
     doTest("* item\n// comment",
       """

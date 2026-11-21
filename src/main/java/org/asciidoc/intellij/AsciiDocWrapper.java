@@ -44,6 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.geronimo.gshell.io.SystemOutputHijacker;
 import org.asciidoc.intellij.asciidoc.AntoraIncludeAdapter;
+import org.asciidoc.intellij.asciidoc.FreemarkerIncludeProcessor;
 import org.asciidoc.intellij.asciidoc.AntoraReferenceAdapter;
 import org.asciidoc.intellij.asciidoc.AttributesRetriever;
 import org.asciidoc.intellij.asciidoc.PrependConfig;
@@ -52,6 +53,7 @@ import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
 import org.asciidoc.intellij.editor.notification.IncompatiblePluginNotificationProvider;
+import org.asciidoc.intellij.lexer.AsciiDocFreemarker;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationDummy;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.psi.AttributeDeclaration;
@@ -181,6 +183,7 @@ public class AsciiDocWrapper {
   private static PrependConfig prependConfig;
 
   private static AntoraIncludeAdapter antoraIncludeAdapter;
+  private static final FreemarkerIncludeProcessor FREEMARKER_INCLUDE_PROCESSOR = new FreemarkerIncludeProcessor();
 
   @Nullable
   private static AttributesRetriever attributesRetriever;
@@ -354,6 +357,7 @@ public class AsciiDocWrapper {
         // requiring it later after other libraries have been loaded results in "undefined method `set_params' for #<OpenSSL::SSL::SSLContext"
         asciidoctor.requireLibrary("openssl");
         asciidoctor.javaExtensionRegistry().preprocessor(prependConfig);
+        asciidoctor.javaExtensionRegistry().includeProcessor(FREEMARKER_INCLUDE_PROCESSOR);
         asciidoctor.javaExtensionRegistry().includeProcessor(antoraIncludeAdapter);
         if (format == FileType.JAVAFX || format == FileType.HTML || format == FileType.JCEF || format == FileType.DOCX || format == FileType.BROWSER) {
           asciidoctor.javaExtensionRegistry().postprocessor(attributesRetriever);
@@ -863,6 +867,11 @@ public class AsciiDocWrapper {
                        List<String> extensions,
                        Notifier notifier,
                        FileType format) {
+    // FreeMarker templates, like the guides of the Keycloak project, contain directives that Asciidoctor doesn't know
+    File templateFile = new File(fileBaseDir, name);
+    File templateBoundary = FreemarkerIncludeProcessor.findBoundary(project, templateFile);
+    FREEMARKER_INCLUDE_PROCESSOR.setBoundary(templateBoundary);
+    text = AsciiDocFreemarker.neutralize(text, templateFile, templateBoundary);
     VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
       project,
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
