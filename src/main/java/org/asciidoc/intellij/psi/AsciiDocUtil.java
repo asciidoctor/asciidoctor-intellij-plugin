@@ -1742,11 +1742,7 @@ public class AsciiDocUtil {
           newKey = value + newKey;
 
           // collector takes precendence over a regular file
-          List<String> collectorResults = new ArrayList<>();
-          resolveCollector(antoraFile.getParent(), antora, newKey, collectorResults);
-          if (collectorResults.size() > 0) {
-            result.addAll(collectorResults);
-          }
+          result.addAll(AntoraCollector.resolve(project, antoraFile.getParent(), antora, newKey));
           if (new File(newKey).exists()) {
             // if the file exists, add it in first place
             result.add(0, newKey);
@@ -1769,48 +1765,6 @@ public class AsciiDocUtil {
       });
     }
     return Collections.singletonList(originalKey);
-  }
-
-  private static void resolveCollector(VirtualFile antoraComponent, Map<String, Object> antoraDescriptor, String file, List<String> result) {
-    Object ext = antoraDescriptor.get("ext");
-    if (!(ext instanceof Map)) {
-      return;
-    }
-    Object collector = ((Map<?, ?>) ext).get("collector");
-    if (collector instanceof List) {
-      for (Object item : ((List<?>) collector)) {
-        if (item instanceof Map) {
-          matchCollector(antoraComponent, (Map<?, ?>) item, file, result);
-        }
-      }
-    } else if (collector instanceof Map) {
-      matchCollector(antoraComponent, (Map<?, ?>) collector, file, result);
-    }
-  }
-
-  private static void matchCollector(VirtualFile antoraComponent, Map<?, ?> item, String fullFile, List<String> result) {
-    if (!(item.get("scan") instanceof Map)) {
-      return;
-    }
-    item = (Map<?, ?>) item.get("scan");
-    String base = antoraComponent.getCanonicalPath();
-    if (base == null) {
-      return;
-    }
-    if (item.get("base") != null) {
-      base = base + "/" + item.get("base");
-    }
-    if (!(item.get("dir") instanceof String)) {
-      return;
-    }
-    if (fullFile.startsWith(base)) {
-      fullFile = antoraComponent.getCanonicalPath() + "/" + item.get("dir") + "/" + fullFile.substring(base.length());
-    }
-    if (new File(fullFile).exists()) {
-      // last file wins, therefore, clear and add.
-      result.clear();
-      result.add(fullFile);
-    }
   }
 
   public static boolean antoraVersionAndComponentExist(PsiElement myElement, String originalKey) {

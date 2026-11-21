@@ -9,3 +9,11 @@ ext:
     - scan:
         dir: ./collector-page-with-base
         base: modules/ROOT/pages
+    - scan:
+        - dir: ./collector-list-a
+          into: modules/ROOT/pages
+        - ./collector-list-b
+    - scan:
+        dir: ./collector-files
+        into: modules/ROOT/pages
+        files: 'match-*.adoc'

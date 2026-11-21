@@ -1,0 +1,3 @@
+= Pages should not resolve
+
+xref:other-page.adoc[]

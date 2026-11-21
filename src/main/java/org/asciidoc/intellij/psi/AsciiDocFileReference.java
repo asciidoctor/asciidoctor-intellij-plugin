@@ -1507,59 +1507,20 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       } catch (YAMLException ex) {
         return Collections.emptyList();
       }
-      Object ext = antora.get("ext");
-      if (!(ext instanceof Map)) {
-        return Collections.emptyList();
+      String fullFile = fileName;
+      if (!SystemInfo.isWindows && fullFile.length() > 1 && !fullFile.startsWith("/")) {
+        fullFile = startDir.getVirtualFile().getCanonicalPath() + "/" + fullFile;
+      } else if (SystemInfo.isWindows && !fullFile.matches("/[A-Z]:/.*")) {
+        fullFile = startDir.getVirtualFile().getCanonicalPath() + "/" + fullFile;
       }
-      Object collector = ((Map<?, ?>) ext).get("collector");
-      if (collector instanceof List) {
-        for (Object item : ((List<?>) collector)) {
-          if (item instanceof Map) {
-            List<@NotNull PsiElement> result = matchCollector(element, startDir, fileName, antoraFile.getParent(), (Map<?, ?>) item);
-            if (!result.isEmpty()) {
-              return result;
-            }
-          }
-        }
-      } else if (collector instanceof Map) {
-        List<@NotNull PsiElement> result = matchCollector(element, startDir, fileName, antoraFile.getParent(), (Map<?, ?>) collector);
-        if (!result.isEmpty()) {
-          return result;
+      for (String path : AntoraCollector.resolve(myElement.getProject(), antoraFile.getParent(), antora, fullFile)) {
+        List<@NotNull PsiElement> psiElements = resolveAbsolutePath(element, path);
+        if (psiElements != null && !psiElements.isEmpty()) {
+          return psiElements;
         }
       }
     }
     return Collections.emptyList();
-  }
-
-  private List<@NotNull PsiElement> matchCollector(PsiElement element, PsiDirectory startDir, String fileName, VirtualFile antoraComponentDir, Map<?, ?> item) {
-    if (!(item.get("scan") instanceof Map)) {
-      return Collections.emptyList();
-    }
-    item = (Map<?, ?>) item.get("scan");
-    String fullFile = fileName;
-    if (!SystemInfo.isWindows && fullFile.length() > 1 && !fullFile.startsWith("/")) {
-      fullFile = startDir.getVirtualFile().getCanonicalPath() + "/" + fullFile;
-    } else if (SystemInfo.isWindows && !fullFile.matches("/[A-Z]:/.*")) {
-      fullFile = startDir.getVirtualFile().getCanonicalPath() + "/" + fullFile;
-    }
-    String base = antoraComponentDir.getCanonicalPath();
-    if (base == null) {
-      return Collections.emptyList();
-    }
-    if (item.get("base") != null) {
-      base = base + "/" + item.get("base");
-    }
-    if (!(item.get("dir") instanceof String)) {
-      return Collections.emptyList();
-    }
-    if (fullFile.startsWith(base)) {
-      fullFile = antoraComponentDir.getCanonicalPath() + "/" + item.get("dir") + "/" + fullFile.substring(base.length());
-    }
-    List<@NotNull PsiElement> psiElements = resolveAbsolutePath(element, fullFile);
-    if (psiElements == null) {
-      return Collections.emptyList();
-    }
-    return psiElements;
   }
 
   @SuppressWarnings("checkstyle:MethodLength")
