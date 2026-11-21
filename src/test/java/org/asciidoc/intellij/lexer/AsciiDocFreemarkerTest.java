@@ -28,7 +28,7 @@ public class AsciiDocFreemarkerTest extends TestCase {
 
   public void testInlineTags() {
     String result = AsciiDocFreemarker.neutralize("<#import \"x\" as x>\nSee <@links.ha id=\"a\" /> and <#if x>this</#if> and <b>bold</b>.\n");
-    assertEquals("// <#import \"x\" as x>\nSee pass:[<code>links.ha id=\"a\"</code>] and this and <b>bold</b>.\n", result);
+    assertEquals("// <#import \"x\" as x>\nSee `+<@links.ha id=\"a\" />+` and this and <b>bold</b>.\n", result);
   }
 
   public void testNoCommentAfterEmptyLineSoListContinues() {
@@ -71,6 +71,89 @@ public class AsciiDocFreemarkerTest extends TestCase {
       assertNull(AsciiDocFreemarker.resolve("/secret.adoc", guide.toFile(), boundary));
       assertNull(AsciiDocFreemarker.resolve("/etc/passwd", guide.toFile(), boundary));
       assertNotNull(AsciiDocFreemarker.resolve("/inside.adoc", guide.toFile(), boundary));
+    } finally {
+      try (var files = java.nio.file.Files.walk(root)) {
+        files.sorted(java.util.Comparator.reverseOrder()).forEach(f -> f.toFile().delete());
+      }
+    }
+  }
+
+  public void testSimpleMacrosAreExpanded() throws Exception {
+    java.nio.file.Path root = java.nio.file.Files.createTempDirectory("freemarker");
+    try {
+      java.nio.file.Path guide = root.resolve("guides/guide.adoc");
+      java.nio.file.Files.createDirectories(guide.getParent());
+      java.nio.file.Files.createDirectories(root.resolve("templates"));
+      java.nio.file.Files.writeString(root.resolve("templates/links.adoc"), """
+        <#macro ha id anchor="">link:{links_ha_${id}_url}<#if anchor != "">#${anchor}</#if>[{links_ha_${id}_name}]</#macro>
+        """);
+      java.nio.file.Files.writeString(root.resolve("templates/profile.adoc"), """
+        <#macro ifProduct>
+        ifeval::[{project_product} == true]
+        <#nested>
+        endif::[]
+        </#macro>
+
+        <#macro complex>
+        line one
+        line two
+        <#nested>
+        </#macro>
+        """);
+      String result = AsciiDocFreemarker.neutralize("""
+        <#import "/templates/links.adoc" as links>
+        <#import "/templates/profile.adoc" as profile>
+        See <@links.ha id="a"/> and <@links.ha id='b' anchor="c" />, <@links.ha id=x/>.
+        <@profile.ifProduct>
+        product text
+        </@profile.ifProduct>
+        <@profile.complex>
+        text
+        </@profile.complex>
+        """, guide.toFile(), root.toFile());
+      assertEquals("""
+        // <#import "/templates/links.adoc" as links>
+        // <#import "/templates/profile.adoc" as profile>
+        See link:{links_ha_a_url}[{links_ha_a_name}] and link:{links_ha_b_url}#c[{links_ha_b_name}], `+<@links.ha id=x/>+`.
+        ifeval::[{project_product} == true]
+        product text
+        endif::[]
+        // <@profile.complex>
+        text
+        // </@profile.complex>
+        """, result);
+    } finally {
+      try (var files = java.nio.file.Files.walk(root)) {
+        files.sorted(java.util.Comparator.reverseOrder()).forEach(f -> f.toFile().delete());
+      }
+    }
+  }
+
+  public void testSelfClosingMacroCallOnItsOwnLineIsVisible() {
+    String result = AsciiDocFreemarker.neutralize("<#import \"x\" as kc>\n\n<@kc.build parameters=\"--a=1\n--b=2\"/>\n\n<@kc.wrap a=\"b\">\ntext\n</@kc.wrap>\n");
+    assertEquals("// <#import \"x\" as kc>\n\n`+<@kc.build parameters=\"--a=1 --b=2\"/>+`\n\n\n\ntext\n// </@kc.wrap>\n", result);
+  }
+
+  public void testLinksToGuidesAreResolved() throws Exception {
+    java.nio.file.Path root = java.nio.file.Files.createTempDirectory("freemarker");
+    try {
+      java.nio.file.Path guide = root.resolve("high-availability/single-cluster/deploy.adoc");
+      java.nio.file.Files.createDirectories(guide.getParent());
+      java.nio.file.Files.createDirectories(root.resolve("high-availability/multi-cluster"));
+      java.nio.file.Files.createDirectories(root.resolve("templates"));
+      java.nio.file.Files.writeString(root.resolve("high-availability/introduction.adoc"), "<@tmpl.guide\ntitle=\"Intro\"\n>\n");
+      java.nio.file.Files.writeString(root.resolve("high-availability/multi-cluster/concepts.adoc"), "<@tmpl.guide\ntitle=\"Multi concepts\"\n>\n");
+      java.nio.file.Files.writeString(root.resolve("templates/links.adoc"), """
+        <#macro ha id anchor="">link:{links_high-availability_${id}_url}<#if anchor != "">#${anchor}</#if>[{links_high-availability_${id}_name}]</#macro>
+        """);
+      String result = AsciiDocFreemarker.neutralize("""
+        <#import "/templates/links.adoc" as links>
+        See <@links.ha id="introduction"/>, <@links.ha id="multi-cluster-concepts" anchor="top"/> and <@links.ha id="unknown"/>.
+        """, guide.toFile(), root.toFile());
+      assertEquals("""
+        // <#import "/templates/links.adoc" as links>
+        See xref:../introduction.adoc[Intro], xref:../multi-cluster/concepts.adoc#top[Multi concepts] and link:{links_high-availability_unknown_url}[{links_high-availability_unknown_name}].
+        """, result);
     } finally {
       try (var files = java.nio.file.Files.walk(root)) {
         files.sorted(java.util.Comparator.reverseOrder()).forEach(f -> f.toFile().delete());

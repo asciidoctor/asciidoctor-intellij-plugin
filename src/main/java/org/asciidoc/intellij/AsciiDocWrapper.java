@@ -870,7 +870,6 @@ public class AsciiDocWrapper {
     // FreeMarker templates, like the guides of the Keycloak project, contain directives that Asciidoctor doesn't know
     File templateFile = new File(fileBaseDir, name);
     File templateBoundary = FreemarkerIncludeProcessor.findBoundary(project, templateFile);
-    FREEMARKER_INCLUDE_PROCESSOR.setBoundary(templateBoundary);
     text = AsciiDocFreemarker.neutralize(text, templateFile, templateBoundary);
     VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
       project,
@@ -896,6 +895,8 @@ public class AsciiDocWrapper {
         asciidoctor.registerLogHandler(logHandler);
         prependConfig.setConfig(config);
         antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
+        // the processor is shared by all projects, set its details only while holding the lock
+        FREEMARKER_INCLUDE_PROCESSOR.setBoundary(templateBoundary);
         AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
         try {
           return "<div id=\"content\"" + (antoraModuleDir != null ? " class=\"doc\"" : "") + ">\n" + asciidoctor.convert(text,
@@ -903,6 +904,7 @@ public class AsciiDocWrapper {
         } finally {
           prependConfig.setConfig("");
           antoraIncludeAdapter.setAntoraDetails(null, null, null, null);
+          FREEMARKER_INCLUDE_PROCESSOR.setBoundary(null);
           asciidoctor.unregisterLogHandler(logHandler);
         }
       } catch (ProcessCanceledException ex) {
