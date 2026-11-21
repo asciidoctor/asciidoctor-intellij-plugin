@@ -92,4 +92,10 @@ public class AsciiDocMoveFileTest extends BasePlatformTestCase {
     move("docs/a/other.adoc", "docs/b");
     assertEquals("xref:b/other.adoc[Other]\n\nxref:b/other.adoc#anchor[Anchor]\n", myFixture.getFile().getText());
   }
+
+  public void testMoveIncludedPartialWithAttributeReferenceInTarget() {
+    setUpAntora(":ver: 1.0\n\ninclude::{ver}@test:ROOT:partial$placeholder.adoc[]");
+    move("modules/ROOT/partials/placeholder.adoc", "modules/ROOT/pages");
+    assertFalse(myFixture.getFile().getText().contains("partial$"));
+  }
 }

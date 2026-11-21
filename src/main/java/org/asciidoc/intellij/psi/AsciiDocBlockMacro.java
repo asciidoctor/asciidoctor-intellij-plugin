@@ -220,17 +220,32 @@ public class AsciiDocBlockMacro extends AsciiDocStandardBlock implements HasFile
                                                   @NotNull TextRange range,
                                                   String newContent) throws IncorrectOperationException {
       PsiElement child = element.getFirstChild();
-      while (child != null && range.getStartOffset() >= child.getTextLength()) {
-        range = range.shiftRight(-child.getTextLength());
+      TextRange childRange = range;
+      while (child != null && childRange.getStartOffset() >= child.getTextLength()) {
+        childRange = childRange.shiftRight(-child.getTextLength());
         child = child.getNextSibling();
       }
-      if (child instanceof LeafPsiElement && range.getEndOffset() <= child.getTextLength()) {
-        ((LeafPsiElement) child).replaceWithText(range.replace(child.getText(), newContent));
+      if (child instanceof LeafPsiElement && childRange.getEndOffset() <= child.getTextLength()) {
+        ((LeafPsiElement) child).replaceWithText(childRange.replace(child.getText(), newContent));
+      } else if (child != null) {
+        return replaceAcrossChildren(element, range, newContent);
       } else {
         AsciiDocPsiImplUtil.throwExceptionCantHandleContentChange(element, range, newContent);
       }
 
       return element;
+    }
+
+    // the range spans several children, for example a target containing an attribute reference
+    private static AsciiDocBlockMacro replaceAcrossChildren(AsciiDocBlockMacro element, TextRange range, String newContent) {
+      String text = range.replace(element.getText(), newContent);
+      AsciiDocFile file = AsciiDocPsiElementFactory.createFile(element.getProject(), text);
+      AsciiDocBlockMacro replacement = PsiTreeUtil.findChildOfType(file, AsciiDocBlockMacro.class);
+      if (replacement == null || !replacement.getText().equals(text)) {
+        AsciiDocPsiImplUtil.throwExceptionCantHandleContentChange(element, range, newContent);
+        return element;
+      }
+      return (AsciiDocBlockMacro) element.replace(replacement);
     }
 
     @NotNull
