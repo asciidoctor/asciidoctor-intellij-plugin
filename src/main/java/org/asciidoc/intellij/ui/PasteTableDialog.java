@@ -3,16 +3,15 @@ package org.asciidoc.intellij.ui;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
-import org.apache.commons.lang3.StringUtils;
+import org.asciidoc.intellij.actions.asciidoc.ClipboardTableParser;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.BufferedReader;
-import java.io.CharArrayReader;
 import java.io.IOException;
+import java.util.List;
 
 public class PasteTableDialog extends DialogWrapper {
 
@@ -88,10 +87,9 @@ public class PasteTableDialog extends DialogWrapper {
       try {
         data = (String) Toolkit.getDefaultToolkit()
           .getSystemClipboard().getData(DataFlavor.stringFlavor);
-        BufferedReader br = new BufferedReader(new CharArrayReader(data.toCharArray()));
-        long lines = br.lines().count();
-        br = new BufferedReader(new CharArrayReader(data.toCharArray()));
-        int max = br.lines().mapToInt(line -> StringUtils.countMatches(line, separator)).max().orElse(0);
+        List<List<String>> rows = ClipboardTableParser.parse(data, separator);
+        long lines = rows.size();
+        int max = rows.stream().mapToInt(List::size).max().orElse(1) - 1;
         expectedTableSizeLabel.setText(max + 1 + " x " + lines);
       } catch (UnsupportedFlavorException | IOException e) {
         log.info("unable to parse clipboard (no text found)", e);
