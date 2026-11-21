@@ -1120,8 +1120,11 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
           myJSQuerySetScrollY.inject("value"),
         getCefBrowser().getURL(), 0);
     } catch (IllegalStateException ex) {
-      if (ex.getMessage().equals("the JS query has been disposed")) {
+      if ("the JS query has been disposed".equals(ex.getMessage())) {
         LOG.info("JS query has already been disposed, can't place cursor in preview");
+      } else if ("JCEF server was disconnected.".equals(ex.getMessage())) {
+        // the remote browser process of the IDE has stopped, there is nothing left to scroll
+        LOG.info("JCEF server was disconnected, can't place cursor in preview");
       } else {
         throw ex;
       }
