@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -66,21 +67,17 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
     PsiFile[] files;
     if (scope instanceof GlobalSearchScope globalSearchScope) {
       // when the user searches all references
-      // inspections like "unused class" search while the IDE is indexing; waiting for smart mode is not possible there
+      // inspections like "unused class" search while the IDE is indexing; waiting for smart mode is not possible there,
+      // as this already runs inside a read action, and a non-blocking read action can't wait for smart mode in there
       if (DumbService.isDumb(element.getProject())) {
         return;
       }
       try {
-        files = ReadAction.nonBlocking(() ->
-          CacheManager.getInstance(element.getProject())
-            .getFilesWithWord(name, UsageSearchContext.IN_CODE, GlobalSearchScope.getScopeRestrictedByFileTypes(globalSearchScope, AsciiDocFileType.INSTANCE), false))
-          .inSmartMode(element.getProject()).executeSynchronously();
-      } catch (IllegalStateException e) {
-        // indexing started after the check above, so the smart mode constraint can't be satisfied
-        if (DumbService.isDumb(element.getProject())) {
-          return;
-        }
-        throw e;
+        files = CacheManager.getInstance(element.getProject())
+          .getFilesWithWord(name, UsageSearchContext.IN_CODE, GlobalSearchScope.getScopeRestrictedByFileTypes(globalSearchScope, AsciiDocFileType.INSTANCE), false);
+      } catch (IndexNotReadyException e) {
+        // indexing started after the check above
+        return;
       }
       if (files.length == 0) {
         return;
@@ -119,19 +116,16 @@ public class AsciiDocJavaReferencesSearch extends QueryExecutorBase<PsiReference
       final CharSequence text = ReadAction.compute(psiFile::getText);
       if (text != null) {
         LowLevelSearchUtil.processTexts(text, 0, text.length(), searcher, index -> {
-          ReadAction.nonBlocking(() -> {
-            try {
-              PsiReference referenceAt = psiFile.findReferenceAt(index);
-              if (referenceAt instanceof PsiMultiReference psiMultiReference) {
-                for (PsiReference reference : psiMultiReference.getReferences()) {
-                  checkReference(consumer, element, reference);
-                }
+          try {
+            PsiReference referenceAt = psiFile.findReferenceAt(index);
+            if (referenceAt instanceof PsiMultiReference psiMultiReference) {
+              for (PsiReference reference : psiMultiReference.getReferences()) {
+                checkReference(consumer, element, reference);
               }
-              checkReference(consumer, element, referenceAt);
-            } catch (PsiInvalidElementAccessException ignored) {
             }
-            return null;
-          }).inSmartMode(element.getProject()).executeSynchronously();
+            checkReference(consumer, element, referenceAt);
+          } catch (PsiInvalidElementAccessException | IndexNotReadyException ignored) {
+          }
           return true;
         });
       }
