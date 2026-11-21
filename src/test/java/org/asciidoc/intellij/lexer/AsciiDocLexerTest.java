@@ -782,6 +782,62 @@ public class AsciiDocLexerTest extends LexerTestCase {
         AsciiDoc:ATTRS_END (']')""");
   }
 
+  public void testBlockMacroWithQuotedPositionalAttributeContainingComma() {
+    doTest("macro::foo[\"a, b\",c]",
+      """
+        AsciiDoc:BLOCK_MACRO_ID ('macro::')
+        AsciiDoc:BLOCK_MACRO_BODY ('foo')
+        AsciiDoc:ATTRS_START ('[')
+        AsciiDoc:DOUBLE_QUOTE ('"')
+        AsciiDoc:ATTR_VALUE ('a, b')
+        AsciiDoc:DOUBLE_QUOTE ('"')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:ATTR_NAME ('c')
+        AsciiDoc:ATTRS_END (']')""");
+  }
+
+  public void testBlockMacroWithQuoteInsideOfPositionalAttributeIsNoQuotedValue() {
+    doTest("macro::foo[a\"b, c\",d]",
+      """
+        AsciiDoc:BLOCK_MACRO_ID ('macro::')
+        AsciiDoc:BLOCK_MACRO_BODY ('foo')
+        AsciiDoc:ATTRS_START ('[')
+        AsciiDoc:ATTR_NAME ('a"b')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:ATTR_NAME ('c"')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:ATTR_NAME ('d')
+        AsciiDoc:ATTRS_END (']')""");
+  }
+
+  public void testBlockMacroWithUnclosedQuoteIsNoQuotedValue() {
+    doTest("macro::foo[\"a, b]",
+      """
+        AsciiDoc:BLOCK_MACRO_ID ('macro::')
+        AsciiDoc:BLOCK_MACRO_BODY ('foo')
+        AsciiDoc:ATTRS_START ('[')
+        AsciiDoc:ATTR_NAME ('"a')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:ATTR_NAME ('b')
+        AsciiDoc:ATTRS_END (']')""");
+  }
+
+  public void testInlineMacroWithSingleQuotedPositionalAttributeContainingComma() {
+    doTest("macro:foo['a, b',c]",
+      """
+        AsciiDoc:INLINE_MACRO_ID ('macro:')
+        AsciiDoc:INLINE_MACRO_BODY ('foo')
+        AsciiDoc:INLINE_ATTRS_START ('[')
+        AsciiDoc:SINGLE_QUOTE (''')
+        AsciiDoc:ATTR_VALUE ('a, b')
+        AsciiDoc:SINGLE_QUOTE (''')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:ATTR_NAME ('c')
+        AsciiDoc:INLINE_ATTRS_END (']')""");
+  }
+
   public void testBlockMacroWithDoubleQuotedAttribute() {
     doTest("macro::foo[key=\"value\"]",
       """

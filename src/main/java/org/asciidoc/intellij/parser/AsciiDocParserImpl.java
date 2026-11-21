@@ -619,7 +619,7 @@ public class AsciiDocParserImpl {
         parseUrl();
       } else if (at(PASSTRHOUGH_INLINE_START)) {
         parsePassthrough();
-      } else if (at(ATTR_NAME)) {
+      } else if (at(ATTR_NAME) || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE)) {
         parseAttributeInBrackets(macroId);
       } else if (at(ATTRIBUTE_REF_START)) {
         parseAttributeReference();
@@ -777,7 +777,7 @@ public class AsciiDocParserImpl {
         break;
       } else if (QUOTEPAIRS.containsKey(myBuilder.getTokenType())) {
         parseQuoted(new HashSet<>());
-      } else if (at(ATTR_NAME)) {
+      } else if (at(ATTR_NAME) || at(DOUBLE_QUOTE) || at(SINGLE_QUOTE)) {
         parseAttributeInBrackets(macroId);
       } else if (at(URL_START) || at(URL_LINK) || at(URL_EMAIL) || at(URL_PREFIX)) {
         parseUrl();

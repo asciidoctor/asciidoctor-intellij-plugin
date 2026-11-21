@@ -23,6 +23,7 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
 %{
   private static final char[] NUMBERS = "1234567890".toCharArray();
   private static final char[] SPACES = " \t".toCharArray();
+  private static final char[] ATTR_SLOT_START = "[, \t".toCharArray();
   private static final char[] COLONSLASH = ":/".toCharArray();
   private static final char[] PLUS = "+".toCharArray();
   private static final char[] PIPE = "|".toCharArray();
@@ -2058,6 +2059,19 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <BLOCK_MACRO_ATTRS> {
   "," { return AsciiDocTokenTypes.SEPARATOR; }
+  // quoted positional value that may contain commas, for example "Hello, world"
+  "\"" / ( [^\"\]\n] | "\\\"" )* "\"" {SPACE}* [,\]] {
+        if (isPrefixedBy(ATTR_SLOT_START)) {
+          yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE); return AsciiDocTokenTypes.DOUBLE_QUOTE;
+        }
+        return AsciiDocTokenTypes.ATTR_NAME;
+      }
+  "\'" / ( [^\'\]\n] | "\\\'" )* "\'" {SPACE}* [,\]] {
+        if (isPrefixedBy(ATTR_SLOT_START)) {
+          yypushstate(); yybegin(ATTRS_SINGLE_QUOTE); return AsciiDocTokenTypes.SINGLE_QUOTE;
+        }
+        return AsciiDocTokenTypes.ATTR_NAME;
+      }
 }
 
 <BLOCK_ATTRS> {
@@ -2291,6 +2305,19 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                        }
   "\n"                 { return AsciiDocTokenTypes.LINE_BREAK; }
   "]"                  { yypopstate(); yypushback(yylength()); }
+  // quoted positional value that may contain commas, for example "Hello, world"
+  "\"" / ( [^\"\]\n] | "\\\"" )* "\"" {SPACE}* [,\]] {
+        if (isPrefixedBy(ATTR_SLOT_START)) {
+          yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE); return AsciiDocTokenTypes.DOUBLE_QUOTE;
+        }
+        return AsciiDocTokenTypes.ATTR_NAME;
+      }
+  "\'" / ( [^\'\]\n] | "\\\'" )* "\'" {SPACE}* [,\]] {
+        if (isPrefixedBy(ATTR_SLOT_START)) {
+          yypushstate(); yybegin(ATTRS_SINGLE_QUOTE); return AsciiDocTokenTypes.SINGLE_QUOTE;
+        }
+        return AsciiDocTokenTypes.ATTR_NAME;
+      }
   ","                  { return AsciiDocTokenTypes.SEPARATOR; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
   "[" [^\]\n]* "]"     { return AsciiDocTokenTypes.ATTR_NAME; }

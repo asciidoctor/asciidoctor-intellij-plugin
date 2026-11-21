@@ -1,0 +1,336 @@
+# Metadata about the attributes of AsciiDoc block and inline macros.
+# It is used for completion, quick documentation and intentions.
+#
+# Sources, to be cross-checked when upgrading Asciidoctor (last checked: Asciidoctor 2.0.23, AsciiDoc docs as of 2026-11):
+#   - Positional attributes (the `posattrs` of the Ruby code) are defined in the Asciidoctor source:
+#       lib/asciidoctor/parser.rb       block macros image, video, audio (search for `posattrs`)
+#       lib/asciidoctor/substitutors.rb inline macros image and icon (search for `posattrs`)
+#     Run `grep -n "posattrs\|positional_attrs" lib/asciidoctor/*.rb` to find all positional attributes after an upgrade.
+#   - Named attributes and their values are not listed in the Asciidoctor source, therefore they are taken from the AsciiDoc documentation
+#     (URL in the `doc` of each macro) and from the converter that evaluates them (lib/asciidoctor/converter/html5.rb).
+#     The source of the documentation is https://gitlab.eclipse.org/eclipse/asciidoc-lang/asciidoc-lang (commit ea91969 of 2026-11-18),
+#     the reference tables are in docs/modules/macros/pages/image-ref.adoc, audio-and-video.adoc, link-macro-ref.adoc,
+#     docs/modules/toc/pages/toc-ref.adoc and docs/modules/directives/pages/include*.adoc.
+#
+# Macros of Asciidoctor without attributes that are not listed here (checked in rx.rb and substitutors.rb of Asciidoctor 2.0.23):
+#   - kbd, btn, menu, pass, stem/latexmath/asciimath, footnote, indexterm, indexterm2, anchor: the content in the brackets is plain text.
+#     They are listed below without attributes so that quick documentation is available for the macro.
+#   - link and xref: the first positional attribute is the link text, which isn't a named attribute (a `text=` wouldn't work),
+#     therefore `positional` is empty for them.
+#   - mailto: the first positional attribute is the link text, the second the subject and the third the body; not listed as the plugin parses it as a URL and not as a macro.
+#   - Extensions (for example Kroki, or custom macros) define their own positional attributes (`positional_attributes` in extensions.rb).
+#
+# sets:     Reusable lists of attributes that can be referenced by macros via `uses`.
+# macros:   The macros, with:
+#   name        Name of the macro without colons.
+#   description Short description for the quick documentation of the macro.
+#   type        `block` (name::target[]) or `inline` (name:target[]).
+#   doc         URL of the documentation.
+#   positional  Names of the attributes for the first, second, ... positional attribute.
+#               Only list names that can be used as named attribute as well, as an intention converts positional attributes to named ones.
+#   uses        Names of the sets to include, in order.
+#   attributes  Attributes specific to this macro, they override attributes of the same name from a set.
+#
+# An attribute has:
+#   name         Name of the attribute.
+#   description  Short description for the quick documentation.
+#   values       Optional, a map of the proposed values with their description (may be empty).
+#                Values for options that exist for different macros can be defined per macro.
+
+sets:
+  common:
+    - name: id
+      description: Unique identifier of the element, can be used as target of a cross reference.
+    - name: title
+      description: Title of the element.
+    - name: role
+      description: Role (CSS class) of the element. Multiple roles are separated by spaces.
+  link-attributes:
+    - name: id
+      description: Unique identifier of the link in the output.
+    - name: title
+      description: Description of the link, often shown as tooltip.
+    - name: role
+      description: Role (CSS class) of the link. Multiple roles are separated by spaces.
+    - name: window
+      description: Window target of the link, for example _blank. Alternatively, end the link text with a caret (^).
+    - name: opts
+      description: Additional options for the creation of the link.
+      values:
+        nofollow: Adds rel="nofollow" to the link.
+        noopener: Adds rel="noopener" to the link, implied by window=_blank.
+  link:
+    - name: link
+      description: URI the element links to.
+    - name: window
+      description: Window target for the link, for example _blank.
+  size:
+    - name: width
+      description: Width in pixels.
+    - name: height
+      description: Height in pixels. Should only be set together with the width, and must respect the aspect ratio.
+  playback:
+    - name: start
+      description: Playback start time in seconds.
+    - name: end
+      description: Playback end time in seconds.
+  image:
+    - name: alt
+      description: Alternative text for the image, shown when the image can't be displayed.
+    - name: format
+      description: Format of the image as sub-MIME type, or svg. Only necessary if the format can't be detected from the extension of the target.
+    - name: fallback
+      description: Fallback image if the target is an SVG and opts=interactive.
+    - name: scale
+      description: Scaling factor to apply to the intrinsic image dimensions. DocBook only.
+    - name: pdfwidth
+      description: Width of the image in a PDF. Asciidoctor PDF only.
+    - name: loading
+      description: Hint if the browser should load the image lazily.
+      values:
+        lazy: Defers loading of the image until it is near the viewport.
+        eager: Loads the image immediately, independent of its position on the page.
+    - name: imagesdir
+      description: Overrides the document attribute imagesdir for this image.
+    - name: opts
+      description: Options of the image, separated by commas.
+      values:
+        interactive: Embeds an SVG as an object element to keep its interactive features like links and animations.
+        inline: Embeds the SVG in the HTML so that it can be styled by the stylesheet of the page.
+        nolazy: Disables lazy loading of the image.
+        nofollow: Adds rel="nofollow" to the link of the image.
+        noopener: Adds rel="noopener" to the link of the image.
+  image-block:
+    - name: align
+      description: Horizontal alignment of the image. Can't be combined with float.
+      values:
+        left: Aligns the image to the left.
+        center: Centers the image.
+        right: Aligns the image to the right.
+    - name: float
+      description: Floats the image. Can't be combined with align.
+      values:
+        left: Floats the image to the left, text wraps around it on the right.
+        right: Floats the image to the right, text wraps around it on the left.
+    - name: caption
+      description: 'Caption prefix of the image, for example "Figure 8: ".'
+    - name: scaledwidth
+      description: Width of the image relative to the page. DocBook and Asciidoctor PDF only.
+
+macros:
+  # positional: lib/asciidoctor/parser.rb, `posattrs = ['alt', 'width', 'height']` for block images
+  - name: image
+    type: block
+    doc: https://docs.asciidoctor.org/asciidoc/latest/macros/images/
+    description: Block image, embeds an image as its own block.
+    positional: [alt, width, height]
+    uses: [image, size, common, link, image-block]
+  # positional: lib/asciidoctor/substitutors.rb, `type, posattrs = 'image', ['alt', 'width', 'height']`
+  - name: image
+    type: inline
+    doc: https://docs.asciidoctor.org/asciidoc/latest/macros/image-ref/
+    description: Inline image, embeds an image within a line of text.
+    positional: [alt, width, height]
+    uses: [image, size, common, link]
+  # positional: lib/asciidoctor/substitutors.rb, `type, posattrs = 'icon', ['size']`
+  - name: icon
+    type: inline
+    doc: https://docs.asciidoctor.org/asciidoc/latest/macros/icon-macro/
+    description: Inline icon, shows an icon from an icon font or an icon image. Requires the document attribute icons.
+    positional: [size]
+    uses: [common, link]
+    attributes:
+      - name: size
+        description: Size of the icon.
+        values:
+          1x: Default size of the icon.
+          2x: Icon at two times its size.
+          3x: Icon at three times its size.
+          4x: Icon at four times its size.
+          5x: Icon at five times its size.
+          lg: Icon that is 33% larger than normal.
+          fw: Icon with a fixed width, useful to align icons in a list.
+      - name: rotate
+        description: Rotates the icon by the given degrees.
+        values:
+          90: Rotates the icon by 90 degrees clockwise.
+          180: Rotates the icon by 180 degrees.
+          270: Rotates the icon by 270 degrees clockwise.
+      - name: flip
+        description: Flips the icon.
+        values:
+          horizontal: Mirrors the icon horizontally.
+          vertical: Mirrors the icon vertically.
+  # positional: lib/asciidoctor/parser.rb, `posattrs = []` for block audio
+  - name: audio
+    type: block
+    doc: https://docs.asciidoctor.org/asciidoc/latest/macros/audio-and-video/
+    description: Block audio, embeds an audio player.
+    positional: []
+    uses: [common, playback]
+    attributes:
+      - name: opts
+        description: Options of the audio player, separated by commas.
+        values:
+          autoplay: Starts playing the audio automatically.
+          loop: Restarts the audio when it has finished.
+          controls: Shows the player controls (default).
+          nocontrols: Hides the player controls.
+  # positional: lib/asciidoctor/parser.rb, `posattrs = ['poster', 'width', 'height']` for block video
+  - name: video
+    type: block
+    doc: https://docs.asciidoctor.org/asciidoc/latest/macros/audio-and-video/
+    description: Block video, embeds a video player or a video hosted on Vimeo or YouTube.
+    positional: [poster, width, height]
+    uses: [size, common, playback]
+    attributes:
+      - name: poster
+        description: URL of an image to show until the user plays or seeks the video. Also used to specify the hosting service (vimeo, youtube) of the video.
+        values:
+          vimeo: The target is the ID of a video hosted on Vimeo.
+          youtube: The target is the ID of a video hosted on YouTube.
+      - name: align
+        description: Horizontal alignment of the video.
+        values:
+          left: Aligns the video to the left.
+          center: Centers the video.
+          right: Aligns the video to the right.
+      - name: theme
+        description: Theme of the video player, for Vimeo and YouTube.
+      - name: lang
+        description: Language of the YouTube player interface.
+      - name: list
+        description: ID of a YouTube playlist.
+      - name: playlist
+        description: IDs of additional YouTube videos to play, separated by commas.
+      - name: opts
+        description: Options of the video player, separated by commas.
+        values:
+          autoplay: Starts playing the video automatically.
+          loop: Restarts the video when it has finished.
+          modest: Hides most of the YouTube branding. YouTube only.
+          nocontrols: Hides the player controls.
+          nofullscreen: Disables the full-screen button.
+          muted: Starts the video muted.
+          related: Shows related videos at the end of playback. YouTube only.
+  # attributes: lib/asciidoctor/reader.rb, `preprocess_include_directive`
+  - name: include
+    type: block
+    doc: https://docs.asciidoctor.org/asciidoc/latest/directives/include/
+    description: Include directive, includes the content of another file at this location.
+    positional: []
+    attributes:
+      - name: leveloffset
+        description: Offsets the section levels of the included content.
+        values:
+          "+1": Increases the section levels of the included content by one.
+          "-1": Decreases the section levels of the included content by one.
+      - name: lines
+        description: Selects lines or ranges of lines of the included file, separated by semicolons or commas.
+      - name: tag
+        description: Selects a tagged region of the included file.
+      - name: tags
+        description: Selects multiple tagged regions of the included file, separated by semicolons or commas.
+      - name: indent
+        description: Sets the indentation of the included content.
+      - name: encoding
+        description: Encoding of the included file.
+      - name: opts
+        description: Options of the include directive.
+        values:
+          optional: Doesn't report an error if the included file is missing.
+  # positional: none, the first positional attribute is the link text; attributes: lib/asciidoctor/substitutors.rb, `InlineLinkMacroRx`
+  - name: link
+    type: inline
+    doc: https://docs.asciidoctor.org/asciidoc/latest/macros/link-macro-ref/
+    description: Link macro, creates a link to a URL or a relative path. The text in the brackets is the link text unless it contains named attributes.
+    positional: []
+    uses: [link-attributes]
+  # attributes: lib/asciidoctor/substitutors.rb (`InlineXrefMacroRx`) and lib/asciidoctor/converter/html5.rb (`convert_inline_anchor`)
+  - name: xref
+    type: inline
+    doc: https://docs.asciidoctor.org/asciidoc/latest/macros/xref-text-and-style/
+    description: Cross reference macro, creates a link to an anchor or to another document.
+    positional: []
+    attributes:
+      - name: role
+        description: Role (CSS class) of the link. Multiple roles are separated by spaces.
+      - name: xrefstyle
+        description: Style of the automatically generated text of the cross reference, overrides the document attribute xrefstyle for this reference.
+        values:
+          full: Signifier, number and title of the target, for example Section 2.3, "Installation".
+          short: Signifier and number of the target, for example Section 2.3.
+          basic: Title of the target only.
+  # attributes: lib/asciidoctor/parser.rb (`BlockTocMacroRx`) and lib/asciidoctor/converter/html5.rb (`convert_toc`)
+  - name: toc
+    type: block
+    doc: https://docs.asciidoctor.org/asciidoc/latest/toc/position/
+    description: Table of contents macro, places the table of contents at this location when the document attribute toc is set to macro.
+    positional: []
+    uses: [common]
+    attributes:
+      - name: levels
+        description: Number of section levels to show in the table of contents, overrides the document attribute toclevels.
+        values:
+          0: Only parts and special sections of level 0.
+          1: Section level 1.
+          2: Section levels 1 and 2 (default).
+          3: Section levels 1 to 3.
+          4: Section levels 1 to 4.
+          5: Section levels 1 to 5.
+  # the following macros don't have attributes, they are listed for the quick documentation of the macro
+  - name: kbd
+    type: inline
+    doc: https://docs.asciidoctor.org/asciidoc/latest/macros/keyboard-macro/
+    description: Keyboard macro, shows a key or a key combination, for example kbd:[Ctrl+Shift+T].
+    positional: []
+  - name: btn
+    type: inline
+    doc: https://docs.asciidoctor.org/asciidoc/latest/macros/ui-macros/
+    description: Button macro, shows the label of a button in the user interface.
+    positional: []
+  - name: menu
+    type: inline
+    doc: https://docs.asciidoctor.org/asciidoc/latest/macros/ui-macros/
+    description: Menu macro, shows a menu selection, for example menu:File[Save As > PDF].
+    positional: []
+  - name: footnote
+    type: inline
+    doc: https://docs.asciidoctor.org/asciidoc/latest/macros/footnote/
+    description: Footnote macro, adds a footnote. The target is an optional ID to reference the footnote from other locations.
+    positional: []
+  - name: pass
+    type: inline
+    doc: https://docs.asciidoctor.org/asciidoc/latest/pass/pass-macro/
+    description: Passthrough macro, passes the content to the output without or with selected substitutions.
+    positional: []
+  - name: stem
+    type: inline
+    doc: https://docs.asciidoctor.org/asciidoc/latest/stem/
+    description: Stem macro, shows a mathematical expression written in the notation of the document attribute stem.
+    positional: []
+  - name: latexmath
+    type: inline
+    doc: https://docs.asciidoctor.org/asciidoc/latest/stem/
+    description: Latexmath macro, shows a mathematical expression written in LaTeX notation.
+    positional: []
+  - name: asciimath
+    type: inline
+    doc: https://docs.asciidoctor.org/asciidoc/latest/stem/
+    description: Asciimath macro, shows a mathematical expression written in AsciiMath notation.
+    positional: []
+  - name: indexterm
+    type: inline
+    doc: https://docs.asciidoctor.org/asciidoc/latest/sections/user-index/
+    description: Index term macro, adds a term to the index and doesn't show it in the text.
+    positional: []
+  - name: indexterm2
+    type: inline
+    doc: https://docs.asciidoctor.org/asciidoc/latest/sections/user-index/
+    description: Index term macro, adds a term to the index and shows it in the text.
+    positional: []
+  - name: anchor
+    type: inline
+    doc: https://docs.asciidoctor.org/asciidoc/latest/attributes/id/
+    description: Anchor macro, defines an ID at this location that can be the target of a cross reference.
+    positional: []
