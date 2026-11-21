@@ -12,6 +12,7 @@ This document provides a high-level view of the changes introduced by release.
 - Fix the "Constraint inSmartMode cannot be satisfied" error when searching for usages of Java classes or packages in AsciiDoc files while the IDE is indexing
 - Don't report an error when scrolling the preview after the IDE's remote JCEF browser process has been disconnected
 - Fix the "Can't handle content change" error when moving a file that is referenced by a block macro with an attribute reference in its target
+- Don't report an error when resolving Java class references if the Gradle cache contains file names that are invalid paths on Windows
 
 === 0.45.15
 
