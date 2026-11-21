@@ -206,16 +206,17 @@ public class CreateDocxAction extends AsciiDocFileAction {
       @Override
       public void onFinished() {
         // runs on the EDT, regardless if the task was successful, failed or cancelled
-        ApplicationManager.getApplication().runWriteAction(() -> {
-          VirtualFile virtualFileDocx = findOutputFile(target, file, "docx");
-          VirtualFile virtualFile = virtualFileDocx != null ? virtualFileDocx : target;
-          AsciiDocUtil.selectFileInProjectView(currentProject, virtualFile);
-          if (virtualFileDocx != null && successful.get()) {
-            ApplicationManager.getApplication().invokeLater(() -> {
-              new OpenFileDescriptor(currentProject, virtualFileDocx).navigate(true);
-            });
-          }
-        });
+        // write action is needed here to update the file system view via refreshAndFindFileByNioPath
+        VirtualFile virtualFileDocx = ApplicationManager.getApplication().runWriteAction(
+          (Computable<VirtualFile>) () -> findOutputFile(target, file, "docx"));
+        VirtualFile virtualFile = virtualFileDocx != null ? virtualFileDocx : target;
+        // selecting the file waits for the UI, so this must not be inside a write action
+        AsciiDocUtil.selectFileInProjectView(currentProject, virtualFile);
+        if (virtualFileDocx != null && successful.get()) {
+          ApplicationManager.getApplication().invokeLater(() -> {
+            new OpenFileDescriptor(currentProject, virtualFileDocx).navigate(true);
+          });
+        }
       }
     });
   }
