@@ -879,6 +879,23 @@ public class AsciiDocUtil {
     return null;
   }
 
+  /**
+   * Looking up the file of an event can fail when the virtual file system is corrupted, for example with a
+   * {@code FileDeletedException} when the children of a directory can't be sorted.
+   * Don't let this break the listeners of the plugin, as it would be reported again for every change.
+   */
+  @Nullable
+  public static VirtualFile getFileOfEvent(@NotNull VFileEvent event) {
+    try {
+      return event.getFile();
+    } catch (ProcessCanceledException ex) {
+      throw ex;
+    } catch (RuntimeException ex) {
+      LOG.info("Unable to determine the file of the VFS event " + event, ex);
+      return null;
+    }
+  }
+
   private static final ProjectCache<TreeSet<VirtualFile>> PROJECT_ROOTS = new ProjectCache<>() {
 
     @Override
@@ -886,8 +903,9 @@ public class AsciiDocUtil {
       Set<VirtualFile> roots = new HashSet<>();
       for (VFileEvent event : events) {
         try {
-          if (event.getFile() != null && event.getFile().isValid()) {
-            VirtualFile contentRootForFile = ProjectFileIndex.getInstance(project).getContentRootForFile(event.getFile());
+          VirtualFile eventFile = getFileOfEvent(event);
+          if (eventFile != null && eventFile.isValid()) {
+            VirtualFile contentRootForFile = ProjectFileIndex.getInstance(project).getContentRootForFile(eventFile);
             if (contentRootForFile != null) {
               roots.add(contentRootForFile);
             }

@@ -19,6 +19,7 @@ import com.intellij.util.Alarm;
 import com.intellij.util.messages.MessageBusConnection;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware {
           if (!isRelevant(event)) {
             continue;
           }
-          VirtualFile file = event.getFile();
+          VirtualFile file = AsciiDocUtil.getFileOfEvent(event);
           if (file != null) {
             files.add(file);
           }

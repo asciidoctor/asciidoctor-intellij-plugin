@@ -56,6 +56,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.asciidoc.intellij.AsciiDocExtensionService;
 import org.asciidoc.intellij.AsciiDocWrapper;
 import org.asciidoc.intellij.download.AsciiDocDownloadNotificationProvider;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanel;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJcefRecovery;
 import org.asciidoc.intellij.editor.jeditor.JeditorHtmlPanelProvider;
@@ -374,7 +375,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         // this listener might be called on a thread that is not allowed to use the read lock, therefore check the events in the background
         boolean queued = false;
         for (VFileEvent event : events) {
-          if (event.getFile() != null) {
+          if (AsciiDocUtil.getFileOfEvent(event) != null) {
             pendingVfsEvents.add(event);
             queued = true;
           }
@@ -402,7 +403,7 @@ public class AsciiDocPreviewEditor extends UserDataHolderBase implements FileEdi
         // any modification of a file within the project refreshes the preview
         return ReadAction.compute(() -> {
           for (VFileEvent event : events) {
-            VirtualFile file = event.getFile();
+            VirtualFile file = AsciiDocUtil.getFileOfEvent(event);
             if (file == null || project.isDisposed()) {
               continue;
             }

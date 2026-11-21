@@ -13,6 +13,7 @@ This document provides a high-level view of the changes introduced by release.
 - Don't report an error when scrolling the preview after the IDE's remote JCEF browser process has been disconnected
 - Fix the "Can't handle content change" error when moving a file that is referenced by a block macro with an attribute reference in its target
 - Don't report an error when resolving Java class references if the Gradle cache contains file names that are invalid paths on Windows
+- Don't report an error in the file change listeners when the IDE's virtual file system is corrupted and the file of an event can't be determined
 
 === 0.45.15
 
