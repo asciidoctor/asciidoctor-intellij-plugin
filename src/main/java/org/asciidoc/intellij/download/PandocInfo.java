@@ -7,16 +7,16 @@ import java.io.File;
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class PandocInfo {
   // https://github.com/jgm/pandoc/releases/
-  public static final PandocInfo WINDOWS_INTEL_64 = new PandocInfo(true, "c3541f1a352003498979f2659c2570ac6dd227ec12533b75a76c4d109e75d218", "pandoc.exe", "windows-x86_64.zip");
-  public static final PandocInfo LINUX_ARM = new PandocInfo(true, "8ac04ce0aedae38f0c9f64bfe634910378cc326d091092395a2140a7ec819d54", "bin/pandoc", "linux-arm64.tar.gz");
-  public static final PandocInfo LINUX_INTEL_64 = new PandocInfo(true, "4e1c607f7e4e9243fa1e1f5b208cd4f1d3f6fd055d5d8c39ba0cdc38644e1c35", "bin/pandoc", "linux-amd64.tar.gz");
-  public static final PandocInfo MAC_ARM64 = new PandocInfo(true, "aa0eab6cf10e5d54d255d68f8fae47e08da071565a3d2b8d242be29a8c1f1460", "bin/pandoc", "arm64-macOS.zip");
-  public static final PandocInfo MAC_INTEL_64 = new PandocInfo(true, "72c43b1de30e67d3a2f69bfd69881e5fcf6ed3c2583c2ad22142c390d185f0b4", "bin/pandoc", "x86_64-macOS.zip");
+  public static final PandocInfo WINDOWS_INTEL_64 = new PandocInfo(true, "0144b96e8c7b023fd382ec5ef5bdc475e873f1019d6fa72502492df2c9a94a3b", "pandoc.exe", "windows-x86_64.zip");
+  public static final PandocInfo LINUX_ARM = new PandocInfo(true, "c692f3d78a415741bbbac4cdbbbe26fa7edca1f43d2301b982fbf4009cc8cf7f", "bin/pandoc", "linux-arm64.tar.gz");
+  public static final PandocInfo LINUX_INTEL_64 = new PandocInfo(true, "c5f4720cdefb3f7bdc5d07202ef579feef0d1370773c873804dd8fdaa8c4f1b8", "bin/pandoc", "linux-amd64.tar.gz");
+  public static final PandocInfo MAC_ARM64 = new PandocInfo(true, "58d6593884fec9d4424b641b92503c316d9c36decb2891ff8d73ae74dd3b6304", "bin/pandoc", "arm64-macOS.zip");
+  public static final PandocInfo MAC_INTEL_64 = new PandocInfo(true, "891708579061e7b1c1a6ce0df30ebb3cb2b6d0ca045ed3c8554ab830c1e0c270", "bin/pandoc", "x86_64-macOS.zip");
 
   private static volatile PandocInfo myInfo;
 
   public static final Platform PLATFORM = Platform.identify();
-  public static final String VERSION = "3.1.2";
+  public static final String VERSION = "3.14";
 
   public final boolean supported;
   public final String hash;

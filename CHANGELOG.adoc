@@ -7,6 +7,10 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.45.17
+
+- Upgrade to pandoc version 3.14
+
 === 0.45.16
 
 - Add completion and quick documentation for macros and their named and positional attributes (image, icon, audio, video, include, link, xref, toc, kbd, btn, menu, footnote, stem, index terms and more), and intentions to convert between positional and named attributes (#2172)
@@ -24,7 +28,6 @@ This document provides a high-level view of the changes introduced by release.
 - Declare the UTF-8 charset in the preview page, so that non-ASCII characters aren't shown as Windows-1252 mojibake in remote development (#2169)
 - Resolve Antora prefixes like `partial$` within the component of a file in an excluded folder, and show a notification that the component is not indexed (#1795)
 - Keep quoted cells with line breaks or blank lines together when pasting a table from a spreadsheet, and escape `|` in cell contents (#1790)
-- Upgrade the downloaded Pandoc to version 3.14
 
 === 0.45.15
 
