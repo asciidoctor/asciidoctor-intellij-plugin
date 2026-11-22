@@ -309,8 +309,8 @@ public class AsciiDocWrapper {
     if (asciiDocApplicationSettings.getAsciiDocPreviewSettings().isEnableBuiltInMermaid()) {
       md = md + ".mermaid";
     }
-    if (format == FileType.JAVAFX || format == FileType.JCEF || format == FileType.HTML || format == FileType.BROWSER) {
-      // special ruby extensions loaded for JAVAFX and HTML
+    if (format == FileType.JAVAFX || format == FileType.JCEF || format == FileType.HTML || format == FileType.BROWSER || format == FileType.DOCX) {
+      // special ruby extensions and the attributes retriever are loaded for these formats, don't share the instance with PDF
       md = md + "." + format.name();
     }
     boolean krokiEnabled = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isKrokiEnabled();
