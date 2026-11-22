@@ -304,6 +304,31 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     }
   }
 
+  public void testShouldExportFreemarkerTemplatesNeutralized() throws Exception {
+    File base = new File(System.getProperty("java.io.tmpdir"), "freemarker-export-" + System.nanoTime());
+    File guides = new File(base, "guides");
+    File partials = new File(base, "partials");
+    assertThat(guides.mkdirs()).isTrue();
+    assertThat(partials.mkdirs()).isTrue();
+    Files.writeString(new File(partials, "p.adoc").toPath(), "<#if a>\n. partial one\n</#if>\n", UTF_8);
+    File guide = new File(guides, "guide.adoc");
+    Files.writeString(guide.toPath(), "<#import \"/templates/x.adoc\" as x>\n= Title\n\n. first\n<#include \"/partials/p.adoc\" />\n. second\n", UTF_8);
+    VirtualFile baseVf = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(base);
+    assertThat(baseVf).isNotNull();
+    PsiTestUtil.addContentRoot(myFixture.getModule(), baseVf);
+    try {
+      VirtualFile guidesVf = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(guides);
+      assertThat(guidesVf).isNotNull();
+      AsciiDocWrapper wrapper = new AsciiDocWrapper(getProject(), guidesVf, null, "guide.adoc");
+      assertThat(wrapper.convertTo(guide, "", Collections.emptyList(), AsciiDocWrapper.FileType.HTML)).isTrue();
+      String html = Files.readString(new File(guides, "guide.html").toPath(), UTF_8);
+      assertThat(html).contains("partial one").contains("second").doesNotContain("&lt;#");
+    } finally {
+      PsiTestUtil.removeContentEntry(myFixture.getModule(), baseVf);
+      FileUtil.delete(base);
+    }
+  }
+
   public void testShouldRenderPlainAsciidoc() {
     String html = asciidocWrapper.render("this is *bold*.", Collections.emptyList());
     assertThat(html).withFailMessage("should contain formatted output").contains("<strong>bold</strong>");

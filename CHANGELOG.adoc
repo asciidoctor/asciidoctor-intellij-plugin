@@ -10,6 +10,7 @@ This document provides a high-level view of the changes introduced by release.
 === 0.45.17
 
 - Upgrade to pandoc version 3.14
+- Handle FreeMarker templates also when exporting to HTML, PDF or DOCX (#2173)
 - Fix the "cannot convert instance of class org.jruby.gen.RubyObject to class java.lang.String" error when exporting to PDF after exporting to DOCX
 
 === 0.45.16

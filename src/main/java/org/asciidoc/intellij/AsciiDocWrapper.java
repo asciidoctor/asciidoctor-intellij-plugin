@@ -45,6 +45,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.apache.geronimo.gshell.io.SystemOutputHijacker;
 import org.asciidoc.intellij.asciidoc.AntoraIncludeAdapter;
 import org.asciidoc.intellij.asciidoc.FreemarkerIncludeProcessor;
+import org.asciidoc.intellij.asciidoc.FreemarkerPreprocessor;
 import org.asciidoc.intellij.asciidoc.AntoraReferenceAdapter;
 import org.asciidoc.intellij.asciidoc.AttributesRetriever;
 import org.asciidoc.intellij.asciidoc.PrependConfig;
@@ -184,6 +185,7 @@ public class AsciiDocWrapper {
 
   private static AntoraIncludeAdapter antoraIncludeAdapter;
   private static final FreemarkerIncludeProcessor FREEMARKER_INCLUDE_PROCESSOR = new FreemarkerIncludeProcessor();
+  private static final FreemarkerPreprocessor FREEMARKER_PREPROCESSOR = new FreemarkerPreprocessor();
 
   @Nullable
   private static AttributesRetriever attributesRetriever;
@@ -356,6 +358,8 @@ public class AsciiDocWrapper {
         // require openssl library here to enable download content via https
         // requiring it later after other libraries have been loaded results in "undefined method `set_params' for #<OpenSSL::SSL::SSLContext"
         asciidoctor.requireLibrary("openssl");
+        // before the config is prepended, as the lines of the template are replaced
+        asciidoctor.javaExtensionRegistry().preprocessor(FREEMARKER_PREPROCESSOR);
         asciidoctor.javaExtensionRegistry().preprocessor(prependConfig);
         asciidoctor.javaExtensionRegistry().includeProcessor(FREEMARKER_INCLUDE_PROCESSOR);
         asciidoctor.javaExtensionRegistry().includeProcessor(antoraIncludeAdapter);
@@ -1032,6 +1036,10 @@ public class AsciiDocWrapper {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         prependConfig.setConfig(config);
         antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
+        File templateBoundary = FreemarkerIncludeProcessor.findBoundary(project, file);
+        // these are shared by all projects, set their details only while holding the lock
+        FREEMARKER_INCLUDE_PROCESSOR.setBoundary(templateBoundary);
+        FREEMARKER_PREPROCESSOR.setFile(file, templateBoundary);
         AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
         asciidoctor.registerLogHandler(logHandler);
         try {
@@ -1046,6 +1054,8 @@ public class AsciiDocWrapper {
         } finally {
           prependConfig.setConfig("");
           antoraIncludeAdapter.setAntoraDetails(null, null, null, null);
+          FREEMARKER_INCLUDE_PROCESSOR.setBoundary(null);
+          FREEMARKER_PREPROCESSOR.setFile(null, null);
           asciidoctor.unregisterLogHandler(logHandler);
         }
       } catch (ProcessCanceledException ex) {

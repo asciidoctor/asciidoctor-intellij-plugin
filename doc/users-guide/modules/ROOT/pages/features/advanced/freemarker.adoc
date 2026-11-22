@@ -24,3 +24,4 @@ Macros with more complex bodies are shown as before.
 To support the conventions of the Keycloak project, Links in the form `+link:{links_<folder>_<id>_url}[{links_<folder>_<id>_name}]+` are resolved to an `xref:` to the guide `<id>.adoc` below the folder `<folder>`, using its `title="..."` as text, as the attributes are usually generated at build time and not known to the IDE.
 Expressions like `${...}` are shown as they are.
 The preview doesn't run FreeMarker, therefore both branches of an `<#if>` and the content of a `<#list>` are shown once, and macros are not expanded.
+The same applies when exporting to HTML, PDF or DOCX.
