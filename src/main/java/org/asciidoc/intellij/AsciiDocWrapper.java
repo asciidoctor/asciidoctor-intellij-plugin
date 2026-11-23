@@ -1022,6 +1022,8 @@ public class AsciiDocWrapper {
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
     );
     Collection<AttributeDeclaration> attributes = populateAntoraAttributes(project, fileBaseDir, antoraModuleDir);
+    // look up the boundary before taking the lock, as it requires a read action
+    File templateBoundary = FreemarkerIncludeProcessor.findBoundary(project, file);
 
     lock();
     try {
@@ -1036,7 +1038,6 @@ public class AsciiDocWrapper {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         prependConfig.setConfig(config);
         antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
-        File templateBoundary = FreemarkerIncludeProcessor.findBoundary(project, file);
         // these are shared by all projects, set their details only while holding the lock
         FREEMARKER_INCLUDE_PROCESSOR.setBoundary(templateBoundary);
         FREEMARKER_PREPROCESSOR.setFile(file, templateBoundary);

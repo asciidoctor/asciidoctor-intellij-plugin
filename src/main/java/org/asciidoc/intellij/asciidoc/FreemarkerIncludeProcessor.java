@@ -5,6 +5,7 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.asciidoc.intellij.lexer.AsciiDocFreemarker;
+import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
 import org.asciidoctor.ast.Document;
 import org.asciidoctor.extension.IncludeProcessor;
 import org.asciidoctor.extension.PreprocessorReader;
@@ -38,7 +39,14 @@ public class FreemarkerIncludeProcessor extends IncludeProcessor {
     for (File candidate = absolute; candidate != null && vf == null; candidate = candidate.getParentFile()) {
       vf = LocalFileSystem.getInstance().findFileByIoFile(candidate);
     }
-    VirtualFile root = vf == null ? null : ProjectFileIndex.getInstance(project).getContentRootForFile(vf);
+    if (vf == null) {
+      return absolute.getParentFile();
+    }
+    final VirtualFile existing = vf;
+    // the file index requires a read action, while rendering runs in a background thread without one
+    final VirtualFile root = AsciiDocProcessUtil.runInReadActionWithWriteActionPriority(
+      () -> project.isDisposed() ? null : ProjectFileIndex.getInstance(project).getContentRootForFile(existing)
+    );
     return root != null ? new File(root.getPath()) : absolute.getParentFile();
   }
 
