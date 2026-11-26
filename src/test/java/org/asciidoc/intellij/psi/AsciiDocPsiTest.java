@@ -1022,6 +1022,23 @@ public class AsciiDocPsiTest extends BasePlatformTestCase {
 
   }
 
+  public void testAntoraPrefixInExcludedFolder() {
+    myFixture.addFileToProject("excluded/comp/antora.yml", "name: my-component\nversion: '1.0'\n");
+    myFixture.addFileToProject("excluded/comp/modules/ROOT/partials/a.adoc", "content");
+    PsiFile page = myFixture.addFileToProject("excluded/comp/modules/ROOT/pages/test.adoc", "include::partial$a.adoc[]");
+    VirtualFile excluded = myFixture.findFileInTempDir("excluded");
+    com.intellij.openapi.roots.ModuleRootModificationUtil.updateExcludedFolders(getModule(), myFixture.getTempDirFixture().getFile(""),
+      List.of(), List.of(excluded.getUrl()));
+    assertTrue(com.intellij.openapi.roots.ProjectRootManager.getInstance(getProject()).getFileIndex().isExcluded(page.getVirtualFile()));
+
+    AsciiDocBlockMacro[] macros = PsiTreeUtil.getChildrenOfType(page, AsciiDocBlockMacro.class);
+    assertNotNull(macros);
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "partial$a.adoc", "page"), "/src/excluded/comp/modules/ROOT/partials/a.adoc");
+    assertSingleListEntry(AsciiDocUtil.replaceAntoraPrefix(macros[0], "my-component:ROOT:partial$a.adoc", "page"), "/src/excluded/comp/modules/ROOT/partials/a.adoc");
+    // other components in excluded folders are still not discovered
+    assertEquals(List.of("other-component:ROOT:partial$a.adoc"), AsciiDocUtil.replaceAntoraPrefix(macros[0], "other-component:ROOT:partial$a.adoc", "page"));
+  }
+
   public void testAntoraRelativeResources() {
     // given...
     PsiFile[] psiFile = myFixture.configureByFiles(

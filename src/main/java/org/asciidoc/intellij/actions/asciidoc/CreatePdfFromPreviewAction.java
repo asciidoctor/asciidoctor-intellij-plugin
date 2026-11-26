@@ -11,6 +11,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.asciidoc.intellij.AsciiDocBundle;
@@ -68,17 +69,18 @@ public class CreatePdfFromPreviewAction extends AsciiDocAction implements DumbAw
         String targetString = canonicalPath.replaceAll("\\.(adoc|asciidoc|ad)$", ".pdf");
         previewEditor.printToPdf(targetString, success -> ApplicationManager.getApplication().invokeLater(() -> {
           if (success) {
-            ApplicationManager.getApplication().runWriteAction(() -> {
-              VirtualFile target = changeFileExtension(file);
-              VirtualFile parent = file.getParent();
-              VirtualFile virtualFile = target != null ? target : parent;
-              AsciiDocUtil.selectFileInProjectView(project, virtualFile);
-              if (target != null) {
-                ApplicationManager.getApplication().invokeLater(() -> {
-                  new OpenFileDescriptor(project, target).navigate(true);
-                });
-              }
-            });
+            // write action is needed here to update the file system view
+            VirtualFile target = ApplicationManager.getApplication().runWriteAction(
+              (Computable<VirtualFile>) () -> changeFileExtension(file));
+            VirtualFile parent = file.getParent();
+            VirtualFile virtualFile = target != null ? target : parent;
+            // selecting the file waits for the UI, so this must not be inside a write action
+            AsciiDocUtil.selectFileInProjectView(project, virtualFile);
+            if (target != null) {
+              ApplicationManager.getApplication().invokeLater(() -> {
+                new OpenFileDescriptor(project, target).navigate(true);
+              });
+            }
           } else {
             Notifications.Bus
               .notify(new Notification("asciidoctor", AsciiDocBundle.message("asciidoc.webpdf.failed.title"),

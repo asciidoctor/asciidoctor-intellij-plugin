@@ -1,0 +1,3 @@
+= Pages should resolve
+
+xref:match-page.adoc[]

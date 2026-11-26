@@ -972,12 +972,21 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
       html = AsciiDocWrapper.enrichPage(html, AsciiDocHtmlPanel.getCssLines(isDarcula() ? myInlineCssDarcula + myTabsCssDarcula : myInlineCss) + myFontAwesomeCssLink + myDroidSansMonoCssLink + myGoogleFontsCssLink + myDejavuCssLink, myMermaidScript, myAsciidoctorTabsScript, attributes, editor != null ? editor.getProject() : null);
     }
 
-    html = html.replaceAll("<head>", "<head>\n" +
-      "<meta http-equiv=\"Content-Security-Policy\" content=\"" + PreviewStaticServer.createCSP(attributes) + "\">");
+    html = addMetaTags(html, PreviewStaticServer.createCSP(attributes));
 
     /* Add JavaScript for auto-scolling and clickable links */
     return html
       .replace("</body>", getScriptingLines() + "</body>");
+  }
+
+  /**
+   * The platform serves the page as "text/html" without a charset, so the browser guesses the encoding.
+   * In a remote development setup the guess is Windows-1252, and UTF-8 characters show up as mojibake.
+   * Declare the charset as the first element in the head, as it needs to be within the first 1024 bytes.
+   */
+  static String addMetaTags(String html, String csp) {
+    return html.replaceAll("<head>", "<head>\n<meta charset=\"UTF-8\">\n" +
+      "<meta http-equiv=\"Content-Security-Policy\" content=\"" + Matcher.quoteReplacement(csp) + "\">");
   }
 
   private synchronized boolean isAntora() {
@@ -1120,8 +1129,11 @@ public class AsciiDocJCEFHtmlPanel extends JCEFHtmlPanel implements AsciiDocHtml
           myJSQuerySetScrollY.inject("value"),
         getCefBrowser().getURL(), 0);
     } catch (IllegalStateException ex) {
-      if (ex.getMessage().equals("the JS query has been disposed")) {
+      if ("the JS query has been disposed".equals(ex.getMessage())) {
         LOG.info("JS query has already been disposed, can't place cursor in preview");
+      } else if ("JCEF server was disconnected.".equals(ex.getMessage())) {
+        // the remote browser process of the IDE has stopped, there is nothing left to scroll
+        LOG.info("JCEF server was disconnected, can't place cursor in preview");
       } else {
         throw ex;
       }

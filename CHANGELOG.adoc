@@ -7,6 +7,31 @@ This document provides a high-level view of the changes introduced by release.
 [[releasenotes]]
 == Release notes
 
+=== 0.45.17
+
+- Upgrade to pandoc version 3.14
+- Handle FreeMarker templates also when exporting to HTML, PDF or DOCX (#2173)
+- Fix the "`cannot convert instance of class org.jruby.gen.RubyObject to class java.lang.String`" error when exporting to PDF after exporting to DOCX
+- Fix the "`Read access is allowed from inside read-action only`" error when rendering the preview of a FreeMarker template (thanks to @dvponomarev) (#2174)
+
+=== 0.45.16
+
+- Add completion and quick documentation for macros and their named and positional attributes (image, icon, audio, video, include, link, xref, toc, kbd, btn, menu, footnote, stem, index terms and more), and intentions to convert between positional and named attributes (#2172)
+- Fix lexing of quoted positional attribute values that contain a comma in block and inline macros, for example `image::a.png["Hello, world"]`
+- Improve support for the Antora Collector extension: `scan` as a list or string, `into` as the successor of `base`, `dir` relative to the repository root, and filtering with `files` (#1177)
+- Handle AsciiDoc files that are FreeMarker templates: lines with a directive or macro call are comments in the editor and hidden in the preview, and macro calls within a line are shown as a placeholder (#2173)
+- Use the Antora Atlas site manifest to validate xrefs to other components, offer them in completion and show their titles in the preview (#1250)
+- Fix the "Constraint inSmartMode cannot be satisfied" error when searching for usages of Java classes or packages in AsciiDoc files while the IDE is indexing
+- Don't report an error when scrolling the preview after the IDE's remote JCEF browser process has been disconnected
+- Fix the "Can't handle content change" error when moving a file that is referenced by a block macro with an attribute reference in its target
+- Don't report an error when resolving Java class references if the Gradle cache contains file names that are invalid paths on Windows
+- Don't report an error in the file change listeners when the IDE's virtual file system is corrupted and the file of an event can't be determined
+- Check the file type of changed files with read access when refreshing links after file changes, to avoid an error about missing read access
+- Avoid freezing the UI after exporting to HTML, PDF or DOCX by selecting the exported file in the project view outside of a write action
+- Declare the UTF-8 charset in the preview page, so that non-ASCII characters aren't shown as Windows-1252 mojibake in remote development (#2169)
+- Resolve Antora prefixes like `partial$` within the component of a file in an excluded folder, and show a notification that the component is not indexed (#1795)
+- Keep quoted cells with line breaks or blank lines together when pasting a table from a spreadsheet, and escape `|` in cell contents (#1790)
+
 === 0.45.15
 
 - Update the embedded Kroki extension to asciidoctor-kroki 2.0.0: it adds Lini diagrams, resolves relative PlantUML includes from the document's base directory, reads includes and remote targets of block macros following the rules of `include::` (in safe mode only from within the base directory, URLs only with `allow-uri-read`), fixes server URLs with a trailing slash, keeps the title on diagrams that couldn't be rendered, and supports the Ditaa option `separation=false`
@@ -26,7 +51,7 @@ This document provides a high-level view of the changes introduced by release.
 - Show the "Copy to clipboard" and run buttons of code blocks in the preview at the right instead of the left, so they no longer hide the code (#2157)
 - Don't show a placeholder for PlantUML diagrams that include C4-PlantUML files like `!include C4_Container.puml` when using Kroki, as the Kroki server provides them (#2158)
 - Add actions to insert, delete and move rows and columns of a table at the caret, in the editor context menu and as intentions via Alt+Enter, move between cells with Tab and Shift+Tab (Tab in the last cell appends a row), and move rows with the shortcuts for moving lines (#1256)
-- Warn about the deprecated shorthand cross-reference syntax `<<file.adoc#anchor,text>>` for references to other documents, with a quick fix to change it to `xref:file.adoc#anchor[text]` (#1867)
+- Warn about the deprecated shorthand cross-reference syntax `+<<file.adoc#anchor,text>>+` for references to other documents, with a quick fix to change it to `+xref:file.adoc#anchor[text]+` (#1867)
 - Update the path of `link:`, `xref:` and `include::` macros when the referenced file or folder is moved, also outside of Antora modules (#1915)
 - Don't show auto-generated section IDs in the completion or validation for cross-references when disabled via `:!sectids:` in the file, in an `.asciidoctorconfig` or in an `antora.yml` (#1845)
 - Avoid an exception when the navigation history compares the state of a split editor that has no text editor state

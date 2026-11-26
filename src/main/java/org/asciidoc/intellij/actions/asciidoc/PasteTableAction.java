@@ -9,15 +9,10 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import org.apache.commons.lang3.StringUtils;
 import org.asciidoc.intellij.ui.PasteTableDialog;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
-import java.io.CharArrayReader;
-import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Action to import/convert table data from clipboard.
@@ -53,55 +48,55 @@ public class PasteTableAction extends AsciiDocAction {
     });
   }
 
-  private String toAsciiDocTable(@NotNull String tableData, String separator, boolean firstLineHeader) {
-    StringBuilder asciiDocTable = new StringBuilder("\n");
-    int cols;
-    try (BufferedReader br = new BufferedReader(new CharArrayReader(tableData.toCharArray()))) {
-      cols = br.lines().mapToInt(line -> StringUtils.countMatches(line, separator)).max().orElse(0) + 1;
+  static String toAsciiDocTable(@NotNull String tableData, String separator, boolean firstLineHeader) {
+    List<List<String>> rows = ClipboardTableParser.parse(tableData, separator);
+    int cols = rows.stream().mapToInt(List::size).max().orElse(0);
+    cols = Math.max(cols, 1);
+    StringBuilder asciiDocTable = new StringBuilder("\n|===\n");
 
-      asciiDocTable.append("|===\n");
-
-      if (!firstLineHeader) {
-        // Create header columns
-        for (int c = 0; c < cols; c++) {
-          asciiDocTable.append("|Header ");
-          asciiDocTable.append(c + 1);
-          if (c < cols - 1) {
-            asciiDocTable.append(' ');
-          }
+    if (!firstLineHeader) {
+      // Create header columns
+      for (int c = 0; c < cols; c++) {
+        asciiDocTable.append("|Header ");
+        asciiDocTable.append(c + 1);
+        if (c < cols - 1) {
+          asciiDocTable.append(' ');
         }
-        asciiDocTable.append("\n\n");
       }
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+      asciiDocTable.append("\n\n");
     }
-    try (BufferedReader br = new BufferedReader(new CharArrayReader(tableData.toCharArray()))) {
-      boolean firstLine = true;
-      List<String> lines = br.lines().collect(Collectors.toList());
-      for (String line : lines) {
-        String[] elements = line.split(separator, -1);
-        for (int i = 0; i < cols; i++) {
-          asciiDocTable.append('|');
-          if (i < elements.length) {
-            asciiDocTable.append(elements[i]);
-          }
-          //new line except if line is the header (all headers must be on the same line)
-          if (!firstLine || !firstLineHeader) {
-            asciiDocTable.append('\n');
-          }
+
+    boolean firstLine = true;
+    for (List<String> row : rows) {
+      boolean header = firstLine && firstLineHeader;
+      for (int i = 0; i < cols; i++) {
+        asciiDocTable.append('|');
+        if (i < row.size()) {
+          asciiDocTable.append(escapeCell(row.get(i), header));
         }
-        if (firstLine && firstLineHeader) {
-          //header line must be followed by an empty line
+        //new line except if line is the header (all headers must be on the same line)
+        if (!header) {
           asciiDocTable.append('\n');
         }
-        asciiDocTable.append('\n');
-        firstLine = false;
       }
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+      if (header) {
+        //header line must be followed by an empty line
+        asciiDocTable.append('\n');
+      }
+      asciiDocTable.append('\n');
+      firstLine = false;
     }
     asciiDocTable.append("|===\n");
     return asciiDocTable.toString();
+  }
+
+  private static String escapeCell(String cell, boolean header) {
+    String result = cell.replace("\r\n", "\n").replace('\r', '\n').replace("|", "\\|");
+    if (header) {
+      // a header row must be on a single line
+      result = result.replaceAll("\\s*\n\\s*", " ");
+    }
+    return result;
   }
 
 }

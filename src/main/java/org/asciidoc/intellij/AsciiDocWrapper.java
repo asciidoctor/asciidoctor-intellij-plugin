@@ -44,6 +44,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.geronimo.gshell.io.SystemOutputHijacker;
 import org.asciidoc.intellij.asciidoc.AntoraIncludeAdapter;
+import org.asciidoc.intellij.asciidoc.FreemarkerIncludeProcessor;
+import org.asciidoc.intellij.asciidoc.FreemarkerPreprocessor;
 import org.asciidoc.intellij.asciidoc.AntoraReferenceAdapter;
 import org.asciidoc.intellij.asciidoc.AttributesRetriever;
 import org.asciidoc.intellij.asciidoc.PrependConfig;
@@ -52,6 +54,7 @@ import org.asciidoc.intellij.editor.AsciiDocPreviewEditor;
 import org.asciidoc.intellij.editor.javafx.PreviewStaticServer;
 import org.asciidoc.intellij.editor.jcef.AsciiDocJCEFHtmlPanelProvider;
 import org.asciidoc.intellij.editor.notification.IncompatiblePluginNotificationProvider;
+import org.asciidoc.intellij.lexer.AsciiDocFreemarker;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclarationDummy;
 import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.asciidoc.intellij.psi.AttributeDeclaration;
@@ -181,6 +184,8 @@ public class AsciiDocWrapper {
   private static PrependConfig prependConfig;
 
   private static AntoraIncludeAdapter antoraIncludeAdapter;
+  private static final FreemarkerIncludeProcessor FREEMARKER_INCLUDE_PROCESSOR = new FreemarkerIncludeProcessor();
+  private static final FreemarkerPreprocessor FREEMARKER_PREPROCESSOR = new FreemarkerPreprocessor();
 
   @Nullable
   private static AttributesRetriever attributesRetriever;
@@ -306,8 +311,8 @@ public class AsciiDocWrapper {
     if (asciiDocApplicationSettings.getAsciiDocPreviewSettings().isEnableBuiltInMermaid()) {
       md = md + ".mermaid";
     }
-    if (format == FileType.JAVAFX || format == FileType.JCEF || format == FileType.HTML || format == FileType.BROWSER) {
-      // special ruby extensions loaded for JAVAFX and HTML
+    if (format == FileType.JAVAFX || format == FileType.JCEF || format == FileType.HTML || format == FileType.BROWSER || format == FileType.DOCX) {
+      // special ruby extensions and the attributes retriever are loaded for these formats, don't share the instance with PDF
       md = md + "." + format.name();
     }
     boolean krokiEnabled = AsciiDocApplicationSettings.getInstance().getAsciiDocPreviewSettings().isKrokiEnabled();
@@ -353,7 +358,10 @@ public class AsciiDocWrapper {
         // require openssl library here to enable download content via https
         // requiring it later after other libraries have been loaded results in "undefined method `set_params' for #<OpenSSL::SSL::SSLContext"
         asciidoctor.requireLibrary("openssl");
+        // before the config is prepended, as the lines of the template are replaced
+        asciidoctor.javaExtensionRegistry().preprocessor(FREEMARKER_PREPROCESSOR);
         asciidoctor.javaExtensionRegistry().preprocessor(prependConfig);
+        asciidoctor.javaExtensionRegistry().includeProcessor(FREEMARKER_INCLUDE_PROCESSOR);
         asciidoctor.javaExtensionRegistry().includeProcessor(antoraIncludeAdapter);
         if (format == FileType.JAVAFX || format == FileType.HTML || format == FileType.JCEF || format == FileType.DOCX || format == FileType.BROWSER) {
           asciidoctor.javaExtensionRegistry().postprocessor(attributesRetriever);
@@ -863,6 +871,10 @@ public class AsciiDocWrapper {
                        List<String> extensions,
                        Notifier notifier,
                        FileType format) {
+    // FreeMarker templates, like the guides of the Keycloak project, contain directives that Asciidoctor doesn't know
+    File templateFile = new File(fileBaseDir, name);
+    File templateBoundary = FreemarkerIncludeProcessor.findBoundary(project, templateFile);
+    text = AsciiDocFreemarker.neutralize(text, templateFile, templateBoundary);
     VirtualFile springRestDocsSnippets = findSpringRestDocSnippets(
       project,
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
@@ -887,6 +899,8 @@ public class AsciiDocWrapper {
         asciidoctor.registerLogHandler(logHandler);
         prependConfig.setConfig(config);
         antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
+        // the processor is shared by all projects, set its details only while holding the lock
+        FREEMARKER_INCLUDE_PROCESSOR.setBoundary(templateBoundary);
         AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
         try {
           return "<div id=\"content\"" + (antoraModuleDir != null ? " class=\"doc\"" : "") + ">\n" + asciidoctor.convert(text,
@@ -894,6 +908,7 @@ public class AsciiDocWrapper {
         } finally {
           prependConfig.setConfig("");
           antoraIncludeAdapter.setAntoraDetails(null, null, null, null);
+          FREEMARKER_INCLUDE_PROCESSOR.setBoundary(null);
           asciidoctor.unregisterLogHandler(logHandler);
         }
       } catch (ProcessCanceledException ex) {
@@ -1007,6 +1022,8 @@ public class AsciiDocWrapper {
       LocalFileSystem.getInstance().findFileByIoFile(fileBaseDir)
     );
     Collection<AttributeDeclaration> attributes = populateAntoraAttributes(project, fileBaseDir, antoraModuleDir);
+    // look up the boundary before taking the lock, as it requires a read action
+    File templateBoundary = FreemarkerIncludeProcessor.findBoundary(project, file);
 
     lock();
     try {
@@ -1021,6 +1038,9 @@ public class AsciiDocWrapper {
         Asciidoctor asciidoctor = initWithExtensions(extensions, springRestDocsSnippets != null, format);
         prependConfig.setConfig(config);
         antoraIncludeAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
+        // these are shared by all projects, set their details only while holding the lock
+        FREEMARKER_INCLUDE_PROCESSOR.setBoundary(templateBoundary);
+        FREEMARKER_PREPROCESSOR.setFile(file, templateBoundary);
         AntoraReferenceAdapter.setAntoraDetails(project, antoraModuleDir, fileBaseDir, name);
         asciidoctor.registerLogHandler(logHandler);
         try {
@@ -1035,6 +1055,8 @@ public class AsciiDocWrapper {
         } finally {
           prependConfig.setConfig("");
           antoraIncludeAdapter.setAntoraDetails(null, null, null, null);
+          FREEMARKER_INCLUDE_PROCESSOR.setBoundary(null);
+          FREEMARKER_PREPROCESSOR.setFile(null, null);
           asciidoctor.unregisterLogHandler(logHandler);
         }
       } catch (ProcessCanceledException ex) {

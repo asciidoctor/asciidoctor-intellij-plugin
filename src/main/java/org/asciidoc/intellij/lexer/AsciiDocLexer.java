@@ -29,6 +29,8 @@ public class AsciiDocLexer extends MergingLexerAdapter {
       public void reset(CharSequence buffer, int start, int end, int initialState) {
         super.reset(buffer, start, end, initialState);
         setFinal(end);
+        // the whole buffer decides, not only the range, so that the result is the same when the lexer is restarted in the middle
+        setFreemarker(AsciiDocFreemarker.isTemplate(buffer));
       }
 
       /**

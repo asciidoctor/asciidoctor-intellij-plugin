@@ -39,6 +39,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.AsciiDocWrapper;
+import org.asciidoc.intellij.antora.AntoraSiteManifest;
+import org.asciidoc.intellij.antora.AntoraSiteManifestService;
 import org.asciidoc.intellij.completion.AsciiDocCompletionContributor;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.jetbrains.annotations.NotNull;
@@ -1016,6 +1018,7 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
                 toAntoraLookupItem(items, "page", AsciiDocUtil.findAntoraPagesDir(root.getProject(), vf), '$');
               }
               if (!("include".equals(macroName) && AsciiDocUtil.isAntoraPage(myElement))) {
+                addSiteManifestVariants(items);
                 return items.toArray();
               }
             }
@@ -1147,6 +1150,8 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
         items.add(lb);
       }
     }
+
+    addSiteManifestVariants(items);
 
     Object[] variants = new Object[candidates.length + items.size()];
     for (int i = 0; i < candidates.length; i++) {
@@ -1300,6 +1305,51 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       lb = lb.withTypeText(typeText.toString());
       lb = handleTrailing(lb, ':');
       items.add(lb);
+    }
+  }
+
+  /**
+   * Add components and pages from the Antora site manifest that are not available locally.
+   * They can only be referenced from an xref in an Antora module.
+   */
+  private void addSiteManifestVariants(List<LookupElementBuilder> items) {
+    if (!("xref".equals(macroName) || "xref-attr".equals(macroName)) || AsciiDocUtil.findAntoraModuleDir(root) == null) {
+      return;
+    }
+    Set<String> existing = items.stream().map(LookupElementBuilder::getLookupString).collect(Collectors.toSet());
+    for (AntoraSiteManifest manifest : AntoraSiteManifestService.getInstance(root.getProject()).getManifests()) {
+      if (base.isEmpty()) {
+        for (AntoraSiteManifest.Prefix prefix : manifest.getPrefixes()) {
+          if (!existing.add(prefix.lookup())) {
+            continue;
+          }
+          LookupElementBuilder lb = LookupElementBuilder.create(prefix.lookup())
+            .withPresentableText(prefix.getPresentableText())
+            .withIcon(PlatformIcons.PACKAGE_ICON)
+            .withTypeText(prefix.component() + ":" + prefix.module() + " (" + manifest.getSiteUrl() + ")");
+          if (prefix.title() != null) {
+            lb = lb.withTailText(" " + prefix.title(), true);
+          }
+          items.add(handleTrailing(lb, ':'));
+        }
+      } else {
+        for (AntoraSiteManifest.Entry entry : manifest.getEntries(base)) {
+          if (!existing.add(entry.name())) {
+            continue;
+          }
+          LookupElementBuilder lb = LookupElementBuilder.create(entry.name())
+            .withTypeText(manifest.getSiteUrl(), true);
+          if (entry.directory()) {
+            lb = handleTrailing(lb.withIcon(PlatformIcons.FOLDER_ICON), '/');
+          } else {
+            lb = lb.withIcon(AsciiDocFileType.INSTANCE.getIcon());
+            if (entry.title() != null) {
+              lb = lb.withTailText(" " + entry.title(), true);
+            }
+          }
+          items.add(lb);
+        }
+      }
     }
   }
 
@@ -1507,59 +1557,20 @@ public class AsciiDocFileReference extends PsiReferenceBase<PsiElement> implemen
       } catch (YAMLException ex) {
         return Collections.emptyList();
       }
-      Object ext = antora.get("ext");
-      if (!(ext instanceof Map)) {
-        return Collections.emptyList();
+      String fullFile = fileName;
+      if (!SystemInfo.isWindows && fullFile.length() > 1 && !fullFile.startsWith("/")) {
+        fullFile = startDir.getVirtualFile().getCanonicalPath() + "/" + fullFile;
+      } else if (SystemInfo.isWindows && !fullFile.matches("/[A-Z]:/.*")) {
+        fullFile = startDir.getVirtualFile().getCanonicalPath() + "/" + fullFile;
       }
-      Object collector = ((Map<?, ?>) ext).get("collector");
-      if (collector instanceof List) {
-        for (Object item : ((List<?>) collector)) {
-          if (item instanceof Map) {
-            List<@NotNull PsiElement> result = matchCollector(element, startDir, fileName, antoraFile.getParent(), (Map<?, ?>) item);
-            if (!result.isEmpty()) {
-              return result;
-            }
-          }
-        }
-      } else if (collector instanceof Map) {
-        List<@NotNull PsiElement> result = matchCollector(element, startDir, fileName, antoraFile.getParent(), (Map<?, ?>) collector);
-        if (!result.isEmpty()) {
-          return result;
+      for (String path : AntoraCollector.resolve(myElement.getProject(), antoraFile.getParent(), antora, fullFile)) {
+        List<@NotNull PsiElement> psiElements = resolveAbsolutePath(element, path);
+        if (psiElements != null && !psiElements.isEmpty()) {
+          return psiElements;
         }
       }
     }
     return Collections.emptyList();
-  }
-
-  private List<@NotNull PsiElement> matchCollector(PsiElement element, PsiDirectory startDir, String fileName, VirtualFile antoraComponentDir, Map<?, ?> item) {
-    if (!(item.get("scan") instanceof Map)) {
-      return Collections.emptyList();
-    }
-    item = (Map<?, ?>) item.get("scan");
-    String fullFile = fileName;
-    if (!SystemInfo.isWindows && fullFile.length() > 1 && !fullFile.startsWith("/")) {
-      fullFile = startDir.getVirtualFile().getCanonicalPath() + "/" + fullFile;
-    } else if (SystemInfo.isWindows && !fullFile.matches("/[A-Z]:/.*")) {
-      fullFile = startDir.getVirtualFile().getCanonicalPath() + "/" + fullFile;
-    }
-    String base = antoraComponentDir.getCanonicalPath();
-    if (base == null) {
-      return Collections.emptyList();
-    }
-    if (item.get("base") != null) {
-      base = base + "/" + item.get("base");
-    }
-    if (!(item.get("dir") instanceof String)) {
-      return Collections.emptyList();
-    }
-    if (fullFile.startsWith(base)) {
-      fullFile = antoraComponentDir.getCanonicalPath() + "/" + item.get("dir") + "/" + fullFile.substring(base.length());
-    }
-    List<@NotNull PsiElement> psiElements = resolveAbsolutePath(element, fullFile);
-    if (psiElements == null) {
-      return Collections.emptyList();
-    }
-    return psiElements;
   }
 
   @SuppressWarnings("checkstyle:MethodLength")

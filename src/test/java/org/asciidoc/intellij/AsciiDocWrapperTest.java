@@ -279,6 +279,56 @@ public class AsciiDocWrapperTest extends BasePlatformTestCase {
     }
   }
 
+  public void testShouldIncludeFreemarkerTemplatesNeutralized() throws Exception {
+    File base = new File(System.getProperty("java.io.tmpdir"), "freemarker-include-" + System.nanoTime());
+    File guides = new File(base, "guides");
+    File partials = new File(base, "partials");
+    assertThat(guides.mkdirs()).isTrue();
+    assertThat(partials.mkdirs()).isTrue();
+    Files.writeString(new File(partials, "p.adoc").toPath(),
+      "<#import \"/templates/x.adoc\" as x>\n. partial one\n\n<#if a>\n. partial two\n</#if>\n", UTF_8);
+    VirtualFile baseVf = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(base);
+    assertThat(baseVf).isNotNull();
+    PsiTestUtil.addContentRoot(myFixture.getModule(), baseVf);
+    try {
+      VirtualFile guidesVf = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(guides);
+      assertThat(guidesVf).isNotNull();
+      AsciiDocWrapper wrapper = new AsciiDocWrapper(getProject(), guidesVf, null, "guide.adoc");
+      String html = wrapper.render("<#import \"/templates/x.adoc\" as x>\n<#include \"/partials/p.adoc\" />\n", Collections.emptyList());
+      assertThat(html).contains("partial one").contains("partial two").doesNotContain("&lt;#");
+      String outside = wrapper.render("<#import \"/templates/x.adoc\" as x>\ninclude::freemarker:" + new File(base.getParentFile(), "outside.adoc").getPath() + "[]\n", Collections.emptyList());
+      assertThat(outside).contains("outside of the project");
+    } finally {
+      PsiTestUtil.removeContentEntry(myFixture.getModule(), baseVf);
+      FileUtil.delete(base);
+    }
+  }
+
+  public void testShouldExportFreemarkerTemplatesNeutralized() throws Exception {
+    File base = new File(System.getProperty("java.io.tmpdir"), "freemarker-export-" + System.nanoTime());
+    File guides = new File(base, "guides");
+    File partials = new File(base, "partials");
+    assertThat(guides.mkdirs()).isTrue();
+    assertThat(partials.mkdirs()).isTrue();
+    Files.writeString(new File(partials, "p.adoc").toPath(), "<#if a>\n. partial one\n</#if>\n", UTF_8);
+    File guide = new File(guides, "guide.adoc");
+    Files.writeString(guide.toPath(), "<#import \"/templates/x.adoc\" as x>\n= Title\n\n. first\n<#include \"/partials/p.adoc\" />\n. second\n", UTF_8);
+    VirtualFile baseVf = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(base);
+    assertThat(baseVf).isNotNull();
+    PsiTestUtil.addContentRoot(myFixture.getModule(), baseVf);
+    try {
+      VirtualFile guidesVf = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(guides);
+      assertThat(guidesVf).isNotNull();
+      AsciiDocWrapper wrapper = new AsciiDocWrapper(getProject(), guidesVf, null, "guide.adoc");
+      assertThat(wrapper.convertTo(guide, "", Collections.emptyList(), AsciiDocWrapper.FileType.HTML)).isTrue();
+      String html = Files.readString(new File(guides, "guide.html").toPath(), UTF_8);
+      assertThat(html).contains("partial one").contains("second").doesNotContain("&lt;#");
+    } finally {
+      PsiTestUtil.removeContentEntry(myFixture.getModule(), baseVf);
+      FileUtil.delete(base);
+    }
+  }
+
   public void testShouldRenderPlainAsciidoc() {
     String html = asciidocWrapper.render("this is *bold*.", Collections.emptyList());
     assertThat(html).withFailMessage("should contain formatted output").contains("<strong>bold</strong>");

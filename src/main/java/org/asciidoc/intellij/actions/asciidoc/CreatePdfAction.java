@@ -16,6 +16,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.AsciiDocExtensionService;
@@ -130,16 +131,17 @@ public class CreatePdfAction extends AsciiDocFileAction {
       @Override
       public void onFinished() {
         // runs on the EDT, regardless if the task was successful, failed or cancelled
-        ApplicationManager.getApplication().runWriteAction(() -> {
-          VirtualFile virtualFilePdf = findOutputFile(target, file, "pdf");
-          VirtualFile virtualFile = virtualFilePdf != null ? virtualFilePdf : target;
-          AsciiDocUtil.selectFileInProjectView(currentProject, virtualFile);
-          if (virtualFilePdf != null && successful.get()) {
-            ApplicationManager.getApplication().invokeLater(() -> {
-              new OpenFileDescriptor(currentProject, virtualFilePdf).navigate(true);
-            });
-          }
-        });
+        // write action is needed here to update the file system view via refreshAndFindFileByNioPath
+        VirtualFile virtualFilePdf = ApplicationManager.getApplication().runWriteAction(
+          (Computable<VirtualFile>) () -> findOutputFile(target, file, "pdf"));
+        VirtualFile virtualFile = virtualFilePdf != null ? virtualFilePdf : target;
+        // selecting the file waits for the UI, so this must not be inside a write action
+        AsciiDocUtil.selectFileInProjectView(currentProject, virtualFile);
+        if (virtualFilePdf != null && successful.get()) {
+          ApplicationManager.getApplication().invokeLater(() -> {
+            new OpenFileDescriptor(currentProject, virtualFilePdf).navigate(true);
+          });
+        }
       }
     });
   }

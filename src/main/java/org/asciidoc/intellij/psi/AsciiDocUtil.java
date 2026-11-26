@@ -879,6 +879,23 @@ public class AsciiDocUtil {
     return null;
   }
 
+  /**
+   * Looking up the file of an event can fail when the virtual file system is corrupted, for example with a
+   * {@code FileDeletedException} when the children of a directory can't be sorted.
+   * Don't let this break the listeners of the plugin, as it would be reported again for every change.
+   */
+  @Nullable
+  public static VirtualFile getFileOfEvent(@NotNull VFileEvent event) {
+    try {
+      return event.getFile();
+    } catch (ProcessCanceledException ex) {
+      throw ex;
+    } catch (RuntimeException ex) {
+      LOG.info("Unable to determine the file of the VFS event " + event, ex);
+      return null;
+    }
+  }
+
   private static final ProjectCache<TreeSet<VirtualFile>> PROJECT_ROOTS = new ProjectCache<>() {
 
     @Override
@@ -886,8 +903,9 @@ public class AsciiDocUtil {
       Set<VirtualFile> roots = new HashSet<>();
       for (VFileEvent event : events) {
         try {
-          if (event.getFile() != null && event.getFile().isValid()) {
-            VirtualFile contentRootForFile = ProjectFileIndex.getInstance(project).getContentRootForFile(event.getFile());
+          VirtualFile eventFile = getFileOfEvent(event);
+          if (eventFile != null && eventFile.isValid()) {
+            VirtualFile contentRootForFile = ProjectFileIndex.getInstance(project).getContentRootForFile(eventFile);
             if (contentRootForFile != null) {
               roots.add(contentRootForFile);
             }
@@ -1724,11 +1742,7 @@ public class AsciiDocUtil {
           newKey = value + newKey;
 
           // collector takes precendence over a regular file
-          List<String> collectorResults = new ArrayList<>();
-          resolveCollector(antoraFile.getParent(), antora, newKey, collectorResults);
-          if (collectorResults.size() > 0) {
-            result.addAll(collectorResults);
-          }
+          result.addAll(AntoraCollector.resolve(project, antoraFile.getParent(), antora, newKey));
           if (new File(newKey).exists()) {
             // if the file exists, add it in first place
             result.add(0, newKey);
@@ -1751,48 +1765,6 @@ public class AsciiDocUtil {
       });
     }
     return Collections.singletonList(originalKey);
-  }
-
-  private static void resolveCollector(VirtualFile antoraComponent, Map<String, Object> antoraDescriptor, String file, List<String> result) {
-    Object ext = antoraDescriptor.get("ext");
-    if (!(ext instanceof Map)) {
-      return;
-    }
-    Object collector = ((Map<?, ?>) ext).get("collector");
-    if (collector instanceof List) {
-      for (Object item : ((List<?>) collector)) {
-        if (item instanceof Map) {
-          matchCollector(antoraComponent, (Map<?, ?>) item, file, result);
-        }
-      }
-    } else if (collector instanceof Map) {
-      matchCollector(antoraComponent, (Map<?, ?>) collector, file, result);
-    }
-  }
-
-  private static void matchCollector(VirtualFile antoraComponent, Map<?, ?> item, String fullFile, List<String> result) {
-    if (!(item.get("scan") instanceof Map)) {
-      return;
-    }
-    item = (Map<?, ?>) item.get("scan");
-    String base = antoraComponent.getCanonicalPath();
-    if (base == null) {
-      return;
-    }
-    if (item.get("base") != null) {
-      base = base + "/" + item.get("base");
-    }
-    if (!(item.get("dir") instanceof String)) {
-      return;
-    }
-    if (fullFile.startsWith(base)) {
-      fullFile = antoraComponent.getCanonicalPath() + "/" + item.get("dir") + "/" + fullFile.substring(base.length());
-    }
-    if (new File(fullFile).exists()) {
-      // last file wins, therefore, clear and add.
-      result.clear();
-      result.add(fullFile);
-    }
   }
 
   public static boolean antoraVersionAndComponentExist(PsiElement myElement, String originalKey) {
@@ -1941,13 +1913,19 @@ public class AsciiDocUtil {
           }
         }
       }
+      // the component of the current module is always known, even if it is in an excluded folder and not indexed
+      VirtualFile ownDescriptor = moduleDir.getParent() != null && moduleDir.getParent().getParent() != null
+        ? moduleDir.getParent().getParent().findChild(ANTORA_YML) : null;
+      if (files != null && ownDescriptor != null && !files.contains(ownDescriptor)) {
+        files.add(ownDescriptor);
+      }
       if (files != null) {
         // sort by path proximity
         files.sort(Comparator.comparingInt(value -> countNumberOfSameStartingCharacters(value, moduleDir.getPath()) * -1));
         ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
         for (VirtualFile file : files) {
           if (index.isInLibrary(file)
-            || index.isExcluded(file)
+            || (index.isExcluded(file) && !file.equals(ownDescriptor))
             || index.isInLibraryClasses(file)
             || index.isInLibrarySource(file)) {
             continue;

@@ -19,6 +19,7 @@ import com.intellij.util.Alarm;
 import com.intellij.util.messages.MessageBusConnection;
 import org.asciidoc.intellij.file.AsciiDocFileType;
 import org.asciidoc.intellij.threading.AsciiDocProcessUtil;
+import org.asciidoc.intellij.psi.AsciiDocUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware {
           if (!isRelevant(event)) {
             continue;
           }
-          VirtualFile file = event.getFile();
+          VirtualFile file = AsciiDocUtil.getFileOfEvent(event);
           if (file != null) {
             files.add(file);
           }
@@ -117,25 +118,10 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware {
         DumbService.getInstance(project).runWhenSmart(() -> schedule(files));
         return;
       }
-      Set<String> canonicalPaths = new HashSet<>();
-      for (VirtualFile file : files) {
-        if (project.isDisposed()) {
-          return;
-        }
-        if (!file.isValid() || !file.getFileType().equals(AsciiDocFileType.INSTANCE)) {
-          continue;
-        }
-        String canonicalPath = file.getCanonicalPath();
-        if (canonicalPath != null) {
-          canonicalPaths.add(canonicalPath);
-        }
-      }
-      if (!canonicalPaths.isEmpty()) {
-        refresh(canonicalPaths, 1);
-      }
+      refresh(files, 1);
     }
 
-    private void refresh(Set<String> canonicalPaths, int attempt) {
+    private void refresh(List<VirtualFile> files, int attempt) {
       // stop retrying when the project is gone, otherwise this re-schedules itself endlessly
       if (project.isDisposed()) {
         return;
@@ -146,6 +132,23 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware {
           // the index might not be available yet if indexing started after the file change was observed
           if (DumbService.isDumb(project)) {
             dumb.set(true);
+            return;
+          }
+          // checking the file type needs read access; like the index lookup, this should give way to write actions
+          Set<String> canonicalPaths = new HashSet<>();
+          for (VirtualFile file : files) {
+            if (project.isDisposed()) {
+              return;
+            }
+            if (!file.isValid() || !file.getFileType().equals(AsciiDocFileType.INSTANCE)) {
+              continue;
+            }
+            String canonicalPath = file.getCanonicalPath();
+            if (canonicalPath != null) {
+              canonicalPaths.add(canonicalPath);
+            }
+          }
+          if (canonicalPaths.isEmpty()) {
             return;
           }
           Set<VirtualFile> linkSources = new HashSet<>();
@@ -161,12 +164,12 @@ public class AsciiDocLinkProjectOpen implements StartupActivity, DumbAware {
           }
         });
         if (dumb.get()) {
-          DumbService.getInstance(project).runWhenSmart(() -> alarm.addRequest(() -> refresh(canonicalPaths, attempt), 0));
+          DumbService.getInstance(project).runWhenSmart(() -> alarm.addRequest(() -> refresh(files, attempt), 0));
         }
       } catch (ProcessCanceledException e) {
         if (attempt < MAX_ATTEMPTS) {
           // don't retry immediately, to give the write action and the index update time to complete
-          alarm.addRequest(() -> refresh(canonicalPaths, attempt + 1), RETRY_DELAY_MS);
+          alarm.addRequest(() -> refresh(files, attempt + 1), RETRY_DELAY_MS);
         }
       }
     }

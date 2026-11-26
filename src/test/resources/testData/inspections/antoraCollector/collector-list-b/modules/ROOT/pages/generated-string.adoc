@@ -1,0 +1,3 @@
+= Generated page from string
+
+This is a generated page.

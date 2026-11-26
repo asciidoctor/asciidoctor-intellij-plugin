@@ -23,6 +23,7 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
 %{
   private static final char[] NUMBERS = "1234567890".toCharArray();
   private static final char[] SPACES = " \t".toCharArray();
+  private static final char[] ATTR_SLOT_START = "[, \t".toCharArray();
   private static final char[] COLONSLASH = ":/".toCharArray();
   private static final char[] PLUS = "+".toCharArray();
   private static final char[] PIPE = "|".toCharArray();
@@ -40,6 +41,12 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
   private String style = null;
   private int headerLines = 0;
   private char tableChar = 0;
+  // the file is a FreeMarker template, so lines with a template directive are handled like comments
+  private boolean freemarker = false;
+
+  public void setFreemarker(boolean freemarker) {
+    this.freemarker = freemarker;
+  }
 
   private Stack<Integer> stateStack = new Stack<>();
 
@@ -373,6 +380,9 @@ https://intellij-asciidoc-plugin.ahus1.de/docs/contributors-guide/coder/lexing-a
 SPACE = [\ \t]
 NON_SPACE = [^\n]
 LINE_COMMENT="//"
+// FreeMarker directive or macro call like <#if x>, </#list> or <@tmpl.guide title="x">, as used in templates that generate AsciiDoc.
+// It may span multiple lines, and is only recognized if it is the only content of the line.
+TEMPLATE_DIRECTIVE = {SPACE}* "<" "/"? ( "#" [a-zA-Z_]+ | "@" [a-zA-Z_][a-zA-Z0-9_]* ("." [a-zA-Z_][a-zA-Z0-9_]*)* ) ( [^>\"'] | \"[^\"]*\" | '[^']*' )* ">"
 COMMENT_BLOCK_DELIMITER = "////" "/"* {SPACE}*
 PASSTRHOUGH_BLOCK_DELIMITER = "++++" "+"* {SPACE}*
 LISTING_BLOCK_DELIMITER = "----" "-"* {SPACE}*
@@ -1189,6 +1199,17 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 }
 
 <PREBLOCK, SINGLELINE, PASSTHROUGH_NO_DELIMITER, HEADER, LIST> {
+  ^ {TEMPLATE_DIRECTIVE} {SPACE}* $ {
+    if (tableChar != 0 || !freemarker) {
+      yypushback(yylength());
+      yybegin(INSIDE_LINE);
+    } else {
+      // treat a line with only a template directive like a comment, so that it doesn't interrupt lists, paragraphs or blocks
+      yypushstate();
+      yybegin(LINECOMMENT);
+      return AsciiDocTokenTypes.LINE_COMMENT;
+    }
+  }
   ^ {LINE_COMMENT} [^/] {
     yypushback(1); // ... as this might be a newline character
     // the line comment might be stopped while reading a comment within a table up until the cell separator
@@ -2058,6 +2079,19 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
 
 <BLOCK_MACRO_ATTRS> {
   "," { return AsciiDocTokenTypes.SEPARATOR; }
+  // quoted positional value that may contain commas, for example "Hello, world"
+  "\"" / ( [^\"\]\n] | "\\\"" )* "\"" {SPACE}* [,\]] {
+        if (isPrefixedBy(ATTR_SLOT_START)) {
+          yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE); return AsciiDocTokenTypes.DOUBLE_QUOTE;
+        }
+        return AsciiDocTokenTypes.ATTR_NAME;
+      }
+  "\'" / ( [^\'\]\n] | "\\\'" )* "\'" {SPACE}* [,\]] {
+        if (isPrefixedBy(ATTR_SLOT_START)) {
+          yypushstate(); yybegin(ATTRS_SINGLE_QUOTE); return AsciiDocTokenTypes.SINGLE_QUOTE;
+        }
+        return AsciiDocTokenTypes.ATTR_NAME;
+      }
 }
 
 <BLOCK_ATTRS> {
@@ -2291,6 +2325,19 @@ ADMONITION = ("NOTE" | "TIP" | "IMPORTANT" | "CAUTION" | "WARNING" ) ":"
                        }
   "\n"                 { return AsciiDocTokenTypes.LINE_BREAK; }
   "]"                  { yypopstate(); yypushback(yylength()); }
+  // quoted positional value that may contain commas, for example "Hello, world"
+  "\"" / ( [^\"\]\n] | "\\\"" )* "\"" {SPACE}* [,\]] {
+        if (isPrefixedBy(ATTR_SLOT_START)) {
+          yypushstate(); yybegin(ATTRS_DOUBLE_QUOTE); return AsciiDocTokenTypes.DOUBLE_QUOTE;
+        }
+        return AsciiDocTokenTypes.ATTR_NAME;
+      }
+  "\'" / ( [^\'\]\n] | "\\\'" )* "\'" {SPACE}* [,\]] {
+        if (isPrefixedBy(ATTR_SLOT_START)) {
+          yypushstate(); yybegin(ATTRS_SINGLE_QUOTE); return AsciiDocTokenTypes.SINGLE_QUOTE;
+        }
+        return AsciiDocTokenTypes.ATTR_NAME;
+      }
   ","                  { return AsciiDocTokenTypes.SEPARATOR; }
   {SPACE}              { return AsciiDocTokenTypes.WHITE_SPACE; }
   "[" [^\]\n]* "]"     { return AsciiDocTokenTypes.ATTR_NAME; }

@@ -104,11 +104,11 @@ public class CreateHtmlAction extends AsciiDocFileAction {
         // runs on the EDT, regardless if the task was successful, failed or cancelled
         VirtualFile vf = ApplicationManager.getApplication().runWriteAction((Computable<? extends VirtualFile>) () -> {
           // write action is needed here to update the file system view via refreshAndFindFileByNioPath
-          VirtualFile virtualFileHtml = findOutputFile(target, file, "html");
-          VirtualFile virtualFile = virtualFileHtml != null ? virtualFileHtml : target;
-          AsciiDocUtil.selectFileInProjectView(currentProject, virtualFile);
-          return virtualFileHtml;
+          return findOutputFile(target, file, "html");
         });
+        VirtualFile virtualFile = vf != null ? vf : target;
+        // selecting the file waits for the UI, so this must not be inside a write action
+        AsciiDocUtil.selectFileInProjectView(currentProject, virtualFile);
         if (vf != null && successful.get()) {
           // this must not be a write action, as on macOS this interacts with AWT
           ApplicationManager.getApplication().invokeLater(() -> BrowserUtil.browse(vf));

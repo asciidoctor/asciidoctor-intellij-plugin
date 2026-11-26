@@ -32,6 +32,112 @@ public class AsciiDocLexerTest extends LexerTestCase {
       AsciiDoc:LINE_COMMENT ('// bar')""");
   }
 
+  public void testTemplateDirectiveBetweenListItems() {
+    doTest("<#assign a = 1>\n* one\n<#if x>\n* two\n</#if>\n", """
+        AsciiDoc:LINE_COMMENT ('<#assign a = 1>')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:BULLET ('*')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('one')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LINE_COMMENT ('<#if x>')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:BULLET ('*')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('two')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LINE_COMMENT ('</#if>')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
+  public void testNoTemplateDirectiveWithoutTemplateMarker() {
+    doTest("* one\n<#else>\n* two\n", """
+        AsciiDoc:BULLET ('*')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('one')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LT ('<')
+        AsciiDoc:TEXT ('#else')
+        AsciiDoc:GT ('>')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:BULLET ('*')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('two')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
+  public void testTemplateMacroOverMultipleLines() {
+    doTest("<@tmpl.guide\ntitle=\"a > b\"\nsummary='x' >\n\ntext\n", """
+        AsciiDoc:LINE_COMMENT ('<@tmpl.guide\\ntitle="a > b"\\nsummary='x' >')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:EMPTY_LINE ('\\n')
+        AsciiDoc:TEXT ('text')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
+  public void testTemplateMacroIndented() {
+    doTest("* item\n+\n  <@kc.start parameters=\"--optimized\"/>\n", """
+        AsciiDoc:BULLET ('*')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('item')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:CONTINUATION ('+')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LINE_COMMENT ('  <@kc.start parameters="--optimized"/>')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
+  public void testNoTemplateDirectiveWhenFollowedByText() {
+    doTest("<#if x>text\n", """
+        AsciiDoc:LT ('<')
+        AsciiDoc:TEXT ('#if')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('x')
+        AsciiDoc:GT ('>')
+        AsciiDoc:TEXT ('text')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
+  public void testNoTemplateDirectiveForOtherHtmlAndMentions() {
+    doTest("<a>\n\n<@user>\n\n<#>\n\n<#elseif x == \"a>\n", """
+        AsciiDoc:LT ('<')
+        AsciiDoc:TEXT ('a')
+        AsciiDoc:GT ('>')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:EMPTY_LINE ('\\n')
+        AsciiDoc:LT ('<')
+        AsciiDoc:TEXT ('@user')
+        AsciiDoc:GT ('>')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:EMPTY_LINE ('\\n')
+        AsciiDoc:LT ('<')
+        AsciiDoc:TEXT ('#')
+        AsciiDoc:GT ('>')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:EMPTY_LINE ('\\n')
+        AsciiDoc:LT ('<')
+        AsciiDoc:TEXT ('#elseif')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('x')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:TEXT ('==')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:DOUBLE_QUOTE ('"')
+        AsciiDoc:TEXT ('a')
+        AsciiDoc:GT ('>')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
+  public void testNoTemplateDirectiveInListing() {
+    doTest("----\n<#if x>\n----\n", """
+        AsciiDoc:LISTING_BLOCK_DELIMITER ('----')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LISTING_TEXT ('<#if x>')
+        AsciiDoc:LINE_BREAK ('\\n')
+        AsciiDoc:LISTING_BLOCK_DELIMITER ('----')
+        AsciiDoc:LINE_BREAK ('\\n')""");
+  }
+
   public void testLineCommentAfterEnumeration() {
     doTest("* item\n// comment",
       """
@@ -780,6 +886,62 @@ public class AsciiDocLexerTest extends LexerTestCase {
         AsciiDoc:ATTR_VALUE ('value')
         AsciiDoc:SINGLE_QUOTE (''')
         AsciiDoc:ATTRS_END (']')""");
+  }
+
+  public void testBlockMacroWithQuotedPositionalAttributeContainingComma() {
+    doTest("macro::foo[\"a, b\",c]",
+      """
+        AsciiDoc:BLOCK_MACRO_ID ('macro::')
+        AsciiDoc:BLOCK_MACRO_BODY ('foo')
+        AsciiDoc:ATTRS_START ('[')
+        AsciiDoc:DOUBLE_QUOTE ('"')
+        AsciiDoc:ATTR_VALUE ('a, b')
+        AsciiDoc:DOUBLE_QUOTE ('"')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:ATTR_NAME ('c')
+        AsciiDoc:ATTRS_END (']')""");
+  }
+
+  public void testBlockMacroWithQuoteInsideOfPositionalAttributeIsNoQuotedValue() {
+    doTest("macro::foo[a\"b, c\",d]",
+      """
+        AsciiDoc:BLOCK_MACRO_ID ('macro::')
+        AsciiDoc:BLOCK_MACRO_BODY ('foo')
+        AsciiDoc:ATTRS_START ('[')
+        AsciiDoc:ATTR_NAME ('a"b')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:ATTR_NAME ('c"')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:ATTR_NAME ('d')
+        AsciiDoc:ATTRS_END (']')""");
+  }
+
+  public void testBlockMacroWithUnclosedQuoteIsNoQuotedValue() {
+    doTest("macro::foo[\"a, b]",
+      """
+        AsciiDoc:BLOCK_MACRO_ID ('macro::')
+        AsciiDoc:BLOCK_MACRO_BODY ('foo')
+        AsciiDoc:ATTRS_START ('[')
+        AsciiDoc:ATTR_NAME ('"a')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:WHITE_SPACE (' ')
+        AsciiDoc:ATTR_NAME ('b')
+        AsciiDoc:ATTRS_END (']')""");
+  }
+
+  public void testInlineMacroWithSingleQuotedPositionalAttributeContainingComma() {
+    doTest("macro:foo['a, b',c]",
+      """
+        AsciiDoc:INLINE_MACRO_ID ('macro:')
+        AsciiDoc:INLINE_MACRO_BODY ('foo')
+        AsciiDoc:INLINE_ATTRS_START ('[')
+        AsciiDoc:SINGLE_QUOTE (''')
+        AsciiDoc:ATTR_VALUE ('a, b')
+        AsciiDoc:SINGLE_QUOTE (''')
+        AsciiDoc:SEPARATOR (',')
+        AsciiDoc:ATTR_NAME ('c')
+        AsciiDoc:INLINE_ATTRS_END (']')""");
   }
 
   public void testBlockMacroWithDoubleQuotedAttribute() {

@@ -16,7 +16,9 @@ import com.intellij.util.ProcessingContext;
 import org.asciidoc.intellij.AsciiDocBundle;
 import org.asciidoc.intellij.AsciiDocLanguage;
 import org.asciidoc.intellij.lexer.AsciiDocTokenTypes;
+import org.asciidoc.intellij.macros.AsciiDocMacroAttributes;
 import org.asciidoc.intellij.parser.AsciiDocElementTypes;
+import org.asciidoc.intellij.psi.AsciiDocAttributeInBrackets;
 import org.asciidoc.intellij.psi.AsciiDocFileReference;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagInDocument;
 import org.asciidoc.intellij.psi.AsciiDocIncludeTagReferenceInElement;
@@ -90,6 +92,80 @@ public class AsciiDocCompletionContributor extends CompletionContributor {
                 }
               })
             );
+          }
+        }
+      });
+    extend(CompletionType.BASIC, PlatformPatterns.psiElement().withElementType(AsciiDocTokenTypes.ATTR_NAME).withLanguage(AsciiDocLanguage.INSTANCE),
+      new CompletionProvider<>() {
+        @Override
+        public void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext processingContext,
+                                   @NotNull CompletionResultSet resultSet) {
+          PsiElement position = parameters.getPosition();
+          PsiElement macroElement = AsciiDocMacroAttributes.getMacroElement(position);
+          AsciiDocMacroAttributes.Macro macro = AsciiDocMacroAttributes.find(macroElement);
+          if (macroElement == null || macro == null) {
+            return;
+          }
+          if (position.getParent() instanceof AsciiDocAttributeInBrackets attribute
+            && AsciiDocMacroAttributes.isNamed(attribute)) {
+            // completing the value of a named attribute
+            return;
+          }
+          if (position.getParent() instanceof AsciiDocAttributeInBrackets attribute) {
+            // a positional attribute can be a value of the attribute at this position
+            int index = AsciiDocMacroAttributes.getPosition(attribute);
+            if (index >= 0 && index < macro.positional().size()) {
+              AsciiDocMacroAttributes.Attribute positional = macro.find(macro.positional().get(index));
+              if (positional != null) {
+                for (String value : positional.suggestions()) {
+                  resultSet.addElement(LookupElementBuilder.create(
+                      new AsciiDocMacroAttributes.AttributeRef(macro, positional, value), value).withCaseSensitivity(false)
+                    .withTypeText(positional.name(), true));
+                }
+              }
+            }
+          }
+          Set<String> used = AsciiDocMacroAttributes.getUsedNames(macroElement, position.getParent() instanceof AsciiDocAttributeInBrackets ? position.getParent() : null);
+          for (AsciiDocMacroAttributes.Attribute attribute : macro.attributes()) {
+            if (used.contains(attribute.name())) {
+              continue;
+            }
+            resultSet.addElement(LookupElementBuilder.create(new AsciiDocMacroAttributes.AttributeRef(macro, attribute), attribute.name())
+              .withTypeText(String.join(", ", attribute.suggestions()), true)
+              .withCaseSensitivity(false)
+              .withInsertHandler((insertionContext, item) -> {
+                int end = insertionContext.getTailOffset();
+                CharSequence text = insertionContext.getDocument().getCharsSequence();
+                if (end >= text.length() || text.charAt(end) != '=') {
+                  insertionContext.getDocument().insertString(end, "=");
+                }
+                insertionContext.getEditor().getCaretModel().moveToOffset(end + 1);
+              }));
+          }
+        }
+      });
+    extend(CompletionType.BASIC, PlatformPatterns.psiElement().withElementType(AsciiDocTokenTypes.ATTR_VALUE).withLanguage(AsciiDocLanguage.INSTANCE),
+      new CompletionProvider<>() {
+        @Override
+        public void addCompletions(@NotNull CompletionParameters parameters, @NotNull ProcessingContext processingContext,
+                                   @NotNull CompletionResultSet resultSet) {
+          PsiElement position = parameters.getPosition();
+          if (!(position.getParent() instanceof AsciiDocAttributeInBrackets attribute)) {
+            return;
+          }
+          PsiElement macroElement = AsciiDocMacroAttributes.getMacroElement(position);
+          AsciiDocMacroAttributes.Macro macro = AsciiDocMacroAttributes.find(macroElement);
+          String name = AsciiDocMacroAttributes.getName(attribute);
+          if (macro == null || name == null) {
+            return;
+          }
+          AsciiDocMacroAttributes.Attribute documented = macro.find(name);
+          if (documented == null) {
+            return;
+          }
+          for (String value : documented.suggestions()) {
+            resultSet.addElement(LookupElementBuilder.create(
+              new AsciiDocMacroAttributes.AttributeRef(macro, documented, value), value).withCaseSensitivity(false));
           }
         }
       });

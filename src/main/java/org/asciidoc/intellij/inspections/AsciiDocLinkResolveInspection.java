@@ -5,12 +5,14 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.codeInspection.util.InspectionMessage;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.asciidoc.intellij.antora.AntoraSiteManifestService;
 import org.asciidoc.intellij.psi.AsciiDocAttributeDeclaration;
 import org.asciidoc.intellij.psi.AsciiDocAttributeInBrackets;
 import org.asciidoc.intellij.psi.AsciiDocBlockMacro;
@@ -37,6 +39,7 @@ import java.util.StringTokenizer;
  */
 public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
   private static final @InspectionMessage String TEXT_HINT_FILE_DOESNT_RESOLVE = "File doesn't resolve";
+  private static final @InspectionMessage String TEXT_HINT_PAGE_NOT_IN_SITE_MANIFEST = "Page is not listed in the Antora site manifest of";
   private static final @InspectionMessage String TEXT_HINT_ANCHOR_DOESNT_RESOLVE = "Anchor doesn't resolve";
   private static final @InspectionMessage String TEXT_HINT_FILE_USES_DIFFERENT_CAPITALIZATION = "File name has different capitalization in document and on file system.";
   private static final @InspectionMessage String TEXT_HINT_DIRECTORY_USES_DIFFERENT_CAPITALIZATION = "Directory name has different capitalization in document and on file system.";
@@ -129,6 +132,7 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
               // if the Antora reference doesn't resolve, don't continue
               // as it might be a reference to an Antora component in another project
               continueResolving = false;
+              checkSiteManifest(o, holder);
             }
           }
         }
@@ -174,6 +178,33 @@ public class AsciiDocLinkResolveInspection extends AsciiDocInspectionBase {
         super.visitElement(o);
       }
     };
+  }
+
+  /**
+   * If a page of another component can't be found locally, check the site manifest of that component (if available).
+   * Only report an error if the manifest knows the component and its version, but not the page.
+   */
+  private void checkSiteManifest(@NotNull PsiElement o, @NotNull ProblemsHolder holder) {
+    if (!(o instanceof AsciiDocLink link) || !"xref".equals(link.getMacroName())) {
+      return;
+    }
+    String reference = link.getResolvedBody();
+    if (reference == null) {
+      return;
+    }
+    AntoraSiteManifestService service = AntoraSiteManifestService.getInstance(o.getProject());
+    AntoraSiteManifestService.Lookup lookup = service.lookup(reference, service.getManifests());
+    if (lookup == null || lookup.getPage() != null) {
+      return;
+    }
+    TextRange range = AsciiDocLink.getBodyRange(link);
+    String body = range.substring(link.getText());
+    int anchor = body.indexOf('#');
+    if (anchor != -1) {
+      range = TextRange.create(range.getStartOffset(), range.getStartOffset() + anchor);
+    }
+    holder.registerProblem(o, TEXT_HINT_PAGE_NOT_IN_SITE_MANIFEST + " " + lookup.getManifest().getSiteUrl(),
+      ProblemHighlightType.GENERIC_ERROR_OR_WARNING, range);
   }
 
   /**

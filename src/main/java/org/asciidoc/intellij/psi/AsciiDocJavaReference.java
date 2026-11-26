@@ -18,6 +18,7 @@ import com.intellij.psi.util.ClassUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,44 +64,60 @@ public class AsciiDocJavaReference extends PsiReferenceBase<PsiElement> implemen
   @Override
   public ResolveResult @NotNull [] multiResolve(boolean incompleteCode) {
     List<ResolveResult> results = new ArrayList<>();
-    AsciiDocUtil.swallowIndexNotReadyExceptionIfInsideDumbAware(() -> {
-      String name = myRangeInElement.substring(myElement.getText());
-      boolean annotation = false;
-      if (name.startsWith("@")) {
-        annotation = true;
-        name = name.substring(1);
-      }
-      PsiClass[] fullQualifiedClasses = JavaPsiFacade.getInstance(myElement.getProject()).findClasses(
-        name,
-        new AsciiDocSearchScope(myElement.getProject())
-      );
-      for (PsiClass aClass : fullQualifiedClasses) {
-        if (annotation && !aClass.isAnnotationType()) {
-          continue;
+    try {
+      AsciiDocUtil.swallowIndexNotReadyExceptionIfInsideDumbAware(() -> {
+        String name = myRangeInElement.substring(myElement.getText());
+        boolean annotation = false;
+        if (name.startsWith("@")) {
+          annotation = true;
+          name = name.substring(1);
         }
-        results.add(new PsiElementResolveResult(aClass));
-      }
-      PsiPackage thePackage = JavaPsiFacade.getInstance(myElement.getProject()).findPackage(name);
-      if (thePackage != null) {
-        results.add(new PsiElementResolveResult(thePackage));
-      }
-      PsiClass[] shortNamedClasses = PsiShortNamesCache.getInstance(myElement.getProject()).getClassesByName(
-        name,
-        new AsciiDocSearchScope(myElement.getProject())
-      );
-      for (PsiClass aClass : shortNamedClasses) {
-        if (annotation && !aClass.isAnnotationType()) {
-          continue;
+        PsiClass[] fullQualifiedClasses = JavaPsiFacade.getInstance(myElement.getProject()).findClasses(
+          name,
+          new AsciiDocSearchScope(myElement.getProject())
+        );
+        for (PsiClass aClass : fullQualifiedClasses) {
+          if (annotation && !aClass.isAnnotationType()) {
+            continue;
+          }
+          results.add(new PsiElementResolveResult(aClass));
         }
-        ResolveResult resolveResult = new PsiElementResolveResult(aClass);
-        if (!results.contains(resolveResult)) {
-          // avoid having the same class in the list twice. Would happen if class doesn't have a package name,
-          // and short name and fully qualified name are the same.
-          results.add(resolveResult);
+        PsiPackage thePackage = JavaPsiFacade.getInstance(myElement.getProject()).findPackage(name);
+        if (thePackage != null) {
+          results.add(new PsiElementResolveResult(thePackage));
         }
+        PsiClass[] shortNamedClasses = PsiShortNamesCache.getInstance(myElement.getProject()).getClassesByName(
+          name,
+          new AsciiDocSearchScope(myElement.getProject())
+        );
+        for (PsiClass aClass : shortNamedClasses) {
+          if (annotation && !aClass.isAnnotationType()) {
+            continue;
+          }
+          ResolveResult resolveResult = new PsiElementResolveResult(aClass);
+          if (!results.contains(resolveResult)) {
+            // avoid having the same class in the list twice. Would happen if class doesn't have a package name,
+            // and short name and fully qualified name are the same.
+            results.add(resolveResult);
+          }
+        }
+      });
+    } catch (RuntimeException e) {
+      // e.g. the Gradle cache on Windows contains file names with a ':' that the platform can't convert to a path
+      if (!hasCause(e, InvalidPathException.class)) {
+        throw e;
       }
-    });
+    }
     return results.toArray(new ResolveResult[0]);
+  }
+
+  private static boolean hasCause(Throwable e, Class<? extends Throwable> type) {
+    for (Throwable t = e; t != null; t = t.getCause()) {
+      if (type.isInstance(t)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Nullable
